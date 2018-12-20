@@ -3,50 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6790EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60226C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2E62177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 294412177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297617;
-	bh=W2GGUoZNSdk2EXqsaX+8B3OP3sSpyOB2DCjSj+DOQa4=;
+	s=default; t=1545297621;
+	bh=w4rCWL/a9EyoBwmuIYpb/k15tbouBxr62jIeYXKxwzE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cM9Rwv2fLRxN9DR245YAXSJlMWr/R3tDbPwJ0L0lzEyep8Xvg6V+ci3wM/keVg/q0
-	 HI4gQoR9vMudpVCvSLBsQ3491JcarKvF84oMChu21xEv2yARGaZVpWhScnaX9C3kPj
-	 APAgKhoJ0jQYj1iHEjWP+2pR50BZy4Kg3XBg4mn8=
+	b=ZqhHoGoGltMOITORgGc/GYCPHOKydwiZLDDrC2CwQOm71PotxJNqkH78ShtU0CM6w
+	 0QNWmd9SttEjA0uMxsQV/aljdIq5QLwxwf+TJ3PKwiBDFY3pkxm93tLxj5HVxH/oRz
+	 +rpiCQ+q+UJn08xGqQFiOEh8wDTG3512zVENDKrE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbeLTJUQ (ORCPT
+        id S1730662AbeLTJUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50088 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:20:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730616AbeLTJUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:12 -0500
+        id S1730616AbeLTJUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94AD82177B;
-        Thu, 20 Dec 2018 09:20:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E020B21720;
+        Thu, 20 Dec 2018 09:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297612;
-        bh=W2GGUoZNSdk2EXqsaX+8B3OP3sSpyOB2DCjSj+DOQa4=;
+        s=default; t=1545297617;
+        bh=w4rCWL/a9EyoBwmuIYpb/k15tbouBxr62jIeYXKxwzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j71+LZSlPzRk1vEbhQQoON4SuluxDuJ6GKZz29DVx863JeaTMyoQlb8PRgtF2hBN5
-         LoR/SkE3RAVuhgni9GlIMpH+30d2nWuxzG6CEU+tMTybjbZXOZ+YS84Ykkp03joYIW
-         aYEh1QHWghAJlQeEGsocaTghvPB08Or/xjCoz7tY=
+        b=06h7KoxD+MLf9c0wc3oGmihHMSTGhacW1Xf2/ArgLxnKv5nhO0g4r15SHxW2TCBvt
+         0D9m1496IyrWZs/UOTETrI0FzHw+cUAzq/7JlN23nUlcjU19RNqS2p3GHj4o3Pj9Be
+         ZgXpRKGJYfdHlJZ6YvIplqm7AbV9tuRjYbEejnkA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 24/31] cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)
-Date:   Thu, 20 Dec 2018 10:18:36 +0100
-Message-Id: <20181220085743.564655787@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 26/31] ALSA: isa/wavefront: prevent some out of bound writes
+Date:   Thu, 20 Dec 2018 10:18:38 +0100
+Message-Id: <20181220085743.635182074@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -65,32 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e785302dad32228819d8066e5376acd15d0e6ba ]
+[ Upstream commit 84d7a4470dbac0dd9389050100b54a1625d04264 ]
 
-Missing a dependency.  Shouldn't show cifs posix extensions
-in Kconfig if CONFIG_CIFS_ALLOW_INSECURE_DIALECTS (ie SMB1
-protocol) is disabled.
+"header->number" can be up to USHRT_MAX and it comes from the ioctl so
+it needs to be capped.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/isa/wavefront/wavefront_synth.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
-index a2172f3f69e3..35bbf6b64982 100644
---- a/fs/cifs/Kconfig
-+++ b/fs/cifs/Kconfig
-@@ -111,7 +111,7 @@ config CIFS_XATTR
+diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
+index e5db001363ee..b5fde9fd1ae9 100644
+--- a/sound/isa/wavefront/wavefront_synth.c
++++ b/sound/isa/wavefront/wavefront_synth.c
+@@ -785,6 +785,9 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
+ 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading patch %d\n",
+ 				      header->number);
  
- config CIFS_POSIX
-         bool "CIFS POSIX Extensions"
--        depends on CIFS_XATTR
-+        depends on CIFS && CIFS_ALLOW_INSECURE_LEGACY && CIFS_XATTR
-         help
-           Enabling this option will cause the cifs client to attempt to
- 	  negotiate a newer dialect with servers, such as Samba 3.0.5
++	if (header->number >= ARRAY_SIZE(dev->patch_status))
++		return -EINVAL;
++
+ 	dev->patch_status[header->number] |= WF_SLOT_FILLED;
+ 
+ 	bptr = buf;
+@@ -809,6 +812,9 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
+ 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading program %d\n",
+ 		header->number);
+ 
++	if (header->number >= ARRAY_SIZE(dev->prog_status))
++		return -EINVAL;
++
+ 	dev->prog_status[header->number] = WF_SLOT_USED;
+ 
+ 	/* XXX need to zero existing SLOT_USED bit for program_status[i]
+@@ -898,6 +904,9 @@ wavefront_send_sample (snd_wavefront_t *dev,
+ 		header->number = x;
+ 	}
+ 
++	if (header->number >= WF_MAX_SAMPLE)
++		return -EINVAL;
++
+ 	if (header->size) {
+ 
+ 		/* XXX it's a debatable point whether or not RDONLY semantics
 -- 
 2.19.1
 
