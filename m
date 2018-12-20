@@ -2,52 +2,52 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B10C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2860C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FBD217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702502177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297633;
-	bh=qmn2JA3TYp4uqEdL1GpzfUMdTwVPxZOwnl8sH6xjS8k=;
+	s=default; t=1545297637;
+	bh=DeImVgYHwnFtxp9gBy/j/J22ioUWckRCnHBmMF9Np1k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QB3N5uUlnEFmlUWHKv5zls5nslR96lMVQZoDR6vT9BbBMruZIFX2Gcwm3cfeIn6V4
-	 OvmeNfMPCurLfhzX3a0lwGoeVGX81Z+M0SPHUPjyM1ua4Nj6h0WbXgFTm1ABYdncMt
-	 0w2Db/AgjA/vbYXNexAYj5KkqRrydZhs+csNJWnU=
+	b=X5yoUnF2nBZsEUNlyzcYMHR3QLONgTlf+uatRPXG1zJwz0MSWw3n29mSmBJSgbtQ5
+	 fs9j5lu90yBWZt0HhM447A9nhQRV5NhXM5Og3NjkvNfZ+guuDJDivb7gv23HIZjv5c
+	 tiZ8/Moeuhbgw19u9lF1J1OZaSMGuLi5glKIESI4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbeLTJUc (ORCPT
+        id S1730757AbeLTJUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52674 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbeLTJU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:29 -0500
+        id S1730675AbeLTJUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A705B2177E;
-        Thu, 20 Dec 2018 09:20:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 263FD2177E;
+        Thu, 20 Dec 2018 09:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297628;
-        bh=qmn2JA3TYp4uqEdL1GpzfUMdTwVPxZOwnl8sH6xjS8k=;
+        s=default; t=1545297633;
+        bh=DeImVgYHwnFtxp9gBy/j/J22ioUWckRCnHBmMF9Np1k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O1oZwm5qw/dTAxft9DTA/F3qR86zO7YkHJGnZbEUOP/HZpwBZXzjIw5BSrKMPZlsA
-         zs9NIJjdtkhEIFPcOTb5YeiEjK4L4n+u+2Q2JLAjc2wRwsxN8OWKtqyunCWHYjwp5e
-         1HjT3U07+64P2Jn5eL2CCUQUSXLrkil15Eq4jjao=
+        b=u//HtAX1eMS/c9ohXyuA7Qp1s6z7nWbdC29qxn15KjoVqhQq62yOk3Yqap5DLNxpe
+         FQQXSUS9xZmJ0MVAbCDc3g1d2v4rby3dcbDzmDEy9O8eDY4WPzg7dueFYSGbDPYsgs
+         7HFv4fr+yo5tl0ensf2oZFQmqXs0IqMXrzF+W+1Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 03/31] lib/rbtree_test.c: make input module parameters
-Date:   Thu, 20 Dec 2018 10:18:15 +0100
-Message-Id: <20181220085742.732926640@linuxfoundation.org>
+        stable@vger.kernel.org, Lior David <qca_liord@qca.qualcomm.com>,
+        Maya Erez <qca_merez@qca.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 31/31] wil6210: missing length check in wmi_set_ie
+Date:   Thu, 20 Dec 2018 10:18:43 +0100
+Message-Id: <20181220085743.827719854@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -66,155 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 223f8911eace60c787f8767c25148b80ece9732a ]
+From: Lior David <qca_liord@qca.qualcomm.com>
 
-Allows for more flexible debugging.
+commit b5a8ffcae4103a9d823ea3aa3a761f65779fbe2a upstream.
 
-Link: http://lkml.kernel.org/r/20170719014603.19029-5-dave@stgolabs.net
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add a length check in wmi_set_ie to detect unsigned integer
+overflow.
+
+Signed-off-by: Lior David <qca_liord@qca.qualcomm.com>
+Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/rbtree_test.c | 55 +++++++++++++++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 21 deletions(-)
+ drivers/net/wireless/ath/wil6210/wmi.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/lib/rbtree_test.c b/lib/rbtree_test.c
-index 8b3c9dc88262..e83331aa1b7f 100644
---- a/lib/rbtree_test.c
-+++ b/lib/rbtree_test.c
-@@ -1,11 +1,18 @@
- #include <linux/module.h>
-+#include <linux/moduleparam.h>
- #include <linux/rbtree_augmented.h>
- #include <linux/random.h>
-+#include <linux/slab.h>
- #include <asm/timex.h>
- 
--#define NODES       100
--#define PERF_LOOPS  100000
--#define CHECK_LOOPS 100
-+#define __param(type, name, init, msg)		\
-+	static type name = init;		\
-+	module_param(name, type, 0444);		\
-+	MODULE_PARM_DESC(name, msg);
-+
-+__param(int, nnodes, 100, "Number of nodes in the rb-tree");
-+__param(int, perf_loops, 100000, "Number of iterations modifying the rb-tree");
-+__param(int, check_loops, 100, "Number of iterations modifying and verifying the rb-tree");
- 
- struct test_node {
- 	u32 key;
-@@ -17,7 +24,7 @@ struct test_node {
- };
- 
- static struct rb_root root = RB_ROOT;
--static struct test_node nodes[NODES];
-+static struct test_node *nodes = NULL;
- 
- static struct rnd_state rnd;
- 
-@@ -95,7 +102,7 @@ static void erase_augmented(struct test_node *node, struct rb_root *root)
- static void init(void)
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -969,7 +969,12 @@ int wmi_set_ie(struct wil6210_priv *wil,
  {
- 	int i;
--	for (i = 0; i < NODES; i++) {
-+	for (i = 0; i < nnodes; i++) {
- 		nodes[i].key = prandom_u32_state(&rnd);
- 		nodes[i].val = prandom_u32_state(&rnd);
- 	}
-@@ -177,6 +184,10 @@ static int __init rbtree_test_init(void)
- 	int i, j;
- 	cycles_t time1, time2, time;
- 
-+	nodes = kmalloc(nnodes * sizeof(*nodes), GFP_KERNEL);
-+	if (!nodes)
-+		return -ENOMEM;
+ 	int rc;
+ 	u16 len = sizeof(struct wmi_set_appie_cmd) + ie_len;
+-	struct wmi_set_appie_cmd *cmd = kzalloc(len, GFP_KERNEL);
++	struct wmi_set_appie_cmd *cmd;
 +
- 	printk(KERN_ALERT "rbtree testing");
- 
- 	prandom_seed_state(&rnd, 3141592653589793238ULL);
-@@ -184,27 +195,27 @@ static int __init rbtree_test_init(void)
- 
- 	time1 = get_cycles();
- 
--	for (i = 0; i < PERF_LOOPS; i++) {
--		for (j = 0; j < NODES; j++)
-+	for (i = 0; i < perf_loops; i++) {
-+		for (j = 0; j < nnodes; j++)
- 			insert(nodes + j, &root);
--		for (j = 0; j < NODES; j++)
-+		for (j = 0; j < nnodes; j++)
- 			erase(nodes + j, &root);
- 	}
- 
- 	time2 = get_cycles();
- 	time = time2 - time1;
- 
--	time = div_u64(time, PERF_LOOPS);
-+	time = div_u64(time, perf_loops);
- 	printk(" -> %llu cycles\n", (unsigned long long)time);
- 
--	for (i = 0; i < CHECK_LOOPS; i++) {
-+	for (i = 0; i < check_loops; i++) {
- 		init();
--		for (j = 0; j < NODES; j++) {
-+		for (j = 0; j < nnodes; j++) {
- 			check(j);
- 			insert(nodes + j, &root);
- 		}
--		for (j = 0; j < NODES; j++) {
--			check(NODES - j);
-+		for (j = 0; j < nnodes; j++) {
-+			check(nnodes - j);
- 			erase(nodes + j, &root);
- 		}
- 		check(0);
-@@ -216,32 +227,34 @@ static int __init rbtree_test_init(void)
- 
- 	time1 = get_cycles();
- 
--	for (i = 0; i < PERF_LOOPS; i++) {
--		for (j = 0; j < NODES; j++)
-+	for (i = 0; i < perf_loops; i++) {
-+		for (j = 0; j < nnodes; j++)
- 			insert_augmented(nodes + j, &root);
--		for (j = 0; j < NODES; j++)
-+		for (j = 0; j < nnodes; j++)
- 			erase_augmented(nodes + j, &root);
- 	}
- 
- 	time2 = get_cycles();
- 	time = time2 - time1;
- 
--	time = div_u64(time, PERF_LOOPS);
-+	time = div_u64(time, perf_loops);
- 	printk(" -> %llu cycles\n", (unsigned long long)time);
- 
--	for (i = 0; i < CHECK_LOOPS; i++) {
-+	for (i = 0; i < check_loops; i++) {
- 		init();
--		for (j = 0; j < NODES; j++) {
-+		for (j = 0; j < nnodes; j++) {
- 			check_augmented(j);
- 			insert_augmented(nodes + j, &root);
- 		}
--		for (j = 0; j < NODES; j++) {
--			check_augmented(NODES - j);
-+		for (j = 0; j < nnodes; j++) {
-+			check_augmented(nnodes - j);
- 			erase_augmented(nodes + j, &root);
- 		}
- 		check_augmented(0);
- 	}
- 
-+	kfree(nodes);
++	if (len < ie_len)
++		return -EINVAL;
 +
- 	return -EAGAIN; /* Fail will directly unload the module */
- }
++	cmd = kzalloc(len, GFP_KERNEL);
  
--- 
-2.19.1
-
+ 	if (!cmd)
+ 		return -ENOMEM;
 
 
