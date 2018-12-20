@@ -2,170 +2,126 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2922C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3557CC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE17218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545341486;
-	bh=1FqKb1GpG+S9VoO7X/l5EZuqFJuSUyVphvXlILoc0yc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dAo///9pmBhz82/TI4cs4kLXjtLexvN2QzDvhU3VMKik+oDu0DYo+7XasvbT0khew
-	 m7aVV+obc5xxTXMiL+iPQDFWchWNVqHzvZdi3A4BEiPU+W0cg5sg1mFX1h+bdFvvSb
-	 zvVWxbAD3KiN5iUUlDtFsckps8+MjCqOeRuf89JA=
+	by mail.kernel.org (Postfix) with ESMTP id 0B71A218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389951AbeLTVbZ (ORCPT
+        id S2389965AbeLTVc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:31:25 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44074 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728808AbeLTVbZ (ORCPT
+        Thu, 20 Dec 2018 16:32:59 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:33862 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728808AbeLTVc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:31:25 -0500
-Received: by mail-oi1-f193.google.com with SMTP id m6so3106769oig.11;
-        Thu, 20 Dec 2018 13:31:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gf+h2AhWr0ZeBTfaM0rmwldFKBNFrJgqCEN8pBT818o=;
-        b=S+ltHeI0IT0sEurmy0OhtB6iUczuNS2cFjY3pWz1+wheUmvT7lY8NhTbpdeg3ny9C7
-         r61IGXQiFSYrfw/XRXF8nE1JPiagXYbEH1u9+6u0Dceyrf09YoRzN22lN17FZwx8NxIN
-         J3drsOKuKPI0cM/Yi2w2la4ZeQ3l1C8jU+s4NQpfqcN/DACb8XecUhtzsZOtdXhosGGO
-         MsVAlCize57lJ9IJFV/73pu4RPsKJVPqpl45mOSASPVB6qth+kSunUYa3WWFsSU8l2QU
-         WqgB45T5XWI9CUExRgqYSuSNYqLSxyb6P/bP1HbIWIyMkG3pJLE9IvQIYgFeXxnt/s+n
-         f5Zw==
-X-Gm-Message-State: AA+aEWbTy0elW+Df9MTzBYnFPXHSJaR1bVxyePhGdv0Jfh0MNhQlmrfX
-        etUSUbYN2brsNsUmKQEO/w==
-X-Google-Smtp-Source: AFSGD/X+eQWYNul+hjHdxrIEy4EuRkOivVA+V0BovFnLtSLVvyZgdKknXjRvl2baVbKiD5kjxknw2Q==
-X-Received: by 2002:aca:ad53:: with SMTP id w80mr262988oie.148.1545341483984;
-        Thu, 20 Dec 2018 13:31:23 -0800 (PST)
-Received: from localhost ([2607:fb90:1cd6:97bd:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id c78sm16608450oig.30.2018.12.20.13.31.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:31:23 -0800 (PST)
-Date:   Thu, 20 Dec 2018 15:31:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH 7/7] riscv: dts: add initial board data for the SiFive
- HiFive Unleashed
-Message-ID: <20181220212618.GA27359@bogus>
-References: <20181215052154.24347-1-paul.walmsley@sifive.com>
- <20181215052154.24347-8-paul.walmsley@sifive.com>
+        Thu, 20 Dec 2018 16:32:58 -0500
+X-Greylist: delayed 19432 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Dec 2018 16:32:57 EST
+Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBKG1U9J011267;
+        Thu, 20 Dec 2018 16:08:55 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2pgb5rsskd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Dec 2018 16:08:55 +0000
+Received: from G4W9122.americas.hpqcorp.net (g4w9122.houston.hp.com [16.210.21.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id C55C564;
+        Thu, 20 Dec 2018 16:08:53 +0000 (UTC)
+Received: from G2W6310.americas.hpqcorp.net (2002:10c5:4034::10c5:4034) by
+ G4W9122.americas.hpqcorp.net (2002:10d2:1511::10d2:1511) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Thu, 20 Dec 2018 16:08:41 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (15.241.52.13) by
+ G2W6310.americas.hpqcorp.net (16.197.64.52) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Thu, 20 Dec 2018 16:08:41 +0000
+Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.145) by
+ AT5PR8401MB0675.NAMPRD84.PROD.OUTLOOK.COM (10.169.5.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.21; Thu, 20 Dec 2018 16:08:39 +0000
+Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::c083:f0a1:861f:a953]) by AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::c083:f0a1:861f:a953%3]) with mapi id 15.20.1446.020; Thu, 20 Dec 2018
+ 16:08:39 +0000
+From:   "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+To:     "dgilbert@interlog.com" <dgilbert@interlog.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Boaz Harrosh <ooo@electrozaur.com>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: remove exofs, the T10 OSD code and block/scsi bidi support V3
+Thread-Topic: remove exofs, the T10 OSD code and block/scsi bidi support V3
+Thread-Index: AQHUecMBakDdesG2sUCKcpWbMfVl4qViYocAgCP8cYCAAL12gIAA68pA
+Date:   Thu, 20 Dec 2018 16:08:39 +0000
+Message-ID: <AT5PR8401MB1169FF6CBFDD789452E9CB17ABBF0@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20181111133211.13926-1-hch@lst.de>
+ <4f4b6aff-6726-c500-e3e4-f8b73d641851@electrozaur.com>
+ <20181219144347.GB23410@lst.de>
+ <0e8b8d45-cfeb-ba9d-c92f-953cabede1ee@interlog.com>
+In-Reply-To: <0e8b8d45-cfeb-ba9d-c92f-953cabede1ee@interlog.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [67.8.158.32]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0675;6:f67Q+1tWHRupuflooEO3hxrJvmBtMPE6HNcnt9LswGUnK1r6bEYFjg2ra2XxzuL9xw/oenCj/mah5nL8cURicyZIQqR/Hqtep6QgvKvReo/aexghwx7pDb67zX5iztL21J00x80XBoMOA0J1YUUWG2b9j1T9Yb935t2Dyfc1j4kZpzTXzLV1wPxc4wxJH76Hdj7CKWk62w/mF/PAcWK/ok777GhMWa9g9p/HJvOR9ZmpHnC3wdbl6K4uV1rG1sHYT6WXsF1dE2rEJkc196Nfgv+qMalqWIESlqOdzX8zD9lOKBNbcLhaAyQ9J7zjB1hFuu9aFDF/fRZc4t2v2E5lUO0oX+tPjaGckQUMfEW0eEQovW2dA9ocBUrkMwyu3cJ6pazLGxl+hSuJJX845Z75knWLFEPH0ymOzxedw+fmALthFSrnwDaQkz/UGki/PNbg20u1AfzS9Q5wyFfl7jWJoA==;5:1kPImzY1RHT04x5vtGf1opL/houiZMC9l+ThpPELNQzaJClOazeGZn5+PO7mRzy9Yz+DjSlMNVCR4r/cCXFuUTZ55AB3s7J8DdKxAbYzl6OMrhZLQMKBsWQEQL0ypeEVFgXAad78zy66a7DsqyCeTiijtf0OUIPLLk0ETeq3XqE=;7:4FyxK1gKnJ+582bP+41zMKqILt9/IOpOWuELiR6LTMVbntKuKECTX6S7VRlXctBwdVpwJPSHXyew1dmlr2MO3auGZ0AS4kR8upYRzdYIZgsXE7BZuUqKZbV0LtUCEaUTpSudYxKYZ3BxNXTHadCLVw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f695c884-237e-470f-4c78-08d666956795
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0675;
+x-ms-traffictypediagnostic: AT5PR8401MB0675:
+x-microsoft-antispam-prvs: <AT5PR8401MB0675C0BDD8F7A2D842857D90ABBF0@AT5PR8401MB0675.NAMPRD84.PROD.OUTLOOK.COM>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB0675;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0675;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(376002)(346002)(136003)(189003)(199004)(13464003)(7416002)(71200400001)(86362001)(14454004)(229853002)(74316002)(71190400001)(478600001)(33656002)(66066001)(2906002)(97736004)(106356001)(105586002)(5660300001)(305945005)(7736002)(8676002)(81156014)(81166006)(8936002)(53936002)(99286004)(316002)(76176011)(9686003)(11346002)(446003)(7696005)(4326008)(25786009)(54906003)(6246003)(256004)(14444005)(3846002)(53546011)(6116002)(26005)(93886005)(6506007)(6436002)(102836004)(476003)(68736007)(186003)(486006)(55016002)(2501003)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0675;H:AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 8oynKcM5I9mDQnrpQDa8+Y3iGZki5Bet8GusDgso8xwpg/lrEWsREOvv7v+YxYCK12IxYl5aYhrivELaRjs0D3T9kMG0ccJA3nxhsELI7q5h3caR/UR5tCXbJQu7abByS4VknZUJyFQJZ/YWBdujG9WblwP229/OvZUwHU16lxMAkVLI2Ff1hwyrL4DmSjtFksocTmMH45vG14aKHAMGyiXBCfMeUMCsW+wYqcnLAZwkGKYPs83urRdQIRLM0JAqReIzrOTX5IkedsqM10rzCqverdafWFiE6op0a2gI21lnUQmD+6QfnxLtvmlqjOQx
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181215052154.24347-8-paul.walmsley@sifive.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f695c884-237e-470f-4c78-08d666956795
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 16:08:39.2408
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0675
+X-OriginatorOrg: hpe.com
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=860 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:21:54PM -0800, Paul Walmsley wrote:
-> Add initial board data for the SiFive HiFive Unleashed A00.
-> 
-> Currently the data populated in this DT file describes the board
-> DRAM configuration and the external clock sources that supply the
-> PRCI.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> ---
->  arch/riscv/boot/dts/Makefile                  |  2 +
->  arch/riscv/boot/dts/sifive/Makefile           |  4 ++
->  .../dts/sifive/hifive-unleashed-a00-fu540.dts | 39 +++++++++++++++++++
->  3 files changed, 45 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/Makefile
->  create mode 100644 arch/riscv/boot/dts/sifive/Makefile
->  create mode 100644 arch/riscv/boot/dts/sifive/hifive-unleashed-a00-fu540.dts
-> 
-> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-> new file mode 100644
-> index 000000000000..dcc3ada78455
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +subdir-y += sifive
-> diff --git a/arch/riscv/boot/dts/sifive/Makefile b/arch/riscv/boot/dts/sifive/Makefile
-> new file mode 100644
-> index 000000000000..e120ccf5649c
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sifive/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +dtb-$(CONFIG_ARCH_SIFIVE) += hifive-unleashed-a00-fu540.dtb
-> +
-> +
-> diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00-fu540.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00-fu540.dts
-> new file mode 100644
-> index 000000000000..0c6afabe69e3
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00-fu540.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: Apache-2.0
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-
-This should be a single line with: (Apache-2.0 OR GPL-2.0+)
-
-> +/* Copyright (c) 2018 SiFive, Inc */
-> +/* See the file LICENSE for further information */
-> +
-> +/dts-v1/;
-> +
-> +#include "fu540-c000.dtsi"
-> +
-> +/ {
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +	model = "SiFive HiFive Unleashed A00 (FU540-C000)"
-> +	compatible = "sifive,hifive-unleashed-a00-fu540",
-> +		"sifive,hifive-unleashed-fu540";
-
-SoC compatible should be here too.
-
-> +
-> +	chosen {
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x1f 0x80000000>;
-> +	};
-> +
-> +	soc {
-> +		hfclk: hfclk {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <33333333>;
-> +			clock-output-names = "hfclk";
-> +		};
-> +		rtcclk: rtcclk {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <1000000>;
-> +			clock-output-names = "rtcclk";
-> +		};
-
-Are these the clock inputs to the SoC or dummy clocks until you write a 
-proper clock driver? If the former, they should be at the top level. 
-
-Rob
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgta2VybmVsLW93
+bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgta2VybmVsLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5v
+cmc+IE9uIEJlaGFsZiBPZiBEb3VnbGFzIEdpbGJlcnQNCj4gU2VudDogV2VkbmVzZGF5LCBEZWNl
+bWJlciAxOSwgMjAxOCA5OjAyIFBNDQo+IFN1YmplY3Q6IFJlOiByZW1vdmUgZXhvZnMsIHRoZSBU
+MTAgT1NEIGNvZGUgYW5kIGJsb2NrL3Njc2kgYmlkaSBzdXBwb3J0IFYzDQo+IA0KLi4uIA0KPiBX
+aGlsZSBvbiB0aGUgc3ViamVjdCBvZiBiaWRpLCB0aGUgb3JkZXIgb2YgdHJhbnNmZXJzOiBpcyB0
+aGUgZGF0YS1vdXQNCj4gKHRvIHRoZSB0YXJnZXQpIGFsd2F5cyBiZWZvcmUgdGhlIGRhdGEtaW4g
+b3IgaXMgaXQgdGhlIHRhcmdldCBkZXZpY2UNCj4gdGhhdCBkZWNpZGVzIChkZXBlbmRpbmcgb24g
+dGhlIHNlbWFudGljcyBvZiB0aGUgY29tbWFuZCkgd2hvIGlzIGZpcnN0Pw0KDQpJbiBTQ1NJLCB0
+aGF0IHdhcyBjb21tYW5kLXNwZWNpZmljLiBTb21lIG5lY2Vzc2l0YXRlZCBpbnRlcm1peGluZyB0
+aGUNCnRyYW5zZmVycywgd2hpbGUgb3RoZXJzIGRpZCBhbGwgb25lIGRpcmVjdGlvbiBiZWZvcmUg
+YWxsIHRoZSBvdGhlcg0KZGlyZWN0aW9uLg0KDQotLS0NClJvYmVydCBFbGxpb3R0LCBIUEUgUGVy
+c2lzdGVudCBNZW1vcnkNCg0KDQoNCg0K
