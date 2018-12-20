@@ -2,54 +2,51 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDDBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D1EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60B92176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87BBF2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545299167;
-	bh=eQCkzWFd646MgTWK44jKntqgLVz5BhqPzGZ4+9tb+lg=;
+	s=default; t=1545299179;
+	bh=v+fNZw9CkzKtL2iKwwhWpAKGotLFAm7WrfLgt6mOeBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SA7rC1KHwQo7mqx1Wiri6bHPZnjRW8Xv6ydARma73wedSSYtgGBfI8h92/MhhIufh
-	 RX3kdu3pUi7kHb80pqFF+n7Wvo7pUW1C4cPG6b4rBTRP61auZ6JKux3TKVw9OkXd/T
-	 at2eADmGBTca9PtfWJ1/cGTp+3bWFKQUwpmI1LOc=
+	b=x6Jnx1fc5sCzMewS4khnmUUZwYjlzrw9xuDczViO4mP7jMZIg0OeFzdaHbK8BGn/G
+	 uP6jXWcuBaV7yRADugO1jPQuLqp89XZY9i8Tuw2w3NP3HiR2P/3Wy/RMssjPgi1Zp9
+	 9Ome3LuAtua9qfc99TP9QauWAqKkdTZi/K4PK7QU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbeLTJqH (ORCPT
+        id S1731140AbeLTJqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:46:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52294 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:46:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730616AbeLTJU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:26 -0500
+        id S1730626AbeLTJUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F5BD21720;
-        Thu, 20 Dec 2018 09:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B0EA2177B;
+        Thu, 20 Dec 2018 09:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297625;
-        bh=eQCkzWFd646MgTWK44jKntqgLVz5BhqPzGZ4+9tb+lg=;
+        s=default; t=1545297614;
+        bh=v+fNZw9CkzKtL2iKwwhWpAKGotLFAm7WrfLgt6mOeBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AlvQNVbIT3U1xP+etdowreaE+I1OlQ3UsUuyVthQMZ+IP5pMaVVjDMQjFGtCx+MFv
-         MSkUPmMttn9iaK1QqdCVWtcIlydQ0lqUN3rwYn7NS/HFe4Xrorw/FfJm7qJcXSTv9z
-         jH1YwwHgNZks0XgxaYupis41lSsMVXtcItU02suQ=
+        b=DGKKNyYFM28ctW+28GvkfOj0MV5+3bitSE4PxuF0AUGg35w/7WbuLO1NKmquLNgh2
+         UjkCpfpzso1kdFAysobmNT7Nv0j7I3k7McE7mcmPpZnR6xnl685MRxMAQ/nwwmUrLw
+         npI2eNSaUkv1nwBcocIl6bAaDljQQAI1zj41lo5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Piotr Gabriel Kosinski <pg.kosinski@gmail.com>,
-        Daniel Shapira <daniel@twistlock.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 29/31] sr: pass down correctly sized SCSI sense buffer
-Date:   Thu, 20 Dec 2018 10:18:41 +0100
-Message-Id: <20181220085743.753335991@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 25/31] i2c: scmi: Fix probe error on devices with an empty SMB0001 ACPI device node
+Date:   Thu, 20 Dec 2018 10:18:37 +0100
+Message-Id: <20181220085743.599629114@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -68,84 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+[ Upstream commit 0544ee4b1ad574aec3b6379af5f5cdee42840971 ]
 
-commit f7068114d45ec55996b9040e98111afa56e010fe upstream.
+Some AMD based HP laptops have a SMB0001 ACPI device node which does not
+define any methods.
 
-We're casting the CDROM layer request_sense to the SCSI sense
-buffer, but the former is 64 bytes and the latter is 96 bytes.
-As we generally allocate these on the stack, we end up blowing
-up the stack.
+This leads to the following error in dmesg:
 
-Fix this by wrapping the scsi_execute() call with a properly
-sized sense buffer, and copying back the bits for the CDROM
-layer.
+[    5.222731] cmi: probe of SMB0001:00 failed with error -5
 
-Reported-by: Piotr Gabriel Kosinski <pg.kosinski@gmail.com>
-Reported-by: Daniel Shapira <daniel@twistlock.com>
-Tested-by: Kees Cook <keescook@chromium.org>
-Fixes: 82ed4db499b8 ("block: split scsi_request out of struct request")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[bwh: Despite what the "Fixes" field says, a buffer overrun was already
- possible if the sense data was really > 64 bytes long.
- Backported to 4.4:
- - We always need to allocate a sense buffer in order to call
-   scsi_normalize_sense()
- - Remove the existing conditional heap-allocation of the sense buffer]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This commit makes acpi_smbus_cmi_add() return -ENODEV instead in this case
+silencing the error. In case of a failure of the i2c_add_adapter() call
+this commit now propagates the error from that call instead of -EIO.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/sr_ioctl.c |   21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/i2c/busses/i2c-scmi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/sr_ioctl.c
-+++ b/drivers/scsi/sr_ioctl.c
-@@ -187,30 +187,25 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
- 	struct scsi_device *SDev;
- 	struct scsi_sense_hdr sshdr;
- 	int result, err = 0, retries = 0;
--	struct request_sense *sense = cgc->sense;
-+	unsigned char sense_buffer[SCSI_SENSE_BUFFERSIZE];
+diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
+index efefcfa24a4c..d2178f701b41 100644
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -364,6 +364,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ {
+ 	struct acpi_smbus_cmi *smbus_cmi;
+ 	const struct acpi_device_id *id;
++	int ret;
  
- 	SDev = cd->device;
+ 	smbus_cmi = kzalloc(sizeof(struct acpi_smbus_cmi), GFP_KERNEL);
+ 	if (!smbus_cmi)
+@@ -385,8 +386,10 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	acpi_walk_namespace(ACPI_TYPE_METHOD, smbus_cmi->handle, 1,
+ 			    acpi_smbus_cmi_query_methods, NULL, smbus_cmi, NULL);
  
--	if (!sense) {
--		sense = kmalloc(SCSI_SENSE_BUFFERSIZE, GFP_KERNEL);
--		if (!sense) {
--			err = -ENOMEM;
--			goto out;
--		}
--	}
--
-       retry:
- 	if (!scsi_block_when_processing_errors(SDev)) {
- 		err = -ENODEV;
- 		goto out;
+-	if (smbus_cmi->cap_info == 0)
++	if (smbus_cmi->cap_info == 0) {
++		ret = -ENODEV;
+ 		goto err;
++	}
+ 
+ 	snprintf(smbus_cmi->adapter.name, sizeof(smbus_cmi->adapter.name),
+ 		"SMBus CMI adapter %s",
+@@ -397,7 +400,8 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	smbus_cmi->adapter.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+ 	smbus_cmi->adapter.dev.parent = &device->dev;
+ 
+-	if (i2c_add_adapter(&smbus_cmi->adapter)) {
++	ret = i2c_add_adapter(&smbus_cmi->adapter);
++	if (ret) {
+ 		dev_err(&device->dev, "Couldn't register adapter!\n");
+ 		goto err;
  	}
- 
--	memset(sense, 0, sizeof(*sense));
-+	memset(sense_buffer, 0, sizeof(sense_buffer));
- 	result = scsi_execute(SDev, cgc->cmd, cgc->data_direction,
--			      cgc->buffer, cgc->buflen, (char *)sense,
-+			      cgc->buffer, cgc->buflen, sense_buffer,
- 			      cgc->timeout, IOCTL_RETRIES, 0, NULL);
- 
--	scsi_normalize_sense((char *)sense, sizeof(*sense), &sshdr);
-+	scsi_normalize_sense(sense_buffer, sizeof(sense_buffer), &sshdr);
-+
-+	if (cgc->sense)
-+		memcpy(cgc->sense, sense_buffer, sizeof(*cgc->sense));
- 
- 	/* Minimal error checking.  Ignore cases we know about, and report the rest. */
- 	if (driver_byte(result) != 0) {
-@@ -272,8 +267,6 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
- 
- 	/* Wake up a process waiting for device */
-       out:
--	if (!cgc->sense)
--		kfree(sense);
- 	cgc->stat = err;
- 	return err;
+@@ -407,7 +411,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ err:
+ 	kfree(smbus_cmi);
+ 	device->driver_data = NULL;
+-	return -EIO;
++	return ret;
  }
+ 
+ static int acpi_smbus_cmi_remove(struct acpi_device *device)
+-- 
+2.19.1
+
 
 
