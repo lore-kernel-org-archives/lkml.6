@@ -2,97 +2,127 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6E3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691F8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F48217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0EA217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:24:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CD40v8/0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CD40v8/0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733005AbeLTNUF (ORCPT
+        id S1733065AbeLTNYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:20:05 -0500
-Received: from mga05.intel.com ([192.55.52.43]:48383 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732391AbeLTNUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:20:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 05:20:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="285273460"
-Received: from unknown (HELO localhost) ([10.249.254.232])
-  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2018 05:19:57 -0800
-Date:   Thu, 20 Dec 2018 15:19:55 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181220131955.GB4848@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181220103204.GB26410@linux.intel.com>
- <20181220131213.GA4848@linux.intel.com>
+        Thu, 20 Dec 2018 08:24:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732234AbeLTNYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 08:24:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C8FE560734; Thu, 20 Dec 2018 13:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545312281;
+        bh=NIXtCQQK/IafPV7TqJymlEnoMphLjq6l33somg+KjZI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CD40v8/0ZHQnD14G+NYXZ8f12oxTE/L/JcYLUxphyQUJt4S/CwNaJK/lfw89d8x+J
+         FTsVdLldK5s46JvZqKoA2EmQ1zmmD6d1O0wCKGF2OPmGN2R2qf2p/XG5Bz/OvnfTcN
+         CKG4WE8ELHU2MHRKWuX6wdJ+7tDp2eGfHI9ydmQ8=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3D85260208;
+        Thu, 20 Dec 2018 13:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545312281;
+        bh=NIXtCQQK/IafPV7TqJymlEnoMphLjq6l33somg+KjZI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CD40v8/0ZHQnD14G+NYXZ8f12oxTE/L/JcYLUxphyQUJt4S/CwNaJK/lfw89d8x+J
+         FTsVdLldK5s46JvZqKoA2EmQ1zmmD6d1O0wCKGF2OPmGN2R2qf2p/XG5Bz/OvnfTcN
+         CKG4WE8ELHU2MHRKWuX6wdJ+7tDp2eGfHI9ydmQ8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220131213.GA4848@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 20 Dec 2018 18:54:41 +0530
+From:   Govind Singh <govinds@codeaurora.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     briannorris@chromium.org, andy.gross@linaro.org,
+        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Enable ath10k wcn3990 wifi driver support on
+ sdm845
+In-Reply-To: <87imzo72w8.fsf@purkki.adurom.net>
+References: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
+ <87d0r55ews.fsf@codeaurora.org>
+ <6e831363962be4e28d7551e360ed4d46@codeaurora.org>
+ <874lcg55at.fsf@codeaurora.org>
+ <9f8bbfaa232c02bb33594207fa1f8821@codeaurora.org>
+ <87y38ktnnm.fsf@kamboji.qca.qualcomm.com> <87imzo72w8.fsf@purkki.adurom.net>
+Message-ID: <b3117fed581713cc60538705760fdf90@codeaurora.org>
+X-Sender: govinds@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 03:12:13PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
-> > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > opening a new instance of /dev/sgx for each encalve?
-> > 
-> > I think that fits better to the SCM_RIGHTS scenario i.e. you could send
-> > the enclav to a process that does not have necessarily have rights to
-> > /dev/sgx. Gives more robust environment to configure SGX.
-> 
-> My only open for the implementation is where to swap? If it is a VMA,
-> whose VMA?
-> 
-> Please share your views here. Not a blocker for me to work on the
-> implementation, though. I'll use a private shmem file up until there
-> is a better option.
-> 
-> This ioctl API discussion is kind of meaningless for me ATM because it
-> does not have that much effect to the internals even if it wouldn't be
-> perfect in v19. Very trival to change.
+Hi Kalle,
 
-Oops, and after sending I realized that I started this thread asking
-comments about the API (I think I mentioned swapping though too) :-) The
-feedback has been valuable and I gained the required understanding about
-enclave_fd but I think that now the things have been saturated to minor
-details.
+On 2018-12-20 18:48, Kalle Valo wrote:
+> Kalle Valo <kvalo@codeaurora.org> writes:
+> 
+>> Govind Singh <govinds@codeaurora.org> writes:
+>> 
+>>> Hi Kalle,
+>>> 
+>>> On 2018-11-17 16:39, Kalle Valo wrote:
+>>>> Govind Singh <govinds@codeaurora.org> writes:
+>>>> 
+>>>>> On 2018-11-16 18:59, Kalle Valo wrote:
+>>>>>> 
+>>>>>> Via which tree are these patches going? That's not clear for me.
+>>>>> 
+>>>>> I guess sdm845 dtsi change should be going to
+>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git.
+>>>>> I need to send v5 to address one comment from Brian.
+>>>> 
+>>>> Ok, I'll then drop these from my queue.
+>>> 
+>>> Can you pls apply below changes to ath10k tree, i will send sdm845
+>>> dtsi change as separate patch after rebase.
+>>> 
+>>>>>>>   dt: bindings: add missing dt properties for WCN3990 wifi node
+>>>>>>>   dt: bindings: add bindings for wifi iommu node
+>> 
+>> Ok, these two are back in my queue:
+>> 
+>> https://patchwork.kernel.org/patch/10668237/
+>> 
+>> https://patchwork.kernel.org/patch/10668245/
+>> 
+>> I'll just modify the titles to use ath10k prefix to make it more clear
+>> these are for ath10k:
+>> 
+>>    dt: bindings: ath10k: .....
+> 
+> There were conflicts with this commit:
+> 
+> 2b741a8aaa34 dt: bindings: add bindings for msa memory region
+> 
+> I fixed them in the pending branch, please double check carefully:
+> 
 
-Appreciate all the feedback so far. Sorry for a bit harsh statement.
+Changes looks good to me.
 
-/Jarkko
+> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=5bb88d4d49783c75ac083e4ea19b7527bc115857
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=a6d53e207670eacd72a74277658bac1ab346fabd
+
+BR,
+Govind
