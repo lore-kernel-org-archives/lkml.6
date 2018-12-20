@@ -2,139 +2,87 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8251CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73E9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF0E218D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545318532;
-	bh=u7C8+QJIgZn2KTlrtx/D76/p3INt0xn1OcrxfyZdLh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AEyW6+vwoLFWe8MDx4a+RVOc4b+K2Umg/n+UcexwTDMxLIopakJFAEf7/TIlJdMDS
-	 QpPaKmUv8T6sS6kgL1Bkm1JMmHBjx0LshyIw/T8AMwkA6KJ+oOzp3YEVuhTCWmGEwO
-	 G4/o2YBNXI3t3EkkhPqTFW+G6GIaRIrT4HAIHOLo=
+	by mail.kernel.org (Postfix) with ESMTP id A6EFE21852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbeLTPIv (ORCPT
+        id S1732874AbeLTPQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729339AbeLTPIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:08:51 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 113FE21720;
-        Thu, 20 Dec 2018 15:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545318530;
-        bh=u7C8+QJIgZn2KTlrtx/D76/p3INt0xn1OcrxfyZdLh4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t3lTejcIcSe52bezwm4dS/kKRDpfBUNXZY6ndRj4ppLrkT9ALXnNvD43FijXONCt3
-         tTs+i8Pg0gpjtu5zXPli1Jaj1UTlI2SWdHQBtyOZ1CVTtp/S/d266a21gtj67vwQaS
-         bcwSEJtnaJLctE1ybZDPd0uUJTIeu+zwNJ/tmerA=
-Date:   Thu, 20 Dec 2018 09:08:48 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     hch@lst.de, linux-pci@vger.kernel.org, catalin.marinas@arm.com,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, linux-acpi@vger.kernel.org,
-        iommu@lists.linux-foundation.org, gregkh@linuxfoundation.org,
-        lenb@kernel.org, linux-arm-kernel@lists.infradead.org,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 2/2] ACPI / scan: Refactor _CCA enforcement
-Message-ID: <20181220150848.GA183878@google.com>
-References: <cover.1544199754.git.robin.murphy@arm.com>
- <fe956f04bfe7f8293f6205ee224b087046e40a91.1544199754.git.robin.murphy@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe956f04bfe7f8293f6205ee224b087046e40a91.1544199754.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 20 Dec 2018 10:16:51 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:34254 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730084AbeLTPQv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:16:51 -0500
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id EFGp1z00D3XaVaC01FGpAE; Thu, 20 Dec 2018 16:16:49 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ga049-00005g-7g; Thu, 20 Dec 2018 16:16:49 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ga049-0006tg-50; Thu, 20 Dec 2018 16:16:49 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [git pull] m68k fixes for 4.20
+Date:   Thu, 20 Dec 2018 16:16:47 +0100
+Message-Id: <20181220151647.26469-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 04:31:35PM +0000, Robin Murphy wrote:
-> Rather than checking the DMA attribute at each callsite, just pass it
-> through for acpi_dma_configure() to handle directly. That can then deal
-> with the relatively exceptional DEV_DMA_NOT_SUPPORTED case by explicitly
-> installing dummy DMA ops instead of just skipping setup entirely. This
-> will then free up the dev->dma_ops == NULL case for some valuable
-> fastpath optimisations.
-> 
-> CC: Rafael J. Wysocki <rjw@rjwysocki.net>
-> CC: Len Brown <lenb@kernel.org>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+	Hi Linus,
 
-FWIW, if this hasn't been applied already (I think you targeted a DMA
-tree):
+The following changes since commit 58c116fb7dc6703a557fe79c6e6ebab1450082b3:
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+  m68k/sun3: Remove is_medusa and m68k_pgtable_cachemode (2018-08-31 09:30:42 +0200)
 
-> ---
->  drivers/acpi/scan.c      | 5 +++++
->  drivers/base/platform.c  | 3 +--
->  drivers/pci/pci-driver.c | 3 +--
->  3 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index bd1c59fb0e17..b75ae34ed188 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1456,6 +1456,11 @@ int acpi_dma_configure(struct device *dev, enum dev_dma_attr attr)
->  	const struct iommu_ops *iommu;
->  	u64 dma_addr = 0, size = 0;
->  
-> +	if (attr == DEV_DMA_NOT_SUPPORTED) {
-> +		set_dma_ops(dev, &dma_dummy_ops);
-> +		return 0;
-> +	}
-> +
->  	iort_dma_setup(dev, &dma_addr, &size);
->  
->  	iommu = iort_iommu_configure(dev);
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 41b91af95afb..c6daca875c17 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -1138,8 +1138,7 @@ int platform_dma_configure(struct device *dev)
->  		ret = of_dma_configure(dev, dev->of_node, true);
->  	} else if (has_acpi_companion(dev)) {
->  		attr = acpi_get_dma_attr(to_acpi_device_node(dev->fwnode));
-> -		if (attr != DEV_DMA_NOT_SUPPORTED)
-> -			ret = acpi_dma_configure(dev, attr);
-> +		ret = acpi_dma_configure(dev, attr);
->  	}
->  
->  	return ret;
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index bef17c3fca67..f899a28b90f8 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -1602,8 +1602,7 @@ static int pci_dma_configure(struct device *dev)
->  		struct acpi_device *adev = to_acpi_device_node(bridge->fwnode);
->  		enum dev_dma_attr attr = acpi_get_dma_attr(adev);
->  
-> -		if (attr != DEV_DMA_NOT_SUPPORTED)
-> -			ret = acpi_dma_configure(dev, attr);
-> +		ret = acpi_dma_configure(dev, attr);
->  	}
->  
->  	pci_put_host_bridge_device(bridge);
-> -- 
-> 2.19.1.dirty
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v4.20-tag2
+
+for you to fetch changes up to bed1369f51901b17108a4bb4f7210aab183bea42:
+
+  m68k: Fix memblock-related crashes (2018-12-19 17:24:12 +0100)
+
+----------------------------------------------------------------
+m68k fixes for 4.20
+
+  - Fix memblock-related crashes.
+
+This is a fix for regressions introduced in v4.19.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      m68k: Fix memblock-related crashes
+
+ arch/m68k/kernel/setup_mm.c | 2 --
+ arch/m68k/mm/motorola.c     | 2 ++
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
