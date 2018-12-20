@@ -6,50 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF2AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0ECC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9142177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C21D21741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298163;
-	bh=h2LAt1FA+3496s42OwqdmPmbeM6/Rk4SQMTzeV8C/50=;
+	s=default; t=1545298167;
+	bh=FRRRuG4fp0Xfh4ujF3Cyz1VmN9RMQVIfURWBMYoq1H4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W6oMzWvjTHLIa4c1te9hTQiHwY9j8/ld9YUjJyKP3MozNXmIKabX+5tBpJ7VcGUvv
-	 hIJEYfw5CAPy9rGGBxZ0ShXtTf+t6RHVJoD0rjll+m0TI4N4ZWLis1ZcRWbcBnTe0R
-	 v2G3zDbhYmDKWLRXKptTSEyAS7TRa5pAAyDa8Udc=
+	b=psBD4VfTLUuwsTAc0KvHXkyCXNbNZvHJ1PK90pfUGGTztcIlBZM0XLm2xddrD14B/
+	 GjMf9ciZT94sVsDKcffWHt9CIjYWD5Tf862T1i/BwtrbIJFDuXZ9pMaT59PACxlHVq
+	 ujQtV2n8QLYM6KcWF+kMBo+YtMIABrCWqe92P5rY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732690AbeLTJ3W (ORCPT
+        id S1732705AbeLTJ30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:29:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54796 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:29:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732479AbeLTJ3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:29:18 -0500
+        id S1732479AbeLTJ3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:29:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F34842177E;
-        Thu, 20 Dec 2018 09:29:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55D9C21741;
+        Thu, 20 Dec 2018 09:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298157;
-        bh=h2LAt1FA+3496s42OwqdmPmbeM6/Rk4SQMTzeV8C/50=;
+        s=default; t=1545298162;
+        bh=FRRRuG4fp0Xfh4ujF3Cyz1VmN9RMQVIfURWBMYoq1H4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SyvMD6iV4soaf1mA0+RFSMERepB6NWKnC0FSSOGMCMcQKUDU4BGrQGBR4/6JCfEaO
-         yDuZWEAqDp/+Kp4Z2Yf0JhERO8RO8KMuNEGFOOSqfw2vrvXbPpJ3DzlRBQFRhNkfu5
-         hUmqxph9VXhMTKRObdXm+cUdSxhhZysYrtZLLjmY=
+        b=WqLqWSlt5ZYEPPOok2awSGYu2FsSFULXZtdODSDJyCI6xmmn0oo1lOcTXO8CaZeH6
+         nA00TBIPkw8NXSSiUF+ke+8odh6Zmwu059Uz8ernecuCON7d/ZHNDjIVwIswFRm8dr
+         3LETjdYjJcdcfdZXfUVSY1ptUSPSBd/XjpahWDSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chunming Zhou <david1.zhou@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 20/67] drm/amdgpu: wait for IB test on first device open
-Date:   Thu, 20 Dec 2018 10:18:32 +0100
-Message-Id: <20181220085904.352039174@linuxfoundation.org>
+Subject: [PATCH 4.19 04/67] mac80211_hwsim: fix module init error paths for netlink
+Date:   Thu, 20 Dec 2018 10:18:16 +0100
+Message-Id: <20181220085903.744025617@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -68,44 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3bfa8897e4d08f822d1d58cf6cbbffbccef82e08 ]
+[ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
 
-Instead of delaying that to the first query. Otherwise we could try to use the
-SDMA for VM updates before the IB tests are done.
+There is no unregister netlink notifier and family on error paths
+in init_mac80211_hwsim(). Also there is an error path where
+hwsim_class is not destroyed.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index bd98cc5fb97b..fd825d30edf1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -292,9 +292,6 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
- 	if (!info->return_size || !info->return_pointer)
- 		return -EINVAL;
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 62ab42e94c9d..4ca6592f5b3a 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3712,16 +3712,16 @@ static int __init init_mac80211_hwsim(void)
+ 	if (err)
+ 		goto out_unregister_pernet;
  
--	/* Ensure IB tests are run on ring */
--	flush_delayed_work(&adev->late_init_work);
--
- 	switch (info->query) {
- 	case AMDGPU_INFO_ACCEL_WORKING:
- 		ui32 = adev->accel_working;
-@@ -861,6 +858,9 @@ int amdgpu_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
- 	struct amdgpu_fpriv *fpriv;
- 	int r, pasid;
- 
-+	/* Ensure IB tests are run on ring */
-+	flush_delayed_work(&adev->late_init_work);
++	err = hwsim_init_netlink();
++	if (err)
++		goto out_unregister_driver;
 +
- 	file_priv->driver_priv = NULL;
+ 	hwsim_class = class_create(THIS_MODULE, "mac80211_hwsim");
+ 	if (IS_ERR(hwsim_class)) {
+ 		err = PTR_ERR(hwsim_class);
+-		goto out_unregister_driver;
++		goto out_exit_netlink;
+ 	}
  
- 	r = pm_runtime_get_sync(dev->dev);
+-	err = hwsim_init_netlink();
+-	if (err < 0)
+-		goto out_unregister_driver;
+-
+ 	for (i = 0; i < radios; i++) {
+ 		struct hwsim_new_radio_params param = { 0 };
+ 
+@@ -3827,6 +3827,8 @@ out_free_mon:
+ 	free_netdev(hwsim_mon);
+ out_free_radios:
+ 	mac80211_hwsim_free();
++out_exit_netlink:
++	hwsim_exit_netlink();
+ out_unregister_driver:
+ 	platform_driver_unregister(&mac80211_hwsim_driver);
+ out_unregister_pernet:
 -- 
 2.19.1
 
