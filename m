@@ -3,51 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070BDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C62C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95552177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1404B20656
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298304;
-	bh=NU6UDALi4ffT3abIlFfoNqtZB0gUJhJYRkRcgql3xDM=;
+	s=default; t=1545298310;
+	bh=fARG9DSkJ+BvdXZTez/Q6Pd81ZI87thzdCKiX/xAGz8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1GpIOdXauLnneXzHNHCuE7Yc5k/bPHv/kq+vylA014X2VIpSa5imTIblw+9z35IoB
-	 I7U/23C+KosEw2/5e34bWu5iq2i9GrlrgwZHisoS+cmU4QEAzpzX1IMtGyDTVLI88x
-	 7452d7BrlKM+EZTBZYS2y6HcIA5lvOv3jlJb1x9o=
+	b=K9TQblx9vqwRyXKvBRNnPUbeGttRoSiDjl3nANaOV1XsrKpDZyqO2IttR19xCAqim
+	 gf2BoTJ4RT8wKEnlGM4niyCQoIpwP97SoAXMyFZ4Ex+//0kE7iX+zpyf1P4p0wfw62
+	 Kp2MTWAoQCkX452uwtmqnHrFObVGq7vsbvcUoUzI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbeLTJbn (ORCPT
+        id S1733206AbeLTJbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:31:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:31:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733163AbeLTJbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:31:39 -0500
+        id S1730901AbeLTJbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:31:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E03820989;
-        Thu, 20 Dec 2018 09:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D8920656;
+        Thu, 20 Dec 2018 09:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298299;
-        bh=NU6UDALi4ffT3abIlFfoNqtZB0gUJhJYRkRcgql3xDM=;
+        s=default; t=1545298304;
+        bh=fARG9DSkJ+BvdXZTez/Q6Pd81ZI87thzdCKiX/xAGz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yMxmxIbE4vwSzAcFDlMixWml/U6R2hglE7A3zuTdc90xrQ2Ze7CPAXpXxbZKxC7tC
-         KMbh9TlBSeNQ9tutOklWc0dFQ49marDGDYl+hW9uKFaR7MyYETz2Prc4/rnPFn7zZE
-         DGqmSQ9QNhomY0kiuMwfmEXDaQYKO9LTIuGrktFE=
+        b=qyDZVC5tu5ViNw4nGbfEJ3nTv03U2osJtQrnMSnBZ1Rkgd/6Ba6ezl6N9AFAoeBKe
+         FjIYc19pDAyIlVI4V9JsmYmdtErvumE3mmXwWOfNEv6sHjRo2xKdSSvPvY1oOzatcz
+         dDQ3Pao59DIzAKqKgzsEkjvMiLZ+3Dur8d57O0uk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Israel Rukshin <israelr@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 66/67] nvmet-rdma: fix response use after free
-Date:   Thu, 20 Dec 2018 10:19:18 +0100
-Message-Id: <20181220085906.144410895@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 62/67] i2c: scmi: Fix probe error on devices with an empty SMB0001 ACPI device node
+Date:   Thu, 20 Dec 2018 10:19:14 +0100
+Message-Id: <20181220085905.994217109@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,42 +65,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d7dcdf9d4e15189ecfda24cc87339a3425448d5c ]
+[ Upstream commit 0544ee4b1ad574aec3b6379af5f5cdee42840971 ]
 
-nvmet_rdma_release_rsp() may free the response before using it at error
-flow.
+Some AMD based HP laptops have a SMB0001 ACPI device node which does not
+define any methods.
 
-Fixes: 8407879 ("nvmet-rdma: fix possible bogus dereference under heavy load")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+This leads to the following error in dmesg:
+
+[    5.222731] cmi: probe of SMB0001:00 failed with error -5
+
+This commit makes acpi_smbus_cmi_add() return -ENODEV instead in this case
+silencing the error. In case of a failure of the i2c_add_adapter() call
+this commit now propagates the error from that call instead of -EIO.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/target/rdma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-scmi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index bfc4da660bb4..e57f3902beb3 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -529,6 +529,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
+index 7e9a2bbf5ddc..ff3f4553648f 100644
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -367,6 +367,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
  {
- 	struct nvmet_rdma_rsp *rsp =
- 		container_of(wc->wr_cqe, struct nvmet_rdma_rsp, send_cqe);
-+	struct nvmet_rdma_queue *queue = cq->cq_context;
+ 	struct acpi_smbus_cmi *smbus_cmi;
+ 	const struct acpi_device_id *id;
++	int ret;
  
- 	nvmet_rdma_release_rsp(rsp);
+ 	smbus_cmi = kzalloc(sizeof(struct acpi_smbus_cmi), GFP_KERNEL);
+ 	if (!smbus_cmi)
+@@ -388,8 +389,10 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	acpi_walk_namespace(ACPI_TYPE_METHOD, smbus_cmi->handle, 1,
+ 			    acpi_smbus_cmi_query_methods, NULL, smbus_cmi, NULL);
  
-@@ -536,7 +537,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
- 		     wc->status != IB_WC_WR_FLUSH_ERR)) {
- 		pr_err("SEND for CQE 0x%p failed with status %s (%d).\n",
- 			wc->wr_cqe, ib_wc_status_msg(wc->status), wc->status);
--		nvmet_rdma_error_comp(rsp->queue);
-+		nvmet_rdma_error_comp(queue);
+-	if (smbus_cmi->cap_info == 0)
++	if (smbus_cmi->cap_info == 0) {
++		ret = -ENODEV;
+ 		goto err;
++	}
+ 
+ 	snprintf(smbus_cmi->adapter.name, sizeof(smbus_cmi->adapter.name),
+ 		"SMBus CMI adapter %s",
+@@ -400,7 +403,8 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	smbus_cmi->adapter.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+ 	smbus_cmi->adapter.dev.parent = &device->dev;
+ 
+-	if (i2c_add_adapter(&smbus_cmi->adapter)) {
++	ret = i2c_add_adapter(&smbus_cmi->adapter);
++	if (ret) {
+ 		dev_err(&device->dev, "Couldn't register adapter!\n");
+ 		goto err;
  	}
+@@ -410,7 +414,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ err:
+ 	kfree(smbus_cmi);
+ 	device->driver_data = NULL;
+-	return -EIO;
++	return ret;
  }
  
+ static int acpi_smbus_cmi_remove(struct acpi_device *device)
 -- 
 2.19.1
 
