@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072A4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEBDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF96C2176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CCEA2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbeLTIZH (ORCPT
+        id S1730976AbeLTIYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:25:07 -0500
-Received: from ozlabs.ru ([107.173.13.209]:54908 "EHLO ozlabs.ru"
+        Thu, 20 Dec 2018 03:24:38 -0500
+Received: from ozlabs.ru ([107.173.13.209]:54479 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731097AbeLTIZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:25:03 -0500
+        id S1730940AbeLTIYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:24:33 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 40C26AE80490;
-        Thu, 20 Dec 2018 03:24:58 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id 1956FAE8032F;
+        Thu, 20 Dec 2018 03:24:29 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -37,9 +37,9 @@ Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
         Alex Williamson <alex.williamson@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH kernel v7 18/20] vfio_pci: Allow mapping extra regions
-Date:   Thu, 20 Dec 2018 19:23:48 +1100
-Message-Id: <20181220082350.58113-19-aik@ozlabs.ru>
+Subject: [PATCH kernel v7 10/20] powerpc/iommu_api: Move IOMMU groups setup to a single place
+Date:   Thu, 20 Dec 2018 19:23:40 +1100
+Message-Id: <20181220082350.58113-11-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181220082350.58113-1-aik@ozlabs.ru>
 References: <20181220082350.58113-1-aik@ozlabs.ru>
@@ -48,63 +48,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far we only allowed mapping of MMIO BARs to the userspace. However
-there are GPUs with on-board coherent RAM accessible via side
-channels which we also want to map to the userspace. The first client
-for this is NVIDIA V100 GPU with NVLink2 direct links to a POWER9
-NPU-enabled CPU; such GPUs have 16GB RAM which is coherently mapped
-to the system address space, we are going to export these as an extra
-PCI region.
+Registering new IOMMU groups and adding devices to them are separated in
+code and the latter is dug in the DMA setup code which it does not
+really belong to.
 
-We already support extra PCI regions and this adds support for mapping
-them to the userspace.
+This moved IOMMU groups setup to a separate helper which registers a group
+and adds devices as before. This does not make a difference as IOMMU
+groups are not used anyway; the only dependency here is that
+iommu_add_device() requires a valid pointer to an iommu_table
+(set by set_iommu_table_base()).
+
+To keep the old behaviour, this does not add new IOMMU groups for PEs
+with no DMA weight and also skips NVLink bridges which do not have
+pci_controller_ops::setup_bridge (the normal way of adding PEs).
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
 ---
 Changes:
-v2:
-* reverted one of mistakenly removed error checks
+v5:
+* fixed compile with defined but not used pnv_ioda_setup_bus_iommu_group();
+unfortunately defining a dummy version looks uglier than #ifdef
 ---
- drivers/vfio/pci/vfio_pci_private.h | 3 +++
- drivers/vfio/pci/vfio_pci.c         | 9 +++++++++
- 2 files changed, 12 insertions(+)
+ arch/powerpc/platforms/powernv/pci-ioda.c | 82 +++++++++++++++++++----
+ 1 file changed, 68 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-index cde3b5d..86aab05 100644
---- a/drivers/vfio/pci/vfio_pci_private.h
-+++ b/drivers/vfio/pci/vfio_pci_private.h
-@@ -59,6 +59,9 @@ struct vfio_pci_regops {
- 		      size_t count, loff_t *ppos, bool iswrite);
- 	void	(*release)(struct vfio_pci_device *vdev,
- 			   struct vfio_pci_region *region);
-+	int	(*mmap)(struct vfio_pci_device *vdev,
-+			struct vfio_pci_region *region,
-+			struct vm_area_struct *vma);
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index b86a6e0..f6ab13d 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -1538,6 +1538,9 @@ void pnv_pci_sriov_disable(struct pci_dev *pdev)
+ 
+ static void pnv_pci_ioda2_setup_dma_pe(struct pnv_phb *phb,
+ 				       struct pnv_ioda_pe *pe);
++#ifdef CONFIG_IOMMU_API
++static void pnv_ioda_setup_bus_iommu_group(struct pnv_ioda_pe *pe);
++#endif
+ static void pnv_ioda_setup_vf_PE(struct pci_dev *pdev, u16 num_vfs)
+ {
+ 	struct pci_bus        *bus;
+@@ -1591,6 +1594,9 @@ static void pnv_ioda_setup_vf_PE(struct pci_dev *pdev, u16 num_vfs)
+ 		mutex_unlock(&phb->ioda.pe_list_mutex);
+ 
+ 		pnv_pci_ioda2_setup_dma_pe(phb, pe);
++#ifdef CONFIG_IOMMU_API
++		pnv_ioda_setup_bus_iommu_group(pe);
++#endif
+ 	}
+ }
+ 
+@@ -1930,21 +1936,16 @@ static u64 pnv_pci_ioda_dma_get_required_mask(struct pci_dev *pdev)
+ 	return mask;
+ }
+ 
+-static void pnv_ioda_setup_bus_dma(struct pnv_ioda_pe *pe,
+-				   struct pci_bus *bus,
+-				   bool add_to_group)
++static void pnv_ioda_setup_bus_dma(struct pnv_ioda_pe *pe, struct pci_bus *bus)
+ {
+ 	struct pci_dev *dev;
+ 
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+ 		set_iommu_table_base(&dev->dev, pe->table_group.tables[0]);
+ 		set_dma_offset(&dev->dev, pe->tce_bypass_base);
+-		if (add_to_group)
+-			iommu_add_device(&pe->table_group, &dev->dev);
+ 
+ 		if ((pe->flags & PNV_IODA_PE_BUS_ALL) && dev->subordinate)
+-			pnv_ioda_setup_bus_dma(pe, dev->subordinate,
+-					add_to_group);
++			pnv_ioda_setup_bus_dma(pe, dev->subordinate);
+ 	}
+ }
+ 
+@@ -2374,7 +2375,7 @@ static void pnv_pci_ioda1_setup_dma_pe(struct pnv_phb *phb,
+ 	iommu_init_table(tbl, phb->hose->node);
+ 
+ 	if (pe->flags & (PNV_IODA_PE_BUS | PNV_IODA_PE_BUS_ALL))
+-		pnv_ioda_setup_bus_dma(pe, pe->pbus, true);
++		pnv_ioda_setup_bus_dma(pe, pe->pbus);
+ 
+ 	return;
+  fail:
+@@ -2607,7 +2608,7 @@ static void pnv_ioda2_take_ownership(struct iommu_table_group *table_group)
+ 	pnv_pci_ioda2_set_bypass(pe, false);
+ 	pnv_pci_ioda2_unset_window(&pe->table_group, 0);
+ 	if (pe->pbus)
+-		pnv_ioda_setup_bus_dma(pe, pe->pbus, false);
++		pnv_ioda_setup_bus_dma(pe, pe->pbus);
+ 	iommu_tce_table_put(tbl);
+ }
+ 
+@@ -2618,7 +2619,7 @@ static void pnv_ioda2_release_ownership(struct iommu_table_group *table_group)
+ 
+ 	pnv_pci_ioda2_setup_default_config(pe);
+ 	if (pe->pbus)
+-		pnv_ioda_setup_bus_dma(pe, pe->pbus, false);
++		pnv_ioda_setup_bus_dma(pe, pe->pbus);
+ }
+ 
+ static struct iommu_table_group_ops pnv_pci_ioda2_ops = {
+@@ -2735,12 +2736,68 @@ static struct iommu_table_group_ops pnv_pci_ioda2_npu_ops = {
+ 	.release_ownership = pnv_ioda2_release_ownership,
  };
  
- struct vfio_pci_region {
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index fef5002..4a6f7c0 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -1130,6 +1130,15 @@ static int vfio_pci_mmap(void *device_data, struct vm_area_struct *vma)
- 		return -EINVAL;
- 	if ((vma->vm_flags & VM_SHARED) == 0)
- 		return -EINVAL;
-+	if (index >= VFIO_PCI_NUM_REGIONS) {
-+		int regnum = index - VFIO_PCI_NUM_REGIONS;
-+		struct vfio_pci_region *region = vdev->region + regnum;
++static void pnv_ioda_setup_bus_iommu_group_add_devices(struct pnv_ioda_pe *pe,
++		struct pci_bus *bus)
++{
++	struct pci_dev *dev;
 +
-+		if (region && region->ops && region->ops->mmap &&
-+		    (region->flags & VFIO_REGION_INFO_FLAG_MMAP))
-+			return region->ops->mmap(vdev, region, vma);
-+		return -EINVAL;
++	list_for_each_entry(dev, &bus->devices, bus_list) {
++		iommu_add_device(&pe->table_group, &dev->dev);
++
++		if ((pe->flags & PNV_IODA_PE_BUS_ALL) && dev->subordinate)
++			pnv_ioda_setup_bus_iommu_group_add_devices(pe,
++					dev->subordinate);
 +	}
- 	if (index >= VFIO_PCI_ROM_REGION_INDEX)
- 		return -EINVAL;
- 	if (!vdev->bar_mmap_supported[index])
++}
++
++static void pnv_ioda_setup_bus_iommu_group(struct pnv_ioda_pe *pe)
++{
++	if (!pnv_pci_ioda_pe_dma_weight(pe))
++		return;
++
++	iommu_register_group(&pe->table_group, pe->phb->hose->global_number,
++			pe->pe_number);
++
++	/*
++	 * set_iommu_table_base(&pe->pdev->dev, tbl) should have been called
++	 * by now
++	 */
++	if (pe->flags & PNV_IODA_PE_DEV)
++		iommu_add_device(&pe->table_group, &pe->pdev->dev);
++	else if (pe->flags & (PNV_IODA_PE_BUS | PNV_IODA_PE_BUS_ALL))
++		pnv_ioda_setup_bus_iommu_group_add_devices(pe, pe->pbus);
++}
++
+ static void pnv_pci_ioda_setup_iommu_api(void)
+ {
+ 	struct pci_controller *hose, *tmp;
+ 	struct pnv_phb *phb;
+ 	struct pnv_ioda_pe *pe, *gpe;
+ 
++	/*
++	 * There are 4 types of PEs:
++	 * - PNV_IODA_PE_BUS: a downstream port with an adapter,
++	 *   created from pnv_pci_setup_bridge();
++	 * - PNV_IODA_PE_BUS_ALL: a PCI-PCIX bridge with devices behind it,
++	 *   created from pnv_pci_setup_bridge();
++	 * - PNV_IODA_PE_VF: a SRIOV virtual function,
++	 *   created from pnv_pcibios_sriov_enable();
++	 * - PNV_IODA_PE_DEV: an NPU or OCAPI device,
++	 *   created from pnv_pci_ioda_fixup().
++	 *
++	 * Normally a PE is represented by an IOMMU group, however for
++	 * devices with side channels the groups need to be more strict.
++	 */
++	list_for_each_entry(hose, &hose_list, list_node) {
++		phb = hose->private_data;
++
++		if (phb->type == PNV_PHB_NPU_NVLINK)
++			continue;
++
++		list_for_each_entry(pe, &phb->ioda.pe_list, list)
++			pnv_ioda_setup_bus_iommu_group(pe);
++	}
++
+ 	/*
+ 	 * Now we have all PHBs discovered, time to add NPU devices to
+ 	 * the corresponding IOMMU groups.
+@@ -2801,9 +2858,6 @@ static void pnv_pci_ioda2_setup_dma_pe(struct pnv_phb *phb,
+ 	/* TVE #1 is selected by PCI address bit 59 */
+ 	pe->tce_bypass_base = 1ull << 59;
+ 
+-	iommu_register_group(&pe->table_group, phb->hose->global_number,
+-			pe->pe_number);
+-
+ 	/* The PE will reserve all possible 32-bits space */
+ 	pe_info(pe, "Setting up 32-bit TCE table at 0..%08x\n",
+ 		phb->ioda.m32_pci_base);
+@@ -2824,7 +2878,7 @@ static void pnv_pci_ioda2_setup_dma_pe(struct pnv_phb *phb,
+ 		return;
+ 
+ 	if (pe->flags & (PNV_IODA_PE_BUS | PNV_IODA_PE_BUS_ALL))
+-		pnv_ioda_setup_bus_dma(pe, pe->pbus, true);
++		pnv_ioda_setup_bus_dma(pe, pe->pbus);
+ }
+ 
+ #ifdef CONFIG_PCI_MSI
 -- 
 2.17.1
 
