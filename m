@@ -2,137 +2,163 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3A9C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D840CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0843C218AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545318018;
-	bh=PgdcFzzFJRfg9e6GuRKfjwKRt1qszJo4vAoki4ZdPow=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Npt5LTaEXUQENszzMAPTOS5matAZeDsVNQXEamR5UC25p41aUiTua/eIRSZp7YJ3K
-	 9xdkgBFn/pQfVvAIKxnbifOFkXLHI1V2TkzNA2MSD0IPDf46GKiOtsfo2L2lAsqzYZ
-	 VSvIFkvqv0F3/OpNMwOmcM39ifvriwArPSPnxLd0=
+	by mail.kernel.org (Postfix) with ESMTP id A73B7218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AmN9JAYK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbeLTPAR (ORCPT
+        id S1730549AbeLTPA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:00:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbeLTPAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:00:16 -0500
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86A48218D4;
-        Thu, 20 Dec 2018 15:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545318015;
-        bh=PgdcFzzFJRfg9e6GuRKfjwKRt1qszJo4vAoki4ZdPow=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pdnUMcCFDBFzHEAMdpyHRqX9GgShwKo+QWg59/9Oe4NJ82DCoTOfLtLzZYMANPtwQ
-         L0sUq2vX5mD6Af6yxTOnQuLhXBpFkmQnsid16WJWPW1iqe/fF8awRHmT6MQ7y6YWYx
-         uTqdoLMVoIEznpEq3UtzC3+ivOhjCz4zQIY5fcgI=
-Received: by mail-qt1-f182.google.com with SMTP id n21so2087877qtl.6;
-        Thu, 20 Dec 2018 07:00:15 -0800 (PST)
-X-Gm-Message-State: AA+aEWZD9ZHfvcQaslGzxG/VXmjuRWEdT70KEsKyW5DwZHqucR/NtYdH
-        jX1DIFWQD/fMmHqQCC4HYheZb7t44w32ujKQ6A==
-X-Google-Smtp-Source: AFSGD/UI6ZKZCM3DWOK3vRuT6L0eQh3X21IsbTvynvSnAaNVyobUIJbREiqUsj9quGSzKi6VGzTplbsMOKm35Uj5ark=
-X-Received: by 2002:a0c:f212:: with SMTP id h18mr26745039qvk.106.1545318014699;
- Thu, 20 Dec 2018 07:00:14 -0800 (PST)
+        Thu, 20 Dec 2018 10:00:29 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32886 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbeLTPA2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:00:28 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so1614292lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:00:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iMl2hbIQ2G0NVk4jB6P2YvLkLP/KG6VzAEvkrHIhylM=;
+        b=AmN9JAYK018rt6Zlqgd2BXXX4SgMFgB0mWKAURY1SEMkx6PUnAg2d/ETFhyXwEapQa
+         lZMPHJtzSsR/bdLCDaHfRSIxcNke+36pu9U4eu9InxghdXcatN6MBJcPm0zFskibIeGD
+         Sygrs3LDuoXDd5bhwoFepsO+lga/jFFQwDEXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iMl2hbIQ2G0NVk4jB6P2YvLkLP/KG6VzAEvkrHIhylM=;
+        b=S12OORUGngFI9AZt41YLA/9TAT5EQCYM2facPQ0YNcpPvX4xl9D9FSngi4j7qhiXT6
+         5rnbIiholK696N2UVh4AoqSEgF8YCIAGthKz/ukawR4d00jq4c6r+QKZ+p0TCUhKvIl3
+         vE1o1JqzZilFzlfjr3zaS6KUAqz6btjA99DZLwt/fDGigO+2VsHYwep3hcK4WXRQP/+p
+         1YkMiPkr9iEv4TOTEGzwwT3x1zWj7EaJFqJLDkxpp5NDJrzvkPl2iGONzf+zzS2OD7Q+
+         ilCKE7VZUgfYQvXj0Hf9bYcjPkXZWCF+9yZFUqBm3iBbotzCs3UVigZh1cI8VztMGtAb
+         EEdA==
+X-Gm-Message-State: AA+aEWb5NKCsxzyBB//wbDHwd6v+PaiLkozOZVi2iegP8gGIUD2xOqrw
+        hmC8hZVIdVCzI1bTo2VS+zt5iU9ubE4sXdvijC/tew==
+X-Google-Smtp-Source: AFSGD/XozS4JVF+xjqDollqsK0DUFh+eWvf6HXpW+qi0q9BxmwLZEVYXuIP8wNgfyKSUJciADzXAnrvwGvyc5eMkRaQ=
+X-Received: by 2002:a19:1d0d:: with SMTP id d13mr14840547lfd.74.1545318024545;
+ Thu, 20 Dec 2018 07:00:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
- <20181218040702.29231-4-andrew.smirnov@gmail.com> <20181218151533.GA2922@bogus>
- <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
- <CAL_JsqJb24ZpM7qQfy_F7RUVEGyceBAXOndbZcTMh3a__k38UQ@mail.gmail.com>
- <CAHQ1cqEMxxo9JGN5be4XQWAtPz7nC2JyLCr3qasnD5QK7_hOYQ@mail.gmail.com> <1545268969.22930.77.camel@impinj.com>
-In-Reply-To: <1545268969.22930.77.camel@impinj.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 20 Dec 2018 09:00:01 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJBxZw225qqWfCFa8UqADtGOUCjFogo6Pb2bd8bKwz3nA@mail.gmail.com>
-Message-ID: <CAL_JsqJBxZw225qqWfCFa8UqADtGOUCjFogo6Pb2bd8bKwz3nA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-pci@vger.kernel.org
+References: <20181220085843.743900603@linuxfoundation.org>
+In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 20 Dec 2018 20:30:12 +0530
+Message-ID: <CA+G9fYsmTOip2e=WyFVBZJ32eu5i-BV3QHeZe4wpvNK5CH9FJw@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/61] 4.9.147-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 7:22 PM Trent Piepho <tpiepho@impinj.com> wrote:
+On Thu, 20 Dec 2018 at 14:53, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Wed, 2018-12-19 at 16:47 -0800, Andrey Smirnov wrote:
-> >
-> > > > This series initially added explicit offsets but I suggested a single
-> > > > "controller-id" because:
-> > > >   * There are multiple bit and byte offsets
-> > > >   * Other imx8 SOCs also have 2x pcie with other bit/byte offsets
-> > > >
-> > > > Hiding this behind a compatible string and single "controller-id" seem
-> > > > preferable to elaborating register maps in dt bindings. It also makes
-> > > > upgrades simpler: if features are added which use other bits there is no
-> > > > need to describe them in DT and deal with compatibility headaches.
-> > >
-> > > You already have an id for the controllers: the address. Use that if
-> > > you don't want to put the register offsets in DT.
-> > >
-> >
-> > Lucas, are you on board with this?
+> This is the start of the stable review cycle for the 4.9.147 release.
+> There are 61 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Does address here mean the address from the controller's reg property?
-
-Yes.
-
-> How do you map that address to the controller's index?  A giant table
-> of every soc so the soc type plus controller register address pair than
-> can be looked up in the driver?
-
-You only need the 2-Nth instance addresses. A non-matching address can
-be instance 0.
-
-> I.e., on iMX8MQ the controller at 0x33800000 is controller 0 and so on
-> for every possible SoC address combination?
+> Responses should be made by Sat Dec 22 08:58:31 UTC 2018.
+> Anything received after that time might be too late.
 >
-> Not really a fan of that.
-
-Well, this was not my first suggestion.
-
-> The situation here is that some registers for these controllers are
-> interleaved, right?  I.e., there's one register somewhere where bit 0
-> means enable controller 0 and bit 1 means enable controller 1 and so
-> on.
-
-So? The only difference here is an additional mapping step.
-
-> Isn't cell-index already the standard device tree property for this
-> kind of setup?
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.147-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
 >
-> I know cell-index was historically also (ab)used in an attempt to
-> provide a fixed kernel device enumeration order, something now handled
-> better by chosen node aliases.
+> thanks,
+>
+> greg k-h
 
-Don't use cell-index. Consider it a deprecated relic from OF that is
-not used on FDT (though there probably are some cases it did get
-used).
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Rob
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.147-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 2758b137b9ed759bd1827db35c31571beab263be
+git describe: v4.9.146-62-g2758b137b9ed
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.146-62-g2758b137b9ed
+
+No regressions (compared to build v4.9.146)
+
+No fixes (compared to build v4.9.146)
+
+Ran 21452 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
