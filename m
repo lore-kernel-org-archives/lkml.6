@@ -2,58 +2,54 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D3DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C27218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E16217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297912;
-	bh=L7iVUziSMVdeOfsu8IEWQFG3rogq34UdNf/MQwZhYyw=;
+	s=default; t=1545297918;
+	bh=p4DB2CfweL+yYt7qpEZV4DCN7JIpkMl+u/DPKfpvMdQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S66DuzZtqbkAtvGY20CgLaI0dP3PjxlueyI0Swa1zUUhhXkSqPD8tHrFGfQBaFg30
-	 drF8ItjO2XIOA93eovF18zcc5fs1NSur/ovR/vo4uVVMx8sCMlLCu73khKxVAUOA4T
-	 LDQsM3S/VU4Qrc2PbS0tGF9RsSboMrZUjLSEwLoc=
+	b=kRK9Z33n9up1DXYsenTkAFZAoxrlYPg4F/PrjGu2jTu3Sih4ZxSRYIq63talmZsP2
+	 4SnbkJb8MR6FUb56p0R58DCsFnsF0SsWw2XiwXC6H5/uUTQzsC9SBYl+GrN/fcInGE
+	 Jhgmd1o1qkkYhZJeVKBjsMoasf1Vz3p35WJlaSmE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731491AbeLTJZK (ORCPT
+        id S1731951AbeLTJZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:25:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41390 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:25:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731914AbeLTJZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:05 -0500
+        id S1731926AbeLTJZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A52AF2186A;
-        Thu, 20 Dec 2018 09:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE04F218AE;
+        Thu, 20 Dec 2018 09:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297904;
-        bh=L7iVUziSMVdeOfsu8IEWQFG3rogq34UdNf/MQwZhYyw=;
+        s=default; t=1545297909;
+        bh=p4DB2CfweL+yYt7qpEZV4DCN7JIpkMl+u/DPKfpvMdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l6ac/ipk3Ko8f5pAx4zXCBQ0IRXwpg/zwkzGZAVnEBbqUcfQPDTqj2emhXQBF5iCo
-         zXGC3xUpoUXlRen0xmqks7FyH3VeppfgVkOiywZ2vp1KpxbbwBPozBcwa3ddq6UzIM
-         PbVdNDxweCceKUdiwm9C6Jw8trdny4MeTs0Jptmc=
+        b=g7qXhVEQsB+8SqvqiBw2ke2x80tQOxMhLT2KgQ664IPTy+oyGRiDp5gJPCurYbe1q
+         llKlScVb3uMuGyL+ddqq6wpEvXu34ll2LpG0LYPKVelkWOE2HvRBCfbxuK3joBX2TM
+         AEDb2u7KHcZ0DMLtqfb4Ypn3PdjHCr9Gdmkg319Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 23/61] locking/qspinlock: Merge struct __qspinlock into struct qspinlock
-Date:   Thu, 20 Dec 2018 10:18:23 +0100
-Message-Id: <20181220085844.672096510@linuxfoundation.org>
+        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 4.9 15/61] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
+Date:   Thu, 20 Dec 2018 10:18:15 +0100
+Message-Id: <20181220085844.341672426@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -72,327 +68,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 625e88be1f41b53cec55827c984e4a89ea8ee9f9 upstream.
+From: Brian Norris <briannorris@chromium.org>
 
-'struct __qspinlock' provides a handy union of fields so that
-subcomponents of the lockword can be accessed by name, without having to
-manage shifts and masks explicitly and take endianness into account.
+commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
 
-This is useful in qspinlock.h and also potentially in arch headers, so
-move the 'struct __qspinlock' into 'struct qspinlock' and kill the extra
-definition.
+This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-3-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+It causes new warnings [1] on shutdown when running the Google Kevin or
+Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
+different than what Marc and Heiko test.
+
+We're looking at a different approach (e.g., [2]) to replace this, but
+IMO the revert should be taken first, as it already propagated to
+-stable.
+
+[1] Report here:
+http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
+
+WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
+...
+ Call trace:
+  drm_mode_config_cleanup+0x1c4/0x294
+  rockchip_drm_unbind+0x4c/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+ Memory manager not clean during takedown.
+ WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
+...
+  drm_mm_takedown+0x34/0x44
+  rockchip_drm_unbind+0x64/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+
+[2] https://patchwork.kernel.org/patch/10556151/
+    https://www.spinics.net/lists/linux-rockchip/msg21342.html
+    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
+
+Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Vicente Bergas <vicencb@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/include/asm/qspinlock.h          |  2 +-
- arch/x86/include/asm/qspinlock_paravirt.h |  3 +-
- include/asm-generic/qspinlock_types.h     | 32 +++++++++++++++-
- kernel/locking/qspinlock.c                | 46 ++---------------------
- kernel/locking/qspinlock_paravirt.h       | 34 ++++++-----------
- 5 files changed, 46 insertions(+), 71 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index eaba08076030..e07cc206919d 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -14,7 +14,7 @@
-  */
- static inline void native_queued_spin_unlock(struct qspinlock *lock)
- {
--	smp_store_release((u8 *)lock, 0);
-+	smp_store_release(&lock->locked, 0);
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -478,11 +478,6 @@ static int rockchip_drm_platform_remove(
+ 	return 0;
  }
  
- #ifdef CONFIG_PARAVIRT_SPINLOCKS
-diff --git a/arch/x86/include/asm/qspinlock_paravirt.h b/arch/x86/include/asm/qspinlock_paravirt.h
-index 9d55f9b6e167..fc75415ae971 100644
---- a/arch/x86/include/asm/qspinlock_paravirt.h
-+++ b/arch/x86/include/asm/qspinlock_paravirt.h
-@@ -21,8 +21,7 @@ PV_CALLEE_SAVE_REGS_THUNK(__pv_queued_spin_unlock_slowpath);
-  *
-  * void __pv_queued_spin_unlock(struct qspinlock *lock)
-  * {
-- *	struct __qspinlock *l = (void *)lock;
-- *	u8 lockval = cmpxchg(&l->locked, _Q_LOCKED_VAL, 0);
-+ *	u8 lockval = cmpxchg(&lock->locked, _Q_LOCKED_VAL, 0);
-  *
-  *	if (likely(lockval == _Q_LOCKED_VAL))
-  *		return;
-diff --git a/include/asm-generic/qspinlock_types.h b/include/asm-generic/qspinlock_types.h
-index 034acd0c4956..0763f065b975 100644
---- a/include/asm-generic/qspinlock_types.h
-+++ b/include/asm-generic/qspinlock_types.h
-@@ -29,13 +29,41 @@
- #endif
- 
- typedef struct qspinlock {
--	atomic_t	val;
-+	union {
-+		atomic_t val;
-+
-+		/*
-+		 * By using the whole 2nd least significant byte for the
-+		 * pending bit, we can allow better optimization of the lock
-+		 * acquisition for the pending bit holder.
-+		 */
-+#ifdef __LITTLE_ENDIAN
-+		struct {
-+			u8	locked;
-+			u8	pending;
-+		};
-+		struct {
-+			u16	locked_pending;
-+			u16	tail;
-+		};
-+#else
-+		struct {
-+			u16	tail;
-+			u16	locked_pending;
-+		};
-+		struct {
-+			u8	reserved[2];
-+			u8	pending;
-+			u8	locked;
-+		};
-+#endif
-+	};
- } arch_spinlock_t;
- 
- /*
-  * Initializier
-  */
--#define	__ARCH_SPIN_LOCK_UNLOCKED	{ ATOMIC_INIT(0) }
-+#define	__ARCH_SPIN_LOCK_UNLOCKED	{ .val = ATOMIC_INIT(0) }
- 
- /*
-  * Bitfields in the atomic value:
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index a8da1fc5222e..cc98050e8bec 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -125,40 +125,6 @@ static inline __pure struct mcs_spinlock *decode_tail(u32 tail)
- 
- #define _Q_LOCKED_PENDING_MASK (_Q_LOCKED_MASK | _Q_PENDING_MASK)
- 
--/*
-- * By using the whole 2nd least significant byte for the pending bit, we
-- * can allow better optimization of the lock acquisition for the pending
-- * bit holder.
-- *
-- * This internal structure is also used by the set_locked function which
-- * is not restricted to _Q_PENDING_BITS == 8.
-- */
--struct __qspinlock {
--	union {
--		atomic_t val;
--#ifdef __LITTLE_ENDIAN
--		struct {
--			u8	locked;
--			u8	pending;
--		};
--		struct {
--			u16	locked_pending;
--			u16	tail;
--		};
--#else
--		struct {
--			u16	tail;
--			u16	locked_pending;
--		};
--		struct {
--			u8	reserved[2];
--			u8	pending;
--			u8	locked;
--		};
--#endif
--	};
--};
+-static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
+-{
+-	rockchip_drm_platform_remove(pdev);
+-}
 -
- #if _Q_PENDING_BITS == 8
- /**
-  * clear_pending_set_locked - take ownership and clear the pending bit.
-@@ -170,9 +136,7 @@ struct __qspinlock {
-  */
- static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
--	WRITE_ONCE(l->locked_pending, _Q_LOCKED_VAL);
-+	WRITE_ONCE(lock->locked_pending, _Q_LOCKED_VAL);
- }
- 
- /*
-@@ -187,13 +151,11 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
-  */
- static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
- {
--	struct __qspinlock *l = (void *)lock;
--
- 	/*
- 	 * Use release semantics to make sure that the MCS node is properly
- 	 * initialized before changing the tail code.
- 	 */
--	return (u32)xchg_release(&l->tail,
-+	return (u32)xchg_release(&lock->tail,
- 				 tail >> _Q_TAIL_OFFSET) << _Q_TAIL_OFFSET;
- }
- 
-@@ -248,9 +210,7 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
-  */
- static __always_inline void set_locked(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
--	WRITE_ONCE(l->locked, _Q_LOCKED_VAL);
-+	WRITE_ONCE(lock->locked, _Q_LOCKED_VAL);
- }
- 
- 
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index e3b5520005db..3e33336911ff 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -69,10 +69,8 @@ struct pv_node {
- #define queued_spin_trylock(l)	pv_queued_spin_steal_lock(l)
- static inline bool pv_queued_spin_steal_lock(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
- 	if (!(atomic_read(&lock->val) & _Q_LOCKED_PENDING_MASK) &&
--	    (cmpxchg(&l->locked, 0, _Q_LOCKED_VAL) == 0)) {
-+	    (cmpxchg(&lock->locked, 0, _Q_LOCKED_VAL) == 0)) {
- 		qstat_inc(qstat_pv_lock_stealing, true);
- 		return true;
- 	}
-@@ -87,16 +85,12 @@ static inline bool pv_queued_spin_steal_lock(struct qspinlock *lock)
- #if _Q_PENDING_BITS == 8
- static __always_inline void set_pending(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
--	WRITE_ONCE(l->pending, 1);
-+	WRITE_ONCE(lock->pending, 1);
- }
- 
- static __always_inline void clear_pending(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
--	WRITE_ONCE(l->pending, 0);
-+	WRITE_ONCE(lock->pending, 0);
- }
- 
- /*
-@@ -106,10 +100,8 @@ static __always_inline void clear_pending(struct qspinlock *lock)
-  */
- static __always_inline int trylock_clear_pending(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
--
--	return !READ_ONCE(l->locked) &&
--	       (cmpxchg(&l->locked_pending, _Q_PENDING_VAL, _Q_LOCKED_VAL)
-+	return !READ_ONCE(lock->locked) &&
-+	       (cmpxchg(&lock->locked_pending, _Q_PENDING_VAL, _Q_LOCKED_VAL)
- 			== _Q_PENDING_VAL);
- }
- #else /* _Q_PENDING_BITS == 8 */
-@@ -353,7 +345,6 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
- static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
- {
- 	struct pv_node *pn = (struct pv_node *)node;
--	struct __qspinlock *l = (void *)lock;
- 
- 	/*
- 	 * If the vCPU is indeed halted, advance its state to match that of
-@@ -372,7 +363,7 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
- 	 * the hash table later on at unlock time, no atomic instruction is
- 	 * needed.
- 	 */
--	WRITE_ONCE(l->locked, _Q_SLOW_VAL);
-+	WRITE_ONCE(lock->locked, _Q_SLOW_VAL);
- 	(void)pv_hash(lock, pn);
- }
- 
-@@ -387,7 +378,6 @@ static u32
- pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
- {
- 	struct pv_node *pn = (struct pv_node *)node;
--	struct __qspinlock *l = (void *)lock;
- 	struct qspinlock **lp = NULL;
- 	int waitcnt = 0;
- 	int loop;
-@@ -438,13 +428,13 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
- 			 *
- 			 * Matches the smp_rmb() in __pv_queued_spin_unlock().
- 			 */
--			if (xchg(&l->locked, _Q_SLOW_VAL) == 0) {
-+			if (xchg(&lock->locked, _Q_SLOW_VAL) == 0) {
- 				/*
- 				 * The lock was free and now we own the lock.
- 				 * Change the lock value back to _Q_LOCKED_VAL
- 				 * and unhash the table.
- 				 */
--				WRITE_ONCE(l->locked, _Q_LOCKED_VAL);
-+				WRITE_ONCE(lock->locked, _Q_LOCKED_VAL);
- 				WRITE_ONCE(*lp, NULL);
- 				goto gotlock;
- 			}
-@@ -452,7 +442,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
- 		WRITE_ONCE(pn->state, vcpu_hashed);
- 		qstat_inc(qstat_pv_wait_head, true);
- 		qstat_inc(qstat_pv_wait_again, waitcnt);
--		pv_wait(&l->locked, _Q_SLOW_VAL);
-+		pv_wait(&lock->locked, _Q_SLOW_VAL);
- 
- 		/*
- 		 * Because of lock stealing, the queue head vCPU may not be
-@@ -477,7 +467,6 @@ gotlock:
- __visible void
- __pv_queued_spin_unlock_slowpath(struct qspinlock *lock, u8 locked)
- {
--	struct __qspinlock *l = (void *)lock;
- 	struct pv_node *node;
- 
- 	if (unlikely(locked != _Q_SLOW_VAL)) {
-@@ -506,7 +495,7 @@ __pv_queued_spin_unlock_slowpath(struct qspinlock *lock, u8 locked)
- 	 * Now that we have a reference to the (likely) blocked pv_node,
- 	 * release the lock.
- 	 */
--	smp_store_release(&l->locked, 0);
-+	smp_store_release(&lock->locked, 0);
- 
- 	/*
- 	 * At this point the memory pointed at by lock can be freed/reused,
-@@ -532,7 +521,6 @@ __pv_queued_spin_unlock_slowpath(struct qspinlock *lock, u8 locked)
- #ifndef __pv_queued_spin_unlock
- __visible void __pv_queued_spin_unlock(struct qspinlock *lock)
- {
--	struct __qspinlock *l = (void *)lock;
- 	u8 locked;
- 
- 	/*
-@@ -540,7 +528,7 @@ __visible void __pv_queued_spin_unlock(struct qspinlock *lock)
- 	 * unhash. Otherwise it would be possible to have multiple @lock
- 	 * entries, which would be BAD.
- 	 */
--	locked = cmpxchg_release(&l->locked, _Q_LOCKED_VAL, 0);
-+	locked = cmpxchg_release(&lock->locked, _Q_LOCKED_VAL, 0);
- 	if (likely(locked == _Q_LOCKED_VAL))
- 		return;
- 
--- 
-2.19.1
-
+ static const struct of_device_id rockchip_drm_dt_ids[] = {
+ 	{ .compatible = "rockchip,display-subsystem", },
+ 	{ /* sentinel */ },
+@@ -492,7 +487,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
+ static struct platform_driver rockchip_drm_platform_driver = {
+ 	.probe = rockchip_drm_platform_probe,
+ 	.remove = rockchip_drm_platform_remove,
+-	.shutdown = rockchip_drm_platform_shutdown,
+ 	.driver = {
+ 		.name = "rockchip-drm",
+ 		.of_match_table = rockchip_drm_dt_ids,
 
 
