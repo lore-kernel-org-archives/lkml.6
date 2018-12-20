@@ -2,52 +2,52 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A48ABC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F29BAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74CC32176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A962176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:46:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545299148;
-	bh=IAs5IXkqaLm+8j6QRvN6N/l6LehIQw2zTpFch6YAhJQ=;
+	s=default; t=1545299160;
+	bh=PFSuxZ/dUvg2vkSJLYRcvarR/JM3wIZaHk8UJIS7dcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y7fJM8UIu/UoK02SAYMpR/QqwvajDm+qBHfgjq3O29NBtCajW92/UDCxayU6X+dYI
-	 M3e/xfQv37NpBjfgDBcWHRNOI2BZutouJYABmmJb0h2SkMETFJIbcWtBzDp+sJ0KCP
-	 fN0Pe1NcaqaLUpc8VfA3PZxGKK7X0LcecYgTtKPk=
+	b=MihTE0v2Gz1U3PBVM8lbtbq4Y1sZUY4GdgriG6kvnOwRK2sT/ZlJQeuSTtmmMZSEn
+	 +Mx8PRQ4ioaXsgPRG48AiqT/vVs6NcnrL9mYby+Wkx6zezKhpQrG7nW0MTtOLe4JFY
+	 MkssGLVAD6PjeNcI40hSZdOx+XVw8dwrJa9kM98Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730811AbeLTJUo (ORCPT
+        id S1730563AbeLTJp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54458 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:45:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730566AbeLTJUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:40 -0500
+        id S1730707AbeLTJUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0E172177B;
-        Thu, 20 Dec 2018 09:20:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A221621773;
+        Thu, 20 Dec 2018 09:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297639;
-        bh=IAs5IXkqaLm+8j6QRvN6N/l6LehIQw2zTpFch6YAhJQ=;
+        s=default; t=1545297631;
+        bh=PFSuxZ/dUvg2vkSJLYRcvarR/JM3wIZaHk8UJIS7dcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j8ML801k+vkOWZZnS1NGjkiZ4XegBL2WXbqYasmB7/kduePYIHhSrDin4mo2NztE1
-         ZLz5TGK+w22sEgNiRY1EoQ63e0YUwKiIFdTN8R3qHfiBSJX50Rpgh0/HPl96d+EWp+
-         jk4uqUIBQxYkXjpS5xRr2tnM98iRzu4jteDWXe84=
+        b=dChE50/IBwxwOc0z/z6VQlsReKjV+xXcnS894f4697QYL2w5EOVOdcMWKdW32s4tz
+         KEqWMT0rZw0ZaTzsuHoeCt0ldn3kWcfClSmSxqp3MtIW0KQy9UkybaUPjNfxySYdGO
+         HItpbbXydsd+Dwts+BAgFij+rvklu17LBPhmFg38=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 05/31] lib/interval_tree_test.c: allow users to limit scope of endpoint
-Date:   Thu, 20 Dec 2018 10:18:17 +0100
-Message-Id: <20181220085742.809044440@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 30/31] swiotlb: clean up reporting
+Date:   Thu, 20 Dec 2018 10:18:42 +0100
+Message-Id: <20181220085743.786731250@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -66,65 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a8ec14d4f6aa8e245efacc992c8ee6ea0464ce2a ]
+From: Kees Cook <keescook@chromium.org>
 
-Add a 'max_endpoint' parameter such that users may easily limit the size
-of the intervals that are randomly generated.
+commit 7d63fb3af87aa67aa7d24466e792f9d7c57d8e79 upstream.
 
-Link: http://lkml.kernel.org/r/20170518174936.20265-4-dave@stgolabs.net
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This removes needless use of '%p', and refactors the printk calls to
+use pr_*() helpers instead.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+[bwh: Backported to 4.4:
+ - Adjust filename
+ - Remove "swiotlb: " prefix from an additional log message]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/interval_tree_test.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ lib/swiotlb.c |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index bababcf7ffdd..222c8010bda0 100644
---- a/lib/interval_tree_test.c
-+++ b/lib/interval_tree_test.c
-@@ -17,6 +17,7 @@ __param(int, nsearches, 100, "Number of searches to the interval tree");
- __param(int, search_loops, 1000, "Number of iterations searching the tree");
- __param(bool, search_all, false, "Searches will iterate all nodes in the tree");
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -17,6 +17,8 @@
+  * 08/12/11 beckyb	Add highmem support
+  */
  
-+__param(uint, max_endpoint, ~0, "Largest value for the interval's endpoint");
- 
- static struct rb_root root = RB_ROOT;
- static struct interval_tree_node *nodes = NULL;
-@@ -41,18 +42,20 @@ static void init(void)
- 	int i;
- 
- 	for (i = 0; i < nnodes; i++) {
--		u32 a = prandom_u32_state(&rnd);
--		u32 b = prandom_u32_state(&rnd);
--		if (a <= b) {
--			nodes[i].start = a;
--			nodes[i].last = b;
--		} else {
--			nodes[i].start = b;
--			nodes[i].last = a;
--		}
-+		u32 b = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
-+		u32 a = (prandom_u32_state(&rnd) >> 4) % b;
++#define pr_fmt(fmt) "software IO TLB: " fmt
 +
-+		nodes[i].start = a;
-+		nodes[i].last = b;
+ #include <linux/cache.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/mm.h>
+@@ -143,20 +145,16 @@ static bool no_iotlb_memory;
+ void swiotlb_print_info(void)
+ {
+ 	unsigned long bytes = io_tlb_nslabs << IO_TLB_SHIFT;
+-	unsigned char *vstart, *vend;
+ 
+ 	if (no_iotlb_memory) {
+-		pr_warn("software IO TLB: No low mem\n");
++		pr_warn("No low mem\n");
+ 		return;
  	}
-+
-+	/*
-+	 * Limit the search scope to what the user defined.
-+	 * Otherwise we are merely measuring empty walks,
-+	 * which is pointless.
-+	 */
- 	for (i = 0; i < nsearches; i++)
--		queries[i] = prandom_u32_state(&rnd);
-+		queries[i] = (prandom_u32_state(&rnd) >> 4) % max_endpoint;
+ 
+-	vstart = phys_to_virt(io_tlb_start);
+-	vend = phys_to_virt(io_tlb_end);
+-
+-	printk(KERN_INFO "software IO TLB [mem %#010llx-%#010llx] (%luMB) mapped at [%p-%p]\n",
++	pr_info("mapped [mem %#010llx-%#010llx] (%luMB)\n",
+ 	       (unsigned long long)io_tlb_start,
+ 	       (unsigned long long)io_tlb_end,
+-	       bytes >> 20, vstart, vend - 1);
++	       bytes >> 20);
  }
  
- static int interval_tree_test_init(void)
--- 
-2.19.1
-
+ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
+@@ -230,7 +228,7 @@ swiotlb_init(int verbose)
+ 	if (io_tlb_start)
+ 		memblock_free_early(io_tlb_start,
+ 				    PAGE_ALIGN(io_tlb_nslabs << IO_TLB_SHIFT));
+-	pr_warn("Cannot allocate SWIOTLB buffer");
++	pr_warn("Cannot allocate buffer");
+ 	no_iotlb_memory = true;
+ }
+ 
+@@ -272,8 +270,8 @@ swiotlb_late_init_with_default_size(size
+ 		return -ENOMEM;
+ 	}
+ 	if (order != get_order(bytes)) {
+-		printk(KERN_WARNING "Warning: only able to allocate %ld MB "
+-		       "for software IO TLB\n", (PAGE_SIZE << order) >> 20);
++		pr_warn("only able to allocate %ld MB\n",
++			(PAGE_SIZE << order) >> 20);
+ 		io_tlb_nslabs = SLABS_PER_PAGE << order;
+ 	}
+ 	rc = swiotlb_late_init_with_tbl(vstart, io_tlb_nslabs);
 
 
