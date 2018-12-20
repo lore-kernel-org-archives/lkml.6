@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66A6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE33C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7975921773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7DF421720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297684;
-	bh=DEYp7qMZ5yu+rI+l7vmjv43aWdvlbrTmCyzcBi0wA8E=;
+	s=default; t=1545297687;
+	bh=xnSwO6+akl+uM8tOLWQcjaIznTcnIDDFkgGu+ZkZNkI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HGzq9haw3ibEQD0/Lyj0T8GXNF4n/GKmMsU5j/52ZLO6IsPMBCYgJG/AF6Oru3L0+
-	 yuiPnQ11gOE+OmwFacLJYyh9z9xg90GH5/sUn+r0OIX4o/hHj0v3PvVfzEWj0UwC98
-	 53b7YjgVXO3Bf9OAdOuOUrQPkYuVJvgmQQZNgTzo=
+	b=cs65YzCoftHD4o5RtM7OtL3PLVTjj+hnyDANLtwxkJbCH/S8dqVvQLpMc+a7w2Mfd
+	 n5QD962CnYmKZ87gIjKI5GPA0vP4g2Ret5/WLFrJRxVOdlxMip3G6e3T5+87eySbPL
+	 gZuI94AxgkBgDenykchzNHDnFkoVZS8L9k4g2SUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731052AbeLTJVX (ORCPT
+        id S1731070AbeLTJV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:21:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:21:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbeLTJVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:21:20 -0500
+        id S1730992AbeLTJVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:21:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C30A62177B;
-        Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65D9521720;
+        Thu, 20 Dec 2018 09:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297680;
-        bh=DEYp7qMZ5yu+rI+l7vmjv43aWdvlbrTmCyzcBi0wA8E=;
+        s=default; t=1545297683;
+        bh=xnSwO6+akl+uM8tOLWQcjaIznTcnIDDFkgGu+ZkZNkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=veHnUvbqnxlD0YqgmuZikQ2bZTkUDKsb+m22DTudpIxLgNlfboddXj7H2VeecyKQP
-         7GOFTTG+V+9xMxDyraZKvFehICpgl4T/nUgEx4n6c2R9Vh7blVmiCDNxhE73M43lNo
-         O3qf8Ryry4i13tyDpgzDCfajZSgcMg/w8PunGRAM=
+        b=I8OL41N+30Knct+H9xES6OlPXdmt9vVs3ob95dReS/LHJ3Ae8wqFrrb/uLgA9/3fz
+         YBvze7gYOliAqgpNdmQusTJER54KP+QICipNM+D4ZG4iynR24H7JuX3IA8/INB0oel
+         ghMGszvFU53PTIAgmY0U3xPxR7RYQ3nPnvWbNGXc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Fred Herard <fred.herard@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 18/40] mac80211_hwsim: fix module init error paths for netlink
-Date:   Thu, 20 Dec 2018 10:18:30 +0100
-Message-Id: <20181220085827.197702334@linuxfoundation.org>
+Subject: [PATCH 4.4 19/40] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
+Date:   Thu, 20 Dec 2018 10:18:31 +0100
+Message-Id: <20181220085827.234545968@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -65,57 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
+[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
 
-There is no unregister netlink notifier and family on error paths
-in init_mac80211_hwsim(). Also there is an error path where
-hwsim_class is not destroyed.
+This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
+Reference should not be made to session->leadconn when session->state is
+set to ISCSI_STATE_TERMINATE.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Fred Herard <fred.herard@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mac80211_hwsim.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/scsi/libiscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index ab480ea6d95a..0d1abcfec003 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3195,16 +3195,16 @@ static int __init init_mac80211_hwsim(void)
- 	if (err)
- 		return err;
- 
-+	err = hwsim_init_netlink();
-+	if (err)
-+		goto out_unregister_driver;
-+
- 	hwsim_class = class_create(THIS_MODULE, "mac80211_hwsim");
- 	if (IS_ERR(hwsim_class)) {
- 		err = PTR_ERR(hwsim_class);
--		goto out_unregister_driver;
-+		goto out_exit_netlink;
- 	}
- 
--	err = hwsim_init_netlink();
--	if (err < 0)
--		goto out_unregister_driver;
--
- 	for (i = 0; i < radios; i++) {
- 		struct hwsim_new_radio_params param = { 0 };
- 
-@@ -3310,6 +3310,8 @@ out_free_mon:
- 	free_netdev(hwsim_mon);
- out_free_radios:
- 	mac80211_hwsim_free();
-+out_exit_netlink:
-+	hwsim_exit_netlink();
- out_unregister_driver:
- 	platform_driver_unregister(&mac80211_hwsim_driver);
- 	return err;
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index a74f8fbefd33..009a2ef829d6 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2416,8 +2416,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
 -- 
 2.19.1
 
