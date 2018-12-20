@@ -2,116 +2,134 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABC8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37005C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A197C21773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="AJRBGyrG"
+	by mail.kernel.org (Postfix) with ESMTP id EE91F218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545336076;
+	bh=Kjplz9ZA7IwbwZHSPBvUNwVv/Uf7CYkybDnHHIWpqjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rkjR0oT7vxYUYZGA4PerSCXmVvGXeOdyuvs2DRwKzIEY9cjpFU7EQ9B1IS3mc2+1E
+	 udLr7Y2e1FJrFpKwl6I2h02LyPbLvOYwKBseNDXSD3b86Xw+3QMGLrZtLDkeLj4rbc
+	 R9O0SCnZF3RssBfdKyBQRbQFbUIFX0CaCDgtT5e4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732025AbeLTUAM (ORCPT
+        id S2388004AbeLTUBP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:00:12 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:60006 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbeLTUAL (ORCPT
+        Thu, 20 Dec 2018 15:01:15 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39197 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbeLTUBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:00:11 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 1F828C43
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 20:00:10 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id E2YPc2te3hPm for <linux-kernel@vger.kernel.org>;
-        Thu, 20 Dec 2018 14:00:10 -0600 (CST)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id E78AB272
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 14:00:09 -0600 (CST)
-Received: by mail-io1-f69.google.com with SMTP id i11so1016425iog.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 12:00:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=b8dgIikx7Ts1HlioLdKrv+YP/Ltg6pMHyP2ZQv2bWlw=;
-        b=AJRBGyrGAnWvvulxNEbiYMdVgJ36R29SfWK4s/YuNDCo8pkJX2OOhfZLv1UJzJc1la
-         08136Eqv4nRLrgyXe7wlgxemlqRRLY/qOiLLzp9VYOpeeMOTdQvMVR0xaz9/ntMGd/Nn
-         I46LX68XxT154fqv02gQloU3AMZ/pXH+KhyHDgaSK09bODVeCBoPhoRvMjVdelJWWejM
-         rBQENId1Jro55DL/7IOVPvacqIvRhmSV3nupqJTYLj9phZyG/IsazCQLsaquCp/tU68+
-         lvLoymo+Rah0k/rIv5TPuMQC8HYhKyBgrgBxPLBpiXQLKf6lmO6syt9KYSkpNANgCwiP
-         vo+w==
+        Thu, 20 Dec 2018 15:01:14 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i6so2902988oia.6;
+        Thu, 20 Dec 2018 12:01:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=b8dgIikx7Ts1HlioLdKrv+YP/Ltg6pMHyP2ZQv2bWlw=;
-        b=iHkRC6km2RqtF8+d97tl63OrwHKAamqYpXDjZwc/YflmhfPvGvC9kGyix4f16VJdGk
-         cNiMUIt/7AjVYn0NWHmMNqNv6iosO8KirgkVjSu6ymE56lcd8CeJfqSMDDEYkObmyUyj
-         JEdz4Rt+94cSnPGLOyPsWGSRd6yR4xDck6W0GkyagBs7mlcokascD7BjOuidV1khcaVS
-         g7CGjjb3/8GcIxKS6YeDBPi1hV+wJONq9u6Zn7AJ9sOgqFkS1JGdIr9aOLBpok/RPbEv
-         D/GXMWc06Oep0kGHfMO1L6TtzmE422g1HQX71pynmpH4FI776HvbJP6HrcbAEQKo27JH
-         c4vQ==
-X-Gm-Message-State: AA+aEWaYCtFWDLYPoC5SUk48IHsVCpmQrA+eV1Wsu5XRXKSgxJoXVQFx
-        c9oJkQjjK6wlUpclBhA9r+mfPX+OE6lHiPE52twTaGSEzNBbV+wXoVTgicrycYQV/W2URhauPu4
-        oxSvNSdhMWTG3o6XnXL8dN0yufUk2
-X-Received: by 2002:a6b:8d8a:: with SMTP id p132mr23042387iod.290.1545336009143;
-        Thu, 20 Dec 2018 12:00:09 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/V+lYSWOq+FdpYJoTxHwqJqjO2vjyKtGSaW/lDg5AGID0GeOw3fwgJ4tHR5dQ1wuP8B/vNyVA==
-X-Received: by 2002:a6b:8d8a:: with SMTP id p132mr23042369iod.290.1545336008873;
-        Thu, 20 Dec 2018 12:00:08 -0800 (PST)
-Received: from bee.cs.umn.edu (cs-bee0u.cs.umn.edu. [134.84.121.28])
-        by smtp.gmail.com with ESMTPSA id w3sm338804ior.28.2018.12.20.12.00.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 12:00:08 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rts5208: fix a missing check of ms read
-Date:   Thu, 20 Dec 2018 14:00:01 -0600
-Message-Id: <20181220200002.29685-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t3MrXUDVNap07upDxL0l4FILJcfu7jgTbXMFe35+0rg=;
+        b=pctNTt3IaoXKmNK9KNKsiSh7zuJMivEQaW/zbIT0hTBIEXsIOlarD2lQLjgNW1kReo
+         QVLc1BTsOwFGTE5TCnaxW0bcqPnpwH2kyCTmwYFIpcT8xSbNNIb6oco4hMFTlKy1dJo6
+         8sHkT3L4nwNjcC+paf+vpA5Nie/1wXJf5kcwJYpA+fkttHYTDrtrSR94Hh9dubHmDp0x
+         JYD8FpLn47WiCOr2ubYqrkyyZeD1OlDfhdaAHlXzy/7bFXfLCDrqHv2pv/kULWf3QVTB
+         7flvBmUzERg+xz6UL0Ph7qXeVxRTaSxGD7nKuQOFgHREedfFWycJqA+W6gipZsisf2Fb
+         eBvg==
+X-Gm-Message-State: AA+aEWbKBG9dYwz17lzVyS0DhKuzJFGx1CuFfBZlfnzljhPQRnJe3Jrs
+        0aNlVlUMbZEGElhw5mvM5A==
+X-Google-Smtp-Source: AFSGD/X5CCL8SSYoWWflQ55l4RxdiwlY0diYXSD+FaEmPPTqVlSzWQrw+U1GU9oMvzBD5tHZmLpR1A==
+X-Received: by 2002:aca:4b4f:: with SMTP id y76mr99969oia.88.1545336073491;
+        Thu, 20 Dec 2018 12:01:13 -0800 (PST)
+Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
+        by smtp.gmail.com with ESMTPSA id t2sm10484374otl.4.2018.12.20.12.01.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 12:01:12 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:01:11 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, balbi@kernel.org, rogerq@ti.com,
+        linux-kernel@vger.kernel.org, adouglas@cadence.com,
+        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
+        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
+Subject: Re: [PATCH v1 1/2] dt-bindings: add binding for USBSS-DRD controller.
+Message-ID: <20181220200111.GA27998@bogus>
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
+ <1544445555-17325-2-git-send-email-pawell@cadence.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544445555-17325-2-git-send-email-pawell@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When ms_read_extra_data fails, the data read in "extra" buffer is
-just incorrect and thus should be used. However, "extra" is used
-in multiple places no matter ms_read_extra_data() fails or not.
-The fix checks the status of ms_read_extra_data() and returns with
-an error code upon its failure.
+On Mon, Dec 10, 2018 at 12:39:14PM +0000, Pawel Laszczak wrote:
+> This patch aim at documenting USB related dt-bindings for the
+> Cadence USBSS-DRD controller.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  .../devicetree/bindings/usb/cdns3-usb.txt     | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/cdns3-usb.txt b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
+> new file mode 100644
+> index 000000000000..ae4a255f0b10
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/cdns3-usb.txt
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/staging/rts5208/ms.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+cdns-usb3.txt?
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index f53adf15c685..03b359ec69e6 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -1676,7 +1676,9 @@ static int ms_copy_page(struct rtsx_chip *chip, u16 old_blk, u16 new_blk,
- 			return STATUS_FAIL;
- 		}
- 
--		ms_read_extra_data(chip, old_blk, i, extra, MS_EXTRA_SIZE);
-+		retval = ms_read_extra_data(chip, old_blk, i, extra, MS_EXTRA_SIZE);
-+		if (retval != STATUS_SUCCESS)
-+			return STATUS_FAIL;
- 
- 		retval = ms_set_rw_reg_addr(chip, OverwriteFlag,
- 					    MS_EXTRA_SIZE, SystemParm, 6);
--- 
-2.17.1
+> @@ -0,0 +1,31 @@
+> +Binding for the Cadence USBSS-DRD controller
+> +
+> +Required properties:
+> +  - reg: Physical base address and size of the controller's register areas.
+> +	 Controller has 3 different regions:
+> +	 region 1 - HOST registers area
+> +	 region 2 - DEVICE registers area
+> +	 region 3 - OTG/DRD registers area
+> +  - compatible: Should contain: "cdns,usb3"
 
+Only 1 version of the IP block?
+
+> +  - interrupts: Interrupt specifier. Refer to interrupt bindings.
+> +		Driver supports only single interrupt line.
+> +                This single interrupt is shared between Device,
+> +		host and OTG/DRD part of driver.
+> +
+> +Optional propertiesi:
+
+typo
+
+> + - maximum-speed : valid arguments are "super-speed", "high-speed" and
+> +                   "full-speed"; refer to usb/generic.txt
+> + - dr_mode: Should be one of "host", "peripheral" or "otg".
+> + - phys: reference to the USB PHY
+> + - phy-names: name of the USB PHY, should be "cdns3,usbphy"
+
+Don't need -names when there is only one.
+
+> +
+> +
+> +Example:
+> +	usb@f3000000 {
+> +		compatible = "cdns,usb3";
+> +		interrupts = <USB_IRQ  7 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg = <0xf3000000 0x10000	//memory area for HOST registers
+> +			0xf3010000 0x10000	//memory area for DEVICE registers
+> +			0xf3020000 0x10000>;	//memory area for OTG/DRD registers
+> +	};
+> +
+> -- 
+> 2.17.1
+> 
