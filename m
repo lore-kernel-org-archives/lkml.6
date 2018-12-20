@@ -2,93 +2,73 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F3AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6A3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C24B9218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 146C821905
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545340544;
+	bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
+	h=To:References:Cc:From:In-Reply-To:Subject:Date:List-ID:From;
+	b=w1qcz2gwT1rfZig/7yKeLVoy5dJFShEt6wt3gTBGEOZ/R9uYquAGTfSQbxvMgFIYa
+	 1SNx5Ynjlf+S+lvw3EO/xVO+2RO9BRESE3hR0NoOrVzvW0ZZNPiJuHM9BfBjhbumik
+	 fmIJMkM1UuJkVa3ZV7on+/HY6lS78BDTS/2tUn7w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbeLTVOC (ORCPT
+        id S2389821AbeLTVPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:14:02 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49956 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbeLTVOC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:14:02 -0500
-Received: from 89-77-194-223.dynamic.chello.pl (89.77.194.223) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id c92e7aeba1ec9840; Thu, 20 Dec 2018 22:14:00 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND] PM / Domains: remove define_genpd_open_function() and define_genpd_debugfs_fops()
-Date:   Thu, 20 Dec 2018 22:13:33 +0100
-Message-ID: <3394539.b4fEdePmXH@aspire.rjw.lan>
-In-Reply-To: <CAPDyKFpZkmVOCOdkcOuF_4nGcy-mwW8BdYeE7CBR2eJH5Qn0cg@mail.gmail.com>
-References: <20181215084526.27210-1-tiny.windzz@gmail.com> <CAJZ5v0hW_SFsQ-oGaHUtxTEXTdNRkDjp4ZpS_MxEp9-jTYvoew@mail.gmail.com> <CAPDyKFpZkmVOCOdkcOuF_4nGcy-mwW8BdYeE7CBR2eJH5Qn0cg@mail.gmail.com>
+        Thu, 20 Dec 2018 16:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727703AbeLTVPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:15:42 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CB48218F0;
+        Thu, 20 Dec 2018 21:15:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545340542;
+        bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
+        h=To:References:Cc:From:In-Reply-To:Subject:Date:From;
+        b=HG+oagdZ7lQIl8JfYm8JmL4S7dgqWiQCkIpy3pLluT4AbyG6y4d9mfGjqKoCGTrEF
+         IXCn2XpXT8GMvORKYpY5qxBPhgab56OMoTWfyBEyFh5vwbW9alDqquCyVXiLUTnc3U
+         +O5m0WIOpV0uwajqXZIk0zmUDm1VYbVe1nCNXyM0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: alot/0.8
+To:     Derek Basehore <dbasehore@chromium.org>,
+        linux-kernel@vger.kernel.org
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        mturquette@baylibre.com, heiko@sntech.de, aisheng.dong@nxp.com,
+        mchehab+samsung@kernel.org, corbet@lwn.net,
+        Derek Basehore <dbasehore@chromium.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
+Message-ID: <154534054131.79149.12015186156265337224@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/6] Coordinated Clks
+Date:   Thu, 20 Dec 2018 13:15:41 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, December 19, 2018 10:20:22 AM CET Ulf Hansson wrote:
-> On Wed, 19 Dec 2018 at 10:17, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Wed, Dec 19, 2018 at 9:32 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Mon, Dec 17, 2018 at 09:19:07AM +0100, Ulf Hansson wrote:
-> > > > On Sat, 15 Dec 2018 at 09:45, Yangtao Li <tiny.windzz@gmail.com> wrote:
-> > > > >
-> > > > > We already have the DEFINE_SHOW_ATTRIBUTE, There is no need to define
-> > > > > such a macro, so remove define_genpd_open_function and
-> > > > > define_genpd_debugfs_fops.
-> > > > >
-> > > > > Convert them to DEFINE_SHOW_ATTRIBUTE.
-> > > > >
-> > > > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > > > > ---
-> > > > >  drivers/base/power/domain.c | 71 +++++++++++++------------------------
-> > > > >  1 file changed, 24 insertions(+), 47 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > > > > index 7f38a92b444a..10a61d6147d0 100644
-> > > > > --- a/drivers/base/power/domain.c
-> > > > > +++ b/drivers/base/power/domain.c
-> > > > > @@ -2671,7 +2671,7 @@ static int genpd_summary_one(struct seq_file *s,
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > -static int genpd_summary_show(struct seq_file *s, void *data)
-> > > > > +static int summary_show(struct seq_file *s, void *data)
-> > > >
-> > > > Why rename the function(s)?
-> > >
-> > > Because the macro requires it?
-> >
-> > Yeah.
-> >
-> > Ulf, this looks like a good cleanup to me, any objections to this one
-> > given the explanation above?
-> 
-> It looks good to me, I just didn't go into the details of how the
-> macro works. Now I know, so please add:
-> 
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Quoting Derek Basehore (2018-10-23 18:31:26)
+> Here's the first set of patches that I'm working on for the Common
+> Clk Framework. Part of this patch series adds a new clk op,
+> pre_rate_req. This is designed to replace the clk notifier approach
+> that many clk drivers use right now to setup alt parents or temporary
+> dividers. This should allow for the removal of the
+> CLK_RECALC_NEW_RATES flag and the implementation of a better locking
+> scheme for the prepare lock.
 
-So the patch has been applied, thanks!
+Are you going to resend this series? I can do a review but I wonder how
+much it will change anyway.
 
