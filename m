@@ -2,203 +2,151 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB5FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D701EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFCC21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A45021741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onelaird.onmicrosoft.com header.i=@onelaird.onmicrosoft.com header.b="smkaDWkM"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E4RlMnHM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730721AbeLTKT2 (ORCPT
+        id S1730674AbeLTKXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:19:28 -0500
-Received: from mail-bgr052100128065.outbound.protection.outlook.com ([52.100.128.65]:58784
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725795AbeLTKT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:19:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=onelaird.onmicrosoft.com; s=selector1-lairdtech-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ggFpBvM/n6fep8TC52/+g4MvxuwnAXhtAcfL6FsgAtE=;
- b=smkaDWkMwGjDiYRoL+xbv4R5Uc3jZFhIDhjeqCeGoz8sMd5Lpg35aOIkO7m3R/eb/SHs0aTfl7yoLlk1Kkqm4EaaXZ3iETY0/KHm6ufs7+lYyjX8iVMiEqCoQuKZ2dHYZFsA7bxBiehwjHmKgJD+nbD9QfqUOYeKZnPN4dw+jQg=
-Received: from BY1PR02MB1114.namprd02.prod.outlook.com (10.162.108.140) by
- BY1PR02MB1193.namprd02.prod.outlook.com (10.162.108.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Thu, 20 Dec 2018 10:19:08 +0000
-Received: from BY1PR02MB1114.namprd02.prod.outlook.com
- ([fe80::619e:d5fa:199e:c1b1]) by BY1PR02MB1114.namprd02.prod.outlook.com
- ([fe80::619e:d5fa:199e:c1b1%4]) with mapi id 15.20.1425.024; Thu, 20 Dec 2018
- 10:19:07 +0000
-From:   Ben Whitten <Ben.Whitten@lairdtech.com>
-To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
-CC:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        "linux-lpwan@lists.infradead.org" <linux-lpwan@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>
-Subject: RE: [PATCH v5 5/6] net: maclorawan: Implement maclorawan class module
-Thread-Topic: [PATCH v5 5/6] net: maclorawan: Implement maclorawan class
- module
-Thread-Index: AQHUlSj0xlSlK7vGv0u4S31FjvDsaKWC9/6AgAGZNICAAEksgIABC9DggABe0oCAASWggA==
-Date:   Thu, 20 Dec 2018 10:19:07 +0000
-Message-ID: <BY1PR02MB1114B352A3A73F8478AE667DE7BF0@BY1PR02MB1114.namprd02.prod.outlook.com>
-References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
- <20181216101858.9585-6-starnight@g.ncu.edu.tw>
- <20181217140233.GG2096@nanopsycho>
- <CAC=mGziN5KrXPMAXoN_hhfQrtofCeyzTr4AjbbJLOoJ+p2+Nng@mail.gmail.com>
- <60ff6940-4bcc-750c-ad38-0a183375169f@suse.de>
- <BY1PR02MB11148DBF420DCAC7CCDD8A79E7BE0@BY1PR02MB1114.namprd02.prod.outlook.com>
- <CAC=mGzg4TGCaNUbq=_kFqmF5VNFR6rWHVBwO_5Fprt0u3m1O9g@mail.gmail.com>
-In-Reply-To: <CAC=mGzg4TGCaNUbq=_kFqmF5VNFR6rWHVBwO_5Fprt0u3m1O9g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ben.Whitten@lairdtech.com; 
-x-originating-ip: [109.174.151.67]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR02MB1193;7:1qBqGKUFITVn/a9f6TdGrqgbYh6mnO7/C/WRv/EVUlnt/8mqGhX7lNbW43gzEvXWy+c5nHFTaIGzvaEu8k3ShBUgaVflTPe1BPVGnhjWOPkX2mT/2yUwRcn3vP4nsaQnYfD/Ub0jjJcmjepISvzR4g==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f48e35db-27a1-493e-f10b-08d66664939b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY1PR02MB1193;
-x-ms-traffictypediagnostic: BY1PR02MB1193:|BY1PR02MB1193:
-x-microsoft-antispam-prvs: <BY1PR02MB1193BC035EDE5CDDA69DCF0BE7BF0@BY1PR02MB1193.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(4982022)(52105112)(10201501046)(3002001)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BY1PR02MB1193;BCL:0;PCL:0;RULEID:;SRVR:BY1PR02MB1193;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(39860400002)(366004)(136003)(376002)(396003)(346002)(199004)(189003)(7416002)(305945005)(2906002)(9686003)(74316002)(6436002)(5660300001)(66066001)(68736007)(93886005)(8676002)(106356001)(71200400001)(446003)(71190400001)(478600001)(476003)(6506007)(229853002)(14454004)(6306002)(11346002)(486006)(72206003)(105586002)(186003)(86362001)(54906003)(26005)(53936002)(2171002)(4326008)(81156014)(316002)(55016002)(81166006)(256004)(76176011)(102836004)(33656002)(6116002)(97736004)(6246003)(3846002)(6916009)(966005)(8936002)(25786009)(14444005)(7736002)(7696005)(99286004)(4432625001);DIR:OUT;SFP:1501;SCL:5;SRVR:BY1PR02MB1193;H:BY1PR02MB1114.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: lairdtech.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1Jf6OXgVYPrb2gaZ9uR2y+9X84bYCf4qMydIvPCDmo/G8PbgUTq1TiuAuIWzONkq9+XQGghnYf5qet8MGR3yV6g9hE9xqlXU2Znq5XCYZuqx50x/hgbR//+oXpDgW77PUj80+nRwdkwPDA7NTQKZBYoVNqKMbi8rvdL5K/NoXbR42fpXVmwFSw3oL/hIMfluMT5hFnSQY5u/cdL4s1RpXdKoq5EjH8nggik5EuAZPdTggRz3m83o3Gh1+7KpTf2XOeehQbEbRJuPlR1xkxoY7CUTIm1tg8HsJGtWXJirFohQfpdeVyHCfZWrmmajE6Uhssf5cfL8vMjPMDUsIo7NRQQUjFo61nnCON+fQes1GMGDTbF9aecQuABVvfhZRfNJ0QLtj/RQkfbbceL2JukF6tEuJyGlaSJNz67rrt3OXkn4MqMEP53RCUOmHbiBKzsMDBhcNrO+TZIPbMNp6tUe6gSANqkDzGoRC9t5yTTXKygbDhQgYICdLUamuUgTTCSw
-spamdiagnosticoutput: 1:22
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: lairdtech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f48e35db-27a1-493e-f10b-08d66664939b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 10:19:07.6862
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c4d27a54-2db1-4088-a044-1a83c778ad1b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR02MB1193
+        Thu, 20 Dec 2018 05:23:02 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44083 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLTKXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 05:23:02 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181220102300euoutp0217903aa2bbf60436ff0a66f72d3ccb83~yA2ry7d1m2904229042euoutp02o;
+        Thu, 20 Dec 2018 10:23:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181220102300euoutp0217903aa2bbf60436ff0a66f72d3ccb83~yA2ry7d1m2904229042euoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545301380;
+        bh=gXXPWLyIIksGpJBpdP9wgUBqHTK9VHca9DO7KeBZFdA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=E4RlMnHMZHT3MHbORlOojrC9LWHcm5YwPZKRJ41JlhHVat2R0YKsQ7DquSnJ52b3k
+         wfe3oAuoQCd22TL5LYzzFnOsSPJs6fczCOoQP0vIyvcEiVnrYTEzKDBO5PPshW3zqG
+         C+4T4WLFJ1KncSjtdiwmgoqqEy3J04kypq+NbN4E=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181220102259eucas1p2ff36a1116e23abb31680baf332651443~yA2rUN4nM0445704457eucas1p26;
+        Thu, 20 Dec 2018 10:22:59 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 92.BC.04441.38D6B1C5; Thu, 20
+        Dec 2018 10:22:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181220102258eucas1p1ca5abb0b48d1f13d9234a4a7702a13da~yA2qnsYRf1719217192eucas1p1H;
+        Thu, 20 Dec 2018 10:22:58 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-be-5c1b6d836c8d
+Received: from eusync3.samsung.com ( [203.254.199.213]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 17.6E.04128.28D6B1C5; Thu, 20
+        Dec 2018 10:22:58 +0000 (GMT)
+Received: from AMDC3748.DIGITAL.local ([106.120.43.17]) by
+        eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PK100480669SP10@eusync3.samsung.com>;
+        Thu, 20 Dec 2018 10:22:58 +0000 (GMT)
+From:   Andrzej Hajda <a.hajda@samsung.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com,
+        Mark Brown <broonie@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: [PATCH v4 0/3] driver core: add probe error check helper
+Date:   Thu, 20 Dec 2018 11:22:44 +0100
+Message-id: <20181220102247.4911-1-a.hajda@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsWy7djP87rNudIxBrv/c1ncWneO1eLlhMOM
+        FhtnrGe1mPrwCZtF8+L1bBYLpy1ntNj0+BqrxeVdc9gsDk3dy2ix9shddou5X6YyO3B7XL52
+        kdlj56y77B6bVnWyeeyfu4bdY/OSeo/3+66yefRtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfG
+        4YWbWQr28FYcXJHYwPiaq4uRg0NCwERi2qOULkYuDiGBFYwSkyZ2M0M4nxklvh5aztLFyAlW
+        dKpxNRNEYhmjxNar16Cq/jNKLDy1kwmkik1AU+Lv5ptsILaIgLFE/9lZ7CBFzALzmCVevroD
+        ViQs4Chx7dAtZhCbRUBVYuqGpawgNq+AucSJ+S1Q6+QlVm84ALZBQmABm8TXxufMEAkXiaMr
+        J0EVCUu8Or6FHcKWkbg8uRsqXi/RNPMKVHMHo8SJxcvZIBLWEoePXwTbxizAJzFp23RmSAjw
+        SnS0CUGUeEhc3HQHrERIIFbi+6rVLBMYJRYwMqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P
+        3cQIjNXT/45/2sH49VLSIUYBDkYlHt4ZUVIxQqyJZcWVuYcYJTiYlUR4H2dJxwjxpiRWVqUW
+        5ccXleakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgSTZeLglGpgbN21SfM2ry1PLvdJpg9V
+        qRPym1bdudB9zUP1o97VuyvEyj73vdP9Xi67V+fAYtuzi/98qjorH/T26r/nz+encc9fXp2j
+        8r5P8eDdmasld1i8/Mg+R/Hl6YSwB9N3eofv6OxceMXB9fycf071Mxd/7Xmt9OjDX7u7sgu/
+        HJp0NXal7KqcQ8f/1yxXYinOSDTUYi4qTgQAndPLoNECAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsVy+t/xq7pNudIxBjsnqVvcWneO1eLlhMOM
+        FhtnrGe1mPrwCZtF8+L1bBYLpy1ntNj0+BqrxeVdc9gsDk3dy2ix9shddou5X6YyO3B7XL52
+        kdlj56y77B6bVnWyeeyfu4bdY/OSeo/3+66yefRtWcXo8XmTXABHFJdNSmpOZllqkb5dAlfG
+        4YWbWQr28FYcXJHYwPiaq4uRk0NCwETiVONqpi5GLg4hgSWMEgfvPGGEcBqZJM5uesMCUsUm
+        oCnxd/NNNhBbRMBYov/sLHaQImaBRcwSe9ftYwVJCAs4Slw7dIsZxGYRUJWYumEpWJxXwFzi
+        xPwWFoh18hKrNxxgnsDItYCRYRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgQG079nPLDsau
+        d8GHGAU4GJV4eGdEScUIsSaWFVfmHmKU4GBWEuF9nCUdI8SbklhZlVqUH19UmpNafIhRmoNF
+        SZz3vEFllJBAemJJanZqakFqEUyWiYNTqoGxLVrw0OcnFkuWWl56+oBh3vdVM63tfh16+Hhi
+        VVpOqArHRMbkOLf1u6XqH5z5IJV897mekd8/vbePChaV/dxjt3BRZePJK+2XHz31aQnZyPN3
+        y/nmW9dWvc79dedGz7dlNcfd1W9rXG/J3XnV/4el6wc7hpI3706oNyj56bGyLnkvu/SgcpSz
+        ghJLcUaioRZzUXEiAE/OtsMkAgAA
+X-CMS-MailID: 20181220102258eucas1p1ca5abb0b48d1f13d9234a4a7702a13da
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181220102258eucas1p1ca5abb0b48d1f13d9234a4a7702a13da
+References: <CGME20181220102258eucas1p1ca5abb0b48d1f13d9234a4a7702a13da@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ID4gQW0gMTguMTIuMTggdW0gMTU6Mjcgc2NocmllYiBKaWFuLUhvbmcgUGFuOg0KPiA+ID4g
-Pj4gU3VuLCBEZWMgMTYsIDIwMTggYXQgMTE6MTg6NTlBTSBDRVQsIHN0YXJuaWdodEBnLm5jdS5l
-ZHUudHcgd3JvdGU6DQo+ID4gPiA+Pj4gTG9SYVdBTiBkZWZpbmVkIGJ5IExvUmEgQWxsaWFuY2Uo
-VE0pIGlzIHRoZSBNQUMgbGF5ZXIgb3ZlciBMb1JhDQo+ID4gPiBkZXZpY2VzLg0KPiA+ID4gPj4+
-DQo+ID4gPiA+Pj4gVGhpcyBwYXRjaCBpbXBsZW1lbnRzIHBhcnQgb2YgQ2xhc3MgQSBlbmQtZGV2
-aWNlcyBTb2Z0TUFDIGRlZmluZWQgaW4NCj4gPiA+ID4+PiBMb1JhV0FOKFRNKSBTcGVjaWZpY2F0
-aW9uIFZlci4gMS4wLjI6DQo+ID4gPiA+Pj4gMS4gRW5kLWRldmljZSByZWNlaXZlIHNsb3QgdGlt
-aW5nDQo+ID4gPiA+Pj4gMi4gT25seSBzaW5nbGUgY2hhbm5lbCBhbmQgc2luZ2xlIGRhdGEgcmF0
-ZSBmb3Igbm93DQo+ID4gPiA+Pj4gMy4gVW5jb25maXJtZWQgZGF0YSB1cC9kb3duIG1lc3NhZ2Ug
-dHlwZXMNCj4gPiA+ID4+Pg0KPiA+ID4gPj4+IE9uIHRoZSBvdGhlciBzaWRlLCBpdCBkZWZpbmVz
-IHRoZSBiYXNpYyBpbnRlcmZhY2UgYW5kIG9wZXJhdGlvbg0KPiA+ID4gPj4+IGZ1bmN0aW9ucyBm
-b3IgY29tcGF0aWJsZSBMb1JhIGRldmljZSBkcml2ZXJzLg0KPiA+ID4gPj4+DQo+ID4gPiA+Pj4g
-U2lnbmVkLW9mZi1ieTogSmlhbi1Ib25nIFBhbiA8c3Rhcm5pZ2h0QGcubmN1LmVkdS50dz4NCj4g
-PiA+IFsuLi5dDQo+ID4gPiA+Pj4gbmV0L21hY2xvcmF3YW4vS2NvbmZpZyAgfCAgMTQgKw0KPiA+
-ID4gPj4+IG5ldC9tYWNsb3Jhd2FuL01ha2VmaWxlIHwgICAyICsNCj4gPiA+ID4+PiBuZXQvbWFj
-bG9yYXdhbi9tYWMuYyAgICB8IDU1NQ0KPiA+ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrDQo+ID4gPiA+Pj4gbmV0L21hY2xvcmF3YW4vbWFpbi5jICAgfCA2MDYNCj4gPiA+
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4+PiA0IGZp
-bGVzIGNoYW5nZWQsIDExNzcgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPj4+IGNyZWF0ZSBtb2RlIDEw
-MDY0NCBuZXQvbWFjbG9yYXdhbi9LY29uZmlnDQo+ID4gPiA+Pj4gY3JlYXRlIG1vZGUgMTAwNjQ0
-IG5ldC9tYWNsb3Jhd2FuL01ha2VmaWxlDQo+ID4gPiA+Pj4gY3JlYXRlIG1vZGUgMTAwNjQ0IG5l
-dC9tYWNsb3Jhd2FuL21hYy5jDQo+ID4gPiA+Pj4gY3JlYXRlIG1vZGUgMTAwNjQ0IG5ldC9tYWNs
-b3Jhd2FuL21haW4uYw0KPiA+ID4gPj4NCj4gPiA+ID4+IEkgZG9uJ3QgZ2V0IGl0LiBJbiBwYXRj
-aCAiQWRkIExvUmFXQU4gQVBJIGRlY2xhcmF0aW9uIGZvciBMb1JhIGRldmljZXMiDQo+ID4gPiA+
-PiB5b3UgYWRkIGhlYWRlcnMgZm9yICJBUEkiIGFuZCBoZXJlIHlvdSBpbXBsZW1lbnQgZnVuY3Rp
-b25zLiBUaGF0IGlzDQo+IGp1c3QNCj4gPiA+ID4+IHdlaXJkLiBEb2VzIGl0IG1lYW4geW91IGNh
-biBoYXZlIG90aGVyIGltcGxlbWVudGF0aW9ucz8NCj4gPiA+ID4NCj4gPiA+ID4gTG9SYVdBTiBk
-ZWZpbmVkIGJ5IExvUmEgQWxsaWFuY2UoVE0pIGlzIHRoZSBNQUMgbGF5ZXIgb3ZlciBMb1JhIFBI
-WS4NCj4gPiA+ID4gVGhpcyBwYXJ0IGlzIHNvZnQtTUFDIGFzIEFuZHJlYXMgbWVudGlvbmVkDQo+
-ID4gPiA+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL3BpcGVybWFpbC9saW51eC1scHdhbi8y
-MDE4LQ0KPiA+ID4gRGVjZW1iZXIvMDAwMDEwLmh0bWwNCj4gPiA+ID4NCj4gPiA+ID4+IEFsc28s
-IHlvdSBkb24ndCByZWFsbHkgaGF2ZSBhbnkgdXNlciBvZiB0aGlzIEFQSSBpbiB0aGUgc2V0LiBQ
-bGVhc2UNCj4gPiA+ID4+IGludHJvZHVjZSBhdCBsZWFzdCAxIGRyaXZlciwgcHJlZmVyYWJseSBt
-b3JlIChJIHNlZSB0aGF0IEFuZHJlYXMgaGFzDQo+ID4gPiA+PiBtdWx0aXBsZSBvbmVzIGluIGhp
-cyBwYXRjaHNldCkuIFlvdSBjYW5ub3QgcHVzaCBrZXJuZWwgaW5mcmFzdHJ1Y3R1cmUNCj4gPiA+
-ID4+IHdpdGhvdXQga2VybmVsIHVzZXIuDQo+ID4gPiA+DQo+ID4gPiA+IFRoZSBzb2Z0LU1BQyBp
-cyBzdWl0YWJsZSBmb3IgdGhlIExvUmEgY2hpcHMnIGRldmljZSBkcml2ZXJzLCBsaWtlDQo+ID4g
-PiA+IHN4MTI3Ni83Ny83OC83OSwgUkZNOTUvOTYvOTcvOThXIC4uLg0KPiA+ID4gPiBTdGlsbCB3
-YWl0aW5nIGZvciBBbmRyZWFzJyBzeDEyNzYgdmVyc2lvbiAyIHBhdGNoIGFuZCBtb3JlIGRpc2N1
-c3Npb24uDQo+ID4gPg0KPiA+ID4gc3gxMjc2IHJlZ21hcCBjb252ZXJzaW9uIHdhcyBwdXNoZWQg
-dG8gbXkgc3RhZ2luZyB0cmVlIHRvZ2V0aGVyIHdpdGgNCj4gPiA+IEJlbidzIHN4MTMwMSBmaW5h
-bCBjb252ZXJzaW9uIGxhc3QgbmlnaHQsIGxpZ2h0bHkgdGVzdGVkLg0KPiA+ID4NCj4gPiA+IGh0
-dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2FmYWVyYmVyL2xp
-bnV4LQ0KPiA+ID4gbG9yYS5naXQvbG9nLz9oPWxvcmEtbmV4dA0KPiA+ID4NCj4gPiA+IFRCRDog
-cmVuYW1lIHRvIHN4MTI3eCwgaW1wbGVtZW50IHJlZ21hcCBmaWVsZHMsIG9ubHkgYXV0by1kZXRl
-Y3QgcmVzZXQNCj4gPiA+IHdoZW4gbm8gT0Ygbm9kZSBhdmFpbGFibGUgKGFsbCBsb3cgcHJpb3Jp
-dHkgYXRtLCBwYXRjaGVzIHdlbGNvbWUpDQo+ID4gPg0KPiA+ID4gKGFuZCBmb3Igc3gxMzAxIEkg
-c3RpbGwgbmVlZCB0byB1cGRhdGUgbXkgRFQgb3ZlcmxheXMgd2l0aCB0aGUgbmV3IGNsaykNCj4g
-PiA+DQo+ID4gPiA+IEZvciBleGFtcGxlLCBob3cgdG8gbWFrZSBQRl9MT1JBIGFuZCBQRl9MT1JB
-V0FOIGxpa2UgRXRoZXJuZXQsDQo+ID4gPiBQRl9JTkVUDQo+ID4gPiA+IGFuZCBQRl9JTkVUNiBk
-b24ndCBuZWVkIHNlcGFyYXRlIGRldmljZXMgZWl0aGVyLCBib3RoIHVzZSBldGgwLg0KPiA+ID4g
-PiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxOC84LzMvMjY2DQo+ID4gPg0KPiA+ID4gSmlyaSwg
-SSBhbSBleHBlY3RpbmcgdGhlIG1hY2xvcmF3YW4gZHJpdmVyIHRvIGxvd2VyIHBhY2tldHMgZnJv
-bQ0KPiA+ID4gRVRIX1BfTE9SQVdBTiB0byBFVEhfUF9MT1JBIGluIGEgZ2VuZXJpYyB3YXksIHNv
-IHRoYXQgYW55IG9mIHRoZSBMb1JhDQo+ID4gPiBkZXZpY2UgZHJpdmVycyBjYW4gYmVuZWZpdCBv
-ZiBpdCwgd2l0aCBtYWNsb3Jhd2FuIHVzaW5nIHRoZSBMb1JhIG5ldGxpbmsNCj4gPiA+IGNvbW1h
-bmRzIHRoYXQgdGhlIGluZGl2aWR1YWwgZHJpdmVycyBpbXBsZW1lbnQuDQo+ID4gPiBOb3Qgc3Vy
-ZSB3aGF0IGlmIGFueXRoaW5nIGlzIG1pc3NpbmcgZm9yIHRoYXQgaW4gdGhlIGN1cnJlbnQgcmV2
-aXNpb24/DQo+ID4gPiBTdGlsbCBkZWFsaW5nIHdpdGggdGhlIGxvd2VyLWxldmVsIGluZnJhc3Ry
-dWN0dXJlIGFuZCBteSB0ZXN0IHNldHVwIC4uLg0KPiA+ID4gcHJvZ3Jlc3Npbmcgc2xvd2x5Lg0K
-PiA+ID4NCj4gPiA+IEknbGwgcHJvYmFibHkgbmVlZCB0byBxdWV1ZSB0aGUgcmVtYWluaW5nIGdl
-bmVyaWMgTG9SYVdBTiBwYXJ0IDEvNiBpbiBteQ0KPiA+ID4gdHJlZSB0byByZXNvbHZlIHRoaXMg
-Y2lyY3VsYXIgZGVwZW5kZW5jeSBiZXR3ZWVuIEppYW4tSG9uZyBhbmQgbWUsIHNvDQo+ID4gPiB0
-aGF0IG9ubHkgdGhlIHNvZnQtTUFDIGltcGxlbWVudGF0aW9uIHJlbWFpbnMgYSBzZXBhcmF0ZSBw
-YXRjaCBzZXJpZXMuDQo+ID4gPiBUaGUgaGFyZC1NQUMgaW1wbGVtZW50YXRpb25zIHdpbGwgYmUg
-b24gbXkgcGxhdGUgbW9zdGx5LCBhcyBib3RoIFNYMTI3Ng0KPiA+ID4gYW5kIFNYMTMwMSBuZWVk
-IHRoZSBzb2Z0LU1BQy4NCj4gPg0KPiA+IE9uIHRoZSBTWDEzMDEgc2lkZSBvZiB0aGluZ3MsIHRo
-ZSBhYmlsaXR5IHRvIHNlbmQgbWVzc2FnZXMgYXMgYSBMb1JhV0FODQo+ID4gbm9kZSBkZXZpY2Ug
-aXMgYSBuaWNoZSB1c2UgY2FzZSwgdGhlIG1ham9yaXR5IGlmIG5vdCBhbGwgcGVvcGxlIHdpbGwg
-dXNlIHRoZQ0KPiA+IGNvbmNlbnRyYXRvciBjYXJkIGFzIHRoZSBwYXNzIHRocm91Z2ggZ2F0ZXdh
-eSB0byB0aGUgbm9kZS4NCj4gPg0KPiA+IEluIHRoaXMgbW9kZSBvZiBvcGVyYXRpb24gdGhlIHBh
-cmFtZXRlcnMgZm9yIHRyYW5zbWlzc2lvbiBzdWNoIGFzOw0KPiBmcmVxdWVuY3ksDQo+ID4gc3By
-ZWFkaW5nIGZhY3RvciAvIGRhdGEgcmF0ZSwgcG93ZXIsIGFyZSBnaXZlbiBieSBhIHJlbW90ZSBz
-ZXJ2ZXIgYW5kIHBhc3NlZA0KPiA+IGluIGZyb20gdGhlIHVzZXJzcGFjZSBhcHBsaWNhdGlvbiB3
-aGljaCByZWNlaXZlZCBpdC4NCj4gPiBFdmVudHVhbGx5IGluIHRoZSBrZXJuZWwgdGhlc2UgbmVl
-ZCB0byBiZSBjaGVja2VkIGxvY2FsbHkgdG8gZW5zdXJlDQo+IHJlZ3VsYXRvcnkNCj4gPiBjb21w
-bGlhbmNlLg0KPiA+IFRvIHRoYXQgZW5kIEkgaGF2ZSBleHBlcmltZW50ZWQgd2l0aCBmcmFtaW5n
-LCBhcyBDQU4gZG9lcywgc28gdGhhdCB0aGlzDQo+ID4gbWV0YWRhdGEgY2FuIGJlIHByb3ZpZGVk
-IG9uIGEgd3JpdGUgZnJvbSB1c2Vyc3BhY2UgdG8gdGhlIFNYMTMwMSBkcml2ZXIuDQo+ID4NCj4g
-PiBTb3VuZHMgbGlrZSB3ZSBuZWVkIGRpZmZlcmVudCBwcm90b2NvbHMgZm9yIGZyYW1pbmcgd2l0
-aGluIHRoZSBwcm90b2NvbA0KPiBmYW1pbHkuDQo+ID4gUmF3IGluIHRoZSBjYXNlIG9mIG5vZGVz
-IGFuZCBmcmFtZWQgd2l0aCBtZXRhZGF0YSBpbiB0aGUgY2FzZSBvZg0KPiBjb25jZW50cmF0b3IN
-Cj4gPiBjYXJkcywgdGhvdWdodHM/DQo+IA0KPiBZZXMsIEkgaGF2ZSB0aG91Z2h0IHRoZSByb2xl
-cyBvZiBub2RlIGFuZCBnYXRld2F5LiAgVGhleSBtYXkgaGF2ZQ0KPiBkaWZmZXJlbnQgc2tiIHBh
-c3NpbmcgcGF0aHMuDQo+IEFzIHlvdSBtZW50aW9uZWQsIG1hbnkgdGhpbmdzIG9mIHRoZSBnYXRl
-d2F5IGlzIGNvbnRyb2xsZWQgYnkgdGhlDQo+IHJlbW90ZSBzZXJ2ZXIuICBTbywgSSBvbmx5IGlt
-cGxlbWVudCB0aGUgcGF0aCBmb3Igbm9kZXMgcmlnaHQgbm93Lg0KPiBNYXliZSwgd2UgY2FuIGhh
-dmUgYSByb2xlIGZsYWc6IG5vZGUsIGdhdGV3YXkgd2hpY2ggY2FuIGJlIGFzc2lnbmVkIGJ5DQo+
-IHNvbWUgd2F5LiAgVGhlbiwgdGhlIHNrYiBjYW4gYmUgZGVjb2RlLCBjaGVja2VkIGFuZCBwYXNz
-ZWQgYWNjb3JkaW5nDQo+IHRvIHRoZSByb2xlIGZsYWcuICBBbmQgbW9kdWxlIGFsc28gY2hlY2tz
-IHRoZSBpbnRlZ3JpdHkgKE1JQywgbGVuZ3RoDQo+IC4uLikgYW5kIGZpbHRlciBvdXQgdGhlIGJh
-ZCBza2IgYmVmb3JlIHNlbmRzIHRvIG5leHQgc3RvcC4NCg0KQXMgSVAgaGF2ZSBJUFBST1RPX1RD
-UCwgSVBQUk9UT19VRFAsIGV0YyBtYXliZSB3ZSBjYW4gaGF2ZQ0KTE9SQV9QUk9UT19NT0RVTEUs
-IExPUkFfUFJPVE9fR0FURVdBWSB3aGljaCBkaWN0YXRlcyB0aGUNCnBhdGh3YXkgYW5kIHNrYiBm
-b3JtYXQuDQoNCj4gPiBJIHdpbGwgc2VuZCBteSBleHBlcmltZW50IFJGQyB0byB0aGUgbHB3YW4g
-bWFpbGluZyBsaXN0Lg0KPiANCj4gT3IgeW91IGNhbiBzZW5kIHRoZSBSRkMgZmlyc3QuICBUaGVu
-IHdlIGNhbiBoYXZlIHRoZSBza2IgcGFzc2luZyBwYXRoDQo+IGZvciBnYXRld2F5IGFuZCBmaWd1
-cmUgb3V0IGhvdyB0byBwdXQgdGhlbSB0b2dldGhlci4NCj4gDQo+IERvZXMgdGhpcyBzb3VuZCBy
-ZWFzb25hYmxlPw0KDQpTZW50LCBpdCdzIGJlaW5nIGhlbGQgYXQgbWFpbGluZyBsaXN0IGZvciBt
-b2RlcmF0b3IgYXBwcm92YWwgYnV0IHNob3VsZCBiZSBpbg0KeW91ciBpbmJveGVzIGN1cnJlbnRs
-eS4NCg0KUmVnYXJkcywNCkJlbg0K
+Hi Greg, Rafael,
+
+This patchset proposes probe helper function which should simplify little bit
+resource acquisition error handling, it also extend it with adding defer probe
+reason to devices_deferred property:
+
+This patchset is actually resend of the most important 1st and 2nd patch.
+
+I have also attached patch adding probe_err_ptr - it will allow to replace
+quite frequent calls:
+    probe_err(dev, PTR_ERR(ptr), ...)
+with
+    probe_err_ptr(dev, ptr, ...)
+
+I have dropped the last patch showing usage of probe_err(_ptr)? as it is
+very big, should be split per subsystem, and should be applied after merge
+of patches introducing probe_err(_ptr) helpers.
+
+Just for the record - my dirty cocci script generates patch which replaces
+code with probe_err* helpers with following stats (on linux_next branch):
+   1585 probe_err
+   1194 probe_err_ptr
+   1638 files changed, 6487 insertions(+), 9163 deletions(-).
+Of course there are much more places where probe_err* can be applied, the script
+tries to catch the most obvious ones.
+More importantly probe_err should handle probe errors more correctly
+and uniformly than it is done now.
+
+If this patchset will be accepted I will try to send patches introducing probe_err*
+per subsystem.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (3):
+  driver core: add probe_err log helper
+  driver core: add deferring probe reason to devices_deferred property
+  driver core: add probe_err_ptr helper
+
+ drivers/base/base.h    |  3 +++
+ drivers/base/core.c    | 40 ++++++++++++++++++++++++++++++++++++++++
+ drivers/base/dd.c      | 21 ++++++++++++++++++++-
+ include/linux/device.h |  5 +++++
+ 4 files changed, 68 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
