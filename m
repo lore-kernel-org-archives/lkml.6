@@ -2,121 +2,123 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ADDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E41C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261EC217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C30A5217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kkc9yjgS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732096AbeLTM3A (ORCPT
+        id S1732110AbeLTM3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:29:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45212 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731181AbeLTM27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:28:59 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C726C05B02A;
-        Thu, 20 Dec 2018 12:28:59 +0000 (UTC)
-Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 411C5100034B;
-        Thu, 20 Dec 2018 12:28:51 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 13:28:49 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Michael Mueller <mimu@linux.ibm.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH v5 08/15] KVM: s390: add the GIB and its related
- life-cyle functions
-Message-ID: <20181220132849.2b7cf473.cohuck@redhat.com>
-In-Reply-To: <20181219191756.57973-9-mimu@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
-        <20181219191756.57973-9-mimu@linux.ibm.com>
-Organization: Red Hat GmbH
+        Thu, 20 Dec 2018 07:29:05 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45681 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbeLTM2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:28:05 -0500
+Received: by mail-qt1-f195.google.com with SMTP id e5so1505127qtr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:28:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BYfZwtNqPkn0guvWm4B86oIzil/V0+VJgO7LgjhvR+A=;
+        b=Kkc9yjgS2z3gT9tpwNAhcxGRhX0aiiLe9DeM7uGCnNr1nJO5SWAf+ujrmy7+fpYLmi
+         AH+IyM2aJo4SVPFEXzo1ExC0CEXkkf3kLnDoMpuCAbjETqsElgNfn9GIpQs6mXMjtrme
+         ULzmeYAVK7Ht9lJMXHR+5dTvy9WPcCRbnE7Ly4ddY1XWVGJrRi9vgehmAWQSLkEbReUf
+         55hofJFxwDtthZmfmJ7lSCxssJCa0eOJ8y5M38g0WPdnaWYpEtagq6zhn4+i/i+B16hM
+         rOcDAsBt/OSyrCwHWDW1mJBJbcpF4jEBllrJUsfdkPiIShPQGFzG/mnl6ez7ihmjk5l8
+         Bzhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BYfZwtNqPkn0guvWm4B86oIzil/V0+VJgO7LgjhvR+A=;
+        b=dzEbVrkv5VA1UkW1mc7ZHD4uo032rsk0iYoPe/jft3pNgTB99YRQAVqzn78GVN3IFw
+         IDJz/MnCeoIRT2O9MkJ6TjoT4mBaWRx/GvNdSLKmP3e/F8Z6WExK3Ipd+4Qzl+a423BK
+         aQUha2OeIoLoQvlyU+q2ZNGkqYcctvYru8/mANb7Q3pk5FBznsviU2SnJm/a+lEAlynt
+         TxJB+7lbqwPuqZfxX419vCkWJOqgDTIKn2YwovFi/uqcYp5fjBWGVqR+e0aXh6VW9Te1
+         38ssPPqc0o4gMR08A9y1X0EAeps6eLYn5HfvY4ayeifAJc/bUEf1xEg0KNErdzoV0kX2
+         0WOg==
+X-Gm-Message-State: AA+aEWZcmkBxj3qwNib2XHZz3yarF0G2ZIT5gRt3c9lL4jumn2q+J8ZV
+        mGRxqazVfM9T4Ax+En6q5jY=
+X-Google-Smtp-Source: AFSGD/V24ndGkLR0w2GjefebOysGcqnxgty1oZWtZVGCQJksNhjSS1qjO97OsUq1WeTQl31A3L5ltA==
+X-Received: by 2002:ac8:2adb:: with SMTP id c27mr25000555qta.188.1545308883487;
+        Thu, 20 Dec 2018 04:28:03 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id d199sm2930874qkc.76.2018.12.20.04.27.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 04:28:03 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:27:57 -0200
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/7] drm: i915: Cleanup drm_display_mode print str
+Message-ID: <087e07a388c7c65b6d0ec50db069640e4eb32fdf.1545308167.git.shayenneluzmoura@gmail.com>
+References: <cover.1545308167.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Dec 2018 12:28:59 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1545308167.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018 20:17:49 +0100
-Michael Mueller <mimu@linux.ibm.com> wrote:
+This patch adjust the print string of drm_display_mode object
+to remove drm_mode_object dependency in i915 files.
+It modifies the print style to standardize the use of DRM_MODE_FMT.
 
-> The Guest Information Block (GIB) links the GISA of all guests
-> that have adapter interrupts pending. These interrupts cannot be
-> delivered because no vcpu of these guests is currently running in
-> SIE context. Instead, a GIB alert is issued on the host to schedule
-> these guests to run.
-> 
-> This mechanism allows to process adapter interrupts for currently
-> not running guests.
-> 
-> The GIB is created during host initialization and associated with
-> the Adapter Interruption Facility in case an Adapter Interruption
-> Virtualization Facility is available.
-> 
-> The GIB initialization and thus the activation of the related code
-> will be done in an upcoming patch of this series.
-> 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/include/asm/kvm_host.h | 10 +++++++++
->  arch/s390/kvm/interrupt.c        | 44 ++++++++++++++++++++++++++++++++++++++++
->  arch/s390/kvm/kvm-s390.c         |  1 +
->  arch/s390/kvm/kvm-s390.h         |  2 ++
->  4 files changed, 57 insertions(+)
+Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-> +int kvm_s390_gib_init(u8 nisc)
-> +{
-> +	int rc = 0;
-> +
-> +	if (!css_general_characteristics.aiv) {
-> +		KVM_EVENT(3, "%s", "gib not initialized, no AIV facility");
-> +		goto out;
-> +	}
-> +
-> +	gib = (struct kvm_s390_gib *)get_zeroed_page(GFP_KERNEL | GFP_DMA);
-> +	if (!gib) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	gib->nisc = nisc;
-> +	if (chsc_sgib((u32)(u64)gib)) {
-> +		pr_err("Associating the GIB with the AIV facility failed\n");
+---
+Changes in v2:
+  - Use DRM_MODE_FMT/ARG macros (Daniel)
+  - Make the commit message more clear
 
-I presume that logging the chsc response code (or returning it instead
-of -EIO) would not give any interesting information?
+ drivers/gpu/drm/i915/i915_debugfs.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-> +		free_page((unsigned long)gib);
-> +		gib = NULL;
-> +		rc = -EIO;
-> +		goto out;
-> +	}
-> +
-> +	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
-> +out:
-> +	return rc;
-> +}
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 7f455bca528e..a63d084c8e96 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -2948,14 +2948,7 @@ static void intel_seq_print_mode(struct seq_file *m, int tabs,
+ 	for (i = 0; i < tabs; i++)
+ 		seq_putc(m, '\t');
+ 
+-	seq_printf(m, "id %d:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
+-		   mode->base.id, mode->name,
+-		   mode->vrefresh, mode->clock,
+-		   mode->hdisplay, mode->hsync_start,
+-		   mode->hsync_end, mode->htotal,
+-		   mode->vdisplay, mode->vsync_start,
+-		   mode->vsync_end, mode->vtotal,
+-		   mode->type, mode->flags);
++	seq_printf(m, DRM_MODE_FMT "\n", DRM_MODE_ARG(mode));
+ }
+ 
+ static void intel_encoder_info(struct seq_file *m,
+-- 
+2.17.1
 
-Anyhow,
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
