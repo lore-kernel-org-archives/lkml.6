@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3106EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393CFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE46320656
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 096F0217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297852;
-	bh=cqiNFxuf1799ohMg7WhQQIjFVxM1Ktg2jgqP18gOtdY=;
+	s=default; t=1545297856;
+	bh=I2XVjXBPh58c80D1wsXDQJLL+V3LSpXAR/TqQpIZhZ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dutflogf7t+cRzJPUGTm14ahMmEZyArlDBskKWfoPAQQVwJkPzKsK/8LLB2wgpjbc
-	 MLN8M8XgDKmxB7C+C59PrTPe8RXCTxkBWlDZktFkh/QZi8q/hPbvKuTNPpxOm1+JD+
-	 LIOdEcpeXYt5V6rv3riD10BILCfasUZKg+JQGLG0=
+	b=xegMPhE0hCWy7ozxaWF8h3sVV6KPFORGlNRCOqULgA5FQ/Tcbhwnf5Ut3NCgMRFsb
+	 sX0gMq4GF7cP2pWFGlnto65DIzCXS8qh1yjospFoH+OaTzZo7m8zOliavmSvwPfsJy
+	 rE1SVxJhYTGdjt37a3nxBKW3Zm5Tg47tft4HkKgs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbeLTJYL (ORCPT
+        id S1731785AbeLTJYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60538 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:24:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730167AbeLTJYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:08 -0500
+        id S1731766AbeLTJYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75A8B217D7;
-        Thu, 20 Dec 2018 09:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15F9320656;
+        Thu, 20 Dec 2018 09:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297847;
-        bh=cqiNFxuf1799ohMg7WhQQIjFVxM1Ktg2jgqP18gOtdY=;
+        s=default; t=1545297850;
+        bh=I2XVjXBPh58c80D1wsXDQJLL+V3LSpXAR/TqQpIZhZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d5z/4snzEJL1fJ7JUWz5gQQGRHsyEV3xOClQOaAc1T47M9eWZipgcmhlYhbdP+jJ+
-         Bkkto/HK+DBw3YBDtTgLneZfVZk0nKqFIgv3+gKr0ewCNqNfmbK3fs7X5O4haDA/mX
-         qxl/0zMYTGQpa5s1COPNGP1Lx3fCVJw1067G76+U=
+        b=PsMUV0GjirKntAw5mR8o58inN1kd2sl/E56fy456qp6xgqnr5u5F42L4C0pDN680W
+         hUufN9dd5UBSlTOHs7cLg9R6lvEMh9neXNuE2QBu4si3SOer5+AyK2ntDhP0GVe79C
+         M7M2i0nSCgDpxW5zIBu8991SIafUUQ0MpE6TrWnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 39/61] SUNRPC: Fix a potential race in xprt_connect()
-Date:   Thu, 20 Dec 2018 10:18:39 +0100
-Message-Id: <20181220085845.342207898@linuxfoundation.org>
+Subject: [PATCH 4.9 40/61] sbus: char: add of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:40 +0100
+Message-Id: <20181220085845.387670480@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -65,44 +65,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
+[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
 
-If an asynchronous connection attempt completes while another task is
-in xprt_connect(), then the call to rpc_sleep_on() could end up
-racing with the call to xprt_wake_pending_tasks().
-So add a second test of the connection state after we've put the
-task to sleep and set the XPRT_CONNECTING flag, when we know that there
-can be no asynchronous connection attempts still in progress.
+use of_node_put() to release the refcount.
 
-Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprt.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/sbus/char/display7seg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
-index 685e6d225414..1a8df242d26a 100644
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -778,8 +778,15 @@ void xprt_connect(struct rpc_task *task)
- 			return;
- 		if (xprt_test_and_set_connecting(xprt))
- 			return;
--		xprt->stat.connect_start = jiffies;
--		xprt->ops->connect(xprt, task);
-+		/* Race breaker */
-+		if (!xprt_connected(xprt)) {
-+			xprt->stat.connect_start = jiffies;
-+			xprt->ops->connect(xprt, task);
-+		} else {
-+			xprt_clear_connecting(xprt);
-+			task->tk_status = 0;
-+			rpc_wake_up_queued_task(&xprt->pending, task);
-+		}
- 	}
- 	xprt_release_write(xprt, task);
- }
+diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
+index 33fbe8249fd5..044cffbc45e8 100644
+--- a/drivers/sbus/char/display7seg.c
++++ b/drivers/sbus/char/display7seg.c
+@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
+ 	dev_set_drvdata(&op->dev, p);
+ 	d7s_device = p;
+ 	err = 0;
++	of_node_put(opts);
+ 
+ out:
+ 	return err;
 -- 
 2.19.1
 
