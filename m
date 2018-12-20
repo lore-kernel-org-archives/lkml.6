@@ -2,214 +2,276 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674F2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4456BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E0F8217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE20217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:52:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nW4gTURC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731500AbeLTLuH (ORCPT
+        id S1731204AbeLTLv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:50:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45384 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730899AbeLTLuG (ORCPT
+        Thu, 20 Dec 2018 06:51:59 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52664 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730616AbeLTLv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:50:06 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKBkKIc079131
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:50:04 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pg7jh8s2p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:50:04 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 20 Dec 2018 11:50:01 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Dec 2018 11:49:59 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKBnvGA34472030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 11:49:57 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65AC85204F;
-        Thu, 20 Dec 2018 11:49:57 +0000 (GMT)
-Received: from [9.152.224.123] (unknown [9.152.224.123])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id F3F7C52050;
-        Thu, 20 Dec 2018 11:49:56 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 05/15] KVM: s390: unify pending_irqs() and
- pending_irqs_no_gisa()
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        Thu, 20 Dec 2018 06:51:59 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181220115156euoutp01149a1215657e2ccefe72036ef637d127~yCEWOdfni0127401274euoutp01N
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:51:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181220115156euoutp01149a1215657e2ccefe72036ef637d127~yCEWOdfni0127401274euoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545306717;
+        bh=XMiM3DmsMK0uFSxzcXJQU11KHsnWS6JqEHwvsWPRKNM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=nW4gTURCAd4L9AkSupTG5vGT94r93JbkAAQpjcCKXKLNKBgkuHKhTagScG50HX1Pi
+         7ySzezR6IaFjgnk7/jNNsG7HM9AhbV6821oJdH0xK34gQFHo4tEX5oLYx67lf7IyOA
+         hnHvpbDbRCegwA8MxjWTJXkMlkhc6iWyHTKlB7Ww=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181220115155eucas1p2c4bda5e566f5251e1aa74d4cfc58ed52~yCEU9Vgci2780027800eucas1p28;
+        Thu, 20 Dec 2018 11:51:55 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 67.98.04441.B528B1C5; Thu, 20
+        Dec 2018 11:51:55 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181220115154eucas1p1c40cf8ec2ff9192dd06a5bef9133333c~yCEUEBej22888628886eucas1p1Q;
+        Thu, 20 Dec 2018 11:51:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181220115154eusmtrp26fa016ad3368b24869c6afd3ced3ab90~yCET1OU4-1446314463eusmtrp2q;
+        Thu, 20 Dec 2018 11:51:54 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-49-5c1b825ba5a5
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2D.DA.04128.A528B1C5; Thu, 20
+        Dec 2018 11:51:54 +0000 (GMT)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181220115153eusmtip1e8d1fbb7bd7f2bb8454c00c44e3356d2~yCETNMGe-2012720127eusmtip1h;
+        Thu, 20 Dec 2018 11:51:53 +0000 (GMT)
+Subject: Re: [PATCH v4 2/3] driver core: add deferring probe reason to
+ devices_deferred property
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-6-mimu@linux.ibm.com>
- <20181220120614.65acacac.cohuck@redhat.com>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Thu, 20 Dec 2018 12:49:56 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Javier Martinez Canillas <javierm@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com,
+        Mark Brown <broonie@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <bd1424e7-44a3-52e9-3b4e-7b1496beb42c@samsung.com>
+Date:   Thu, 20 Dec 2018 12:51:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181220120614.65acacac.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20181220111220.GA10978@kroah.com>
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18122011-0016-0000-0000-0000023925C9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122011-0017-0000-0000-0000329180E2
-Message-Id: <62bf4bcf-585f-ddfc-e7a5-18fc946819d9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812200099
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH/e3e3V1Hk5/T2GH2wEF/aKWZRpdMqSgYFRn4T6lkUy9q6pQ7
+        H5l/aCq6lqlJKx2KhdnKRz5bPtJiho/E0jStiZq4f9JE8JFJ9HBeJf/7nHO+h+/3wKEJaa9Q
+        TkerE1lOrYpVUGLS1L324WBwpkvIoWoLZr4VdiGmobhOyOinrRSTVVFHMY/uGxHTODMqZIbb
+        SinGrO9ATO3bCRFTtqwnToiVw6NDhLLVMCFSNlbdopSvy2pEyqbH6cqFzk+UMr+5CimXGvdc
+        pIPExyPY2OhklvP0vyqOKljWChPeuF9/NVdDZqB6hQ7Z04B9oKp0VqRDYlqKnyLImugg+GIZ
+        QctsmcimkuIlBLrxw1sb/Q11JC8yIsix1CO+mEeQO2wlbConHAY/595tsDP2hoIBw4YHgVcF
+        YLIuCG0DCrvB76YvlI0l2B9y+6Y37Ei8D+ay9QIb78SXQDtVvalxhL4SK2lje+wJ39vHNpjA
+        e+HlfCnBswws1nKBzQywRQTPCuYRn/s03OmfFfHsBLM9zZu8C/62lgt4TofMkhGCX9Yi6K0w
+        UvzAF7p6htZT0+sOblDX5sm3T0L33QHC1gbsAJ/nHfkMDlBkerDZloA2R8qrXWFq4AXBswwq
+        B1eoQqQwbLvMsO0aw7ZrDP99HyKyCsnYJE1cJKvxUrMpHhpVnCZJHekRHh/XiNb/q/9Pz2IL
+        WvkYZkaYRoodkuIgeYhUqErWpMaZEdCEwlkyc80lRCqJUKXeYLn4UC4pltWYkQtNKmSSNLuv
+        wVIcqUpkY1g2geW2pgLaXp6BtIPDlrV7R8JbrvSJ33vb5WUEFt08AAFFeQS4jZpllv3+u3Wm
+        sZ6jkxfPFhzz8TvntxbhMVJmklWn9fku1p8/o24ad+8gVtNdYnoXZSYiOzSYHBu/PCSM6syf
+        JJueyH+UmqyuQfGClKzu9l7jbXVt9iku8FdA1uDzyguc3MIqSE2Uysud4DSqf0N8TKtbAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xu7pRTdIxBoeuc1q8nHCY0WLjjPWs
+        FlMfPmGzaF68ns1i4bTljBabHl9jtbi8aw6bxaGpexkt1h65y24x98tUZgcuj8vXLjJ77Jx1
+        l91j06pONo/9c9ewe2xeUu/xft9VNo++LasYPT5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIz
+        tLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DL6P/SwVpwQKtiz+s1LA2MG5S6GDk5JARM
+        JE5vXM/SxcjFISSwlFFi1bvDrBAJcYnd898yQ9jCEn+udbFBFL1mlDh+bAZYQlggSeLH61Ng
+        toiAsUT/2VnsIDazwG8miSkbskBsIYF7jBLnfxaC2GwCmhJ/N99kA7F5Bewk2k8+BKtnEVCV
+        eN0ylQnEFhWIkDj7ch0jRI2gxMmZT1hAbE4BfYk3u6+zQMxXl/gz7xIzhC0vsf3tHChbXOLW
+        k/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjNdtx35u
+        2cHY9S74EKMAB6MSD++MKKkYIdbEsuLK3EOMEhzMSiK8j7OkY4R4UxIrq1KL8uOLSnNSiw8x
+        mgI9N5FZSjQ5H5hK8kriDU0NzS0sDc2NzY3NLJTEec8bVEYJCaQnlqRmp6YWpBbB9DFxcEo1
+        MN64bb6UxYJBZr5r68yM7ykdT1Wcfaa03WitdJYp8/wYoxF46HKreWe1YGD9h8ioyUq85yxm
+        rE3Nab28u7dCTEImIumj/SNGj5z6GOkrFmlLFcN7HnFONE8y1j1+Tfnez0Xi3BXP17upPTDm
+        C/69YWVbxP0tW1XUBU6q3H6ibeVzzoXZ/VePEktxRqKhFnNRcSIAH4Fci+0CAAA=
+X-CMS-MailID: 20181220115154eucas1p1c40cf8ec2ff9192dd06a5bef9133333c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a
+References: <20181220102247.4911-1-a.hajda@samsung.com>
+        <CGME20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a@eucas1p1.samsung.com>
+        <20181220102247.4911-3-a.hajda@samsung.com>
+        <20181220111220.GA10978@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20.12.18 12:06, Cornelia Huck wrote:
-> On Wed, 19 Dec 2018 20:17:46 +0100
-> Michael Mueller <mimu@linux.ibm.com> wrote:
-> 
->> Use a single function with parameter irq_flags to differentiate
->> between cases.
+On 20.12.2018 12:12, Greg Kroah-Hartman wrote:
+> On Thu, Dec 20, 2018 at 11:22:46AM +0100, Andrzej Hajda wrote:
+>> /sys/kernel/debug/devices_deferred property contains list of deferred devices.
+>> This list does not contain reason why the driver deferred probe, the patch
+>> improves it.
+>> The natural place to set the reason is probe_err function introduced recently,
+>> ie. if probe_err will be called with -EPROBE_DEFER instead of printk the message
+>> will be attached to deferred device and printed when user read devices_deferred
+>> property.
 >>
->> New irq flag:
->>     IRQ_FLAG_LOCAL: include vcpu local interruptions pending
->>     IRQ_FLAG_FLOATING: include vcpu floating interruptions pending
->>     IRQ_FLAG_GISA: include GISA interruptions pending in IPM
-> 
-> I presume that means that irqs may be in more than one set? Or are gisa
-> irqs not considered floating irqs, because they use a different
-> mechanism?
-
-Currently, the interruptions managed in GISA are floating only. But
-that might change in future. The idea is not to subsume IRQ_FLAG_GISA
-in IRQ_FLAG_FLOATING but to be able to address the right set of 
-procedures to determine the irq pending set for a given subset of irq
-types that have different implementations.
-
-There might be a better name for IRQ_FLAG_FLOATING then?
-
-> 
->>
->> New irq masks:
->>     IRQ_MASK_ALL: include all types
->>     IRQ_MASK_NO_GISA: include all types but GISA
->>
->> Examples:
->>     pending_irqs(vcpu, IRQ_MASK_ALL)
->>     pending_irqs(vcpu, IRQ_MASK_NO_GISA)
->>
->> There will be more irq flags with upcoming patches.
->>
->> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 >> ---
->>   arch/s390/kvm/interrupt.c | 33 +++++++++++++++++++++------------
->>   1 file changed, 21 insertions(+), 12 deletions(-)
+>> v4:
+>>   - removed NULL check before kfree,
+>>   - coding style tweaking.
+>> v3:
+>>   - adjusted deferred_devs_show, to accept newline ended messages,
+>>   - changed conditonal check to positive,
+>>   - added R-b by Andy.
+>> v2:
+>>   - changed __deferred_probe_set_msg args - like in __dev_printk, fits better,
+>>   - use kasprintf instead of bunch of code,
+>>   - keep consistent format of devices_deferred lines,
+>>   - added R-Bs (again I hope changes above are not against it).
+>> ---
+>> ---
+>>  drivers/base/base.h |  3 +++
+>>  drivers/base/core.c |  9 +++++----
+>>  drivers/base/dd.c   | 21 ++++++++++++++++++++-
+>>  3 files changed, 28 insertions(+), 5 deletions(-)
 >>
->> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->> index 093b568b6356..4ab20d2eb180 100644
->> --- a/arch/s390/kvm/interrupt.c
->> +++ b/arch/s390/kvm/interrupt.c
->> @@ -31,6 +31,13 @@
->>   #define PFAULT_DONE 0x0680
->>   #define VIRTIO_PARAM 0x0d00
->>   
->> +#define IRQ_FLAG_LOCAL    0x8000 /* include local interruption pending mask */
->> +#define IRQ_FLAG_FLOATING 0x4000 /* include float interruption pending mask */
->> +#define IRQ_FLAG_GISA     0x2000 /* include GISA interruption pending mask */
+>> diff --git a/drivers/base/base.h b/drivers/base/base.h
+>> index 7a419a7a6235..effbd5e7f9f1 100644
+>> --- a/drivers/base/base.h
+>> +++ b/drivers/base/base.h
+>> @@ -75,6 +75,7 @@ struct device_private {
+>>  	struct klist_node knode_driver;
+>>  	struct klist_node knode_bus;
+>>  	struct list_head deferred_probe;
+>> +	char *deferred_probe_msg;
+>>  	struct device *device;
+>>  };
+>>  #define to_device_private_parent(obj)	\
+>> @@ -113,6 +114,8 @@ extern void device_release_driver_internal(struct device *dev,
+>>  extern void driver_detach(struct device_driver *drv);
+>>  extern int driver_probe_device(struct device_driver *drv, struct device *dev);
+>>  extern void driver_deferred_probe_del(struct device *dev);
+>> +extern void __deferred_probe_set_msg(const struct device *dev,
+>> +				     struct va_format *vaf);
+>>  static inline int driver_match_device(struct device_driver *drv,
+>>  				      struct device *dev)
+>>  {
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 7f644f3c41d3..d3eb5aeeaa28 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -3108,6 +3108,7 @@ define_dev_printk_level(_dev_info, KERN_INFO);
+>>   *
+>>   * This helper implements common pattern present in probe functions for error
+>>   * checking: print message if the error is not -EPROBE_DEFER and propagate it.
+>> + * In case of -EPROBE_DEFER it sets defer probe reason.
+>>   * It replaces code sequence:
+>>   * 	if (err != -EPROBE_DEFER)
+>>   * 		dev_err(dev, ...);
+>> @@ -3123,14 +3124,14 @@ int probe_err(const struct device *dev, int err, const char *fmt, ...)
+>>  	struct va_format vaf;
+>>  	va_list args;
+>>  
+>> -	if (err == -EPROBE_DEFER)
+>> -		return err;
+>> -
+>>  	va_start(args, fmt);
+>>  	vaf.fmt = fmt;
+>>  	vaf.va = &args;
+>>  
+>> -	dev_err(dev, "error %d: %pV", err, &vaf);
+>> +	if (err == -EPROBE_DEFER)
+>> +		__deferred_probe_set_msg(dev, &vaf);
+>> +	else
+>> +		dev_err(dev, "error %d: %pV", err, &vaf);
+>>  
+>>  	va_end(args);
+>>  
+>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>> index 88713f182086..857aa4d1d45d 100644
+>> --- a/drivers/base/dd.c
+>> +++ b/drivers/base/dd.c
+>> @@ -27,6 +27,7 @@
+>>  #include <linux/async.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/pinctrl/devinfo.h>
+>> +#include <linux/slab.h>
+>>  
+>>  #include "base.h"
+>>  #include "power/power.h"
+>> @@ -132,6 +133,8 @@ void driver_deferred_probe_del(struct device *dev)
+>>  	if (!list_empty(&dev->p->deferred_probe)) {
+>>  		dev_dbg(dev, "Removed from deferred list\n");
+>>  		list_del_init(&dev->p->deferred_probe);
+>> +		kfree(dev->p->deferred_probe_msg);
+>> +		dev->p->deferred_probe_msg = NULL;
+>>  	}
+>>  	mutex_unlock(&deferred_probe_mutex);
+>>  }
+>> @@ -202,6 +205,21 @@ void device_unblock_probing(void)
+>>  	driver_deferred_probe_trigger();
+>>  }
+>>  
+>> +/*
+>> + * __deferred_probe_set_msg() - Set defer probe reason message for device
+>> + */
+>> +void __deferred_probe_set_msg(const struct device *dev, struct va_format *vaf)
+>> +{
+>> +	const char *drv = dev_driver_string(dev);
 >> +
->> +#define IRQ_MASK_ALL      (IRQ_FLAG_LOCAL | IRQ_FLAG_FLOATING | IRQ_FLAG_GISA)
->> +#define IRQ_MASK_NO_GISA  (IRQ_MASK_ALL & ~IRQ_FLAG_GISA)
+>> +	mutex_lock(&deferred_probe_mutex);
 >> +
->>   /* handle external calls via sigp interpretation facility */
->>   static int sca_ext_call_pending(struct kvm_vcpu *vcpu, int *src_id)
->>   {
->> @@ -237,16 +244,18 @@ static inline int kvm_s390_gisa_tac_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gis
->>   	return test_and_clear_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
->>   }
->>   
->> -static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu *vcpu)
->> +static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu, u16 irq_flags)
-> 
-> Any deeper reason why this is a u16? 16 bits should be enough for
-> everyone? :)
+>> +	kfree(dev->p->deferred_probe_msg);
+>> +	dev->p->deferred_probe_msg = kasprintf(GFP_KERNEL, "%s: %pV", drv, vaf);
+> Why do you also need the dev driver string here?  Don't you get it
+> automatically when you print out the list in deferred_devs_show()?
 
-I want to use the 8 bits for the IRQ type and the other 8 for additional 
-controls, see: "KVM: s390: restore IAM in get_ipm() when IPM is clean"
 
-> 
->>   {
->> -	return vcpu->kvm->arch.float_int.pending_irqs |
->> -		vcpu->arch.local_int.pending_irqs;
->> -}
->> +	unsigned long pending_irqs = 0;
->>   
->> -static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
->> -{
->> -	return pending_irqs_no_gisa(vcpu) |
->> -		kvm_s390_gisa_get_ipm(vcpu->kvm->arch.gisa) << IRQ_PEND_IO_ISC_7;
->> +	if (irq_flags & IRQ_FLAG_LOCAL)
->> +		pending_irqs |= vcpu->arch.local_int.pending_irqs;
->> +	if (irq_flags & IRQ_FLAG_FLOATING)
->> +		pending_irqs |= vcpu->kvm->arch.float_int.pending_irqs;
->> +	if (irq_flags & IRQ_FLAG_GISA)
->> +		pending_irqs |= kvm_s390_gisa_get_ipm(vcpu->kvm->arch.gisa) <<
->> +			IRQ_PEND_IO_ISC_7;
->> +	return pending_irqs;
->>   }
->>   
->>   static inline int isc_to_irq_type(unsigned long isc)
->> @@ -275,7 +284,7 @@ static unsigned long deliverable_irqs(struct kvm_vcpu *vcpu)
->>   {
->>   	unsigned long active_mask;
->>   
->> -	active_mask = pending_irqs(vcpu);
->> +	active_mask = pending_irqs(vcpu, IRQ_MASK_ALL);
->>   	if (!active_mask)
->>   		return 0;
->>   
->> @@ -343,7 +352,7 @@ static void __reset_intercept_indicators(struct kvm_vcpu *vcpu)
->>   
->>   static void set_intercept_indicators_io(struct kvm_vcpu *vcpu)
->>   {
->> -	if (!(pending_irqs_no_gisa(vcpu) & IRQ_PEND_IO_MASK))
->> +	if (!(pending_irqs(vcpu, IRQ_MASK_NO_GISA) & IRQ_PEND_IO_MASK))
-> 
-> I/O interrupts are always floating, so you probably could check for
-> only floating (excluding gisa) irqs here.
+Deferred device is not bound to driver.
 
-That's right.
 
-> 
->>   		return;
->>   	else if (psw_ioint_disabled(vcpu))
->>   		kvm_s390_set_cpuflags(vcpu, CPUSTAT_IO_INT);Store Data
->> @@ -353,7 +362,7 @@ static void set_intercept_indicators_io(struct kvm_vcpu *vcpu)
->>   
+>
+> How about we just wait on this patch, it seems very unneeded.  Or at
+> least I can't see who would need this, what can a user do with this
+> information?
+
+
+It should be quite helpful in case of deferred probing, solving
+mysteries why given device is not bound to the driver is very common in
+mobile world.
+
+And since deferal should not be treated as an error grepping dmesg often
+does not help.
+
+
+Regards
+
+Andrzej
+
+
+
+>
+> thanks,
+>
+> greg k-h
+>
+>
 
