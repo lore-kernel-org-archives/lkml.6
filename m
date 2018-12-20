@@ -3,54 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A741C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27CEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDB420811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FDE420989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298886;
-	bh=aQEeZVcWaZoSnRdDZJ9pvup3QYAQgBon9uWnOz9b24Y=;
+	s=default; t=1545298900;
+	bh=N2vicCi6CeKqs4IpBOcz+njd0Q7SHmZEyF4Ni4VKGUg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NAbNGSkpr+KeDPtGvshmXwj5wrPP6nQKqOQdSIKuiZIYcM/rJd9ROH0ur/EE92vbk
-	 UmwGk02AtHlQbzKbpzlBjhJZCEiXq81ITvMCZ8Au/Jx/Y5j1JjH2lereAeWo6hrflo
-	 V3fX0XgEpnEQLE4ljbhXoIVFEWs0pk2fRamnqewU=
+	b=E39nKdultQq2jRjJnsGDXfiK5C/L2sGAJPJnRNClRgm44iMtkXwe+s9u01MER20CR
+	 08Xoh7Lhu+iEFr2l8jIOP1B9xJHJaptyX8oiDXq5WhOiMEsC0WXkkzE5L2HpUmGJOg
+	 l+jP8WHWzXPMn1wyd1N3tfwrZveK2qrTqvCJk46I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387443AbeLTJlY (ORCPT
+        id S1731694AbeLTJXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:41:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59284 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:23:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731737AbeLTJYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:01 -0500
+        id S1731676AbeLTJXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:23:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8EC62177B;
-        Thu, 20 Dec 2018 09:23:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DEB2217D7;
+        Thu, 20 Dec 2018 09:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297840;
-        bh=aQEeZVcWaZoSnRdDZJ9pvup3QYAQgBon9uWnOz9b24Y=;
+        s=default; t=1545297830;
+        bh=N2vicCi6CeKqs4IpBOcz+njd0Q7SHmZEyF4Ni4VKGUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nnE0EIcAN801gmAobhV5wqo5aEWfHJHzlmEcclOfMtPegNKEKNqEVA7f0h4TXjsFl
-         lcHBXk7zD7dkk92E7ZVimdOoH2pG2qZbBuwSKmTGfmwdkrDW3ADaXc4nwFPoKUkAz4
-         DrGYAzWW2CRsF0gSFC5vn+vHYtJ5VTm9fBszGo0U=
+        b=mk1ZTKxBnUHgwt9sfR0VBK4Y6PsjXuxIJQBYq7L9ZPGSYh/36UG0McKiU33l4nUt7
+         cis9O3T5m92EFOrGoj/soXuUTHABy54Lha4x8F5Yv9UqElTu33y8tbKXjO5QzO5RmR
+         guoXb7QA8I74zWzMRzbmkmOkYiwqqpKcnmJG1nOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Vitor Soares <soares@synopsys.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org, Cathy Avery <cavery@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 36/61] ARC: io.h: Implement reads{x}()/writes{x}()
-Date:   Thu, 20 Dec 2018 10:18:36 +0100
-Message-Id: <20181220085845.204666405@linuxfoundation.org>
+Subject: [PATCH 4.9 33/61] scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
+Date:   Thu, 20 Dec 2018 10:18:33 +0100
+Message-Id: <20181220085845.059335403@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -69,141 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
+[ Upstream commit 02f425f811cefcc4d325d7a72272651e622dc97e ]
 
-Some ARC CPU's do not support unaligned loads/stores. Currently, generic
-implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
-This can lead to misfunction of some drivers as generic functions do a
-plain dereference of a pointer that can be unaligned.
+Currently pvscsi_remove calls free_irq more than once as
+pvscsi_release_resources and __pvscsi_shutdown both call
+pvscsi_shutdown_intr. This results in a 'Trying to free already-free IRQ'
+warning and stack trace. To solve the problem pvscsi_shutdown_intr has been
+moved out of pvscsi_release_resources.
 
-Let's use {get/put}_unaligned() helpers instead of plain dereference of
-pointer in order to fix. The helpers allow to get and store data from an
-unaligned address whilst preserving the CPU internal alignment.
-According to [1], the use of these helpers are costly in terms of
-performance so we added an initial check for a buffer already aligned so
-that the usage of the helpers can be avoided, when possible.
-
-[1] Documentation/unaligned-memory-access.txt
-
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Tested-by: Vitor Soares <soares@synopsys.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/scsi/vmw_pvscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
-index c22b181e8206..2f39d9b3886e 100644
---- a/arch/arc/include/asm/io.h
-+++ b/arch/arc/include/asm/io.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- #include <asm/page.h>
-+#include <asm/unaligned.h>
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 874e9f085326..fcfbe2dcd025 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -1233,8 +1233,6 @@ static void pvscsi_shutdown_intr(struct pvscsi_adapter *adapter)
  
- #ifdef CONFIG_ISA_ARCV2
- #include <asm/barrier.h>
-@@ -94,6 +95,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
- 	return w;
- }
- 
-+/*
-+ * {read,write}s{b,w,l}() repeatedly access the same IO address in
-+ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
-+ * @count times
-+ */
-+#define __raw_readsx(t,f) \
-+static inline void __raw_reads##f(const volatile void __iomem *addr,	\
-+				  void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			*buf++ = x;					\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			put_unaligned(x, buf++);			\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_readsb __raw_readsb
-+__raw_readsx(8, b)
-+#define __raw_readsw __raw_readsw
-+__raw_readsx(16, w)
-+#define __raw_readsl __raw_readsl
-+__raw_readsx(32, l)
-+
- #define __raw_writeb __raw_writeb
- static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
+ static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
  {
-@@ -126,6 +163,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+-	pvscsi_shutdown_intr(adapter);
+-
+ 	if (adapter->workqueue)
+ 		destroy_workqueue(adapter->workqueue);
  
+@@ -1563,6 +1561,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ out_reset_adapter:
+ 	ll_adapter_reset(adapter);
+ out_release_resources:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	scsi_host_put(host);
+ out_disable_device:
+@@ -1571,6 +1570,7 @@ out_disable_device:
+ 	return error;
+ 
+ out_release_resources_and_disable:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	goto out_disable_device;
  }
- 
-+#define __raw_writesx(t,f)						\
-+static inline void __raw_writes##f(volatile void __iomem *addr, 	\
-+				   const void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	const u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			__raw_write##f(*buf++, addr);			\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			__raw_write##f(get_unaligned(buf++), addr);	\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_writesb __raw_writesb
-+__raw_writesx(8, b)
-+#define __raw_writesw __raw_writesw
-+__raw_writesx(16, w)
-+#define __raw_writesl __raw_writesl
-+__raw_writesx(32, l)
-+
- /*
-  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
-  * Based on ARM model for the typical use case
-@@ -141,10 +207,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
- #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
- #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
-+#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
-+#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
-+#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
- #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
-+#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
-+#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
-+#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
- 
- /*
-  * Relaxed API for drivers which can handle barrier ordering themselves
 -- 
 2.19.1
 
