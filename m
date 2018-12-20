@@ -2,99 +2,142 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369EAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5143BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AA8217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FEFF217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="atse4Hyq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X+PiM9pn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387741AbeLTOqa (ORCPT
+        id S2387751AbeLTOqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:46:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732874AbeLTOq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:46:29 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 20 Dec 2018 09:46:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53606 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730470AbeLTOqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:46:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4FD52600E2; Thu, 20 Dec 2018 14:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545317209;
+        bh=+5JcqqY9KLQBPk9N8ttnos656n3P+frkzI0/tq446Ec=;
+        h=From:To:Cc:Subject:Date:From;
+        b=atse4HyqfrPpUxjV84G5Z8kmdg7eQX0X2ZEj01yS9cRy5jaUIZPOvHZSYwX5IhzPa
+         supuYhFIoFqOwKrKeoAb+eaUad/TrApwcgI6s8q+BN5qh/rfcqnS59FU+Ywz6m4tKa
+         IfZC/2pudfBgWr9DXJ1oQ0uBSAtdYa+xd8eNqRik=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6ECF9C0495A9;
-        Thu, 20 Dec 2018 14:46:29 +0000 (UTC)
-Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0951A19C7B;
-        Thu, 20 Dec 2018 14:46:27 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 08:46:26 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Jiri Kosina <jikos@kernel.org>, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, jeyu@kernel.org, pmladek@suse.com,
-        linux-kbuild@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Joao Moreira <jmoreira@suse.de>
-Subject: Re: [PATCH] kbuild: use -flive-patching when CONFIG_LIVEPATCH is
- enabled
-Message-ID: <20181220144626.2uwuzsmdowbrmxxq@treble>
-References: <20181219141744.32392-1-mbenes@suse.cz>
- <20181219165428.5udrppedpdvf2u7k@treble>
- <nycvar.YFH.7.76.1812191756450.17216@cbobk.fhfr.pm>
- <20181219172127.o753af7pkrsttcgl@treble>
- <nycvar.YFH.7.76.1812191909490.17216@cbobk.fhfr.pm>
- <alpine.LSU.2.21.1812200919210.28185@pobox.suse.cz>
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1050E600E2;
+        Thu, 20 Dec 2018 14:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545317208;
+        bh=+5JcqqY9KLQBPk9N8ttnos656n3P+frkzI0/tq446Ec=;
+        h=From:To:Cc:Subject:Date:From;
+        b=X+PiM9pnvM4tF8m46PYhvZ2JHjeVkuprzjD+54brMv0Hua6xPtFt1t1uVzg17Ttey
+         k79HyJaYlpOwPbkrAiHJljVP2MTgAd82UMzHWMWrCqU9hh2VQ3ChfR+8r6kks880p5
+         tpdcjs698W5Fbi9VXEyoV3jXrfMcc5hzOFMTFibg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1050E600E2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v5 0/5] Bug fixes for Qualcomm BT chip wcn3990 
+Date:   Thu, 20 Dec 2018 20:16:34 +0530
+Message-Id: <20181220144639.15928-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1812200919210.28185@pobox.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Dec 2018 14:46:29 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 09:33:05AM +0100, Miroslav Benes wrote:
-> > > Though, upstream, almost everybody seems to use kpatch-build, for which
-> > > this patch doesn't help.  And people will continue to do so until we
-> > > have decent source-based tooling.  Will the klp-convert patches be
-> > > revived soon?
-> >
-> > Let me add Joao, who's working on that.
-> > 
-> > Joao, I think you had something basically ready for upstream exposure, 
-> > right?
-> 
-> I think that when Joao posted it a long time ago, the conclusion was that 
-> it would be better to wait for the source-based tooling and have the 
-> complete solution. I may misremember though.
-> 
-> If Josh thinks that it would be acceptable to have klp-convert merged even 
-> without the tooling, I'm all for it.
-> 
-> We're about to start using it at SUSE and staying close to upstream would 
-> definitely be better.
+The below issues are found in the recent testing.
 
-A complete toolchain should definitely be the end goal.
+1. Observed device is not going into off state or not responding.
+    As wcn3990 require a power pulses to turn on the irrespctive of
+    igniting regulators, it was observed that power on or power off
+    pulses are not in sync with respective to chip.
+    The below patch will help us to wait until byte is pushed on to wires.          
 
-But as a usable first step, only *some* of the tooling is required,
-since some of the steps can be done manually, right?
+    * Bluetooth: hci_qca: use wait_until_sent() for power pulses
 
-So starting out, for something usable, I believe the following would be
-the bare minimum:
+2. Observed Chip responding when we are in sleep.
+   This is due to turn on flow control during change baudrate request.
+   The below patch will only pull the RTS line high instead of turning off
+   the flow.
 
-  * -flive-patching
+   * Bluetooth: hci_qca: Pull RTS line high for baudrate change command.
 
-  * The analysis tool which analyzes the -fdump-ipa-clones files
+3. Frame reassembly errors splashing on console.
+   wcn3990 requires will use multiple baudrates during booting stage.
+   i.e. 2400 bps while sending power off pulse
+    115200 bps while sending power on pulse
+    port close
+    port open
+    set baudrate to 115200 request the chip version.
 
-  * klp-convert
+  during above process, we are seeing some stray bytes coming up
+  on the UART Rx FIFO it could be due to frequent baudrate change.
 
-  * Documentation describing the end-to-end patch creation process,
-    including the manual steps and how to use the above tools
+  This patch will stop the frame reassembly errors.
 
-Did I miss anything?
+  * Bluetooth: hci_qca: Fix frame reassembly errors for wcn3990
 
-Then over time we can fill in the gaps (manual steps) with automation.
+4. Disable IBS state machine and flush Tx buffer
+   We are disabling IBS and flushing the Tx buffer before turning off the chip.
+  
+   This is due to IBS state machine is active when we turn off the chip.
+   This will stop queuing IBS protocol bytes.
+
+   * Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+5. btqca: inject command complete event during fw download
+   
+   Qualcomm latest chip will not send an command complete event
+   for last packet of the fw dump sent, so here we are inject an command 
+   complete event.
+
+   * Bluetooth: btqca: inject command complete event during fw download
+
+Changes in V5:
+ * added serdev_device_wrute_flush before sending the power off pulse
+   during shutdown.
+
+Changes in v4:
+ * used serdev_device_write_buf() instead of serdev_device_write().
+ * added new patch to stop logging of 0xfc00 timeout on console.
+
+Changes in v3:
+ * moved IBS & qca_flush to different patch
+ * updated comments in code fo Deassert RTS patch
+
+Balakrishna Godavarthi (5):
+  Bluetooth: hci_qca: use wait_until_sent() for power pulses
+  Bluetooth: hci_qca: Deassert RTS while baudrate change command
+  Bluetooth: hci_qca: Fix frame reassembly errors for wcn3990
+  Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+  Bluetooth: btqca: inject command complete event during fw download
+
+ drivers/bluetooth/btqca.c   | 39 ++++++++++++++++++-
+ drivers/bluetooth/btqca.h   |  3 ++
+ drivers/bluetooth/hci_qca.c | 78 +++++++++++++++++++++----------------
+ 3 files changed, 85 insertions(+), 35 deletions(-)
 
 -- 
-Josh
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
