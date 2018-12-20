@@ -2,164 +2,126 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C46C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C88BAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46820218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1928218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:19:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A6Ob2Eb6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VGCinmJm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJNROoRx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389219AbeLTTTL (ORCPT
+        id S2389289AbeLTTTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:19:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50758 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729641AbeLTTTL (ORCPT
+        Thu, 20 Dec 2018 14:19:21 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37714 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbeLTTTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:19:11 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AEF5C60734; Thu, 20 Dec 2018 19:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545333549;
-        bh=WWCQ7FCRrUJ8WS9+XVkOHFMxId/mZpH5TnDKQPjRx+0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A6Ob2Eb6jP/uaU10oUDl8xfq3NEoUy1kfynJ3Y+HPpg+ZuRYDbwcH8ZrW1bDe8V1+
-         Cu6NZ+wk5nbO93hRyRkMsgE/ccoQow5yu3HkN6XeHnFd8DSdYjzDVDlLyMF7fexJNl
-         H/q03Y4x1Bz5UvXnGFQVoBAebugQlbjk0i63pXUg=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D2CCF60208;
-        Thu, 20 Dec 2018 19:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545333541;
-        bh=WWCQ7FCRrUJ8WS9+XVkOHFMxId/mZpH5TnDKQPjRx+0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VGCinmJmc7pOnmBNwIM75W4YQRaZiV3e/c/p2SE9d7iUsJmQ3M4BSHvcNmIUtky2g
-         Pd0Vclys66VLIG+4jYIRkwiu+v7bJ7Y5XUKKIeogQ5FgDz/Gmoz6JpOQqfSy5Sbw69
-         MAgo/SaDe2QuDdYN4gheN9b+jpLavYzrO5Ifk0Gk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2CCF60208
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, david.brown@linaro.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
-        Matthias Kaehlcke <mka@google.com>, amit.kucheria@linaro.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH] arm64: dts: sdm845: Add cpufreq device node
-Date:   Fri, 21 Dec 2018 00:48:50 +0530
-Message-Id: <1545333530-30151-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 20 Dec 2018 14:19:21 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y11so2209448lfj.4;
+        Thu, 20 Dec 2018 11:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VOgq0OztbfdSvEtyTC3tYeK3AlrkwdW39gM4Ncp34TY=;
+        b=TJNROoRxJGlPhT9Nt0TMqpFUXYZWbuj0+lktjVLk/lCTJ7Oc0Cgb5/hmKndUl0FkNu
+         l9MA09ZvMtHc+ada3prPmW1w9Rvus6fYlxXfcFQCDO+hA4b4vht0TiNV9AXb+p4PAQep
+         LSkNrP1mIXcfM5t+pe1m9VL2e78CaCyxVc3UjVOSZfZHgCpW0s/sA1NHMeE3xeKIsZ2O
+         geeeUOxf3hwKEK7ueTIlHMF+U3OnoH6A64yp1zlmUbPUJNFhHd07sflpwVhfAQgz7Uj5
+         JHgk9old9o7WKCzgywQy57lRmRhNq3r2D5ovoyMa015q967k9WK0nsaeZgBBNWT/ruih
+         KAMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VOgq0OztbfdSvEtyTC3tYeK3AlrkwdW39gM4Ncp34TY=;
+        b=W/Mk7Aggfvv9Rl3Y9F2tDhccebfu+iIMVYOhXS1qcyDXDD+E9ZuphHKCHossufFz+2
+         727In2z7Dvipm3d97vCZ9dwt95HUAHFtr7bTOHjKpihiJsIKGok5CTpMm9tt2hOTVT5J
+         XV8Zbzemlqn/4q0o7iIHWrPYRPlql4iURQqMB+BOSTC4LnkeWiKzC/ikWFyds49uflbr
+         +qseqbuMt5N9eMTYeCxHmuG9uM90ZcXbRIJRUNJPTPOmHMzP+b3DLw8DwAg6bbQtIcmv
+         cNsNZ+I9REj5qGb0W57OPOFSypg5P3Is4aEbmN0oCOp28qcCvjqfyi2fK4F4DQdBmuk3
+         6XMg==
+X-Gm-Message-State: AA+aEWZc9gGIa8sCQrmjWk4HA5mcU4mypN/hv8oHuoeOftDXnCA3KBN1
+        DQTo9Igbr1fTxvYYcOVOiT3m7hiFJQ4=
+X-Google-Smtp-Source: AFSGD/VKz/h7wn00/eY2tOJKzhQzbN8y9F9Z15LVD0IETIyZ/AUjd3lZ3UVlDsZ6pECHfSd91JCccw==
+X-Received: by 2002:a19:5510:: with SMTP id n16mr15583615lfe.68.1545333558356;
+        Thu, 20 Dec 2018 11:19:18 -0800 (PST)
+Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
+        by smtp.gmail.com with ESMTPSA id k11-v6sm4320458ljk.40.2018.12.20.11.19.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 11:19:17 -0800 (PST)
+Subject: Re: [PATCH 04/12] __wr_after_init: x86_64: __wr_op
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
+ <20181219213338.26619-5-igor.stoppa@huawei.com>
+ <20181220184917.GY10600@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <d5e8523a-3afd-d992-1af3-b329985c5ed5@gmail.com>
+Date:   Thu, 20 Dec 2018 21:19:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181220184917.GY10600@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change adds the cpufreq node as per the bindings example for SDM845.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 23a253b..5db4fcc 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -99,6 +99,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 				compatible = "cache";
-@@ -114,6 +115,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_100>;
- 			L2_100: l2-cache {
- 				compatible = "cache";
-@@ -126,6 +128,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x200>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_200>;
- 			L2_200: l2-cache {
- 				compatible = "cache";
-@@ -138,6 +141,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x300>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 0>;
- 			next-level-cache = <&L2_300>;
- 			L2_300: l2-cache {
- 				compatible = "cache";
-@@ -150,6 +154,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x400>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_400>;
- 			L2_400: l2-cache {
- 				compatible = "cache";
-@@ -162,6 +167,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x500>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_500>;
- 			L2_500: l2-cache {
- 				compatible = "cache";
-@@ -174,6 +180,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x600>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_600>;
- 			L2_600: l2-cache {
- 				compatible = "cache";
-@@ -186,6 +193,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x700>;
- 			enable-method = "psci";
-+			qcom,freq-domain = <&cpufreq_hw 1>;
- 			next-level-cache = <&L2_700>;
- 			L2_700: l2-cache {
- 				compatible = "cache";
-@@ -341,6 +349,17 @@
- 			#power-domain-cells = <1>;
- 		};
+On 20/12/2018 20:49, Matthew Wilcox wrote:
 
-+		cpufreq_hw: cpufreq@17d43000 {
-+			compatible = "qcom,cpufreq-hw";
-+			reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
-+			reg-names = "freq-domain0", "freq-domain1";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-+			clock-names = "xo", "alternate";
-+
-+			#freq-domain-cells = <1>;
-+		};
-+
- 		qfprom@784000 {
- 			compatible = "qcom,qfprom";
- 			reg = <0x784000 0x8ff>;
+> I think you're causing yourself more headaches by implementing this "op"
+> function.  
+
+I probably misinterpreted the initial criticism on my first patchset, 
+about duplication. Somehow, I'm still thinking to the endgame of having 
+higher-level functions, like list management.
+
+> Here's some generic code:
+
+thank you, I have one question, below
+
+> void *wr_memcpy(void *dst, void *src, unsigned int len)
+> {
+> 	wr_state_t wr_state;
+> 	void *wr_poking_addr = __wr_addr(dst);
+> 
+> 	local_irq_disable();
+> 	wr_enable(&wr_state);
+> 	__wr_memcpy(wr_poking_addr, src, len);
+
+Is __wraddr() invoked inside wm_memcpy() instead of being invoked 
+privately within __wr_memcpy() because the code is generic, or is there 
+some other reason?
+
+> 	wr_disable(&wr_state);
+> 	local_irq_enable();
+> 
+> 	return dst;
+> }
+> 
+> Now, x86 can define appropriate macros and functions to use the temporary_mm
+> functionality, and other architectures can do what makes sense to them.
+> 
+
 --
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+igor
