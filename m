@@ -2,180 +2,95 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A763C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519D9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526EB218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26530217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:01:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="V5w+19Di"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388328AbeLTSB3 (ORCPT
+        id S2388342AbeLTSBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:01:29 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34815 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729293AbeLTSB2 (ORCPT
+        Thu, 20 Dec 2018 13:01:46 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43384 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388329AbeLTSBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:01:28 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI1M2x3680106
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:01:22 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI1LwO3680103;
-        Thu, 20 Dec 2018 10:01:21 -0800
-Date:   Thu, 20 Dec 2018 10:01:21 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-8ki7sld6rusnjhhtaly26i5o@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        tglx@linutronix.de, acme@redhat.com, adrian.hunter@intel.com,
-        jolsa@kernel.org, mingo@kernel.org
-Reply-To: mingo@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-          acme@redhat.com, tglx@linutronix.de, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Allow selecting use the use of the
- ordered_events code
-Git-Commit-ID: a761a8d102e2a6edfef3ad5bb22baeb715f93abd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 20 Dec 2018 13:01:45 -0500
+Received: by mail-io1-f67.google.com with SMTP id g17so205509ioc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:01:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AyBdSrvRm/wXdYjkLX3yiCw+a2axnClN0AxiBCiOLEY=;
+        b=V5w+19DiqFjF82f9mJOguqNmB5ULUfX3NSO9Gd4pmcWo1o/0sNsADluJ90Ui1MIJPG
+         xvcrSJDG4rTvfsF3XIPNrHSVpt7Hb4XmyGSlJUT0gZCtvgLN+j2NtLiLJ/tWYdFNAf0l
+         vNUuJMI1ZcrhfL4nAN1Bovquu54dl+BikazqIhA3ZLEMSrwkl/CUjYVrF5V/SdlkXvFQ
+         IIm6IDIqUNNvJDhSZfxJ9BKP1Q8h4YPAea0EIm8NXeJo7nmepZgpVOmVAHCq84Z90B0T
+         iPeqWxO6r64toNmyGjl4+Hs2cfDgHMUffen2w5iHQ7tASGF4/OcbhnIsZ3gf6+RTMsEw
+         HoZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AyBdSrvRm/wXdYjkLX3yiCw+a2axnClN0AxiBCiOLEY=;
+        b=m8TMeSkF9VSEWVFzVNLKRRNgwa5yMy1cy7+3lE/rOj1sYx31IfacOEnL4vzFS0Ivp7
+         s2631BSpH2trKVbxb0hQenI5Hrus/1EZrwiFihw8zzQpJuV2LI7H2/smySIslinDrrh0
+         7yDARHFr3FlNgCnsoK6x2RBs66trQpg/fDmymXK8dC98idyeMOUBl95cJey4Y73kjzWF
+         b/AD5ELjLHsVoNKpo02Atz8/pK53Vc/ONoLn8b5vf+JgACjlRV5iv/KfVhlIbv22rLeD
+         Xm9GUnaIF597W565XMY4eTpiT8mk6WFxxgzE5M5fWSrybZL8oR7WvYGfsM2brj9HPjRt
+         MBJQ==
+X-Gm-Message-State: AA+aEWatk5UYVoU2L0uSQFT7S7kz5APh66xJJB1+wTO1Q/mh6TCGYh2z
+        c0l4tXZbviqBLSquFllhgmXl83V+AtI0MQ==
+X-Google-Smtp-Source: AFSGD/Xdns9FRVRuLIYrLuo6ErtHwQg/grhogJe4no8pEK3KT+VNsBGiXQg0YnQI0iiIBHBubX0COw==
+X-Received: by 2002:a6b:9355:: with SMTP id v82mr22437020iod.40.1545328903923;
+        Thu, 20 Dec 2018 10:01:43 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id k7sm383400iop.0.2018.12.20.10.01.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 10:01:37 -0800 (PST)
+Subject: Re: [PATCH] ata: pata_macio: add of_node_put()
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20181121130510epcas3p4498edc67a02f61a6aa8e55efa9349681@epcas3p4.samsung.com>
+ <20181121130439.22255-1-tiny.windzz@gmail.com>
+ <b3331d3f-3bfd-f3ce-cea1-30c4b13e6374@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a925d66a-09ea-b6db-8043-df58548da192@kernel.dk>
+Date:   Thu, 20 Dec 2018 11:01:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <b3331d3f-3bfd-f3ce-cea1-30c4b13e6374@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a761a8d102e2a6edfef3ad5bb22baeb715f93abd
-Gitweb:     https://git.kernel.org/tip/a761a8d102e2a6edfef3ad5bb22baeb715f93abd
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 10 Dec 2018 16:27:33 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 18 Dec 2018 12:23:55 -0300
+On 12/20/18 10:03 AM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> On 11/21/2018 02:04 PM, Yangtao Li wrote:
+>> of_find_node_by_path() acquires a reference to the node
+>> returned by it and that reference needs to be dropped by its caller.
+>> bl_idle_init() doesn't do that, so fix it.
+>>
+>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> 
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-perf trace: Allow selecting use the use of the ordered_events code
+Yangtao, were you going to resend this one?
 
-I was trigger happy on this one, as using ordered_events as implemented
-by Jiri for use with the --block code under discussion on lkml incurs
-in delaying processing to form batches that then get ordered and then
-printed.
+-- 
+Jens Axboe
 
-With 'perf trace' we want to process the events as they go, without that
-delay, and doing it that way works well for the common case which is to
-trace a thread or a workload started by 'perf trace'.
-
-So revert back to not using ordered_events but add an option to select
-that mode so that users can experiment with their particular use case to
-see if works better, i.e. if the added delay is not a problem and the
-ordering helps.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-8ki7sld6rusnjhhtaly26i5o@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Documentation/perf-trace.txt |  6 ++++++
- tools/perf/builtin-trace.c              | 25 +++++++++++++++++++------
- 2 files changed, 25 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-index e113450503d2..631e687be4eb 100644
---- a/tools/perf/Documentation/perf-trace.txt
-+++ b/tools/perf/Documentation/perf-trace.txt
-@@ -205,6 +205,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
- 	because the file may be huge. A time out is needed in such cases.
- 	This option sets the time out limit. The default value is 500 ms.
- 
-+--sort-events::
-+	Do sorting on batches of events, use when noticing out of order events that
-+	may happen, for instance, when a thread gets migrated to a different CPU
-+	while processing a syscall.
-+
-+
- PAGEFAULTS
- ----------
- 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 1ff5603db940..406bceda6a2b 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -110,6 +110,7 @@ struct trace {
- 	} stats;
- 	unsigned int		max_stack;
- 	unsigned int		min_stack;
-+	bool			sort_events;
- 	bool			raw_augmented_syscalls;
- 	bool			not_ev_qualifier;
- 	bool			live;
-@@ -2656,7 +2657,7 @@ static int __trace__deliver_event(struct trace *trace, union perf_event *event)
- 	return 0;
- }
- 
--static int trace__flush_events(struct trace *trace)
-+static int __trace__flush_events(struct trace *trace)
- {
- 	u64 first = ordered_events__first_time(&trace->oe.data);
- 	u64 flush = trace->oe.last - NSEC_PER_SEC;
-@@ -2668,12 +2669,19 @@ static int trace__flush_events(struct trace *trace)
- 	return 0;
- }
- 
-+static int trace__flush_events(struct trace *trace)
-+{
-+	return !trace->sort_events ? 0 : __trace__flush_events(trace);
-+}
-+
- static int trace__deliver_event(struct trace *trace, union perf_event *event)
- {
--	struct perf_evlist *evlist = trace->evlist;
- 	int err;
- 
--	err = perf_evlist__parse_sample_timestamp(evlist, event, &trace->oe.last);
-+	if (!trace->sort_events)
-+		return __trace__deliver_event(trace, event);
-+
-+	err = perf_evlist__parse_sample_timestamp(trace->evlist, event, &trace->oe.last);
- 	if (err && err != -1)
- 		return err;
- 
-@@ -2897,7 +2905,8 @@ out_disable:
- 
- 	perf_evlist__disable(evlist);
- 
--	ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
-+	if (trace->sort_events)
-+		ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
- 
- 	if (!err) {
- 		if (trace->summary)
-@@ -3516,6 +3525,8 @@ int cmd_trace(int argc, const char **argv)
- 		     "Set the maximum stack depth when parsing the callchain, "
- 		     "anything beyond the specified depth will be ignored. "
- 		     "Default: kernel.perf_event_max_stack or " __stringify(PERF_MAX_STACK_DEPTH)),
-+	OPT_BOOLEAN(0, "sort-events", &trace.sort_events,
-+			"Sort batch of events before processing, use if getting out of order events"),
- 	OPT_BOOLEAN(0, "print-sample", &trace.print_sample,
- 			"print the PERF_RECORD_SAMPLE PERF_SAMPLE_ info, for debugging"),
- 	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
-@@ -3609,8 +3620,10 @@ int cmd_trace(int argc, const char **argv)
- 		}
- 	}
- 
--	ordered_events__init(&trace.oe.data, ordered_events__deliver_event, &trace);
--	ordered_events__set_copy_on_queue(&trace.oe.data, true);
-+	if (trace.sort_events) {
-+		ordered_events__init(&trace.oe.data, ordered_events__deliver_event, &trace);
-+		ordered_events__set_copy_on_queue(&trace.oe.data, true);
-+	}
- 
- 	/*
- 	 * If we are augmenting syscalls, then combine what we put in the
