@@ -2,74 +2,72 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BA1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F61AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C812084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B19C2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:07:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knPpRNPv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXuv5a1O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbeLTBH2 (ORCPT
+        id S1730744AbeLTBH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 20:07:28 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39037 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728373AbeLTBH1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 20:07:27 -0500
-Received: by mail-pf1-f195.google.com with SMTP id r136so33811pfc.6;
-        Wed, 19 Dec 2018 17:07:25 -0800 (PST)
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45870 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730725AbeLTBHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 20:07:25 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g62so21073pfd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 17:07:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9eDj9Bbt2oCf40baWi7GsmAunPoJ7bQGVVCa01DH/lM=;
-        b=knPpRNPve/QpAk838saOm0fzqBMDJZUpf9ZwdhpSbcqX1+2m6ewzdTVo7P0Pkh5R8s
-         prneLkG9ohhukGXVYDYumezv99MF4Jb+dO9aJ0ucF+LpsSesZXYf929WmdGi+AgwVI7G
-         wkDZKarPWboOwmQlSgrYKl8fI4gt1BrzybodmiWB5wDEwlPHjopVYu4hepIqz9MvMR5s
-         dSyRN8Z9geJuD6v7nB00lmcbTf2C+O6lsJAM5sXjASoVzey/PlQ4xRSywUW/naG+ymKq
-         CsnlFmOdqhpgxOuBEY/b3vURJYVidVXI3xPaioHeCzqrKVDsPZDn9YQCoBEBAlWu4cZT
-         iuBA==
+        bh=5yjanOGqKt2X+U7hCj9lgZEDI+E4lAi/78Tud6Gou4k=;
+        b=SXuv5a1OCUHNyKNaMxDprIbGfDeEKrx58PuZDsQ0dJwByr5+GzAY/pwSFQg24GVr3x
+         riOR1QnI3pQ0AN9+4RuE02rXLLovNKDAgTa9H0CE9FOWMmdDIC3Gzcp9Y6jntUR+giQg
+         XxkAsu0HQWnH0aKSFCSRhGWFFZBgH6Y9DOJwREBneunzBZ+t5MWLWJdDP3V5EycYdLMJ
+         EmxLnQEdli2Xm828Twrn9v6E3LIdrztQf2JVZofL30lfn6m4bkZMEAg3g36xSsxCy0Yg
+         t3k+ROm8x4RJNzVBNHiIQmO58sMCpoT1A67y/xlFu2fhYj54ZygwMNq07XM2HIuLrZlD
+         wgdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9eDj9Bbt2oCf40baWi7GsmAunPoJ7bQGVVCa01DH/lM=;
-        b=s51W0/d/ybOOQmMygovPEquXJlP3YQv0b3VH9FHwaIacfMI0UJNBRV4cxecHz2beBm
-         KbkS1L2RnePKKI8I9eHNAN3qzLN7SYujyXcNQ3hrKU1fmseh4BI3TX0YRTzyWg+SeelJ
-         Rl34RYG/iyAFS1ZZ5CkCgCdK+4s7iZ2wMrlYqrTjvQfgFOrW7xSNEYl0aQ4n5LDUSXZR
-         tHz16sJVr3cyK1BN9nP6fiWU2w5DQx1FQABEeZotwqbVynjjeTZ7gQFntfCjumgN57fH
-         uYBqwoiqiyfkBM1B7pgtVYcU0hbbhM3+6MMyAog7L63peLett64UVtO9JMXhjOB1vPxx
-         XfWA==
-X-Gm-Message-State: AA+aEWbcUoUmaTdHCMkTQvBT5mkIGBvOzY9gx0VRytZJzNLiK3UPp7NF
-        esmGGdPpV5RKvSg5arudomI=
-X-Google-Smtp-Source: AFSGD/Xk4iEb/3kumYvsWax7BIovJuhImdrqNN/gjgnOhxLr/GDDsrxdgU540Fs4qQL43q0ijfx80A==
-X-Received: by 2002:a62:8d4f:: with SMTP id z76mr23262096pfd.2.1545268044860;
-        Wed, 19 Dec 2018 17:07:24 -0800 (PST)
+        bh=5yjanOGqKt2X+U7hCj9lgZEDI+E4lAi/78Tud6Gou4k=;
+        b=abFVgsquJn1l5l/1WfjEFyjXwHghC2tYdF9hRXlDpLENFiusgke+LStSnLRIULe5AA
+         VmYH3/oIT7Yimqboa9JXRCgHUE5u445G0Kg0c8xg+7TWE0Y3ZIdC2LBXAQawNn8qC02f
+         z+gLccV+KvREIW30+omVDNWYbqXYB/BSxrDHUZhGil1yvXQONEFBg4h8OVe3qVxKxEX4
+         KYsItGyFs9pLb3lgAEZxZkFsm9GTb3DxA9ZcOPMtEsu8lp1nSbxY24wS3tanmU1qB7XJ
+         pD75DULfWMJy5VM7ZQJjvMg9i5OaHByIS8fy7uUTq78raJ68xlG/N8SJS3RRSPZauunk
+         RFbg==
+X-Gm-Message-State: AA+aEWZxAgNNl9NitD3ANGH2UYHXPxZpUO9LR77sRKMSn4CizxF70pLS
+        puWUAQb2o/ZqfJsGS3P5HGI=
+X-Google-Smtp-Source: AFSGD/UZX7hxQiGJ7N+TmkRcCoGyRG1EJFhMgIghejLALlKQkU3rDwumifoK4h6FMHOJC2v62hXIxQ==
+X-Received: by 2002:a63:cf48:: with SMTP id b8mr21657772pgj.17.1545268042911;
+        Wed, 19 Dec 2018 17:07:22 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id 83sm29008612pgf.57.2018.12.19.17.07.22
+        by smtp.gmail.com with ESMTPSA id 83sm29008612pgf.57.2018.12.19.17.07.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 17:07:24 -0800 (PST)
+        Wed, 19 Dec 2018 17:07:22 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     p.zabel@pengutronix.de
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
         l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] reset: imx7: Add support for i.MX8MQ IP block variant
-Date:   Wed, 19 Dec 2018 17:07:00 -0800
-Message-Id: <20181220010700.8598-4-andrew.smirnov@gmail.com>
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/3] dt-bindings: reset: imx7: Document usage on i.MX8MQ SoCs
+Date:   Wed, 19 Dec 2018 17:06:59 -0800
+Message-Id: <20181220010700.8598-3-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181220010700.8598-1-andrew.smirnov@gmail.com>
 References: <20181220010700.8598-1-andrew.smirnov@gmail.com>
@@ -80,8 +78,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bits and pieces needed to support IP block variant found on
-i.MX8MQ SoCs.
+The driver now supports i.MX8MQ, so update bindings accordingly.
 
 Cc: p.zabel@pengutronix.de
 Cc: Fabio Estevam <fabio.estevam@nxp.com>
@@ -90,164 +87,109 @@ Cc: l.stach@pengutronix.de
 Cc: Leonard Crestez <leonard.crestez@nxp.com>
 Cc: "A.s. Dong" <aisheng.dong@nxp.com>
 Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
 Cc: linux-imx@nxp.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/reset/Kconfig      |   4 +-
- drivers/reset/reset-imx7.c | 106 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 108 insertions(+), 2 deletions(-)
+ .../bindings/reset/fsl,imx7-src.txt           |  7 +-
+ include/dt-bindings/reset/imx8mq-reset.h      | 64 +++++++++++++++++++
+ 2 files changed, 69 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/reset/imx8mq-reset.h
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index c21da9fe51ec..add84b523be1 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -48,9 +48,9 @@ config RESET_HSDK
- 	  This enables the reset controller driver for HSDK board.
+diff --git a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
+index 1ab1d109318e..2ecf33815d18 100644
+--- a/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
++++ b/Documentation/devicetree/bindings/reset/fsl,imx7-src.txt
+@@ -5,7 +5,9 @@ Please also refer to reset.txt in this directory for common reset
+ controller binding usage.
  
- config RESET_IMX7
--	bool "i.MX7 Reset Driver" if COMPILE_TEST
-+	bool "i.MX7/8 Reset Driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
--	default SOC_IMX7D
-+	default SOC_IMX7D || (ARM64 && ARCH_MXC)
- 	select MFD_SYSCON
- 	help
- 	  This enables the reset controller driver for i.MX7 SoCs.
-diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c
-index 3a36d5863891..bb826935db6d 100644
---- a/drivers/reset/reset-imx7.c
-+++ b/drivers/reset/reset-imx7.c
-@@ -22,6 +22,7 @@
- #include <linux/reset-controller.h>
- #include <linux/regmap.h>
- #include <dt-bindings/reset/imx7-reset.h>
-+#include <dt-bindings/reset/imx8mq-reset.h>
+ Required properties:
+-- compatible: Should be "fsl,imx7d-src", "syscon"
++- compatible:
++	- For i.MX7 SoCs should be "fsl,imx7d-src", "syscon"
++	- For i.MX8MQ SoCs should be "fsl,imx8mq-src", "syscon"
+ - reg: should be register base and length as documented in the
+   datasheet
+ - interrupts: Should contain SRC interrupt
+@@ -44,4 +46,5 @@ Example:
  
- struct imx7_src_signal {
- 	unsigned int offset, bit;
-@@ -113,6 +114,110 @@ static const struct imx7_src_variant variant_imx7 = {
- 	.prepare = imx7_src_prepare,
- };
  
-+enum imx8mq_src_registers {
-+	SRC_A53RCR0		= 0x0004,
-+	SRC_HDMI_RCR		= 0x0030,
-+	SRC_DISP_RCR		= 0x0034,
-+	SRC_GPU_RCR		= 0x0040,
-+	SRC_VPU_RCR		= 0x0044,
-+	SRC_PCIE2_RCR		= 0x0048,
-+	SRC_MIPIPHY1_RCR	= 0x004c,
-+	SRC_MIPIPHY2_RCR	= 0x0050,
-+	SRC_DDRC2_RCR		= 0x1004,
-+};
+ For list of all valid reset indicies see
+-<dt-bindings/reset/imx7-reset.h>
++<dt-bindings/reset/imx7-reset.h> for i.MX7 and
++<dt-bindings/reset/imx8mq-reset.h> for i.MX8MQ
+diff --git a/include/dt-bindings/reset/imx8mq-reset.h b/include/dt-bindings/reset/imx8mq-reset.h
+new file mode 100644
+index 000000000000..57c592498aa0
+--- /dev/null
++++ b/include/dt-bindings/reset/imx8mq-reset.h
+@@ -0,0 +1,64 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2018 Zodiac Inflight Innovations
++ *
++ * Author: Andrey Smirnov <andrew.smirnov@gmail.com>
++ */
 +
-+static const struct imx7_src_signal imx8mq_src_signals[IMX8MQ_RESET_NUM] = {
-+	[IMX8MQ_RESET_A53_CORE_POR_RESET0]	= { SRC_A53RCR0, BIT(0) },
-+	[IMX8MQ_RESET_A53_CORE_POR_RESET1]	= { SRC_A53RCR0, BIT(1) },
-+	[IMX8MQ_RESET_A53_CORE_POR_RESET2]	= { SRC_A53RCR0, BIT(2) },
-+	[IMX8MQ_RESET_A53_CORE_POR_RESET3]	= { SRC_A53RCR0, BIT(3) },
-+	[IMX8MQ_RESET_A53_CORE_RESET0]		= { SRC_A53RCR0, BIT(4) },
-+	[IMX8MQ_RESET_A53_CORE_RESET1]		= { SRC_A53RCR0, BIT(5) },
-+	[IMX8MQ_RESET_A53_CORE_RESET2]		= { SRC_A53RCR0, BIT(6) },
-+	[IMX8MQ_RESET_A53_CORE_RESET3]		= { SRC_A53RCR0, BIT(7) },
-+	[IMX8MQ_RESET_A53_DBG_RESET0]		= { SRC_A53RCR0, BIT(8) },
-+	[IMX8MQ_RESET_A53_DBG_RESET1]		= { SRC_A53RCR0, BIT(9) },
-+	[IMX8MQ_RESET_A53_DBG_RESET2]		= { SRC_A53RCR0, BIT(10) },
-+	[IMX8MQ_RESET_A53_DBG_RESET3]		= { SRC_A53RCR0, BIT(11) },
-+	[IMX8MQ_RESET_A53_ETM_RESET0]		= { SRC_A53RCR0, BIT(12) },
-+	[IMX8MQ_RESET_A53_ETM_RESET1]		= { SRC_A53RCR0, BIT(13) },
-+	[IMX8MQ_RESET_A53_ETM_RESET2]		= { SRC_A53RCR0, BIT(14) },
-+	[IMX8MQ_RESET_A53_ETM_RESET3]		= { SRC_A53RCR0, BIT(15) },
-+	[IMX8MQ_RESET_A53_SOC_DBG_RESET]	= { SRC_A53RCR0, BIT(20) },
-+	[IMX8MQ_RESET_A53_L2RESET]		= { SRC_A53RCR0, BIT(21) },
-+	[IMX8MQ_RESET_SW_NON_SCLR_M4C_RST]	= { SRC_M4RCR, BIT(0) },
-+	[IMX8MQ_RESET_OTG1_PHY_RESET]		= { SRC_USBOPHY1_RCR, BIT(0) },
-+	[IMX8MQ_RESET_OTG2_PHY_RESET]		= { SRC_USBOPHY2_RCR, BIT(0) },
-+	[IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N]	= { SRC_MIPIPHY_RCR, BIT(1) },
-+	[IMX8MQ_RESET_MIPI_DSI_RESET_N]		= { SRC_MIPIPHY_RCR, BIT(2) },
-+	[IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(3) },
-+	[IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(4) },
-+	[IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(5) },
-+	[IMX8MQ_RESET_PCIEPHY]			= { SRC_PCIEPHY_RCR,
-+						    BIT(2) | BIT(1) },
-+	[IMX8MQ_RESET_PCIEPHY_PERST]		= { SRC_PCIEPHY_RCR, BIT(3) },
-+	[IMX8MQ_RESET_PCIE_CTRL_APPS_EN]	= { SRC_PCIEPHY_RCR, BIT(6) },
-+	[IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF]	= { SRC_PCIEPHY_RCR, BIT(11) },
-+	[IMX8MQ_RESET_HDMI_PHY_APB_RESET]	= { SRC_HDMI_RCR, BIT(0) },
-+	[IMX8MQ_RESET_DISP_RESET]		= { SRC_DISP_RCR, BIT(0) },
-+	[IMX8MQ_RESET_GPU_RESET]		= { SRC_GPU_RCR, BIT(0) },
-+	[IMX8MQ_RESET_VPU_RESET]		= { SRC_VPU_RCR, BIT(0) },
-+	[IMX8MQ_RESET_PCIEPHY2]			= { SRC_PCIE2_RCR,
-+						    BIT(2) | BIT(1) },
-+	[IMX8MQ_RESET_PCIEPHY2_PERST]		= { SRC_PCIE2_RCR, BIT(3) },
-+	[IMX8MQ_RESET_PCIE2_CTRL_APPS_EN]	= { SRC_PCIE2_RCR, BIT(6) },
-+	[IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF]	= { SRC_PCIE2_RCR, BIT(11) },
-+	[IMX8MQ_RESET_MIPI_CSI1_CORE_RESET]	= { SRC_MIPIPHY1_RCR, BIT(0) },
-+	[IMX8MQ_RESET_MIPI_CSI1_PHY_REF_RESET]	= { SRC_MIPIPHY1_RCR, BIT(1) },
-+	[IMX8MQ_RESET_MIPI_CSI1_ESC_RESET]	= { SRC_MIPIPHY1_RCR, BIT(2) },
-+	[IMX8MQ_RESET_MIPI_CSI2_CORE_RESET]	= { SRC_MIPIPHY2_RCR, BIT(0) },
-+	[IMX8MQ_RESET_MIPI_CSI2_PHY_REF_RESET]	= { SRC_MIPIPHY2_RCR, BIT(1) },
-+	[IMX8MQ_RESET_MIPI_CSI2_ESC_RESET]	= { SRC_MIPIPHY2_RCR, BIT(2) },
-+	[IMX8MQ_RESET_DDRC1_PRST]		= { SRC_DDRC_RCR, BIT(0) },
-+	[IMX8MQ_RESET_DDRC1_CORE_RESET]		= { SRC_DDRC_RCR, BIT(1) },
-+	[IMX8MQ_RESET_DDRC1_PHY_RESET]		= { SRC_DDRC_RCR, BIT(2) },
-+	[IMX8MQ_RESET_DDRC2_PHY_RESET]		= { SRC_DDRC2_RCR, BIT(0) },
-+	[IMX8MQ_RESET_DDRC2_CORE_RESET]		= { SRC_DDRC2_RCR, BIT(1) },
-+	[IMX8MQ_RESET_DDRC2_PRST]		= { SRC_DDRC2_RCR, BIT(2) },
-+};
++#ifndef DT_BINDING_RESET_IMX8MQ_H
++#define DT_BINDING_RESET_IMX8MQ_H
 +
-+static unsigned int
-+imx8mq_src_prepare(struct imx7_src *imx7src, unsigned long id, bool assert)
-+{
-+	const unsigned int bit = imx7src->variant->signals[id].bit;
-+	unsigned int value = assert ? bit : 0;
++#define IMX8MQ_RESET_A53_CORE_POR_RESET0	0
++#define IMX8MQ_RESET_A53_CORE_POR_RESET1	1
++#define IMX8MQ_RESET_A53_CORE_POR_RESET2	2
++#define IMX8MQ_RESET_A53_CORE_POR_RESET3	3
++#define IMX8MQ_RESET_A53_CORE_RESET0		4
++#define IMX8MQ_RESET_A53_CORE_RESET1		5
++#define IMX8MQ_RESET_A53_CORE_RESET2		6
++#define IMX8MQ_RESET_A53_CORE_RESET3		7
++#define IMX8MQ_RESET_A53_DBG_RESET0		8
++#define IMX8MQ_RESET_A53_DBG_RESET1		9
++#define IMX8MQ_RESET_A53_DBG_RESET2		10
++#define IMX8MQ_RESET_A53_DBG_RESET3		11
++#define IMX8MQ_RESET_A53_ETM_RESET0		12
++#define IMX8MQ_RESET_A53_ETM_RESET1		13
++#define IMX8MQ_RESET_A53_ETM_RESET2		14
++#define IMX8MQ_RESET_A53_ETM_RESET3		15
++#define IMX8MQ_RESET_A53_SOC_DBG_RESET		16
++#define IMX8MQ_RESET_A53_L2RESET		17
++#define IMX8MQ_RESET_SW_NON_SCLR_M4C_RST	18
++#define IMX8MQ_RESET_OTG1_PHY_RESET		19
++#define IMX8MQ_RESET_OTG2_PHY_RESET		20
++#define IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N	21
++#define IMX8MQ_RESET_MIPI_DSI_RESET_N		22
++#define IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N	23
++#define IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N	24
++#define IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N	25
++#define IMX8MQ_RESET_PCIEPHY			26
++#define IMX8MQ_RESET_PCIEPHY_PERST		27
++#define IMX8MQ_RESET_PCIE_CTRL_APPS_EN		28
++#define IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF	29
++#define IMX8MQ_RESET_HDMI_PHY_APB_RESET		30
++#define IMX8MQ_RESET_DISP_RESET			31
++#define IMX8MQ_RESET_GPU_RESET			32
++#define IMX8MQ_RESET_VPU_RESET			33
++#define IMX8MQ_RESET_PCIEPHY2			34
++#define IMX8MQ_RESET_PCIEPHY2_PERST		35
++#define IMX8MQ_RESET_PCIE2_CTRL_APPS_EN		36
++#define IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF	37
++#define IMX8MQ_RESET_MIPI_CSI1_CORE_RESET	38
++#define IMX8MQ_RESET_MIPI_CSI1_PHY_REF_RESET	39
++#define IMX8MQ_RESET_MIPI_CSI1_ESC_RESET	40
++#define IMX8MQ_RESET_MIPI_CSI2_CORE_RESET	41
++#define IMX8MQ_RESET_MIPI_CSI2_PHY_REF_RESET	42
++#define IMX8MQ_RESET_MIPI_CSI2_ESC_RESET	43
++#define IMX8MQ_RESET_DDRC1_PRST			44
++#define IMX8MQ_RESET_DDRC1_CORE_RESET		45
++#define IMX8MQ_RESET_DDRC1_PHY_RESET		46
++#define IMX8MQ_RESET_DDRC2_PRST			47
++#define IMX8MQ_RESET_DDRC2_CORE_RESET		48
++#define IMX8MQ_RESET_DDRC2_PHY_RESET		49
 +
-+	switch (id) {
-+	case IMX8MQ_RESET_PCIEPHY:
-+	case IMX8MQ_RESET_PCIEPHY2: /* fallthrough */
-+		/*
-+		 * wait for more than 10us to release phy g_rst and
-+		 * btnrst
-+		 */
-+		if (!assert)
-+			udelay(10);
-+		break;
++#define IMX8MQ_RESET_NUM			50
 +
-+	case IMX8MQ_RESET_PCIE_CTRL_APPS_EN:
-+	case IMX8MQ_RESET_PCIE2_CTRL_APPS_EN:	/* fallthrough */
-+	case IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N:	/* fallthrough */
-+	case IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N:	/* fallthrough */
-+	case IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N:	/* fallthrough */
-+	case IMX8MQ_RESET_MIPI_DSI_RESET_N:	/* fallthrough */
-+	case IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N:	/* fallthrough */
-+		value = assert ? 0 : bit;
-+		break;
-+	}
-+
-+	return value;
-+}
-+
-+static const struct imx7_src_variant variant_imx8mq = {
-+	.signals = imx8mq_src_signals,
-+	.signals_num = ARRAY_SIZE(imx8mq_src_signals),
-+	.prepare = imx8mq_src_prepare,
-+};
-+
- static struct imx7_src *to_imx7_src(struct reset_controller_dev *rcdev)
- {
- 	return container_of(rcdev, struct imx7_src, rcdev);
-@@ -175,6 +280,7 @@ static int imx7_reset_probe(struct platform_device *pdev)
- 
- static const struct of_device_id imx7_reset_dt_ids[] = {
- 	{ .compatible = "fsl,imx7d-src", .data = &variant_imx7 },
-+	{ .compatible = "fsl,imx8mq-src", .data = &variant_imx8mq },
- 	{ /* sentinel */ },
- };
- 
++#endif
 -- 
 2.19.1
 
