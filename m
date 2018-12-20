@@ -2,103 +2,99 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A08C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF5EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF73217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE9FF217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:13:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lwTAxOtu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W5CWV7LQ"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BJGVpu1n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732808AbeLTNMm (ORCPT
+        id S1732976AbeLTNNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:12:42 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36918 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730884AbeLTNMl (ORCPT
+        Thu, 20 Dec 2018 08:13:50 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:33360 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730884AbeLTNNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:12:41 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1BDBD60867; Thu, 20 Dec 2018 13:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545311561;
-        bh=REEJn9AdM/EMIpyj5AGdvfP5/SAXzUzyr5xgpY8LL0s=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=lwTAxOtuIKGLlxDJMtWKIh2zEIMYzODkk9cE81T1SUS2WBvqH27Oldf06ruipmeyu
-         hvHUuIm30oMMrAY+H3FofccTCMq8LJsdvcNmOCDfZZ3mZPqfEmI93j+vtUCIqlOk/a
-         hW0HU+z+3MqD0/5vF24L2zCT6SJI4Vuc8+4WJkhs=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86E1B60867;
-        Thu, 20 Dec 2018 13:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545311559;
-        bh=REEJn9AdM/EMIpyj5AGdvfP5/SAXzUzyr5xgpY8LL0s=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=W5CWV7LQb53kCdmcWXDBuFjZCyO/BueVVi7o4N/UOYhaoHTSlwpkblmPshLZTp6wP
-         OxYimnVS+anFpgGDMuuBdojDKTWymWwD4Ro9l2AomVk4OXzrodIlgbgGwnonxJDyI4
-         /nNAoixbu+xgyirOJ+aNAgoTr1vXXALyvDJtrtXc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86E1B60867
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        netdev@vger.kernel.org,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: out of bounds read in drivers/net/wireless/ray_cs.c
-References: <9a94eeb3-0146-5e64-1e35-54f925fb14d2@canonical.com>
-Date:   Thu, 20 Dec 2018 15:12:35 +0200
-In-Reply-To: <9a94eeb3-0146-5e64-1e35-54f925fb14d2@canonical.com> (Colin Ian
-        King's message of "Thu, 20 Dec 2018 13:06:58 +0000")
-Message-ID: <87pntwtk8s.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 20 Dec 2018 08:13:49 -0500
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id wBKDDMEQ027669;
+        Thu, 20 Dec 2018 22:13:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wBKDDMEQ027669
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1545311602;
+        bh=vBsqhUnkcX+Cw8tH/LhB5lUjlmPdpWIo2EEGfiaInzw=;
+        h=From:Date:Subject:To:Cc:From;
+        b=BJGVpu1n/sROqVd5jakJdkXZGArSMHStt/TvYHNvvRldfaB6IK8naTqfObaLXiEwd
+         U1MgGKcu/e9ER6LJ6VCmsuqUWM8kUwFLbgPNeQrNIVNynJXJJ9EtBe8/JZntJtNtnv
+         /roCDdF0euaWqKIrOGJxuGnQ0syKAyBqU1lUSQrdwsxbA4OeO1QNvr+e8sWL2wgx5B
+         NT1EvFymz+/mQSgjUblTCb0gBioyxbO3kTfC7dsi2PqqiIn3YfaDDIun+CoFvW3L8f
+         bEQUrQpfZoVovuDGzP5eFT3mAfEISYmG9LzqmMjsxwKMYQIrIVJVrAsr+VvG7M0HWX
+         bRKIFGZzDHNGA==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id h78so1029352vsi.6;
+        Thu, 20 Dec 2018 05:13:22 -0800 (PST)
+X-Gm-Message-State: AA+aEWZwb5tmo8sWTd+8+TvoXKO6fPvh0W5wt/M9ph5bTE+SVN6KXnDM
+        gBCavyegooeT5RW4BlXcts3X9GLayGQznLTIo5A=
+X-Google-Smtp-Source: AFSGD/UVGywGyHyPQJNYpBVhWjHgWMida9/LqboIM6kmlhUf4YgPLLwBiR109Xx/qlM3N9I26AGIesPTkOqTkPBkqaY=
+X-Received: by 2002:a67:f1c2:: with SMTP id v2mr5361457vsm.181.1545311601124;
+ Thu, 20 Dec 2018 05:13:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 20 Dec 2018 22:12:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQHKJzY9giP-A5Q5+tp_JuH_bnDTzgbGnBCiAMbCVVevw@mail.gmail.com>
+Message-ID: <CAK7LNAQHKJzY9giP-A5Q5+tp_JuH_bnDTzgbGnBCiAMbCVVevw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v4.20
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> writes:
+Hi Linus,
 
-> Static analysis with CoverityScan picked up an out of bounds read issue
-> that has been in the Raylink wireless LAN card driver since it appeared
-> in the kernel:
->
-> drivers/net/wireless/ray_cs.c:
->
-> accessing org[3] is out of bounds, the array has just 3 elements.
->
->  959                if (proto == htons(ETH_P_AARP) || proto ==
-> htons(ETH_P_IPX)) {
->  960                        /* This is the selective translation table,
-> only 2 entries */
->
->     CID undefined (#1 of 1): Out-of-bounds read
->     overrun-local: Overrunning array of 3 bytes at byte offset 3 by
-> dereferencing pointer &((struct snaphdr_t *)ptx->var)->org[3].
->
->  961                        writeb(0xf8,
->  962                               &((struct snaphdr_t __iomem
-> *)ptx->var)->org[3]);
->  963                }
->
-> I suspect the org[3] is a typo and should be org[2], but I don't have
-> any info on the H/W so I'm speculating that this is the issue. Any ideas
-> anyone?
+Please pull one fix for v4.20 release.
 
-I have never heard anyone using this driver so I suspect you won't get
-any help with testing. Just send a patch fixing the issue, and if it
-breaks something then at least we know someone is using the driver :)
+Thanks!
+
+
+
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
+
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v4.20-2
+
+for you to fetch changes up to ef7cfd00b2caf6edeb7f169682b64be2d0a798cf:
+
+  kbuild: fix false positive warning/error about missing libelf
+(2018-12-20 00:04:15 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v4.20 (2nd)
+
+ - fix false positive warning/error about missing library for objtool
+
+----------------------------------------------------------------
+Masahiro Yamada (1):
+      kbuild: fix false positive warning/error about missing libelf
+
+ Makefile | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
 
 -- 
-Kalle Valo
+Best Regards
+Masahiro Yamada
