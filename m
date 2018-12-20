@@ -2,76 +2,112 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8437AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA0DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59081218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:33:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iVTpVsWN"
+	by mail.kernel.org (Postfix) with ESMTP id 0E74F218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389257AbeLTSdQ (ORCPT
+        id S2389270AbeLTSdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:33:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49996 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730556AbeLTSdP (ORCPT
+        Thu, 20 Dec 2018 13:33:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33115 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387657AbeLTSdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:33:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zWmImtXqeGkHvkoyDwKHxzBwzs1ZAXYh07e9ywdlueU=; b=iVTpVsWNGKhInzhT4FZQZfSxM
-        r8e8WfaFO9H2N5Qu+9zsmvgvsKCzPRuzJR19wWQmV8jUgzVyYTYb/b+VEklSZdUj/lhq+j8J4iDkd
-        jzvG2vmovGtxgZMPq2ArT1O6o1HUipsbNJrPHcL1fTk9m3TLWWgx8f9TfdMMPf4Hnaij+PplHSX8Z
-        HvZ/2EbOZrkPsAw11IuMbQ8zlOtrHF5bcnOLBv7SPzDLyeOOoqkm1WQWUhPcVgUldipKFNWMXCCBZ
-        BV3A67K/16dhdiIfHvyXmZ2RCMymyoRoCgj8cHDLGM26EeuWyR9DeNzd1vX2G9L1A3HazlaQlYQ1H
-        nBPnrWPRg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ga38C-0005OU-2z; Thu, 20 Dec 2018 18:33:12 +0000
-Date:   Thu, 20 Dec 2018 10:33:11 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
-Message-ID: <20181220183311.GA30801@infradead.org>
-References: <20181127103252.20994-1-andr2000@gmail.com>
- <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
- <20181220153646.GA22997@infradead.org>
- <f2cfadc7-2e0b-b63d-d094-d5339b0c85fe@gmail.com>
- <20181220173950.GA19641@infradead.org>
- <CAKMK7uF8hmO=z4jy+1b1z5ELLWpjcZpqmLoRiP2BJvwnNpOFeg@mail.gmail.com>
+        Thu, 20 Dec 2018 13:33:20 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIWxIB3687283
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 20 Dec 2018 10:32:59 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIWx7M3687280;
+        Thu, 20 Dec 2018 10:32:59 -0800
+Date:   Thu, 20 Dec 2018 10:32:59 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-tk2jgo2v4v2yjuj28axbpppo@git.kernel.org>
+Cc:     mingo@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
+        penberg@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        acme@redhat.com, fweisbec@gmail.com, linux-kernel@vger.kernel.org,
+        hitalos@gmail.com, hpa@zytor.com, jolsa@kernel.org
+Reply-To: namhyung@kernel.org, mingo@kernel.org, adrian.hunter@intel.com,
+          peterz@infradead.org, tglx@linutronix.de, penberg@kernel.org,
+          acme@redhat.com, fweisbec@gmail.com,
+          linux-kernel@vger.kernel.org, hitalos@gmail.com, hpa@zytor.com,
+          jolsa@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf symbols: Relax checks on perf-PID.map
+ ownership
+Git-Commit-ID: bc055c54b887961bc3545c54e61c844fd4499c2b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uF8hmO=z4jy+1b1z5ELLWpjcZpqmLoRiP2BJvwnNpOFeg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 07:29:37PM +0100, Daniel Vetter wrote:
-> What we most definitely not want to end up with though is actually
-> streaming dma, because with that all the zero copy buffer sharing
-> tricks become pointless. There's pretty epic amounts of hacks to work
-> around this, I have no idea what's supposed to give here.
+Commit-ID:  bc055c54b887961bc3545c54e61c844fd4499c2b
+Gitweb:     https://git.kernel.org/tip/bc055c54b887961bc3545c54e61c844fd4499c2b
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 18 Dec 2018 12:39:08 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 18 Dec 2018 16:17:41 -0300
 
-Err, with streaming DMA buffer sharing is trivial.  The coherent DMA
-allocator is what causes all kinds of horrible hacks that can't actually
-work on various platforms.
+perf symbols: Relax checks on perf-PID.map ownership
+
+Those are simple enough, and usually not produced by root, instead by
+whatever user is running java, rust, Node.js JIT code that end up
+generating those /tmp/perf-PID.map for resolution of symbols in the
+anonymous executable maps.
+
+Having to use --force to resolve symbols in 'perf top' is a distraction,
+as recently I experienced when node.js symbols were not being resolved
+by 'perf top'.
+
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Hítalo Silva <hitalos@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/n/tip-tk2jgo2v4v2yjuj28axbpppo@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/symbol.c | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index dcce74bae6de..01f2c7385e38 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1537,17 +1537,6 @@ int dso__load(struct dso *dso, struct map *map)
+ 	dso->adjust_symbols = 0;
+ 
+ 	if (perfmap) {
+-		struct stat st;
+-
+-		if (lstat(map_path, &st) < 0)
+-			goto out;
+-
+-		if (!symbol_conf.force && st.st_uid && (st.st_uid != geteuid())) {
+-			pr_warning("File %s not owned by current user or root, "
+-				   "ignoring it (use -f to override).\n", map_path);
+-			goto out;
+-		}
+-
+ 		ret = dso__load_perf_map(map_path, dso);
+ 		dso->symtab_type = ret > 0 ? DSO_BINARY_TYPE__JAVA_JIT :
+ 					     DSO_BINARY_TYPE__NOT_FOUND;
