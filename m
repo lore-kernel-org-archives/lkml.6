@@ -2,203 +2,247 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F131C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51054C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1406E217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAt5atSd"
+	by mail.kernel.org (Postfix) with ESMTP id 12A01217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732858AbeLTOJF (ORCPT
+        id S2387476AbeLTOJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:09:05 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43337 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731255AbeLTOJE (ORCPT
+        Thu, 20 Dec 2018 09:09:31 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54976 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731255AbeLTOJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:09:04 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so1897129wrs.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:09:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MXCduRLidV5Y2s88Gyg/N4BgSVPqPJlaFtjfZoolwFI=;
-        b=OAt5atSd5KMTOh+hCSw3lA8Vm1wj2zZPhIuXG3JC6DUfIw9JUEo+wUF0yRm4k6UKI1
-         PwGV9lU1Sb4sdg1g2lK1AugYY5l+/UXO/+i1YCMMcRvcrGWVzEieae2kYF7tlGBmT6ZU
-         q5XNVY9yCn0YyOyux//IJPou4zxCN9TDqwpJU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MXCduRLidV5Y2s88Gyg/N4BgSVPqPJlaFtjfZoolwFI=;
-        b=d12UfyOmd9TkNkTnEKR1w/Re+Vyg5M99Sr6t3bRtPLaLURRiWaR5OBVehZHAtRrqhh
-         Wx2lBiGvI43g1W/I5lb6FJpYUNgrWPoj1GsIlqENW8GbLx3BAO92IHWkVeAk9nJfODte
-         Aqp9Em7AEhwPKz8KOC7pGUucIFShGerQJeznTRQV11tMuJX+EKpe6rNRkd4AanizGXTq
-         nRfBPvv/XGp72z5ruf+cngsIVs4C0q7OUveK8cSN1fSMQqsQfsfCRsf3duuRBBz/EXM0
-         4Pc+MGFHxsblXuzAx+x7jozAbifR7OuD8zKaRMJBxyuHcEg7/rkw9rRZhr3pu/8D7VCn
-         XvYw==
-X-Gm-Message-State: AA+aEWakgHZlGmrYLfAydsH2FaMDjuDZGwLb7hQOmCv/P3sBUM2u4+DL
-        DVdgPKNduiIc8lfJ70L3yJa94GN0mLo=
-X-Google-Smtp-Source: AFSGD/W5+DNc3zSbSwCRnIPAvaohoz/ozEuusdKpfnYt1uD9X08g8RQESQ4F3STvJRH1ivydEeOojA==
-X-Received: by 2002:adf:900f:: with SMTP id h15mr22696475wrh.18.1545314941239;
-        Thu, 20 Dec 2018 06:09:01 -0800 (PST)
-Received: from [192.168.0.40] (55.183.88.92.rev.sfr.net. [92.88.183.55])
-        by smtp.googlemail.com with ESMTPSA id c15sm1207011wml.27.2018.12.20.06.08.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 06:09:00 -0800 (PST)
-Subject: Re: [PATCH v10 16/27] drivers: firmware: psci: Prepare to use OS
- initiated suspend mode
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
-Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-17-ulf.hansson@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <20e1c04b-870f-3213-835d-28724ef4f530@linaro.org>
-Date:   Thu, 20 Dec 2018 15:08:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 20 Dec 2018 09:09:31 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKE5Oct126689
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:09:29 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pgb574gy7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:09:29 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 20 Dec 2018 14:09:26 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 14:09:24 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKE9Nta60424254
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 14:09:23 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CE47A4051;
+        Thu, 20 Dec 2018 14:09:23 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C5B08A4040;
+        Thu, 20 Dec 2018 14:09:22 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.116])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Dec 2018 14:09:22 +0000 (GMT)
+Subject: Re: 4.20-rc6: WARNING: CPU: 30 PID: 197360 at
+ net/core/flow_dissector.c:764 __skb_flow_dissect
+To:     Ido Schimmel <idosch@idosch.org>, willemb@google.com
+Cc:     Michael S Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
+References: <ba519cd8-ab88-2868-f6d0-be321d8df0be@de.ibm.com>
+ <20181220091207.GA25942@splinter>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 20 Dec 2018 15:09:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181129174700.16585-17-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181220091207.GA25942@splinter>
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122014-0008-0000-0000-000002A4142C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122014-0009-0000-0000-0000220EB207
+Message-Id: <0c5a8fa8-efb3-71f2-0da9-6fc0f133cdf9@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=910 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 18:46, Ulf Hansson wrote:
-> To enable the OS initiated mode, the CPU topology needs to be described
-> using the hierarchical model in DT. When used, the idle state bits for the
-> CPU are created by ORing the bits for PM domain's idle state.
+On 20.12.2018 10:12, Ido Schimmel wrote:
+> +Willem
 > 
-> Let's prepare the PSCI driver to deal with this, via introducing a per CPU
-> variable called domain_state and by adding internal helpers to read/write
-> the value of the variable.
-
-What are the domain states ? What values can they have ?
-
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
+> On Thu, Dec 20, 2018 at 08:45:40AM +0100, Christian Borntraeger wrote:
+>> Folks,
+>>
+>> I got this warning today. I cant tell when and why this happened, so I do not know yet how to reproduce.
+>> Maybe someone has a quick idea.
+>>
+>> [85109.572032] WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764 __skb_flow_dissect+0x1f0/0x1318
 > 
-> Changes in v10:
-> 	- Use __this_cpu_read|write() rather than this_cpu_read|write().
+> I managed to trigger this warning as well the other day, but from a
+> different call path:
+
+FWIW, it also seems to happen on 4.20-rc1. 4.19.0 seems fine. bisect seem to have failed so
+my reproducer is not reliable.
+
 > 
-> ---
->  drivers/firmware/psci/psci.c | 26 ++++++++++++++++++++++----
->  1 file changed, 22 insertions(+), 4 deletions(-)
+> [280155.348526] WARNING: CPU: 1 PID: 24819 at net/core/flow_dissector.c:764 __skb_flow_dissect+0x314/0x16b0
+> [280155.348529] Modules linked in: dummy vrf intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul leds_mlxreg i2c_mux_reg i2c_mlxcpld crc32_pclmul mlxreg_hotplug mlxreg_io i2c_mux ghash_clmulni_intel iTCO_wdt gpio_ich iTCO_vendor_support mlx_platform aesni_intel aes_x86_64 crypto_simd cryptd glue_helper intel_cstate mac_hid lpc_ich ip_tables x_tables autofs4 mlxsw_spectrum mlxfw vxlan ip6_udp_tunnel udp_tunnel ip6_tunnel tunnel6 objagg psample parman bridge stp llc mlxsw_pci igb ahci mlxsw_core dca i2c_algo_bit libahci devlink i2c_ismt
+> [280155.348570] CPU: 1 PID: 24819 Comm: ip Not tainted 4.20.0-rc6-nn181213 #1
+> [280155.348572] Hardware name: Mellanox Technologies Ltd. MSN2100/SA001390, BIOS 5.6.5 06/07/2016
+> [280155.348576] RIP: 0010:__skb_flow_dissect+0x314/0x16b0
+> [280155.348579] Code: 85 19 0e 00 00 45 0f b7 6c 24 04 41 0f b7 44 24 06 4d 01 fd 48 85 db 4d 8d 14 07 74 0f 48 8b 43 18 48 85 c0 0f 85 e5 02 00 00 <0f> 0b 41 f6 04 24 40 0f 85 a4 02 00 00 c7 85 30 ff ff ff 00 00 00
+> [280155.348581] RSP: 0018:ffffa0df41fdf650 EFLAGS: 00010246
+> [280155.348584] RAX: 0000000000000000 RBX: ffff8bcded232000 RCX: 0000000000000000
+> [280155.348586] RDX: ffffa0df41fdf7e0 RSI: ffffffff98e415a0 RDI: ffff8bcded232000
+> [280155.348588] RBP: ffffa0df41fdf760 R08: 0000000000000000 R09: 0000000000000000
+> [280155.348590] R10: ffffa0df41fdf7e8 R11: ffff8bcdf27a3000 R12: ffffffff98e415a0
+> [280155.348591] R13: ffffa0df41fdf7e0 R14: ffffffff98dd2980 R15: ffffa0df41fdf7e0
+> [280155.348594] FS:  00007f46f6897680(0000) GS:ffff8bcdf7a80000(0000) knlGS:0000000000000000
+> [280155.348596] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [280155.348598] CR2: 000055933e95f9a0 CR3: 000000021e636000 CR4: 00000000001006e0
+> [280155.348600] Call Trace:
+> [280155.348610]  fib_multipath_hash+0x28c/0x2d0
+> [280155.348613]  ? fib_multipath_hash+0x28c/0x2d0
+> [280155.348619]  fib_select_path+0x241/0x32f
+> [280155.348622]  ? __fib_lookup+0x6a/0xb0
+> [280155.348626]  ip_route_output_key_hash_rcu+0x650/0xa30
+> [280155.348631]  ? __alloc_skb+0x9b/0x1d0
+> [280155.348634]  inet_rtm_getroute+0x3f7/0xb80
+> [280155.348640]  ? __alloc_pages_nodemask+0x11c/0x2c0
+> [280155.348646]  rtnetlink_rcv_msg+0x1d9/0x2f0
+> [280155.348650]  ? rtnl_calcit.isra.24+0x120/0x120
+> [280155.348654]  netlink_rcv_skb+0x54/0x130
+> [280155.348657]  rtnetlink_rcv+0x15/0x20
+> [280155.348661]  netlink_unicast+0x20a/0x2c0
+> [280155.348664]  netlink_sendmsg+0x2d1/0x3d0
+> [280155.348669]  sock_sendmsg+0x39/0x50
+> [280155.348672]  ___sys_sendmsg+0x2a0/0x2f0
+> [280155.348677]  ? filemap_map_pages+0x16b/0x360
+> [280155.348682]  ? __handle_mm_fault+0x108e/0x13d0
+> [280155.348686]  __sys_sendmsg+0x63/0xa0
+> [280155.348688]  ? __sys_sendmsg+0x63/0xa0
+> [280155.348692]  __x64_sys_sendmsg+0x1f/0x30
+> [280155.348697]  do_syscall_64+0x5a/0x120
+> [280155.348701]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [280155.348704] RIP: 0033:0x7f46f5b80d04
+> [280155.348707] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b5 0f 1f 80 00 00 00 00 48 8d 05 01 dc 2c 00 8b 00 85 c0 75 13 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 41 54 55 41 89 d4 53 48 89 f5
+> [280155.348709] RSP: 002b:00007fff82d62778 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> [280155.348712] RAX: ffffffffffffffda RBX: 000000005c1900ae RCX: 00007f46f5b80d04
+> [280155.348713] RDX: 0000000000000000 RSI: 00007fff82d627e0 RDI: 0000000000000003
+> [280155.348715] RBP: 00007fff82d628d8 R08: 0000000000000001 R09: 0000000000000000
+> [280155.348717] R10: 00007f46f5bfccc0 R11: 0000000000000246 R12: 0000000000000001
+> [280155.348718] R13: 000055933eb90020 R14: 0000000000000000 R15: 00007fff82d63030
+> [280155.348722] ---[ end trace e14023d76a175374 ]---
 > 
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index 4f0cbc95e41b..8dbcdecc2ae4 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -87,8 +87,19 @@ static u32 psci_function_id[PSCI_FN_MAX];
->  				(PSCI_1_0_EXT_POWER_STATE_ID_MASK | \
->  				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
->  
-> +static DEFINE_PER_CPU(u32, domain_state);
->  static u32 psci_cpu_suspend_feature;
->  
-> +static inline u32 psci_get_domain_state(void)
-> +{
-> +	return __this_cpu_read(domain_state);
-> +}
-> +
-> +static inline void psci_set_domain_state(u32 state)
-> +{
-> +	__this_cpu_write(domain_state, state);
-> +}
-> +
->  static inline bool psci_has_ext_power_state(void)
->  {
->  	return psci_cpu_suspend_feature &
-> @@ -187,6 +198,8 @@ static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
->  
->  	fn = psci_function_id[PSCI_FN_CPU_ON];
->  	err = invoke_psci_fn(fn, cpuid, entry_point, 0);
-> +	/* Clear the domain state to start fresh. */
-> +	psci_set_domain_state(0);
->  	return psci_to_linux_errno(err);
-
-I think this change is ambiguous:
-
- - if it is a change of the state because of the cpu_on, then I was
-expecting a similar change in cpu_off and the change only if
-invoke_psci_fn() succeeds.
-
- - if it is a change to take opportunity of the code path to initialize
-the domain state, I suggest to remove it from there and make it very
-explicit with static DEFINE_PER_CPU(u32, domain_state) = { 0 };
-
-
->  }
->  
-> @@ -409,15 +422,17 @@ int psci_cpu_init_idle(struct cpuidle_driver *drv, unsigned int cpu)
->  static int psci_suspend_finisher(unsigned long index)
->  {
->  	u32 *state = __this_cpu_read(psci_power_state);
-> +	u32 composite_state = state[index - 1] | psci_get_domain_state();
->  
-> -	return psci_ops.cpu_suspend(state[index - 1],
-> -				    __pa_symbol(cpu_resume));
-> +	return psci_ops.cpu_suspend(composite_state, __pa_symbol(cpu_resume));
->  }
->  
->  int psci_cpu_suspend_enter(unsigned long index)
->  {
->  	int ret;
->  	u32 *state = __this_cpu_read(psci_power_state);
-> +	u32 composite_state = state[index - 1] | psci_get_domain_state();
-> +
->  	/*
->  	 * idle state index 0 corresponds to wfi, should never be called
->  	 * from the cpu_suspend operations
-> @@ -425,11 +440,14 @@ int psci_cpu_suspend_enter(unsigned long index)
->  	if (WARN_ON_ONCE(!index))
->  		return -EINVAL;
->  
-> -	if (!psci_power_state_loses_context(state[index - 1]))
-> -		ret = psci_ops.cpu_suspend(state[index - 1], 0);
-> +	if (!psci_power_state_loses_context(composite_state))
-> +		ret = psci_ops.cpu_suspend(composite_state, 0);
->  	else
->  		ret = cpu_suspend(index, psci_suspend_finisher);
->  
-> +	/* Clear the domain state to start fresh when back from idle. */
-> +	psci_set_domain_state(0);
-> +
->  	return ret;
->  }
->  
+> Problem is the synthesized skb for output route resolution does not have
+> skb->dev or skb->sk set. When a multipath route is hit and
+> net.ipv4.fib_multipath_hash_policy is set the flow dissector is called
+> with this skb and the warning is triggered.
 > 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> I plan to fix it by setting skb->dev to net->loopback_dev. I assume we
+> want to keep this warning to prevent call paths which will otherwise
+> silently fallback to standard flow dissector instead of the BPF one.
+> 
+>> [85109.572036] Modules linked in: vhost_net vhost macvtap macvlan tap vfio_ap vfio_mdev mdev vfio_iommu_type1 vfio kvm xt_CHECKSUM ipt_MASQUERADE tun bridge stp llc xt_tcpudp ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ip6table_nat nf_nat_ipv6 ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_nat_ipv4 nf_nat iptable_mangle iptable_raw iptable_security nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nfnetlink ip6table_filter ip6_tables iptable_filter dm_service_time rpcrdma sunrpc rdma_ucm rdma_cm configfs iw_cm ib_cm mlx4_ib ib_uverbs ib_core pkey ghash_s390 prng aes_s390 des_s390 des_generic sha512_s390 sha1_s390 zcrypt_cex4 zcrypt rng_core eadm_sch sch_fq_codel ip_tables x_tables mlx4_en mlx4_core sha256_s390 sha_common dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua dm_mirror dm_region_hash dm_log dm_mod autofs4
+>> [85109.572072] CPU: 30 PID: 197360 Comm: vhost-197330 Not tainted 4.20.0-20181213.rc6.git0.407d079170c1.300.fc29.s390x #1
+>> [85109.572074] Hardware name: IBM 2964 NC9 712 (LPAR)
+>> [85109.572075] Krnl PSW : 0704c00180000000 000000000092e320 (__skb_flow_dissect+0x1f0/0x1318)
+>> [85109.572078]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+>> [85109.572080] Krnl GPRS: 000000000000002a 0000000000000000 000003e0385bfc84 0000000000d91e30
+>> [85109.572081]            000003e0385bfc84 0000000000000000 0000000000000000 0000000000d91e30
+>> [85109.572083]            000003e0385bfc84 000000000000000e 0000007e3eb88100 0000007ff3561e00
+>> [85109.572084]            0000000000000806 0000000000b4f288 000003e0385bfbb8 000003e0385bfab0
+>> [85109.572115] Krnl Code: 000000000092e312: e310b0180002	ltg	%r1,24(%r11)
+>>                           000000000092e318: a7740271		brc	7,92e7fa
+>>                          #000000000092e31c: a7f40001		brc	15,92e31e
+>>                          >000000000092e320: 91407003		tm	3(%r7),64
+>>                           000000000092e324: a7740257		brc	7,92e7d2
+>>                           000000000092e328: 5810f0b4		l	%r1,180(%r15)
+>>                           000000000092e32c: e54cf0c80000	mvhi	200(%r15),0
+>>                           000000000092e332: c01b00000008	nilf	%r1,8
+>> [85109.572129] Call Trace:
+>> [85109.572130] ([<0000000000000000>]           (null))
+>> [85109.572134]  [<000003ff800c81e4>] tap_sendmsg+0x384/0x430 [tap] 
+> 
+> I'm not familiar with tap code, so someone else will need to patch this
+> case, but it looks like:
+> 
+> tap_sendmsg()
+>     tap_get_user()
+>         skb_probe_transport_header()
+> 	    skb_flow_dissect_flow_keys_basic()
+> 	        __skb_flow_dissect()
+> 
+> skb->dev is only set later in the code.
+> 
+>> [85109.572137]  [<000003ff801acdee>] vhost_tx_batch.isra.10+0x66/0xe0 [vhost_net] 
+>> [85109.572138]  [<000003ff801ad61c>] handle_tx_copy+0x18c/0x568 [vhost_net] 
+>> [85109.572140]  [<000003ff801adab4>] handle_tx+0xbc/0x100 [vhost_net] 
+>> [85109.572145]  [<000003ff8019bbe8>] vhost_worker+0xc8/0x128 [vhost] 
+>> [85109.572148]  [<00000000001690b8>] kthread+0x140/0x160 
+>> [85109.572152]  [<0000000000a84266>] kernel_thread_starter+0x6/0x10 
+>> [85109.572154]  [<0000000000a84260>] kernel_thread_starter+0x0/0x10 
+>> [85109.572155] Last Breaking-Event-Address:
+>> [85109.572156]  [<000000000092e31c>] __skb_flow_dissect+0x1ec/0x1318
+>> [85109.572158] ---[ end trace 97c040a6691bc000 ]---
+> 
 
