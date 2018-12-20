@@ -2,105 +2,151 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E18C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C98C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E727217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545306241;
-	bh=2+9PEL8XoQkd6aKSID064UknhUqf2jk739VsyIll1yE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=fSv1AND0ejGFNZVur2qfVbNPA+MSx5XEwlN4NyRQGwo/aTBps5hWg9cePAYsEzF8D
-	 woHeq+Ta62U2x68U6Q0ojzvJKRGD7VI4vNWyxxr/OIWvlVpFP5TZhDh32rSzAdFLwY
-	 y5gCn6vGr/8pGbRtTwzF+Gvdxq7AIZOfKtCmiV4c=
+	by mail.kernel.org (Postfix) with ESMTP id 4EB3F217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:46:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mzL3dYQh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KIDMZChB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbeLTLoA (ORCPT
+        id S1731246AbeLTLqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:44:00 -0500
-Received: from casper.infradead.org ([85.118.1.10]:42426 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727850AbeLTLoA (ORCPT
+        Thu, 20 Dec 2018 06:46:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44622 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729140AbeLTLqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:44:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2VRR382a8PxcCCOQMxdwOCpzI+Vr/u2FSWqqkIlkEi0=; b=pmqthJOuiDgI0XCoqURow4TjQT
-        O/E2Kfuzni7iWNFJzDU1o4XRJM2ua/DoA8Rk0lyH59xAiATipEziS247mQtAP1BWGoHbTWs1Sk5w9
-        TvmcpIsaUh320sVb1Q2LtfwFYfkHVlyzntDqne2LKqhWYlSeB70l9FFbyjUZKJ77zZ4BvyHP8rxha
-        Pl5feBfVfUSu4uZgqVgsugH4prHY/R04Qupn/k4xcCqi3NlGWW1xlmZaH4WjHdKYpd6ygqadUsVsH
-        BUEk5FWNdAxnCmqCO3auO0WLwF+6ksISX70GyzBrUT0KDW/QtDlk0uC8Drx6qz3xQFFfDZZmgsED4
-        TOcoAtAw==;
-Received: from [191.33.191.108] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZwk3-0006P0-HL; Thu, 20 Dec 2018 11:43:52 +0000
-Date:   Thu, 20 Dec 2018 09:43:46 -0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Dec 11
-Message-ID: <20181220094337.36d9aed3@coco.lan>
-In-Reply-To: <20181219144423.089e46b9@canb.auug.org.au>
-References: <20181211182627.42b79e40@canb.auug.org.au>
-        <20181211173851.GA29028@roeck-us.net>
-        <20181211180437.GA28010@flashbox>
-        <20181212093632.774c0603@canb.auug.org.au>
-        <20181219144423.089e46b9@canb.auug.org.au>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Dec 2018 06:46:38 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A07A6074E; Thu, 20 Dec 2018 11:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545306397;
+        bh=+a604Dlu1vRnEhpaFL30Lbxces93nQdy+8/y8pq7l0A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mzL3dYQhSsShtKFZm8YlbBBgVEkCugNg5C9Opz4om766O/OM6t00jSzzjzdcCbSOz
+         ErtTOaieEZ8mnbMU2vpLOFTpEQsEO7Mt8ykfjM2e+CCdydgosdHKR9rl3to7yETC9j
+         Ayzg4IWyFTjyz1HkWRiW56SVHzFOTW6zZhz82z0c=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F515600E2;
+        Thu, 20 Dec 2018 11:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545306396;
+        bh=+a604Dlu1vRnEhpaFL30Lbxces93nQdy+8/y8pq7l0A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KIDMZChBkAytId4LcUp5HP52DQkU18ZFgn4HSAJ533hlh2ZZ59Ujucu2xedclyqfm
+         syWQdKvJlrcUI+ccCt8ETKQT2dKF6O6HSZMOebIM6UozHSIKaCOZSSYx6wzVKZa2g4
+         Jsb5qIoFVCff0NmYRYlgD3ll5RcrXQ+JPe7eXprc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F515600E2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
+Date:   Thu, 20 Dec 2018 17:16:25 +0530
+Message-Id: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 19 Dec 2018 14:44:23 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
+before accessing them and that was the reason to mark the gcc lpass clocks
+as critical. But in the case where the lpass subsystem would require a
+restart, toggling the lpass reset would from HW clear the SW enable bits
+of the GCC lpass clocks. Thus the next time bringing up the lpass subsystem
+out of reset would fail.
 
-> Hi all,
-> 
-> On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmail.com> wrote:  
-> > >
-> > > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote:    
-> > > > Build results:
-> > > > 	total: 152 pass: 150 fail: 2
-> > > > Failed builds: 
-> > > > 	arm:allmodconfig 
-> > > > 	arm64:allmodconfig 
-> > > > Qemu test results:
-> > > > 	total: 337 pass: 137 fail: 200
-> > > > 
-> > > > Build failures:
-> > > > 
-> > > > arm:
-> > > > 
-> > > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
-> > > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> > > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
-> > > >       
-> > > 
-> > > Just FYI, I noticed this one yesterday on next-20181210 and sent a patch:
-> > > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancellor@gmail.com/    
-> > 
-> > I have added that patch after the v4l-dvb tree for today.  
-> 
-> I am still applying that patch ...
+Allow the lpass clock driver to enable/disable the gcc lpass clocks and
+mark the lpass clocks not be accessed during late_init if no client vote.
 
-Sorry for taking so long with that. Patch applied, thanks!
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-sdm845.c     | 2 --
+ drivers/clk/qcom/lpasscc-sdm845.c | 5 +++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Thanks,
-Mauro
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index c782e62..8365c97 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3163,7 +3163,6 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_lpass_q6_axi_clk",
+-			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -3177,7 +3176,6 @@ enum {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_lpass_sway_clk",
+-			.flags = CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+index e246b99..1acc741 100644
+--- a/drivers/clk/qcom/lpasscc-sdm845.c
++++ b/drivers/clk/qcom/lpasscc-sdm845.c
+@@ -22,6 +22,7 @@
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "lpass_q6ss_ahbm_aon_clk",
++			.flags = CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -35,6 +36,7 @@
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "lpass_q6ss_ahbs_aon_clk",
++			.flags = CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -49,6 +51,7 @@
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "lpass_qdsp6ss_core_clk",
++			.flags = CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -63,6 +66,7 @@
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "lpass_qdsp6ss_xo_clk",
++			.flags = CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -77,6 +81,7 @@
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "lpass_qdsp6ss_sleep_clk",
++			.flags = CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
