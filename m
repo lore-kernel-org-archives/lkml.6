@@ -6,51 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00A5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FF3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3D620449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E82CE20449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298610;
-	bh=pTcMKgYXSqRdfDNm05MA+LmStAIdl75SfcDLj8E5l7w=;
+	s=default; t=1545298625;
+	bh=gNJqhygFqcnBwoBeJrFpH2PraZnJKf0aJL4d9LauQ94=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0gQ3FfGQnO63xO1KP6nAyQOnm1+tR874zcPPxiR7z76JN+y28lFpXIQg3CiVWR047
-	 24B2CK+2RJxZq1roI9aoRZZ/ljs26wWsLeHQElL2USItvA+o8Iad4c3otxNKsBjB/T
-	 nxtBhHstqcdH6FLYm+0/Eokq2nTXk3xWLcs9QqoU=
+	b=G8IO/t1nwOAQfuf5HS2yZd2gTil/RiwNCd2m1xdVIik2HdjaCOTI8o9ZXhcqitQNd
+	 LSi7QFUzKxIdb1VDMWHnynzv+x2EjDyijbIOGotN6+pUkqxj9aNtIh4WIeDaK+3LPV
+	 5py5qRnSerSoaDKEP9MYh/qaNVVwoQfY45yNtNLo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733280AbeLTJgt (ORCPT
+        id S1733286AbeLTJhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:36:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36658 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:37:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732318AbeLTJ11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:27 -0500
+        id S1732283AbeLTJ1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9470F217D4;
-        Thu, 20 Dec 2018 09:27:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D2C20656;
+        Thu, 20 Dec 2018 09:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298046;
-        bh=pTcMKgYXSqRdfDNm05MA+LmStAIdl75SfcDLj8E5l7w=;
+        s=default; t=1545298035;
+        bh=gNJqhygFqcnBwoBeJrFpH2PraZnJKf0aJL4d9LauQ94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nHl1qc6Atn1GqdHg4WBcKNpQydSg21MUi4vtxP19CbuEjpMx8htOPpOiNtIBW94s0
-         hGXvylsBXSDHqq3ClfZygJSjwCG1RgnfgDY/738NL3mTTYGGYt4znK+IdIq7sOsYoq
-         NaVybeaCmCNI3XhWUhJxkaT2guW6g+ObktNGNPrQ=
+        b=gDAkjqhOZM8c2LHFBcBXyV2UjjdpciqPufGgUos999dJc5bR7ShWGBN05d6JGWIUJ
+         uLuDqOwTURurOE55Yy72FFr9AZZcdxjQI65uWG2glajoOlwGhhhv6TNe9OILqSwJfD
+         YJpFjiZvCOFHNBAGxVrcdfyfHnA2tSRDBkWUoSL8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 51/72] drm/msm: Fix error return checking
-Date:   Thu, 20 Dec 2018 10:18:50 +0100
-Message-Id: <20181220085924.350437005@linuxfoundation.org>
+Subject: [PATCH 4.14 47/72] sbus: char: add of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:46 +0100
+Message-Id: <20181220085924.194686709@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -69,42 +65,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 098336deb946f37a70afc0979af388b615c378bf ]
+[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
 
-The error checks on ret for a negative error return always fails because
-the return value of iommu_map_sg() is unsigned and can never be negative.
+use of_node_put() to release the refcount.
 
-Detected with Coccinelle:
-drivers/gpu/drm/msm/msm_iommu.c:69:9-12: WARNING: Unsigned expression
-compared with zero: ret < 0
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Rob Clark <robdclark@gmail.com>
-CC: David Airlie <airlied@linux.ie>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: linux-arm-msm@vger.kernel.org
-CC: dri-devel@lists.freedesktop.org
-CC: freedreno@lists.freedesktop.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/sbus/char/display7seg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-index b23d33622f37..2a90aa4caec0 100644
---- a/drivers/gpu/drm/msm/msm_iommu.c
-+++ b/drivers/gpu/drm/msm/msm_iommu.c
-@@ -66,7 +66,7 @@ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
- //	pm_runtime_get_sync(mmu->dev);
- 	ret = iommu_map_sg(iommu->domain, iova, sgt->sgl, sgt->nents, prot);
- //	pm_runtime_put_sync(mmu->dev);
--	WARN_ON(ret < 0);
-+	WARN_ON(!ret);
+diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
+index f32765d3cbd8..db761aca8667 100644
+--- a/drivers/sbus/char/display7seg.c
++++ b/drivers/sbus/char/display7seg.c
+@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
+ 	dev_set_drvdata(&op->dev, p);
+ 	d7s_device = p;
+ 	err = 0;
++	of_node_put(opts);
  
- 	return (ret == len) ? 0 : -EINVAL;
- }
+ out:
+ 	return err;
 -- 
 2.19.1
 
