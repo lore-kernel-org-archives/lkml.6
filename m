@@ -2,233 +2,84 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25AFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AAFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B366206C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33107206C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731763AbeLTQqH (ORCPT
+        id S1731848AbeLTQqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:46:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:1911 "EHLO mx1.redhat.com"
+        Thu, 20 Dec 2018 11:46:12 -0500
+Received: from verein.lst.de ([213.95.11.211]:54138 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbeLTQqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:46:07 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 29D145A1EA;
-        Thu, 20 Dec 2018 16:46:06 +0000 (UTC)
-Received: from x1.home (ovpn-116-92.phx2.redhat.com [10.3.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD71860BE5;
-        Thu, 20 Dec 2018 16:46:04 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 09:46:04 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Leonardo Augusto =?UTF-8?B?R3Vp?= =?UTF-8?B?bWFyw6Nlcw==?=
-         Garcia <lagarcia@br.ibm.com>,
-        Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH kernel v7 20/20] vfio_pci: Add NVIDIA GV100GL [Tesla
- V100 SXM2] subdriver
-Message-ID: <20181220094604.7d172cbe@x1.home>
-In-Reply-To: <20181220082350.58113-21-aik@ozlabs.ru>
-References: <20181220082350.58113-1-aik@ozlabs.ru>
-        <20181220082350.58113-21-aik@ozlabs.ru>
-Organization: Red Hat
+        id S1731411AbeLTQqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:46:11 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 02B4C68AA6; Thu, 20 Dec 2018 17:46:09 +0100 (CET)
+Date:   Thu, 20 Dec 2018 17:46:08 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/15] dma-mapping: bypass indirect calls for dma-direct
+Message-ID: <20181220164608.GA20000@lst.de>
+References: <20181207190720.18517-1-hch@lst.de> <20181207190720.18517-16-hch@lst.de> <20181220164418.GA18777@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Dec 2018 16:46:06 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220164418.GA18777@ulmo>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 19:23:50 +1100
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+On Thu, Dec 20, 2018 at 05:44:18PM +0100, Thierry Reding wrote:
+> On Fri, Dec 07, 2018 at 11:07:20AM -0800, Christoph Hellwig wrote:
+> [...]
+> > diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> > index 0b18cfbdde95..fc84c81029d9 100644
+> > --- a/kernel/dma/mapping.c
+> > +++ b/kernel/dma/mapping.c
+> [...]
+> > @@ -397,9 +404,9 @@ int dma_supported(struct device *dev, u64 mask)
+> >  {
+> >  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> >  
+> > -	if (!ops)
+> > -		return 0;
+> > -	if (!ops->dma_supported)
+> > +	if (dma_is_direct(ops))
+> > +		return dma_direct_supported(dev, mask);
+> > +	if (ops->dma_supported)
+> >  		return 1;
+> >  	return ops->dma_supported(dev, mask);
+> >  }
+> 
+> Hi Christoph,
+> 
+> This hunk causes a crash on boot for me. It looks like a ! got lost in
+> the rework here. The following patch fixes the crash for me and restores
+> the logic of the op->dma_supported check.
+> 
+> Feel free to squash this patch into the above if you prefer that.
 
-> POWER9 Witherspoon machines come with 4 or 6 V100 GPUs which are not
-> pluggable PCIe devices but still have PCIe links which are used
-> for config space and MMIO. In addition to that the GPUs have 6 NVLinks
-> which are connected to other GPUs and the POWER9 CPU. POWER9 chips
-> have a special unit on a die called an NPU which is an NVLink2 host bus
-> adapter with p2p connections to 2 to 3 GPUs, 3 or 2 NVLinks to each.
-> These systems also support ATS (address translation services) which is
-> a part of the NVLink2 protocol. Such GPUs also share on-board RAM
-> (16GB or 32GB) to the system via the same NVLink2 so a CPU has
-> cache-coherent access to a GPU RAM.
-> 
-> This exports GPU RAM to the userspace as a new VFIO device region. This
-> preregisters the new memory as device memory as it might be used for DMA.
-> This inserts pfns from the fault handler as the GPU memory is not onlined
-> until the vendor driver is loaded and trained the NVLinks so doing this
-> earlier causes low level errors which we fence in the firmware so
-> it does not hurt the host system but still better be avoided; for the same
-> reason this does not map GPU RAM into the host kernel (usual thing for
-> emulated access otherwise).
-> 
-> This exports an ATSD (Address Translation Shootdown) register of NPU which
-> allows TLB invalidations inside GPU for an operating system. The register
-> conveniently occupies a single 64k page. It is also presented to
-> the userspace as a new VFIO device region. One NPU has 8 ATSD registers,
-> each of them can be used for TLB invalidation in a GPU linked to this NPU.
-> This allocates one ATSD register per an NVLink bridge allowing passing
-> up to 6 registers. Due to the host firmware bug (just recently fixed),
-> only 1 ATSD register per NPU was actually advertised to the host system
-> so this passes that alone register via the first NVLink bridge device in
-> the group which is still enough as QEMU collects them all back and
-> presents to the guest via vPHB to mimic the emulated NPU PHB on the host.
-> 
-> In order to provide the userspace with the information about GPU-to-NVLink
-> connections, this exports an additional capability called "tgt"
-> (which is an abbreviated host system bus address). The "tgt" property
-> tells the GPU its own system address and allows the guest driver to
-> conglomerate the routing information so each GPU knows how to get directly
-> to the other GPUs.
-> 
-> For ATS to work, the nest MMU (an NVIDIA block in a P9 CPU) needs to
-> know LPID (a logical partition ID or a KVM guest hardware ID in other
-> words) and PID (a memory context ID of a userspace process, not to be
-> confused with a linux pid). This assigns a GPU to LPID in the NPU and
-> this is why this adds a listener for KVM on an IOMMU group. A PID comes
-> via NVLink from a GPU and NPU uses a PID wildcard to pass it through.
-> 
-> This requires coherent memory and ATSD to be available on the host as
-> the GPU vendor only supports configurations with both features enabled
-> and other configurations are known not to work. Because of this and
-> because of the ways the features are advertised to the host system
-> (which is a device tree with very platform specific properties),
-> this requires enabled POWERNV platform.
-> 
-> The V100 GPUs do not advertise any of these capabilities via the config
-> space and there are more than just one device ID so this relies on
-> the platform to tell whether these GPUs have special abilities such as
-> NVLinks.
-> 
-> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> ---
-> Changes:
-> v6.1:
-> * fixed outdated comment about VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD
-> 
-> v6:
-> * reworked capabilities - tgt for nvlink and gpu and link-speed
-> for nvlink only
-> 
-> v5:
-> * do not memremap GPU RAM for emulation, map it only when it is needed
-> * allocate 1 ATSD register per NVLink bridge, if none left, then expose
-> the region with a zero size
-> * separate caps per device type
-> * addressed AW review comments
-> 
-> v4:
-> * added nvlink-speed to the NPU bridge capability as this turned out to
-> be not a constant value
-> * instead of looking at the exact device ID (which also changes from system
-> to system), now this (indirectly) looks at the device tree to know
-> if GPU and NPU support NVLink
-> 
-> v3:
-> * reworded the commit log about tgt
-> * added tracepoints (do we want them enabled for entire vfio-pci?)
-> * added code comments
-> * added write|mmap flags to the new regions
-> * auto enabled VFIO_PCI_NVLINK2 config option
-> * added 'tgt' capability to a GPU so QEMU can recreate ibm,npu and ibm,gpu
-> references; there are required by the NVIDIA driver
-> * keep notifier registered only for short time
-> ---
->  drivers/vfio/pci/Makefile           |   1 +
->  drivers/vfio/pci/trace.h            | 102 ++++++
->  drivers/vfio/pci/vfio_pci_private.h |  14 +
->  include/uapi/linux/vfio.h           |  37 +++
->  drivers/vfio/pci/vfio_pci.c         |  27 +-
->  drivers/vfio/pci/vfio_pci_nvlink2.c | 482 ++++++++++++++++++++++++++++
->  drivers/vfio/pci/Kconfig            |   6 +
->  7 files changed, 667 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/vfio/pci/trace.h
->  create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
-> 
-...
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 8131028..5562587 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -353,6 +353,21 @@ struct vfio_region_gfx_edid {
->  #define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
->  };
->  
-> +/*
-> + * 10de vendor sub-type
-> + *
-> + * NVIDIA GPU NVlink2 RAM is coherent RAM mapped onto the host address space.
-> + */
-> +#define VFIO_REGION_SUBTYPE_NVIDIA_NVLINK2_RAM	(1)
-> +
-> +/*
-> + * 1014 vendor sub-type
-> + *
-> + * IBM NPU NVlink2 ATSD (Address Translation Shootdown) register of NPU
-> + * to do TLB invalidation on a GPU.
-> + */
-> +#define VFIO_REGION_SUBTYPE_IBM_NVLINK2_ATSD	(1)
-> +
->  /*
->   * The MSIX mappable capability informs that MSIX data of a BAR can be mmapped
->   * which allows direct access to non-MSIX registers which happened to be within
-> @@ -363,6 +378,28 @@ struct vfio_region_gfx_edid {
->   */
->  #define VFIO_REGION_INFO_CAP_MSIX_MAPPABLE	3
->  
-> +/*
-> + * Capability with compressed real address (aka SSA - small system address)
-> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-> + */
-> +#define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT	4
-> +
-> +struct vfio_region_info_cap_nvlink2_ssatgt {
-> +	struct vfio_info_cap_header header;
-> +	__u64 tgt;
-> +};
-> +
-> +/*
-> + * Capability with an NVLink link speed.
-> + */
-
-I was really hoping for something more like SSATGT above indicating the
-intended users and purpose, and an update to SSATGT since it's now used
-by both the GPU and NPU2.  This comment is correct, but it's basically
-useless, it doesn't provide any information that isn't readily apparent
-from the structure definition.  AIUI, SSATGT is used not only for the
-GPU to determine where its RAM is mapped on the system bus, but also by
-the NPU2 to associate itself to a GPU, right?  And the link speed here
-is consumed by the NPU2 in order to fill in DT information for the
-guest for compatibility and possibly routing optimizations?  Thanks,
-
-Alex
-
-> +#define VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD	5
-> +
-> +struct vfio_region_info_cap_nvlink2_lnkspd {
-> +	struct vfio_info_cap_header header;
-> +	__u32 link_speed;
-> +	__u32 __pad;
-> +};
-> +
+I don't want to rebase, so I'll pick this up ASAP.
