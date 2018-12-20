@@ -2,105 +2,99 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825FBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCE1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD5520866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A5CF20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G97+wlrN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DwYYRblN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbeLTMfC (ORCPT
+        id S1732371AbeLTMfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:35:02 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39902 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730044AbeLTMfB (ORCPT
+        Thu, 20 Dec 2018 07:35:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37194 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730044AbeLTMfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:35:01 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so1212369lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:35:00 -0800 (PST)
+        Thu, 20 Dec 2018 07:35:02 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so833813plr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:35:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=d+MOXg7RX46ppNn2t+HJ2iusF00TZYgDl/TAVlFufoI=;
-        b=G97+wlrNdbnMi/DLOPm7yo5FuhGWAjd5q8k5WpV+eZaVQ9ZoaObcBmVeRfurlaDk55
-         PGjkwwuAhVBLCw2DhW+Letcnk8NrmO9jdBCNH+05J5Ul3SXyv8ECEGKexIiOmoJhqa0F
-         /cJVzHgQxJQOAlkE+t55etbbrxOjNTrrwAspgcAQf3HJA5l3skeuTQ5j6EewU3hPYP9b
-         LQrhBcBbISIzXx031cAeBt7eAq+4Huf2BmA2LDkWZA54QFbFXD7NR7pMMI+xV/r2ijns
-         mq/mwamJd0Vl4j6MkasDbR0a6k4rlMzs1bCpGjJOzJ7RVpsMpDy8xaO0ZM74QbNzQRAb
-         6FNQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=RFf5xlrJowjAcNcgVo7EfifGoS9m+N50AmRD0sRVj5Q=;
+        b=DwYYRblNLvQosDfYN3xJkjOyQ2F/NvWU47gkgRoDVOteFx/9K40skpWyNrE7VjeA1o
+         jQ5Bmjx0MUReMTfNMLApwetxig/VAejrCUYi+nDwyWeD4zrhzGp/VVPUXsocq3jB9jtg
+         rT0J1nqsIc/oQqimwHHi+Jn6NV4ejAVDNcrnMXowEk3QpxNObJf/GZ6wLHW6FknxtTOo
+         Fu5sMqYa/xik3Gk7TXYoFL8fL1Riv6DA+2SZYUEPBAMEInlIQh8a5nYXunGiQPiFr633
+         sHR9eT9CuCbVxEtkq40wO+rDAeogoYTyq3xIIYgyNCtNDGFf7fri0IViPk35nAUT0wsb
+         PLWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=d+MOXg7RX46ppNn2t+HJ2iusF00TZYgDl/TAVlFufoI=;
-        b=aM+VSX1Wea96lge4biKU8iXfM1cHtEVrjJtm1sQELlCBUYW9EooVgxiYIlVhYFPXre
-         eI2x7k2kpV8+zLQsN9aCQyqxjQpjWqNzugttizF8tXmJ6pKWxz/iIHv/Xr6VJkC1fKoA
-         0phVCsJ14pvAoYNflxt0eC0trxkFBOj8ffh30Jtptalh7QD6I8+UGa45xcnuESUnbCce
-         rGbf33Sqdf26wvzjQrZWpgKHuseuvuZDKgVRi8kzJBC5vsM24r3hErCdc6eGw0753ar4
-         +DXfPnjgCQDOF3jYet1uodT16pp+JpVN7zOxwbj9BYzcI7a26sJQ90VK+O0HFTIcVuU9
-         XfgQ==
-X-Gm-Message-State: AA+aEWbIS9NjWU7LWLwn3gXaEInwkt2IIg2a3EJmk5A8rSr3zV6KCfbn
-        B3YDT1DeULsZL7YGN3bJB9o=
-X-Google-Smtp-Source: AFSGD/VOhr+AgCmNP7CzojqzZ3si+xZJgFEg0tAkVwpPmmzw9CBuhzTiwxDJYEaBOJkT/W9YauOUGg==
-X-Received: by 2002:a19:2c92:: with SMTP id s140mr14466763lfs.42.1545309299307;
-        Thu, 20 Dec 2018 04:34:59 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm3967024ljk.86.2018.12.20.04.34.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 04:34:58 -0800 (PST)
-Subject: Re: [PATCH 08/14] drm/bochs: atomic: set DRIVER_ATOMIC
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-References: <20181219115127.31359-1-kraxel@redhat.com>
- <20181219115127.31359-9-kraxel@redhat.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <42edc361-ea12-23e1-b4ac-ee077f000523@gmail.com>
-Date:   Thu, 20 Dec 2018 14:34:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=RFf5xlrJowjAcNcgVo7EfifGoS9m+N50AmRD0sRVj5Q=;
+        b=UT61B61MqOHCU1ul2hwYuyg1ztxkMtSLW/TKf/cDvR4qxOrVzDY3kKaMxCI3lZmOFN
+         czLKqIfNAsQRZ1NCxtNqmJ3bxDBwkIG05F9hmDLoDgwuO9czd/RdrKYlYJlBYYTYbaZ2
+         18iAbmy0ComHyvXixNSTWjuMpMFw/j4Gg71nN/YbapAdogsFGuzZEePdZPfhD0BoKLo6
+         cnucoAyFZPpXKgdO+Bhdz4BihPDd/qqm3PdqnmCH1cDuy7hdhSBEcb0INWsJymqYiIQK
+         f3gBoToiV7SXQ1P9qgjtV7s+VktCpQs9vrBC7m7TZT286mJAb2BPu30Kj97P7h2rltmI
+         OA3w==
+X-Gm-Message-State: AA+aEWaG0yvCpIaHH1y3YrS40UhbIBDIfHGgbtqpUJ8i4iOdx3ETCUbM
+        ZzE717hoQ219765uJ+Afb6c=
+X-Google-Smtp-Source: AFSGD/WPbOWnolRdq+8iw//VERDiXF7iJ/tgrvpnxPkrs69lyeOEJVR5MvYF7hArj1QhleakHx0eWA==
+X-Received: by 2002:a17:902:848d:: with SMTP id c13mr24103814plo.257.1545309301697;
+        Thu, 20 Dec 2018 04:35:01 -0800 (PST)
+Received: from hp-pavilion-15-notebook-pc-brajeswar ([2409:4061:61f:c77a:7447:88ff:6435:ef2b])
+        by smtp.gmail.com with ESMTPSA id p7sm41570484pfj.72.2018.12.20.04.34.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 04:35:01 -0800 (PST)
+Date:   Thu, 20 Dec 2018 18:04:55 +0530
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+To:     harry.wentland@amd.com, sunpeng.li@amd.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, Tony.Cheng@amd.com,
+        Bhawanpreet.Lakha@amd.com, Dmytro.Laktyushkin@amd.com,
+        charlene.liu@amd.com
+Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com
+Subject: [PATCH] drm/amd/display/i2c_hw_engine_dce110: Remove duplicate header
+Message-ID: <20181220123455.GA24952@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-In-Reply-To: <20181219115127.31359-9-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
-> Conversion to atomic modesetting, final step.
-> Set the DRIVER_ATOMIC flag.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/gpu/drm/bochs/bochs_drv.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-> index f3dd66ae99..278f9d2e7f 100644
-> --- a/drivers/gpu/drm/bochs/bochs_drv.c
-> +++ b/drivers/gpu/drm/bochs/bochs_drv.c
-> @@ -81,7 +81,7 @@ static const struct file_operations bochs_fops = {
->   };
->   
->   static struct drm_driver bochs_driver = {
-> -	.driver_features	= DRIVER_GEM | DRIVER_MODESET,
-> +	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
->   	.fops			= &bochs_fops,
->   	.name			= "bochs-drm",
->   	.desc			= "bochs dispi vga interface (qemu stdvga)",
+Remove reg_helper.h which is included more than once
+
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+---
+ .../gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c  | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
+index 9cbe1a7a6bcb..137350142fb2 100644
+--- a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
++++ b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
+@@ -97,7 +97,6 @@ enum dc_i2c_arbitration {
+ #define FN(reg_name, field_name) \
+ 	hw_engine->i2c_shift->field_name, hw_engine->i2c_mask->field_name
+ 
+-#include "reg_helper.h"
+ 
+ static void disable_i2c_hw_engine(
+ 	struct i2c_hw_engine_dce110 *hw_engine)
+-- 
+2.17.1
 
