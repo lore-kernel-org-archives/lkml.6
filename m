@@ -2,103 +2,90 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E76C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1A9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDC520811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545299237;
-	bh=/QUpjuuBLeRnEpZ1pjLgU3qEaOWOdu2cZD8d1JUr1dc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vmH9odCF4G3yIDGVtUujRqGfUdtNHRFI77hc5xE/u35liei/WzJZyOf7lpioTLs5W
-	 D7gsqx/B6MYKZ2Pjmhrli5174UWKyE49c+P9cqQQcO3JUSOFEMO1+BFoppXZP+jJPZ
-	 co8Jlx4GeojPHLxIaC/J/fIkwbuToTbcSRpDa82w=
+	by mail.kernel.org (Postfix) with ESMTP id 8CC932176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731376AbeLTJrQ (ORCPT
+        id S1730442AbeLTJtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730214AbeLTJTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:19:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3702A21773;
-        Thu, 20 Dec 2018 09:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297577;
-        bh=/QUpjuuBLeRnEpZ1pjLgU3qEaOWOdu2cZD8d1JUr1dc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KqgmuYk9U0vTHuEK7jWrbjUgMlFtKqVLOTduJqviVwqSUpAArNxuM50lvITnn85Cp
-         obvULlk0eVParCmFqrpduuRUr+NVmBrRILJaPM70kyM0CbBzZAsTiNmMihzCXgY0LR
-         qvYFOeNCUei0nnHATgx40rWcWpuxM4V/UuzZpg7o=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fred Herard <fred.herard@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Lee Duncan <lduncan@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 12/31] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
-Date:   Thu, 20 Dec 2018 10:18:24 +0100
-Message-Id: <20181220085743.083792336@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
-References: <20181220085742.601260254@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 20 Dec 2018 04:49:47 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16614 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727972AbeLTJtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:49:46 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A625CB4F37898;
+        Thu, 20 Dec 2018 17:49:42 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
+ 17:49:34 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <bfields@fieldses.org>,
+        <jlayton@kernel.org>, <trond.myklebust@hammerspace.com>,
+        <anna.schumaker@netapp.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <jgg@ziepe.ca>,
+        <chuck.lever@oracle.com>, <bvanassche@acm.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] svcrdma: Fix an uninitialized variable false warning
+Date:   Thu, 20 Dec 2018 17:49:21 +0800
+Message-ID: <20181220094921.3396-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+smatch warning this:
+net/sunrpc/xprtrdma/svc_rdma_rw.c:351 svc_rdma_post_chunk_ctxt() error: uninitialized symbol 'bad_wr'
+net/sunrpc/xprtrdma/verbs.c:1569 rpcrdma_post_recvs() error: uninitialized symbol 'bad_wr'
 
-------------------
+'bad_wr' is initialized in ib_post_send. But smatch
+doesn't know that and warns this.
 
-[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
-
-This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
-Reference should not be made to session->leadconn when session->state is
-set to ISCSI_STATE_TERMINATE.
-
-Signed-off-by: Fred Herard <fred.herard@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/scsi/libiscsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtrdma/svc_rdma_rw.c | 2 +-
+ net/sunrpc/xprtrdma/verbs.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index 857bf9417817..56441a5ec3d7 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -2433,8 +2433,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
- failed:
- 		ISCSI_DBG_EH(session,
- 			     "failing session reset: Could not log back into "
--			     "%s, %s [age %d]\n", session->targetname,
--			     conn->persistent_address, session->age);
-+			     "%s [age %d]\n", session->targetname,
-+			     session->age);
- 		spin_unlock_bh(&session->frwd_lock);
- 		mutex_unlock(&session->eh_mutex);
- 		return FAILED;
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+index dc19517..0954b25 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+@@ -308,7 +308,7 @@ static int svc_rdma_post_chunk_ctxt(struct svc_rdma_chunk_ctxt *cc)
+ 	struct svcxprt_rdma *rdma = cc->cc_rdma;
+ 	struct svc_xprt *xprt = &rdma->sc_xprt;
+ 	struct ib_send_wr *first_wr;
+-	const struct ib_send_wr *bad_wr;
++	const struct ib_send_wr *bad_wr = NULL;
+ 	struct list_head *tmp;
+ 	struct ib_cqe *cqe;
+ 	int ret;
+diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
+index 3ddba94..37be70f 100644
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -1518,7 +1518,7 @@ void
+ rpcrdma_post_recvs(struct rpcrdma_xprt *r_xprt, bool temp)
+ {
+ 	struct rpcrdma_buffer *buf = &r_xprt->rx_buf;
+-	struct ib_recv_wr *wr, *bad_wr;
++	struct ib_recv_wr *wr, *bad_wr = NULL;
+ 	int needed, count, rc;
+ 
+ 	rc = 0;
 -- 
-2.19.1
-
+2.7.0
 
 
