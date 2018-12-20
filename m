@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471DBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FB0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8922176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A72C2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbeLTIYe (ORCPT
+        id S1730992AbeLTIYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:24:34 -0500
-Received: from ozlabs.ru ([107.173.13.209]:54431 "EHLO ozlabs.ru"
+        Thu, 20 Dec 2018 03:24:41 -0500
+Received: from ozlabs.ru ([107.173.13.209]:54528 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbeLTIYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:24:31 -0500
+        id S1730963AbeLTIYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:24:37 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 64CA8AE8030E;
-        Thu, 20 Dec 2018 03:24:26 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id 98520AE8001E;
+        Thu, 20 Dec 2018 03:24:33 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -37,9 +37,9 @@ Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
         Alex Williamson <alex.williamson@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH kernel v7 09/20] powerpc/powernv/pseries: Rework device adding to IOMMU groups
-Date:   Thu, 20 Dec 2018 19:23:39 +1100
-Message-Id: <20181220082350.58113-10-aik@ozlabs.ru>
+Subject: [PATCH kernel v7 11/20] powerpc/powernv: Reference iommu_table while it is linked to a group
+Date:   Thu, 20 Dec 2018 19:23:41 +1100
+Message-Id: <20181220082350.58113-12-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181220082350.58113-1-aik@ozlabs.ru>
 References: <20181220082350.58113-1-aik@ozlabs.ru>
@@ -48,343 +48,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The powernv platform registers IOMMU groups and adds devices to them
-from the pci_controller_ops::setup_bridge() hook except one case when
-virtual functions (SRIOV VFs) are added from a bus notifier.
-
-The pseries platform registers IOMMU groups from
-the pci_controller_ops::dma_bus_setup() hook and adds devices from
-the pci_controller_ops::dma_dev_setup() hook. The very same bus notifier
-used for powernv does not add devices for pseries though as
-__of_scan_bus() adds devices first, then it does the bus/dev DMA setup.
-
-Both platforms use iommu_add_device() which takes a device and expects
-it to have a valid IOMMU table struct with an iommu_table_group pointer
-which in turn points the iommu_group struct (which represents
-an IOMMU group). Although the helper seems easy to use, it relies on
-some pre-existing device configuration and associated data structures
-which it does not really need.
-
-This simplifies iommu_add_device() to take the table_group pointer
-directly. Pseries already has a table_group pointer handy and the bus
-notified is not used anyway. For powernv, this copies the existing bus
-notifier, makes it work for powernv only which means an easy way of
-getting to the table_group pointer. This was tested on VFs but should
-also support physical PCI hotplug.
-
-Since iommu_add_device() receives the table_group pointer directly,
-pseries does not do TCE cache invalidation (the hypervisor does) nor
-allow multiple groups per a VFIO container (in other words sharing
-an IOMMU table between partitionable endpoints), this removes
-iommu_table_group_link from pseries.
+The iommu_table pointer stored in iommu_table_group may get stale
+by accident, this adds referencing and removes a redundant comment
+about this.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
 ---
- arch/powerpc/include/asm/iommu.h          | 12 ++---
- arch/powerpc/kernel/iommu.c               | 58 ++---------------------
- arch/powerpc/platforms/powernv/pci-ioda.c | 10 +---
- arch/powerpc/platforms/powernv/pci.c      | 43 ++++++++++++++++-
- arch/powerpc/platforms/pseries/iommu.c    | 46 +++++++++---------
- 5 files changed, 74 insertions(+), 95 deletions(-)
+ arch/powerpc/platforms/powernv/pci-ioda-tce.c | 3 ++-
+ arch/powerpc/platforms/powernv/pci-ioda.c     | 4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/iommu.h b/arch/powerpc/include/asm/iommu.h
-index a8aeac0..e847ff6 100644
---- a/arch/powerpc/include/asm/iommu.h
-+++ b/arch/powerpc/include/asm/iommu.h
-@@ -215,9 +215,9 @@ struct iommu_table_group {
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+index 7639b21..697449a 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+@@ -368,6 +368,7 @@ void pnv_pci_unlink_table_and_group(struct iommu_table *tbl,
+ 	found = false;
+ 	for (i = 0; i < IOMMU_TABLE_GROUP_MAX_TABLES; ++i) {
+ 		if (table_group->tables[i] == tbl) {
++			iommu_tce_table_put(tbl);
+ 			table_group->tables[i] = NULL;
+ 			found = true;
+ 			break;
+@@ -393,7 +394,7 @@ long pnv_pci_link_table_and_group(int node, int num,
+ 	tgl->table_group = table_group;
+ 	list_add_rcu(&tgl->next, &tbl->it_group_list);
  
- extern void iommu_register_group(struct iommu_table_group *table_group,
- 				 int pci_domain_number, unsigned long pe_num);
--extern int iommu_add_device(struct device *dev);
-+extern int iommu_add_device(struct iommu_table_group *table_group,
-+		struct device *dev);
- extern void iommu_del_device(struct device *dev);
--extern int __init tce_iommu_bus_notifier_init(void);
- extern long iommu_tce_xchg(struct mm_struct *mm, struct iommu_table *tbl,
- 		unsigned long entry, unsigned long *hpa,
- 		enum dma_data_direction *direction);
-@@ -228,7 +228,8 @@ static inline void iommu_register_group(struct iommu_table_group *table_group,
- {
- }
+-	table_group->tables[num] = tbl;
++	table_group->tables[num] = iommu_tce_table_get(tbl);
  
--static inline int iommu_add_device(struct device *dev)
-+static inline int iommu_add_device(struct iommu_table_group *table_group,
-+		struct device *dev)
- {
  	return 0;
  }
-@@ -236,11 +237,6 @@ static inline int iommu_add_device(struct device *dev)
- static inline void iommu_del_device(struct device *dev)
- {
- }
--
--static inline int __init tce_iommu_bus_notifier_init(void)
--{
--        return 0;
--}
- #endif /* !CONFIG_IOMMU_API */
- 
- int dma_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr);
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index cbcc615..9d5d109 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -1078,11 +1078,8 @@ void iommu_release_ownership(struct iommu_table *tbl)
- }
- EXPORT_SYMBOL_GPL(iommu_release_ownership);
- 
--int iommu_add_device(struct device *dev)
-+int iommu_add_device(struct iommu_table_group *table_group, struct device *dev)
- {
--	struct iommu_table *tbl;
--	struct iommu_table_group_link *tgl;
--
- 	/*
- 	 * The sysfs entries should be populated before
- 	 * binding IOMMU group. If sysfs entries isn't
-@@ -1098,32 +1095,10 @@ int iommu_add_device(struct device *dev)
- 		return -EBUSY;
- 	}
- 
--	tbl = get_iommu_table_base(dev);
--	if (!tbl) {
--		pr_debug("%s: Skipping device %s with no tbl\n",
--			 __func__, dev_name(dev));
--		return 0;
--	}
--
--	tgl = list_first_entry_or_null(&tbl->it_group_list,
--			struct iommu_table_group_link, next);
--	if (!tgl) {
--		pr_debug("%s: Skipping device %s with no group\n",
--			 __func__, dev_name(dev));
--		return 0;
--	}
- 	pr_debug("%s: Adding %s to iommu group %d\n",
--		 __func__, dev_name(dev),
--		 iommu_group_id(tgl->table_group->group));
-+		 __func__, dev_name(dev),  iommu_group_id(table_group->group));
- 
--	if (PAGE_SIZE < IOMMU_PAGE_SIZE(tbl)) {
--		pr_err("%s: Invalid IOMMU page size %lx (%lx) on %s\n",
--		       __func__, IOMMU_PAGE_SIZE(tbl),
--		       PAGE_SIZE, dev_name(dev));
--		return -EINVAL;
--	}
--
--	return iommu_group_add_device(tgl->table_group->group, dev);
-+	return iommu_group_add_device(table_group->group, dev);
- }
- EXPORT_SYMBOL_GPL(iommu_add_device);
- 
-@@ -1143,31 +1118,4 @@ void iommu_del_device(struct device *dev)
- 	iommu_group_remove_device(dev);
- }
- EXPORT_SYMBOL_GPL(iommu_del_device);
--
--static int tce_iommu_bus_notifier(struct notifier_block *nb,
--                unsigned long action, void *data)
--{
--        struct device *dev = data;
--
--        switch (action) {
--        case BUS_NOTIFY_ADD_DEVICE:
--                return iommu_add_device(dev);
--        case BUS_NOTIFY_DEL_DEVICE:
--                if (dev->iommu_group)
--                        iommu_del_device(dev);
--                return 0;
--        default:
--                return 0;
--        }
--}
--
--static struct notifier_block tce_iommu_bus_nb = {
--        .notifier_call = tce_iommu_bus_notifier,
--};
--
--int __init tce_iommu_bus_notifier_init(void)
--{
--        bus_register_notifier(&pci_bus_type, &tce_iommu_bus_nb);
--        return 0;
--}
- #endif /* CONFIG_IOMMU_API */
 diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index ec4ce35..b86a6e0 100644
+index f6ab13d..a5879ab 100644
 --- a/arch/powerpc/platforms/powernv/pci-ioda.c
 +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -1940,7 +1940,7 @@ static void pnv_ioda_setup_bus_dma(struct pnv_ioda_pe *pe,
- 		set_iommu_table_base(&dev->dev, pe->table_group.tables[0]);
- 		set_dma_offset(&dev->dev, pe->tce_bypass_base);
- 		if (add_to_group)
--			iommu_add_device(&dev->dev);
-+			iommu_add_device(&pe->table_group, &dev->dev);
+@@ -2719,10 +2719,6 @@ static long pnv_pci_ioda2_npu_unset_window(
  
- 		if ((pe->flags & PNV_IODA_PE_BUS_ALL) && dev->subordinate)
- 			pnv_ioda_setup_bus_dma(pe, dev->subordinate,
-@@ -2526,14 +2526,6 @@ static long pnv_pci_ioda2_setup_default_config(struct pnv_ioda_pe *pe)
- 	if (!pnv_iommu_bypass_disabled)
- 		pnv_pci_ioda2_set_bypass(pe, true);
- 
+ static void pnv_ioda2_npu_take_ownership(struct iommu_table_group *table_group)
+ {
 -	/*
--	 * Setting table base here only for carrying iommu_group
--	 * further down to let iommu_add_device() do the job.
--	 * pnv_pci_ioda_dma_dev_setup will override it later anyway.
+-	 * Detach NPU first as pnv_ioda2_take_ownership() will destroy
+-	 * the iommu_table if 32bit DMA is enabled.
 -	 */
--	if (pe->flags & PNV_IODA_PE_DEV)
--		set_iommu_table_base(&pe->pdev->dev, tbl);
--
- 	return 0;
+ 	pnv_npu_take_ownership(gpe_table_group_to_npe(table_group));
+ 	pnv_ioda2_take_ownership(table_group);
  }
- 
-diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
-index db230a35..5121fb8 100644
---- a/arch/powerpc/platforms/powernv/pci.c
-+++ b/arch/powerpc/platforms/powernv/pci.c
-@@ -1127,4 +1127,45 @@ void __init pnv_pci_init(void)
- 	set_pci_dma_ops(&dma_iommu_ops);
- }
- 
--machine_subsys_initcall_sync(powernv, tce_iommu_bus_notifier_init);
-+static int pnv_tce_iommu_bus_notifier(struct notifier_block *nb,
-+		unsigned long action, void *data)
-+{
-+	struct device *dev = data;
-+	struct pci_dev *pdev;
-+	struct pci_dn *pdn;
-+	struct pnv_ioda_pe *pe;
-+	struct pci_controller *hose;
-+	struct pnv_phb *phb;
-+
-+	switch (action) {
-+	case BUS_NOTIFY_ADD_DEVICE:
-+		pdev = to_pci_dev(dev);
-+		pdn = pci_get_pdn(pdev);
-+		hose = pci_bus_to_host(pdev->bus);
-+		phb = hose->private_data;
-+
-+		WARN_ON_ONCE(!phb);
-+		if (!pdn || pdn->pe_number == IODA_INVALID_PE || !phb)
-+			return 0;
-+
-+		pe = &phb->ioda.pe_array[pdn->pe_number];
-+		iommu_add_device(&pe->table_group, dev);
-+		return 0;
-+	case BUS_NOTIFY_DEL_DEVICE:
-+		iommu_del_device(dev);
-+		return 0;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static struct notifier_block pnv_tce_iommu_bus_nb = {
-+	.notifier_call = pnv_tce_iommu_bus_notifier,
-+};
-+
-+static int __init pnv_tce_iommu_bus_notifier_init(void)
-+{
-+	bus_register_notifier(&pci_bus_type, &pnv_tce_iommu_bus_nb);
-+	return 0;
-+}
-+machine_subsys_initcall_sync(powernv, pnv_tce_iommu_bus_notifier_init);
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 2783cb7..8fc8fe0 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -57,7 +57,6 @@ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
- {
- 	struct iommu_table_group *table_group;
- 	struct iommu_table *tbl;
--	struct iommu_table_group_link *tgl;
- 
- 	table_group = kzalloc_node(sizeof(struct iommu_table_group), GFP_KERNEL,
- 			   node);
-@@ -68,22 +67,13 @@ static struct iommu_table_group *iommu_pseries_alloc_group(int node)
- 	if (!tbl)
- 		goto free_group;
- 
--	tgl = kzalloc_node(sizeof(struct iommu_table_group_link), GFP_KERNEL,
--			node);
--	if (!tgl)
--		goto free_table;
--
- 	INIT_LIST_HEAD_RCU(&tbl->it_group_list);
- 	kref_init(&tbl->it_kref);
--	tgl->table_group = table_group;
--	list_add_rcu(&tgl->next, &tbl->it_group_list);
- 
- 	table_group->tables[0] = tbl;
- 
- 	return table_group;
- 
--free_table:
--	kfree(tbl);
- free_group:
- 	kfree(table_group);
- 	return NULL;
-@@ -93,23 +83,12 @@ static void iommu_pseries_free_group(struct iommu_table_group *table_group,
- 		const char *node_name)
- {
- 	struct iommu_table *tbl;
--#ifdef CONFIG_IOMMU_API
--	struct iommu_table_group_link *tgl;
--#endif
- 
- 	if (!table_group)
- 		return;
- 
- 	tbl = table_group->tables[0];
- #ifdef CONFIG_IOMMU_API
--	tgl = list_first_entry_or_null(&tbl->it_group_list,
--			struct iommu_table_group_link, next);
--
--	WARN_ON_ONCE(!tgl);
--	if (tgl) {
--		list_del_rcu(&tgl->next);
--		kfree(tgl);
--	}
- 	if (table_group->group) {
- 		iommu_group_put(table_group->group);
- 		BUG_ON(table_group->group);
-@@ -1216,7 +1195,7 @@ static void pci_dma_dev_setup_pSeriesLP(struct pci_dev *dev)
- 	}
- 
- 	set_iommu_table_base(&dev->dev, pci->table_group->tables[0]);
--	iommu_add_device(&dev->dev);
-+	iommu_add_device(pci->table_group, &dev->dev);
- }
- 
- static int dma_set_mask_pSeriesLP(struct device *dev, u64 dma_mask)
-@@ -1421,4 +1400,27 @@ static int __init disable_multitce(char *str)
- 
- __setup("multitce=", disable_multitce);
- 
-+static int tce_iommu_bus_notifier(struct notifier_block *nb,
-+		unsigned long action, void *data)
-+{
-+	struct device *dev = data;
-+
-+	switch (action) {
-+	case BUS_NOTIFY_DEL_DEVICE:
-+		iommu_del_device(dev);
-+		return 0;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static struct notifier_block tce_iommu_bus_nb = {
-+	.notifier_call = tce_iommu_bus_notifier,
-+};
-+
-+static int __init tce_iommu_bus_notifier_init(void)
-+{
-+	bus_register_notifier(&pci_bus_type, &tce_iommu_bus_nb);
-+	return 0;
-+}
- machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
 -- 
 2.17.1
 
