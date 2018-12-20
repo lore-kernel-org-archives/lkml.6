@@ -3,45 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405B3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFFDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17901217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B45E217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbeLTSFA (ORCPT
+        id S2388517AbeLTSFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:05:00 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55313 "EHLO
+        Thu, 20 Dec 2018 13:05:37 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54561 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbeLTSE7 (ORCPT
+        with ESMTP id S1731288AbeLTSFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:04:59 -0500
+        Thu, 20 Dec 2018 13:05:35 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI4qNF3680766
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI5RRg3680921
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:04:52 -0800
+        Thu, 20 Dec 2018 10:05:27 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI4qdB3680763;
-        Thu, 20 Dec 2018 10:04:52 -0800
-Date:   Thu, 20 Dec 2018 10:04:52 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI5RQ83680918;
+        Thu, 20 Dec 2018 10:05:27 -0800
+Date:   Thu, 20 Dec 2018 10:05:27 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org>
-Cc:     adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, jolsa@kernel.org, namhyung@kernel.org,
-        acme@redhat.com, jpoimboe@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org
-Reply-To: namhyung@kernel.org, tglx@linutronix.de, jpoimboe@redhat.com,
-          acme@redhat.com, adrian.hunter@intel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org
+Message-ID: <tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org>
+Cc:     mingo@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, hpa@zytor.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org
+Reply-To: acme@redhat.com, hpa@zytor.com, jolsa@kernel.org,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib subcmd: Don't add the kernel sources to
- the include path
-Git-Commit-ID: ece9804985b57e1ccd83b1fb6288520955a29d51
+Subject: [tip:perf/core] perf tools: Add missing sigqueue() prototype for
+ systems lacking it
+Git-Commit-ID: 748fe0889c1ff12d378946bd5326e8ee8eacf5cf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -55,72 +54,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ece9804985b57e1ccd83b1fb6288520955a29d51
-Gitweb:     https://git.kernel.org/tip/ece9804985b57e1ccd83b1fb6288520955a29d51
+Commit-ID:  748fe0889c1ff12d378946bd5326e8ee8eacf5cf
+Gitweb:     https://git.kernel.org/tip/748fe0889c1ff12d378946bd5326e8ee8eacf5cf
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 11 Dec 2018 15:00:52 -0300
+AuthorDate: Tue, 11 Dec 2018 15:48:47 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:23:56 -0300
 
-tools lib subcmd: Don't add the kernel sources to the include path
+perf tools: Add missing sigqueue() prototype for systems lacking it
 
-At some point we decided not to directly include kernel sources files
-when building tools/perf/, but when tools/lib/subcmd/ was forked from
-tools/perf it somehow ended up adding it via these two lines in its
-Makefile:
+There are systems such as the Android NDK API level 24 has the
+sigqueue() function but doesn't provide a prototype, adding noise to the
+build:
 
-  CFLAGS += -I$(srctree)/include/uapi
-  CFLAGS += -I$(srctree)/include
+  util/evlist.c: In function 'perf_evlist__prepare_workload':
+  util/evlist.c:1494:4: warning: implicit declaration of function 'sigqueue' [-Wimplicit-function-declaration]
+      if (sigqueue(getppid(), SIGUSR1, val))
+      ^
+  util/evlist.c:1494:4: warning: nested extern declaration of 'sigqueue' [-Wnested-externs]
 
-As $(srctree) points to the kernel sources.
+Define a LACKS_SIGQUEUE_PROTOTYPE define so that code needing that can
+get a prototype.
 
-Removing those lines and keeping just:
+Checked in the bionic git repo to be available since level 23:
 
-  CFLAGS += -I$(srctree)/tools/include/
+https://android.googlesource.com/platform/bionic/+/master/libc/include/signal.h#123
 
-Is enough to build tools/perf and tools/objtool.
+  int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
 
-This fixes the build when building from the sources in environments such
-as the Android NDK crossbuilding from a fedora:26 system:
-
-  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
-   static inline void report(const char *prefix, const char *err, va_list params)
-                 ^
-  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
-                   from /git/perf/include/uapi/linux/posix_types.h:5,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
-                   from run-command.c:2:
-  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
-
-The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
-file that includes linux/posix_types.h ends up getting the one in the kernel
-sources causing the breakage. Fix it.
-
-Test built tools/objtool/ too.
-
-Reported-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
-Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/subcmd/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/Makefile.config | 1 +
+ tools/perf/util/evlist.c   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-index 95563b8e1ad7..ed61fb3a46c0 100644
---- a/tools/lib/subcmd/Makefile
-+++ b/tools/lib/subcmd/Makefile
-@@ -36,8 +36,6 @@ endif
- CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index b66f97a04b12..265a9225e5fc 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -294,6 +294,7 @@ ifndef NO_BIONIC
+   $(call feature_check,bionic)
+   ifeq ($(feature-bionic), 1)
+     BIONIC := 1
++    CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
+     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
+     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
+   endif
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e90575192209..8c902276d4b4 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -34,6 +34,10 @@
+ #include <linux/log2.h>
+ #include <linux/err.h>
  
- CFLAGS += -I$(srctree)/tools/include/
--CFLAGS += -I$(srctree)/include/uapi
--CFLAGS += -I$(srctree)/include
- 
- SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
++#ifdef LACKS_SIGQUEUE_PROTOTYPE
++int sigqueue(pid_t pid, int sig, const union sigval value);
++#endif
++
+ #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
+ #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
  
