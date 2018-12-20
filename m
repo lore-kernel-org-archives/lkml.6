@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC373C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070BDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE9420656
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C95552177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298297;
-	bh=tvhzI2wl6KXBkrMcx1SKEicMcRiJMm9pieGzq4iAcFw=;
+	s=default; t=1545298304;
+	bh=NU6UDALi4ffT3abIlFfoNqtZB0gUJhJYRkRcgql3xDM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y0LxKbXufxFRbYPbFj5eVWCPie3g/mg9nKICXvEybpCFBd7Lz9zDBz+PrGNSp3qOq
-	 t/wlzm6luZntFLjiCON3FjPTWze6NyPD8cvd3mI0yJ3dkwW7G7N3gBFUExBAYcNYuH
-	 2BadisUmyieaNKCGNwtpXHf8XRN/mfdvsX6bsjTk=
+	b=1GpIOdXauLnneXzHNHCuE7Yc5k/bPHv/kq+vylA014X2VIpSa5imTIblw+9z35IoB
+	 I7U/23C+KosEw2/5e34bWu5iq2i9GrlrgwZHisoS+cmU4QEAzpzX1IMtGyDTVLI88x
+	 7452d7BrlKM+EZTBZYS2y6HcIA5lvOv3jlJb1x9o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733159AbeLTJbg (ORCPT
+        id S1733187AbeLTJbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:31:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:31:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733127AbeLTJbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:31:31 -0500
+        id S1733163AbeLTJbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:31:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD93121741;
-        Thu, 20 Dec 2018 09:31:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E03820989;
+        Thu, 20 Dec 2018 09:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298291;
-        bh=tvhzI2wl6KXBkrMcx1SKEicMcRiJMm9pieGzq4iAcFw=;
+        s=default; t=1545298299;
+        bh=NU6UDALi4ffT3abIlFfoNqtZB0gUJhJYRkRcgql3xDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uB/Rp9nBJvNDDXn2pcoSXKUpjDA0st9TnarTNyTcsDjksKGEUUz8aTGQNR9BDbwod
-         bWYW96c3rCC9SVfVCmB1sDTj+CHQPPLUL+TaBz8Q+ZzSXAndW7iRB3kHWsqr1wluFZ
-         t5k3zMWLvqKSCKZQETdK4NiTNUFruTtxcTaYo6KQ=
+        b=yMxmxIbE4vwSzAcFDlMixWml/U6R2hglE7A3zuTdc90xrQ2Ze7CPAXpXxbZKxC7tC
+         KMbh9TlBSeNQ9tutOklWc0dFQ49marDGDYl+hW9uKFaR7MyYETz2Prc4/rnPFn7zZE
+         DGqmSQ9QNhomY0kiuMwfmEXDaQYKO9LTIuGrktFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 63/67] i2c: uniphier: fix violation of tLOW requirement for Fast-mode
-Date:   Thu, 20 Dec 2018 10:19:15 +0100
-Message-Id: <20181220085906.029881324@linuxfoundation.org>
+        stable@vger.kernel.org, Israel Rukshin <israelr@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 66/67] nvmet-rdma: fix response use after free
+Date:   Thu, 20 Dec 2018 10:19:18 +0100
+Message-Id: <20181220085906.144410895@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,41 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8469636ab5d8c77645b953746c10fda6983a8830 ]
+[ Upstream commit d7dcdf9d4e15189ecfda24cc87339a3425448d5c ]
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
+nvmet_rdma_release_rsp() may free the response before using it at error
+flow.
 
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 8407879 ("nvmet-rdma: fix possible bogus dereference under heavy load")
+Signed-off-by: Israel Rukshin <israelr@mellanox.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/nvme/target/rdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier.c b/drivers/i2c/busses/i2c-uniphier.c
-index 454f914ae66d..c488e558aef7 100644
---- a/drivers/i2c/busses/i2c-uniphier.c
-+++ b/drivers/i2c/busses/i2c-uniphier.c
-@@ -320,7 +320,13 @@ static void uniphier_i2c_hw_init(struct uniphier_i2c_priv *priv)
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index bfc4da660bb4..e57f3902beb3 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -529,6 +529,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+ {
+ 	struct nvmet_rdma_rsp *rsp =
+ 		container_of(wc->wr_cqe, struct nvmet_rdma_rsp, send_cqe);
++	struct nvmet_rdma_queue *queue = cq->cq_context;
  
- 	uniphier_i2c_reset(priv, true);
+ 	nvmet_rdma_release_rsp(rsp);
  
--	writel((cyc / 2 << 16) | cyc, priv->membase + UNIPHIER_I2C_CLK);
-+	/*
-+	 * Bit30-16: clock cycles of tLOW.
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel((cyc * 5 / 9 << 16) | cyc, priv->membase + UNIPHIER_I2C_CLK);
- 
- 	uniphier_i2c_reset(priv, false);
+@@ -536,7 +537,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+ 		     wc->status != IB_WC_WR_FLUSH_ERR)) {
+ 		pr_err("SEND for CQE 0x%p failed with status %s (%d).\n",
+ 			wc->wr_cqe, ib_wc_status_msg(wc->status), wc->status);
+-		nvmet_rdma_error_comp(rsp->queue);
++		nvmet_rdma_error_comp(queue);
+ 	}
  }
+ 
 -- 
 2.19.1
 
