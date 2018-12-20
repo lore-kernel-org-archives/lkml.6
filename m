@@ -2,147 +2,83 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AFBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3522C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6CE421915
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F88B21908
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:14:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qOCjDcIo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbeLTULw (ORCPT
+        id S2388620AbeLTUO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:11:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41368 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728835AbeLTULv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:11:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18AE8ACC4;
-        Thu, 20 Dec 2018 20:11:49 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 21:11:45 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC pile for 4.21
-Message-ID: <20181220201137.GD24975@zn.tnic>
+        Thu, 20 Dec 2018 15:14:26 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54642 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbeLTUOZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 15:14:25 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBKKEIlA123669;
+        Thu, 20 Dec 2018 20:14:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=4Fm8EDcpxeBYqtgMbLb6cGt8dSaLzcwbl9VpHPtpC3U=;
+ b=qOCjDcIoDNB5wZoMVcEAK/VLWUHXBYufbT52L//uEOzuQOMmbn0+l16QjzzKvVRefB+v
+ 1XIPN9c0anTfdc3oc+NX4PdGC9q/oVC3HNQu6bthZPm+E1yE7TIGMeY8nHXJ/9PW0qG2
+ SFSWXRhoqNJbU9tw38E693n1ORAOCG4pKP/0jYXy9NhFI++Uvt88QjuTZR8UH0TCK+y2
+ xQU7FnDEETIE8ellCLLDelWyjwPFhMvK7j/jhQsCyLjRLxwhQvFUVe5cPBU4GqDtLDpa
+ Hu85fq250BxKpBhdh433vVZDhou0lmU6XkjUnEBH38wA0ZKBVbH+xSaPu9rPwDX3tYze tw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2pfh3a98du-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Dec 2018 20:14:17 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBKKEHWY009170
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Dec 2018 20:14:17 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBKKEGPH006381;
+        Thu, 20 Dec 2018 20:14:16 GMT
+Received: from kadam (/197.157.0.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Dec 2018 12:14:15 -0800
+Date:   Thu, 20 Dec 2018 23:14:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aymen Qader <qader.aymen@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rts5208: fix a missing check of ms read
+Message-ID: <20181220201404.GS19692@kadam>
+References: <20181220200002.29685-1-kjlu@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181220200002.29685-1-kjlu@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9113 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=754
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812200165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+LGTM.
 
-please pull the latest pile of shiny new EDAC Christmas patches in the
-upcoming merge window of what is going to be 4.21 or maybe the 5.0
-kernel. I guess the new number will be a Christmas miracle. :-)
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thx.
+regards,
+dan carpenter
 
------------------->
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_for_4.21
-
-for you to fetch changes up to 75dfa87035f9a2659dd0c48af6b4d9899e79cdc9:
-
-  EDAC, fsl_ddr: Add LS1021A to the list of supported hardware (2018-12-19 11:57:45 +0100)
-
-----------------------------------------------------------------
-- Support for ZynqMP DDR controller support to synopsys_edac along
-with a driver cleanup and generalization for the addition of support for
-the new IP. (Manish Narani)
-
-- Removal of the /sys/bus/edac devices hierarchy. This enabled us to get
-rid of the silly memory controllers maximum number notion. (Tony Luck
-and Borislav Petkov)
-
-- skx_edac improvements and fixes. (Qiuxu Zhuo and Tony Luck)
-
-- The usual garden variety of small cleanups and fixes.
-
-----------------------------------------------------------------
-Alexandre Belloni (2):
-      EDAC, i82975x: Fix spelling mistake "reserverd" -> "reserved"
-      MAINTAINERS, EDAC: Drop bouncing email
-
-Borislav Petkov (1):
-      EDAC: Drop per-memory controller buses
-
-Colin Ian King (1):
-      EDAC: Fix indentation issues in several EDAC drivers
-
-Dan Carpenter (1):
-      EDAC, qcom_edac: Remove irq_handled local variable
-
-Manish Narani (10):
-      EDAC, synopsys: Improve code readability
-      EDAC, synopsys: Shorten static function names
-      EDAC, synopsys: Correct comments
-      EDAC, synopsys: Return void for functions always returning 0
-      EDAC, synopsys: Add platform specific structures for the DDR Controller
-      EDAC, synopsys: Add error handling for the of_device_get_match_data() result
-      dt: bindings: Document ZynqMP DDRC in Synopsys documentation
-      EDAC, synopsys: Add macro defines for ZynqMP DDRC
-      EDAC, synopsys: Add ECC support for ZynqMP DDR controller
-      EDAC, synopsys: Add Error Injection support for ZynqMP DDR controller
-
-Patrick Havelange (1):
-      EDAC, fsl_ddr: Add LS1021A to the list of supported hardware
-
-Qiuxu Zhuo (4):
-      EDAC, skx: Fix function calling order in skx_exit()
-      EDAC, skx: Prepend hex formatting with '0x'
-      EDAC, skx: Move debugfs node under EDAC's hierarchy
-      EDAC, skx: Let EDAC core show the decoded result for debugfs
-
-Tony Luck (2):
-      EDAC, skx: Fix randconfig builds in a better way
-      EDAC: Don't add devices under /sys/bus/edac
-
-York Sun (1):
-      EDAC, fsl: Move error injection under CONFIG_EDAC_DEBUG
-
-YueHaibing (2):
-      EDAC, i82975x: Remove set but not used variable dtype
-      EDAC, i5000: Remove set but not used local variables
-
- .../bindings/memory-controllers/synopsys.txt       |   27 +-
- MAINTAINERS                                        |    1 -
- drivers/edac/Kconfig                               |    6 +-
- drivers/edac/e752x_edac.c                          |    4 +-
- drivers/edac/edac_mc.c                             |    9 +-
- drivers/edac/edac_mc_sysfs.c                       |   33 +-
- drivers/edac/fsl_ddr_edac.c                        |    8 +-
- drivers/edac/fsl_ddr_edac.h                        |    4 +-
- drivers/edac/i3000_edac.c                          |    4 +-
- drivers/edac/i5000_edac.c                          |   13 +-
- drivers/edac/i7core_edac.c                         |    2 +-
- drivers/edac/i82975x_edac.c                        |   21 +-
- drivers/edac/qcom_edac.c                           |    8 +-
- drivers/edac/skx_edac.c                            |  151 +--
- drivers/edac/synopsys_edac.c                       | 1204 +++++++++++++++++---
- include/linux/adxl.h                               |    5 -
- include/linux/edac.h                               |    6 -
- 17 files changed, 1174 insertions(+), 332 deletions(-)
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
