@@ -2,179 +2,111 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A27C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5B1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A36B218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0156218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:51:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WovJ7XO7"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Vi8b8c+E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbeLTTu6 (ORCPT
+        id S2388914AbeLTTvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:50:58 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34824 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731163AbeLTTu5 (ORCPT
+        Thu, 20 Dec 2018 14:51:33 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:52990 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732114AbeLTTvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:50:57 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so1360529plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:50:57 -0800 (PST)
+        Thu, 20 Dec 2018 14:51:33 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 84D349C8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:51:31 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RbqLMdHwvAy2 for <linux-kernel@vger.kernel.org>;
+        Thu, 20 Dec 2018 13:51:31 -0600 (CST)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 58BD9514
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 13:51:31 -0600 (CST)
+Received: by mail-it1-f200.google.com with SMTP id i12so2633787ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:51:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OjUg7R1XST2kzHO5K2dbel0SWVi+REGA4J6AxgTJpMc=;
-        b=WovJ7XO7At0R61Ino4A5jayelH2VG7UMgBnTBBHNUNDFpejLf7Pp8JpGAXozd9w0j6
-         6qxprNm5ll2wZx4YAB8xPHPRHpocrw7pIDeYp0PMpEKMKjBFYhyRR+UodDB46pEOeViE
-         5TXg60l17My/5hO0aqaQ9YNnAz1WcyrC2iSL4=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DCNlHdkvdIUGRN9ww792EColzsYz2mqQhXZ13uy+EAM=;
+        b=Vi8b8c+EMz1/I1CM8QktxdJxf5M2bVA6wCChCLYlpiFA79j4MMsN41zYDRPayfzG0n
+         xukf2ZMz8vlkRE1phxdwFXGt4GsnZJHzUrAuhFVJ+xP77LqOYPLrBvXGmq4PtPCMk6E8
+         3+bG2H1c5ROZO1wBhjC8+2767l6lRVIuEel2BWmqFzXL9hlSvcLyDc0Im/PH8h84eG7i
+         kXrQjBeh1RiArvMch7iSRXY8lVoTZ6h7ts2cSjN+YtmjzMV0SmfMDCz6e5eUGEZ4YsYg
+         ZGqYjMK1Dpx+Mk1adS283EkRNDp7tfYJQBoYY06FZ5cHzX8GBGTQnOkmntowdi3VbWR+
+         BDJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OjUg7R1XST2kzHO5K2dbel0SWVi+REGA4J6AxgTJpMc=;
-        b=dhlAhJ8w0EVKidD3/2MNvKOzX4jSwp31HikA/5uONYxOrfpJrYObECiQnpSO5Ms5Zl
-         RKS8I16/eE/Gw2Wr+Mlg+f2kU7SvEB6vt4kHxk6eVBMQDMAxMGECUekdZ1m4i74XRuFt
-         UaFFdFTvQrPYd/FIVRqeczekqiwfJoYGxOiA6N4YgPi1ps1mB5mR9DarnhsxUsTSbf4j
-         x4mGAktQIfPaKrAY0ixpybFsTGOPIf0VmBxzl1Fe6ejxEF1cpeyJM0+C1tXx4xVMwe9V
-         bUrNgVjljlpRPGQYzlAPEZyu/mjxUN62mcoyEXksdUBfxWWV+GaypolFa7jx2WotqtFT
-         A4PA==
-X-Gm-Message-State: AA+aEWalkpOA6YdbMLyWOrX8f2d7vIfFQaR0vJ5H08xq6CZW/ycd7F2F
-        Yzts3HqMf3+nw8qR7jt+pFKZJg==
-X-Google-Smtp-Source: AFSGD/Us9E5aoWOcuSE+g7meXBc3oOpp07BsL2j7GWNxxO9i7vEZcC46ObER4fuxvqhhAAt7Njlyrg==
-X-Received: by 2002:a17:902:96a:: with SMTP id 97mr24507168plm.45.1545335457115;
-        Thu, 20 Dec 2018 11:50:57 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id h8sm31463666pfo.162.2018.12.20.11.50.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 11:50:56 -0800 (PST)
-From:   Matthias Kaehlcke <mka@chromium.org>
-X-Google-Original-From: Matthias Kaehlcke <mka@google.com>
-Date:   Thu, 20 Dec 2018 11:50:55 -0800
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, david.brown@linaro.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
-        amit.kucheria@linaro.org
-Subject: Re: [PATCH] arm64: dts: sdm845: Add cpufreq device node
-Message-ID: <20181220195055.GB261387@google.com>
-References: <1545333530-30151-1-git-send-email-tdas@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1545333530-30151-1-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DCNlHdkvdIUGRN9ww792EColzsYz2mqQhXZ13uy+EAM=;
+        b=GNM1FylVauOqqVHPCkWUXUz1Ys1cD+VTeebFWgxtTJeE8Nymp2zS6IqYIIYcKfrcal
+         +T2WGMnDJKQIb/EbFSYvwfwnCclZHL6nIn+ayZJLWdfd1dhepDXe4XLp6PcT6VOQRRA6
+         LzV114MYOF7nObHI2NTVQ6rRAM4lOckhjeNAdE/V30I30IPdQYhOQuuVSNu6r8PK5tco
+         stPO1JlZ+lqltRot2PH3oicIszQ0Q2IRCTBBNpGVLybYKN/UwDtp5CRTaQ/IXncw4peM
+         odD/gTXUDhO93EASu9CChEHfls474Y4lMJ/RHQBkwI4tmC8XnVIAuNTEml4k2hJKNb0t
+         Fi/w==
+X-Gm-Message-State: AJcUukfPfZU/VlcQQpgjOQb+Z3pFJBZB2ERnJqbUsCoM3OuoluLriEMh
+        Fn230xJyOVg8SaRsVjtkF5xVpoLs5j75ymeSJW26vvhSMHiETU1gM5Z9G/uyz2+4Na4vURKQNf3
+        U2uaKywLPVl8rhUzq8RzOYfAnm74H
+X-Received: by 2002:a24:4545:: with SMTP id y66mr17605ita.174.1545335490933;
+        Thu, 20 Dec 2018 11:51:30 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/WjX8lK8Aj3+mLdGM379dUNOAGELi7yTdzhAcN0DAkTkJ3aE1B9tfvBnwLIKf7pChnyI+7mZw==
+X-Received: by 2002:a24:4545:: with SMTP id y66mr17595ita.174.1545335490694;
+        Thu, 20 Dec 2018 11:51:30 -0800 (PST)
+Received: from bee.cs.umn.edu (cs-bee0u.cs.umn.edu. [134.84.121.28])
+        by smtp.gmail.com with ESMTPSA id 197sm5314454itx.21.2018.12.20.11.51.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 11:51:29 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Sebastian Reichel <sre@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] power: twl4030: fix a missing check of return value
+Date:   Thu, 20 Dec 2018 13:51:24 -0600
+Message-Id: <20181220195124.29467-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
+If twl4030_bci_read() fails, the read data in "s" is incorrect,
+which is however used in the following execution. The fix checks
+the return value of twl4030_bci_read() and returns an error code
+upstream upon the failure of twl4030_bci_read().
 
-On Fri, Dec 21, 2018 at 12:48:50AM +0530, Taniya Das wrote:
-> This change adds the cpufreq node as per the bindings example for SDM845.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 23a253b..5db4fcc 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -99,6 +99,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 0>;
->  			next-level-cache = <&L2_0>;
->  			L2_0: l2-cache {
->  				compatible = "cache";
-> @@ -114,6 +115,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x100>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 0>;
->  			next-level-cache = <&L2_100>;
->  			L2_100: l2-cache {
->  				compatible = "cache";
-> @@ -126,6 +128,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x200>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 0>;
->  			next-level-cache = <&L2_200>;
->  			L2_200: l2-cache {
->  				compatible = "cache";
-> @@ -138,6 +141,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x300>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 0>;
->  			next-level-cache = <&L2_300>;
->  			L2_300: l2-cache {
->  				compatible = "cache";
-> @@ -150,6 +154,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x400>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 1>;
->  			next-level-cache = <&L2_400>;
->  			L2_400: l2-cache {
->  				compatible = "cache";
-> @@ -162,6 +167,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x500>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 1>;
->  			next-level-cache = <&L2_500>;
->  			L2_500: l2-cache {
->  				compatible = "cache";
-> @@ -174,6 +180,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x600>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 1>;
->  			next-level-cache = <&L2_600>;
->  			L2_600: l2-cache {
->  				compatible = "cache";
-> @@ -186,6 +193,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x700>;
->  			enable-method = "psci";
-> +			qcom,freq-domain = <&cpufreq_hw 1>;
->  			next-level-cache = <&L2_700>;
->  			L2_700: l2-cache {
->  				compatible = "cache";
-> @@ -341,6 +349,17 @@
->  			#power-domain-cells = <1>;
->  		};
-> 
-> +		cpufreq_hw: cpufreq@17d43000 {
-> +			compatible = "qcom,cpufreq-hw";
-> +			reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
-> +			reg-names = "freq-domain0", "freq-domain1";
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-> +			clock-names = "xo", "alternate";
-> +
-> +			#freq-domain-cells = <1>;
-> +		};
-> +
->  		qfprom@784000 {
->  			compatible = "qcom,qfprom";
->  			reg = <0x784000 0x8ff>;
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/power/supply/twl4030_charger.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-My understanding is that the entries in the SDM845 DT are sorted by
-address. The address of the cpufreq node is 0x17d43000, hence it
-should be the last entry of the 'soc' node, after 'timer@17c90000'.
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index 0e202d4273fb..4299873a1118 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -809,7 +809,9 @@ static int twl4030_bci_get_property(struct power_supply *psy,
+ 		is_charging = state & TWL4030_MSTATEC_AC;
+ 	if (!is_charging) {
+ 		u8 s;
+-		twl4030_bci_read(TWL4030_BCIMDEN, &s);
++		ret = twl4030_bci_read(TWL4030_BCIMDEN, &s);
++		if (ret < 0)
++			return ret;
+ 		if (psy->desc->type == POWER_SUPPLY_TYPE_USB)
+ 			is_charging = s & 1;
+ 		else
+-- 
+2.17.1
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
