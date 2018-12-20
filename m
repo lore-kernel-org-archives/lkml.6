@@ -2,159 +2,128 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F14C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79867C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A702177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D57A21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.ru header.i=@mail.ru header.b="b5tPvmp1";
-	dkim=pass (1024-bit key) header.d=mail.ru header.i=@mail.ru header.b="b5tPvmp1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oH4rihhj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731521AbeLTLQn (ORCPT
+        id S1731527AbeLTLTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:16:43 -0500
-Received: from fallback15.mail.ru ([94.100.179.50]:54886 "EHLO
-        fallback15.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbeLTLQm (ORCPT
+        Thu, 20 Dec 2018 06:19:08 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37353 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbeLTLTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:16:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=Yb1P2aSIuTxnGxja0jTXn2FS4rN7Q+U8PKpZNQ52e3k=;
-        b=b5tPvmp1zj04swzA/r1sSvlfeL5d0gaR2nBk21A8Qmrmvbq+9AWNXOJgRAQ7u1+u3LQqaf32GZO0YtyKonpMCo0koD8BLYZmNw2UjleXbasvHjh+aBdJ98OtmQW+ntrRBf+Buy1gNttwoYTpihPGZfpydO8c4GgKtiLlsk0sSTE=;
-Received: from [10.161.64.61] (port=45212 helo=smtp53.i.mail.ru)
-        by fallback15.m.smailru.net with esmtp (envelope-from <shc_work@mail.ru>)
-        id 1gZwJj-0002EA-CF
-        for linux-kernel@vger.kernel.org; Thu, 20 Dec 2018 14:16:39 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail2;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=Yb1P2aSIuTxnGxja0jTXn2FS4rN7Q+U8PKpZNQ52e3k=;
-        b=b5tPvmp1zj04swzA/r1sSvlfeL5d0gaR2nBk21A8Qmrmvbq+9AWNXOJgRAQ7u1+u3LQqaf32GZO0YtyKonpMCo0koD8BLYZmNw2UjleXbasvHjh+aBdJ98OtmQW+ntrRBf+Buy1gNttwoYTpihPGZfpydO8c4GgKtiLlsk0sSTE=;
-Received: by smtp53.i.mail.ru with esmtpa (envelope-from <shc_work@mail.ru>)
-        id 1gZwJb-0003Vf-Dc; Thu, 20 Dec 2018 14:16:31 +0300
-From:   Alexander Shiyan <shc_work@mail.ru>
-To:     linux-kernel@vger.kernel.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH] clocksource: clps711x: Remove board support
-Date:   Thu, 20 Dec 2018 14:16:26 +0300
-Message-Id: <20181220111626.17140-1-shc_work@mail.ru>
-X-Mailer: git-send-email 2.13.0
-X-77F55803: 2D1AD755E866B1545A78504BD2AC2941AC9F5C0DA9FA9AD2E7AC7A8BB2BD5317A66BE2BC3FF8BB7C592F5F1828F7DFC7
-X-7FA49CB5: 0D63561A33F958A511F4A34DC5082C85A1A93E28E2F85D2ACCB126939EC2412B8941B15DA834481FA18204E546F3947CEDCF5861DED71B2F389733CBF5DBD5E9C8A9BA7A39EFB7666BA297DBC24807EA117882F44604297287769387670735209ECD01F8117BC8BEA471835C12D1D977C4224003CC8364767815B9869FA544D8D32BA5DBAC0009BE9E8FC8737B5C2249CE66FDB1904541E03AA81AA40904B5D9CF19DD082D7633A0E7DDDDC251EA7DABD81D268191BDAD3D78DA827A17800CE79383FD4D963104D4CD04E86FAF290E2D40A5AABA2AD3711975ECD9A6C639B01B78DA827A17800CE7C9A2B4115E0ACE2E939314D80A623AB475ECD9A6C639B01B4E70A05D1297E1BBC6867C52282FAC85D9B7C4F32B44FF57285124B2A10EEC6C00306258E7E6ABB4E4A6367B16DE6309
-X-Mailru-Sender: 8261CADE3D3FA0B4C2F1292954F703E98697CD375B7CF8D9FF3218203CE65191762A45175564275F6B3B2BD4812BFD4DC77752E0C033A69E93554C27080790AB3B25A7FBAAF806F0AE208404248635DF
-X-Mras: OK
-X-77F55803: 6AF0DA0BABFA9FDB7F9F52485CB584D7271FD7DF62800FDC60DDF8F2F021D8E7EAB3B4457305C87F4D86EEA66FF75675D5145E3F8FD384A3
-X-7FA49CB5: 0D63561A33F958A5A70C0BE57F555D4EA1A56BDBB7A808FAF91E8C5B4B34F81E8941B15DA834481FA18204E546F3947CEDCF5861DED71B2F389733CBF5DBD5E9C8A9BA7A39EFB7666BA297DBC24807EA117882F44604297287769387670735209ECD01F8117BC8BEA471835C12D1D977C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: A5480F10D64C9005756D98BBC07C3822332ABE724A08D241EAB3B4457305C87F6565FCDE7E403FA13786569BE0651809D50E20E2BC48EF5AFF3C6AF3E48A3A73EAB4BC95F72C04283CDA0F3B3F5B9367
-X-Mras: OK
+        Thu, 20 Dec 2018 06:19:08 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so1037334lfj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 03:19:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pHtTs6KHm6BdZnSGv7rSta30oEewrBNdyzWeLYp8VgQ=;
+        b=oH4rihhjXRvpjkbHslN4NNN7t0zffwxOHXLSSHNRRogsWF8lFMTmPIm+v/eQS5bzlz
+         oCHdZmC8ZfGIPYyyW5VFtyLQqFfX4KnWAwCb28Z8QiXiDRsFYYDiGFycfLDkBxvzjgEx
+         SiiHA4beFKDro9FmVCXkO9VVx1r8Cckj4BJ0RQzVagh3fQjV2a35/oCSstoictFOHnEa
+         IasppzEFTZvEhZQtSqtxA1QF/VkqWncdM0B+6XLJ/6xd7x3pdy3PUh1tIYJLaq/Ge+z3
+         lYCqNenP3qrgqGspOB3FElUpXLtsKvRUVwviIi7x9JHjAOXkCkIL1QjHccld7TlALcys
+         hdIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pHtTs6KHm6BdZnSGv7rSta30oEewrBNdyzWeLYp8VgQ=;
+        b=c2Y7vFWe12Ze96TXb1Kz4DO4vqtzsJ3NnTa10ryl8cW+FVbUPsYsR9h3vAxRUeC/0n
+         UStScGVhqZqw5CjS43SdpJE+cza5bjr3ZoxTYZtM535INB9AlpyCEgYiKai67JELhoXq
+         UtqgrpgckQB7UFlmgd5yESSniXxGF2IWc2+QOqTq43SHQWHoYlnWM4Q52/GyKvqrvHeu
+         SoesPkjn+EHawkCS7S+Nst0v/Ppqm5EX2pGHRwKhUzT3cUWijko1dE1phnGrF/xQzIa6
+         8IF0B80gy7XTFElDasYLrNpkboUpYlJoslhE05utCDzgA3KCzpeHoo+Uio4DDeiKWKSq
+         c6Fw==
+X-Gm-Message-State: AA+aEWZkcG5VM8A1TKqBozZhGr3A5xX92DlFRAjLH0efR1QLucTf5Y9G
+        dB5grCvGRv6DCXC2wprDvwM=
+X-Google-Smtp-Source: AFSGD/VpyaYh2hHNtYaZL//eQc5zIVs6oSObD3+8Xb5hmDGKqhlxxtdH3Qyx06/0WPyrR71nAlXNyw==
+X-Received: by 2002:a19:e601:: with SMTP id d1mr15455353lfh.71.1545304746233;
+        Thu, 20 Dec 2018 03:19:06 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id u26-v6sm3949241lji.22.2018.12.20.03.19.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 03:19:05 -0800 (PST)
+Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
+To:     Gerd Hoffmann <kraxel@redhat.com>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
+Cc:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+References: <20181127103252.20994-1-andr2000@gmail.com>
+ <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
+ <c5fa494c-2ead-e190-6e8c-43478275f789@gmail.com>
+ <20181219131452.cehks3kabcwuuk7i@sirius.home.kraxel.org>
+ <dd166576-6771-a03f-bdee-ef798f789aed@gmail.com>
+ <20181219141000.k426c7o6ncsdzrn5@sirius.home.kraxel.org>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <3e24ecc5-25e1-3d5e-2092-daa95ae36cba@gmail.com>
+Date:   Thu, 20 Dec 2018 13:19:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181219141000.k426c7o6ncsdzrn5@sirius.home.kraxel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since board support for the CLPS711X platform was removed,
-remove the board support from the clps711x-timer driver.
-
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- drivers/clocksource/clps711x-timer.c | 44 +++++++++++-------------------------
- 1 file changed, 13 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/clocksource/clps711x-timer.c b/drivers/clocksource/clps711x-timer.c
-index a8dd80576c95..857f8c086274 100644
---- a/drivers/clocksource/clps711x-timer.c
-+++ b/drivers/clocksource/clps711x-timer.c
-@@ -31,16 +31,9 @@ static u64 notrace clps711x_sched_clock_read(void)
- 	return ~readw(tcd);
- }
- 
--static int __init _clps711x_clksrc_init(struct clk *clock, void __iomem *base)
-+static void __init clps711x_clksrc_init(struct clk *clock, void __iomem *base)
- {
--	unsigned long rate;
--
--	if (!base)
--		return -ENOMEM;
--	if (IS_ERR(clock))
--		return PTR_ERR(clock);
--
--	rate = clk_get_rate(clock);
-+	unsigned long rate = clk_get_rate(clock);
- 
- 	tcd = base;
- 
-@@ -48,8 +41,6 @@ static int __init _clps711x_clksrc_init(struct clk *clock, void __iomem *base)
- 			      clocksource_mmio_readw_down);
- 
- 	sched_clock_register(clps711x_sched_clock_read, 16, rate);
--
--	return 0;
- }
- 
- static irqreturn_t clps711x_timer_interrupt(int irq, void *dev_id)
-@@ -67,13 +58,6 @@ static int __init _clps711x_clkevt_init(struct clk *clock, void __iomem *base,
- 	struct clock_event_device *clkevt;
- 	unsigned long rate;
- 
--	if (!irq)
--		return -EINVAL;
--	if (!base)
--		return -ENOMEM;
--	if (IS_ERR(clock))
--		return PTR_ERR(clock);
--
- 	clkevt = kzalloc(sizeof(*clkevt), GFP_KERNEL);
- 	if (!clkevt)
- 		return -ENOMEM;
-@@ -93,31 +77,29 @@ static int __init _clps711x_clkevt_init(struct clk *clock, void __iomem *base,
- 			   "clps711x-timer", clkevt);
- }
- 
--void __init clps711x_clksrc_init(void __iomem *tc1_base, void __iomem *tc2_base,
--				 unsigned int irq)
--{
--	struct clk *tc1 = clk_get_sys("clps711x-timer.0", NULL);
--	struct clk *tc2 = clk_get_sys("clps711x-timer.1", NULL);
--
--	BUG_ON(_clps711x_clksrc_init(tc1, tc1_base));
--	BUG_ON(_clps711x_clkevt_init(tc2, tc2_base, irq));
--}
--
--#ifdef CONFIG_TIMER_OF
- static int __init clps711x_timer_init(struct device_node *np)
- {
- 	unsigned int irq = irq_of_parse_and_map(np, 0);
- 	struct clk *clock = of_clk_get(np, 0);
- 	void __iomem *base = of_iomap(np, 0);
- 
-+	if (!base)
-+		return -ENOMEM;
-+	if (!irq)
-+		return -EINVAL;
-+	if (IS_ERR(clock))
-+		return PTR_ERR(clock);
-+
- 	switch (of_alias_get_id(np, "timer")) {
- 	case CLPS711X_CLKSRC_CLOCKSOURCE:
--		return _clps711x_clksrc_init(clock, base);
-+		clps711x_clksrc_init(clock, base);
-+		break;
- 	case CLPS711X_CLKSRC_CLOCKEVENT:
- 		return _clps711x_clkevt_init(clock, base, irq);
- 	default:
- 		return -EINVAL;
- 	}
-+
-+	return 0;
- }
- TIMER_OF_DECLARE(clps711x, "cirrus,ep7209-timer", clps711x_timer_init);
--#endif
--- 
-2.13.0
-
+On 12/19/18 4:10 PM, Gerd Hoffmann wrote:
+>    Hi,
+>
+>>> Sure this actually helps?  It's below 4G in guest physical address
+>>> space, so it can be backed by pages which are actually above 4G in host
+>>> physical address space ...
+>> Yes, you are right here. This is why I wrote about the IOMMU
+>> and other conditions. E.g. you can have a device which only
+>> expects 32-bit, but thanks to IOMMU it can access pages above
+>> 4GiB seamlessly. So, this is why I *hope* that this code *may* help
+>> such devices. Do you think I don't need that and have to remove?
+> I would try without that, and maybe add a runtime option (module
+> parameter) later if it turns out some hardware actually needs that.
+> Devices which can do 32bit DMA only become less and less common these
+> days.
+Good point, will remove then
+>>>>>> +    if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
+>>>>>> +            DMA_BIDIRECTIONAL)) {
+>>>>> Are you using the DMA streaming API as a way to flush the caches?
+>>>> Yes
+>>>>> Does this mean that GFP_USER isn't making the buffer coherent?
+>>>> No, it didn't help. I had a question [1] if there are any other better way
+>>>> to achieve the same, but didn't have any response yet. So, I implemented
+>>>> it via DMA API which helped.
+>>> set_pages_array_*() ?
+>>>
+>>> See arch/x86/include/asm/set_memory.h
+>> Well, x86... I am on arm which doesn't define that...
+> Oh, arm.  Maybe ask on a arm list then.  I know on arm you have to care
+> about caching a lot more, but that also is where my knowledge ends ...
+>
+> Using dma_map_sg for cache flushing looks like a sledge hammer approach
+> to me.
+It is. This is why I am so unsure this is way to go
+>    But maybe it is needed to make xen flush the caches (xen guests
+> have their own dma mapping implementation, right?  Or is this different
+> on arm than on x86?).
+I'll try to figure out
+> cheers,
+>    Gerd
+>
+Thank you,
+Oleksandr
