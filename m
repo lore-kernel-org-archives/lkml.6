@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65966C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2141CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D2720989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5D9F20449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298453;
-	bh=NxL23U+DdkaoDN1JBLjzNV/sG1zL1bVVTTaTrXNXgH8=;
+	s=default; t=1545298465;
+	bh=VOciozYKQc6rTK9QkrTE9v7i2nhR0L+Bw8O7MAp9DkQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VHF1TjsWvpdO1XC4a40yI5lNOrD/Syp0ZJdFkBvWJZmA1CmsLYv2Y6adBeVOm7z61
-	 m3LgZ27YnDlqseQemPRvqNJCxT7b67VnGKjdcYkQZ7ry8+V6bpS13fMNaMdZHiS9Hx
-	 ZZWlvFOifectHOSkXNaJaaRaIO7CAyOMSYUftJBU=
+	b=X1KuxgO/olZAqolHapXIrNHfoF9wgMbYbUuTIYN918GAcx6Auvo0Gz2s45PUb59mB
+	 MtBJblIkES6lOCMo7AbIA0eGS0gG5WKB0OIxzgHpP93yFwIQ+wtYwxREBbqrp8XjxN
+	 FFDgqMY1G5o8IcavmFzaob7GLqr1zgK51kRbcH98=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733233AbeLTJeL (ORCPT
+        id S1733236AbeLTJeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:34:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:34:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732753AbeLTJ3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:29:41 -0500
+        id S1732708AbeLTJ32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:29:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A0472177E;
-        Thu, 20 Dec 2018 09:29:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 821FF218D8;
+        Thu, 20 Dec 2018 09:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298180;
-        bh=NxL23U+DdkaoDN1JBLjzNV/sG1zL1bVVTTaTrXNXgH8=;
+        s=default; t=1545298168;
+        bh=VOciozYKQc6rTK9QkrTE9v7i2nhR0L+Bw8O7MAp9DkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GuIYX0cvFePxJJDatPDTo59WUSZPG4W1IKX6DHqoHf3DdIK2iueg6W2kIAUDpE5Fx
-         WXPwQ5tfLhUXZWnstPVtCmdJquq5EuIbAz6tZGcfitK3alBFc7lixPEHDea3EVuWHK
-         AID3Ne/eH/xetvNtuqa1u5J9GA7F7nhfoVijEG4I=
+        b=tpHY3W0oy6y4a15DhEbhqa/YlmmUsV+okiwLuSRKBUkuwOjUVlA1HhvSYD+eIOAP2
+         nbvbCaarK+NZQlwtavjIKFNGoNa9g9e9ynL8hH+Z/HNJJRiPE7J3mNQyC4uWbmBri1
+         +NokoZJeB+2Q9hYGJS2zDnD27BvzvvVXrr/0GbE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/67] net: stmmac: Move debugfs init/exit to ->probe()/->remove()
-Date:   Thu, 20 Dec 2018 10:18:34 +0100
-Message-Id: <20181220085904.425594564@linuxfoundation.org>
+Subject: [PATCH 4.19 06/67] i2c: rcar: check bus state before reinitializing
+Date:   Thu, 20 Dec 2018 10:18:18 +0100
+Message-Id: <20181220085903.822192733@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,95 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5f2b8b62786853341a20d4cd4948f9cbca3db002 ]
+[ Upstream commit 0b57436f15bf40e432487086c4f2d01fd3529393 ]
 
-Setting up and tearing down debugfs is current unbalanced, as seen by
-this error during resume from suspend:
+We should check the bus state before reinitializing the IP core.
+Otherwise, the internal bus busy state which also tracks multi-master
+activity is lost.
 
-    [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
-    [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+Credits go to the Renesas BSP team for suggesting this change.
 
-The imbalance happens because the driver creates the debugfs hierarchy
-when the device is opened and tears it down when the device is closed.
-There's little gain in that, and it could be argued that it is even
-surprising because it's not usually done for other devices. Fix the
-imbalance by moving the debugfs creation and teardown to the driver's
-->probe() and ->remove() implementations instead.
-
-Note that the ring descriptors cannot be read while the interface is
-down, so make sure to return an empty file when the descriptors_status
-debugfs file is read.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing registers before transfer")
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +++++++++++--------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 75896d6ba6e2..99ea5c4ce29c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2547,12 +2547,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
- 			netdev_warn(priv->dev, "PTP init failed\n");
- 	}
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 4aa7dde876f3..254e6219e538 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -779,6 +779,11 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
  
--#ifdef CONFIG_DEBUG_FS
--	ret = stmmac_init_fs(dev);
--	if (ret < 0)
--		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
--			    __func__);
--#endif
- 	priv->tx_lpi_timer = STMMAC_DEFAULT_TWT_LS;
+ 	pm_runtime_get_sync(dev);
  
- 	if (priv->use_riwt) {
-@@ -2753,10 +2747,6 @@ static int stmmac_release(struct net_device *dev)
- 
- 	netif_carrier_off(dev);
- 
--#ifdef CONFIG_DEBUG_FS
--	stmmac_exit_fs(dev);
--#endif
--
- 	stmmac_release_ptp(priv);
- 
- 	return 0;
-@@ -3896,6 +3886,9 @@ static int stmmac_sysfs_ring_read(struct seq_file *seq, void *v)
- 	u32 tx_count = priv->plat->tx_queues_to_use;
- 	u32 queue;
- 
-+	if ((dev->flags & IFF_UP) == 0)
-+		return 0;
-+
- 	for (queue = 0; queue < rx_count; queue++) {
- 		struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
- 
-@@ -4394,6 +4387,13 @@ int stmmac_dvr_probe(struct device *device,
- 		goto error_netdev_register;
- 	}
- 
-+#ifdef CONFIG_DEBUG_FS
-+	ret = stmmac_init_fs(ndev);
++	/* Check bus state before init otherwise bus busy info will be lost */
++	ret = rcar_i2c_bus_barrier(priv);
 +	if (ret < 0)
-+		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
-+			    __func__);
-+#endif
++		goto out;
 +
- 	return ret;
+ 	/* Gen3 needs a reset before allowing RXDMA once */
+ 	if (priv->devtype == I2C_RCAR_GEN3) {
+ 		priv->flags |= ID_P_NO_RXDMA;
+@@ -791,10 +796,6 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
  
- error_netdev_register:
-@@ -4429,6 +4429,9 @@ int stmmac_dvr_remove(struct device *dev)
+ 	rcar_i2c_init(priv);
  
- 	netdev_info(priv->dev, "%s: removing driver", __func__);
+-	ret = rcar_i2c_bus_barrier(priv);
+-	if (ret < 0)
+-		goto out;
+-
+ 	for (i = 0; i < num; i++)
+ 		rcar_i2c_request_dma(priv, msgs + i);
  
-+#ifdef CONFIG_DEBUG_FS
-+	stmmac_exit_fs(ndev);
-+#endif
- 	stmmac_stop_all_dma(priv);
- 
- 	stmmac_mac_set(priv, priv->ioaddr, false);
 -- 
 2.19.1
 
