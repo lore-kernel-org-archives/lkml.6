@@ -2,139 +2,191 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC886C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88ABC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F975218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vk323Bne"
+	by mail.kernel.org (Postfix) with ESMTP id 88CCB20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:50:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732095AbeLTQth (ORCPT
+        id S1732161AbeLTQuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:49:37 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59996 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbeLTQtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:49:36 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181220164935euoutp029172bc6a57ed9ad52542148381308878~yGIN6CM490925409254euoutp02s
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:49:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181220164935euoutp029172bc6a57ed9ad52542148381308878~yGIN6CM490925409254euoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545324575;
-        bh=5SopC54hdF6i+F0aVfMTTAbXp5OQRW7nIZjGukDNiC0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Vk323Bne7Hc36x3nCatoeoyqXijdotdcG4F/PXlUiuT5N1jj+Ka3K0fnQfXL7KepE
-         TMe4rVzbUUJe48J8e9ZPOuJTRHIuYTdfaf1BpeQMdjjdCvh7spjUMXv+vu0OxOD1rR
-         h2CkM3iyzzAY43lh7QgqXcWAhDPB14nvohfX6TqA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181220164934eucas1p1959aa46c93c8c46ee6f62d34d47a45fc~yGINTRGAv2382623826eucas1p1P;
-        Thu, 20 Dec 2018 16:49:34 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id E1.F7.04806.E18CB1C5; Thu, 20
-        Dec 2018 16:49:34 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220164933eucas1p2ac0190f35fc1b08683723886ba246f58~yGIMRZmRF1865718657eucas1p2x;
-        Thu, 20 Dec 2018 16:49:33 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181220164933eusmtrp235d67db7f423d04a36a8aaaa8e8bd0ec~yGIMCVHZA3142031420eusmtrp2e;
-        Thu, 20 Dec 2018 16:49:33 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-67-5c1bc81efa05
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.6C.04128.D18CB1C5; Thu, 20
-        Dec 2018 16:49:33 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220164932eusmtip191fac2f6e69921bdf90e7047bf2503d5~yGILs51b_0977009770eusmtip1B;
-        Thu, 20 Dec 2018 16:49:32 +0000 (GMT)
-Subject: Re: [REGRESSION PATCH] fbdev: fbmem: behave better with small
- rotated displays and many CPUs
-To:     Peter Rosin <peda@axentia.se>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geoff Levand <geoff@infradead.org>,
-        James Simmons <jsimmons@users.sf.net>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <ff208bfb-500d-3d8a-94ec-6c78e29f1331@samsung.com>
-Date:   Thu, 20 Dec 2018 17:49:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Thu, 20 Dec 2018 11:50:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727652AbeLTQuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:50:37 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A4F8420A4;
+        Thu, 20 Dec 2018 16:50:36 +0000 (UTC)
+Received: from redhat.com (ovpn-123-95.rdu2.redhat.com [10.10.123.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC5BE6B644;
+        Thu, 20 Dec 2018 16:50:33 +0000 (UTC)
+Date:   Thu, 20 Dec 2018 11:50:31 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181220165030.GC3963@redhat.com>
+References: <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181218093017.GB18032@quack2.suse.cz>
+ <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
+ <20181219020723.GD4347@redhat.com>
+ <20181219110856.GA18345@quack2.suse.cz>
+ <8e98d553-7675-8fa1-3a60-4211fc836ed9@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <bfd5d16a-6fb2-4bc8-c5fd-b7086f44e7dc@axentia.se>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djPc7pyJ6RjDK71sltc+fqezWLu7EmM
-        Fkte2lncWyFrcaLvA6vF5V1z2Cz2HprPaLF+/i02Bw6PaQdms3tMPKvrsXmFlsf97uNMHsdv
-        bGfyWL3Sz+PzJrkA9igum5TUnMyy1CJ9uwSujN6O6WwFr5krGpqeMTcwtjF3MXJySAiYSDzY
-        85sdxBYSWMEocb5ZuouRC8j+wigxv/UNG4TzmVHixoGLcB19e09CdSxnlDh1MAGi6D2jxKZ3
-        W5lAEsIC6RL7J81kA7FFBBQlFuyaxQxSxCzwjkliwudesG42ASuJie2rGLsYOTh4BewkXjfq
-        gIRZBFQlHk9dzwISFhWIkOg/ow4S5hUQlDg58wkLiM0JVP3q5ilWEJtZQF5i+9s5YOMlBLax
-        S7yaupwVpFdCwEXi/GExiJuFJV4d38IOYctI/N85nwmifjqjxJtfS1kgnPWMEmvOHGOCqLKW
-        OHz8ItggZgFNifW79CHCjhJrj6xggpjPJ3HjrSDEDXwSk7ZNZ4YI80p0tAlBVKtJbFi2gQ1m
-        bdfOldAg9JB4t6iHaQKj4iwkn81C8s0shL0LGJlXMYqnlhbnpqcWG+ellusVJ+YWl+al6yXn
-        525iBKae0/+Of93BuO9P0iFGAQ5GJR5ejV3SMUKsiWXFlbmHGCU4mJVEeNcfAgrxpiRWVqUW
-        5ccXleakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgSTZeLglGpg3BvyVlg+zdhuX9Skzkvm
-        +45OOJjw4dXP+bm6Lyx7am/ulVYy+3Ls+K3pmpIXDRelyZ27+iExPtb44LR4m08r3cWccw/V
-        7FxWaCWx/MW6/pDwiRUz/h4+dTJ70d/Aw8fnnj5278m9iNvzTwjU9ElWys64XSL75bX1PxHd
-        iA+TzA+Zb/3PK2OpfVOJpTgj0VCLuag4EQAJQ7HTOQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xu7qyJ6RjDGa8Y7G48vU9m8Xc2ZMY
-        LZa8tLO4t0LW4kTfB1aLy7vmsFnsPTSf0WL9/FtsDhwe0w7MZveYeFbXY/MKLY/73ceZPI7f
-        2M7ksXqln8fnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2Nimp
-        OZllqUX6dgl6Gb0d09kKXjNXNDQ9Y25gbGPuYuTkkBAwkejbe5IdxBYSWMooMW2DdhcjB1Bc
-        RuL4+jKIEmGJP9e62LoYuYBK3jJKtJ44AtYrLJAu0fmqH8wWEVCUWLBrFjNE0VImiX9/D7OD
-        OMwC75gkziw9wQZSxSZgJTGxfRUjyAZeATuJ1406IGEWAVWJx1PXs4DYogIRErcedoDZvAKC
-        EidnPgGzOYHKX908xQpiMwuoS/yZd4kZwpaX2P52DvMERsFZSFpmISmbhaRsASPzKkaR1NLi
-        3PTcYiO94sTc4tK8dL3k/NxNjMC42nbs55YdjF3vgg8xCnAwKvHwauySjhFiTSwrrsw9xCjB
-        wawkwrv+EFCINyWxsiq1KD++qDQntfgQoynQExOZpUST84Exn1cSb2hqaG5haWhubG5sZqEk
-        znveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgdE3bXl3Qcg/m2CN9ZpZV+6yfL32yPy8+Pa06tBP
-        M/YlT+DRu+ehdemuzmebCa6lufVBWzfcrld663Ly35O25G2mx44ynmX7syUiLYLjwZQWExPZ
-        3JLwfsMZV+Q9OnVWt6rLzOPb+eQE58IMgd+Rr7/5zau5tmXH/8r7JwWLk9bzxS3sE2BYL6TE
-        UpyRaKjFXFScCABiTU/FwQIAAA==
-X-CMS-MailID: 20181220164933eucas1p2ac0190f35fc1b08683723886ba246f58
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284
-References: <20181108095347.19326-1-peda@axentia.se>
-        <CGME20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284@epcas1p3.samsung.com>
-        <8faae5c6-ce11-99b4-4fc7-7a8925aad3e4@axentia.se>
-        <94947dad-2ac4-99b0-3ebd-0aba62f27d4a@samsung.com>
-        <bfd5d16a-6fb2-4bc8-c5fd-b7086f44e7dc@axentia.se>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e98d553-7675-8fa1-3a60-4211fc836ed9@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Dec 2018 16:50:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 11/26/2018 10:19 PM, Peter Rosin wrote:
-> On 2018-11-26 15:33, Bartlomiej Zolnierkiewicz wrote:
->> On 11/26/2018 03:16 PM, Peter Rosin wrote:
->>> Ping?!
->>
->> Hi,
->>
->> Thank you for your patch, it will be considered for 4.21 (as it is not
->> a recent regression + I'm busy with other things currently).
+On Thu, Dec 20, 2018 at 02:54:49AM -0800, John Hubbard wrote:
+> On 12/19/18 3:08 AM, Jan Kara wrote:
+> > On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+> >> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+> >>> OK, so let's take another look at Jerome's _mapcount idea all by itself (using
+> >>> *only* the tracking pinned pages aspect), given that it is the lightest weight
+> >>> solution for that.  
+> >>>
+> >>> So as I understand it, this would use page->_mapcount to store both the real
+> >>> mapcount, and the dma pinned count (simply added together), but only do so for
+> >>> file-backed (non-anonymous) pages:
+> >>>
+> >>>
+> >>> __get_user_pages()
+> >>> {
+> >>> 	...
+> >>> 	get_page(page);
+> >>>
+> >>> 	if (!PageAnon)
+> >>> 		atomic_inc(page->_mapcount);
+> >>> 	...
+> >>> }
+> >>>
+> >>> put_user_page(struct page *page)
+> >>> {
+> >>> 	...
+> >>> 	if (!PageAnon)
+> >>> 		atomic_dec(&page->_mapcount);
+> >>>
+> >>> 	put_page(page);
+> >>> 	...
+> >>> }
+> >>>
+> >>> ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
+> >>> to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
+> >>> had in mind?
+> >>
+> >> Mostly, with the extra two observations:
+> >>     [1] We only need to know the pin count when a write back kicks in
+> >>     [2] We need to protect GUP code with wait_for_write_back() in case
+> >>         GUP is racing with a write back that might not the see the
+> >>         elevated mapcount in time.
+> >>
+> >> So for [2]
+> >>
+> >> __get_user_pages()
+> >> {
+> >>     get_page(page);
+> >>
+> >>     if (!PageAnon) {
+> >>         atomic_inc(page->_mapcount);
+> >> +       if (PageWriteback(page)) {
+> >> +           // Assume we are racing and curent write back will not see
+> >> +           // the elevated mapcount so wait for current write back and
+> >> +           // force page fault
+> >> +           wait_on_page_writeback(page);
+> >> +           // force slow path that will fault again
+> >> +       }
+> >>     }
+> >> }
+> > 
+> > This is not needed AFAICT. __get_user_pages() gets page reference (and it
+> > should also increment page->_mapcount) under PTE lock. So at that point we
+> > are sure we have writeable PTE nobody can change. So page_mkclean() has to
+> > block on PTE lock to make PTE read-only and only after going through all
+> > PTEs like this, it can check page->_mapcount. So the PTE lock provides
+> > enough synchronization.
+> > 
+> >> For [1] only needing pin count during write back turns page_mkclean into
+> >> the perfect spot to check for that so:
+> >>
+> >> int page_mkclean(struct page *page)
+> >> {
+> >>     int cleaned = 0;
+> >> +   int real_mapcount = 0;
+> >>     struct address_space *mapping;
+> >>     struct rmap_walk_control rwc = {
+> >>         .arg = (void *)&cleaned,
+> >>         .rmap_one = page_mkclean_one,
+> >>         .invalid_vma = invalid_mkclean_vma,
+> >> +       .mapcount = &real_mapcount,
+> >>     };
+> >>
+> >>     BUG_ON(!PageLocked(page));
+> >>
+> >>     if (!page_mapped(page))
+> >>         return 0;
+> >>
+> >>     mapping = page_mapping(page);
+> >>     if (!mapping)
+> >>         return 0;
+> >>
+> >>     // rmap_walk need to change to count mapping and return value
+> >>     // in .mapcount easy one
+> >>     rmap_walk(page, &rwc);
+> >>
+> >>     // Big fat comment to explain what is going on
+> >> +   if ((page_mapcount(page) - real_mapcount) > 0) {
+> >> +       SetPageDMAPined(page);
+> >> +   } else {
+> >> +       ClearPageDMAPined(page);
+> >> +   }
+> > 
+> > This is the detail I'm not sure about: Why cannot rmap_walk_file() race
+> > with e.g. zap_pte_range() which decrements page->_mapcount and thus the
+> > check we do in page_mkclean() is wrong?
 > 
-> Right, thanks for letting me know!
+> Right. This looks like a dead end, after all. We can't lock a whole chunk 
+> of "all these are mapped, hold still while we count you" pages. It's not
+> designed to allow that at all.
+> 
+> IMHO, we are now back to something like dynamic_page, which provides an
+> independent dma pinned count. 
 
-Patch queued for 4.21, thanks.
+I will keep looking because allocating a structure for every GUP is
+insane to me they are user out there that are GUPin GigaBytes of data
+and it gonna waste tons of memory just to fix crappy hardware.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Cheers,
+Jérôme
