@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26B0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270DDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9041920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E844D2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545299112;
-	bh=KZKyehFYVbnxFHu+ie+5RvTgr7dZOjRvRRbH8o9Gh6c=;
+	s=default; t=1545299121;
+	bh=XGWQ0oC2lpBUO3mxC3mG4+8DrfF0FSb786hvRXo/Vuw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AXfrgJKO1oKeA2jhLY7apoW4G9k8pnxB/0iuoUzpIOeYQ5hULr7gjI61PjZ7E5N5E
-	 9I606wFv9M8mjZXMPnnJ8zADmC5iH8yITejKnVRLPkckbB91MBVWOStvOS0XtX/MEe
-	 ItbVXa3cYs2DF7owFOubyk2MPiYIOXyCcQSl96cM=
+	b=pMCyJZAwNNVvrdv3G7JnDEvT3YrkjJIGdvDT5EcApLCs1Zt48zqtXBL1e49m2ZUNH
+	 AmSj1nutB1JNOiPyCghqO0NOSmkXtxcQAXYbjZlpm9HrEUAFAAqTPt59eEbwW/dE6c
+	 dfkhIna5vn7jTFgs1wh2HUZJqhLWvofIWCLxnC0Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbeLTJVQ (ORCPT
+        id S1730970AbeLTJVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:21:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59694 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:21:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730984AbeLTJVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:21:12 -0500
+        id S1730950AbeLTJVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:21:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5D3721720;
-        Thu, 20 Dec 2018 09:21:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 165D021720;
+        Thu, 20 Dec 2018 09:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297671;
-        bh=KZKyehFYVbnxFHu+ie+5RvTgr7dZOjRvRRbH8o9Gh6c=;
+        s=default; t=1545297663;
+        bh=XGWQ0oC2lpBUO3mxC3mG4+8DrfF0FSb786hvRXo/Vuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D04866VhV9HhVEjhyL4ZLhMnGAWDM1UxNNNrqtB5J8vdMIyzB8HS1AlCRmaT5iVX8
-         gMZlA2LHb279jY7ChxfwSU4bGUT61bjCTDS12K6SwYKWO9EDkLXgH3h85g72mgjT5C
-         Fo/SJjpqLEGWF/QYkkFBG1xWs/0IOAilSY7ib024=
+        b=ZyTzsBnEcQrGV0t2E5Rd9YfFwosq6vyermTdx4Ox8oGtKfQKnQYjU4NmFhxWn8sHD
+         Rn18lSxtZmnnWI2fffnkvDHlgHGYY5bqyV3mIm80gqptP1kvlR9+xb/h4YlpmSAsGe
+         morBVSreruUaY6upM7fB1LM2VmYGDOIwW6cOa/zI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.4 15/40] f2fs: fix a panic caused by NULL flush_cmd_control
-Date:   Thu, 20 Dec 2018 10:18:27 +0100
-Message-Id: <20181220085827.086876444@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 12/40] tracing: Fix memory leak of instance function hash filters
+Date:   Thu, 20 Dec 2018 10:18:24 +0100
+Message-Id: <20181220085826.971075022@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -64,48 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunlei He <heyunlei@huawei.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit d4fdf8ba0e5808ba9ad6b44337783bd9935e0982 upstream.
+commit 2840f84f74035e5a535959d5f17269c69fa6edc5 upstream.
 
-Mount fs with option noflush_merge, boot failed for illegal address
-fcc in function f2fs_issue_flush:
+The following commands will cause a memory leak:
 
-        if (!test_opt(sbi, FLUSH_MERGE)) {
-                ret = submit_flush_wait(sbi);
-                atomic_inc(&fcc->issued_flush);   ->  Here, fcc illegal
-                return ret;
-        }
+ # cd /sys/kernel/tracing
+ # mkdir instances/foo
+ # echo schedule > instance/foo/set_ftrace_filter
+ # rmdir instances/foo
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 4.9: adjust context]
+The reason is that the hashes that hold the filters to set_ftrace_filter and
+set_ftrace_notrace are not freed if they contain any data on the instance
+and the instance is removed.
+
+Found by kmemleak detector.
+
+Cc: stable@vger.kernel.org
+Fixes: 591dffdade9f ("ftrace: Allow for function tracing instance to filter functions")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/segment.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/trace/ftrace.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -398,6 +398,9 @@ int create_flush_cmd_control(struct f2fs
- 	init_waitqueue_head(&fcc->flush_wait_queue);
- 	init_llist_head(&fcc->issue_list);
- 	SM_I(sbi)->cmd_control_info = fcc;
-+	if (!test_opt(sbi, FLUSH_MERGE))
-+		return err;
-+
- 	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
- 				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
- 	if (IS_ERR(fcc->f2fs_issue_flush)) {
-@@ -2316,7 +2319,7 @@ int build_segment_manager(struct f2fs_sb
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4767,6 +4767,7 @@ void ftrace_destroy_filter_files(struct
+ 	if (ops->flags & FTRACE_OPS_FL_ENABLED)
+ 		ftrace_shutdown(ops, 0);
+ 	ops->flags |= FTRACE_OPS_FL_DELETED;
++	ftrace_free_filter(ops);
+ 	mutex_unlock(&ftrace_lock);
+ }
  
- 	INIT_LIST_HEAD(&sm_info->sit_entry_set);
- 
--	if (test_opt(sbi, FLUSH_MERGE) && !f2fs_readonly(sbi->sb)) {
-+	if (!f2fs_readonly(sbi->sb)) {
- 		err = create_flush_cmd_control(sbi);
- 		if (err)
- 			return err;
 
 
