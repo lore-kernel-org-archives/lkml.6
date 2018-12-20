@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AABC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CD9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90E9020449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91BE820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298426;
-	bh=Si3/0D2pzCJRy1cth8oQaB+i8RiC2T74upRwreSMa48=;
+	s=default; t=1545298439;
+	bh=CfmdXNZE+4AW1n35ThWHPFHIIE815csQt4iPTbaj/CE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YHywiiiyO/I81ilyKivkQGeZz+/WaMoknlIDAOAC2MD7kt0Cn2KiRiyJu5PCb+3E/
-	 h59GaNPSsUM9dQTHYfOUitVl9y2VZMutx6GqjU39Hv76zLRMJBnIKf37PYZIV9otfB
-	 kWf9cU/ppPhyDT/3/MrZ5O5r5xInL5mNuUI095Mo=
+	b=nln04GxdwkTAuUTdv68VXBSYWaqdhIGnCvW+Nb5SYiIdKJfVUb99rTPLml6ZpksK1
+	 oqcBfwAdJOJ6g83yUhh1NETVXtguyKqMydBqTa/2/W0cSB4pAKt+Uxf3rQBffE/zcb
+	 nXi7GSi2YQtYhQwVGgsQzsnT/y71dtZduqZ0CVHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731052AbeLTJaL (ORCPT
+        id S1733201AbeLTJd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:30:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34740 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:33:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732133AbeLTJaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:08 -0500
+        id S1732799AbeLTJ3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:29:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 035BB20656;
-        Thu, 20 Dec 2018 09:30:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEF562177E;
+        Thu, 20 Dec 2018 09:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298207;
-        bh=Si3/0D2pzCJRy1cth8oQaB+i8RiC2T74upRwreSMa48=;
+        s=default; t=1545298191;
+        bh=CfmdXNZE+4AW1n35ThWHPFHIIE815csQt4iPTbaj/CE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vn6JovvB1kZdpDTb3ErfnjC94NPILfisr58JpXSY9Jdx0pS5qx0luZaA3FqFW6YVy
-         xiaFA5aairLFQqAVtHbywotJfCpvryJz3Dv4L8gTU/J9yqnB33dBX88xhWP48LbaPo
-         BQSZWrmF+10Yrd5fdwzgNNgtEiyRLAU9JYyAQngo=
+        b=Jyb0zW028t43tpiQb2ZpDyokdejy4VPSWk171wZ+cquzmjigBKvvglZGJ3BHb9+zg
+         rVq82OFn2cFJKtXPehVXexXR79ItVDco+rgDLMTPN6GQm7/zLK5gzY4tWh16VbH7oG
+         hC/7tUt6IPQiqbnuJoN1HkJi3n/MSOBtpa371TR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nitesh Debnath <niteshkd1999@gmail.com>,
-        Teika Kazura <teika@gmx.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/67] Input: synaptics - enable SMBus for HP 15-ay000
-Date:   Thu, 20 Dec 2018 10:18:52 +0100
-Message-Id: <20181220085905.125027029@linuxfoundation.org>
+Subject: [PATCH 4.19 34/67] drm/msm: dpu: Dont set legacy plane->crtc pointer
+Date:   Thu, 20 Dec 2018 10:18:46 +0100
+Message-Id: <20181220085904.894342094@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -67,38 +66,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5a6dab15f7a79817cab4af612ddd99eda793fce6 ]
+[ Upstream commit 081679c51ef2fd7b23cf9ddb7d775b17f75de18c ]
 
-SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000
-series,
+It causes a WARN in drm_atomic_get_plane_state(), and is not used by
+atomic (or dpu).
 
-This device has been reported in these messages in the "linux-input"
-mailing list:
-* https://marc.info/?l=linux-input&m=152016683003369&w=2
-* https://www.spinics.net/lists/linux-input/msg52525.html
-
-Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
-Reported-by: Teika Kazura <teika@gmx.com>
-Signed-off-by: Teika Kazura <teika@gmx.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mouse/synaptics.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index c42813d50591..2bd5bb11c8ba 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -178,6 +178,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN200f", /* T450s */
-+	"SYN3221", /* HP 15-ay000 */
- 	NULL
- };
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index cd02eae884cc..4752f08f0884 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -2122,7 +2122,6 @@ struct drm_crtc *dpu_crtc_init(struct drm_device *dev, struct drm_plane *plane)
+ 				NULL);
  
+ 	drm_crtc_helper_add(crtc, &dpu_crtc_helper_funcs);
+-	plane->crtc = crtc;
+ 
+ 	/* save user friendly CRTC name for later */
+ 	snprintf(dpu_crtc->name, DPU_CRTC_NAME_SIZE, "crtc%u", crtc->base.id);
 -- 
 2.19.1
 
