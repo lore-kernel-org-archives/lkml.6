@@ -2,144 +2,96 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3FDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F253C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628B021852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405FC21852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:39:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="S6haeK9B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387581AbeLTOhK (ORCPT
+        id S2387668AbeLTOjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:37:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40072 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731737AbeLTOhJ (ORCPT
+        Thu, 20 Dec 2018 09:39:25 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:53220 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731737AbeLTOjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:37:09 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKEYclC103163
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:37:08 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pg9jqtesk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:37:07 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 20 Dec 2018 14:37:05 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Dec 2018 14:37:03 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKEb2UN22478978
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 14:37:02 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD7D15205A;
-        Thu, 20 Dec 2018 14:37:01 +0000 (GMT)
-Received: from [9.152.224.123] (unknown [9.152.224.123])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 81BE25204F;
-        Thu, 20 Dec 2018 14:37:01 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 06/15] KVM: s390: remove prefix kvm_s390_gisa_ from
- static inline functions
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-7-mimu@linux.ibm.com>
- <20181220132430.7cea69d3.cohuck@redhat.com>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Thu, 20 Dec 2018 15:37:01 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181220132430.7cea69d3.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 20 Dec 2018 09:39:24 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id A271024E1024;
+        Thu, 20 Dec 2018 06:39:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1545316764; bh=PSaIbdm1pTweGDxdz0+CtGyfSqlmkKGLtd9gBB8k3Fk=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=S6haeK9BYiMbEw8naQIUZmNOhPPKmH5WS/eK1XxivEPZoP4rXOLY8nLRtNBCN0CVB
+         qxloqvHh037jtMwAn6lD2efJCAa62AS98VuxthH2r55ErL6i8+oGmmzOUz/iVMAdBH
+         LOCPxa9yqpPpr6OwJsWIDxvt4EElx1xA2L33y1V0+XAVZvFCIHaqX8CtY8TWr3fc0Y
+         +31RGWBvCJ0fsuug/p+K44LD0g9y+W741CC6TC4tQMR9wLLEPLevCWJ6PB0pYMywxs
+         rE6h+/VlE9KZG4Maee6Y20I93akMYiYlwfDWdVL8POJ3m9/2TrbCSTBGki9hpv3PL9
+         LCQCnw9e5cSJw==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 28F295031;
+        Thu, 20 Dec 2018 06:39:23 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 20 Dec 2018 06:39:23 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 20 Dec 2018 15:39:20 +0100
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     "hch@lst.de" <hch@lst.de>,
+        "eugeniy.paltsev@synopsys.com" <eugeniy.paltsev@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "ashutosh.dixit@intel.com" <ashutosh.dixit@intel.com>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: ensure dma_alloc_coherent always returns zeroed memory
+Thread-Topic: ensure dma_alloc_coherent always returns zeroed memory
+Thread-Index: AQHUk4aSEUXLnU4haEedcBZA0NDmW6WGQKSAgAFpToCAAABngIAAAWqA
+Date:   Thu, 20 Dec 2018 14:39:20 +0000
+Message-ID: <1545316759.14089.22.camel@synopsys.com>
+References: <20181214082515.14835-1-hch@lst.de>
+         <20181219165939.GA26087@lst.de> <1545316369.14089.20.camel@synopsys.com>
+         <20181220143415.GA17726@lst.de>
+In-Reply-To: <20181220143415.GA17726@lst.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18122014-0008-0000-0000-000002A41770
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122014-0009-0000-0000-0000220EB579
-Message-Id: <49e2b16f-23a3-73a8-75b1-b03d5c9ad8a2@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812200120
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.66]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <97A4157C2B777C4DAB00EFA080F46E4C@internal.synopsys.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20.12.18 13:24, Cornelia Huck wrote:
-> On Wed, 19 Dec 2018 20:17:47 +0100
-> Michael Mueller <mimu@linux.ibm.com> wrote:
-> 
->> This will shorten the length of code lines.
->> All GISA related static inline functions are local to interrupt.c
->>
->> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
->> ---
->>   arch/s390/kvm/interrupt.c | 26 +++++++++++++-------------
->>   1 file changed, 13 insertions(+), 13 deletions(-)
->>
->> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->> index 4ab20d2eb180..9b1fa39b6f90 100644
->> --- a/arch/s390/kvm/interrupt.c
->> +++ b/arch/s390/kvm/interrupt.c
->> @@ -224,22 +224,22 @@ static inline u8 int_word_to_isc(u32 int_word)
->>    */
->>   #define IPM_BIT_OFFSET (offsetof(struct kvm_s390_gisa, ipm) * BITS_PER_BYTE)
->>   
->> -static inline void kvm_s390_gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->> +static inline void set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->>   {
->>   	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
->>   }
->>   
->> -static inline u8 kvm_s390_gisa_get_ipm(struct kvm_s390_gisa *gisa)
->> +static inline u8 get_ipm(struct kvm_s390_gisa *gisa)
->>   {
->>   	return READ_ONCE(gisa->ipm);
->>   }
->>   
->> -static inline void kvm_s390_gisa_clear_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->> +static inline void clear_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->>   {
->>   	clear_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
->>   }
->>   
->> -static inline int kvm_s390_gisa_tac_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->> +static inline int tac_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
->>   {
->>   	return test_and_clear_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
->>   }
-> 
-> I don't disagree with making them shorter, but I think the code would
-> be more readable if you only dropped the kvm_s390_ prefix and kept
-> annotating the functions as gisa_.
-
-applied
-
-> 
-
+T24gVGh1LCAyMDE4LTEyLTIwIGF0IDE1OjM0ICswMTAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiBP
+biBUaHUsIERlYyAyMCwgMjAxOCBhdCAwMjozMjo1MlBNICswMDAwLCBFdWdlbml5IFBhbHRzZXYg
+d3JvdGU6DQo+ID4gSGkgQ2hyaXN0b3BoLA0KPiA+IA0KPiA+IEkgdGVzdCBrZXJuZWwgZnJvbSB5
+b3VyICdkbWEtYWxsb2MtYWx3YXlzLXplcm8nIGJyYW5jaCwgYW5kIGFzDQo+ID4gSSBjYW4gc2Vl
+IHdlIGhhdmUgRE1BIHBlcmlwaGVyYWxzIChsaWtlIFVTQikgYnJva2VuLg0KPiANCj4gSSB3b3Vs
+ZCBiZSByZWFsbHkgc3VycHJpc2VkIGlmIHRoYXQgaXMgY2F1c2VkIGJ5IHRoZSBwYXRjaCB0byBh
+ZGQNCj4gdGhlIHplcm9pbmcuIA0KTWUgdG9vIDopDQoNCj4gIENhbiB5b3UgY2hlY2sgd2hpY2gg
+Y29tbWl0IGNhdXNlZCB0aGUgaXNzdWUgYnkgYmlzZWN0aW5nDQo+IGZyb20gYSBrbm93biBnb29k
+IGJhc2VsaW5lPw0KDQpZZXAuIEF0IGxlYXN0IGtlcm5lbCBidWlsZCBmcm9tIHY0LjIwLXJjNCAo
+d2hpY2ggaXMgYmFzZSBmb3IgeW91ciBicmFuY2gpDQpzZWVtcyB0byB3b3JrIGZpbmUuDQoNCi0t
+IA0KIEV1Z2VuaXkgUGFsdHNldg==
