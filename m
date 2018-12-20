@@ -2,133 +2,143 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC13C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC895C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1193E218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA6D218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:50:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNVaC280"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSk0XIYK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388162AbeLTRt7 (ORCPT
+        id S2388176AbeLTRuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:49:59 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46107 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732259AbeLTRt6 (ORCPT
+        Thu, 20 Dec 2018 12:50:15 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34426 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732259AbeLTRuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:49:58 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f23so2001108lfc.13;
-        Thu, 20 Dec 2018 09:49:56 -0800 (PST)
+        Thu, 20 Dec 2018 12:50:14 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b3so2494027ede.1;
+        Thu, 20 Dec 2018 09:50:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9PD5IUtbrUQOAUKV5EkOEWfoDu9dse6LjWVMzTkzTzA=;
-        b=uNVaC280eFpeI3adOgwn5GC6b7w/FIdMufAADPXoDlo6WEoI9J10Y+FWhHXh2dwU0M
-         fhBsfZ6PbzPd2cllGUS0X+3bSTiuq7fxfbR0BcCTC9DiiLNtHDvfSZcqKw0+bId0XbKr
-         dHMrxIBBfO8v9TRy7barwV/CT6Le47/AjmOWrrnnAYjDgQjJmfc72rWywAQ3xOwvX8Sx
-         KIKz8RH5y/PHM8iIUDV/i/uf8+5HKaIcSu/Z1gJHk1VokqNfNgXkpJHYzx48lGtH+5LH
-         9HXfnA7eDjoOCbBr69K4MHJgupPv51QNWM2CElp0JlH95NCw1GKPNd/X8kyIW3lvimNI
-         3dAQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TUQTlyqc6f9mbz9aRI6ZWP4z0vW0Fjk9deB5vRyDbD8=;
+        b=CSk0XIYKOwObwURHvhN60J4CJERe+WZxBVRlYLr/Fh5yltGDHj0RO8Mr33L8WCnN0n
+         3MvCJx3xwyqrU2fo2gJVRpwNSCUDWD0ZjPvwiTaCNKhUFnG3Rs+2z13sgygnIT5ADo2s
+         dsVWu5InSaFabM11L7LqJxajPh8SPcNL1dVpmm80i7LlzzaWOOM8TWus7eURmAZKJ34W
+         MFwfY+ORSzGgPDxZweQfj4WWHl9+X+uXorEZmORfJIK+gM4/ThAxOQwn0RQMkT6ZXe9m
+         c7oFSzxNTx3Fd8u/xNXfFhCJ4pugQ06x4C3bXEdgbGKb3QP+lNoYEfDW6hvjVdD8dpSe
+         RHTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9PD5IUtbrUQOAUKV5EkOEWfoDu9dse6LjWVMzTkzTzA=;
-        b=CI1bTkj9AG8LnOOnqkOEkUGHq7qI9Q7ZFmVAgl+GgSLidqBNdRU+9nxwm4ZPtD180d
-         f2nnhPqlyOc9JqL0efKyemGfVJpAHOR7z9SfrI6I67mHHeuZ2/68rXaZ0xqALVn58cI3
-         rSesj+C2RRtEwjoxSwGBdvI1jYhSsZWwYTAPjmkbDslu0PIlY7IbOPcXHMhGtVSMu/fi
-         Um1JOOcbrd/mNL0qUXTas49+Q0Ey4WmbDxCRhyrnthdNQim+oh1aPCBY91T8jQmu8BlQ
-         8IPn73W006KtVGj3SGy5qaYsiPJk+q7dQ4ceWJ6gPlI4GhADVuTilDY6VHNO/z5PZ7IY
-         mfvw==
-X-Gm-Message-State: AA+aEWYtUts0WJvXxpnb5KuTsAuWMmE5de2Xf+HKt4gdOqRoU4oruISf
-        WSYqLF+L+80DWeyLERlNsvzg2LndTQ8=
-X-Google-Smtp-Source: AFSGD/XyEyilPnztbosq7KHrRr3/7fKCjTF2BWRtxoBtOnDl5w3XyTaO39b/h459Bd/l6y3IEZ3mNQ==
-X-Received: by 2002:a19:a84e:: with SMTP id r75mr16372028lfe.45.1545328195537;
-        Thu, 20 Dec 2018 09:49:55 -0800 (PST)
-Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm4093717ljb.31.2018.12.20.09.49.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 09:49:54 -0800 (PST)
-Subject: Re: [PATCH 11/12] IMA: turn ima_policy_flags into __wr_after_init
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181219213338.26619-1-igor.stoppa@huawei.com>
- <20181219213338.26619-12-igor.stoppa@huawei.com>
- <87pntwumw6.fsf@morokweng.localdomain>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <bb8cb502-d958-c4b4-eb82-603799079b63@gmail.com>
-Date:   Thu, 20 Dec 2018 19:49:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TUQTlyqc6f9mbz9aRI6ZWP4z0vW0Fjk9deB5vRyDbD8=;
+        b=ZJEw33bULb9jU5wL5ulTzKtn0R2uzmBzGQ7H0ltFb1tqgXKrXFfRjnBCOPiQwy5Fke
+         my5CR+7defCdtoG354pNwQcOftfY/H6qhkQ66J46yehqmQDnNF2lLgY/CiZCCGEr3Z2w
+         h4ulJcDSlbjOeeXGf1gDsQLIMWm8xoeqe4rX0PbxoDwG7OqoAcfecTcNLnCfFhMj0zBa
+         3/DAkCAS1lG47OwXtdTGzrQu4ADWTeabIbrcCqWe8NaFh1oCJAC63ZdOicFAGNDR6GuC
+         Gk8a/frkViCCTpX9bN8WusrecAU7eWfPirNicQOmsgvT6nn/TUClKxL1RBPy5G7XqDvc
+         cTgw==
+X-Gm-Message-State: AA+aEWZnSYjcxkXKDHVBUVzNTmeyMlvicoMmgjIkEX3CCEyxyeHcU4kt
+        /YmONYlfrD6pjMzyTRhBbhg=
+X-Google-Smtp-Source: AFSGD/XlvvuHfiZCrBoZtfjTTj+clRp0f7moT4gbfvMhvlglGiu8+vAFto6P8hV1s333lx6h0X6wCg==
+X-Received: by 2002:a17:906:515:: with SMTP id j21-v6mr12819054eja.39.1545328211161;
+        Thu, 20 Dec 2018 09:50:11 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id b9sm6594602ede.12.2018.12.20.09.50.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 09:50:10 -0800 (PST)
+Date:   Thu, 20 Dec 2018 18:50:09 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner
+ sun8i.
+Message-ID: <20181220175009.GF9408@ulmo>
+References: <20181125161859.GA5277@arx-s1>
 MIME-Version: 1.0
-In-Reply-To: <87pntwumw6.fsf@morokweng.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IvGM3kKqwtniy32b"
+Content-Disposition: inline
+In-Reply-To: <20181125161859.GA5277@arx-s1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 20/12/2018 19:30, Thiago Jung Bauermann wrote:
-> 
-> Hello Igor,
-> 
-> Igor Stoppa <igor.stoppa@gmail.com> writes:
-> 
->> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
->> index 59d834219cd6..5f4e13e671bf 100644
->> --- a/security/integrity/ima/ima_init.c
->> +++ b/security/integrity/ima/ima_init.c
->> @@ -21,6 +21,7 @@
->>   #include <linux/scatterlist.h>
->>   #include <linux/slab.h>
->>   #include <linux/err.h>
->> +#include <linux/prmem.h>
->>
->>   #include "ima.h"
->>
->> @@ -98,9 +99,9 @@ void __init ima_load_x509(void)
->>   {
->>   	int unset_flags = ima_policy_flag & IMA_APPRAISE;
->>
->> -	ima_policy_flag &= ~unset_flags;
->> +	wr_assign(ima_policy_flag, ima_policy_flag & ~unset_flags);
->>   	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
->> -	ima_policy_flag |= unset_flags;
->> +	wr_assign(ima_policy_flag, ima_policy_flag | unset_flags);
->>   }
->>   #endif
-> 
-> In the cover letter, you said:
-> 
->> As the name implies, the write protection kicks in only after init()
->> is completed; before that moment, the data is modifiable in the usual
->> way.
-> 
-> Given that, is it still necessary or useful to use wr_assign() in a
-> function marked with __init?
+--IvGM3kKqwtniy32b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I might have been over enthusiastic of using the wr interface.
-You are right, I can drop these two. Thank you.
+On Mon, Nov 26, 2018 at 12:18:59AM +0800, Hao Zhang wrote:
+> This patch adds Allwinner sun8i pwm binding document.
+>=20
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+> ---
+>  .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++++=
+++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Docume=
+ntation/devicetree/bindings/pwm/pwm-sun8i.txt
+> new file mode 100644
+> index 0000000..7531d85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+> @@ -0,0 +1,24 @@
+> +Allwinner sun8i R40/V40/T3 SoC PWM controller
+> +
+> +Required properties:
+> +  - compatible: Should be one of:
+> +    - "allwinner,sun8i-r40-pwm"
+> +  - reg: Physical base address and length of the controller's registers
+> +  - interrupts: Should contain interrupt.
+> +  - clocks: From common clock binding, handle to the parent clock.
+> +  - clock-names: Must contain the clock names described just above.
+> +  - pwm-channels: PWM channels of the controller.
 
---
-igor
+Why do you need this? In the cover letter you say:
+
+	"The sun8i R40/T3/V40 PWM has 8 PWM channals ..."
+
+Why does this need to be specified in the DT?
+
+Thierry
+
+--IvGM3kKqwtniy32b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwb1k4ACgkQ3SOs138+
+s6EOyA//auHjqjKwvjCLwWgHXdVr26cFUnFn/Ml6ZHHRe+oLCiYsatv4AZfGFvZ7
+CIGWN3zUu9c5YoDOd1isauQYgRtTsShWYC4gPxFFK9hWfb8f3o/wG60whkNDuvLL
+1SAQ/KJTC01LQIEXfHlb60EPvKCtt4YUQG4PkTGBGOHSO+MhWQHRLy5aLaq+d3yH
+KHaDZ0PuZvYNnFWi7W/ggraiIlRToPH8HanFzGew+gUfPjClrczjrGqgn8u0bAL6
+MuKDMHLgjI/D8cs7XIaXc/OCPsp69B4JGrRJsxYh0KGKthaYDeKAUERpvsltDhGT
+oTB55mJPZlriaiEOSwPrj+M0JQe9AnUIBVEiSIP2dSn8+rcSlWd10ysEjnCH/Ea7
+ARkamiRCk2hgOhZlDZcm+hjh7VxnJinaYahGFXMszpVgCScHT/fjZKexGqX8NJa8
+EWRJjeJaS1jLpLb7ZhM0iZrhzSC638G/5z3+1CWmyxwOvICb0FXzQDCTNSm1t8DO
+NicV26tAWMIvDEW5PcTqrJaSvQmNrr4MiBiqocKs4N+ZA7Ey8JQW0oUFzwiwD6Ew
+HaOuVXDlha1SZNK2tEnTDsTctXefl+eB7xeQ8MOHPp3yeKrpQlj4gHSyNOboEaXR
+8el/ZC1gGYHPeFGPSgXTbRNFwNY8/9GKPfP5cUgLc+e1B7oWAHg=
+=9v1O
+-----END PGP SIGNATURE-----
+
+--IvGM3kKqwtniy32b--
