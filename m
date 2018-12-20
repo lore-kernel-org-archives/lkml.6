@@ -6,83 +6,85 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA5DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FC1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F2C218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C24FB21907
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545338156;
-	bh=+TJebNVLOLkngRB0Fz358fGC9BrsOz0eh2CMZUodByk=;
+	s=default; t=1545338181;
+	bh=N5G0yDkpdD1N9e8Q8NLDJxhYMayveV97MgHObcP/AkU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cn/wot38Yv2kNAoMKFUj0PCLyfMbTONcuhcPvAR2fKzTyrH+gep02r3A/fH4PU1q6
-	 GAfYAVb8/vii6+abiHLDjk+3ILD9k8qbOJIK4xW1TQ4g21PsSGJ6eUz5hXNr/uIIUQ
-	 q+a/fY4nJ2rSjrYXMdI3D7ToKqvelqhwUpQDvwaQ=
+	b=bqMDzSW0+r4ylo6bWquwvYuchtX0GzzEZGDJ2HWia9YycHCiTbQAnEYEMzIZoEfEK
+	 1H8RF5bcPrrE0hc4yXnuXd9ZTRKjH3jOG4UMPr7W7EW/fWoS9MhcjXwFfJY+heXy28
+	 3xSA6EYAnwNK7cpjvpj73VZRug9gkUV1zSWIZNqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389640AbeLTUfz (ORCPT
+        id S1732396AbeLTUgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:35:55 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54313 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732267AbeLTUfz (ORCPT
+        Thu, 20 Dec 2018 15:36:21 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55628 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeLTUgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:35:55 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so3930982ita.4;
-        Thu, 20 Dec 2018 12:35:54 -0800 (PST)
+        Thu, 20 Dec 2018 15:36:20 -0500
+Received: by mail-it1-f195.google.com with SMTP id m62so3932084ith.5;
+        Thu, 20 Dec 2018 12:36:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xY7qRHGgX/X1+QTLc15wcTmWoGPME+maH0J1xrCWkRo=;
-        b=F0+ZxksZPQHd/DduAFWf+bmIOUh4+gtYBKKZJJ+16j7mnZUuGG2irSJm8gDKywUeJC
-         YhBfd7KhWrn2mGIWVXOfDWTXm5KSQ30xK+PNHnmUrBIL4jLJObalCzYEuWF0/XApw9MY
-         gva4sp0Eoq0q3kohKupCI/vQ9SmDnYrkIVbVvkuzWnZlQu/zhmDLq4Bm4SULZPcfSMgh
-         JZw3mPOD3nRfScOSEQ9EfoDE3XenwxL2R4FOoNaYq0Iyy29Ub0jekEMEAdArEcrLJc2+
-         ocotCrvUzE89XIaLmuqlMyhN9l0V38y7+nm2HG98Pk5Qu2GqrJqjDcpywxNepygrQzLj
-         /Mqw==
-X-Gm-Message-State: AA+aEWbfmvwAHCzf6Ked0Wwwy32ca4Ay02OjVNf7D/LjdGYoIXyrToXN
-        NvxXyBOICr/RfEFN1bICcQ==
-X-Google-Smtp-Source: AFSGD/W0Qqnf8weDfA8AU63EFAEsXjTc4Ju3kfcxLR3ihUK+VbTC0MS64nCPq7k5Wn4Ie4oWW3+DmA==
-X-Received: by 2002:a02:9281:: with SMTP id b1mr24329112jah.86.1545338153936;
-        Thu, 20 Dec 2018 12:35:53 -0800 (PST)
+        bh=cWq/JI6sBy72pbbAKi9t+bxuJD77VGB/IaIRKVR0DOs=;
+        b=VujNC6mm0wnxQjeJ9H0FxBGeznczlFDgfXMeuVpHHtVPbJ4fJwDFk04KLkwBlEeMb6
+         C5vjIAo/QDtGk7Vis30xBlqv0Ucgcdhp5u+7Zegjtvvs65pMEvOwzv9lWU1ctRhyE9wU
+         vDWL5bkTlRq3aNiDTMiqf45zaEqy9Xws/c3zMQOulgciMF/hFp7XZaNNEEMJDt0wH7C5
+         OOxJRa85/VhprZyxWa4VR71Kzaz5OGjw7vO/Vc7jPx2qR9h04eKVDYXP/zwKqEujLmj6
+         wFBePYzr+t9RqNl6bWFjkV5Zj7VBK3y6M2V1i/31+JBK0Xyy4FahwMrwfR2YXvI9EhKy
+         K4KA==
+X-Gm-Message-State: AA+aEWZ+URAI4ON8jLdIZwRPbfGqUn5PwZ5D54zCCmXOFh9uLVHCdIzd
+        4mhWfZ0FmOxAeRW6n5uFwA==
+X-Google-Smtp-Source: AFSGD/XTEpeA1t9mz28MT4R5bvcWrhHUX3IpdNHmeHOstxMpr6EeETcgxiIfDK2W7oOC46Z1bXn7zQ==
+X-Received: by 2002:a24:6fc4:: with SMTP id x187mr137757itb.93.1545338179071;
+        Thu, 20 Dec 2018 12:36:19 -0800 (PST)
 Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id i135sm5673339iti.34.2018.12.20.12.35.53
+        by smtp.gmail.com with ESMTPSA id n129sm6218824itb.20.2018.12.20.12.36.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:35:53 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:35:52 -0600
+        Thu, 20 Dec 2018 12:36:18 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:36:17 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
+Cc:     Mark Rutland <mark.rutland@arm.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: can: rcar_can: Add r8a774c0 support
-Message-ID: <20181220203552.GA17852@bogus>
-References: <1544732378-6268-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: add R8A774C0 support
+Message-ID: <20181220203617.GA18535@bogus>
+References: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544732378-6268-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 20:19:38 +0000, Fabrizio Castro wrote:
-> Document RZ/G2E (r8a774c0) SoC specific bindings.
+On Thu, 13 Dec 2018 20:19:48 +0000, Fabrizio Castro wrote:
+> Document RZ/G2E SoC (a.k.a. r8a774c0) bindings.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> 
 > ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 1 +
->  1 file changed, 1 insertion(+)
+> 
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
