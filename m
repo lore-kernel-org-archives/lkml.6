@@ -2,90 +2,84 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854B5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186EFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544FF218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545336357;
-	bh=zW1Bo5Yn+fWs+Fa2QDsSJadnLhEk9ZTG/rBfYjj3ChQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WUB3sYtbIcXjOTxqicKyVGJR2d+0pXzWsqNb1X84xZBmOJC/kuxN2I6Yy0GrM8QB2
-	 GN9rtsS11LC//2h4xKUKLn+uRkoO8lh6cJrbtQNnyOM3iXxZybqxfLPNZa92ASSxJ/
-	 xbhpnFWx0gxZs8XNDF188CgRzCOplC11ruOm61f4=
+	by mail.kernel.org (Postfix) with ESMTP id DC5F321905
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389537AbeLTUF4 (ORCPT
+        id S2389563AbeLTUGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:05:56 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33403 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389117AbeLTUFz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:05:55 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i20so3105458otl.0;
-        Thu, 20 Dec 2018 12:05:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4QMY38lcT2DOZsCegYUwqK1+4Md7FtyuEkcUG+niPk4=;
-        b=UHPKuFTDEZFZNHdrQdErB/oRKgtBBA2WXSk6fQoFHObkuQ+yDivpF8oJmSoqTxqELA
-         OZrg/ba7u2ylUt1RUUEIpEgS7BMePNhmPh+z7QgcczvOD0g2a+f+7mase6qJ5Ns1oNFk
-         lHYP3T9rTpbZZUGlePiAluqeuasjkMGK4QIoZltjjWwSQu+ntjm2UauzWM7pPRg5NBfd
-         Auf+QHkvSF+Hal8TOWdjH38L7AVwnb3O/+Mq/7fbhq/rHQZ3ixO0adQz7+3IwtboCUuJ
-         RNq9LDGqnYO2eyvoX63BHR7Zt3OJcFtuOs1o42VaqqvBVmuu/ET7lL1IMK6LbH5LIk9t
-         TsJQ==
-X-Gm-Message-State: AA+aEWalZf3VyO9Chss7dJ3767EyiK9r8KtPv+Vd3G8V4YLyNrwaU93D
-        JleNO25Xs45CwM5ElwXvEQ==
-X-Google-Smtp-Source: AFSGD/WUxK8np9r7pV/2ZConG6qIb3hQNWI6Eijm8P116BQAjo6zw8QpGclLb/nEChiEY0X4yG3IHA==
-X-Received: by 2002:a9d:775a:: with SMTP id t26mr18215635otl.32.1545336354966;
-        Thu, 20 Dec 2018 12:05:54 -0800 (PST)
-Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id f18sm11096744otl.18.2018.12.20.12.05.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:05:54 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:05:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        mka@chromium.org, khasim.mohammed@linaro.org,
-        devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for ADC on
- pms405 PMIC
-Message-ID: <20181220200553.GA8681@bogus>
-References: <cover.1544599950.git.amit.kucheria@linaro.org>
- <3aac8c4cd7648589d0eef994376357509e284030.1544599950.git.amit.kucheria@linaro.org>
+        Thu, 20 Dec 2018 15:06:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43606 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387436AbeLTUGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 15:06:36 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D9E83F731;
+        Thu, 20 Dec 2018 20:06:36 +0000 (UTC)
+Received: from flask (unknown [10.43.2.138])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 98CAD5C1B2;
+        Thu, 20 Dec 2018 20:06:31 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Thu, 20 Dec 2018 21:06:30 +0100
+Date:   Thu, 20 Dec 2018 21:06:30 +0100
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org
+Subject: Re: [PATCH] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
+Message-ID: <20181220200630.GC25497@flask>
+References: <20181219110613.24459-1-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3aac8c4cd7648589d0eef994376357509e284030.1544599950.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181219110613.24459-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 20 Dec 2018 20:06:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018 15:47:54 +0530, Amit Kucheria wrote:
-> PMS405 contains a variant of the spmi-adc-rev2 ADC. Create a new
-> compatible inorder to handle any differences.
+2018-12-19 12:06+0100, Vitaly Kuznetsov:
+> AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
+> knows nothing about it, however, this MSR is among emulated_msrs and
+> thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
+> of course, fails.
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Report the MSR as unsupported to not confuse userspace.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > ---
->  Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/x86/kvm/svm.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 2acb42b74a51..dfdf7d0b7f88 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5845,6 +5845,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
+>  
+>  static bool svm_has_emulated_msr(int index)
+>  {
+> +	switch (index) {
+> +	case MSR_IA32_MCG_EXT_CTL:
+> +		return false;
+> +	default:
+> +		break;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Queued, thanks.
+
+Btw, I would prefer this without the
+
+  default: break;
+
+as I don't think we'll ever add something there.
