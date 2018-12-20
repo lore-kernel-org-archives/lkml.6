@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90152C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18365C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3972177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB2420656
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297787;
-	bh=4WM9bWTzcLOsjQY7SaA/6rPAg8t0vVGHIe+6vArNvhM=;
+	s=default; t=1545297789;
+	bh=4p5U0+rqfqrDYVPf1w5FV/UPHdhIy8HNdLBIX0GuEbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fGV1U3d/mpVeOi65DJvcz7V2wsJrLDHsDXmjJ3BGJ9IBtQRkC4yElncI/kDVcC8Gi
-	 Py72GpwhiLA/MOHvRwdGpzl7PC4g/P4tKAlg1d/8p9DTjpcyxaxIg2Bmjk6s8YPg6F
-	 vFA3YgaLbspYoOSfmMoJzZ/XRhnxsN0WjjM5CCLY=
+	b=TPmz8GYtHwDkitI/qRKTfcne3bw1S1qzmx9+zvzpDe4MsmOFLejtnSCfCelsw0X68
+	 FeVOfyuk9Df69RUvcLsDTc3jqed0sbG8os7RWpTgFQqIiEphp20xS4aXDP0GDqTw6J
+	 IVOMiLxqdWVNE8hkt1CkpzGO4XlAvzSCNgIYgnk4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729645AbeLTJXG (ORCPT
+        id S1731482AbeLTJXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:23:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49748 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:23:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbeLTJXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:23:03 -0500
+        id S1731442AbeLTJXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:23:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05A1D20656;
-        Thu, 20 Dec 2018 09:23:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A03B2217D7;
+        Thu, 20 Dec 2018 09:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297782;
-        bh=4WM9bWTzcLOsjQY7SaA/6rPAg8t0vVGHIe+6vArNvhM=;
+        s=default; t=1545297785;
+        bh=4p5U0+rqfqrDYVPf1w5FV/UPHdhIy8HNdLBIX0GuEbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YuttTWDzrtjljSTc3K6ZxbWzTKMpgSpVAzifp2v7q8AMnnqP71h2vo7gA0AEH1a+b
-         q93sjOXRNfN+xe3k4vpg1xBtDqFXxn0M+Oe5JTT6rNo8A7bUDNX8JPF7cgJruNInyD
-         vyswEUPZxmRMFY7ab9Ua5jgU+h/WwH1XQhdWVEk0=
+        b=ASykYtdUXW0AenNOfEwS7kOzaiIA5EgxypYOWhd1Oe+gJVIrq9KcFGxoEvukznENa
+         Ku9sa+TIffp2wSTIEsjIGGE2ECcyetYTwi0P4fW7aPBGcV2Agetz70t9qxP1pSAzMC
+         rzT924atTNTSPOz51JHH86kqODedYKpBdFswGxlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 02/61] lib/interval_tree_test.c: make test options module parameters
-Date:   Thu, 20 Dec 2018 10:18:02 +0100
-Message-Id: <20181220085843.840433508@linuxfoundation.org>
+Subject: [PATCH 4.9 03/61] lib/interval_tree_test.c: allow full tree search
+Date:   Thu, 20 Dec 2018 10:18:03 +0100
+Message-Id: <20181220085843.876085484@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -66,143 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a54dae0338b7f01eb0f9c7571fb9b74f791d1c6b ]
+[ Upstream commit c46ecce431ebe6b1a9551d1f530eb432dae5c39b ]
 
-Allows for more flexible debugging.
+...  such that a user can specify visiting all the nodes in the tree
+(intersects with the world).  This is a nice opposite from the very
+basic default query which is a single point.
 
-Link: http://lkml.kernel.org/r/20170518174936.20265-3-dave@stgolabs.net
+Link: http://lkml.kernel.org/r/20170518174936.20265-5-dave@stgolabs.net
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/interval_tree_test.c | 57 ++++++++++++++++++++++++++++------------
- 1 file changed, 40 insertions(+), 17 deletions(-)
+ lib/interval_tree_test.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index 245900b98c8e..1093f0496d5e 100644
+index 1093f0496d5e..409383463879 100644
 --- a/lib/interval_tree_test.c
 +++ b/lib/interval_tree_test.c
-@@ -1,16 +1,25 @@
- #include <linux/module.h>
-+#include <linux/moduleparam.h>
- #include <linux/interval_tree.h>
- #include <linux/random.h>
-+#include <linux/slab.h>
- #include <asm/timex.h>
+@@ -15,6 +15,7 @@ __param(int, perf_loops, 100000, "Number of iterations modifying the tree");
  
--#define NODES        100
--#define PERF_LOOPS   100000
--#define SEARCHES     100
--#define SEARCH_LOOPS 10000
-+#define __param(type, name, init, msg)		\
-+	static type name = init;		\
-+	module_param(name, type, 0444);		\
-+	MODULE_PARM_DESC(name, msg);
-+
-+__param(int, nnodes, 100, "Number of nodes in the interval tree");
-+__param(int, perf_loops, 100000, "Number of iterations modifying the tree");
-+
-+__param(int, nsearches, 100, "Number of searches to the interval tree");
-+__param(int, search_loops, 10000, "Number of iterations searching the tree");
-+
+ __param(int, nsearches, 100, "Number of searches to the interval tree");
+ __param(int, search_loops, 10000, "Number of iterations searching the tree");
++__param(bool, search_all, false, "Searches will iterate all nodes in the tree");
+ 
  
  static struct rb_root root = RB_ROOT;
--static struct interval_tree_node nodes[NODES];
--static u32 queries[SEARCHES];
-+static struct interval_tree_node *nodes = NULL;
-+static u32 *queries = NULL;
- 
+@@ -24,13 +25,13 @@ static u32 *queries = NULL;
  static struct rnd_state rnd;
  
-@@ -29,7 +38,8 @@ search(unsigned long query, struct rb_root *root)
- static void init(void)
+ static inline unsigned long
+-search(unsigned long query, struct rb_root *root)
++search(struct rb_root *root, unsigned long start, unsigned long last)
  {
- 	int i;
--	for (i = 0; i < NODES; i++) {
-+
-+	for (i = 0; i < nnodes; i++) {
- 		u32 a = prandom_u32_state(&rnd);
- 		u32 b = prandom_u32_state(&rnd);
- 		if (a <= b) {
-@@ -40,7 +50,7 @@ static void init(void)
- 			nodes[i].last = a;
- 		}
- 	}
--	for (i = 0; i < SEARCHES; i++)
-+	for (i = 0; i < nsearches; i++)
- 		queries[i] = prandom_u32_state(&rnd);
+ 	struct interval_tree_node *node;
+ 	unsigned long results = 0;
+ 
+-	for (node = interval_tree_iter_first(root, query, query); node;
+-	     node = interval_tree_iter_next(node, query, query))
++	for (node = interval_tree_iter_first(root, start, last); node;
++	     node = interval_tree_iter_next(node, start, last))
+ 		results++;
+ 	return results;
  }
- 
-@@ -50,6 +60,16 @@ static int interval_tree_test_init(void)
- 	unsigned long results;
- 	cycles_t time1, time2, time;
- 
-+	nodes = kmalloc(nnodes * sizeof(struct interval_tree_node), GFP_KERNEL);
-+	if (!nodes)
-+		return -ENOMEM;
-+
-+	queries = kmalloc(nsearches * sizeof(int), GFP_KERNEL);
-+	if (!queries) {
-+		kfree(nodes);
-+		return -ENOMEM;
-+	}
-+
- 	printk(KERN_ALERT "interval tree insert/remove");
- 
- 	prandom_seed_state(&rnd, 3141592653589793238ULL);
-@@ -57,39 +77,42 @@ static int interval_tree_test_init(void)
- 
- 	time1 = get_cycles();
- 
--	for (i = 0; i < PERF_LOOPS; i++) {
--		for (j = 0; j < NODES; j++)
-+	for (i = 0; i < perf_loops; i++) {
-+		for (j = 0; j < nnodes; j++)
- 			interval_tree_insert(nodes + j, &root);
--		for (j = 0; j < NODES; j++)
-+		for (j = 0; j < nnodes; j++)
- 			interval_tree_remove(nodes + j, &root);
- 	}
- 
- 	time2 = get_cycles();
- 	time = time2 - time1;
- 
--	time = div_u64(time, PERF_LOOPS);
-+	time = div_u64(time, perf_loops);
- 	printk(" -> %llu cycles\n", (unsigned long long)time);
- 
- 	printk(KERN_ALERT "interval tree search");
- 
--	for (j = 0; j < NODES; j++)
-+	for (j = 0; j < nnodes; j++)
- 		interval_tree_insert(nodes + j, &root);
- 
- 	time1 = get_cycles();
+@@ -99,8 +100,12 @@ static int interval_tree_test_init(void)
  
  	results = 0;
--	for (i = 0; i < SEARCH_LOOPS; i++)
--		for (j = 0; j < SEARCHES; j++)
-+	for (i = 0; i < search_loops; i++)
-+		for (j = 0; j < nsearches; j++)
- 			results += search(queries[j], &root);
+ 	for (i = 0; i < search_loops; i++)
+-		for (j = 0; j < nsearches; j++)
+-			results += search(queries[j], &root);
++		for (j = 0; j < nsearches; j++) {
++			unsigned long start = search_all ? 0 : queries[j];
++			unsigned long last = search_all ? max_endpoint : queries[j];
++
++			results += search(&root, start, last);
++		}
  
  	time2 = get_cycles();
  	time = time2 - time1;
- 
--	time = div_u64(time, SEARCH_LOOPS);
--	results = div_u64(results, SEARCH_LOOPS);
-+	time = div_u64(time, search_loops);
-+	results = div_u64(results, search_loops);
- 	printk(" -> %llu cycles (%lu results)\n",
- 	       (unsigned long long)time, results);
- 
-+	kfree(queries);
-+	kfree(nodes);
-+
- 	return -EAGAIN; /* Fail will directly unload the module */
- }
- 
 -- 
 2.19.1
 
