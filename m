@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13895C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B05AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6CC7217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ADD3217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297945;
-	bh=VmpCp95LAl085AZZz6bsFAoeAwmhr+YqzqSn042MSc0=;
+	s=default; t=1545297950;
+	bh=x14Ee6a7k74ZQ3geDIAmnmeQzBQHf3/wD/bgzlkNAw0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=orV0RT3t/WA6DI6Wb7lgfjymo2jIOTJx0jO4VSRil2QddCOiMpAPYOoUrLxgTivum
-	 seTk46Y7RVOuq/LJy1+0PuoP6osDljCOTyXzYmGZvu1pBaYdYJpVosB1/Svl62ThOo
-	 L5xCu6JTHrvZfTabZWdWsF2nosnyh95pjkRwlJis=
+	b=0qtOggER/rbx2webQlJ2QElg2Vj2Wy5h5bzAPIi4w1hBeEMwoNo3SPeVTrCGk4N0Z
+	 Ul9emeV1dcc1jthxeQyI6F02I3zVRFFBPH62KIYpeog8FkJOvv+N4C1BpZk6vML7oU
+	 3BUUYtysQs+vAseLJXNdTYRdrx3dyNUwBt2JU17U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731979AbeLTJZn (ORCPT
+        id S1731985AbeLTJZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:25:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:25:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731967AbeLTJZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:40 -0500
+        id S1730483AbeLTJZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A36E217D9;
-        Thu, 20 Dec 2018 09:25:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7386020656;
+        Thu, 20 Dec 2018 09:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297939;
-        bh=VmpCp95LAl085AZZz6bsFAoeAwmhr+YqzqSn042MSc0=;
+        s=default; t=1545297944;
+        bh=x14Ee6a7k74ZQ3geDIAmnmeQzBQHf3/wD/bgzlkNAw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xvw6pSYM5GxPUGe6xVHDSAJdDdFbaUWDvRSVKtkfZAhfqNtutcyqK1oE0TtTNpHIJ
-         arppkJ6QcJS+OyYl5iUZG/x2dGwyfoqTV+Myr+dY3fNGXAVvIbYijZRLfyLzC5zJdp
-         x1GkLtfWA0Qhj3x/YBdlzyxPoCGC3LTHNRJnsP+Q=
+        b=0jXCHtBww/Hhso7zMYsDZHPCxUDI0ECpcz6IgjOomzexFgIZsm++FGgAq7VR/tTkI
+         40sDPYqybDT+A+SslibaooOdcSL6446LgthDOxMbg5Qj+zZ6cRRzt/lhY0UTYqhbUQ
+         rSz/edReukhWEtJ6o6yWMstU+TFmnby8BgB0l9iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 12/72] tracing: Fix memory leak in set_trigger_filter()
-Date:   Thu, 20 Dec 2018 10:18:11 +0100
-Message-Id: <20181220085922.816867142@linuxfoundation.org>
+        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 14/72] powerpc/msi: Fix NULL pointer access in teardown code
+Date:   Thu, 20 Dec 2018 10:18:13 +0100
+Message-Id: <20181220085922.892730542@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -64,45 +64,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Radu Rendec <radu.rendec@gmail.com>
 
-commit 3cec638b3d793b7cacdec5b8072364b41caeb0e1 upstream.
+commit 78e7b15e17ac175e7eed9e21c6f92d03d3b0a6fa upstream.
 
-When create_event_filter() fails in set_trigger_filter(), the filter may
-still be allocated and needs to be freed. The caller expects the
-data->filter to be updated with the new filter, even if the new filter
-failed (we could add an error message by setting set_str parameter of
-create_event_filter(), but that's another update).
+The arch_teardown_msi_irqs() function assumes that controller ops
+pointers were already checked in arch_setup_msi_irqs(), but this
+assumption is wrong: arch_teardown_msi_irqs() can be called even when
+arch_setup_msi_irqs() returns an error (-ENOSYS).
 
-But because the error would just exit, filter was left hanging and
-nothing could free it.
+This can happen in the following scenario:
+  - msi_capability_init() calls pci_msi_setup_msi_irqs()
+  - pci_msi_setup_msi_irqs() returns -ENOSYS
+  - msi_capability_init() notices the error and calls free_msi_irqs()
+  - free_msi_irqs() calls pci_msi_teardown_msi_irqs()
 
-Found by kmemleak detector.
+This is easier to see when CONFIG_PCI_MSI_IRQ_DOMAIN is not set and
+pci_msi_setup_msi_irqs() and pci_msi_teardown_msi_irqs() are just
+aliases to arch_setup_msi_irqs() and arch_teardown_msi_irqs().
 
-Cc: stable@vger.kernel.org
-Fixes: bac5fb97a173a ("tracing: Add and use generic set_trigger_filter() implementation")
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+The call to free_msi_irqs() upon pci_msi_setup_msi_irqs() failure
+seems legit, as it does additional cleanup; e.g.
+list_del(&entry->list) and kfree(entry) inside free_msi_irqs() do
+happen (MSI descriptors are allocated before pci_msi_setup_msi_irqs()
+is called and need to be cleaned up if that fails).
+
+Fixes: 6b2fd7efeb88 ("PCI/MSI/PPC: Remove arch_msi_check_device()")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Radu Rendec <radu.rendec@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_trigger.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/msi.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -744,8 +744,10 @@ int set_trigger_filter(char *filter_str,
+--- a/arch/powerpc/kernel/msi.c
++++ b/arch/powerpc/kernel/msi.c
+@@ -34,5 +34,10 @@ void arch_teardown_msi_irqs(struct pci_d
+ {
+ 	struct pci_controller *phb = pci_bus_to_host(dev->bus);
  
- 	/* The filter is for the 'trigger' event, not the triggered event */
- 	ret = create_event_filter(file->event_call, filter_str, false, &filter);
--	if (ret)
--		goto out;
+-	phb->controller_ops.teardown_msi_irqs(dev);
 +	/*
-+	 * If create_event_filter() fails, filter still needs to be freed.
-+	 * Which the calling code will do with data->filter.
++	 * We can be called even when arch_setup_msi_irqs() returns -ENOSYS,
++	 * so check the pointer again.
 +	 */
-  assign:
- 	tmp = rcu_access_pointer(data->filter);
- 
++	if (phb->controller_ops.teardown_msi_irqs)
++		phb->controller_ops.teardown_msi_irqs(dev);
+ }
 
 
