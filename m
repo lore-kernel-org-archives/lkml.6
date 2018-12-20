@@ -6,148 +6,95 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF50C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67783C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B6B8218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3692C21905
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QlSGMD2r"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gztRf//W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389861AbeLTVKh (ORCPT
+        id S2389872AbeLTVLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:10:37 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:43092 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729941AbeLTVKg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:10:36 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x1so1967245vsc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 13:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cUq9TBBK9t1BgxHFuMyVN3iuBzPgKImOP2CXu8v7xh8=;
-        b=QlSGMD2rj7s0+DheMQQSufYJhmCo8Zle1mdgAVDYkipVq9GdMLYYBayBErQLSXE0hW
-         +H0GlKGcO9QpP4zNSaApPqF3zcNTQj43G+is0wmxB47MzLVrYxOejTXILZ+on5ecNTHl
-         uRwemciysky7AeB34k431kNOLWV7tk3wynLXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cUq9TBBK9t1BgxHFuMyVN3iuBzPgKImOP2CXu8v7xh8=;
-        b=UEAxwHbh3zENRZRe3kD0RxZaQc6kX5zd+lyHMopOeOMtaCJM72IUOHM6wPxTxFRvE+
-         DVN2pRKN2CD+JSucaaqLVAV78zd6SSaC24otZQd9rHBHSZPGv6g7FzBkbtDBpPOJImV5
-         S/YwmeWmSmczQsFiF2ug4Fquzv2qPE6KV/PtwMh00sI9/CL7ztx75GaHn4NzuJemhC94
-         WV6CFnDmIJJIe+7qcGh3CWCH3cS0vOlKP/AhrH0SLQm8U9dAcfJfJJGC6wiPwxKFHEu8
-         vBBaz1mRVhFRiODngajCrB7Y3F6XQvZihPnAAVHrO4ghemzbuXPM1KCsd/ltZMc2QPaJ
-         AJ3w==
-X-Gm-Message-State: AA+aEWYG65fMpZacYeQe5dTZpxNvDGD1JIT594zbQ8Qye/MGoanhkEml
-        ykMyIFowUY8xJiNd5zpd800B/S/THkN5Twnd158SkQ==
-X-Google-Smtp-Source: AFSGD/UcKr+fxrsy9M49vWoFuydwg4E2/rRLDRfl/NqRVf2+hPr3L0AsZWYY7rX7f/wwiG3lJS2dg9psDnSV/eqyykk=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr12790733vsc.35.1545340235233;
- Thu, 20 Dec 2018 13:10:35 -0800 (PST)
+        Thu, 20 Dec 2018 16:11:03 -0500
+Received: from ozlabs.org ([203.11.71.1]:57555 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730967AbeLTVLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:11:02 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43LPYv56JCz9sCV;
+        Fri, 21 Dec 2018 08:10:59 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545340259;
+        bh=kjzi7t6x9jerdwJhyAxKRc8psCXaiILJFNpTp+b+m6k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gztRf//W8//1qIhbsxVQNod078mqwjlLAvv8WCEG7vvt0A0nCWdoJAEpX5Kv6MCXC
+         1si4Mmgu34WIScPS256CWHPnvC6kNmnL9cJguh/nkRVhK1hGVYqr7OfGzr1yXb+Gvs
+         KfaEglJYlieUBcG49+PWHskY2i2uOfqbddmv3UnC8TGmEHiUXs8f9k43qAS0wmdeqm
+         /ZFFIDrZ7yu26eYkC7RHDUOIZP507uNLdewTIeG5OZbPHSpnhLzQlz7OXio63Mn3Gi
+         qsJGHEHj17Z7RGdoesc0j+9bMns527dq+xdcvN+7IJxbo4ZfUM98R1q05d1Nl5ht6r
+         GTtu7VgPNynIw==
+Date:   Fri, 21 Dec 2018 08:10:58 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the vfs tree
+Message-ID: <20181221081058.5ada2c53@canb.auug.org.au>
+In-Reply-To: <20181220210543.GX2217@ZenIV.linux.org.uk>
+References: <20181221074522.0b0c986c@canb.auug.org.au>
+        <20181220210543.GX2217@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-19-ulf.hansson@linaro.org> <fa99b1a9-2e4d-e97c-9478-43b4d3ef9819@linaro.org>
-In-Reply-To: <fa99b1a9-2e4d-e97c-9478-43b4d3ef9819@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 20 Dec 2018 22:09:58 +0100
-Message-ID: <CAPDyKFo5Qf-fODAugZK4CqOL81-r0uUjZVmoD2h+M8_b+-_95A@mail.gmail.com>
-Subject: Re: [PATCH v10 18/27] drivers: firmware: psci: Add support for PM
- domains using genpd
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3sCidSRlU2hsOUA+1pQsWWh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > -obj-$(CONFIG_ARM_PSCI_FW)    += psci.o
-> > +obj-$(CONFIG_ARM_PSCI_FW)    += psci.o psci_pm_domain.o
+Hi Al,
+
+On Thu, 20 Dec 2018 21:05:44 +0000 Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> Same comment as 17/27.
->
-> +obj-$(CONFIG_PSCI_IDLE) += psci_pm_domain.o
+> > are missing a Signed-off-by from their committers. =20
+>=20
+> What the...  Oh, I see - that's David adding his reviewed-by and somehow
+> losing my S-o-b in process...  *grumble*
 
-Let's discuss that in patch 17 to agree on the way forward.
+Actually, if David has actually added his Reviewed-by, then he has
+committed them and so he needs to add a SOB as committer.
 
-[...]
+> Will be fixed in tomorrow push.
 
-> > +static int psci_pd_power_off(struct generic_pm_domain *pd)
-> > +{
-> > +     struct genpd_power_state *state = &pd->states[pd->state_idx];
-> > +     u32 *pd_state;
-> > +     u32 composite_pd_state;
-> > +
-> > +     /* If we have failed to enable OSI mode, then abort power off. */
-> > +     if (psci_has_osi_support() && !osi_mode_enabled)
-> > +             return -EBUSY;
->
-> I'm not sure EBUSY is the best error code to describe this situation.
-> May be ENOTSUP ?
+Thanks.
 
-I see your point. However, -EBUSY is the correct code for this case as
-it tells genpd that the PM domain could not power off, but needs to
-stay powered on.
+--=20
+Cheers,
+Stephen Rothwell
 
-To be clear, genpd treat -EBUSY, in a bit special way.
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
-> However, how possible is it to pass in this function if the OSI mode was
-> not enabled ?
+-----BEGIN PGP SIGNATURE-----
 
-If we fail to enable OSI mode, we keep having the CPUs attached to
-PSCI PM PM domains. Although, as we are then running in platform
-coordinated mode, there is no point allowing a cluster idle state.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwcBWIACgkQAVBC80lX
+0GyjGggAjM75t9jlM/lC8yXOo0KHZAYyjCTs2BaIr2sSv8vxSMSoe5vSfCEmWVvQ
+dnIr5Ws5LWr6g8KCXwd5CHkHDLOfMXeV04xs3W/FBsykEFbKpqqtg4X5SxvpPNjE
+ZL2zzyW/Ux+Nb69sy4a9y3tD8IHDdAeWumll9KO4psXre2iuUaqw4EjzCYKEgCbF
+FHWbOe/sEQhNnOAnmLYIK5IMOAqQUN60CRYOKtCqnkNxBCo79qYSU3ugUNzvZqzE
+GMnLdaSinEzSwG6J5xNgNJXwLi/6gmL2jNs9EeHRAujHCrVeAkZDB7aQCd2ObIWE
+0BRTekcDe+CsZ+J8JLtmyz2ikGMnPA==
+=6gY9
+-----END PGP SIGNATURE-----
 
-The option would be to convert to the flattened model in case we fail
-to enable OSI mode, but that error path is going to be rather
-complicated (we need to detach CPUs, unregister domains and providers,
-etc). Instead the assumption is that it simply shouldn't fail when we
-decide to try. If it does, it's likely something need to be fixed
-anyways.
-
->
-> > +     if (!state->data)
-> > +             return 0;
-> > +
-> > +     /* When OSI mode is enabled, set the corresponding domain state. */
-> > +     pd_state = state->data;
-> > +     composite_pd_state = *pd_state | psci_get_domain_state();
-> > +     psci_set_domain_state(composite_pd_state);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int psci_pd_parse_state_nodes(struct genpd_power_state *states,
-> > +                             int state_count)
->
-> __init ?
-
-Yes, probably. I will check and see if/where it could makes sense.
-Thanks for pointing it out!
-
-[...]
-
-Kind regards
-Uffe
+--Sig_/3sCidSRlU2hsOUA+1pQsWWh--
