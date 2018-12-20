@@ -2,168 +2,85 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A88FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DB8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6A272177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C7B220869
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:15:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tQCuwu2P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbeLTFD5 (ORCPT
+        id S1727767AbeLTFPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 00:03:57 -0500
-Received: from mga01.intel.com ([192.55.52.88]:39452 "EHLO mga01.intel.com"
+        Thu, 20 Dec 2018 00:15:08 -0500
+Received: from ozlabs.org ([203.11.71.1]:37521 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbeLTFDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 00:03:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2018 21:03:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,375,1539673200"; 
-   d="scan'208";a="119756268"
-Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
-  by orsmga002.jf.intel.com with ESMTP; 19 Dec 2018 21:03:46 -0800
-From:   Aubrey Li <aubrey.li@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
-        hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [PATCH v7 2/3] proc: add AVX-512 usage elapsed time to /proc/pid/status
-Date:   Thu, 20 Dec 2018 05:45:23 +0800
-Message-Id: <20181219214524.3986-2-aubrey.li@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181219214524.3986-1-aubrey.li@intel.com>
-References: <20181219214524.3986-1-aubrey.li@intel.com>
+        id S1725550AbeLTFPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 00:15:08 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43L0Lw6yKwz9s55;
+        Thu, 20 Dec 2018 16:15:04 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545282905;
+        bh=gsvPkWilmOPjvMrm3Hrh2CDhzPnzg8B2CRQQ2nim6dI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=tQCuwu2PkrXGl00nLjDHLRaEfa9fz9ysCrdLj5cgUFZznTs9qNe6HoELf7iYkWMZN
+         HoEUF0cAKX1D0V/BYibET28Ih7mjNbzX8PKGAzzUxu1urbgrsH2BdWbF+Qmv8Eok/S
+         kaPCJVhxh7s5hQoIn6ZnO0zvKp91usSESfnQ6q0Z6UWrPCLS5+LLYI4ROCwj35Z34a
+         rqL0DJ+PQfk1UszBSDnkVjrRh5vLZwTcUR8Oh8SBMsfp+759ovZUnSMpqT+98ZMsMh
+         adVBYDmHdZzrbPQcDb6sWmXoYi0Dlm10U92cCl0XEVGXIsdh4Ame1hrEpKib+NlEzl
+         CSbx4OZk39TPw==
+Date:   Thu, 20 Dec 2018 16:15:04 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: please clean up the clockevents tree
+Message-ID: <20181220161504.5720655d@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4VGc=Tb_93BTw6nAOYJHflC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX-512 components use could cause core turbo frequency drop. So
-it's useful to expose AVX-512 usage elapsed time as a heuristic hint
-for the user space job scheduler to cluster the AVX-512 using tasks
-together.
+--Sig_/4VGc=Tb_93BTw6nAOYJHflC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Example:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:      1020
+Hi Daniel,
 
-The number '1020' denotes 1020 millisecond elapsed since last time
-context switch the off-CPU task using AVX-512 components, thus the
-task could cause core frequency drop.
+It looks like all the changes in the clockevents tree appear as other
+commits in other tree(s).  Could you please reset your tree to somewhere
+in your upstream tree as it is beginning to produce conflicts.
 
-Or:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:      -1
+--=20
+Cheers,
+Stephen Rothwell
 
-The number '-1' indicates the task didn't use AVX-512 components
-before thus unlikely has frequency drop issue.
+--Sig_/4VGc=Tb_93BTw6nAOYJHflC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-User space tools may want to further check by:
+-----BEGIN PGP SIGNATURE-----
 
-$ perf stat --pid <pid> -e core_power.lvl2_turbo_license -- sleep 1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwbJVgACgkQAVBC80lX
+0GysJwf+J8nNuww7oF2nE1vVqf8nTxsXJdGwljrzV5y3w+yGVDgatX9zGqVEp6ma
+BFzhT6k86jqGCJPoHsUcvD/ay/WY7kK41BEjLC7T3TjJ5tGrKZWo2nDNspz1AJdp
+SzH//UVkTpxYbzMF2j4HvQ+cGbHi4vd2/CByeC6LCZK8vvRH8dp2ZfqPOcsq2XES
+ps5igdaKgK34qwCKyX91ibzebUSvp3nsxnP4VCFrQr2gbbrjyQOl6p+MyqIFtGjx
+3r0GuEI2goNj+hAWwut+n44aKpc2Iyc1vUtMIIRWXbjK/bDYMD0zwsPNdSUiqVoS
+MQ5WXiHrGPGJiU8Z5AiqnLy3yR+tww==
+=6/8l
+-----END PGP SIGNATURE-----
 
- Performance counter stats for process id '3558':
-
-     3,251,565,961      core_power.lvl2_turbo_license
-
-       1.004031387 seconds time elapsed
-
-Non-zero counter value confirms that the task causes frequency drop.
-
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
----
- arch/x86/kernel/fpu/xstate.c | 38 ++++++++++++++++++++++++++++++++++++
- fs/proc/array.c              |  5 +++++
- 2 files changed, 43 insertions(+)
-
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d3..c361de2bfb28 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -7,6 +7,7 @@
- #include <linux/cpu.h>
- #include <linux/mman.h>
- #include <linux/pkeys.h>
-+#include <linux/seq_file.h>
- 
- #include <asm/fpu/api.h>
- #include <asm/fpu/internal.h>
-@@ -1245,3 +1246,40 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 
- 	return 0;
- }
-+
-+/*
-+ * Report the amount of time elapsed in millisecond since last AVX512
-+ * use in the task.
-+ */
-+void avx512_state(struct seq_file *m, struct task_struct *task)
-+{
-+	unsigned long timestamp = task->thread.fpu.avx512_timestamp;
-+	long delta;
-+
-+	if (!timestamp)
-+		delta = -1;
-+	else {
-+		delta = (long)(jiffies - timestamp);
-+		/*
-+		 * Cap to LONG_MAX if time difference > LONG_MAX
-+		 */
-+		if (delta < 0)
-+			delta = LONG_MAX;
-+		delta = jiffies_to_msecs(delta);
-+	}
-+
-+	seq_put_decimal_ll(m, "AVX512_elapsed_ms:\t", delta);
-+	seq_putc(m, '\n');
-+}
-+
-+/*
-+ * Report CPU specific thread state
-+ */
-+void arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+	/*
-+	 * Report AVX512 state if the processor and build option supported.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_AVX512F))
-+		avx512_state(m, task);
-+}
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 0ceb3b6b37e7..dd88c2219f08 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -392,6 +392,10 @@ static inline void task_core_dumping(struct seq_file *m, struct mm_struct *mm)
- 	seq_putc(m, '\n');
- }
- 
-+void __weak arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+}
-+
- int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 			struct pid *pid, struct task_struct *task)
- {
-@@ -414,6 +418,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 	task_cpus_allowed(m, task);
- 	cpuset_task_status_allowed(m, task);
- 	task_context_switch_counts(m, task);
-+	arch_task_state(m, task);
- 	return 0;
- }
- 
--- 
-2.17.1
-
+--Sig_/4VGc=Tb_93BTw6nAOYJHflC--
