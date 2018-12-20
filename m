@@ -2,165 +2,115 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7035C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B459C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B47A621720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4371021720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:55:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8bTQ2ok"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbeLTQyi (ORCPT
+        id S1732607AbeLTQzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:54:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33354 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbeLTQyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:54:38 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 296A4C0A1984;
-        Thu, 20 Dec 2018 16:54:37 +0000 (UTC)
-Received: from redhat.com (ovpn-123-95.rdu2.redhat.com [10.10.123.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C67D226FDC;
-        Thu, 20 Dec 2018 16:54:34 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 11:54:32 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181220165432.GD3963@redhat.com>
-References: <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181218103306.GC18032@quack2.suse.cz>
- <20181218234254.GC31274@dastard>
- <20181219030329.GI21992@ziepe.ca>
- <20181219102825.GN6311@dastard>
- <20181219113540.GC18345@quack2.suse.cz>
- <20181219223312.GP6311@dastard>
+        Thu, 20 Dec 2018 11:55:07 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:35940 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732570AbeLTQzG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:55:06 -0500
+Received: by mail-wm1-f43.google.com with SMTP id p6so2973958wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:55:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FQM56/DAQi4hOp+0xgr8IIx0Y25ue+iTF7xXK/bLQKg=;
+        b=Q8bTQ2okcO6UTyM8CuifwLyyUqmGjuSaDCvMc59mMLznK9JuPMReFD8KMwW0BDfpxd
+         shH4Y8iC1oo9yLYmB/DubLBh2TB2MM+mGeM61ctdtkgWouSLKAE23Em3pKdeMa1l5ih9
+         h9UoCNyrPOyuOYALijKMCQqeFDhY9AHV1HUQLBXWq6hS2yFWy/ts5xqyudNLvHciJwis
+         lXsdERk9Cxe2BstDhQr0w0Aebem1NcYJjVcD+Cj5U/6JCH/SnYxJEX8XhSGJDzOZrY/v
+         EcPNskYd7RrHaYrzR+G9uz68Kkz2InhpxuqLF8uZ7CiH65DVDlEkJmAx65sk/CRdhLGT
+         /+sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FQM56/DAQi4hOp+0xgr8IIx0Y25ue+iTF7xXK/bLQKg=;
+        b=A9yvU7Zzsa+mB71kOzeQPf2hp0w53KgmTY127vtPLGJhG9m3/5CQ/5r7YaIs1km2Ht
+         fvfwES8zrwG2tp6d9Z7Wv37ustVk40RLIFbNh2/TqS7S7Oj35jHRW2MR5R3UPxgYyBo9
+         PqGXafi9Hbu4VLBP2zrSCI/4jdZyBHx1KVQaOvJrY6/HXD+djm8U5b0l15ogcg4oSjOv
+         AWaBvQ179Voh0xAd5oSAXTdBZPO27neUjKBUDUrKLJEq0eLZgvIFVFWdXyMLNoCP7miJ
+         l25p6mz/5hhlMr0yaNksJCJvWohrKiq8JOQs3d0NYAlifnOCC9+GZkF4utO90lHutul+
+         NESg==
+X-Gm-Message-State: AA+aEWa/LNzMJRK1dAe4L8BJTehg8c+ARfwISVtjvT+suApVVLMza5SK
+        Au6TLzN7atlJBuzAYbexiQMd3pfyc0Xt7QSGxHTI7cfl
+X-Google-Smtp-Source: AFSGD/UzazZx/Y8TNxa2ISHOBuJ8jgowcyFRKr36410TrwxEcOSMDpweIj/qXwUBFSPtwXQdDGEgeJsr/MEnNmsZQQY=
+X-Received: by 2002:a1c:6243:: with SMTP id w64mr11209289wmb.153.1545324905347;
+ Thu, 20 Dec 2018 08:55:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181219223312.GP6311@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Dec 2018 16:54:37 +0000 (UTC)
+References: <20181220122841.GA24907@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20181220122841.GA24907@hp-pavilion-15-notebook-pc-brajeswar>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 20 Dec 2018 11:54:53 -0500
+Message-ID: <CADnq5_Oq4TZee5C1mU4Rrdin8gLbBM5hFWn2hS+NsvVhUfndsQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display/dcn10_hw_sequencer_debug: Remove
+ duplicate header
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Wesley.Chalmers@amd.com,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 09:33:12AM +1100, Dave Chinner wrote:
-> On Wed, Dec 19, 2018 at 12:35:40PM +0100, Jan Kara wrote:
-> > On Wed 19-12-18 21:28:25, Dave Chinner wrote:
-> > > On Tue, Dec 18, 2018 at 08:03:29PM -0700, Jason Gunthorpe wrote:
-> > > > On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
-> > > > 
-> > > > > Essentially, what we are talking about is how to handle broken
-> > > > > hardware. I say we should just brun it with napalm and thermite
-> > > > > (i.e. taint the kernel with "unsupportable hardware") and force
-> > > > > wait_for_stable_page() to trigger when there are GUP mappings if
-> > > > > the underlying storage doesn't already require it.
-> > > > 
-> > > > If you want to ban O_DIRECT/etc from writing to file backed pages,
-> > > > then just do it.
-> > > 
-> > > O_DIRECT IO *isn't the problem*.
-> > 
-> > That is not true. O_DIRECT IO is a problem. In some aspects it is easier
-> > than the problem with RDMA but currently O_DIRECT IO can crash your machine
-> > or corrupt data the same way RDMA can.
-> 
-> It's not O_DIRECT - it's a ""transient page pin". Yes, there are
-> problems with that right now, but as we've discussed the issues can
-> be avoided by:
-> 
-> 	a) stable pages always blocking in ->page_mkwrite;
-> 	b) blocking in write_cache_pages() on an elevated map count
-> 	when WB_SYNC_ALL is set; and
-> 	c) blocking in truncate_pagecache() on an elevated map
-> 	count.
-> 
-> That prevents:
-> 	a) gup pinning a page that is currently under writeback and
-> 	modifying it while IO is in flight;
-> 	b) a dirty page being written back while it is pinned by
-> 	GUP, thereby turning it clean before the gup reference calls
-> 	set_page_dirty() on DMA completion; and
-> 	c) truncate/hole punch for pulling the page out from under
-> 	the gup operation that is ongoing.
-> 
-> This is an adequate solution for a short term transient pins. It
-> doesn't break fsync(), it doesn't change how truncate works and it
-> fixes the problem where a mapped file is the buffer for an O_DIRECT
-> IO rather than the open fd and that buffer file gets truncated.
-> IOWs, transient pins (and hence O_DIRECT) is not really the problem
-> here.
-> 
-> The problem with this is that blocking on elevated map count does
-> not work for long term pins (i.e. gup_longterm()) which are defined
-> as:
-> 
->  * "longterm" == userspace controlled elevated page count lifetime.
->  * Contrast this to iov_iter_get_pages() usages which are transient.
-> 
-> It's the "userspace controlled" part of the long term gup pin that
-> is the problem we need to solve. If we treat them the same as a
-> transient pin, then this leads to fsync() and truncate either
-> blocking for a long time waiting for userspace to drop it's gup
-> reference, or having to be failed with something like EBUSY or
-> EAGAIN.
-> 
-> This is the problem revokable file layout leases solve. The NFS
-> server is already using this for revoking delegations from remote
-> clients. Userspace holding long term GUP references is essentially
-> the same thing - it's a delegation of file ownership to userspace
-> that the filesystem must be able to revoke when it needs to run
-> internal and/or 3rd-party requested operations on that delegated
-> file.
-> 
-> If the hardware supports page faults, then we can further optimise
-> the long term pin case to relax stable page requirements and allow
-> page cleaning to occur while there are long term pins. In this case,
-> the hardware will write-fault the clean pages appropriately before
-> DMA is initiated, and hence avoid the need for data integrity
-> operations like fsync() to trigger lease revocation. However,
-> truncate/hole punch still requires lease revocation to work sanely,
-> especially when we consider DAX *must* ensure there are no remaining
-> references to the physical pmem page after the space has been freed.
+On Thu, Dec 20, 2018 at 9:36 AM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
+>
+> Remove custom_float.h which is included more than once
+>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
-truncate does not requires lease recovations for faulting hardware,
-truncate will trigger a mmu notifier callback which will invalidate
-the hardware page table. On next access the hardware will fault and
-this will turn into a regular page fault from kernel point of view.
+Applied.  thanks!
 
-So truncate/reflink and all fs expectation for faulting hardware do
-hold. It is exactly as the CPU page table. So if CPU page table is
-properly updated then so will be the hardware one.
+Alex
 
-Note that such hardware also abive by munmap() so hardware mapping
-does not outlive vma.
-
-
-Cheers,
-Jérôme
+> ---
+>  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> index 64158900730f..5a563e231be8 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer_debug.c
+> @@ -40,7 +40,6 @@
+>  #include "ipp.h"
+>  #include "mpc.h"
+>  #include "reg_helper.h"
+> -#include "custom_float.h"
+>  #include "dcn10_hubp.h"
+>  #include "dcn10_hubbub.h"
+>  #include "dcn10_cm_common.h"
+> --
+> 2.17.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
