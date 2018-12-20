@@ -4,55 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1375AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E14C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD5A720449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01FDE20449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298529;
-	bh=S5tb2N+31X716PyjYw5BS/l9aGS/EApEi15QD38BRbk=;
+	s=default; t=1545298545;
+	bh=4z9XnexHVwH//G3mFSFaUIUMxLUwhHQ1vBv6cH1TB+4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BPbh8Lo7z/TOvs/Ee/OQxo3Cy31Dl9OWXObS4KnQVFwEPbkwHPbGAddR4N2LyOL/s
-	 hBG5+DKs+yemxnHBeRhOmQWi/nI8u7QwfCc6qzxcdALtfxCzdw0ouEHDG17qqapTQF
-	 q5aYHpLcENF+dOHgxtDvfNgrYeQx3p8d1Gnewn+Y=
+	b=p6dk+aUOfLausO8aCMP3djgXK4B0FNBnFXt1WVRGgqhQeQnfSbC76E2alpsOR/WXh
+	 nDVYvtHex2pY7dJdccsyTfroNvP4Ez/w6P12b9IN9PeTmial93WvhsUZbUhR1O5b6q
+	 3eLajC5WSueKK69GCRaTqpUI5ekR5BQrOV1juLcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbeLTJf2 (ORCPT
+        id S1733075AbeLTJfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:35:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48350 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732551AbeLTJ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:28:39 -0500
+        id S1732466AbeLTJ2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:28:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4FE220656;
-        Thu, 20 Dec 2018 09:28:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F60620656;
+        Thu, 20 Dec 2018 09:28:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298118;
-        bh=S5tb2N+31X716PyjYw5BS/l9aGS/EApEi15QD38BRbk=;
+        s=default; t=1545298101;
+        bh=4z9XnexHVwH//G3mFSFaUIUMxLUwhHQ1vBv6cH1TB+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tFiC7InV7cC/aF41MCjca85ABbzP78fZkfF/GLGrbF0ktU3MRMbDj1DZ4zSHrNqm8
-         KWwLtwfbf2bKvn+6nqxtxuBq4d6r1gESr8ReEodGaGNX2OZ6OOlA69A1pr9VknVKj/
-         2CQcnbalnNo9mqlQuzbnhmmKgx5atMmePbcUlBM8=
+        b=xYrtv44JKXrlVHQjTILMeQoZhHXGB2akUhZcHJ7QZ1Ik4QLqAeQv7xB06Iui8bbiM
+         GLwEWgcRbjCCUmP2kbBKtDujeKvf7+Lfp4X1uRK/hSSgFhfqEmb+u6ewWQHvI0sfU0
+         CRczIRFQ3p4kjy0L0YkodkuUZZYi6VueJsySuzkI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Bryan ODonoghue <pure.logic@nexus-software.ie>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 71/72] rtc: snvs: Add timeouts to avoid kernel lockups
-Date:   Thu, 20 Dec 2018 10:19:10 +0100
-Message-Id: <20181220085925.127873929@linuxfoundation.org>
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 35/72] locking/qspinlock: Fix build for anonymous union in older GCC compilers
+Date:   Thu, 20 Dec 2018 10:18:34 +0100
+Message-Id: <20181220085923.723845209@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -71,194 +73,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cd7f3a249dbed2858e6c2f30e5be7f1f7a709ee2 ]
+[ Upstream commit 6cc65be4f6f2a7186af8f3e09900787c7912dad2 ]
 
-In order to read correctly from asynchronously updated RTC registers,
-it's necessary to read repeatedly until their values do not change from
-read to read.  It's also necessary to wait for three RTC clock ticks for
-certain operations.  There are no timeouts in this code and these
-operations could possibly loop forever.
+One of my tests compiles the kernel with gcc 4.5.3, and I hit the
+following build error:
 
-To avoid kernel hangs, put in timeouts.
+  include/linux/semaphore.h: In function 'sema_init':
+  include/linux/semaphore.h:35:17: error: unknown field 'val' specified in initializer
+  include/linux/semaphore.h:35:17: warning: missing braces around initializer
+  include/linux/semaphore.h:35:17: warning: (near initialization for '(anonymous).raw_lock.<anonymous>.val')
 
-The iMX7d can be configured to stop the SRTC on a tamper event, which
-will lockup the kernel inside this driver as described above.
+I bisected it down to:
 
-These hangs can happen when running under qemu, which doesn't emulate
-the SNVS RTC, though currently the driver will refuse to load on qemu
-due to a timeout in the driver probe method.
+ 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
 
-It could also happen if the SRTC block where somehow placed into reset
-or the slow speed clock that drives the SRTC counter (but not the CPU)
-were to stop.
+... which makes qspinlock have an anonymous union, which makes initializing it special
+for older compilers. By adding strategic brackets, it makes the build
+happy again.
 
-The symptoms on a two core iMX7d are a work queue hang on
-rtc_timer_do_work(), which eventually blocks a systemd fsnotify
-operation that triggers a work queue flush, causing systemd to hang and
-thus causing all services that should be started by systemd, like a
-console getty, to fail to start or stop.
-
-Also optimize the wait code to wait less.  It only needs to wait for the
-clock to advance three ticks, not to see it change three times.
-
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>
-Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Signed-off-by: Trent Piepho <tpiepho@impinj.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Fixes: 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
+Link: http://lkml.kernel.org/r/20180621203526.172ab5c4@vmware.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-snvs.c | 105 +++++++++++++++++++++++++++--------------
- 1 file changed, 70 insertions(+), 35 deletions(-)
+ include/asm-generic/qspinlock_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
-index 9af591d5223c..71eee39520f0 100644
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -47,49 +47,83 @@ struct snvs_rtc_data {
- 	struct clk *clk;
- };
+diff --git a/include/asm-generic/qspinlock_types.h b/include/asm-generic/qspinlock_types.h
+index 0763f065b975..d10f1e7d6ba8 100644
+--- a/include/asm-generic/qspinlock_types.h
++++ b/include/asm-generic/qspinlock_types.h
+@@ -63,7 +63,7 @@ typedef struct qspinlock {
+ /*
+  * Initializier
+  */
+-#define	__ARCH_SPIN_LOCK_UNLOCKED	{ .val = ATOMIC_INIT(0) }
++#define	__ARCH_SPIN_LOCK_UNLOCKED	{ { .val = ATOMIC_INIT(0) } }
  
-+/* Read 64 bit timer register, which could be in inconsistent state */
-+static u64 rtc_read_lpsrt(struct snvs_rtc_data *data)
-+{
-+	u32 msb, lsb;
-+
-+	regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &msb);
-+	regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &lsb);
-+	return (u64)msb << 32 | lsb;
-+}
-+
-+/* Read the secure real time counter, taking care to deal with the cases of the
-+ * counter updating while being read.
-+ */
- static u32 rtc_read_lp_counter(struct snvs_rtc_data *data)
- {
- 	u64 read1, read2;
--	u32 val;
-+	unsigned int timeout = 100;
- 
-+	/* As expected, the registers might update between the read of the LSB
-+	 * reg and the MSB reg.  It's also possible that one register might be
-+	 * in partially modified state as well.
-+	 */
-+	read1 = rtc_read_lpsrt(data);
- 	do {
--		regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &val);
--		read1 = val;
--		read1 <<= 32;
--		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &val);
--		read1 |= val;
--
--		regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &val);
--		read2 = val;
--		read2 <<= 32;
--		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &val);
--		read2 |= val;
--	} while (read1 != read2);
-+		read2 = read1;
-+		read1 = rtc_read_lpsrt(data);
-+	} while (read1 != read2 && --timeout);
-+	if (!timeout)
-+		dev_err(&data->rtc->dev, "Timeout trying to get valid LPSRT Counter read\n");
- 
- 	/* Convert 47-bit counter to 32-bit raw second count */
- 	return (u32) (read1 >> CNTR_TO_SECS_SH);
- }
- 
--static void rtc_write_sync_lp(struct snvs_rtc_data *data)
-+/* Just read the lsb from the counter, dealing with inconsistent state */
-+static int rtc_read_lp_counter_lsb(struct snvs_rtc_data *data, u32 *lsb)
- {
--	u32 count1, count2, count3;
--	int i;
--
--	/* Wait for 3 CKIL cycles */
--	for (i = 0; i < 3; i++) {
--		do {
--			regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
--			regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count2);
--		} while (count1 != count2);
--
--		/* Now wait until counter value changes */
--		do {
--			do {
--				regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count2);
--				regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count3);
--			} while (count2 != count3);
--		} while (count3 == count1);
-+	u32 count1, count2;
-+	unsigned int timeout = 100;
-+
-+	regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
-+	do {
-+		count2 = count1;
-+		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
-+	} while (count1 != count2 && --timeout);
-+	if (!timeout) {
-+		dev_err(&data->rtc->dev, "Timeout trying to get valid LPSRT Counter read\n");
-+		return -ETIMEDOUT;
- 	}
-+
-+	*lsb = count1;
-+	return 0;
-+}
-+
-+static int rtc_write_sync_lp(struct snvs_rtc_data *data)
-+{
-+	u32 count1, count2;
-+	u32 elapsed;
-+	unsigned int timeout = 1000;
-+	int ret;
-+
-+	ret = rtc_read_lp_counter_lsb(data, &count1);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for 3 CKIL cycles, about 61.0-91.5 µs */
-+	do {
-+		ret = rtc_read_lp_counter_lsb(data, &count2);
-+		if (ret)
-+			return ret;
-+		elapsed = count2 - count1; /* wrap around _is_ handled! */
-+	} while (elapsed < 3 && --timeout);
-+	if (!timeout) {
-+		dev_err(&data->rtc->dev, "Timeout waiting for LPSRT Counter to change\n");
-+		return -ETIMEDOUT;
-+	}
-+	return 0;
- }
- 
- static int snvs_rtc_enable(struct snvs_rtc_data *data, bool enable)
-@@ -173,9 +207,7 @@ static int snvs_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
- 			   (SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN),
- 			   enable ? (SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN) : 0);
- 
--	rtc_write_sync_lp(data);
--
--	return 0;
-+	return rtc_write_sync_lp(data);
- }
- 
- static int snvs_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-@@ -183,11 +215,14 @@ static int snvs_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
- 	struct rtc_time *alrm_tm = &alrm->time;
- 	unsigned long time;
-+	int ret;
- 
- 	rtc_tm_to_time(alrm_tm, &time);
- 
- 	regmap_update_bits(data->regmap, data->offset + SNVS_LPCR, SNVS_LPCR_LPTA_EN, 0);
--	rtc_write_sync_lp(data);
-+	ret = rtc_write_sync_lp(data);
-+	if (ret)
-+		return ret;
- 	regmap_write(data->regmap, data->offset + SNVS_LPTAR, time);
- 
- 	/* Clear alarm interrupt status bit */
+ /*
+  * Bitfields in the atomic value:
 -- 
 2.19.1
 
