@@ -2,202 +2,106 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F561C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4F2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F416218C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c93U3Jyx"
+	by mail.kernel.org (Postfix) with ESMTP id 36FCC217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:51:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbeLTPtt (ORCPT
+        id S1731978AbeLTPvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:49:49 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38636 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731827AbeLTPts (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:49:48 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x64so1357720vsa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:49:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qn72qtavczvyDQK9+bypOLwn0vE7TYTvQ62AhlWVQvc=;
-        b=c93U3JyxU7xHglhNXDNeXprXo6AnSMsYOYtv0bAJBQYaG/VFNHKiSoh3sjn5+4EIok
-         BsWcGL3OAaiRmdepRf3pLtbpU/MyRxY+e9CW10GFIT3euZGvyafmJ2CwrGITnes/vCii
-         hHBBU11S/aM8xzbF6ZSfauHf0vFO6wijkdxpE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qn72qtavczvyDQK9+bypOLwn0vE7TYTvQ62AhlWVQvc=;
-        b=UWoQWLryzPgtRhaJQ0UaDsolxlDFysaxRNg1fRAaS8IfeiI45lHpa58zuERPHXxGSP
-         aivNLllbTZPjbDDXkbOgFD0Ckeqod/l3R0IMmN8Z05ZvrEonOqNVNu8bk7CP2DiVzbsD
-         d42uePeQ2dPuwvI/jWyP+js65VScyUSJwlQeaqgRK6YVZaTPArCNpvo/IexZjWhPPRnB
-         FoQfMLXrwzeNfko9ssfYdMslHhrzFU2PgASeUw2vw3E+6NNAekKhjpwrYjlzTHSQBcS1
-         3irbzANBZn31JA9B5DnX9DK/+jOsDmYszoRVwF84Z+3nxiOaiQJcdg+VhMidrYA69fHc
-         GkUQ==
-X-Gm-Message-State: AA+aEWbO1fCNbk9DxD0p00xLaXo9Y/2OY4V5q/qAR2S2YvqAfD6ilVuU
-        tygYID2AgdH6QWsMa0ZXQ9l3zfn6c5KyicI3oDvNfQ==
-X-Google-Smtp-Source: AFSGD/X0T/PUFBNw2axl+qwYI9yKy7q7VEdIgg/mW+jwrGKXNHWex9SJwM4cT5gy19+WAPLksaxH3/8dcTlPwFuGwik=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr12276554vsc.35.1545320986457;
- Thu, 20 Dec 2018 07:49:46 -0800 (PST)
+        Thu, 20 Dec 2018 10:51:15 -0500
+Received: from ns360863.ovh.net ([91.121.165.116]:37120 "EHLO ns360863.ovh.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728172AbeLTPvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:51:15 -0500
+X-Greylist: delayed 464 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Dec 2018 10:51:13 EST
+Received: from [192.168.0.16] (HSI-KBW-046-005-005-080.hsi8.kabel-badenwuerttemberg.de [46.5.5.80])
+        by ns360863.ovh.net (Postfix) with ESMTPSA id 98A32401BA;
+        Thu, 20 Dec 2018 16:47:54 +0100 (CET)
+Subject: Re: [PATCH v5 05/15] KVM: s390: unify pending_irqs() and
+ pending_irqs_no_gisa()
+To:     mimu@linux.ibm.com, Cornelia Huck <cohuck@redhat.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-6-mimu@linux.ibm.com>
+ <20181220120614.65acacac.cohuck@redhat.com>
+ <62bf4bcf-585f-ddfc-e7a5-18fc946819d9@linux.ibm.com>
+ <20181220132130.33a417fa.cohuck@redhat.com>
+ <83553348-0b10-8bcc-34b0-c87a0e2f95ac@linux.ibm.com>
+From:   pierre morel <pmorel@mnis.fr>
+Organization: MNIS
+Message-ID: <3944cf13-130a-d4ea-8d14-f8b055506339@mnis.fr>
+Date:   Thu, 20 Dec 2018 16:43:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-18-ulf.hansson@linaro.org> <d82f3fe0-7f60-c89a-6503-435cc6dcc5cf@linaro.org>
-In-Reply-To: <d82f3fe0-7f60-c89a-6503-435cc6dcc5cf@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 20 Dec 2018 16:49:09 +0100
-Message-ID: <CAPDyKFpfp+d9K-i-ytCqwSq2ToQvqApatH0YyRXbW55wLyU=wA@mail.gmail.com>
-Subject: Re: [PATCH v10 17/27] drivers: firmware: psci: Prepare to support PM domains
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <83553348-0b10-8bcc-34b0-c87a0e2f95ac@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 at 15:19, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> On 29/11/2018 18:46, Ulf Hansson wrote:
-> > Following changes are about to implement support for PM domains to PSCI.
-> > Those changes are mainly going to be implemented in a new separate file,
-> > hence a couple of the internal PSCI functions needs to be shared to be
-> > accessible. So, let's do that via adding new PSCI header file.
-> >
-> > Moreover, the changes deploying support for PM domains, needs to be able to
-> > switch the PSCI FW into the OS initiated mode. For that reason, let's add a
-> > new function that deals with this and share it via the new PSCI header
-> > file.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >
-> > Changes in v10:
-> >       - New patch. Re-places the earlier patch: "drivers: firmware: psci:
-> >         Share a few internal PSCI functions".
-> >
-> > ---
-> >  drivers/firmware/psci/psci.c | 28 +++++++++++++++++++++-------
-> >  drivers/firmware/psci/psci.h | 14 ++++++++++++++
-> >  2 files changed, 35 insertions(+), 7 deletions(-)
-> >  create mode 100644 drivers/firmware/psci/psci.h
-> >
-> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> > index 8dbcdecc2ae4..623591b541a4 100644
-> > --- a/drivers/firmware/psci/psci.c
-> > +++ b/drivers/firmware/psci/psci.c
-> > @@ -34,6 +34,8 @@
-> >  #include <asm/smp_plat.h>
-> >  #include <asm/suspend.h>
-> >
-> > +#include "psci.h"
-> > +
-> >  /*
-> >   * While a 64-bit OS can make calls with SMC32 calling conventions, for some
-> >   * calls it is necessary to use SMC64 to pass or return 64-bit values.
-> > @@ -90,23 +92,35 @@ static u32 psci_function_id[PSCI_FN_MAX];
-> >  static DEFINE_PER_CPU(u32, domain_state);
-> >  static u32 psci_cpu_suspend_feature;
-> >
-> > -static inline u32 psci_get_domain_state(void)
-> > +u32 psci_get_domain_state(void)
-> >  {
-> >       return __this_cpu_read(domain_state);
-> >  }
-> >
-> > -static inline void psci_set_domain_state(u32 state)
-> > +void psci_set_domain_state(u32 state)
-> >  {
-> >       __this_cpu_write(domain_state, state);
-> >  }
-> >
-> > +bool psci_set_osi_mode(void)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret = invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
-> > +                     PSCI_1_0_SUSPEND_MODE_OSI, 0, 0);
-> > +     if (ret)
-> > +             pr_warn("failed to enable OSI mode: %d\n", ret);
-> > +
-> > +     return !ret;
-> > +}
->
-> Please keep the convention with the error code (0 => success)
->
-> In the next patch it can be called:
->
-> if (psci_has_osi_support())
->         osi_mode_enabled = psci_set_osi_mode() ? false : true;
->
 
-Sure!
 
-> > +
-> >  static inline bool psci_has_ext_power_state(void)
-> >  {
-> >       return psci_cpu_suspend_feature &
-> >                               PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK;
-> >  }
-> >
-> > -static inline bool psci_has_osi_support(void)
-> > +bool psci_has_osi_support(void)
-> >  {
-> >       return psci_cpu_suspend_feature & PSCI_1_0_OS_INITIATED;
-> >  }
-> > @@ -285,10 +299,7 @@ static int __init psci_features(u32 psci_func_id)
-> >                             psci_func_id, 0, 0);
-> >  }
-> >
-> > -#ifdef CONFIG_CPU_IDLE
-> > -static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
-> > -
-> > -static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-> > +int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-> >  {
-> >       int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
-> >
-> > @@ -305,6 +316,9 @@ static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_CPU_IDLE
->
-> It would be nicer if you can remove the CONFIG_CPU_IDLE by replacing it
-> with a specific one (eg. CONFIG_PSCI_IDLE) and make it depend on
-> CONFIG_CPU_IDLE, so the config options stay contained in their
-> respective subsystems directory.
+Le 12/20/18 à 13:33, Michael Mueller a écrit :
+> 
+> 
+> On 20.12.18 13:21, Cornelia Huck wrote:
+>> On Thu, 20 Dec 2018 12:49:56 +0100
+>> Michael Mueller <mimu@linux.ibm.com> wrote:
+>>
+>>> On 20.12.18 12:06, Cornelia Huck wrote:
+>>>> On Wed, 19 Dec 2018 20:17:46 +0100
+>>>> Michael Mueller <mimu@linux.ibm.com> wrote:
+>>>>> Use a single function with parameter irq_flags to differentiate
+>>>>> between cases.
+>>>>>
+...snip
+>>>>>    }
+>>>>> -static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu 
+>>>>> *vcpu)
+>>>>> +static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu, 
+>>>>> u16 irq_flags)
+>>>>
+>>>> Any deeper reason why this is a u16? 16 bits should be enough for
+>>>> everyone? :)
+>>>
+>>> I want to use the 8 bits for the IRQ type and the other 8 for additional
+>>> controls, see: "KVM: s390: restore IAM in get_ipm() when IPM is clean"
+>>
+>> Still need to look at that patch, but my question mainly was "why only
+>> 16 bits"? I would think making this local variable larger is cheap.
+>>
 
-I am all for simplifying the Kconfig options in here, as indeed it's
-rather messy. However, I would rather avoid folding in additional
-cleanup changes to this series, is already extensive enough.
++1
 
-Would you be okay if we deal with that on top?
+> 
+> I will enlarge the flag mask to u32 with 16 bits for the IRQ types then.
 
-[...]
+AFAIK CPU generally work better with int (or long)
+Is there any hardware reason to restrict the size?
 
-Kind regards
-Uffe
+> 
+>>>
+>>>>>    {
+>>>>> -    return vcpu->kvm->arch.float_int.pending_irqs |
+>>>>> -        vcpu->arch.local_int.pending_irqs;
+>>>>> -}
+>>
+> 
