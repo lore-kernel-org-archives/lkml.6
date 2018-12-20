@@ -2,110 +2,114 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C8EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C854C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19393218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545336607;
-	bh=NivbT7SG2BNLmLeqIwAMiE2z5d4wIPjd3t4eLQFxoDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Eu/0xtu7+yOt6w2pq1eyyPWG/DvFQSjb4NVQnbfh88iPHyHm/De4ShsaMtq2Zf7Lg
-	 CsaMWsaQPf022TJ/0GpFtZjVneqZwJn97x0q8C3jB4fQ3sxAWo30Tet+pTjE8EoJH6
-	 VyEc3nZJ57Djo7U+yC6UdR5OPZDNMK26czbXFjXc=
+	by mail.kernel.org (Postfix) with ESMTP id 3E14D21904
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WdUuNQo9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387436AbeLTUKG (ORCPT
+        id S2388599AbeLTUKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:10:06 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45152 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729937AbeLTUKF (ORCPT
+        Thu, 20 Dec 2018 15:10:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40886 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729469AbeLTUKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:10:05 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y1so2918763oie.12;
-        Thu, 20 Dec 2018 12:10:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XgyqBNKrhVreiPD5SUQQ10IUV2HGrJTcm0g1cAZmsMA=;
-        b=IlYK3WFIsKLrJr4RNa41L8vV9GK41QKBP+XXUTuof1KKiYHgZo+T0xm2bRogqFQupF
-         qZHtZPgLRYFbST1/TfTnRxPQ9tWM9MM2m0CfWwT62FxhWq+NZOdPVYOfICWDDtcW+Q5n
-         0rtChu7zEcGJZrkM7h65VpirPH58GVbn+oYKkpWrhc2gzqxreRIpaA+KDQhMxsAo4vyk
-         DA9g/TxkP5mBEe95zlQFabbS5tRR2XrFXjjlBz+tdiZCwODieH6fplQcBfxQgl+bAIS7
-         7slKcTW61Fmk1WRJ8aQDBR2QCjV1k0ErhnBVGFIsS0WUSME6ZK0RpPfmdPxYb4jZlLSL
-         i0xw==
-X-Gm-Message-State: AJcUukeW06eLrPTnPNsBTXUg1WY5InRWIP5LV7HqilgzyITcojOuaGNe
-        nkHaknPfbGmLACXG4JWI1w==
-X-Google-Smtp-Source: AFSGD/VOz59lhYBdrIcbplCBMLtCq4OAmrq/4Rxy68jTRULAo6TUW0gI/YVKX+4TIluvGUyFsKPFkQ==
-X-Received: by 2002:aca:6155:: with SMTP id v82mr93983oib.259.1545336604263;
-        Thu, 20 Dec 2018 12:10:04 -0800 (PST)
-Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id m89sm12121760otc.35.2018.12.20.12.10.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:10:03 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:10:02 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, david.brown@linaro.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        briannorris@chromium.org, akdwived@codeaurora.org,
-        clew@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: Add firmware bindings
- for Q6V5 MSS
-Message-ID: <20181220201002.GA8831@bogus>
-References: <20181212124456.3164-1-sibis@codeaurora.org>
- <20181212124456.3164-2-sibis@codeaurora.org>
+        Thu, 20 Dec 2018 15:10:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FjNs8VpeMu00P2stXs8RQhJqfBBhcHqh35FWhSVSkVg=; b=WdUuNQo9V7CR3cPOzpO9qxEMW
+        R7+ftCMmLtVGiKF0krOp6NcNbJz6yWf+CvfbVLrIGzFwEwGqyN5fOy6BKYDeV692or32IQnOG3nIx
+        ZFT1C9DgDgkFj44z7REcgBuu96/YYNPI4QisUtC10N76FNibJR++/v76cd3zgxJDPJX4q5QwMgazf
+        bY0HrWX0M8QGXdACvgw8tupyBP6C+w8aNNZNloOzsBo6LaaER2PYE5PoG1K1mCLY7ZbWCmlntGb8X
+        axMxR11wYeyYDacGBU6naBE3ROa4g2DH8JSSKjd5qHo5vGTnTD6rUBeSNyldzJ3n+WiNwcBdqyH3q
+        qZFP7bPIw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ga4eQ-00028Y-29; Thu, 20 Dec 2018 20:10:34 +0000
+Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
+ it more comprehensible
+To:     Thorsten Leemhuis <linux@leemhuis.info>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181217152043.9989-1-linux@leemhuis.info>
+ <20181217112437.5fe868eb@lwn.net>
+ <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
+ <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
+ <20181220082819.69fc3e5c@lwn.net>
+ <a02caf89-9221-8e31-4a2d-44b46b81cda2@infradead.org>
+ <0996ba55-e5e1-49e2-f0ed-82cb1619ee03@leemhuis.info>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <abd75184-1d33-4877-eef7-eeca436e5220@infradead.org>
+Date:   Thu, 20 Dec 2018 12:10:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212124456.3164-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0996ba55-e5e1-49e2-f0ed-82cb1619ee03@leemhuis.info>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 06:14:55PM +0530, Sibi Sankar wrote:
-> Add optional firmware bindings for Q6V5 MSS. It lists the two relative
-> firmware paths which are used for booting and authenticating the Hexagon
-> core.
+On 12/20/18 10:21 AM, Thorsten Leemhuis wrote:
+> Am 20.12.18 um 17:38 schrieb Randy Dunlap:
+>> On 12/20/18 7:28 AM, Jonathan Corbet wrote:
+>>> On Thu, 20 Dec 2018 16:23:38 +0100
+>>> Thorsten Leemhuis <linux@leemhuis.info> wrote:
+>>>
+>>>> While at it: Jonathan, you mentioned putting the script in scripts/, but
+>>>> according to the Makefile in that directory it is "for various helper
+>>>> programs used throughout the kernel for the build process". That's one
+>>>> reason why it feels wrong to put it there. Another one: that script
+>>>> targets users and thus we should try to make sure they can access it
+>>>> easily. That's why I'm currently inclined to put it in tools/ somewhere.
+>>> Yeah, tools/ is a better place.  Maybe a tools/debugging directory or some
+>>> such?
+>> chktaint
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 9ff5b0309417..1f6988a60636 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -36,6 +36,13 @@ on the Qualcomm Hexagon core.
->  	Value type: <stringlist>
->  	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
->  
-> +- qcom,firmware:
+> BTW, I renamed it to kernel-taintstatus, sounded more appropriate to me.
+> Does anyone mind?
 
-We already have a standard name 'firmware-name'. Use that. I'm fine with 
-allowing it to be more than 1 string.
+Not terribly, although that seems too long to me.  ;)
+maybe 'taintstatus'?
 
-> +	Usage: optional
-> +	Value type: <stringlist>
-> +	Definition: must list the 2 relative firmware paths (mba and modem
-> +		    metadata respectively) which are used for booting and
-> +		    authenticating the Hexagon core.
-> +
->  - clocks:
->  	Usage: required
->  	Value type: <phandle>
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>> is similar (IMO) to scripts/decodecode though.
 > 
+> Hmmm. Maybe it would be better to move this to tools/? Will take a quick
+> look, guess sooner or later by current endeavours will lead me to the
+> documentation that refers to this script anyway.
+> 
+>> @Thorsten:
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Thx. And thx for the feedback in the other reply.
+> 
+> BTW, for those following this thread and my earlier quest for a simple
+> cmd to decode /proc/sys/kernel/tainted: looks like @apexo on twitter
+> (thx again!) found a trick to do what I want which should work on most
+> systems out-of-the-box:
+> 
+> $ for i in $(seq 18); do echo $i $(($(cat
+> /proc/sys/kernel/tainted)>>($i-1)&1));done
+
+I think Jon mentioned this:  The output should begin with bit #0,
+not bit #1, so it should show bits 0 - 17 (or whatever the max is),
+not 1 - 18.
+
+
+-- 
+~Randy
