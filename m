@@ -2,267 +2,137 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F3CC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3A9C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C579217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0843C218AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545318018;
+	bh=PgdcFzzFJRfg9e6GuRKfjwKRt1qszJo4vAoki4ZdPow=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Npt5LTaEXUQENszzMAPTOS5matAZeDsVNQXEamR5UC25p41aUiTua/eIRSZp7YJ3K
+	 9xdkgBFn/pQfVvAIKxnbifOFkXLHI1V2TkzNA2MSD0IPDf46GKiOtsfo2L2lAsqzYZ
+	 VSvIFkvqv0F3/OpNMwOmcM39ifvriwArPSPnxLd0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeLTOzH (ORCPT
+        id S1729339AbeLTPAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:55:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62203 "EHLO mga04.intel.com"
+        Thu, 20 Dec 2018 10:00:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbeLTOzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:55:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 06:55:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="285293790"
-Received: from unknown (HELO localhost) ([10.249.254.232])
-  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2018 06:55:01 -0800
-Date:   Thu, 20 Dec 2018 16:55:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181220145500.GA10652@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
+        id S1725681AbeLTPAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:00:16 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86A48218D4;
+        Thu, 20 Dec 2018 15:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545318015;
+        bh=PgdcFzzFJRfg9e6GuRKfjwKRt1qszJo4vAoki4ZdPow=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pdnUMcCFDBFzHEAMdpyHRqX9GgShwKo+QWg59/9Oe4NJ82DCoTOfLtLzZYMANPtwQ
+         L0sUq2vX5mD6Af6yxTOnQuLhXBpFkmQnsid16WJWPW1iqe/fF8awRHmT6MQ7y6YWYx
+         uTqdoLMVoIEznpEq3UtzC3+ivOhjCz4zQIY5fcgI=
+Received: by mail-qt1-f182.google.com with SMTP id n21so2087877qtl.6;
+        Thu, 20 Dec 2018 07:00:15 -0800 (PST)
+X-Gm-Message-State: AA+aEWZD9ZHfvcQaslGzxG/VXmjuRWEdT70KEsKyW5DwZHqucR/NtYdH
+        jX1DIFWQD/fMmHqQCC4HYheZb7t44w32ujKQ6A==
+X-Google-Smtp-Source: AFSGD/UI6ZKZCM3DWOK3vRuT6L0eQh3X21IsbTvynvSnAaNVyobUIJbREiqUsj9quGSzKi6VGzTplbsMOKm35Uj5ark=
+X-Received: by 2002:a0c:f212:: with SMTP id h18mr26745039qvk.106.1545318014699;
+ Thu, 20 Dec 2018 07:00:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213102945.30946-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
+ <20181218040702.29231-4-andrew.smirnov@gmail.com> <20181218151533.GA2922@bogus>
+ <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+ <CAL_JsqJb24ZpM7qQfy_F7RUVEGyceBAXOndbZcTMh3a__k38UQ@mail.gmail.com>
+ <CAHQ1cqEMxxo9JGN5be4XQWAtPz7nC2JyLCr3qasnD5QK7_hOYQ@mail.gmail.com> <1545268969.22930.77.camel@impinj.com>
+In-Reply-To: <1545268969.22930.77.camel@impinj.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 20 Dec 2018 09:00:01 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJBxZw225qqWfCFa8UqADtGOUCjFogo6Pb2bd8bKwz3nA@mail.gmail.com>
+Message-ID: <CAL_JsqJBxZw225qqWfCFa8UqADtGOUCjFogo6Pb2bd8bKwz3nA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> stores the number of allocated PCR banks in nr_allocated_banks (new member
-> of tpm_chip), and replaces the static array with a pointer to a dynamically
-> allocated array.
-> 
-> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> driver users unnecessarily calculate a digest for that bank.
-> 
-> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> 
-> As a consequence of the introduction of nr_allocated_banks,
-> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> is equal to zero.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm-chip.c      |  1 +
->  drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->  drivers/char/tpm/tpm.h           |  3 ++-
->  drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->  drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->  5 files changed, 47 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 32db84683c40..ce851c62bb68 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->  	kfree(chip->log.bios_event_log);
->  	kfree(chip->work_space.context_buf);
->  	kfree(chip->work_space.session_buf);
-> +	kfree(chip->allocated_banks);
->  	kfree(chip);
->  }
->  
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index d9439f9abe78..7b80919228be 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->  {
->  	int rc;
-> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> -	u32 count = 0;
-> +	struct tpm2_digest *digest_list;
->  	int i;
->  
->  	chip = tpm_find_get_ops(chip);
-> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->  		return -ENODEV;
->  
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		memset(digest_list, 0, sizeof(digest_list));
-> +		digest_list = kcalloc(chip->nr_allocated_banks,
-> +				      sizeof(*digest_list), GFP_KERNEL);
-> +		if (!digest_list)
-> +			return -ENOMEM;
+On Wed, Dec 19, 2018 at 7:22 PM Trent Piepho <tpiepho@impinj.com> wrote:
+>
+> On Wed, 2018-12-19 at 16:47 -0800, Andrey Smirnov wrote:
+> >
+> > > > This series initially added explicit offsets but I suggested a single
+> > > > "controller-id" because:
+> > > >   * There are multiple bit and byte offsets
+> > > >   * Other imx8 SOCs also have 2x pcie with other bit/byte offsets
+> > > >
+> > > > Hiding this behind a compatible string and single "controller-id" seem
+> > > > preferable to elaborating register maps in dt bindings. It also makes
+> > > > upgrades simpler: if features are added which use other bits there is no
+> > > > need to describe them in DT and deal with compatibility headaches.
+> > >
+> > > You already have an id for the controllers: the address. Use that if
+> > > you don't want to put the register offsets in DT.
+> > >
+> >
+> > Lucas, are you on board with this?
+>
+> Does address here mean the address from the controller's reg property?
 
-You could preallocate digest list and place it to struct tpm_chip
-instead of doing it everytime tpm_pcr_extend() called.
+Yes.
 
->  
-> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> -			digest_list[i].alg_id = chip->active_banks[i];
-> +		for (i = 0; i < chip->nr_allocated_banks; i++) {
-> +			digest_list[i].alg_id = chip->allocated_banks[i];
->  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> -			count++;
->  		}
->  
-> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-> +				     digest_list);
-> +		kfree(digest_list);
->  		tpm_put_ops(chip);
->  		return rc;
->  	}
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f27d1f38a93d..6b94306ab7c5 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -257,7 +257,8 @@ struct tpm_chip {
->  	const struct attribute_group *groups[3];
->  	unsigned int groups_cnt;
->  
-> -	u16 active_banks[7];
-> +	u32 nr_allocated_banks;
-> +	u16 *allocated_banks;
->  #ifdef CONFIG_ACPI
->  	acpi_handle acpi_dev_handle;
->  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 6f306338953b..0874743ca96d 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->  		goto out;
->  	}
->  
-> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-> +	chip->nr_allocated_banks = 1;
-> +
->  	return rc;
->  out:
->  	if (rc > 0)
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index a6bec13afa69..245669a7aba5 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->  	int i;
->  	int j;
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks))
-> +	if (count > chip->nr_allocated_banks)
->  		return -EINVAL;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> @@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	void *marker;
->  	void *end;
->  	void *pcr_select_offset;
-> -	unsigned int count;
->  	u32 sizeof_pcr_selection;
-> +	u32 nr_possible_banks;
-> +	u32 nr_alloc_banks = 0;
-> +	u16 hash_alg;
->  	u32 rsp_len;
->  	int rc;
->  	int i = 0;
-> +	int j;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
->  	if (rc)
-> @@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	if (rc)
->  		goto out;
->  
-> -	count = be32_to_cpup(
-> +	nr_possible_banks = be32_to_cpup(
->  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks)) {
-> -		rc = -ENODEV;
-> +	chip->allocated_banks = kcalloc(nr_possible_banks,
-> +					sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  
-> @@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
->  	end = &buf.data[rsp_len];
->  
-> -	for (i = 0; i < count; i++) {
-> +	for (i = 0; i < nr_possible_banks; i++) {
->  		pcr_select_offset = marker +
->  			offsetof(struct tpm2_pcr_selection, size_of_select);
->  		if (pcr_select_offset >= end) {
-> @@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  		}
->  
->  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
-> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-> +		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
-> +
-> +		for (j = 0; j < pcr_selection.size_of_select; j++)
-> +			if (pcr_selection.pcr_select[j])
-> +				break;
-> +
-> +		if (j < pcr_selection.size_of_select) {
-> +			chip->allocated_banks[nr_alloc_banks] = hash_alg;
-> +			nr_alloc_banks++;
-> +		}
+> How do you map that address to the controller's index?  A giant table
+> of every soc so the soc type plus controller register address pair than
+> can be looked up in the driver?
 
-The same comment as before: you should use memchr_inv() here.
+You only need the 2-Nth instance addresses. A non-matching address can
+be instance 0.
 
-> +
->  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
->  			sizeof(pcr_selection.size_of_select) +
->  			pcr_selection.size_of_select;
->  		marker = marker + sizeof_pcr_selection;
->  	}
->  
-> +	chip->nr_allocated_banks = nr_alloc_banks;
->  out:
-> -	if (i < ARRAY_SIZE(chip->active_banks))
-> -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> -
->  	tpm_buf_destroy(&buf);
->  
->  	return rc;
-> -- 
-> 2.17.1
-> 
+> I.e., on iMX8MQ the controller at 0x33800000 is controller 0 and so on
+> for every possible SoC address combination?
+>
+> Not really a fan of that.
 
-/Jarkko
+Well, this was not my first suggestion.
+
+> The situation here is that some registers for these controllers are
+> interleaved, right?  I.e., there's one register somewhere where bit 0
+> means enable controller 0 and bit 1 means enable controller 1 and so
+> on.
+
+So? The only difference here is an additional mapping step.
+
+> Isn't cell-index already the standard device tree property for this
+> kind of setup?
+>
+> I know cell-index was historically also (ab)used in an attempt to
+> provide a fixed kernel device enumeration order, something now handled
+> better by chosen node aliases.
+
+Don't use cell-index. Consider it a deprecated relic from OF that is
+not used on FDT (though there probably are some cases it did get
+used).
+
+Rob
