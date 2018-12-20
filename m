@@ -6,56 +6,55 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C5BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EA8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E22F21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B733F21741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O0D59jm/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pg5/bTUX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733073AbeLTWDd (ORCPT
+        id S2387421AbeLTWDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 17:03:33 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:35593 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729240AbeLTWDd (ORCPT
+        Thu, 20 Dec 2018 17:03:55 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46443 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729240AbeLTWDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 17:03:33 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d2so1083236ual.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 14:03:32 -0800 (PST)
+        Thu, 20 Dec 2018 17:03:55 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n10so2043830vso.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 14:03:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fIDMy7CCVMnMgIweNrdFkIBjnkYw0c+C6Ctsf2lflSs=;
-        b=O0D59jm/2ErVlvfsBIVn5MONv+pOJOcNT+B00BRxZ2VVJrEygwYYdOA848XAybxx4S
-         5olzSOrRQ7yJqO8MOkIjMFNNpwkRcMzfYou7cjORd8HLYfpsY7gmBROPXOWGtZXDIOxA
-         zxKUcG9H2I1oaGfVfl/ZtmvvJtLi0xM+7V25Q=
+        bh=J0fHO5/7OfTvBjbMwzBxKezdUGL5snzpcNslFilli/k=;
+        b=Pg5/bTUXEOQcpyrjNZhMLxXLx3FuIkKjV6LUCXdiBupQGOCthzDDfpBU4t9jjf3Len
+         3dpWb/Aw/vVNXxBeNes5bJFbslgeZa4HAGxO+QIlC0CX051MrN8Yca+uMrcDsy2lTS7U
+         cOnGoFdsb6ua7MHK00MmwkO9JMX8yiTho6U0g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fIDMy7CCVMnMgIweNrdFkIBjnkYw0c+C6Ctsf2lflSs=;
-        b=JDKyVE88LC1PFFIDlHe5iZe5WpWLf+oDpXcP8i6VX/utZmjpVXCAuswqthS5EzR/QJ
-         HJLocej47+EiMI3s+eqg55c4/K4upSGI58S8m+/GtRPDDIQesAbOgcKYaRMkmyNCo34+
-         qEMHbBpytsdqozlFpOVRNc/fNrfvgJDgyskeWFIONjsrtScTqgEF4e0wj0+554gv+Wb9
-         rMbePxe+TUBQ7uv64zGqAYLSJlVhTvBZWziRyTfnt1L/qT+1Q/YMa6+TpOH3XTajOP8B
-         Ddf56PzP9sjb4eWC7chK1ejGHpYHVui+Mj3tUAwGnM2hIiLDC9mIR46cO3k9zwOmf74G
-         mHcA==
-X-Gm-Message-State: AA+aEWZjQAezxCOEZXuYNWd6HEcusT2bAmv2WrEdFPeEd648kViPAWVq
-        5It8tP6yXSTenCjOgMlI6i3OqmjPkMs35+E+YLRdVw==
-X-Google-Smtp-Source: AFSGD/XOaVAFZ59RyZ/43MAFSVvZQqKAvDfdSaaYx63oi+af9aB6nK45TK6uyYCguoOvJHjdogvK06NYW5n4lO4aRBw=
-X-Received: by 2002:ab0:526:: with SMTP id 35mr12728088uax.25.1545343411322;
- Thu, 20 Dec 2018 14:03:31 -0800 (PST)
+        bh=J0fHO5/7OfTvBjbMwzBxKezdUGL5snzpcNslFilli/k=;
+        b=WyV2LzLYms8cMkmLXIv4Xet6WcssFuYtKb0DEHJbDivIvemB9LRQTSOu+YhEPY26Tr
+         ycoCHI7XVef/6iqROQsQEeFpfEixmILAOdqi5XSgW2hGD6rJfgt8P1SZFkbZ/h2Iw+Zw
+         1hRltYiJzo6sFESGf8JZZ3DK/ziWgXPgX+uWdKVVvNfEpKDcHN1DAAF2xQDaUYT3caYT
+         J+sYybj+7wC8WhDxxZXDl/4qX3yG+wMUeWLx8KYLcs2yf7gnxRPMFxaD0f/KtYthenIC
+         mpX0ng5rINwhfaOVD6JhzWBQPgTQjBl9gJVEY2TjgosAUiDhew1p8Pyxk7O0VF+A/8JX
+         mrtw==
+X-Gm-Message-State: AA+aEWZ5icJCO1gPwFcQLB+WqhghMkdSVvEm8DKLXuH9dH7pg5Kjey+z
+        dAxR69+BfA8x/I3KzUIx6QMSvaFqOwXkSllHK7WTxg==
+X-Google-Smtp-Source: AFSGD/U5gAn58gLVjQHMhut3iNrENweoiPF+F9yV4/PkJAzUyzKZmPrsVR4POqpRrJBEJ4dm7Lp/wDrcnS/A1y/UgNg=
+X-Received: by 2002:a67:1a84:: with SMTP id a126mr13000561vsa.165.1545343433879;
+ Thu, 20 Dec 2018 14:03:53 -0800 (PST)
 MIME-Version: 1.0
-References: <1545315426-14545-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1545315426-14545-1-git-send-email-vincent.guittot@linaro.org>
+References: <1545315385-14384-1-git-send-email-vincent.guittot@linaro.org> <1545315385-14384-2-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1545315385-14384-2-git-send-email-vincent.guittot@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 20 Dec 2018 23:02:55 +0100
-Message-ID: <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] PM/runtime:Replace jiffies based accounting with
- ktime based accounting
+Date:   Thu, 20 Dec 2018 23:03:18 +0100
+Message-ID: <CAPDyKFo9GedhCVF4sRxvYzgWCiXK7aPzKnDXPWX5YT+vopAV5g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] PM/runtime: Add a new interface to get accounted time
 To:     Vincent Guittot <vincent.guittot@linaro.org>
 Cc:     Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -73,92 +72,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 at 15:17, Vincent Guittot
+On Thu, 20 Dec 2018 at 15:16, Vincent Guittot
 <vincent.guittot@linaro.org> wrote:
 >
-> From: Thara Gopinath <thara.gopinath@linaro.org>
+> Some drivers (like i915/drm) needs to get the accounted suspended time.
+> pm_runtime_suspended_time() will return the suspended accounted time
+> in ns unit.
 >
-> This patch replaces jiffies based accounting for runtime_active_time
-> and runtime_suspended_time with ktime base accounting. This makes the
-> runtime debug counters inline with genpd and other pm subsytems which
-> uses ktime based accounting.
->
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> [move from ktime to raw nsec]
 > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  drivers/base/power/runtime.c | 17 +++++++++--------
->  drivers/base/power/sysfs.c   | 11 ++++++++---
->  include/linux/pm.h           |  6 +++---
->  3 files changed, 20 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index e695544..f700524 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -64,8 +64,8 @@ static int rpm_suspend(struct device *dev, int rpmflags);
->   */
->  void update_pm_runtime_accounting(struct device *dev)
->  {
-> -       unsigned long now = jiffies;
-> -       unsigned long delta;
-> +       u64 now = ktime_to_ns(ktime_get());
-> +       u64 delta;
->
->         delta = now - dev->power.accounting_timestamp;
->
-> @@ -75,9 +75,9 @@ void update_pm_runtime_accounting(struct device *dev)
->                 return;
->
->         if (dev->power.runtime_status == RPM_SUSPENDED)
-> -               dev->power.suspended_jiffies += delta;
-> +               dev->power.suspended_time += delta;
->         else
-> -               dev->power.active_jiffies += delta;
-> +               dev->power.active_time += delta;
->  }
->
->  static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> @@ -88,17 +88,18 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
->
->  u64 pm_runtime_suspended_time(struct device *dev)
->  {
-> -       unsigned long flags, time;
-> +       u64 time;
-> +       unsigned long flags;
->
->         spin_lock_irqsave(&dev->power.lock, flags);
->
->         update_pm_runtime_accounting(dev);
->
-> -       time = dev->power.suspended_jiffies;
-> +       time = dev->power.suspended_time;
->
->         spin_unlock_irqrestore(&dev->power.lock, flags);
->
-> -       return jiffies_to_nsecs(time);
-> +       return time;
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
->
-> @@ -1503,7 +1504,7 @@ void pm_runtime_init(struct device *dev)
->         dev->power.request_pending = false;
->         dev->power.request = RPM_REQ_NONE;
->         dev->power.deferred_resume = false;
-> -       dev->power.accounting_timestamp = jiffies;
-> +       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
 
-This change worries me a bit, but it may not be a problem in practice.
-
-pm_runtime_init() is called when devices get initialized, via
-device_initialize(). If timekeeping has not been initialized prior a
-call to ktime_get() is done, it will fail and causing a NULL pointer
-deference or something along those lines.
-
-In other words, do we know that device_initialize() is always called
-after timekeeping has been initialized during boot?
-
-[...]
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
 Kind regards
 Uffe
+
+> ---
+>  drivers/base/power/runtime.c | 16 ++++++++++++++++
+>  include/linux/pm_runtime.h   |  2 ++
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index beb85c3..e695544 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -86,6 +86,22 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
+>         dev->power.runtime_status = status;
+>  }
+>
+> +u64 pm_runtime_suspended_time(struct device *dev)
+> +{
+> +       unsigned long flags, time;
+> +
+> +       spin_lock_irqsave(&dev->power.lock, flags);
+> +
+> +       update_pm_runtime_accounting(dev);
+> +
+> +       time = dev->power.suspended_jiffies;
+> +
+> +       spin_unlock_irqrestore(&dev->power.lock, flags);
+> +
+> +       return jiffies_to_nsecs(time);
+> +}
+> +EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
+> +
+>  /**
+>   * pm_runtime_deactivate_timer - Deactivate given device's suspend timer.
+>   * @dev: Device to handle.
+> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> index f0fc470..d479707 100644
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -113,6 +113,8 @@ static inline bool pm_runtime_is_irq_safe(struct device *dev)
+>         return dev->power.irq_safe;
+>  }
+>
+> +extern u64 pm_runtime_suspended_time(struct device *dev);
+> +
+>  #else /* !CONFIG_PM */
+>
+>  static inline bool queue_pm_work(struct work_struct *work) { return false; }
+> --
+> 2.7.4
+>
