@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741E4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9D7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234572177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B49217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298223;
-	bh=ckQCRdlC0+1Gn9IMG7U20hRq3ys4TKYdH4XrRe5g69E=;
+	s=default; t=1545298227;
+	bh=FJ20MwyGf6RkRDp5dyhsxzlFY0QsaBk83uAdNOAfOoY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1dQTKYyBt8OarepqTf9irdQxl2mTpgt2863b5HJzzsQfckCdIfSz95XQpLbTNSn2J
-	 L9tl+vCDrrUlYeCC8Ko84PyV5mRfsqHH9EY2cd01pZ2Qo3gzFbhAd6Jd8NGyKLDCNZ
-	 yl4/xpqCzXqU/wlvfD6U7/JGiLmA12cnu8d2AINw=
+	b=oNoJTHw+6cIEUAdBb2g3xf4lhGnxGIWwM2TtLqlaUr1szQCNTHhitP+Rxz/0ngHMY
+	 k0jlOahuLDFmyXNyI/U3QbL0OvU5MA4RC0asD3eMbDjPue7FGMvQZQRfTbAiGoIEyo
+	 mkgDFCMx62tXOxOwvzQZ62s5xCU/ZmWtKnQYb9Ys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732915AbeLTJaW (ORCPT
+        id S1732929AbeLTJa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36502 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:30:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732876AbeLTJaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:18 -0500
+        id S1732908AbeLTJaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:30:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8EAE20989;
-        Thu, 20 Dec 2018 09:30:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6489621741;
+        Thu, 20 Dec 2018 09:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298218;
-        bh=ckQCRdlC0+1Gn9IMG7U20hRq3ys4TKYdH4XrRe5g69E=;
+        s=default; t=1545298220;
+        bh=FJ20MwyGf6RkRDp5dyhsxzlFY0QsaBk83uAdNOAfOoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z3RBm+qXAffvnQ0I7qu7aTE8zMLK9W3UManphagZ6Vs2QJsNrYAO9RIFZPa933jx8
-         TKHGk467TRE5JtB+SeJHQnTSlBPj/5tCo0yXuycCmx9tWcKzNptP8932EQ9U7a6w+v
-         gqXH0SMWAECanGt6WYNH4iqN8yETxu6lZAQHzAtM=
+        b=gQrIZulB1Okax6d5lHmDhxY28vYXEJC4ARGz2fPDxyHcP+uiD7zy/1ifnJEeguNmP
+         Q6QEuPaPy9++jUm8SLF5PXn2evyWmpTz1UPfPWIGIjW8KziT9E7EsUpIm32vl/qeGD
+         H0X76UaOaA4fG9CYpwL+16eZsXinaytn/JdeZyEA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        stable@vger.kernel.org, Anderson Luiz Alves <alacn1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/67] macvlan: return correct error value
-Date:   Thu, 20 Dec 2018 10:18:55 +0100
-Message-Id: <20181220085905.246656676@linuxfoundation.org>
+Subject: [PATCH 4.19 44/67] mv88e6060: disable hardware level MAC learning
+Date:   Thu, 20 Dec 2018 10:18:56 +0100
+Message-Id: <20181220085905.289517922@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -65,66 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 59f997b088d26a774958cb7b17b0763cd82de7ec ]
+[ Upstream commit a74515604a7b171f2702bdcbd1e231225fb456d0 ]
 
-A MAC address must be unique among all the macvlan devices with the same
-lower device. The only exception is the passthru [sic] mode,
-which shares the lower device address.
+Disable hardware level MAC learning because it breaks station roaming.
+When enabled it drops all frames that arrive from a MAC address
+that is on a different port at learning table.
 
-When duplicate addresses are detected, EBUSY is returned when bringing
-the interface up:
-
-    # ip link add macvlan0 link eth0 type macvlan
-    # read addr </sys/class/net/eth0/address
-    # ip link set macvlan0 address $addr
-    # ip link set macvlan0 up
-    RTNETLINK answers: Device or resource busy
-
-Use correct error code which is EADDRINUSE, and do the check also
-earlier, on address change:
-
-    # ip link set macvlan0 address $addr
-    RTNETLINK answers: Address already in use
-
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/macvlan.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/dsa/mv88e6060.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
-index cfda146f3b3b..6372cdc4a510 100644
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -608,7 +608,7 @@ static int macvlan_open(struct net_device *dev)
- 		goto hash_add;
- 	}
+diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
+index 65f10fec25b3..0b3e51f248c2 100644
+--- a/drivers/net/dsa/mv88e6060.c
++++ b/drivers/net/dsa/mv88e6060.c
+@@ -116,8 +116,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
+ 	/* Reset the switch. */
+ 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
+ 		  GLOBAL_ATU_CONTROL_SWRESET |
+-		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
+-		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
++		  GLOBAL_ATU_CONTROL_LEARNDIS);
  
--	err = -EBUSY;
-+	err = -EADDRINUSE;
- 	if (macvlan_addr_busy(vlan->port, dev->dev_addr))
- 		goto out;
+ 	/* Wait up to one second for reset to complete. */
+ 	timeout = jiffies + 1 * HZ;
+@@ -142,13 +141,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
+ 	 */
+ 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
  
-@@ -706,7 +706,7 @@ static int macvlan_sync_address(struct net_device *dev, unsigned char *addr)
- 	} else {
- 		/* Rehash and update the device filters */
- 		if (macvlan_addr_busy(vlan->port, addr))
--			return -EBUSY;
-+			return -EADDRINUSE;
+-	/* Enable automatic address learning, set the address
+-	 * database size to 1024 entries, and set the default aging
+-	 * time to 5 minutes.
++	/* Disable automatic address learning.
+ 	 */
+ 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
+-		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
+-		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
++		  GLOBAL_ATU_CONTROL_LEARNDIS);
  
- 		if (!macvlan_passthru(port)) {
- 			err = dev_uc_add(lowerdev, addr);
-@@ -747,6 +747,9 @@ static int macvlan_set_mac_address(struct net_device *dev, void *p)
- 		return dev_set_mac_address(vlan->lowerdev, addr);
- 	}
- 
-+	if (macvlan_addr_busy(vlan->port, addr->sa_data))
-+		return -EADDRINUSE;
-+
- 	return macvlan_sync_address(dev, addr->sa_data);
+ 	return 0;
  }
- 
 -- 
 2.19.1
 
