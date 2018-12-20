@@ -6,43 +6,45 @@ X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B96C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D7EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE83217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2704F217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:58:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388281AbeLTR6N (ORCPT
+        id S2388294AbeLTR6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:58:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43493 "EHLO
+        Thu, 20 Dec 2018 12:58:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58135 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733211AbeLTR6M (ORCPT
+        with ESMTP id S1733211AbeLTR6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:58:12 -0500
+        Thu, 20 Dec 2018 12:58:38 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKHvtUQ3679473
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKHwUF43679556
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 09:57:55 -0800
+        Thu, 20 Dec 2018 09:58:30 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKHvs7X3679470;
-        Thu, 20 Dec 2018 09:57:54 -0800
-Date:   Thu, 20 Dec 2018 09:57:54 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKHwTZw3679550;
+        Thu, 20 Dec 2018 09:58:29 -0800
+Date:   Thu, 20 Dec 2018 09:58:29 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-b5c2161cc415babb84d2b49599df8bd03b2b9b69@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-        mingo@kernel.org, jolsa@redhat.com, hpa@zytor.com, acme@redhat.com,
-        tglx@linutronix.de
-Reply-To: tglx@linutronix.de, acme@redhat.com,
-          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-          mingo@kernel.org, hpa@zytor.com, jolsa@redhat.com
+Message-ID: <tip-571766010ea6bf9726b288eb2db1abb59b1841af@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        mhiramat@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
+        acme@redhat.com
+Reply-To: hpa@zytor.com, mathieu.poirier@linaro.org,
+          linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+          jolsa@redhat.com, mingo@kernel.org, adrian.hunter@intel.com,
+          acme@redhat.com, tglx@linutronix.de
 In-Reply-To: <20181127084634.12469-1-adrian.hunter@intel.com>
 References: <20181127084634.12469-1-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf dso: Export data_file_size() method there are
- no symbols
-Git-Commit-ID: b5c2161cc415babb84d2b49599df8bd03b2b9b69
+Subject: [tip:perf/core] perf auxtrace: Alter addr_filter__entire_dso() to
+ work if there are no symbols
+Git-Commit-ID: 571766010ea6bf9726b288eb2db1abb59b1841af
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,68 +58,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b5c2161cc415babb84d2b49599df8bd03b2b9b69
-Gitweb:     https://git.kernel.org/tip/b5c2161cc415babb84d2b49599df8bd03b2b9b69
+Commit-ID:  571766010ea6bf9726b288eb2db1abb59b1841af
+Gitweb:     https://git.kernel.org/tip/571766010ea6bf9726b288eb2db1abb59b1841af
 Author:     Adrian Hunter <adrian.hunter@intel.com>
 AuthorDate: Tue, 27 Nov 2018 10:46:34 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:21:44 -0300
 
-perf dso: Export data_file_size() method there are no symbols
+perf auxtrace: Alter addr_filter__entire_dso() to work if there are no symbols
 
-Will be used outside dso.c in a followup patch, so rename it and make it
-non-static.
+addr_filter__entire_dso() uses the first and last symbols from a dso,
+and so does not work when there are no symbols.  Alter it to filter the
+whole file instead.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 1b36c03e3569 ("perf record: Add support for using symbols in address filters")
 Link: http://lkml.kernel.org/r/20181127084634.12469-1-adrian.hunter@intel.com
 [ split from a larger patch ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/dso.c | 6 +++---
- tools/perf/util/dso.h | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ tools/perf/util/auxtrace.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index cee717a3794f..62c8cf622607 100644
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -894,7 +894,7 @@ static ssize_t cached_read(struct dso *dso, struct machine *machine,
- 	return r;
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 72d5ba2479bf..f69961c4a4f3 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -1983,17 +1983,14 @@ static int find_dso_sym(struct dso *dso, const char *sym_name, u64 *start,
+ 
+ static int addr_filter__entire_dso(struct addr_filter *filt, struct dso *dso)
+ {
+-	struct symbol *first_sym = dso__first_symbol(dso);
+-	struct symbol *last_sym = dso__last_symbol(dso);
+-
+-	if (!first_sym || !last_sym) {
+-		pr_err("Failed to determine filter for %s\nNo symbols found.\n",
++	if (dso__data_file_size(dso, NULL)) {
++		pr_err("Failed to determine filter for %s\nCannot determine file size.\n",
+ 		       filt->filename);
+ 		return -EINVAL;
+ 	}
+ 
+-	filt->addr = first_sym->start;
+-	filt->size = last_sym->end - first_sym->start;
++	filt->addr = 0;
++	filt->size = dso->data.file_size;
+ 
+ 	return 0;
  }
- 
--static int data_file_size(struct dso *dso, struct machine *machine)
-+int dso__data_file_size(struct dso *dso, struct machine *machine)
- {
- 	int ret = 0;
- 	struct stat st;
-@@ -943,7 +943,7 @@ out:
-  */
- off_t dso__data_size(struct dso *dso, struct machine *machine)
- {
--	if (data_file_size(dso, machine))
-+	if (dso__data_file_size(dso, machine))
- 		return -1;
- 
- 	/* For now just estimate dso data size is close to file size */
-@@ -953,7 +953,7 @@ off_t dso__data_size(struct dso *dso, struct machine *machine)
- static ssize_t data_read_offset(struct dso *dso, struct machine *machine,
- 				u64 offset, u8 *data, ssize_t size)
- {
--	if (data_file_size(dso, machine))
-+	if (dso__data_file_size(dso, machine))
- 		return -1;
- 
- 	/* Check the offset sanity. */
-diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-index c5380500bed4..8c8a7abe809d 100644
---- a/tools/perf/util/dso.h
-+++ b/tools/perf/util/dso.h
-@@ -322,6 +322,7 @@ int dso__data_get_fd(struct dso *dso, struct machine *machine);
- void dso__data_put_fd(struct dso *dso);
- void dso__data_close(struct dso *dso);
- 
-+int dso__data_file_size(struct dso *dso, struct machine *machine);
- off_t dso__data_size(struct dso *dso, struct machine *machine);
- ssize_t dso__data_read_offset(struct dso *dso, struct machine *machine,
- 			      u64 offset, u8 *data, ssize_t size);
