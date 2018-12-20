@@ -2,87 +2,89 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6264C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA64C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2A422176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:03:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D9Q9GkTp"
+	by mail.kernel.org (Postfix) with ESMTP id 11E092176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbeLTJDe (ORCPT
+        id S1728956AbeLTJGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:03:34 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60166 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbeLTJDe (ORCPT
+        Thu, 20 Dec 2018 04:06:16 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45805 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbeLTJGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:03:34 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBK931PR046797;
-        Thu, 20 Dec 2018 03:03:01 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545296581;
-        bh=je64GQv5fkJQoxiJSkHiUO/szatxLAvDbpDZvhS7foU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=D9Q9GkTpcvHaTnr5n4jzu3X+uz0yZksXlwz7RTWYhqyZt7K9BSAlE9YyXex/ZsMX6
-         1034KDRQgSVTEBrglYomn3DhhgnFsABARVeH4JutndofESAzGWz6a7yDdxIC9jcmCH
-         6fqW4HF6TEYTXinqMFi7Em7CIxO07IfztEIkruqU=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBK93189026475
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 03:03:01 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 20
- Dec 2018 03:03:00 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 20 Dec 2018 03:03:00 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBK92vPn030184;
-        Thu, 20 Dec 2018 03:02:57 -0600
-Subject: Re: [PATCH 0/9] ASoC/ARM: Merge the davinci and omap audio
- directories
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <jarkko.nikula@bitmer.com>, <tony@atomide.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <jsarha@ti.com>
-References: <20181217122142.6652-1-peter.ujfalusi@ti.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4c9085db-3c55-49ee-30d3-46dca84e28ca@ti.com>
-Date:   Thu, 20 Dec 2018 14:32:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 20 Dec 2018 04:06:15 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 61ECA8097F; Thu, 20 Dec 2018 10:06:09 +0100 (CET)
+Date:   Thu, 20 Dec 2018 10:06:12 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Message-ID: <20181220090612.GA21972@amd>
+References: <20181219162626.12297-3-dmurphy@ti.com>
+ <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
+ <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <20181219220326.GA28244@amd>
+ <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com>
+ <20181219222737.GB30496@amd>
+ <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20181217122142.6652-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Content-Disposition: inline
+In-Reply-To: <d7edfd57-20df-bd83-b616-5b18e8bc2c64@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/18 5:51 PM, Peter Ujfalusi wrote:
-> Mark, Tony, Sekhar: This series - as I mentioned - is based on next-20181210.
-> Not sure what tag, branch, commit  I should base this, but I can resend v2 if
-> needed.
 
-For the series:
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Sekhar Nori <nsekhar@ti.com>
+Hi!
 
-Looks like Mark has already applied it, but just for the record.
+> > Anyway, if your 36 channels can be set independently, I believe you
+> > just want them to export as 36 LEDs.
+>=20
+> I am not sure that is what the "customers" would want to have to set 36 d=
+ifferent nodes or even declare those 36 nodes.
+> That is 36 independent user space to kernel space calls that are very exp=
+ensive just to set a LED color and brightness.
+>=20
 
-Thanks,
-Sekhar
+No, 36 independend calls to kernel space are not that expensive.
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwbW4QACgkQMOfwapXb+vIX5gCfbSoZAB6VrN4h8DnjYJr1VN0/
+XJ0AoKGMJ00yzItHxFC4vtxppLvmclBq
+=G+17
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
