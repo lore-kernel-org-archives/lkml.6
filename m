@@ -2,75 +2,79 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81B3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 335F0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2812176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2B32176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731083AbeLTKpl (ORCPT
+        id S1731114AbeLTKqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:45:41 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:39562 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbeLTKpl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:45:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 40EAE608A3A5;
-        Thu, 20 Dec 2018 11:45:39 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 6C2j1tvITbBT; Thu, 20 Dec 2018 11:45:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id D18A2608A3AD;
-        Thu, 20 Dec 2018 11:45:38 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id dYOE1HfC68eR; Thu, 20 Dec 2018 11:45:38 +0100 (CET)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 835F8608A3A5;
-        Thu, 20 Dec 2018 11:45:38 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     Hou Tao <houtao1@huawei.com>
-Cc:     linux-mtd@lists.infradead.org, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] jffs2: Fix integer underflow in jffs2_rtime_compress
-Date:   Thu, 20 Dec 2018 11:45:37 +0100
-Message-ID: <2142335.HPRDAJu19m@blindfold>
-In-Reply-To: <cae86ca1-91f9-6728-df64-40580145220d@huawei.com>
-References: <20181215162350.12489-1-richard@nod.at> <cae86ca1-91f9-6728-df64-40580145220d@huawei.com>
+        Thu, 20 Dec 2018 05:46:15 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58916 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbeLTKqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 05:46:15 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2812C207AD; Thu, 20 Dec 2018 11:46:13 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 812172086A;
+        Thu, 20 Dec 2018 11:45:50 +0100 (CET)
+Date:   Thu, 20 Dec 2018 11:45:50 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH -next] regulator: act8945a-regulator: make symbol
+ act8945a_pm static
+Message-ID: <20181220114550.782cdddc@bbrezillon>
+In-Reply-To: <1545117021-178814-1-git-send-email-weiyongjun1@huawei.com>
+References: <1545117021-178814-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 20. Dezember 2018, 11:43:08 CET schrieb Hou Tao:
+On Tue, 18 Dec 2018 07:10:21 +0000
+Wei Yongjun <weiyongjun1@huawei.com> wrote:
+
+> Fixes the following sparse warning:
 > 
-> On 2018/12/16 0:23, Richard Weinberger wrote:
-> > The rtime compressor assumes that at least two bytes are
-> > compressed.
-> > If we try to compress just one byte, the loop condition will
-> > wrap around and an out-of-bounds write happens.
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Richard Weinberger <richard@nod.at>
-> > ---
-> >  fs/jffs2/compr_rtime.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > It seems that it doesn't incur any harm because the minimal allocated
-> size will be 8-bytes and jffs2_rtime_compress() will write 2-bytes into
-> the allocated buffer.
+> drivers/regulator/act8945a-regulator.c:340:1: warning:
+>  symbol 'act8945a_pm' was not declared. Should it be static?
+> 
+> Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Are you sure about that? I saw odd kernel behavior and KASAN complained too.
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-Thanks,
-//richard
-
+> ---
+>  drivers/regulator/act8945a-regulator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+> index 90572b6..dc3942b 100644
+> --- a/drivers/regulator/act8945a-regulator.c
+> +++ b/drivers/regulator/act8945a-regulator.c
+> @@ -337,7 +337,7 @@ static int act8945a_suspend(struct device *pdev)
+>  	return regmap_write(act8945a->regmap, ACT8945A_SYS_CTRL, 0x42);
+>  }
+>  
+> -SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
+> +static SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
+>  
+>  static void act8945a_pmic_shutdown(struct platform_device *pdev)
+>  {
+> 
+> 
+> 
 
