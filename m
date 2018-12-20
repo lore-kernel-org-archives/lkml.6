@@ -2,124 +2,95 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E52C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4435CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0026521852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA542186A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545319276;
+	bh=ctA6UWidU1uKt7b+MOwgX+5DTj3Qn9wldP9TCkw4T7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=diY/7ubrqnh91FPwIp7ynJenlEiqPE0E/c9ErzF6syQW1FQIGGDgkrWlH+I3O5J+H
+	 EpYz9DJg/SDBMjX8VuanxYN4NwqPIY59LPutVLN18lpcy1+7up6BIijVA8PAVHnVnp
+	 m82/Q5+xQ8MiaDsB9BL8lSwsuPfMgcUqMJMMSESA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387582AbeLTPRj (ORCPT
+        id S2387612AbeLTPVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:17:39 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:59312 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733107AbeLTPRj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:17:39 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id EFHd1z01G3XaVaC01FHdlm; Thu, 20 Dec 2018 16:17:38 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ga04v-00006F-QM; Thu, 20 Dec 2018 16:17:37 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ga04v-0006vs-P0; Thu, 20 Dec 2018 16:17:37 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [git pull] m68k updates for 4.21
-Date:   Thu, 20 Dec 2018 16:17:36 +0100
-Message-Id: <20181220151736.26607-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 20 Dec 2018 10:21:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729693AbeLTPVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:21:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA4821852;
+        Thu, 20 Dec 2018 15:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545319274;
+        bh=ctA6UWidU1uKt7b+MOwgX+5DTj3Qn9wldP9TCkw4T7s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oBkMgYPQ7xvzRElCvMq8UZcM2Uo75K1Fwhd2VqOjmn3SXtOY388HxTVzu6barFC4n
+         yJCIK5jtLapvDLmTR+RghIHLFBjBdC4qDHMTeJXVvKLzEV2iZ0XAnzES4valX0gUbH
+         kLUvpbuPFvN/TXJcnbqDwp6jiMI+qsyb38H7Lud0=
+Date:   Thu, 20 Dec 2018 16:21:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+Message-ID: <20181220152111.GB17408@kroah.com>
+References: <20181115011125.GA32556@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115011125.GA32556@roeck-us.net>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi Linus,
+On Wed, Nov 14, 2018 at 05:11:25PM -0800, Guenter Roeck wrote:
+> On Thu, Nov 01, 2018 at 11:26:06AM -0700, Florian Fainelli wrote:
+> > It is way too easy to miss enabling SERIAL_OF_PLATFORM which would
+> > result in the inability for the kernel to have a valid console device,
+> > which can be seen with:
+> > 
+> > Warning: unable to open an initial console.
+> > 
+> > and then:
+> > 
+> > Run /init as init process
+> > Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
+> > 
+> > Since SERIAL_OF_PLATFORM already depends on SERIAL_8250 && OF there
+> > really is no drawback to defaulting this config to the value of
+> > SERIAL_8250.
+> > 
+> > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> This patch results in situations where CONFIG_SERIAL_OF_PLATFORM is now
+> defined where it was not previously. Example mpc85xx_defconfig. This in
+> turn results in boot failures for those configurations, with an error
+> message of
+> 
+> of_serial: probe of e0004500.serial failed with error -22
+> 
+> which wasn't seen before.
+> 
+> Not sure if replacing a potential problem with a real one is really an
+> improvement.`
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+What ever was the result of this long thread?  Should I revert
+something?  Or was a patch proposed?
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+totally lost,
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v4.21-tag1
-
-for you to fetch changes up to 005e13a96c0ed1437cb7f113d5d0f07ad9590962:
-
-  m68k: Generate uapi header and syscall table header files (2018-12-04 09:47:55 +0100)
-
-----------------------------------------------------------------
-m68k updates for v4.21
-
-  - Generate syscall headers,
-  - Small improvements and cleanups,
-  - Defconfig updates.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      m68k: Remove redundant 'default n' from Kconfig
-
-Finn Thain (1):
-      m68k: Unroll raw_outsb() loop
-
-Firoz Khan (3):
-      m68k: Add __NR_syscalls along with NR_syscalls
-      m68k: Add system call table generation support
-      m68k: Generate uapi header and syscall table header files
-
-Geert Uytterhoeven (1):
-      m68k/defconfig: Update defconfigs for v4.20-rc1
-
- arch/m68k/Kconfig.machine               |   2 -
- arch/m68k/Makefile                      |   3 +
- arch/m68k/configs/amiga_defconfig       | 103 +++++----
- arch/m68k/configs/apollo_defconfig      |  93 ++++----
- arch/m68k/configs/atari_defconfig       | 109 +++++----
- arch/m68k/configs/bvme6000_defconfig    |  89 ++++----
- arch/m68k/configs/hp300_defconfig       |  91 ++++----
- arch/m68k/configs/mac_defconfig         |  93 ++++----
- arch/m68k/configs/multi_defconfig       | 123 +++++-----
- arch/m68k/configs/mvme147_defconfig     |  87 +++----
- arch/m68k/configs/mvme16x_defconfig     |  89 ++++----
- arch/m68k/configs/q40_defconfig         |  89 ++++----
- arch/m68k/configs/sun3_defconfig        |  81 ++++---
- arch/m68k/configs/sun3x_defconfig       |  83 ++++---
- arch/m68k/include/asm/Kbuild            |   1 +
- arch/m68k/include/asm/raw_io.h          |  39 +++-
- arch/m68k/include/asm/unistd.h          |   3 +-
- arch/m68k/include/uapi/asm/Kbuild       |   1 +
- arch/m68k/include/uapi/asm/unistd.h     | 385 +------------------------------
- arch/m68k/kernel/syscalls/Makefile      |  38 ++++
- arch/m68k/kernel/syscalls/syscall.tbl   | 389 ++++++++++++++++++++++++++++++++
- arch/m68k/kernel/syscalls/syscallhdr.sh |  36 +++
- arch/m68k/kernel/syscalls/syscalltbl.sh |  32 +++
- arch/m68k/kernel/syscalltable.S         | 387 +------------------------------
- 24 files changed, 1161 insertions(+), 1285 deletions(-)
- create mode 100644 arch/m68k/kernel/syscalls/Makefile
- create mode 100644 arch/m68k/kernel/syscalls/syscall.tbl
- create mode 100644 arch/m68k/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/m68k/kernel/syscalls/syscalltbl.sh
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+greg k-h
