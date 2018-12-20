@@ -2,135 +2,108 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7056EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740CDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 366062086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:28:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qzFOwkBV"
+	by mail.kernel.org (Postfix) with ESMTP id 474852086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeLTC22 (ORCPT
+        id S1728324AbeLTCf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:28:28 -0500
-Received: from ozlabs.org ([203.11.71.1]:37199 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbeLTC21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:28:27 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Kwfd1drGz9s3q;
-        Thu, 20 Dec 2018 13:28:24 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545272905;
-        bh=LV9d4xC0PxZk+oBlviKrRToDVGerSaAFwSiz1adR4F0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qzFOwkBV2KgZPDdu0ghh6xbT0eYN0yVInMY8DSufMfPxl85YXz3SMQWxwqsORPiMB
-         l0HoxG9r1dRDoWSuVpKMrjVKemanJKxPZyZ7/Tjzj7i1HBOoyQ1hYafxP/p6Pq74Yk
-         DAb/skc6geiMpw4JnwLMW9461X4B94aK19yjw5fYpHPU4Wz709QyczgeEy4ve2wUPk
-         ZN3VmMGcWsWqO8mSV2e1TL632L+zeWx9uUj2rEn85xemt3stun7m27hPCkqOF/bRTJ
-         Hx49LPGlDgomc2weK/5k6Hz9t3FFcDdYBEW2kFygGe97RN5+q5u6S7moZauJFrqNj6
-         ErmPY9gErge0A==
-Date:   Thu, 20 Dec 2018 13:28:24 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Petr Machata <petrm@mellanox.com>
-Subject: linux-next: build failure after merge of the net-next tree
-Message-ID: <20181220132824.341c10e9@canb.auug.org.au>
+        Wed, 19 Dec 2018 21:35:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40909 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726604AbeLTCf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 21:35:28 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3BEA7A0C62787;
+        Thu, 20 Dec 2018 10:35:24 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 20 Dec 2018 10:35:19 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] powerpc/eeh: Fix debugfs_simple_attr.cocci warnings
+Date:   Thu, 20 Dec 2018 02:42:51 +0000
+Message-ID: <1545273771-131851-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cwsMIF4xqo86oD7MLEsVxTl"; protocol="application/pgp-signature"
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+for debugfs files.
 
-Hi all,
+Semantic patch information:
+Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+imposes some significant overhead as compared to
+DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
 
-After merging the net-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
 
-drivers/net/vxlan.c: In function 'vxlan_changelink':
-drivers/net/vxlan.c:3763:10: error: too few arguments to function 'vxlan_fd=
-b_update'
-    err =3D vxlan_fdb_update(vxlan, all_zeros_mac,
-          ^~~~~~~~~~~~~~~~
-drivers/net/vxlan.c:830:12: note: declared here
- static int vxlan_fdb_update(struct vxlan_dev *vxlan,
-            ^~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  ce5e098f7a10 ("vxlan: changelink: Fix handling of default remotes")
-
-from the net tree interacting with commit
-
-  0e6160f3f5a9 ("vxlan: vxlan_fdb_notify(): Make switchdev notification con=
-figurable")
-
-from the net-next tree.
-
-I added the following merge fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 20 Dec 2018 13:24:05 +1100
-Subject: [PATCH] vxlan: fix for vxlan_fdb_update() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/vxlan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
-index efd709a5e3a8..5209ee9aac47 100644
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -3768,7 +3768,7 @@ static int vxlan_changelink(struct net_device *dev, s=
-truct nlattr *tb[],
- 					       dst->remote_vni,
- 					       dst->remote_vni,
- 					       dst->remote_ifindex,
--					       NTF_SELF);
-+					       NTF_SELF, true);
- 			if (err) {
- 				spin_unlock_bh(&vxlan->hash_lock);
- 				return err;
---=20
-2.19.1
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 23fe62f..ae05203 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1808,10 +1808,10 @@ static int eeh_freeze_dbgfs_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(eeh_enable_dbgfs_ops, eeh_enable_dbgfs_get,
+-			eeh_enable_dbgfs_set, "0x%llx\n");
+-DEFINE_SIMPLE_ATTRIBUTE(eeh_freeze_dbgfs_ops, eeh_freeze_dbgfs_get,
+-			eeh_freeze_dbgfs_set, "0x%llx\n");
++DEFINE_DEBUGFS_ATTRIBUTE(eeh_enable_dbgfs_ops, eeh_enable_dbgfs_get,
++			 eeh_enable_dbgfs_set, "0x%llx\n");
++DEFINE_DEBUGFS_ATTRIBUTE(eeh_freeze_dbgfs_ops, eeh_freeze_dbgfs_get,
++			 eeh_freeze_dbgfs_set, "0x%llx\n");
+ #endif
+ 
+ static int __init eeh_init_proc(void)
+@@ -1819,12 +1819,12 @@ static int __init eeh_init_proc(void)
+ 	if (machine_is(pseries) || machine_is(powernv)) {
+ 		proc_create_single("powerpc/eeh", 0, NULL, proc_eeh_show);
+ #ifdef CONFIG_DEBUG_FS
+-		debugfs_create_file("eeh_enable", 0600,
+-                                    powerpc_debugfs_root, NULL,
+-                                    &eeh_enable_dbgfs_ops);
+-		debugfs_create_file("eeh_max_freezes", 0600,
+-				    powerpc_debugfs_root, NULL,
+-				    &eeh_freeze_dbgfs_ops);
++		debugfs_create_file_unsafe("eeh_enable", 0600,
++					   powerpc_debugfs_root, NULL,
++					   &eeh_enable_dbgfs_ops);
++		debugfs_create_file_unsafe("eeh_max_freezes", 0600,
++					   powerpc_debugfs_root, NULL,
++					   &eeh_freeze_dbgfs_ops);
+ #endif
+ 	}
+ 
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa/kgACgkQAVBC80lX
-0GwBOwf/Tgik72mNw76kDMNQdtdYVqGCQ9bBVGXIQAvsoqkQcr0TfwmTJNPzLISx
-5P2O9wT0N9ruOTW1atmEZQEU1RYRPHaZdBB7wKUvq94ovRc3DxfjPR2+9KOi9voK
-ZVkiVkNUjTvTOf03IbhRqYiIsPHClPh9SUVvQT7/97fLsQci6YhM7Ahxtix1ueQU
-07wDj1ROEQrKgmFyfeS7jrndCa/xOWp1bszbbFxzEoDYVxa/8duijTSywmIOeVv9
-HXVrnYRId2R02JMa5SY2i1mBS1yz6TzJGXlMaUWThB0UcNQloy5CBM3mDh7s2f5o
-Oh5nDZ6eNMDVZ+aZD3jhiY6zEZzCmA==
-=NjDq
------END PGP SIGNATURE-----
 
---Sig_/cwsMIF4xqo86oD7MLEsVxTl--
