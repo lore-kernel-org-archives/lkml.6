@@ -2,132 +2,213 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3C4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385D8C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952DA21720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC1A20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="feY9Pt/K"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="BF+jxDWa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732512AbeLTQ5A (ORCPT
+        id S1732795AbeLTQ5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:57:00 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38488 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730950AbeLTQ5A (ORCPT
+        Thu, 20 Dec 2018 11:57:34 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42440 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732385AbeLTQ5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:57:00 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181220165657euoutp013423177ad71cc0228cae9adbf2ae377a~yGOqWtJ1f0205702057euoutp01-
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:56:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181220165657euoutp013423177ad71cc0228cae9adbf2ae377a~yGOqWtJ1f0205702057euoutp01-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545325018;
-        bh=4ia7kJBN3xe9Zuv9vaJov1S1QuP8OGX4OcrqvZOrVoc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=feY9Pt/KDEgD8gC98FGxQ6X5YuDk9R45p/u2Ra+3F5sIIZEsBHe+e1xeHfYj/P8Xx
-         WY7M6dMAc9BtVPW1GSPWoBqIngZ8il51A5AeM/J/bPw/EqjiLetORLdyBD5UWp6Ueg
-         FyYuy2zZ+1jBKghcbouXEGb/HcxGhzsb/pLQJKoo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181220165657eucas1p2d9c21f7da3627a6c3a8dd90eac26b4a6~yGOqEDyh60994909949eucas1p20;
-        Thu, 20 Dec 2018 16:56:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 34.A2.04294.9D9CB1C5; Thu, 20
-        Dec 2018 16:56:57 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220165656eucas1p2a198d2ffce86d6ffde6c7da0f4de8eb8~yGOpEi3802397123971eucas1p2Z;
-        Thu, 20 Dec 2018 16:56:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181220165656eusmtrp25eee81efb3b4c0e4b681cf7f7da22e92~yGOo2GUMP0072800728eusmtrp28;
-        Thu, 20 Dec 2018 16:56:56 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-aa-5c1bc9d94cd9
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F3.18.04284.8D9CB1C5; Thu, 20
-        Dec 2018 16:56:56 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220165656eusmtip2a87538fed8dff9201bf3fd4b9ef81c4e~yGOohbOeq0791107911eusmtip2W;
-        Thu, 20 Dec 2018 16:56:55 +0000 (GMT)
-Subject: Re: [PATCH -next] video: fbdev: pxafb: Fix
- "WARNING: invalid free of devm_ allocated data"
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     daniel@zonque.org, robert.jarzmik@free.fr,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <69dc564b-fb9d-98c0-6b31-2de9e0363c33@samsung.com>
-Date:   Thu, 20 Dec 2018 17:56:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Thu, 20 Dec 2018 11:57:34 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v23so2525934otk.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:57:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DYRCP9UN9luBBsvCXHDTrjPXPPJREpwyogy2A14Q3wo=;
+        b=BF+jxDWaMphjdbIE5m6BbKM9lClqGRJRTGaKWB+fCVLJe/SZocmVMCJD9ohNMiKav/
+         fKjZMPDcyFwY4po1ZMBzgMblTjmN+TPwnUxY2SdRGpvulfuWnU1i+PCPMtABqCWwoJDM
+         hywlsMQbC3hdF49+lKUceJFYCBs5t4l9jhhNJGv2IsCgfEQjTPskI0P3ilo/dLoijyEV
+         d7vLnDReV2sow+LkSc1wsys6szTsQO/mDObZaf33ul6um9Y1CG/XbO4WSQ/KJat2nrfX
+         6GLtiSiO75c0SNylDl/mgdoprBeTZ6XoSMOxeBzmQuQLqzlhwGobIar+ZH3uHOPSC5W3
+         +qIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DYRCP9UN9luBBsvCXHDTrjPXPPJREpwyogy2A14Q3wo=;
+        b=MJf5/DWNSHm4dWfxCv+qwL8gH19vK9XdNQhR3Dy/ldmqwOZ3xXq8NXlUNVIs/lSF2J
+         FgaaesjNSMMniz/c8/ywE74plHCX1e7QEovE8gVuP66Gf+S+kudD5G5s2L+WfadK4LyY
+         nF1N4i7zlEqjYZ/9bYYueV2ABLH0wwbqr2MDwCZR0lkOkKRkTAm4vBLMmDkB9fTDW7EX
+         zttCON2RsJze98U4fjaYz7wIwrV2SI1v9E+QnCd0Z52mX0irZpRPi6qMXr0d8VuLHg2N
+         hXVhjKO86q0RXVpjgat+OD91a23004UzcvqGFTD1xx5ZHRJk9l7zjzrrMNRNakwtbxmq
+         4zng==
+X-Gm-Message-State: AA+aEWYHkvuOQfXDSE3ZPGarljfycKMsKJejnrw+6mdVvOKIU+mevS2j
+        c5HR2CMY6qUs1HkFRGmQuAiUQ+CzrXTEfngObJQn3Q==
+X-Google-Smtp-Source: AFSGD/WCi156/s0upT+G+UTmXWfUxt4iIsjfeMe4jWUZi3yb6/MuVgIfvwzU8+4eUgIMppvOx9oFlGJzJjhJevVoKeQ=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr17529610otn.95.1545325053044;
+ Thu, 20 Dec 2018 08:57:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <a24ef622-d811-dd6e-450f-a75bf4392215@samsung.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djPc7o3T0rHGNz7LmbR9PcVi8WVr+/Z
-        LE70fWC1uLxrDpvFrDfCFne+PmdxYPPoX/eZ1aPlyFtWj/vdx5k8Pm+S89i+ezlLAGsUl01K
-        ak5mWWqRvl0CV8bd1x+ZC9azVKxuv8bWwHieuYuRk0NCwERi86Uupi5GLg4hgRWMEn07fzNC
-        OF8YJR5d2wHlfGaUeDb1PEsXIwdYy/erXBDx5YwSs09vh2p/zyix7e1qVpC5wgKpEg/Xb2YE
-        sUUE1CRaTm1hBiliFuhmlHix+jE7SIJNwEpiYvsqsCJeATuJz1feMYFsYBFQlTjYJwNiigpE
-        SPSfUYeoEJQ4OfMJC4jNKWAvceLLJzCbWcBA4siiOawQtrzE9rdzwFZJCExnl/gwfwUrxJ8u
-        Ev9X/WaEsIUlXh3fwg5hy0j83zmfCaqBUeLNr6UsEM56Rok1Z44xQVRZSxw+fhFqkqPEycv9
-        0KDgk7jxVhBiM5/EpG3TmSHCvBIdbUIQ1WoSG5ZtYIPZ1bVzJTTcPSSuvbvAOoFRcRaS32Yh
-        +WcWkn8WMDKvYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECEwxp/8d/7KDcdefpEOMAhyM
-        Sjy8F7ZLxwixJpYVV+YeYpTgYFYS4V1/CCjEm5JYWZValB9fVJqTWnyIUZqDRUmct5rhQbSQ
-        QHpiSWp2ampBahFMlomDU6qBUXze640nk5mPlqiynU8zV3VIf6B3PLssafXCf319ttWXZ166
-        eNJvQ8zCid+/m7tGcZnHWC0Qbmg5G3bu+P/j19de9rFgejyhujzL7Fb9zs9qurH1L89WKfRf
-        btn1ZMve2XePR7I2hW19ks3ws2GycvW+Lo/Vu1o/Hs3s79gq8mXWh5Ln19hzFyqxFGckGmox
-        FxUnAgCk/dgLLQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsVy+t/xe7o3TkrHGBw5L2jR9PcVi8WVr+/Z
-        LE70fWC1uLxrDpvFrDfCFne+PmdxYPPoX/eZ1aPlyFtWj/vdx5k8Pm+S89i+ezlLAGuUnk1R
-        fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbd1x+ZC9az
-        VKxuv8bWwHieuYuRg0NCwETi+1WuLkYuDiGBpYwSN9snMULEZSSOry/rYuQEMoUl/lzrYgOx
-        hQTeMko0bnABsYUFUiXendrBDmKLCKhJtJzawgwx5zCjxOH+xUwgDrNAN1DD3YWMIFVsAlYS
-        E9tXgdm8AnYSn6+8YwJZxiKgKnGwTwYkLCoQIXHrYQcLRImgxMmZT8BsTgF7iRNfPoHZzAJ6
-        Ejuu/2KFsOUltr+dwzyBUXAWkpZZSMpmISlbwMi8ilEktbQ4Nz232FCvODG3uDQvXS85P3cT
-        IzBqth37uXkH46WNwYcYBTgYlXh4NXZJxwixJpYVV+YeYpTgYFYS4V1/CCjEm5JYWZValB9f
-        VJqTWnyI0RToh4nMUqLJ+cCIziuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE
-        08fEwSnVwOh5Ql33Q88Oo4hpR7ync3+dqSz0PPp6uqHyJB315uo6xaytAg2GLu/K+vc9X1E6
-        3f7C38L8Di6Bk83zeGW6TdT+1K16dDbjhGP0S3O95wy7tvAVys7efjJ419P2Ba26jdcai+12
-        mPquCZnK0TpHUcvdZeMF2Z45nrfYm1mEnJ7UL5NI3SmqqcRSnJFoqMVcVJwIAA3hkgmwAgAA
-X-CMS-MailID: 20181220165656eucas1p2a198d2ffce86d6ffde6c7da0f4de8eb8
-X-Msg-Generator: CA
-X-RootMTR: 20181116110325epcas4p1a18c4e9d98ede25027bc198065d988dd
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181116110325epcas4p1a18c4e9d98ede25027bc198065d988dd
-References: <CGME20181116110325epcas4p1a18c4e9d98ede25027bc198065d988dd@epcas4p1.samsung.com>
-        <20181116110255.19736-1-yuehaibing@huawei.com>
-        <a24ef622-d811-dd6e-450f-a75bf4392215@samsung.com>
+References: <20181212214641.GB29416@dastard> <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard> <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org> <20181218093017.GB18032@quack2.suse.cz>
+ <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com> <20181219020723.GD4347@redhat.com>
+ <20181219110856.GA18345@quack2.suse.cz> <8e98d553-7675-8fa1-3a60-4211fc836ed9@nvidia.com>
+ <20181220165030.GC3963@redhat.com>
+In-Reply-To: <20181220165030.GC3963@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 20 Dec 2018 08:57:22 -0800
+Message-ID: <CAPcyv4iDdOGh6wCug9sZsrPdby1Sv1jG5aRUA5PjL0dDW7eNNA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 20, 2018 at 8:50 AM Jerome Glisse <jglisse@redhat.com> wrote:
+>
+> On Thu, Dec 20, 2018 at 02:54:49AM -0800, John Hubbard wrote:
+> > On 12/19/18 3:08 AM, Jan Kara wrote:
+> > > On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+> > >> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+> > >>> OK, so let's take another look at Jerome's _mapcount idea all by itself (using
+> > >>> *only* the tracking pinned pages aspect), given that it is the lightest weight
+> > >>> solution for that.
+> > >>>
+> > >>> So as I understand it, this would use page->_mapcount to store both the real
+> > >>> mapcount, and the dma pinned count (simply added together), but only do so for
+> > >>> file-backed (non-anonymous) pages:
+> > >>>
+> > >>>
+> > >>> __get_user_pages()
+> > >>> {
+> > >>>   ...
+> > >>>   get_page(page);
+> > >>>
+> > >>>   if (!PageAnon)
+> > >>>           atomic_inc(page->_mapcount);
+> > >>>   ...
+> > >>> }
+> > >>>
+> > >>> put_user_page(struct page *page)
+> > >>> {
+> > >>>   ...
+> > >>>   if (!PageAnon)
+> > >>>           atomic_dec(&page->_mapcount);
+> > >>>
+> > >>>   put_page(page);
+> > >>>   ...
+> > >>> }
+> > >>>
+> > >>> ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
+> > >>> to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you
+> > >>> had in mind?
+> > >>
+> > >> Mostly, with the extra two observations:
+> > >>     [1] We only need to know the pin count when a write back kicks in
+> > >>     [2] We need to protect GUP code with wait_for_write_back() in case
+> > >>         GUP is racing with a write back that might not the see the
+> > >>         elevated mapcount in time.
+> > >>
+> > >> So for [2]
+> > >>
+> > >> __get_user_pages()
+> > >> {
+> > >>     get_page(page);
+> > >>
+> > >>     if (!PageAnon) {
+> > >>         atomic_inc(page->_mapcount);
+> > >> +       if (PageWriteback(page)) {
+> > >> +           // Assume we are racing and curent write back will not see
+> > >> +           // the elevated mapcount so wait for current write back and
+> > >> +           // force page fault
+> > >> +           wait_on_page_writeback(page);
+> > >> +           // force slow path that will fault again
+> > >> +       }
+> > >>     }
+> > >> }
+> > >
+> > > This is not needed AFAICT. __get_user_pages() gets page reference (and it
+> > > should also increment page->_mapcount) under PTE lock. So at that point we
+> > > are sure we have writeable PTE nobody can change. So page_mkclean() has to
+> > > block on PTE lock to make PTE read-only and only after going through all
+> > > PTEs like this, it can check page->_mapcount. So the PTE lock provides
+> > > enough synchronization.
+> > >
+> > >> For [1] only needing pin count during write back turns page_mkclean into
+> > >> the perfect spot to check for that so:
+> > >>
+> > >> int page_mkclean(struct page *page)
+> > >> {
+> > >>     int cleaned = 0;
+> > >> +   int real_mapcount = 0;
+> > >>     struct address_space *mapping;
+> > >>     struct rmap_walk_control rwc = {
+> > >>         .arg = (void *)&cleaned,
+> > >>         .rmap_one = page_mkclean_one,
+> > >>         .invalid_vma = invalid_mkclean_vma,
+> > >> +       .mapcount = &real_mapcount,
+> > >>     };
+> > >>
+> > >>     BUG_ON(!PageLocked(page));
+> > >>
+> > >>     if (!page_mapped(page))
+> > >>         return 0;
+> > >>
+> > >>     mapping = page_mapping(page);
+> > >>     if (!mapping)
+> > >>         return 0;
+> > >>
+> > >>     // rmap_walk need to change to count mapping and return value
+> > >>     // in .mapcount easy one
+> > >>     rmap_walk(page, &rwc);
+> > >>
+> > >>     // Big fat comment to explain what is going on
+> > >> +   if ((page_mapcount(page) - real_mapcount) > 0) {
+> > >> +       SetPageDMAPined(page);
+> > >> +   } else {
+> > >> +       ClearPageDMAPined(page);
+> > >> +   }
+> > >
+> > > This is the detail I'm not sure about: Why cannot rmap_walk_file() race
+> > > with e.g. zap_pte_range() which decrements page->_mapcount and thus the
+> > > check we do in page_mkclean() is wrong?
+> >
+> > Right. This looks like a dead end, after all. We can't lock a whole chunk
+> > of "all these are mapped, hold still while we count you" pages. It's not
+> > designed to allow that at all.
+> >
+> > IMHO, we are now back to something like dynamic_page, which provides an
+> > independent dma pinned count.
+>
+> I will keep looking because allocating a structure for every GUP is
+> insane to me they are user out there that are GUPin GigaBytes of data
 
-On 12/20/2018 05:55 PM, Bartlomiej Zolnierkiewicz wrote:
-> 
-> On 11/16/2018 12:02 PM, YueHaibing wrote:
->> 'info->modes' got allocated with devm_kcalloc in of_get_pxafb_display.
->>
->> This gives this error message:
->>   ./drivers/video/fbdev/pxafb.c:2238:2-7: WARNING: invalid free of devm_ allocated data
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> 
-> Patch queued for 4.21, thanks.
+This is not the common case.
 
-I've just noticed v2, I will queue it instead..
+> and it gonna waste tons of memory just to fix crappy hardware.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This is the common case.
+
+Please refrain from the hyperbolic assessments.
