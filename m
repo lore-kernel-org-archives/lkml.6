@@ -3,103 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48306C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EF1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033A321720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B162321720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:56:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="UYTxpxuL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rpytKtYm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732689AbeLTQ4O (ORCPT
+        id S1732718AbeLTQ40 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:56:14 -0500
-Received: from mail-ed1-f41.google.com ([209.85.208.41]:45153 "EHLO
-        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729722AbeLTQ4N (ORCPT
+        Thu, 20 Dec 2018 11:56:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35267 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbeLTQ4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:56:13 -0500
-Received: by mail-ed1-f41.google.com with SMTP id d39so2305501edb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:56:12 -0800 (PST)
+        Thu, 20 Dec 2018 11:56:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so2502448wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:56:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DVr6MGctpu9yauzkVa8+kfqvb2kYqRr/TVyHWiOIj+E=;
-        b=UYTxpxuLspR6tqYz0tQ2nKeNP5cDQq2Bks0wMh2Idv8K5Y/VwyudZStk98HqI9A81F
-         OZ8ZKn6iXb8KAHf6O9+iH3WKAY+o1eOfVCUFbE8M5io0HYufLEGQIOgsZxERQaEY2RE2
-         TDBN85H7DyEgVHdSteaCmgPX/eikUPLNYXR30=
+        bh=aPxdpKWB0Vy2Yg4uUEsqW4RBYHJyaPxqerPSLHDjQiY=;
+        b=rpytKtYmEsvd1SF2y5MesK/7GkLxbVePUU36sZT1avbJBWqo5+Wwx+JJRmfp6R7I43
+         H753gDhOljzOvJVS4ks1Ndu5LZ/+UzE4A9aGPoOVV49Qk7ovppi2/ftT9jIS9n+ENtNZ
+         kxriRq2Ukei0NfH5ilCpF2sUmHWywtCACMcz4KUR+mFV+4p2MhNgrdr/0YqM2WUb/7vq
+         3WtNpDuf5kiuGfiLPONxcD76Q9VMkEnCkvzhsEpEro0+fU5NiXshGmcT3Sz07m5AhCzR
+         v7CK6Huw//Nv5IwvHfVrm4Q9Qfi2Z0ieerfWLk9oeB7l5KNaKaik0wHUQk/iiDro+EX4
+         BqeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DVr6MGctpu9yauzkVa8+kfqvb2kYqRr/TVyHWiOIj+E=;
-        b=Mf/RtQNcDsB1lqagpP840yM8InDWbnYsXH993m7gdBzn01xM9/Or3e1TbedLbEtuIc
-         AqhYZb7YH9+CLWuKUrpcLrcECv13ZqFEs0zjrBYHzqGWwbFg57NZEDx0mp+gjloPxHcy
-         ikHWhS4WJKgOpiCYqaOVQyqTNLe2F2p/lKtjCe2KaA4qO9vGgHBE0gQMuToXUB2FXDIn
-         GuBGz7oQKs5aFn77r6dhbZ8TOdPeZOBpwyJmHsdfBpMkneUi2dEP91y4ZJLIBqLc4u9i
-         nbw9bOtRuwNMVGIWMApwCMqWLDLnfpXIPHjubg/FFxsVLiL5Zp6PtuyHC2hHei1W7/g9
-         9R+A==
-X-Gm-Message-State: AA+aEWa347V8+6S9uSJqaz7eJx4rpVq3zzLg/7W7nY3GtBaPy8dd7Afx
-        gaCRHHZpcGVkAZoa7FgxTKGuwp/SSXOn4+P4mcRB0g==
-X-Google-Smtp-Source: AFSGD/XPelwKlUZS2I/mDVujunF9iebbxxIcLMsLfayKCMq+i+SuOvJGggw1k+qvoesBDGaJbeFd8yrGLKB2JVeNl8o=
-X-Received: by 2002:a17:906:6c14:: with SMTP id j20-v6mr20266936ejr.41.1545324971862;
- Thu, 20 Dec 2018 08:56:11 -0800 (PST)
+        bh=aPxdpKWB0Vy2Yg4uUEsqW4RBYHJyaPxqerPSLHDjQiY=;
+        b=jgghStpak1OhCBnFDiCkGaQB4qSWBNeEHk3mNGGuGsNe46TMtl9irf+W1orf+oXJ21
+         TS8aMxfHjIid7zV1n1yoqDOvicEvkzgrnZqaGYZ6NwKm4bqS+uvYwis9+RrhfQa6S/HI
+         kHSXC3N9hFFlh7Pe0MY2Ce1AQYxcEiDGbJ37NEeYdoOkCaobvrGONeD5wS9HaPIotZEi
+         iws1lPjzXaGfhhUCKZsKBfdbFEuKHjfqvOy0FAhdhiSpHvZaIixg53eGM8or9JzfoHbo
+         iArlcxpSXw7IlStjbrznMnZoY+wKBPh3iUboXEtVExCRtAoPeMp+mXI87ak8is4+hv/B
+         7FfA==
+X-Gm-Message-State: AA+aEWa8CSuZWWrgAFpzm4sFwNkDmuQe4vlk+Mw4SWhgX0ld6AtrVRp7
+        m4ouyAtNfZXyVzSNNC1AkFChjP3jHdH3YCb9Pm8=
+X-Google-Smtp-Source: AFSGD/XWogbhpmP4pt2ui/FzDCpgMIqJRatGTZCxzpdKr1J4BmfJOVSbAR+fhUAe9Ifr8ZAhPg8m8GR+m3QNZbC91vY=
+X-Received: by 2002:a5d:5351:: with SMTP id t17mr23347224wrv.288.1545324983952;
+ Thu, 20 Dec 2018 08:56:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20181220165050.17429-1-colin.king@canonical.com>
-In-Reply-To: <20181220165050.17429-1-colin.king@canonical.com>
-From:   Roopa Prabhu <roopa@cumulusnetworks.com>
-Date:   Thu, 20 Dec 2018 08:56:01 -0800
-Message-ID: <CAJieiUj6mDAjEgmy5wLWFO0Fpi+NOMvw08sB4Tk0maMJjeU7FA@mail.gmail.com>
-Subject: Re: [PATCH][next] neighbour: remove stray semicolon
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>,
-        netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181220123455.GA24952@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20181220123455.GA24952@hp-pavilion-15-notebook-pc-brajeswar>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 20 Dec 2018 11:56:11 -0500
+Message-ID: <CADnq5_MGmr0Zi+QB_ha2CrEq+SF=TM17wzu9=q-RDZa_RmMuEQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display/i2c_hw_engine_dce110: Remove duplicate header
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        "Cheng, Tony" <Tony.Cheng@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Charlene Liu <charlene.liu@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 8:50 AM Colin King <colin.king@canonical.com> wrote:
+On Thu, Dec 20, 2018 at 9:36 AM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
 >
-> From: Colin Ian King <colin.king@canonical.com>
+> Remove reg_helper.h which is included more than once
 >
-> Currently the stray semicolon means that the final term in the addition
-> is being missed.  Fix this by removing it. Cleans up clang warning:
->
-> net/core/neighbour.c:2821:9: warning: expression result unused [-Wunused-value]
->
-> Fixes: 82cbb5c631a0 ("neighbour: register rtnl doit handler")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
-Acked-By: Roopa Prabhu <roopa@cumulusnetworks.com>
+Applied.  thanks!
 
-Thanks!.
-
+Alex
 
 > ---
->  net/core/neighbour.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c  | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-> index 43687c9abe1d..1c4b7814ac32 100644
-> --- a/net/core/neighbour.c
-> +++ b/net/core/neighbour.c
-> @@ -2817,7 +2817,7 @@ static int neigh_get_reply(struct net *net, struct neighbour *neigh,
->  static inline size_t pneigh_nlmsg_size(void)
->  {
->         return NLMSG_ALIGN(sizeof(struct ndmsg))
-> -              + nla_total_size(MAX_ADDR_LEN); /* NDA_DST */
-> +              + nla_total_size(MAX_ADDR_LEN) /* NDA_DST */
->                + nla_total_size(1); /* NDA_PROTOCOL */
->  }
+> diff --git a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
+> index 9cbe1a7a6bcb..137350142fb2 100644
+> --- a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
+> +++ b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/i2c_hw_engine_dce110.c
+> @@ -97,7 +97,6 @@ enum dc_i2c_arbitration {
+>  #define FN(reg_name, field_name) \
+>         hw_engine->i2c_shift->field_name, hw_engine->i2c_mask->field_name
 >
+> -#include "reg_helper.h"
+>
+>  static void disable_i2c_hw_engine(
+>         struct i2c_hw_engine_dce110 *hw_engine)
 > --
-> 2.19.1
+> 2.17.1
 >
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
