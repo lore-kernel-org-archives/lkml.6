@@ -2,108 +2,203 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF31C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F131C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF25F2186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545314853;
-	bh=1Zuy2GzBKlgz21F6tNh9wBJvufwSey8/K1T12KYOFyI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=v69nG7/1FUwBrNcYxi9Wo4QCOobBRewNwXwijZQSLe0PxS16MvL+2M3P5qTEHiYRb
-	 sPwOodtYcRHuXdnL3oKxnpztlFauqTRU3CRgxdmUTiCgVZruWCyV/VgvmA/kwaRULt
-	 eMpwKf5rkVeYI9r7OzTGFyaO/lPSlIe5GTOwXYeY=
+	by mail.kernel.org (Postfix) with ESMTP id 1406E217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:09:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAt5atSd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733171AbeLTOHc (ORCPT
+        id S1732858AbeLTOJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:07:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731265AbeLTOHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:07:32 -0500
-Received: from bbrezillon (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEFF4217D8;
-        Thu, 20 Dec 2018 14:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545314851;
-        bh=1Zuy2GzBKlgz21F6tNh9wBJvufwSey8/K1T12KYOFyI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=j12sTpwB2mY9JX1cWWVmKWaCv9yY+xdVDVKeHh6pq6Mu/46KLHyZJo0KutFv/+GnQ
-         te0r2iJ9ExlUoOQuY9CJ2Y9GN35XRBAymFYJdZNzLt4Mcb+4OLfokmF+A1Bhmy9cWv
-         UPj2RGtzWBGxK/YyffosXr8YspOprJYEPw5Q+Bck=
-Date:   Thu, 20 Dec 2018 15:07:26 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/3] mtd: rawnand: Support bad block markers in first,
- second or last page
-Message-ID: <20181220150715.5b19f480@bbrezillon>
-In-Reply-To: <20181220145954.55ae36e9@bbrezillon>
-References: <1545061693-29216-1-git-send-email-frieder.schrempf@kontron.de>
-        <1545061693-29216-2-git-send-email-frieder.schrempf@kontron.de>
-        <20181220145954.55ae36e9@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 20 Dec 2018 09:09:05 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43337 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731255AbeLTOJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:09:04 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r10so1897129wrs.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:09:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MXCduRLidV5Y2s88Gyg/N4BgSVPqPJlaFtjfZoolwFI=;
+        b=OAt5atSd5KMTOh+hCSw3lA8Vm1wj2zZPhIuXG3JC6DUfIw9JUEo+wUF0yRm4k6UKI1
+         PwGV9lU1Sb4sdg1g2lK1AugYY5l+/UXO/+i1YCMMcRvcrGWVzEieae2kYF7tlGBmT6ZU
+         q5XNVY9yCn0YyOyux//IJPou4zxCN9TDqwpJU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MXCduRLidV5Y2s88Gyg/N4BgSVPqPJlaFtjfZoolwFI=;
+        b=d12UfyOmd9TkNkTnEKR1w/Re+Vyg5M99Sr6t3bRtPLaLURRiWaR5OBVehZHAtRrqhh
+         Wx2lBiGvI43g1W/I5lb6FJpYUNgrWPoj1GsIlqENW8GbLx3BAO92IHWkVeAk9nJfODte
+         Aqp9Em7AEhwPKz8KOC7pGUucIFShGerQJeznTRQV11tMuJX+EKpe6rNRkd4AanizGXTq
+         nRfBPvv/XGp72z5ruf+cngsIVs4C0q7OUveK8cSN1fSMQqsQfsfCRsf3duuRBBz/EXM0
+         4Pc+MGFHxsblXuzAx+x7jozAbifR7OuD8zKaRMJBxyuHcEg7/rkw9rRZhr3pu/8D7VCn
+         XvYw==
+X-Gm-Message-State: AA+aEWakgHZlGmrYLfAydsH2FaMDjuDZGwLb7hQOmCv/P3sBUM2u4+DL
+        DVdgPKNduiIc8lfJ70L3yJa94GN0mLo=
+X-Google-Smtp-Source: AFSGD/W5+DNc3zSbSwCRnIPAvaohoz/ozEuusdKpfnYt1uD9X08g8RQESQ4F3STvJRH1ivydEeOojA==
+X-Received: by 2002:adf:900f:: with SMTP id h15mr22696475wrh.18.1545314941239;
+        Thu, 20 Dec 2018 06:09:01 -0800 (PST)
+Received: from [192.168.0.40] (55.183.88.92.rev.sfr.net. [92.88.183.55])
+        by smtp.googlemail.com with ESMTPSA id c15sm1207011wml.27.2018.12.20.06.08.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 06:09:00 -0800 (PST)
+Subject: Re: [PATCH v10 16/27] drivers: firmware: psci: Prepare to use OS
+ initiated suspend mode
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
+Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-17-ulf.hansson@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <20e1c04b-870f-3213-835d-28724ef4f530@linaro.org>
+Date:   Thu, 20 Dec 2018 15:08:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181129174700.16585-17-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 14:59:54 +0100
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+On 29/11/2018 18:46, Ulf Hansson wrote:
+> To enable the OS initiated mode, the CPU topology needs to be described
+> using the hierarchical model in DT. When used, the idle state bits for the
+> CPU are created by ORing the bits for PM domain's idle state.
+> 
+> Let's prepare the PSCI driver to deal with this, via introducing a per CPU
+> variable called domain_state and by adding internal helpers to read/write
+> the value of the variable.
 
-> >  
-> >  /**
-> > + * nand_bbm_page_offset - Get the page offsets for bad block markers
-> > + * @chip: NAND chip object
-> > + * @index: Index for the page offset  
+What are the domain states ? What values can they have ?
+
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
 > 
-> Hm, the meaning of index is far from obvious. How about passing the
-> current page instead (and return 1 if there are more pages to scan 0
-> otherwise)?
+> Changes in v10:
+> 	- Use __this_cpu_read|write() rather than this_cpu_read|write().
 > 
-> Something like:
+> ---
+>  drivers/firmware/psci/psci.c | 26 ++++++++++++++++++++++----
+>  1 file changed, 22 insertions(+), 4 deletions(-)
 > 
-> static int nand_bbm_get_next_page(struct nand_chip *chip, int page)
-> {
-> 	struct mtd_info *mtd = nand_to_mtd(chip);
-> 	int last_page = ((mtd->erasesize - mtd->writesize) >>
-> 			 chip->page_shift) & chip->pagemask;
-> 
-> 	if (page < 0 && chip->bbt_options & NAND_BBT_SCANFIRSTPAGE)
-> 		return 0;
-> 	else if (page < 1 && chip->bbt_options & NAND_BBT_SCAN2NDPAGE)
-> 		return 1;
-> 	else if (page < last_page &&
-> 		 chip->bbt_options & NAND_BBT_SCANLASTPAGE)
-> 		return last_page;
-> 
-> 	return -1;
-> }
-> 
-> And yes, that means defining NAND_BBT_SCANFIRSTPAGE and setting it when
-> appropriate.
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 4f0cbc95e41b..8dbcdecc2ae4 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -87,8 +87,19 @@ static u32 psci_function_id[PSCI_FN_MAX];
+>  				(PSCI_1_0_EXT_POWER_STATE_ID_MASK | \
+>  				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
+>  
+> +static DEFINE_PER_CPU(u32, domain_state);
+>  static u32 psci_cpu_suspend_feature;
+>  
+> +static inline u32 psci_get_domain_state(void)
+> +{
+> +	return __this_cpu_read(domain_state);
+> +}
+> +
+> +static inline void psci_set_domain_state(u32 state)
+> +{
+> +	__this_cpu_write(domain_state, state);
+> +}
+> +
+>  static inline bool psci_has_ext_power_state(void)
+>  {
+>  	return psci_cpu_suspend_feature &
+> @@ -187,6 +198,8 @@ static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
+>  
+>  	fn = psci_function_id[PSCI_FN_CPU_ON];
+>  	err = invoke_psci_fn(fn, cpuid, entry_point, 0);
+> +	/* Clear the domain state to start fresh. */
+> +	psci_set_domain_state(0);
+>  	return psci_to_linux_errno(err);
+
+I think this change is ambiguous:
+
+ - if it is a change of the state because of the cpu_on, then I was
+expecting a similar change in cpu_off and the change only if
+invoke_psci_fn() succeeds.
+
+ - if it is a change to take opportunity of the code path to initialize
+the domain state, I suggest to remove it from there and make it very
+explicit with static DEFINE_PER_CPU(u32, domain_state) = { 0 };
+
+
+>  }
+>  
+> @@ -409,15 +422,17 @@ int psci_cpu_init_idle(struct cpuidle_driver *drv, unsigned int cpu)
+>  static int psci_suspend_finisher(unsigned long index)
+>  {
+>  	u32 *state = __this_cpu_read(psci_power_state);
+> +	u32 composite_state = state[index - 1] | psci_get_domain_state();
+>  
+> -	return psci_ops.cpu_suspend(state[index - 1],
+> -				    __pa_symbol(cpu_resume));
+> +	return psci_ops.cpu_suspend(composite_state, __pa_symbol(cpu_resume));
+>  }
+>  
+>  int psci_cpu_suspend_enter(unsigned long index)
+>  {
+>  	int ret;
+>  	u32 *state = __this_cpu_read(psci_power_state);
+> +	u32 composite_state = state[index - 1] | psci_get_domain_state();
+> +
+>  	/*
+>  	 * idle state index 0 corresponds to wfi, should never be called
+>  	 * from the cpu_suspend operations
+> @@ -425,11 +440,14 @@ int psci_cpu_suspend_enter(unsigned long index)
+>  	if (WARN_ON_ONCE(!index))
+>  		return -EINVAL;
+>  
+> -	if (!psci_power_state_loses_context(state[index - 1]))
+> -		ret = psci_ops.cpu_suspend(state[index - 1], 0);
+> +	if (!psci_power_state_loses_context(composite_state))
+> +		ret = psci_ops.cpu_suspend(composite_state, 0);
+>  	else
+>  		ret = cpu_suspend(index, psci_suspend_finisher);
+>  
+> +	/* Clear the domain state to start fresh when back from idle. */
+> +	psci_set_domain_state(0);
+> +
+>  	return ret;
+>  }
+>  
 > 
 
-Oh, and you'll have to define NAND_BBT_SCANFIRST2PAGES like this
 
-#define NAND_BBT_SCANFIRST2PAGES NAND_BBT_SCAN1STPAGE |	\
-				 NAND_BBT_SCAN2NDPAGE
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-and then patch all users of NAND_BBT_SCAN2NDPAGE to use
-NAND_BBT_SCANFIRST2PAGES instead.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
