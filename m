@@ -2,87 +2,83 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02B9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D77C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD0221773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:38:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u2tt3Yrf"
+	by mail.kernel.org (Postfix) with ESMTP id 0813121773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbeLTQiO (ORCPT
+        id S1730537AbeLTQji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:38:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34206 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeLTQiO (ORCPT
+        Thu, 20 Dec 2018 11:39:38 -0500
+Received: from mail09.linbit.com ([212.69.161.110]:50122 "EHLO
+        mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbeLTQjh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:38:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CG/jSNeNChtKOqB2GhAVgwv4KkxMfGgWF7pWoOr89kI=; b=u2tt3Yrf2gIH3x6Lnk4xszbFQ
-        DKw9iASYROnevBlH9Xf7ze13R9C39PJ4lpFpZ3KD90t42ccnswbKEo890nx7HyTrjz3rncZL01Djt
-        3DOIokdM0vEuFIFV4noCtHDVgZd1KQwohx8FcUY1Fd0L0uB4WEOV5HtQ18Q15XTywKy+FTK2l10WW
-        gp67ZHzG5XYNIhudHXe42JPZfbi0ByP9kMr+GFMUy/gRZcCQ1QtBXu+Nnbq92Ka5/FkxNaaRCEq42
-        sJ6lrCeCBfkXoTGRNaXeFtdJbA6Vs8K6EGj8bZnNo6bPeFS0NcKBtOBN3rV02VlOCJJH4sp92X6aS
-        Jmf/TQA5g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ga1Kv-0000cj-Ji; Thu, 20 Dec 2018 16:38:13 +0000
-Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
- it more comprehensible
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Cc:     linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181217152043.9989-1-linux@leemhuis.info>
- <20181217112437.5fe868eb@lwn.net>
- <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
- <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
- <20181220082819.69fc3e5c@lwn.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a02caf89-9221-8e31-4a2d-44b46b81cda2@infradead.org>
-Date:   Thu, 20 Dec 2018 08:38:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181220082819.69fc3e5c@lwn.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Dec 2018 11:39:37 -0500
+Received: from soda.linbit (212-186-191-219.static.upcbusiness.at [212.186.191.219])
+        by mail09.linbit.com (LINBIT Mail Daemon) with ESMTP id B6A2C1045C32;
+        Thu, 20 Dec 2018 17:23:48 +0100 (CET)
+From:   Lars Ellenberg <lars.ellenberg@linbit.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     drbd-dev@lists.linbit.com
+Subject: [PATCH 11/17] drbd: avoid spurious self-outdating with concurrent disconnect / down
+Date:   Thu, 20 Dec 2018 17:23:38 +0100
+Message-Id: <20181220162344.8430-12-lars.ellenberg@linbit.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181220162344.8430-1-lars.ellenberg@linbit.com>
+References: <20181220162344.8430-1-lars.ellenberg@linbit.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 7:28 AM, Jonathan Corbet wrote:
-> On Thu, 20 Dec 2018 16:23:38 +0100
-> Thorsten Leemhuis <linux@leemhuis.info> wrote:
-> 
->> While at it: Jonathan, you mentioned putting the script in scripts/, but
->> according to the Makefile in that directory it is "for various helper
->> programs used throughout the kernel for the build process". That's one
->> reason why it feels wrong to put it there. Another one: that script
->> targets users and thus we should try to make sure they can access it
->> easily. That's why I'm currently inclined to put it in tools/ somewhere.
-> 
-> Yeah, tools/ is a better place.  Maybe a tools/debugging directory or some
-> such?
+If peers are "simultaneously" told to disconnect from each other,
+either explicitly, or implicitly by taking down the resource,
+with bad timing, one side may see its disconnect "fail" with
+a result of "state change failed by peer", and interpret this as
+"please oudate yourself".
 
-chktaint is similar (IMO) to scripts/decodecode though.
+Try to catch this by checking for current connection status,
+and possibly retry as local-only state change instead.
 
-@Thorsten:
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+---
+ drivers/block/drbd/drbd_nl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-
-thanks,
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 1958eb33b643..82915880c5e9 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -2711,8 +2711,10 @@ int drbd_adm_connect(struct sk_buff *skb, struct genl_info *info)
+ 
+ static enum drbd_state_rv conn_try_disconnect(struct drbd_connection *connection, bool force)
+ {
++	enum drbd_conns cstate;
+ 	enum drbd_state_rv rv;
+ 
++repeat:
+ 	rv = conn_request_state(connection, NS(conn, C_DISCONNECTING),
+ 			force ? CS_HARD : 0);
+ 
+@@ -2730,6 +2732,11 @@ static enum drbd_state_rv conn_try_disconnect(struct drbd_connection *connection
+ 
+ 		break;
+ 	case SS_CW_FAILED_BY_PEER:
++		spin_lock_irq(&connection->resource->req_lock);
++		cstate = connection->cstate;
++		spin_unlock_irq(&connection->resource->req_lock);
++		if (cstate <= C_WF_CONNECTION)
++			goto repeat;
+ 		/* The peer probably wants to see us outdated. */
+ 		rv = conn_request_state(connection, NS2(conn, C_DISCONNECTING,
+ 							disk, D_OUTDATED), 0);
 -- 
-~Randy
+2.17.1
+
