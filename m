@@ -2,180 +2,155 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FROM_EXCESS_BASE64,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D19C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2724C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900A320815
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 832C22176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:39:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BjFE794U"
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="sRZm58xz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbeLTLiF (ORCPT
+        id S1731168AbeLTLjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:38:05 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42995 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727990AbeLTLiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:38:04 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181220113803euoutp02ad1c32e8b262821933a8c5e7f3730fbf~yB4N2Gv770610606106euoutp02N
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:38:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181220113803euoutp02ad1c32e8b262821933a8c5e7f3730fbf~yB4N2Gv770610606106euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545305883;
-        bh=/wtVSIU1u8jkniyVCmf9tdEnnLzL0IulpduUFjvvCK8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=BjFE794UuI9MuzvIm3YGXcLukyrJeiTlxRtR44ChQ4SseyMjOR2gtyR7r4kxlgbxt
-         Yv+XfZJWJduWQj1Kb2DRpmz6oYnL4Ip2MnZSI2VcwRMpkBEDEofauBqTYfdDhQktMc
-         1ZWw3GnLDQlVnQsmgoygWrGn3P9ZH5J4aZ5QCXiA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181220113802eucas1p1e9ecf87e8492337bad2269605244fe90~yB4MuBWvu1592515925eucas1p1H;
-        Thu, 20 Dec 2018 11:38:02 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id AA.FC.04294.91F7B1C5; Thu, 20
-        Dec 2018 11:38:01 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220113801eucas1p1c8485c363200952f23a2a35e06d85842~yB4LvSiD91724317243eucas1p1B;
-        Thu, 20 Dec 2018 11:38:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181220113800eusmtrp12021081b24e59575dfd7e3e20d8bc4ef~yB4LgJ2Mg2144921449eusmtrp1t;
-        Thu, 20 Dec 2018 11:38:00 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-08-5c1b7f1962e0
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 69.24.04284.81F7B1C5; Thu, 20
-        Dec 2018 11:38:00 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220113800eusmtip17949c581ea817caa20a3aa79d9b22a6d~yB4LBQtK11857618576eusmtip1E;
-        Thu, 20 Dec 2018 11:38:00 +0000 (GMT)
-Subject: Re: [PATCH v4 1/3] driver core: add probe_err log helper
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, andy.shevchenko@gmail.com,
-        Mark Brown <broonie@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <b9f7cb75-62a0-20f6-0e5b-1553852d81b2@samsung.com>
-Date:   Thu, 20 Dec 2018 12:37:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181220111403.GB10978@kroah.com>
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Dec 2018 06:39:20 -0500
+Received: from mail-eopbgr50069.outbound.protection.outlook.com ([40.107.5.69]:14336
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729659AbeLTLjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 06:39:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IzFTGx9iFDcCXpJcO0VLuXvMhWudduU/ZX1q5UuJbcM=;
+ b=sRZm58xzJeXm6K2PTMnc9CnZ0Nwqd6ys1VQzorXas6QlFSjx2F6kthIawZiWGias5IRmYHI59NaaTzbhRCercHwzEDG8ITeWJwaEHn6oM5KPQqyxjBvlQvWkuAopRJlo12rSbiBQ3CkswdHtwTfeweS5gkP5IwOxzFU93cWLCAM=
+Received: from DB7PR04MB4667.eurprd04.prod.outlook.com (52.135.139.13) by
+ DB7PR04MB5018.eurprd04.prod.outlook.com (20.176.234.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.17; Thu, 20 Dec 2018 11:39:12 +0000
+Received: from DB7PR04MB4667.eurprd04.prod.outlook.com
+ ([fe80::2561:ec02:4e5e:f490]) by DB7PR04MB4667.eurprd04.prod.outlook.com
+ ([fe80::2561:ec02:4e5e:f490%3]) with mapi id 15.20.1446.020; Thu, 20 Dec 2018
+ 11:39:12 +0000
+From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: =?utf-8?B?UmU6IFtQQVRDSCA0LzRdIEFSTTogbXhzOiBjZmExMDAzNjogRml4dXAgT0xF?=
+ =?utf-8?B?RMKgZGlzcGxheSByZXNldCBwb2xhcml0eQ==?=
+Thread-Topic: =?utf-8?B?W1BBVENIIDQvNF0gQVJNOiBteHM6IGNmYTEwMDM2OiBGaXh1cCBPTEVEwqBk?=
+ =?utf-8?Q?isplay_reset_polarity?=
+Thread-Index: AQHUi+KKthGpJEQVZU6UA2M3No4/WKWGaR2AgAEwXAA=
+Date:   Thu, 20 Dec 2018 11:39:12 +0000
+Message-ID: <7819e740-6f20-23b5-0836-2ca08d3fb386@ysoft.com>
+References: <1543935806-94880-1-git-send-email-michal.vokac@ysoft.com>
+ <1543935806-94880-5-git-send-email-michal.vokac@ysoft.com>
+ <20181219172949.GA7680@bogus>
+In-Reply-To: <20181219172949.GA7680@bogus>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHfbzbvdfR5G4qO2pkDgwsfE3lgmFKfbjUl1KIUqGmXpzlpmxq
-        mR+0hFKTWoamQzNZaWhhvm26smCr1NR8W1qWWTgsxSGhlVJGXq+S337n/M//Of8DD4lJ+4Re
-        ZJo6i9WoFelyXCQwvlp9E+CZ750YPGMMpud0VkS3VDYL6fIvdpwuNDTjdF1FA6JbZ8aF9Ji5
-        Gqct5d2IfvRiiqBrlsuxaBEzNj6CMV36KYJpbSzGmec1Dwmm7V4+s/jsLc5cb29EzFLrrmNk
-        vOhACpuelsNqgqLOiJQTZR9RZpXkgsWmwwrQd3EJciGBCgNb0ygqQSJSSj1A0D0ySvDFMgKb
-        6ZuAL5YQ1Pe+dt6ytDV2YLzQgMBqc2z6HQjs0xMEN+VGxcDk0Dzi2J3aDzcG9RvvYtQvZzDa
-        F4WcgFP+sNb2HudYTEVB4WwJxrGA8oOrs7c32IM6CUXTTZszEuirsgs4dqGCwFDEezHKB0yO
-        aoxnGUzaa525ZUBNEjC0fAfxuQ/DmmmI4NkN5nvaN3kn9N8qFfCcD5erbBhvLkLQa2jAeSES
-        rD0j66nJ9Q3+0GwO4tsx8HiknODaQLnCO4eEz+AKZUYuP9cWQ9EVKT/tC9ODHRjPMrg//APX
-        Ibl+22X6bdfot12j/7/3LhI0IhmbrVWlstpQNXs+UKtQabPVqYHJGapWtP7B+v/2LHci858k
-        C6JIJN8hroz3SpQKFTnaXJUFAYnJ3cUzZ70TpeIURe5FVpNxWpOdzmotyJsUyGXiPKfPCVIq
-        VZHFnmPZTFazpTqTLl4FqEIXd/BnkpOyiw4/kmAj7l3yWZmLMAfbw/eZg4cNSaoC08zKxCFd
-        WBSTP75QUDyQ5quLFX/NyzaFkHllVV79u1ei/ToksaFxAdfWfq9GRpV5mm+a9mQetfZ3Frao
-        jaeSn/a5eLyUHa89IXEKS68rTVbW931ayu1+MjBu8Fv4ECEXaJWKkL2YRqv4Byl7wX9cAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xu7oS9dIxBotX61i8nHCY0WLjjPWs
-        FlMfPmGzaF68ns1i4bTljBabHl9jtbi8aw6bxaGpexkt1h65y24x98tUZgcuj8vXLjJ77Jx1
-        l91j06pONo/9c9ewe2xeUu/xft9VNo++LasYPT5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIz
-        tLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuD7pDmPBTMGKQ1cmMDcwfuTtYuTkkBAw
-        kdi8aisziC0ksJRR4s0hXYi4uMTu+W+ZIWxhiT/Xuti6GLmAal4zSjw69g0sISzgKHHr/CtG
-        EFtEwFii/+wsdhCbWeA3k8SUDVkQDfcYJR6sfMMEkmAT0JT4u/kmG4jNK2An0fysC2wQi4Cq
-        RPuz6WC2qECExNmX6xghagQlTs58wgJicwroSyzugOhlFlCX+DPvEjOELS+x/e0cKFtc4taT
-        +UwTGIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiM123Hfm7e
-        wXhpY/AhRgEORiUe3hlRUjFCrIllxZW5hxglOJiVRHgfZ0nHCPGmJFZWpRblxxeV5qQWH2I0
-        BXpuIrOUaHI+MJXklcQbmhqaW1gamhubG5tZKInznjeojBISSE8sSc1OTS1ILYLpY+LglGpg
-        ZIrgv64m4f3inalX2J1Lm64fCcrZtHae/Ry55BlRe61VTTR/xj5393/CsPahJtvkM+LK3Kc2
-        M7i2LBPbPXHle7OMtp3nJi6XYp17W8Ykx+Js3ZWvndsLVENlzJ48u2Y/g1vfa4aCjf70Fes7
-        cwymHGIXL7550uW7qujhRnm/faFSK03r1+i9UmIpzkg01GIuKk4EABycEB7tAgAA
-X-CMS-MailID: 20181220113801eucas1p1c8485c363200952f23a2a35e06d85842
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0202CA0010.eurprd02.prod.outlook.com
+ (2603:10a6:203:69::20) To DB7PR04MB4667.eurprd04.prod.outlook.com
+ (2603:10a6:5:37::13)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michal.Vokac@ysoft.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [89.24.100.190]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB5018;6:P/AuGyecCVH7qNDdEGjzgvjxMYecJ6/jPDH7Y+hejmrPtIXnBtTvceDdzhQuD0tPON5OM6X7v9VLk6o02fMRQtPxH/VRsq2NpJebC/c6qHk0UeO9G6+RWXUhRrduPGwfiEUGkG0w+mwbxfwHCUVQ34MKwjqnfp0qPY067ik4LMFbVeUdKq9dS0SKx39M7yy9LGRHOnKFNQrNRBftNLoVAnZ9UuqRYpXLPeaEz64wP4QmkHnl6T6gNvzDyaYn06zp3RopkEoha8ZqlYZGN/4jWguo2F7RgHo212R5QUcstOPdd3bintrvRrBwGfV9CmMgPKsC2m66o2eqa2Iwp2Q5z0TL4zM8gKiASIUjY2e6Ve8G8P1amXVmHei+CUYYw6PUJuukUSHGvDh0fKUm4iPMHHOTjN6M7qVsmTeTp+8YnPN6BviV6RmCQa4ITzGVuF6cEzQJ38rSUtCZnfAMUBtZUQ==;5:l3oIH6Ys0dPDGS/h1m+gLGfVACeSF1qMjHZMM+I6Q5pgc/qscoxGEmLI1zqDmhRWafA3kAKNSS2tB6oGtaGF3OMYoCHc9NttCCWsCL1MwK4m+g/Kxckq/FMV+XMg/mMlvU43m+5KDZ1eWrW7tDWbAe7tzKLA2JWU+p7WFxKp3lY=;7:hL+Wsm2gyBXvxy7Ekc425kYQQCgT7JpzjbrOK74TOcKGWXuuZ8YTvoiMaCRAx8OJbVGjTO4MW08bOlDa/eerbDRVlVWKVFN0AmzU7K0Il6lTy744mlGiJgk+yfKIghPg1JmKFkaZzty8yJfY4PFaEA==
+x-ms-office365-filtering-correlation-id: 5ae17c23-f0cc-46d3-2563-08d6666fc373
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB5018;
+x-ms-traffictypediagnostic: DB7PR04MB5018:
+x-microsoft-antispam-prvs: <DB7PR04MB5018F856947C2CAE7AE05F479EBF0@DB7PR04MB5018.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB5018;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB5018;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(39850400004)(136003)(346002)(189003)(199004)(71190400001)(71200400001)(31686004)(53936002)(2906002)(345774005)(25786009)(6512007)(478600001)(14444005)(6436002)(68736007)(14454004)(229853002)(256004)(76176011)(6486002)(52116002)(31696002)(106356001)(86362001)(72206003)(105586002)(6916009)(26005)(186003)(486006)(446003)(386003)(6506007)(53546011)(476003)(11346002)(2616005)(66066001)(305945005)(54906003)(7736002)(316002)(85182001)(81156014)(36756003)(3846002)(6116002)(81166006)(5660300001)(99286004)(102836004)(4326008)(6246003)(8936002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5018;H:DB7PR04MB4667.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: ysoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: CifTqiXa85/Z8d1UpziuuRUWNwfS8wV+Grhj3dzKHI3wh+8p0Cgah+Ya6GxX9KjP9Ug8FibGAsl96YaZO/IFyIxKez0363ZuHi9GKeY61loRDy0AnNoL9DpLZ6FozygUrpLflBRBwT4yew5SD+ZnHDdL7pkLJzRlMdu2h+OznL4DIe5ZHrL+miPvqzmi6btjwlmWReqPgVHAptTZKGL34IZtLqQMhoNWrod+hYRqQjlwUbdbWtslg6K7jZDV5uxCcIS1Xg0xnHmAMtPlY5j72g9j16eNzB2oVR2O7c9GC6u61Gg+ui0U3u4JaFKPIf8b
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181220102259eucas1p2f748c68e01cd4e09a266da879722e218
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181220102259eucas1p2f748c68e01cd4e09a266da879722e218
-References: <20181220102247.4911-1-a.hajda@samsung.com>
-        <CGME20181220102259eucas1p2f748c68e01cd4e09a266da879722e218@eucas1p2.samsung.com>
-        <20181220102247.4911-2-a.hajda@samsung.com>
-        <20181220111403.GB10978@kroah.com>
+Content-ID: <20B313C6FB340C4AB38C5E15DC302D43@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: ysoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ae17c23-f0cc-46d3-2563-08d6666fc373
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 11:39:12.8942
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.12.2018 12:14, Greg Kroah-Hartman wrote:
-> On Thu, Dec 20, 2018 at 11:22:45AM +0100, Andrzej Hajda wrote:
->> During probe every time driver gets resource it should usually check for error
->> printk some message if it is not -EPROBE_DEFER and return the error. This
->> pattern is simple but requires adding few lines after any resource acquisition
->> code, as a result it is often omited or implemented only partially.
->> probe_err helps to replace such code sequences with simple call, so code:
->> 	if (err != -EPROBE_DEFER)
->> 		dev_err(dev, ...);
->> 	return err;
->> becomes:
->> 	return probe_err(dev, err, ...);
-> Can you show a driver being converted to use this to show if it really
-> will save a bunch of lines and make things simpler?  Usually you are
-> requesting lots of resources so you need to do more than just return,
-> you need to clean stuff up first.
-
-
-I have posted sample conversion patch (generated by cocci) in previous
-version of this patchset [1].
-
-I did not re-posted it again as it is quite big patch and it will not be
-applied without prior splitting it per subsystem.
-
-Regarding stuff cleaning: devm_* usually makes it unnecessary, but also
-even with necessary cleaning you can profit from probe_err, you just
-calls it without leaving probe - you have still handled correctly probe
-deferring.
-
-Here is sample usage (taken from beginning of the mentioned patch):
-
----
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index 4b900fc659f7..52e891fe1586 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -581,11 +581,8 @@ int ahci_platform_init_host(struct platform_device *pdev,
- 	int i, irq, n_ports, rc;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0) {
--		if (irq != -EPROBE_DEFER)
--			dev_err(dev, "no irq\n");
--		return irq;
--	}
-+	if (irq <= 0)
-+		return probe_err(dev, irq, "no irq\n");
-
----
-
-And there is plenty of such places, with new version of cocci script I can locate about 2700 such cases, and it is still far from completeness.
-
-[1]:
-https://lore.kernel.org/lkml/20181016072244.1216-4-a.hajda@samsung.com/T/#u
-
-
-Regards
-
-Andrzej
-
-
+T24gMTkuMTIuMjAxOCAxODoyOSwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IE9uIFR1ZSwgRGVjIDA0
+LCAyMDE4IGF0IDAzOjAzOjQwUE0gKzAwMDAsIFZva8OhxI0gTWljaGFsIHdyb3RlOg0KPj4gVGhl
+cmUgd2FzIGEgYnVnIGluIHJlc2V0IHNpZ25hbCBnZW5lcmF0aW9uIGluIHNzZDEzMDdmYiBPTEVE
+IGRyaXZlci4NCj4+IFRoZSBkaXNwbGF5IG5lZWRzIGFuIGFjdGl2ZS1sb3cgcmVzZXQgc2lnbmFs
+IGJ1dCB0aGUgZHJpdmVyIHByb2R1Y2VkDQo+PiB0aGUgY29ycmVjdCBzZXF1ZW5jZSBvbmx5IGlm
+IHRoZSBHUElPIHVzZWQgZm9yIHJlc2V0IHdhcyBzcGVjaWZpZWQgYXMNCj4+IEdQSU9fQUNUSVZF
+X0hJR0guDQo+Pg0KPj4gTm93IGFzIHRoZSBPTEVEIGRyaXZlciBpcyBmaXhlZCBpdCBpcyBhbHNv
+IG5lY2Vzc2FycnkgdG8gaW1wbGVtZW50DQo+PiBhIGZpeHVwIGZvciBhbGwgY3VycmVudCB1c2Vy
+cyBvZiB0aGUgb2xkIERUIEFCSS4gVGhlcmUgaXMgb25seSBvbmUNCj4+IGluLXRyZWUgdXNlciBh
+bmQgdGhhdCBpcyB0aGUgQ3J5c3RhbGZvbnR6IENGQS0xMDAzNiBib2FyZC4gSW4gY2FzZQ0KPj4g
+dGhpcyBib2FyZCBpcyBib290aW5nIGFuZCBHUElPX0FDVElWRV9ISUdIIGlzIHVzZWQgZm9yIHJl
+c2V0IHdlDQo+PiBvdmVycmlkZSBpdCB0byBHUElPX0FDVElWRV9MT1cuDQo+Pg0KPj4gU2lnbmVk
+LW9mZi1ieTogTWljaGFsIFZva8OhxI0gPG1pY2hhbC52b2thY0B5c29mdC5jb20+DQo+PiAtLS0N
+Cj4+ICAgYXJjaC9hcm0vbWFjaC1teHMvbWFjaC1teHMuYyB8IDQ1ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA0NSBpbnNl
+cnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbXhzL21hY2gtbXhz
+LmMgYi9hcmNoL2FybS9tYWNoLW14cy9tYWNoLW14cy5jDQo+PiBpbmRleCAxYzYwNjJkLi4yM2My
+NjBjIDEwMDY0NA0KPj4gLS0tIGEvYXJjaC9hcm0vbWFjaC1teHMvbWFjaC1teHMuYw0KPj4gKysr
+IGIvYXJjaC9hcm0vbWFjaC1teHMvbWFjaC1teHMuYw0KPj4gQEAgLTIxLDYgKzIxLDcgQEANCj4+
+ICAgI2luY2x1ZGUgPGxpbnV4L3JlYm9vdC5oPg0KPj4gICAjaW5jbHVkZSA8bGludXgvbWljcmVs
+X3BoeS5oPg0KPj4gICAjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPj4gKyNpbmNsdWRl
+IDxsaW51eC9vZl9ncGlvLmg+DQo+PiAgICNpbmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0K
+Pj4gICAjaW5jbHVkZSA8bGludXgvcGh5Lmg+DQo+PiAgICNpbmNsdWRlIDxsaW51eC9waW5jdHJs
+L2NvbnN1bWVyLmg+DQo+PiBAQCAtMjY4LDkgKzI2OSw1MyBAQCBzdGF0aWMgdm9pZCBfX2luaXQg
+YXB4NGRldmtpdF9pbml0KHZvaWQpDQo+PiAgIAkJCQkJICAgYXB4NGRldmtpdF9waHlfZml4dXAp
+Ow0KPj4gICB9DQo+PiAgIA0KPj4gKyNkZWZpbmUgT0xFRF9SRVNFVF9HUElPX0xFTgkzDQo+PiAr
+I2RlZmluZSBPTEVEX1JFU0VUX0dQSU9fU0laRQkoT0xFRF9SRVNFVF9HUElPX0xFTiAqIHNpemVv
+Zih1MzIpKQ0KPj4gKw0KPj4gK3N0YXRpYyB2b2lkIF9faW5pdCBjcnlzdGFsZm9udHpfb2xlZF9y
+ZXNldF9maXh1cCh2b2lkKQ0KPj4gK3sNCj4+ICsJc3RydWN0IHByb3BlcnR5ICpuZXdncGlvOw0K
+Pj4gKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wOw0KPj4gKwl1MzIgKmdwaW9zcGVjOw0KPj4gKwlp
+bnQgaSwgcmV0Ow0KPj4gKw0KPj4gKwlucCA9IG9mX2ZpbmRfY29tcGF0aWJsZV9ub2RlKE5VTEws
+IE5VTEwsICJzb2xvbW9uLHNzZDEzMDZmYi1pMmMiKTsNCj4+ICsJaWYgKCFucCkNCj4+ICsJCXJl
+dHVybjsNCj4+ICsNCj4+ICsJbmV3Z3BpbyA9IGt6YWxsb2Moc2l6ZW9mKCpuZXdncGlvKSArIE9M
+RURfUkVTRVRfR1BJT19TSVpFLCBHRlBfS0VSTkVMKTsNCj4+ICsJaWYgKCFuZXdncGlvKQ0KPj4g
+KwkJcmV0dXJuOw0KPj4gKw0KPj4gKwluZXdncGlvLT52YWx1ZSA9IG5ld2dwaW8gKyAxOw0KPj4g
+KwluZXdncGlvLT5sZW5ndGggPSBPTEVEX1JFU0VUX0dQSU9fU0laRTsNCj4+ICsJbmV3Z3Bpby0+
+bmFtZSA9IGtzdHJkdXAoInJlc2V0LWdwaW9zIiwgR0ZQX0tFUk5FTCk7DQo+PiArCWlmICghbmV3
+Z3Bpby0+bmFtZSkgew0KPj4gKwkJa2ZyZWUobmV3Z3Bpbyk7DQo+PiArCQlyZXR1cm47DQo+PiAr
+CX0NCj4+ICsNCj4+ICsJZ3Bpb3NwZWMgPSBuZXdncGlvLT52YWx1ZTsNCj4+ICsJZm9yIChpID0g
+MDsgaSA8IE9MRURfUkVTRVRfR1BJT19MRU47IGkrKykgew0KPj4gKwkJcmV0ID0gb2ZfcHJvcGVy
+dHlfcmVhZF91MzJfaW5kZXgobnAsICJyZXNldC1ncGlvcyIsIGksDQo+PiArCQkJCQkJICZncGlv
+c3BlY1tpXSk7DQo+IA0KPiBEb24ndCB3ZSBoYXZlIGEgaGVscGVyIHRvIHJlYWQgdGhlIHdob2xl
+IGFycmF5Pw0KDQpIaSBSb2IsDQp5ZXAsIEkgd2lsbCBmaXggdGhpcy4NClRoYW5rIHlvdSBmb3Ig
+eW91ciByZXZpZXcgYW5kIGZvciBwb2ludGluZyBtZSB0byB0aGUgcmlnaHQgc29sdXRpb24uDQoN
+Ck1pY2hhbA0KDQo+IA0KPiBPdGhlcndpc2UsIGZvciB0aGUgc2VyaWVzOg0KPiANCj4gUmV2aWV3
+ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+IA0KPj4gKwkJaWYgKHJldCkg
+ew0KPj4gKwkJCWtmcmVlKG5ld2dwaW8pOw0KPj4gKwkJCXJldHVybjsNCj4+ICsJCX0NCj4+ICsJ
+fQ0KPj4gKw0KPj4gKwlpZiAoIShncGlvc3BlY1syXSAmIE9GX0dQSU9fQUNUSVZFX0xPVykpIHsN
+Cj4+ICsJCWdwaW9zcGVjWzJdIHw9IE9GX0dQSU9fQUNUSVZFX0xPVzsNCj4+ICsJCWNwdV90b19i
+ZTMyX2FycmF5KGdwaW9zcGVjLCBncGlvc3BlYywgT0xFRF9SRVNFVF9HUElPX0xFTik7DQo+PiAr
+CQlvZl91cGRhdGVfcHJvcGVydHkobnAsIG5ld2dwaW8pOw0KPj4gKwl9DQo+PiArfQ0KPj4gKw0K
+Pj4gICBzdGF0aWMgdm9pZCBfX2luaXQgY3J5c3RhbGZvbnR6X2luaXQodm9pZCkNCj4+ICAgew0K
+Pj4gICAJdXBkYXRlX2ZlY19tYWNfcHJvcChPVUlfQ1JZU1RBTEZPTlRaKTsNCj4+ICsJY3J5c3Rh
+bGZvbnR6X29sZWRfcmVzZXRfZml4dXAoKTsNCj4+ICAgfQ0KPj4gICANCj4+ICAgc3RhdGljIHZv
+aWQgX19pbml0IGR1Y2tiaWxsX2luaXQodm9pZCkNCj4+IC0tIA0KPj4gMi4xLjQNCj4+DQoNCg==
