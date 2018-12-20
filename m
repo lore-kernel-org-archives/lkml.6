@@ -2,84 +2,137 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF867C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5F2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992F220866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:12:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oZMpLt50"
+	by mail.kernel.org (Postfix) with ESMTP id 2F25920989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbeLTCL7 (ORCPT
+        id S1729976AbeLTCQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:11:59 -0500
-Received: from ozlabs.org ([203.11.71.1]:55801 "EHLO ozlabs.org"
+        Wed, 19 Dec 2018 21:16:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727850AbeLTCL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:11:59 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726604AbeLTCQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 21:16:18 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43KwHc6pdCz9sBh;
-        Thu, 20 Dec 2018 13:11:56 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545271917;
-        bh=ciSeFkVKWdah5FetgAxfiRQGeBDPYW6nO5746lzIMIg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oZMpLt501Zenwbychpa0wthCG2EWdNkBEwxM9klxVB+sM6rGjGi/S1RqODOw2IevZ
-         mva5VvpPHmteAeH0/0HlUoLdFsn3LZkz+Ofrhnnt37APd6wxdhfP09svRY14AGBlMM
-         l6AyWQxECkmivQySsAYbkg06gdi2eqDKex8AyIbd5UK8Gvn8T+JtdjPPvdz5IcaUW9
-         VqiGUEk9tPF6H2uLM2F5mgpFpW7NYzNeT3F3o51gXbAB4alwVjc+NYFsqabHOJY9/V
-         So1a4y3FlRKuClDy8d2V0RXiy7ZGhp1ZurQue2lhrc5UsfKHR2bQt7gRXRz+8h9gBO
-         VNg2k38Pyy2zw==
-Date:   Thu, 20 Dec 2018 13:11:56 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Linus <torvalds@linux-foundation.org>
-Subject: linux-next: a short break
-Message-ID: <20181220131156.67eaab49@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 98A9920578;
+        Thu, 20 Dec 2018 02:16:16 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 21:16:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [RFC][PATCH v2] string.h: Add strncmp_prefix() helper macro
+Message-ID: <20181219211615.2298e781@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ujzj.E9+gUKnp7NWKQH7Ind"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ujzj.E9+gUKnp7NWKQH7Ind
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+A discussion came up in the trace triggers thread about converting a
+bunch of:
 
-Hi all,
+ strncmp(str, "const", sizeof("const") - 1)
 
-There will be no linux-next releases between Dec 22 and Jan 1
-inclusive.  I hope you all have a great break.
+use cases into a helper macro. It started with:
 
---=20
-Cheers,
-Stephen Rothwell
+#define strncmp_const(str, const) \
+	strncmp(str, const, sizeof(const) - 1)
 
---Sig_/ujzj.E9+gUKnp7NWKQH7Ind
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+But then Joe Perches mentioned that if a const is not used, the
+sizeof() will be the size of a pointer, which can be bad. And that
+gcc will optimize strlen("const") into "sizeof("const") - 1".
 
------BEGIN PGP SIGNATURE-----
+Thinking about this more, a quick grep in the kernel tree found several
+(thousands!) of cases that use this construct. A quick grep also
+revealed that there's probably several bugs in that use case. Some are
+that people forgot the "- 1" (which I found) and others could be that
+the constant for the sizeof is different than the constant (although, I
+haven't found any of those, but I also didn't look hard).
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa+mwACgkQAVBC80lX
-0GzHDwgAgBkU6MxgD/3PMUKyXpj3VNOVQzRK4QwxeHA7Hw1rVnEwHz4aPxBhHS1j
-nGeq/uSY9wpL/P/ug+IG+N51uiGoNZWM52rPe6jb73enUtlFCQQjjK4ZrF40Gqd1
-szk7TpcBiTqRt5puMGCOQhiS7I7VBCSVnBgkp1JsHegig+N+xo3QguLWOJzivtAE
-hzYuuRWpgyekefEjuAnZa5Dc/IMCl9C6eBTLQqpEv/PCU+mUfYRlOD95xiZGm4dX
-BNphsEK5IMMIO7FsQulYV71fzFggI0/EMkFL5dfTcFLzbNUGgfWFrzq3vElOVGBa
-ok8rezlcNilVYU3dpvMStA0lE1U5/A==
-=7Kxe
------END PGP SIGNATURE-----
+I figured the best thing to do is to create a helper macro and place it
+into include/linux/string.h. And go around and fix all the open coded
+versions of it later.
 
---Sig_/ujzj.E9+gUKnp7NWKQH7Ind--
+I plan on only applying this patch and updating the tracing hooks for
+this merge window. And perhaps use it to fix some of the bugs that were
+found.
+
+I was going to just use:
+
+#define strncmp_prefix(str, prefix) \
+	strncmp(str, prefix, strlen(prefix))
+
+but then realized that "prefix" is used twice, and will break if
+someone does something like:
+
+	strncmp_prefix(str, ptr++);
+
+So instead I check with __builtin_constant_p() to see if the second
+parameter is truly a constant, which I use sizeof() anyway (why bother
+gcc to optimize it, if we already know it's a constant), and copy the
+parameter into a local variable and use that local variable for the non
+constant part (with strlen).
+
+Link: http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+Changes since v1:
+
+ - Sending this time as Bryana's dad
+
+ - Moved the assignment of the non constant into the non constant block
+   (Pointed out by Joe Perches)
+
+ - Added "typeof(prefix)" to define the non constant variable
+    (Suggested by Joe Perches)
+
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 27d0482e5e05..a998a53333ef 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -14,6 +14,28 @@ extern void *memdup_user(const void __user *, size_t);
+ extern void *vmemdup_user(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
+ 
++/*
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use strncmp_prefix().
++ */
++#define strncmp_prefix(str, prefix)					\
++	({								\
++		int ____strcmp_prefix_ret____;				\
++		if (__builtin_constant_p(&prefix)) {			\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, prefix, sizeof(prefix) - 1); \
++		} else {						\
++			typeof(prefix) ____strcmp_prefix____ = prefix;	\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, ____strcmp_prefix____,	\
++					strlen(____strcmp_prefix____));	\
++		}							\
++		____strcmp_prefix_ret____;				\
++	})
++
+ /*
+  * Include machine specific inline routines
+  */
