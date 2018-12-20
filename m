@@ -2,97 +2,82 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73381C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A1DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF63218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:41:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="bCHMPea4"
+	by mail.kernel.org (Postfix) with ESMTP id CB31E2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbeLTKlX (ORCPT
+        id S1731036AbeLTKnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:41:23 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35135 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbeLTKlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:41:23 -0500
-Received: by mail-ed1-f66.google.com with SMTP id x30so1316130edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qrnoWVRgBMFgFz3oKgCnWbXHJsB70kEiZDeudcCynpM=;
-        b=bCHMPea4ZOU60yKwFSYruzYTdcD/sXnyNsNARIiJy/qcRQ+Vj53j94J/JpvLJ+RUx0
-         T5oIY7QxARMjoJEHqkRQxoMJVQtNTKEIJlbexjxWj4Jr/py8jhRPWnXndAI+6uHrZGDx
-         2qT3E8sf5FgywUPnxGwCjYVzq38ntjgxixzGHTIzLb7aT+PtYefscKd6q0OGqHBuMuXl
-         XRRX2dVpxc01COsbWJHeNe59Q1bDrH7DV/1Qbzxyd3gINmsxplKfyWgTVtWeIyhHtr1T
-         l3kwWUa6kcvVnkQDLmT9L5Nr+EyhppiQaGPIrS6iCcGnRcDPyVD+P0FwJtgSx9PoBchy
-         zELw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qrnoWVRgBMFgFz3oKgCnWbXHJsB70kEiZDeudcCynpM=;
-        b=g2jxfO36uXz9zQy/FD014mUGqZdZqK64/fPQeFrRWJ9kPBTXdbzoUSuDesADIVO70v
-         jyO0bzaWlabtxYh45V8oSxdOHW0nn6GbjBFk0hhdKzW6ceTf+PgB1sNyo1nKagjL8Dmr
-         o9gpNN8UMfogAUxJCIQTloMcCGeIUOoU9H4s2lKORWtmWbsEl9PnmJKKL/FxCu1bCiaU
-         pxwOxttUQuCyto7NsspKUZvduMkaPrV935OAbnou9sPfez78SSrrKedJ7gIUrNIUlayI
-         gPkRc91hBMadtZr0tenjUNJ4XcSSceknV3PR2NaS/XXfdxcKnTpkExN9Ipoi+s+jCtRV
-         PKqg==
-X-Gm-Message-State: AA+aEWZtJF425TlReLGTI5feE3+Q0aDA5DmWY7hclIeDse9VOYKhM8Do
-        R1StGzKC5rf7ynASgBLvzpDYCA==
-X-Google-Smtp-Source: AFSGD/WJXRq0aaV/dsd3mxt9DFB8Lwem0H/fifRUZegF5NBmgZmv9ZJYTG3LmwGE5wcruaCEVXwpEg==
-X-Received: by 2002:a17:906:6d59:: with SMTP id a25-v6mr19224451ejt.54.1545302481752;
-        Thu, 20 Dec 2018 02:41:21 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:6c14:58a0:c7b2:d756:db85])
-        by smtp.gmail.com with ESMTPSA id q3-v6sm3081404ejz.30.2018.12.20.02.41.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 02:41:21 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@google.com,
-        linux-kernel@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>
-Subject: [PATCH] MAINTAINERS: update Android binder
-Date:   Thu, 20 Dec 2018 11:40:57 +0100
-Message-Id: <20181220104057.18628-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
+        Thu, 20 Dec 2018 05:43:15 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16173 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725730AbeLTKnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 05:43:14 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB501C6BD8103;
+        Thu, 20 Dec 2018 18:43:10 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.14) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
+ 18:43:09 +0800
+Subject: Re: [PATCH] jffs2: Fix integer underflow in jffs2_rtime_compress
+To:     Richard Weinberger <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>
+CC:     <dwmw2@infradead.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20181215162350.12489-1-richard@nod.at>
+From:   Hou Tao <houtao1@huawei.com>
+Message-ID: <cae86ca1-91f9-6728-df64-40580145220d@huawei.com>
+Date:   Thu, 20 Dec 2018 18:43:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181215162350.12489-1-richard@nod.at>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.14]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As briefly discussed with Greg and Todd, add Christian as maintainer for
-binder{fs}.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3318f30903b2..3c78cfa08c47 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -950,6 +950,7 @@ M:	Arve Hjønnevåg <arve@android.com>
- M:	Todd Kjos <tkjos@android.com>
- M:	Martijn Coenen <maco@android.com>
- M:	Joel Fernandes <joel@joelfernandes.org>
-+M:	Christian Brauner <christian@brauner.io>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
- L:	devel@driverdev.osuosl.org
- S:	Supported
--- 
-2.19.1
+On 2018/12/16 0:23, Richard Weinberger wrote:
+> The rtime compressor assumes that at least two bytes are
+> compressed.
+> If we try to compress just one byte, the loop condition will
+> wrap around and an out-of-bounds write happens.
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+>  fs/jffs2/compr_rtime.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> It seems that it doesn't incur any harm because the minimal allocated
+size will be 8-bytes and jffs2_rtime_compress() will write 2-bytes into
+the allocated buffer.
+
+> diff --git a/fs/jffs2/compr_rtime.c b/fs/jffs2/compr_rtime.c
+> index 406d9cc84ba8..cbf700001fc9 100644
+> --- a/fs/jffs2/compr_rtime.c
+> +++ b/fs/jffs2/compr_rtime.c
+> @@ -39,6 +39,9 @@ static int jffs2_rtime_compress(unsigned char *data_in,
+>  
+>  	memset(positions,0,sizeof(positions));
+>  
+> +	if (*dstlen < 2)
+> +		return -1;
+> +
+>  	while (pos < (*sourcelen) && outpos <= (*dstlen)-2) {
+>  		int backpos, runlen=0;
+>  		unsigned char value;
+> 
 
