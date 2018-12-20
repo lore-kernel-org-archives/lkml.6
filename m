@@ -2,93 +2,160 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C534AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD9B21720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:45:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="liyC5MQF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XQnw67Vp"
+	by mail.kernel.org (Postfix) with ESMTP id 8E8EB21720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbeLTHpG (ORCPT
+        id S1730603AbeLTHpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 02:45:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbeLTHpG (ORCPT
+        Thu, 20 Dec 2018 02:45:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35328 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727790AbeLTHpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 02:45:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9A84A609BD; Thu, 20 Dec 2018 07:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545291905;
-        bh=Ps+jTx430mNatVK6eXnpdGimwC8ru0CTiKlGF61Uy1M=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=liyC5MQFSQh/+qq7gwj6sIZx2wubtFBYHe7BSje3ruIGRSZFSU9C3e+2j2HGlB36x
-         NdE1ZDH8AK9Z42TOMVkr5a2fcykazI4IkpjIpZL7QKROBYpFNOxkCT6SBsJ/7gHJnG
-         hlIdfzlKBc6IXdBcyjYc/vYyAT0UkDKhSjYmdjpM=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3907D60985;
-        Thu, 20 Dec 2018 07:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545291904;
-        bh=Ps+jTx430mNatVK6eXnpdGimwC8ru0CTiKlGF61Uy1M=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=XQnw67VpwluyamBo1RRltflGIXN1/HR/12h3dlLPIIa0GFCpSc7dfS+nioGW9tLrd
-         hfzSIcVyOMjxbG87SN9/maQBnX1ZWqC9GUD8dbN0uxzBIfTKtdFD8aIuq+NwpzQZhb
-         Lagou239G1HcLPdJbicfQuuq/p4e2eeZLbo00F/U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3907D60985
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 20 Dec 2018 02:45:47 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBK7iJcd085586
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:45:46 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pg54fn11k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:45:45 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 20 Dec 2018 07:45:43 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 07:45:42 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBK7jfbU8782322
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 07:45:41 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 357DAA4064;
+        Thu, 20 Dec 2018 07:45:41 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FAC2A4062;
+        Thu, 20 Dec 2018 07:45:41 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.116])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Dec 2018 07:45:40 +0000 (GMT)
+To:     Michael S Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: 4.20-rc6: WARNING: CPU: 30 PID: 197360 at
+ net/core/flow_dissector.c:764 __skb_flow_dissect
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 20 Dec 2018 08:45:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wil6210: remove set but not used variable 'wdev'
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1543996743-137124-1-git-send-email-yuehaibing@huawei.com>
-References: <1543996743-137124-1-git-send-email-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Maya Erez <merez@codeaurora.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        <linux-wireless@vger.kernel.org>, <wil6210@qti.qualcomm.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181220074505.9A84A609BD@smtp.codeaurora.org>
-Date:   Thu, 20 Dec 2018 07:45:05 +0000 (UTC)
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122007-0016-0000-0000-000002390D0F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122007-0017-0000-0000-0000329166B2
+Message-Id: <ba519cd8-ab88-2868-f6d0-be321d8df0be@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=466 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
+Folks,
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/wireless/ath/wil6210/main.c: In function '_wil6210_disconnect':
-> drivers/net/wireless/ath/wil6210/main.c:407:23: warning:
->  variable 'wdev' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since commit ("e1b43407c034 wil6210: refactor disconnect flow")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Maya Erez <merez@codeaurora.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+I got this warning today. I cant tell when and why this happened, so I do not know yet how to reproduce.
+Maybe someone has a quick idea.
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-3fe970e76b37 wil6210: remove set but not used variable 'wdev'
-
--- 
-https://patchwork.kernel.org/patch/10713127/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+[85109.572032] WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764 __skb_flow_dissect+0x1f0/0x1318
+[85109.572036] Modules linked in: vhost_net vhost macvtap macvlan tap vfio_ap vfio_mdev mdev vfio_iommu_type1 vfio kvm xt_CHECKSUM ipt_MASQUERADE tun bridge stp llc xt_tcpudp ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ip6table_nat nf_nat_ipv6 ip6table_mangle ip6table_raw ip6table_security iptable_nat nf_nat_ipv4 nf_nat iptable_mangle iptable_raw iptable_security nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nfnetlink ip6table_filter ip6_tables iptable_filter dm_service_time rpcrdma sunrpc rdma_ucm rdma_cm configfs iw_cm ib_cm mlx4_ib ib_uverbs ib_core pkey ghash_s390 prng aes_s390 des_s390 des_generic sha512_s390 sha1_s390 zcrypt_cex4 zcrypt rng_core eadm_sch sch_fq_codel ip_tables x_tables mlx4_en mlx4_core sha256_s390 sha_common dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua dm_mirror dm_region_hash dm_log dm_mod autofs4
+[85109.572072] CPU: 30 PID: 197360 Comm: vhost-197330 Not tainted 4.20.0-20181213.rc6.git0.407d079170c1.300.fc29.s390x #1
+[85109.572074] Hardware name: IBM 2964 NC9 712 (LPAR)
+[85109.572075] Krnl PSW : 0704c00180000000 000000000092e320 (__skb_flow_dissect+0x1f0/0x1318)
+[85109.572078]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+[85109.572080] Krnl GPRS: 000000000000002a 0000000000000000 000003e0385bfc84 0000000000d91e30
+[85109.572081]            000003e0385bfc84 0000000000000000 0000000000000000 0000000000d91e30
+[85109.572083]            000003e0385bfc84 000000000000000e 0000007e3eb88100 0000007ff3561e00
+[85109.572084]            0000000000000806 0000000000b4f288 000003e0385bfbb8 000003e0385bfab0
+[85109.572115] Krnl Code: 000000000092e312: e310b0180002	ltg	%r1,24(%r11)
+                          000000000092e318: a7740271		brc	7,92e7fa
+                         #000000000092e31c: a7f40001		brc	15,92e31e
+                         >000000000092e320: 91407003		tm	3(%r7),64
+                          000000000092e324: a7740257		brc	7,92e7d2
+                          000000000092e328: 5810f0b4		l	%r1,180(%r15)
+                          000000000092e32c: e54cf0c80000	mvhi	200(%r15),0
+                          000000000092e332: c01b00000008	nilf	%r1,8
+[85109.572129] Call Trace:
+[85109.572130] ([<0000000000000000>]           (null))
+[85109.572134]  [<000003ff800c81e4>] tap_sendmsg+0x384/0x430 [tap] 
+[85109.572137]  [<000003ff801acdee>] vhost_tx_batch.isra.10+0x66/0xe0 [vhost_net] 
+[85109.572138]  [<000003ff801ad61c>] handle_tx_copy+0x18c/0x568 [vhost_net] 
+[85109.572140]  [<000003ff801adab4>] handle_tx+0xbc/0x100 [vhost_net] 
+[85109.572145]  [<000003ff8019bbe8>] vhost_worker+0xc8/0x128 [vhost] 
+[85109.572148]  [<00000000001690b8>] kthread+0x140/0x160 
+[85109.572152]  [<0000000000a84266>] kernel_thread_starter+0x6/0x10 
+[85109.572154]  [<0000000000a84260>] kernel_thread_starter+0x0/0x10 
+[85109.572155] Last Breaking-Event-Address:
+[85109.572156]  [<000000000092e31c>] __skb_flow_dissect+0x1ec/0x1318
+[85109.572158] ---[ end trace 97c040a6691bc000 ]---
 
