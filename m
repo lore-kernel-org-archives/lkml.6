@@ -2,48 +2,47 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E68C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DB7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3EF218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 428B3218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388854AbeLTSWt (ORCPT
+        id S2388873AbeLTSXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:22:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47507 "EHLO
+        Thu, 20 Dec 2018 13:23:24 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54069 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731559AbeLTSWs (ORCPT
+        with ESMTP id S1731018AbeLTSXX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:22:48 -0500
+        Thu, 20 Dec 2018 13:23:23 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIMcKe3684032
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKINCYl3684070
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:22:38 -0800
+        Thu, 20 Dec 2018 10:23:12 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIMb3S3684029;
-        Thu, 20 Dec 2018 10:22:37 -0800
-Date:   Thu, 20 Dec 2018 10:22:37 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKINCA13684067;
+        Thu, 20 Dec 2018 10:23:12 -0800
+Date:   Thu, 20 Dec 2018 10:23:12 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-zypczc88gzbmeqx7b372s138@git.kernel.org>
-Cc:     adrian.hunter@intel.com, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        lclaudio@redhat.com, namhyung@kernel.org, hpa@zytor.com,
-        wangnan0@huawei.com
-Reply-To: adrian.hunter@intel.com, mingo@kernel.org, acme@redhat.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, namhyung@kernel.org, lclaudio@redhat.com,
-          hpa@zytor.com, wangnan0@huawei.com
+Message-ID: <tip-mtn1i4rjowjl72trtnbmvjd4@git.kernel.org>
+Cc:     hpa@zytor.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        lclaudio@redhat.com, tglx@linutronix.de, acme@redhat.com,
+        wangnan0@huawei.com, jolsa@kernel.org
+Reply-To: hpa@zytor.com, adrian.hunter@intel.com, namhyung@kernel.org,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, lclaudio@redhat.com, acme@redhat.com,
+          wangnan0@huawei.com, jolsa@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Add a prefix member to the strarray
- class
-Git-Commit-ID: 2e3d7fac9db5e80d1cc26bb1453b85245c26d657
+Subject: [tip:perf/core] perf trace: Allow asking for not suppressing common
+ string prefixes
+Git-Commit-ID: c65c83ffe904590162bd762be185ac4d53ce5a85
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,354 +56,1042 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2e3d7fac9db5e80d1cc26bb1453b85245c26d657
-Gitweb:     https://git.kernel.org/tip/2e3d7fac9db5e80d1cc26bb1453b85245c26d657
+Commit-ID:  c65c83ffe904590162bd762be185ac4d53ce5a85
+Gitweb:     https://git.kernel.org/tip/c65c83ffe904590162bd762be185ac4d53ce5a85
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 14 Dec 2018 15:08:40 -0300
+AuthorDate: Fri, 14 Dec 2018 17:06:47 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 16:07:42 -0300
 
-perf trace: Add a prefix member to the strarray class
+perf trace: Allow asking for not suppressing common string prefixes
 
-So that the user, in an upcoming patch, can select printing it to get
-the full string as used in the source code, not one with a common prefix
-chopped off so as to make the output more compact.
+So far we've been suppressing common stuff such as "MAP_" in the mmap
+flags, showing "SHARED" instead of "MAP_SHARED", allow for those
+prefixes (and a few suffixes) to be shown:
+
+  # trace -e *map,open*,*seek sleep 1
+  openat("/etc/ld.so.cache", CLOEXEC) = 3
+  mmap(0, 109093, READ, PRIVATE, 3, 0) = 0x7ff61c695000
+  openat("/lib64/libc.so.6", CLOEXEC) = 3
+  lseek(3, 792, SET) = 792
+  mmap(0, 8192, READ|WRITE, PRIVATE|ANONYMOUS) = 0x7ff61c693000
+  lseek(3, 792, SET) = 792
+  lseek(3, 864, SET) = 864
+  mmap(0, 1857568, READ, PRIVATE|DENYWRITE, 3, 0) = 0x7ff61c4cd000
+  mmap(0x7ff61c4ef000, 1363968, EXEC|READ, PRIVATE|FIXED|DENYWRITE, 3, 139264) = 0x7ff61c4ef000
+  mmap(0x7ff61c63c000, 311296, READ, PRIVATE|FIXED|DENYWRITE, 3, 1503232) = 0x7ff61c63c000
+  mmap(0x7ff61c689000, 24576, READ|WRITE, PRIVATE|FIXED|DENYWRITE, 3, 1814528) = 0x7ff61c689000
+  mmap(0x7ff61c68f000, 14368, READ|WRITE, PRIVATE|FIXED|ANONYMOUS) = 0x7ff61c68f000
+  munmap(0x7ff61c695000, 109093) = 0
+  openat("/usr/lib/locale/locale-archive", CLOEXEC) = 3
+  mmap(0, 217749968, READ, PRIVATE, 3, 0) = 0x7ff60f523000
+  #
+  # vim ~/.perfconfig
+  #
+  # perf config
+  llvm.dump-obj=true
+  trace.add_events=/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o
+  trace.show_zeros=yes
+  trace.show_duration=no
+  trace.no_inherit=yes
+  trace.show_timestamp=no
+  trace.show_arg_names=no
+  trace.args_alignment=0
+  trace.string_quote="
+  trace.show_prefix=yes
+  #
+  #
+  # trace -e *map,open*,*seek sleep 1
+  openat(AT_FDCWD, "/etc/ld.so.cache", O_CLOEXEC) = 3
+  mmap(0, 109093, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f7ebbe59000
+  openat(AT_FDCWD, "/lib64/libc.so.6", O_CLOEXEC) = 3
+  lseek(3, 792, SEEK_SET) = 792
+  mmap(0, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS) = 0x7f7ebbe57000
+  lseek(3, 792, SEEK_SET) = 792
+  lseek(3, 864, SEEK_SET) = 864
+  mmap(0, 1857568, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f7ebbc91000
+  mmap(0x7f7ebbcb3000, 1363968, PROT_EXEC|PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 139264) = 0x7f7ebbcb3000
+  mmap(0x7f7ebbe00000, 311296, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 1503232) = 0x7f7ebbe00000
+  mmap(0x7f7ebbe4d000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 1814528) = 0x7f7ebbe4d000
+  mmap(0x7f7ebbe53000, 14368, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS) = 0x7f7ebbe53000
+  munmap(0x7f7ebbe59000, 109093) = 0
+  openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_CLOEXEC) = 3
+  mmap(0, 217749968, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f7eaece7000
+  #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-zypczc88gzbmeqx7b372s138@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-mtn1i4rjowjl72trtnbmvjd4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c            | 21 +++++++++++----------
- tools/perf/trace/beauty/beauty.h      |  7 +++++--
- tools/perf/trace/beauty/fcntl.c       |  2 +-
- tools/perf/trace/beauty/ioctl.c       | 16 ++++++++--------
- tools/perf/trace/beauty/kcmp.c        |  2 +-
- tools/perf/trace/beauty/mmap.c        |  4 ++--
- tools/perf/trace/beauty/mount_flags.c |  2 +-
- tools/perf/trace/beauty/pkey_alloc.c  |  2 +-
- tools/perf/trace/beauty/prctl.c       |  4 ++--
- tools/perf/trace/beauty/renameat.c    |  2 +-
- tools/perf/trace/beauty/sockaddr.c    |  2 +-
- tools/perf/trace/beauty/socket.c      |  2 +-
- 12 files changed, 35 insertions(+), 31 deletions(-)
+ tools/perf/Documentation/perf-config.txt  |  4 ++++
+ tools/perf/builtin-trace.c                | 30 ++++++++++++++++++++----------
+ tools/perf/trace/beauty/beauty.h          |  8 +++++---
+ tools/perf/trace/beauty/clone.c           |  7 ++++---
+ tools/perf/trace/beauty/eventfd.c         |  4 +++-
+ tools/perf/trace/beauty/fcntl.c           | 20 +++++++++++---------
+ tools/perf/trace/beauty/flock.c           |  4 +++-
+ tools/perf/trace/beauty/futex_op.c        |  8 +++++---
+ tools/perf/trace/beauty/futex_val3.c      |  3 ++-
+ tools/perf/trace/beauty/ioctl.c           | 15 +++++++++------
+ tools/perf/trace/beauty/kcmp.c            |  6 +++---
+ tools/perf/trace/beauty/mmap.c            | 16 ++++++++++------
+ tools/perf/trace/beauty/mode_t.c          |  4 +++-
+ tools/perf/trace/beauty/mount_flags.c     |  6 +++---
+ tools/perf/trace/beauty/msg_flags.c       |  4 +++-
+ tools/perf/trace/beauty/open_flags.c      | 11 ++++++-----
+ tools/perf/trace/beauty/perf_event_open.c |  4 +++-
+ tools/perf/trace/beauty/pkey_alloc.c      | 12 ++++++------
+ tools/perf/trace/beauty/prctl.c           | 12 ++++++------
+ tools/perf/trace/beauty/renameat.c        |  6 +++---
+ tools/perf/trace/beauty/sched_policy.c    |  6 ++++--
+ tools/perf/trace/beauty/seccomp.c         |  8 ++++++--
+ tools/perf/trace/beauty/signum.c          |  4 +++-
+ tools/perf/trace/beauty/sockaddr.c        |  2 +-
+ tools/perf/trace/beauty/socket.c          |  6 +++---
+ tools/perf/trace/beauty/socket_type.c     |  4 +++-
+ tools/perf/trace/beauty/statx.c           | 10 +++++++---
+ tools/perf/trace/beauty/waitid_options.c  |  4 +++-
+ 28 files changed, 142 insertions(+), 86 deletions(-)
 
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 0098eab8e5b1..4ac7775fbc11 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -543,6 +543,10 @@ trace.*::
+ 	trace.show_duration::
+ 		Show syscall duration.
+ 
++	trace.show_prefix::
++		If set to 'yes' will show common string prefixes in tables. The default
++		is to remove the common prefix in things like "MAP_SHARED", showing just "SHARED".
++
+ 	trace.show_timestamp::
+ 		Show syscall start timestamp.
+ 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index dc8cadeb3fa5..02bc5da5cfa7 100644
+index 02bc5da5cfa7..8a176ab2bd8e 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -423,6 +423,7 @@ static size_t syscall_arg__scnprintf_fd_at(char *bf, size_t size,
+@@ -132,6 +132,7 @@ struct trace {
+ 	bool			show_duration;
+ 	bool			show_zeros;
+ 	bool			show_arg_names;
++	bool			show_string_prefix;
+ 	bool			force;
+ 	bool			vfs_getname;
+ 	int			trace_pgfaults;
+@@ -360,21 +361,21 @@ out_delete:
+ 	({ struct syscall_tp *fields = evsel->priv; \
+ 	   fields->name.pointer(&fields->name, sample); })
+ 
+-size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val)
++size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_prefix, int val)
+ {
+ 	int idx = val - sa->offset;
+ 
+ 	if (idx < 0 || idx >= sa->nr_entries || sa->entries[idx] == NULL)
+ 		return scnprintf(bf, size, intfmt, val);
+ 
+-	return scnprintf(bf, size, "%s", sa->entries[idx]);
++	return scnprintf(bf, size, "%s%s", show_prefix ? sa->prefix : "", sa->entries[idx]);
+ }
+ 
+ static size_t __syscall_arg__scnprintf_strarray(char *bf, size_t size,
+ 						const char *intfmt,
+ 					        struct syscall_arg *arg)
+ {
+-	return strarray__scnprintf(arg->parm, bf, size, intfmt, arg->val);
++	return strarray__scnprintf(arg->parm, bf, size, intfmt, arg->show_string_prefix, arg->val);
+ }
+ 
+ static size_t syscall_arg__scnprintf_strarray(char *bf, size_t size,
+@@ -408,7 +409,7 @@ size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size,
+ 		if (idx >= 0 && idx < sa->nr_entries) {
+ 			if (sa->entries[idx] == NULL)
+ 				break;
+-			return scnprintf(bf, size, "%s", sa->entries[idx]);
++			return scnprintf(bf, size, "%s%s", arg->show_string_prefix ? sa->prefix : "", sa->entries[idx]);
+ 		}
+ 	}
+ 
+@@ -423,10 +424,10 @@ static size_t syscall_arg__scnprintf_fd_at(char *bf, size_t size,
  					   struct syscall_arg *arg)
  {
  	int fd = arg->val;
-+	/* char fd_at_prefix = "AT_FD"; */
+-	/* char fd_at_prefix = "AT_FD"; */
++	const char *prefix = "AT_FD";
  
  	if (fd == AT_FDCWD)
- 		return scnprintf(bf, size, "CWD");
-@@ -456,13 +457,13 @@ static const char *bpf_cmd[] = {
- 	"MAP_CREATE", "MAP_LOOKUP_ELEM", "MAP_UPDATE_ELEM", "MAP_DELETE_ELEM",
- 	"MAP_GET_NEXT_KEY", "PROG_LOAD",
- };
--static DEFINE_STRARRAY(bpf_cmd);
-+static DEFINE_STRARRAY(bpf_cmd, "BPF_");
+-		return scnprintf(bf, size, "CWD");
++		return scnprintf(bf, size, "%s%s", arg->show_string_prefix ? prefix : "", "CWD");
  
- static const char *epoll_ctl_ops[] = { "ADD", "DEL", "MOD", };
--static DEFINE_STRARRAY_OFFSET(epoll_ctl_ops, 1);
-+static DEFINE_STRARRAY_OFFSET(epoll_ctl_ops, "EPOLL_CTL_", 1);
- 
- static const char *itimers[] = { "REAL", "VIRTUAL", "PROF", };
--static DEFINE_STRARRAY(itimers);
-+static DEFINE_STRARRAY(itimers, "ITIMER_");
- 
- static const char *keyctl_options[] = {
- 	"GET_KEYRING_ID", "JOIN_SESSION_KEYRING", "UPDATE", "REVOKE", "CHOWN",
-@@ -471,7 +472,7 @@ static const char *keyctl_options[] = {
- 	"ASSUME_AUTHORITY", "GET_SECURITY", "SESSION_TO_PARENT", "REJECT",
- 	"INSTANTIATE_IOV", "INVALIDATE", "GET_PERSISTENT",
- };
--static DEFINE_STRARRAY(keyctl_options);
-+static DEFINE_STRARRAY(keyctl_options, "KEYCTL_");
- 
- static const char *whences[] = { "SET", "CUR", "END",
- #ifdef SEEK_DATA
-@@ -481,7 +482,7 @@ static const char *whences[] = { "SET", "CUR", "END",
- "HOLE",
- #endif
- };
--static DEFINE_STRARRAY(whences);
-+static DEFINE_STRARRAY(whences, "SEEK_");
- 
- static const char *fcntl_cmds[] = {
- 	"DUPFD", "GETFD", "SETFD", "GETFL", "SETFL", "GETLK", "SETLK",
-@@ -489,7 +490,7 @@ static const char *fcntl_cmds[] = {
- 	"SETLK64", "SETLKW64", "SETOWN_EX", "GETOWN_EX",
- 	"GETOWNER_UIDS",
- };
--static DEFINE_STRARRAY(fcntl_cmds);
-+static DEFINE_STRARRAY(fcntl_cmds, "F_");
- 
- static const char *fcntl_linux_specific_cmds[] = {
- 	"SETLEASE", "GETLEASE", "NOTIFY", [5] =	"CANCELLK", "DUPFD_CLOEXEC",
-@@ -497,7 +498,7 @@ static const char *fcntl_linux_specific_cmds[] = {
- 	"GET_RW_HINT", "SET_RW_HINT", "GET_FILE_RW_HINT", "SET_FILE_RW_HINT",
- };
- 
--static DEFINE_STRARRAY_OFFSET(fcntl_linux_specific_cmds, F_LINUX_SPECIFIC_BASE);
-+static DEFINE_STRARRAY_OFFSET(fcntl_linux_specific_cmds, "F_", F_LINUX_SPECIFIC_BASE);
- 
- static struct strarray *fcntl_cmds_arrays[] = {
- 	&strarray__fcntl_cmds,
-@@ -511,17 +512,17 @@ static const char *rlimit_resources[] = {
- 	"MEMLOCK", "AS", "LOCKS", "SIGPENDING", "MSGQUEUE", "NICE", "RTPRIO",
- 	"RTTIME",
- };
--static DEFINE_STRARRAY(rlimit_resources);
-+static DEFINE_STRARRAY(rlimit_resources, "RLIMIT_");
- 
- static const char *sighow[] = { "BLOCK", "UNBLOCK", "SETMASK", };
--static DEFINE_STRARRAY(sighow);
-+static DEFINE_STRARRAY(sighow, "SIG_");
- 
- static const char *clockid[] = {
- 	"REALTIME", "MONOTONIC", "PROCESS_CPUTIME_ID", "THREAD_CPUTIME_ID",
- 	"MONOTONIC_RAW", "REALTIME_COARSE", "MONOTONIC_COARSE", "BOOTTIME",
- 	"REALTIME_ALARM", "BOOTTIME_ALARM", "SGI_CYCLE", "TAI"
- };
--static DEFINE_STRARRAY(clockid);
-+static DEFINE_STRARRAY(clockid, "CLOCK_");
- 
+ 	return syscall_arg__scnprintf_fd(bf, size, arg);
+ }
+@@ -527,14 +528,16 @@ static DEFINE_STRARRAY(clockid, "CLOCK_");
  static size_t syscall_arg__scnprintf_access_mode(char *bf, size_t size,
  						 struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *suffix = "_OK";
+ 	size_t printed = 0;
+ 	int mode = arg->val;
+ 
+ 	if (mode == F_OK) /* 0 */
+-		return scnprintf(bf, size, "F");
++		return scnprintf(bf, size, "F%s", show_prefix ? suffix : "");
+ #define	P_MODE(n) \
+ 	if (mode & n##_OK) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s", #n, show_prefix ? suffix : ""); \
+ 		mode &= ~n##_OK; \
+ 	}
+ 
+@@ -559,11 +562,13 @@ static size_t syscall_arg__scnprintf_filename(char *bf, size_t size,
+ static size_t syscall_arg__scnprintf_pipe_flags(char *bf, size_t size,
+ 						struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "O_";
+ 	int printed = 0, flags = arg->val;
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & O_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~O_##n; \
+ 	}
+ 
+@@ -589,11 +594,13 @@ static size_t syscall_arg__scnprintf_pipe_flags(char *bf, size_t size,
+ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 						   struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "GRND_";
+ 	int printed = 0, flags = arg->val;
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & GRND_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~GRND_##n; \
+ 	}
+ 
+@@ -1577,6 +1584,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 		.mask	= 0,
+ 		.trace  = trace,
+ 		.thread = thread,
++		.show_string_prefix = trace->show_string_prefix,
+ 	};
+ 	struct thread_trace *ttrace = thread__priv(thread);
+ 
+@@ -3563,6 +3571,8 @@ static int trace__config(const char *var, const char *value, void *arg)
+ 			goto out;
+ 		}
+ 		trace->show_zeros = new_show_zeros;
++	} else if (!strcmp(var, "trace.show_prefix")) {
++		trace->show_string_prefix = perf_config_bool(var, value);
+ 	} else if (!strcmp(var, "trace.no_inherit")) {
+ 		trace->opts.no_inherit = perf_config_bool(var, value);
+ 	} else if (!strcmp(var, "trace.args_alignment")) {
 diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 48ff3ce05325..452e9c006d4f 100644
+index 452e9c006d4f..ac25b6410bc8 100644
 --- a/tools/perf/trace/beauty/beauty.h
 +++ b/tools/perf/trace/beauty/beauty.h
-@@ -9,18 +9,21 @@
- struct strarray {
- 	int	    offset;
- 	int	    nr_entries;
-+	const char *prefix;
- 	const char **entries;
+@@ -26,8 +26,8 @@ struct strarray {
+ 	.prefix = _prefix, \
+ }
+ 
+-size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val);
+-size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags);
++size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, bool show_prefix, int val);
++size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, bool show_prefix, unsigned long flags);
+ 
+ struct trace;
+ struct thread;
+@@ -69,6 +69,7 @@ struct augmented_arg {
+  * @parm: private area, may be an strarray, for instance
+  * @idx: syscall arg idx (is this the first?)
+  * @mask: a syscall arg may mask another arg, see syscall_arg__scnprintf_futex_op
++ * @show_string_prefix: When there is a common prefix in a string table, show it or not
+  */
+ 
+ struct syscall_arg {
+@@ -83,6 +84,7 @@ struct syscall_arg {
+ 	void	      *parm;
+ 	u8	      idx;
+ 	u8	      mask;
++	bool	      show_string_prefix;
  };
  
--#define DEFINE_STRARRAY(array) struct strarray strarray__##array = { \
-+#define DEFINE_STRARRAY(array, _prefix) struct strarray strarray__##array = { \
- 	.nr_entries = ARRAY_SIZE(array), \
- 	.entries = array, \
-+	.prefix = _prefix, \
- }
+ unsigned long syscall_arg__val(struct syscall_arg *arg, u8 idx);
+@@ -162,7 +164,7 @@ size_t syscall_arg__scnprintf_statx_flags(char *bf, size_t size, struct syscall_
+ size_t syscall_arg__scnprintf_statx_mask(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_STATX_MASK syscall_arg__scnprintf_statx_mask
  
--#define DEFINE_STRARRAY_OFFSET(array, off) struct strarray strarray__##array = { \
-+#define DEFINE_STRARRAY_OFFSET(array, _prefix, off) struct strarray strarray__##array = { \
- 	.offset	    = off, \
- 	.nr_entries = ARRAY_SIZE(array), \
- 	.entries = array, \
-+	.prefix = _prefix, \
- }
+-size_t open__scnprintf_flags(unsigned long flags, char *bf, size_t size);
++size_t open__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix);
  
- size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const char *intfmt, int val);
+ void syscall_arg__set_ret_scnprintf(struct syscall_arg *arg,
+ 				    size_t (*ret_scnprintf)(char *bf, size_t size, struct syscall_arg *arg));
+diff --git a/tools/perf/trace/beauty/clone.c b/tools/perf/trace/beauty/clone.c
+index 010406500c30..6eb9a6636171 100644
+--- a/tools/perf/trace/beauty/clone.c
++++ b/tools/perf/trace/beauty/clone.c
+@@ -10,13 +10,14 @@
+ #include <sys/types.h>
+ #include <uapi/linux/sched.h>
+ 
+-static size_t clone__scnprintf_flags(unsigned long flags, char *bf, size_t size)
++static size_t clone__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
+ {
++	const char *prefix = "CLONE_";
+ 	int printed = 0;
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & CLONE_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~CLONE_##n; \
+ 	}
+ 
+@@ -70,5 +71,5 @@ size_t syscall_arg__scnprintf_clone_flags(char *bf, size_t size, struct syscall_
+ 	if (!(flags & CLONE_SETTLS))
+ 		arg->mask |= SCC_TLS;
+ 
+-	return clone__scnprintf_flags(flags, bf, size);
++	return clone__scnprintf_flags(flags, bf, size, arg->show_string_prefix);
+ }
+diff --git a/tools/perf/trace/beauty/eventfd.c b/tools/perf/trace/beauty/eventfd.c
+index db5b9b492113..4bab106213c6 100644
+--- a/tools/perf/trace/beauty/eventfd.c
++++ b/tools/perf/trace/beauty/eventfd.c
+@@ -13,13 +13,15 @@
+ 
+ static size_t syscall_arg__scnprintf_eventfd_flags(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "EFD_";
+ 	int printed = 0, flags = arg->val;
+ 
+ 	if (flags == 0)
+ 		return scnprintf(bf, size, "NONE");
+ #define	P_FLAG(n) \
+ 	if (flags & EFD_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~EFD_##n; \
+ 	}
+ 
 diff --git a/tools/perf/trace/beauty/fcntl.c b/tools/perf/trace/beauty/fcntl.c
-index e6de31674e24..15d669087e0a 100644
+index 15d669087e0a..56ef83b3d130 100644
 --- a/tools/perf/trace/beauty/fcntl.c
 +++ b/tools/perf/trace/beauty/fcntl.c
-@@ -22,7 +22,7 @@ static size_t syscall_arg__scnprintf_fcntl_getfd(char *bf, size_t size, struct s
- static size_t fcntl__scnprintf_getlease(unsigned long val, char *bf, size_t size)
+@@ -9,27 +9,28 @@
+ #include <linux/kernel.h>
+ #include <uapi/linux/fcntl.h>
+ 
+-static size_t fcntl__scnprintf_getfd(unsigned long val, char *bf, size_t size)
++static size_t fcntl__scnprintf_getfd(unsigned long val, char *bf, size_t size, bool show_prefix)
+ {
+-	return scnprintf(bf, size, "%s", val ? "CLOEXEC" : "0");
++	return val ? scnprintf(bf, size, "%s", "0") :
++		     scnprintf(bf, size, "%s%s", show_prefix ? "FD_" : "", "CLOEXEC");
+ }
+ 
+ static size_t syscall_arg__scnprintf_fcntl_getfd(char *bf, size_t size, struct syscall_arg *arg)
+ {
+-	return fcntl__scnprintf_getfd(arg->val, bf, size);
++	return fcntl__scnprintf_getfd(arg->val, bf, size, arg->show_string_prefix);
+ }
+ 
+-static size_t fcntl__scnprintf_getlease(unsigned long val, char *bf, size_t size)
++static size_t fcntl__scnprintf_getlease(unsigned long val, char *bf, size_t size, bool show_prefix)
  {
  	static const char *fcntl_setlease[] = { "RDLCK", "WRLCK", "UNLCK", };
--	static DEFINE_STRARRAY(fcntl_setlease);
-+	static DEFINE_STRARRAY(fcntl_setlease, "F_");
+ 	static DEFINE_STRARRAY(fcntl_setlease, "F_");
  
- 	return strarray__scnprintf(&strarray__fcntl_setlease, bf, size, "%x", val);
+-	return strarray__scnprintf(&strarray__fcntl_setlease, bf, size, "%x", val);
++	return strarray__scnprintf(&strarray__fcntl_setlease, bf, size, "%x", show_prefix, val);
+ }
+ 
+ static size_t syscall_arg__scnprintf_fcntl_getlease(char *bf, size_t size, struct syscall_arg *arg)
+ {
+-	return fcntl__scnprintf_getlease(arg->val, bf, size);
++	return fcntl__scnprintf_getlease(arg->val, bf, size, arg->show_string_prefix);
+ }
+ 
+ size_t syscall_arg__scnprintf_fcntl_cmd(char *bf, size_t size, struct syscall_arg *arg)
+@@ -68,22 +69,23 @@ out:
+ 
+ size_t syscall_arg__scnprintf_fcntl_arg(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
+ 	int cmd = syscall_arg__val(arg, 1);
+ 
+ 	if (cmd == F_DUPFD)
+ 		return syscall_arg__scnprintf_fd(bf, size, arg);
+ 
+ 	if (cmd == F_SETFD)
+-		return fcntl__scnprintf_getfd(arg->val, bf, size);
++		return fcntl__scnprintf_getfd(arg->val, bf, size, show_prefix);
+ 
+ 	if (cmd == F_SETFL)
+-		return open__scnprintf_flags(arg->val, bf, size);
++		return open__scnprintf_flags(arg->val, bf, size, show_prefix);
+ 
+ 	if (cmd == F_SETOWN)
+ 		return syscall_arg__scnprintf_pid(bf, size, arg);
+ 
+ 	if (cmd == F_SETLEASE)
+-		return fcntl__scnprintf_getlease(arg->val, bf, size);
++		return fcntl__scnprintf_getlease(arg->val, bf, size, show_prefix);
+ 	/*
+ 	 * We still don't grab the contents of pointers on entry or exit,
+ 	 * so just print them as hex numbers
+diff --git a/tools/perf/trace/beauty/flock.c b/tools/perf/trace/beauty/flock.c
+index cf02ae5f0ba6..c14274edd6d9 100644
+--- a/tools/perf/trace/beauty/flock.c
++++ b/tools/perf/trace/beauty/flock.c
+@@ -22,13 +22,15 @@
+ 
+ size_t syscall_arg__scnprintf_flock(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "LOCK_";
+ 	int printed = 0, op = arg->val;
+ 
+ 	if (op == 0)
+ 		return scnprintf(bf, size, "NONE");
+ #define	P_CMD(cmd) \
+ 	if ((op & LOCK_##cmd) == LOCK_##cmd) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #cmd); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #cmd); \
+ 		op &= ~LOCK_##cmd; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/futex_op.c b/tools/perf/trace/beauty/futex_op.c
+index 1136bde56406..00365156782b 100644
+--- a/tools/perf/trace/beauty/futex_op.c
++++ b/tools/perf/trace/beauty/futex_op.c
+@@ -19,6 +19,8 @@
+ 
+ static size_t syscall_arg__scnprintf_futex_op(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "FUTEX_";
+ 	enum syscall_futex_args {
+ 		SCF_UADDR   = (1 << 0),
+ 		SCF_OP	    = (1 << 1),
+@@ -32,7 +34,7 @@ static size_t syscall_arg__scnprintf_futex_op(char *bf, size_t size, struct sysc
+ 	size_t printed = 0;
+ 
+ 	switch (cmd) {
+-#define	P_FUTEX_OP(n) case FUTEX_##n: printed = scnprintf(bf, size, #n);
++#define	P_FUTEX_OP(n) case FUTEX_##n: printed = scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", #n);
+ 	P_FUTEX_OP(WAIT);	    arg->mask |= SCF_VAL3|SCF_UADDR2;		  break;
+ 	P_FUTEX_OP(WAKE);	    arg->mask |= SCF_VAL3|SCF_UADDR2|SCF_TIMEOUT; break;
+ 	P_FUTEX_OP(FD);		    arg->mask |= SCF_VAL3|SCF_UADDR2|SCF_TIMEOUT; break;
+@@ -50,10 +52,10 @@ static size_t syscall_arg__scnprintf_futex_op(char *bf, size_t size, struct sysc
+ 	}
+ 
+ 	if (op & FUTEX_PRIVATE_FLAG)
+-		printed += scnprintf(bf + printed, size - printed, "|PRIV");
++		printed += scnprintf(bf + printed, size - printed, "|%s%s", show_prefix ? prefix : "", "PRIVATE_FLAG");
+ 
+ 	if (op & FUTEX_CLOCK_REALTIME)
+-		printed += scnprintf(bf + printed, size - printed, "|CLKRT");
++		printed += scnprintf(bf + printed, size - printed, "|%s%s", show_prefix ? prefix : "", "CLOCK_REALTIME");
+ 
+ 	return printed;
+ }
+diff --git a/tools/perf/trace/beauty/futex_val3.c b/tools/perf/trace/beauty/futex_val3.c
+index 138b7d588a70..9114f7620571 100644
+--- a/tools/perf/trace/beauty/futex_val3.c
++++ b/tools/perf/trace/beauty/futex_val3.c
+@@ -7,10 +7,11 @@
+ 
+ static size_t syscall_arg__scnprintf_futex_val3(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	const char *prefix = "FUTEX_BITSET_";
+ 	unsigned int bitset = arg->val;
+ 
+ 	if (bitset == FUTEX_BITSET_MATCH_ANY)
+-		return scnprintf(bf, size, "MATCH_ANY");
++		return scnprintf(bf, size, "%s%s", arg->show_string_prefix ? prefix : "", "MATCH_ANY");
+ 
+ 	return scnprintf(bf, size, "%#xd", bitset);
  }
 diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
-index eae59ad15ce3..ea243f6167d7 100644
+index ea243f6167d7..9efeb6a936c2 100644
 --- a/tools/perf/trace/beauty/ioctl.c
 +++ b/tools/perf/trace/beauty/ioctl.c
-@@ -36,7 +36,7 @@ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
- 	"TIOCSERGWILD", "TIOCSERSWILD", "TIOCGLCKTRMIOS", "TIOCSLCKTRMIOS",
- 	"TIOCSERGSTRUCT", "TIOCSERGETLSR", "TIOCSERGETMULTI", "TIOCSERSETMULTI",
- 	"TIOCMIWAIT", "TIOCGICOUNT", };
--	static DEFINE_STRARRAY(ioctl_tty_cmd);
-+	static DEFINE_STRARRAY(ioctl_tty_cmd, "");
+@@ -112,8 +112,9 @@ static size_t ioctl__scnprintf_perf_cmd(int nr, int dir, char *bf, size_t size)
+ 	return scnprintf(bf, size, "(%#x, %#x, %#x)", 0xAE, nr, dir);
+ }
  
- 	if (nr < strarray__ioctl_tty_cmd.nr_entries && strarray__ioctl_tty_cmd.entries[nr] != NULL)
- 		return scnprintf(bf, size, "%s", strarray__ioctl_tty_cmd.entries[nr]);
-@@ -47,7 +47,7 @@ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
- static size_t ioctl__scnprintf_drm_cmd(int nr, int dir, char *bf, size_t size)
+-static size_t ioctl__scnprintf_cmd(unsigned long cmd, char *bf, size_t size)
++static size_t ioctl__scnprintf_cmd(unsigned long cmd, char *bf, size_t size, bool show_prefix)
  {
- #include "trace/beauty/generated/ioctl/drm_ioctl_array.c"
--	static DEFINE_STRARRAY(drm_ioctl_cmds);
-+	static DEFINE_STRARRAY(drm_ioctl_cmds, "");
++	const char *prefix = "_IOC_";
+ 	int dir	 = _IOC_DIR(cmd),
+ 	    type = _IOC_TYPE(cmd),
+ 	    nr	 = _IOC_NR(cmd),
+@@ -143,12 +144,14 @@ static size_t ioctl__scnprintf_cmd(unsigned long cmd, char *bf, size_t size)
+ 	printed += scnprintf(bf + printed, size - printed, "%c", '(');
  
- 	if (nr < strarray__drm_ioctl_cmds.nr_entries && strarray__drm_ioctl_cmds.entries[nr] != NULL)
- 		return scnprintf(bf, size, "DRM_%s", strarray__drm_ioctl_cmds.entries[nr]);
-@@ -58,7 +58,7 @@ static size_t ioctl__scnprintf_drm_cmd(int nr, int dir, char *bf, size_t size)
- static size_t ioctl__scnprintf_sndrv_pcm_cmd(int nr, int dir, char *bf, size_t size)
+ 	if (dir == _IOC_NONE) {
+-		printed += scnprintf(bf + printed, size - printed, "%s", "NONE");
++		printed += scnprintf(bf + printed, size - printed, "%s%s", show_prefix ? prefix : "", "NONE");
+ 	} else {
+ 		if (dir & _IOC_READ)
+-			printed += scnprintf(bf + printed, size - printed, "%s", "READ");
+-		if (dir & _IOC_WRITE)
+-			printed += scnprintf(bf + printed, size - printed, "%s%s", dir & _IOC_READ ? "|" : "", "WRITE");
++			printed += scnprintf(bf + printed, size - printed, "%s%s", show_prefix ? prefix : "", "READ");
++		if (dir & _IOC_WRITE) {
++			printed += scnprintf(bf + printed, size - printed, "%s%s%s", dir & _IOC_READ ? "|" : "",
++					     show_prefix ? prefix : "",  "WRITE");
++		}
+ 	}
+ 
+ 	return printed + scnprintf(bf + printed, size - printed, ", %#x, %#x, %#x)", type, nr, sz);
+@@ -158,5 +161,5 @@ size_t syscall_arg__scnprintf_ioctl_cmd(char *bf, size_t size, struct syscall_ar
  {
- #include "trace/beauty/generated/ioctl/sndrv_pcm_ioctl_array.c"
--	static DEFINE_STRARRAY(sndrv_pcm_ioctl_cmds);
-+	static DEFINE_STRARRAY(sndrv_pcm_ioctl_cmds, "");
+ 	unsigned long cmd = arg->val;
  
- 	if (nr < strarray__sndrv_pcm_ioctl_cmds.nr_entries && strarray__sndrv_pcm_ioctl_cmds.entries[nr] != NULL)
- 		return scnprintf(bf, size, "SNDRV_PCM_%s", strarray__sndrv_pcm_ioctl_cmds.entries[nr]);
-@@ -69,7 +69,7 @@ static size_t ioctl__scnprintf_sndrv_pcm_cmd(int nr, int dir, char *bf, size_t s
- static size_t ioctl__scnprintf_sndrv_ctl_cmd(int nr, int dir, char *bf, size_t size)
- {
- #include "trace/beauty/generated/ioctl/sndrv_ctl_ioctl_array.c"
--	static DEFINE_STRARRAY(sndrv_ctl_ioctl_cmds);
-+	static DEFINE_STRARRAY(sndrv_ctl_ioctl_cmds, "");
- 
- 	if (nr < strarray__sndrv_ctl_ioctl_cmds.nr_entries && strarray__sndrv_ctl_ioctl_cmds.entries[nr] != NULL)
- 		return scnprintf(bf, size, "SNDRV_CTL_%s", strarray__sndrv_ctl_ioctl_cmds.entries[nr]);
-@@ -80,7 +80,7 @@ static size_t ioctl__scnprintf_sndrv_ctl_cmd(int nr, int dir, char *bf, size_t s
- static size_t ioctl__scnprintf_kvm_cmd(int nr, int dir, char *bf, size_t size)
- {
- #include "trace/beauty/generated/ioctl/kvm_ioctl_array.c"
--	static DEFINE_STRARRAY(kvm_ioctl_cmds);
-+	static DEFINE_STRARRAY(kvm_ioctl_cmds, "");
- 
- 	if (nr < strarray__kvm_ioctl_cmds.nr_entries && strarray__kvm_ioctl_cmds.entries[nr] != NULL)
- 		return scnprintf(bf, size, "KVM_%s", strarray__kvm_ioctl_cmds.entries[nr]);
-@@ -91,8 +91,8 @@ static size_t ioctl__scnprintf_kvm_cmd(int nr, int dir, char *bf, size_t size)
- static size_t ioctl__scnprintf_vhost_virtio_cmd(int nr, int dir, char *bf, size_t size)
- {
- #include "trace/beauty/generated/ioctl/vhost_virtio_ioctl_array.c"
--	static DEFINE_STRARRAY(vhost_virtio_ioctl_cmds);
--	static DEFINE_STRARRAY(vhost_virtio_ioctl_read_cmds);
-+	static DEFINE_STRARRAY(vhost_virtio_ioctl_cmds, "");
-+	static DEFINE_STRARRAY(vhost_virtio_ioctl_read_cmds, "");
- 	struct strarray *s = (dir & _IOC_READ) ? &strarray__vhost_virtio_ioctl_read_cmds : &strarray__vhost_virtio_ioctl_cmds;
- 
- 	if (nr < s->nr_entries && s->entries[nr] != NULL)
-@@ -104,7 +104,7 @@ static size_t ioctl__scnprintf_vhost_virtio_cmd(int nr, int dir, char *bf, size_
- static size_t ioctl__scnprintf_perf_cmd(int nr, int dir, char *bf, size_t size)
- {
- #include "trace/beauty/generated/ioctl/perf_ioctl_array.c"
--	static DEFINE_STRARRAY(perf_ioctl_cmds);
-+	static DEFINE_STRARRAY(perf_ioctl_cmds, "");
- 
- 	if (nr < strarray__perf_ioctl_cmds.nr_entries && strarray__perf_ioctl_cmds.entries[nr] != NULL)
- 		return scnprintf(bf, size, "PERF_%s", strarray__perf_ioctl_cmds.entries[nr]);
+-	return ioctl__scnprintf_cmd(cmd, bf, size);
++	return ioctl__scnprintf_cmd(cmd, bf, size, arg->show_string_prefix);
+ }
 diff --git a/tools/perf/trace/beauty/kcmp.c b/tools/perf/trace/beauty/kcmp.c
-index b276a274f203..56f1e50a6012 100644
+index 56f1e50a6012..9351f84390a1 100644
 --- a/tools/perf/trace/beauty/kcmp.c
 +++ b/tools/perf/trace/beauty/kcmp.c
-@@ -28,7 +28,7 @@ size_t syscall_arg__scnprintf_kcmp_idx(char *bf, size_t size, struct syscall_arg
- 
- static size_t kcmp__scnprintf_type(int type, char *bf, size_t size)
- {
--	static DEFINE_STRARRAY(kcmp_types);
-+	static DEFINE_STRARRAY(kcmp_types, "KCMP_");
- 	return strarray__scnprintf(&strarray__kcmp_types, bf, size, "%d", type);
+@@ -26,10 +26,10 @@ size_t syscall_arg__scnprintf_kcmp_idx(char *bf, size_t size, struct syscall_arg
+ 	return pid__scnprintf_fd(arg->trace, pid, fd, bf, size);
  }
  
+-static size_t kcmp__scnprintf_type(int type, char *bf, size_t size)
++static size_t kcmp__scnprintf_type(int type, char *bf, size_t size, bool show_prefix)
+ {
+ 	static DEFINE_STRARRAY(kcmp_types, "KCMP_");
+-	return strarray__scnprintf(&strarray__kcmp_types, bf, size, "%d", type);
++	return strarray__scnprintf(&strarray__kcmp_types, bf, size, "%d", show_prefix, type);
+ }
+ 
+ size_t syscall_arg__scnprintf_kcmp_type(char *bf, size_t size, struct syscall_arg *arg)
+@@ -39,5 +39,5 @@ size_t syscall_arg__scnprintf_kcmp_type(char *bf, size_t size, struct syscall_ar
+ 	if (type != KCMP_FILE)
+ 		arg->mask |= (1 << 3) | (1 << 4); /* Ignore idx1 and idx2 */
+ 
+-	return kcmp__scnprintf_type(type, bf, size);
++	return kcmp__scnprintf_type(type, bf, size, arg->show_string_prefix);
+ }
 diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
-index c534bd96ef5c..1a7bd716057a 100644
+index 1a7bd716057a..138f36a47fb1 100644
 --- a/tools/perf/trace/beauty/mmap.c
 +++ b/tools/perf/trace/beauty/mmap.c
-@@ -34,7 +34,7 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
- static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size)
+@@ -5,13 +5,15 @@
+ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
+ 					       struct syscall_arg *arg)
+ {
++	const char *prot_prefix = "PROT_";
+ 	int printed = 0, prot = arg->val;
++	bool show_prefix = arg->show_string_prefix;
+ 
+ 	if (prot == PROT_NONE)
+-		return scnprintf(bf, size, "NONE");
++		return scnprintf(bf, size, "%sNONE", show_prefix ? prot_prefix : "");
+ #define	P_MMAP_PROT(n) \
+ 	if (prot & PROT_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prot_prefix :"", #n); \
+ 		prot &= ~PROT_##n; \
+ 	}
+ 
+@@ -31,12 +33,12 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
+ 
+ #define SCA_MMAP_PROT syscall_arg__scnprintf_mmap_prot
+ 
+-static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size)
++static size_t mmap__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
  {
  #include "trace/beauty/generated/mmap_flags_array.c"
--       static DEFINE_STRARRAY(mmap_flags);
-+       static DEFINE_STRARRAY(mmap_flags, "MAP_");
+        static DEFINE_STRARRAY(mmap_flags, "MAP_");
  
-        return strarray__scnprintf_flags(&strarray__mmap_flags, bf, size, flags);
+-       return strarray__scnprintf_flags(&strarray__mmap_flags, bf, size, flags);
++       return strarray__scnprintf_flags(&strarray__mmap_flags, bf, size, show_prefix, flags);
  }
-@@ -78,7 +78,7 @@ static size_t syscall_arg__scnprintf_mremap_flags(char *bf, size_t size,
- static size_t madvise__scnprintf_behavior(int behavior, char *bf, size_t size)
- {
- #include "trace/beauty/generated/madvise_behavior_array.c"
--       static DEFINE_STRARRAY(madvise_advices);
-+       static DEFINE_STRARRAY(madvise_advices, "MADV_");
  
-        if (behavior < strarray__madvise_advices.nr_entries && strarray__madvise_advices.entries[behavior] != NULL)
-                return scnprintf(bf, size, "MADV_%s", strarray__madvise_advices.entries[behavior]);
+ static size_t syscall_arg__scnprintf_mmap_flags(char *bf, size_t size,
+@@ -47,7 +49,7 @@ static size_t syscall_arg__scnprintf_mmap_flags(char *bf, size_t size,
+ 	if (flags & MAP_ANONYMOUS)
+ 		arg->mask |= (1 << 4) | (1 << 5); /* Mask 4th ('fd') and 5th ('offset') args, ignored */
+ 
+-	return mmap__scnprintf_flags(flags, bf, size);
++	return mmap__scnprintf_flags(flags, bf, size, arg->show_string_prefix);
+ }
+ 
+ #define SCA_MMAP_FLAGS syscall_arg__scnprintf_mmap_flags
+@@ -55,11 +57,13 @@ static size_t syscall_arg__scnprintf_mmap_flags(char *bf, size_t size,
+ static size_t syscall_arg__scnprintf_mremap_flags(char *bf, size_t size,
+ 						  struct syscall_arg *arg)
+ {
++	const char *flags_prefix = "MREMAP_";
++	bool show_prefix = arg->show_string_prefix;
+ 	int printed = 0, flags = arg->val;
+ 
+ #define P_MREMAP_FLAG(n) \
+ 	if (flags & MREMAP_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? flags_prefix : "", #n); \
+ 		flags &= ~MREMAP_##n; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/mode_t.c b/tools/perf/trace/beauty/mode_t.c
+index 6879d36d3004..29a8fadfb7f9 100644
+--- a/tools/perf/trace/beauty/mode_t.c
++++ b/tools/perf/trace/beauty/mode_t.c
+@@ -22,11 +22,13 @@
+ 
+ static size_t syscall_arg__scnprintf_mode_t(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "S_";
+ 	int printed = 0, mode = arg->val;
+ 
+ #define	P_MODE(n) \
+ 	if ((mode & S_##n) == S_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		mode &= ~S_##n; \
+ 	}
+ 
 diff --git a/tools/perf/trace/beauty/mount_flags.c b/tools/perf/trace/beauty/mount_flags.c
-index 712935c6620a..7129106bf797 100644
+index 7129106bf797..10fb14cfaf8f 100644
 --- a/tools/perf/trace/beauty/mount_flags.c
 +++ b/tools/perf/trace/beauty/mount_flags.c
-@@ -14,7 +14,7 @@
- static size_t mount__scnprintf_flags(unsigned long flags, char *bf, size_t size)
+@@ -11,12 +11,12 @@
+ #include <linux/log2.h>
+ #include <sys/mount.h>
+ 
+-static size_t mount__scnprintf_flags(unsigned long flags, char *bf, size_t size)
++static size_t mount__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
  {
  #include "trace/beauty/generated/mount_flags_array.c"
--	static DEFINE_STRARRAY(mount_flags);
-+	static DEFINE_STRARRAY(mount_flags, "MS_");
+ 	static DEFINE_STRARRAY(mount_flags, "MS_");
  
- 	return strarray__scnprintf_flags(&strarray__mount_flags, bf, size, flags);
+-	return strarray__scnprintf_flags(&strarray__mount_flags, bf, size, flags);
++	return strarray__scnprintf_flags(&strarray__mount_flags, bf, size, show_prefix, flags);
  }
+ 
+ unsigned long syscall_arg__mask_val_mount_flags(struct syscall_arg *arg __maybe_unused, unsigned long flags)
+@@ -39,5 +39,5 @@ size_t syscall_arg__scnprintf_mount_flags(char *bf, size_t size, struct syscall_
+ {
+ 	unsigned long flags = arg->val;
+ 
+-	return mount__scnprintf_flags(flags, bf, size);
++	return mount__scnprintf_flags(flags, bf, size, arg->show_string_prefix);
+ }
+diff --git a/tools/perf/trace/beauty/msg_flags.c b/tools/perf/trace/beauty/msg_flags.c
+index 1b9d6306d274..d66c66315987 100644
+--- a/tools/perf/trace/beauty/msg_flags.c
++++ b/tools/perf/trace/beauty/msg_flags.c
+@@ -21,13 +21,15 @@
+ static size_t syscall_arg__scnprintf_msg_flags(char *bf, size_t size,
+ 					       struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "MSG_";
+ 	int printed = 0, flags = arg->val;
+ 
+ 	if (flags == 0)
+ 		return scnprintf(bf, size, "NONE");
+ #define	P_MSG_FLAG(n) \
+ 	if (flags & MSG_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~MSG_##n; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/open_flags.c b/tools/perf/trace/beauty/open_flags.c
+index cc673fec9184..6da48893a1bb 100644
+--- a/tools/perf/trace/beauty/open_flags.c
++++ b/tools/perf/trace/beauty/open_flags.c
+@@ -22,15 +22,16 @@
+ #undef O_LARGEFILE
+ #define O_LARGEFILE	00100000
+ 
+-size_t open__scnprintf_flags(unsigned long flags, char *bf, size_t size)
++size_t open__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
+ {
++	const char *prefix = "O_";
+ 	int printed = 0;
+ 
+ 	if (flags == 0)
+-		return scnprintf(bf, size, "RDONLY");
++		return scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", "RDONLY");
+ #define	P_FLAG(n) \
+ 	if (flags & O_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~O_##n; \
+ 	}
+ 
+@@ -57,7 +58,7 @@ size_t open__scnprintf_flags(unsigned long flags, char *bf, size_t size)
+ #endif
+ #ifdef O_DSYNC
+ 	if ((flags & O_SYNC) == O_SYNC)
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", "SYNC");
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", "SYNC");
+ 	else {
+ 		P_FLAG(DSYNC);
+ 	}
+@@ -81,5 +82,5 @@ size_t syscall_arg__scnprintf_open_flags(char *bf, size_t size, struct syscall_a
+ 	if (!(flags & O_CREAT))
+ 		arg->mask |= 1 << (arg->idx + 1); /* Mask the mode parm */
+ 
+-	return open__scnprintf_flags(flags, bf, size);
++	return open__scnprintf_flags(flags, bf, size, arg->show_string_prefix);
+ }
+diff --git a/tools/perf/trace/beauty/perf_event_open.c b/tools/perf/trace/beauty/perf_event_open.c
+index 981185c1974b..11d47dbe63bd 100644
+--- a/tools/perf/trace/beauty/perf_event_open.c
++++ b/tools/perf/trace/beauty/perf_event_open.c
+@@ -18,6 +18,8 @@
+ static size_t syscall_arg__scnprintf_perf_flags(char *bf, size_t size,
+ 						struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "PERF_";
+ 	int printed = 0, flags = arg->val;
+ 
+ 	if (flags == 0)
+@@ -25,7 +27,7 @@ static size_t syscall_arg__scnprintf_perf_flags(char *bf, size_t size,
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & PERF_FLAG_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~PERF_FLAG_##n; \
+ 	}
+ 
 diff --git a/tools/perf/trace/beauty/pkey_alloc.c b/tools/perf/trace/beauty/pkey_alloc.c
-index 1b8ed4cac815..f4818e05a48b 100644
+index f4818e05a48b..f9596ed02cc4 100644
 --- a/tools/perf/trace/beauty/pkey_alloc.c
 +++ b/tools/perf/trace/beauty/pkey_alloc.c
-@@ -41,7 +41,7 @@ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, uns
- static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
+@@ -9,14 +9,14 @@
+ #include <linux/kernel.h>
+ #include <linux/log2.h>
+ 
+-size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, unsigned long flags)
++size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, bool show_prefix, unsigned long flags)
+ {
+ 	int i, printed = 0;
+ 
+ 	if (flags == 0) {
+ 		const char *s = sa->entries[0];
+ 		if (s)
+-			return scnprintf(bf, size, "%s", s);
++			return scnprintf(bf, size, "%s%s", show_prefix ? sa->prefix : "", s);
+ 		return scnprintf(bf, size, "%d", 0);
+ 	}
+ 
+@@ -30,7 +30,7 @@ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, uns
+ 			printed += scnprintf(bf + printed, size - printed, "|");
+ 
+ 		if (sa->entries[i] != NULL)
+-			printed += scnprintf(bf + printed, size - printed, "%s", sa->entries[i]);
++			printed += scnprintf(bf + printed, size - printed, "%s%s", show_prefix ? sa->prefix : "", sa->entries[i]);
+ 		else
+ 			printed += scnprintf(bf + printed, size - printed, "0x%#", bit);
+ 	}
+@@ -38,17 +38,17 @@ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, uns
+ 	return printed;
+ }
+ 
+-static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size)
++static size_t pkey_alloc__scnprintf_access_rights(int access_rights, char *bf, size_t size, bool show_prefix)
  {
  #include "trace/beauty/generated/pkey_alloc_access_rights_array.c"
--	static DEFINE_STRARRAY(pkey_alloc_access_rights);
-+	static DEFINE_STRARRAY(pkey_alloc_access_rights, "PKEY_");
+ 	static DEFINE_STRARRAY(pkey_alloc_access_rights, "PKEY_");
  
- 	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, access_rights);
+-	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, access_rights);
++	return strarray__scnprintf_flags(&strarray__pkey_alloc_access_rights, bf, size, show_prefix, access_rights);
+ }
+ 
+ size_t syscall_arg__scnprintf_pkey_alloc_access_rights(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	unsigned long cmd = arg->val;
+ 
+-	return pkey_alloc__scnprintf_access_rights(cmd, bf, size);
++	return pkey_alloc__scnprintf_access_rights(cmd, bf, size, arg->show_string_prefix);
  }
 diff --git a/tools/perf/trace/beauty/prctl.c b/tools/perf/trace/beauty/prctl.c
-index be7a5d395975..7b6466b0856d 100644
+index 7b6466b0856d..ba2179abed00 100644
 --- a/tools/perf/trace/beauty/prctl.c
 +++ b/tools/perf/trace/beauty/prctl.c
-@@ -13,13 +13,13 @@
+@@ -11,16 +11,16 @@
  
- static size_t prctl__scnprintf_option(int option, char *bf, size_t size)
+ #include "trace/beauty/generated/prctl_option_array.c"
+ 
+-static size_t prctl__scnprintf_option(int option, char *bf, size_t size)
++static size_t prctl__scnprintf_option(int option, char *bf, size_t size, bool show_prefix)
  {
--	static DEFINE_STRARRAY(prctl_options);
-+	static DEFINE_STRARRAY(prctl_options, "PR_");
- 	return strarray__scnprintf(&strarray__prctl_options, bf, size, "%d", option);
+ 	static DEFINE_STRARRAY(prctl_options, "PR_");
+-	return strarray__scnprintf(&strarray__prctl_options, bf, size, "%d", option);
++	return strarray__scnprintf(&strarray__prctl_options, bf, size, "%d", show_prefix, option);
  }
  
- static size_t prctl__scnprintf_set_mm(int option, char *bf, size_t size)
+-static size_t prctl__scnprintf_set_mm(int option, char *bf, size_t size)
++static size_t prctl__scnprintf_set_mm(int option, char *bf, size_t size, bool show_prefix)
  {
--	static DEFINE_STRARRAY(prctl_set_mm_options);
-+	static DEFINE_STRARRAY(prctl_set_mm_options, "PR_SET_MM_");
- 	return strarray__scnprintf(&strarray__prctl_set_mm_options, bf, size, "%d", option);
+ 	static DEFINE_STRARRAY(prctl_set_mm_options, "PR_SET_MM_");
+-	return strarray__scnprintf(&strarray__prctl_set_mm_options, bf, size, "%d", option);
++	return strarray__scnprintf(&strarray__prctl_set_mm_options, bf, size, "%d", show_prefix, option);
  }
  
+ size_t syscall_arg__scnprintf_prctl_arg2(char *bf, size_t size, struct syscall_arg *arg)
+@@ -28,7 +28,7 @@ size_t syscall_arg__scnprintf_prctl_arg2(char *bf, size_t size, struct syscall_a
+ 	int option = syscall_arg__val(arg, 0);
+ 
+ 	if (option == PR_SET_MM)
+-		return prctl__scnprintf_set_mm(arg->val, bf, size);
++		return prctl__scnprintf_set_mm(arg->val, bf, size, arg->show_string_prefix);
+ 	/*
+ 	 * We still don't grab the contents of pointers on entry or exit,
+ 	 * so just print them as hex numbers
+@@ -77,5 +77,5 @@ size_t syscall_arg__scnprintf_prctl_option(char *bf, size_t size, struct syscall
+ 	if (option < ARRAY_SIZE(masks))
+ 		arg->mask |= masks[option];
+ 
+-	return prctl__scnprintf_option(option, bf, size);
++	return prctl__scnprintf_option(option, bf, size, arg->show_string_prefix);
+ }
 diff --git a/tools/perf/trace/beauty/renameat.c b/tools/perf/trace/beauty/renameat.c
-index 02c7207faee6..910695aff979 100644
+index 910695aff979..6dab340cc506 100644
 --- a/tools/perf/trace/beauty/renameat.c
 +++ b/tools/perf/trace/beauty/renameat.c
-@@ -7,7 +7,7 @@
- static size_t renameat2__scnprintf_flags(unsigned long flags, char *bf, size_t size)
+@@ -4,16 +4,16 @@
+ #include "trace/beauty/beauty.h"
+ #include <uapi/linux/fs.h>
+ 
+-static size_t renameat2__scnprintf_flags(unsigned long flags, char *bf, size_t size)
++static size_t renameat2__scnprintf_flags(unsigned long flags, char *bf, size_t size, bool show_prefix)
  {
  #include "trace/beauty/generated/rename_flags_array.c"
--       static DEFINE_STRARRAY(rename_flags);
-+       static DEFINE_STRARRAY(rename_flags, "RENAME_");
+        static DEFINE_STRARRAY(rename_flags, "RENAME_");
  
-        return strarray__scnprintf_flags(&strarray__rename_flags, bf, size, flags);
+-       return strarray__scnprintf_flags(&strarray__rename_flags, bf, size, flags);
++       return strarray__scnprintf_flags(&strarray__rename_flags, bf, size, show_prefix, flags);
  }
+ 
+ size_t syscall_arg__scnprintf_renameat2_flags(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	unsigned long flags = arg->val;
+-	return renameat2__scnprintf_flags(flags, bf, size);
++	return renameat2__scnprintf_flags(flags, bf, size, arg->show_string_prefix);
+ }
+diff --git a/tools/perf/trace/beauty/sched_policy.c b/tools/perf/trace/beauty/sched_policy.c
+index 48f2b5c9aa3e..68aa59eeed8d 100644
+--- a/tools/perf/trace/beauty/sched_policy.c
++++ b/tools/perf/trace/beauty/sched_policy.c
+@@ -17,6 +17,8 @@
+ static size_t syscall_arg__scnprintf_sched_policy(char *bf, size_t size,
+ 						  struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "SCHED_";
+ 	const char *policies[] = {
+ 		"NORMAL", "FIFO", "RR", "BATCH", "ISO", "IDLE", "DEADLINE",
+ 	};
+@@ -26,13 +28,13 @@ static size_t syscall_arg__scnprintf_sched_policy(char *bf, size_t size,
+ 
+ 	policy &= SCHED_POLICY_MASK;
+ 	if (policy <= SCHED_DEADLINE)
+-		printed = scnprintf(bf, size, "%s", policies[policy]);
++		printed = scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", policies[policy]);
+ 	else
+ 		printed = scnprintf(bf, size, "%#x", policy);
+ 
+ #define	P_POLICY_FLAG(n) \
+ 	if (flags & SCHED_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "|%s", #n); \
++		printed += scnprintf(bf + printed, size - printed, "|%s%s", show_prefix ? prefix : "",  #n); \
+ 		flags &= ~SCHED_##n; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/seccomp.c b/tools/perf/trace/beauty/seccomp.c
+index e36156b19c70..4600c28a3cfe 100644
+--- a/tools/perf/trace/beauty/seccomp.c
++++ b/tools/perf/trace/beauty/seccomp.c
+@@ -8,11 +8,13 @@
+ 
+ static size_t syscall_arg__scnprintf_seccomp_op(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "SECOMP_SET_MODE_";
+ 	int op = arg->val;
+ 	size_t printed = 0;
+ 
+ 	switch (op) {
+-#define	P_SECCOMP_SET_MODE_OP(n) case SECCOMP_SET_MODE_##n: printed = scnprintf(bf, size, #n); break
++#define	P_SECCOMP_SET_MODE_OP(n) case SECCOMP_SET_MODE_##n: printed = scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", #n); break
+ 	P_SECCOMP_SET_MODE_OP(STRICT);
+ 	P_SECCOMP_SET_MODE_OP(FILTER);
+ #undef P_SECCOMP_SET_MODE_OP
+@@ -31,11 +33,13 @@ static size_t syscall_arg__scnprintf_seccomp_op(char *bf, size_t size, struct sy
+ static size_t syscall_arg__scnprintf_seccomp_flags(char *bf, size_t size,
+ 						   struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "SECOMP_FILTER_FLAG_";
+ 	int printed = 0, flags = arg->val;
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & SECCOMP_FILTER_FLAG_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~SECCOMP_FILTER_FLAG_##n; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/signum.c b/tools/perf/trace/beauty/signum.c
+index 587fec545b8a..21220c56500a 100644
+--- a/tools/perf/trace/beauty/signum.c
++++ b/tools/perf/trace/beauty/signum.c
+@@ -3,10 +3,12 @@
+ 
+ static size_t syscall_arg__scnprintf_signum(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "SIG";
+ 	int sig = arg->val;
+ 
+ 	switch (sig) {
+-#define	P_SIGNUM(n) case SIG##n: return scnprintf(bf, size, #n)
++#define	P_SIGNUM(n) case SIG##n: return scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", #n)
+ 	P_SIGNUM(HUP);
+ 	P_SIGNUM(INT);
+ 	P_SIGNUM(QUIT);
 diff --git a/tools/perf/trace/beauty/sockaddr.c b/tools/perf/trace/beauty/sockaddr.c
-index 9410ad230f10..95cc82a9967f 100644
+index 95cc82a9967f..173c8f760763 100644
 --- a/tools/perf/trace/beauty/sockaddr.c
 +++ b/tools/perf/trace/beauty/sockaddr.c
-@@ -15,7 +15,7 @@ static const char *socket_families[] = {
- 	"BLUETOOTH", "IUCV", "RXRPC", "ISDN", "PHONET", "IEEE802154", "CAIF",
- 	"ALG", "NFC", "VSOCK",
- };
--DEFINE_STRARRAY(socket_families);
-+DEFINE_STRARRAY(socket_families, "PF_");
+@@ -58,7 +58,7 @@ static size_t syscall_arg__scnprintf_augmented_sockaddr(struct syscall_arg *arg,
+ 	char family[32];
+ 	size_t printed;
  
- static size_t af_inet__scnprintf(struct sockaddr *sa, char *bf, size_t size)
- {
+-	strarray__scnprintf(&strarray__socket_families, family, sizeof(family), "%d", sa->sa_family);
++	strarray__scnprintf(&strarray__socket_families, family, sizeof(family), "%d", arg->show_string_prefix, sa->sa_family);
+ 	printed = scnprintf(bf, size, "{ .family: %s", family);
+ 
+ 	if (sa->sa_family < ARRAY_SIZE(af_scnprintfs) && af_scnprintfs[sa->sa_family])
 diff --git a/tools/perf/trace/beauty/socket.c b/tools/perf/trace/beauty/socket.c
-index d971a2596417..eacbfb930fe4 100644
+index eacbfb930fe4..f23a3dda2902 100644
 --- a/tools/perf/trace/beauty/socket.c
 +++ b/tools/perf/trace/beauty/socket.c
-@@ -12,7 +12,7 @@
- static size_t socket__scnprintf_ipproto(int protocol, char *bf, size_t size)
+@@ -9,12 +9,12 @@
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ 
+-static size_t socket__scnprintf_ipproto(int protocol, char *bf, size_t size)
++static size_t socket__scnprintf_ipproto(int protocol, char *bf, size_t size, bool show_prefix)
  {
  #include "trace/beauty/generated/socket_ipproto_array.c"
--	static DEFINE_STRARRAY(socket_ipproto);
-+	static DEFINE_STRARRAY(socket_ipproto, "IPPROTO_");
+ 	static DEFINE_STRARRAY(socket_ipproto, "IPPROTO_");
  
- 	return strarray__scnprintf(&strarray__socket_ipproto, bf, size, "%d", protocol);
+-	return strarray__scnprintf(&strarray__socket_ipproto, bf, size, "%d", protocol);
++	return strarray__scnprintf(&strarray__socket_ipproto, bf, size, "%d", show_prefix, protocol);
  }
+ 
+ size_t syscall_arg__scnprintf_socket_protocol(char *bf, size_t size, struct syscall_arg *arg)
+@@ -22,7 +22,7 @@ size_t syscall_arg__scnprintf_socket_protocol(char *bf, size_t size, struct sysc
+ 	int domain = syscall_arg__val(arg, 0);
+ 
+ 	if (domain == AF_INET || domain == AF_INET6)
+-		return socket__scnprintf_ipproto(arg->val, bf, size);
++		return socket__scnprintf_ipproto(arg->val, bf, size, arg->show_string_prefix);
+ 
+ 	return syscall_arg__scnprintf_int(bf, size, arg);
+ }
+diff --git a/tools/perf/trace/beauty/socket_type.c b/tools/perf/trace/beauty/socket_type.c
+index a63a9a332aa0..bed8d5761ca8 100644
+--- a/tools/perf/trace/beauty/socket_type.c
++++ b/tools/perf/trace/beauty/socket_type.c
+@@ -20,6 +20,8 @@
+ 
+ static size_t syscall_arg__scnprintf_socket_type(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "SOCK_";
+ 	size_t printed;
+ 	int type = arg->val,
+ 	    flags = type & ~SOCK_TYPE_MASK;
+@@ -29,7 +31,7 @@ static size_t syscall_arg__scnprintf_socket_type(char *bf, size_t size, struct s
+ 	 * Can't use a strarray, MIPS may override for ABI reasons.
+ 	 */
+ 	switch (type) {
+-#define	P_SK_TYPE(n) case SOCK_##n: printed = scnprintf(bf, size, #n); break;
++#define	P_SK_TYPE(n) case SOCK_##n: printed = scnprintf(bf, size, "%s%s", show_prefix ? prefix : "", #n); break;
+ 	P_SK_TYPE(STREAM);
+ 	P_SK_TYPE(DGRAM);
+ 	P_SK_TYPE(RAW);
+diff --git a/tools/perf/trace/beauty/statx.c b/tools/perf/trace/beauty/statx.c
+index 630f2760dd66..811cc0eeb2d5 100644
+--- a/tools/perf/trace/beauty/statx.c
++++ b/tools/perf/trace/beauty/statx.c
+@@ -13,13 +13,15 @@
+ 
+ size_t syscall_arg__scnprintf_statx_flags(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "AT_";
+ 	int printed = 0, flags = arg->val;
+ 
+ 	if (flags == 0)
+-		return scnprintf(bf, size, "SYNC_AS_STAT");
++		return scnprintf(bf, size, "%s%s", show_prefix ? "AT_STATX_" : "", "SYNC_AS_STAT");
+ #define	P_FLAG(n) \
+ 	if (flags & AT_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~AT_##n; \
+ 	}
+ 
+@@ -41,11 +43,13 @@ size_t syscall_arg__scnprintf_statx_flags(char *bf, size_t size, struct syscall_
+ 
+ size_t syscall_arg__scnprintf_statx_mask(char *bf, size_t size, struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "STATX_";
+ 	int printed = 0, flags = arg->val;
+ 
+ #define	P_FLAG(n) \
+ 	if (flags & STATX_##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", show_prefix ? prefix : "", #n); \
+ 		flags &= ~STATX_##n; \
+ 	}
+ 
+diff --git a/tools/perf/trace/beauty/waitid_options.c b/tools/perf/trace/beauty/waitid_options.c
+index 42ff58ad613b..6897fab40dcc 100644
+--- a/tools/perf/trace/beauty/waitid_options.c
++++ b/tools/perf/trace/beauty/waitid_options.c
+@@ -5,11 +5,13 @@
+ static size_t syscall_arg__scnprintf_waitid_options(char *bf, size_t size,
+ 						    struct syscall_arg *arg)
+ {
++	bool show_prefix = arg->show_string_prefix;
++	const char *prefix = "W";
+ 	int printed = 0, options = arg->val;
+ 
+ #define	P_OPTION(n) \
+ 	if (options & W##n) { \
+-		printed += scnprintf(bf + printed, size - printed, "%s%s", printed ? "|" : "", #n); \
++		printed += scnprintf(bf + printed, size - printed, "%s%s%s", printed ? "|" : "", show_prefix ? prefix : #n); \
+ 		options &= ~W##n; \
+ 	}
+ 
