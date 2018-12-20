@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30764C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3106EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00E982177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE46320656
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297847;
-	bh=POdEw+AAyHzu4LdH8sCABmL9eqVooSTh6S7vaAJJOm0=;
+	s=default; t=1545297852;
+	bh=cqiNFxuf1799ohMg7WhQQIjFVxM1Ktg2jgqP18gOtdY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qDyKVpX3I3XQBwW8jqJUh1QTEqP4+mZBlEAPNCFyIFMyiK3osJV7ziRjWSoSZCuXT
-	 RzV3bCvuBfhwtMn3P9Jet/EuICBuMFllwstZcV8l0un665pRxfRccWhgwQMhc+oIL+
-	 h/x0/h42+Ue4tgssUs/gmjaMBhrxxZoW9xxC2IXo=
+	b=dutflogf7t+cRzJPUGTm14ahMmEZyArlDBskKWfoPAQQVwJkPzKsK/8LLB2wgpjbc
+	 MLN8M8XgDKmxB7C+C59PrTPe8RXCTxkBWlDZktFkh/QZi8q/hPbvKuTNPpxOm1+JD+
+	 LIOdEcpeXYt5V6rv3riD10BILCfasUZKg+JQGLG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbeLTJYG (ORCPT
+        id S1731776AbeLTJYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:24:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59716 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:24:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729722AbeLTJYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:03 -0500
+        id S1730167AbeLTJYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632B220656;
-        Thu, 20 Dec 2018 09:24:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75A8B217D7;
+        Thu, 20 Dec 2018 09:24:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297842;
-        bh=POdEw+AAyHzu4LdH8sCABmL9eqVooSTh6S7vaAJJOm0=;
+        s=default; t=1545297847;
+        bh=cqiNFxuf1799ohMg7WhQQIjFVxM1Ktg2jgqP18gOtdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A1M9Us0Ej35wv9PsDmOqkFW8M3/qZrb1ua67JFV/Y9tzy41ETmXcJj8UGlFmdnppW
-         srifClVPvzdKNKGOr38nBfeXiLM6OhtKH9RBLh0UzX9sVIs8ZmvDcTSadoAlMIxfYI
-         xl4Gr3toRSuv1eXkKV7od/lR48ckhAzMZYdZnEEg=
+        b=d5z/4snzEJL1fJ7JUWz5gQQGRHsyEV3xOClQOaAc1T47M9eWZipgcmhlYhbdP+jJ+
+         Bkkto/HK+DBw3YBDtTgLneZfVZk0nKqFIgv3+gKr0ewCNqNfmbK3fs7X5O4haDA/mX
+         qxl/0zMYTGQpa5s1COPNGP1Lx3fCVJw1067G76+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Toni Peltonen <peltzi@peltzi.fi>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 37/61] bonding: fix 802.3ad state sent to partner when unbinding slave
-Date:   Thu, 20 Dec 2018 10:18:37 +0100
-Message-Id: <20181220085845.253510230@linuxfoundation.org>
+Subject: [PATCH 4.9 39/61] SUNRPC: Fix a potential race in xprt_connect()
+Date:   Thu, 20 Dec 2018 10:18:39 +0100
+Message-Id: <20181220085845.342207898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -67,58 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3b5b3a3331d141e8f2a7aaae3a94dfa1e61ecbe4 ]
+[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
 
-Previously when unbinding a slave the 802.3ad implementation only told
-partner that the port is not suitable for aggregation by setting the port
-aggregation state from aggregatable to individual. This is not enough. If the
-physical layer still stays up and we only unbinded this port from the bond there
-is nothing in the aggregation status alone to prevent the partner from sending
-traffic towards us. To ensure that the partner doesn't consider this
-port at all anymore we should also disable collecting and distributing to
-signal that this actor is going away. Also clear AD_STATE_SYNCHRONIZATION to
-ensure partner exits collecting + distributing state.
+If an asynchronous connection attempt completes while another task is
+in xprt_connect(), then the call to rpc_sleep_on() could end up
+racing with the call to xprt_wake_pending_tasks().
+So add a second test of the connection state after we've put the
+task to sleep and set the XPRT_CONNECTING flag, when we know that there
+can be no asynchronous connection attempts still in progress.
 
-I have tested this behaviour againts Arista EOS switches with mlx5 cards
-(physical link stays up even when interface is down) and simulated
-the same situation virtually Linux <-> Linux with two network namespaces
-running two veth device pairs. In both cases setting aggregation to
-individual doesn't alone prevent traffic from being to sent towards this
-port given that the link stays up in partners end. Partner still keeps
-it's end in collecting + distributing state and continues until timeout is
-reached. In most cases this means we are losing the traffic partner sends
-towards our port while we wait for timeout. This is most visible with slow
-periodic time (LACP rate slow).
-
-Other open source implementations like Open VSwitch and libreswitch, and
-vendor implementations like Arista EOS, seem to disable collecting +
-distributing to when doing similar port disabling/detaching/removing change.
-With this patch kernel implementation would behave the same way and ensure
-partner doesn't consider our actor viable anymore.
-
-Signed-off-by: Toni Peltonen <peltzi@peltzi.fi>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Jonathan Toppins <jtoppins@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_3ad.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/sunrpc/xprt.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-index 6dcc42d79cab..1e2ee97b9240 100644
---- a/drivers/net/bonding/bond_3ad.c
-+++ b/drivers/net/bonding/bond_3ad.c
-@@ -2050,6 +2050,9 @@ void bond_3ad_unbind_slave(struct slave *slave)
- 		   aggregator->aggregator_identifier);
- 
- 	/* Tell the partner that this port is not suitable for aggregation */
-+	port->actor_oper_port_state &= ~AD_STATE_SYNCHRONIZATION;
-+	port->actor_oper_port_state &= ~AD_STATE_COLLECTING;
-+	port->actor_oper_port_state &= ~AD_STATE_DISTRIBUTING;
- 	port->actor_oper_port_state &= ~AD_STATE_AGGREGATION;
- 	__update_lacpdu_from_port(port);
- 	ad_lacpdu_send(port);
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 685e6d225414..1a8df242d26a 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -778,8 +778,15 @@ void xprt_connect(struct rpc_task *task)
+ 			return;
+ 		if (xprt_test_and_set_connecting(xprt))
+ 			return;
+-		xprt->stat.connect_start = jiffies;
+-		xprt->ops->connect(xprt, task);
++		/* Race breaker */
++		if (!xprt_connected(xprt)) {
++			xprt->stat.connect_start = jiffies;
++			xprt->ops->connect(xprt, task);
++		} else {
++			xprt_clear_connecting(xprt);
++			task->tk_status = 0;
++			rpc_wake_up_queued_task(&xprt->pending, task);
++		}
+ 	}
+ 	xprt_release_write(xprt, task);
+ }
 -- 
 2.19.1
 
