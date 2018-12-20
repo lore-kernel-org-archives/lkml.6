@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8408C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66A6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4FCA21720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7975921773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297679;
-	bh=I7+L1gEMGURt6bbv5m3n01sAcjm/6OQxEkeZaD6p6+c=;
+	s=default; t=1545297684;
+	bh=DEYp7qMZ5yu+rI+l7vmjv43aWdvlbrTmCyzcBi0wA8E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fe2vUG3KFJp3oG+QS89gVdYw/l/fxqtrlqgC2aqsUxQLim+LjJ/qziWaybF+L/jmq
-	 S2o4y5mp9hvIZlt0ktD/LcqAqGPSbVLTr9TvcZjHzuAEiKMiFqyFpglCLHFaHauXvU
-	 OrkDIgZjghCTzSmHy2uZJueaYDcX4fasC8uAovos=
+	b=HGzq9haw3ibEQD0/Lyj0T8GXNF4n/GKmMsU5j/52ZLO6IsPMBCYgJG/AF6Oru3L0+
+	 yuiPnQ11gOE+OmwFacLJYyh9z9xg90GH5/sUn+r0OIX4o/hHj0v3PvVfzEWj0UwC98
+	 53b7YjgVXO3Bf9OAdOuOUrQPkYuVJvgmQQZNgTzo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeLTJVS (ORCPT
+        id S1731052AbeLTJVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:21:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60206 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:21:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbeLTJVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:21:15 -0500
+        id S1730992AbeLTJVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:21:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2CEF217D4;
-        Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C30A62177B;
+        Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297674;
-        bh=I7+L1gEMGURt6bbv5m3n01sAcjm/6OQxEkeZaD6p6+c=;
+        s=default; t=1545297680;
+        bh=DEYp7qMZ5yu+rI+l7vmjv43aWdvlbrTmCyzcBi0wA8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RtOA7wLZZowbqH2nQ0CYLmnj2SyK8Sydq8Dis7A8K3AK96hU7Xta3/J7kpH/1K32w
-         1jL/RK8wltHxqEvVNXRmPwKrY4M/uWTjBVZ14lZuBzuNxIPX5wUpr47Rr3p0i8UtWm
-         sbD4RR/JSBOyVpcJKMp8gfu2wm1GorvPPPp9tbxw=
+        b=veHnUvbqnxlD0YqgmuZikQ2bZTkUDKsb+m22DTudpIxLgNlfboddXj7H2VeecyKQP
+         7GOFTTG+V+9xMxDyraZKvFehICpgl4T/nUgEx4n6c2R9Vh7blVmiCDNxhE73M43lNo
+         O3qf8Ryry4i13tyDpgzDCfajZSgcMg/w8PunGRAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/40] mac80211: dont WARN on bad WMM parameters from buggy APs
-Date:   Thu, 20 Dec 2018 10:18:28 +0100
-Message-Id: <20181220085827.125833537@linuxfoundation.org>
+Subject: [PATCH 4.4 18/40] mac80211_hwsim: fix module init error paths for netlink
+Date:   Thu, 20 Dec 2018 10:18:30 +0100
+Message-Id: <20181220085827.197702334@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -66,42 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c470bdc1aaf36669e04ba65faf1092b2d1c6cabe ]
+[ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
 
-Apparently, some APs are buggy enough to send a zeroed
-WMM IE. Don't WARN on this since this is not caused by a bug
-on the client's system.
+There is no unregister netlink notifier and family on error paths
+in init_mac80211_hwsim(). Also there is an error path where
+hwsim_class is not destroyed.
 
-This aligns the condition of the WARNING in drv_conf_tx
-with the validity check in ieee80211_sta_wmm_params.
-We will now pick the default values whenever we get
-a zeroed WMM IE.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-This has been reported here:
-https://bugzilla.kernel.org/show_bug.cgi?id=199161
-
-Fixes: f409079bb678 ("mac80211: sanity check CW_min/CW_max towards driver")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mlme.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mac80211_hwsim.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index a5e11280f405..51f31e77c19b 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -1886,7 +1886,8 @@ static bool ieee80211_sta_wmm_params(struct ieee80211_local *local,
- 		params[ac].acm = acm;
- 		params[ac].uapsd = uapsd;
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index ab480ea6d95a..0d1abcfec003 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3195,16 +3195,16 @@ static int __init init_mac80211_hwsim(void)
+ 	if (err)
+ 		return err;
  
--		if (params[ac].cw_min > params[ac].cw_max) {
-+		if (params->cw_min == 0 ||
-+		    params[ac].cw_min > params[ac].cw_max) {
- 			sdata_info(sdata,
- 				   "AP has invalid WMM params (CWmin/max=%d/%d for ACI %d), using defaults\n",
- 				   params[ac].cw_min, params[ac].cw_max, aci);
++	err = hwsim_init_netlink();
++	if (err)
++		goto out_unregister_driver;
++
+ 	hwsim_class = class_create(THIS_MODULE, "mac80211_hwsim");
+ 	if (IS_ERR(hwsim_class)) {
+ 		err = PTR_ERR(hwsim_class);
+-		goto out_unregister_driver;
++		goto out_exit_netlink;
+ 	}
+ 
+-	err = hwsim_init_netlink();
+-	if (err < 0)
+-		goto out_unregister_driver;
+-
+ 	for (i = 0; i < radios; i++) {
+ 		struct hwsim_new_radio_params param = { 0 };
+ 
+@@ -3310,6 +3310,8 @@ out_free_mon:
+ 	free_netdev(hwsim_mon);
+ out_free_radios:
+ 	mac80211_hwsim_free();
++out_exit_netlink:
++	hwsim_exit_netlink();
+ out_unregister_driver:
+ 	platform_driver_unregister(&mac80211_hwsim_driver);
+ 	return err;
 -- 
 2.19.1
 
