@@ -2,149 +2,143 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81A1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E99C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F1F8217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD724218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Wpl0Q71I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731783AbeLTPmd convert rfc822-to-8bit (ORCPT
+        id S1731838AbeLTPmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:42:33 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:42891 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729184AbeLTPmb (ORCPT
+        Thu, 20 Dec 2018 10:42:53 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48694 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729184AbeLTPmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:42:31 -0500
-Received: by mail-vk1-f194.google.com with SMTP id y14so470648vky.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:42:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tHQnhEmeNAkhfMiX5dm+pc4968Yh2EmyfSDMadQr4KU=;
-        b=G15LryuEzwKxSJgAq6U3IpngjFb394sRdG52H+7RQcgtV+J8FoO8Trzs0LrMyT/r8p
-         NaE1b9AUz4dGAKuHopvfDuGnU2SttHJtE5/DH9vrn5PGBaa3Oa35FNN/eZh43HT4W1xH
-         Y+EUP+T1ABWM3aIt988zTKKjqYeB9KUhX1cPbidJDFXp1InjqZs4KuyQy03oUnW2HzKT
-         OXobMTN6DCxoi6aKZp13sRBRG2d978abpXb0fo61y7HWD75qUZH2R6nQ8o+3EquMARgP
-         QLnD1JAq/GGpWMtGS9SmCk9xLINDJLqyZjbiFiqgQbNLmlcfdmcfGmR+29UlL2lFmrS+
-         1smQ==
-X-Gm-Message-State: AA+aEWaXAzNYOY8aAkYomDTwvAObpRTzBihiSWUzzk5s4yIEZJD8kO4+
-        pgh5CCJsTNksbNQi8MDWC9ej3n5tl+SiyNFN0a0=
-X-Google-Smtp-Source: AFSGD/W9y0+JF2fO7Q92lGcmeA3Ba1SrzGbyMudAJGbf750QDrt3V0qtbKEISY/Ax9DQLCPNPnhHn2+VQe+G2lyFxTo=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr11841962vkh.65.1545320549416;
- Thu, 20 Dec 2018 07:42:29 -0800 (PST)
+        Thu, 20 Dec 2018 10:42:53 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181220154251euoutp010fcb50e2761c58fd29ca7331d823c774~yFN9DcuXq3110231102euoutp01w
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 15:42:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181220154251euoutp010fcb50e2761c58fd29ca7331d823c774~yFN9DcuXq3110231102euoutp01w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545320571;
+        bh=zxRPt0Q/5rMMomLAHj3d3MQIU4XhgYSZLaGCm71334I=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Wpl0Q71IF6cuZ+37Gtko0lo5BZ3mNNK4zEuuQ1mz0VgE4DMjN+p6x0TjRLstF44WA
+         sGOvOqucJQQJO7Q8rRpxDY3x73LAk6PPL7V2Aemx0JIYCeqxCCdiSYowk0M3X2cyPD
+         h6VX8Ox2iuSJ4ilUh5fR/9hrSSSIKxMkA7HLPAqE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181220154250eucas1p2ef19a2c19a934d4580ecad2720b5997e~yFN8Tas9Y1620316203eucas1p2I;
+        Thu, 20 Dec 2018 15:42:50 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7F.22.04806.A78BB1C5; Thu, 20
+        Dec 2018 15:42:50 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181220154249eucas1p2205a1febc87460f910de4c7ac1ea8a0b~yFN7dC_Lm0373103731eucas1p2E;
+        Thu, 20 Dec 2018 15:42:49 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181220154249eusmtrp17696d6b2b6733b4e86ff2bd2c0422dd7~yFN7LkgjA0038600386eusmtrp1W;
+        Thu, 20 Dec 2018 15:42:49 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-ae-5c1bb87a0f4e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FC.42.04284.978BB1C5; Thu, 20
+        Dec 2018 15:42:49 +0000 (GMT)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181220154248eusmtip2d65368e3fa7ad8ca05c0d99cef1fb659~yFN6s1HNB1995219952eusmtip2k;
+        Thu, 20 Dec 2018 15:42:48 +0000 (GMT)
+Subject: Re: [PATCH] fbdev: make FB_BACKLIGHT a tristate
+To:     Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans de Goede <j.w.r.degoede@gmail.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <c5378c0f-d2f8-720c-e633-24673af87a53@samsung.com>
+Date:   Thu, 20 Dec 2018 16:42:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20181211150513.15161-1-joro@8bytes.org> <CGME20181211150640epcas5p4ffdd63a1900ebfe4a04eea24d2c86de6@epcas5p4.samsung.com>
- <20181211150513.15161-4-joro@8bytes.org> <30d86186-e0a2-2be1-2295-20510fbd74ba@samsung.com>
- <20181219143451.GY16835@8bytes.org>
-In-Reply-To: <20181219143451.GY16835@8bytes.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 20 Dec 2018 16:42:17 +0100
-Message-ID: <CAMuHMdXr5tVuWf4dJzBLRfdqpMCMBSg-+t35nb=Rmh9PM=abJg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] iommu/of: Don't call iommu_ops->add_device directly
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAF6AEGuUXt-c9Bmi8yfU=d_pUvrsXwDq4CzZ9GfrhZBP+zbe-A@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xSYRju4xzgwKROWPZOWy3WZbZpNWs7lXO1dTlrrdsvM1uRnqlL0IFS
+        2h/DQqCsoBqJ2nBlEGk6MC+1mNOCTGldqJjVus7SQt26aF6w4ODq3/M83/O+z/NuH4GJu7ix
+        RI68gFHIpbkSnhBvdv9+lFDcGpe+8pZWSE0a3XxqqtmAUb6fQzyqutKIqMeBYR719Z6aS+kM
+        V/nUgzPDXOrZ7SoeFXhtwqnPNaMY9XisF9sQRY+PGRF995cFpw3eBLrN/IZPV2oruLTTtpx+
+        e8rDoat+/8Lp744FuwRpwuRMJjdHxShWpBwUZk+4JrH8Efyoy+fGS5Aa1yMBAeRq8H0McvVI
+        SIhJG4Imp5fPkh8IHMdfRsh3BCVdATQ9Yj9ZzwthMWlFUN4gZ01DCPqtr8KmaJKC+sGP4Yw5
+        5B54MXABC2GM9GDQ5wt7eOQ6MJTZw1hEpoD3uSuMcXIJaPw6jh4RxFwyFc72LGMts6Gr4lN4
+        pYDcDc4vTTx25UJoCVRhoQ5A9vPBV6nD2KKbwK9Tc1kcDQOeJj6L50P3+dM4O2BC8G2sNkIa
+        ENT1uDmsaz10ep5wQy0wMh4abq9g5Y1wPliDhWQgZ4I/MJstMROMzaaILAKtRsy6l0LjtUbe
+        dKy+7XqkGg2+iwP4ObTI/N9p5v/OMf/LtSDMjuYxhUpZFqNMkjNHEpVSmbJQnpWYkSdzoL8f
+        rDvo+dmKXBOHOhBJIEmU6FJabLqYK1Upi2QdCAhMMkdUrotLF4sypUXFjCLvgKIwl1F2oDgC
+        l8wTHZvxbp+YzJIWMIcZJp9RTL9yCEFsCcLid15e2Wvjn3IsvrN/ZPP7k94X28sJk2/d1phb
+        JwYDux7OsubcNAa39T1R78jMqE4su3KmOA/HK7bgWku8qtdODaqsAVm/M2lrm01Tq9kgqGu/
+        3z7uxwNrSy2dexc+TZW5q903Uh7Wl45+SOZMfnmwhpjie7UxQ5pZU2Utx/wSXJktXbUcUyil
+        fwDRaabTXAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xe7qVO6RjDO6d4rP4O+kYu8X/bROZ
+        La58fc9mMXf2JEaLC28/sFm8PtLEatE5cQm7xYm+D6wWl3fNYbN4e2c6i8XzhT+YLS78usXs
+        wOPx+9ckRo+93xaweEw8q+uxc9Zddo/ZHTNZPTav0PK4332cyWPOz28sHp83yQVwRunZFOWX
+        lqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl/Nn3l7ngO0vF
+        vivHWBoYm1i6GDk5JARMJFa1rmXrYuTiEBJYyijRfOw8cxcjB1BCRuL4+jKIGmGJP9e6oGre
+        Mkq09q1nBUkIC1hIrH33GGyQiECQxP3rHawQRZcZJeb3vWUBcZgFTjJLzGzuZwKpYhOwkpjY
+        vooRxOYVsJM4e3UfmM0ioCrRdqMTrEZUIELi1sMOFogaQYmTM5+A2ZwCgRKbX2xhA7GZBdQl
+        /sy7xAxhy0tsfzuHeQKj4CwkLbOQlM1CUraAkXkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZG
+        YHRuO/Zz8w7GSxuDDzEKcDAq8fDOiJKKEWJNLCuuzD3EKMHBrCTC29spHSPEm5JYWZValB9f
+        VJqTWnyI0RToiYnMUqLJ+cDEkVcSb2hqaG5haWhubG5sZqEkznveoDJKSCA9sSQ1OzW1ILUI
+        po+Jg1OqgTH0r4awa9ON5brrl259efPVsjt2t5dHXCz35UqUsXiks9ukcSZfWsOGAsO0+1ln
+        Fy/33dQ3K+LAE79qZ7OEwG0cSUmiTUvj5f55+kvxLUhM+f+12Hf3hZznandTEvxKAnaZf2Xq
+        93BLWXj5sPP35mlv5p4zP/P6i8GG7rsPqq5fEbD79vHxvzYlluKMREMt5qLiRAAhEUR55AIA
+        AA==
+X-CMS-MailID: 20181220154249eucas1p2205a1febc87460f910de4c7ac1ea8a0b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181218132030epcas4p341162d849e429c85fdd265246aee6630
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181218132030epcas4p341162d849e429c85fdd265246aee6630
+References: <20181026140931.15771-1-robdclark@gmail.com>
+        <CGME20181218132030epcas4p341162d849e429c85fdd265246aee6630@epcas4p3.samsung.com>
+        <CAF6AEGuUXt-c9Bmi8yfU=d_pUvrsXwDq4CzZ9GfrhZBP+zbe-A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jörg,
 
-On Wed, Dec 19, 2018 at 5:51 PM Joerg Roedel <joro@8bytes.org> wrote:
-> On Wed, Dec 19, 2018 at 10:54:18AM +0100, Marek Szyprowski wrote:
-> > On 2018-12-11 16:05, Joerg Roedel wrote:
-> > > From: Joerg Roedel <jroedel@suse.de>
-> > >
-> > > Make sure to invoke this call-back through the proper
-> > > function of the IOMMU-API.
-> > >
-> > > Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> > > ---
-> > >  drivers/iommu/of_iommu.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> > > index c5dd63072529..4d4847de727e 100644
-> > > --- a/drivers/iommu/of_iommu.c
-> > > +++ b/drivers/iommu/of_iommu.c
-> > > @@ -218,10 +218,10 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
-> > >             ops = dev->iommu_fwspec->ops;
-> > >     /*
-> > >      * If we have reason to believe the IOMMU driver missed the initial
-> > > -    * add_device callback for dev, replay it to get things in order.
-> > > +    * probe for dev, replay it to get things in order.
-> > >      */
-> > > -   if (ops && ops->add_device && dev->bus && !dev->iommu_group)
-> > > -           err = ops->add_device(dev);
-> > > +   if (dev->bus && !dev->iommu_group)
-> > > +           err = iommu_probe_device(dev);
-> >
-> > This change removes a check for NULL ops, what causes NULL pointer
-> > exception on first device without IOMMU.
->
-> Bummer, this check was supposed to be in iommu_probe_device(), but
-> apparently it got lost. Does the attached patch fix it?
->
-> > I'm also not sure if this is a good idea to call iommu_probe_device(),
-> > which comes from dev->bus->iommu_ops, which might be different from ops
-> > from local variable.
->
-> The local variable comes from dev->iommu_fwspec->ops, which should be
-> exactly the same as dev->bus->iommu_ops. I'll leave that for now until
-> it turns out to be a problem (which I don't expect).
->
->
-> Regards,
->
->         Joerg
->
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index a2131751dcff..3ed4db334341 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -114,10 +114,14 @@ void iommu_device_unregister(struct iommu_device *iommu)
->  int iommu_probe_device(struct device *dev)
->  {
->         const struct iommu_ops *ops = dev->bus->iommu_ops;
-> +       int ret = -EINVAL;
->
->         WARN_ON(dev->iommu_group);
->
-> -       return ops->add_device(dev);
-> +       if (ops)
+On 12/18/2018 02:19 PM, Rob Clark wrote:
+> On Fri, Oct 26, 2018 at 10:09 AM Rob Clark <robdclark@gmail.com> wrote:
+>>
+>> BACKLIGHT_CLASS_DEVICE is already tristate, but a dependency
+>> FB_BACKLIGHT prevents it from being built as a module.  There
+>> doesn't seem to be any particularly good reason for this, so
+>> switch FB_BACKLIGHT over to tristate.
+>>
+>> Signed-off-by: Rob Clark <robdclark@gmail.com>
+>> Tested-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> bump
 
-Is this sufficient? The old code checked for ops->add_device != NULL,
-too.
+Patch queued for 4.21, thanks (also sorry for the delay).
 
-> +               ret = ops->add_device(dev);
-> +
-> +       return ret;
->  }
->
->  void iommu_release_device(struct device *dev)
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
