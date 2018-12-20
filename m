@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09866C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08580C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D364821741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:17:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D57882176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeLTDQZ (ORCPT
+        id S1730209AbeLTDRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 22:16:25 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59687 "EHLO huawei.com"
+        Wed, 19 Dec 2018 22:17:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59714 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729230AbeLTDQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 22:16:23 -0500
+        id S1729523AbeLTDQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 22:16:25 -0500
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D894ABCDBAE99;
+        by Forcepoint Email with ESMTP id EE04136128727;
         Thu, 20 Dec 2018 11:16:19 +0800 (CST)
 Received: from linux-ioko.site (10.71.200.31) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
@@ -30,9 +30,9 @@ To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <lipeng321@huawei.com>
-Subject: [PATCH net-next 5/9] net: hns3: reset tqp while doing DOWN operation
-Date:   Thu, 20 Dec 2018 11:52:02 +0800
-Message-ID: <1545277926-66432-6-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 3/9] net: hns3: fix a bug caused by udelay
+Date:   Thu, 20 Dec 2018 11:52:00 +0800
+Message-ID: <1545277926-66432-4-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1545277926-66432-1-git-send-email-lipeng321@huawei.com>
 References: <1545277926-66432-1-git-send-email-lipeng321@huawei.com>
@@ -45,60 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+udelay() in driver may always occupancy processor. If there is only
+one cpu in system, the VF driver may initialize fail when insmod
+PF and VF driver in the same system. This patch use msleep() to free
+cpu when VF wait PF message.
 
-While doing DOWN operation, the driver will reclaim the memory which has
-already used for TX. If the hardware is processing this memory, it will
-cause a RCB error to the hardware. According the hardware's description,
-the driver should reset the tqp before reclaim the memory during DOWN.
-
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 4 ++++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 0b04d04..98ae282 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5331,6 +5331,7 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
+index ef9c8e6..84653f5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
+@@ -26,7 +26,7 @@ static int hclgevf_get_mbx_resp(struct hclgevf_dev *hdev, u16 code0, u16 code1,
+ 				u8 *resp_data, u16 resp_len)
  {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
-+	int i;
+ #define HCLGEVF_MAX_TRY_TIMES	500
+-#define HCLGEVF_SLEEP_USCOEND	1000
++#define HCLGEVF_SLEEP_USECOND	1000
+ 	struct hclgevf_mbx_resp_status *mbx_resp;
+ 	u16 r_code0, r_code1;
+ 	int i = 0;
+@@ -43,7 +43,7 @@ static int hclgevf_get_mbx_resp(struct hclgevf_dev *hdev, u16 code0, u16 code1,
+ 		if (test_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state))
+ 			return -EIO;
  
- 	set_bit(HCLGE_STATE_DOWN, &hdev->state);
- 
-@@ -5343,6 +5344,9 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 		return;
+-		udelay(HCLGEVF_SLEEP_USCOEND);
++		usleep_range(HCLGEVF_SLEEP_USECOND, HCLGEVF_SLEEP_USECOND * 2);
+ 		i++;
  	}
  
-+	for (i = 0; i < handle->kinfo.num_tqps; i++)
-+		hclge_reset_tqp(handle, i);
-+
- 	/* Mac disable */
- 	hclge_cfg_mac_mode(hdev, false);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 919c3aa..156242f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1870,9 +1870,13 @@ static int hclgevf_ae_start(struct hnae3_handle *handle)
- static void hclgevf_ae_stop(struct hnae3_handle *handle)
- {
- 	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
-+	int i;
- 
- 	set_bit(HCLGEVF_STATE_DOWN, &hdev->state);
- 
-+	for (i = 0; i < handle->kinfo.num_tqps; i++)
-+		hclgevf_reset_tqp(handle, i);
-+
- 	/* reset tqp stats */
- 	hclgevf_reset_tqp_stats(handle);
- 	hclgevf_update_link_status(hdev, 0);
 -- 
 1.9.1
 
