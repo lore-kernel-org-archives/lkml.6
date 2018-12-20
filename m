@@ -2,490 +2,144 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AC1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3FDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3A121852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KoHDhIch"
+	by mail.kernel.org (Postfix) with ESMTP id 628B021852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387664AbeLTOfx (ORCPT
+        id S2387581AbeLTOhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:35:53 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35468 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730558AbeLTOfw (ORCPT
+        Thu, 20 Dec 2018 09:37:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40072 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731737AbeLTOhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:35:52 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so2007320wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:35:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iSBBGKYXoMbAEVaAi+Mds4SNqRv60KJaSLPiiZa6Ui8=;
-        b=KoHDhIchrUcTBTszIGVh8c7qEIdRb8CL3TAzTurDHLJV/fd//mdJScLRmVMXSeCt4t
-         VTvIkQla7i+Svq0PueG1mpdAmfv4oeguuJrtneqtaXmdkUSv+1JSaA9Qhz+Nxhm746KI
-         Gy/J3YRL+xUWLfSysvld1dOa/2quvhPOSfDgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iSBBGKYXoMbAEVaAi+Mds4SNqRv60KJaSLPiiZa6Ui8=;
-        b=XnsPwA0IFzZuDKMgplPG0sYn+IbOYiYZxA6PAvFrr2vrO8YMIeLw+hnGtKb9tRYV9n
-         OYZcO3KBLxJQVzl8gbcPvVOBLqfjz6v/RmLPnKQhGqjg157IzZ204I8LGdwtd/X2K/Lj
-         Iz+2Qa1OZJOrdgKIpZQ/VqiHpR1kWUiDCE2UTxCGBBR5u7ABjA+aulphVZBNaoZwq4Pp
-         Z+VqdkjmSergXUV4RwyAxyJPZJBMbwtwUd5xIJWkfph87M7Oiw2eJsottI2Nj4gjabhJ
-         9bJQW7/VLZtLC4cCNw1p/F2J1K9UaQsGQDbG/nO8Iuk2Q4iNPr7R5vyzmcYih0N4X8ne
-         Mc8g==
-X-Gm-Message-State: AA+aEWYoR0iOyUi85J+tmr3sFg7fFxRcH5cdpzPeCH4aOKpEGaJ6EXLE
-        sM/3PfPlg5FzVEUPsIAeN92b6ss7WGo=
-X-Google-Smtp-Source: AFSGD/XHXzeWvbngiFo4S1TfUwtIhuy3xZYoPe5zaPhBaCg7IMUKPYiT7j/5KT1/KbhHqdvozGGNew==
-X-Received: by 2002:adf:9bda:: with SMTP id e26mr21841749wrc.295.1545316549095;
-        Thu, 20 Dec 2018 06:35:49 -0800 (PST)
-Received: from [192.168.0.40] (55.183.88.92.rev.sfr.net. [92.88.183.55])
-        by smtp.googlemail.com with ESMTPSA id h131sm10054013wmd.17.2018.12.20.06.35.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 06:35:48 -0800 (PST)
-Subject: Re: [PATCH v10 18/27] drivers: firmware: psci: Add support for PM
- domains using genpd
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
-Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-19-ulf.hansson@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <fa99b1a9-2e4d-e97c-9478-43b4d3ef9819@linaro.org>
-Date:   Thu, 20 Dec 2018 15:35:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 20 Dec 2018 09:37:09 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKEYclC103163
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:37:08 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pg9jqtesk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:37:07 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Thu, 20 Dec 2018 14:37:05 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 14:37:03 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKEb2UN22478978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 14:37:02 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD7D15205A;
+        Thu, 20 Dec 2018 14:37:01 +0000 (GMT)
+Received: from [9.152.224.123] (unknown [9.152.224.123])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 81BE25204F;
+        Thu, 20 Dec 2018 14:37:01 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v5 06/15] KVM: s390: remove prefix kvm_s390_gisa_ from
+ static inline functions
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-7-mimu@linux.ibm.com>
+ <20181220132430.7cea69d3.cohuck@redhat.com>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Thu, 20 Dec 2018 15:37:01 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181129174700.16585-19-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181220132430.7cea69d3.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122014-0008-0000-0000-000002A41770
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122014-0009-0000-0000-0000220EB579
+Message-Id: <49e2b16f-23a3-73a8-75b1-b03d5c9ad8a2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/2018 18:46, Ulf Hansson wrote:
-> When the hierarchical CPU topology layout is used in DT, we need to setup
-> the corresponding PM domain data structures, as to allow a CPU and a group
-> of CPUs to be power managed accordingly. Let's enable this by deploying
-> support through the genpd interface.
+
+
+On 20.12.18 13:24, Cornelia Huck wrote:
+> On Wed, 19 Dec 2018 20:17:47 +0100
+> Michael Mueller <mimu@linux.ibm.com> wrote:
 > 
-> Additionally, when the OS initiated mode is supported by the PSCI FW, let's
-> also parse the domain idle states DT bindings as to make genpd responsible
-> for the state selection, when the states are compatible with
-> "domain-idle-state". Otherwise, when only Platform Coordinated mode is
-> supported, we rely solely on the state selection to be managed through the
-> regular cpuidle framework.
+>> This will shorten the length of code lines.
+>> All GISA related static inline functions are local to interrupt.c
+>>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+>> ---
+>>   arch/s390/kvm/interrupt.c | 26 +++++++++++++-------------
+>>   1 file changed, 13 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+>> index 4ab20d2eb180..9b1fa39b6f90 100644
+>> --- a/arch/s390/kvm/interrupt.c
+>> +++ b/arch/s390/kvm/interrupt.c
+>> @@ -224,22 +224,22 @@ static inline u8 int_word_to_isc(u32 int_word)
+>>    */
+>>   #define IPM_BIT_OFFSET (offsetof(struct kvm_s390_gisa, ipm) * BITS_PER_BYTE)
+>>   
+>> -static inline void kvm_s390_gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>> +static inline void set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>>   {
+>>   	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+>>   }
+>>   
+>> -static inline u8 kvm_s390_gisa_get_ipm(struct kvm_s390_gisa *gisa)
+>> +static inline u8 get_ipm(struct kvm_s390_gisa *gisa)
+>>   {
+>>   	return READ_ONCE(gisa->ipm);
+>>   }
+>>   
+>> -static inline void kvm_s390_gisa_clear_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>> +static inline void clear_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>>   {
+>>   	clear_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+>>   }
+>>   
+>> -static inline int kvm_s390_gisa_tac_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>> +static inline int tac_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>>   {
+>>   	return test_and_clear_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+>>   }
 > 
-> If the initialization of the PM domain data structures succeeds and the OS
-> initiated mode is supported, we try to switch to it. In case it fails,
-> let's fall back into a degraded mode, rather than bailing out and returning
-> an error code.
+> I don't disagree with making them shorter, but I think the code would
+> be more readable if you only dropped the kvm_s390_ prefix and kept
+> annotating the functions as gisa_.
+
+applied
+
 > 
-> Due to that the OS initiated mode may become enabled, we need to adjust to
-> maintain backwards compatibility for a kernel started through a kexec call.
-> Do this by explicitly switch to Platform Coordinated mode during boot.
-> 
-> To try to initiate the PM domain data structures, the PSCI driver shall
-> call the new function, psci_dt_init_pm_domains(). However, this is done
-> from following changes.
-> 
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in V10:
-> 	- Enable the PM domains to be used for both PC and OSI mode.
-> 	- Fixup error paths.
-> 	- Move the management of kexec started kernels into this patch.
-> 	- Rewrite changelog.
-> 
-> ---
->  drivers/firmware/psci/Makefile         |   2 +-
->  drivers/firmware/psci/psci.c           |   7 +-
->  drivers/firmware/psci/psci.h           |   6 +
->  drivers/firmware/psci/psci_pm_domain.c | 262 +++++++++++++++++++++++++
->  4 files changed, 275 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/firmware/psci/psci_pm_domain.c
-> 
-> diff --git a/drivers/firmware/psci/Makefile b/drivers/firmware/psci/Makefile
-> index 1956b882470f..ff300f1fec86 100644
-> --- a/drivers/firmware/psci/Makefile
-> +++ b/drivers/firmware/psci/Makefile
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
->  #
-> -obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
-> +obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o psci_pm_domain.o
-
-Same comment as 17/27.
-
-+obj-$(CONFIG_PSCI_IDLE) += psci_pm_domain.o
-
->  obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index 623591b541a4..19af2093151b 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -704,9 +704,14 @@ static int __init psci_1_0_init(struct device_node *np)
->  	if (err)
->  		return err;
->  
-> -	if (psci_has_osi_support())
-> +	if (psci_has_osi_support()) {
->  		pr_info("OSI mode supported.\n");
->  
-> +		/* Make sure we default to PC mode. */
-> +		invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
-> +			       PSCI_1_0_SUSPEND_MODE_PC, 0, 0);
-> +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
-> index 7d9d38fd57e1..8cf6d7206fab 100644
-> --- a/drivers/firmware/psci/psci.h
-> +++ b/drivers/firmware/psci/psci.h
-> @@ -11,4 +11,10 @@ void psci_set_domain_state(u32 state);
->  bool psci_has_osi_support(void);
->  int psci_dt_parse_state_node(struct device_node *np, u32 *state);
->  
-> +#ifdef CONFIG_CPU_IDLE
-
-Same comment as 17/27 for the config option.
-
-> +int psci_dt_init_pm_domains(struct device_node *np);
-> +#else
-> +static inline int psci_dt_init_pm_domains(struct device_node *np) { return 0; }
-> +#endif
-> +
->  #endif /* __PSCI_H */
-> diff --git a/drivers/firmware/psci/psci_pm_domain.c b/drivers/firmware/psci/psci_pm_domain.c
-> new file mode 100644
-> index 000000000000..d0dc38e96f85
-> --- /dev/null
-> +++ b/drivers/firmware/psci/psci_pm_domain.c
-> @@ -0,0 +1,262 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PM domains for CPUs via genpd - managed by PSCI.
-> + *
-> + * Copyright (C) 2018 Linaro Ltd.
-> + * Author: Ulf Hansson <ulf.hansson@linaro.org>
-> + *
-> + */
-> +
-> +#define pr_fmt(fmt) "psci: " fmt
-> +
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +
-> +#include "psci.h"
-> +
-> +#ifdef CONFIG_CPU_IDLE
-
-Same comment as 17/27 for the config option. This condition should go away.
-
-> +struct psci_pd_provider {
-> +	struct list_head link;
-> +	struct device_node *node;
-> +};
-> +
-> +static LIST_HEAD(psci_pd_providers);
-> +static bool osi_mode_enabled;
-> +
-> +static int psci_pd_power_off(struct generic_pm_domain *pd)
-> +{
-> +	struct genpd_power_state *state = &pd->states[pd->state_idx];
-> +	u32 *pd_state;
-> +	u32 composite_pd_state;
-> +
-> +	/* If we have failed to enable OSI mode, then abort power off. */
-> +	if (psci_has_osi_support() && !osi_mode_enabled)
-> +		return -EBUSY;
-
-I'm not sure EBUSY is the best error code to describe this situation.
-May be ENOTSUP ?
-
-However, how possible is it to pass in this function if the OSI mode was
-not enabled ?
-
-> +	if (!state->data)
-> +		return 0;
-> +
-> +	/* When OSI mode is enabled, set the corresponding domain state. */
-> +	pd_state = state->data;
-> +	composite_pd_state = *pd_state | psci_get_domain_state();
-> +	psci_set_domain_state(composite_pd_state);
-> +
-> +	return 0;
-> +}
-> +
-> +static int psci_pd_parse_state_nodes(struct genpd_power_state *states,
-> +				int state_count)
-
-__init ?
-
-> +{
-> +	int i, ret;
-> +	u32 psci_state, *psci_state_buf;
-> +
-> +	for (i = 0; i < state_count; i++) {
-> +		ret = psci_dt_parse_state_node(to_of_node(states[i].fwnode),
-> +					&psci_state);
-> +		if (ret)
-> +			goto free_state;
-> +
-> +		psci_state_buf = kmalloc(sizeof(u32), GFP_KERNEL);
-> +		if (!psci_state_buf) {
-> +			ret = -ENOMEM;
-> +			goto free_state;
-> +		}
-> +		*psci_state_buf = psci_state;
-> +		states[i].data = psci_state_buf;
-> +	}
-> +
-> +	return 0;
-> +
-> +free_state:
-> +	while (i >= 0) {
-> +		kfree(states[i].data);
-> +		i--;
-> +	}
-
-for (; i >= 0; i--)
-
-> +	return ret;
-> +}
-> +
-> +static int psci_pd_parse_states(struct device_node *np,
-> +			struct genpd_power_state **states, int *state_count)
-
-__init ?
-
-> +{
-> +	int ret;
-> +
-> +	/* Parse the domain idle states. */
-> +	ret = of_genpd_parse_idle_states(np, states, state_count);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Fill out the PSCI specifics for each found state. */
-> +	ret = psci_pd_parse_state_nodes(*states, *state_count);
-> +	if (ret)
-> +		kfree(*states);
-> +
-> +	return ret;
-> +}
-> +
-> +static int psci_pd_init(struct device_node *np)
-
-__init ?
-
-> +{
-> +	struct generic_pm_domain *pd;
-> +	struct psci_pd_provider *pd_provider;
-> +	struct dev_power_governor *pd_gov;
-> +	struct genpd_power_state *states = NULL;
-> +	int i, ret = -ENOMEM, state_count = 0;
-> +
-> +	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-> +	if (!pd)
-> +		goto out;
-> +
-> +	pd_provider = kzalloc(sizeof(*pd_provider), GFP_KERNEL);
-> +	if (!pd_provider)
-> +		goto free_pd;
-> +
-> +	pd->name = kasprintf(GFP_KERNEL, "%pOF", np);
-> +	if (!pd->name)
-> +		goto free_pd_prov;
-> +
-> +	/*
-> +	 * For OSI mode, parse the domain idle states and let genpd manage the
-> +	 * state selection for those being compatible with "domain-idle-state".
-> +	 */
-> +	if (psci_has_osi_support()) {
-> +		ret = psci_pd_parse_states(np, &states, &state_count);
-> +		if (ret)
-> +			goto free_name;
-> +	}
-> +
-> +	pd->name = kbasename(pd->name);
-> +	pd->power_off = psci_pd_power_off;
-> +	pd->states = states;
-> +	pd->state_count = state_count;
-> +	pd->flags |= GENPD_FLAG_IRQ_SAFE | GENPD_FLAG_CPU_DOMAIN;
-> +
-> +	/* Use governor for CPU PM domains if it has some states to manage. */
-> +	pd_gov = state_count > 0 ? &pm_domain_cpu_gov : NULL;
-> +
-> +	ret = pm_genpd_init(pd, pd_gov, false);
-> +	if (ret)
-> +		goto free_state;
-> +
-> +	ret = of_genpd_add_provider_simple(np, pd);
-> +	if (ret)
-> +		goto remove_pd;
-> +
-> +	pd_provider->node = of_node_get(np);
-> +	list_add(&pd_provider->link, &psci_pd_providers);
-> +
-> +	pr_debug("init PM domain %s\n", pd->name);
-> +	return 0;
-> +
-> +remove_pd:
-> +	pm_genpd_remove(pd);
-> +free_state:
-> +	for (i = 0; i < state_count; i++)
-> +		kfree(states[i].data);
-> +	kfree(states);
-> +free_name:
-> +	kfree(pd->name);
-> +free_pd_prov:
-> +	kfree(pd_provider);
-> +free_pd:
-> +	kfree(pd);
-> +out:
-> +	pr_err("failed to init PM domain ret=%d %pOF\n", ret, np);
-> +	return ret;
-> +}
-> +
-> +static void psci_pd_remove(void)
-> +{
-> +	struct psci_pd_provider *pd_provider, *it;
-> +	struct generic_pm_domain *genpd;
-> +	int i;
-> +
-> +	list_for_each_entry_safe(pd_provider, it, &psci_pd_providers, link) {
-> +		of_genpd_del_provider(pd_provider->node);
-> +
-> +		genpd = of_genpd_remove_last(pd_provider->node);
-> +		if (!IS_ERR(genpd)) {
-> +			for (i = 0; i < genpd->state_count; i++)
-> +				kfree(genpd->states[i].data);
-> +			kfree(genpd->states);
-> +			kfree(genpd);
-> +		}
-> +
-> +		of_node_put(pd_provider->node);
-> +		list_del(&pd_provider->link);
-> +		kfree(pd_provider);
-> +	}
-> +}
-> +
-> +static int psci_pd_init_topology(struct device_node *np)
-
-__init ?
-
-> +{
-> +	struct device_node *node;
-> +	struct of_phandle_args child, parent;
-> +	int ret;
-> +
-> +	for_each_child_of_node(np, node) {
-> +		if (of_parse_phandle_with_args(node, "power-domains",
-> +					"#power-domain-cells", 0, &parent))
-> +			continue;
-> +
-> +		child.np = node;
-> +		child.args_count = 0;
-> +
-> +		ret = of_genpd_add_subdomain(&parent, &child);
-> +		of_node_put(parent.np);
-> +		if (ret) {
-> +			of_node_put(node);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int psci_dt_init_pm_domains(struct device_node *np)
-
-__init ?
-
-> +{
-> +	struct device_node *node;
-> +	int ret, pd_count = 0;
-> +
-> +	/*
-> +	 * Parse child nodes for the "#power-domain-cells" property and
-> +	 * initialize a genpd/genpd-of-provider pair when it's found.
-> +	 */
-> +	for_each_child_of_node(np, node) {
-> +		if (!of_find_property(node, "#power-domain-cells", NULL))
-> +			continue;
-> +
-> +		ret = psci_pd_init(node);
-> +		if (ret)
-> +			goto put_node;
-> +
-> +		pd_count++;
-> +	}
-> +
-> +	/* Bail out if not using the hierarchical CPU topology. */
-> +	if (!pd_count)
-> +		return 0;
-> +
-> +	/* Link genpd masters/subdomains to model the CPU topology. */
-> +	ret = psci_pd_init_topology(np);
-> +	if (ret)
-> +		goto remove_pd;
-> +
-> +	/* Try to enable OSI mode if supported. */
-> +	if (psci_has_osi_support())
-> +		osi_mode_enabled = psci_set_osi_mode();
-> +
-> +	pr_info("Initialized CPU PM domain topology\n");
-> +	return pd_count;
-> +
-> +put_node:
-> +	of_node_put(node);
-> +remove_pd:
-> +	if (pd_count)
-> +		psci_pd_remove();
-> +	pr_err("failed to create CPU PM domains ret=%d\n", ret);
-> +	return ret;
-> +}
-> +#endif
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
