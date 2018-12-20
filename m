@@ -4,83 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C8BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3184CC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73973218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE2B0218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:34:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545338012;
-	bh=8kSuh1G40OlfIoM80YO76JjHyQcsOH/N+mSkEgDch/I=;
+	s=default; t=1545338090;
+	bh=OPULwwFhcOOz3opOU0r8BsJBpItaPvmPuuu3yjWpU4E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jCNXzQtiZ1zHHqshTH/R26vCWwaFVtnVJujewu1FECPi8wvKlbDxNP5v8vG5Bm9nm
-	 TY/QGQyJ1d9qrl2KtAilfIi9wmChp0PWnk5Y5xx3bgCUqcLXsAaYvsyYqV/6YoQsNR
-	 io6JcEU2nUqFJfKW2A98Fq7bmBbcz2Y77lPjXU3Q=
+	b=tzvHSgfqe6V2k7JezLq47znWy7l5w4wYDgQtTyIN7kHSAOu+nU0LpdbJlfFYYVfXM
+	 JIB6WM43h6DT+yiUX5YYatvWN+KR/Z0HTL9to+88Essm/iBYHR8y21neBwZ6kagtI7
+	 IpxCf637DSfpgvO7c+J6RbLY5Htag5G/Wq+FcDx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389606AbeLTUdb (ORCPT
+        id S2389595AbeLTUet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:33:31 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37537 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732267AbeLTUda (ORCPT
+        Thu, 20 Dec 2018 15:34:49 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43350 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732267AbeLTUes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:33:30 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y23so3000187oia.4;
-        Thu, 20 Dec 2018 12:33:29 -0800 (PST)
+        Thu, 20 Dec 2018 15:34:48 -0500
+Received: by mail-oi1-f193.google.com with SMTP id u18so2983328oie.10;
+        Thu, 20 Dec 2018 12:34:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cv8z4yv5sYxwa7jyT3/xE6fyFpfbJy/B+lEEf5ec1us=;
-        b=WqM/AvrWk3vTdEmk0FHDSXCfENEXiY4+AkvhTHm4iPjpoxTwX0Tesga25JdRO3v1p1
-         73NLDSmg0b6+TkfzaIfoYUXc6kMl8ua8+h7CXgiDgEJYThQZTyqm9LcV4cYVtvVXsCeC
-         z1Feko3ZJYIpEWDTh6Hcglx1/FtwgylIViSp6UoXyF82wSfs97ZlU0vvh2xKvmHNFXQ2
-         0XKCMayicXqMQRKWBshM/xeKcBSa0HGVHRZiYqALv3LIM9kRPnvvQWRZuBGcPnZpkXSU
-         qYB8N2/ei07otLik7tfMF4vaSRnaToV+gKCHcvjnKmoZeGGwCrtXY4ABQn8PYP3abl5v
-         1Trg==
-X-Gm-Message-State: AA+aEWYrmRpKdXzC0IFvm4kZ89jo9Ls0h+3J9pjTdxUlE+/HCxHleuEI
-        NKz2MmnQoLd6ImR8X56v7g==
-X-Google-Smtp-Source: AFSGD/W22XHCYVQMh8oAqrt70oz09o8S1pQInqBfnmu0MMXhvzsmBYBa6ratTdgN4ci2Cn/1FKkC5w==
-X-Received: by 2002:a05:6808:317:: with SMTP id i23mr177880oie.2.1545338009221;
-        Thu, 20 Dec 2018 12:33:29 -0800 (PST)
+        bh=p0kj97/JA/6KPX1ql/1vAJIkgOF/pQnn0nZGJwn6ih0=;
+        b=Eu6WNrAzzKSgsSyBhU59R+ezzEnoEEMiVuDTGCvfDXigPuPvQe6rcyX/O7X35bSZju
+         Xzv1yJL/YwX4lutm+AIHdsyn76Ng3pHmRuTgP9JrzEMTQpIrzqsGgjRJHLGmxtDKRnQ/
+         +jCL4j9Bq+pc+M4b6P0lLB2jrPcEOAS7pKwpAf5g9RTUGl8NRac6lg/wBCCedF2wECVv
+         hXrRNFGgZoSE9lOiUHuZhlSbUgf7bEfZNeipRBLMOkGsPYtWoH1WwWG3JNn+x/q43nYt
+         9S0Z72ZLPnwLGE0SFsLh6O4JkutSVvvuobrSD6Vcin0iVwdPuOOdoO+9erLAitrw4Mgl
+         SoPg==
+X-Gm-Message-State: AA+aEWZVfpx6ENSWv7wO/X/a1RFahxX8GToG1/r79IVeG0FwVrn0Kbzb
+        E+2iTFfPfmtprS/QvbLlww==
+X-Google-Smtp-Source: ALg8bN5PhBUsoBlwIrVvdQtOta7yKHiW+IZF39B0RrPUYz7koFILDFmU5e7MtohrtA7ZkdjCRms6JA==
+X-Received: by 2002:aca:e283:: with SMTP id z125mr150404oig.23.1545338088062;
+        Thu, 20 Dec 2018 12:34:48 -0800 (PST)
 Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id s66sm20347199oia.55.2018.12.20.12.33.28
+        by smtp.gmail.com with ESMTPSA id o8sm10914048oia.53.2018.12.20.12.34.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:33:28 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:33:27 -0600
+        Thu, 20 Dec 2018 12:34:47 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:34:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, Bin Liu <b-liu@ti.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, od@zcrc.me,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/4] Documentation: dt: Add binding info for jz4740-musb
- driver
-Message-ID: <20181220203327.GA14186@bogus>
-References: <20181213144555.24031-1-paul@crapouillou.net>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774c0
+ support
+Message-ID: <20181220203446.GA16133@bogus>
+References: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213144555.24031-1-paul@crapouillou.net>
+In-Reply-To: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 15:45:52 +0100, Paul Cercueil wrote:
-> This commit adds documentation for the device-tree bindings of the
-> jz4740-musb driver, which provides support for the USB gadget mode
-> of the JZ4740 and similar SoCs from Ingenic.
+On Thu, 13 Dec 2018 20:18:04 +0000, Fabrizio Castro wrote:
+> Document RZ/G2E (R8A774C0) SoC bindings.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
->  .../bindings/usb/ingenic,jz4740-musb.txt           | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/ingenic,jz4740-musb.txt
+>  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
