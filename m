@@ -6,52 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AACC5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D95C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7016120989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E51D420811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298911;
-	bh=b8YZj5NDsMOhsJy4RWpf4gts4aOTi+9kywzbEpD24PM=;
+	s=default; t=1545298915;
+	bh=Ns1q9zjfelHh42HEixkbS4t/0GQyhHXLl1oaEv3GFro=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wX+pPeHBd0g5q7lkOXjmFnL9SvuFxQ186QOWv5NG8Zc/78kO7llQ83pa8xDRd9zMU
-	 5TeSUTDrAzlRIWTEeknYX+FmhjrdBCBzH7jMOA9DRJpqkPya9O4FvQUIZYXomfj9GS
-	 T0svinVU2YB3rFtmJVOIytAK0Hk3BW6V47YlZbuY=
+	b=nH4sExSuC9qrIPt3XvZ2A5/2s1mlxTEyDchPoz5I6nObUZD2exTDBD5wogwirtuJD
+	 GJjNiLZ4PZxNMtoiPtJbnVg6X2zOqSxuOvnVrpn5CyIpQeDhf71CwzKQWSXW3qbNHC
+	 dygeKfRZ/vlbq4l9SbrEFGN9n/GsPfvaokbyRCqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731662AbeLTJXp (ORCPT
+        id S1731512AbeLTJlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:23:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55776 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731648AbeLTJXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:23:40 -0500
+        id S1731667AbeLTJXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:23:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CF962186A;
-        Thu, 20 Dec 2018 09:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F15E220656;
+        Thu, 20 Dec 2018 09:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297819;
-        bh=b8YZj5NDsMOhsJy4RWpf4gts4aOTi+9kywzbEpD24PM=;
+        s=default; t=1545297827;
+        bh=Ns1q9zjfelHh42HEixkbS4t/0GQyhHXLl1oaEv3GFro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jrFgmuJYDkAF8XUipLL0tFJsTmHL47aDVXyV6Lb7VmZ5KeRqoV6E6MpPRCCDH7/jL
-         ndBudiV5QXSe6S0AGH3M7WOhp/f+EYQyaHDBA8uYTRBD6xsVj13O22Er/Dc/Z/tGbr
-         qtEZINSdoj2Uak9flQ+cFD4gEzh3Pfkt/g0qBcJk=
+        b=S5A+5/gEafAZTbFXCq9B4jXxqX/BHAT5+E5A2LcdT62gljwILbBuP/hyfC/blbzAz
+         VnIMsCPK707O867TKFKk2a+JloSzpzbbI2zKAynJ9Iqss477sMUyVk2FKrRXqQ3LPC
+         6Ivi9xIphOm6nCeghmcZTqDXFUmUZV9IUX2UHGrg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        andrea.parri@amarulasolutions.com, longman@redhat.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org, Fred Herard <fred.herard@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 29/61] locking/qspinlock, x86: Provide liveness guarantee
-Date:   Thu, 20 Dec 2018 10:18:29 +0100
-Message-Id: <20181220085844.901078994@linuxfoundation.org>
+Subject: [PATCH 4.9 32/61] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
+Date:   Thu, 20 Dec 2018 10:18:32 +0100
+Message-Id: <20181220085845.016356265@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -70,151 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 7aa54be2976550f17c11a1c3e3630002dea39303 upstream.
+[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
 
-On x86 we cannot do fetch_or() with a single instruction and thus end up
-using a cmpxchg loop, this reduces determinism. Replace the fetch_or()
-with a composite operation: tas-pending + load.
+This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
+Reference should not be made to session->leadconn when session->state is
+set to ISCSI_STATE_TERMINATE.
 
-Using two instructions of course opens a window we previously did not
-have. Consider the scenario:
-
-	CPU0		CPU1		CPU2
-
- 1)	lock
-	  trylock -> (0,0,1)
-
- 2)			lock
-			  trylock /* fail */
-
- 3)	unlock -> (0,0,0)
-
- 4)					lock
-					  trylock -> (0,0,1)
-
- 5)			  tas-pending -> (0,1,1)
-			  load-val <- (0,1,0) from 3
-
- 6)			  clear-pending-set-locked -> (0,0,1)
-
-			  FAIL: _2_ owners
-
-where 5) is our new composite operation. When we consider each part of
-the qspinlock state as a separate variable (as we can when
-_Q_PENDING_BITS == 8) then the above is entirely possible, because
-tas-pending will only RmW the pending byte, so the later load is able
-to observe prior tail and lock state (but not earlier than its own
-trylock, which operates on the whole word, due to coherence).
-
-To avoid this we need 2 things:
-
- - the load must come after the tas-pending (obviously, otherwise it
-   can trivially observe prior state).
-
- - the tas-pending must be a full word RmW instruction, it cannot be an XCHGB for
-   example, such that we cannot observe other state prior to setting
-   pending.
-
-On x86 we can realize this by using "LOCK BTS m32, r32" for
-tas-pending followed by a regular load.
-
-Note that observing later state is not a problem:
-
- - if we fail to observe a later unlock, we'll simply spin-wait for
-   that store to become visible.
-
- - if we observe a later xchg_tail(), there is no difference from that
-   xchg_tail() having taken place before the tas-pending.
-
-Suggested-by: Will Deacon <will.deacon@arm.com>
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Will Deacon <will.deacon@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: andrea.parri@amarulasolutions.com
-Cc: longman@redhat.com
-Fixes: 59fb586b4a07 ("locking/qspinlock: Remove unbounded cmpxchg() loop from locking slowpath")
-Link: https://lkml.kernel.org/r/20181003130957.183726335@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bigeasy: GEN_BINARY_RMWcc macro redo]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Fred Herard <fred.herard@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/qspinlock.h | 21 +++++++++++++++++++++
- kernel/locking/qspinlock.c       | 17 ++++++++++++++++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
+ drivers/scsi/libiscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index 8b1ba1607091..9e78e963afb8 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -4,9 +4,30 @@
- #include <asm/cpufeature.h>
- #include <asm-generic/qspinlock_types.h>
- #include <asm/paravirt.h>
-+#include <asm/rmwcc.h>
- 
- #define _Q_PENDING_LOOPS	(1 << 9)
- 
-+#define queued_fetch_set_pending_acquire queued_fetch_set_pending_acquire
-+
-+static __always_inline bool __queued_RMW_btsl(struct qspinlock *lock)
-+{
-+	GEN_BINARY_RMWcc(LOCK_PREFIX "btsl", lock->val.counter,
-+			 "I", _Q_PENDING_OFFSET, "%0", c);
-+}
-+
-+static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
-+{
-+	u32 val = 0;
-+
-+	if (__queued_RMW_btsl(lock))
-+		val |= _Q_PENDING_VAL;
-+
-+	val |= atomic_read(&lock->val) & ~_Q_PENDING_MASK;
-+
-+	return val;
-+}
-+
- #define	queued_spin_unlock queued_spin_unlock
- /**
-  * queued_spin_unlock - release a queued spinlock
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index f493a4fce624..0ed478e10071 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -224,6 +224,20 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
- }
- #endif /* _Q_PENDING_BITS == 8 */
- 
-+/**
-+ * queued_fetch_set_pending_acquire - fetch the whole lock value and set pending
-+ * @lock : Pointer to queued spinlock structure
-+ * Return: The previous lock value
-+ *
-+ * *,*,* -> *,1,*
-+ */
-+#ifndef queued_fetch_set_pending_acquire
-+static __always_inline u32 queued_fetch_set_pending_acquire(struct qspinlock *lock)
-+{
-+	return atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-+}
-+#endif
-+
- /**
-  * set_locked - Set the lock bit and own the lock
-  * @lock: Pointer to queued spinlock structure
-@@ -439,7 +453,8 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 * 0,0,0 -> 0,0,1 ; trylock
- 	 * 0,0,1 -> 0,1,1 ; pending
- 	 */
--	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-+	val = queued_fetch_set_pending_acquire(lock);
-+
- 	/*
- 	 * If we observe any contention; undo and queue.
- 	 */
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index cc8f2a7c2463..c79743de48f9 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2414,8 +2414,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
 -- 
 2.19.1
 
