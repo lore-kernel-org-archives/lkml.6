@@ -2,110 +2,170 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09137C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 344D5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC73020866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545309579;
-	bh=VZ39Xru/cA0kTeB/X9fXxC2c5ZIY8C5GuuSdmT2EohY=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=T/EyoewT3VNeWCnrMaAPhMocF6XG0HY7IiQUfjQFjRq6i1d/RbmT+zOvKR2om7g02
-	 UIPVWin7id2usmkY24I6IOsqMih6DjAgmXwxXBedFESIPhKOK1h9pjFpe5OUbOZoPg
-	 nGbFFEoXTbR+0imfTM6dhBnB2xbQiu3GdxnfRtOw=
+	by mail.kernel.org (Postfix) with ESMTP id EB14520989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:40:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdQbSjr+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732539AbeLTMjj (ORCPT
+        id S1732559AbeLTMk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:39:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730500AbeLTMjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:39:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD4F920866;
-        Thu, 20 Dec 2018 12:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545309574;
-        bh=VZ39Xru/cA0kTeB/X9fXxC2c5ZIY8C5GuuSdmT2EohY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VQOCSBGPHTfH/DMrh+NnUnTUDb/wiiKOrz0Vv0HlZf2ZOx1XbVzOnUZWoKkPj7iJf
-         bw2wLvFQBhbPgi1UEjpB5t3mdix0CxrY0dgSwjXgMyipZ8ZJvTyG2gmivThMO4btD4
-         vhMEr6xc7DEWfAIYMRi3wayY4YAeQTO5D/vQZeOw=
-Date:   Thu, 20 Dec 2018 13:39:31 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 4.20-rc8
-Message-ID: <20181220123931.GA18376@kroah.com>
+        Thu, 20 Dec 2018 07:40:58 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38421 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728966AbeLTMk5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:40:57 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so1416398lja.5;
+        Thu, 20 Dec 2018 04:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OAbIzZ1QLXITn9zJ/+VdE14YTPS6lrAtkbqngHncBiM=;
+        b=SdQbSjr+hVQuIN7WEhOMmn7G2BjQSEAvvczWjelzMXxEINQjSqMnvY9IpG8y91gExQ
+         KB5mbo5OcTlPzuKN7X64AjtuRXCv9wsHDLJDf2pIhyRfmT8ETR116SRWSR2ApSVe/iWZ
+         TqyKdOrMpuqTyyEuTQ5pVqGmPh9DD/yfufjKS5WcXkALwhxsXXjufZnXakHVQaPz7aSZ
+         IRbqQe2Z7jSRDlw7kTUy+33tvG3VueEJYEXZCN4VQ1ZzO/WhwLYH23X4qZEfAtMk8CTd
+         8xFnnmkM90yLvnn/MxZPJQF4z9b2+8h6Qc3zPAV7FDmnPOK4lGUBaJI348h2EF/9cz1T
+         jFWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OAbIzZ1QLXITn9zJ/+VdE14YTPS6lrAtkbqngHncBiM=;
+        b=nGd3AyEHYEgMDIYAaeyuWfcz5DjBN8M5WzrL75vzYWU2GBbbGim4/Z1ImpZ/fN8XJZ
+         I3SLoy3F3Hzn1/MCzGEBACOYY3tnzxlgH7/Fudk66QI11HHhMhIP22NCvtQmKcpy491A
+         LsStCx5vYvjaAWOmRqBxXgBu/1wl3N7qIZA/CPiffUG0VRFYIA4vYACssOkTyARtz4XC
+         IT05QcaJUl6G/yawhxBXMsyCt90Z5nLdQBHy64bTDLmT7NVzpE7Bqw0AbtzIExmm7W+x
+         lGyKPM8uuzFPs9YHXElBJRiqDeY/TRM/A86KwQB/lSDIORTiKUlV9SPLNDt1AL/JG1GO
+         tOnw==
+X-Gm-Message-State: AA+aEWbek2OwykyaM57zz4JPh/l7t71nml7OxYxJZO+LbxOX4Bok/CAV
+        qmf1X7f17qpdU+COe1MD+8VSc3qCLos=
+X-Google-Smtp-Source: AFSGD/UEwlZfTAyNPcZTJeM1AUblTOxNCuEAseEmfvVMJY7DJlmWqRU9632xSCl/HxHiqFlNJKEPVw==
+X-Received: by 2002:a2e:3803:: with SMTP id f3-v6mr15166660lja.169.1545309653919;
+        Thu, 20 Dec 2018 04:40:53 -0800 (PST)
+Received: from ?IPv6:2001:14ba:8017:3300:200b:ab20:c3cf:58fb? (dtynxhybybr1wbt0snd9t-3.rev.dnainternet.fi. [2001:14ba:8017:3300:200b:ab20:c3cf:58fb])
+        by smtp.googlemail.com with ESMTPSA id p89-v6sm1532019ljp.60.2018.12.20.04.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 04:40:52 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Dan Murphy <dmurphy@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
+Date:   Thu, 20 Dec 2018 14:40:51 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
+Hi All,
 
-  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
+On 19/12/2018 23.50, Dan Murphy wrote:
+> On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
+>> Hi Dan and Pavel,
+>> Some time ago we had discussion with Vesa Jääskeläinen about possible
+>> approaches to RGB LEDs [0]. What seemed to be the most suitable
+>> variation of the discussed out-of-tree approach was the "color" property
+>> and array of color triplets defined in Device Tree per each color.
+>>
+> 
+> Why does Device tree define the color?
+> 
+> Rob indicated that Device tree is supposed to define the hardware.
+> This thread seems to be defining the operation.
+> 
+> Shouldn't the color be done via user space and not dt?
+> 
+> Especially if they want to change the color real time?
+> 
+> Dan
+> 
+>> Please refer to [0] for the details.
+>>
+>> [0] https://lkml.org/lkml/2018/11/9/938
+>>
 
-are available in the Git repository at:
+Idea was to define preset colors in device tree as an example when you 
+are dealing with multi-color LEDs without PWM. In that case you only 
+have GPIOs to control and then have a problem what does those GPIO's mean.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-4.20-rc8
+With preset definitions one can use color names to act as a shortcut to 
+configure GPIO's to proper state for that particular color.
 
-for you to fetch changes up to 55449af1a17a4f32178b42d8ba4ee9477fe9a00c:
+For more flexible setups where you have PWM or such control you have 
+larger space of available colors. In this case you need to somehow 
+define also meaning of those controls.
 
-  Merge tag 'hyperv-fixes-4.20-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux into char-misc-linus (2018-12-14 15:36:56 +0100)
+Also we may not have LED with only red, green and blue elements. There 
+might in example be amber, ultraviolet, white elements.
 
-----------------------------------------------------------------
-Char/Misc driver fixes for 4.20-rc8
+This is where device tree is concerned. It helps us craft the logical 
+definition for LED so that we can control it from user space in common way.
 
-Here are 3 tiny last-minute driver fixes for 4.20-rc8 that resolve some
-reported issues, and one MAINTAINERS file update.
+Now the next problem then is how does user space work then.
 
-All of them are related to the hyper-v subsystem, it seems people are
-actually testing and using it now, which is nice to see :)
+For multi-color LEDs it it important to change the color atomically so 
+that no wrong colors are being shown as user space got interrupted when 
+controlling it.
 
-The fixes are:
-  - uio_hv_generic: fix for opening multiple times
-  - Remove PCI dependancy on hyperv drivers
-  - return proper error code for an unopened channel.
+Also we have brightness setting that would be useful for PWM controlled 
+LEDs.
 
-And Sasha has signed up to help out with the hyperv maintainership.
+Setting color is easy when you use preset names then you only need to 
+deal with brightness value (eg. RGB -> HSV * brightness -> RGB). Of 
+course here additional problem is other color elements are they then 
+scaled according to brightness value?.
 
-All of these have been in linux-next for a while with no reported
-issues.
+Setting color as "raw" values is then next problem. In order to do it 
+atomically it needs to be one atomic activation and could be eg. one 
+write to "color" sysfs entry with combination of all color elements and 
+perhaps additionally also brightness value. Next question is then what 
+is the format for such entry then? What are the value ranges? In here we 
+can utilize device tree definition to help define what kind of LED we do 
+have and what kind of capabilities it does have.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Additional problem risen also in discussion was non-linearity of some 
+control mechanisms vs. perceived color. So there might be a need for 
+curve mapping similarly what is with backlight control and that would be 
+defined either in device tree and possibly in user space if there is a 
+need for that. I suppose golden curve definition in device tree should 
+be good enough.
 
-----------------------------------------------------------------
-Dexuan Cui (1):
-      Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
+Then there was additional discussion about possible animation support 
+but I would leave that for future design as that would then be utilizing 
+the same framework.
 
-Greg Kroah-Hartman (1):
-      Merge tag 'hyperv-fixes-4.20-rc6' of git://git.kernel.org/.../hyperv/linux into char-misc-linus
+I suppose color space handling and that kind of stuff should be in some 
+led core functionality and then raw control should be part of physical 
+led driver.
 
-Sasha Levin (1):
-      MAINTAINERS: Patch monkey for the Hyper-V code
+I was planning to play with it during holiday season but lets see how it 
+goes. Feel free to also experiment with the idea.
 
-Sinan Kaya (1):
-      x86, hyperv: remove PCI dependency
-
-Stephen Hemminger (1):
-      uio_hv_generic: set callbacks on open
-
- MAINTAINERS                  |  4 +++-
- drivers/hv/Kconfig           |  2 +-
- drivers/hv/vmbus_drv.c       | 20 ++++++++++++++++++++
- drivers/uio/uio_hv_generic.c |  7 +++----
- 4 files changed, 27 insertions(+), 6 deletions(-)
+Thanks,
+Vesa Jääskeläinen
