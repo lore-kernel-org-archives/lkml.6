@@ -2,92 +2,92 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73042C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2370BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E7921720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:07:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545325650;
-	bh=m4U3zVVItje9ZXPjv60FHEUC3Y2UybKPf+mr0OcI8/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BCrFPKHrb8R6QliN5bQNU/cRy8YHZ6TNh22WDgG2gl/jrO9i8lgXEBX6EPA82A7Ne
-	 tvME75n3e7SIdLy5hi6yQ0Qars8wF3Fb0OdRWUDZyGKzr1H6VcPYncSQ4H3hUMxWC/
-	 pMyMWwvejw483/wPLLTkg4jLrQSKj9iyB2T05Qxw=
+	by mail.kernel.org (Postfix) with ESMTP id E6514217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:08:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B/TbUwWJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WVKacGE3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbeLTRH3 (ORCPT
+        id S1731342AbeLTRIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:07:29 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38343 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729720AbeLTRH3 (ORCPT
+        Thu, 20 Dec 2018 12:08:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729720AbeLTRIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:07:29 -0500
-Received: by mail-ot1-f68.google.com with SMTP id e12so2575892otl.5;
-        Thu, 20 Dec 2018 09:07:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xL0zgMszuckqIPQQ1s1mmtV6vFWdJXlKun3iStFYcJU=;
-        b=c+pEcZd8a+1iWmdK+EWsmgzVxygPgQtGBvDtMbs3XK09Dl2Ahk9Dn3cYlEMtSeaAsL
-         1CcCz0CJR4DTWTYIdwl/zoEs3+2XLIz6AduH9RiWShgpJZ5fOrp0ySpqBlK8moAxtJJn
-         iB7JGRD6VGblfB6ciXbTC+KGvD5LtVRBdNc+ep9b4X/IZP5pdR/LwM50qP+wDSUgkhTE
-         aPRog3OTXKr3QWZNWlh9JyYpaFd6diO9FsXvcSD3GpJ+BH+U1Ss9p2UgWLMByFikPR+E
-         FPaqvqUVcuVuY9vcIoroTHLOEFdtEpccD3jvU3s/wCuj1iFyHri7Kdw4kggnGN4Gd1Np
-         d9gQ==
-X-Gm-Message-State: AA+aEWbTyUGS43X/TgAMCDVX0iwWzgT/ViJEeMDl2QUgIYuLEXqvKy2w
-        J8BBrjsIyaFPQ9WRoDyiIg==
-X-Google-Smtp-Source: AFSGD/VuF3XDmhTEwbv2nRu60OpM6CHrhgPOurM72S+TZI97GyDO4utSswk59MMdE8P+7hGAkTewyw==
-X-Received: by 2002:a9d:2c46:: with SMTP id f64mr20046468otb.192.1545325648239;
-        Thu, 20 Dec 2018 09:07:28 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m3sm10109726ote.64.2018.12.20.09.07.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 09:07:27 -0800 (PST)
-Date:   Thu, 20 Dec 2018 11:07:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
-        vkoul@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
- bindings
-Message-ID: <20181220170727.GB19862@bogus>
-References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1544176558-7946-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20181220095245.GA7783@igloo>
+        Thu, 20 Dec 2018 12:08:06 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 972A2602CB; Thu, 20 Dec 2018 17:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545325685;
+        bh=KrWKHejGY40TA7+09WJc5pMyNHKFaezQJxUmW+p8Ei0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=B/TbUwWJsCOd1zUgSUZQq9wcy0+Z70TQWfq5mJQ7GJHeF07IP5evnT0Z+Tp9685xj
+         E8gq8BGPzYL2P1zoXKl2LIAmUw7EmKL9lhuOCSHsbZ2flmX7IXFZsE1dsyjvACcm0c
+         bq3GRyh7ki4lzMxY12splHYMtuMDeCm6sG5vwDHI=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FF356014B;
+        Thu, 20 Dec 2018 17:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545325685;
+        bh=KrWKHejGY40TA7+09WJc5pMyNHKFaezQJxUmW+p8Ei0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=WVKacGE3FhT7DtNQvd3myWsZTnhdfVqkpGQjMwkTCk/nxlyboSgqIyPTPB2Qago+q
+         uROE8guLViTGeWgZa+plBmqwBz9nCJ50erhKdb3BYvtQQ9rtYlm9kvf/ODNEX3kVNE
+         NVu/MwGjgsr/5yfCUqoP+Gvfq6tCDr63r8L7OPFY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FF356014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220095245.GA7783@igloo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v4 1/3] dt: bindings: add missing dt properties for
+ WCN3990 wifi node
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1541423318-19312-2-git-send-email-govinds@codeaurora.org>
+References: <1541423318-19312-2-git-send-email-govinds@codeaurora.org>
+To:     Govind Singh <govinds@codeaurora.org>
+Cc:     briannorris@chromium.org, andy.gross@linaro.org,
+        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181220170805.972A2602CB@smtp.codeaurora.org>
+Date:   Thu, 20 Dec 2018 17:08:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 10:52:45AM +0100, Jorge Ramirez-Ortiz wrote:
-> On 07/12/18 10:55:57, Jorge Ramirez-Ortiz wrote:
-> > Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
-> > controller embedded in QCS404.
-> > 
-> > Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
-> > definitions.
-> > 
-> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> > Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Govind Singh <govinds@codeaurora.org> wrote:
+
+> Add missing optional properties in WCN3990 wifi node.
 > 
-> any follow up on this patchset?
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> Tested-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Check DT patchwork[1] if you want to know where you are in the queue. 
-Just so happened to get to it now.
+2 patches applied to ath-next branch of ath.git, thanks.
 
-Rob
+5fac78aac91d dt: bindings: ath10k: add missing dt properties for WCN3990 wifi node
+a3542d0c73ce dt: bindings: ath10k: add bindings for wifi iommu node
 
-[1] https://patchwork.ozlabs.org/project/devicetree-bindings/list/
+-- 
+https://patchwork.kernel.org/patch/10668237/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
