@@ -2,128 +2,177 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB44C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658A9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463382176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oViJlhCH"
+	by mail.kernel.org (Postfix) with ESMTP id 35B5B21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeLTIMb (ORCPT
+        id S1730345AbeLTIPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:12:31 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:44100 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbeLTIMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:12:31 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 144CEBD8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:12:30 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NRquv3gGiH4f for <linux-kernel@vger.kernel.org>;
-        Thu, 20 Dec 2018 02:12:29 -0600 (CST)
-Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id D58E9AAF
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:12:29 -0600 (CST)
-Received: by mail-it1-f198.google.com with SMTP id i12so1426143ita.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 00:12:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=iPMrAI3bLWBOMHdbC/v0OmDCeGkFjS0XKiHDe7hscpk=;
-        b=oViJlhCHLrCtStkRktQVHWLAZKNWvxF+fRu0xWXq3jqyCl1pBY/Em5pos5VAcJF9je
-         63Lj8LnsTTRbMzYhodVgw9YK0nLexeu6i3CBw/eKEcbXc22KXuW+HWbaqebvCJTiMRgs
-         BpgHmakKibEXma3mEZ6+lPT8ONo93I0w4uWw7ueimANdk8nSYTk5+j0hP5waX3ZO6JgK
-         ag9uR/UJmyC98KGq6z5zNzsR+a8LiIAfTc7w2ntPv92pXMuZ8p3WnGqSoHzdu5G/eBNO
-         Pph6MRaQoDd71Zeg0I1RvU6ZAAlJdukC2QFAJ8Ir/XlAA7BHJcZGwd+MqBDYOZlHA/Gi
-         FZnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iPMrAI3bLWBOMHdbC/v0OmDCeGkFjS0XKiHDe7hscpk=;
-        b=qcpUM6yfOWmnwLQy3cNesfbZF+2FhbXQqx8R9uxp63rxQhn27UTLz1Dse/FSjzI5E7
-         jje3sH3xt1Ou4IotVcgbwc2AOw1lKN8LZ4eTwuAkkw/lvwNoR3usMHxm5pf07+vk1sSw
-         EOINH5ficL4vN1+kvWejIdupESF8a8Hu1cLdujC8SmKXwWSbZYN7lIuIhIvQhCxDmiWc
-         mL4LgEDZArVfr+IL93kHwAjcCR/XVpufgmrhYvCzHYyaaZTTjk/G1VDHDtvPRVq9Mow9
-         1XcBScwmC+SsRxKpiZ2ZzrU398rbfsBhooQXE37ORP9TyQwKyJFuj46X9KeQ2DpybMz9
-         k/+Q==
-X-Gm-Message-State: AA+aEWaspGwKH2oiSTkM71D+tB3UtoM7TkF+f+mKJdAr2wYUM9ucU9mA
-        HNv4q8Ejt1lb9V+JXc73ssDvSqp8rVxZDoaZE0Byu4rmoZq1var20sWHF37VyNloPuuoPlW4dcW
-        T5hfL77IooGkYzcufR/FvX2yMfsdb
-X-Received: by 2002:a02:8c4a:: with SMTP id j10mr22677922jal.129.1545293549451;
-        Thu, 20 Dec 2018 00:12:29 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/WCEeCZfW3oesFZ+Mry2MjYfPMndYE32X/zKdL36o+W+b2dG/dqx6raCupaDbaUZTX+/Kt4Ng==
-X-Received: by 2002:a02:8c4a:: with SMTP id j10mr22677912jal.129.1545293549203;
-        Thu, 20 Dec 2018 00:12:29 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-24.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.24])
-        by smtp.gmail.com with ESMTPSA id f10sm4352122itf.41.2018.12.20.00.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Dec 2018 00:12:28 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Matthias Schwarzott <zzam@gentoo.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: si2165: fix a missing check of return value
-Date:   Thu, 20 Dec 2018 02:12:09 -0600
-Message-Id: <20181220081209.40807-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Thu, 20 Dec 2018 03:15:16 -0500
+Received: from mga17.intel.com ([192.55.52.151]:4390 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725440AbeLTIPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:15:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 00:15:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,376,1539673200"; 
+   d="scan'208";a="119794170"
+Received: from shclpe02.sh.intel.com (HELO clrdev-22780.sh.intel.com) ([10.239.144.225])
+  by orsmga002.jf.intel.com with ESMTP; 20 Dec 2018 00:15:12 -0800
+From:   Bin Yang <bin.yang@intel.com>
+To:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
+        chris@chris-wilson.co.uk, jani.saarinen@intel.com,
+        alek.du@intel.com, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        bin.yang@intel.com
+Subject: [PATCH] drm/i915: Fix i915_gem_wait_for_idle oops due to active_requests check
+Date:   Thu, 20 Dec 2018 08:01:35 +0000
+Message-Id: <20181220080135.9059-1-bin.yang@intel.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
-that "val_tmp" will be an uninitialized value when regmap_read() fails.
-"val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
-"val" will be a random value. Further use will lead to undefined
-behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
-"-EINVAL".
+i915_gem_wait_for_idle() waits for all requests being completed and
+calls i915_retire_requests() to retire them. It assumes the
+active_requests should be zero finally.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+In i915_retire_requests(), it will retire all requests on the active
+rings. Unfortunately, active_requests is increased in
+i915_request_alloc() and reduced in i915_request_retire(), but the
+request is added into active rings in i915_request_add().
+
+If i915_gem_wait_for_idle() is called between i915_request_alloc()
+and i915_request_add(), this request will not be retired. Then, the
+active_requests will not be zero in the end.
+
+Normally, i915_request_alloc() and i915_request_add() will be called
+in sequence with drm.struct_mutex locked. But in
+intel_vgpu_create_workload(), it will pre-allocate the request and
+call i915_request_add() in the workload thread for performance
+optimization. The above issue will be triggered.
+
+This patch introduced a new counter named reserved_requests for
+request allocation. The active_requests will be increased when
+the request is really added into the active rings.
+
+8<----- below is the oops when above issue is hitted.
+
+[2018-11-28 23:17:54] [12278.310417] kernel BUG at drivers/gpu/drm/i915/i915_gem.c:4702!
+[2018-11-28 23:17:54] [12278.310802] invalid opcode: 0000 [#1] PREEMPT SMP
+[2018-11-28 23:17:54] [12278.311012] CPU: 0 PID: 61 Comm: kswapd0 Tainted: G     U  WC        4.19.0-26.iot-lts2018-sos #1
+[2018-11-28 23:17:54] [12278.311393] RIP: 0010:i915_gem_wait_for_idle.part.78.cold.114+0x45/0x47
+[2018-11-28 23:17:54] [12278.311675] Code: 7b 8b ae ff 48 8b 35 e6 92 3c 01 49 c7 c0 af 48 55 a9 b9 5e 12 00 00 48 c7 c2 50 7a 0b a9 48 c7 c7 f4 e6 60 a8 e8 37 38 b6 ff <0f> 0b 48 c7 c1 a8 59 55 a9 ba b8 12 00 00 48 c7 c6 20 7a 0b a9 48
+[2018-11-28 23:17:55] [12278.312447] RSP: 0018:ffff8e31acd8bbb8 EFLAGS: 00010246
+[2018-11-28 23:17:55] [12278.312673] RAX: 000000000000000e RBX: 000000000000000a RCX: 0000000000000000
+[2018-11-28 23:17:55] [12278.312971] RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff8e31ae841400
+[2018-11-28 23:17:55] [12278.313268] RBP: ffff8e31acea8340 R08: 0000000001416578 R09: ffff8e31aea15000
+[2018-11-28 23:17:55] [12278.313566] R10: ffff8e31ae807100 R11: ffff8e31ae841400 R12: ffff8e31acea0000
+[2018-11-28 23:17:55] [12278.313863] R13: 00000b2ab1d38ed0 R14: 0000000000000000 R15: ffff8e31acd8bd70
+[2018-11-28 23:17:55] [12278.314162] FS:  0000000000000000(0000) GS:ffff8e31afa00000(0000) knlGS:0000000000000000
+[2018-11-28 23:17:55] [12278.314499] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[2018-11-28 23:17:55] [12278.314741] CR2: 00007ff94948f000 CR3: 0000000226813000 CR4: 00000000003406f0
+[2018-11-28 23:17:55] [12278.315039] Call Trace:
+[2018-11-28 23:17:55] [12278.315162]  i915_gem_shrink+0x3b7/0x4b0
+[2018-11-28 23:17:55] [12278.315340]  i915_gem_shrinker_scan+0x104/0x130
+[2018-11-28 23:17:55] [12278.315537]  do_shrink_slab+0x12c/0x2c0
+[2018-11-28 23:17:55] [12278.315706]  shrink_slab+0x225/0x2c0
+[2018-11-28 23:17:55] [12278.315864]  shrink_node+0xe4/0x430
+[2018-11-28 23:17:55] [12278.316018]  kswapd+0x3ce/0x730
+[2018-11-28 23:17:55] [12278.316161]  ? mem_cgroup_shrink_node+0x1a0/0x1a0
+[2018-11-28 23:17:55] [12278.316365]  kthread+0x11e/0x140
+[2018-11-28 23:17:55] [12278.316508]  ? kthread_create_worker_on_cpu+0x70/0x70
+[2018-11-28 23:17:55] [12278.316727]  ret_from_fork+0x3a/0x50
+[2018-11-28 23:17:55] [12278.316884] Modules linked in: igb_avb(C) xhci_pci xhci_hcd dca ici_isys_mod ipu4_acpi intel_ipu4_isys_csslib intel_ipu4_psys intel_ipu4_psys_csslib intel_ipu4_mmu intel_ipu4 iova crlmodule_lite
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=109005
+Signed-off-by: Bin Yang <bin.yang@intel.com>
 ---
- drivers/media/dvb-frontends/si2165.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.h     |  1 +
+ drivers/gpu/drm/i915/i915_gem.c     |  2 +-
+ drivers/gpu/drm/i915/i915_request.c | 10 +++++++---
+ 3 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
-index feacd8da421d..c134f312fa5b 100644
---- a/drivers/media/dvb-frontends/si2165.c
-+++ b/drivers/media/dvb-frontends/si2165.c
-@@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 815db160b966..7a757f0f504f 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1948,6 +1948,7 @@ struct drm_i915_private {
+ 		struct list_head active_rings;
+ 		struct list_head closed_vma;
+ 		u32 active_requests;
++		u32 reserved_requests;
+ 		u32 request_serial;
  
- static int si2165_wait_init_done(struct si2165_state *state)
- {
--	int ret = -EINVAL;
-+	int ret;
- 	u8 val = 0;
- 	int i;
+ 		/**
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index d92147ab4489..1873e21c84c1 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -200,7 +200,7 @@ void i915_gem_unpark(struct drm_i915_private *i915)
+ 	GEM_TRACE("\n");
  
- 	for (i = 0; i < 3; ++i) {
--		si2165_readreg8(state, REG_INIT_DONE, &val);
-+		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
-+		if (ret < 0)
-+			return -EINVAL;
- 		if (val == 0x01)
- 			return 0;
- 		usleep_range(1000, 50000);
+ 	lockdep_assert_held(&i915->drm.struct_mutex);
+-	GEM_BUG_ON(!i915->gt.active_requests);
++	GEM_BUG_ON(!i915->gt.reserved_requests);
+ 
+ 	if (i915->gt.awake)
+ 		return;
+diff --git a/drivers/gpu/drm/i915/i915_request.c b/drivers/gpu/drm/i915/i915_request.c
+index 637909c59f1f..394283799ee9 100644
+--- a/drivers/gpu/drm/i915/i915_request.c
++++ b/drivers/gpu/drm/i915/i915_request.c
+@@ -200,7 +200,7 @@ static int reserve_gt(struct drm_i915_private *i915)
+ 		}
  	}
- 	dev_err(&state->client->dev, "init_done was not set\n");
--	return ret;
-+	return -EINVAL;
+ 
+-	if (!i915->gt.active_requests++)
++	if (!i915->gt.reserved_requests++)
+ 		i915_gem_unpark(i915);
+ 
+ 	return 0;
+@@ -208,8 +208,8 @@ static int reserve_gt(struct drm_i915_private *i915)
+ 
+ static void unreserve_gt(struct drm_i915_private *i915)
+ {
+-	GEM_BUG_ON(!i915->gt.active_requests);
+-	if (!--i915->gt.active_requests)
++	GEM_BUG_ON(!i915->gt.reserved_requests);
++	if (!--i915->gt.reserved_requests)
+ 		i915_gem_park(i915);
  }
  
- static int si2165_upload_firmware_block(struct si2165_state *state,
+@@ -384,6 +384,8 @@ static void i915_request_retire(struct i915_request *request)
+ 
+ 	__retire_engine_upto(request->engine, request);
+ 
++	GEM_BUG_ON(!request->i915->gt.active_requests);
++	request->i915->gt.active_requests--;
+ 	unreserve_gt(request->i915);
+ 
+ 	i915_sched_node_fini(request->i915, &request->sched);
+@@ -1006,6 +1008,8 @@ void i915_request_add(struct i915_request *request)
+ 							 0);
+ 	}
+ 
++	++request->i915->gt.active_requests;
++
+ 	spin_lock_irq(&timeline->lock);
+ 	list_add_tail(&request->link, &timeline->requests);
+ 	spin_unlock_irq(&timeline->lock);
 -- 
-2.17.2 (Apple Git-113)
+2.19.1
 
