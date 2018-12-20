@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34943C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA11EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02F22217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7F88217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:21:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cn7x64jd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJ1BR/AO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbeLTRUz (ORCPT
+        id S2388016AbeLTRVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:20:55 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36987 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387929AbeLTRUd (ORCPT
+        Thu, 20 Dec 2018 12:21:05 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40084 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387911AbeLTRUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:20:33 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so2410975edb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:32 -0800 (PST)
+        Thu, 20 Dec 2018 12:20:30 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g22so2392647edr.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=P+gOo8zs+s92KTAUX6s3+jz0o4ECXMvdcL4c1sWAOPE=;
-        b=cn7x64jd6AZDodQbyiGmA1FkBYQoJs5W22kMmiEt59VlCeAEJ4yuYc1WPko10f0Fjg
-         COfdzU9+DYVngEIErsxQ/8JLCpdvYmh0Iq8aTjCmVmEV3RyZfyeSLAbw7dtvwCm7uoYP
-         eS0qmbgiQbL4X2NGqvOQIltO/EnT/gOJmdF8kdiNYUk3VcEZ9crYoXKv1dipz64b6KUU
-         3fqsVPBXPAAjTs+bccP99hUO1jA52vBXkE7mBnxf65O9C0yvC22wy8MEJjf9eLIRiD35
-         CVN7P8mr3tQ0kKhXeac16yD+LvwCgTvO2ZXss6vSfSnk46xg0QWILvTss9pxsOMXjqZt
-         7oTQ==
+        bh=H/kPgrFxRe9kUUhR6JvSGe7kcKeba4lxi/88gm/plt0=;
+        b=CJ1BR/AO0ih1f+DP+DfQFXhHrbg92p0RLKThfHhu6dLQAMfBjW3Vyl0Z8fFiI7d5hs
+         TNLtOan3SCv5wDNv1ieQlt+YZ5HhvMw3d4gS+RP2wyFgQGSIfvgSqW00fHisVTrjyGN0
+         aoq+lBAaJFjT+sfYfjSTMi1YLhelF7Kq0cNal1oZpHCyZDGtQrqKzPDKwLdm/rfdcH/F
+         HA8vvrzKV988ZXIExyywhUt6WtnMY5WFP2Uj0TxmUft4pOuRoOX2/eGxRZl8sHmOwRg3
+         xkFVBOMAyq1lhbiFTMTKyMt0hfYlnfuE2Y4L2bG4zqmQ+7v1zbBCA/fi2Skxcp2r3LzI
+         5Ulg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=P+gOo8zs+s92KTAUX6s3+jz0o4ECXMvdcL4c1sWAOPE=;
-        b=BMmZeQstwSy5fO/qDYipUX7vqItUE78lj8RdHGeUfL5udj68zU5rbblCqqQQPR7bWM
-         LQJPLHeobhoXVbd4psGuDx/V2bbl1vJnr7JdFOgcyqVf0cRHMq6+kqTd8rBwVm4WOXE7
-         4V/jTIlbt7cnAzf79a9Cz/FagYWxGte8ThJJKvuT9Si/R8bp9PpWojPnz+VwcJNshCd7
-         3EKaZ3eeDHZ9gvvCmLD5M2WxJsARwgXhSriZ2I0twTzUImPsNZoryJ+EX95nslQ14Gq+
-         oi8d98rimPzZ43T6isDCM+u+IJkHmJyViQzbWOIAbvWYeaCbCg2a4Lv5VGfyvR///iUa
-         yugA==
-X-Gm-Message-State: AA+aEWZLaRdCPspoGmG5bDahSilQYe55WL8SSFo/8LR3QI+g3xg6LbGE
-        oUoZ9WoTARWf9kd3F4PxP8Y=
-X-Google-Smtp-Source: AFSGD/W0F/C//JlDiuc3iinDD6VyPuINByFrPpX3L/Duq4NPQ/Jm0RQ1pi1KM8DRexz39peD1vf9kQ==
-X-Received: by 2002:a17:906:51d4:: with SMTP id v20-v6mr13994272ejk.184.1545326431347;
-        Thu, 20 Dec 2018 09:20:31 -0800 (PST)
+        bh=H/kPgrFxRe9kUUhR6JvSGe7kcKeba4lxi/88gm/plt0=;
+        b=Dwm4ALLPFULzYo5Q4vVK/JLs1B86eKSJob4pjoeTti50z0bzLoGwoi9b3L+dIhpo2T
+         /xVL0zvNf92vTJ4yiqqlhQ15BHxKSGAJiRIIMG6t7IYPEvC0FYeljhX8msqp39uNJCnY
+         GqtnweOWQh1Bv4uWNUPoIzjkxMVeyGkcdKIDE9gRMRC7uZmxLOCBUkIDXeJ4xS/gpLv/
+         Otclkql3zH9YCYVeJ9/VU0mqAtI3gzrLz/L5vJ28wFOZ+/trJNWqP92NBV0GSHvqxLdg
+         UhLvFH7QIjlZv+HCw4HcGI7teOWW+xINMq4sKSls7/aCwb/1JpWzER8dEd46lNZrpUB5
+         NcbQ==
+X-Gm-Message-State: AA+aEWY9pkzBjVGY41E1M6uByrrFS0FIAvmJk6t1VyRQi4Th/VtT/ykg
+        paCs3DJYmDX5IRSS44luUsg=
+X-Google-Smtp-Source: AFSGD/WVr0qTwXjv91Lw+hg1dTzHEI1JLspKIuP1k9mJ1e/5nf7NkpanIx5l+HOXzXdHeDMtsT42KQ==
+X-Received: by 2002:a50:924e:: with SMTP id j14mr24702381eda.142.1545326427886;
+        Thu, 20 Dec 2018 09:20:27 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id dc5-v6sm3298140ejb.53.2018.12.20.09.20.30
+        by smtp.gmail.com with ESMTPSA id e53sm6296661ede.90.2018.12.20.09.20.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 09:20:30 -0800 (PST)
+        Thu, 20 Dec 2018 09:20:27 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH v3 17/19] mailbox: rockchip: Use device-managed registration API
-Date:   Thu, 20 Dec 2018 18:20:00 +0100
-Message-Id: <20181220172002.9016-18-thierry.reding@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v3 15/19] mailbox: platform-mhu: Use device-managed registration API
+Date:   Thu, 20 Dec 2018 18:19:58 +0100
+Message-Id: <20181220172002.9016-16-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181220172002.9016-1-thierry.reding@gmail.com>
 References: <20181220172002.9016-1-thierry.reding@gmail.com>
@@ -77,47 +78,50 @@ From: Thierry Reding <treding@nvidia.com>
 Get rid of some boilerplate driver removal code by using the newly added
 device-managed registration API.
 
-Cc: Caesar Wang <wxt@rock-chips.com>
-Reviewed-by: Caesar Wang <wxt@rock-chips.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mailbox/rockchip-mailbox.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/mailbox/platform_mhu.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/mailbox/rockchip-mailbox.c b/drivers/mailbox/rockchip-mailbox.c
-index d702a204f5c1..f24a77b1a0ff 100644
---- a/drivers/mailbox/rockchip-mailbox.c
-+++ b/drivers/mailbox/rockchip-mailbox.c
-@@ -247,28 +247,15 @@ static int rockchip_mbox_probe(struct platform_device *pdev)
- 		mb->chans[i].msg = NULL;
- 	}
+diff --git a/drivers/mailbox/platform_mhu.c b/drivers/mailbox/platform_mhu.c
+index e13201a5cec6..d2502c5be130 100644
+--- a/drivers/mailbox/platform_mhu.c
++++ b/drivers/mailbox/platform_mhu.c
+@@ -163,7 +163,7 @@ static int platform_mhu_probe(struct platform_device *pdev)
  
--	ret = mbox_controller_register(&mb->mbox);
-+	ret = devm_mbox_controller_register(&pdev->dev, &mb->mbox);
- 	if (ret < 0)
- 		dev_err(&pdev->dev, "Failed to register mailbox: %d\n", ret);
+ 	platform_set_drvdata(pdev, mhu);
  
- 	return ret;
+-	err = mbox_controller_register(&mhu->mbox);
++	err = devm_mbox_controller_register(dev, &mhu->mbox);
+ 	if (err) {
+ 		dev_err(dev, "Failed to register mailboxes %d\n", err);
+ 		return err;
+@@ -173,15 +173,6 @@ static int platform_mhu_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static int rockchip_mbox_remove(struct platform_device *pdev)
+-static int platform_mhu_remove(struct platform_device *pdev)
 -{
--	struct rockchip_mbox *mb = platform_get_drvdata(pdev);
+-	struct platform_mhu *mhu = platform_get_drvdata(pdev);
 -
--	if (!mb)
--		return -EINVAL;
--
--	mbox_controller_unregister(&mb->mbox);
+-	mbox_controller_unregister(&mhu->mbox);
 -
 -	return 0;
 -}
 -
- static struct platform_driver rockchip_mbox_driver = {
- 	.probe	= rockchip_mbox_probe,
--	.remove	= rockchip_mbox_remove,
+ static const struct of_device_id platform_mhu_dt_ids[] = {
+ 	{ .compatible = "amlogic,meson-gxbb-mhu", },
+ 	{ /* sentinel */ },
+@@ -190,7 +181,6 @@ MODULE_DEVICE_TABLE(of, platform_mhu_dt_ids);
+ 
+ static struct platform_driver platform_mhu_driver = {
+ 	.probe	= platform_mhu_probe,
+-	.remove	= platform_mhu_remove,
  	.driver = {
- 		.name = "rockchip-mailbox",
- 		.of_match_table = of_match_ptr(rockchip_mbox_of_match),
+ 		.name = "platform-mhu",
+ 		.of_match_table	= platform_mhu_dt_ids,
 -- 
 2.19.1
 
