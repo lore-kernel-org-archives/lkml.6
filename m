@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F15C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F92C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3D5218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822F8218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="PfolZphx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="QlNAG2Db"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389475AbeLTTWe (ORCPT
+        id S2389485AbeLTTWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:22:34 -0500
-Received: from a9-32.smtp-out.amazonses.com ([54.240.9.32]:38054 "EHLO
-        a9-32.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389335AbeLTTWB (ORCPT
+        Thu, 20 Dec 2018 14:22:40 -0500
+Received: from a9-31.smtp-out.amazonses.com ([54.240.9.31]:42296 "EHLO
+        a9-31.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389328AbeLTTWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:22:01 -0500
+        Thu, 20 Dec 2018 14:22:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333720;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333718;
         h=Message-Id:Date:From:To:Cc:Cc:Cc:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=HPynk5ie8DqlrwTSrcpoX8ICqEk/Juei7kWbVieJc3U=;
-        b=PfolZphxIyAKtwwsB+etH1iPIkc5vgB18IIUZeZFp+eNrdEkSPSxmjzp2/HrWYBD
-        6jNi+e3ZPWy1bh34NwFCLIQXbD4VJEqXD6sowCDjyMi/oR/JGbPKLJ78ZjXGhVt4Prf
-        +vNus1fbj5+deIsZuLLB5qaBnqanDwkpGAKDAHOo=
-Message-ID: <01000167cd1143e3-1533fccc-7036-4a4e-97ea-5be8b347bbf0-000000@email.amazonses.com>
+        bh=MEo1JnulmTAHG+WXA+afG0E08WmvUdsEOe37fi6PrrM=;
+        b=QlNAG2DbLCddJR2rTzuDDeU5Bi4NhHZ686TqNEwNlRTD/c2MgN5RbdIK98ycS8Cu
+        8Cb2xj8r43L7Rx9lSoR4+7luOLmsh4gqghmW/FkPslBSSU9RuEk5Zi45gxjTUtrsfqu
+        5QH9n+9YHIP7rGhBd5cPpCWa/SItiQKh8huHJC7g=
+Message-ID: <01000167cd113f16-b5a2b2db-e75a-4bad-a47a-0a66fbf7fd8a-000000@email.amazonses.com>
 User-Agent: quilt/0.65
-Date:   Thu, 20 Dec 2018 19:22:00 +0000
+Date:   Thu, 20 Dec 2018 19:21:58 +0000
 From:   Christoph Lameter <cl@linux.com>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-mm@kvack.org
@@ -45,103 +45,192 @@ Cc:     Dave Chinner <dchinner@redhat.com>
 Cc:     Christoph Hellwig <hch@lst.de>
 Cc:     Michal Hocko <mhocko@suse.com>
 Cc:     Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC 4/7] slub: Sort slab cache list and establish maximum objects for defrag slabs
+Subject: [RFC 3/7] slub: Add isolate() and migrate() methods
 References: <20181220192145.023162076@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=sort_and_max
-X-SES-Outgoing: 2018.12.20-54.240.9.32
+Content-Disposition: inline; filename=isolate_and_migrate_methods
+X-SES-Outgoing: 2018.12.20-54.240.9.31
 Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is advantageous to have all defragmentable slabs together at the
-beginning of the list of slabs so that there is no need to scan the
-complete list. Put defragmentable caches first when adding a slab cache
-and others last.
+Add the two methods needed for moving objects and enable the
+display of the callbacks via the /sys/kernel/slab interface.
 
-Determine the maximum number of objects in defragmentable slabs. This allows
-the sizing of the array holding refs to objects in a slab later.
+Add documentation explaining the use of these methods and the prototypes
+for slab.h. Add functions to setup the callbacks method for a slab cache.
+
+Add empty functions for SLAB/SLOB. The API is generic so it
+could be theoretically implemented for these allocators as well.
 
 Signed-off-by: Christoph Lameter <cl@linux.com>
 
 ---
- mm/slub.c |   26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ include/linux/slab.h     |   50 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/slub_def.h |    3 ++
+ mm/slub.c                |   29 ++++++++++++++++++++++++++-
+ 3 files changed, 81 insertions(+), 1 deletion(-)
 
+Index: linux/include/linux/slub_def.h
+===================================================================
+--- linux.orig/include/linux/slub_def.h
++++ linux/include/linux/slub_def.h
+@@ -99,6 +99,9 @@ struct kmem_cache {
+ 	gfp_t allocflags;	/* gfp flags to use on each alloc */
+ 	int refcount;		/* Refcount for slab cache destroy */
+ 	void (*ctor)(void *);
++	kmem_isolate_func *isolate;
++	kmem_migrate_func *migrate;
++
+ 	unsigned int inuse;		/* Offset to metadata */
+ 	unsigned int align;		/* Alignment */
+ 	unsigned int red_left_pad;	/* Left redzone padding size */
 Index: linux/mm/slub.c
 ===================================================================
 --- linux.orig/mm/slub.c
 +++ linux/mm/slub.c
-@@ -196,6 +196,9 @@ static inline bool kmem_cache_has_cpu_pa
- /* Use cmpxchg_double */
- #define __CMPXCHG_DOUBLE	((slab_flags_t __force)0x40000000U)
+@@ -3498,7 +3498,6 @@ static int calculate_sizes(struct kmem_c
+ 	else
+ 		s->flags &= ~__OBJECT_POISON;
  
-+/* Maximum objects in defragmentable slabs */
-+static unsigned int max_defrag_slab_objects;
-+
- /*
-  * Tracking user of a slab.
-  */
-@@ -4310,22 +4313,45 @@ int __kmem_cache_create(struct kmem_cach
+-
+ 	/*
+ 	 * If we are Redzoning then check if there is some space between the
+ 	 * end of the object and the free pointer. If not then add an
+@@ -4311,6 +4310,25 @@ int __kmem_cache_create(struct kmem_cach
  	return err;
  }
  
-+/*
-+ * Allocate a slab scratch space that is sufficient to keep at least
-+ * max_defrag_slab_objects pointers to individual objects and also a bitmap
-+ * for max_defrag_slab_objects.
-+ */
-+static inline void *alloc_scratch(void)
++void kmem_cache_setup_mobility(struct kmem_cache *s,
++	kmem_isolate_func isolate, kmem_migrate_func migrate)
 +{
-+	return kmalloc(max_defrag_slab_objects * sizeof(void *) +
-+		BITS_TO_LONGS(max_defrag_slab_objects) * sizeof(unsigned long),
-+		GFP_KERNEL);
++	/*
++	 * Defragmentable slabs must have a ctor otherwise objects may be
++	 * in an undetermined state after they are allocated.
++	 */
++	BUG_ON(!s->ctor);
++	s->isolate = isolate;
++	s->migrate = migrate;
++	/*
++	 * Sadly serialization requirements currently mean that we have
++	 * to disable fast cmpxchg based processing.
++	 */
++	s->flags &= ~__CMPXCHG_DOUBLE;
++
 +}
++EXPORT_SYMBOL(kmem_cache_setup_mobility);
 +
- void kmem_cache_setup_mobility(struct kmem_cache *s,
- 	kmem_isolate_func isolate, kmem_migrate_func migrate)
+ void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
  {
-+	int max_objects = oo_objects(s->max);
-+
- 	/*
- 	 * Defragmentable slabs must have a ctor otherwise objects may be
- 	 * in an undetermined state after they are allocated.
- 	 */
- 	BUG_ON(!s->ctor);
-+
-+	mutex_lock(&slab_mutex);
-+
- 	s->isolate = isolate;
- 	s->migrate = migrate;
-+
- 	/*
- 	 * Sadly serialization requirements currently mean that we have
- 	 * to disable fast cmpxchg based processing.
- 	 */
- 	s->flags &= ~__CMPXCHG_DOUBLE;
+ 	struct kmem_cache *s;
+@@ -5004,6 +5022,20 @@ static ssize_t ops_show(struct kmem_cach
  
-+	list_move(&s->list, &slab_caches);	/* Move to top */
-+	if (max_objects > max_defrag_slab_objects)
-+		max_defrag_slab_objects = max_objects;
+ 	if (s->ctor)
+ 		x += sprintf(buf + x, "ctor : %pS\n", s->ctor);
 +
-+	mutex_unlock(&slab_mutex);
++	if (s->isolate) {
++		x += sprintf(buf + x, "isolate : ");
++		x += sprint_symbol(buf + x,
++				(unsigned long)s->isolate);
++		x += sprintf(buf + x, "\n");
++	}
++
++	if (s->migrate) {
++		x += sprintf(buf + x, "migrate : ");
++		x += sprint_symbol(buf + x,
++				(unsigned long)s->migrate);
++		x += sprintf(buf + x, "\n");
++	}
+ 	return x;
  }
- EXPORT_SYMBOL(kmem_cache_setup_mobility);
+ SLAB_ATTR_RO(ops);
+Index: linux/include/linux/slab.h
+===================================================================
+--- linux.orig/include/linux/slab.h
++++ linux/include/linux/slab.h
+@@ -153,6 +153,68 @@ void memcg_deactivate_kmem_caches(struct
+ void memcg_destroy_kmem_caches(struct mem_cgroup *);
  
+ /*
++ * Function prototypes passed to kmem_cache_setup_mobility() to enable mobile
++ * objects and targeted reclaim in slab caches.
++ */
++
++/*
++ * kmem_cache_isolate_func() is called with locks held so that the slab
++ * objects cannot be freed. We are in an atomic context and no slab
++ * operations may be performed. The purpose of kmem_cache_isolate_func()
++ * is to pin the object so that it cannot be freed until
++ * kmem_cache_migrate_func() has processed them. This may be accomplished
++ * by increasing the refcount or setting a flag.
++ *
++ * Parameters passed are the number of objects to process and an array of
++ * pointers to objects which are intended to be moved.
++ *
++ * Returns a pointer that is passed to the migrate function. If any objects
++ * cannot be touched at this point then the pointer may indicate a
++ * failure and then the migration function can simply remove the references
++ * that were already obtained. The private data could be used to track
++ * the objects that were already pinned.
++ *
++ * The object pointer array passed is also passed to kmem_cache_migrate().
++ * The function may remove objects from the array by setting pointers to
++ * NULL. This is useful if we can determine that an object is being freed
++ * because kmem_cache_isolate_func() was called when the subsystem
++ * was calling kmem_cache_free().
++ * In that case it is not necessary to increase the refcount or
++ * specially mark the object because the release of the slab lock
++ * will lead to the immediate freeing of the object.
++ */
++typedef void *kmem_isolate_func(struct kmem_cache *, void **, int);
++
++/*
++ * kmem_cache_move_migrate_func is called with no locks held and interrupts
++ * enabled. Sleeping is possible. Any operation may be performed in
++ * migrate(). kmem_cache_migrate_func should allocate new objects and
++ * free all the objects.
++ **
++ * Parameters passed are the number of objects in the array, the array of
++ * pointers to the objects, the NUMA node where the object should be
++ * allocated and the pointer returned by kmem_cache_isolate_func().
++ *
++ * Success is checked by examining the number of remaining objects in
++ * the slab. If the number is zero then the objects will be freed.
++ */
++typedef void kmem_migrate_func(struct kmem_cache *, void **, int nr, int node, void *private);
++
++/*
++ * kmem_cache_setup_mobility() is used to setup callbacks for a slab cache.
++ */
++#ifdef CONFIG_SLUB
++void kmem_cache_setup_mobility(struct kmem_cache *, kmem_isolate_func,
++						kmem_migrate_func);
++#else
++static inline void kmem_cache_setup_mobility(struct kmem_cache *s,
++	kmem_isolate_func isolate, kmem_migrate_func migrate) {}
++#endif
++
++/*
++ * Allocator specific definitions. These are mainly used to establish optimized
++ * ways to convert kmalloc() calls to kmem_cache_alloc() invocations by
++ * selecting the appropriate general cache at compile time.
+  * Please use this macro to create slab caches. Simply specify the
+  * name of the structure and maybe some flags that are listed above.
+  *
 Index: linux/mm/slab_common.c
 ===================================================================
 --- linux.orig/mm/slab_common.c
 +++ linux/mm/slab_common.c
-@@ -393,7 +393,7 @@ static struct kmem_cache *create_cache(c
- 		goto out_free_cache;
+@@ -298,7 +298,7 @@ int slab_unmergeable(struct kmem_cache *
+ 	if (!is_root_cache(s))
+ 		return 1;
  
- 	s->refcount = 1;
--	list_add(&s->list, &slab_caches);
-+	list_add_tail(&s->list, &slab_caches);
- 	memcg_link_cache(s);
- out:
- 	if (err)
+-	if (s->ctor)
++	if (s->ctor || s->isolate || s->migrate)
+ 		return 1;
+ 
+ 	if (s->usersize)
 
