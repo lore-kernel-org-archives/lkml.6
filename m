@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18365C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1408BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB2420656
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80CE2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297789;
-	bh=4p5U0+rqfqrDYVPf1w5FV/UPHdhIy8HNdLBIX0GuEbE=;
+	s=default; t=1545297796;
+	bh=WnvVvoDwF21WEc1jyGKGDeZJd7sUVpkVgSO17FZUFto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TPmz8GYtHwDkitI/qRKTfcne3bw1S1qzmx9+zvzpDe4MsmOFLejtnSCfCelsw0X68
-	 FeVOfyuk9Df69RUvcLsDTc3jqed0sbG8os7RWpTgFQqIiEphp20xS4aXDP0GDqTw6J
-	 IVOMiLxqdWVNE8hkt1CkpzGO4XlAvzSCNgIYgnk4=
+	b=nCMu90mg439oW//8ijIY+IzXVkvps8vchYqkULYHk887kNI+YKmsvOhjXxqWPL7rW
+	 ryWIxfK8SrOIOw7Ea8+X+LOm7TblfOOysonC1tBTG6Ufy33dUZcRr3zq4r4zaU4uuQ
+	 IcU0io++pr+mxyA2YxM0oRW8BGmCg0rKoCnMKQyM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731482AbeLTJXI (ORCPT
+        id S1731576AbeLTJXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50178 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:23:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731442AbeLTJXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:23:05 -0500
+        id S1731499AbeLTJXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:23:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A03B2217D7;
-        Thu, 20 Dec 2018 09:23:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB38218D4;
+        Thu, 20 Dec 2018 09:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297785;
-        bh=4p5U0+rqfqrDYVPf1w5FV/UPHdhIy8HNdLBIX0GuEbE=;
+        s=default; t=1545297790;
+        bh=WnvVvoDwF21WEc1jyGKGDeZJd7sUVpkVgSO17FZUFto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ASykYtdUXW0AenNOfEwS7kOzaiIA5EgxypYOWhd1Oe+gJVIrq9KcFGxoEvukznENa
-         Ku9sa+TIffp2wSTIEsjIGGE2ECcyetYTwi0P4fW7aPBGcV2Agetz70t9qxP1pSAzMC
-         rzT924atTNTSPOz51JHH86kqODedYKpBdFswGxlo=
+        b=Qx7la/u3cxfleJSmrtU9WYJhpHjm6RYBWJ0cEhwqZFKH9b3jTxjVlNRQpjL2e7KtT
+         +hif+P9ervyTxg4dQgPcEcPku+NQlqbBMiyC+/EQdbx7ArMhVxCzVZ7eNTQID9U2qO
+         XKtyDTesAOVpKBTNP5HrKZ7uiasOE9gO05K9DG6c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        Fengguang Wu <fengguang.wu@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/61] lib/interval_tree_test.c: allow full tree search
-Date:   Thu, 20 Dec 2018 10:18:03 +0100
-Message-Id: <20181220085843.876085484@linuxfoundation.org>
+Subject: [PATCH 4.9 05/61] lib/rbtree-test: lower default params
+Date:   Thu, 20 Dec 2018 10:18:05 +0100
+Message-Id: <20181220085843.951459551@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -66,65 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c46ecce431ebe6b1a9551d1f530eb432dae5c39b ]
+[ Upstream commit 0b548e33e6cb2bff240fdaf1783783be15c29080 ]
 
-...  such that a user can specify visiting all the nodes in the tree
-(intersects with the world).  This is a nice opposite from the very
-basic default query which is a single point.
+Fengguang reported soft lockups while running the rbtree and interval
+tree test modules.  The logic for these tests all occur in init phase,
+and we currently are pounding with the default values for number of
+nodes and number of iterations of each test.  Reduce the latter by two
+orders of magnitude.  This does not influence the value of the tests in
+that one thousand times by default is enough to get the picture.
 
-Link: http://lkml.kernel.org/r/20170518174936.20265-5-dave@stgolabs.net
+Link: http://lkml.kernel.org/r/20171109161715.xai2dtwqw2frhkcm@linux-n805
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/interval_tree_test.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ lib/interval_tree_test.c | 4 ++--
+ lib/rbtree_test.c        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/lib/interval_tree_test.c b/lib/interval_tree_test.c
-index 1093f0496d5e..409383463879 100644
+index 409383463879..bababcf7ffdd 100644
 --- a/lib/interval_tree_test.c
 +++ b/lib/interval_tree_test.c
-@@ -15,6 +15,7 @@ __param(int, perf_loops, 100000, "Number of iterations modifying the tree");
+@@ -11,10 +11,10 @@
+ 	MODULE_PARM_DESC(name, msg);
+ 
+ __param(int, nnodes, 100, "Number of nodes in the interval tree");
+-__param(int, perf_loops, 100000, "Number of iterations modifying the tree");
++__param(int, perf_loops, 1000, "Number of iterations modifying the tree");
  
  __param(int, nsearches, 100, "Number of searches to the interval tree");
- __param(int, search_loops, 10000, "Number of iterations searching the tree");
-+__param(bool, search_all, false, "Searches will iterate all nodes in the tree");
+-__param(int, search_loops, 10000, "Number of iterations searching the tree");
++__param(int, search_loops, 1000, "Number of iterations searching the tree");
+ __param(bool, search_all, false, "Searches will iterate all nodes in the tree");
  
  
- static struct rb_root root = RB_ROOT;
-@@ -24,13 +25,13 @@ static u32 *queries = NULL;
- static struct rnd_state rnd;
+diff --git a/lib/rbtree_test.c b/lib/rbtree_test.c
+index e83331aa1b7f..afedd3770562 100644
+--- a/lib/rbtree_test.c
++++ b/lib/rbtree_test.c
+@@ -11,7 +11,7 @@
+ 	MODULE_PARM_DESC(name, msg);
  
- static inline unsigned long
--search(unsigned long query, struct rb_root *root)
-+search(struct rb_root *root, unsigned long start, unsigned long last)
- {
- 	struct interval_tree_node *node;
- 	unsigned long results = 0;
+ __param(int, nnodes, 100, "Number of nodes in the rb-tree");
+-__param(int, perf_loops, 100000, "Number of iterations modifying the rb-tree");
++__param(int, perf_loops, 1000, "Number of iterations modifying the rb-tree");
+ __param(int, check_loops, 100, "Number of iterations modifying and verifying the rb-tree");
  
--	for (node = interval_tree_iter_first(root, query, query); node;
--	     node = interval_tree_iter_next(node, query, query))
-+	for (node = interval_tree_iter_first(root, start, last); node;
-+	     node = interval_tree_iter_next(node, start, last))
- 		results++;
- 	return results;
- }
-@@ -99,8 +100,12 @@ static int interval_tree_test_init(void)
- 
- 	results = 0;
- 	for (i = 0; i < search_loops; i++)
--		for (j = 0; j < nsearches; j++)
--			results += search(queries[j], &root);
-+		for (j = 0; j < nsearches; j++) {
-+			unsigned long start = search_all ? 0 : queries[j];
-+			unsigned long last = search_all ? max_endpoint : queries[j];
-+
-+			results += search(&root, start, last);
-+		}
- 
- 	time2 = get_cycles();
- 	time = time2 - time1;
+ struct test_node {
 -- 
 2.19.1
 
