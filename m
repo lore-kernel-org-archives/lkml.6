@@ -2,95 +2,150 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9D8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF35C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74D920672
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:00:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zWG/YzcR"
+	by mail.kernel.org (Postfix) with ESMTP id A03022133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeLTCAn (ORCPT
+        id S1729909AbeLTCDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:00:43 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:22402 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729731AbeLTCAn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:00:43 -0500
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wBK20WFL009462;
-        Thu, 20 Dec 2018 11:00:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBK20WFL009462
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545271233;
-        bh=yHSlXIor1Fh3gCFsMpZEw4y1VA61jENAqCxtVTMLXRE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zWG/YzcR/vuOhXdRm3h8wR/f9h/KrWtLvtcxpKuDsdgo4av2YE4ylUTWvOm0/3/FG
-         mR830Xdf5xQz0KphD01AK+QBIyUvO1rdJESnvbxmDYTxTUC4tgBt2MKsWj8YzMzerP
-         Vl8U6+qUNUEl2UKPYYx/QKxZNwjXoxUvPhGTFDBscgEnp8LkmM6IJnhYSSLMfdg2h5
-         giLFyJb6jm08b5oQSE9FHouGlulS0WFdgyKHQCWlh7uo/AWHQKMM0Tau4vornGY4l2
-         pk0tEXNFPdcltQ6C63Xh9ULSPLZobEVGgRcyiHi7WUllumTSkb5TR5R2dHrujVZoK2
-         Qm8ubtBgDN/eQ==
-X-Nifty-SrcIP: [209.85.222.44]
-Received: by mail-ua1-f44.google.com with SMTP id c24so50882uak.1;
-        Wed, 19 Dec 2018 18:00:32 -0800 (PST)
-X-Gm-Message-State: AA+aEWbdurCk3cwipQrJe2so5uAaU9afXeU8WRckor3DW4hWiIuSNcie
-        pr3bbUzk4ubWXkR5Gwv3wJIyQ78GmYv0bnZoOoA=
-X-Google-Smtp-Source: AFSGD/UgkDxVB8vDD5fRJFlWC9maqsWBYc9ErRB8IQxR2m97UwM1jNEe6vHFLEs0Rd01P/M+dzymvcmawBtbMdJdPUY=
-X-Received: by 2002:a9f:3193:: with SMTP id v19mr11144432uad.55.1545271231818;
- Wed, 19 Dec 2018 18:00:31 -0800 (PST)
+        Wed, 19 Dec 2018 21:03:09 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56364 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728798AbeLTCDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 21:03:09 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1FC4B149AC853;
+        Thu, 20 Dec 2018 10:03:05 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
+ 10:02:59 +0800
+CC:     <liuyu712@hisilicon.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>
+Subject: Re: [PATCH v1 03/12] dt-bindings: misc: Add bindings for HiSilicon
+ usb hub and data role switch functionality on HiKey960
+To:     Rob Herring <robh@kernel.org>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-4-chenyu56@huawei.com> <20181219142118.GA24144@bogus>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <f0f570a9-74cb-2554-58e6-1271e69344ff@huawei.com>
+Date:   Thu, 20 Dec 2018 10:02:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-References: <1545110741-10761-1-git-send-email-yamada.masahiro@socionext.com> <1545143648.18411.20.camel@lca.pw>
-In-Reply-To: <1545143648.18411.20.camel@lca.pw>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 20 Dec 2018 10:59:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQxG_UmLQGCZqaNkKGQwKyzJdZst343o_kTqsMcGCcLCQ@mail.gmail.com>
-Message-ID: <CAK7LNAQxG_UmLQGCZqaNkKGQwKyzJdZst343o_kTqsMcGCcLCQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: fix false positive warning/error about missing libelf
-To:     Qian Cai <cai@lca.pw>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181219142118.GA24144@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:35 PM Qian Cai <cai@lca.pw> wrote:
->
-> On Tue, 2018-12-18 at 14:25 +0900, Masahiro Yamada wrote:
-> > For the same reason as commit 25896d073d8a ("x86/build: Fix compiler
-> > support check for CONFIG_RETPOLINE"), you cannot put this $(error ...)
-> > into the parse stage of the top Makefile.
-> >
-> > Perhaps I'd propose a more sophisticated solution later, but this is
-> > the best I can do for now.
-> >
-> > Link: https://lkml.org/lkml/2017/12/25/211
-> > Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> > Reported-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> > Reported-by: Qian Cai <cai@lca.pw>
-> > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
->
-> Tested-by: Qian Cai <cai@lca.pw>
 
 
-Applied to linux-kbuild/fixes.
+On 2018/12/19 22:21, Rob Herring wrote:
+> On Mon, Dec 03, 2018 at 11:45:06AM +0800, Yu Chen wrote:
+>> This patch adds binding documentation to support usb hub and usb
+>> data role switch of Hisilicon HiKey&HiKey960 Board.
+>>
+>> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: John Stultz <john.stultz@linaro.org>
+>> Cc: Binghui Wang <wangbinghui@hisilicon.com>
+>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+>> --
+>> v1:
+>> 1) Fix some format errors as suggested by Sergei.
+>> 2) Modify gpio description to use gpiod API.
+>> --
+>> ---
+>>  .../bindings/misc/hisilicon-hikey-usb.txt          | 36 ++++++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.txt b/Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.txt
+>> new file mode 100644
+>> index 000000000000..f3413d851e18
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/misc/hisilicon-hikey-usb.txt
+>> @@ -0,0 +1,36 @@
+>> +Support usb hub and usb data role switch of Hisilicon HiKey&HiKey960 Board.
+> 
+> s/&/ & /
+> 
+OK.
+> Some trivial comments below, but this all needs to use the USB connector 
+> binding for the OTG and host ports and then we need to figure out how 
+> the switching fits into that.
+> 
+>> +
+>> +-----------------------------
+>> +
+>> +Required properties:
+>> +- compatible: "hisilicon,gpio-hubv1","hisilicon,hikey960-usb"
+>> +- typc-vbus-int-gpio: gpio to control the vbus of typeC port
+>> +- typc-vbus-enable-val: gpio value that enable the vbus of typeC port
+> 
+> HiKey at least doesn't have a TypeC port.
+>Yes. I will re-check the driver for Hikey.
+>> +- otg-gpio: gpio to switch DP&DM between the hub and typeC port
+>> +- hub-vdd33-en-gpio: gpio to enable the power of hub
+> 
+> -gpios for all these.
 
+OK.
+> 
+>> +- pinctrl-0: pinctrl config
+>> +
+>> +Example
+>> +-----
+>> +
+>> +	hisi_hikey_usb: hisi_hikey_usb {
+>> +		compatible = "hisilicon,hikey960-usb";
+>> +		typec-vbus-gpios = <&gpio25 2 0>;
+>> +		typc-vbus-enable-val = <1>;
+>> +		otg-switch-gpios = <&gpio25 6 0>;
+>> +		hub-vdd33-en-gpios = <&gpio5 6 0>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&usbhub5734_pmx_func>;
+>> +
+>> +		port {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			hikey_usb_ep: endpoint@0 {
+>> +				reg = <0>;
+>> +				device_type = "usb-role-switch";
+> 
+> Drop device_type.
 
+Currently the device_type is used for usb-role-switch match, but it
+will be removed after Heikki Krogerus's patch.
+> 
+>> +				remote-endpoint = <&dwc3_role_switch_notify>;
+>> +			};
+>> +		};
+>> +
+>> +	};
+>> -- 
+>> 2.15.0-rc2
+>>
+> 
+> .
+> 
+Thanks!
 
--- 
-Best Regards
-Masahiro Yamada
