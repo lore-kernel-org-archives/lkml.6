@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC6FC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BC0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DA8120989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931232177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298041;
-	bh=GggaxItT8q14si/lUaLJMUOZDYgxEdmNApYk0askahE=;
+	s=default; t=1545298045;
+	bh=ZCHyD4ywMF/0PBH6WkyhKGyQk8yez49y0tFfv8XGfNI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bi6ydPbDrm6I3/zZINCHyzpjMl9PE2yPygsAfOKB23ONhE0ijHn4asnIq5pkhx4UC
-	 Em9NmJZRLSu/osauFhAEbI6VG8n31aKWYIHcCYrtrn7YIJiL1ESTegE710a7GWUf8U
-	 cfSF9OItlhPwxeoEkF1ATuTcyVeth5WdFYQJSVC8=
+	b=rIsmFMHBIUm89czzn0R5g2HyB7xRbf+mJj2YcITjIdXYB5TsgS1ZXpmy/dSpanFuF
+	 k7L7WxpPmY07/7JX5hRHPJr3isunA0b53vxFk47rHKxCo0RS+D0Nli1lOMSJ/XKXLa
+	 X4xTBv2RPN0n3Adx3fJvhR0mb783gLUUmIdoAgSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732303AbeLTJ1U (ORCPT
+        id S1732315AbeLTJ1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35290 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730662AbeLTJ1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:19 -0500
+        id S1730662AbeLTJ1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0563A20989;
-        Thu, 20 Dec 2018 09:27:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C3920656;
+        Thu, 20 Dec 2018 09:27:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298038;
-        bh=GggaxItT8q14si/lUaLJMUOZDYgxEdmNApYk0askahE=;
+        s=default; t=1545298041;
+        bh=ZCHyD4ywMF/0PBH6WkyhKGyQk8yez49y0tFfv8XGfNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EBW/C/czbfh3j3PagW2mVUCV7k8Ab4LK3Trw5trxD0LSwoqFMj9loQWe7JCb8H+GI
-         DXLPtnH28ocYcbd4Cev9uMJGdFZCawgzg0IO9CR3e0Bfhwb7sFF4jL1X1HViy4Aua/
-         qz4dQEGzwAPM26pXGT1ScmjVtOFu/A37EzWJo5F8=
+        b=X5p49Qs1JTGkY3HNVjMFRo8IXXdBcJtw2wYf0eBtmV64VumOyCDexKi58EH9obejx
+         QGLp00QZG3aRaWocfQBIGgsYRmt9ee3ftghkh4D6Q6w5GKpXkPKKza6lbv6QbGMGn7
+         zmoBtEugfbva+wPVmVwQKrWx3jjUdGiEhvjgTt/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 48/72] drivers/sbus/char: add of_node_put()
-Date:   Thu, 20 Dec 2018 10:18:47 +0100
-Message-Id: <20181220085924.237106773@linuxfoundation.org>
+Subject: [PATCH 4.14 49/72] drivers/tty: add missing of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:48 +0100
+Message-Id: <20181220085924.273319191@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -65,32 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6bd520ab7cf69486ea81fd3cdfd2d5a390ad1100 ]
+[ Upstream commit dac097c4546e4c5b16dd303a1e97c1d319c8ab3e ]
 
-use of_node_put() to release the refcount.
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place is not doing this, so fix it.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/sbus/char/envctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/suncore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
-index 56e962a01493..b8481927bfe4 100644
---- a/drivers/sbus/char/envctrl.c
-+++ b/drivers/sbus/char/envctrl.c
-@@ -910,8 +910,10 @@ static void envctrl_init_i2c_child(struct device_node *dp,
- 			for (len = 0; len < PCF8584_MAX_CHANNELS; ++len) {
- 				pchild->mon_type[len] = ENVCTRL_NOMON;
- 			}
-+			of_node_put(root_node);
- 			return;
- 		}
-+		of_node_put(root_node);
+diff --git a/drivers/tty/serial/suncore.c b/drivers/tty/serial/suncore.c
+index 127472bd6a7c..209f314745ab 100644
+--- a/drivers/tty/serial/suncore.c
++++ b/drivers/tty/serial/suncore.c
+@@ -111,6 +111,7 @@ void sunserial_console_termios(struct console *con, struct device_node *uart_dp)
+ 		mode = of_get_property(dp, mode_prop, NULL);
+ 		if (!mode)
+ 			mode = "9600,8,n,1,-";
++		of_node_put(dp);
  	}
  
- 	/* Get the monitor channels. */
+ 	cflag = CREAD | HUPCL | CLOCAL;
 -- 
 2.19.1
 
