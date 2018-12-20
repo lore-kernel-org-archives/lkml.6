@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4EEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64747C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCC442176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2262176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731102AbeLTIZC (ORCPT
+        id S1731138AbeLTIZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:25:02 -0500
-Received: from ozlabs.ru ([107.173.13.209]:54840 "EHLO ozlabs.ru"
+        Thu, 20 Dec 2018 03:25:09 -0500
+Received: from ozlabs.ru ([107.173.13.209]:54979 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731085AbeLTIY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:24:59 -0500
+        id S1731110AbeLTIZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:25:07 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id B5A2DAE80381;
-        Thu, 20 Dec 2018 03:24:54 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id BE537AE80491;
+        Thu, 20 Dec 2018 03:25:01 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -37,9 +37,9 @@ Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
         Alex Williamson <alex.williamson@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH kernel v7 17/20] powerpc/powernv/npu: Fault user page into the hypervisor's pagetable
-Date:   Thu, 20 Dec 2018 19:23:47 +1100
-Message-Id: <20181220082350.58113-18-aik@ozlabs.ru>
+Subject: [PATCH kernel v7 19/20] vfio_pci: Allow regions to add own capabilities
+Date:   Thu, 20 Dec 2018 19:23:49 +1100
+Message-Id: <20181220082350.58113-20-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181220082350.58113-1-aik@ozlabs.ru>
 References: <20181220082350.58113-1-aik@ozlabs.ru>
@@ -48,59 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a page fault happens in a GPU, the GPU signals the OS and the GPU
-driver calls the fault handler which populated a page table; this allows
-the GPU to complete an ATS request.
+VFIO regions already support region capabilities with a limited set of
+fields. However the subdriver might have to report to the userspace
+additional bits.
 
-On the bare metal get_user_pages() is enough as it adds a pte to
-the kernel page table but under KVM the partition scope tree does not get
-updated so ATS will still fail.
-
-This reads a byte from an effective address which causes HV storage
-interrupt and KVM updates the partition scope tree.
+This adds an add_capability() hook to vfio_pci_regops.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- arch/powerpc/platforms/powernv/npu-dma.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Changes:
+v3:
+* removed confusing rationale for the patch, the next patch makes
+use of it anyway
+---
+ drivers/vfio/pci/vfio_pci_private.h | 3 +++
+ drivers/vfio/pci/vfio_pci.c         | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-index c6163b9..12b8421 100644
---- a/arch/powerpc/platforms/powernv/npu-dma.c
-+++ b/arch/powerpc/platforms/powernv/npu-dma.c
-@@ -1133,6 +1133,8 @@ int pnv_npu2_handle_fault(struct npu_context *context, uintptr_t *ea,
- 	u64 rc = 0, result = 0;
- 	int i, is_write;
- 	struct page *page[1];
-+	const char __user *u;
-+	char c;
+diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+index 86aab05..93c1738 100644
+--- a/drivers/vfio/pci/vfio_pci_private.h
++++ b/drivers/vfio/pci/vfio_pci_private.h
+@@ -62,6 +62,9 @@ struct vfio_pci_regops {
+ 	int	(*mmap)(struct vfio_pci_device *vdev,
+ 			struct vfio_pci_region *region,
+ 			struct vm_area_struct *vma);
++	int	(*add_capability)(struct vfio_pci_device *vdev,
++				  struct vfio_pci_region *region,
++				  struct vfio_info_cap *caps);
+ };
  
- 	/* mmap_sem should be held so the struct_mm must be present */
- 	struct mm_struct *mm = context->mm;
-@@ -1145,18 +1147,17 @@ int pnv_npu2_handle_fault(struct npu_context *context, uintptr_t *ea,
- 					is_write ? FOLL_WRITE : 0,
- 					page, NULL, NULL);
+ struct vfio_pci_region {
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index 4a6f7c0..6cb70cf 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -763,6 +763,12 @@ static long vfio_pci_ioctl(void *device_data,
+ 			if (ret)
+ 				return ret;
  
--		/*
--		 * To support virtualised environments we will have to do an
--		 * access to the page to ensure it gets faulted into the
--		 * hypervisor. For the moment virtualisation is not supported in
--		 * other areas so leave the access out.
--		 */
- 		if (rc != 1) {
- 			status[i] = rc;
- 			result = -EFAULT;
- 			continue;
++			if (vdev->region[i].ops->add_capability) {
++				ret = vdev->region[i].ops->add_capability(vdev,
++						&vdev->region[i], &caps);
++				if (ret)
++					return ret;
++			}
+ 		}
  		}
  
-+		/* Make sure partition scoped tree gets a pte */
-+		u = page_address(page[0]);
-+		if (__get_user(c, u))
-+			result = -EFAULT;
-+
- 		status[i] = 0;
- 		put_page(page[0]);
- 	}
 -- 
 2.17.1
 
