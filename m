@@ -2,112 +2,153 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.2 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D41FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90992C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E6B218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D349218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389015AbeLTS21 (ORCPT
+        id S2389031AbeLTS2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:28:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55480 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732679AbeLTS21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:28:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 48CC8B008;
-        Thu, 20 Dec 2018 18:28:25 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: features and fixes for 4.21
-Date:   Thu, 20 Dec 2018 19:28:23 +0100
-Message-Id: <20181220182823.7803-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Thu, 20 Dec 2018 13:28:33 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40723 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732986AbeLTS2b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 13:28:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKISNSg3686490
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 20 Dec 2018 10:28:23 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKISMlu3686487;
+        Thu, 20 Dec 2018 10:28:22 -0800
+Date:   Thu, 20 Dec 2018 10:28:22 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-6e4tj2fjen8qa73gy4u49vav@git.kernel.org>
+Cc:     adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org,
+        namhyung@kernel.org, lclaudio@redhat.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, wangnan0@huawei.com,
+        hpa@zytor.com, tglx@linutronix.de
+Reply-To: wangnan0@huawei.com, hpa@zytor.com, tglx@linutronix.de,
+          acme@redhat.com, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, jolsa@kernel.org, mingo@kernel.org,
+          namhyung@kernel.org, lclaudio@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace: Move strarrays to beauty.h for further
+ reuse
+Git-Commit-ID: 1f2d085e0f25a40eeb0ac032fd399be94f866adb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Commit-ID:  1f2d085e0f25a40eeb0ac032fd399be94f866adb
+Gitweb:     https://git.kernel.org/tip/1f2d085e0f25a40eeb0ac032fd399be94f866adb
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 18 Dec 2018 10:25:28 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 18 Dec 2018 16:15:19 -0300
 
-Please git pull the following tag:
+perf trace: Move strarrays to beauty.h for further reuse
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.21-rc1-tag
+We'll use it in the upcoming arch_prctl() 'code' arg beautifier.
 
-xen: features and fixes for 4.21
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-6e4tj2fjen8qa73gy4u49vav@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-trace.c       | 26 ++++++++++----------------
+ tools/perf/trace/beauty/beauty.h | 12 ++++++++++++
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
-It contains the following changes:
-
-- a series to enable KVM guests to be booted by qemu via the Xen PVH
-  boot entry for speeding up KVM guest tests
-
-- a series for a common driver to be used by Xen PV frontends (right now
-  drm and sound)
-
-- two other fixes in Xen related code
-
-
-Thanks.
-
-Juergen
-
- MAINTAINERS                                     |   1 +
- arch/x86/Kbuild                                 |   2 +
- arch/x86/Kconfig                                |   6 +
- arch/x86/kernel/head_64.S                       |   2 +-
- arch/x86/platform/pvh/Makefile                  |   5 +
- arch/x86/platform/pvh/enlighten.c               | 137 ++++++
- arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
- arch/x86/xen/Kconfig                            |   3 +-
- arch/x86/xen/Makefile                           |   2 -
- arch/x86/xen/enlighten_pvh.c                    |  92 +---
- arch/x86/xen/xen-asm_64.S                       |   2 +
- drivers/gpu/drm/xen/Kconfig                     |   1 +
- drivers/gpu/drm/xen/Makefile                    |   1 -
- drivers/gpu/drm/xen/xen_drm_front.c             |  65 ++-
- drivers/gpu/drm/xen/xen_drm_front_gem.c         |   1 -
- drivers/gpu/drm/xen/xen_drm_front_shbuf.c       | 414 ------------------
- drivers/gpu/drm/xen/xen_drm_front_shbuf.h       |  64 ---
- drivers/xen/Kconfig                             |   3 +
- drivers/xen/Makefile                            |   1 +
- drivers/xen/xen-front-pgdir-shbuf.c             | 553 ++++++++++++++++++++++++
- drivers/xen/xen-pciback/pci_stub.c              |   3 +-
- include/xen/interface/hvm/start_info.h          |  63 ++-
- include/xen/xen-front-pgdir-shbuf.h             |  89 ++++
- include/xen/xen.h                               |   3 +
- sound/xen/Kconfig                               |   1 +
- sound/xen/Makefile                              |   1 -
- sound/xen/xen_snd_front.c                       |   7 +-
- sound/xen/xen_snd_front.h                       |   4 +-
- sound/xen/xen_snd_front_alsa.c                  | 102 +++--
- sound/xen/xen_snd_front_shbuf.c                 | 194 ---------
- sound/xen/xen_snd_front_shbuf.h                 |  36 --
- 31 files changed, 996 insertions(+), 862 deletions(-)
-
-Andrea Righi (1):
-      kprobes/x86/xen: blacklist non-attachable xen interrupt functions
-
-Maran Wilson (7):
-      xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
-      xen/pvh: Move PVH entry code out of Xen specific tree
-      xen/pvh: Create a new file for Xen specific PVH code
-      xen/pvh: Move Xen specific PVH VM initialization out of common file
-      xen/pvh: Move Xen code for getting mem map via hcall out of common file
-      xen/pvh: Add memory map pointer to hvm_start_info struct
-      KVM: x86: Allow Qemu/KVM to use PVH entry point
-
-Oleksandr Andrushchenko (3):
-      xen: Introduce shared buffer helpers for page directory...
-      drm/xen-front: Use Xen common shared buffer implementation
-      ALSA: xen-front: Use Xen common shared buffer implementation
-
-Ross Lagerwall (1):
-      xen/pciback: Check dev_data before using it
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 6ba8290a0794..9d30e0f3b7ea 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -386,34 +386,28 @@ static size_t syscall_arg__scnprintf_strarray(char *bf, size_t size,
+ 
+ #define SCA_STRARRAY syscall_arg__scnprintf_strarray
+ 
+-struct strarrays {
+-	int		nr_entries;
+-	struct strarray **entries;
+-};
+-
+-#define DEFINE_STRARRAYS(array) struct strarrays strarrays__##array = { \
+-	.nr_entries = ARRAY_SIZE(array), \
+-	.entries = array, \
+-}
+-
+-size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size,
+-					struct syscall_arg *arg)
++size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const char *intfmt, bool show_prefix, int val)
+ {
+-	struct strarrays *sas = arg->parm;
+ 	int i;
+ 
+ 	for (i = 0; i < sas->nr_entries; ++i) {
+ 		struct strarray *sa = sas->entries[i];
+-		int idx = arg->val - sa->offset;
++		int idx = val - sa->offset;
+ 
+ 		if (idx >= 0 && idx < sa->nr_entries) {
+ 			if (sa->entries[idx] == NULL)
+ 				break;
+-			return scnprintf(bf, size, "%s%s", arg->show_string_prefix ? sa->prefix : "", sa->entries[idx]);
++			return scnprintf(bf, size, "%s%s", show_prefix ? sa->prefix : "", sa->entries[idx]);
+ 		}
+ 	}
+ 
+-	return scnprintf(bf, size, "%d", arg->val);
++	return scnprintf(bf, size, intfmt, val);
++}
++
++size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size,
++					struct syscall_arg *arg)
++{
++	return strarrays__scnprintf(arg->parm, bf, size, "%d", arg->show_string_prefix, arg->val);
+ }
+ 
+ #ifndef AT_FDCWD
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 1a93d9c626ef..58e734b27958 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -32,6 +32,18 @@ size_t strarray__scnprintf_flags(struct strarray *sa, char *bf, size_t size, boo
+ struct trace;
+ struct thread;
+ 
++struct strarrays {
++	int		nr_entries;
++	struct strarray **entries;
++};
++
++#define DEFINE_STRARRAYS(array) struct strarrays strarrays__##array = { \
++	.nr_entries = ARRAY_SIZE(array), \
++	.entries = array, \
++}
++
++size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const char *intfmt, bool show_prefix, int val);
++
+ size_t pid__scnprintf_fd(struct trace *trace, pid_t pid, int fd, char *bf, size_t size);
+ 
+ extern struct strarray strarray__socket_families;
