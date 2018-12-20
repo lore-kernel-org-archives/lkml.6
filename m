@@ -2,170 +2,114 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344D5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4545C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB14520989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:40:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdQbSjr+"
+	by mail.kernel.org (Postfix) with ESMTP id 88C23218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545309866;
+	bh=8KlNPwNV6AB/lDEFpXu6UH5N8C1TpcOhRftkTlAM7xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KOlUpQqenz5RAiXEJlFbzP3ks9B3d6Y1xN72ywozYyumAXTi4zev7KE6ONTMDBJuD
+	 e5pq5SPOrJOKE0b/F5TmujH0r5sA+xf3kv9HZ/nWDXFVaJTmPe5jwTBcIQPIdcd5sC
+	 feu1VLQpUzOqGZ3nZbEcb9i8CsG72MN8ptwLxv2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbeLTMk6 (ORCPT
+        id S1732561AbeLTMoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:40:58 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38421 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728966AbeLTMk5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:40:57 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so1416398lja.5;
-        Thu, 20 Dec 2018 04:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OAbIzZ1QLXITn9zJ/+VdE14YTPS6lrAtkbqngHncBiM=;
-        b=SdQbSjr+hVQuIN7WEhOMmn7G2BjQSEAvvczWjelzMXxEINQjSqMnvY9IpG8y91gExQ
-         KB5mbo5OcTlPzuKN7X64AjtuRXCv9wsHDLJDf2pIhyRfmT8ETR116SRWSR2ApSVe/iWZ
-         TqyKdOrMpuqTyyEuTQ5pVqGmPh9DD/yfufjKS5WcXkALwhxsXXjufZnXakHVQaPz7aSZ
-         IRbqQe2Z7jSRDlw7kTUy+33tvG3VueEJYEXZCN4VQ1ZzO/WhwLYH23X4qZEfAtMk8CTd
-         8xFnnmkM90yLvnn/MxZPJQF4z9b2+8h6Qc3zPAV7FDmnPOK4lGUBaJI348h2EF/9cz1T
-         jFWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OAbIzZ1QLXITn9zJ/+VdE14YTPS6lrAtkbqngHncBiM=;
-        b=nGd3AyEHYEgMDIYAaeyuWfcz5DjBN8M5WzrL75vzYWU2GBbbGim4/Z1ImpZ/fN8XJZ
-         I3SLoy3F3Hzn1/MCzGEBACOYY3tnzxlgH7/Fudk66QI11HHhMhIP22NCvtQmKcpy491A
-         LsStCx5vYvjaAWOmRqBxXgBu/1wl3N7qIZA/CPiffUG0VRFYIA4vYACssOkTyARtz4XC
-         IT05QcaJUl6G/yawhxBXMsyCt90Z5nLdQBHy64bTDLmT7NVzpE7Bqw0AbtzIExmm7W+x
-         lGyKPM8uuzFPs9YHXElBJRiqDeY/TRM/A86KwQB/lSDIORTiKUlV9SPLNDt1AL/JG1GO
-         tOnw==
-X-Gm-Message-State: AA+aEWbek2OwykyaM57zz4JPh/l7t71nml7OxYxJZO+LbxOX4Bok/CAV
-        qmf1X7f17qpdU+COe1MD+8VSc3qCLos=
-X-Google-Smtp-Source: AFSGD/UEwlZfTAyNPcZTJeM1AUblTOxNCuEAseEmfvVMJY7DJlmWqRU9632xSCl/HxHiqFlNJKEPVw==
-X-Received: by 2002:a2e:3803:: with SMTP id f3-v6mr15166660lja.169.1545309653919;
-        Thu, 20 Dec 2018 04:40:53 -0800 (PST)
-Received: from ?IPv6:2001:14ba:8017:3300:200b:ab20:c3cf:58fb? (dtynxhybybr1wbt0snd9t-3.rev.dnainternet.fi. [2001:14ba:8017:3300:200b:ab20:c3cf:58fb])
-        by smtp.googlemail.com with ESMTPSA id p89-v6sm1532019ljp.60.2018.12.20.04.40.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 04:40:52 -0800 (PST)
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-To:     Dan Murphy <dmurphy@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
- <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
- <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
-From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Message-ID: <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
-Date:   Thu, 20 Dec 2018 14:40:51 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Thu, 20 Dec 2018 07:44:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59528 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728966AbeLTMoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:44:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5CCC7AE41;
+        Thu, 20 Dec 2018 12:44:22 +0000 (UTC)
+Date:   Thu, 20 Dec 2018 13:44:19 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCHv2 2/3] mm/numa: build zonelist when alloc for device on
+ offline node
+Message-ID: <20181220124419.GD9104@dhcp22.suse.cz>
+References: <1545299439-31370-1-git-send-email-kernelfans@gmail.com>
+ <1545299439-31370-3-git-send-email-kernelfans@gmail.com>
+ <20181220113547.GC9104@dhcp22.suse.cz>
+ <CAFgQCTvxNGTKD+DP_LxF86WoVnCHnPkWoSqdGeXQxXNVYD_orw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTvxNGTKD+DP_LxF86WoVnCHnPkWoSqdGeXQxXNVYD_orw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
-
-On 19/12/2018 23.50, Dan Murphy wrote:
-> On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
->> Hi Dan and Pavel,
->> Some time ago we had discussion with Vesa Jääskeläinen about possible
->> approaches to RGB LEDs [0]. What seemed to be the most suitable
->> variation of the discussed out-of-tree approach was the "color" property
->> and array of color triplets defined in Device Tree per each color.
->>
+On Thu 20-12-18 20:26:28, Pingfan Liu wrote:
+> On Thu, Dec 20, 2018 at 7:35 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Thu 20-12-18 17:50:38, Pingfan Liu wrote:
+> > [...]
+> > > @@ -453,7 +456,12 @@ static inline int gfp_zonelist(gfp_t flags)
+> > >   */
+> > >  static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+> > >  {
+> > > -     return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
+> > > +     if (unlikely(!possible_zonelists[nid])) {
+> > > +             WARN_ONCE(1, "alloc from offline node: %d\n", nid);
+> > > +             if (unlikely(build_fallback_zonelists(nid)))
+> > > +                     nid = first_online_node;
+> > > +     }
+> > > +     return possible_zonelists[nid] + gfp_zonelist(flags);
+> > >  }
+> >
+> > No, please don't do this. We do not want to make things work magically
 > 
-> Why does Device tree define the color?
+> For magically, if you mean directly replies on zonelist instead of on
+> pgdat struct, then it is easy to change
+
+No, I mean that we _know_ which nodes are possible. Platform is supposed
+to tell us. We should just do the intialization properly. What we do now
+instead is a pile of hacks that fit magically together. And that should
+be changed.
+
+> > and we definitely do not want to put something like that into the hot
 > 
-> Rob indicated that Device tree is supposed to define the hardware.
-> This thread seems to be defining the operation.
+> But  the cose of "unlikely" can be ignored, why can it not be placed
+> in the path?
+
+unlikely will simply put the code outside of the hot path. The condition
+is still there. There are people desperately fighting to get every
+single cycle out of the page allocator. Now you want them to pay a
+branch which is relevant only for few obscure HW setups.
+
+> > path. We definitely need zonelists to be build transparently for all
+> > possible nodes during the init time.
 > 
-> Shouldn't the color be done via user space and not dt?
-> 
-> Especially if they want to change the color real time?
-> 
-> Dan
-> 
->> Please refer to [0] for the details.
->>
->> [0] https://lkml.org/lkml/2018/11/9/938
->>
+> That is the point, whether the all nodes should be instanced at boot
+> time, or not be instanced until there is requirement.
 
-Idea was to define preset colors in device tree as an example when you 
-are dealing with multi-color LEDs without PWM. In that case you only 
-have GPIOs to control and then have a problem what does those GPIO's mean.
-
-With preset definitions one can use color names to act as a shortcut to 
-configure GPIO's to proper state for that particular color.
-
-For more flexible setups where you have PWM or such control you have 
-larger space of available colors. In this case you need to somehow 
-define also meaning of those controls.
-
-Also we may not have LED with only red, green and blue elements. There 
-might in example be amber, ultraviolet, white elements.
-
-This is where device tree is concerned. It helps us craft the logical 
-definition for LED so that we can control it from user space in common way.
-
-Now the next problem then is how does user space work then.
-
-For multi-color LEDs it it important to change the color atomically so 
-that no wrong colors are being shown as user space got interrupted when 
-controlling it.
-
-Also we have brightness setting that would be useful for PWM controlled 
-LEDs.
-
-Setting color is easy when you use preset names then you only need to 
-deal with brightness value (eg. RGB -> HSV * brightness -> RGB). Of 
-course here additional problem is other color elements are they then 
-scaled according to brightness value?.
-
-Setting color as "raw" values is then next problem. In order to do it 
-atomically it needs to be one atomic activation and could be eg. one 
-write to "color" sysfs entry with combination of all color elements and 
-perhaps additionally also brightness value. Next question is then what 
-is the format for such entry then? What are the value ranges? In here we 
-can utilize device tree definition to help define what kind of LED we do 
-have and what kind of capabilities it does have.
-
-Additional problem risen also in discussion was non-linearity of some 
-control mechanisms vs. perceived color. So there might be a need for 
-curve mapping similarly what is with backlight control and that would be 
-defined either in device tree and possibly in user space if there is a 
-need for that. I suppose golden curve definition in device tree should 
-be good enough.
-
-Then there was additional discussion about possible animation support 
-but I would leave that for future design as that would then be utilizing 
-the same framework.
-
-I suppose color space handling and that kind of stuff should be in some 
-led core functionality and then raw control should be part of physical 
-led driver.
-
-I was planning to play with it during holiday season but lets see how it 
-goes. Feel free to also experiment with the idea.
-
-Thanks,
-Vesa Jääskeläinen
+And that should be done at init time. We have all the information
+necessary at that time.
+-- 
+Michal Hocko
+SUSE Labs
