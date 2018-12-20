@@ -3,50 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF62CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DF9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0CE20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0A720989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298203;
-	bh=MbRw6wAU7Ure/N+MY4pXFIR/rii9JA4kapFBMTVjfWA=;
+	s=default; t=1545298207;
+	bh=QN2DfQulBi4c+sP6mUMXprXuaoA1v6lwjVoUI6c/1zU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LjNF5vZ0IaBr08Ke+2x4u7Fb/pSk3W0Xuc1E/JzSc7j20tgeAWC3SzTdXKKE+cEBc
-	 JjOb+kRecP+pqBVNbPmjolMffLL8GP99Zz8Kf1kr+KjA8CPursjcGMJhuv1Wyy3FR1
-	 EmwoAgMRSPozNAfY1g9A1knVDvz6n1yv8Sbry0R4=
+	b=TIIz8Irk3IH0JRpZo5xEfSpkWZ4OTckfq7MKMtn5MDUv1nYPE1JMCfzGy/tMROVZL
+	 QtTC0pDM6XmQW64L+1EaClt+tBQUEbTgkE6FhbmMcCBrLXZREB3RlzP5uqa7JG909c
+	 S6vzEFbda1L4oEACzy3tHqO7TaYLAjvNGPbzTb1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732847AbeLTJaC (ORCPT
+        id S1732860AbeLTJaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:30:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33362 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:30:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732832AbeLTJaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:00 -0500
+        id S1732841AbeLTJaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:30:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E17BD20989;
-        Thu, 20 Dec 2018 09:29:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 831C720656;
+        Thu, 20 Dec 2018 09:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298199;
-        bh=MbRw6wAU7Ure/N+MY4pXFIR/rii9JA4kapFBMTVjfWA=;
+        s=default; t=1545298202;
+        bh=QN2DfQulBi4c+sP6mUMXprXuaoA1v6lwjVoUI6c/1zU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oNv0/LPjZQbDGBrj7c0tKZI0knLL/rdRh9oC30Z7CyJnzY6spcDKNvg8T2JWncCUS
-         7D3HcFuqayodIEEEYv2q+8jLhygMKvioGwHIO9dChar+DD6kCUGWuDzp9nB1dOyxGB
-         VJ0MQG+i23rsNc8SmkfEZpvJnbfECPAIwRJ+ZpzA=
+        b=qx1QRmQdlKDjzyuulHuceiLRvqoSIwdutZFvtxWoqn0G9aklMPSkGb23lZKpD+XsV
+         RYgLCmocdWt7CXJ7U3ZyRV/19FJOreySrDByUMbUR6NcYrT3Eg+uebrjB7fl1OoujS
+         JGs//gH5rb8dEOLSwPBBhOY8wzh15LXVXYcIuv9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 37/67] drm/amd/powerplay: issue pre-display settings for display change event
-Date:   Thu, 20 Dec 2018 10:18:49 +0100
-Message-Id: <20181220085905.009091856@linuxfoundation.org>
+Subject: [PATCH 4.19 38/67] clk: mvebu: Off by one bugs in cp110_of_clk_get()
+Date:   Thu, 20 Dec 2018 10:18:50 +0100
+Message-Id: <20181220085905.046003129@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -65,47 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 10cb3e6b63bf4266a5198813526fdd7259ffb8be ]
+[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
 
-For display config change event only, pre-display config settings are
-needed.
+These > comparisons should be >= to prevent reading beyond the end of
+of the clk_data->hws[] buffer.
 
-Signed-off-by: Evan Quan <evan.quan@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
+when we do:
+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+				      GFP_KERNEL);
+As you can see, it has CP110_CLK_NUM elements which is equivalent to
+CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
+
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c  | 3 +++
- drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c | 2 --
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-index 8994aa5c8cf8..64596029b696 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/hwmgr.c
-@@ -365,6 +365,9 @@ int hwmgr_handle_task(struct pp_hwmgr *hwmgr, enum amd_pp_task task_id,
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 75bf7b8f282f..0153c76d4a20 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -202,11 +202,11 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	unsigned int idx = clkspec->args[1];
  
- 	switch (task_id) {
- 	case AMD_PP_TASK_DISPLAY_CONFIG_CHANGE:
-+		ret = phm_pre_display_configuration_changed(hwmgr);
-+		if (ret)
-+			return ret;
- 		ret = phm_set_cpu_power_state(hwmgr);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-index 91ffb7bc4ee7..56437866d120 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/pp_psm.c
-@@ -265,8 +265,6 @@ int psm_adjust_power_state_dynamic(struct pp_hwmgr *hwmgr, bool skip,
- 	if (skip)
- 		return 0;
- 
--	phm_pre_display_configuration_changed(hwmgr);
--
- 	phm_display_configuration_changed(hwmgr);
- 
- 	if (hwmgr->ps)
+ 	if (type == CP110_CLK_TYPE_CORE) {
+-		if (idx > CP110_MAX_CORE_CLOCKS)
++		if (idx >= CP110_MAX_CORE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[idx];
+ 	} else if (type == CP110_CLK_TYPE_GATABLE) {
+-		if (idx > CP110_MAX_GATABLE_CLOCKS)
++		if (idx >= CP110_MAX_GATABLE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
+ 	}
 -- 
 2.19.1
 
