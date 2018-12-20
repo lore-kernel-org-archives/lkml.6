@@ -2,111 +2,113 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4A6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3FDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0623221773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545325968;
-	bh=Lpz3p6/AQufqIGXrvka6OGNF94iO3k2EaYcQ+Z6SsVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PPPNFiodRkYMg7zm1DR5/KRu9SCZu5tED5GRiazsZqUtwYx72P9RhsQwebYEkvqx3
-	 L4S6LP3WXt4dz0/UFNNTnLRS2ygfe1/+s5qH/GRhEOlZXuVmu+V/rd2iX+McQ3Novc
-	 Wi81NGLinpYmv4jkIf1oY5JHUgrky0w0uWR0pYmQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5756221773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbeLTRMr (ORCPT
+        id S2387730AbeLTRNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:12:47 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45259 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbeLTRMq (ORCPT
+        Thu, 20 Dec 2018 12:13:34 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:27586 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730510AbeLTRNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:12:46 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so2568210ota.12;
-        Thu, 20 Dec 2018 09:12:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VTWNz/bdAjLOi56caOeWhwWjyxdwy/hu458gts3psvs=;
-        b=E6vqx+PI+ScJ52m5uvsBDgoiW8VL5+7e+TIu2XIOm3mSKr/RdGFSuksv0X4eR/F/zy
-         4XBMjUsJbRXs3Vi0acEWL6LJssZuf33eNq777vLO23By6A/hO7EFpAN0em8Mrr/5/8Sm
-         LenoKRKZBEeXQG9DxfJgPldHtEaVS5gf0MJXzn7tZSPnkMZIbr7l9P9k0U7g1vXYG2yV
-         bihA9W1zHhRJd81uypV8qxVHUS1ULyfg/+XY2wbxF4ZOaZki5nm4XI9AWT3AyU0ad7/U
-         +qQHLlq23OyztTVPWguVz6I8go4GeBfvbHN3uNt+vlH7VMJbrQ8JgNIkNXTIm/Qexq8I
-         /jlw==
-X-Gm-Message-State: AA+aEWZNgrL8NN/4uH9x4ZlxpQBMYk283hhMzbvBqkHj7fXTZNsRgad5
-        gvMxCPjCkSFu2ERIhtTXBA==
-X-Google-Smtp-Source: AFSGD/X9Y7jiW3SqvSCeoxBjW97zigIndQolgvi3K7GXy7UovibIGVQj+bucvS+BzWvrup/m65Smcw==
-X-Received: by 2002:a9d:225:: with SMTP id 34mr20115952otb.224.1545325965947;
-        Thu, 20 Dec 2018 09:12:45 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n185sm10216814oih.18.2018.12.20.09.12.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 09:12:44 -0800 (PST)
-Date:   Thu, 20 Dec 2018 11:12:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, liwei213@huawei.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        john.stultz@linaro.org, amit.kucheria@linaro.org,
-        guodong.xu@linaro.org
-Subject: Re: [PATCH 1/3] dt-bindings: ufs: Add HI3670 UFS controller binding
-Message-ID: <20181220171244.GA22403@bogus>
-References: <20181207175151.8969-1-manivannan.sadhasivam@linaro.org>
- <20181207175151.8969-2-manivannan.sadhasivam@linaro.org>
+        Thu, 20 Dec 2018 12:13:33 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 9F999D31E
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:13:32 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id a1t6gBEvKiQera1t6gGYck; Thu, 20 Dec 2018 11:13:32 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=59006 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ga1t6-000AJm-8E; Thu, 20 Dec 2018 11:13:32 -0600
+Subject: Re: [PATCH] ALSA: isa/wavefront: Fix potential Spectre v1
+ vulnerabilities
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20181219233143.GA14518@embeddedor> <s5ha7l0obxk.wl-tiwai@suse.de>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <c367ab0f-6b07-fa4f-0e05-0050a02875ae@embeddedor.com>
+Date:   Thu, 20 Dec 2018 11:13:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207175151.8969-2-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <s5ha7l0obxk.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1ga1t6-000AJm-8E
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:59006
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 11:21:49PM +0530, Manivannan Sadhasivam wrote:
-> Add devicetree binding for HI3670 UFS controller. HI3760 SoC is very
-> similar to HI3660 SoC with almost same IPs. Only major difference interms
 
-s/interms/in terms/
 
-> of UFS is the PHY. HI3670 has 10nm PHY.
+On 12/20/18 2:11 AM, Takashi Iwai wrote:
+> On Thu, 20 Dec 2018 00:31:43 +0100,
+>   Gustavo A. R. Silva  wrote:
+>>
+>> header->number is indirectly controlled by user-space, hence leading
+>> to a potential exploitation of the Spectre variant 1 vulnerability.
+>>
+>> This issue was detected with the help of Smatch:
+>>
+>> sound/isa/wavefront/wavefront_synth.c:792 wavefront_send_patch() warn: potential spectre issue 'dev->patch_status' [w] (local cap)
+>> sound/isa/wavefront/wavefront_synth.c:819 wavefront_send_program() warn: potential spectre issue 'dev->prog_status' [w] (local cap)
+>> sound/isa/wavefront/wavefront_synth.c:1197 wavefront_send_alias() warn: potential spectre issue 'dev->sample_status' [w]
+>> sound/isa/wavefront/wavefront_synth.c:1248 wavefront_send_multisample() warn: potential spectre issue 'dev->sample_status' [w]
+>> sound/isa/wavefront/wavefront_synth.c:1548 wavefront_synth_control() warn: potential spectre issue 'dev->sample_status' [r] (local cap)
+>>
+>> Fix this by sanitizing header->number before using it to index
+>> dev->patch_status, dev->prog_status and dev->sample_status.
+>>
+>> Notice that given that speculation windows are large, the policy is
+>> to kill the speculation on the first load and not worry if it can be
+>> completed with a dependent load/store [1].
+>>
+>> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Is there any platform with ISA slot that suffers from Spectre?
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> index a48c44817367..a327c1e24365 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-> @@ -6,7 +6,9 @@ Each UFS Host Controller should have its own node.
->  Required properties:
->  - compatible        : compatible list, contains one of the following -
->  					"hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
-> -					host controller present on Hi36xx chipset.
-> +					host controller present on Hi3660 chipset.
-> +					"hisilicon,hi3670-ufs", "jedec,ufs-2.1" for hisi ufs
-> +					host controller present on Hi3670 chipset.
-
-From the description, sounds like having "hisilicon,hi3660-ufs" as a 
-fallback would be appropriate?
-
->  - reg               : should contain UFS register address space & UFS SYS CTRL register address,
->  - interrupt-parent  : interrupt device
-
-Don't document interrupt-parent. It is implied.
-
->  - interrupts        : interrupt number
-> -- 
-> 2.17.1
 > 
+
+Do you mean 'any other'?
+
+If so, yeah, I just spotted some Spectre vulns in sound/isa/sb/emu8000.c
+
+I'll send a patch for that.
+
+Thanks
+--
+Gustavo
