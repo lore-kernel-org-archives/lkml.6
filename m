@@ -2,157 +2,138 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC514C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6867C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB37B2186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20AE217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pmS8HOvQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiwEhiP5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbeLTM0m (ORCPT
+        id S1731792AbeLTM1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:26:42 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35999 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbeLTM0m (ORCPT
+        Thu, 20 Dec 2018 07:27:05 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46336 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbeLTM1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:26:42 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f23so1582578edb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:26:40 -0800 (PST)
+        Thu, 20 Dec 2018 07:27:03 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y20so1496518qtm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:27:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R4a5LGFdoY5XJf8K5/zF3Zn4wAJbZoJB4Ksv/i71lR8=;
-        b=pmS8HOvQ99RyxXZv8Um0Dln2oVyXCzZzos0yDFrUuaAEJ2kXKJ9Ku3kIjGPqHo/LGU
-         WetslvwId951YXveHiOIV8YVVN8BjF16781aCM21Rgk3wUUeoWCBmn1YRcKzu1HtJZ9l
-         FLLO5mTeSJIYTv0kX2eLSof4sVTNItnoYfrXh69fl4sBmfudIjd9WV1XNpdt139rEmG7
-         Lme39o7J6AXWplKSKr3tVL3CJbn6iDeBImXQ3iIMWXlMoWq0ZVNqA2tGxSpdtGqjxRdo
-         na9s9cMzoexp0OzMB2JSHdI7ImTrf/0hfwJ/d9X57QL88JqDQcg3N3byEC/+6N+spZXr
-         QMhA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wb00zi3GtM+UDUK6MWkzSBSj/kmc+caJeQJNkmOWNiw=;
+        b=MiwEhiP5t2BgTk77tQlrUyHv+HwkLA6GVdOF8LNNv7PUocg0OIq+bt3urH64OFBL2x
+         r7KgJQj9XlU/PvSe0+SOp3kGIQGpNp75FhzyQZiz5Blzm82W6PXVkIG+kCl9gcb0PrcE
+         xAWOC3mMTt5WgpjbxSXX6kZzRd5j8wDO2mA41uKtjT5LRtUSg1q3L1OTxStJPJXVQQKO
+         mSNyMJyKN10IaRNQrJ/FGyvcfSOBmAVUPQyOISPEVdV05h8gw1XR7o+0OupYyibUKDov
+         u9MO8JdW/4492mudRW6bd/am1LyNUxI6nuE+uZEUOnlPn8Guv3xCnwAFCIb8TzdUzmMJ
+         flxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R4a5LGFdoY5XJf8K5/zF3Zn4wAJbZoJB4Ksv/i71lR8=;
-        b=YeypgDfzudwRUsyan0rYiKdWpbT3EecujoPS8gyGpx/EFKLEThp99eYUqLNtK7UDJe
-         p50qHJq7qhN5NoJFm12cHoLf3CPyTUPxaXVAtxT3kXJppkXUrh5HHLarjPSWQhddGzfe
-         edjUbhLA6HQVkU9M1tfxzfiLZK+Qlqc36Frd2HcrTQQG0edwQcn9pssccYlmxUaQaMAt
-         +16cKlLR/x6FsDULLWK/j14DmytKeBOuq6bIuZhIrcmxOf4tUPYpnnriirRSWImUQU3/
-         MPuQ5K5zecRTbSKs1t4eQEzfjgvC6VTJsPBdhjxD7MWErwgmgyi/Yj85FJdu9LIi+IOT
-         fRXQ==
-X-Gm-Message-State: AA+aEWZrDjsrvhzwov/NHjwrONeRgV//MoMAmNA1QJBTL71Kl8ii39Z7
-        +nFMz6hgpGMdb3yXEyGSg1EtmZPlVUDJ/Hpb4A==
-X-Google-Smtp-Source: AFSGD/X0JdX1/FF5gw5aLqyJFharMVqH+3EGA/ie8E9ECtLlDqLGbrNPaoLf329YHkSosXaygBslGmRlZbcf556COmE=
-X-Received: by 2002:a17:906:3488:: with SMTP id g8-v6mr19486881ejb.11.1545308800200;
- Thu, 20 Dec 2018 04:26:40 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wb00zi3GtM+UDUK6MWkzSBSj/kmc+caJeQJNkmOWNiw=;
+        b=uLKMQ5HbFJIlxS4DGyH5c0ZQnbOxZYD+yVuFGMlRa7fhLaIfa8o+tpXIzoPRmLAW9R
+         genZu7yJrkeH0ng4pF+LCi5mPred0zj8Wk/HW04pApg/LPlPZtTcNdpMUvsx1W2qsiEp
+         VtLo/gRpug6py8JtqFw0UgSimnm3I5lbMDxV2SINrUp8inYwPSAYC6Bvc65/uMQjnXgN
+         GXggOfxcjitIy6VM2jlPMCr04YUebyXxPEpIZcPsUFQ9UyPcXFdfSf745KRe9T9nzQaY
+         01eM62GAk6HaB2PFBNScetGVw8EX/S15DPWPWuJlfXTqE5wPlGj4sEFdUnK4LNzELNn/
+         PG7Q==
+X-Gm-Message-State: AA+aEWZLUZCd6jovNYNM/6EGgFkRa8sQ/PTBOkNkezIWgmbKs/ZTpeMF
+        Fs5/8wtFJP9xGy9eJQO7/Qw=
+X-Google-Smtp-Source: AFSGD/U3CHqpm25jpOHFtgL0uCn70+l1YOMS35VUcusM4zlqgrnvN2vxOKP6OoReiBxQDLry+COyIQ==
+X-Received: by 2002:ac8:1414:: with SMTP id k20mr25778896qtj.298.1545308821892;
+        Thu, 20 Dec 2018 04:27:01 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id q17sm4061434qtc.19.2018.12.20.04.26.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 04:27:01 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:26:55 -0200
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/7] drm: meson: Cleanup on drm_display_mode print str
+Message-ID: <7017942bbbb3e0e6c1e2bd854ea5a5f461784ac4.1545308167.git.shayenneluzmoura@gmail.com>
+References: <cover.1545308167.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-References: <1545299439-31370-1-git-send-email-kernelfans@gmail.com>
- <1545299439-31370-3-git-send-email-kernelfans@gmail.com> <20181220113547.GC9104@dhcp22.suse.cz>
-In-Reply-To: <20181220113547.GC9104@dhcp22.suse.cz>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu, 20 Dec 2018 20:26:28 +0800
-Message-ID: <CAFgQCTvxNGTKD+DP_LxF86WoVnCHnPkWoSqdGeXQxXNVYD_orw@mail.gmail.com>
-Subject: Re: [PATCHv2 2/3] mm/numa: build zonelist when alloc for device on
- offline node
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        David Rientjes <rientjes@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1545308167.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 7:35 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Thu 20-12-18 17:50:38, Pingfan Liu wrote:
-> [...]
-> > @@ -453,7 +456,12 @@ static inline int gfp_zonelist(gfp_t flags)
-> >   */
-> >  static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
-> >  {
-> > -     return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
-> > +     if (unlikely(!possible_zonelists[nid])) {
-> > +             WARN_ONCE(1, "alloc from offline node: %d\n", nid);
-> > +             if (unlikely(build_fallback_zonelists(nid)))
-> > +                     nid = first_online_node;
-> > +     }
-> > +     return possible_zonelists[nid] + gfp_zonelist(flags);
-> >  }
->
-> No, please don't do this. We do not want to make things work magically
+This patch adjust the print string of drm_display_mode object
+to remove drm_mode_object dependency in meson files.
 
-For magically, if you mean directly replies on zonelist instead of on
-pgdat struct, then it is easy to change
-> and we definitely do not want to put something like that into the hot
+Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 
-But  the cose of "unlikely" can be ignored, why can it not be placed
-in the path?
-> path. We definitely need zonelists to be build transparently for all
-> possible nodes during the init time.
+---
+Changes in v2:
+  - Use DRM_MODE_FMT/ARG macros (Daniel)
+  - Make the commit message more clear
 
-That is the point, whether the all nodes should be instanced at boot
-time, or not be instanced until there is requirement.
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-To replace the possible_zonelists, I bring out the following draft
-(locking issue is not considered)
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 0705164..24e8ae6 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -453,6 +453,11 @@ static inline int gfp_zonelist(gfp_t flags)
-  */
- static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
- {
-+       if (unlikely(!node_data[nid])) {
-+               WARN_ONCE(1, "alloc from offline node: %d\n", nid);
-+               if (unlikely(build_offline_node(nid)))
-+                       nid = first_online_node;
-+       }
-        return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
- }
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index d8c5cc34e22e..0b6c29cdd934 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -365,7 +365,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	unsigned int wr_clk =
+ 		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
+ 
+-	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
++	DRM_DEBUG_DRIVER("\"%s\"\n", mode->name);
+ 
+ 	/* Enable clocks */
+ 	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
+@@ -555,12 +555,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	int vic = drm_match_cea_mode(mode);
+ 	enum drm_mode_status status;
+ 
+-	DRM_DEBUG_DRIVER("Modeline %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
+-		mode->base.id, mode->name, mode->vrefresh, mode->clock,
+-		mode->hdisplay, mode->hsync_start,
+-		mode->hsync_end, mode->htotal,
+-		mode->vdisplay, mode->vsync_start,
+-		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
++	DRM_DEBUG_DRIVER("Modeline " DRM_MODE_FMT "\n", DRM_MODE_ARG(mode));
+ 
+ 	/* Check against non-VIC supported modes */
+ 	if (!vic) {
+@@ -650,8 +645,7 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_encoder *encoder,
+ 	struct meson_drm *priv = dw_hdmi->priv;
+ 	int vic = drm_match_cea_mode(mode);
+ 
+-	DRM_DEBUG_DRIVER("%d:\"%s\" vic %d\n",
+-			 mode->base.id, mode->name, vic);
++	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
+ 
+ 	/* VENC + VENC-DVI Mode setup */
+ 	meson_venc_hdmi_mode_set(priv, vic, mode);
+-- 
+2.17.1
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2ec9cc4..4ef15fc 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5261,6 +5261,21 @@ static void build_zonelists(pg_data_t *pgdat)
-        build_thisnode_zonelists(pgdat);
- }
-
-+int build_offline_node(int nid)
-+{
-+       unsigned long zones_size[MAX_NR_ZONES] = {0};
-+       unsigned long zholes_size[MAX_NR_ZONES] = {0};
-+       pg_data_t *pgdat;
-+
-+       pgdat = kzalloc(sizeof(pg_data_t), GFP_ATOMIC);
-+       if (!pgdat)
-+               return -ENOMEM
-+       node_data[nid] = pgdat;
-+       free_area_init_node(nid, zones_size, 0, zholes_size);
-+       build_zonelists(pgdat);
-+       return 0;
-+}
-+
-
-Thanks and regards,
-Pingfan
