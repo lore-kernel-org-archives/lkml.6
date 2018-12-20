@@ -2,53 +2,51 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F6CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA1EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C6D217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED60C2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297801;
-	bh=VM8VmnhOGahDE9+80xpGj8GDOfEKcVOGVd1nn4qRQJM=;
+	s=default; t=1545297806;
+	bh=23bxm9obxe0ltb9H6OShz6agAU/Bwp5KvrE+sgaBJc8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jdeQVLI8q6xE9ohqHb/rOKngWl56OujkWNUReuSbf3Tn7g6W4sRU9Fgv/T0r77Goc
-	 uyqRIHK2kFEfpRAZpVK518EvbkjWmbpArxc8QseAVWY2jvRWDIO6URh1jT2QV+r6YA
-	 ruJKDz5LkHhxsNB76YSheJn44ofgmRNH0l3ucI3E=
+	b=poZTen7LIWA10l6vagT0j+c+lwIYCWFi5Ofi7G3xpE0mclOEWZkN5LkG0HEx3rg+Y
+	 144vOPK3c6ODozErusT4D695a0WFlI3ZOZgyoo1wo+okYTwzCGr38xOwqg1N+N1Fwp
+	 MmY8cmYnllKTWgVhVwoOdMu5rJmz1mEngY241AkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbeLTJXT (ORCPT
+        id S1731529AbeLTJXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51942 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:23:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731499AbeLTJXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:23:16 -0500
+        id S1731509AbeLTJXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:23:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E9A120656;
-        Thu, 20 Dec 2018 09:23:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE25217D7;
+        Thu, 20 Dec 2018 09:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297796;
-        bh=VM8VmnhOGahDE9+80xpGj8GDOfEKcVOGVd1nn4qRQJM=;
+        s=default; t=1545297801;
+        bh=23bxm9obxe0ltb9H6OShz6agAU/Bwp5KvrE+sgaBJc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uf39BjWfA5D15qSb/JOmz0n5tWOZplwK6KHmpmobFvbA12V4UondNEvkQ5wlaTKQV
-         SJGZQmv1mbK1KRWqcNMdcsUxzeD5XoWbkCD5jiLx+NozAgSWF7mfs5UxFugbxu+ub5
-         K9gkWOCNGbuOaRVpePbuP2A+DiKDZ8MdpF2tuaqk=
+        b=dbz8QHWe3BFdqQeXDAHBmza7KD58IgeMNZJXM0XyrBd5GT0ybbHr6PGN0KraSLhSz
+         C1jFUF4GnvTGEgk3cD6LyepM+a7e2YIFo9KqJadQjjswhBkKu1bQTErR81wu/VDqDz
+         g7+7Kqi0GGvXdEqCqAESrBuvnCnQalBC7LWPgTQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/61] timer/debug: Change /proc/timer_list from 0444 to 0400
-Date:   Thu, 20 Dec 2018 10:18:07 +0100
-Message-Id: <20181220085844.024304430@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jeff Moyer <jmoyer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 09/61] aio: fix spectre gadget in lookup_ioctx
+Date:   Thu, 20 Dec 2018 10:18:09 +0100
+Message-Id: <20181220085844.103038300@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -67,36 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8e7df2b5b7f245c9bd11064712db5cb69044a362 ]
+From: Jeff Moyer <jmoyer@redhat.com>
 
-While it uses %pK, there's still few reasons to read this file
-as non-root.
+commit a538e3ff9dabcdf6c3f477a373c629213d1c3066 upstream.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Matthew pointed out that the ioctx_table is susceptible to spectre v1,
+because the index can be controlled by an attacker.  The below patch
+should mitigate the attack for all of the aio system calls.
+
+Cc: stable@vger.kernel.org
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/time/timer_list.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/aio.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index ef4f16e81283..1407ed20ea93 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -399,7 +399,7 @@ static int __init init_timer_list_procfs(void)
- {
- 	struct proc_dir_entry *pe;
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -40,6 +40,7 @@
+ #include <linux/ramfs.h>
+ #include <linux/percpu-refcount.h>
+ #include <linux/mount.h>
++#include <linux/nospec.h>
  
--	pe = proc_create("timer_list", 0444, NULL, &timer_list_fops);
-+	pe = proc_create("timer_list", 0400, NULL, &timer_list_fops);
- 	if (!pe)
- 		return -ENOMEM;
- 	return 0;
--- 
-2.19.1
-
+ #include <asm/kmap_types.h>
+ #include <asm/uaccess.h>
+@@ -1071,6 +1072,7 @@ static struct kioctx *lookup_ioctx(unsig
+ 	if (!table || id >= table->nr)
+ 		goto out;
+ 
++	id = array_index_nospec(id, table->nr);
+ 	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+ 		if (percpu_ref_tryget_live(&ctx->users))
 
 
