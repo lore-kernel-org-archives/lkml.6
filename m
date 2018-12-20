@@ -2,389 +2,94 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429A1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2542C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BE7218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87A8E218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="FvS7IG7l"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgeED+Cu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389068AbeLTS3P (ORCPT
+        id S2389083AbeLTS3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:29:15 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:45436 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388997AbeLTS3M (ORCPT
+        Thu, 20 Dec 2018 13:29:18 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38303 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389065AbeLTS3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:29:12 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBKISCS2023626
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:11 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=iNeEnuC+EP4XVBMyoq+fh0NuT6+6Zbgsgjm6MuCrIIk=;
- b=FvS7IG7lNLGPAFNvv8vcxcYqH+dlOjG4ubJYcBxeRCdLFPGgdpEnAtNBgeP94YXwU7Pl
- +Xy3t3J3AE3GeqEwDZsg5e66ZJhTerMvj2ND0DdZIuYHBJVlxwxE60t54M4QD3hn1Q5M
- +SK5jlVTsTUpTtFj3FEmjykCCz4QoMYLsFE= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pgexwgcyn-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:11 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 20 Dec 2018 10:29:08 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 9E28C62E139A; Thu, 20 Dec 2018 10:29:07 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v5 perf, bpf-next 5/7] perf util: handle PERF_RECORD_KSYMBOL
-Date:   Thu, 20 Dec 2018 10:29:02 -0800
-Message-ID: <20181220182904.4193196-6-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181220182904.4193196-1-songliubraving@fb.com>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Thu, 20 Dec 2018 13:29:15 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so1315922pfi.5;
+        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Lv+bJQPAIkowSRq1DJaFnjQc/asERKA3XL1Blldwe/U=;
+        b=jgeED+Cu1Or95OkuuNUM8i/JHI5Of7Dj2xdljuA32aQ+BQ0UOHx89FYzbUqTVfQy0/
+         nZsXU+s8uFdgo28cDnf5Fv+jKA8w015IwfSU+EWyPYtFmhhn0+QpmbecYATuSO6VMIGd
+         bk6hoh7MNKu0kzcKfj0VFkTJ2jHv1ZQL+VsQIiRTZkfl09ki5oNFMv/VMSlk5M1khoHZ
+         tUhurMLNIWlNWEuJ3xrZxla6LBkX2YtEvK4Z73By0XnclVfTny61geJv617am1wKfneB
+         jPEQb6UNxIMx2XDIFG0k92HCb7L69KhlCROMc8v0qkfYEcH5naWcNrXzV5fh021dzdzX
+         2Jjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Lv+bJQPAIkowSRq1DJaFnjQc/asERKA3XL1Blldwe/U=;
+        b=ne4vlRfsVSffRT4YZ+eRCM7o156p+ML9twaOY4GCfyR4rMAIU3uDejedBGOma/duli
+         mwpITvWthVojcvD4OnrAz4hVk4Yhm0PgKeV3YzSc6IaoGseaCOFRd6F5+GwzgkJ4LTSp
+         rrKW8Ct8ghbGHAlhgyVu0cTzmh997ZLr9d4n0+LlkxXGtUbRodqYYiIfNI5oOIAmHlL1
+         r1dbLJKR+QSNJFCreEPvxSiO5eyhyCBHr8FGo9LyCNyOp0ZcKahfsku2F+vZw4OjRtbR
+         /9w8xWbzapYoJCR+BQOIBVmLepssFanhUbfBnNRnUG7ro/F4I09m0dQY4i/UDB3Csir+
+         +QGg==
+X-Gm-Message-State: AA+aEWZ1AUdc6mirb34AplRAcRiWMHlcaBboyvLabk00CR9OC9AX0XJW
+        fdG1g0r+GAudXKnUVFwz0tE=
+X-Google-Smtp-Source: AFSGD/ViDVPGXMD9e1DhWNPC2P8aR5QcQ3LHQMyLcsX7rYNwLo/HztD6HMnP2+MldSl8gmuZpaO88A==
+X-Received: by 2002:a65:4b82:: with SMTP id t2mr7601779pgq.189.1545330554700;
+        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g26sm26518727pfh.61.2018.12.20.10.29.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:29:13 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/72] 4.14.90-stable review
+Message-ID: <20181220182913.GD12802@roeck-us.net>
+References: <20181220085922.332225035@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch handles PERF_RECORD_KSYMBOL in perf record/report.
-Specifically, map and symbol are created for ksymbol register, and
-removed for ksymbol unregister.
+On Thu, Dec 20, 2018 at 10:17:59AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.90 release.
+> There are 72 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec 22 08:59:06 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-This patch also set perf_event_attr.ksymbol properly. The flag is
-ON by default.
+Build results:
+	total: 171 pass: 171 fail: 0
+Qemu test results:
+	total: 315 pass: 315 fail: 0
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/perf/util/event.c   | 20 ++++++++++++++
- tools/perf/util/event.h   | 18 +++++++++++++
- tools/perf/util/evsel.c   |  9 +++++++
- tools/perf/util/evsel.h   |  1 +
- tools/perf/util/machine.c | 57 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/machine.h |  5 +++-
- tools/perf/util/session.c |  4 +++
- tools/perf/util/tool.h    |  4 ++-
- 8 files changed, 116 insertions(+), 2 deletions(-)
+Details are available at https://kerneltests.org/builders/.
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index e9c108a6b1c3..4b47194eaa4b 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -24,6 +24,7 @@
- #include "symbol/kallsyms.h"
- #include "asm/bug.h"
- #include "stat.h"
-+#include "session.h"
- 
- static const char *perf_event__names[] = {
- 	[0]					= "TOTAL",
-@@ -43,6 +44,7 @@ static const char *perf_event__names[] = {
- 	[PERF_RECORD_SWITCH]			= "SWITCH",
- 	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
- 	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-+	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
- 	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
- 	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
- 	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-@@ -1335,6 +1337,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
- 	return machine__process_switch_event(machine, event);
- }
- 
-+int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
-+				union perf_event *event,
-+				struct perf_sample *sample __maybe_unused,
-+				struct machine *machine)
-+{
-+	return machine__process_ksymbol(machine, event, sample);
-+}
-+
- size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
- {
- 	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-@@ -1467,6 +1477,13 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
- 	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
- }
- 
-+size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
-+{
-+	return fprintf(fp, " ksymbol event with addr %lx len %lu name %s\n",
-+		       event->ksymbol_event.addr, event->ksymbol_event.len,
-+		       event->ksymbol_event.name);
-+}
-+
- size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- {
- 	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-@@ -1502,6 +1519,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- 	case PERF_RECORD_LOST:
- 		ret += perf_event__fprintf_lost(event, fp);
- 		break;
-+	case PERF_RECORD_KSYMBOL:
-+		ret += perf_event__fprintf_ksymbol(event, fp);
-+		break;
- 	default:
- 		ret += fprintf(fp, "\n");
- 	}
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index bfa60bcafbde..100b59f1fdec 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -5,6 +5,7 @@
- #include <limits.h>
- #include <stdio.h>
- #include <linux/kernel.h>
-+#include <linux/bpf.h>
- 
- #include "../perf.h"
- #include "build-id.h"
-@@ -84,6 +85,17 @@ struct throttle_event {
- 	u64 stream_id;
- };
- 
-+#ifndef KSYM_NAME_LEN
-+#define KSYM_NAME_LEN 256
-+#endif
-+
-+struct ksymbol_event {
-+	struct perf_event_header header;
-+	u64 addr;
-+	u64 len;
-+	char name[KSYM_NAME_LEN];
-+};
-+
- #define PERF_SAMPLE_MASK				\
- 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
- 	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-@@ -651,6 +663,7 @@ union perf_event {
- 	struct stat_round_event		stat_round;
- 	struct time_conv_event		time_conv;
- 	struct feature_event		feat;
-+	struct ksymbol_event		ksymbol_event;
- };
- 
- void perf_event__print_totals(void);
-@@ -750,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
- 			     union perf_event *event,
- 			     struct perf_sample *sample,
- 			     struct machine *machine);
-+int perf_event__process_ksymbol(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine);
- int perf_tool__process_synth_event(struct perf_tool *tool,
- 				   union perf_event *event,
- 				   struct machine *machine,
-@@ -814,6 +831,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-+size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf(union perf_event *event, FILE *fp);
- 
- int kallsyms__get_function_start(const char *kallsyms_filename,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index dbc0466db368..de34ce875648 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	attr->mmap  = track;
- 	attr->mmap2 = track && !perf_missing_features.mmap2;
- 	attr->comm  = track;
-+	attr->ksymbol = track && !perf_missing_features.ksymbol;
- 
- 	if (opts->record_namespaces)
- 		attr->namespaces  = track;
-@@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
- 	PRINT_ATTRf(context_switch, p_unsigned);
- 	PRINT_ATTRf(write_backward, p_unsigned);
- 	PRINT_ATTRf(namespaces, p_unsigned);
-+	PRINT_ATTRf(ksymbol, p_unsigned);
- 
- 	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
- 	PRINT_ATTRf(bp_type, p_unsigned);
-@@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
- 				     PERF_SAMPLE_BRANCH_NO_CYCLES);
- 	if (perf_missing_features.group_read && evsel->attr.inherit)
- 		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
-+	if (perf_missing_features.ksymbol)
-+		evsel->attr.ksymbol = 0;
- retry_sample_id:
- 	if (perf_missing_features.sample_id_all)
- 		evsel->attr.sample_id_all = 0;
-@@ -1955,6 +1959,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
- 		perf_missing_features.exclude_guest = true;
- 		pr_debug2("switching off exclude_guest, exclude_host\n");
- 		goto fallback_missing_features;
-+	} else if (!perf_missing_features.ksymbol &&
-+		   evsel->attr.ksymbol) {
-+		perf_missing_features.ksymbol = true;
-+		pr_debug2("switching off ksymbol\n");
-+		goto fallback_missing_features;
- 	} else if (!perf_missing_features.sample_id_all) {
- 		perf_missing_features.sample_id_all = true;
- 		pr_debug2("switching off sample_id_all\n");
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 3147ca76c6fc..c647c1963f7a 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -168,6 +168,7 @@ struct perf_missing_features {
- 	bool lbr_flags;
- 	bool write_backward;
- 	bool group_read;
-+	bool ksymbol;
- };
- 
- extern struct perf_missing_features perf_missing_features;
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..5b50442d77c9 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -681,6 +681,61 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
- 	return 0;
- }
- 
-+static int machine__process_ksymbol_register(
-+	struct machine *machine,
-+	union perf_event *event,
-+	struct perf_sample *sample __maybe_unused)
-+{
-+	struct symbol *sym;
-+	struct map *map;
-+
-+	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-+	if (!map) {
-+		map = dso__new_map("bpf_prog");
-+		if (!map)
-+			return -ENOMEM;
-+
-+		map->start = event->ksymbol_event.addr;
-+		map->pgoff = map->start;
-+		map->end = map->start + event->ksymbol_event.len;
-+		map_groups__insert(&machine->kmaps, map);
-+	}
-+
-+	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
-+			  0, 0, event->ksymbol_event.name);
-+	if (!sym)
-+		return -ENOMEM;
-+	dso__insert_symbol(map->dso, sym);
-+	return 0;
-+}
-+
-+static int machine__process_ksymbol_unregister(
-+	struct machine *machine,
-+	union perf_event *event,
-+	struct perf_sample *sample __maybe_unused)
-+{
-+	struct map *map;
-+
-+	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-+	if (map)
-+		map_groups__remove(&machine->kmaps, map);
-+
-+	return 0;
-+}
-+
-+int machine__process_ksymbol(struct machine *machine __maybe_unused,
-+			     union perf_event *event,
-+			     struct perf_sample *sample)
-+{
-+	if (dump_trace)
-+		perf_event__fprintf_ksymbol(event, stderr);
-+
-+	if (event->header.misc & PERF_RECORD_MISC_KSYMBOL_UNREGISTER)
-+		return machine__process_ksymbol_unregister(machine, event,
-+							   sample);
-+	return machine__process_ksymbol_register(machine, event, sample);
-+}
-+
- static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
- {
- 	const char *dup_filename;
-@@ -1812,6 +1867,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		ret = machine__process_switch_event(machine, event); break;
-+	case PERF_RECORD_KSYMBOL:
-+		ret = machine__process_ksymbol(machine, event, sample); break;
- 	default:
- 		ret = -1;
- 		break;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index d856b85862e2..e92728fe66cd 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -127,9 +127,12 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
- 				struct perf_sample *sample);
- int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
- 				 struct perf_sample *sample);
-+
- int machine__process_event(struct machine *machine, union perf_event *event,
- 				struct perf_sample *sample);
--
-+int machine__process_ksymbol(struct machine *machine,
-+			     union perf_event *event,
-+			     struct perf_sample *sample);
- typedef void (*machine__process_t)(struct machine *machine, void *data);
- 
- struct machines {
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 7d2c8ce6cfad..2c1976a66164 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -371,6 +371,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
- 		tool->itrace_start = perf_event__process_itrace_start;
- 	if (tool->context_switch == NULL)
- 		tool->context_switch = perf_event__process_switch;
-+	if (tool->ksymbol == NULL)
-+		tool->ksymbol = perf_event__process_ksymbol;
- 	if (tool->read == NULL)
- 		tool->read = process_event_sample_stub;
- 	if (tool->throttle == NULL)
-@@ -1300,6 +1302,8 @@ static int machines__deliver_event(struct machines *machines,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		return tool->context_switch(tool, event, sample, machine);
-+	case PERF_RECORD_KSYMBOL:
-+		return tool->ksymbol(tool, event, sample, machine);
- 	default:
- 		++evlist->stats.nr_unknown_events;
- 		return -1;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 56e4ca54020a..9c81ca2f3cf7 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -53,7 +53,9 @@ struct perf_tool {
- 			itrace_start,
- 			context_switch,
- 			throttle,
--			unthrottle;
-+			unthrottle,
-+			ksymbol;
-+
- 	event_attr_op	attr;
- 	event_attr_op	event_update;
- 	event_op2	tracing_data;
--- 
-2.17.1
-
+Guenter
