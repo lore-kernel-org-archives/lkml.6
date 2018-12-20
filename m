@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE14C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C957C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115662177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BDE42177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297611;
-	bh=YYbVc3zzP8usWBCC1K+3/qAcnsIBvsj4DMizrvTzJBA=;
+	s=default; t=1545297613;
+	bh=dgZP//dKhWWQis8jfr9wJyae5Os8odn/OcIposc5MVU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NSaaK8kgePLgzXZv4vJjqCskpFCRmRANqQfAUcWxSTinuoIRPm3lcg/3W8W0Cn1MT
-	 VI9P2hyXQZNH9ME0QXOAdJMqc9KQ3aD5wh+ZpRdF0RAPzqPDviTeLqTbR9wl6jTbJQ
-	 9DdNXWlyiSJLHZrspaQ9Y74bET3k4oTPDVJZi6+s=
+	b=MsTRDQSR9fXZdv+1JDwWoKfd2zn5Y2vono1btvya4plklsIkMMX3tDLWEM3Kgt+1B
+	 I/OZxKHeEV1+3APUU/SUlUkbORXxqZ5n443BPNzwYOMWffWjtVOmUOaEYdWWq1ssff
+	 Phgiw2gpTuqEAnUj8EBPvHjKjQz+QsDjGo98wXMQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbeLTJUJ (ORCPT
+        id S1730613AbeLTJUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49200 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:20:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730571AbeLTJUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:07 -0500
+        id S1730589AbeLTJUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2676021773;
-        Thu, 20 Dec 2018 09:20:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE96D21720;
+        Thu, 20 Dec 2018 09:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297606;
-        bh=YYbVc3zzP8usWBCC1K+3/qAcnsIBvsj4DMizrvTzJBA=;
+        s=default; t=1545297609;
+        bh=dgZP//dKhWWQis8jfr9wJyae5Os8odn/OcIposc5MVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksoxb9BGtIxkWhVJzAFRdSGQOe4NeZjv6dU1YyTZCpp5Sgvs+2HhMNVLYH/8julev
-         gdBvMuajNzb1V3ehsnUdkZe/C7+FF+7sMo6xJ21wxb7YyUwaEJfY+z/5XrwPZtnvuV
-         GrBWyxoCa06Tu+haJ85u1qSoWlluErkHyoq+3p94=
+        b=W0k1QbTYkj/j3yhm81/kdnBQQS1apJAmNDlcFjQblNjghNsn5Xh8Gu0M59qDf4l+5
+         p/b/lflCtu82EKwLuaR8JCn9kD/jVDepNRefpWy10ImEdIfkr7MUwYTFF8a9dE9FCR
+         Q8ItT6RmDxuRp6vS5y+exJHy7WOVQSY3jW3b4MU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Juha-Matti Tilli <juha-matti.tilli@iki.fi>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 22/31] libata: whitelist all SAMSUNG MZ7KM* solid-state disks
-Date:   Thu, 20 Dec 2018 10:18:34 +0100
-Message-Id: <20181220085743.485704154@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Cole <chris@sageembedded.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 23/31] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
+Date:   Thu, 20 Dec 2018 10:18:35 +0100
+Message-Id: <20181220085743.528836665@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -66,32 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fd6f32f78645db32b6b95a42e45da2ddd6de0e67 ]
+[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
 
-These devices support read zero after trim (RZAT), as they advertise to
-the OS. However, the OS doesn't believe the SSDs unless they are
-explicitly whitelisted.
+This patch addresses possible memory corruption when
+v7_dma_inv_range(start_address, end_address) address parameters are not
+aligned to whole cache lines. This function issues "invalidate" cache
+management operations to all cache lines from start_address (inclusive)
+to end_address (exclusive). When start_address and/or end_address are
+not aligned, the start and/or end cache lines are first issued "clean &
+invalidate" operation. The assumption is this is done to ensure that any
+dirty data addresses outside the address range (but part of the first or
+last cache lines) are cleaned/flushed so that data is not lost, which
+could happen if just an invalidate is issued.
 
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The problem is that these first/last partial cache lines are issued
+"clean & invalidate" and then "invalidate". This second "invalidate" is
+not required and worse can cause "lost" writes to addresses outside the
+address range but part of the cache line. If another component writes to
+its part of the cache line between the "clean & invalidate" and
+"invalidate" operations, the write can get lost. This fix is to remove
+the extra "invalidate" operation when unaligned addressed are used.
+
+A kernel module is available that has a stress test to reproduce the
+issue and a unit test of the updated v7_dma_inv_range(). It can be
+downloaded from
+http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
+
+v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
+when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
+argue that DMA from a device to main memory should use buffers aligned
+to cache line size, because the "clean & invalidate" might overwrite
+data that the device just wrote using DMA. But if a driver does use
+unaligned buffers, at least this fix will prevent memory corruption
+outside the buffer.
+
+Signed-off-by: Chris Cole <chris@sageembedded.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mm/cache-v7.S | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 6629a5deccbd..e155998e4696 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4295,6 +4295,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 	{ "SSD*INTEL*",			NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "Samsung*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "SAMSUNG*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
-+	{ "SAMSUNG*MZ7KM*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
- 	{ "ST[1248][0248]0[FH]*",	NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index b966656d2c2d..7e98fecff55a 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -359,14 +359,16 @@ v7_dma_inv_range:
+ 	ALT_UP(W(nop))
+ #endif
+ 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
++	addne	r0, r0, r2
  
- 	/* devices that don't properly handle TRIM commands */
+ 	tst	r1, r3
+ 	bic	r1, r1, r3
+ 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
+-1:
+-	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
+-	add	r0, r0, r2
+ 	cmp	r0, r1
++1:
++	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
++	addlo	r0, r0, r2
++	cmplo	r0, r1
+ 	blo	1b
+ 	dsb	st
+ 	ret	lr
 -- 
 2.19.1
 
