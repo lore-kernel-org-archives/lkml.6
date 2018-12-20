@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BA3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B60DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59A8D218AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4201217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c0qDR9Tx";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c0qDR9Tx"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fY09vD5I";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cq+Kw195"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387767AbeLTOqz (ORCPT
+        id S2387784AbeLTOq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:46:55 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53764 "EHLO
+        Thu, 20 Dec 2018 09:46:59 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53866 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730470AbeLTOqy (ORCPT
+        with ESMTP id S1730470AbeLTOq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:46:54 -0500
+        Thu, 20 Dec 2018 09:46:57 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CB93A60878; Thu, 20 Dec 2018 14:46:52 +0000 (UTC)
+        id 1C8FF608FC; Thu, 20 Dec 2018 14:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545317212;
-        bh=skpRbyz4PLIR+EC/q9OOEKBEdYi/DmYi0K9za8LDpnk=;
+        s=default; t=1545317216;
+        bh=0B9GVC752BwFbK8CYti9/n+e+zeQbgDayO5vKzYzwrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c0qDR9TxudP6aixHMBVwvA64WUG6cb116rgX9PVedQAlfZeAxSZdp4P3c5hh1stTJ
-         xiw3/ileL3byBrEsIJHQhWCsWIGbCzBxJU4gZY1wW2WBBJtBmnKETlBNi/WmOVhkz7
-         XTAfwtHHoAXd3Qk62f0L19AEe3ZdXPfBDdRxOPYI=
+        b=fY09vD5I3vml74/aRNixqFXmCOi4nEDPmCAsbLuOe8CTbZKDsuFfBMj/XvkcmKiQL
+         Z+0Tw/q3juFL6VHOFEERYZOz10WLaInqs8Q4NfN/0u9zrEVr82uQrjQJRLZx6LBbS7
+         4m2lrMRtk7Kkbws6a4zKdUrlmJPdrCuNk/wZ8Jic=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 667C760860;
-        Thu, 20 Dec 2018 14:46:49 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C237A605A5;
+        Thu, 20 Dec 2018 14:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545317212;
-        bh=skpRbyz4PLIR+EC/q9OOEKBEdYi/DmYi0K9za8LDpnk=;
+        s=default; t=1545317215;
+        bh=0B9GVC752BwFbK8CYti9/n+e+zeQbgDayO5vKzYzwrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c0qDR9TxudP6aixHMBVwvA64WUG6cb116rgX9PVedQAlfZeAxSZdp4P3c5hh1stTJ
-         xiw3/ileL3byBrEsIJHQhWCsWIGbCzBxJU4gZY1wW2WBBJtBmnKETlBNi/WmOVhkz7
-         XTAfwtHHoAXd3Qk62f0L19AEe3ZdXPfBDdRxOPYI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 667C760860
+        b=cq+Kw195nPi/dq8tslY3jrshWoZgu+1ABVkNfinxvgPFVkZ4/pi58NSBObB0GiP36
+         F1CFBSCjGtuELaBiL3bV9uW1cn4+G/c2C75mUkKJ4a0ZT/LqiqFYcXVcIOBpstilHY
+         +xv9oYtS79i+H96g8QKJfko/nVhkS8dn5VXqoOO0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C237A605A5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -54,9 +54,9 @@ Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
         linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v5 1/5] Bluetooth: hci_qca: use wait_until_sent() for power pulses
-Date:   Thu, 20 Dec 2018 20:16:35 +0530
-Message-Id: <20181220144639.15928-2-bgodavar@codeaurora.org>
+Subject: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate change command
+Date:   Thu, 20 Dec 2018 20:16:36 +0530
+Message-Id: <20181220144639.15928-3-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181220144639.15928-1-bgodavar@codeaurora.org>
 References: <20181220144639.15928-1-bgodavar@codeaurora.org>
@@ -67,102 +67,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wcn3990 requires a power pulse to turn ON/OFF along with
-regulators. Sometimes we are observing the power pulses are sent
-out with some time delay, due to queuing these commands. This is
-causing synchronization issues with chip, which intern delay the
-chip setup or may end up with communication issues.
+This patch will help to stop frame reassembly errors while changing
+the baudrate. This is because host send a change baudrate request
+command to the chip with 115200 bps, Whereas chip will change their
+UART clocks to the enable for new baudrate and sends the response
+for the change request command with newer baudrate, On host side
+we are still operating in 115200 bps which results of reading garbage
+data. Here we are pulling RTS line, so that chip we will wait to send data
+to host until host change its baudrate.
 
 Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/bluetooth/hci_qca.c | 38 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
+ drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea3..5a07c2370289 100644
+index 5a07c2370289..1680ead6cc3d 100644
 --- a/drivers/bluetooth/hci_qca.c
 +++ b/drivers/bluetooth/hci_qca.c
-@@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 		hci_uart_set_baudrate(hu, speed);
+@@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	struct hci_uart *hu = hci_get_drvdata(hdev);
+ 	struct qca_data *qca = hu->priv;
+ 	struct sk_buff *skb;
+-	struct qca_serdev *qcadev;
+ 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+ 
+ 	if (baudrate > QCA_BAUDRATE_3200000)
+@@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 		return -ENOMEM;
+ 	}
+ 
+-	/* Disabling hardware flow control is mandatory while
+-	 * sending change baudrate request to wcn3990 SoC.
+-	 */
+-	qcadev = serdev_device_get_drvdata(hu->serdev);
+-	if (qcadev->btsoc_type == QCA_WCN3990)
+-		hci_uart_set_flow_control(hu, true);
+-
+ 	/* Assign commands to change baudrate and packet type. */
+ 	skb_put_data(skb, cmd, sizeof(cmd));
+ 	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+@@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+ 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+ 	set_current_state(TASK_RUNNING);
+ 
+-	if (qcadev->btsoc_type == QCA_WCN3990)
+-		hci_uart_set_flow_control(hu, false);
+-
+ 	return 0;
  }
  
--static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
-+static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+@@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
  {
--	struct hci_uart *hu = hci_get_drvdata(hdev);
--	struct qca_data *qca = hu->priv;
--	struct sk_buff *skb;
-+	int ret;
- 
- 	/* These power pulses are single byte command which are sent
- 	 * at required baudrate to wcn3990. On wcn3990, we have an external
-@@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
- 	 * save power. Disabling hardware flow control is mandatory while
- 	 * sending power pulses to SoC.
- 	 */
--	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
--
--	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
--	if (!skb)
--		return -ENOMEM;
--
-+	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
- 	hci_uart_set_flow_control(hu, true);
-+	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
-+	if (ret < 0) {
-+		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
-+			   cmd);
-+		return ret;
-+	}
- 
--	skb_put_u8(skb, cmd);
--	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
--
--	skb_queue_tail(&qca->txq, skb);
--	hci_uart_tx_wakeup(hu);
-+	serdev_device_wait_until_sent(hu->serdev, 0);
- 
- 	/* Wait for 100 uS for SoC to settle down */
- 	usleep_range(100, 200);
-@@ -1116,7 +1111,6 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 
- static int qca_wcn3990_init(struct hci_uart *hu)
- {
--	struct hci_dev *hdev = hu->hdev;
- 	struct qca_serdev *qcadev;
+ 	unsigned int speed, qca_baudrate;
++	struct qca_serdev *qcadev;
  	int ret;
  
-@@ -1139,12 +1133,12 @@ static int qca_wcn3990_init(struct hci_uart *hu)
+ 	if (speed_type == QCA_INIT_SPEED) {
+@@ -1097,6 +1087,15 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+ 		if (!speed)
+ 			return 0;
  
- 	/* Forcefully enable wcn3990 to enter in to boot mode. */
- 	host_set_baudrate(hu, 2400);
--	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
-+	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
- 	if (ret)
- 		return ret;
++		/* Deassert RTS while changing the baudrate of chip and host.
++		 * This will prevent chip from transmitting its response with
++		 * the new baudrate while the host port is still operating at
++		 * the old speed.
++		 */
++		qcadev = serdev_device_get_drvdata(hu->serdev);
++		if (qcadev->btsoc_type == QCA_WCN3990)
++			serdev_device_set_rts(hu->serdev, false);
++
+ 		qca_baudrate = qca_get_baudrate_value(speed);
+ 		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+ 		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+@@ -1104,6 +1103,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+ 			return ret;
  
- 	qca_set_speed(hu, QCA_INIT_SPEED);
--	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWERON_PULSE);
-+	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWERON_PULSE);
- 	if (ret)
- 		return ret;
+ 		host_set_baudrate(hu, speed);
++
++		if (qcadev->btsoc_type == QCA_WCN3990)
++			serdev_device_set_rts(hu->serdev, true);
+ 	}
  
-@@ -1274,13 +1268,9 @@ static const struct qca_vreg_data qca_soc_data = {
- 
- static void qca_power_shutdown(struct hci_uart *hu)
- {
--	struct serdev_device *serdev = hu->serdev;
--	unsigned char cmd = QCA_WCN3990_POWEROFF_PULSE;
--
-+	serdev_device_write_flush(hu->serdev);
- 	host_set_baudrate(hu, 2400);
--	hci_uart_set_flow_control(hu, true);
--	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
--	hci_uart_set_flow_control(hu, false);
-+	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
- 	qca_power_setup(hu, false);
- }
- 
+ 	return 0;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
