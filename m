@@ -6,49 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D00FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13895C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D55420656
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6CC7217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297941;
-	bh=9dg8ncPMTT5Zo4u02dDVlvpyInHvZnFVwDMjiDjyrGU=;
+	s=default; t=1545297945;
+	bh=VmpCp95LAl085AZZz6bsFAoeAwmhr+YqzqSn042MSc0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FoQyz2DguETXevMPJdhOi+7XZAEujOFZ9PZGLJns29kOsFlGDX3QJ1YttSiBh2+1S
-	 NH0ZK9hytnBalhMd2ZhvIs5IXxPaMQEKtlpb0H7DnrcLp/E+z35l+SEXsMd5nO8sC2
-	 xPdAcC/s+Zmv624hpuIvCYwsVSlHiJg0i06BW6RU=
+	b=orV0RT3t/WA6DI6Wb7lgfjymo2jIOTJx0jO4VSRil2QddCOiMpAPYOoUrLxgTivum
+	 seTk46Y7RVOuq/LJy1+0PuoP6osDljCOTyXzYmGZvu1pBaYdYJpVosB1/Svl62ThOo
+	 L5xCu6JTHrvZfTabZWdWsF2nosnyh95pjkRwlJis=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeLTJZk (ORCPT
+        id S1731979AbeLTJZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:25:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45782 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:25:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731115AbeLTJZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:31 -0500
+        id S1731967AbeLTJZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6E472186A;
-        Thu, 20 Dec 2018 09:25:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A36E217D9;
+        Thu, 20 Dec 2018 09:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297931;
-        bh=9dg8ncPMTT5Zo4u02dDVlvpyInHvZnFVwDMjiDjyrGU=;
+        s=default; t=1545297939;
+        bh=VmpCp95LAl085AZZz6bsFAoeAwmhr+YqzqSn042MSc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YufBX3QDaaIKGYJB2y2JRRJO8smkrsw4+JzT0CY4UGqEBtw3EyJd6XnjG0Ad2l7Ip
-         Gp0/ksuahfeeA/uqGkenEjiOFuKQzbz2meqGGSPCwA63MvzQeBlGnVhZetFOQKdx0C
-         z6N+nxF7/GI6i+Dv+sJH+V+K7uSoXwgz0k2b0N3w=
+        b=xvw6pSYM5GxPUGe6xVHDSAJdDdFbaUWDvRSVKtkfZAhfqNtutcyqK1oE0TtTNpHIJ
+         arppkJ6QcJS+OyYl5iUZG/x2dGwyfoqTV+Myr+dY3fNGXAVvIbYijZRLfyLzC5zJdp
+         x1GkLtfWA0Qhj3x/YBdlzyxPoCGC3LTHNRJnsP+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/72] timer/debug: Change /proc/timer_list from 0444 to 0400
-Date:   Thu, 20 Dec 2018 10:18:00 +0100
-Message-Id: <20181220085922.387104356@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 12/72] tracing: Fix memory leak in set_trigger_filter()
+Date:   Thu, 20 Dec 2018 10:18:11 +0100
+Message-Id: <20181220085922.816867142@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -67,31 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8e7df2b5b7f245c9bd11064712db5cb69044a362 ]
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-While it uses %pK, there's still few reasons to read this file
-as non-root.
+commit 3cec638b3d793b7cacdec5b8072364b41caeb0e1 upstream.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When create_event_filter() fails in set_trigger_filter(), the filter may
+still be allocated and needs to be freed. The caller expects the
+data->filter to be updated with the new filter, even if the new filter
+failed (we could add an error message by setting set_str parameter of
+create_event_filter(), but that's another update).
+
+But because the error would just exit, filter was left hanging and
+nothing could free it.
+
+Found by kmemleak detector.
+
+Cc: stable@vger.kernel.org
+Fixes: bac5fb97a173a ("tracing: Add and use generic set_trigger_filter() implementation")
+Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/time/timer_list.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_trigger.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -389,7 +389,7 @@ static int __init init_timer_list_procfs
- {
- 	struct proc_dir_entry *pe;
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -744,8 +744,10 @@ int set_trigger_filter(char *filter_str,
  
--	pe = proc_create("timer_list", 0444, NULL, &timer_list_fops);
-+	pe = proc_create("timer_list", 0400, NULL, &timer_list_fops);
- 	if (!pe)
- 		return -ENOMEM;
- 	return 0;
+ 	/* The filter is for the 'trigger' event, not the triggered event */
+ 	ret = create_event_filter(file->event_call, filter_str, false, &filter);
+-	if (ret)
+-		goto out;
++	/*
++	 * If create_event_filter() fails, filter still needs to be freed.
++	 * Which the calling code will do with data->filter.
++	 */
+  assign:
+ 	tmp = rcu_access_pointer(data->filter);
+ 
 
 
