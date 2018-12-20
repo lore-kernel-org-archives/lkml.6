@@ -2,157 +2,138 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDE6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72C0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69FBC20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADBFF2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:42:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="LuOmXq33"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeLTBjv (ORCPT
+        id S1728792AbeLTBmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 20:39:51 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:6520 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726535AbeLTBjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 20:39:51 -0500
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id EA86C3307685F;
-        Thu, 20 Dec 2018 09:39:46 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.137]) by
- DGGEMM402-HUB.china.huawei.com ([10.3.20.210]) with mapi id 14.03.0415.000;
- Thu, 20 Dec 2018 09:39:45 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Laura Abbott <labbott@redhat.com>,
-        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?utf-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] staging: android: ion: add buffer flag update ioctl
-Thread-Topic: [PATCH] staging: android: ion: add buffer flag update ioctl
-Thread-Index: AQHUl3t2yiOi+mE2D0GoXeOyj1fBg6WF1uUAgAD/fVA=
-Date:   Thu, 20 Dec 2018 01:39:45 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED24E2926A@dggemm526-mbx.china.huawei.com>
-References: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
- <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
-In-Reply-To: <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 19 Dec 2018 20:42:08 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34269 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728088AbeLTBmI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 20:42:08 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t5so125823otk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 17:42:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=8DJJ6tfz00WAjl0f+jqJpkoVPa0HFPmtJlksB3R29LA=;
+        b=LuOmXq33ikXaxXL1zqCKyGG8E8xoy2pw4lmUW61vwi5PSmdX8YElH+DX68x2DOGSjy
+         UuF6I2wZNl+RSuhv4kbhi+fWXUezEfDihsDMmyiXb0Sb3aP3t8bRLWzmUTu8AIZjanHF
+         zyKL7RGMaYalNVKUlZ0oZfZaUQAoHagTWaF9I+BgblR1TJOlnll/plvV69+EhiFEUlHl
+         X/5DjUquQKPettwqv0XPo3U0opfUyv0ea/pcgoDvESrBST31eekmr99eJNSXy7dXQuBx
+         xE4BTOI019vB6tsXfsUz06qZd31KcaJ9xbIwHDgaXMpZdcjj3xXj89PSm76cMAUjXrLW
+         n82A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=8DJJ6tfz00WAjl0f+jqJpkoVPa0HFPmtJlksB3R29LA=;
+        b=kbLiovjUI1VBpbNF2da2XMlfoBPdbIUl4V96dtLWNoi2Pr8V2zKDk7Gk5GFPm8Q7ww
+         jkh6V71zmmSaFpD2qUTiFtI8iNwu3DoJAd5RMpSQTBVlF4higo3zJU+S9/aD3b/keN5Z
+         Nph7geNHuJxo6FXRqzTfQwNqB2te+TC7ZoY4jbXxcoJLgoGbOUKSlErid+5HmVd8UUiA
+         gEFIcs+dOSkF6OqlmvnVqdCoR0xLybJhRkcXX/oSZLVH4ABUrcfYTOgg+Ba9x87D7Epf
+         Dm2aZddW0bFsHfH8ao2+1APNA6h3jEmDOak8tbb41XtHcjZzNaVpaC5Rr6bR2WLKtkUt
+         JkBQ==
+X-Gm-Message-State: AA+aEWbD2ssr6Vj4cGPRiWLHQgK22FuWZmMlv9c1uIubUfSb25/hlKDa
+        GF46kiZSGRMKYsHON5mCvBJFpbXYmvdHj6glaGNmxw==
+X-Google-Smtp-Source: AFSGD/VGJwGUFSGFABAHN4/jU2foKwgE2+mzrBcyjUfX//gHpjiEKtonZJrhpVpuZZasDpeoy9gNJ4lsNpfd3TFSqFM=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr16726508oti.367.1545270127114;
+ Wed, 19 Dec 2018 17:42:07 -0800 (PST)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <46441800c43f029757c70d8386e3112701081503.1534160958.git.yi.z.zhang@linux.intel.com>
+ <1534787638.13739.52.camel@intel.com> <89e7bd54-4afa-614d-ec54-49af7928d6c7@intel.com>
+ <20180821161657.GA22028@tiger-server> <CAPcyv4gZ8WBhUZkoUd1m6bCrtKW0EmfWfCtpGULvjfM=yJ9_sg@mail.gmail.com>
+ <20181213061239.GA43404@tiger-server>
+In-Reply-To: <20181213061239.GA43404@tiger-server>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 19 Dec 2018 17:41:56 -0800
+Message-ID: <CAPcyv4iYEqrm49Nx78Ax+KaU2CqoZPxaQDQeqCxYzE+PHofr=w@mail.gmail.com>
+Subject: Re: [PATCH V2 1/1] device-dax: check for vma range while dax_mmap.
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, zwisler@kernel.org,
+        Jan Kara <jack@suse.cz>, "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgbGF1cmE6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IExhdXJhIEFi
-Ym90dCBbbWFpbHRvOmxhYmJvdHRAcmVkaGF0LmNvbV0NCj5TZW50OiBUaHVyc2RheSwgRGVjZW1i
-ZXIgMjAsIDIwMTggMjoxMCBBTQ0KPlRvOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGlj
-b24uY29tPjsgc3VtaXQuc2Vtd2FsQGxpbmFyby5vcmcNCj5DYzogR3JlZyBLcm9haC1IYXJ0bWFu
-IDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IEFydmUgSGrDuG5uZXbDpWcNCj48YXJ2ZUBh
-bmRyb2lkLmNvbT47IFRvZGQgS2pvcyA8dGtqb3NAYW5kcm9pZC5jb20+OyBNYXJ0aWpuIENvZW5l
-bg0KPjxtYWNvQGFuZHJvaWQuY29tPjsgSm9lbCBGZXJuYW5kZXMgPGpvZWxAam9lbGZlcm5hbmRl
-cy5vcmc+Ow0KPmRldmVsQGRyaXZlcmRldi5vc3Vvc2wub3JnOyBkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnOw0KPmxpbmFyby1tbS1zaWdAbGlzdHMubGluYXJvLm9yZzsgbGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBbUEFUQ0hdIHN0YWdpbmc6IGFuZHJv
-aWQ6IGlvbjogYWRkIGJ1ZmZlciBmbGFnIHVwZGF0ZSBpb2N0bA0KPg0KPk9uIDEyLzE5LzE4IDk6
-MTkgQU0sIFplbmcgVGFvIHdyb3RlOg0KPj4gSW4gc29tZSB1c2VjYXNlcywgdGhlIGJ1ZmZlciBj
-YWNoZWQgYXR0cmlidXRlIGlzIG5vdCBkZXRlcm1pbmVkIGF0DQo+PiBhbGxvY2F0aW9uIHRpbWUs
-IGl0J3MgZGV0ZXJtaW5lZCBqdXN0IGJlZm9yZSB0aGUgcmVhbCBjcHUgbWFwcGluZy4NCj4+IEFu
-ZCBmcm9tIHRoZSBtZW1vcnkgdmlldyBvZiBwb2ludCwgYSBidWZmZXIgc2hvdWxkIG5vdCBoYXZl
-IHRoZQ0KPmNhY2hlZA0KPj4gYXR0cmlidXRlIHV0aWwgaXMgcmVhbGx5IG1hcHBlZCBieSB0aGUg
-Y3B1LiBTbyBpbiB0aGlzIHBhdGNoLCB3ZQ0KPj4gaW50cm9kdWNlZCB0aGUgbmV3IGlvY3RsIGNv
-bW1hbmQgdG8gdGFyZ2V0IHRoZSByZXF1aXJlbWVudC4NCj4+DQo+DQo+VGhpcyBpcyByYWN5IGFu
-ZCBlcnJvciBwcm9uZS4gQ2FuIHlvdSBleHBsYWluIG1vcmUgd2hhdCBwcm9ibGVtIHlvdSBhcmUN
-Cj50cnlpbmcgdG8gc29sdmU/DQoNCk15IHVzZSBjYXNlIGlzIGxpa2UgdGhpczoNCjEuICBUaGVy
-ZSBhcmUgdHdvIHByb2Nlc3MgQSBhbmQgQiwgQSB0YWtlcyBjYXNlIG9mIGlvbiBidWZmZXIgYWxs
-b2NhdGlvbiwgYW5kDQogcGFzcyB0aGUgYnVmZmVyIGZkIHRvIEIsIHRoZW4gQiBtYXBzIGFuZCB1
-c2VzIGl0Lg0KMi4gIFByb2Nlc3MgQiBuZWVkIHRvIG1hcCB0aGUgYnVmZmVyIHdpdGggZGlmZmVy
-ZW50IGNhY2hlZCBhdHRyaWJ1dGUgZm9yIA0KZGlmZmVyZW50IHVzZSBjYXNlLCBmb3IgZXhhbXBs
-ZSwgaWYgdGhlIGJ1ZmZlciBpcyB1c2VkIGZvciBwdXJlIHNvZnR3YXJlIGFsZ29yaXRobSwgDQp0
-aGVuIHdlIG5lZWQgdG8gbWFwIGl0IGFzIGNhY2hlZCwgb3RoZXJ3aXNlIG5vbi1jYWNoZWQsIGFu
-ZCBCIG5lZWRzIHRvIGRlYWwNCndpdGggYm90aCBjYXNlcy4NCkFuZCB1bmZvcnR1bmF0ZWx5IHRo
-ZSBtbWFwIHN5c2NhbGwgdGFrZXMgbm8gY2FjaGVkIGZsYWdzIGFuZCB3ZSBjYW4ndCBkZWNpZGUg
-DQp0aGUgY2FjaGUgYXR0cmlidXRlIHdoZW4gd2UgYXJlIGRvaW5nIHRoZSBtbWFwLCBzbyBJIGlu
-dHJvZHVjZSBuZXcgdGhlIGlvY3RsIA0KZXZlbiB0aG91Z2ggSSB0aGluayB0aGUgc29sdXRpb24g
-aXMgbm90IGFzIGdvb2QuIA0KDQoNCj4NCj4+IFNpZ25lZC1vZmYtYnk6IFplbmcgVGFvIDxwcmlt
-ZS56ZW5nQGhpc2lsaWNvbi5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9zdGFnaW5nL2FuZHJv
-aWQvaW9uL2lvbi1pb2N0bC5jIHwgIDQgKysrKw0KPj4gICBkcml2ZXJzL3N0YWdpbmcvYW5kcm9p
-ZC9pb24vaW9uLmMgICAgICAgfCAxNyArKysrKysrKysrKysrKysrKw0KPj4gICBkcml2ZXJzL3N0
-YWdpbmcvYW5kcm9pZC9pb24vaW9uLmggICAgICAgfCAgMSArDQo+PiAgIGRyaXZlcnMvc3RhZ2lu
-Zy9hbmRyb2lkL3VhcGkvaW9uLmggICAgICB8IDIyDQo+KysrKysrKysrKysrKysrKysrKysrKw0K
-Pj4gICA0IGZpbGVzIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKykNCj4+DQo+PiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jDQo+PiBiL2RyaXZlcnMv
-c3RhZ2luZy9hbmRyb2lkL2lvbi9pb24taW9jdGwuYw0KPj4gaW5kZXggYThkM2NjNC4uNjBiYjcw
-MiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24taW9jdGwu
-Yw0KPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jDQo+PiBA
-QCAtMTIsNiArMTIsNyBAQA0KPj4NCj4+ICAgdW5pb24gaW9uX2lvY3RsX2FyZyB7DQo+PiAgIAlz
-dHJ1Y3QgaW9uX2FsbG9jYXRpb25fZGF0YSBhbGxvY2F0aW9uOw0KPj4gKwlzdHJ1Y3QgaW9uX2J1
-ZmZlcl9mbGFnX2RhdGEgdXBkYXRlOw0KPj4gICAJc3RydWN0IGlvbl9oZWFwX3F1ZXJ5IHF1ZXJ5
-Ow0KPj4gICB9Ow0KPj4NCj4+IEBAIC04Myw2ICs4NCw5IEBAIGxvbmcgaW9uX2lvY3RsKHN0cnVj
-dCBmaWxlICpmaWxwLCB1bnNpZ25lZCBpbnQgY21kLA0KPj4gdW5zaWduZWQgbG9uZyBhcmcpDQo+
-Pg0KPj4gICAJCWJyZWFrOw0KPj4gICAJfQ0KPj4gKwljYXNlIElPTl9JT0NfQlVGRkVSX1VQREFU
-RToNCj4+ICsJCXJldCA9IGlvbl9idWZmZXJfdXBkYXRlKGRhdGEudXBkYXRlLmZkLCBkYXRhLnVw
-ZGF0ZS5mbGFncyk7DQo+PiArCQlicmVhazsNCj4+ICAgCWNhc2UgSU9OX0lPQ19IRUFQX1FVRVJZ
-Og0KPj4gICAJCXJldCA9IGlvbl9xdWVyeV9oZWFwcygmZGF0YS5xdWVyeSk7DQo+PiAgIAkJYnJl
-YWs7DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jDQo+
-PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPj4gaW5kZXggOTkwNzMzMi4u
-ZjE0MDRkYyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24u
-Yw0KPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jDQo+PiBAQCAtNDM2
-LDYgKzQzNiwyMyBAQCBpbnQgaW9uX2FsbG9jKHNpemVfdCBsZW4sIHVuc2lnbmVkIGludA0KPmhl
-YXBfaWRfbWFzaywgdW5zaWduZWQgaW50IGZsYWdzKQ0KPj4gICAJcmV0dXJuIGZkOw0KPj4gICB9
-DQo+Pg0KPj4gK2ludCBpb25fYnVmZmVyX3VwZGF0ZSh1bnNpZ25lZCBpbnQgZmQsIHVuc2lnbmVk
-IGludCBmbGFncykgew0KPj4gKwlzdHJ1Y3QgZG1hX2J1ZiAqZG1hYnVmOw0KPj4gKwlzdHJ1Y3Qg
-aW9uX2J1ZmZlciAqYnVmZmVyOw0KPj4gKw0KPj4gKwlkbWFidWYgPSBkbWFfYnVmX2dldChmZCk7
-DQo+PiArDQo+PiArCWlmICghZG1hYnVmKQ0KPj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+PiArDQo+
-PiArCWJ1ZmZlciA9IGRtYWJ1Zi0+cHJpdjsNCj4+ICsJYnVmZmVyLT5mbGFncyA9IGZsYWdzOw0K
-Pj4gKwlkbWFfYnVmX3B1dChkbWFidWYpOw0KPj4gKw0KPj4gKwlyZXR1cm4gMDsNCj4+ICt9DQo+
-PiArDQo+PiAgIGludCBpb25fcXVlcnlfaGVhcHMoc3RydWN0IGlvbl9oZWFwX3F1ZXJ5ICpxdWVy
-eSkNCj4+ICAgew0KPj4gICAJc3RydWN0IGlvbl9kZXZpY2UgKmRldiA9IGludGVybmFsX2Rldjsg
-ZGlmZiAtLWdpdA0KPj4gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmgNCj4+IGIv
-ZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oDQo+PiBpbmRleCBjMDA2ZmMxLi45OWJm
-OWFiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oDQo+
-PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmgNCj4+IEBAIC0xOTksNiAr
-MTk5LDcgQEAgaW50IGlvbl9oZWFwX3BhZ2VzX3plcm8oc3RydWN0IHBhZ2UgKnBhZ2UsDQo+c2l6
-ZV90IHNpemUsIHBncHJvdF90IHBncHJvdCk7DQo+PiAgIGludCBpb25fYWxsb2Moc2l6ZV90IGxl
-biwNCj4+ICAgCSAgICAgIHVuc2lnbmVkIGludCBoZWFwX2lkX21hc2ssDQo+PiAgIAkgICAgICB1
-bnNpZ25lZCBpbnQgZmxhZ3MpOw0KPj4gK2ludCBpb25fYnVmZmVyX3VwZGF0ZSh1bnNpZ25lZCBp
-bnQgZmQsIHVuc2lnbmVkIGludCBmbGFncyk7DQo+Pg0KPj4gICAvKioNCj4+ICAgICogaW9uX2hl
-YXBfaW5pdF9zaHJpbmtlcg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lk
-L3VhcGkvaW9uLmgNCj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdWFwaS9pb24uaA0KPj4g
-aW5kZXggNWQ3MDA5OC4uOTk3NTNmYyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9h
-bmRyb2lkL3VhcGkvaW9uLmgNCj4+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL3VhcGkv
-aW9uLmgNCj4+IEBAIC03NCw2ICs3NCwyMCBAQCBzdHJ1Y3QgaW9uX2FsbG9jYXRpb25fZGF0YSB7
-DQo+PiAgIAlfX3UzMiB1bnVzZWQ7DQo+PiAgIH07DQo+Pg0KPj4gKy8qKg0KPj4gKyAqIHN0cnVj
-dCBpb25fYnVmZmVyX2ZsYWdfZGF0YSAtIG1ldGFkYXRhIHBhc3NlZCBmcm9tIHVzZXJzcGFjZSBm
-b3INCj4+ICt1cGRhdGUNCj4+ICsgKiBidWZmZXIgZmxhZ3MNCj4+ICsgKiBAZmQ6CQkJZmlsZSBk
-ZXNjcmlwdG9yIG9mIHRoZSBidWZmZXINCj4+ICsgKiBAZmxhZ3M6CQlmbGFncyBwYXNzZWQgdG8g
-dGhlIGJ1ZmZlcg0KPj4gKyAqDQo+PiArICogUHJvdmlkZWQgYnkgdXNlcnNwYWNlIGFzIGFuIGFy
-Z3VtZW50IHRvIHRoZSBpb2N0bCAgKi8NCj4+ICsNCj4+ICtzdHJ1Y3QgaW9uX2J1ZmZlcl9mbGFn
-X2RhdGEgew0KPj4gKwlfX3UzMiBmZDsNCj4+ICsJX191MzIgZmxhZ3M7DQo+PiArfQ0KPj4gKw0K
-Pj4gICAjZGVmaW5lIE1BWF9IRUFQX05BTUUJCQkzMg0KPj4NCj4+ICAgLyoqDQo+PiBAQCAtMTE2
-LDYgKzEzMCwxNCBAQCBzdHJ1Y3QgaW9uX2hlYXBfcXVlcnkgew0KPj4gICAJCQkJICAgICAgc3Ry
-dWN0IGlvbl9hbGxvY2F0aW9uX2RhdGEpDQo+Pg0KPj4gICAvKioNCj4+ICsgKiBET0M6IElPTl9J
-T0NfQlVGRkVSX1VQREFURSAtIHVwZGF0ZSB0aGUgc3BlY2lmaWVkIGlvbiBidWZmZXINCj5mbGFn
-cw0KPj4gKyAqDQo+PiArICogVGFrZXMgYW4gaW9uX2J1ZmZlcl9mbGFnX2RhdGEgc3RydWN0dXJl
-IGFuZCByZXR1cm5zIHRoZSByZXN1bHQgb2YNCj4+ICt0aGUNCj4+ICsgKiBidWZmZXIgZmxhZyB1
-cGRhdGUgb3BlcmF0aW9uLg0KPj4gKyAqLw0KPj4gKyNkZWZpbmUgSU9OX0lPQ19CVUZGRVJfVVBE
-QVRFCV9JT1dSKElPTl9JT0NfTUFHSUMsIDEsIFwNCj4+ICsJCQkJICAgICAgc3RydWN0IGlvbl9i
-dWZmZXJfZmxhZ19kYXRhKQ0KPj4gKy8qKg0KPj4gICAgKiBET0M6IElPTl9JT0NfSEVBUF9RVUVS
-WSAtIGluZm9ybWF0aW9uIGFib3V0IGF2YWlsYWJsZSBoZWFwcw0KPj4gICAgKg0KPj4gICAgKiBU
-YWtlcyBhbiBpb25faGVhcF9xdWVyeSBzdHJ1Y3R1cmUgYW5kIHBvcHVsYXRlcyBpbmZvcm1hdGlv
-bg0KPmFib3V0DQo+Pg0KDQo=
+On Wed, Dec 12, 2018 at 10:12 PM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+>
+> On 2018-12-10 at 16:10:31 -0800, Dan Williams wrote:
+> > On Tue, Aug 21, 2018 at 12:38 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
+> > >
+> > > On 2018-08-20 at 12:50:31 -0700, Dave Jiang wrote:
+> > > >
+> > > >
+> > > > On 08/20/2018 10:53 AM, Verma, Vishal L wrote:
+> > > > >
+> > > > > On Mon, 2018-08-13 at 20:02 +0800, Zhang Yi wrote:
+> > > > >> This patch prevents a user mapping an illegal vma range that is larger
+> > > > >> than a dax device physical resource.
+> > > > >>
+> > > > >> When qemu maps the dax device for virtual nvdimm's backend device, the
+> > > > >> v-nvdimm label area is defined at the end of mapped range. By using an
+> > > > >> illegal size that exceeds the range of the device dax, it will trigger a
+> > > > >> fault with qemu.
+> > > > >>
+> > > > >> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
+> > > > >> ---
+> > > > >>  drivers/dax/device.c | 29 +++++++++++++++++++++++++++++
+> > > > >>  1 file changed, 29 insertions(+)
+> > > > >>
+> > > > >
+> > > > > Looks good to me:
+> > > > > Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+> > > >
+> > > > Applied.
+> > > Thanks Dava and Vishal's kindly review. Thank you.
+> >
+> > So, it turns out this patch did not get merged for 4.20. I fumbled it
+> > when returning from vacation. However, I'm not sure it is needed. As
+> > long as attempts to access the out-of-range capacity results in SIGBUS
+> > then the implementation is correct. This is similar to the case where
+> > a file is truncated after the vma is established. That size is
+> > validated at fault time.
+> The problem is that we didn't get the fault at we initial the mapping
+> until attempt to access it, then qemu will failed unexpect without any
+> output, I think is is better to mention user that we are starting at a
+> illegal size, but not faulting at an uncertained time.
+
+That can always happen with mmap'd files. There is no guarantee that a
+file range an application successfully mmap'd can be faulted in
+without triggering a SIGBUS later. So this change would make
+device-dax semantics stricter than regular file semantics. For example
+the following program prints "map: pass" and then terminates with
+SIGBUS. The "test_data" file is a zero sized file.
+
+int main(void)
+{
+        int fd = open("test_data", O_RDWR);
+        void *addr;
+
+        if (fd < 0)
+                return -1;
+
+        addr = mmap(NULL, 1 << 20, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+        printf("map: %s\n", addr == MAP_FAILED ? "fail" : "pass");
+
+        *(char *) addr = 0;
+
+        return 0;
+}
