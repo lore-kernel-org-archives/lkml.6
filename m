@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97979C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAC3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6406B20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E27420989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298819;
-	bh=+K9N8WY+o2E0JSv9JPWTAs+R/Nxlya7/UA2ThUhe458=;
+	s=default; t=1545298826;
+	bh=xek2es9mzrGHZCaC2rj42QklKTzrl3X3C5bigB+tBx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MoLSewK8tiQmUnr6H1wyaTEGsfFBV1dT8XkNU0H+FbWvai1xfahybjrvc59D4onZY
-	 kAri8Zdx+YmZyLViGyAM1UUahzvDdXiEZlXA184clX8WlZgqecFp1wAqW7/NgTadv2
-	 Fwq7OiUHp7sZpG6I6zhMxkcU8y4KLqsp/rhXItC8=
+	b=wuM6LChs6RvL//ti2wMNBrdb5ouKpEbkpYIK6gBqVOXdebbDOqdAmAjUiEbpxuCU7
+	 xQIbEww1cokbuWe6Y2YWNovxFgh2/2YBOMp/+TEANAne6avW2BpBHqF9OWIqboexpq
+	 l2j2sbKOw0yMAK4+Dmp/t7XamzAnddpq4dZrw01U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387409AbeLTJkS (ORCPT
+        id S1729645AbeLTJkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:40:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39242 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:40:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729727AbeLTJYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:51 -0500
+        id S1731844AbeLTJYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38F7E20656;
-        Thu, 20 Dec 2018 09:24:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF13220656;
+        Thu, 20 Dec 2018 09:24:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297890;
-        bh=+K9N8WY+o2E0JSv9JPWTAs+R/Nxlya7/UA2ThUhe458=;
+        s=default; t=1545297882;
+        bh=xek2es9mzrGHZCaC2rj42QklKTzrl3X3C5bigB+tBx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=or4+zmwy/YfDL+ZKqpMc+Z2QuvcvUfOMwEYugAX7/YyxQ+KnsOzZd63kKzY0hL7Kt
-         y0VhmWeOXRV6eH7TuWyTNh8qNKebHH27E9a+sIcxXMzsIVTk1Z8QkzBbCFt+uDJDtY
-         x6DVYhYlWpN5Ma5KTScfpFaA6hy2C0Gxf+1SAZtQ=
+        b=gXX9RvkZs9noON5jvK5buQdhKBGqp1sB3tJ+ET2ODfv61ZLXPpRjSHDns7HJd6n2r
+         Xjzn26unokNa7v+Ejw4kCHp9p0UXRTp3o8cLwBpYRKqSONvZDcoZkNRcUI7Ub8qFCp
+         XqnXRTRykpliaGOuGIMkSjQ559mAvdyrBbPuaIfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
+        stable@vger.kernel.org, Chris Cole <chris@sageembedded.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 54/61] drm/ast: Fix connector leak during driver unload
-Date:   Thu, 20 Dec 2018 10:18:54 +0100
-Message-Id: <20181220085845.944338047@linuxfoundation.org>
+Subject: [PATCH 4.9 51/61] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
+Date:   Thu, 20 Dec 2018 10:18:51 +0100
+Message-Id: <20181220085845.814982920@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -66,36 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e594a5e349ddbfdaca1951bb3f8d72f3f1660d73 ]
+[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
 
-When unloading the ast driver, a warning message is printed by
-drm_mode_config_cleanup() because a reference is still held to one of
-the drm_connector structs.
+This patch addresses possible memory corruption when
+v7_dma_inv_range(start_address, end_address) address parameters are not
+aligned to whole cache lines. This function issues "invalidate" cache
+management operations to all cache lines from start_address (inclusive)
+to end_address (exclusive). When start_address and/or end_address are
+not aligned, the start and/or end cache lines are first issued "clean &
+invalidate" operation. The assumption is this is done to ensure that any
+dirty data addresses outside the address range (but part of the first or
+last cache lines) are cleaned/flushed so that data is not lost, which
+could happen if just an invalidate is issued.
 
-Correct this by calling drm_crtc_force_disable_all() in
-ast_fbdev_destroy().
+The problem is that these first/last partial cache lines are issued
+"clean & invalidate" and then "invalidate". This second "invalidate" is
+not required and worse can cause "lost" writes to addresses outside the
+address range but part of the cache line. If another component writes to
+its part of the cache line between the "clean & invalidate" and
+"invalidate" operations, the write can get lost. This fix is to remove
+the extra "invalidate" operation when unaligned addressed are used.
 
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com
+A kernel module is available that has a stress test to reproduce the
+issue and a unit test of the updated v7_dma_inv_range(). It can be
+downloaded from
+http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
+
+v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
+when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
+argue that DMA from a device to main memory should use buffers aligned
+to cache line size, because the "clean & invalidate" might overwrite
+data that the device just wrote using DMA. But if a driver does use
+unaligned buffers, at least this fix will prevent memory corruption
+outside the buffer.
+
+Signed-off-by: Chris Cole <chris@sageembedded.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_fb.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mm/cache-v7.S | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
-index 7a86e24e2687..5e0d3e561b04 100644
---- a/drivers/gpu/drm/ast/ast_fb.c
-+++ b/drivers/gpu/drm/ast/ast_fb.c
-@@ -286,6 +286,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
- {
- 	struct ast_framebuffer *afb = &afbdev->afb;
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index a134d8a13d00..11d699af30ed 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -359,14 +359,16 @@ v7_dma_inv_range:
+ 	ALT_UP(W(nop))
+ #endif
+ 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
++	addne	r0, r0, r2
  
-+	drm_crtc_force_disable_all(dev);
- 	drm_fb_helper_unregister_fbi(&afbdev->helper);
- 	drm_fb_helper_release_fbi(&afbdev->helper);
- 
+ 	tst	r1, r3
+ 	bic	r1, r1, r3
+ 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
+-1:
+-	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
+-	add	r0, r0, r2
+ 	cmp	r0, r1
++1:
++	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
++	addlo	r0, r0, r2
++	cmplo	r0, r1
+ 	blo	1b
+ 	dsb	st
+ 	ret	lr
 -- 
 2.19.1
 
