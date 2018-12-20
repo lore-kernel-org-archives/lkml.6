@@ -2,137 +2,93 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D50C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14056C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F237C218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D525B218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:28:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UP+sy3Ip"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388964AbeLTS17 (ORCPT
+        id S2388982AbeLTS2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:27:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55433 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731963AbeLTS17 (ORCPT
+        Thu, 20 Dec 2018 13:28:17 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44240 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732679AbeLTS2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:27:59 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIRmQ13686412
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:27:48 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIRmDJ3686408;
-        Thu, 20 Dec 2018 10:27:48 -0800
-Date:   Thu, 20 Dec 2018 10:27:48 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-3r9blij6n8wdlsyd5dujx86r@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        lclaudio@redhat.com, namhyung@kernel.org, acme@redhat.com,
-        wangnan0@huawei.com, tglx@linutronix.de, adrian.hunter@intel.com,
-        hpa@zytor.com, jolsa@kernel.org
-Reply-To: acme@redhat.com, wangnan0@huawei.com, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          lclaudio@redhat.com, adrian.hunter@intel.com, jolsa@kernel.org,
-          hpa@zytor.com, tglx@linutronix.de
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf beauty: Wire up the x86_arch prctl code table
- generator
-Git-Commit-ID: 40714e8b37723c31aa1b48dd2f346c3827059957
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 20 Dec 2018 13:28:16 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so1252244pgr.11;
+        Thu, 20 Dec 2018 10:28:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pxZ7xvhosk7DnA/WLvL5Vb9KcvSMSR9K+cq/sDBYXyM=;
+        b=UP+sy3Ip1c6Ds4QlQPiq4OW5OsT14QoMqcGhgi5N8guuGJPr3Z0rGBkEJARsf1PVKu
+         8cmLJrIa9do/6XIj7rnyDj0gKfA13GHzdTDd7gqnS3KadL1JshMRP8Hh3Be9kh+ozizA
+         wJpTxzylfinQAX5g+sGH2sbPVRdfWwCtYTuKv6qjUbuvRQQZFYbT4+OsDaX0Ia2VwNhv
+         CM8iT4YA5sk4DJKnT7Ni1k/fkx4SbSKhsnLPgUWdagLhWxPIqs6TSrzty6oDJBZfjO3q
+         pGTp2+m46k/szc4H4h9DhAvZIGdXozn1GGLRQhZdcLX7pyJTMkiX2IfFG5sAR9nOD3Ut
+         pzWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pxZ7xvhosk7DnA/WLvL5Vb9KcvSMSR9K+cq/sDBYXyM=;
+        b=GvlWdaa+YYmaLQYokGULOxdTQNqXIHEkPj+eSs7kclyr2ZXCyOzUR1pYcM/50swF+o
+         3n9J3zpWRPOroCQ2TLUzkoog2eHxmm+k734bLDc8Y8QXvgz/uq4ibuC32CHns9uZTRMb
+         MF4yfCcnqe2qQMRjTTexDGtMhjKvI3pP/RBcnx9UMp8HmbvvOswaifR1OIZcEquAJJy+
+         nwbBTh/rEdV57LmIMUSo1YKPwtN1COObKK5e5aZjZAcHQWlFGCFpS+nFgfVcnv8vS++v
+         sug3A6+e8FKvSU2IJL83vWwdTgPTWXBmUuJQhRXvl0S+lW961xDQ8c2T3ALRkNJdCaVT
+         JUeQ==
+X-Gm-Message-State: AA+aEWbt8UIFxkSKoeR8v2lUOMPTUs7NYGWVXQoRRFar2/JQrvQ0S0Nm
+        QeYWLETmsRdGaDR7Jxgu+rQ=
+X-Google-Smtp-Source: AFSGD/XZg8Yca9arYB+dZfSONKYuA2Y3979i+CpWHogiMZHRJ0vFqnps7JC9eWdeyxVWbLoNdfQfLQ==
+X-Received: by 2002:a63:7e1a:: with SMTP id z26mr23329350pgc.216.1545330496011;
+        Thu, 20 Dec 2018 10:28:16 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l69sm44483325pfb.75.2018.12.20.10.28.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 10:28:15 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:28:14 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/40] 4.4.169-stable review
+Message-ID: <20181220182814.GB12802@roeck-us.net>
+References: <20181220085826.212663515@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  40714e8b37723c31aa1b48dd2f346c3827059957
-Gitweb:     https://git.kernel.org/tip/40714e8b37723c31aa1b48dd2f346c3827059957
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 17 Dec 2018 17:00:14 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 18 Dec 2018 16:15:19 -0300
+On Thu, Dec 20, 2018 at 10:18:12AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.169 release.
+> There are 40 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec 22 08:58:16 UTC 2018.
+> Anything received after that time might be too late.
+> 
+Build results:
+	total: 170 pass: 170 fail: 0
+Qemu test results:
+	total: 278 pass: 278 fail: 0
 
-perf beauty: Wire up the x86_arch prctl code table generator
+Details are available at https://kerneltests.org/builders/.
 
-  $ cat /tmp/build/perf/trace/beauty/generated/x86_arch_prctl_code_array.c
-  #define x86_arch_prctl_codes_1_offset 0x1001
-  static const char *x86_arch_prctl_codes_1[] = {
-	[0x1001 - 0x1001]= "SET_GS",
-	[0x1002 - 0x1001]= "SET_FS",
-	[0x1003 - 0x1001]= "GET_FS",
-	[0x1004 - 0x1001]= "GET_GS",
-	[0x1011 - 0x1001]= "GET_CPUID",
-	[0x1012 - 0x1001]= "SET_CPUID",
-  };
-
-  #define x86_arch_prctl_codes_2_offset 0x2001
-  static const char *x86_arch_prctl_codes_2[] = {
-	[0x2001 - 0x2001]= "MAP_VDSO_X32",
-	[0x2002 - 0x2001]= "MAP_VDSO_32",
-	[0x2003 - 0x2001]= "MAP_VDSO_64",
-  };
-  $
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-3r9blij6n8wdlsyd5dujx86r@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Makefile.perf | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 8c1350c591f2..3af432bccd3e 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -396,6 +396,7 @@ SHELL = $(SHELL_PATH)
- linux_uapi_dir := $(srctree)/tools/include/uapi/linux
- asm_generic_uapi_dir := $(srctree)/tools/include/uapi/asm-generic
- arch_asm_uapi_dir := $(srctree)/tools/arch/$(SRCARCH)/include/uapi/asm/
-+x86_arch_asm_uapi_dir := $(srctree)/tools/arch/x86/include/uapi/asm/
- 
- beauty_outdir := $(OUTPUT)trace/beauty/generated
- beauty_ioctl_outdir := $(beauty_outdir)/ioctl
-@@ -490,6 +491,12 @@ prctl_option_tbl := $(srctree)/tools/perf/trace/beauty/prctl_option.sh
- $(prctl_option_array): $(prctl_hdr_dir)/prctl.h $(prctl_option_tbl)
- 	$(Q)$(SHELL) '$(prctl_option_tbl)' $(prctl_hdr_dir) > $@
- 
-+x86_arch_prctl_code_array := $(beauty_outdir)/x86_arch_prctl_code_array.c
-+x86_arch_prctl_code_tbl := $(srctree)/tools/perf/trace/beauty/x86_arch_prctl.sh
-+
-+$(x86_arch_prctl_code_array): $(x86_arch_asm_uapi_dir)/prctl.h $(x86_arch_prctl_code_tbl)
-+	$(Q)$(SHELL) '$(x86_arch_prctl_code_tbl)' $(x86_arch_asm_uapi_dir) > $@
-+
- rename_flags_array := $(beauty_outdir)/rename_flags_array.c
- rename_flags_tbl := $(srctree)/tools/perf/trace/beauty/rename_flags.sh
- 
-@@ -610,6 +617,7 @@ prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h archheaders $(drm_ioc
- 	$(mount_flags_array) \
- 	$(perf_ioctl_array) \
- 	$(prctl_option_array) \
-+	$(x86_arch_prctl_code_array) \
- 	$(rename_flags_array) \
- 	$(arch_errno_name_array)
- 
-@@ -907,6 +915,7 @@ clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clea
- 		$(OUTPUT)$(vhost_virtio_ioctl_array) \
- 		$(OUTPUT)$(perf_ioctl_array) \
- 		$(OUTPUT)$(prctl_option_array) \
-+		$(OUTPUT)$(x86_arch_prctl_code_array) \
- 		$(OUTPUT)$(rename_flags_array) \
- 		$(OUTPUT)$(arch_errno_name_array)
- 	$(QUIET_SUBDIR0)Documentation $(QUIET_SUBDIR1) clean
+Guenter
