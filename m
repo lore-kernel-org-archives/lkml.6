@@ -6,76 +6,81 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA69C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6769FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D25F218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44CD0218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:34:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HKX/Ov5v"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b76zvRHu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbeLTTbh (ORCPT
+        id S2387581AbeLTTeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:31:37 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33553 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731052AbeLTTbf (ORCPT
+        Thu, 20 Dec 2018 14:34:15 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:35261 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729825AbeLTTeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:31:35 -0500
-Received: by mail-vk1-f193.google.com with SMTP id d201so645179vka.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:31:35 -0800 (PST)
+        Thu, 20 Dec 2018 14:34:14 -0500
+Received: by mail-ua1-f66.google.com with SMTP id d2so950833ual.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tf3aNrAlSeEVgkQHuW8ZV4UrjbkQvk5X7tGGlBbr5NQ=;
-        b=HKX/Ov5vQP5dOTxECfftoCs117+K07ZbiOghuTj5ab2les7e6hIsa5zcMYtPdbFPYN
-         YjeKweNRNrKRoP6QTSVPAcCnISso6Wh95NfJDzw6liCljGMueZDDlutDpafHuELRe6M6
-         m0W1U5GYcUWFq/4OabHvnhgc4EZjy3IGOxBYQ=
+        bh=wSgF32GgudHEHzGZDuRsuOoMJp9dJetEXkqrIYMfTO8=;
+        b=b76zvRHuMfq66HK2UcmG94k5oqgheep2w0e4DgyzmFb7cMZPQPHA0XMd2IdpaOA/Ch
+         Cs8MFZMQE4g837a/0G5+UglTxhYmlj5INUgMZ8dmYx+44mFqozjQeTuDA8pwRE639tgG
+         7W2ZKl5CZahZqs4ElBPuuew7/h9c1TjaSfAUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tf3aNrAlSeEVgkQHuW8ZV4UrjbkQvk5X7tGGlBbr5NQ=;
-        b=WSJTu6bPpKGUyle2qNAjlEM9J0YOJw4josFYt6+oNhtiyTGjymZzc+LEMlLCTOTh8T
-         pmeaOdokfKjQ55NrfLl1FHMdvLuca09TFSJa1mJD3bV6tWXyqh9fT0eLLy3CKp/7zx2Q
-         Z/BgagShzakAVoKpmql/fJ3r3iMGPr6NrpZdV1qCsjiY3c4OAymXy49WEc/KR/tkhdDq
-         D8Abbk3fhcocMbEGdBYJ3IZ78R2h7/5jr5uA3CeF8P8w5hvcgB2hcbxpgpb/dTJStR4c
-         FPq8ediQBJY7xWqREV5XMTcI6DCuI8f0XdQtJ/axcqW/vK4B3VhkvKTflraIeB9dJ9KM
-         yC3w==
-X-Gm-Message-State: AA+aEWYjsZmFdTIuyrByamlV7A2YaqSrR/erwqvcao4syQ1opVxnmXDY
-        EZ4YhuCsvieMTKSmtLz8LMEyHlIHroA=
-X-Google-Smtp-Source: AFSGD/VxVhZ7QQrCI38KMx3bkCnYdXBUScdLZApJj8iB/VRavFvnNlyfjFZQfTN9yDYe+LqkrAjljA==
-X-Received: by 2002:a1f:9c81:: with SMTP id f123mr11518155vke.85.1545334294649;
-        Thu, 20 Dec 2018 11:31:34 -0800 (PST)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 30sm7936706vkq.49.2018.12.20.11.31.32
+        bh=wSgF32GgudHEHzGZDuRsuOoMJp9dJetEXkqrIYMfTO8=;
+        b=dWq1MLBJ4fC4P2Cf07+kaTJMXVrERsaqioOxboVU1oElLr43navBx7lmVzrvL6bnW0
+         TAQ7yEPgUiQOGL20glSele84aRIi7XTJtEchcjZbVxuLZ314lU1D5KTGYyVR3lYDaxx4
+         mPkjsKhxcUtl7fciHLDsB7HoL6V0ZtQ9sLTCxZ5qePL+XASaMQW4yIIbXrug0beFoD2g
+         FalikuIuNnIq/WFPQhLEyABlrF92208usZGQ7+cE00UH4Vjb5E8HVHg0uylNDRbXMLej
+         VsLUMh9ervPDf97PDOWS5QbxyY1a7VSchQxAHqkkxDt1vs6fiMWJmEsd7zVzPqv5kwXe
+         nKGQ==
+X-Gm-Message-State: AA+aEWZIuKFGtZALG6BxO3BfPTgr94wb3DsXmWd6cFV5TRXYfVf+PICm
+        5hDmvssawdjVA4vgeRXihPS7EXagYKM=
+X-Google-Smtp-Source: AFSGD/U8Qp3/oO5fcMGYbAE350OWuRlVutDMCREK99UrYpZpXVB/98t/4UdypO8Jj2D+hYCcdsAGyA==
+X-Received: by 2002:ab0:13d3:: with SMTP id n19mr12060499uae.37.1545334453043;
+        Thu, 20 Dec 2018 11:34:13 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id w83sm5574047vke.22.2018.12.20.11.34.12
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 11:31:33 -0800 (PST)
-Received: by mail-vs1-f49.google.com with SMTP id e7so1807971vsc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:31:32 -0800 (PST)
-X-Received: by 2002:a67:f943:: with SMTP id u3mr5661298vsq.149.1545334292549;
- Thu, 20 Dec 2018 11:31:32 -0800 (PST)
+        Thu, 20 Dec 2018 11:34:12 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id n13so1812097vsk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:34:12 -0800 (PST)
+X-Received: by 2002:a67:f943:: with SMTP id u3mr5656774vsq.149.1545334107562;
+ Thu, 20 Dec 2018 11:28:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20181220173026.3857-1-jcrouse@codeaurora.org> <20181220173026.3857-4-jcrouse@codeaurora.org>
-In-Reply-To: <20181220173026.3857-4-jcrouse@codeaurora.org>
+References: <20181220173026.3857-1-jcrouse@codeaurora.org> <20181220173026.3857-2-jcrouse@codeaurora.org>
+In-Reply-To: <20181220173026.3857-2-jcrouse@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 20 Dec 2018 11:31:20 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Wk8md2QwPJKc4AxT2W+wtAZ6uyFteP+GEAMGwp4-pK=A@mail.gmail.com>
-Message-ID: <CAD=FV=Wk8md2QwPJKc4AxT2W+wtAZ6uyFteP+GEAMGwp4-pK=A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: sdm845: Add interconnect for GPU
+Date:   Thu, 20 Dec 2018 11:28:15 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WX3ZFJCh2_xiWDb_0N9cu2SiAxh3qbfkxK335_yXrOmg@mail.gmail.com>
+Message-ID: <CAD=FV=WX3ZFJCh2_xiWDb_0N9cu2SiAxh3qbfkxK335_yXrOmg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] drm/msm/a6xx: Add support for an interconnect path
 To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>
 Cc:     freedreno <freedreno@lists.freedesktop.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        Johan Hovold <johan@kernel.org>,
+        Colin Ian King <colin.king@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -86,16 +91,34 @@ Hi,
 
 On Thu, Dec 20, 2018 at 9:30 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
 >
-> Define an interconnect port for the GPU to set bus
-> capabilities.
+> Try to get the interconnect path for the GPU and vote for the maximum
+> bandwidth to support all frequencies. This is needed for performance.
+> Later we will want to scale the bandwidth based on the frequency to
+> also optimize for power but that will require some device tree
+> infrastructure that does not yet exist.
+>
+> v5: Remove hardcoded interconnect name and just use the default
+> v4: Don't use a port string at all to skip the need for names in the DT
+> v3: Use macros and change port string per Georgi Djakov
 >
 > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
 > ---
 >
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpu/drm/msm/Kconfig             |  1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
+>  drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
+>  4 files changed, 33 insertions(+)
 
-For going through Andy's tree once the bindings land (presumably in
-Georgi's tree).
+There is very little difference between this an the previous version
+[1].  Maybe could have kept Rob Clark's Acked-by?  The only change
+was:
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+-       gpu->icc_path = of_icc_get(dev, "gfx-mem");
++       gpu->icc_path = of_icc_get(dev, NULL);
+
+Also: I assume that this is still intended to go through Georgi's tree?
+
+[1] https://lkml.kernel.org/r/20181207170656.13208-1-jcrouse@codeaurora.org
+
+-Doug
