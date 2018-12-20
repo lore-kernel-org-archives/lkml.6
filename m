@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE63FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4882CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF5E820989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1725820811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298637;
-	bh=utvaQVECUxct64VzgGTM3HD1SQ4ii7aStnZo+ZVBgfY=;
+	s=default; t=1545298642;
+	bh=wdShKhi0sESLf6KgiJR1O45sZoKsDbfoYKGNIPHcN5o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hfzq+Bsza/U3xVIRTITajrA0LB9kWFo19HWOX9w5NWDQlUPyRWa/jTQ7720wugFFd
-	 ABHvK+M6846KaYAnUnB4XzrbGUmD+lVaIFrSAjMnisz1VfY5e/PMLi7QCaRcrxsSQJ
-	 iOK+uYu4ntOod+LAysZqQe7yGFEgKiG8s2/eEnLs=
+	b=cw5v7IYfC+2ifmCp2CBPIG/E46txuhiHw6iNMMwtLJazhbX42wAAIbr+u1bHy85qL
+	 752Ipgb4qEkO2C3ofmpSxV98W0UqFaTIiC0qzn3/YSE/18ke8tbJZOicWtP2ON+Lnd
+	 OL8ho9H9Ty57iHZAP93Hc1skP88u05aaYDgCbs0U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbeLTJ1N (ORCPT
+        id S1732244AbeLTJ1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33188 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732233AbeLTJ1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:06 -0500
+        id S1732223AbeLTJ1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E39A20656;
-        Thu, 20 Dec 2018 09:27:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8614A217D7;
+        Thu, 20 Dec 2018 09:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298025;
-        bh=utvaQVECUxct64VzgGTM3HD1SQ4ii7aStnZo+ZVBgfY=;
+        s=default; t=1545298023;
+        bh=wdShKhi0sESLf6KgiJR1O45sZoKsDbfoYKGNIPHcN5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCTcP0tAnkiYA+6k/WVJ030AUzteDG1kd4u70Hp+ZBjGrS9elZ2TlRinlGGXNELFW
-         nAfAbpdyam2fSAYKV0PfOUx65n0ibzM1oM56bXnnYrJHILDIz/Zs0dhQVuzjv1Lpvl
-         1Jpp93yW431708rbI5JX3R2euZVaKlmqebn+1oxk=
+        b=A2FqnSIuS0BpIYG4SqmQuxgKM/pRbA+14E3dw5X6D+3DcU716j4YZZWoXwSmwLjis
+         Dyw7L1azSygKuU+54MpR4ufpKAqBbi70NqV0u10ZwaCTmKfO8WSEki19SeP+Wz0FzU
+         imOslmkXa1VmzRd9iwH/MeKrKd/DVAHjQEjCQq+8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Toni Peltonen <peltzi@peltzi.fi>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        Jonathan Toppins <jtoppins@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 44/72] bpf: Fix verifier log string check for bad alignment.
-Date:   Thu, 20 Dec 2018 10:18:43 +0100
-Message-Id: <20181220085924.084258036@linuxfoundation.org>
+Subject: [PATCH 4.14 43/72] bonding: fix 802.3ad state sent to partner when unbinding slave
+Date:   Thu, 20 Dec 2018 10:18:42 +0100
+Message-Id: <20181220085924.047881158@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -65,33 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c01ac66b38660f2b507ccd0b75d28e3002d56fbb ]
+[ Upstream commit 3b5b3a3331d141e8f2a7aaae3a94dfa1e61ecbe4 ]
 
-The message got changed a lot time ago.
+Previously when unbinding a slave the 802.3ad implementation only told
+partner that the port is not suitable for aggregation by setting the port
+aggregation state from aggregatable to individual. This is not enough. If the
+physical layer still stays up and we only unbinded this port from the bond there
+is nothing in the aggregation status alone to prevent the partner from sending
+traffic towards us. To ensure that the partner doesn't consider this
+port at all anymore we should also disable collecting and distributing to
+signal that this actor is going away. Also clear AD_STATE_SYNCHRONIZATION to
+ensure partner exits collecting + distributing state.
 
-This was responsible for 36 test case failures on sparc64.
+I have tested this behaviour againts Arista EOS switches with mlx5 cards
+(physical link stays up even when interface is down) and simulated
+the same situation virtually Linux <-> Linux with two network namespaces
+running two veth device pairs. In both cases setting aggregation to
+individual doesn't alone prevent traffic from being to sent towards this
+port given that the link stays up in partners end. Partner still keeps
+it's end in collecting + distributing state and continues until timeout is
+reached. In most cases this means we are losing the traffic partner sends
+towards our port while we wait for timeout. This is most visible with slow
+periodic time (LACP rate slow).
 
-Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Other open source implementations like Open VSwitch and libreswitch, and
+vendor implementations like Arista EOS, seem to disable collecting +
+distributing to when doing similar port disabling/detaching/removing change.
+With this patch kernel implementation would behave the same way and ensure
+partner doesn't consider our actor viable anymore.
+
+Signed-off-by: Toni Peltonen <peltzi@peltzi.fi>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Acked-by: Jonathan Toppins <jtoppins@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_verifier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bonding/bond_3ad.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 041dbbb30ff0..a0591d06c61b 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -8070,7 +8070,7 @@ static void do_test_single(struct bpf_test *test, bool unpriv,
+diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+index f43fb2f958a5..93dfcef8afc4 100644
+--- a/drivers/net/bonding/bond_3ad.c
++++ b/drivers/net/bonding/bond_3ad.c
+@@ -2086,6 +2086,9 @@ void bond_3ad_unbind_slave(struct slave *slave)
+ 		   aggregator->aggregator_identifier);
  
- 	reject_from_alignment = fd_prog < 0 &&
- 				(test->flags & F_NEEDS_EFFICIENT_UNALIGNED_ACCESS) &&
--				strstr(bpf_vlog, "Unknown alignment.");
-+				strstr(bpf_vlog, "misaligned");
- #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	if (reject_from_alignment) {
- 		printf("FAIL\nFailed due to alignment despite having efficient unaligned access: '%s'!\n",
+ 	/* Tell the partner that this port is not suitable for aggregation */
++	port->actor_oper_port_state &= ~AD_STATE_SYNCHRONIZATION;
++	port->actor_oper_port_state &= ~AD_STATE_COLLECTING;
++	port->actor_oper_port_state &= ~AD_STATE_DISTRIBUTING;
+ 	port->actor_oper_port_state &= ~AD_STATE_AGGREGATION;
+ 	__update_lacpdu_from_port(port);
+ 	ad_lacpdu_send(port);
 -- 
 2.19.1
 
