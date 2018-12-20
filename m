@@ -3,48 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62237C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692B3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC03218E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46FA2218E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388610AbeLTSI4 (ORCPT
+        id S2388639AbeLTSJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:08:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38171 "EHLO
+        Thu, 20 Dec 2018 13:09:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45251 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730513AbeLTSIz (ORCPT
+        with ESMTP id S1730093AbeLTSJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:08:55 -0500
+        Thu, 20 Dec 2018 13:09:04 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI8Jfa3681466
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI8rXq3681503
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:08:19 -0800
+        Thu, 20 Dec 2018 10:08:53 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI8JHv3681463;
-        Thu, 20 Dec 2018 10:08:19 -0800
-Date:   Thu, 20 Dec 2018 10:08:19 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI8rrd3681499;
+        Thu, 20 Dec 2018 10:08:53 -0800
+Date:   Thu, 20 Dec 2018 10:08:53 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-3f643937aaab04881236b5aabec00f9802c1eda8@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-        jolsa@kernel.org, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, acme@redhat.com
-Reply-To: peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
-          acme@redhat.com, alexander.shishkin@linux.intel.com,
-          jolsa@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org
-In-Reply-To: <20181212132940.840-1-jolsa@kernel.org>
-References: <20181212132940.840-1-jolsa@kernel.org>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-8bjsul8x7osw7nxjodnyfn14@git.kernel.org>
+Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, acme@redhat.com, adrian.hunter@intel.com,
+        hpa@zytor.com, wangnan0@huawei.com, mingo@kernel.org,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+          wangnan0@huawei.com, hpa@zytor.com, jolsa@kernel.org,
+          acme@redhat.com, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Link libperf-jvmti.so with LDFLAGS
- variable
-Git-Commit-ID: 3f643937aaab04881236b5aabec00f9802c1eda8
+Subject: [tip:perf/core] perf trace: Rename set_ev_qualifier_filter to
+ clarify its a tracepoint filter
+Git-Commit-ID: 246fbe03edaab9dfa5bd1f0e223c7c960d987982
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,37 +56,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3f643937aaab04881236b5aabec00f9802c1eda8
-Gitweb:     https://git.kernel.org/tip/3f643937aaab04881236b5aabec00f9802c1eda8
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 12 Dec 2018 14:29:40 +0100
+Commit-ID:  246fbe03edaab9dfa5bd1f0e223c7c960d987982
+Gitweb:     https://git.kernel.org/tip/246fbe03edaab9dfa5bd1f0e223c7c960d987982
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 12 Dec 2018 11:06:53 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:23:57 -0300
 
-perf tools: Link libperf-jvmti.so with LDFLAGS variable
+perf trace: Rename set_ev_qualifier_filter to clarify its a tracepoint filter
 
-So we could propagate distro flags into libperf-jvmti.so library.
+Rename it to trace__set_ev_qualifier_tp_filter(), as this just sets up
+tracepoint filters on the raw_syscalls:sys_{enter,exit} tracepoints, and
+since we're going to do the same for the augmented_raw_syscalls
+codepath, when used, rename it to clarify.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181212132940.840-1-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-8bjsul8x7osw7nxjodnyfn14@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 22956a85e4c6..8c1350c591f2 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -654,7 +654,7 @@ $(LIBJVMTI_IN): FORCE
- 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=jvmti obj=jvmti
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index a14ee4ed2c9f..76e4fa04d824 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2553,7 +2553,7 @@ out_delete_sys_enter:
+ 	goto out;
+ }
  
- $(OUTPUT)$(LIBJVMTI): $(LIBJVMTI_IN)
--	$(QUIET_LINK)$(CC) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
-+	$(QUIET_LINK)$(CC) $(LDFLAGS) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
- endif
+-static int trace__set_ev_qualifier_filter(struct trace *trace)
++static int trace__set_ev_qualifier_tp_filter(struct trace *trace)
+ {
+ 	int err = -1;
+ 	struct perf_evsel *sys_exit;
+@@ -2578,6 +2578,11 @@ out_enomem:
+ 	goto out;
+ }
  
- $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
++static int trace__set_ev_qualifier_filter(struct trace *trace)
++{
++	return trace__set_ev_qualifier_tp_filter(trace);
++}
++
+ static int bpf_map__set_filter_pids(struct bpf_map *map __maybe_unused,
+ 				    size_t npids __maybe_unused, pid_t *pids __maybe_unused)
+ {
