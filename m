@@ -2,49 +2,44 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBB7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4312C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B462186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B87217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733300AbeLTN6G (ORCPT
+        id S2387447AbeLTOAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:58:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 09:00:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34592 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728803AbeLTN6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:58:06 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D383F217D8;
-        Thu, 20 Dec 2018 13:58:04 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 08:58:03 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Petr Mladek <pmladek@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181220085803.4c5853e8@gandalf.local.home>
-In-Reply-To: <20181220113537.GA701@jagdpanzerIV>
-References: <20181218114709.GF7485@zn.tnic>
-        <20181218130750.GA665@tigerII.localdomain>
-        <20181218142623.GH7485@zn.tnic>
-        <20181218145558.GD665@tigerII.localdomain>
-        <20181218150313.GI7485@zn.tnic>
-        <20181218151455.GE665@tigerII.localdomain>
-        <20181218152413.GJ7485@zn.tnic>
-        <20181218165217.GA534@tigerII.localdomain>
-        <20181218172109.GK15430@hirez.programming.kicks-ass.net>
-        <20181218123748.3aadd16c@gandalf.local.home>
-        <20181220113537.GA701@jagdpanzerIV>
+        id S1732985AbeLTOAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:00:07 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BA1102079F; Thu, 20 Dec 2018 15:00:04 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 70E2E20717;
+        Thu, 20 Dec 2018 14:59:54 +0100 (CET)
+Date:   Thu, 20 Dec 2018 14:59:54 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH 1/3] mtd: rawnand: Support bad block markers in first,
+ second or last page
+Message-ID: <20181220145954.55ae36e9@bbrezillon>
+In-Reply-To: <1545061693-29216-2-git-send-email-frieder.schrempf@kontron.de>
+References: <1545061693-29216-1-git-send-email-frieder.schrempf@kontron.de>
+        <1545061693-29216-2-git-send-email-frieder.schrempf@kontron.de>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -54,73 +49,275 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 20:35:37 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+On Mon, 17 Dec 2018 15:49:07 +0000
+Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
 
-> On (12/18/18 12:37), Steven Rostedt wrote:
-> > > 
-> > > Again, complain to system-doofus for printing so much crap to somewhere
-> > > it should not print to begin with.  
-> > 
-> > I've been saying that it would be good to make the kmsg be a separate
-> > buffer that just gets interleaved with the kernel buffer.  
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> Hmm, this is interesting.
+> Currently supported bad block marker positions within the block are:
+> * in first page only
+> * in last page only
+> * in first or second page
 > 
-> > Userspace processes should never be able to overwrite messages
-> > from the kernel.  
+> Some ESMT NANDs are known to have been shipped by the manufacturer
+> with bad block markers in the first or last page, instead of the
+> first or second page.
 > 
-> I would agree.
+> Also the datasheets for Cypress/Spansion/AMD NANDs claim that the
+> first, second *and* last page needs to be checked.
 > 
-> It's a bit funny that kernel people first take the patch in and then,
-> when user-space begins to use the feature, start to object and ratelimit.
-
-Please note the "kernel people" to first take it in, were also systemd
-developers. And there was a bit of objections to what they wanted to
-have to what they got. It wasn't until later when systemd started
-abusing the buffer (taking it as its own, making the kernel use of it a
-second class citizen) that other kernel developers (that now need to
-deal with the fallout) started to object and ratelimit it.
-
-Honestly, it should have been a separate buffer to begin with, and I
-wish I pushed for that when it was first added. It's not too late. We
-can still make it a separate buffer.
-
+> Therefore we make it possible to set NAND_BBT_SCAN2NDPAGE and
+> NAND_BBT_SCANLASTPAGE at the same time to scan/set all three pages.
 > 
-> By the way, systemd seems to be OK with alternative logging targets
+> To simplify the code, the logic to evaluate the flags is moved to a
+> a new function nand_bbm_page_offset().
 > 
-> /etc/systemd/system.conf
-> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 > ---
-> 	[Manager]
-> 	#LogLevel=info
-> 	LogTarget=syslog console journal
-
-When the system is up and running, it works. But I believe systemd can
-still only use ksmsg for initial boot up messages before it does the
-chroot.
-
-> ---
+>  drivers/mtd/nand/raw/internals.h |  1 +
+>  drivers/mtd/nand/raw/nand_base.c | 72 ++++++++++++++++++++++++++---------
+>  drivers/mtd/nand/raw/nand_bbt.c  | 30 +++++++--------
+>  3 files changed, 68 insertions(+), 35 deletions(-)
 > 
-> Everything looks fine with read-only devkmsg (running the patched
-> kernel). "journalctl -f -b" gives a nice system log:
-> 
-> ...
->  kernel: r8169 0000:04:00.0 enp4s0: renamed from eth0
->  kernel: snd_hda_codec_realtek hdaudioC0D0:      Line=0x1a
->  systemd-udevd[180]: link_config: autonegotiation is unset or enabled, the speed and duplex are not writable.
->  systemd[1]: Started Flush Journal to Persistent Storage.
->  kernel: input: HDA Intel PCH Line as /devices/pci0000:00/0000:00:1f.3/sound/card0/input7
-> ...
-> 
+> diff --git a/drivers/mtd/nand/raw/internals.h b/drivers/mtd/nand/raw/internals.h
+> index 04c2cf7..8e4b168 100644
+> --- a/drivers/mtd/nand/raw/internals.h
+> +++ b/drivers/mtd/nand/raw/internals.h
+> @@ -76,6 +76,7 @@ extern const struct nand_manufacturer_ops toshiba_nand_manuf_ops;
+>  
+>  /* Core functions */
+>  const struct nand_manufacturer *nand_get_manufacturer(u8 id);
+> +int nand_bbm_page_offset(struct nand_chip *chip, int index);
+>  int nand_markbad_bbm(struct nand_chip *chip, loff_t ofs);
+>  int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
+>  		    int allowbbt);
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 71050a0..388d9ed 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -253,6 +253,45 @@ static void nand_release_device(struct mtd_info *mtd)
+>  }
+>  
+>  /**
+> + * nand_bbm_page_offset - Get the page offsets for bad block markers
+> + * @chip: NAND chip object
+> + * @index: Index for the page offset
 
-Do you get systemd messages before chroot with this patch compared to
-what you get without it?
+Hm, the meaning of index is far from obvious. How about passing the
+current page instead (and return 1 if there are more pages to scan 0
+otherwise)?
 
--- Steve
+Something like:
 
-> 
-> Given how often systemd hits ratelimits (I googled some bug reports),
-> I wonder if systemd people are still interested in /dev/kmsg logging
-> at all.
-> 
+static int nand_bbm_get_next_page(struct nand_chip *chip, int page)
+{
+	struct mtd_info *mtd = nand_to_mtd(chip);
+	int last_page = ((mtd->erasesize - mtd->writesize) >>
+			 chip->page_shift) & chip->pagemask;
+
+	if (page < 0 && chip->bbt_options & NAND_BBT_SCANFIRSTPAGE)
+		return 0;
+	else if (page < 1 && chip->bbt_options & NAND_BBT_SCAN2NDPAGE)
+		return 1;
+	else if (page < last_page &&
+		 chip->bbt_options & NAND_BBT_SCANLASTPAGE)
+		return last_page;
+
+	return -1;
+}
+
+And yes, that means defining NAND_BBT_SCANFIRSTPAGE and setting it when
+appropriate.
+
+> + *
+> + * Returns an integer that corresponds to the page offset within a block, for
+> + * a page that is used to store bad block markers. If no more page offsets are
+> + * available, -1 is returned.
+> + */
+> +int nand_bbm_page_offset(struct nand_chip *chip, int index)
+> +{
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +	int last_page = ((mtd->erasesize - mtd->writesize) >>
+> +			 chip->page_shift) & chip->pagemask;
+> +
+> +	switch (index) {
+> +	case 0:
+> +		if ((chip->bbt_options & NAND_BBT_SCANLASTPAGE) &&
+> +		    !(chip->bbt_options & NAND_BBT_SCAN2NDPAGE))
+> +			return last_page;
+> +		else
+> +			return 0;
+> +		break;
+> +	case 1:
+> +		if (chip->bbt_options & NAND_BBT_SCAN2NDPAGE)
+> +			return 1;
+> +		break;
+> +	case 2:
+> +		if ((chip->bbt_options & NAND_BBT_SCANLASTPAGE) &&
+> +		    (chip->bbt_options & NAND_BBT_SCAN2NDPAGE))
+> +			return last_page;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -1;
+> +}
+> +
+> +/**
+>   * nand_block_bad - [DEFAULT] Read bad block marker from the chip
+>   * @chip: NAND chip object
+>   * @ofs: offset from device start
+> @@ -261,18 +300,14 @@ static void nand_release_device(struct mtd_info *mtd)
+>   */
+>  static int nand_block_bad(struct nand_chip *chip, loff_t ofs)
+>  {
+> -	struct mtd_info *mtd = nand_to_mtd(chip);
+> -	int page, page_end, res;
+> +	int page_offset, i = 0;
+> +	int res, first_page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+>  	u8 bad;
+>  
+> -	if (chip->bbt_options & NAND_BBT_SCANLASTPAGE)
+> -		ofs += mtd->erasesize - mtd->writesize;
+> +	page_offset = nand_bbm_page_offset(chip, 0);
+>  
+> -	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
+> -	page_end = page + (chip->bbt_options & NAND_BBT_SCAN2NDPAGE ? 2 : 1);
+> -
+> -	for (; page < page_end; page++) {
+> -		res = chip->ecc.read_oob(chip, page);
+> +	do {
+> +		res = chip->ecc.read_oob(chip, first_page + page_offset);
+>  		if (res < 0)
+>  			return res;
+>  
+> @@ -284,7 +319,9 @@ static int nand_block_bad(struct nand_chip *chip, loff_t ofs)
+>  			res = hweight8(bad) < chip->badblockbits;
+>  		if (res)
+>  			return res;
+> -	}
+> +
+> +		page_offset = nand_bbm_page_offset(chip, ++i);
+> +	} while (page_offset != -1);
+>  
+>  	return 0;
+>  }
+> @@ -303,7 +340,7 @@ static int nand_default_block_markbad(struct nand_chip *chip, loff_t ofs)
+>  	struct mtd_info *mtd = nand_to_mtd(chip);
+>  	struct mtd_oob_ops ops;
+>  	uint8_t buf[2] = { 0, 0 };
+> -	int ret = 0, res, i = 0;
+> +	int ret = 0, res, i = 0, page_offset;
+>  
+>  	memset(&ops, 0, sizeof(ops));
+>  	ops.oobbuf = buf;
+> @@ -316,17 +353,16 @@ static int nand_default_block_markbad(struct nand_chip *chip, loff_t ofs)
+>  	}
+>  	ops.mode = MTD_OPS_PLACE_OOB;
+>  
+> -	/* Write to first/last page(s) if necessary */
+> -	if (chip->bbt_options & NAND_BBT_SCANLASTPAGE)
+> -		ofs += mtd->erasesize - mtd->writesize;
+> +	page_offset = nand_bbm_page_offset(chip, 0);
+> +
+>  	do {
+> -		res = nand_do_write_oob(mtd, ofs, &ops);
+> +		res = nand_do_write_oob(mtd, ofs + page_offset * mtd->writesize,
+> +					&ops);
+>  		if (!ret)
+>  			ret = res;
+>  
+> -		i++;
+> -		ofs += mtd->writesize;
+> -	} while ((chip->bbt_options & NAND_BBT_SCAN2NDPAGE) && i < 2);
+> +		page_offset = nand_bbm_page_offset(chip, ++i);
+> +	} while (page_offset != -1);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
+> index 98a8268..b1424b3 100644
+> --- a/drivers/mtd/nand/raw/nand_bbt.c
+> +++ b/drivers/mtd/nand/raw/nand_bbt.c
+> @@ -412,10 +412,11 @@ static void read_abs_bbts(struct mtd_info *mtd, uint8_t *buf,
+>  
+>  /* Scan a given block partially */
+>  static int scan_block_fast(struct mtd_info *mtd, struct nand_bbt_descr *bd,
+> -			   loff_t offs, uint8_t *buf, int numpages)
+> +			   loff_t offs, uint8_t *buf)
+>  {
+> +	struct nand_chip *chip = mtd_to_nand(mtd);
+>  	struct mtd_oob_ops ops;
+> -	int j, ret;
+> +	int i = 0, ret, page_offset;
+>  
+>  	ops.ooblen = mtd->oobsize;
+>  	ops.oobbuf = buf;
+> @@ -423,12 +424,15 @@ static int scan_block_fast(struct mtd_info *mtd, struct nand_bbt_descr *bd,
+>  	ops.datbuf = NULL;
+>  	ops.mode = MTD_OPS_PLACE_OOB;
+>  
+> -	for (j = 0; j < numpages; j++) {
+> +	page_offset = nand_bbm_page_offset(chip, 0);
+> +
+> +	do {
+>  		/*
+>  		 * Read the full oob until read_oob is fixed to handle single
+>  		 * byte reads for 16 bit buswidth.
+>  		 */
+> -		ret = mtd_read_oob(mtd, offs, &ops);
+> +		ret = mtd_read_oob(mtd, offs + page_offset * mtd->writesize,
+> +				   &ops);
+>  		/* Ignore ECC errors when checking for BBM */
+>  		if (ret && !mtd_is_bitflip_or_eccerr(ret))
+>  			return ret;
+> @@ -436,8 +440,9 @@ static int scan_block_fast(struct mtd_info *mtd, struct nand_bbt_descr *bd,
+>  		if (check_short_pattern(buf, bd))
+>  			return 1;
+>  
+> -		offs += mtd->writesize;
+> -	}
+> +		page_offset = nand_bbm_page_offset(chip, ++i);
+> +	} while (page_offset != -1);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -456,17 +461,11 @@ static int create_bbt(struct mtd_info *mtd, uint8_t *buf,
+>  	struct nand_bbt_descr *bd, int chip)
+>  {
+>  	struct nand_chip *this = mtd_to_nand(mtd);
+> -	int i, numblocks, numpages;
+> -	int startblock;
+> +	int i, numblocks, startblock;
+>  	loff_t from;
+>  
+>  	pr_info("Scanning device for bad blocks\n");
+>  
+> -	if (bd->options & NAND_BBT_SCAN2NDPAGE)
+> -		numpages = 2;
+> -	else
+> -		numpages = 1;
+> -
+>  	if (chip == -1) {
+>  		numblocks = mtd->size >> this->bbt_erase_shift;
+>  		startblock = 0;
+> @@ -483,15 +482,12 @@ static int create_bbt(struct mtd_info *mtd, uint8_t *buf,
+>  		from = (loff_t)startblock << this->bbt_erase_shift;
+>  	}
+>  
+> -	if (this->bbt_options & NAND_BBT_SCANLASTPAGE)
+> -		from += mtd->erasesize - (mtd->writesize * numpages);
+> -
+>  	for (i = startblock; i < numblocks; i++) {
+>  		int ret;
+>  
+>  		BUG_ON(bd->options & NAND_BBT_NO_OOB);
+>  
+> -		ret = scan_block_fast(mtd, bd, from, buf, numpages);
+> +		ret = scan_block_fast(mtd, bd, from, buf);
+>  		if (ret < 0)
+>  			return ret;
+>  
+
