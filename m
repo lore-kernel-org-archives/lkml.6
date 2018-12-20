@@ -2,158 +2,181 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C69C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E5DC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C589D206C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91EEA206C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HdF8DGGg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJoSmb3v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731488AbeLTQnB (ORCPT
+        id S1731510AbeLTQoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:43:01 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58678 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbeLTQnA (ORCPT
+        Thu, 20 Dec 2018 11:44:24 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36291 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730086AbeLTQoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:43:00 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181220164259euoutp02ce1f5ac493d7f3b73db3fbd5f3baab55~yGCdeMBq10614606146euoutp02D
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:42:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181220164259euoutp02ce1f5ac493d7f3b73db3fbd5f3baab55~yGCdeMBq10614606146euoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545324179;
-        bh=5tVfjnbzRFa3mICddZwU/vbfaEPMfgDWAAyooERIFo8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=HdF8DGGgu3P4KGYc7sr7IBn7cG8X+aT3FTEsXiSD9NdFTLfA7KIyWaX2dg5pksqsx
-         Scn08G6NV+/kKVH66alRHXJGv4E7T0u7x5WRxM9CjIYkc+Fml80gubfw7zRnpvYLkt
-         HSOD8oWyFxSEitpF0J+rfN9e3Xgd+/JD98v3tvWs=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181220164258eucas1p25af43ea0a506b794c6ec2b844e01a134~yGCcfbsBO2918629186eucas1p2s;
-        Thu, 20 Dec 2018 16:42:58 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 04.87.04806.296CB1C5; Thu, 20
-        Dec 2018 16:42:58 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220164257eucas1p1cabbeee44fdf0f85e7dadaef059a8243~yGCbwG_IT2168721687eucas1p1_;
-        Thu, 20 Dec 2018 16:42:57 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181220164257eusmtrp1234fc78a767b7a06faca98e1d737a436~yGCbhzUai1901719017eusmtrp1d;
-        Thu, 20 Dec 2018 16:42:57 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-47-5c1bc69205b4
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CD.27.04284.196CB1C5; Thu, 20
-        Dec 2018 16:42:57 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220164257eusmtip2d316bc7d80e50d66e0bb1cfda43f0066~yGCbP4qfa0433904339eusmtip24;
-        Thu, 20 Dec 2018 16:42:57 +0000 (GMT)
-Subject: Re: [PATCH] video: clps711x-fb: release disp device node in probe()
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Alexander Shiyan <shc_work@mail.ru>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <05f1c984-ddda-6a83-32dd-e96756eac916@samsung.com>
-Date:   Thu, 20 Dec 2018 17:42:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Thu, 20 Dec 2018 11:44:24 -0500
+Received: by mail-ed1-f66.google.com with SMTP id f23so2311071edb.3;
+        Thu, 20 Dec 2018 08:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=udwoJwfUZVTLOwxGcRxzcnzXp8PPvnNNCGmi043csVg=;
+        b=HJoSmb3vcdm8FnOqXzD5As8Ne0duxHPcU4yIIOc0yBVofpYdVxljnobXkMn8ChB0zS
+         cNQVNC4JF11xjZYPHGO/7zekySsbnBp138BgWmvuKQp7g4gWachAzJSNypfWpOuMKwKV
+         Cc64+5HRyXMh9y3boPG4Sey+5u3w4HlSDgCJxBmwantyScvrl5o9Zykwty2Hfe87aILC
+         27HQhzd43QUn7+xlBaKCqxFm08QotKMR2wt0tGxLoFhjBTC8jK2Tt9QUxRBJ8zuTl78X
+         LiFI69xvkD5PZyv0IbFkz9yTnY2GO7C3SOpgDpHhEud8fKkwwZg8EIo6yQgA/n+cHNew
+         gFcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=udwoJwfUZVTLOwxGcRxzcnzXp8PPvnNNCGmi043csVg=;
+        b=PBzPoh26u0UkvMo67aIY8uqAtr01OEdH2i+v6IB93aOzy3Wxtgvdy5hs6M+tsnPfFN
+         PPQqUVYUGWUvGGCEXe2YYkbzI36/MdyctxyvadKQzLpR3EdG1P9X6i8IMWdZ2do5/v4x
+         5vc5xXDPIzk9xDMDBu5PGHeAixhPE5rqy9GLJ+x68kV3gtFsLd08zBRI5pqEthLIgA4L
+         3k9TsC2YRxrXWH3bmbm43ldf44G+4utoDuOmT3IFJFvERyLJPtHsZR7nj81mfkBAYkwe
+         Ej0uTAOD+t9q4GES/Ina/IHPpdy6jcIBXdmO0Y+1hhHNucwawVXPke7ET92YtYsA1Sqf
+         +chQ==
+X-Gm-Message-State: AA+aEWY/cNSCzBEKghUzzjUBPLjKj5CpoGFfPhDZnchWP4IH0S+jWTt4
+        AVffHKa17ddRS1KjqbWPqjg=
+X-Google-Smtp-Source: AFSGD/XbntL90LehgIKfTmGzsmFEOHRlGbpugiPq8LsCYuUKRD/7OWkTSOl16XaGwWplJSPJ06Mc1Q==
+X-Received: by 2002:a17:906:198b:: with SMTP id g11-v6mr20146763ejd.166.1545324261086;
+        Thu, 20 Dec 2018 08:44:21 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id j4sm2371867edh.69.2018.12.20.08.44.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 08:44:20 -0800 (PST)
+Date:   Thu, 20 Dec 2018 17:44:18 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/15] dma-mapping: bypass indirect calls for dma-direct
+Message-ID: <20181220164418.GA18777@ulmo>
+References: <20181207190720.18517-1-hch@lst.de>
+ <20181207190720.18517-16-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <1541197423-31560-1-git-send-email-khoroshilov@ispras.ru>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djP87qTjknHGCx5yWFx5et7Nosd63ay
-        Wyzv7mKxONH3gdXi8q45bBaTdkg5sHnM+DeV0ePO67+sHve7jzN5TJl7hNXj8ya5ANYoLpuU
-        1JzMstQifbsEroyvn88wF3zlqnh9+jVrA+MPji5GTg4JAROJ+Ut2s3UxcnEICaxglOj72Azl
-        fGGUWP/7CpTzmVGif+EHVpiWVxeOMEIkljNKLDnZxAzhvGeU2L+tj72LkYNDWMBHYv9td5AG
-        EQE9iY+vtjKB1DALLGWU2NP1mAkkwSZgJTGxfRUjiM0rYCfR9eMAG4jNIqAqseHNXSaQOaIC
-        ERL9Z9QhSgQlTs58wgJicwq4SUzZdQOslVnAQOLIojmsELa8xPa3c8DukRCYxy6x5NUvJoir
-        XSQ2tB5lhrCFJV4d38IOYctInJ7cwwLRMJ1R4s2vpVDOekaJNWeOQXVbSxw+fhHqf0eJhVMP
-        gX0pIcAnceOtIMRmPolJ26YzQ4R5JTrahCCq1SQ2LNvABrOra+dKqBs8JPYs3cg2gVFxFpLf
-        ZiH5ZxaSfxYwMq9iFE8tLc5NTy02zkst1ytOzC0uzUvXS87P3cQITDKn/x3/uoNx35+kQ4wC
-        HIxKPLwau6RjhFgTy4orcw8xSnAwK4nwrj8EFOJNSaysSi3Kjy8qzUktPsQozcGiJM5bzfAg
-        WkggPbEkNTs1tSC1CCbLxMEp1cC45KzN0ptmzbucXj41z/3McHqv3tGU9Z2BhiX3F6rGpzxb
-        VRzdv8JI9ePOt7t6Fh8w0MlqZNHrOlV98Ues037n1xwflV/uvL944asMG+mCjvP5H79ejFP7
-        wztTrzM+dvWSLu3n0uJ7XnW/3qhxWtbjzsm9h9a6rJz+9W1w6p+N/3bx9rP91Ff4rMRSnJFo
-        qMVcVJwIAFdQmTEuAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsVy+t/xe7oTj0nHGNxokLC48vU9m8WOdTvZ
-        LZZ3d7FYnOj7wGpxedccNotJO6Qc2Dxm/JvK6HHn9V9Wj/vdx5k8psw9wurxeZNcAGuUnk1R
-        fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbXz2eYC75y
-        Vbw+/Zq1gfEHRxcjJ4eEgInEqwtHGLsYuTiEBJYySkyd95qli5EDKCEjcXx9GUSNsMSfa11s
-        EDVvGSUOL3vJBFIjLOAjsf+2O0iNiICexMdXW5kgamYySrz4sRWsgRlk6MYzE5hBqtgErCQm
-        tq9iBLF5Bewkun4cYAOxWQRUJTa8ucsEYosKREjcetjBAlEjKHFy5hMwm1PATWLKrhtgvcxA
-        23Zc/8UKYctLbH87h3kCo+AsJC2zkJTNQlK2gJF5FaNIamlxbnpusaFecWJucWleul5yfu4m
-        RmDkbDv2c/MOxksbgw8xCnAwKvHwauySjhFiTSwrrsw9xCjBwawkwrv+EFCINyWxsiq1KD++
-        qDQntfgQoynQExOZpUST84FRnVcSb2hqaG5haWhubG5sZqEkznveoDJKSCA9sSQ1OzW1ILUI
-        po+Jg1OqgVHzj0jKTMkNLX7fNQVOyGxKmnXNUSXy/v5fNuXy1nMPSrUXfgx++mv2ox3cc/hP
-        rzCf8SFgR4cY+98LKcUKthW7Wh65zhfJOqHSKOqY7SqdFaFdELEuSOLJPovXf86svBOft3Gy
-        ouuUGwpcp83mvz+7XdJuuvuPvNhDiVqFZ/h7doXJnnoVu1GJpTgj0VCLuag4EQALP6aZsgIA
-        AA==
-X-CMS-MailID: 20181220164257eucas1p1cabbeee44fdf0f85e7dadaef059a8243
-X-Msg-Generator: CA
-X-RootMTR: 20181102222440epcas1p3ccba6957ba132ddbbc6e32d6ff912062
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181102222440epcas1p3ccba6957ba132ddbbc6e32d6ff912062
-References: <CGME20181102222440epcas1p3ccba6957ba132ddbbc6e32d6ff912062@epcas1p3.samsung.com>
-        <1541197423-31560-1-git-send-email-khoroshilov@ispras.ru>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Disposition: inline
+In-Reply-To: <20181207190720.18517-16-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-[ added dri-devel ML to Cc: ]
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/02/2018 11:23 PM, Alexey Khoroshilov wrote:
-> clps711x_fb_probe() increments refcnt of disp device node by
-> of_parse_phandle() and leaves it undecremented on both
-> successful and error paths.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+On Fri, Dec 07, 2018 at 11:07:20AM -0800, Christoph Hellwig wrote:
+[...]
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 0b18cfbdde95..fc84c81029d9 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+[...]
+> @@ -397,9 +404,9 @@ int dma_supported(struct device *dev, u64 mask)
+>  {
+>  	const struct dma_map_ops *ops =3D get_dma_ops(dev);
+> =20
+> -	if (!ops)
+> -		return 0;
+> -	if (!ops->dma_supported)
+> +	if (dma_is_direct(ops))
+> +		return dma_direct_supported(dev, mask);
+> +	if (ops->dma_supported)
+>  		return 1;
+>  	return ops->dma_supported(dev, mask);
+>  }
 
-Patch queued for 4.21, thanks.
+Hi Christoph,
 
-> ---
->  drivers/video/fbdev/clps711x-fb.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-> index ff561073ee4e..42f909618f04 100644
-> --- a/drivers/video/fbdev/clps711x-fb.c
-> +++ b/drivers/video/fbdev/clps711x-fb.c
-> @@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
->  	}
->  
->  	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
-> -	if (ret)
-> +	if (ret) {
-> +		of_node_put(disp);
->  		goto out_fb_release;
-> +	}
->  
->  	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
->  	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
->  
->  	ret = of_property_read_u32(disp, "bits-per-pixel",
->  				   &info->var.bits_per_pixel);
-> +	of_node_put(disp);
->  	if (ret)
->  		goto out_fb_release;
->  
+This hunk causes a crash on boot for me. It looks like a ! got lost in
+the rework here. The following patch fixes the crash for me and restores
+the logic of the op->dma_supported check.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Feel free to squash this patch into the above if you prefer that.
+
+Thierry
+
+--- >8 ---
+=46rom c502b29ab01fa857e81c78cd574d4d22d7d20e09 Mon Sep 17 00:00:00 2001
+=46rom: Thierry Reding <treding@nvidia.com>
+Date: Thu, 20 Dec 2018 17:35:47 +0100
+Subject: [PATCH] dma-mapping: Fix inverted logic in dma_supported()
+
+The cleanup in commit 356da6d0cde3 ("dma-mapping: bypass indirect calls
+for dma-direct") accidentally inverted the logic in the check for the
+presence of a ->dma_supported() callback. Switch this back to the way it
+was to prevent a crash on boot.
+
+Fixes: 356da6d0cde3 ("dma-mapping: bypass indirect calls for dma-direct")
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ kernel/dma/mapping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index fc84c81029d9..d7c34d2d1ba5 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -406,7 +406,7 @@ int dma_supported(struct device *dev, u64 mask)
+=20
+ 	if (dma_is_direct(ops))
+ 		return dma_direct_supported(dev, mask);
+-	if (ops->dma_supported)
++	if (!ops->dma_supported)
+ 		return 1;
+ 	return ops->dma_supported(dev, mask);
+ }
+--=20
+2.19.1
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwbxuAACgkQ3SOs138+
+s6FOFBAAvk7KvF523TFilLtTgdqzgtbG0su3+Q9/rfoojbuGfvhM5uVjTT8i/Brp
+4yx6kTZg7EbcIyiPhY4YN6MKtxFIQO4xRuCAnsiEG2XzwLKct0bmqf39UOMjRCiL
+QgdUBn7wdWKH4gMLwHs9jupvvw6AWkDUF+d7s9/idZIy5+KGXeCYq6qgcRFhitXd
+fOF4iBMnK49WcDhwRCBYieTE99Mb01ILjFOtdBFjnB4xnf3GyWs5uriDDwGdrurI
+ASrZABnhANLKYYInPA61xDqpudGlydOTa+7BtIvDMVr1CGcRYpZ0ERknioCdQQQE
+XoO6taGR2vfwIOm+frEvuIVNOBEUO7NNRFHfMaVWU3oEjQ5NNhzcp3t+EyxL+jTT
+0zxaX2H3b9w703yxWo8/fvEwdyuBGbTYA7cmtCgoTo8QHRt2BhxBaE1X/n5wLDYW
+Giu06kdfZQAks6U+YAogHzy7imPUpDYIZuH2Tko3Sw710nIF1et6j2zPrQmYO2nu
+1i/orBSibV/5P1Y9DRVNztY56l9oDv7cOVmFeJWXtQXBz8OdYjyHIKI6KhDi1sQK
+W/nqPzW9uvCC4KeTWDGaw90BChgtWyKy6rEhPdk1QpQnMQYerr+a0y4Za905TqlU
+mgI8M4YFd34Cr424HZuguZ6NtgUACys5BnYqjMLUTfl/LK3lcW8=
+=t2Tu
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
