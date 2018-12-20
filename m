@@ -2,75 +2,128 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEE7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB44C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37E021741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463382176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:12:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oViJlhCH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730645AbeLTILc (ORCPT
+        id S1729659AbeLTIMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:11:32 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:40106 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbeLTILc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:11:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 169A7201B9;
-        Thu, 20 Dec 2018 09:11:31 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id JsqTZXOzXFWW; Thu, 20 Dec 2018 09:11:30 +0100 (CET)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        Thu, 20 Dec 2018 03:12:31 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:44100 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbeLTIMb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:12:31 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 144CEBD8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:12:30 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NRquv3gGiH4f for <linux-kernel@vger.kernel.org>;
+        Thu, 20 Dec 2018 02:12:29 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id B695F20068;
-        Thu, 20 Dec 2018 09:11:30 +0100 (CET)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
- 09:11:30 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 47F6B3182739;
- Thu, 20 Dec 2018 09:11:30 +0100 (CET)
-Date:   Thu, 20 Dec 2018 09:11:30 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-CC:     <davem@davemloft.net>, <herbert@gondor.apana.org.au>,
-        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next] xfrm6_tunnel: Fix spi check in
- __xfrm6_tunnel_alloc_spi
-Message-ID: <20181220081130.GB3581@gauss3.secunet.de>
-References: <20181219064509.9804-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181219064509.9804-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 73B6D09D-E687-47C4-AFB1-C4660A7CFE46
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id D58E9AAF
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:12:29 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id i12so1426143ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 00:12:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iPMrAI3bLWBOMHdbC/v0OmDCeGkFjS0XKiHDe7hscpk=;
+        b=oViJlhCHLrCtStkRktQVHWLAZKNWvxF+fRu0xWXq3jqyCl1pBY/Em5pos5VAcJF9je
+         63Lj8LnsTTRbMzYhodVgw9YK0nLexeu6i3CBw/eKEcbXc22KXuW+HWbaqebvCJTiMRgs
+         BpgHmakKibEXma3mEZ6+lPT8ONo93I0w4uWw7ueimANdk8nSYTk5+j0hP5waX3ZO6JgK
+         ag9uR/UJmyC98KGq6z5zNzsR+a8LiIAfTc7w2ntPv92pXMuZ8p3WnGqSoHzdu5G/eBNO
+         Pph6MRaQoDd71Zeg0I1RvU6ZAAlJdukC2QFAJ8Ir/XlAA7BHJcZGwd+MqBDYOZlHA/Gi
+         FZnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iPMrAI3bLWBOMHdbC/v0OmDCeGkFjS0XKiHDe7hscpk=;
+        b=qcpUM6yfOWmnwLQy3cNesfbZF+2FhbXQqx8R9uxp63rxQhn27UTLz1Dse/FSjzI5E7
+         jje3sH3xt1Ou4IotVcgbwc2AOw1lKN8LZ4eTwuAkkw/lvwNoR3usMHxm5pf07+vk1sSw
+         EOINH5ficL4vN1+kvWejIdupESF8a8Hu1cLdujC8SmKXwWSbZYN7lIuIhIvQhCxDmiWc
+         mL4LgEDZArVfr+IL93kHwAjcCR/XVpufgmrhYvCzHYyaaZTTjk/G1VDHDtvPRVq9Mow9
+         1XcBScwmC+SsRxKpiZ2ZzrU398rbfsBhooQXE37ORP9TyQwKyJFuj46X9KeQ2DpybMz9
+         k/+Q==
+X-Gm-Message-State: AA+aEWaspGwKH2oiSTkM71D+tB3UtoM7TkF+f+mKJdAr2wYUM9ucU9mA
+        HNv4q8Ejt1lb9V+JXc73ssDvSqp8rVxZDoaZE0Byu4rmoZq1var20sWHF37VyNloPuuoPlW4dcW
+        T5hfL77IooGkYzcufR/FvX2yMfsdb
+X-Received: by 2002:a02:8c4a:: with SMTP id j10mr22677922jal.129.1545293549451;
+        Thu, 20 Dec 2018 00:12:29 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/WCEeCZfW3oesFZ+Mry2MjYfPMndYE32X/zKdL36o+W+b2dG/dqx6raCupaDbaUZTX+/Kt4Ng==
+X-Received: by 2002:a02:8c4a:: with SMTP id j10mr22677912jal.129.1545293549203;
+        Thu, 20 Dec 2018 00:12:29 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-24.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.24])
+        by smtp.gmail.com with ESMTPSA id f10sm4352122itf.41.2018.12.20.00.12.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Dec 2018 00:12:28 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Matthias Schwarzott <zzam@gentoo.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: si2165: fix a missing check of return value
+Date:   Thu, 20 Dec 2018 02:12:09 -0600
+Message-Id: <20181220081209.40807-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 02:45:09PM +0800, YueHaibing wrote:
-> gcc warn this:
-> 
-> net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
->  always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
-> 
-> 'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
-> because of wrap around. So the second forloop will never reach.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
+that "val_tmp" will be an uninitialized value when regmap_read() fails.
+"val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
+"val" will be a random value. Further use will lead to undefined
+behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
+"-EINVAL".
 
-Also applied, thanks a lot!
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/media/dvb-frontends/si2165.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
+index feacd8da421d..c134f312fa5b 100644
+--- a/drivers/media/dvb-frontends/si2165.c
++++ b/drivers/media/dvb-frontends/si2165.c
+@@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
+ 
+ static int si2165_wait_init_done(struct si2165_state *state)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 	u8 val = 0;
+ 	int i;
+ 
+ 	for (i = 0; i < 3; ++i) {
+-		si2165_readreg8(state, REG_INIT_DONE, &val);
++		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
++		if (ret < 0)
++			return -EINVAL;
+ 		if (val == 0x01)
+ 			return 0;
+ 		usleep_range(1000, 50000);
+ 	}
+ 	dev_err(&state->client->dev, "init_done was not set\n");
+-	return ret;
++	return -EINVAL;
+ }
+ 
+ static int si2165_upload_firmware_block(struct si2165_state *state,
+-- 
+2.17.2 (Apple Git-113)
+
