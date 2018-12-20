@@ -6,316 +6,276 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A17C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2558CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394A0218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E49218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="qs8hcmsX"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cB6yWGl+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389126AbeLTS30 (ORCPT
+        id S2389149AbeLTS33 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:29:26 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56736 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389097AbeLTS3W (ORCPT
+        Thu, 20 Dec 2018 13:29:29 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37299 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389111AbeLTS3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:29:22 -0500
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBKIPYoX014252
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=vmv2Jmzw92ALmjS4UtH5tIE6j+Wo0B0S2fP7rXtd1OQ=;
- b=qs8hcmsXvAAIzRRMvoKeP02v0h8UU7qJCl0Ffcbehp6r2mXGqeEySY45Pn3H5hfiEmYl
- uvM5vcRsmfggCXskrRF7m5dgbgtdLLZz6e3hPD/T9rshM+LMo6fLrap6xHOdti5OgUeK
- lnmJ8lizEUkmPwukEzPxja+9q/uVyp0Btvg= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pgey9gcn9-17
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:21 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 20 Dec 2018 10:29:11 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 1F09462E0FD0; Thu, 20 Dec 2018 10:29:07 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v5 perf, bpf-next 1/7] perf, bpf: Introduce PERF_RECORD_KSYMBOL
-Date:   Thu, 20 Dec 2018 10:28:58 -0800
-Message-ID: <20181220182904.4193196-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181220182904.4193196-1-songliubraving@fb.com>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Thu, 20 Dec 2018 13:29:25 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so2105644lfj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A5oSEUX5NghaDjuKlQPFL03PIZwpGHlDsIssOQKwoKw=;
+        b=cB6yWGl+9A2svMSCpy6fDEoVmhR557ria7RvDQLuskrCWzSTDUtzdhRNkzPb/gkHZy
+         zUMhy12TCmTQTNT73Zc1wypZH31T0FVgR3CNjI6nOZgRb2E4M1b2IHY7DKSgceMWcB4p
+         ouqGmSmbpHM+HEN6FkGYZgX/P5T1rXzN6LqFA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A5oSEUX5NghaDjuKlQPFL03PIZwpGHlDsIssOQKwoKw=;
+        b=swLnlLPt7qSR1ErleYLWfL6ICcEl+cMn9/LnSo4I/OFWzl0Uo0gfxh94nxSxQ94oyF
+         LetoBKEXrUNTYFfklKQDB+akmP4PkjKZJwSbGmyZsPG1JthjXHla+qOzUAlT9j8rMu5z
+         XZAAwIUCJSNlVXEOoOKBftEmgWppA3XUrLdA5ZHC1LGZaKzlRO6MtsblwNXuWYcgqduA
+         VrzZFU5B+2CBzahRIpxTrh3h7DU/fc8W2i5wv5RlUfEY9YLvchcky/bNjLJozWeVG10h
+         Db7snL9GXXHJcMoaxCzxDxJfe7bCJYTUZ6R5FBzauuKxi5ztqY0PZNymXhES3uND36BE
+         H+Tw==
+X-Gm-Message-State: AA+aEWblbVcrCD1F7uYWWcd5CY9+x3tYqkCUkpMhGv97k61HY6OhDzDk
+        1e/87/pF9JA/UzKso5UMHVhzirA++1Lc3w==
+X-Google-Smtp-Source: AFSGD/WW2BN5PJDOsGHW8e/LAO5/TOnO1px1VhCKTIRpnD/MN3aZFvRx6wofoczHqVxaYgSnxkd+hQ==
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr15134088lfa.106.1545330561983;
+        Thu, 20 Dec 2018 10:29:21 -0800 (PST)
+Received: from localhost ([195.238.92.132])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm4179166ljh.39.2018.12.20.10.29.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 10:29:21 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume Nault <g.nault@alphalink.fr>
+Subject: [PATCH v2] ppp: Move PFC decompression to PPP generic layer
+Date:   Thu, 20 Dec 2018 20:29:20 +0200
+Message-Id: <20181220182920.4208-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of dynamically JITed and loaded kernel
-functions, such as BPF programs, this patch introduces
-PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
-register/unregister information to user space.
+Extract "Protocol" field decompression code from transport protocols to
+PPP generic layer, where it actually belongs. As a consequence, this
+patch fixes incorrect place of PFC decompression in L2TP driver (when
+it's not PPPOX_BOUND) and also enables this decompression for other
+protocols, like PPPoE.
 
-The following data structure is used for PERF_RECORD_KSYMBOL.
+Protocol field decompression also happens in PPP Multilink Protocol
+code and in PPP compression protocols implementations (bsd, deflate,
+mppe). It looks like there is no easy way to get rid of that, so it was
+decided to leave it as is, but provide those cases with appropriate
+comments instead.
 
-    /*
-     * struct {
-     *      struct perf_event_header        header;
-     *      u64                             addr;
-     *      u64                             len;
-     *      char                            name[];
-     *      struct sample_id                sample_id;
-     * };
-     */
-
-PERF_RECORD_KSYMBOL uses 4 more bits (bit 3-6) in header.misc:
-Bit 3 is used to differentiate register vs. unregister. Bit 4-6
-encode types of the ksymbol. The following are details of the
-assignment of these bits:
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- include/linux/perf_event.h      | 12 ++++
- include/uapi/linux/perf_event.h | 23 +++++++-
- kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
- 3 files changed, 131 insertions(+), 2 deletions(-)
+Changes in v2:
+  - Fix the order of checking skb data room and proto decompression
+  - Remove "inline" keyword from ppp_decompress_proto()
+  - Don't split line before function name
+  - Prefix ppp_decompress_proto() function with "__"
+  - Add ppp_decompress_proto() function with skb data room checks
+  - Add description for introduced functions
+  - Fix comments (as per review on mailing list)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..037863e69bb2 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1113,6 +1113,12 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
- }
- 
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+
-+/* callback function to generate ksymbol name */
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+extern void perf_event_ksymbol(int type, u64 addr, u64 len, bool unregister,
-+			       perf_ksymbol_get_name_f get_name, void *data);
-+
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1339,12 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+static inline void perf_event_ksymbol(int type, u64 addr, u64 len,
-+				      bool unregister,
-+				      perf_ksymbol_get_name_f get_name,
-+				      void *data) 			{ }
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..6c9e327e87ed 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -648,11 +649,18 @@ struct perf_event_mmap_page {
-  *   PERF_RECORD_MISC_COMM_EXEC  - PERF_RECORD_COMM event
-  *   PERF_RECORD_MISC_FORK_EXEC  - PERF_RECORD_FORK event (perf internal)
-  *   PERF_RECORD_MISC_SWITCH_OUT - PERF_RECORD_SWITCH* events
-+ *   PERF_RECORD_MISC_KSYMBOL_*  - PERF_RECORD_KSYMBOL event
-  */
- #define PERF_RECORD_MISC_MMAP_DATA		(1 << 13)
- #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_FORK_EXEC		(1 << 13)
- #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
-+
-+#define PERF_RECORD_MISC_KSYMBOL_UNREGISTER	(1 << 3)
-+#define PERF_RECORD_MISC_KSYMBOL_TYPE_MASK	(7 << 4)
-+#define PERF_RECORD_MISC_KSYMBOL_TYPE_UNKNOWN	(0 << 4)
-+#define PERF_RECORD_MISC_KSYMBOL_TYPE_BPF	(1 << 4)
-+
- /*
-  * These PERF_RECORD_MISC_* flags below are safely reused
-  * for the following events:
-@@ -965,6 +973,19 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u64				len;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 84530ab358c3..c0ac6dee367c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
- static atomic_t nr_task_events __read_mostly;
- static atomic_t nr_freq_events __read_mostly;
- static atomic_t nr_switch_events __read_mostly;
-+static atomic_t nr_ksymbol_events __read_mostly;
- 
- static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
-@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
- 
- 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
- 	    attr->comm || attr->comm_exec ||
--	    attr->task ||
-+	    attr->task || attr->ksymbol ||
- 	    attr->context_switch)
- 		return true;
- 	return false;
-@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
- 		dec = true;
- 	if (has_branch_stack(event))
- 		dec = true;
-+	if (event->attr.ksymbol)
-+		atomic_dec(&nr_ksymbol_events);
- 
- 	if (dec) {
- 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
- 	perf_output_end(&handle);
- }
- 
-+/*
-+ * ksymbol register/unregister tracking
-+ */
-+
-+struct perf_ksymbol_event {
-+	const char	*name;
-+	int		name_len;
-+	struct {
-+		struct perf_event_header        header;
-+		u64				addr;
-+		u64				len;
-+	} event_id;
-+};
-+
-+static int perf_event_ksymbol_match(struct perf_event *event)
-+{
-+	return event->attr.ksymbol;
-+}
-+
-+static void perf_event_ksymbol_output(struct perf_event *event, void *data)
-+{
-+	struct perf_ksymbol_event *ksymbol_event = data;
-+	struct perf_output_handle handle;
-+	struct perf_sample_data sample;
-+	int ret;
-+
-+	if (!perf_event_ksymbol_match(event))
-+		return;
-+
-+	perf_event_header__init_id(&ksymbol_event->event_id.header,
-+				   &sample, event);
-+	ret = perf_output_begin(&handle, event,
-+				ksymbol_event->event_id.header.size);
-+	if (ret)
-+		return;
-+
-+	perf_output_put(&handle, ksymbol_event->event_id);
-+	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
-+	perf_event__output_id_sample(event, &handle, &sample);
-+
-+	perf_output_end(&handle);
-+}
-+
-+void perf_event_ksymbol(int ksym_type, u64 addr, u64 len, bool unregister,
-+			perf_ksymbol_get_name_f get_name, void *data)
-+{
-+	struct perf_ksymbol_event ksymbol_event;
-+	char name[KSYM_NAME_LEN];
-+	int name_len;
-+
-+	if (!atomic_read(&nr_ksymbol_events))
-+		return;
-+
-+	if (ksym_type & ~PERF_RECORD_MISC_KSYMBOL_TYPE_MASK)
-+		goto err;
-+
-+	switch (ksym_type & PERF_RECORD_MISC_KSYMBOL_TYPE_MASK) {
-+	case PERF_RECORD_MISC_KSYMBOL_TYPE_BPF:
-+		break;
-+	case PERF_RECORD_MISC_KSYMBOL_TYPE_UNKNOWN:
-+	default:
-+		goto err;
-+	}
-+
-+	get_name(name, KSYM_NAME_LEN, data);
-+	name_len = strlen(name) + 1;
-+	while (!IS_ALIGNED(name_len, sizeof(u64)))
-+		name[name_len++] = '\0';
-+	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
-+
-+	ksymbol_event = (struct perf_ksymbol_event){
-+		.name = name,
-+		.name_len = name_len,
-+		.event_id = {
-+			.header = {
-+				.type = PERF_RECORD_KSYMBOL,
-+				.misc = ksym_type,
-+				.size = sizeof(ksymbol_event.event_id) +
-+					name_len,
-+			},
-+			.addr = addr,
-+			.len = len,
-+		},
-+	};
-+
-+	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
-+	return;
-+err:
-+	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
-+}
-+
- void perf_event_itrace_started(struct perf_event *event)
+ drivers/net/ppp/ppp_async.c   | 14 ++++-----
+ drivers/net/ppp/ppp_generic.c | 54 +++++++++++++++++++++++++++++++++--
+ drivers/net/ppp/ppp_synctty.c |  9 +++---
+ drivers/net/ppp/pptp.c        |  5 ----
+ net/l2tp/l2tp_ppp.c           |  4 ---
+ 5 files changed, 62 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/ppp/ppp_async.c b/drivers/net/ppp/ppp_async.c
+index 288cf099876b..b287bb811875 100644
+--- a/drivers/net/ppp/ppp_async.c
++++ b/drivers/net/ppp/ppp_async.c
+@@ -770,7 +770,7 @@ process_input_packet(struct asyncppp *ap)
  {
- 	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
- 		inc = true;
- 	if (is_cgroup_event(event))
- 		inc = true;
-+	if (event->attr.ksymbol)
-+		atomic_inc(&nr_ksymbol_events);
+ 	struct sk_buff *skb;
+ 	unsigned char *p;
+-	unsigned int len, fcs, proto;
++	unsigned int len, fcs;
  
- 	if (inc) {
- 		/*
+ 	skb = ap->rpkt;
+ 	if (ap->state & (SC_TOSS | SC_ESCAPE))
+@@ -799,14 +799,14 @@ process_input_packet(struct asyncppp *ap)
+ 			goto err;
+ 		p = skb_pull(skb, 2);
+ 	}
+-	proto = p[0];
+-	if (proto & 1) {
+-		/* protocol is compressed */
+-		*(u8 *)skb_push(skb, 1) = 0;
+-	} else {
++
++	/* If protocol field is not compressed, it can be LCP packet */
++	if (!(p[0] & 0x01)) {
++		unsigned int proto;
++
+ 		if (skb->len < 2)
+ 			goto err;
+-		proto = (proto << 8) + p[1];
++		proto = (p[0] << 8) + p[1];
+ 		if (proto == PPP_LCP)
+ 			async_lcp_peek(ap, p, skb->len, 1);
+ 	}
+diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+index 500bc0027c1b..c708400fff4a 100644
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -1965,6 +1965,46 @@ ppp_do_recv(struct ppp *ppp, struct sk_buff *skb, struct channel *pch)
+ 	ppp_recv_unlock(ppp);
+ }
+ 
++/**
++ * __ppp_decompress_proto - Decompress protocol field, slim version.
++ * @skb: Socket buffer where protocol field should be decompressed. It must have
++ *	 at least 1 byte of head room and 1 byte of linear data. First byte of
++ *	 data must be a protocol field byte.
++ *
++ * Decompress protocol field in PPP header if it's compressed, e.g. when
++ * Protocol-Field-Compression (PFC) was negotiated. No checks w.r.t. skb data
++ * length are done in this function.
++ */
++static void __ppp_decompress_proto(struct sk_buff *skb)
++{
++	if (skb->data[0] & 0x01)
++		*(u8 *)skb_push(skb, 1) = 0x00;
++}
++
++/**
++ * ppp_decompress_proto - Check skb data room and decompress protocol field.
++ * @skb: Socket buffer where protocol field should be decompressed. First byte
++ *	 of data must be a protocol field byte.
++ *
++ * Decompress protocol field in PPP header if it's compressed, e.g. when
++ * Protocol-Field-Compression (PFC) was negotiated. This function also makes
++ * sure that skb data room is sufficient for Protocol field, before and after
++ * decompression.
++ *
++ * Return: true - decompressed successfully, false - not enough room in skb.
++ */
++static bool ppp_decompress_proto(struct sk_buff *skb)
++{
++	/* At least one byte should be present (if protocol is compressed) */
++	if (!pskb_may_pull(skb, 1))
++		return false;
++
++	__ppp_decompress_proto(skb);
++
++	/* Protocol field should occupy 2 bytes when not compressed */
++	return pskb_may_pull(skb, 2);
++}
++
+ void
+ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
+ {
+@@ -1977,7 +2017,7 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
+ 	}
+ 
+ 	read_lock_bh(&pch->upl);
+-	if (!pskb_may_pull(skb, 2)) {
++	if (!ppp_decompress_proto(skb)) {
+ 		kfree_skb(skb);
+ 		if (pch->ppp) {
+ 			++pch->ppp->dev->stats.rx_length_errors;
+@@ -2074,6 +2114,9 @@ ppp_receive_nonmp_frame(struct ppp *ppp, struct sk_buff *skb)
+ 	if (ppp->flags & SC_MUST_COMP && ppp->rstate & SC_DC_FERROR)
+ 		goto err;
+ 
++	/* At this point the "Protocol" field MUST be decompressed, either in
++	 * ppp_input(), ppp_decompress_frame() or in ppp_receive_mp_frame().
++	 */
+ 	proto = PPP_PROTO(skb);
+ 	switch (proto) {
+ 	case PPP_VJC_COMP:
+@@ -2245,6 +2288,9 @@ ppp_decompress_frame(struct ppp *ppp, struct sk_buff *skb)
+ 		skb_put(skb, len);
+ 		skb_pull(skb, 2);	/* pull off the A/C bytes */
+ 
++		/* Don't call __ppp_decompress_proto() here, but instead rely on
++		 * corresponding algo (mppe/bsd/deflate) to decompress it.
++		 */
+ 	} else {
+ 		/* Uncompressed frame - pass to decompressor so it
+ 		   can update its dictionary if necessary. */
+@@ -2290,9 +2336,11 @@ ppp_receive_mp_frame(struct ppp *ppp, struct sk_buff *skb, struct channel *pch)
+ 
+ 	/*
+ 	 * Do protocol ID decompression on the first fragment of each packet.
++	 * We have to do that here, because ppp_receive_nonmp_frame() expects
++	 * decompressed protocol field.
+ 	 */
+-	if ((PPP_MP_CB(skb)->BEbits & B) && (skb->data[0] & 1))
+-		*(u8 *)skb_push(skb, 1) = 0;
++	if (PPP_MP_CB(skb)->BEbits & B)
++		__ppp_decompress_proto(skb);
+ 
+ 	/*
+ 	 * Expand sequence number to 32 bits, making it as close
+diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
+index 047f6c68a441..d02ba2494d93 100644
+--- a/drivers/net/ppp/ppp_synctty.c
++++ b/drivers/net/ppp/ppp_synctty.c
+@@ -709,11 +709,10 @@ ppp_sync_input(struct syncppp *ap, const unsigned char *buf,
+ 		p = skb_pull(skb, 2);
+ 	}
+ 
+-	/* decompress protocol field if compressed */
+-	if (p[0] & 1) {
+-		/* protocol is compressed */
+-		*(u8 *)skb_push(skb, 1) = 0;
+-	} else if (skb->len < 2)
++	/* PPP packet length should be >= 2 bytes when protocol field is not
++	 * compressed.
++	 */
++	if (!(p[0] & 0x01) && skb->len < 2)
+ 		goto err;
+ 
+ 	/* queue the frame to be processed */
+diff --git a/drivers/net/ppp/pptp.c b/drivers/net/ppp/pptp.c
+index 67ffe74747a1..8f09edd811e9 100644
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -325,11 +325,6 @@ static int pptp_rcv_core(struct sock *sk, struct sk_buff *skb)
+ 			skb_pull(skb, 2);
+ 		}
+ 
+-		if ((*skb->data) & 1) {
+-			/* protocol is compressed */
+-			*(u8 *)skb_push(skb, 1) = 0;
+-		}
+-
+ 		skb->ip_summed = CHECKSUM_NONE;
+ 		skb_set_network_header(skb, skb->head-skb->data);
+ 		ppp_input(&po->chan, skb);
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index c03c6461f236..04d9946dcdba 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -236,10 +236,6 @@ static void pppol2tp_recv(struct l2tp_session *session, struct sk_buff *skb, int
+ 	    skb->data[1] == PPP_UI)
+ 		skb_pull(skb, 2);
+ 
+-	/* Decompress protocol field if PFC is enabled */
+-	if ((*skb->data) & 0x1)
+-		*(u8 *)skb_push(skb, 1) = 0;
+-
+ 	if (sk->sk_state & PPPOX_BOUND) {
+ 		struct pppox_sock *po;
+ 
 -- 
-2.17.1
+2.19.2
 
