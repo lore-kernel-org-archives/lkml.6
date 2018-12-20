@@ -2,79 +2,66 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC540C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB224C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A23217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F869218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732045AbeLTPwx (ORCPT
+        id S1732058AbeLTPyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:52:53 -0500
-Received: from nat.nue.novell.com ([195.135.221.2]:56289 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728172AbeLTPwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:52:53 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id 774FF3CB1; Thu, 20 Dec 2018 16:52:51 +0100 (CET)
-Date:   Thu, 20 Dec 2018 16:52:51 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        vbabka@suse.cz, pavel.tatashin@microsoft.com,
-        rppt@linux.vnet.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm, page_alloc: Fix has_unmovable_pages for HugePages
-Message-ID: <20181220155247.qbyptzk35xr7ey72@d104.suse.de>
-References: <20181217225113.17864-1-osalvador@suse.de>
- <20181219142528.yx6ravdyzcqp5wtd@master>
- <20181219233914.2fxe26pih26ifvmt@d104.suse.de>
- <20181220091228.GB14234@dhcp22.suse.cz>
- <20181220124925.itwuuacgztpgsk7s@d104.suse.de>
- <20181220130606.GG9104@dhcp22.suse.cz>
- <20181220134132.6ynretwlndmyupml@d104.suse.de>
- <20181220142124.r34fnuv6b33luj5a@d104.suse.de>
- <20181220153237.bhepsqw27mjmc4g5@master>
+        Thu, 20 Dec 2018 10:54:04 -0500
+Received: from ms.lwn.net ([45.79.88.28]:53534 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728172AbeLTPyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:54:04 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 13A726D9;
+        Thu, 20 Dec 2018 15:54:04 +0000 (UTC)
+Date:   Thu, 20 Dec 2018 08:54:03 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     NeilBrown <neilb@suse.com>
+Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] Documentation: convert path-lookup from markdown to
+ resturctured text
+Message-ID: <20181220085403.5538683d@lwn.net>
+In-Reply-To: <87h8fmcnoi.fsf@notabene.neil.brown.name>
+References: <87k1l9dgx9.fsf@notabene.neil.brown.name>
+        <87sgzc7v50.fsf@notabene.neil.brown.name>
+        <20181205124644.3f8a452a@lwn.net>
+        <87woonelit.fsf@notabene.neil.brown.name>
+        <20181206100912.535b351d@lwn.net>
+        <87h8fmcnoi.fsf@notabene.neil.brown.name>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220153237.bhepsqw27mjmc4g5@master>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 03:32:37PM +0000, Wei Yang wrote:
-> Now let's go back to see how to calculate new_iter. From the chart
-> above, we can see this formula stands for all three cases:
+On Mon, 10 Dec 2018 09:58:37 +1100
+NeilBrown <neilb@suse.com> wrote:
+
+> However we now have a stub section "Pathname lookup" which serves only
+> to introduce another stub sectoin "Pathname lookup in Linux", which does
+> little more than introduce the rest of the section.
+> This seems inelegant, and is probably why I went for the "include"
+> approach.
 > 
->     new_iter = round_up(iter + 1, page_size(HugePage))
-> 
-> So it looks the first version is correct.
+> What would you think of something more like the following?
 
-Let us assume:
+Sorry for the delay ... $EXCUSES ...
 
-* iter = 0 (page first of the pageblock)
-* page is a tail
-* hugepage is 2mb
+This makes sense; I went ahead and applied it with your SOB on it; let me
+know if that's not what you wanted.
 
-So we have the following:
+Thanks,
 
-iter = round_up(iter + 1, 1<<compound_order(head)) - 1;
-
-which translates to:
-
-iter = round_up(1, 512) - 1 = 511;
-
-Then iter will be incremented to 512, and we break the loop.
-
-The outcome of this is that ouf ot 512 pages, we only scanned 1,
-and we skipped all the other 511 pages by mistake.
-
--- 
-Oscar Salvador
-SUSE L3
+jon
