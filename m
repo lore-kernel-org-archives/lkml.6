@@ -2,164 +2,119 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AC8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03602C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE2820989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dhGP006d"
+	by mail.kernel.org (Postfix) with ESMTP id C4D7B20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545318313;
+	bh=pU1qiUpdARY0RhrguUJV+QXDWs9jVr6LBPKymW/y3LY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=A5uDbz2niUeFZJDpdRoesH2s+B1x/6DzzduIkoD/fLBMrpOOAeW5MBK9cwbaFJlM4
+	 NwSVO1E3gm3w4Rq2HN9jLY5n8uATjAro3MPg8dwVjH7jIiNpukIVP1v3gTDovf+fjK
+	 e6VLjSVlmKpMUClNoUZVvEjn1yGUZwXvatAKLZ3I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbeLTPDh (ORCPT
+        id S1730958AbeLTPFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:03:37 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39877 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728697AbeLTPDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:03:37 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so1602813lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:03:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=a+yF+mRO5+t2Sy3Usy5wJ4cgDUSE/pLeF/x8VtN8/RQ=;
-        b=dhGP006dKOm9o5PZTvEOsUvvgrFbptquk5utyl7hQi09Oyxado24C2GKzSQikZWnCw
-         prTt83C9NVYv8y5qm7iL1sZSjAtg3hV/+eY9n18bVR8OFla+PBFwPwmxUfuiXjLzfx8H
-         B/d3Z0GNy6vHiQ2/InW1vyFpkbHsZ5kFWDb54=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=a+yF+mRO5+t2Sy3Usy5wJ4cgDUSE/pLeF/x8VtN8/RQ=;
-        b=BWZNix64PGcVrToaSaccIItdq8M7iMB0/4WwUGe3b7/zcOesGQ26Uk9J1UFnpyrBag
-         1heRvH1o+MNGnBQLRxVN31HiqAdeHQ1ZNPrFSlhUDLm40qsOFudmuYfJcf1/qDGczasj
-         TmdgNbVE6ceY+oROrrNivpc5SpmG3ktsBuTIzlRQgQTMt00O+/KTfPFnCkv4EEecfc8o
-         tcZfRdz5/QcVB73oON2Rb5CBzSVqh1yxgO8hFZTMHRd7mD5hiubLh8IJUeMKJDLQ5s78
-         TOPeMevH7sXbnkOW/L97KNdMpZxzQA0CHxYdii2WcqjGTZwPDnOSdzZzOwubKgfeET45
-         m6VQ==
-X-Gm-Message-State: AA+aEWa3pa+jwZzshvpTiDTqXUCF5YYa9l5pNtmy46F2Qkp1FRTM8+Ab
-        y3G9SU69X5eMAl1SmmhkB1gdvsP5BxoRUr8dkBmDw8IpIC8=
-X-Google-Smtp-Source: AFSGD/XSjqy7THOgFgD0iFxVQUvJ4rdDE2b8GeXESeC5eXGd0YTG30jiQVOMVfLEsXDIQvFe8+zb8oak33sp13th0Jc=
-X-Received: by 2002:a19:ca51:: with SMTP id h17mr14560107lfj.126.1545318214972;
- Thu, 20 Dec 2018 07:03:34 -0800 (PST)
+        Thu, 20 Dec 2018 10:05:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725681AbeLTPFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:05:12 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7E03218D3;
+        Thu, 20 Dec 2018 15:05:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545318311;
+        bh=pU1qiUpdARY0RhrguUJV+QXDWs9jVr6LBPKymW/y3LY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BKoi93q0Ey+xkCzuqqOQTHp+4u/DfalRPbHW2Qz9e849jTnhxKau5RC161IZ+DP88
+         OwmgI5xxXVKG+JHalCnryZ+OBJKvudzsAjz4bBe5Hu9Bqx2lSnGAKCudk22sZyld0z
+         fTfLjh+MAWHqFUgAbjZ48wyxMbcb0EnLSg46B9Iw=
+Received: by mail-qt1-f180.google.com with SMTP id i7so2097139qtj.10;
+        Thu, 20 Dec 2018 07:05:10 -0800 (PST)
+X-Gm-Message-State: AA+aEWZXjzxAxDWPH9wmutuzZ1YY7q6KyUwnOJQn8YI8bajKvvIiyARH
+        KT8N6OrNpkBOq1L8D13Tbuo2+4Hr+IYKE0wxeA==
+X-Google-Smtp-Source: AFSGD/UnuIu7E3MzUS/BouOvxJ8zdia4VxZRbCWxRFN6Pdr0hyHOUB1E4X4aLpHc9e8tsdnhFPql4uFymmKZAHFEpn0=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr26473216qvi.90.1545318310028;
+ Thu, 20 Dec 2018 07:05:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20181220085903.562090333@linuxfoundation.org>
-In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 20 Dec 2018 20:33:23 +0530
-Message-ID: <CA+G9fYv0brPeSuyQC06DTe=P4pxKijiaG-EAnP_2aMbcj7tqaQ@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/67] 4.19.12-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
+ <20181218040702.29231-4-andrew.smirnov@gmail.com> <20181218151533.GA2922@bogus>
+ <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 20 Dec 2018 09:04:58 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLcMb+RG8CJxzCRx0D8TdfZBFOtcx768ejHeNHtSSp5Wg@mail.gmail.com>
+Message-ID: <CAL_JsqLcMb+RG8CJxzCRx0D8TdfZBFOtcx768ejHeNHtSSp5Wg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 at 14:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Dec 18, 2018 at 12:09 PM Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
 >
-> This is the start of the stable review cycle for the 4.19.12 release.
-> There are 67 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On 12/18/2018 5:15 PM, Rob Herring wrote:
+> > On Mon, Dec 17, 2018 at 08:07:02PM -0800, Andrey Smirnov wrote:
+> >> Add code needed to support i.MX8MQ variant.
+> >>
+> >> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> >> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 >
-> Responses should be made by Sat Dec 22 08:58:49 UTC 2018.
-> Anything received after that time might be too late.
+> >> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> >> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> >>
+> >> +Additional required properties for imx8mq-pcie:
+> >> +- fsl,controller-id: Logical ID of a given PCIE controller. PCIE1 is 0, PCIE2 is 1;
+> >> +
+> >
+> > Remove this.
+> >
+> > If GPR register offset is what you need, then put that into DT.
+> > Typically, we'd have a property with iomuxc phandle and offset.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.12-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
+> This series initially added explicit offsets but I suggested a single
+> "controller-id" because:
+>   * There are multiple bit and byte offsets
+>   * Other imx8 SOCs also have 2x pcie with other bit/byte offsets
 >
-> thanks,
->
-> greg k-h
+> Hiding this behind a compatible string and single "controller-id" seem
+> preferable to elaborating register maps in dt bindings. It also makes
+> upgrades simpler: if features are added which use other bits there is no
+> need to describe them in DT and deal with compatibility headaches.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+You don't have to describe all bit and byte offsets. Once you know 1,
+you can derive all the others. In fact, it doesn't have to be a
+register field at all, just provide whatever identifier you need:
 
-Summary
-------------------------------------------------------------------------
+<$syscon 0>
 
-kernel: 4.19.12-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 5ef9b1a9d5aa83951b89a56de85e3a1fa01b2910
-git describe: v4.19.11-68-g5ef9b1a9d5aa
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.11-68-g5ef9b1a9d5aa
+and
 
-No regressions (compared to build v4.19.11)
+<&syscon 1>
 
-No fixes (compared to build v4.19.11)
-
-
-Ran 20458 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-hugetlb-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Rob
