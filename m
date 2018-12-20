@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F428C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CD4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40490217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8246920989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298028;
-	bh=DuJdRJFnvgBOzjGz58IHAaAXXvIzCiAYC+naEfaLZJY=;
+	s=default; t=1545298037;
+	bh=VQMSwhIxixzVCziehJcWHm97cA2YczXIxSMCL+7vDsA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fqJ89zMvXP3I7J4Ip0lsc3+8+Obo7FpcBd+kc/ZGvzrWpO2NyLsCqzaSKsgLqTDxT
-	 XUqicQXQe3lFWkNsMZ3pefAHKaIIcZjw+NhsI8oRaKXZbGVaoC/scUKsjShXXq0HYA
-	 w+fCZjxyL7XMj0KGuwi3YhIe0r8cXxNfBM/ZyIEs=
+	b=VlPT2RwqRnQlkVFgdMtIOS27pxivZJ+OWwe15tn+01RHXEIcFQMEZ2m4j3Nq28LDa
+	 a2U83balgziuWoh1d3I9rIltQRCk4RYzvsDpqpaBwQR8plMKJY4B2vQHz3Ao6qjzt+
+	 dOuwzUHq82Pk/uZ591R8A2WJC4l25nGu1fxCwpP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732236AbeLTJ1G (ORCPT
+        id S1732293AbeLTJ1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730828AbeLTJ06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:26:58 -0500
+        id S1732256AbeLTJ1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01E6B21852;
-        Thu, 20 Dec 2018 09:26:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF5FC20656;
+        Thu, 20 Dec 2018 09:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298017;
-        bh=DuJdRJFnvgBOzjGz58IHAaAXXvIzCiAYC+naEfaLZJY=;
+        s=default; t=1545298033;
+        bh=VQMSwhIxixzVCziehJcWHm97cA2YczXIxSMCL+7vDsA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yMa34ZYbeVwNAWvf3rgH/VXo5HTNuSIflOsARyKzVEwbQh1Y11WjEbGlwbs2ECsYt
-         1/lOCDbD7hmlbP8n6wRtfp1keSidcusi8Dr+RAe/3dliiU5Za83z2+VYlflzTPbXWg
-         XQsz4bSTSJp6Bh+4A52VzZixiiqCNo2cLYMtVoCU=
+        b=Hbb2T5e4HTMpU1elKepPqcdbDH5mk/Yu2T9EQ62J0VThwsiBQZvv0x/0SE0pnpPP2
+         bTWnL1SozeRhxBLbvWq1ZplFrarrTDB/PRKsrdI/DyNnCFjSh+9IkVAghsDdIieZA+
+         YXj+2TR9X0C0zDvMMd0a4XkBst/qqZsZOg4iajdw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Abhinav Kumar <abhinavk@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 41/72] drm/msm: Grab a vblank reference when waiting for commit_done
-Date:   Thu, 20 Dec 2018 10:18:40 +0100
-Message-Id: <20181220085923.966567772@linuxfoundation.org>
+Subject: [PATCH 4.14 46/72] SUNRPC: Fix a potential race in xprt_connect()
+Date:   Thu, 20 Dec 2018 10:18:45 +0100
+Message-Id: <20181220085924.158895238@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -66,37 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
+[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
 
-Similar to the atomic helpers, we should enable vblank while we're
-waiting for the commit to finish. DPU needs this, MDP5 seems to work
-fine without it.
+If an asynchronous connection attempt completes while another task is
+in xprt_connect(), then the call to rpc_sleep_on() could end up
+racing with the call to xprt_wake_pending_tasks().
+So add a second test of the connection state after we've put the
+task to sleep and set the XPRT_CONNECTING flag, when we know that there
+can be no asynchronous connection attempts still in progress.
 
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/sunrpc/xprt.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index 025d454163b0..8f77047a226d 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -93,7 +93,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
- 		if (!new_crtc_state->active)
- 			continue;
- 
-+		if (drm_crtc_vblank_get(crtc))
-+			continue;
-+
- 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
-+
-+		drm_crtc_vblank_put(crtc);
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 8eb0c4f3b3e9..d0282cc88b14 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -780,8 +780,15 @@ void xprt_connect(struct rpc_task *task)
+ 			return;
+ 		if (xprt_test_and_set_connecting(xprt))
+ 			return;
+-		xprt->stat.connect_start = jiffies;
+-		xprt->ops->connect(xprt, task);
++		/* Race breaker */
++		if (!xprt_connected(xprt)) {
++			xprt->stat.connect_start = jiffies;
++			xprt->ops->connect(xprt, task);
++		} else {
++			xprt_clear_connecting(xprt);
++			task->tk_status = 0;
++			rpc_wake_up_queued_task(&xprt->pending, task);
++		}
  	}
+ 	xprt_release_write(xprt, task);
  }
- 
 -- 
 2.19.1
 
