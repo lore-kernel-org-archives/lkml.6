@@ -2,66 +2,87 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1666C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F02B9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2A721773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD0221773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:38:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u2tt3Yrf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbeLTQgj convert rfc822-to-8bit (ORCPT
+        id S1730510AbeLTQiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:36:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbeLTQgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:36:39 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D6648C0BEAA5;
-        Thu, 20 Dec 2018 16:36:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0938C5EE03;
-        Thu, 20 Dec 2018 16:36:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CADYN=9KNL=6juu0WuHYPLu3bMNpVimUMWfFqmr5GbTrKPyOfVg@mail.gmail.com>
-References: <CADYN=9KNL=6juu0WuHYPLu3bMNpVimUMWfFqmr5GbTrKPyOfVg@mail.gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754768644.17872.4707695831889551662.stgit@warthog.procyon.org.uk>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mszeredi@redhat.com, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 34/34] vfs: Add a sample program for the new mount API [ver #12]
+        Thu, 20 Dec 2018 11:38:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34206 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbeLTQiO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:38:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CG/jSNeNChtKOqB2GhAVgwv4KkxMfGgWF7pWoOr89kI=; b=u2tt3Yrf2gIH3x6Lnk4xszbFQ
+        DKw9iASYROnevBlH9Xf7ze13R9C39PJ4lpFpZ3KD90t42ccnswbKEo890nx7HyTrjz3rncZL01Djt
+        3DOIokdM0vEuFIFV4noCtHDVgZd1KQwohx8FcUY1Fd0L0uB4WEOV5HtQ18Q15XTywKy+FTK2l10WW
+        gp67ZHzG5XYNIhudHXe42JPZfbi0ByP9kMr+GFMUy/gRZcCQ1QtBXu+Nnbq92Ka5/FkxNaaRCEq42
+        sJ6lrCeCBfkXoTGRNaXeFtdJbA6Vs8K6EGj8bZnNo6bPeFS0NcKBtOBN3rV02VlOCJJH4sp92X6aS
+        Jmf/TQA5g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ga1Kv-0000cj-Ji; Thu, 20 Dec 2018 16:38:13 +0000
+Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
+ it more comprehensible
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Thorsten Leemhuis <linux@leemhuis.info>
+Cc:     linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181217152043.9989-1-linux@leemhuis.info>
+ <20181217112437.5fe868eb@lwn.net>
+ <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
+ <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
+ <20181220082819.69fc3e5c@lwn.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a02caf89-9221-8e31-4a2d-44b46b81cda2@infradead.org>
+Date:   Thu, 20 Dec 2018 08:38:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181220082819.69fc3e5c@lwn.net>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 20 Dec 2018 16:36:36 +0000
-Message-ID: <6151.1545323796@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 20 Dec 2018 16:36:39 +0000 (UTC)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/20/18 7:28 AM, Jonathan Corbet wrote:
+> On Thu, 20 Dec 2018 16:23:38 +0100
+> Thorsten Leemhuis <linux@leemhuis.info> wrote:
+> 
+>> While at it: Jonathan, you mentioned putting the script in scripts/, but
+>> according to the Makefile in that directory it is "for various helper
+>> programs used throughout the kernel for the build process". That's one
+>> reason why it feels wrong to put it there. Another one: that script
+>> targets users and thus we should try to make sure they can access it
+>> easily. That's why I'm currently inclined to put it in tools/ somewhere.
+> 
+> Yeah, tools/ is a better place.  Maybe a tools/debugging directory or some
+> such?
 
-Anders Roxell <anders.roxell@linaro.org> wrote:
+chktaint is similar (IMO) to scripts/decodecode though.
 
-> In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
->                  from ../samples/vfs/test-statx.c:28:
-> /usr/include/x86_64-linux-gnu/bits/statx.h:25:8: error: redefinition
-> of ‘struct statx_timestamp’
+@Thorsten:
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Yeah - the problem is that statx has now made it into glibc, but the sample
-program doesn't deal with it turning up in the system headers.  I've passed a
-patch to Al already.
 
-David
+thanks,
+-- 
+~Randy
