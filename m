@@ -6,42 +6,45 @@ X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAE7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE4FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFE49218E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5102218E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388600AbeLTSHS (ORCPT
+        id S2388602AbeLTSHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:07:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33033 "EHLO
+        Thu, 20 Dec 2018 13:07:53 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53591 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbeLTSHS (ORCPT
+        with ESMTP id S1729637AbeLTSHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:07:18 -0500
+        Thu, 20 Dec 2018 13:07:53 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI7A8H3681355
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI7j5O3681407
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:07:11 -0800
+        Thu, 20 Dec 2018 10:07:45 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI7ABn3681352;
-        Thu, 20 Dec 2018 10:07:10 -0800
-Date:   Thu, 20 Dec 2018 10:07:10 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI7im73681404;
+        Thu, 20 Dec 2018 10:07:44 -0800
+Date:   Thu, 20 Dec 2018 10:07:44 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5rav4ccyb0sjciysz2i4p3sx@git.kernel.org>
-Cc:     tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        tmricht@linux.ibm.com, jolsa@kernel.org, mingo@kernel.org
-Reply-To: jolsa@kernel.org, mingo@kernel.org, adrian.hunter@intel.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org,
-          tmricht@linux.ibm.com, acme@redhat.com, namhyung@kernel.org,
-          tglx@linutronix.de
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-41fa483aeee567cc34f9fc4c2e7035f2df25299d@git.kernel.org>
+Cc:     mingo@kernel.org, tz.stoyanov@gmail.com, herton@redhat.com,
+        tglx@linutronix.de, acme@redhat.com, jolsa@redhat.com,
+        hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        rostedt@goodmis.org
+Reply-To: acme@redhat.com, tglx@linutronix.de, rostedt@goodmis.org,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
+          jolsa@redhat.com, herton@redhat.com, tz.stoyanov@gmail.com,
+          mingo@kernel.org
+In-Reply-To: <20181212091214.GC17489@krava>
+References: <20181212091214.GC17489@krava>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Cast off_t to s64 to avoid warning on
- bionic libc
-Git-Commit-ID: 866053bb644f754d1a93aaa9db9998fecf7a8978
+Subject: [tip:perf/core] tools lib traceevent: Use LDFLAGS in the build
+ commands
+Git-Commit-ID: 41fa483aeee567cc34f9fc4c2e7035f2df25299d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -55,48 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  866053bb644f754d1a93aaa9db9998fecf7a8978
-Gitweb:     https://git.kernel.org/tip/866053bb644f754d1a93aaa9db9998fecf7a8978
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 11 Dec 2018 16:43:40 -0300
+Commit-ID:  41fa483aeee567cc34f9fc4c2e7035f2df25299d
+Gitweb:     https://git.kernel.org/tip/41fa483aeee567cc34f9fc4c2e7035f2df25299d
+Author:     Jiri Olsa <jolsa@redhat.com>
+AuthorDate: Wed, 12 Dec 2018 10:12:14 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:23:57 -0300
 
-perf tools: Cast off_t to s64 to avoid warning on bionic libc
+tools lib traceevent: Use LDFLAGS in the build commands
 
-To avoid this warning:
+So that the user can specify outside LDFLAGS values.
 
-    CC       /tmp/build/perf/util/s390-cpumsf.o
-  util/s390-cpumsf.c: In function 's390_cpumsf_samples':
-  util/s390-cpumsf.c:508:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'off_t' [-Wformat=]
-     pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
-     ^
+Keeping the CFLAGS in there as well, so we don't break existing scripts.
 
-Now the various Android cross toolchains used in the perf tools
-container test builds are all clean and we can remove this:
-
-  export EXTRA_MAKE_ARGS="WERROR=0"
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: https://lkml.kernel.org/n/tip-5rav4ccyb0sjciysz2i4p3sx@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Herton Krzesinski <herton@redhat.com>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Link: http://lkml.kernel.org/r/20181212091214.GC17489@krava
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/s390-cpumsf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/traceevent/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index a2eeebbfb25f..68b2570304ec 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -506,7 +506,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
- 	aux_ts = get_trailer_time(buf);
- 	if (!aux_ts) {
- 		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
--		       sfq->buffer->data_offset);
-+		       (s64)sfq->buffer->data_offset);
- 		aux_ts = ~0ULL;
- 		goto out;
- 	}
+diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
+index 67fe5d7ef190..941761d9923d 100644
+--- a/tools/lib/traceevent/Makefile
++++ b/tools/lib/traceevent/Makefile
+@@ -177,7 +177,7 @@ $(TE_IN): force
+ 	$(Q)$(MAKE) $(build)=libtraceevent
+ 
+ $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
+-	$(QUIET_LINK)$(CC) --shared $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
++	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
+ 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
+ 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
+ 
+@@ -196,7 +196,7 @@ $(PLUGINS_IN): force
+ 	$(Q)$(MAKE) $(build)=$(plugin_obj)
+ 
+ $(OUTPUT)%.so: $(OUTPUT)%-in.o
+-	$(QUIET_LINK)$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
++	$(QUIET_LINK)$(CC) $(CFLAGS) -shared $(LDFLAGS) -nostartfiles -o $@ $^
+ 
+ define make_version.h
+   (echo '/* This file is automatically generated. Do not modify. */';		\
