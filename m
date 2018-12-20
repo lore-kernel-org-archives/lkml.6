@@ -2,121 +2,84 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4186C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D5CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D13021909
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EQ4sSfTT"
+	by mail.kernel.org (Postfix) with ESMTP id EA0FA21905
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545338780;
+	bh=bTccyKLKF6zYBe+Zve/lh7YrZ+ypM5r9whlilg+dVgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=H8DVMMlOVvyHKJvILrCb18IHFAvrO0YkUoXRmxm1myh1CvH86HFm2Vej0IwxWSaWb
+	 YXeEhnODtSmhnl0XkvjH1txZV+OU/He7u8OZU+a+PNpDiZYtdwf0L0Su5v5/OUi10G
+	 uUl7ECVXPEUtOYc4IhEi8lk2/TyN2do3TNFf/QI4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388259AbeLTUpc (ORCPT
+        id S2389632AbeLTUqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:45:32 -0500
-Received: from ozlabs.org ([203.11.71.1]:55037 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730057AbeLTUpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:45:32 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43LP0S4bf1z9s8J;
-        Fri, 21 Dec 2018 07:45:28 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545338729;
-        bh=BwrrPM3X9hZVgHVFTGe/NdzgxrivncUr13rT/FGbtRY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EQ4sSfTT/EOvQQFAXYEVWvMsavH7v8jUy79O2uSaC9yMgSDHh+lD/cveKwyV38460
-         9dHDdkdZzzr3N7FPFcACE7e4uM4z3AtpUSjjI9q3YFcEAcMCC5apY9oMBvdXO8BkIK
-         9lvenYvmCaiMGeePNnxU0iLyDDnpONcFLyR45FhryyCwn4dV8XIQRD+fhIvgWGamW8
-         L/tCq8oe/mwUmNl0g59E4P67f15TB0bekmTIVkqNyUf36gqZ2NHHPJsBapph/7MgbM
-         uRnY1sHEHNu1n0qVn+PJKWM8EMYbNaCiA7AJl21staKgzjkwsNN3E8/hbIe2zbNmZQ
-         SlAjFjoBK8N3w==
-Date:   Fri, 21 Dec 2018 07:45:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: Signed-off-by missing for commits in the vfs tree
-Message-ID: <20181221074522.0b0c986c@canb.auug.org.au>
+        Thu, 20 Dec 2018 15:46:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36591 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730057AbeLTUqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 15:46:18 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k98so3199803otk.3;
+        Thu, 20 Dec 2018 12:46:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H/p/Jc068FZbYYymYSJXNWUqOBdncNuVva4cW2LHqpI=;
+        b=hE/PhaP20Z86rdvPaVWxH9+oXBgBSL/hrOdIXshDNjF0lxg/fzmS71ylWX0IWly352
+         le6R0YNXUx6mzVcOv5+CCk2rqXKGrTBXBW2++pznPCapaHqhxvjO6ef3wC4pOzcPHaX8
+         g3/tVNVk/UIFrKXCpmblVqPxLYQUDsw1mtCW4OdHhR6bZkW1C5+8JhN5nciRN+iwKdLo
+         AFVgtZo/wDolMcKeWjFBmyiDm34FgYw0sombb9cleRRfbf8VEzl+bunUMpaW7VETj/68
+         pZn7nRCAHZ93pvvLEm7OOHeYdUt8uqG37/uDxsU9TM2AWlmDvRu50JpHvs/XBuo0Gcpd
+         163Q==
+X-Gm-Message-State: AA+aEWbd3W42JfNyBZYIXI1WU1Ca7Sj5eSoKZVYG4r/CyAWGFw03ey5D
+        5hlVK4a+y+iNk8DE98LA/w==
+X-Google-Smtp-Source: AFSGD/XjwVw+/JmKsl1e8kNkrJ3oUAfxOPvTWXnLKO6f5nbQnIT64o47qtcvDU96OOky4KOfOFhCMw==
+X-Received: by 2002:a9d:66f:: with SMTP id 102mr20395922otn.293.1545338778042;
+        Thu, 20 Dec 2018 12:46:18 -0800 (PST)
+Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
+        by smtp.gmail.com with ESMTPSA id v141sm11901076oia.25.2018.12.20.12.46.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 12:46:17 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:46:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andreas Klinger <ak@it-klinger.de>
+Cc:     grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        mark.rutland@arm.com, linux-omap@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio-omap.txt: add reg and interrupts properties
+Message-ID: <20181220204616.GA31850@bogus>
+References: <20181214194822.lvavgczxq4cy7v64@arbad>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/p6HwAU_tfq9f5bddGFFOrnS"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214194822.lvavgczxq4cy7v64@arbad>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/p6HwAU_tfq9f5bddGFFOrnS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 14, 2018 at 08:48:25PM +0100, Andreas Klinger wrote:
+> Document properties reg and interrupts for OMAP GPIO controller bindings
+> 
+> Also add unit address in node name of the example
+> 
+> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-omap.txt | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 
-Hi Al,
+Applied.
 
-Commits
-
-  e6cf4b0ddae8 ("teach vfs_get_tree() to handle subtype, switch do_new_moun=
-t() to it")
-  a5df92eef26f ("new helper: vfs_create_mount()")
-  84b9446c0cb2 ("mount_fs: suppress MAC on MS_SUBMOUNT as well as MS_KERNMO=
-UNT")
-  6df9e604628d ("smack: rewrite smack_sb_eat_lsm_opts()")
-  a4fdf6490284 ("smack: get rid of match_token()")
-  b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new =
-helper")
-  324240b27f48 ("LSM: new method: ->sb_add_mnt_opt()")
-  8a2bfb0f835a ("selinux: rewrite selinux_sb_eat_lsm_opts()")
-  3cec2907c913 ("selinux: regularize Opt_... names a bit")
-  b0ab2db616c0 ("selinux: switch away from match_token()")
-  cbe9d96f42ba ("selinux: new helper - selinux_add_opt()")
-  2790a639b456 ("LSM: bury struct security_mnt_opts")
-  205b9b7a392a ("smack: switch to private smack_mnt_opts")
-  179a64d445e2 ("selinux: switch to private struct selinux_mnt_opts")
-  cb662518822e ("LSM: hide struct security_mnt_opts from any generic code")
-  6c63bb2d5323 ("selinux: kill selinux_sb_get_mnt_opts()")
-  e03db7f5411c ("LSM: turn sb_eat_lsm_opts() into a method")
-  dc0dadb3c3d7 ("nfs_remount(): don't leak, don't ignore LSM options quietl=
-y")
-  363540f775fb ("btrfs: sanitize security_mnt_opts use")
-  8f08fcb05ba6 ("selinux; don't open-code a loop in sb_finish_set_opts()")
-  144da0858c5e ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
-  be917e5b8736 ("new helper: security_sb_eat_lsm_opts()")
-  580a8bcb268b ("LSM: lift extracting and parsing LSM options into the call=
-er of ->sb_remount()")
-  cf891373b60a ("LSM: lift parsing LSM options into the caller of ->sb_kern=
-_mount()")
-  d02fc3452738 ("smack: make smack_parse_opts_str() clean up on failure")
-  17f3b556a3e3 ("selinux: expand superblock_doinit() calls")
-
-are missing a Signed-off-by from their committers.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/p6HwAU_tfq9f5bddGFFOrnS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwb/2IACgkQAVBC80lX
-0GxLzgf+K7/8UPnOL5DR52WMIUS8B65SD37helBcAb9H1BZJfCJVb8jD27HLSL9N
-Ro/V04nGOxtUuXAQQgI3jhEyRSqKRe4aaXCEmzFyEufLGkUp/i8aR0LZlS2P5lL1
-pl1ZW9q4qKQwMpPMhOsoDLtfpUdnNlIY2X26SmzKYMbRBuBtiVLMySO/9J+3Cili
-6x3oZf6OR3DrynMQ30F6B+EsGxjZlXl/opi/HaPG4hr65Rx02MeIvMZ7f53IztU5
-K7PZNSu+1j5JNH+NSFQIp1cIV9lTztjsz5qcAz0ij73uNJusFEPJ0gLU2XrBpWNO
-mh7q6PDIavE55TKz0pzoYF4/F988JQ==
-=reGn
------END PGP SIGNATURE-----
-
---Sig_/p6HwAU_tfq9f5bddGFFOrnS--
+Rob
