@@ -6,51 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BFFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0D5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B038020989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3810120449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298382;
-	bh=zDZidYK3ddE6HMqqTppHGgCaqV17mOhHX5LHUN3CzCY=;
+	s=default; t=1545298386;
+	bh=+zzHOdpaOL5QYjnZzQWb40OLq4TWt1xsthFO9ObiFD8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R7PofGP5c4k4ROpwOxYlZ88HJU/vCHUsm/0wNoXhuKuJtavkjr/OQHmevSBsimiAP
-	 kLJTMi7Nx+uRHvJnczUv8LUVaM8jamHBOhI4XWoGL1PrpAJfjSODtFxsj3CIg/qhqx
-	 XG/kXtglBt92MizgCouvtNDBDqEEUcU7tiL2wpWU=
+	b=PLwZ087gpngWm2eivhXuYthgij38SzFvBSkuWb8FsTTOLE3AnZfhOm1Rzl3eHuciF
+	 s/Av/WR9cQrDwwSlxZjXvyevDFUPjX7qVkLbjd/A4UsDoYVdNyEI37eff3TWDl23WE
+	 9kktWWkhzIZoP1lSz8EzYwe/Y+PD6Hi3/0jHAhak=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733226AbeLTJdB (ORCPT
+        id S1732992AbeLTJap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:33:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:30:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732983AbeLTJat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:49 -0500
+        id S1732971AbeLTJak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:30:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37F2421741;
-        Thu, 20 Dec 2018 09:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46AAD21741;
+        Thu, 20 Dec 2018 09:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298248;
-        bh=zDZidYK3ddE6HMqqTppHGgCaqV17mOhHX5LHUN3CzCY=;
+        s=default; t=1545298239;
+        bh=+zzHOdpaOL5QYjnZzQWb40OLq4TWt1xsthFO9ObiFD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dkhtpNJoJWr78Ugg7MONlDNOLfUBdNXxOrlo3FJSu+KtWBLv0TCGhWGh77cH1kHMI
-         wiWKlvQr7eTHUrHWWWaWxG2UEPK+0PO3OcnGd2vgMIOz/+D0MndkWtTKR7jWURx/lx
-         7G5ohIdlJSjEOH9O1HwL+Mwo3mQIqa4TcRJGbIco=
+        b=Hpfc7iVcaDMXDi18FfIU/B9raHCud4WHI1Flo++n5oNFhT2iCq2BcPGUS337qaxCC
+         L3BsJGG8yN7fVkiydzqCBFR6FAoADhQ0IWIwiXb/k2C9mEFLXGjOdeqw6GFl8MQEoH
+         5DdYZZKMkz2m8TPhr9iAmoAriOWTgL0NpZXgdxvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Baruch Siach <baruch@tkos.co.il>,
+        stable@vger.kernel.org, Toni Peltonen <peltzi@peltzi.fi>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        Jonathan Toppins <jtoppins@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 53/67] net: mvpp2: fix phylink handling of invalid PHY modes
-Date:   Thu, 20 Dec 2018 10:19:05 +0100
-Message-Id: <20181220085905.642107004@linuxfoundation.org>
+Subject: [PATCH 4.19 24/67] bonding: fix 802.3ad state sent to partner when unbinding slave
+Date:   Thu, 20 Dec 2018 10:18:36 +0100
+Message-Id: <20181220085904.507458210@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -69,93 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0fb628f0f250c74b1023edd0ca4a57c8b35b9b2c ]
+[ Upstream commit 3b5b3a3331d141e8f2a7aaae3a94dfa1e61ecbe4 ]
 
-The .validate phylink callback should empty the supported bitmap when
-the interface mode is invalid.
+Previously when unbinding a slave the 802.3ad implementation only told
+partner that the port is not suitable for aggregation by setting the port
+aggregation state from aggregatable to individual. This is not enough. If the
+physical layer still stays up and we only unbinded this port from the bond there
+is nothing in the aggregation status alone to prevent the partner from sending
+traffic towards us. To ensure that the partner doesn't consider this
+port at all anymore we should also disable collecting and distributing to
+signal that this actor is going away. Also clear AD_STATE_SYNCHRONIZATION to
+ensure partner exits collecting + distributing state.
 
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>
-Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+I have tested this behaviour againts Arista EOS switches with mlx5 cards
+(physical link stays up even when interface is down) and simulated
+the same situation virtually Linux <-> Linux with two network namespaces
+running two veth device pairs. In both cases setting aggregation to
+individual doesn't alone prevent traffic from being to sent towards this
+port given that the link stays up in partners end. Partner still keeps
+it's end in collecting + distributing state and continues until timeout is
+reached. In most cases this means we are losing the traffic partner sends
+towards our port while we wait for timeout. This is most visible with slow
+periodic time (LACP rate slow).
+
+Other open source implementations like Open VSwitch and libreswitch, and
+vendor implementations like Arista EOS, seem to disable collecting +
+distributing to when doing similar port disabling/detaching/removing change.
+With this patch kernel implementation would behave the same way and ensure
+partner doesn't consider our actor viable anymore.
+
+Signed-off-by: Toni Peltonen <peltzi@peltzi.fi>
+Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Acked-by: Jonathan Toppins <jtoppins@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 33 ++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ drivers/net/bonding/bond_3ad.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 1b3b64fea038..6320e080b831 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -4262,8 +4262,27 @@ static void mvpp2_phylink_validate(struct net_device *dev,
- 				   unsigned long *supported,
- 				   struct phylink_link_state *state)
- {
-+	struct mvpp2_port *port = netdev_priv(dev);
- 	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
+diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+index f43fb2f958a5..93dfcef8afc4 100644
+--- a/drivers/net/bonding/bond_3ad.c
++++ b/drivers/net/bonding/bond_3ad.c
+@@ -2086,6 +2086,9 @@ void bond_3ad_unbind_slave(struct slave *slave)
+ 		   aggregator->aggregator_identifier);
  
-+	/* Invalid combinations */
-+	switch (state->interface) {
-+	case PHY_INTERFACE_MODE_10GKR:
-+	case PHY_INTERFACE_MODE_XAUI:
-+		if (port->gop_id != 0)
-+			goto empty_set;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		if (port->gop_id == 0)
-+			goto empty_set;
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	phylink_set(mask, Autoneg);
- 	phylink_set_port_modes(mask);
- 	phylink_set(mask, Pause);
-@@ -4271,6 +4290,7 @@ static void mvpp2_phylink_validate(struct net_device *dev,
- 
- 	switch (state->interface) {
- 	case PHY_INTERFACE_MODE_10GKR:
-+	case PHY_INTERFACE_MODE_XAUI:
- 	case PHY_INTERFACE_MODE_NA:
- 		phylink_set(mask, 10000baseCR_Full);
- 		phylink_set(mask, 10000baseSR_Full);
-@@ -4279,7 +4299,11 @@ static void mvpp2_phylink_validate(struct net_device *dev,
- 		phylink_set(mask, 10000baseER_Full);
- 		phylink_set(mask, 10000baseKR_Full);
- 		/* Fall-through */
--	default:
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_SGMII:
- 		phylink_set(mask, 10baseT_Half);
- 		phylink_set(mask, 10baseT_Full);
- 		phylink_set(mask, 100baseT_Half);
-@@ -4291,11 +4315,18 @@ static void mvpp2_phylink_validate(struct net_device *dev,
- 		phylink_set(mask, 1000baseT_Full);
- 		phylink_set(mask, 1000baseX_Full);
- 		phylink_set(mask, 2500baseX_Full);
-+		break;
-+	default:
-+		goto empty_set;
- 	}
- 
- 	bitmap_and(supported, supported, mask, __ETHTOOL_LINK_MODE_MASK_NBITS);
- 	bitmap_and(state->advertising, state->advertising, mask,
- 		   __ETHTOOL_LINK_MODE_MASK_NBITS);
-+	return;
-+
-+empty_set:
-+	bitmap_zero(supported, __ETHTOOL_LINK_MODE_MASK_NBITS);
- }
- 
- static void mvpp22_xlg_link_state(struct mvpp2_port *port,
+ 	/* Tell the partner that this port is not suitable for aggregation */
++	port->actor_oper_port_state &= ~AD_STATE_SYNCHRONIZATION;
++	port->actor_oper_port_state &= ~AD_STATE_COLLECTING;
++	port->actor_oper_port_state &= ~AD_STATE_DISTRIBUTING;
+ 	port->actor_oper_port_state &= ~AD_STATE_AGGREGATION;
+ 	__update_lacpdu_from_port(port);
+ 	ad_lacpdu_send(port);
 -- 
 2.19.1
 
