@@ -2,124 +2,124 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D95C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CC8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AFD3218E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:06:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDH2s/TQ"
+	by mail.kernel.org (Postfix) with ESMTP id 5DF77218E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeLTSGl (ORCPT
+        id S2388588AbeLTSGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:06:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46446 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388560AbeLTSGk (ORCPT
+        Thu, 20 Dec 2018 13:06:44 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52403 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388561AbeLTSGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:06:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so2694601wrt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:06:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rOmuocn43JbtxF3XCjVijJD6+dvHI36G0VecIvd2WLo=;
-        b=fDH2s/TQTgFcY+zbGO/WgAKUGEdGaRjNBwFwBanEa2SCgi6HUQacEgOv5RJkTAzx5F
-         u93JziiqKbp50xl9bConDlBZCUglPr71IqlsKeV9prfMpTUG7g6/b9c/7nDwmHjLTTYM
-         y/BqHu7Ox9HJoLaBNFR3nii23MmrsdokQSk7o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rOmuocn43JbtxF3XCjVijJD6+dvHI36G0VecIvd2WLo=;
-        b=j6TrPQsQ850TORzvsm/VhiJQm+/F/WKhuPBpX9sVKKbNbNuScJy7BkVLfFIai179gQ
-         y+/79fi546TxPwChj/fArViMH2Cwo6Le2BSWzCojBNoZpKv4q9No5trmWSYmEXLnJoz1
-         vuFwPBsalou+KEtR7zAbn+SkHTLw9Cm8pUIceEFxiyPthkquwZ1eNzcEWCnB8Qbajqfn
-         /U7mhGU7gB9Y8fG97i8OfdRY/v+HYIQ4u8cCS+nmP4Y6KAYh65i0kj7RWSIWfZP2/fvB
-         Qh6u4u11rbnb801xTXpSIec8OhPT0greYZYkbgVG1H/sqVtSAOFEJWsIWKIktflPBk/i
-         vfBQ==
-X-Gm-Message-State: AA+aEWbs3bflC0FCVuDZt5CAnfrpSYVSrRkH+Zc1fHrub2y7rnIBaj/1
-        64GerZtxExxZ9frFjLY6v4YURatQC9s=
-X-Google-Smtp-Source: AFSGD/WjmWkkjc+OFpkV+G4Oir6OxO8qV/smNJb3b76SKsfvNfkM8YKSQHdvnpYu7B5wNz+G4XZbxQ==
-X-Received: by 2002:adf:f703:: with SMTP id r3mr23092752wrp.93.1545329198335;
-        Thu, 20 Dec 2018 10:06:38 -0800 (PST)
-Received: from [192.168.0.40] (55.183.88.92.rev.sfr.net. [92.88.183.55])
-        by smtp.googlemail.com with ESMTPSA id h2sm15476841wrv.87.2018.12.20.10.06.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 10:06:37 -0800 (PST)
-Subject: Re: [PATCH v10 17/27] drivers: firmware: psci: Prepare to support PM
- domains
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-18-ulf.hansson@linaro.org>
- <d82f3fe0-7f60-c89a-6503-435cc6dcc5cf@linaro.org>
- <CAPDyKFpfp+d9K-i-ytCqwSq2ToQvqApatH0YyRXbW55wLyU=wA@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c5587b35-734c-5c1d-a433-ce78c8583ef1@linaro.org>
-Date:   Thu, 20 Dec 2018 19:06:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 20 Dec 2018 13:06:42 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI6a3m3681269
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 20 Dec 2018 10:06:36 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI6aSN3681266;
+        Thu, 20 Dec 2018 10:06:36 -0800
+Date:   Thu, 20 Dec 2018 10:06:36 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-343ashae97e5bq6vizusyfno@git.kernel.org>
+Cc:     namhyung@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        adrian.hunter@intel.com, jolsa@kernel.org
+Reply-To: tglx@linutronix.de, hpa@zytor.com, jolsa@kernel.org,
+          adrian.hunter@intel.com, acme@redhat.com,
+          linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          mingo@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Add missing open_memstream() prototype
+ for systems lacking it
+Git-Commit-ID: d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpfp+d9K-i-ytCqwSq2ToQvqApatH0YyRXbW55wLyU=wA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2018 16:49, Ulf Hansson wrote:
+Commit-ID:  d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70
+Gitweb:     https://git.kernel.org/tip/d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 11 Dec 2018 16:31:19 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 18 Dec 2018 12:23:57 -0300
 
-[ ... ]
+perf tools: Add missing open_memstream() prototype for systems lacking it
 
->>> +#ifdef CONFIG_CPU_IDLE
->>
->> It would be nicer if you can remove the CONFIG_CPU_IDLE by replacing it
->> with a specific one (eg. CONFIG_PSCI_IDLE) and make it depend on
->> CONFIG_CPU_IDLE, so the config options stay contained in their
->> respective subsystems directory.
-> 
-> I am all for simplifying the Kconfig options in here, as indeed it's
-> rather messy. However, I would rather avoid folding in additional
-> cleanup changes to this series, is already extensive enough.
-> 
-> Would you be okay if we deal with that on top?
+There are systems such as the Android NDK API level 24 has the
+open_memstream() function but doesn't provide a prototype, adding noise
+to the build:
 
-IMO, there are patches in this series which can be grouped into a
-cleanup + set the scene patchset and merged immediately. An option
-similar to ARM_SCMI_POWER_DOMAIN can be part of it.
+  builtin-timechart.c: In function 'cat_backtrace':
+  builtin-timechart.c:486:2: warning: implicit declaration of function 'open_memstream' [-Wimplicit-function-declaration]
+    FILE *f = open_memstream(&p, &p_len);
+    ^
+  builtin-timechart.c:486:2: warning: nested extern declaration of 'open_memstream' [-Wnested-externs]
+  builtin-timechart.c:486:12: warning: initialization makes pointer from integer without a cast
+    FILE *f = open_memstream(&p, &p_len);
+              ^
 
-However, if you swear you will do the change after and sign with your
-blood, I'm fine with that 0:)
+Define a LACKS_OPEN_MEMSTREAM_PROTOTYPE define so that code needing that
+can get a prototype.
 
+Checked in the bionic git repo to be available since level 23:
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+https://android.googlesource.com/platform/bionic/+/master/libc/include/stdio.h#241
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  FILE* open_memstream(char** __ptr, size_t* __size_ptr) __INTRODUCED_IN(23);
 
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-343ashae97e5bq6vizusyfno@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.config     | 1 +
+ tools/perf/builtin-timechart.c | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 265a9225e5fc..07c1857c3d7a 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -295,6 +295,7 @@ ifndef NO_BIONIC
+   ifeq ($(feature-bionic), 1)
+     BIONIC := 1
+     CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
++    CFLAGS += -DLACKS_OPEN_MEMSTREAM_PROTOTYPE
+     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
+     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
+   endif
+diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+index a827919c6263..775b99833e51 100644
+--- a/tools/perf/builtin-timechart.c
++++ b/tools/perf/builtin-timechart.c
+@@ -43,6 +43,10 @@
+ #include "util/data.h"
+ #include "util/debug.h"
+ 
++#ifdef LACKS_OPEN_MEMSTREAM_PROTOTYPE
++FILE *open_memstream(char **ptr, size_t *sizeloc);
++#endif
++
+ #define SUPPORT_OLD_POWER_EVENTS 1
+ #define PWR_EVENT_EXIT -1
+ 
