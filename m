@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F04C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5026BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C218921741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA4C21741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVlRNE2C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pNyOpiFm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeLTMZ3 (ORCPT
+        id S1731442AbeLTM0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:25:29 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37905 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730211AbeLTMZ3 (ORCPT
+        Thu, 20 Dec 2018 07:26:19 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40638 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbeLTM0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:25:29 -0500
-Received: by mail-qt1-f194.google.com with SMTP id p17so1530992qtl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:25:28 -0800 (PST)
+        Thu, 20 Dec 2018 07:26:18 -0500
+Received: by mail-qt1-f193.google.com with SMTP id k12so1519094qtf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:26:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wc+h2nJ2tmHyTnnvjthkajBu9k0dkenoaGPPG9SbMV8=;
-        b=CVlRNE2CsIsC+UTWRH8q6FtDg1YZeSqWjftVIGzuWOeHnZ3NuD3FLrYQM55iQMiqIW
-         p3i6slbqKWQ601t8YS4/GWSii35dgh/ySHMcHQuFzeqoK6E/W0Lya5/uec8FWG284uTI
-         /li+t63QipIfele5sNXFW72runIOLV5eH5zmsqzimWOCOc8kJcRG8GIReJQdouMNtGNi
-         RKE+1QcSdTOT+KiVGaPYQyDwJP9uhWmws1+brnDlRwQXIp8vECW2onMfaHi3lWs9/j+R
-         Ibxzwy0ZBRUA5ptzsEi85w/a0wCLPiIgh1jBMMEmGDF0/XVewfcPtqkCA0jstrCZmBnK
-         v+GQ==
+        bh=+cQLVpHvi6mh/2zA45HG6fzTw2UhrAx/fSVerSzkfDc=;
+        b=pNyOpiFmCko+gUEsS4DnM81Npo4vCE4HFR/lYPbWW/3saFx0e4nz97e/hJeKc/GBhi
+         42f4uUrS3liYfZ/htkkcx1HU7ZhHsL8ujnkyAYAPSqWEEQxue9/J9lwNIuL3TymcR8z1
+         KQu28WNXNvGEh5u6TVBJrftwhlo2itOMPdVMxngBAeaA00TodX9SUvVrVxvS/O2fYr7D
+         6XTO/yHD/Aoe9InDabvnZE7xZvsoPUM0Ovkayj7weVZuhjtoa0RP+LeOOE2hSzMf4PJD
+         FLJJIZ9sfj9v4DdPf/8shqalX2pz4UeU12moVkyZwSGXW1KknpOKJ52QWai/eAcPU7mG
+         ckOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wc+h2nJ2tmHyTnnvjthkajBu9k0dkenoaGPPG9SbMV8=;
-        b=NW9fmxk8j4Y97OJTErkBDJy8n1983mYm0SPztXVHmYfwdQPLB6FhWpUbbgncv8pU7J
-         VWK46y4+v/76/1N/qPeIavEq5ii5+rMO5MznA0zUg0ahdEN5VioswkwtMAzza4F0M2X5
-         2hpBmiRT1r5uMb75ahvcKI4Ed3Oe93OdeXHT94BqsVpeg6ZevemyCq4qyyJb5rnGDcxt
-         uTiR6JdxMaEiMYrRbPBodiCmiL3yDp3DmhqA1nMubAZ2mP5GmSnN3PY64ELpAShuiHhb
-         MaNZq45gkHWK1xdbVrEi+rYl5+p9fiO+JiFbyzfhHdB2dk+NQZUdR10mxBJK/gYnVMeo
-         VNWQ==
-X-Gm-Message-State: AA+aEWabg5Y9M4P3e4GLT1Ozd+JepDWw1nBgGR9OM3U9pS5vAEoMepnf
-        dFEQYvv0luy9zVMO7kJTSAA=
-X-Google-Smtp-Source: AFSGD/U41CR/rUhaCg40jhOXkwa21cpWjpN02twsvykSdtygAWHjOWx9fTnbth4cSMITnRQzG0ET0Q==
-X-Received: by 2002:a0c:aca7:: with SMTP id m36mr25079755qvc.237.1545308727467;
-        Thu, 20 Dec 2018 04:25:27 -0800 (PST)
+        bh=+cQLVpHvi6mh/2zA45HG6fzTw2UhrAx/fSVerSzkfDc=;
+        b=ANn1+qi/mDsfl/8AfsNvnKg5V1erEbS9qfXAX9eSpWMO0k+qAbuUAyn4HVgmwC8acF
+         KCkggMN1olfOsJyH5313d+qlArhCzEa6JsXmuLCQ3ulax3/M6S/fujdvSCJ3Q8nsOFGL
+         If/25lq/vso/LZ13wjUvBdVXbJDXi0xv4MnE8MsQ27ME75BoBz913nf80HZrwg7iYyTV
+         2bYacl9bMjx5nITMNEVMdkwubrXL15eDv7rcBljqrs51HTsXdiRRAdo8XxhgOTIQ3+De
+         u6+iobEV3924Uy3BFXrLddvCUqw/mxHf+sCAtAdTmgmWy1LIdZ76xBVJfZnNmrgADcXW
+         DPqg==
+X-Gm-Message-State: AA+aEWZijpoLaFU/xFKFj9PFWk4sfDLIPO5tnOphcOsAGVP9Piosxujc
+        6ZGcdPf19RUihGMEAMumwXc=
+X-Google-Smtp-Source: AFSGD/WXiZjMlVYu45e9VyFauwkrVT7JxaH0TuTTyviFXE6fRpS/GG24pARQ4P6vo/taNv7XR4zqrw==
+X-Received: by 2002:ac8:7201:: with SMTP id a1mr25802622qtp.291.1545308776867;
+        Thu, 20 Dec 2018 04:26:16 -0800 (PST)
 Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id 20sm4471443qtp.54.2018.12.20.04.25.23
+        by smtp.gmail.com with ESMTPSA id w81sm5679407qkg.43.2018.12.20.04.26.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 04:25:27 -0800 (PST)
-Date:   Thu, 20 Dec 2018 10:25:21 -0200
+        Thu, 20 Dec 2018 04:26:16 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:26:10 -0200
 From:   Shayenne Moura <shayenneluzmoura@gmail.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -71,8 +72,8 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Carlo Caione <carlo@caione.org>,
         Kevin Hilman <khilman@baylibre.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/7] drm: msm: Cleanup drm_display_mode print str
-Message-ID: <8a801b11893c519b0b7ebcd7baa5d7de4390f467.1545308167.git.shayenneluzmoura@gmail.com>
+Subject: [PATCH v2 2/7] drm: omapdrm: Cleanup drm_display_mode print str
+Message-ID: <cb6079fa6de6fda8d865a1d2a61d7cf10019ae88.1545308167.git.shayenneluzmoura@gmail.com>
 References: <cover.1545308167.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -85,207 +86,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch adjust the print string of drm_display_mode object
-to remove drm_mode_object dependency in msm files.
+to remove drm_mode_object dependency in omapdrm files.
 
 Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
 ---
 Changes in v2:
-  - Use DRM_MODE_FMT/ARG macros (Daniel).
+  - Use DRM_MODE_FMT/ARG macros (Daniel)
   - Make the commit message more clear
 
- drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c         | 10 ++--------
- drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c  |  9 +--------
- drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c  |  9 +--------
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  9 +--------
- drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c  |  9 +--------
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         |  9 +--------
- drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c      |  9 +--------
- drivers/gpu/drm/msm/dsi/dsi_manager.c             |  9 +--------
- drivers/gpu/drm/msm/edp/edp_bridge.c              |  9 +--------
- 9 files changed, 10 insertions(+), 72 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_connector.c | 9 ++-------
+ drivers/gpu/drm/omapdrm/omap_crtc.c      | 8 ++------
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-index 457c29dba4a1..7b028f778960 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-@@ -244,14 +244,8 @@ static void mdp4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
+index b81302c4bf9e..874d8f3cbff6 100644
+--- a/drivers/gpu/drm/omapdrm/omap_connector.c
++++ b/drivers/gpu/drm/omapdrm/omap_connector.c
+@@ -305,14 +305,9 @@ static int omap_connector_mode_valid(struct drm_connector *connector,
+ 	drm_mode_destroy(dev, new_mode);
  
- 	mode = &crtc->state->adjusted_mode;
- 
--	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mdp4_crtc->name, mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
+ done:
+-	DBG("connector: mode %s: "
+-			"%d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
++	DBG("connector: mode %s: " DRM_MODE_FMT,
+ 			(ret == MODE_OK) ? "valid" : "invalid",
+-			mode->base.id, mode->name, mode->vrefresh, mode->clock,
 -			mode->hdisplay, mode->hsync_start,
 -			mode->hsync_end, mode->htotal,
 -			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("%s: set mode: " DRM_MODE_FMT,
-+			mdp4_crtc->name, DRM_MODE_ARG(mode));
+-			mode->vsync_end, mode->vtotal, mode->type, mode->flags);
++			DRM_MODE_ARG(mode));
  
- 	mdp4_write(mdp4_kms, REG_MDP4_DMA_SRC_SIZE(dma),
- 			MDP4_DMA_SRC_SIZE_WIDTH(mode->hdisplay) |
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
-index 6a1ebdace391..f2009e317820 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
-@@ -58,14 +58,7 @@ static void mdp4_dsi_encoder_mode_set(struct drm_encoder *encoder,
- 
- 	mode = adjusted_mode;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG()):
- 
- 	ctrl_pol = 0;
- 	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-index ba8e587f734b..f6bc86a35d8d 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-@@ -104,14 +104,7 @@ static void mdp4_dtv_encoder_mode_set(struct drm_encoder *encoder,
- 
- 	mode = adjusted_mode;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
- 	mdp4_dtv_encoder->pixclock = mode->clock * 1000;
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-index 2bfb39082f54..d47b8f4af991 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-@@ -273,14 +273,7 @@ static void mdp4_lcdc_encoder_mode_set(struct drm_encoder *encoder,
- 
- 	mode = adjusted_mode;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
- 	mdp4_lcdc_encoder->pixclock = mode->clock * 1000;
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
-index d6f79dc755b4..33972c1816ed 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
-@@ -134,14 +134,7 @@ void mdp5_cmd_encoder_mode_set(struct drm_encoder *encoder,
- {
- 	mode = adjusted_mode;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 	pingpong_tearcheck_setup(encoder, mode);
- 	mdp5_crtc_set_pipeline(encoder->crtc);
+ 	return ret;
  }
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-index b1da9ce54379..66f5402484d4 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-@@ -384,14 +384,7 @@ static void mdp5_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 
- 	mode = &crtc->state->adjusted_mode;
+diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
+index caffc547ef97..40acf4ce7c9f 100644
+--- a/drivers/gpu/drm/omapdrm/omap_crtc.c
++++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
+@@ -427,12 +427,8 @@ static void omap_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ 	struct omap_crtc *omap_crtc = to_omap_crtc(crtc);
+ 	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
  
 -	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			crtc->name, mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("%s: set mode: " DMR_MODE_FMT, crtc->name, DRM_MODE_ARG(mode));
+-	    omap_crtc->name, mode->base.id, mode->name,
+-	    mode->vrefresh, mode->clock,
+-	    mode->hdisplay, mode->hsync_start, mode->hsync_end, mode->htotal,
+-	    mode->vdisplay, mode->vsync_start, mode->vsync_end, mode->vtotal,
+-	    mode->type, mode->flags);
++	DBG("%s: set mode: " DRM_MODE_FMT,
++	    omap_crtc->name, DRM_MODE_ARG(mode));
  
- 	mixer_width = mode->hdisplay;
- 	if (r_mixer)
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
-index fcd44d1d1068..d2a56e55e53d 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
-@@ -118,14 +118,7 @@ static void mdp5_vid_encoder_mode_set(struct drm_encoder *encoder,
- 
- 	mode = adjusted_mode;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
- 	ctrl_pol = 0;
- 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-index 80aa6344185e..7c8352a8ea97 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
-@@ -536,14 +536,7 @@ static void dsi_mgr_bridge_mode_set(struct drm_bridge *bridge,
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	bool is_dual_dsi = IS_DUAL_DSI();
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
- 	if (is_dual_dsi && !IS_MASTER_DSI_LINK(id))
- 		return;
-diff --git a/drivers/gpu/drm/msm/edp/edp_bridge.c b/drivers/gpu/drm/msm/edp/edp_bridge.c
-index 931a5c97cccf..153f350ce017 100644
---- a/drivers/gpu/drm/msm/edp/edp_bridge.c
-+++ b/drivers/gpu/drm/msm/edp/edp_bridge.c
-@@ -60,14 +60,7 @@ static void edp_bridge_mode_set(struct drm_bridge *bridge,
- 	struct edp_bridge *edp_bridge = to_edp_bridge(bridge);
- 	struct msm_edp *edp = edp_bridge->edp;
- 
--	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
--			mode->base.id, mode->name,
--			mode->vrefresh, mode->clock,
--			mode->hdisplay, mode->hsync_start,
--			mode->hsync_end, mode->htotal,
--			mode->vdisplay, mode->vsync_start,
--			mode->vsync_end, mode->vtotal,
--			mode->type, mode->flags);
-+	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
- 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
- 		if ((connector->encoder != NULL) &&
+ 	drm_display_mode_to_videomode(mode, &omap_crtc->vm);
+ }
 -- 
 2.17.1
 
