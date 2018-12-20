@@ -2,71 +2,98 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E3EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E21DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09E6821720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0494A21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbeLTIjZ (ORCPT
+        id S1728025AbeLTIlM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:39:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54071 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbeLTIjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:39:23 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 446FC208CB; Thu, 20 Dec 2018 09:39:21 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D24592078E;
-        Thu, 20 Dec 2018 09:39:10 +0100 (CET)
-Date:   Thu, 20 Dec 2018 09:39:09 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Vignesh R <vigneshr@ti.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Thu, 20 Dec 2018 03:41:12 -0500
+Received: from [38.106.11.25] ([38.106.11.25]:34790 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725776AbeLTIlM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:41:12 -0500
+X-Greylist: delayed 1175 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Dec 2018 03:41:10 EST
+X-ASG-Debug-ID: 1545294088-107606139f1f160001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (localhost [10.128.0.15]) by barracuda02.hxt-semitech.com with ESMTP id FQI9Q7vkbjbmcYWu (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Thu, 20 Dec 2018 16:21:28 +0800 (CST)
+X-Barracuda-Envelope-From: yuanyuan.zhao@hxt-semitech.com
+Received: from localhost.localdomain.localdomain (10.64.5.29) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 20 Dec 2018 16:20:30 +0800
+From:   Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+To:     <marc.zyngier@arm.com>
+CC:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 0/7] spi: add support for octal mode
-Message-ID: <20181220093909.0e3ad8f1@bbrezillon>
-In-Reply-To: <VI1PR04MB5726FABF724D8EE0144E2C8499BF0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1545214186-16987-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <10b25865-b93d-382a-aa4d-b21fbd9c3ba9@ti.com>
-        <VI1PR04MB5726D65958C532965E12EE4F99BF0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <d513cf77-b308-a089-71cf-4598bfd2f085@ti.com>
-        <VI1PR04MB5726FABF724D8EE0144E2C8499BF0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        <yu.zheng@hxt-semitech.com>, <dongsheng.wang@hxt-semitech.com>,
+        Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+Subject: [PATCH 1/1] gic: its: Make sure a LPI is discarded before free.
+Date:   Thu, 20 Dec 2018 16:20:23 +0800
+X-ASG-Orig-Subj: [PATCH 1/1] gic: its: Make sure a LPI is discarded before free.
+Message-ID: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.64.5.29]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+Content-Transfer-Encoding: 8BIT
+X-Barracuda-Connect: localhost[10.128.0.15]
+X-Barracuda-Start-Time: 1545294088
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 1504
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5002 1.0000 0.7500
+X-Barracuda-Spam-Score: 1.35
+X-Barracuda-Spam-Status: No, SCORE=1.35 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=MARKETING_SUBJECT
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.64134
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.60 MARKETING_SUBJECT      Subject contains popular marketing words
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 08:23:07 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+Its device will be removed after all events be freed.
+Undisarded events can lead to unpredictable behaviar.
 
-> Octal mode support patch series has dependency over these patches.
-> Should I send these two patches again or specifies them as dependency patches in the cover letter.
+Signed-off-by: Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-No, you should either base your work on the master branch of the
-linux-next repo [1] (as suggested by Vignesh) or wait
-for 4.21-rc1/5.0-rc1 before sending a new version.
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index db20e99..4fee008 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2572,6 +2572,10 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+                                                                virq + i);
+                u32 event = its_get_event_id(data);
 
-[1]https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/
++               /* Discard irq before free */
++               if (irqd_is_activated(d))
++                       its_send_discard(its_dev, event);
++
+                /* Mark interrupt index as unused */
+                clear_bit(event, its_dev->event_map.lpi_map);
+
+--
+1.8.3.1
+
+
+
+
+This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
+
+
