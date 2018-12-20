@@ -2,58 +2,87 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E00C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B9AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E902186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 608E421903
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545346242;
+	bh=ezUPIrLd3dKSC63ypUwHJ+o1hczyjbliWkxMw7DqwB4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=zL81uJyeoTf7VVn0LsIfzkHol7v4dMbvrig38NEqxyI6qOpRPPjc/T5wch5e9zVUE
+	 LpTRwt3gowMjwg4b1ugqPqutPB4+0/Ij/CHdludvQDB2hQI2mXgffIWkeX2vcv+w9H
+	 ystbow4ukIC0JA8dJxhtHM5esk4EzNOR/myXO8vA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390223AbeLTWsv (ORCPT
+        id S2390237AbeLTWul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 17:48:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36958 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730294AbeLTWsv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 17:48:51 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C200BE2A;
-        Thu, 20 Dec 2018 22:48:50 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 14:48:49 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        Oscar Salvador <OSalvador@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
- association after hot_remove
-Message-Id: <20181220144849.375f554ed6d1f968807aa6db@linux-foundation.org>
-In-Reply-To: <f9dd3dd0-3b20-446f-a131-70180fb733bf@arm.com>
-References: <20181108100413.966-1-mhocko@kernel.org>
-        <20181108102917.GV27423@dhcp22.suse.cz>
-        <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
-        <20181109075914.GD18390@dhcp22.suse.cz>
-        <f9dd3dd0-3b20-446f-a131-70180fb733bf@arm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 20 Dec 2018 17:50:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731534AbeLTWul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 17:50:41 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6662186A;
+        Thu, 20 Dec 2018 22:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545346240;
+        bh=ezUPIrLd3dKSC63ypUwHJ+o1hczyjbliWkxMw7DqwB4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SAcGthCoaUFZ47SEcmUIzUlUi1/vPM8zq3KNu32Wy7HWo9l7lW57NzW7efgx6GHg4
+         joHdS+69c7EeTAZrjJ4P+Fn1oB0Iu3jNGDcecbrh8RRR5fezw2Co7gU9GvwcyF7Vxx
+         HqigHco4UYIPzca2fTRWXp2u+zCxwfPrLahB6/dM=
+Subject: Re: [PATCH 4.14 00/72] 4.14.90-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20181220085922.332225035@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <7d314c61-766e-8314-ba80-1e639726f7f6@kernel.org>
+Date:   Thu, 20 Dec 2018 15:50:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 16:34:29 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-
-> > 
-> > Do you see any problems with the patch as is?
+On 12/20/18 2:17 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.90 release.
+> There are 72 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> No, this patch does remove an erroneous node-cpu map update which help solve
-> a real crash.
+> Responses should be made by Sat Dec 22 08:59:06 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.90-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-I think I'll take that as an ack.
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
+
