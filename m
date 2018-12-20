@@ -2,90 +2,82 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 298C6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B68C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9912176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32782176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbeLTMtq (ORCPT
+        id S1732615AbeLTMuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:49:46 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29133 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728966AbeLTMtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:49:46 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 04:49:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="129450342"
-Received: from unknown (HELO localhost) ([10.249.254.232])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Dec 2018 04:49:38 -0800
-Date:   Thu, 20 Dec 2018 14:49:37 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     jethro@fortanix.com, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        sean.j.christopherson@intel.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        haitao.huang@linux.intel.com, greg@enjellic.com
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181220124937.GA3753@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <CAK8P3a3QatXPYgDzZkUpxwHh5HJw5-XWA6VoyxW6Y9UAnzS=tQ@mail.gmail.com>
+        Thu, 20 Dec 2018 07:50:54 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16615 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728966AbeLTMuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:50:54 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AB3072A9331DF;
+        Thu, 20 Dec 2018 20:50:49 +0800 (CST)
+Received: from dessert.huawei.com (10.69.192.158) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 20 Dec 2018 20:50:41 +0800
+From:   Zeng Tao <prime.zeng@hisilicon.com>
+To:     <felipe.balbi@linux.intel.com>
+CC:     Zeng Tao <prime.zeng@hisilicon.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] usb: dwc3: gadget: don't remove the request if bus-expired
+Date:   Fri, 21 Dec 2018 04:53:50 +0800
+Message-ID: <1545339230-10520-1-git-send-email-prime.zeng@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3QatXPYgDzZkUpxwHh5HJw5-XWA6VoyxW6Y9UAnzS=tQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 01:08:46PM +0100, Arnd Bergmann wrote:
-> On Wed, Dec 19, 2018 at 10:26 AM Jethro Beekman <jethro@fortanix.com> wrote:
-> >
-> > On 2018-12-19 13:28, Jarkko Sakkinen wrote:
-> > > /**
-> > >  * struct sgx_enclave_add_page - parameter structure for the
-> > >  *                               %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-> > >  * @eclave_fd:        file handle to the enclave address space
-> > >  * @src:      address for the page data
-> > >  * @secinfo:  address for the SECINFO data
-> > >  * @mrmask:   bitmask for the measured 256 byte chunks
-> > >  */
-> > > struct sgx_enclave_add_page {
-> > >       __u64   enclave_fd;
-> > >       __u64   src;
-> > >       __u64   secinfo;
-> > >       __u16   mrmask;
-> > > } __attribute__((__packed__));
-> >
-> > Wouldn't you just pass enclave_fd as the ioctl fd parameter?
-> >
-> > How to specify the address of the page that is being added?
-> 
-> One more comment about the structure: I would generally recommend
-> against packing structures like this. Instead just extend the mrmask
-> member to 64 bits as well.
+We have already returned EAGAIN for bus-expiry, and it's designed to
+start with a future Frame number and start the transfer again. So we
+should not remove the request for that case.
 
-Can do. Thanks for the remark.
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+---
+ drivers/usb/dwc3/gadget.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-/Jarkko
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 2ecde30..16a6e3c 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1250,7 +1250,7 @@ static int __dwc3_gadget_kick_transfer(struct dwc3_ep *dep)
+ 	}
+ 
+ 	ret = dwc3_send_gadget_ep_cmd(dep, cmd, &params);
+-	if (ret < 0) {
++	if (ret < 0 && ret != -EAGAIN) {
+ 		/*
+ 		 * FIXME we need to iterate over the list of requests
+ 		 * here and stop, unmap, free and del each of the linked
+@@ -1259,10 +1259,9 @@ static int __dwc3_gadget_kick_transfer(struct dwc3_ep *dep)
+ 		if (req->trb)
+ 			memset(req->trb, 0, sizeof(struct dwc3_trb));
+ 		dwc3_gadget_del_and_unmap_request(dep, req, ret);
+-		return ret;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int __dwc3_gadget_get_frame(struct dwc3 *dwc)
+-- 
+2.7.4
+
