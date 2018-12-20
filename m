@@ -6,56 +6,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474A1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD7CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15DB520811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298726;
-	bh=ZrNI8jMhgXi3gmYWxVS2HvZA0aH97zs0MlCWUg84qXM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yrvF2ToiOrWAjYRHar6EF75QKI+JtXGcxHZaEghP3Sa0Ftm7opTiK26B0zwRnNPlL
-	 eVRQLkKbjY6wq9ILqnmXFnv3iBKYnOuq0k/bCE1eh0FDE2D+Qq5Gf8vvVmHaQrc/TX
-	 pkq2udl5jaCagBi9eXVgfrVuOC2vyoGfTyBvZyak=
+	by mail.kernel.org (Postfix) with ESMTP id BB74820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="V6H/psgf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbeLTJ0J (ORCPT
+        id S2387430AbeLTJiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:26:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731353AbeLTJ0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:26:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF07F217D9;
-        Thu, 20 Dec 2018 09:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297964;
-        bh=ZrNI8jMhgXi3gmYWxVS2HvZA0aH97zs0MlCWUg84qXM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yQ++r45H/+3WfuAtkaClChImdqoMcw9G7NJgbkdsGcX30IrVlVE4xAPaiWEqGpZ1X
-         uSTImjYYQ400A9wEuDE2AkYAXSM8rMEtnnLwtxWgApvQDgqr5wUabOVUueNk4lgC+u
-         0gTJmRkolbMRxHYZy/6P8dlTbEIgsvUHhOgQ907Y=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/72] locking: Remove smp_read_barrier_depends() from queued_spin_lock_slowpath()
-Date:   Thu, 20 Dec 2018 10:18:19 +0100
-Message-Id: <20181220085923.133627628@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
-References: <20181220085922.332225035@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 20 Dec 2018 04:38:50 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45302 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732309AbeLTJir (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:38:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so603491plm.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:38:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1iUhDhIZ1xk9FGjJuaNFZaLpj2B2Rjon4JycLrDK7TY=;
+        b=V6H/psgfubi2ZpcX1KcSuZloVb87/jIk1GnDUZsltHeipuJkZ8f1VCoPynfhff1c1c
+         EjKaN2uhgMOBCosjaufOAgCgYu+yMrJTw9Pf8cSTV4+WQeQ7Robjx0IfkzT4wjLkjK4U
+         KGCYr5aDhHM4RxbLQePEcLHD+B1gsIi0/R0dq4r0Zv/41Wa+iHcOGcyULZ4SIYksDuZY
+         KmVajrBL/UhTdupusqU5tE8x0Udtj3Z+AY1gIP4Poke2NQKFmVR62BPjMyUcuHeQ+wRE
+         la2b1qMCh8g2l0tE9y4v1ww1Of6sZQS8o6vv1HYgdDtPWAx2eJKawAOu9yhVD49y0c6R
+         SDaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1iUhDhIZ1xk9FGjJuaNFZaLpj2B2Rjon4JycLrDK7TY=;
+        b=L55uVdXDe6EBsBQN0HxguJx9w8L4bscaJE4q1w5jz7PMF3GGQuk56QofXtdiD0X5xD
+         RZymO9vEcP1uFK944WLbLi+TP5T1DuShpVLesSURUw6puShpvWNcuMvciuJBgKqa+iY6
+         BDI8Q7QtPcQN/+uKJ8f9ZfmrGrpIVRi34AjxSGfpfGEcgYgMFsKWnImF11GGoMZMZaz4
+         DuZ3p680cphxZVigLU7kERWZoeKQH4n4sNdYOSw9aOH0exQaWI2nQ6J9qUwoDqvxd/oI
+         ttMj3ezFtKCOjD3mNwMQxPf7D0qmVui4vhqq/jWG2xJeJ3VbRmiJQfJKdb/HK4qJcUGZ
+         B75Q==
+X-Gm-Message-State: AA+aEWb3Lp6HmNgS8AXjrfhtCkLGazbbyyGuiMcCw7qpxp9AZF3hR6f3
+        0BJj1NMswALPEiWKliQ+SsUifQCFoTM=
+X-Google-Smtp-Source: AFSGD/U5p2Hoh5L4wPl040c5puKaXDHXPlrwcGXU2WsuUxZPDgnM90oglNVymgFW7rT5l7V7v45A/A==
+X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr23741384pld.8.1545298725645;
+        Thu, 20 Dec 2018 01:38:45 -0800 (PST)
+Received: from localhost.localdomain (36-239-205-170.dynamic-ip.hinet.net. [36.239.205.170])
+        by smtp.gmail.com with ESMTPSA id j6sm32194261pfg.126.2018.12.20.01.38.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 01:38:44 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Andrei Stefanescu <andrei.stefanescu@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: mcp16502: Fix build error when !CONFIG_SUSPEND && CONFIG_PM_SLEEP
+Date:   Thu, 20 Dec 2018 17:38:28 +0800
+Message-Id: <20181220093828.28821-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,60 +73,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Use #ifdef CONFIG_PM_SLEEP guard around suspend_fn/resume_fn to fix below
+build error.
 
-------------------
+  CC [M]  drivers/regulator/mcp16502.o
+In file included from ./include/linux/device.h:23:0,
+                 from ./include/linux/gpio/driver.h:5,
+                 from ./include/asm-generic/gpio.h:13,
+                 from ./include/linux/gpio.h:62,
+                 from drivers/regulator/mcp16502.c:11:
+drivers/regulator/mcp16502.c:528:32: error: ‘mcp16502_suspend_noirq’ undeclared here (not in a function); did you mean ‘mcp16502_suspend’?
+  SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
+                                ^
+./include/linux/pm.h:342:19: note: in definition of macro ‘SET_NOIRQ_SYSTEM_SLEEP_PM_OPS’
+  .suspend_noirq = suspend_fn, \
+                   ^~~~~~~~~~
+drivers/regulator/mcp16502.c:529:10: error: ‘mcp16502_resume_noirq’ undeclared here (not in a function); did you mean ‘mcp16502_suspend_noirq’?
+          mcp16502_resume_noirq)
+          ^
+./include/linux/pm.h:343:18: note: in definition of macro ‘SET_NOIRQ_SYSTEM_SLEEP_PM_OPS’
+  .resume_noirq = resume_fn, \
+                  ^~~~~~~~~
 
-commit 548095dea63ffc016d39c35b32c628d033638aca upstream.
-
-Queued spinlocks are not used by DEC Alpha, and furthermore operations
-such as READ_ONCE() and release/relaxed RMW atomics are being changed
-to imply smp_read_barrier_depends().  This commit therefore removes the
-now-redundant smp_read_barrier_depends() from queued_spin_lock_slowpath(),
-and adjusts the comments accordingly.
-
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- kernel/locking/qspinlock.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/regulator/mcp16502.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 50dc42aeaa56..5541acb79e15 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -170,7 +170,7 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
-  * @tail : The new queue tail code word
-  * Return: The previous queue tail code word
-  *
-- * xchg(lock, tail)
-+ * xchg(lock, tail), which heads an address dependency
-  *
-  * p,*,* -> n,*,* ; prev = xchg(lock, node)
-  */
-@@ -417,13 +417,11 @@ queue:
- 	if (old & _Q_TAIL_MASK) {
- 		prev = decode_tail(old);
- 		/*
--		 * The above xchg_tail() is also a load of @lock which generates,
--		 * through decode_tail(), a pointer.
--		 *
--		 * The address dependency matches the RELEASE of xchg_tail()
--		 * such that the access to @prev must happen after.
-+		 * The above xchg_tail() is also a load of @lock which
-+		 * generates, through decode_tail(), a pointer.  The address
-+		 * dependency matches the RELEASE of xchg_tail() such that
-+		 * the subsequent access to @prev happens after.
- 		 */
--		smp_read_barrier_depends();
+diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
+index ec5b6836a20c..2507acb7f5dc 100644
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -498,7 +498,7 @@ static int mcp16502_probe(struct i2c_client *client,
+ 	return 0;
+ }
  
- 		WRITE_ONCE(prev->next, node);
+-#ifdef CONFIG_SUSPEND
++#ifdef CONFIG_PM_SLEEP
+ static int mcp16502_suspend_noirq(struct device *dev)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -518,10 +518,7 @@ static int mcp16502_resume_noirq(struct device *dev)
  
+ 	return 0;
+ }
+-#else /* !CONFIG_SUSPEND */
+-#define mcp16502_suspend NULL
+-#define mcp16502_resume NULL
+-#endif /* !CONFIG_SUSPEND */
++#endif
+ 
+ #ifdef CONFIG_PM
+ static const struct dev_pm_ops mcp16502_pm_ops = {
 -- 
-2.19.1
-
-
+2.17.1
 
