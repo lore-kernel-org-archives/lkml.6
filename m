@@ -6,66 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8BAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDD5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999D920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0B522176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545299221;
-	bh=8xRBQF50MoNwwkVOpZg8K8sdhycqmC8CsA7FnFP/AHY=;
+	s=default; t=1545299227;
+	bh=V1a2jopTCx7catPnDsbStJesgeWkvI8KHhYdbFQejXw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R8U2ClQ3eU7n8yHfVo2kDXqpRujmObyT/vOG0dhI+jFkbDnNTqDypfPTE+/0MKnI7
-	 tSoWBVRypHuNRn0wHjTZH7vhjZiaD8EBilvkuWserMfuzV7cV55ZZ1cb6ZQ0o/ZzxW
-	 MdD1qA3YisbAtxs1g62UNSQ0dPjag/L5POBSbYtU=
+	b=DGHqv9excnjo/hid2lMgUGfxh1r1jtAEFYcK5Y+A1zJGe21sNvtt823s31fjP8yrh
+	 cDNYQgLNt3dXH7MsfDX6mqrVWAAySWQSQ194R0kHqDOXnB+KhJenfLIiDNpO7EkQoC
+	 ePr0cQ7vcgIhmJmI570Jbv1RebmbWf2eprBd2fmk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730394AbeLTJTw (ORCPT
+        id S1731323AbeLTJrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:19:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45302 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:47:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730288AbeLTJTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:19:44 -0500
+        id S1730372AbeLTJTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:19:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 568AF2177B;
-        Thu, 20 Dec 2018 09:19:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1562221773;
+        Thu, 20 Dec 2018 09:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297582;
-        bh=8xRBQF50MoNwwkVOpZg8K8sdhycqmC8CsA7FnFP/AHY=;
+        s=default; t=1545297590;
+        bh=V1a2jopTCx7catPnDsbStJesgeWkvI8KHhYdbFQejXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VZhwIvndtAfG7VEv9auDwygvrZAcjCB6E5hVZgstT4isoYtBvZWklPOZ2+LPzQ9yf
-         dBIu8Ty8NMXsVXzXr8ovIpkimWFfZOUwHIKsUMFLOFFqGWEgUHZf00ZRIH37LjLYlZ
-         KlU7GNqPiu+76VHzv5i9e6l8czUFa6Zns0mZrrBA=
+        b=Jwm2YN0DDVk9B/Za+IDQ4KAGZboG66fBcu42+lI6N4jxv7iT92tOeIxsieiEdQv76
+         5ZyqJETexLAyb8M1fg3MVB470xn1P8s/mDg+Od6rVmlxH9+nf6c5zz/TLOmecyy6Vb
+         6JoZEiM48Wlu9kIO0iJSW55Cbnx8HbLd6rDe2Zuw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YiFei Zhu <zhuyifei1999@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 14/31] x86/earlyprintk/efi: Fix infinite loop on some screen widths
-Date:   Thu, 20 Dec 2018 10:18:26 +0100
-Message-Id: <20181220085743.168191288@linuxfoundation.org>
+Subject: [PATCH 3.18 17/31] sbus: char: add of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:29 +0100
+Message-Id: <20181220085743.278824934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -84,61 +65,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
+[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
+use of_node_put() to release the refcount.
 
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
-
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/sbus/char/display7seg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 524142117296..82324fc25d5e 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
+index 2b0ce7c350ee..98661714688b 100644
+--- a/drivers/sbus/char/display7seg.c
++++ b/drivers/sbus/char/display7seg.c
+@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
+ 	dev_set_drvdata(&op->dev, p);
+ 	d7s_device = p;
+ 	err = 0;
++	of_node_put(opts);
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
- 		}
+ out:
+ 	return err;
 -- 
 2.19.1
 
