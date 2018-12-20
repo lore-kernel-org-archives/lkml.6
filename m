@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991C2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E094C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 636B32186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF8E2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BQmZ72bR"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OqNkOUfz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeLTMzC (ORCPT
+        id S1732782AbeLTMzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:55:02 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56293 "EHLO
+        Thu, 20 Dec 2018 07:55:07 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52207 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732703AbeLTMy7 (ORCPT
+        with ESMTP id S1732705AbeLTMzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:54:59 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so1894684wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:58 -0800 (PST)
+        Thu, 20 Dec 2018 07:55:01 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so1928074wmj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/BsYwI4MGKscqtd4fapjUVq4zzWRiadQNZwYTiXxWLI=;
-        b=BQmZ72bR81ebRCVcxLtWVeYzKIe97gNe16bqUHQEdvrxZ9jQdgduSgzMhZnrpzNDvC
-         4nLZ7zhSYguQz8KRJjM4qqfx1LBA7ljnIM+D1n9VSLPC5sOrwo92UiUC4iP9URlDtr+a
-         cGKHO0/0xrOVFvYvrjVG1ONqrdH53rHjgH79I=
+        bh=jEijnCjicnGILwhFrMB461TXW1hBMByoFGuErMag6m8=;
+        b=OqNkOUfzqgjoQyhejdqh03U9bW5LPxP6cJgHr8DrmmDR6co5LEA1lPNy06CWMa5diC
+         8HFpmRY/RdxzXB41ICCzKewZhWTyPZrlnYwzNq3wj0342ilCj8mNWFcfeCt97FRX7ZaB
+         rLKfqk5A+199/9SAS+ba0Eomgryl7+N+vUa7w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/BsYwI4MGKscqtd4fapjUVq4zzWRiadQNZwYTiXxWLI=;
-        b=BWLk+VJ6LWTCq0R5LZFUk5RooZ36hWEt7CnMjvL5Yp6a0TQouupnL0Ro0s9HJ7Yp+q
-         aIWLq40P//TjXSwR5ort+5xDfgtJsAptD6zJRwqUHjRXChMvZ2gzyto3rsF6bAdv2tMc
-         znCkzZyzRr0RmKW2l5KW64IZlnuMOBjG9zQ7WxPClHIIYkKOX0EjXn2j98ufH3iYK2vF
-         V5GEu0pychOjpo4/9g5kH6AEVyYewrhcdRE5+qhA6vgOLr50GiKpjgz/rqRSeNGkLDKk
-         0KZ1kbPxtq9tb+TjLcWaGkLVTzpbqb8umvghHYLMG/s2XCMSUYUNrRu0bBrN756qkW6A
-         BEOA==
-X-Gm-Message-State: AA+aEWZ4lZU/laYsy/vbpP5iZRCO0tBYzXdhGgNy4nP5V92R1dD8J7Kz
-        Gfw9/YVOnmphUth0KfsAVjot6w==
-X-Google-Smtp-Source: AFSGD/VGbWVzN9KaZCPi1PGk/1YnRjWa3GPXr7KSh29e1qnj/L28l6uVj7KIQwJJENtIrgWqp97lNg==
-X-Received: by 2002:a1c:a8d2:: with SMTP id r201mr10180319wme.81.1545310497657;
-        Thu, 20 Dec 2018 04:54:57 -0800 (PST)
+        bh=jEijnCjicnGILwhFrMB461TXW1hBMByoFGuErMag6m8=;
+        b=OMYhX9/wJW64UbMWWW1d3FUy+pfa/rAIrIvVllOFAkYYrblD9phoulxgBQa2JzMNsZ
+         V3+6LP2JBVtfzwqUiqPBN/0MnUI4iGDLKMg1xssNBfHR/WT4bzVuHZR0uLJi2MBws+M/
+         Mx3s5p0XCXV8I8JyjGf7O0hhg7ok6CneMHFLnvEel3DtMDsJ5pGjpMrDrK7SgC9xdBCb
+         yhefS1s0E68VSDfYujpwjhZp2SYoYDbbAyPW8SSp5a973uOz9iYkhunVlxndqB9M5UoX
+         vGt1yC0S+TdLVbxUj/gDXvtVyuf0N85kSmJIYo5e9Di2dChOoSbisUgxrrck1TOHXfCP
+         a+mA==
+X-Gm-Message-State: AA+aEWahtqillDc0HICKpUETwQwR5gTPcGFtuymTmN+JUksWuRpcJ07E
+        DXsC4prSU/1xtrojgPnBoFDJXw==
+X-Google-Smtp-Source: AFSGD/UN81KQhKo/d71SW3eqyGyxaLk4UeGQ4qmnRgXdU/jlhJ76DFWvMXnCrFCWNWD5YY4JE/ppJQ==
+X-Received: by 2002:a1c:f605:: with SMTP id w5mr11781988wmc.116.1545310499216;
+        Thu, 20 Dec 2018 04:54:59 -0800 (PST)
 Received: from localhost.localdomain (ip-163-240.sn-213-198.clouditalia.com. [213.198.163.240])
-        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.56
+        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 04:54:57 -0800 (PST)
+        Thu, 20 Dec 2018 04:54:58 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -65,9 +65,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 5/6] arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
-Date:   Thu, 20 Dec 2018 18:24:37 +0530
-Message-Id: <20181220125438.11700-6-jagan@amarulasolutions.com>
+Subject: [DO NOT MERGE] [PATCH v5 6/6] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
+Date:   Thu, 20 Dec 2018 18:24:38 +0530
+Message-Id: <20181220125438.11700-7-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181220125438.11700-1-jagan@amarulasolutions.com>
 References: <20181220125438.11700-1-jagan@amarulasolutions.com>
@@ -78,34 +78,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some camera modules have the SoC feeding a master clock to the sensor
-instead of having a standalone crystal. This clock signal is generated
-from the clock control unit and output from the CSI MCLK function of
-pin PE1.
+Bananapi M64 comes with an optional sensor based on the ov5640,
+add support for it with below pin information.
 
-Add a pinmux setting for it for camera sensors to reference.
+- PE13, PE12 via i2c-gpio bitbanging
+- CLK_CSI_MCLK as external clock
+- PE1 as external clock pin muxing
+- DLDO3 as AVDD supply
+- ALDO1 as DOVDD supply
+- ELDO3 as DVDD supply
+- PE16 gpio for reset pin
+- PE17 gpio for powerdown pin
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 89a0deb3fe6a..dd5740bc3fc9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -538,6 +538,11 @@
- 				function = "csi0";
- 			};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 83e30e0afe5b..c185ceec8c81 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,41 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+			csi_mclk_pin: csi-mclk {
-+				pins = "PE1";
-+				function = "csi0";
-+			};
++	i2c-csi {
++		compatible = "i2c-gpio";
++		sda-gpios = <&pio 4 13 GPIO_ACTIVE_HIGH>; /* CSI0-SDA: PE13 */
++		scl-gpios = <&pio 4 12 GPIO_ACTIVE_HIGH>; /* CSI0-SCK: PE12 */
++		i2c-gpio,delay-us = <5>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- 			i2c0_pins: i2c0_pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
++		ov5640: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&csi_mclk_pin>;
++			clocks = <&ccu CLK_CSI_MCLK>;
++			clock-names = "xclk";
++
++			AVDD-supply = <&reg_dldo3>;
++			DOVDD-supply = <&reg_aldo1>;
++			DVDD-supply = <&reg_eldo3>;
++			reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* CSI0-RST: PE16 */
++			powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* CSI0-PWDN: PE17 */
++
++			port {
++				ov5640_ep: endpoint {
++					remote-endpoint = <&csi_ep>;
++					bus-width = <8>;
++					hsync-active = <1>; /* Active high */
++					vsync-active = <0>; /* Active low */
++					data-active = <1>;  /* Active high */
++					pclk-sample = <1>;  /* Rising */
++				};
++			};
++		};
++	};
++
+ 	hdmi-connector {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -106,6 +141,24 @@
+ 	status = "okay";
+ };
+ 
++&csi {
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		csi_ep: endpoint {
++			remote-endpoint = <&ov5640_ep>;
++			bus-width = <8>;
++			hsync-active = <1>; /* Active high */
++			vsync-active = <0>; /* Active low */
++			data-active = <1>;  /* Active high */
++			pclk-sample = <1>;  /* Rising */
++		};
++	};
++};
++
+ &dai {
+ 	status = "okay";
+ };
+@@ -296,6 +349,12 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&reg_dldo3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "avdd-csi";
++};
++
+ &reg_dldo4 {
+ 	regulator-min-microvolt = <1800000>;
+ 	regulator-max-microvolt = <3300000>;
+@@ -313,6 +372,12 @@
+ 	regulator-name = "cpvdd";
+ };
+ 
++&reg_eldo3 {
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "dvdd-csi";
++};
++
+ &reg_fldo1 {
+ 	regulator-min-microvolt = <1200000>;
+ 	regulator-max-microvolt = <1200000>;
 -- 
 2.18.0.321.gffc6fa0e3
 
