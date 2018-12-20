@@ -2,258 +2,490 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728A6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AC1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A392186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D3A121852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:35:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KoHDhIch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387657AbeLTOfK (ORCPT
+        id S2387664AbeLTOfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:35:10 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:34284 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733267AbeLTOfJ (ORCPT
+        Thu, 20 Dec 2018 09:35:53 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35468 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730558AbeLTOfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:35:09 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 98A9E67B8D5;
-        Thu, 20 Dec 2018 15:35:05 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 20 Dec
- 2018 15:35:05 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Thu, 20 Dec 2018 15:35:05 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Brian Norris" <computersforpeace@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH 1/3] mtd: rawnand: Support bad block markers in first,
- second or last page
-Thread-Topic: [PATCH 1/3] mtd: rawnand: Support bad block markers in first,
- second or last page
-Thread-Index: AQHUliALbj7sZ4eBT0aRyPBxGaehf6WHm40AgAAJ0wA=
-Date:   Thu, 20 Dec 2018 14:35:05 +0000
-Message-ID: <d3fb9a2c-477e-8d7a-2c22-7b8348a67a1a@kontron.de>
-References: <1545061693-29216-1-git-send-email-frieder.schrempf@kontron.de>
- <1545061693-29216-2-git-send-email-frieder.schrempf@kontron.de>
- <20181220145954.55ae36e9@bbrezillon>
-In-Reply-To: <20181220145954.55ae36e9@bbrezillon>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E27399B6E40D0D48A2ECCA573998D198@snt-world.com>
-Content-Transfer-Encoding: base64
+        Thu, 20 Dec 2018 09:35:52 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 96so2007320wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 06:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iSBBGKYXoMbAEVaAi+Mds4SNqRv60KJaSLPiiZa6Ui8=;
+        b=KoHDhIchrUcTBTszIGVh8c7qEIdRb8CL3TAzTurDHLJV/fd//mdJScLRmVMXSeCt4t
+         VTvIkQla7i+Svq0PueG1mpdAmfv4oeguuJrtneqtaXmdkUSv+1JSaA9Qhz+Nxhm746KI
+         Gy/J3YRL+xUWLfSysvld1dOa/2quvhPOSfDgU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iSBBGKYXoMbAEVaAi+Mds4SNqRv60KJaSLPiiZa6Ui8=;
+        b=XnsPwA0IFzZuDKMgplPG0sYn+IbOYiYZxA6PAvFrr2vrO8YMIeLw+hnGtKb9tRYV9n
+         OYZcO3KBLxJQVzl8gbcPvVOBLqfjz6v/RmLPnKQhGqjg157IzZ204I8LGdwtd/X2K/Lj
+         Iz+2Qa1OZJOrdgKIpZQ/VqiHpR1kWUiDCE2UTxCGBBR5u7ABjA+aulphVZBNaoZwq4Pp
+         Z+VqdkjmSergXUV4RwyAxyJPZJBMbwtwUd5xIJWkfph87M7Oiw2eJsottI2Nj4gjabhJ
+         9bJQW7/VLZtLC4cCNw1p/F2J1K9UaQsGQDbG/nO8Iuk2Q4iNPr7R5vyzmcYih0N4X8ne
+         Mc8g==
+X-Gm-Message-State: AA+aEWYoR0iOyUi85J+tmr3sFg7fFxRcH5cdpzPeCH4aOKpEGaJ6EXLE
+        sM/3PfPlg5FzVEUPsIAeN92b6ss7WGo=
+X-Google-Smtp-Source: AFSGD/XHXzeWvbngiFo4S1TfUwtIhuy3xZYoPe5zaPhBaCg7IMUKPYiT7j/5KT1/KbhHqdvozGGNew==
+X-Received: by 2002:adf:9bda:: with SMTP id e26mr21841749wrc.295.1545316549095;
+        Thu, 20 Dec 2018 06:35:49 -0800 (PST)
+Received: from [192.168.0.40] (55.183.88.92.rev.sfr.net. [92.88.183.55])
+        by smtp.googlemail.com with ESMTPSA id h131sm10054013wmd.17.2018.12.20.06.35.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 06:35:48 -0800 (PST)
+Subject: Re: [PATCH v10 18/27] drivers: firmware: psci: Add support for PM
+ domains using genpd
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
+Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-19-ulf.hansson@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <fa99b1a9-2e4d-e97c-9478-43b4d3ef9819@linaro.org>
+Date:   Thu, 20 Dec 2018 15:35:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 98A9E67B8D5.A0513
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at
+In-Reply-To: <20181129174700.16585-19-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAuMTIuMTggMTQ6NTksIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24gTW9uLCAxNyBE
-ZWMgMjAxOCAxNTo0OTowNyArMDAwMA0KPiBTY2hyZW1wZiBGcmllZGVyIDxmcmllZGVyLnNjaHJl
-bXBmQGtvbnRyb24uZGU+IHdyb3RlOg0KPiANCj4+IEZyb206IEZyaWVkZXIgU2NocmVtcGYgPGZy
-aWVkZXIuc2NocmVtcGZAa29udHJvbi5kZT4NCj4+DQo+PiBDdXJyZW50bHkgc3VwcG9ydGVkIGJh
-ZCBibG9jayBtYXJrZXIgcG9zaXRpb25zIHdpdGhpbiB0aGUgYmxvY2sgYXJlOg0KPj4gKiBpbiBm
-aXJzdCBwYWdlIG9ubHkNCj4+ICogaW4gbGFzdCBwYWdlIG9ubHkNCj4+ICogaW4gZmlyc3Qgb3Ig
-c2Vjb25kIHBhZ2UNCj4+DQo+PiBTb21lIEVTTVQgTkFORHMgYXJlIGtub3duIHRvIGhhdmUgYmVl
-biBzaGlwcGVkIGJ5IHRoZSBtYW51ZmFjdHVyZXINCj4+IHdpdGggYmFkIGJsb2NrIG1hcmtlcnMg
-aW4gdGhlIGZpcnN0IG9yIGxhc3QgcGFnZSwgaW5zdGVhZCBvZiB0aGUNCj4+IGZpcnN0IG9yIHNl
-Y29uZCBwYWdlLg0KPj4NCj4+IEFsc28gdGhlIGRhdGFzaGVldHMgZm9yIEN5cHJlc3MvU3BhbnNp
-b24vQU1EIE5BTkRzIGNsYWltIHRoYXQgdGhlDQo+PiBmaXJzdCwgc2Vjb25kICphbmQqIGxhc3Qg
-cGFnZSBuZWVkcyB0byBiZSBjaGVja2VkLg0KPj4NCj4+IFRoZXJlZm9yZSB3ZSBtYWtlIGl0IHBv
-c3NpYmxlIHRvIHNldCBOQU5EX0JCVF9TQ0FOMk5EUEFHRSBhbmQNCj4+IE5BTkRfQkJUX1NDQU5M
-QVNUUEFHRSBhdCB0aGUgc2FtZSB0aW1lIHRvIHNjYW4vc2V0IGFsbCB0aHJlZSBwYWdlcy4NCj4+
-DQo+PiBUbyBzaW1wbGlmeSB0aGUgY29kZSwgdGhlIGxvZ2ljIHRvIGV2YWx1YXRlIHRoZSBmbGFn
-cyBpcyBtb3ZlZCB0byBhDQo+PiBhIG5ldyBmdW5jdGlvbiBuYW5kX2JibV9wYWdlX29mZnNldCgp
-Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEZyaWVkZXIgU2NocmVtcGYgPGZyaWVkZXIuc2NocmVt
-cGZAa29udHJvbi5kZT4NCj4+IC0tLQ0KPj4gICBkcml2ZXJzL210ZC9uYW5kL3Jhdy9pbnRlcm5h
-bHMuaCB8ICAxICsNCj4+ICAgZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYXNlLmMgfCA3MiAr
-KysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLQ0KPj4gICBkcml2ZXJzL210ZC9uYW5k
-L3Jhdy9uYW5kX2JidC5jICB8IDMwICsrKysrKystLS0tLS0tLQ0KPj4gICAzIGZpbGVzIGNoYW5n
-ZWQsIDY4IGluc2VydGlvbnMoKyksIDM1IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9pbnRlcm5hbHMuaCBiL2RyaXZlcnMvbXRkL25hbmQvcmF3
-L2ludGVybmFscy5oDQo+PiBpbmRleCAwNGMyY2Y3Li44ZTRiMTY4IDEwMDY0NA0KPj4gLS0tIGEv
-ZHJpdmVycy9tdGQvbmFuZC9yYXcvaW50ZXJuYWxzLmgNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL25h
-bmQvcmF3L2ludGVybmFscy5oDQo+PiBAQCAtNzYsNiArNzYsNyBAQCBleHRlcm4gY29uc3Qgc3Ry
-dWN0IG5hbmRfbWFudWZhY3R1cmVyX29wcyB0b3NoaWJhX25hbmRfbWFudWZfb3BzOw0KPj4gICAN
-Cj4+ICAgLyogQ29yZSBmdW5jdGlvbnMgKi8NCj4+ICAgY29uc3Qgc3RydWN0IG5hbmRfbWFudWZh
-Y3R1cmVyICpuYW5kX2dldF9tYW51ZmFjdHVyZXIodTggaWQpOw0KPj4gK2ludCBuYW5kX2JibV9w
-YWdlX29mZnNldChzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwLCBpbnQgaW5kZXgpOw0KPj4gICBpbnQg
-bmFuZF9tYXJrYmFkX2JibShzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwLCBsb2ZmX3Qgb2ZzKTsNCj4+
-ICAgaW50IG5hbmRfZXJhc2VfbmFuZChzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwLCBzdHJ1Y3QgZXJh
-c2VfaW5mbyAqaW5zdHIsDQo+PiAgIAkJICAgIGludCBhbGxvd2JidCk7DQo+PiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYXNlLmMgYi9kcml2ZXJzL210ZC9uYW5kL3Jh
-dy9uYW5kX2Jhc2UuYw0KPj4gaW5kZXggNzEwNTBhMC4uMzg4ZDllZCAxMDA2NDQNCj4+IC0tLSBh
-L2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYmFzZS5jDQo+PiArKysgYi9kcml2ZXJzL210ZC9u
-YW5kL3Jhdy9uYW5kX2Jhc2UuYw0KPj4gQEAgLTI1Myw2ICsyNTMsNDUgQEAgc3RhdGljIHZvaWQg
-bmFuZF9yZWxlYXNlX2RldmljZShzdHJ1Y3QgbXRkX2luZm8gKm10ZCkNCj4+ICAgfQ0KPj4gICAN
-Cj4+ICAgLyoqDQo+PiArICogbmFuZF9iYm1fcGFnZV9vZmZzZXQgLSBHZXQgdGhlIHBhZ2Ugb2Zm
-c2V0cyBmb3IgYmFkIGJsb2NrIG1hcmtlcnMNCj4+ICsgKiBAY2hpcDogTkFORCBjaGlwIG9iamVj
-dA0KPj4gKyAqIEBpbmRleDogSW5kZXggZm9yIHRoZSBwYWdlIG9mZnNldA0KPiANCj4gSG0sIHRo
-ZSBtZWFuaW5nIG9mIGluZGV4IGlzIGZhciBmcm9tIG9idmlvdXMuIEhvdyBhYm91dCBwYXNzaW5n
-IHRoZQ0KPiBjdXJyZW50IHBhZ2UgaW5zdGVhZCAoYW5kIHJldHVybiAxIGlmIHRoZXJlIGFyZSBt
-b3JlIHBhZ2VzIHRvIHNjYW4gMA0KPiBvdGhlcndpc2UpPw0KDQpHb29kIGlkZWEuDQoNCj4gDQo+
-IFNvbWV0aGluZyBsaWtlOg0KPiANCj4gc3RhdGljIGludCBuYW5kX2JibV9nZXRfbmV4dF9wYWdl
-KHN0cnVjdCBuYW5kX2NoaXAgKmNoaXAsIGludCBwYWdlKQ0KPiB7DQo+IAlzdHJ1Y3QgbXRkX2lu
-Zm8gKm10ZCA9IG5hbmRfdG9fbXRkKGNoaXApOw0KPiAJaW50IGxhc3RfcGFnZSA9ICgobXRkLT5l
-cmFzZXNpemUgLSBtdGQtPndyaXRlc2l6ZSkgPj4NCj4gCQkJIGNoaXAtPnBhZ2Vfc2hpZnQpICYg
-Y2hpcC0+cGFnZW1hc2s7DQo+IA0KPiAJaWYgKHBhZ2UgPCAwICYmIGNoaXAtPmJidF9vcHRpb25z
-ICYgTkFORF9CQlRfU0NBTkZJUlNUUEFHRSkNCj4gCQlyZXR1cm4gMDsNCj4gCWVsc2UgaWYgKHBh
-Z2UgPCAxICYmIGNoaXAtPmJidF9vcHRpb25zICYgTkFORF9CQlRfU0NBTjJORFBBR0UpDQo+IAkJ
-cmV0dXJuIDE7DQo+IAllbHNlIGlmIChwYWdlIDwgbGFzdF9wYWdlICYmDQo+IAkJIGNoaXAtPmJi
-dF9vcHRpb25zICYgTkFORF9CQlRfU0NBTkxBU1RQQUdFKQ0KPiAJCXJldHVybiBsYXN0X3BhZ2U7
-DQo+IA0KPiAJcmV0dXJuIC0xOw0KPiB9DQo+IA0KPiBBbmQgeWVzLCB0aGF0IG1lYW5zIGRlZmlu
-aW5nIE5BTkRfQkJUX1NDQU5GSVJTVFBBR0UgYW5kIHNldHRpbmcgaXQgd2hlbg0KPiBhcHByb3By
-aWF0ZS4NCg0KSSB0cmllZCB0byBrZWVwIHRoZSBleGlzdGluZyBmbGFncyBhbmQgdGhlaXIgY3Vy
-cmVudCBtZWFuaW5ncywgYnV0IHlvdSANCmFyZSByaWdodC4gSWYgd2UgcmVkZWZpbmUgdGhlIGZs
-YWdzIGFuZCBhZGQgTkFORF9CQlRfU0NBTkZJUlNUUEFHRSBhbmQgDQpOQU5EX0JCVF9TQ0FORklS
-U1QyUEFHRVMgdGhpcyB3aWxsIGJlIG11Y2ggZWFzaWVyIHRvIHJlYWQuDQoNCkFsc28gbWF5YmUg
-cmVuYW1pbmcgdGhlIGZsYWdzIHRvIE5BTkRfQkJNX1hYWCB3b3VsZCBiZSBldmVuIGNsZWFuZXIs
-IGFzIA0Kd2UgdXNlIHRoZW0gbm90IG9ubHkgZm9yIHNjYW5uaW5nLCBidXQgYWxzbyBmb3Igd3Jp
-dGluZyBtYXJrZXJzIGFuZCB0aGV5IA0KYXJlIG5vdCBkaXJlY3RseSByZWxhdGVkIHRvIHRoZSBi
-YWQgYmxvY2sgdGFibGUgKEJCVCk/DQoNCkJ5IHRoZSB3YXksIHdoYXQgYXJlIHlvdXIgcGxhbnMg
-Zm9yIHVzaW5nIHRoZSBjb21tb24gTkFORCBsYXllciAodGhhdCBpcyANCnVzZWQgYnkgdGhlIFNQ
-SSBOQU5EIGxheWVyKSBmb3IgcmF3IE5BTkQ/DQpJJ20gdGhpbmtpbmcgb2YgU1BJIE5BTkRzIHRo
-YXQgbWlnaHQgcmVxdWlyZSB0aGluZ3MgbGlrZSB0aGlzLCB0b28uIA0KQ3VycmVudGx5IHRoZXkg
-c2VlbSB0byBoYXZlIHRoZSBtYXJrZXJzIGluIHRoZSBmaXJzdCBwYWdlIG9ubHksIGJ1dCB0aGF0
-IA0KY291bGQgY2hhbmdlIGVhc2lseSBhbmQgaW4gdGhhdCBjYXNlIGl0IHdvdWxkIGJlIG5pY2Ug
-dG8gc2hhcmUgdGhlIGNvZGUuDQoNCj4gDQo+PiArICoNCj4+ICsgKiBSZXR1cm5zIGFuIGludGVn
-ZXIgdGhhdCBjb3JyZXNwb25kcyB0byB0aGUgcGFnZSBvZmZzZXQgd2l0aGluIGEgYmxvY2ssIGZv
-cg0KPj4gKyAqIGEgcGFnZSB0aGF0IGlzIHVzZWQgdG8gc3RvcmUgYmFkIGJsb2NrIG1hcmtlcnMu
-IElmIG5vIG1vcmUgcGFnZSBvZmZzZXRzIGFyZQ0KPj4gKyAqIGF2YWlsYWJsZSwgLTEgaXMgcmV0
-dXJuZWQuDQo+PiArICovDQo+PiAraW50IG5hbmRfYmJtX3BhZ2Vfb2Zmc2V0KHN0cnVjdCBuYW5k
-X2NoaXAgKmNoaXAsIGludCBpbmRleCkNCj4+ICt7DQo+PiArCXN0cnVjdCBtdGRfaW5mbyAqbXRk
-ID0gbmFuZF90b19tdGQoY2hpcCk7DQo+PiArCWludCBsYXN0X3BhZ2UgPSAoKG10ZC0+ZXJhc2Vz
-aXplIC0gbXRkLT53cml0ZXNpemUpID4+DQo+PiArCQkJIGNoaXAtPnBhZ2Vfc2hpZnQpICYgY2hp
-cC0+cGFnZW1hc2s7DQo+PiArDQo+PiArCXN3aXRjaCAoaW5kZXgpIHsNCj4+ICsJY2FzZSAwOg0K
-Pj4gKwkJaWYgKChjaGlwLT5iYnRfb3B0aW9ucyAmIE5BTkRfQkJUX1NDQU5MQVNUUEFHRSkgJiYN
-Cj4+ICsJCSAgICAhKGNoaXAtPmJidF9vcHRpb25zICYgTkFORF9CQlRfU0NBTjJORFBBR0UpKQ0K
-Pj4gKwkJCXJldHVybiBsYXN0X3BhZ2U7DQo+PiArCQllbHNlDQo+PiArCQkJcmV0dXJuIDA7DQo+
-PiArCQlicmVhazsNCj4+ICsJY2FzZSAxOg0KPj4gKwkJaWYgKGNoaXAtPmJidF9vcHRpb25zICYg
-TkFORF9CQlRfU0NBTjJORFBBR0UpDQo+PiArCQkJcmV0dXJuIDE7DQo+PiArCQlicmVhazsNCj4+
-ICsJY2FzZSAyOg0KPj4gKwkJaWYgKChjaGlwLT5iYnRfb3B0aW9ucyAmIE5BTkRfQkJUX1NDQU5M
-QVNUUEFHRSkgJiYNCj4+ICsJCSAgICAoY2hpcC0+YmJ0X29wdGlvbnMgJiBOQU5EX0JCVF9TQ0FO
-Mk5EUEFHRSkpDQo+PiArCQkJcmV0dXJuIGxhc3RfcGFnZTsNCj4+ICsJCWJyZWFrOw0KPj4gKwlk
-ZWZhdWx0Og0KPj4gKwkJYnJlYWs7DQo+PiArCX0NCj4+ICsNCj4+ICsJcmV0dXJuIC0xOw0KPj4g
-K30NCj4+ICsNCj4+ICsvKioNCj4+ICAgICogbmFuZF9ibG9ja19iYWQgLSBbREVGQVVMVF0gUmVh
-ZCBiYWQgYmxvY2sgbWFya2VyIGZyb20gdGhlIGNoaXANCj4+ICAgICogQGNoaXA6IE5BTkQgY2hp
-cCBvYmplY3QNCj4+ICAgICogQG9mczogb2Zmc2V0IGZyb20gZGV2aWNlIHN0YXJ0DQo+PiBAQCAt
-MjYxLDE4ICszMDAsMTQgQEAgc3RhdGljIHZvaWQgbmFuZF9yZWxlYXNlX2RldmljZShzdHJ1Y3Qg
-bXRkX2luZm8gKm10ZCkNCj4+ICAgICovDQo+PiAgIHN0YXRpYyBpbnQgbmFuZF9ibG9ja19iYWQo
-c3RydWN0IG5hbmRfY2hpcCAqY2hpcCwgbG9mZl90IG9mcykNCj4+ICAgew0KPj4gLQlzdHJ1Y3Qg
-bXRkX2luZm8gKm10ZCA9IG5hbmRfdG9fbXRkKGNoaXApOw0KPj4gLQlpbnQgcGFnZSwgcGFnZV9l
-bmQsIHJlczsNCj4+ICsJaW50IHBhZ2Vfb2Zmc2V0LCBpID0gMDsNCj4+ICsJaW50IHJlcywgZmly
-c3RfcGFnZSA9IChpbnQpKG9mcyA+PiBjaGlwLT5wYWdlX3NoaWZ0KSAmIGNoaXAtPnBhZ2VtYXNr
-Ow0KPj4gICAJdTggYmFkOw0KPj4gICANCj4+IC0JaWYgKGNoaXAtPmJidF9vcHRpb25zICYgTkFO
-RF9CQlRfU0NBTkxBU1RQQUdFKQ0KPj4gLQkJb2ZzICs9IG10ZC0+ZXJhc2VzaXplIC0gbXRkLT53
-cml0ZXNpemU7DQo+PiArCXBhZ2Vfb2Zmc2V0ID0gbmFuZF9iYm1fcGFnZV9vZmZzZXQoY2hpcCwg
-MCk7DQo+PiAgIA0KPj4gLQlwYWdlID0gKGludCkob2ZzID4+IGNoaXAtPnBhZ2Vfc2hpZnQpICYg
-Y2hpcC0+cGFnZW1hc2s7DQo+PiAtCXBhZ2VfZW5kID0gcGFnZSArIChjaGlwLT5iYnRfb3B0aW9u
-cyAmIE5BTkRfQkJUX1NDQU4yTkRQQUdFID8gMiA6IDEpOw0KPj4gLQ0KPj4gLQlmb3IgKDsgcGFn
-ZSA8IHBhZ2VfZW5kOyBwYWdlKyspIHsNCj4+IC0JCXJlcyA9IGNoaXAtPmVjYy5yZWFkX29vYihj
-aGlwLCBwYWdlKTsNCj4+ICsJZG8gew0KPj4gKwkJcmVzID0gY2hpcC0+ZWNjLnJlYWRfb29iKGNo
-aXAsIGZpcnN0X3BhZ2UgKyBwYWdlX29mZnNldCk7DQo+PiAgIAkJaWYgKHJlcyA8IDApDQo+PiAg
-IAkJCXJldHVybiByZXM7DQo+PiAgIA0KPj4gQEAgLTI4NCw3ICszMTksOSBAQCBzdGF0aWMgaW50
-IG5hbmRfYmxvY2tfYmFkKHN0cnVjdCBuYW5kX2NoaXAgKmNoaXAsIGxvZmZfdCBvZnMpDQo+PiAg
-IAkJCXJlcyA9IGh3ZWlnaHQ4KGJhZCkgPCBjaGlwLT5iYWRibG9ja2JpdHM7DQo+PiAgIAkJaWYg
-KHJlcykNCj4+ICAgCQkJcmV0dXJuIHJlczsNCj4+IC0JfQ0KPj4gKw0KPj4gKwkJcGFnZV9vZmZz
-ZXQgPSBuYW5kX2JibV9wYWdlX29mZnNldChjaGlwLCArK2kpOw0KPj4gKwl9IHdoaWxlIChwYWdl
-X29mZnNldCAhPSAtMSk7DQo+PiAgIA0KPj4gICAJcmV0dXJuIDA7DQo+PiAgIH0NCj4+IEBAIC0z
-MDMsNyArMzQwLDcgQEAgc3RhdGljIGludCBuYW5kX2RlZmF1bHRfYmxvY2tfbWFya2JhZChzdHJ1
-Y3QgbmFuZF9jaGlwICpjaGlwLCBsb2ZmX3Qgb2ZzKQ0KPj4gICAJc3RydWN0IG10ZF9pbmZvICpt
-dGQgPSBuYW5kX3RvX210ZChjaGlwKTsNCj4+ICAgCXN0cnVjdCBtdGRfb29iX29wcyBvcHM7DQo+
-PiAgIAl1aW50OF90IGJ1ZlsyXSA9IHsgMCwgMCB9Ow0KPj4gLQlpbnQgcmV0ID0gMCwgcmVzLCBp
-ID0gMDsNCj4+ICsJaW50IHJldCA9IDAsIHJlcywgaSA9IDAsIHBhZ2Vfb2Zmc2V0Ow0KPj4gICAN
-Cj4+ICAgCW1lbXNldCgmb3BzLCAwLCBzaXplb2Yob3BzKSk7DQo+PiAgIAlvcHMub29iYnVmID0g
-YnVmOw0KPj4gQEAgLTMxNiwxNyArMzUzLDE2IEBAIHN0YXRpYyBpbnQgbmFuZF9kZWZhdWx0X2Js
-b2NrX21hcmtiYWQoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCwgbG9mZl90IG9mcykNCj4+ICAgCX0N
-Cj4+ICAgCW9wcy5tb2RlID0gTVREX09QU19QTEFDRV9PT0I7DQo+PiAgIA0KPj4gLQkvKiBXcml0
-ZSB0byBmaXJzdC9sYXN0IHBhZ2UocykgaWYgbmVjZXNzYXJ5ICovDQo+PiAtCWlmIChjaGlwLT5i
-YnRfb3B0aW9ucyAmIE5BTkRfQkJUX1NDQU5MQVNUUEFHRSkNCj4+IC0JCW9mcyArPSBtdGQtPmVy
-YXNlc2l6ZSAtIG10ZC0+d3JpdGVzaXplOw0KPj4gKwlwYWdlX29mZnNldCA9IG5hbmRfYmJtX3Bh
-Z2Vfb2Zmc2V0KGNoaXAsIDApOw0KPj4gKw0KPj4gICAJZG8gew0KPj4gLQkJcmVzID0gbmFuZF9k
-b193cml0ZV9vb2IobXRkLCBvZnMsICZvcHMpOw0KPj4gKwkJcmVzID0gbmFuZF9kb193cml0ZV9v
-b2IobXRkLCBvZnMgKyBwYWdlX29mZnNldCAqIG10ZC0+d3JpdGVzaXplLA0KPj4gKwkJCQkJJm9w
-cyk7DQo+PiAgIAkJaWYgKCFyZXQpDQo+PiAgIAkJCXJldCA9IHJlczsNCj4+ICAgDQo+PiAtCQlp
-Kys7DQo+PiAtCQlvZnMgKz0gbXRkLT53cml0ZXNpemU7DQo+PiAtCX0gd2hpbGUgKChjaGlwLT5i
-YnRfb3B0aW9ucyAmIE5BTkRfQkJUX1NDQU4yTkRQQUdFKSAmJiBpIDwgMik7DQo+PiArCQlwYWdl
-X29mZnNldCA9IG5hbmRfYmJtX3BhZ2Vfb2Zmc2V0KGNoaXAsICsraSk7DQo+PiArCX0gd2hpbGUg
-KHBhZ2Vfb2Zmc2V0ICE9IC0xKTsNCj4+ICAgDQo+PiAgIAlyZXR1cm4gcmV0Ow0KPj4gICB9DQo+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYnQuYyBiL2RyaXZlcnMv
-bXRkL25hbmQvcmF3L25hbmRfYmJ0LmMNCj4+IGluZGV4IDk4YTgyNjguLmIxNDI0YjMgMTAwNjQ0
-DQo+PiAtLS0gYS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2JidC5jDQo+PiArKysgYi9kcml2
-ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2JidC5jDQo+PiBAQCAtNDEyLDEwICs0MTIsMTEgQEAgc3Rh
-dGljIHZvaWQgcmVhZF9hYnNfYmJ0cyhzdHJ1Y3QgbXRkX2luZm8gKm10ZCwgdWludDhfdCAqYnVm
-LA0KPj4gICANCj4+ICAgLyogU2NhbiBhIGdpdmVuIGJsb2NrIHBhcnRpYWxseSAqLw0KPj4gICBz
-dGF0aWMgaW50IHNjYW5fYmxvY2tfZmFzdChzdHJ1Y3QgbXRkX2luZm8gKm10ZCwgc3RydWN0IG5h
-bmRfYmJ0X2Rlc2NyICpiZCwNCj4+IC0JCQkgICBsb2ZmX3Qgb2ZmcywgdWludDhfdCAqYnVmLCBp
-bnQgbnVtcGFnZXMpDQo+PiArCQkJICAgbG9mZl90IG9mZnMsIHVpbnQ4X3QgKmJ1ZikNCj4+ICAg
-ew0KPj4gKwlzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwID0gbXRkX3RvX25hbmQobXRkKTsNCj4+ICAg
-CXN0cnVjdCBtdGRfb29iX29wcyBvcHM7DQo+PiAtCWludCBqLCByZXQ7DQo+PiArCWludCBpID0g
-MCwgcmV0LCBwYWdlX29mZnNldDsNCj4+ICAgDQo+PiAgIAlvcHMub29ibGVuID0gbXRkLT5vb2Jz
-aXplOw0KPj4gICAJb3BzLm9vYmJ1ZiA9IGJ1ZjsNCj4+IEBAIC00MjMsMTIgKzQyNCwxNSBAQCBz
-dGF0aWMgaW50IHNjYW5fYmxvY2tfZmFzdChzdHJ1Y3QgbXRkX2luZm8gKm10ZCwgc3RydWN0IG5h
-bmRfYmJ0X2Rlc2NyICpiZCwNCj4+ICAgCW9wcy5kYXRidWYgPSBOVUxMOw0KPj4gICAJb3BzLm1v
-ZGUgPSBNVERfT1BTX1BMQUNFX09PQjsNCj4+ICAgDQo+PiAtCWZvciAoaiA9IDA7IGogPCBudW1w
-YWdlczsgaisrKSB7DQo+PiArCXBhZ2Vfb2Zmc2V0ID0gbmFuZF9iYm1fcGFnZV9vZmZzZXQoY2hp
-cCwgMCk7DQo+PiArDQo+PiArCWRvIHsNCj4+ICAgCQkvKg0KPj4gICAJCSAqIFJlYWQgdGhlIGZ1
-bGwgb29iIHVudGlsIHJlYWRfb29iIGlzIGZpeGVkIHRvIGhhbmRsZSBzaW5nbGUNCj4+ICAgCQkg
-KiBieXRlIHJlYWRzIGZvciAxNiBiaXQgYnVzd2lkdGguDQo+PiAgIAkJICovDQo+PiAtCQlyZXQg
-PSBtdGRfcmVhZF9vb2IobXRkLCBvZmZzLCAmb3BzKTsNCj4+ICsJCXJldCA9IG10ZF9yZWFkX29v
-YihtdGQsIG9mZnMgKyBwYWdlX29mZnNldCAqIG10ZC0+d3JpdGVzaXplLA0KPj4gKwkJCQkgICAm
-b3BzKTsNCj4+ICAgCQkvKiBJZ25vcmUgRUNDIGVycm9ycyB3aGVuIGNoZWNraW5nIGZvciBCQk0g
-Ki8NCj4+ICAgCQlpZiAocmV0ICYmICFtdGRfaXNfYml0ZmxpcF9vcl9lY2NlcnIocmV0KSkNCj4+
-ICAgCQkJcmV0dXJuIHJldDsNCj4+IEBAIC00MzYsOCArNDQwLDkgQEAgc3RhdGljIGludCBzY2Fu
-X2Jsb2NrX2Zhc3Qoc3RydWN0IG10ZF9pbmZvICptdGQsIHN0cnVjdCBuYW5kX2JidF9kZXNjciAq
-YmQsDQo+PiAgIAkJaWYgKGNoZWNrX3Nob3J0X3BhdHRlcm4oYnVmLCBiZCkpDQo+PiAgIAkJCXJl
-dHVybiAxOw0KPj4gICANCj4+IC0JCW9mZnMgKz0gbXRkLT53cml0ZXNpemU7DQo+PiAtCX0NCj4+
-ICsJCXBhZ2Vfb2Zmc2V0ID0gbmFuZF9iYm1fcGFnZV9vZmZzZXQoY2hpcCwgKytpKTsNCj4+ICsJ
-fSB3aGlsZSAocGFnZV9vZmZzZXQgIT0gLTEpOw0KPj4gKw0KPj4gICAJcmV0dXJuIDA7DQo+PiAg
-IH0NCj4+ICAgDQo+PiBAQCAtNDU2LDE3ICs0NjEsMTEgQEAgc3RhdGljIGludCBjcmVhdGVfYmJ0
-KHN0cnVjdCBtdGRfaW5mbyAqbXRkLCB1aW50OF90ICpidWYsDQo+PiAgIAlzdHJ1Y3QgbmFuZF9i
-YnRfZGVzY3IgKmJkLCBpbnQgY2hpcCkNCj4+ICAgew0KPj4gICAJc3RydWN0IG5hbmRfY2hpcCAq
-dGhpcyA9IG10ZF90b19uYW5kKG10ZCk7DQo+PiAtCWludCBpLCBudW1ibG9ja3MsIG51bXBhZ2Vz
-Ow0KPj4gLQlpbnQgc3RhcnRibG9jazsNCj4+ICsJaW50IGksIG51bWJsb2Nrcywgc3RhcnRibG9j
-azsNCj4+ICAgCWxvZmZfdCBmcm9tOw0KPj4gICANCj4+ICAgCXByX2luZm8oIlNjYW5uaW5nIGRl
-dmljZSBmb3IgYmFkIGJsb2Nrc1xuIik7DQo+PiAgIA0KPj4gLQlpZiAoYmQtPm9wdGlvbnMgJiBO
-QU5EX0JCVF9TQ0FOMk5EUEFHRSkNCj4+IC0JCW51bXBhZ2VzID0gMjsNCj4+IC0JZWxzZQ0KPj4g
-LQkJbnVtcGFnZXMgPSAxOw0KPj4gLQ0KPj4gICAJaWYgKGNoaXAgPT0gLTEpIHsNCj4+ICAgCQlu
-dW1ibG9ja3MgPSBtdGQtPnNpemUgPj4gdGhpcy0+YmJ0X2VyYXNlX3NoaWZ0Ow0KPj4gICAJCXN0
-YXJ0YmxvY2sgPSAwOw0KPj4gQEAgLTQ4MywxNSArNDgyLDEyIEBAIHN0YXRpYyBpbnQgY3JlYXRl
-X2JidChzdHJ1Y3QgbXRkX2luZm8gKm10ZCwgdWludDhfdCAqYnVmLA0KPj4gICAJCWZyb20gPSAo
-bG9mZl90KXN0YXJ0YmxvY2sgPDwgdGhpcy0+YmJ0X2VyYXNlX3NoaWZ0Ow0KPj4gICAJfQ0KPj4g
-ICANCj4+IC0JaWYgKHRoaXMtPmJidF9vcHRpb25zICYgTkFORF9CQlRfU0NBTkxBU1RQQUdFKQ0K
-Pj4gLQkJZnJvbSArPSBtdGQtPmVyYXNlc2l6ZSAtIChtdGQtPndyaXRlc2l6ZSAqIG51bXBhZ2Vz
-KTsNCj4+IC0NCj4+ICAgCWZvciAoaSA9IHN0YXJ0YmxvY2s7IGkgPCBudW1ibG9ja3M7IGkrKykg
-ew0KPj4gICAJCWludCByZXQ7DQo+PiAgIA0KPj4gICAJCUJVR19PTihiZC0+b3B0aW9ucyAmIE5B
-TkRfQkJUX05PX09PQik7DQo+PiAgIA0KPj4gLQkJcmV0ID0gc2Nhbl9ibG9ja19mYXN0KG10ZCwg
-YmQsIGZyb20sIGJ1ZiwgbnVtcGFnZXMpOw0KPj4gKwkJcmV0ID0gc2Nhbl9ibG9ja19mYXN0KG10
-ZCwgYmQsIGZyb20sIGJ1Zik7DQo+PiAgIAkJaWYgKHJldCA8IDApDQo+PiAgIAkJCXJldHVybiBy
-ZXQ7DQo+PiAgIA0KPiA=
+On 29/11/2018 18:46, Ulf Hansson wrote:
+> When the hierarchical CPU topology layout is used in DT, we need to setup
+> the corresponding PM domain data structures, as to allow a CPU and a group
+> of CPUs to be power managed accordingly. Let's enable this by deploying
+> support through the genpd interface.
+> 
+> Additionally, when the OS initiated mode is supported by the PSCI FW, let's
+> also parse the domain idle states DT bindings as to make genpd responsible
+> for the state selection, when the states are compatible with
+> "domain-idle-state". Otherwise, when only Platform Coordinated mode is
+> supported, we rely solely on the state selection to be managed through the
+> regular cpuidle framework.
+> 
+> If the initialization of the PM domain data structures succeeds and the OS
+> initiated mode is supported, we try to switch to it. In case it fails,
+> let's fall back into a degraded mode, rather than bailing out and returning
+> an error code.
+> 
+> Due to that the OS initiated mode may become enabled, we need to adjust to
+> maintain backwards compatibility for a kernel started through a kexec call.
+> Do this by explicitly switch to Platform Coordinated mode during boot.
+> 
+> To try to initiate the PM domain data structures, the PSCI driver shall
+> call the new function, psci_dt_init_pm_domains(). However, this is done
+> from following changes.
+> 
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> 
+> Changes in V10:
+> 	- Enable the PM domains to be used for both PC and OSI mode.
+> 	- Fixup error paths.
+> 	- Move the management of kexec started kernels into this patch.
+> 	- Rewrite changelog.
+> 
+> ---
+>  drivers/firmware/psci/Makefile         |   2 +-
+>  drivers/firmware/psci/psci.c           |   7 +-
+>  drivers/firmware/psci/psci.h           |   6 +
+>  drivers/firmware/psci/psci_pm_domain.c | 262 +++++++++++++++++++++++++
+>  4 files changed, 275 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/firmware/psci/psci_pm_domain.c
+> 
+> diff --git a/drivers/firmware/psci/Makefile b/drivers/firmware/psci/Makefile
+> index 1956b882470f..ff300f1fec86 100644
+> --- a/drivers/firmware/psci/Makefile
+> +++ b/drivers/firmware/psci/Makefile
+> @@ -1,4 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  #
+> -obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
+> +obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o psci_pm_domain.o
+
+Same comment as 17/27.
+
++obj-$(CONFIG_PSCI_IDLE) += psci_pm_domain.o
+
+>  obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 623591b541a4..19af2093151b 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -704,9 +704,14 @@ static int __init psci_1_0_init(struct device_node *np)
+>  	if (err)
+>  		return err;
+>  
+> -	if (psci_has_osi_support())
+> +	if (psci_has_osi_support()) {
+>  		pr_info("OSI mode supported.\n");
+>  
+> +		/* Make sure we default to PC mode. */
+> +		invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
+> +			       PSCI_1_0_SUSPEND_MODE_PC, 0, 0);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
+> index 7d9d38fd57e1..8cf6d7206fab 100644
+> --- a/drivers/firmware/psci/psci.h
+> +++ b/drivers/firmware/psci/psci.h
+> @@ -11,4 +11,10 @@ void psci_set_domain_state(u32 state);
+>  bool psci_has_osi_support(void);
+>  int psci_dt_parse_state_node(struct device_node *np, u32 *state);
+>  
+> +#ifdef CONFIG_CPU_IDLE
+
+Same comment as 17/27 for the config option.
+
+> +int psci_dt_init_pm_domains(struct device_node *np);
+> +#else
+> +static inline int psci_dt_init_pm_domains(struct device_node *np) { return 0; }
+> +#endif
+> +
+>  #endif /* __PSCI_H */
+> diff --git a/drivers/firmware/psci/psci_pm_domain.c b/drivers/firmware/psci/psci_pm_domain.c
+> new file mode 100644
+> index 000000000000..d0dc38e96f85
+> --- /dev/null
+> +++ b/drivers/firmware/psci/psci_pm_domain.c
+> @@ -0,0 +1,262 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PM domains for CPUs via genpd - managed by PSCI.
+> + *
+> + * Copyright (C) 2018 Linaro Ltd.
+> + * Author: Ulf Hansson <ulf.hansson@linaro.org>
+> + *
+> + */
+> +
+> +#define pr_fmt(fmt) "psci: " fmt
+> +
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/slab.h>
+> +#include <linux/string.h>
+> +
+> +#include "psci.h"
+> +
+> +#ifdef CONFIG_CPU_IDLE
+
+Same comment as 17/27 for the config option. This condition should go away.
+
+> +struct psci_pd_provider {
+> +	struct list_head link;
+> +	struct device_node *node;
+> +};
+> +
+> +static LIST_HEAD(psci_pd_providers);
+> +static bool osi_mode_enabled;
+> +
+> +static int psci_pd_power_off(struct generic_pm_domain *pd)
+> +{
+> +	struct genpd_power_state *state = &pd->states[pd->state_idx];
+> +	u32 *pd_state;
+> +	u32 composite_pd_state;
+> +
+> +	/* If we have failed to enable OSI mode, then abort power off. */
+> +	if (psci_has_osi_support() && !osi_mode_enabled)
+> +		return -EBUSY;
+
+I'm not sure EBUSY is the best error code to describe this situation.
+May be ENOTSUP ?
+
+However, how possible is it to pass in this function if the OSI mode was
+not enabled ?
+
+> +	if (!state->data)
+> +		return 0;
+> +
+> +	/* When OSI mode is enabled, set the corresponding domain state. */
+> +	pd_state = state->data;
+> +	composite_pd_state = *pd_state | psci_get_domain_state();
+> +	psci_set_domain_state(composite_pd_state);
+> +
+> +	return 0;
+> +}
+> +
+> +static int psci_pd_parse_state_nodes(struct genpd_power_state *states,
+> +				int state_count)
+
+__init ?
+
+> +{
+> +	int i, ret;
+> +	u32 psci_state, *psci_state_buf;
+> +
+> +	for (i = 0; i < state_count; i++) {
+> +		ret = psci_dt_parse_state_node(to_of_node(states[i].fwnode),
+> +					&psci_state);
+> +		if (ret)
+> +			goto free_state;
+> +
+> +		psci_state_buf = kmalloc(sizeof(u32), GFP_KERNEL);
+> +		if (!psci_state_buf) {
+> +			ret = -ENOMEM;
+> +			goto free_state;
+> +		}
+> +		*psci_state_buf = psci_state;
+> +		states[i].data = psci_state_buf;
+> +	}
+> +
+> +	return 0;
+> +
+> +free_state:
+> +	while (i >= 0) {
+> +		kfree(states[i].data);
+> +		i--;
+> +	}
+
+for (; i >= 0; i--)
+
+> +	return ret;
+> +}
+> +
+> +static int psci_pd_parse_states(struct device_node *np,
+> +			struct genpd_power_state **states, int *state_count)
+
+__init ?
+
+> +{
+> +	int ret;
+> +
+> +	/* Parse the domain idle states. */
+> +	ret = of_genpd_parse_idle_states(np, states, state_count);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Fill out the PSCI specifics for each found state. */
+> +	ret = psci_pd_parse_state_nodes(*states, *state_count);
+> +	if (ret)
+> +		kfree(*states);
+> +
+> +	return ret;
+> +}
+> +
+> +static int psci_pd_init(struct device_node *np)
+
+__init ?
+
+> +{
+> +	struct generic_pm_domain *pd;
+> +	struct psci_pd_provider *pd_provider;
+> +	struct dev_power_governor *pd_gov;
+> +	struct genpd_power_state *states = NULL;
+> +	int i, ret = -ENOMEM, state_count = 0;
+> +
+> +	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> +	if (!pd)
+> +		goto out;
+> +
+> +	pd_provider = kzalloc(sizeof(*pd_provider), GFP_KERNEL);
+> +	if (!pd_provider)
+> +		goto free_pd;
+> +
+> +	pd->name = kasprintf(GFP_KERNEL, "%pOF", np);
+> +	if (!pd->name)
+> +		goto free_pd_prov;
+> +
+> +	/*
+> +	 * For OSI mode, parse the domain idle states and let genpd manage the
+> +	 * state selection for those being compatible with "domain-idle-state".
+> +	 */
+> +	if (psci_has_osi_support()) {
+> +		ret = psci_pd_parse_states(np, &states, &state_count);
+> +		if (ret)
+> +			goto free_name;
+> +	}
+> +
+> +	pd->name = kbasename(pd->name);
+> +	pd->power_off = psci_pd_power_off;
+> +	pd->states = states;
+> +	pd->state_count = state_count;
+> +	pd->flags |= GENPD_FLAG_IRQ_SAFE | GENPD_FLAG_CPU_DOMAIN;
+> +
+> +	/* Use governor for CPU PM domains if it has some states to manage. */
+> +	pd_gov = state_count > 0 ? &pm_domain_cpu_gov : NULL;
+> +
+> +	ret = pm_genpd_init(pd, pd_gov, false);
+> +	if (ret)
+> +		goto free_state;
+> +
+> +	ret = of_genpd_add_provider_simple(np, pd);
+> +	if (ret)
+> +		goto remove_pd;
+> +
+> +	pd_provider->node = of_node_get(np);
+> +	list_add(&pd_provider->link, &psci_pd_providers);
+> +
+> +	pr_debug("init PM domain %s\n", pd->name);
+> +	return 0;
+> +
+> +remove_pd:
+> +	pm_genpd_remove(pd);
+> +free_state:
+> +	for (i = 0; i < state_count; i++)
+> +		kfree(states[i].data);
+> +	kfree(states);
+> +free_name:
+> +	kfree(pd->name);
+> +free_pd_prov:
+> +	kfree(pd_provider);
+> +free_pd:
+> +	kfree(pd);
+> +out:
+> +	pr_err("failed to init PM domain ret=%d %pOF\n", ret, np);
+> +	return ret;
+> +}
+> +
+> +static void psci_pd_remove(void)
+> +{
+> +	struct psci_pd_provider *pd_provider, *it;
+> +	struct generic_pm_domain *genpd;
+> +	int i;
+> +
+> +	list_for_each_entry_safe(pd_provider, it, &psci_pd_providers, link) {
+> +		of_genpd_del_provider(pd_provider->node);
+> +
+> +		genpd = of_genpd_remove_last(pd_provider->node);
+> +		if (!IS_ERR(genpd)) {
+> +			for (i = 0; i < genpd->state_count; i++)
+> +				kfree(genpd->states[i].data);
+> +			kfree(genpd->states);
+> +			kfree(genpd);
+> +		}
+> +
+> +		of_node_put(pd_provider->node);
+> +		list_del(&pd_provider->link);
+> +		kfree(pd_provider);
+> +	}
+> +}
+> +
+> +static int psci_pd_init_topology(struct device_node *np)
+
+__init ?
+
+> +{
+> +	struct device_node *node;
+> +	struct of_phandle_args child, parent;
+> +	int ret;
+> +
+> +	for_each_child_of_node(np, node) {
+> +		if (of_parse_phandle_with_args(node, "power-domains",
+> +					"#power-domain-cells", 0, &parent))
+> +			continue;
+> +
+> +		child.np = node;
+> +		child.args_count = 0;
+> +
+> +		ret = of_genpd_add_subdomain(&parent, &child);
+> +		of_node_put(parent.np);
+> +		if (ret) {
+> +			of_node_put(node);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int psci_dt_init_pm_domains(struct device_node *np)
+
+__init ?
+
+> +{
+> +	struct device_node *node;
+> +	int ret, pd_count = 0;
+> +
+> +	/*
+> +	 * Parse child nodes for the "#power-domain-cells" property and
+> +	 * initialize a genpd/genpd-of-provider pair when it's found.
+> +	 */
+> +	for_each_child_of_node(np, node) {
+> +		if (!of_find_property(node, "#power-domain-cells", NULL))
+> +			continue;
+> +
+> +		ret = psci_pd_init(node);
+> +		if (ret)
+> +			goto put_node;
+> +
+> +		pd_count++;
+> +	}
+> +
+> +	/* Bail out if not using the hierarchical CPU topology. */
+> +	if (!pd_count)
+> +		return 0;
+> +
+> +	/* Link genpd masters/subdomains to model the CPU topology. */
+> +	ret = psci_pd_init_topology(np);
+> +	if (ret)
+> +		goto remove_pd;
+> +
+> +	/* Try to enable OSI mode if supported. */
+> +	if (psci_has_osi_support())
+> +		osi_mode_enabled = psci_set_osi_mode();
+> +
+> +	pr_info("Initialized CPU PM domain topology\n");
+> +	return pd_count;
+> +
+> +put_node:
+> +	of_node_put(node);
+> +remove_pd:
+> +	if (pd_count)
+> +		psci_pd_remove();
+> +	pr_err("failed to create CPU PM domains ret=%d\n", ret);
+> +	return ret;
+> +}
+> +#endif
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
