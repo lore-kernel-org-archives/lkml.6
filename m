@@ -2,207 +2,201 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52490C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF11C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18BB3217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:54:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Usjgz8dy"
+	by mail.kernel.org (Postfix) with ESMTP id 51BD82176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbeLTKyx (ORCPT
+        id S1731387AbeLTKzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:54:53 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11171 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731299AbeLTKyw (ORCPT
+        Thu, 20 Dec 2018 05:55:05 -0500
+Received: from mail-oi1-f197.google.com ([209.85.167.197]:45754 "EHLO
+        mail-oi1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731329AbeLTKzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:54:52 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1b74f00000>; Thu, 20 Dec 2018 02:54:40 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 20 Dec 2018 02:54:50 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 20 Dec 2018 02:54:50 -0800
-Received: from [10.2.167.233] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 20 Dec
- 2018 10:54:50 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com> <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz> <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181218093017.GB18032@quack2.suse.cz>
- <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
- <20181219020723.GD4347@redhat.com> <20181219110856.GA18345@quack2.suse.cz>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8e98d553-7675-8fa1-3a60-4211fc836ed9@nvidia.com>
-Date:   Thu, 20 Dec 2018 02:54:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 20 Dec 2018 05:55:04 -0500
+Received: by mail-oi1-f197.google.com with SMTP id 73so852603oii.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:55:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Ydty51tXu1GhbE294ste5gWWq8Vljd5m8gU35u9wExc=;
+        b=nCYWh305DgdBA84L34AX99bHxsTL2x0GLqPWvquTIu+7ujSkPg1kCnZedyG/3StFkk
+         Q28yOnqDTOyGWeP/44XXub61GGmcARqd6vCPP5kQA+rcmrrUJWTvxiKCfw6mIopWWeHz
+         R0GLlc+4r2hP1WMUHwDoWHIIo8d/RAJdQcUC9UYnVUgjvkKfJdctJn5HrEQXnF5cYMoW
+         2ksdsT6oCx9yNf18NB18TZCi+YQKbxeNJ6n/KZCdftLykrVaH0BwlH9hy6L4yoBSZH37
+         3rgn+2CG/qMJ/RCSwFopTO9NZYnP0YgYWKSoPIeQe/lXgDFdzEWDR/yQt841yvYyWbn5
+         WpSg==
+X-Gm-Message-State: AA+aEWYhznRCtniytAifXWwr3UMAmysk2H5+ZJsUXrYUxdvQWSnNwE2x
+        Vpykihf5xGvft46ZlKYPrkfeGG8x/kDXiiCqitf70Hn+Rg/Q
+X-Google-Smtp-Source: AFSGD/UJAAldmhd1sGRuIc0nPNKavmglPe23ZS22PJ35/C8TolVncWwPEdGJ0H33Tlw6aTrHO9i2aNEBZGoabx/DL0QNfibEFfg1
 MIME-Version: 1.0
-In-Reply-To: <20181219110856.GA18345@quack2.suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545303280; bh=gUB33G4I8Kn0nCUd1t/wdYqHhzS834HZBOXF/wjwMGw=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Usjgz8dydyIWquetSS0VR7eqhrfalgnjXEpcHJu/+pctTBq8ZlQgtBcRPMVoVMGp5
-         pndIUPe1yllJ6TYB7qnNZWKLr+eNoK+pMakdcn0TXYKq+u8bO1kGA+mBugPkPWibhV
-         vUEWdNTTy7TQ6OoxFnZ5zVZMBF+PZolAToKB1FTZBMVnGKg//pdi3ZDSQhzt6HGYd2
-         AMKLivBOKLzE6Wzm7ruWSQEhDu66eexGksoIBit2XfG1HUmFqmEFQEPD7He8nWtYlm
-         ISNEkrFUe4T/MkArDPSxjovRv4wk0f80IMyNzZeFDLBWRE0mWpTYnOAWx8NEsmsHGl
-         rZBqt1LGEul2w==
+X-Received: by 2002:a05:6830:13ca:: with SMTP id e10mr21378501otq.19.1545303303281;
+ Thu, 20 Dec 2018 02:55:03 -0800 (PST)
+Date:   Thu, 20 Dec 2018 02:55:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007664bf057d71f6d7@google.com>
+Subject: BUG: please report to dccp@vger.kernel.org => prev = 10, last = 10 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_h
+From:   syzbot <syzbot+3c8a843d9de82272915b@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 3:08 AM, Jan Kara wrote:
-> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
->> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
->>> OK, so let's take another look at Jerome's _mapcount idea all by itself (using
->>> *only* the tracking pinned pages aspect), given that it is the lightest weight
->>> solution for that.  
->>>
->>> So as I understand it, this would use page->_mapcount to store both the real
->>> mapcount, and the dma pinned count (simply added together), but only do so for
->>> file-backed (non-anonymous) pages:
->>>
->>>
->>> __get_user_pages()
->>> {
->>> 	...
->>> 	get_page(page);
->>>
->>> 	if (!PageAnon)
->>> 		atomic_inc(page->_mapcount);
->>> 	...
->>> }
->>>
->>> put_user_page(struct page *page)
->>> {
->>> 	...
->>> 	if (!PageAnon)
->>> 		atomic_dec(&page->_mapcount);
->>>
->>> 	put_page(page);
->>> 	...
->>> }
->>>
->>> ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
->>> to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
->>> had in mind?
->>
->> Mostly, with the extra two observations:
->>     [1] We only need to know the pin count when a write back kicks in
->>     [2] We need to protect GUP code with wait_for_write_back() in case
->>         GUP is racing with a write back that might not the see the
->>         elevated mapcount in time.
->>
->> So for [2]
->>
->> __get_user_pages()
->> {
->>     get_page(page);
->>
->>     if (!PageAnon) {
->>         atomic_inc(page->_mapcount);
->> +       if (PageWriteback(page)) {
->> +           // Assume we are racing and curent write back will not see
->> +           // the elevated mapcount so wait for current write back and
->> +           // force page fault
->> +           wait_on_page_writeback(page);
->> +           // force slow path that will fault again
->> +       }
->>     }
->> }
-> 
-> This is not needed AFAICT. __get_user_pages() gets page reference (and it
-> should also increment page->_mapcount) under PTE lock. So at that point we
-> are sure we have writeable PTE nobody can change. So page_mkclean() has to
-> block on PTE lock to make PTE read-only and only after going through all
-> PTEs like this, it can check page->_mapcount. So the PTE lock provides
-> enough synchronization.
-> 
->> For [1] only needing pin count during write back turns page_mkclean into
->> the perfect spot to check for that so:
->>
->> int page_mkclean(struct page *page)
->> {
->>     int cleaned = 0;
->> +   int real_mapcount = 0;
->>     struct address_space *mapping;
->>     struct rmap_walk_control rwc = {
->>         .arg = (void *)&cleaned,
->>         .rmap_one = page_mkclean_one,
->>         .invalid_vma = invalid_mkclean_vma,
->> +       .mapcount = &real_mapcount,
->>     };
->>
->>     BUG_ON(!PageLocked(page));
->>
->>     if (!page_mapped(page))
->>         return 0;
->>
->>     mapping = page_mapping(page);
->>     if (!mapping)
->>         return 0;
->>
->>     // rmap_walk need to change to count mapping and return value
->>     // in .mapcount easy one
->>     rmap_walk(page, &rwc);
->>
->>     // Big fat comment to explain what is going on
->> +   if ((page_mapcount(page) - real_mapcount) > 0) {
->> +       SetPageDMAPined(page);
->> +   } else {
->> +       ClearPageDMAPined(page);
->> +   }
-> 
-> This is the detail I'm not sure about: Why cannot rmap_walk_file() race
-> with e.g. zap_pte_range() which decrements page->_mapcount and thus the
-> check we do in page_mkclean() is wrong?
+Hello,
 
-Right. This looks like a dead end, after all. We can't lock a whole chunk 
-of "all these are mapped, hold still while we count you" pages. It's not
-designed to allow that at all.
+syzbot found the following crash on:
 
-IMHO, we are now back to something like dynamic_page, which provides an
-independent dma pinned count. 
+HEAD commit:    6531e115b7ab Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b0bd5d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c8a843d9de82272915b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
--- 
-thanks,
-John Hubbard
-NVIDIA
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3c8a843d9de82272915b@syzkaller.appspotmail.com
+
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+BUG: please report to dccp@vger.kernel.org => prev = 10, last = 10 at  
+net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
+CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #374
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  tfrc_rx_hist_sample_rtt.cold.3+0x54/0x5c  
+net/dccp/ccids/lib/packet_history.c:422
+  ccid3_hc_rx_packet_recv+0x5c4/0xeb0 net/dccp/ccids/ccid3.c:767
+  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+  dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
+  dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
+  dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:656
+  sk_backlog_rcv include/net/sock.h:932 [inline]
+  __sk_receive_skb+0x3e5/0xec0 net/core/sock.c:473
+  dccp_v4_rcv+0x10f9/0x1f58 net/dccp/ipv4.c:877
+  ip_local_deliver_finish+0x2e9/0xda0 net/ipv4/ip_input.c:215
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip_local_deliver+0x1e9/0x750 net/ipv4/ip_input.c:256
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0x1f9/0x300 net/ipv4/ip_input.c:415
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip_rcv+0xed/0x600 net/ipv4/ip_input.c:524
+  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4946
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5056
+  process_backlog+0x24e/0x7a0 net/core/dev.c:5864
+  napi_poll net/core/dev.c:6287 [inline]
+  net_rx_action+0x7fa/0x19b0 net/core/dev.c:6353
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  run_ksoftirqd+0x5e/0x100 kernel/softirq.c:654
+  smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPVS: ftp: loaded support on port[0] = 21
+dccp_close: ABORT with 36864 bytes unread
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPVS: ftp: loaded support on port[0] = 21
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPVS: ftp: loaded support on port[0] = 21
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+IPVS: ftp: loaded support on port[0] = 21
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPVS: ftp: loaded support on port[0] = 21
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+IPVS: ftp: loaded support on port[0] = 21
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPVS: ftp: loaded support on port[0] = 21
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+IPVS: ftp: loaded support on port[0] = 21
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPVS: ftp: loaded support on port[0] = 21
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPVS: ftp: loaded support on port[0] = 21
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as  
+long as lo is part of bond bond0
+bond0: lo is up - this may be due to an out of date ifenslave
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
