@@ -3,51 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C95C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C571C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08302217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE97920656
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297870;
-	bh=vasmiCniDwciFl5jvi9OenQmkFJQYeKzPCJFbPbCQc8=;
+	s=default; t=1545297873;
+	bh=vouLtVZB7PuGjkmj3VtIT7HrfRCv3KKFEBmsR4kpEls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hg/8CIvLylBDtaZUltpXCXgWB+BKtVSxQuI1n9L22PJnzQB6lgIfkr4bqF2eaDz04
-	 mnWIRCviegte9SPEO3+UsM6K9vaImfow6jrCyYNaAu+1yVyyh1yOpxe/cyeYDETWkV
-	 0ojvgRdCn70ECtzQNjlt4YHaPKEzOjJSxIzxvz/0=
+	b=1CZ6uvBbry2LWI2/P66oclj7jqxCsewHbqbSYTzk+ULpD5TImKb/KyKE9rUcXOz4A
+	 chLypjYrUTwBQtmWk6xr/Lfje7O+SXjDXSLaSBo6m6s2j+bOlJzHKZ0RgNl4nyMU1G
+	 ic5i5KtMKzD5NCmbomI9J4d6nS1WRQlOW8pVhJOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbeLTJY3 (ORCPT
+        id S1731829AbeLTJYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:24:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34776 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:24:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731802AbeLTJYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:24 -0500
+        id S1731808AbeLTJY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29F49217D9;
-        Thu, 20 Dec 2018 09:24:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7C1320656;
+        Thu, 20 Dec 2018 09:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297863;
-        bh=vasmiCniDwciFl5jvi9OenQmkFJQYeKzPCJFbPbCQc8=;
+        s=default; t=1545297866;
+        bh=vouLtVZB7PuGjkmj3VtIT7HrfRCv3KKFEBmsR4kpEls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zEA9KmTsiNCEEG1LZaknHVJjqtC4y9hSFvihZtxs+gkiiFTtZXGO0W6Oe4qRmQH6+
-         vTLhdOUlSe+ySwwPB13+1eeFfS1W2nn0n4U//rK4/vtEQAvgU4P7FYX29whlAXAOF6
-         dW8u4dwVdqUmcJwpAkkIMN7u63CcYff1rq/2SN50=
+        b=d3WUiEJOX7A2peGSq2bMUO3eL7zL1bODvBQd+yJ/in4P49WPRIfxC2SJY3gLwQh6c
+         T+OzXoja0Wtt+hPzTu/41VmP3deRF7Tdg6iYdGvDr1RiuiCDEFgmHBFiIdPn288+r2
+         AkQPvm1JRSLGBnV0UfDS7SBZX3MFaejf2ejYksKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/61] mac80211: Fix condition validating WMM IE
-Date:   Thu, 20 Dec 2018 10:18:18 +0100
-Message-Id: <20181220085844.470045269@linuxfoundation.org>
+Subject: [PATCH 4.9 45/61] clk: mmp: Off by one in mmp_clk_add()
+Date:   Thu, 20 Dec 2018 10:18:45 +0100
+Message-Id: <20181220085845.580215979@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -66,36 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 911a26484c33e10de6237228ca1d7293548e9f49 ]
+[ Upstream commit 2e85c57493e391b93445c1e0d530b36b95becc64 ]
 
-Commit c470bdc1aaf3 ("mac80211: don't WARN on bad WMM parameters from
-buggy APs") handled cases where an AP reports a zeroed WMM
-IE. However, the condition that checks the validity accessed the wrong
-index in the ieee80211_tx_queue_params array, thus wrongly deducing
-that the parameters are invalid. Fix it.
+The > comparison should be >= or we write one element beyond the end of
+the unit->clk_table[] array.
 
-Fixes: c470bdc1aaf3 ("mac80211: don't WARN on bad WMM parameters from buggy APs")
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+(The unit->clk_table[] array is allocated in the mmp_clk_init() function
+and it has unit->nr_clks elements).
+
+Fixes: 4661fda10f8b ("clk: mmp: add basic support functions for DT support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/mlme.c | 2 +-
+ drivers/clk/mmp/clk.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index 7811650e76c4..6e0aa296f134 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -1867,7 +1867,7 @@ static bool ieee80211_sta_wmm_params(struct ieee80211_local *local,
- 		params[ac].acm = acm;
- 		params[ac].uapsd = uapsd;
- 
--		if (params->cw_min == 0 ||
-+		if (params[ac].cw_min == 0 ||
- 		    params[ac].cw_min > params[ac].cw_max) {
- 			sdata_info(sdata,
- 				   "AP has invalid WMM params (CWmin/max=%d/%d for ACI %d), using defaults\n",
+diff --git a/drivers/clk/mmp/clk.c b/drivers/clk/mmp/clk.c
+index 61893fe73251..18b6c9b55b95 100644
+--- a/drivers/clk/mmp/clk.c
++++ b/drivers/clk/mmp/clk.c
+@@ -182,7 +182,7 @@ void mmp_clk_add(struct mmp_clk_unit *unit, unsigned int id,
+ 		pr_err("CLK %d has invalid pointer %p\n", id, clk);
+ 		return;
+ 	}
+-	if (id > unit->nr_clks) {
++	if (id >= unit->nr_clks) {
+ 		pr_err("CLK %d is invalid\n", id);
+ 		return;
+ 	}
 -- 
 2.19.1
 
