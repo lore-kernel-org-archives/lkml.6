@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393CFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE03FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096F0217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D18B217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297856;
-	bh=I2XVjXBPh58c80D1wsXDQJLL+V3LSpXAR/TqQpIZhZ8=;
+	s=default; t=1545297862;
+	bh=oEwry/DVtcdjQCwMAtZ1OPvPEYqPbPCcyReB8EZ1vhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xegMPhE0hCWy7ozxaWF8h3sVV6KPFORGlNRCOqULgA5FQ/Tcbhwnf5Ut3NCgMRFsb
-	 sX0gMq4GF7cP2pWFGlnto65DIzCXS8qh1yjospFoH+OaTzZo7m8zOliavmSvwPfsJy
-	 rE1SVxJhYTGdjt37a3nxBKW3Zm5Tg47tft4HkKgs=
+	b=wQrZ4gd/9LSTTJvZq4yjXacywckeSozeK2JUEt4s9LHf2TbDV6WnHxh8qaLbRmc95
+	 3KqJNUvKZGlLujLU/Lu4GG3eTWX4fAuGKNatIDYLulT3aQfn9GJId4Ry0Ikvi14Yaw
+	 9NOsig07dm2jFz/QaiRd1muJf6sum7lTE7WOFw1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731785AbeLTJYO (ORCPT
+        id S1731791AbeLTJYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:24:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:24:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731766AbeLTJYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:11 -0500
+        id S1728831AbeLTJYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15F9320656;
-        Thu, 20 Dec 2018 09:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 428B920656;
+        Thu, 20 Dec 2018 09:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297850;
-        bh=I2XVjXBPh58c80D1wsXDQJLL+V3LSpXAR/TqQpIZhZ8=;
+        s=default; t=1545297855;
+        bh=oEwry/DVtcdjQCwMAtZ1OPvPEYqPbPCcyReB8EZ1vhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PsMUV0GjirKntAw5mR8o58inN1kd2sl/E56fy456qp6xgqnr5u5F42L4C0pDN680W
-         hUufN9dd5UBSlTOHs7cLg9R6lvEMh9neXNuE2QBu4si3SOer5+AyK2ntDhP0GVe79C
-         M7M2i0nSCgDpxW5zIBu8991SIafUUQ0MpE6TrWnE=
+        b=JCqVJehzufDWCUVV6EZrBGBZB8yp8xrHDvgHzTU/8dEk1TyWS9s4bLTWzaon2B3pX
+         K7nacarFEr8WJ0Y5LNAJHkt8jis9z8HSoQk0HOwbxQewkW2X5WghHZcmbK7/Pu/p42
+         YRTPYppkumxHFX6n/poByK9FWhkjYwd+QYQBxhHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 40/61] sbus: char: add of_node_put()
-Date:   Thu, 20 Dec 2018 10:18:40 +0100
-Message-Id: <20181220085845.387670480@linuxfoundation.org>
+Subject: [PATCH 4.9 42/61] drivers/tty: add missing of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:42 +0100
+Message-Id: <20181220085845.470573540@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -65,29 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
+[ Upstream commit dac097c4546e4c5b16dd303a1e97c1d319c8ab3e ]
 
-use of_node_put() to release the refcount.
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place is not doing this, so fix it.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/sbus/char/display7seg.c | 1 +
+ drivers/tty/serial/suncore.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index 33fbe8249fd5..044cffbc45e8 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
- 	dev_set_drvdata(&op->dev, p);
- 	d7s_device = p;
- 	err = 0;
-+	of_node_put(opts);
+diff --git a/drivers/tty/serial/suncore.c b/drivers/tty/serial/suncore.c
+index 127472bd6a7c..209f314745ab 100644
+--- a/drivers/tty/serial/suncore.c
++++ b/drivers/tty/serial/suncore.c
+@@ -111,6 +111,7 @@ void sunserial_console_termios(struct console *con, struct device_node *uart_dp)
+ 		mode = of_get_property(dp, mode_prop, NULL);
+ 		if (!mode)
+ 			mode = "9600,8,n,1,-";
++		of_node_put(dp);
+ 	}
  
- out:
- 	return err;
+ 	cflag = CREAD | HUPCL | CLOCAL;
 -- 
 2.19.1
 
