@@ -2,78 +2,89 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AAEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 262C12176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D56AC2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:50:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TbeDesjs";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QA7vuXx2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbeLTGuG (ORCPT
+        id S1730086AbeLTGue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 01:50:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725300AbeLTGuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 01:50:05 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 20 Dec 2018 01:50:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60888 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbeLTGue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 01:50:34 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D514560736; Thu, 20 Dec 2018 06:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545288633;
+        bh=lIa8jMKu4+VDq3vfLGD9JvpBP43xhY0tdyahbPRGw2s=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=TbeDesjsX23t7nqLPVhfhdJhgO/0jnbbv7GjVnPCWM23uyFId8C+yXunYu5uyxuRK
+         w38H/YOg0QTk3YI5GvF2GOXewO030BxqvYw8xY1oxJbA7pBhO/iaQLmFZe8+ntTidw
+         FLvO2S+TCOKSEaiYa/lFdZUMqQgYTEDPlbs9NAiE=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82D97C057E1B;
-        Thu, 20 Dec 2018 06:50:05 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 59268101F94C;
-        Thu, 20 Dec 2018 06:50:02 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 364F6946; Thu, 20 Dec 2018 07:50:01 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm/bochs: add edid present check
-Date:   Thu, 20 Dec 2018 07:50:01 +0100
-Message-Id: <20181220065001.9594-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Dec 2018 06:50:05 +0000 (UTC)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE62160591;
+        Thu, 20 Dec 2018 06:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545288633;
+        bh=lIa8jMKu4+VDq3vfLGD9JvpBP43xhY0tdyahbPRGw2s=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=QA7vuXx2xHtFEoqHsQKrjjob6Q54rO2S72UyyNQ3Kvs41fhGKhVoCUo5/gan4Rc+1
+         ulh0A5cABtfGxGdESF+y8kJRv0NhxuEmo6MB6Hj1axBjjpGjU2qbDNdFzY+6cWg1Tx
+         8cO9ICH7viIshsGK16WxnR6K6/RHl/A4rGDUXsP0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE62160591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ipw2x00: cleanup dead code
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181219030013.13736-1-yuehaibing@huawei.com>
+References: <20181219030013.13736-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <davem@davemloft.net>, <stas.yakovlev@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20181220065033.D514560736@smtp.codeaurora.org>
+Date:   Thu, 20 Dec 2018 06:50:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check first two header bytes before trying to read the edid blob,
-to avoid the log being spammed in case qemu has no edid support (old
-qemu or edid turned off).
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-Fixes: 01f23459cf drm/bochs: add edid support.
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs_hw.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> Fix smatch warning:
+> 
+> drivers/net/wireless/intel/ipw2x00/ipw2100.c:5606
+>  shim__set_security() warn: always true condition '(sec->active_key <= 3) => (0-3 <= 3)'
+> drivers/net/wireless/intel/ipw2x00/ipw2200.c:10725
+>  shim__set_security() warn: always true condition '(sec->active_key <= 3) => (0-3 <= 3)'
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index c90a0d492f..e1f8ffce00 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -89,6 +89,14 @@ int bochs_hw_load_edid(struct bochs_device *bochs)
- 	if (!bochs->mmio)
- 		return -1;
- 
-+	/*
-+	 * Check first two EDID blob header bytes to figure whenever
-+	 * edid support is enabled in qemu.
-+	 */
-+	if (readb(bochs->mmio + 0) != 0x00 ||
-+	    readb(bochs->mmio + 1) != 0xff)
-+		return -1;
-+
- 	kfree(bochs->edid);
- 	bochs->edid = drm_do_get_edid(&bochs->connector,
- 				      bochs_get_edid_block, bochs);
+Patch applied to wireless-drivers-next.git, thanks.
+
+90a8c74a8d7b ipw2x00: cleanup dead code
+
 -- 
-2.9.3
+https://patchwork.kernel.org/patch/10736741/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
