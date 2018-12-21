@@ -2,163 +2,104 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C6EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8C5C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B25421920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B2121920
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545431098;
+	bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
+	h=Subject:Cc:To:From:In-Reply-To:References:Date:List-ID:From;
+	b=J2GY30yG/mbsa2rkUB8CG74ymP4Vn8GcQAeUkdgHNa2laU/zBDnjLSDbWky7awIhn
+	 IRFoXQzi4tP6+DDpGYvhdXVW4Dqp2IR3jKX0hObXR3eAEiDaS8Wa89IYOYuKO1YLnC
+	 uQ2RSd8teIeYfCY6+MNn2CRCvndRf+zklmtu/x54=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404603AbeLUWUa (ORCPT
+        id S2404621AbeLUWY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 17:20:30 -0500
-Received: from smtprelay0037.hostedemail.com ([216.40.44.37]:40566 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730887AbeLUWU3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 17:20:29 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B98213A91;
-        Fri, 21 Dec 2018 22:20:28 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: frame06_78561ece8b74c
-X-Filterd-Recvd-Size: 5031
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 21 Dec 2018 22:20:26 +0000 (UTC)
-Message-ID: <84199633fd49db573c9ba71f1992936422e907d4.camel@perches.com>
-Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
- macro
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Fri, 21 Dec 2018 14:20:25 -0800
-In-Reply-To: <20181221160826.34c544e6@gandalf.local.home>
-References: <20181221175618.968519903@goodmis.org>
-         <20181221175659.208858193@goodmis.org>
-         <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
-         <20181221144054.20bdeb33@gandalf.local.home>
-         <CAHk-=wgSvRhj6KNRdn9gbK9RJVAswdtKSNjAxdf9O9vn04T5XQ@mail.gmail.com>
-         <20181221153526.5e6055ca@gandalf.local.home>
-         <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
-         <20181221155435.38a9a221@gandalf.local.home> <871s6ad2br.fsf@igel.home>
-         <20181221160826.34c544e6@gandalf.local.home>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Dec 2018 17:24:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730887AbeLUWY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 17:24:56 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5774F21920;
+        Fri, 21 Dec 2018 22:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545431096;
+        bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
+        h=Subject:Cc:To:From:In-Reply-To:References:Date:From;
+        b=AryT69FKwnfM8l/GMYXzkyCEUepTNWGeBtUCKL66W42Ziw/tBfxBy25cM4+8hBXQN
+         Q8FFjMa7PZbvv6XIO9qHdlq/yGUj67CaI9EXTnqNZLpt5pQOK+T8xnc4lhP6xmw+Pd
+         kvLURBXzKMv8pVKRNX7g04FYtMXh2RUCVuCv2RaE=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent clocks"
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
+User-Agent: alot/0.8
+References: <20181204163257.32085-1-jbrunet@baylibre.com> <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com> <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com> <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com> <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com> <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com> <63f9b6f613cab0db91c8363635aa673a11f75fba.camel@baylibre.com> <154509805561.19322.14057956205431846882@swboyd.mtv.corp.google.com> <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
+Message-ID: <154543109549.13075.4102525082189864496@swboyd.mtv.corp.google.com>
+Date:   Fri, 21 Dec 2018 14:24:55 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-21 at 16:08 -0500, Steven Rostedt wrote:
-> On Fri, 21 Dec 2018 21:58:32 +0100
-> Andreas Schwab <schwab@linux-m68k.org> wrote:
-> 
-> 
-> > > Well, perhaps I can just remove the ending ones. I get paranoid with
-> > > macro variables, and tend to over do it so that there's no question.  
-> > 
-> > Why not make it an inline function?
-> 
-> Matters if that removes the strlen(const) optimization. I could try it
-> and see what happens.
+Quoting Jerome Brunet (2018-12-21 08:03:29)
+> On Mon, 2018-12-17 at 17:54 -0800, Stephen Boyd wrote:
+> >=20
+> > Ok. Thanks for the explanation. What should the framework do when the
+> > parent is not known? Mark the clk as not an orphan but parent it to
+> > NULL? That might work here.
+>=20
+> I don't really get the difference in the framework ATM. Is this linked to=
+ the
+> 'orphan probe defer logic' WIP you have been mentionning ?
 
-Using
+Yes, we have orphan marking logic, but we haven't finished the topic and
+returned PROBE_DEFER for orphaned clks. It was blocked on some Allwinner
+drivers having problems but that was over a year ago so I don't see
+anything blocking us now. I really want to do it soon so now is the time
+to fix all of this and see what breaks.
 
-static inline bool str_has_prefix(const char *str, const char prefix[])
-{
-	return !strncmp(str, prefix, strlen(prefix));
-}
+>=20
+> All this below is very interresting but it looks like a very complex way =
+to
+> solve what was initially a very simple problem, with considerations that =
+are
+> still WIP a this stage.
+>=20
+> Even with these future constraints in mind, I don't understand how the
+> proposed patch changes anything to the situtation. A clock with a get_par=
+ent()
+> callback (and several known parents) may still return an out of bound val=
+ue
+> ... CCF will still have to deal with this case gracefully, as it is curre=
+ntly
+> doing
 
-eliminates the strlen with gcc 4.8 (oldest I still have)
+Ok. I think the problem you see is that the clk provider doesn't know
+anything besides parent name is a string? And so you're not sure how the
+provider can return NULL for "this clk won't ever appear", vs. an error
+pointer for "things failed while reading"?
 
-$ cat lib/test_module.c
- * This module emits "Hello, world" on printk when loaded.
- *
- * It is designed to be used for basic evaluation of the module loading
- * subsystem (for example when validating module signing/verification). It
- * lacks any extra dependencies, and will not normally be loaded by the
- * system unless explicitly requested by name.
- */
-
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/printk.h>
-
-static inline bool str_has_prefix(const char *str, const char prefix[])
-{
-	return !strncmp(str, prefix, strlen(prefix));
-}
-
-bool test_str_has_prefix(const char *foo)
-{
-	return str_has_prefix("TomJonesPrefix", foo);
-}
-
-bool test_str_has_prefix_TomJones(void)
-{
-	return str_has_prefix("TomJonesPrefix", "TomJones");
-}
-
-$ make CC=/usr/bin/gcc-4.8 lib/test_module.o
-$ objdump -d -s lib/test_module.o
-
-lib/test_module.o:     file format elf64-x86-64
-
-Contents of section .text:
- 0000 534889fb e8000000 00b90f00 00004883  SH............H.
- 0010 f80f4889 df480f4e c848c7c6 00000000  ..H..H.N.H......
- 0020 4839c9f3 a65b0f94 c0c3660f 1f440000  H9...[....f..D..
- 0030 b8010000 00c3                        ......          
-Contents of section .rodata.str1.1:
- 0000 546f6d4a 6f6e6573 50726566 697800    TomJonesPrefix. 
-Contents of section .comment:
- 0000 00474343 3a202855 62756e74 7520342e  .GCC: (Ubuntu 4.
- 0010 382e352d 34756275 6e747539 2920342e  8.5-4ubuntu9) 4.
- 0020 382e3500                             8.5.            
-Contents of section .orc_unwind_ip:
- 0000 00000000 00000000 00000000 00000000  ................
- 0010 00000000 00000000                    ........        
-Contents of section .orc_unwind:
- 0000 08000000 05001000 00000500 08000000  ................
- 0010 05000000 00000000 08000000 05000000  ................
- 0020 00000000                             ....            
-
-Disassembly of section .text:
-
-0000000000000000 <test_str_has_prefix>:
-   0:	53                   	push   %rbx
-   1:	48 89 fb             	mov    %rdi,%rbx
-   4:	e8 00 00 00 00       	callq  9 <test_str_has_prefix+0x9>
-   9:	b9 0f 00 00 00       	mov    $0xf,%ecx
-   e:	48 83 f8 0f          	cmp    $0xf,%rax
-  12:	48 89 df             	mov    %rbx,%rdi
-  15:	48 0f 4e c8          	cmovle %rax,%rcx
-  19:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
-  20:	48 39 c9             	cmp    %rcx,%rcx
-  23:	f3 a6                	repz cmpsb %es:(%rdi),%ds:(%rsi)
-  25:	5b                   	pop    %rbx
-  26:	0f 94 c0             	sete   %al
-  29:	c3                   	retq   
-  2a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-
-0000000000000030 <test_str_has_prefix_TomJones>:
-  30:	b8 01 00 00 00       	mov    $0x1,%eax
-  35:	c3                   	retq   
-
+I think you understand I'm not trying to change clk_ops::get_parent().
+I'm sidestepping the problem and other problems that we have with the
+return type of that clk_op (u8) by introducing a new clk_op that can
+return an error pointer for exceptional cases. Drivers would need to
+migrate to this new clk op to fix the problem you're solving, and those
+drivers will also need to know what their clk parents are and what the
+clk_hw pointers are for them.
 
