@@ -2,150 +2,112 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E55C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A7FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 091B721929
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CE5C21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:20:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fo2B4emr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ONUcm/5L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392179AbeLUXTh (ORCPT
+        id S2392218AbeLUXUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 18:19:37 -0500
-Received: from smtprelay0071.hostedemail.com ([216.40.44.71]:59568 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725372AbeLUXTh (ORCPT
+        Fri, 21 Dec 2018 18:20:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56318 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbeLUXUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 18:19:37 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 3E8F2837F243;
-        Fri, 21 Dec 2018 23:19:36 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bulb00_368440967965b
-X-Filterd-Recvd-Size: 4719
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 21 Dec 2018 23:19:34 +0000 (UTC)
-Message-ID: <b77cd7378434bf8ea804f2fd0caa662b9b7d07f0.camel@perches.com>
-Subject: Re: [PATCH v3] string.h: Add str_has_prefix() helper
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Date:   Fri, 21 Dec 2018 15:19:33 -0800
-In-Reply-To: <20181221181316.6d32bdc8@gandalf.local.home>
-References: <20181221181316.6d32bdc8@gandalf.local.home>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Dec 2018 18:20:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 35B3F607F1; Fri, 21 Dec 2018 23:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545434441;
+        bh=9/uCD1BVEvuhX8Rlwmmtj+zeh+8t3srb9oXC9dQCg/Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Fo2B4emrXynptGgNLe6pyuUc8y4HXRwOdicArYfPVOGh/YHa5+Ibgwi8IjuchlIXz
+         Nkqr7B5scx44k1B919Mrp8LKRhSXdBI8TAS60M7U2TpIc3epW/WojBay+t6PS14Gr6
+         VwVq54FgJE4EYQYlV8S0r9+pedmTG2LmBoujv920=
+Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jackp@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7CF1D601C3;
+        Fri, 21 Dec 2018 23:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545434440;
+        bh=9/uCD1BVEvuhX8Rlwmmtj+zeh+8t3srb9oXC9dQCg/Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ONUcm/5LgyvcTFDd4Y6HQWWIeC/AAYW4Tc8/UMeacrrvsUPUWTGrkZBNsA5f5H1UY
+         JNGpSsa9TbWYTWCLZ7jIZ20CT8MObox8nN36XsNtLg/MBL0A1f2eQJxBH5ao1AVtPV
+         qvd9d8dIl3LE9l+1CF1FLN59dBeLAKP13+KQKcJo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CF1D601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
+From:   Jack Pham <jackp@codeaurora.org>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jack Pham <jackp@codeaurora.org>
+Subject: [PATCH] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
+Date:   Fri, 21 Dec 2018 15:20:05 -0800
+Message-Id: <20181221232005.5301-1-jackp@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-21 at 18:13 -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> A discussion came up in the trace triggers thread about converting a
-> bunch of:
-> 
->  strncmp(str, "const", sizeof("const") - 1)
-> 
-> use cases into a helper macro. It started with:
-> 
-> 	strncmp(str, const, sizeof(const) - 1)
-> 
-> But then Joe Perches mentioned that if a const is not used, the
-> sizeof() will be the size of a pointer, which can be bad. And that
-> gcc will optimize strlen("const") into "sizeof("const") - 1".
-> 
-> Thinking about this more, a quick grep in the kernel tree found several
-> (thousands!) of cases that use this construct. A quick grep also
-> revealed that there's probably several bugs in that use case. Some are
-> that people forgot the "- 1" (which I found) and others could be that
-> the constant for the sizeof is different than the constant (although, I
-> haven't found any of those, but I also didn't look hard).
-> 
-> I figured the best thing to do is to create a helper macro and place it
-> into include/linux/string.h. And go around and fix all the open coded
-> versions of it later.
-> 
-> Note, gcc appears to optimize this when we make it into an always_inline
-> static function, which removes a lot of issues that a macro produces.
-> 
-> Link: http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
-> Link: http://lkml.kernel.org/r/20181219211615.2298e781@gandalf.local.home
-> Link: http://lkml.kernel.org/r/CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com
-> 
-> Cc: Tom Zanussi <zanussi@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggestions-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Suggestions-by: Joe Perches <joe@perches.com>
-> Suggestions-by: Andreas Schwab <schwab@linux-m68k.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
-> 
-> Changes since v2:
-> 
->  - Rename the helper function to str_has_prefix()
->     (Linus Torvalds and Joe Perches)
-> 
->  - Use a static inline, as that appears to still optimize correctly
->     (Andreas Schwab)
-> 
->  include/linux/string.h | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 27d0482e5e05..a37859d91b57 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -456,4 +456,24 @@ static inline void memcpy_and_pad(void *dest, size_t dest_len,
->  		memcpy(dest, src, dest_len);
->  }
->  
-> +/**
-> + * str_has_prefix - Test if a string has a given prefix
-> + * @str: The string to test
-> + * @prefix: The string to see if @str starts with
-> + *
-> + * A common way to test a prefix of a string is to do:
-> + *  strncmp(str, prefix, sizeof(prefix) - 1)
-> + *
-> + * But this can lead to bugs due to typos, or if prefix is a pointer
-> + * and not a constant. Instead use str_has_prefix().
-> + *
-> + * Returns: 0 if @str does not start with @prefix
-> +         strlen(@prefix) if @str does start with @prefix
-> + */
-> +static __always_inline int str_has_prefix(const char *str, const char *prefix)
-> +{
-> +	int len = strlen(prefix);
-> +	return strncmp(str, prefix, len) == 0 ? len : 0;
-> +}
+OUT endpoint requests may somtimes have this flag set when
+preparing to be submitted to HW indicating that there is an
+additional TRB chained to the request for alignment purposes.
+If that request is removed before the controller can execute the
+transfer (e.g. ep_dequeue/ep_disable), the request will not go
+through the dwc3_gadget_ep_cleanup_completed_request() handler
+and will not have its needs_extra_trb flag cleared when
+dwc3_gadget_giveback() is called.  This same request could be
+later requeued for a new transfer that does not require an
+extra TRB and if it is successfully completed, the cleanup
+and TRB reclamation will incorrectly process the additional TRB
+which belongs to the next request, and incorrectly advances the
+TRB dequeue pointer, thereby messing up calculation of the next
+requeust's actual/remaining count when it completes.
 
-I believe this should be bool.
+The right thing to do here is to ensure that the flag is cleared
+before it is given back to the function driver.  A good place
+to do that is in dwc3_gadget_del_and_unmap_request().
 
-I don't find a use for non-zero assigned len value in the kernel
-for strncmp and I believe the function should simply be:
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+---
+Hi Felipe,
 
-static inline bool str_has_prefix(const char *str, const char prefix[])
-{
-	return !strncmp(str, prefix, strlen(prefix));
-}
+There's probably zero chance this is making it to 4.20, so if you take
+this after 4.21-rc1 so be it. But should this be Cc: stable? If so it
+needs to be sent separately for <= 4.19 as needs_extra_trb was previously
+req->unaligned and req->zero.
 
-It's hard to believe __always_inline vs inline matters
-for any single line function.
+Thanks,
+Jack
 
+ drivers/usb/dwc3/gadget.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 2ecde30ad0b7..e97b14f444c8 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -177,6 +177,7 @@ static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
+ 	req->started = false;
+ 	list_del(&req->list);
+ 	req->remaining = 0;
++	req->needs_extra_trb = false;
+ 
+ 	if (req->request.status == -EINPROGRESS)
+ 		req->request.status = status;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
