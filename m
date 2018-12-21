@@ -3,146 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0675C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6CCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F91218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D46EA21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390443AbeLUMxZ (ORCPT
+        id S2390367AbeLUM7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:53:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388253AbeLUMxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:53:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92E18AE72;
-        Fri, 21 Dec 2018 12:53:22 +0000 (UTC)
-From:   Nikolay Borisov <nborisov@suse.com>
-To:     linux-mm@kvack.org, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH] mm: Define VM_(MAX|MIN)_READAHEAD via sizes.h constants
-Date:   Fri, 21 Dec 2018 14:53:14 +0200
-Message-Id: <20181221125314.5177-1-nborisov@suse.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Dec 2018 07:59:08 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:24991 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388154AbeLUM7H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:59:07 -0500
+X-UUID: 2fd75f5eb17f479da78cdfbff685fa44-20181221
+X-UUID: 2fd75f5eb17f479da78cdfbff685fa44-20181221
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <qii.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 207524934; Fri, 21 Dec 2018 20:59:02 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 21 Dec 2018 20:59:00 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 21 Dec 2018 20:59:00 +0800
+From:   qii wang <qii.wang@mediatek.com>
+To:     <wsa@the-dreams.de>
+CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <qii.wang@mediatek.com>, <ryder.lee@mediatek.com>
+Subject: [PATCH 1/6] dt-bindings: i2c: Add Mediatek MT7629 i2c binding
+Date:   Fri, 21 Dec 2018 20:58:26 +0800
+Message-ID: <1545397111-24183-2-git-send-email-qii.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1545397111-24183-1-git-send-email-qii.wang@mediatek.com>
+References: <1545397111-24183-1-git-send-email-qii.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 2E9BCD794F771916ECDADFF385E8A151B40C745DC98EC84BEF11F9E66D477F412000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All users of the aformentioned macros convert them to kbytes by
-multplying. Instead, directly define the macros via the aptly named
-SZ_16K/SZ_128K ones. Also remove the now redundant comments explaining
-that VM_* are defined in kbytes it's obvious. No functional changes.
+Add MT7629 i2c binding to binding file.
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: qii wang <qii.wang@mediatek.com>
 ---
+ Documentation/devicetree/bindings/i2c/i2c-mtk.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
-I guess it makes sense for this to land via Andrew's mmotm tree?
-
- block/blk-core.c   | 3 +--
- fs/9p/vfs_super.c  | 2 +-
- fs/afs/super.c     | 2 +-
- fs/btrfs/disk-io.c | 2 +-
- fs/fuse/inode.c    | 2 +-
- include/linux/mm.h | 5 +++--
- 6 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index deb56932f8c4..d28b2eeec07e 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1031,8 +1031,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id,
- 	if (!q->stats)
- 		goto fail_stats;
- 
--	q->backing_dev_info->ra_pages =
--			(VM_MAX_READAHEAD * 1024) / PAGE_SIZE;
-+	q->backing_dev_info->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
- 	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
- 	q->backing_dev_info->name = "block";
- 	q->node = node_id;
-diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-index 48ce50484e80..5c9f757410ae 100644
---- a/fs/9p/vfs_super.c
-+++ b/fs/9p/vfs_super.c
-@@ -92,7 +92,7 @@ v9fs_fill_super(struct super_block *sb, struct v9fs_session_info *v9ses,
- 		return ret;
- 
- 	if (v9ses->cache)
--		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
-+		sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
- 
- 	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
- 	if (!v9ses->cache)
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index dcd07fe99871..d1f3af74481a 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -399,7 +399,7 @@ static int afs_fill_super(struct super_block *sb,
- 	ret = super_setup_bdi(sb);
- 	if (ret)
- 		return ret;
--	sb->s_bdi->ra_pages	= VM_MAX_READAHEAD * 1024 / PAGE_SIZE;
-+	sb->s_bdi->ra_pages	= VM_MAX_READAHEAD / PAGE_SIZE;
- 
- 	/* allocate the root inode and dentry */
- 	if (as->dyn_root) {
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 6d776717d8b3..d84e7283d24b 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -2900,7 +2900,7 @@ int open_ctree(struct super_block *sb,
- 	sb->s_bdi->congested_fn = btrfs_congested_fn;
- 	sb->s_bdi->congested_data = fs_info;
- 	sb->s_bdi->capabilities |= BDI_CAP_CGROUP_WRITEBACK;
--	sb->s_bdi->ra_pages = VM_MAX_READAHEAD * SZ_1K / PAGE_SIZE;
-+	sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
- 	sb->s_bdi->ra_pages *= btrfs_super_num_devices(disk_super);
- 	sb->s_bdi->ra_pages = max(sb->s_bdi->ra_pages, SZ_4M / PAGE_SIZE);
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 568abed20eb2..25766e9035b1 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1009,7 +1009,7 @@ static int fuse_bdi_init(struct fuse_conn *fc, struct super_block *sb)
- 	if (err)
- 		return err;
- 
--	sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024) / PAGE_SIZE;
-+	sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
- 	/* fuse does it's own writeback accounting */
- 	sb->s_bdi->capabilities = BDI_CAP_NO_ACCT_WB | BDI_CAP_STRICTLIMIT;
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..e2085eaceae9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -26,6 +26,7 @@
- #include <linux/page_ref.h>
- #include <linux/memremap.h>
- #include <linux/overflow.h>
-+#include <linux/sizes.h>
- 
- struct mempolicy;
- struct anon_vma;
-@@ -2396,8 +2397,8 @@ int __must_check write_one_page(struct page *page);
- void task_dirty_inc(struct task_struct *tsk);
- 
- /* readahead.c */
--#define VM_MAX_READAHEAD	128	/* kbytes */
--#define VM_MIN_READAHEAD	16	/* kbytes (includes current page) */
-+#define VM_MAX_READAHEAD	SZ_128K
-+#define VM_MIN_READAHEAD	SZ_16K	/* includes current page */
- 
- int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
- 			pgoff_t offset, unsigned long nr_to_read);
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-mtk.txt b/Documentation/devicetree/bindings/i2c/i2c-mtk.txt
+index e199695..ee4c324 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-mtk.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-mtk.txt
+@@ -10,6 +10,7 @@ Required properties:
+       "mediatek,mt6589-i2c": for MediaTek MT6589
+       "mediatek,mt7622-i2c": for MediaTek MT7622
+       "mediatek,mt7623-i2c", "mediatek,mt6577-i2c": for MediaTek MT7623
++      "mediatek,mt7629-i2c", "mediatek,mt2712-i2c": for MediaTek MT7629
+       "mediatek,mt8173-i2c": for MediaTek MT8173
+   - reg: physical base address of the controller and dma base, length of memory
+     mapped region.
 -- 
-2.17.1
+1.7.9.5
 
