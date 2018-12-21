@@ -2,106 +2,152 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E295C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BB9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C9F2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:49:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="hhw2dCeT"
+	by mail.kernel.org (Postfix) with ESMTP id 8EB862190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbeLUPtD (ORCPT
+        id S1731347AbeLUPvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:49:03 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:57771 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbeLUPtC (ORCPT
+        Fri, 21 Dec 2018 10:51:37 -0500
+Received: from mail.netline.ch ([148.251.143.178]:34717 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeLUPvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:49:02 -0500
-Date:   Fri, 21 Dec 2018 15:48:55 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1545407339;
-        bh=t06MTnJM32pYH9ouXiRy0LyWy2ilup+KYFOpk+26Dc0=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=hhw2dCeTJxRW7mxzLiS9c+h49BAcj9EQAEf3Jpb3YkboptctuH0NrVQH1bQSuwRRV
-         ayxahPjZPXhxMWQAJFyLDUzNeyjAzYar7DQPm+pmW30Lm5xJkbOcmZz6x+qwo5gVc3
-         J6G9+L/ILtwVNl3m8ZtLEOMymiTfvXVkJAKB85UE=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Fair Pay Available Source OS year end summary:
-Message-ID: <A6wJSf-sOkKdQ07Swp5RAostWM9CB3aCw_10KCkO0ihTGQBhttMep56O-NkEg-gofEgFv7_aAp_5zUDvYT-9oKY2U_xc0IUoGJOJ25Oacts=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Fri, 21 Dec 2018 10:51:36 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 0AE062A6056;
+        Fri, 21 Dec 2018 16:51:33 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Nk4p0R1c7qGD; Fri, 21 Dec 2018 16:51:32 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 4EE022A6055;
+        Fri, 21 Dec 2018 16:51:32 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1gaN5H-0003u6-U1; Fri, 21 Dec 2018 16:51:31 +0100
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+To:     Alex Deucher <alexdeucher@gmail.com>, dnicoara@chromium.org,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>, kernel@collabora.com,
+        "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
+References: <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+ <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
+ <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
+ <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
+ <CADnq5_P9nsquCV95CSZC4NCr7YNJ76ZmCruJA=f1N8dLGYm=ow@mail.gmail.com>
+ <CAKMK7uHu5XMQzr7ocVEcpDS9H6pQ-BHfHNE51_YK7rLkTQC_9g@mail.gmail.com>
+ <CADnq5_P1smiGhYyoZQsEAJG0+jBx6f75HwEFAf2RkaoNp0HEiA@mail.gmail.com>
+ <CAKMK7uGSiBv9H_xAj2fuk=XYocefQU4bFk+fPr=iWGsaPxOwhw@mail.gmail.com>
+ <fb45217c-d9ad-b208-d55d-51299ead108b@daenzer.net>
+ <9be83a7f-aa5f-8d8f-0486-db68e12c5feb@daenzer.net>
+ <20181221132637.GR21184@phenom.ffwll.local>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <79ff8776-8308-ded5-450d-69a7c89c8e5b@daenzer.net>
+Date:   Fri, 21 Dec 2018 16:51:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181221132637.GR21184@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been working with the philosophy behind Oxxo=C3=AF For Fair O.S. the=
- last half year and a bit more,=C2=A0and it is implementations of practical=
- principles from my research on monotheism that has been top 1%=C2=A0on aca=
-demia.edu that is the background, and present a summary for what it is abou=
-t.=C2=A0
+On 2018-12-21 2:26 p.m., Daniel Vetter wrote:
+> On Fri, Dec 21, 2018 at 10:47:27AM +0100, Michel Dänzer wrote:
+>> On 2018-12-20 6:16 p.m., Michel Dänzer wrote:
+>>> On 2018-12-20 6:09 p.m., Daniel Vetter wrote:
+>>>> On Thu, Dec 20, 2018 at 6:03 PM Alex Deucher <alexdeucher@gmail.com> wrote:
+>>>>> On Thu, Dec 20, 2018 at 11:54 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>>
+>>>>>> Not sure about the gamma thing since we had opposite bugs on i915
+>>>>>> about gamma not being vsynced and tearing terribly. Cursor is special
+>>>>>> since it tends to be too small to notice tearing.
+>>>>>
+>>>>> Our cursor hw (and possibly gamma as well Nicholas?  Harry?) is double
+>>>>> buffered, so we can update it any time for the most part and the
+>>>>> changes won't take affect until the next vupdate period.
+>>>>
+>>>> Hm, I guess we could make the gamma update optionally async, and let
+>>>> drivers deal. The issue is that the current async helper stuff won't
+>>>> cope with gamma updates (it's aimed at plane updates only, not at crtc
+>>>> property updates). Or we get userspace to do proper atomic updates. Or
+>>>> we do some faking in the kernel, e.g. waiting with the gamma update
+>>>> until the next atomic update happens. But that kinda breaks
+>>>> ->atomic_check.
+>>>
+>>> Would it be possible to merge gamma changes into a pending commit, if
+>>> there is one, and create a new commit otherwise?
+>>>
+>>> Otherwise the atomic API just moves this same problem to be solved by
+>>> userspace.
+>>
+>> Actually, I'm not sure this is even solvable in a Xorg driver. When it
+>> gets called to update the gamma LUT:
+>>
+>> 1. If there's a pending atomic commit, it cannot amend that, can it?
+> 
+> Yup, but on the kernel side we kinda have the same problem.
+
+It's probably easier to solve in the kernel though; any solution
+allowing userspace to amend commits would likely need similar changes in
+the kernel anyway.
 
 
-Oxxoi For Fair O.S.
----
+>> 2. It has no way of knowing when the next atomic commit would be
+>> submitted e.g. for a page flip, so it kind of has to create its own
+>> commit for the gamma update.
+> 
+> Block handler is what I had in mind for the fallback commit, if no other
+> commit happened meanwhile (which would need to include it).
+
+The BlockHandler runs more or less immediately after the gamma update,
+after any other X11 requests submitted later by the same client and
+flushed to the X server together. So this would still result in a commit
+with only the gamma update most of the time. There might be a small
+chance of combining with a flip with something like Night Light which is
+done by the compositor itself (but still only if the compositor defers
+the gamma update until just before it call SwapBuffers), basically 0
+chance with something separate like RedShift.
 
 
-Delyar: absolute, global online currency, decentralized and free from infla=
-tion.
-
-FPY Licence: intended for use in a system, where fair pay transactions are =
-done, for use, maintenance=C2=A0 and support. Free for poor.
-
-Islam: Coherent philosophy, replacing The Bible, as background in earlier O=
-Ss (Unix), also with a=C2=A0 z=C3=ABn-concept of The G=C3=B3dh, that works =
-in our culture, Oxxoi, that has decreed "deal justly", and is the=C2=A0 bac=
-kground for Fair Pay OS reasoning and labour party politics that are simila=
-r, and work union=C2=A0 efforts, also using The Miriam Font, for script-lik=
-e text accuracy.
-
-Ultimate Iterations Of Tech: [1.] 4K (8k quadratic WR-GB subpixels) standar=
-d screenmode, for minimal=C2=A0 psychovisual noise, at 72.734HZ refresh rat=
-e, also minimal psychovisual noise, approximating reality,=C2=A0 and monoth=
-eistic principles most. [2.] Fast Fantasymode Reduced Rendering Surface Gam=
-ing Mode, for=C2=A0 games: 1920x1080 rendering with 2x multisampling antial=
-iasing only (transparency multisampling also=C2=A0 on) for smoothing the ed=
-ges just a bit, more gets blurry, and 2x anistotropic filtering, for round=
-=C2=A0 edges on zoomed textures and "game profile", and also -0.1250 lod bi=
-as, for "game profile". Negative=C2=A0 lod bias allowed, high quality filte=
-ring, and no trilinear optimization. Upscaled 3x by NN, and=C2=A0 followed =
-by a median filter, for extrapolating a pseudo 3x res, and resampled to 4K,=
-=C2=A0 with a bicubic=C2=A0 (a=3D75) filter. (https://www.youtube.com/watch=
-?v=3DgOnHhchv4k8) [3.] One Pole Diode Filter DA converter,=C2=A0 for ultrah=
-igh speed hi-frequency 1 bit stream gibbsfree DA conversion, for profession=
-al -110dB=C2=A0 noisefloor. [4.] CPU: Instruction set, may combined several=
- things in one clock, for higher virtual=C2=A0 frequency, and closer to hig=
-h-level paradigm thinking. For instance, a 4pole filter (one input, one=
-=C2=A0 output), can be combined into a one clock operation. JSR could take =
-arguments. And commonly used=C2=A0 functions, that has just one input, and =
-one output, can be done in one clock, And this could even be=C2=A0 done in =
-parallel. (Particulary what needs to be optimized is ofcourse the inner loo=
-p, beyond the HZ=C2=A0 timer, which in our testing is best at 90).
-
-Beneficience: We also ofcourse fully support 3d-printed clothing, houses an=
-d tools.=C2=A0 Maybe even for a=C2=A0 little Decentralized On-Grid Non-city=
- technology developments driven life one day, taking centralized=C2=A0 effo=
-rts and technology, to decentralized growth places.
-
-Technocracy: The ultimate conclusion on a resulting political system is a t=
-echnocracy, more democratic=C2=A0 than a democracy, and theocratic like a t=
-heocracy, where a L=C3=A9ad manages specialists seleted by their=C2=A0 work=
-group. This all part of information reduction to a managable level, and wit=
-h a standard=C2=A0 monotheistic language.
-
-
-Have a nice Vacations Season.
-Ywe C=C3=A6rlyn.
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
