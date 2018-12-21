@@ -3,92 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B347BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2886EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C6721903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 000922190B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390471AbeLUAV6 (ORCPT
+        id S2390486AbeLUAWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 19:21:58 -0500
-Received: from mga03.intel.com ([134.134.136.65]:39339 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390391AbeLUAV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 19:21:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 16:21:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,379,1539673200"; 
-   d="scan'208";a="112251095"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga003.jf.intel.com with ESMTP; 20 Dec 2018 16:21:25 -0800
-From:   thor.thayer@linux.intel.com
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dinguyen@kernel.org, arnd@arndb.de, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com
-Cc:     davem@davemloft.net, mcoquelin.stm32@gmail.com,
-        mchehab+samsung@kernel.org, bjorn.andersson@linaro.org,
-        olof@lixom.net, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv2 5/6] net: stmmac: socfpga: Use shared System Manager driver
-Date:   Thu, 20 Dec 2018 18:23:21 -0600
-Message-Id: <1545351802-4354-6-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545351802-4354-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1545351802-4354-1-git-send-email-thor.thayer@linux.intel.com>
+        Thu, 20 Dec 2018 19:22:05 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:57152 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390353AbeLUAVy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 19:21:54 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TGGC63J_1545351679;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TGGC63J_1545351679)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 21 Dec 2018 08:21:27 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     ying.huang@intel.com, tim.c.chen@intel.com, minchan@kernel.org,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v2 PATCH 1/2] mm: swap: check if swap backing device is congested or not
+Date:   Fri, 21 Dec 2018 08:21:18 +0800
+Message-Id: <1545351679-23596-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+Swap readahead would read in a few pages regardless if the underlying
+device is busy or not.  It may incur long waiting time if the device is
+congested, and it may also exacerbate the congestion.
 
-The ARM64 System Manager requires a different method of reading
-the System Manager than ARM32. A new System Manager driver was
-created to steer ARM32 System Manager calls to regmap_mmio and
-ARM64 System Manager calls to the new access method.
+Use inode_read_congested() to check if the underlying device is busy or
+not like what file page readahead does.  Get inode from swap_info_struct.
+Although we can add inode information in swap_address_space
+(address_space->host), it may lead some unexpected side effect, i.e.
+it may break mapping_cap_account_dirty().  Using inode from
+swap_info_struct seems simple and good enough.
 
-Convert from syscon to the shared System Manager driver so that
-both ARM64 and ARM32 are supported.
+Just does the check in vma_cluster_readahead() since
+swap_vma_readahead() is just used for non-rotational device which
+much less likely has congestion than traditional HDD.
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Although swap slots may be consecutive on swap partition, it still may be
+fragmented on swap file. This check would help to reduce excessive stall
+for such case.
+
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Tim Chen <tim.c.chen@intel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
-v2  No change to code. Update commit message.
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+v2: Check the swap device type per Tim Chen
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 5b3b06a0a3bf..743c7f471edb 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -15,6 +15,7 @@
-  * Adopted from dwmac-sti.c
-  */
+ mm/swap_state.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index fd2f21e..ba7e334 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -538,11 +538,17 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 	bool do_poll = true, page_allocated;
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	unsigned long addr = vmf->address;
++	struct inode *inode = si->swap_file->f_mapping->host;
  
-+#include <linux/mfd/altera-sysmgr.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -114,7 +115,8 @@ static int socfpga_dwmac_parse_data(struct socfpga_dwmac *dwmac, struct device *
+ 	mask = swapin_nr_pages(offset) - 1;
+ 	if (!mask)
+ 		goto skip;
  
- 	dwmac->interface = of_get_phy_mode(np);
- 
--	sys_mgr_base_addr = syscon_regmap_lookup_by_phandle(np, "altr,sysmgr-syscon");
-+	sys_mgr_base_addr =
-+		altr_sysmgr_regmap_lookup_by_phandle(np, "altr,sysmgr-syscon");
- 	if (IS_ERR(sys_mgr_base_addr)) {
- 		dev_info(dev, "No sysmgr-syscon node found\n");
- 		return PTR_ERR(sys_mgr_base_addr);
++	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
++		if (inode_read_congested(inode))
++			goto skip;
++	}
++
+ 	do_poll = false;
+ 	/* Read a page_cluster sized and aligned cluster around offset. */
+ 	start_offset = offset & ~mask;
 -- 
-2.7.4
+1.8.3.1
 
