@@ -2,122 +2,88 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A39C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276DFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C18F2173C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E27F32176F
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:55:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ep1iuFX8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389014AbeLUJs3 (ORCPT
+        id S1731687AbeLUJzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:48:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42292 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729789AbeLUJs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:48:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC200AF6D;
-        Fri, 21 Dec 2018 09:48:25 +0000 (UTC)
-Date:   Fri, 21 Dec 2018 10:48:25 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Joao Moreira <jmoreira@suse.de>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        jeyu@kernel.org, pmladek@suse.com, linux-kbuild@vger.kernel.org,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: use -flive-patching when CONFIG_LIVEPATCH is
- enabled
-In-Reply-To: <3fec8358-f64c-57e4-fa7f-1ee91a45be9b@suse.de>
-Message-ID: <alpine.LSU.2.21.1812211046140.3002@pobox.suse.cz>
-References: <20181219141744.32392-1-mbenes@suse.cz> <20181219165428.5udrppedpdvf2u7k@treble> <nycvar.YFH.7.76.1812191756450.17216@cbobk.fhfr.pm> <20181219172127.o753af7pkrsttcgl@treble> <nycvar.YFH.7.76.1812191909490.17216@cbobk.fhfr.pm>
- <alpine.LSU.2.21.1812200919210.28185@pobox.suse.cz> <3fec8358-f64c-57e4-fa7f-1ee91a45be9b@suse.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Fri, 21 Dec 2018 04:55:24 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44332 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729789AbeLUJzX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 04:55:23 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z13so3453921lfe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:55:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VXYovhbry/kbeUtzDEBwEgohu7ga0irY9/zilVzuPDE=;
+        b=ep1iuFX8bGn5G99fZUw53PK2hjRUlffOIPJanVR/pEF4/I9Ur4Vkozkb1H4ieKphGz
+         8rqPGCpKV5qxFQ/+9I0NsTaRkKDtG7X3MMWi67F2pSsGVaiTJ8d9nFsgbfMMd95EfLWp
+         ls0+xL0hhYrD1xiVK/pRQb9v4P+f9mbuathjA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VXYovhbry/kbeUtzDEBwEgohu7ga0irY9/zilVzuPDE=;
+        b=suteO3Pd0fvXxXqRSdMcWBRjJlW8LthmRerSSNVNDeaNG5FgwcHokpNAjH7SrWXUib
+         pTcWMCzf/0gbgR7OHMiC0dkhnVDEko3aw8BT0MvCyD878Ic+Zfyl0NccEbLvXOnB4F7m
+         QEroA77Wn1PkX5nAdQIiC8jpzwze58JbNW52sfNk3iPJRUuzP3UcrMEpMTFl43YfCthy
+         5RvjSIDlOSy7ougoBkRNCnLDRJR1KouiE6Q/myLYnpGkFayZNeQ8ZmaltPJHJLGbaaCK
+         HRubuzpM1Phgeov9HeYqFpWnuFfCsYCtzdtbRsbza+eb75ZbcIfAlth0MTOmCfH9PWpU
+         2CeA==
+X-Gm-Message-State: AA+aEWb3zLGXK9/W/n1+s1p6UgJhljs98MwOgaajM9DkvupGqznskQkx
+        ZfGLxwSZMjaPxWkQnn6PhAC90Yl/NAL6UrfbkE1Hnw==
+X-Google-Smtp-Source: AFSGD/UFuzJTEEh9o8EA0tilG8FoAtJ6IVKV18qZthUnNmFo04uRLtTuWpxciJdlXsfJgq1NCzXKUfSdO5MtQdF9hJs=
+X-Received: by 2002:a19:8d01:: with SMTP id p1mr926538lfd.149.1545386121686;
+ Fri, 21 Dec 2018 01:55:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1544615784-29331-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1544615784-29331-2-git-send-email-andrei.stefanescu@microchip.com>
+In-Reply-To: <1544615784-29331-2-git-send-email-andrei.stefanescu@microchip.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Dec 2018 10:55:09 +0100
+Message-ID: <CACRpkdY+u0jiPNwbFR6pnaFm4VyXmw3q6JTBS+HNUniDuWaOXA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: atmel: describe SECUMOD usage as
+ a GPIO controller
+To:     Andrei.Stefanescu@microchip.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        Cristian.Birsan@microchip.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018, Joao Moreira wrote:
+On Wed, Dec 12, 2018 at 12:57 PM <Andrei.Stefanescu@microchip.com> wrote:
 
-> On 12/20/18 12:33 AM, Miroslav Benes wrote:
-> > On Wed, 19 Dec 2018, Jiri Kosina wrote:
-> > 
-> >> On Wed, 19 Dec 2018, Josh Poimboeuf wrote:
-> >>
-> >>> Also the commit message needs an analysis of the performance impacts.
-> >>
-> >> Agreed. Especially as it's expected (*) to be completely in the noise
-> >> particularly for the kernel, it'd be good to have that documented in the
-> >> changelog.
-> >>
-> >> (*) actually measured already for some subset of the IPA optimizations
-> > 
-> > Ok, we can do that. I don't expect the results to be different from the
-> > last measurement as Jiri mentions. The sets of disabled optimizations are
-> > similar.
-> > 
-> > I'll add it to v2.
-> > 
-> > On Wed, 19 Dec 2018, Jiri Kosina wrote:
-> > 
-> >> On Wed, 19 Dec 2018, Josh Poimboeuf wrote:
-> >>
-> >>>>> This option only makes sense for source-based patch generation, so isn't
-> >>>>> it a bit premature to make this change without proper source-based patch
-> >>>>> tooling?
-> >>>>
-> >>>> The reality is though that before the full-fledged patch tooling exists,
-> >>>> people are actually already writing livepatches by hand, so this option
-> >>>> is
-> >>>> useful for them.
-> >>>
-> >>> Fair enough.
-> > 
-> > Yes, that was the reason I sent it. It would not make sense to wait for
-> > the tooling in this case, because -flive-patching is useful even now,
-> > since there is a way to prepare livepatches without any tooling.
-> > 
-> >>> Though, upstream, almost everybody seems to use kpatch-build, for which
-> >>> this patch doesn't help.  And people will continue to do so until we
-> >>> have decent source-based tooling.  Will the klp-convert patches be
-> >>> revived soon?
-> >>
-> >> Let me add Joao, who's working on that.
-> >>
-> >> Joao, I think you had something basically ready for upstream exposure,
-> >> right?
-> > 
-> > I think that when Joao posted it a long time ago, the conclusion was that
-> > it would be better to wait for the source-based tooling and have the
-> > complete solution. I may misremember though.
-> 
-> Your memories match mine, Miroslav.
-> 
-> FTR, we recently integrated klp-convert to SLE. There were some fixes in
-> comparison with the version which was submitted upstream, thus a v2 of the
-> patches is necessary.
-> 
-> > 
-> > If Josh thinks that it would be acceptable to have klp-convert merged even
-> > without the tooling, I'm all for it.
-> > 
-> Of course I can work on that and I'll be glad to do so / submit this new
-> version, if this is now something considered useful.
+> This patch describes the Security Module's usage as a GPIO
+> controller for its PIOBU pins. These pins have the special
+> property of maintaining their voltage during suspend-to-mem.
+>
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
 
-Yes, please.
+Patch applied with Rob's ACK.
 
-Some context first. We decided to remove the integration into kbuild at 
-SUSE. klp-convert is called from rpm .spec file directly after a livepatch 
-module is compiled.
-
-I think we should preserve kbuild process in upstream though. It makes 
-more sense there.
-
-Miroslav
+Yours,
+Linus Walleij
