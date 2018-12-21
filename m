@@ -3,43 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10427C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 599C3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D136721920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33F7621920
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391342AbeLUR6V (ORCPT
+        id S2391355AbeLUR6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:58:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 12:58:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390986AbeLUR46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2391135AbeLUR46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Dec 2018 12:56:58 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7F5421974;
-        Fri, 21 Dec 2018 17:56:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0BFC21934;
+        Fri, 21 Dec 2018 17:56:57 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gaP2e-0002Ia-0L; Fri, 21 Dec 2018 12:56:56 -0500
-Message-Id: <20181221175655.883112589@goodmis.org>
+        id 1gaP2e-0002Ki-Jw; Fri, 21 Dec 2018 12:56:56 -0500
+Message-Id: <20181221175656.503716620@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 21 Dec 2018 12:56:22 -0500
+Date:   Fri, 21 Dec 2018 12:56:26 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [for-next][PATCH 04/24] x86/ftrace: Do not call function graph from dynamic trampolines
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [for-next][PATCH 08/24] arm64: Use ftrace_graph_get_ret_stack() instead of curr_ret_stack
 References: <20181221175618.968519903@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -50,166 +51,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Since commit 79922b8009c07 ("ftrace: Optimize function graph to be
-called directly"), dynamic trampolines should not be calling the
-function graph tracer at the end. If they do, it could cause the function
-graph tracer to trace functions that it filtered out.
+The structure of the ret_stack array on the task struct is going to
+change, and accessing it directly via the curr_ret_stack index will no
+longer give the ret_stack entry that holds the return address. To access
+that, architectures must now use ftrace_graph_get_ret_stack() to get the
+associated ret_stack that matches the saved return address.
 
-Right now it does not cause a problem because there's a test to check if
-the function graph tracer is attached to the same function as the
-function tracer, which for now is true. But the function graph tracer is
-undergoing changes that can make this no longer true which will cause
-the function graph tracer to trace other functions.
-
- For example:
-
- # cd /sys/kernel/tracing/
- # echo do_IRQ > set_ftrace_filter
- # mkdir instances/foo
- # echo ip_rcv > instances/foo/set_ftrace_filter
- # echo function_graph > current_tracer
- # echo function > instances/foo/current_tracer
-
-Would cause the function graph tracer to trace both do_IRQ and ip_rcv,
-if the current tests change.
-
-As the current tests prevent this from being a problem, this code does
-not need to be backported. But it does make the code cleaner.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/kernel/ftrace.c    | 41 ++++++++++++++++++++-----------------
- arch/x86/kernel/ftrace_64.S |  8 ++++----
- 2 files changed, 26 insertions(+), 23 deletions(-)
+ arch/arm64/kernel/perf_callchain.c |  2 +-
+ arch/arm64/kernel/process.c        |  2 +-
+ arch/arm64/kernel/return_address.c |  2 +-
+ arch/arm64/kernel/stacktrace.c     | 12 +++++++-----
+ arch/arm64/kernel/time.c           |  2 +-
+ arch/arm64/kernel/traps.c          |  2 +-
+ 6 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 7ee8067cbf45..8257a59704ae 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -733,18 +733,20 @@ union ftrace_op_code_union {
- 	} __attribute__((packed));
- };
- 
-+#define RET_SIZE		1
-+
- static unsigned long
- create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- {
--	unsigned const char *jmp;
- 	unsigned long start_offset;
- 	unsigned long end_offset;
- 	unsigned long op_offset;
- 	unsigned long offset;
- 	unsigned long size;
--	unsigned long ip;
-+	unsigned long retq;
- 	unsigned long *ptr;
- 	void *trampoline;
-+	void *ip;
- 	/* 48 8b 15 <offset> is movq <offset>(%rip), %rdx */
- 	unsigned const char op_ref[] = { 0x48, 0x8b, 0x15 };
- 	union ftrace_op_code_union op_ptr;
-@@ -764,27 +766,27 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 
- 	/*
- 	 * Allocate enough size to store the ftrace_caller code,
--	 * the jmp to ftrace_epilogue, as well as the address of
--	 * the ftrace_ops this trampoline is used for.
-+	 * the iret , as well as the address of the ftrace_ops this
-+	 * trampoline is used for.
- 	 */
--	trampoline = alloc_tramp(size + MCOUNT_INSN_SIZE + sizeof(void *));
-+	trampoline = alloc_tramp(size + RET_SIZE + sizeof(void *));
- 	if (!trampoline)
- 		return 0;
- 
--	*tramp_size = size + MCOUNT_INSN_SIZE + sizeof(void *);
-+	*tramp_size = size + RET_SIZE + sizeof(void *);
- 
- 	/* Copy ftrace_caller onto the trampoline memory */
- 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
--	if (WARN_ON(ret < 0)) {
--		tramp_free(trampoline, *tramp_size);
--		return 0;
--	}
-+	if (WARN_ON(ret < 0))
-+		goto fail;
- 
--	ip = (unsigned long)trampoline + size;
-+	ip = trampoline + size;
- 
--	/* The trampoline ends with a jmp to ftrace_epilogue */
--	jmp = ftrace_jmp_replace(ip, (unsigned long)ftrace_epilogue);
--	memcpy(trampoline + size, jmp, MCOUNT_INSN_SIZE);
-+	/* The trampoline ends with ret(q) */
-+	retq = (unsigned long)ftrace_stub;
-+	ret = probe_kernel_read(ip, (void *)retq, RET_SIZE);
-+	if (WARN_ON(ret < 0))
-+		goto fail;
- 
- 	/*
- 	 * The address of the ftrace_ops that is used for this trampoline
-@@ -794,17 +796,15 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	 * the global function_trace_op variable.
- 	 */
- 
--	ptr = (unsigned long *)(trampoline + size + MCOUNT_INSN_SIZE);
-+	ptr = (unsigned long *)(trampoline + size + RET_SIZE);
- 	*ptr = (unsigned long)ops;
- 
- 	op_offset -= start_offset;
- 	memcpy(&op_ptr, trampoline + op_offset, OP_REF_SIZE);
- 
- 	/* Are we pointing to the reference? */
--	if (WARN_ON(memcmp(op_ptr.op, op_ref, 3) != 0)) {
--		tramp_free(trampoline, *tramp_size);
--		return 0;
--	}
-+	if (WARN_ON(memcmp(op_ptr.op, op_ref, 3) != 0))
-+		goto fail;
- 
- 	/* Load the contents of ptr into the callback parameter */
- 	offset = (unsigned long)ptr;
-@@ -819,6 +819,9 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
- 
- 	return (unsigned long)trampoline;
-+fail:
-+	tramp_free(trampoline, *tramp_size);
-+	return 0;
- }
- 
- static unsigned long calc_trampoline_call_offset(bool save_regs)
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 91b2cff4b79a..75f2b36b41a6 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -171,9 +171,6 @@ GLOBAL(ftrace_call)
- 	restore_mcount_regs
- 
- 	/*
--	 * The copied trampoline must call ftrace_epilogue as it
--	 * still may need to call the function graph tracer.
--	 *
- 	 * The code up to this label is copied into trampolines so
- 	 * think twice before adding any new code or changing the
- 	 * layout here.
-@@ -185,7 +182,10 @@ GLOBAL(ftrace_graph_call)
- 	jmp ftrace_stub
+diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
+index bcafd7dcfe8b..1b792b46604e 100644
+--- a/arch/arm64/kernel/perf_callchain.c
++++ b/arch/arm64/kernel/perf_callchain.c
+@@ -164,7 +164,7 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+ 	frame.fp = regs->regs[29];
+ 	frame.pc = regs->pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = current->curr_ret_stack;
++	frame.graph = 0;
  #endif
  
--/* This is weak to keep gas from relaxing the jumps */
-+/*
-+ * This is weak to keep gas from relaxing the jumps.
-+ * It is also used to copy the retq for trampolines.
-+ */
- WEAK(ftrace_stub)
- 	retq
- ENDPROC(ftrace_caller)
+ 	walk_stackframe(current, &frame, callchain_trace, entry);
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index d9a4c2d6dd8b..37a66394b07d 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -459,7 +459,7 @@ unsigned long get_wchan(struct task_struct *p)
+ 	frame.fp = thread_saved_fp(p);
+ 	frame.pc = thread_saved_pc(p);
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = p->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 	do {
+ 		if (unwind_frame(p, &frame))
+diff --git a/arch/arm64/kernel/return_address.c b/arch/arm64/kernel/return_address.c
+index 933adbc0f654..53c40196b607 100644
+--- a/arch/arm64/kernel/return_address.c
++++ b/arch/arm64/kernel/return_address.c
+@@ -44,7 +44,7 @@ void *return_address(unsigned int level)
+ 	frame.fp = (unsigned long)__builtin_frame_address(0);
+ 	frame.pc = (unsigned long)return_address; /* dummy */
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = current->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 
+ 	walk_stackframe(current, &frame, save_return_addr, &data);
+diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
+index 7723dadf25be..1a29f2695ff2 100644
+--- a/arch/arm64/kernel/stacktrace.c
++++ b/arch/arm64/kernel/stacktrace.c
+@@ -59,15 +59,17 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	if (tsk->ret_stack &&
+ 			(frame->pc == (unsigned long)return_to_handler)) {
+-		if (WARN_ON_ONCE(frame->graph == -1))
+-			return -EINVAL;
++		struct ftrace_ret_stack *ret_stack;
+ 		/*
+ 		 * This is a case where function graph tracer has
+ 		 * modified a return address (LR) in a stack frame
+ 		 * to hook a function return.
+ 		 * So replace it to an original value.
+ 		 */
+-		frame->pc = tsk->ret_stack[frame->graph--].ret;
++		ret_stack = ftrace_graph_get_ret_stack(tsk, frame->graph++);
++		if (WARN_ON_ONCE(!ret_stack))
++			return -EINVAL;
++		frame->pc = ret_stack->ret;
+ 	}
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+ 
+@@ -134,7 +136,7 @@ void save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ 	frame.fp = regs->regs[29];
+ 	frame.pc = regs->pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = current->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 
+ 	walk_stackframe(current, &frame, save_trace, &data);
+@@ -165,7 +167,7 @@ static noinline void __save_stack_trace(struct task_struct *tsk,
+ 		frame.pc = (unsigned long)__save_stack_trace;
+ 	}
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = tsk->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 
+ 	walk_stackframe(tsk, &frame, save_trace, &data);
+diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+index f258636273c9..a777ae90044d 100644
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -52,7 +52,7 @@ unsigned long profile_pc(struct pt_regs *regs)
+ 	frame.fp = regs->regs[29];
+ 	frame.pc = regs->pc;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = current->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 	do {
+ 		int ret = unwind_frame(NULL, &frame);
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 5f4d9acb32f5..49ebf3771391 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -122,7 +122,7 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+ 		frame.pc = thread_saved_pc(tsk);
+ 	}
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	frame.graph = tsk->curr_ret_stack;
++	frame.graph = 0;
+ #endif
+ 
+ 	skip = !!regs;
 -- 
 2.19.2
 
