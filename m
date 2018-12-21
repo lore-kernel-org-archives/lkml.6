@@ -2,111 +2,140 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FFFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9374C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53FB21928
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:05:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83FFE21929
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:06:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqG3zCCV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VoDu4eqP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391834AbeLUUFu (ORCPT
+        id S2391852AbeLUUGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:05:50 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34416 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729924AbeLUUFu (ORCPT
+        Fri, 21 Dec 2018 15:06:12 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44074 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729924AbeLUUGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:05:50 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so4749784lfc.1;
-        Fri, 21 Dec 2018 12:05:48 -0800 (PST)
+        Fri, 21 Dec 2018 15:06:11 -0500
+Received: by mail-io1-f67.google.com with SMTP id r200so4571110iod.11;
+        Fri, 21 Dec 2018 12:06:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SHVi8H9/6KagMWPzw8Fwg0KqblmVuLDJSo4G/Y5UnRg=;
-        b=RqG3zCCV/5fTVva/jkuNUUogx6+7AVH10TiOC+nqzfoBZCUPqfUpx9fuq0z4nLsx1j
-         H0QFDvnSWLriCxvRint9FAEGBs5DQS/4TxTdnajv2R0DZQJZBD637U07Vg4HQr0Sg/so
-         2puI7L55yRSqE8kSTdUSwhAAWSwIZZoniKHeDwlil7vBdhfTSheCH2zd+W5fu/Q9EuNM
-         AKVo6ubO2ik6PGcvkE0/BQHfbDL6ur6iNtDhmjudr7/cQIwPEDUVbrqnWCgrJ8eOJubF
-         CCuSOWP1Cgm1yHP33+0Iz8GKLxR8fsZl17u8W4wk+cofLJ6PN5XgXY4wvUrMOYwKTYDM
-         salw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4l8asYMZk02NpiE8YpmE6pXQlvO2A4l3Ah8g716jLKE=;
+        b=VoDu4eqPBM77Jc7vS2MkgZpSnCIJgScOlXvEcBUt2NxLTP39yJbgE+k37gitgA7BnJ
+         TSdi24sos3kbsmySfwEyFZ/se0SnEMqR8bpG3BWYkmkuTyQdPAUlv4T91gJ+sU0uc+H6
+         agjFgPaNxWZnXWpnE/WRDmRN5gUwR6oGjFezlSQismS/5zEDBnA2KEExNYqCsPAhxl/1
+         SMI63ewqG0M1HAjK3S44t5I5FrFmKhBKBvtjl74UJAlnxGZI3bTtj2+Im9eANeuTmzMS
+         gWHBiBaKZ0atpDk+t6zxL9steukRgrbhu04+rpEchF21B6YEaiwdUnax90UsKj2/J2TB
+         AxOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SHVi8H9/6KagMWPzw8Fwg0KqblmVuLDJSo4G/Y5UnRg=;
-        b=NjHeNf+HrfWhFKxMRFBUE+urmEzkIn+uNbmg+xMqTRKSYTIBv1ylejIg8L2sjBeZqB
-         dbvtZbifuWDQIsjov7qkJcAeNXfAm9QlvIWEi111YEBdG2Z6zy0wWbQYlsJ7wu1Wn3E8
-         Wh17G34VCRjZ8VldeiaMJu094pfqATD3hRv4Y0EO0D8kDOImy3ORP/xX1RkP7FInhE9M
-         PGxqOLUPvNr8z/FNWrBp3GC5EqyPSxLlgwc0IM/84q3uwext1W71pBfepicvRb0CRepV
-         NaBcEOrvxjWCJiKdUKUPRfk36HgYq4ATYWICOLablwbB185cFcG8YWGCYOIIm4fhtpB9
-         VCDA==
-X-Gm-Message-State: AA+aEWbtXt5uVRv9GGw4Vvei50NqP+rZGO4q3duAzhD7yOz4jUhh+YM4
-        zW1FQblkcQRMT3isJelnPqs=
-X-Google-Smtp-Source: AFSGD/WAmFVc4ztVoLUg/8Vga6SBqmuJBJfiN8Xn7xRffH9c070QivE/NjWjyIJ409E69snrtTiQWw==
-X-Received: by 2002:a19:ee08:: with SMTP id g8mr2257605lfb.72.1545422747896;
-        Fri, 21 Dec 2018 12:05:47 -0800 (PST)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id t9-v6sm4792831ljj.87.2018.12.21.12.05.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 12:05:47 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 878F8460769; Fri, 21 Dec 2018 23:05:46 +0300 (MSK)
-Date:   Fri, 21 Dec 2018 23:05:46 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] x86_64: memset_user()
-Message-ID: <20181221200546.GA8441@uranus>
-References: <20181221181423.20455-1-igor.stoppa@huawei.com>
- <20181221181423.20455-2-igor.stoppa@huawei.com>
- <20181221182515.GF10600@bombadil.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4l8asYMZk02NpiE8YpmE6pXQlvO2A4l3Ah8g716jLKE=;
+        b=CVJclqeiwWiU7s4vj5N6oNQMUJgDJ8gwMRntBSrdSIbbsv+hp3tOstILuaZsWuZdxt
+         3m2cA4AlW+dGSLozyz8+kOc099MWxnUhGVWqgZo4QzFpHQYxJSM6fiYiAr4SeaQjwugy
+         s8Gujjk9a3KoTJ9fiNb0Dxjn1GY5FkvBCs2FQk32AOechk7UoN2O13JTx7SNeyVmhPP4
+         pa/iXDg3JAZvliRgV3obCauaVwcTgl4zUuF67jnZ0PwQAeG+3TnYlcpMekcMpWWSW6Wd
+         R1Hs6V0hd830oQyheS/PedguGBq/UNXxCJ9KKCZrqemsD/Gi8NbVx3UNBG2XukG8Sl+Q
+         C+tw==
+X-Gm-Message-State: AJcUukf3gtVPf2o9qUpgTTf3mlNOS0N2hDhK+O/zsEPlZUQ+TfSNjAt1
+        PLnV9gGHFzEtkMxH47B6Ht2+iz9zO23Lxz1y9tg=
+X-Google-Smtp-Source: ALg8bN6KbqJdxzTw+SCHsfE0A5+t6J/c0mHV+GUvDA75ldxsor8BiG4/RfDnjUCekI3qlXY2cMT2/DTOKSl9NXs+O0M=
+X-Received: by 2002:a5e:a708:: with SMTP id b8mr2582606iod.126.1545422769450;
+ Fri, 21 Dec 2018 12:06:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221182515.GF10600@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181221011752.25627-1-sre@kernel.org> <20181221011752.25627-2-sre@kernel.org>
+In-Reply-To: <20181221011752.25627-2-sre@kernel.org>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 21 Dec 2018 14:05:57 -0600
+Message-ID: <CAHCN7x+5hq65LpF+G7rsiK89E7F+9fFiukgBA-u3RZZ6ov3xHg@mail.gmail.com>
+Subject: Re: [PATCH 01/14] ARM: dts: LogicPD Torpedo: Add WiLink UART node
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:25:16AM -0800, Matthew Wilcox wrote:
-> On Fri, Dec 21, 2018 at 08:14:12PM +0200, Igor Stoppa wrote:
-> > +unsigned long __memset_user(void __user *addr, int c, unsigned long size)
-> > +{
-> > +	long __d0;
-> > +	unsigned long  pattern = 0;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < 8; i++)
-> > +		pattern = (pattern << 8) | (0xFF & c);
-> 
-> That's inefficient.
-> 
-> 	pattern = (unsigned char)c;
-> 	pattern |= pattern << 8;
-> 	pattern |= pattern << 16;
-> 	pattern |= pattern << 32;
+On Thu, Dec 20, 2018 at 7:18 PM Sebastian Reichel <sre@kernel.org> wrote:
+>
+> From: Sebastian Reichel <sebastian.reichel@collabora.com>
+>
+> Add a node for the UART part of WiLink chip.
+>
+> Cc: Adam Ford <aford173@gmail.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+> This is compile tested only!
 
-Won't
 
-	pattern = 0x0101010101010101 * c;
+I have tried this a few times, unfortunately, I cannot get the wl1283
+to load the BT Firmware without timing out.  The btwilink driver is
+the only option that works for me.
 
-do the same but faster?
+[   22.809600] Bluetooth: hci0: command 0xfd1c tx timeout
+[   31.206390] Bluetooth: hci0: send command failed
+[   31.211334] Bluetooth: hci0: download firmware failed, retrying...
+[   31.367767] Bluetooth: hci0: change remote baud rate command in firmware
+[   38.166351] Bluetooth: hci0: command 0xfd1c tx timeout
+[   46.566375] Bluetooth: hci0: send command failed
+[   46.571289] Bluetooth: hci0: download firmware failed, retrying...
+[   46.738250] Bluetooth: hci0: change remote baud rate command in firmware
+[   53.526336] Bluetooth: hci0: command 0xfd1c tx timeout
+
+It times out, and tries again....and again....
+
+Unless there is a driver fix to the BT UART, I don't think this should
+be applied since I don't know what will happen if/when I try to use
+the btwilink driver.
+
+Having said that, I have no issues with the wl18xx and a wl127x on
+other boards who don't need the btwilink driver.  I think it's somehow
+related to the wl1283
+
+adam
+
+> ---
+>  arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts b/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
+> index 9d5d53fbe9c0..2699da12dc2d 100644
+> --- a/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
+> +++ b/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
+> @@ -54,6 +54,14 @@
+>         };
+>  };
+>
+> +&uart2 {
+> +       bluetooth {
+> +               compatible = "ti,wl1283-st";
+> +               enable-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>; /* gpio 162 */
+> +               max-speed = <3000000>;
+> +       };
+> +};
+> +
+>  &omap3_pmx_core {
+>         mmc3_pins: pinmux_mm3_pins {
+>                 pinctrl-single,pins = <
+> --
+> 2.19.2
+>
