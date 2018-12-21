@@ -2,171 +2,262 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 943BEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EDDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 551632176F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dRcLCsmH"
+	by mail.kernel.org (Postfix) with ESMTP id 8016021908
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389506AbeLUK1U (ORCPT
+        id S2389513AbeLUK1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:27:20 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36446 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731627AbeLUK1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:27:20 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181221102718euoutp02730e70eb9429febe01f0508939ba955e~yUjuomb8V2344023440euoutp02U
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:27:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181221102718euoutp02730e70eb9429febe01f0508939ba955e~yUjuomb8V2344023440euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545388038;
-        bh=vuVS/xIXU8/hnvofyyeEnccvitD34qO7Ai2dVr2AUf0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=dRcLCsmHI3JtA7P8rj2oVXFs1v9s+Qs+WzdVN+4qa4pmDPjF5pP8ViVjiiKVbp3TU
-         0p1w0hKqC1yScVhFlHwzXTQ3xbbJLpjf2X7idkG5f26bc8zQgVyE5i0AFtcz0vT+ea
-         cPpAckx5XZ5D9N3DBuUrVBsSkXDqJYeVQ1EKEUQQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181221102717eucas1p2174e936c9803c2fd345a94015da46b47~yUjuKNnOx1984919849eucas1p2V;
-        Fri, 21 Dec 2018 10:27:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id EE.78.04294.500CC1C5; Fri, 21
-        Dec 2018 10:27:17 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181221102716eucas1p281266752d283cd17a793ec01ccc67391~yUjtPu9gv0431204312eucas1p2n;
-        Fri, 21 Dec 2018 10:27:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181221102716eusmtrp292e86dd5a4d9e54fd8d11d8bb6cfe54b~yUjtA07nK2666126661eusmtrp2E;
-        Fri, 21 Dec 2018 10:27:16 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-1e-5c1cc0051f9c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 19.FA.04284.400CC1C5; Fri, 21
-        Dec 2018 10:27:16 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181221102716eusmtip15218bc79e43c5c5690860dd4f0567c44~yUjskCb4T0492004920eusmtip13;
-        Fri, 21 Dec 2018 10:27:16 +0000 (GMT)
-Subject: Re: [PATCH 1/4] mfd: exynos-lpass: Enable UART module support
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Beomho Seo <beomho.seo@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <7a43948e-17b9-1fd6-6b11-400016a4a28c@samsung.com>
-Date:   Fri, 21 Dec 2018 11:27:15 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181221101306.GH13248@dell>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3a2s+Ns8jmtvTixGBUleRc6UbOCkPWPOaykWtnKg0pOZfOS
-        SeAlLw0L0cB58hIMVIblJe+F6cxbKy8VdqHQYEKKw7wFhl2cR8v/fu/zPu/3vg98FCHpEHhQ
-        cQnJjC5BEy8nRfzW/pVhH0G3p9q/58luutFYL6CtC61COsdUT9IjIw1CemK5D9FvO8tJ2jjS
-        xaNfme4K6d7ZfAFtLJkmj4uUTeY7pPLz+DNS+byiTqi812xGysUmr3DBBdHRaCY+LpXR+YVc
-        EcUWPh0lk0rwjUfV5zNRi9iAnCjAwdC9PIwMSERJcC2CvPwWAVcsIWifKxNyxSICtqmBvznC
-        Ls4SXKMGga2uZsM1h6CqzMJzuNxwKMw3LK29RVHueA8Mzx5yyARe5MHXuXAHkzgADHYD6WAx
-        DoFvuS8EDubjvVC+MIQcvAOrYSqzi895XGGozLbOTtgbxvqz+Nybu6DNXk5wLIVPtiqe4x7A
-        L4UwXpgl5K4+CbltRYhjN5gZaN7QPeFPx+ZADoJ8IyvkikIELeXtJOc6Ar0DY+tpCHwA6jv9
-        OPkEfHzdiBwyYBf4YHfljnCB4tZSgpPFUJAn4dz7gB14/G9tz+gbogjJ2S3R2C1x2C1x2P97
-        HyK+GUmZFL02htEHJjBpvnqNVp+SEON7LVHbhNY+lPX3wFI76ly9akGYQvLt4tE2mVoi0KTq
-        07UWBBQhdxcXKDzVEnG0Jv0mo0uM0qXEM3oLklF8uVScsW3yogTHaJKZ6wyTxOg2uzzKySMT
-        +a9YrKxV5dyqiBxMWw1MORNRbQ7NyojyElF9k6XTqsrsX+M7L8tUxVDpf056NsywgpUqH2fV
-        zMStg7zu5VMW33e3s8VJ8/tdT9sjE7Gy/2ewrDZnwphsmXkwlWeSVXyPPVyruqSIgLBGWRkx
-        +D40yKZTHOv98uN+kCl3vkHO18dqArwJnV7zF9h+3s1MAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xu7osB2RiDJr+KlpsnLGe1eL0p23s
-        Fs2L17NZnD+/gd3i/tejjBaXd81hs5hxfh+TxZnFvewWh9+0s1rMmPySzYHLY9OqTjaPO9f2
-        sHnsn7uG3aNvyypGj8+b5AJYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
-        9O1sUlJzMstSi/TtEvQyenZfYCuYLFCxdllkA+NW3i5GTg4JAROJWZ/fMIPYQgJLGSV+foyF
-        iMtInJzWwAphC0v8udbF1sXIBVTzllHizdJ2RpCEsICbxMcNX4CKODhEBFQkzr0xB6lhFvjM
-        JHHgUyMjRMNTRonjNz8xgTSwCRhKdL0FmcTJwStgJ/Gi9QjYBhYBVYk5n04yggwSFYiReLag
-        GqJEUOLkzCcsIDangJbExWONYDazgLrEn3mXmCFseYntb+dA2eISt57MZ5rAKDQLSfssJC2z
-        kLTMQtKygJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmA8bjv2c/MOxksbgw8xCnAwKvHw
-        auySjhFiTSwrrsw9xCjBwawkwtthKxMjxJuSWFmVWpQfX1Sak1p8iNEU6LeJzFKiyfnAVJFX
-        Em9oamhuYWlobmxubGahJM573qAySkggPbEkNTs1tSC1CKaPiYNTqoGx85JNXnxHa9Lhji/f
-        buqeqwy9LfdUmknjuc5tXfkTElu0z1w+lP/Ycm6eLOdpjk15q46ZnPT4sWFGMf+/7Lw3d09W
-        HZ9uJOCSwpd68djqA70uSYuaX0vYCy2WO6ZlMNvn3NcgGX7pf1fKths3Mc9v+7xZTjf/EZ+W
-        37Xyy43hN1Jv9hWY1T1WYinOSDTUYi4qTgQApgV5s90CAAA=
-X-CMS-MailID: 20181221102716eucas1p281266752d283cd17a793ec01ccc67391
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181214113416eucas1p2002adf7b5438c525c34ff3274ceacbd1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181214113416eucas1p2002adf7b5438c525c34ff3274ceacbd1
-References: <20181214113410.22848-1-m.szyprowski@samsung.com>
-        <CGME20181214113416eucas1p2002adf7b5438c525c34ff3274ceacbd1@eucas1p2.samsung.com>
-        <20181214113410.22848-2-m.szyprowski@samsung.com>
-        <20181221101306.GH13248@dell>
+        Fri, 21 Dec 2018 05:27:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47022 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731787AbeLUK1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:27:46 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1AF1AB403;
+        Fri, 21 Dec 2018 10:27:44 +0000 (UTC)
+Received: from f28server.default (ovpn-116-118.phx2.redhat.com [10.3.116.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FB895D737;
+        Fri, 21 Dec 2018 10:27:39 +0000 (UTC)
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: [PATCH V3 0/9] x86/jump_label: Bound IPIs sent when updating a static key
+Date:   Fri, 21 Dec 2018 11:27:25 +0100
+Message-Id: <cover.1545228276.git.bristot@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 21 Dec 2018 10:27:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+While tuning a system with CPUs isolated as much as possible, we've
+noticed that isolated CPUs were receiving bursts of 12 IPIs, periodically.
+Tracing the functions that emit IPIs, we saw chronyd - an unprivileged
+process -  generating the IPIs when changing a static key, enabling
+network timestaping on sockets.
 
-On 2018-12-21 11:13, Lee Jones wrote:
-> On Fri, 14 Dec 2018, Marek Szyprowski wrote:
->
->> From: Beomho Seo <beomho.seo@samsung.com>
->>
->> This patch enables support for UART module in Exynos Audio SubSystem.
->> There are boards (for example TM2), which use it for communication with
->> bluetooth chip.
-> Does it though?  Or does it enable the interrupt and reset something?
-> These calls would probably benefit from some documentation by way of
-> comments.
+For instance, the trace pointed:
 
-It only enables routing interrupts out of LPASS HW module. This is
-completely transparent for the rest of the system (UART and CPU/GIC).
-UART driver will get them via standard ARM/GIC interrupt controller and
-UART driver will enable/mask/handle it by itself via standard methods.
+# trace-cmd record --func-stack -p function -l smp_call_function_single -e irq_vectors -f 'vector == 251'...
+# trace-cmde report...
+[...]
+         chronyd-858   [000]   433.286406: function:             smp_call_function_single
+         chronyd-858   [000]   433.286408: kernel_stack:         <stack trace>
+=> smp_call_function_many (ffffffffbc10ab22)
+=> smp_call_function (ffffffffbc10abaa)
+=> on_each_cpu (ffffffffbc10ac0b)
+=> text_poke_bp (ffffffffbc02436a)
+=> arch_jump_label_transform (ffffffffbc020ec8)
+=> __jump_label_update (ffffffffbc1b300f)
+=> jump_label_update (ffffffffbc1b30ed)
+=> static_key_slow_inc (ffffffffbc1b334d)
+=> net_enable_timestamp (ffffffffbc625c44)
+=> sock_enable_timestamp (ffffffffbc6127d5)
+=> sock_setsockopt (ffffffffbc612d2f)
+=> SyS_setsockopt (ffffffffbc60d5e6)
+=> tracesys (ffffffffbc7681c5)
+          <idle>-0     [001]   433.286416: call_function_single_entry: vector=251
+          <idle>-0     [001]   433.286419: call_function_single_exit: vector=251
+  
+[... The IPI takes place 12 times]
 
->> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
->> [mszyprow: rephrased commit message, added UART reset]
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/mfd/exynos-lpass.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
->> index ca829f85672f..2713de989f05 100644
->> --- a/drivers/mfd/exynos-lpass.c
->> +++ b/drivers/mfd/exynos-lpass.c
->> @@ -82,11 +82,13 @@ static void exynos_lpass_enable(struct exynos_lpass *lpass)
->>  		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
->>  
->>  	regmap_write(lpass->top, SFR_LPASS_INTR_CPU_MASK,
->> -		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S);
->> +		     LPASS_INTR_SFR | LPASS_INTR_DMA | LPASS_INTR_I2S |
->> +		     LPASS_INTR_UART);
->>  
->>  	exynos_lpass_core_sw_reset(lpass, LPASS_I2S_SW_RESET);
->>  	exynos_lpass_core_sw_reset(lpass, LPASS_DMA_SW_RESET);
->>  	exynos_lpass_core_sw_reset(lpass, LPASS_MEM_SW_RESET);
->> +	exynos_lpass_core_sw_reset(lpass, LPASS_UART_SW_RESET);
->>  }
->>  
->>  static void exynos_lpass_disable(struct exynos_lpass *lpass)
+The static key in case was the netstamp_needed_key. A static key
+change from enabled->disabled/disabled->enabled causes the code to be
+patched, and this is done in three steps:
 
-Best regards
+-- Pseudo-code #1 - Current implementation ---
+For each key to be updated:
+	1) add an int3 trap to the address that will be patched
+	    sync cores (send IPI to all other CPUs)
+	2) update all but the first byte of the patched range
+	    sync cores (send IPI to all other CPUs)
+	3) replace the first byte (int3) by the first byte of replacing opcode 
+	    sync cores (send IPI to all other CPUs)
+-- Pseudo-code #1 ---
+
+As the static key netstamp_needed_key has four entries (used in for
+places in the code) in our kernel, 3 IPIs were generated for each
+entry, resulting in 12 IPIs. The number of IPIs then is linear with
+regard to the number 'n' of entries of a key: O(n*3), which is O(n).
+
+This algorithm works fine for the update of a single key. But we think
+it is possible to optimize the case in which a static key has more than
+one entry. For instance, the sched_schedstats jump label has 56 entries
+in my (updated) fedora kernel, resulting in 168 IPIs for each CPU in
+which the thread that is enabling is _not_ running.
+
+Rather than doing each updated at once, it is possible to queue all updates
+first, and then apply all updates at once, rewriting the pseudo-code #1
+in this way:
+
+-- Pseudo-code #2 - proposal  ---
+1)  for each key in the queue:
+        add an int3 trap to the address that will be patched
+    sync cores (send IPI to all other CPUs)
+
+2)  for each key in the queue:
+        update all but the first byte of the patched range
+    sync cores (send IPI to all other CPUs)
+
+3)  for each key in the queue:
+        replace the first byte (int3) by the first byte of replacing opcode 
+    sync cores (send IPI to all other CPUs)
+-- Pseudo-code #2 - proposal  ---
+
+Doing the update in this way, the number of IPI becomes O(3) with regard
+to the number of keys, which is O(1).
+
+Currently, the jump label of a static key is transformed via the arch
+specific function:
+
+    void arch_jump_label_transform(struct jump_entry *entry,
+                                   enum jump_label_type type)
+
+The new approach (batch mode) uses two arch functions, the first has the
+same arguments of the arch_jump_label_transform(), and is the function:
+
+    void arch_jump_label_transform_queue(struct jump_entry *entry,
+                         enum jump_label_type type)
+
+Rather than transforming the code, it adds the jump_entry in a queue of
+entries to be updated.
+
+After queuing all jump_entries, the function:
+  
+    void arch_jump_label_transform_apply(void)
+
+Applies the changes in the queue.
+
+One easy way to see the benefits of this patch is switching the
+schedstats on and off. For instance:
+
+-------------------------- %< ---------------------------- 
+#!/bin/bash
+
+while [ true ]; do 
+    sysctl -w kernel.sched_schedstats=1
+    sleep 2
+    sysctl -w kernel.sched_schedstats=0
+    sleep 2
+done
+-------------------------- >% ----------------------------
+
+while watching the IPI count:
+
+-------------------------- %< ---------------------------- 
+# watch -n1 "cat /proc/interrupts | grep Function"
+-------------------------- >% ----------------------------
+
+With the current mode, it is possible to see +- 168 IPIs each 2 seconds,
+while with the batch mode the number of IPIs goes to 3 each 2 seconds.
+
+Regarding the performance impact of this patch set, I made two measurements:
+
+    The time to update a key (the task that is causing the change)
+    The time to run the int3 handler (the side effect on a thread that
+                                      hits the code being changed)
+
+The sched_schedstats static key was chosen as the key to being switched on and
+off. The reason being is that it is used in more than 56 places, in a hot path.
+The change in the schedstats static key will be done with the following
+command:
+
+while [ true ]; do
+    sysctl -w kernel.sched_schedstats=1
+    usleep 500000
+    sysctl -w kernel.sched_schedstats=0
+    usleep 500000
+done
+
+In this way, they key will be updated twice per second. To force the hit of the
+int3 handler, the system will also run a kernel compilation with two jobs per
+CPU. The test machine is a two nodes/24 CPUs box with an Intel Xeon processor
+@2.27GHz.
+
+Regarding the update part, on average, the regular kernel takes 57 ms to update
+the static key, while the kernel with the batch updates takes just 1.4 ms on
+average. Although it seems to be too good to be true, it makes sense: the
+sched_schedstats key is used in 56 places, so it was expected that it would take
+around 56 times to update the keys with the current implementation, as the
+IPIs are the most expensive part of the update.
+
+Regarding the int3 handler, the non-batch handler takes 45 ns on average, while
+the batch version takes around 180 ns. At first glance, it seems to be a high
+value. But it is not, considering that it is doing 56 updates, rather than one!
+It is taking four times more, only. This gain is possible because the patch
+uses a binary search in the vector: log2(56)=5.8. So, it was expected to have
+an overhead within four times.
+
+(voice of tv propaganda) But, that is not all! As the int3 handler keeps on for
+a shorter period (because the update part is on for a shorter time), the number
+of hits in the int3 handler decreased by 10%.
+
+The question then is: Is it worth paying the price of "135 ns" more in the int3
+handler?
+
+Considering that, in this test case, we are saving the handling of 53 IPIs,
+that takes more than these 135 ns, it seems to be a meager price to be paid.
+Moreover, the test case was forcing the hit of the int3, in practice, it
+does not take that often. While the IPI takes place on all CPUs, hitting
+the int3 handler or not!
+
+For instance, in an isolated CPU with a process running in user-space
+(nohz_full use-case), the chances of hitting the int3 handler is barely zero,
+while there is no way to avoid the IPIs. By bounding the IPIs, we are improving
+this scenario a lot.
+
+Changes from v2:
+  - Switch the order of patches 8 and 9 (Steven Rostedt)
+  - Fallback in the case of failure in the batch mode (Steven Rostedt)
+  - Fix a pointer in patch 7 (Steven Rostedt)
+  - Adjust the commit log of the patch 1 (Borislav Petkov)
+  - Adjust the commit log of the patch 3 (Jiri Kosina/Thomas Gleixner)
+Changes from v1:
+  - Split the patch in jump-label/x86-jump-label/alternative (Jason Baron)
+  - Use bserach in the int3 handler (Steven Rostedt)
+  - Use a pre-allocated page to store the vector (Jason/Steven)
+  - Do performance tests in the int3 handler (peterz)
+
+Daniel Bristot de Oliveira (9):
+  jump_label: Add for_each_label_entry helper
+  jump_label: Add the jump_label_can_update_check() helper
+  x86/jump_label: Move checking code away from __jump_label_transform()
+  x86/jump_label: Add __jump_label_set_jump_code() helper
+  x86/alternative: Split text_poke_bp() into tree steps
+  jump_label: Sort entries of the same key by the code
+  x86/alternative: Batch of patch operations
+  jump_label: Batch updates if arch supports it
+  x86/jump_label: Batch jump label updates
+
+ arch/x86/include/asm/jump_label.h    |   2 +
+ arch/x86/include/asm/text-patching.h |  15 +++
+ arch/x86/kernel/alternative.c        | 140 ++++++++++++++++++---
+ arch/x86/kernel/jump_label.c         | 174 ++++++++++++++++++++++-----
+ include/linux/jump_label.h           |   6 +
+ kernel/jump_label.c                  |  73 +++++++++--
+ 6 files changed, 359 insertions(+), 51 deletions(-)
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
 
