@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FACFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE357C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D201221917
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:42:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E1D821906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545399771;
-	bh=gkNnCbkk9dqniYmNdFFDN3K0N8a+zR8L4KBvfLKn++U=;
+	s=default; t=1545399781;
+	bh=tXQSBDZ+IXnD124BPPDHB/CzykkoVejH2uJJF0nAMo8=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Ri0uCIRpgnWOOIl3NmD5ON2YRIUPArxFOsXSKfrkMDjIE97JBS0ZNjcW4TqP5TCfb
-	 AHgA22gdDtfFN0V6P3emrV+4gCDdcIe63LSGruokxfaeDmPayM3G5529TkareF1po8
-	 Xx4t+QI/f3mbVohYO75cYSn295rRSPXN2AazjLaA=
+	b=vKnBv7r7PH0m1O8ND04k/C4K7CN6TL0fdw6nBIJha0jQ1bOsQXe26SdTzJr+DYikZ
+	 4UR/CUM6TTeX6vB6sDRLNoAz6LJhgxW6SNgPpGmP+INYV88XXbThHdvqIw9bEW9BWF
+	 SWnQcza0F/LUO4ebjw2dQWp8wL/81bRt8Gu9LlsA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403790AbeLUNmu (ORCPT
+        id S2403808AbeLUNm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:42:50 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59022 "EHLO
+        Fri, 21 Dec 2018 08:42:58 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59200 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403775AbeLUNms (ORCPT
+        with ESMTP id S2403782AbeLUNmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:42:48 -0500
+        Fri, 21 Dec 2018 08:42:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=+03f+J9aszKN6+OCAI3w4GAxagJ0ritFgLbmtAlLa5s=; b=M+RslVAUckta
-        jFyAR1LMZJWsLjQEI/oBJKSl534n59pB+eZqlij+uRUBvhCQWzYoBpJV1A0J7l1cQosdvqkLTtZ8q
-        RAVSf0iPMZ01KaHhWnZmKdKEWWoCsVlT0d6y4t2xqMGAhnvHqsPSQYP/eR+a7DZNDW3z7vex21aFL
-        1Nogg=;
+        List-Archive; bh=EFeLoW9W76Bip7GofDixv+8MHFzoqarzZwkx1IxHH0o=; b=QsEuc0oJhdBH
+        gqlMzJqdr5wgxMn5OIIVC/9uGHPM9OoVzRnxjIgmho14Qudr0OQeojb+R7/5QPUEHJFoBPs8mzXh1
+        CV3+kBAaV5Aw/X3qDcDv2OmoqvjBJV9JbUFj2fD014vV1RvNC+sS9JGSc7XGIZS7ZhquyiVRUQFNf
+        iCl0I=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gaL4g-0002VE-5r; Fri, 21 Dec 2018 13:42:46 +0000
+        id 1gaL4e-0002V9-Ik; Fri, 21 Dec 2018 13:42:44 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D4F831121B93; Fri, 21 Dec 2018 13:42:45 +0000 (GMT)
+        id 3F0951121B93; Fri, 21 Dec 2018 13:42:44 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
+To:     Kangjie Lu <kjlu@umn.edu>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: mcp16502: Select REGMAP_I2C to fix build error" to the regulator tree
+Subject: Applied "regulator: tps65910: fix a missing check of return value" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181221134245.D4F831121B93@debutante.sirena.org.uk>
-Date:   Fri, 21 Dec 2018 13:42:45 +0000 (GMT)
+Message-Id: <20181221134244.3F0951121B93@debutante.sirena.org.uk>
+Date:   Fri, 21 Dec 2018 13:42:44 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mcp16502: Select REGMAP_I2C to fix build error
+   regulator: tps65910: fix a missing check of return value
 
 has been applied to the regulator tree at
 
@@ -84,34 +84,36 @@ to this mail.
 Thanks,
 Mark
 
-From 77ea906082dcfa63ad8a07ace6d5033d30c4175b Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Fri, 21 Dec 2018 10:49:29 +0800
-Subject: [PATCH] regulator: mcp16502: Select REGMAP_I2C to fix build error
+From cd07e3701fa6a4c68f8493ee1d12caa18d46ec6a Mon Sep 17 00:00:00 2001
+From: Kangjie Lu <kjlu@umn.edu>
+Date: Fri, 21 Dec 2018 00:29:19 -0600
+Subject: [PATCH] regulator: tps65910: fix a missing check of return value
 
-Fix build error when CONFIG_REGMAP_I2C=m && CONFIG_REGULATOR_MCP16502=y.
+tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
+returns with its error code.
 
-drivers/regulator/mcp16502.o: In function `mcp16502_probe':
-mcp16502.c:(.text+0xca): undefined reference to `__devm_regmap_init_i2c'
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/tps65910-regulator.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 719d9d660e56..ee60a222f5eb 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -570,6 +570,7 @@ config REGULATOR_MC13892
- config REGULATOR_MCP16502
- 	tristate "Microchip MCP16502 PMIC"
- 	depends on I2C && OF
-+	select REGMAP_I2C
- 	help
- 	  Say y here to support the MCP16502 PMIC. This driver supports
- 	  basic operations (get/set voltage, get/set operating mode)
+diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
+index 02ccdaa226a7..5ebb6ee73f07 100644
+--- a/drivers/regulator/tps65910-regulator.c
++++ b/drivers/regulator/tps65910-regulator.c
+@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, pmic);
+ 
+ 	/* Give control of all register to control port */
+-	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
++	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
+ 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
++	if (err < 0)
++		return err;
+ 
+ 	switch (tps65910_chip_id(tps65910)) {
+ 	case TPS65910:
 -- 
 2.20.1
 
