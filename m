@@ -6,112 +6,73 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=INCLUDES_PULL_REQUEST,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7B8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20810C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B402421906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF72C2196E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:42:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390367AbeLUUmc convert rfc822-to-8bit (ORCPT
+        id S2390474AbeLUUmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:42:32 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52726 "EHLO
+        Fri, 21 Dec 2018 15:42:44 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:52752 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730319AbeLUUmc (ORCPT
+        with ESMTP id S1730319AbeLUUmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:42:32 -0500
+        Fri, 21 Dec 2018 15:42:44 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0030A14A92C08;
-        Fri, 21 Dec 2018 12:42:31 -0800 (PST)
-Date:   Fri, 21 Dec 2018 12:42:25 -0800 (PST)
-Message-Id: <20181221.124225.1063250530021518943.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B3A1D14A92C11;
+        Fri, 21 Dec 2018 12:42:43 -0800 (PST)
+Date:   Fri, 21 Dec 2018 12:42:43 -0800 (PST)
+Message-Id: <20181221.124243.1852216989215465396.davem@davemloft.net>
 To:     torvalds@linux-foundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+CC:     akpm@linux-foundation.org, sparclinux@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
+Subject: [GIT] Sparc
 From:   David Miller <davem@davemloft.net>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 21 Dec 2018 12:42:32 -0800 (PST)
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 21 Dec 2018 12:42:43 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Some more bug fixes have trickled in, we have:
+Just some small fixes here and there, and a refcount leak in a serial
+driver, nothing serious.
 
-1) Local MAC entries properly in mscc driver, from Allan W. Nielsen.
+Please pull, thanks!
 
-2) Eric Dumazet found some more of the typical "pskb_may_pull() -->
-   oops forgot to reload the header pointer" bugs in ipv6 tunnel
-   handling.
+The following changes since commit cf76c364a1e1e5224af80edf70a1e3023e1fcf8c:
 
-3) Bad SKB socket pointer in ipv6 fragmentation handling, from Herbert
-   Xu.
-
-4) Overflow fix in sk_msg_clone(), from Vakul Garg.
-
-5) Validate address lengths in AF_PACKET, from Willem de Bruijn.
-
-Please pull, thanks a lot!
-
-The following changes since commit 1d51b4b1d3f2db0d6d144175e31a84e472fbd99a:
-
-  Merge tag 'm68k-for-v4.20-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k (2018-12-20 07:35:16 -0800)
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2018-12-05 17:06:31 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
 
-for you to fetch changes up to d667044f49513d55fcfefe4fa8f8d96091782901:
+for you to fetch changes up to d430aff8cd0c57502d873909c184e3b5753f8b88:
 
-  qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup (2018-12-21 10:58:45 -0800)
+  serial/sunsu: fix refcount leak (2018-12-21 11:24:38 -0800)
 
 ----------------------------------------------------------------
-Allan W. Nielsen (1):
-      mscc: Configured MAC entries should be locked.
+Corentin Labbe (1):
+      sparc: Set "ARCH: sunxx" information on the same line
 
-Daniele Palmas (1):
-      qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup
+Yangtao Li (1):
+      serial/sunsu: fix refcount leak
 
-Eric Dumazet (2):
-      tcp: fix a race in inet_diag_dump_icsk()
-      ipv6: tunnels: fix two use-after-free
+ndesaulniers@google.com (1):
+      sparc: vdso: Drop implicit common-page-size linker flag
 
-Ganesh Goudar (1):
-      MAINTAINERS: update cxgb4 and cxgb3 maintainer
-
-Herbert Xu (1):
-      ipv6: frags: Fix bogus skb->sk in reassembled packets
-
-Jörgen Storvist (1):
-      qmi_wwan: Add support for Fibocom NL678 series
-
-Kangjie Lu (1):
-      net: netxen: fix a missing check and an uninitialized use
-
-Vakul Garg (2):
-      Prevent overflow of sk_msg in sk_msg_clone()
-      tls: Do not call sk_memcopy_from_iter with zero length
-
-Willem de Bruijn (1):
-      packet: validate address length
-
- MAINTAINERS                                          |  4 ++--
- drivers/net/ethernet/mscc/ocelot.c                   |  2 +-
- drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c |  3 ++-
- drivers/net/usb/qmi_wwan.c                           | 16 +++++++++-------
- net/core/skmsg.c                                     |  3 +++
- net/ipv4/inet_diag.c                                 |  4 +++-
- net/ipv6/ip6_tunnel.c                                |  1 +
- net/ipv6/ip6_vti.c                                   |  1 +
- net/ipv6/reassembly.c                                |  1 +
- net/packet/af_packet.c                               |  4 ++++
- net/tls/tls_sw.c                                     | 10 ++++++----
- 11 files changed, 33 insertions(+), 16 deletions(-)
+ arch/sparc/kernel/setup_32.c | 13 ++++++-------
+ arch/sparc/kernel/setup_64.c |  4 ++--
+ arch/sparc/vdso/Makefile     |  2 +-
+ drivers/tty/serial/sunsu.c   | 31 ++++++++++++++++++++++++++-----
+ 4 files changed, 35 insertions(+), 15 deletions(-)
