@@ -2,118 +2,294 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE357C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32126C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1D821906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545399781;
-	bh=tXQSBDZ+IXnD124BPPDHB/CzykkoVejH2uJJF0nAMo8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=vKnBv7r7PH0m1O8ND04k/C4K7CN6TL0fdw6nBIJha0jQ1bOsQXe26SdTzJr+DYikZ
-	 4UR/CUM6TTeX6vB6sDRLNoAz6LJhgxW6SNgPpGmP+INYV88XXbThHdvqIw9bEW9BWF
-	 SWnQcza0F/LUO4ebjw2dQWp8wL/81bRt8Gu9LlsA=
+	by mail.kernel.org (Postfix) with ESMTP id 0082D21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403808AbeLUNm6 (ORCPT
+        id S2390706AbeLUNne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:42:58 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59200 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403782AbeLUNmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:42:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=EFeLoW9W76Bip7GofDixv+8MHFzoqarzZwkx1IxHH0o=; b=QsEuc0oJhdBH
-        gqlMzJqdr5wgxMn5OIIVC/9uGHPM9OoVzRnxjIgmho14Qudr0OQeojb+R7/5QPUEHJFoBPs8mzXh1
-        CV3+kBAaV5Aw/X3qDcDv2OmoqvjBJV9JbUFj2fD014vV1RvNC+sS9JGSc7XGIZS7ZhquyiVRUQFNf
-        iCl0I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gaL4e-0002V9-Ik; Fri, 21 Dec 2018 13:42:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3F0951121B93; Fri, 21 Dec 2018 13:42:44 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: tps65910: fix a missing check of return value" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20181221134244.3F0951121B93@debutante.sirena.org.uk>
-Date:   Fri, 21 Dec 2018 13:42:44 +0000 (GMT)
+        Fri, 21 Dec 2018 08:43:34 -0500
+Received: from mga02.intel.com ([134.134.136.20]:47985 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732931AbeLUNne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 08:43:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 05:43:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
+   d="scan'208";a="103821304"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by orsmga008.jf.intel.com with ESMTP; 21 Dec 2018 05:43:31 -0800
+Subject: Re: [PATCH V2 1/2] mmc: sdhci: Fix O2 Host PLL and card detect issue
+To:     "Ernest Zhang(WH)" <ernest.zhang@bayhubtech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "Andy Dai (WH)" <andy.dai@bayhubtech.com>,
+        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
+        "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
+        "Mike Li (WH)" <mike.li@bayhubtech.com>
+References: <20181218114003.10002-1-ernest.zhang@bayhubtech.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4124aeab-b281-372f-7802-a699d3226da7@intel.com>
+Date:   Fri, 21 Dec 2018 15:42:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181218114003.10002-1-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 18/12/18 1:40 PM, Ernest Zhang(WH) wrote:
+> From: "Ernest Zhang" <ernest.zhang@bayhubtech.com>
+> 
+> 1. O2 Host Controller PLL lock status is not in compliance with
+> CLOCK_CONTROL register bit 1
+> 2. O2 Host Controller card detect function only work when PLL is
+> enabled and locked
+> 
+> Signed-off-by: Ernest Zhang <ernest.zhang@bayhubtech.com>
 
-   regulator: tps65910: fix a missing check of return value
+If you put the other patch first, then this patch will need some minor
+modifications, otherwise I have no further comments.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From cd07e3701fa6a4c68f8493ee1d12caa18d46ec6a Mon Sep 17 00:00:00 2001
-From: Kangjie Lu <kjlu@umn.edu>
-Date: Fri, 21 Dec 2018 00:29:19 -0600
-Subject: [PATCH] regulator: tps65910: fix a missing check of return value
-
-tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
-returns with its error code.
-
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/tps65910-regulator.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
-index 02ccdaa226a7..5ebb6ee73f07 100644
---- a/drivers/regulator/tps65910-regulator.c
-+++ b/drivers/regulator/tps65910-regulator.c
-@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pmic);
- 
- 	/* Give control of all register to control port */
--	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
-+	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
- 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
-+	if (err < 0)
-+		return err;
- 
- 	switch (tps65910_chip_id(tps65910)) {
- 	case TPS65910:
--- 
-2.20.1
+> ---
+> Change in V2:
+> 	1. Remove unused sdhci_ops function pointer
+> 	2. Change kind of timeout check, get the time first
+> 	3. Rename CARD PRESENT register bit16 and bit 18 macro
+> 
+> Change in V1:
+> 	N/A
+> ---
+>  drivers/mmc/host/sdhci-pci-core.c    |   9 +++
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 121 ++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci-pci.h         |   1 +
+>  drivers/mmc/host/sdhci.h             |   4 ++
+>  4 files changed, 132 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index 2a6eba74b94e..fc4f35653602 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -1257,6 +1257,14 @@ static int jmicron_resume(struct sdhci_pci_chip *chip)
+>  }
+>  #endif
+>  
+> +static const struct sdhci_ops sdhci_pci_o2_ops = {
+> +	.set_clock = sdhci_pci_o2_set_clock,
+> +	.enable_dma = sdhci_pci_enable_dma,
+> +	.set_bus_width = sdhci_set_bus_width,
+> +	.reset = sdhci_reset,
+> +	.set_uhs_signaling = sdhci_set_uhs_signaling,
+> +};
+> +
+>  static const struct sdhci_pci_fixes sdhci_o2 = {
+>  	.probe = sdhci_pci_o2_probe,
+>  	.quirks = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+> @@ -1265,6 +1273,7 @@ static const struct sdhci_pci_fixes sdhci_o2 = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.resume = sdhci_pci_o2_resume,
+>  #endif
+> +	.ops = &sdhci_pci_o2_ops,
+>  };
+>  
+>  static const struct sdhci_pci_fixes sdhci_jmicron = {
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index cc3ffeffd7a2..506b93e5dcd8 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -60,6 +60,13 @@
+>  #define O2_SD_VENDOR_SETTING2	0x1C8
+>  #define O2_SD_HW_TUNING_DISABLE	BIT(4)
+>  
+> +#define O2_PLL_WDT_CONTROL1	0x1CC
+> +#define  O2_PLL_FORCE_ACTIVE	BIT(18)
+> +#define  O2_PLL_LOCK_STATUS	BIT(14)
+> +#define  O2_PLL_SOFT_RESET	BIT(12)
+> +
+> +#define O2_SD_DETECT_SETTING 0x324
+> +
+>  static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
+>  {
+>  	u16 reg;
+> @@ -283,6 +290,113 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
+>  	host->irq = pci_irq_vector(chip->pdev, 0);
+>  }
+>  
+> +static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
+> +{
+> +	ktime_t timeout;
+> +	u32 scratch32;
+> +
+> +	/* Wait max 50 ms */
+> +	timeout = ktime_add_ms(ktime_get(), 50);
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
+> +		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
+> +		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
+> +			break;
+> +
+> +		if (timedout) {
+> +			pr_err("%s: Card Detect debounce never finished.\n",
+> +			       mmc_hostname(host->mmc));
+> +			sdhci_dumpregs(host);
+> +			return;
+> +		}
+> +		udelay(10);
+> +	}
+> +}
+> +
+> +static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
+> +{
+> +	ktime_t timeout;
+> +	u16 scratch;
+> +	u32 scratch32;
+> +
+> +	/* PLL software reset */
+> +	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
+> +	scratch32 |= O2_PLL_SOFT_RESET;
+> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+> +	udelay(1);
+> +	scratch32 &= ~(O2_PLL_SOFT_RESET);
+> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+> +
+> +	/* PLL force active */
+> +	scratch32 |= O2_PLL_FORCE_ACTIVE;
+> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+> +
+> +	/* Wait max 20 ms */
+> +	timeout = ktime_add_ms(ktime_get(), 20);
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		scratch = sdhci_readw(host, O2_PLL_WDT_CONTROL1);
+> +		if (scratch & O2_PLL_LOCK_STATUS)
+> +			break;
+> +		if (timedout) {
+> +			pr_err("%s: Internal clock never stabilised.\n",
+> +			       mmc_hostname(host->mmc));
+> +			sdhci_dumpregs(host);
+> +			goto out;
+> +		}
+> +		udelay(10);
+> +	}
+> +
+> +	/* Wait for card detect finish */
+> +	udelay(1);
+> +	sdhci_o2_wait_card_detect_stable(host);
+> +
+> +out:
+> +	/* Cancel PLL force active */
+> +	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
+> +	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
+> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+> +}
+> +
+> +static int sdhci_o2_get_cd(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +
+> +	sdhci_o2_enable_internal_clock(host);
+> +
+> +	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+> +}
+> +
+> +static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
+> +{
+> +	/* Enable internal clock */
+> +	clk |= SDHCI_CLOCK_INT_EN;
+> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +
+> +	if (sdhci_o2_get_cd(host->mmc)) {
+> +		clk |= SDHCI_CLOCK_CARD_EN;
+> +		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +	}
+> +}
+> +
+> +void sdhci_pci_o2_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	u16 clk;
+> +
+> +	host->mmc->actual_clock = 0;
+> +
+> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> +
+> +	if (clock == 0)
+> +		return;
+> +
+> +	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+> +	sdhci_o2_enable_clk(host, clk);
+> +}
+> +
+>  int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  {
+>  	struct sdhci_pci_chip *chip;
+> @@ -316,7 +430,11 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  				host->flags |= SDHCI_SIGNALING_180;
+>  				host->mmc->caps2 |= MMC_CAP2_NO_SD;
+>  				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
+> +				pci_write_config_dword(chip->pdev,
+> +						       O2_SD_DETECT_SETTING, 3);
+>  			}
+> +
+> +			slot->host->mmc_host_ops.get_cd = sdhci_o2_get_cd;
+>  		}
+>  
+>  		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
+> @@ -490,9 +608,6 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+>  		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
+>  		break;
+>  	case PCI_DEVICE_ID_O2_SEABIRD0:
+> -		if (chip->pdev->revision == 0x01)
+> -			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
+> -		/* fall through */
+>  	case PCI_DEVICE_ID_O2_SEABIRD1:
+>  		/* UnLock WP */
+>  		ret = pci_read_config_byte(chip->pdev,
+> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+> index 2ef0bdca9197..e41a85f0b40a 100644
+> --- a/drivers/mmc/host/sdhci-pci.h
+> +++ b/drivers/mmc/host/sdhci-pci.h
+> @@ -184,6 +184,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip);
+>  #ifdef CONFIG_PM_SLEEP
+>  int sdhci_pci_o2_resume(struct sdhci_pci_chip *chip);
+>  #endif
+> +void sdhci_pci_o2_set_clock(struct sdhci_host *host, unsigned int clock);
+>  
+>  extern const struct sdhci_pci_fixes sdhci_arasan;
+>  extern const struct sdhci_pci_fixes sdhci_snps;
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 6cc9a3c2ac66..924e03332cf7 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -73,6 +73,10 @@
+>  #define  SDHCI_SPACE_AVAILABLE	0x00000400
+>  #define  SDHCI_DATA_AVAILABLE	0x00000800
+>  #define  SDHCI_CARD_PRESENT	0x00010000
+> +#define   SDHCI_CARD_PRES_SHIFT	16
+> +#define  SDHCI_CD_STABLE	0x00020000
+> +#define  SDHCI_CD_LVL		0x00040000
+> +#define   SDHCI_CD_LVL_SHIFT	18
+>  #define  SDHCI_WRITE_PROTECT	0x00080000
+>  #define  SDHCI_DATA_LVL_MASK	0x00F00000
+>  #define   SDHCI_DATA_LVL_SHIFT	20
+> 
 
