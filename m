@@ -2,227 +2,101 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EC8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2332C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4721C2176F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC0A2190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="cSG9ZZA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389688AbeLUK2T (ORCPT
+        id S2389701AbeLUK2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:28:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389465AbeLUK2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:28:17 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BE8FA3972;
-        Fri, 21 Dec 2018 10:28:16 +0000 (UTC)
-Received: from f28server.default (ovpn-116-118.phx2.redhat.com [10.3.116.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9429A6152F;
-        Fri, 21 Dec 2018 10:28:13 +0000 (UTC)
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V3 9/9] x86/jump_label: Batch jump label updates
-Date:   Fri, 21 Dec 2018 11:27:34 +0100
-Message-Id: <a7ff8be5f195e72d69b8a1689d13d3995056994c.1545228276.git.bristot@redhat.com>
-In-Reply-To: <cover.1545228276.git.bristot@redhat.com>
-References: <cover.1545228276.git.bristot@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 21 Dec 2018 10:28:16 +0000 (UTC)
+        Fri, 21 Dec 2018 05:28:32 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36413 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388453AbeLUK2a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:28:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so2418281pfc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:28:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MgbpNXZ6syJHgHjQ8P1oZ35HgImgeEw19kIRzY6x14U=;
+        b=cSG9ZZA3fT8HYV/V9anzC5xuETlC9Aib/IxtvWOWI2Nhq0RklUAvHyM0uIMIMK3WZg
+         GYtK1unGm577Sa2IcIYo8tA3SXjFCTRBkpPf5+6Zx1CGIvcIS9icWHqLAsQNUYHMaIWa
+         eEO0Qin2XepxyOoW8z5+DZE8aSVn/5w7ytRXogLhtScCU66HQBKi1HcsWOvj5sJpauQT
+         IIqm1+D+/i112y4e4Iq+bYDvfnuVdMS7RS/03MNZcII398DR+kdZ2RgTrttTUAn0mK5y
+         ngbjnJwd3m7rFp59k8vV6MD9R3dpY6GoajZqgNV/MInCYnqNQ4vOYGn8u+HgEnsnw3JQ
+         5sIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MgbpNXZ6syJHgHjQ8P1oZ35HgImgeEw19kIRzY6x14U=;
+        b=KCvqo8zEV6x4B5Rbtux5hyhCo8Khq63A0zBy7ku5KyIXnv43ohq2QeAUsa1py2F0NA
+         YpKmZn4bY5xGjBpX/N9HPq9EeaVDBM4ezN26mp9Bdkg875NLYDvQ0kCzA+O+rzhL6wZO
+         uJhLt6dEi9FzX3F1gcCmALLywH6Y5akOU0lvfz22Sjl0D0KbI/CQp34b1YTLgDmTfLqa
+         oqJNNIqB8QXI0Bc8nbFg+dTAPgvK9RAvYWF0wzP+/aAlfKNjWRLq/6E/o+v1NMIVsfdZ
+         kKOnuM7/YiB/VjAP/xHdIfAHHwmRD+a0hbUaDEJjewnGR54OUsyqBcaEMhSRZ9WkbXcd
+         jlaw==
+X-Gm-Message-State: AJcUuke4cweECNXowgOQ/ucPtrEQ+CEcMFm5YdIA2Ru5gM50LEpX4CEZ
+        aqn/dCQI6Pkt+fVPD46xLZyJuA==
+X-Google-Smtp-Source: ALg8bN7neVcA9AyznbeQA/+AEASrdVOx3pWQWTYxFrg4kai4vlauWcjPXwi6ZWnFCRAu6drNKoD55g==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr1823475pgq.387.1545388109580;
+        Fri, 21 Dec 2018 02:28:29 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id s190sm30628986pfb.103.2018.12.21.02.28.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 02:28:28 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 90C24300816; Fri, 21 Dec 2018 13:28:24 +0300 (+03)
+Date:   Fri, 21 Dec 2018 13:28:24 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to fix page
+ fault/truncate race
+Message-ID: <20181221102824.5v36l6l5t2zthpgr@kshutemo-mobl1>
+References: <20181218223557.5202-1-mike.kravetz@oracle.com>
+ <20181218223557.5202-3-mike.kravetz@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218223557.5202-3-mike.kravetz@oracle.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the jump label of a static key is transformed via the arch
-specific function:
+On Tue, Dec 18, 2018 at 02:35:57PM -0800, Mike Kravetz wrote:
+> Instead of writing the required complicated code for this rare
+> occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
+> mode for the duration of page fault processing.  Hold i_mmap_rwsem
+> longer in truncation and hold punch code to cover the call to
+> remove_inode_hugepages.
 
-    void arch_jump_label_transform(struct jump_entry *entry,
-                                   enum jump_label_type type)
+One of remove_inode_hugepages() callers is noticeably missing --
+hugetlbfs_evict_inode(). Why?
 
-The new approach (batch mode) uses two arch functions, the first has the
-same arguments of the arch_jump_label_transform(), and is the function:
+It at least deserves a comment on why the lock rule doesn't apply to it.
 
-    void arch_jump_label_transform_queue(struct jump_entry *entry,
-					 enum jump_label_type type)
-
-Rather than transforming the code, it adds the jump_entry in a queue of
-entries to be updated. This functions returns 1 in the case of a
-successful enqueue of an entry. If it returns 0, the caller must to
-apply the queue and then try to queue again, for instance, because the
-queue is full.
-
-This function expects the caller to sort the entries by the address before
-enqueueuing then. This is already done by the arch independent code, though.
-
-After queuing all jump_entries, the function:
-
-    void arch_jump_label_transform_apply(void)
-
-Applies the changes in the queue.
-
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Chris von Recklinghausen <crecklin@redhat.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Scott Wood <swood@redhat.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/x86/include/asm/jump_label.h |  2 +
- arch/x86/kernel/jump_label.c      | 88 +++++++++++++++++++++++++++++++
- 2 files changed, 90 insertions(+)
-
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index a5fb34fe56a4..39f908e8c0d1 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_JUMP_LABEL_H
- #define _ASM_X86_JUMP_LABEL_H
- 
-+#define HAVE_JUMP_LABEL_BATCH
-+
- #define JUMP_LABEL_NOP_SIZE 5
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index a039ac4ca5bf..633c103412e1 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -15,6 +15,7 @@
- #include <asm/kprobes.h>
- #include <asm/alternative.h>
- #include <asm/text-patching.h>
-+#include <linux/slab.h>
- 
- #ifdef HAVE_JUMP_LABEL
- 
-@@ -132,6 +133,93 @@ void arch_jump_label_transform(struct jump_entry *entry,
- 	mutex_unlock(&text_mutex);
- }
- 
-+struct text_to_poke *entry_vector;
-+unsigned int entry_vector_max_elem __read_mostly;
-+unsigned int entry_vector_nr_elem;
-+
-+void arch_jump_label_init(void)
-+{
-+	entry_vector = (void *) __get_free_page(GFP_KERNEL);
-+
-+	if (WARN_ON_ONCE(!entry_vector))
-+		return;
-+
-+	entry_vector_max_elem = PAGE_SIZE / sizeof(struct text_to_poke);
-+	return;
-+}
-+
-+int arch_jump_label_transform_queue(struct jump_entry *entry,
-+				     enum jump_label_type type)
-+{
-+	void *entry_code;
-+	struct text_to_poke *tp;
-+
-+	/*
-+	 * Batch mode disabled before being able to allocate memory:
-+	 * Fallback to the non-batching mode.
-+	 */
-+	if (unlikely(!entry_vector_max_elem)) {
-+		if (!slab_is_available() || early_boot_irqs_disabled)
-+			goto fallback;
-+
-+		arch_jump_label_init();
-+	}
-+
-+	/*
-+	 * No more space in the vector, tell upper layer to apply
-+	 * the queue before continuing.
-+	 */
-+	if (entry_vector_nr_elem == entry_vector_max_elem)
-+		return 0;
-+
-+	tp = &entry_vector[entry_vector_nr_elem];
-+
-+	entry_code = (void *)jump_entry_code(entry);
-+
-+	/*
-+	 * The int3 handler will do a bsearch in the queue, so we need entries
-+	 * to be sorted. We can survive an unsorted list by rejecting the entry,
-+	 * forcing the generic jump_label code to apply the queue. Warning once,
-+	 * to raise the attention to the case of an unsorted entry that is
-+	 * better not happen, because, in the worst case we will perform in the
-+	 * same way as we do without batching - with some more overhead.
-+	 */
-+	if (entry_vector_nr_elem > 0) {
-+		int prev_idx = entry_vector_nr_elem - 1;
-+		struct text_to_poke *prev_tp = &entry_vector[prev_idx];
-+
-+		if (WARN_ON_ONCE(prev_tp->addr > entry_code))
-+			return 0;
-+	}
-+
-+	__jump_label_set_jump_code(entry, type,
-+				   (union jump_code_union *) &tp->opcode, 0);
-+
-+	tp->addr = entry_code;
-+	tp->handler = entry_code + JUMP_LABEL_NOP_SIZE;
-+	tp->len = JUMP_LABEL_NOP_SIZE;
-+
-+	entry_vector_nr_elem++;
-+
-+	return 1;
-+
-+fallback:
-+	arch_jump_label_transform(entry, type);
-+	return 1;
-+}
-+
-+void arch_jump_label_transform_apply(void)
-+{
-+	if (early_boot_irqs_disabled || !entry_vector_nr_elem)
-+		return;
-+
-+	mutex_lock(&text_mutex);
-+	text_poke_bp_batch(entry_vector, entry_vector_nr_elem);
-+	mutex_unlock(&text_mutex);
-+
-+	entry_vector_nr_elem = 0;
-+}
-+
- static enum {
- 	JL_STATE_START,
- 	JL_STATE_NO_UPDATE,
 -- 
-2.17.1
-
+ Kirill A. Shutemov
