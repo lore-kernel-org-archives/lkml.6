@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7949DC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D38C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521EB21908
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9B4A21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbeLUJYa (ORCPT
+        id S1731688AbeLUJYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:24:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54419 "EHLO mail.bootlin.com"
+        Fri, 21 Dec 2018 04:24:52 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54454 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbeLUJY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:24:29 -0500
+        id S1725860AbeLUJYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 04:24:50 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B5B3C20763; Fri, 21 Dec 2018 10:24:26 +0100 (CET)
+        id F11F120763; Fri, 21 Dec 2018 10:24:47 +0100 (CET)
 Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8B36C20747;
-        Fri, 21 Dec 2018 10:24:26 +0100 (CET)
-Date:   Fri, 21 Dec 2018 10:24:26 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id C0C5620747;
+        Fri, 21 Dec 2018 10:24:47 +0100 (CET)
+Date:   Fri, 21 Dec 2018 10:24:47 +0100
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -50,35 +50,45 @@ Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V5 1/4] dt-bindings: fsl: scu: add rtc binding
-Message-ID: <20181221092426.GL2188@piout.net>
+Subject: Re: [PATCH V5 2/4] rtc: add i.MX system controller RTC support
+Message-ID: <20181221092447.GM2188@piout.net>
 References: <1545295872-20169-1-git-send-email-Anson.Huang@nxp.com>
- <1545295872-20169-2-git-send-email-Anson.Huang@nxp.com>
+ <1545295872-20169-3-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545295872-20169-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1545295872-20169-3-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2018 08:56:07+0000, Anson Huang wrote:
-> NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
-> system controller, the system controller is in charge of system
-> power, clock and secure RTC etc. management, Linux kernel
-> has to communicate with system controller via MU (message unit)
-> IPC to do RTC operation, this patch adds binding doc for i.MX
-> system controller RTC driver.
+On 20/12/2018 08:56:16+0000, Anson Huang wrote:
+> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
+> inside, the system controller is in charge of controlling power,
+> clock and secure rtc etc..
+> 
+> This patch adds i.MX system controller RTC driver support,
+> Linux kernel has to communicate with system controller via MU
+> (message unit) IPC to set/get RTC time and other alarm functions,
+> since the RTC set time needs to be done in secure EL3 mode (required
+> by system controller firmware) and alarm functions needs to be done
+> with general MU IRQ handle, these depend on other components which
+> are NOT ready, so this patch ONLY enables the RTC time read.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
-> No change since V4.
+> ChangeLog since V4:
+>     - Add dependency on IMX_SCU to avoid compile error when IMX_SCU is NOT enabled;
+>     - Use dev_err instead of pr_err;
+>     - Remove unneccssary different errors check in imx_scu_get_handle which is already done in API.
 > ---
->  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  drivers/rtc/Kconfig      |  7 ++++
+>  drivers/rtc/Makefile     |  1 +
+>  drivers/rtc/rtc-imx-sc.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+>  create mode 100644 drivers/rtc/rtc-imx-sc.c
 > 
 Applied, thanks.
 
