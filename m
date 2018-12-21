@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3311C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753F1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826F921903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 460B721903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kj97J01v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqnJTIu8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389013AbeLUH2o (ORCPT
+        id S2388302AbeLUH2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:28:44 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42089 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388220AbeLUH2M (ORCPT
+        Fri, 21 Dec 2018 02:28:10 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46353 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388202AbeLUH2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:28:12 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so2098129plp.9;
-        Thu, 20 Dec 2018 23:28:12 -0800 (PST)
+        Fri, 21 Dec 2018 02:28:07 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w7so2096731pgp.13;
+        Thu, 20 Dec 2018 23:28:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=os5HCIWWSeiXp86kNFBUOm5Js1nl9fgasgDsX5LPT/Y=;
-        b=Kj97J01vYaRO2Tsth4vmAsL09eUm8ZfT+Y1IlvimyYHPKsSNx4cwmrtBkpYQB/pyrY
-         L2QtTUlnNmLrAX6TAqZr6yne1yTCd7kLgANDnmAiDbBQ+jDHoohFzgZOxUlnDHv54PDr
-         p/0c8okKY+ylW2UNiyjZoYDn0AP/jOhvFNzjPn5SlLTkBMhpXeuShdh29XLKsxy2//6M
-         x2UDRXm0qvBnzH1AQz5M7CD4goUCjur5DPjsL2jX1PMz9RAxheMINSdKvTaZpiUJOT3E
-         0jBzNJMp0nMuxAbU6/aBF4PL85YI9mSyYL39bKCxPVSI4Th1puQCwHYDr5+7U9jYU7CT
-         KdOA==
+        bh=aOG8CavLyhRq8sCBntFikyTFeErNCHKkbYlORQ4DvNg=;
+        b=TqnJTIu8I0HdwEONz46eJlxXRn76Mr445orVTvClpARztJpH9rMAlTuv7nejWztxyn
+         DuMPpfio0T351PMzmI+JIDxpUqJsiWPVC/QDukseBDLsA7uJY4y9LSMuF/IMeZ79aT0U
+         lQXDVgEfsi3IRrmrokm3pzsC4PeiIGKamsMv4usncYvREexnQavMulx6JA1tol6q/3Fi
+         jh433KJiMmH7h7fqz1mg6ep0gl2nVGYJywEucavYIlLpYn8UlM05roCmyguNr/4l1DWB
+         y8ml5bt790P5FCicXFp41bFm9uhRBD1+oSpE7Tn6x938/gVurnxl77erxV+Yc4kW8Cce
+         Ce+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=os5HCIWWSeiXp86kNFBUOm5Js1nl9fgasgDsX5LPT/Y=;
-        b=NO8vcNdo64O/524uHyDp9Ve8CsLyhZedNJWsV0jRJ6g8ABW5yiyHSMbQJEhEaAjhDg
-         YLJ1LchlPjNRNk/+QmiHrHRn8CHGI2vz1zgLyzWkrPFOy0rW2rfqjPfLgz2DGY1QrFzZ
-         POZXtZLDyHTKeeNUWPJOne7HksuDBjWAOfRS7KtTAM3soGOBCqwPwsd7cR7KFCvceEC1
-         IRKM13f427EDLVOawwKJyPwq88gjS8JTESExLhl2y1B/ZZA/lDBECWqVLiO/w+81HW9Z
-         vKSv/RZuVTIbnfGsBi6yNbDZstAbAA76Qy5JITO1qnNJwY1cLPNN9vXZp8Q6TS4zWnTn
-         FUGA==
-X-Gm-Message-State: AJcUukfACISpaNouh3ZVdQgfbyDAG3kOSlzFTS/ltEvRekmLmZECQJel
-        p2iac0jE+hUUk0ZCE/wLVtk9IErs
-X-Google-Smtp-Source: ALg8bN4z4ZU5nz72DBY5q8YOvRp5wW78zQBbybW7pRGQW2hcy8aJw7wfTvss0oEMNvtfTdMs0MWtMQ==
-X-Received: by 2002:a17:902:d697:: with SMTP id v23mr1388203ply.261.1545377291783;
-        Thu, 20 Dec 2018 23:28:11 -0800 (PST)
+        bh=aOG8CavLyhRq8sCBntFikyTFeErNCHKkbYlORQ4DvNg=;
+        b=h0kCKJZoJIFuOejY8F7T0bxWtirioMzBWMhT8+/GCVXa9uvmM6PetRV0PpzUt9TGkc
+         8cyRLfRXsPgUakreYLHHkIkV/6EJN06CHAFw7TJU4HDtuTsdIfqwSXDWMf9V+bQBPKvr
+         5Lhl4NE+BCcCOnrQNm0nOv9Lj89iXBrgNZ22HwAggKKLLZ7WBWubLzYpozgRisQOAZrG
+         +YXeX778gwOuDQWx3iRcHJsVn77n8gkqxqyRXV+0IPmYt8Q383hY1j9JeTdgryfUGTzI
+         s2P/6HS08hIPMSExCsmcX6dPgA5/2vJJJcZHXSaI0QgCMRgf3xmFEyrkgFHD4Iu/JB3O
+         cuzQ==
+X-Gm-Message-State: AJcUuke3hmI0t0/LZEVD0YrqB/0wDdC4dPT+V1Z2pnrfdyBCVnagJDrc
+        I/XkkAnwCohIrKcxbq5Ub5IhZJjH
+X-Google-Smtp-Source: ALg8bN7yhNSbFck0nnNIRDg47AJKYuZqq6R/Ffo/4KF2NT1W+iFq6lGG7eFQhBRw7NMV971VW8LGHg==
+X-Received: by 2002:a63:4002:: with SMTP id n2mr1316312pga.137.1545377285389;
+        Thu, 20 Dec 2018 23:28:05 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.09
+        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:28:10 -0800 (PST)
+        Thu, 20 Dec 2018 23:28:04 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-pci@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 17/21] PCI: imx6: Use common mask in imx6_pcie_reset_phy()
-Date:   Thu, 20 Dec 2018 23:27:12 -0800
-Message-Id: <20181221072716.29017-18-andrew.smirnov@gmail.com>
+Subject: [PATCH 14/21] PCI: imx6: Simplify pcie_phy_poll_ack()
+Date:   Thu, 20 Dec 2018 23:27:09 -0800
+Message-Id: <20181221072716.29017-15-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
 References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
@@ -81,8 +81,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify imx6_pcie_reset_phy() by using common mask. No functional
-change intended.
+Simplify pcie_phy_poll_ack() by incorporating shifting into constant
+definition and convert the code to use 'bool'. No functional change
+intended.
 
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
@@ -98,36 +99,43 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index bade9d608605..38c8e8baa077 100644
+index 40d348bb9a2b..ddab1859a07e 100644
 --- a/drivers/pci/controller/dwc/pci-imx6.c
 +++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -230,18 +230,18 @@ static int pcie_phy_write(struct imx6_pcie *imx6_pcie, int addr, u16 data)
+@@ -91,7 +91,7 @@ struct imx6_pcie {
+ #define PCIE_PHY_CTRL_RD		BIT(19)
  
- static void imx6_pcie_reset_phy(struct imx6_pcie *imx6_pcie)
+ #define PCIE_PHY_STAT (PL_OFFSET + 0x110)
+-#define PCIE_PHY_STAT_ACK_LOC 16
++#define PCIE_PHY_STAT_ACK		BIT(16)
+ 
+ /* PHY registers (not memory-mapped) */
+ #define PCIE_PHY_ATEOVRD			0x10
+@@ -108,16 +108,16 @@ struct imx6_pcie {
+ #define PHY_RX_OVRD_IN_LO_RX_DATA_EN		BIT(5)
+ #define PHY_RX_OVRD_IN_LO_RX_PLL_EN		BIT(3)
+ 
+-static int pcie_phy_poll_ack(struct imx6_pcie *imx6_pcie, int exp_val)
++static int pcie_phy_poll_ack(struct imx6_pcie *imx6_pcie, bool exp_val)
  {
-+	const u16 mask = PHY_RX_OVRD_IN_LO_RX_DATA_EN |
-+			 PHY_RX_OVRD_IN_LO_RX_PLL_EN;
- 	u16 tmp;
+ 	struct dw_pcie *pci = imx6_pcie->pci;
+-	u32 val;
++	bool val;
+ 	u32 max_iterations = 10;
+ 	u32 wait_counter = 0;
  
- 	pcie_phy_read(imx6_pcie, PHY_RX_OVRD_IN_LO, &tmp);
--	tmp |= (PHY_RX_OVRD_IN_LO_RX_DATA_EN |
--		PHY_RX_OVRD_IN_LO_RX_PLL_EN);
-+	tmp |= mask;
- 	pcie_phy_write(imx6_pcie, PHY_RX_OVRD_IN_LO, tmp);
+ 	do {
+-		val = dw_pcie_readl_dbi(pci, PCIE_PHY_STAT);
+-		val = (val >> PCIE_PHY_STAT_ACK_LOC) & 0x1;
++		val = dw_pcie_readl_dbi(pci, PCIE_PHY_STAT) &
++			PCIE_PHY_STAT_ACK;
+ 		wait_counter++;
  
- 	usleep_range(2000, 3000);
- 
- 	pcie_phy_read(imx6_pcie, PHY_RX_OVRD_IN_LO, &tmp);
--	tmp &= ~(PHY_RX_OVRD_IN_LO_RX_DATA_EN |
--		  PHY_RX_OVRD_IN_LO_RX_PLL_EN);
-+	tmp &= ~mask;
- 	pcie_phy_write(imx6_pcie, PHY_RX_OVRD_IN_LO, tmp);
- }
- 
+ 		if (val == exp_val)
 -- 
 2.19.1
 
