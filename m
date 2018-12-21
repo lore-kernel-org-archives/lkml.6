@@ -2,240 +2,295 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C88B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4158CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7F021903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:09:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="r9rV5fwZ"
+	by mail.kernel.org (Postfix) with ESMTP id 05A1D21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545412361;
+	bh=AC3N5cPmiWWCoi55jyxZG7SDG+N0rDbDxh2J62m/Kd4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=AlBdZYv8v1saB1FXtCronZp5nDIT9Xmcd7/LywuWpyHB7NUxDtjclEdigvsxahst4
+	 TTflA9QCH501ecpepcxmlQGPu9u1Eq2S/oYB7hmmIKvq8eXh8ikoS0OGqLH1R0wMcy
+	 s2u8bzZfKVgKjgXLpY//58rlirzMt6VizlBloLlg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390041AbeLURJJ (ORCPT
+        id S2390078AbeLURMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:09:09 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:55490 "EHLO vps0.lunn.ch"
+        Fri, 21 Dec 2018 12:12:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729483AbeLURJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 12:09:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=OADIYH0Q3NtJ5r1rb+QbhZCW/KetXV5AxTQ4QMR6ioE=;
-        b=r9rV5fwZRQS+u9SHR+wPUjGUOuipFnSn4DcxiSL/r+oRKVPbDufoQ2jQbF4toqgwbN9NLziSl4v5YihXBwXSGjTzwAuC6zPe2s266uZDyQskj21GZnM7X2zr6LIHRAO+X8ynXQEzn6aJmV6D9BPQ2HZg1yr3UgTPQj9CpfRVuMw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gaOIM-0003Lc-9l; Fri, 21 Dec 2018 18:09:06 +0100
-Date:   Fri, 21 Dec 2018 18:09:06 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: tqmx86: IO controller with i2c, wachdog and gpio
-Message-ID: <20181221170906.GE5023@lunn.ch>
-References: <1545152036-23239-1-git-send-email-andrew@lunn.ch>
- <20181221143505.GQ13248@dell>
+        id S2390041AbeLURMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 12:12:38 -0500
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84FEB21924
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 17:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545412356;
+        bh=AC3N5cPmiWWCoi55jyxZG7SDG+N0rDbDxh2J62m/Kd4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=j0ZOzJzUwQGJViXlXiGXzuLtogRDNIDIMf3u7tuc7oxXVJOLWwDevwoJzWOjy/xdM
+         +TI7ZZr3ZIkIpEDRUI6ycSepBJdHrvB/I277GFpcIkaRLZQCOZvL34SPcfBGgXorCq
+         wZTy/0xtBYw2wROx9hSzaQbzXbXR3cZHvJ9Wsi+w=
+Received: by mail-wm1-f45.google.com with SMTP id f188so6400954wmf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 09:12:36 -0800 (PST)
+X-Gm-Message-State: AJcUukfxI4X9rF1CqmNjoN/b1+lo5hyx3Nz6MmI37Azlmg5SeFGc04BG
+        Oe6cb1/QeXaOf/dgNV24PtIfbaEZmS87mbfBnsp+rQ==
+X-Google-Smtp-Source: ALg8bN5xcqaM3jE5hJcUPjCFtOO3g6YR0MFVkz8Pn8U7+8VNRxUUknF1JZtAsfGq7SfDWSwZEu46tAxAcKayRH2OiRo=
+X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr3851149wmk.74.1545412354958;
+ Fri, 21 Dec 2018 09:12:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221143505.GQ13248@dell>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
+ <20181212000354.31955-2-rick.p.edgecombe@intel.com> <CALCETrVP577NvdeYj8bzpEfTXj3GZD3nFcJxnUq5n1daDBxU=g@mail.gmail.com>
+ <CAKv+Gu_kunBqhUAQt6==SN-ei4Xc+z6=Z=pKXHHJYjk4Gdw73g@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_kunBqhUAQt6==SN-ei4Xc+z6=Z=pKXHHJYjk4Gdw73g@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 21 Dec 2018 09:12:23 -0800
+X-Gmail-Original-Message-ID: <CALCETrWScgJpdnzNswJSKioQ93Oyw+Y_dJLoRxPX2Z=REVV1Ug@mail.gmail.com>
+Message-ID: <CALCETrWScgJpdnzNswJSKioQ93Oyw+Y_dJLoRxPX2Z=REVV1Ug@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] vmalloc: New flags for safe vfree on special perms
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jessica Yu <jeyu@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +config MFD_TQMX86
-> > +       tristate "TQ-Systems IO controller TQMX86"
-> > +       select MFD_CORE
-> > +       help
-> > +	  Say yes here to enable support for various functions of the
-> > +	  TQ-Systems IO controller and watchdog device, found on their
-> > +	  ComExpress CPU modules
+> On Dec 21, 2018, at 9:39 AM, Ard Biesheuvel <ard.biesheuvel@linaro.org> w=
+rote:
+>
+>> On Wed, 12 Dec 2018 at 03:20, Andy Lutomirski <luto@kernel.org> wrote:
+>>
+>> On Tue, Dec 11, 2018 at 4:12 PM Rick Edgecombe
+>> <rick.p.edgecombe@intel.com> wrote:
+>>>
+>>> This adds two new flags VM_IMMEDIATE_UNMAP and VM_HAS_SPECIAL_PERMS, fo=
+r
+>>> enabling vfree operations to immediately clear executable TLB entries t=
+o freed
+>>> pages, and handle freeing memory with special permissions.
+>>>
+>>> In order to support vfree being called on memory that might be RO, the =
+vfree
+>>> deferred list node is moved to a kmalloc allocated struct, from where i=
+t is
+>>> today, reusing the allocation being freed.
+>>>
+>>> arch_vunmap is a new __weak function that implements the actual unmappi=
+ng and
+>>> resetting of the direct map permissions. It can be overridden by more e=
+fficient
+>>> architecture specific implementations.
+>>>
+>>> For the default implementation, it uses architecture agnostic methods w=
+hich are
+>>> equivalent to what most usages do before calling vfree. So now it is ju=
+st
+>>> centralized here.
+>>>
+>>> This implementation derives from two sketches from Dave Hansen and Andy
+>>> Lutomirski.
+>>>
+>>> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+>>> Suggested-by: Andy Lutomirski <luto@kernel.org>
+>>> Suggested-by: Will Deacon <will.deacon@arm.com>
+>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> ---
+>>> include/linux/vmalloc.h |  2 ++
+>>> mm/vmalloc.c            | 73 +++++++++++++++++++++++++++++++++++++----
+>>> 2 files changed, 69 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+>>> index 398e9c95cd61..872bcde17aca 100644
+>>> --- a/include/linux/vmalloc.h
+>>> +++ b/include/linux/vmalloc.h
+>>> @@ -21,6 +21,8 @@ struct notifier_block;                /* in notifier.=
+h */
+>>> #define VM_UNINITIALIZED       0x00000020      /* vm_struct is not full=
+y initialized */
+>>> #define VM_NO_GUARD            0x00000040      /* don't add guard page =
+*/
+>>> #define VM_KASAN               0x00000080      /* has allocated kasan s=
+hadow memory */
+>>> +#define VM_IMMEDIATE_UNMAP     0x00000200      /* flush before releasi=
+ng pages */
+>>> +#define VM_HAS_SPECIAL_PERMS   0x00000400      /* may be freed with sp=
+ecial perms */
+>>> /* bits [20..32] reserved for arch specific ioremap internals */
+>>>
+>>> /*
+>>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>>> index 97d4b25d0373..02b284d2245a 100644
+>>> --- a/mm/vmalloc.c
+>>> +++ b/mm/vmalloc.c
+>>> @@ -18,6 +18,7 @@
+>>> #include <linux/interrupt.h>
+>>> #include <linux/proc_fs.h>
+>>> #include <linux/seq_file.h>
+>>> +#include <linux/set_memory.h>
+>>> #include <linux/debugobjects.h>
+>>> #include <linux/kallsyms.h>
+>>> #include <linux/list.h>
+>>> @@ -38,6 +39,11 @@
+>>>
+>>> #include "internal.h"
+>>>
+>>> +struct vfree_work {
+>>> +       struct llist_node node;
+>>> +       void *addr;
+>>> +};
+>>> +
+>>> struct vfree_deferred {
+>>>        struct llist_head list;
+>>>        struct work_struct wq;
+>>> @@ -50,9 +56,13 @@ static void free_work(struct work_struct *w)
+>>> {
+>>>        struct vfree_deferred *p =3D container_of(w, struct vfree_deferr=
+ed, wq);
+>>>        struct llist_node *t, *llnode;
+>>> +       struct vfree_work *cur;
+>>>
+>>> -       llist_for_each_safe(llnode, t, llist_del_all(&p->list))
+>>> -               __vunmap((void *)llnode, 1);
+>>> +       llist_for_each_safe(llnode, t, llist_del_all(&p->list)) {
+>>> +               cur =3D container_of(llnode, struct vfree_work, node);
+>>> +               __vunmap(cur->addr, 1);
+>>> +               kfree(cur);
+>>> +       }
+>>> }
+>>>
+>>> /*** Page table manipulation functions ***/
+>>> @@ -1494,6 +1504,48 @@ struct vm_struct *remove_vm_area(const void *add=
+r)
+>>>        return NULL;
+>>> }
+>>>
+>>> +/*
+>>> + * This function handles unmapping and resetting the direct map as eff=
+iciently
+>>> + * as it can with cross arch functions. The three categories of archit=
+ectures
+>>> + * are:
+>>> + *   1. Architectures with no set_memory implementations and no direct=
+ map
+>>> + *      permissions.
+>>> + *   2. Architectures with set_memory implementations but no direct ma=
+p
+>>> + *      permissions
+>>> + *   3. Architectures with set_memory implementations and direct map p=
+ermissions
+>>> + */
+>>> +void __weak arch_vunmap(struct vm_struct *area, int deallocate_pages)
+>>
+>> My general preference is to avoid __weak functions -- they don't
+>> optimize well.  Instead, I prefer either:
+>>
+>> #ifndef arch_vunmap
+>> void arch_vunmap(...);
+>> #endif
+>>
+>> or
+>>
+>> #ifdef CONFIG_HAVE_ARCH_VUNMAP
+>> ...
+>> #endif
+>>
+>>
+>>> +{
+>>> +       unsigned long addr =3D (unsigned long)area->addr;
+>>> +       int immediate =3D area->flags & VM_IMMEDIATE_UNMAP;
+>>> +       int special =3D area->flags & VM_HAS_SPECIAL_PERMS;
+>>> +
+>>> +       /*
+>>> +        * In case of 2 and 3, use this general way of resetting the pe=
+rmissions
+>>> +        * on the directmap. Do NX before RW, in case of X, so there is=
+ no W^X
+>>> +        * violation window.
+>>> +        *
+>>> +        * For case 1 these will be noops.
+>>> +        */
+>>> +       if (immediate)
+>>> +               set_memory_nx(addr, area->nr_pages);
+>>> +       if (deallocate_pages && special)
+>>> +               set_memory_rw(addr, area->nr_pages);
+>>
+>> Can you elaborate on the intent here?  VM_IMMEDIATE_UNMAP means "I
+>> want that alias gone before any deallocation happens".
+>> VM_HAS_SPECIAL_PERMS means "I mucked with the direct map -- fix it for
+>> me, please".  deallocate means "this was vfree -- please free the
+>> pages".  I'm not convinced that all the various combinations make
+>> sense.  Do we really need both flags?
+>>
+>> (VM_IMMEDIATE_UNMAP is a bit of a lie, since, if in_interrupt(), it's
+>> not immediate.)
+>>
+>> If we do keep both flags, maybe some restructuring would make sense,
+>> like this, perhaps.  Sorry about horrible whitespace damage.
+>>
+>> if (special) {
+>>  /* VM_HAS_SPECIAL_PERMS makes little sense without deallocate_pages. */
+>>  WARN_ON_ONCE(!deallocate_pages);
+>>
+>>  if (immediate) {
+>>    /* It's possible that the vmap alias is X and we're about to make
+>> the direct map RW.  To avoid a window where executable memory is
+>> writable, first mark the vmap alias NX.  This is silly, since we're
+>> about to *unmap* it, but this is the best we can do if all we have to
+>> work with is the set_memory_abc() APIs.  Architectures should override
+>> this whole function to get better behavior. */
+>
+> So can't we fix this first? Assuming that architectures that bother to
+> implement them will not have executable mappings in the linear region,
+> all we'd need is set_linear_range_ro/rw() routines that default to
+> doing nothing, and encapsulate the existing code for x86 and arm64.
+> That way, we can handle do things in the proper order, i.e., release
+> the vmalloc mapping (without caring about the permissions), restore
+> the linear alias attributes, and finally release the pages.
 
-Hi Lee
+Seems reasonable, except that I think it should be
+set_linear_range_not_present() and set_linear_range_rw(), for three
+reasons:
 
-Thanks for the comments. I will try to answer them the best i can.
-I'm taking the vendor driver and trying to get it into mainline. So i
-did not right this driver, i don't know all the details.
+1. It=E2=80=99s not at all clear to me that we need to keep the linear mapp=
+ing
+around for modules.
 
-> > new file mode 100644
-> > index 000000000000..4eca166db000
-> > --- /dev/null
-> > +++ b/drivers/mfd/tqmx86.c
-> > @@ -0,0 +1,404 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * TQ-Systems PLD MFD core driver
-> > + *
-> > + * Copyright (c) 2015 TQ-Systems GmbH
-> 
-> Copyright is out of date.
+2. At least on x86, the obvious algorithm to do the free operation
+with a single flush requires it.  Someone should probably confirm that
+arm=E2=80=99s TLB works the same way, i.e. that no flush is needed when
+changing from not-present (or whatever ARM calls it) to RW.
 
-That is the copyright on the vendor driver. I can add my copyright as
-well, which will probably be 2019 i guess.
+3. Anyone playing with XPFO wants this facility anyway.  In fact, with
+this change, Rick=E2=80=99s series will more or less implement XPFO for
+vmalloc memory :)
 
-> > +#define I2C_KIND_SOFT	1	/* Ocores soft controller */
-> > +#define I2C_KIND_HARD	2	/* Machxo2 hard controller */
-> 
-> What is a soft/hard controller?
-
-I'm guessing here, but the hardware is implemented in an FPGA.  There
-seems to be a few variants of it, some of which use the OpenCores I2C
-bus controller. https://opencores.org/projects/i2c, which i assume is
-synthesise as a soft core. The other implementation uses a Machxo2
-FPGA which i assume has a hardware core for I2C.
-
-The board i have has the soft i2c bus master.
-
-> > +static uint gpio_irq;
-> > +module_param(gpio_irq, uint, 0);
-> > +MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
-> 
-> I have never seen anything like this.
-> 
-> This should be set by platform data, not a module parameter.
-
-There is no platform data for this driver. It is loaded via matching
-BIOS DMI strings. On x86 it seems like interrupt 7, 9, and 12 are
-generally free for IO controllers to use. However, there has to be
-some way to configure this, since they are not always available.  On
-the board i have 9 is taken by acpi.
-
-> > +static u8 i2c_irq_ctl[16] = {
-> > +	[7] = 1,
-> > +	[9] = 2,
-> > +	[12] = 3
-> > +};
-> > +
-> > +static u8 tqmx86_readb(struct tqmx86_device_data *pld, u32 off)
-> > +{
-> > +	return ioread8(pld->io_base + off);
-> > +}
-> > +
-> > +static void tqmx86_writeb(struct tqmx86_device_data *pld, u8 val, u32 off)
-> > +{
-> > +	iowrite8(val, pld->io_base + off);
-> > +}
-> 
-> Don't write needless abstraction layers.
-> 
-> Use the calls themselves.
-> 
-> Any reason for not using Regmap?
-
-Notice this is ioread/iowrite, not readb/writeb. These are Intel x86
-IO mapped registered, not MMIO registers. regmap does not support such
-registers.
-
-> > +enum tqmx86_cells {
-> > +	TQMX86_I2C_SOFT = 0,
-> > +	TQMX86_WDT,
-> > +	TQMX86_GPIO,
-> > +	TQMX86_UART,
-> > +};
-> > +	int i = 0;
-> > +	u8 ioeic_val = 0;
-> > +
-> > +	ioeic_val |= (i2c_irq_ctl[gpio_irq] & 0x3) << 4;
-> 
-> What is IOEIC?
-
-No idea. This is some sort of mapping from the internal interrupts
-from the devices inside the FPGA to interrupts 7, 9 and 12. I'm
-assuming this device is on the LPC bus, so it has access to the lower
-interrupt numbers of an x86.
-
-> The magic numbers should be defined (*_SHIFT/*_MASK)
-> 
-> Side note: If I have to ask this many questions, it normally means the
-> code is not transparent enough.  There could be many reasons for this;
-> variable/function nomenclature, code trying to be too clever or do too
-> many things at once, coding style, data structure hacks, etc etc.
-> 
-> > +	dev_dbg(pld->dev, "ioeic %x\n", ioeic_val);
-> 
-> Are these really (still - after initial development) helpful to you?
-
-They are never really helpful to me, since i've no documentation, and
-i'm just reverse engineering the vendor driver :-)
- 
-> See other drivers to see how they handle optional cells.
-> 
-> > +	tqmx_gpio_resources[1].start = gpio_irq;
-> 
-> What about end?  This is a hack anyway.
-
-Interrupt resources don't have an end. An interrupt is a single
-value. But i'm not sure there is a better way to do this.
-
-> > +static int tqmx86_create_platform_device(const struct dmi_system_id *id)
-> 
-> > +static struct attribute *pld_attributes[] = {
-> > +	&dev_attr_board_id.attr,
-> > +	&dev_attr_board_rev.attr,
-> > +	&dev_attr_pld_rev.attr,
-> > +	NULL
-> > +};
-> > +
-> > +static const struct attribute_group pld_attr_group = {
-> > +	.attrs = pld_attributes,
-> > +};
-> 
-> What are you using sysfs for that requires this information?
-
-I'm not using it at all. The vendor however must think it is useful.
-I can remove it.
-
-> > +	pld->info.board_id = board_id;
-> > +	pld->info.board_rev = rev >> 4;
-> > +	pld->info.pld_rev = rev & 0xf;
-> > +
-> > +	i2c_det = tqmx86_readb(pld, TQMX86_I2C_DET);
-> > +	i2c_ien = tqmx86_readb(pld, TQMX86_I2C_IEN);
-> 
-> What are these values?
-
-I assume TQMX86_I2C_DET is some sort of identifier or ID for the FPGA.
-So a basic sanity check the device really is what we are trying to
-find. I assume TQMX86_I2C_IEN is about interrupt enable, but i don't
-know.
-
-> More unreadable magic numbers.
-> 
-> > +		pld->info.i2c_type = I2C_KIND_SOFT;
-> > +	else
-> > +		pld->info.i2c_type = I2C_KIND_HARD;
-> 
-> What are these?
-
-The soft I2C device does not support interrupts. That seems to be how
-they decided to use the soft ocores driver, or the hard i2c driver
-which i'm not mainlining, because i don't have the hardware. Of the
-list of devices this driver supports, i've no idea which have soft and
-which have hard. So i'm leaving this dynamic detection here.
- 
-> > +	pld->io_base = devm_ioport_map(dev, ioport->start,
-> > +				       resource_size(ioport));
-> 
-> This is used very little in the kernel.
-
-Correct, because there are few Intel IO drivers using Intel IO
-registers. Most tend to platform IO drivers, so serial ports, watchdog
-timers, GPIO, etc.
-
-> What is it you're trying to do here?
-
-You are supposed to map the IO registers, just to make sure there are
-no overlaps between drivers. The driver name will then appear in
-/proc/ioport,
-
-> Is Regmap a better alternative?  Take a look at some other MFD drivers.
-
-For example kempld-core.c, asic3.c. I think this driver has been
-somewhat modelled on kempld-core.c. It also uses the same platform
-device structure.
-
-Thanks
-       Andrew
-
+Does that seem reasonable to you?
