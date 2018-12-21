@@ -2,158 +2,1554 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F306C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C06C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E98321906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B912190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545395158;
+	bh=XbbB7zXYJrFtUKBsQFiNKaz0ai8MrztX4CMugkhhPAE=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=19a38apdEEBiRDuOAqTaUsWqUFa/HjxYKKIvnS2c+uMFMfU4p161TMffPeTnfpD2T
+	 WRSuFoW11DEgpDi/y0KLGB7e/DLHxtS/YfSZKWtKe/qDQcCUG81/jnyftSsajF/QzS
+	 Uu9soSz5EUZVvViRzbd6QT1Jo4sRwBOJOm5byfMs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390142AbeLUMSo (ORCPT
+        id S2390260AbeLUMZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:18:44 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36264 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388481AbeLUMSo (ORCPT
+        Fri, 21 Dec 2018 07:25:57 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:50916 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387475AbeLUMZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:18:44 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so2463461pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 04:18:43 -0800 (PST)
+        Fri, 21 Dec 2018 07:25:56 -0500
+Received: by mail-wm1-f43.google.com with SMTP id n190so5155962wmd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 04:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ea+GgcGYT8lMrdUPv7UQxUGuz4aa8/kwOFiyBB4Hj5M=;
+        b=e/jQUas/HKLltHaEeAxkJD1bjBAAOMgZ/l2MOExyT/eDIwy0VW5WT7Sf90XeQLZblJ
+         ELTfMVBMhS2E6wswROSGTm3sYBiGguAt64SpkGpOfTt8xpbluNTgLqGmQvFfIem6QAhc
+         NPO7d/aje8f9N0TV9RFlQpSZH1eY9njK7tOTzLt4pfgad85pwmJ0KYSt3HMItsf34boK
+         ptyifT8UH16UEffNb+00IwbejOW4yGrGoqUDu4EGLdN5BrrcLB5nPJ2xO2C2axivgRKq
+         r8NRbMXHAPZQhk3WsUqlthOc1B+6aCpZu9CSL0yPc4lAgVYlFf7uJH9Ha3dwXwW8f0iQ
+         3JkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tYajQfXn2haHQMP9WLk4eyze4RiRp3DRQkG/GKdMfEc=;
-        b=WNx4CCxaSrQ3CaTAiVw7r4ngfMdHi5gOs1cgiDNFVEyBv9LfF8kQmDhegixEZP0Z2V
-         DNhrFXuw5hClERVva2oumodlUSiKYTMzP8fwjksIBU4zi5vuHt1MAn4oO4lO/kq3OYIg
-         ucHeq/jNCgPFHFjQN0CoESCyRzMNgaRNhCTnKczgu2jdL9JcXVtwZKnpTQTMTIgJVAu6
-         OBkVuF5keYchBZNiA1+EK7qrHUsQpEY23SwoyJKja0G+Ps/TjPa/PuKrlKaabcgZS2xH
-         cqCt2+p8+RPhJhOwloe6KLIPdkIZbfFrGFudPUEVp+Zuz4ht6bs10t6bk0C9Gjvcs0FT
-         i7cw==
-X-Gm-Message-State: AJcUukd92FgSA/pkFW5eTRc5V1phwN53PQIzyU/b/MehzLNXZkdkhcTF
-        Bwbi+KNiJTlM7iJDBsrTJoIBRA==
-X-Google-Smtp-Source: ALg8bN6+VmRsmltlkpm/nsiTMmAbysDYmnYvlwhtPCha/LmiU31/IxJb4vM1avCjLdeoQ+nBu560jA==
-X-Received: by 2002:a63:fb15:: with SMTP id o21mr2160784pgh.211.1545394723185;
-        Fri, 21 Dec 2018 04:18:43 -0800 (PST)
-Received: from bsingh.kernel.org ([125.16.97.126])
-        by smtp.gmail.com with ESMTPSA id b5sm60518743pfc.150.2018.12.21.04.18.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 04:18:42 -0800 (PST)
-Subject: Re: [PATCH v2] hpet: Fix missing '=' character in the __setup() code
- of hpet_mmap_enable
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     clemens@ladisch.de, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20181220120524.30732-1-bsingh@redhat.com>
- <20181220122932.GB17138@kroah.com>
- <a9704df4-53ee-5b12-2ab1-477fb7e8f083@redhat.com>
- <20181220140951.GB8621@kroah.com>
-From:   Buland Singh <bsingh@redhat.com>
-Message-ID: <04420337-0df1-73ee-69d7-aa39232f495a@redhat.com>
-Date:   Fri, 21 Dec 2018 17:48:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=ea+GgcGYT8lMrdUPv7UQxUGuz4aa8/kwOFiyBB4Hj5M=;
+        b=uLB879MjhGADqHDzZAoAZfn7htHSDlya/GRBUfrhxtamQIjjiYqa7O6mPcTObomy9l
+         uPITjTyYx9JTZNqp9DEfBDSsrg7IoPVgiaZfF422QzyueG/o9b6sQ9bKOohFiekEHED4
+         LC9emFTS2ifYDp+Xv2csja4gk4x6Z53UjWaEKddKD3xyZ1RxgXUBAkrrh1DC5vHQ1JA4
+         WT9KtmWttUHKC0BA57B+lBMIuxPTGvrpUhq99RDZxvO/C0odinVE8O3pc4SdloZTN8Tr
+         zRM1u/fq/VSX4/UBFsFtVRSjZ/8DXU6LIt/fsvk82wklx2aZMPFOkQBJf8KPJG9AWI9r
+         lepA==
+X-Gm-Message-State: AA+aEWZa067WvFMH0bmNZ5yGku9HVGc1FwZLyk99289m6Wr0O7ChO1pG
+        yRsLYzXcmk8lt+nWC6/IRGo=
+X-Google-Smtp-Source: AFSGD/UifLsnMVc7VLdrF3JnDowMnAm8avFU0+URlqqWjvM1d66+KY7Gx7UzvqFUMReWF8AQZS6dyQ==
+X-Received: by 2002:a1c:ad43:: with SMTP id w64mr2595708wme.32.1545395148916;
+        Fri, 21 Dec 2018 04:25:48 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o4sm12660408wrq.66.2018.12.21.04.25.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 04:25:48 -0800 (PST)
+Date:   Fri, 21 Dec 2018 13:25:45 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <20181221122545.GA59955@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181220140951.GB8621@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 7:39 PM, Greg KH wrote:
-> On Thu, Dec 20, 2018 at 07:12:55PM +0530, Buland Singh wrote:
->> On 12/20/18 5:59 PM, Greg KH wrote:
->>> On Thu, Dec 20, 2018 at 05:35:24PM +0530, Buland Singh wrote:
->>>> Commit '3d035f580699 ("drivers/char/hpet.c: allow user controlled mmap for
->>>> user processes")' introduced a new kernel command line parameter hpet_mmap,
->>>> that is required to expose the memory map of the HPET registers to
->>>> user-space. Unfortunately the kernel command line parameter 'hpet_mmap' is
->>>> broken and never takes effect due to missing '=' character in the __setup()
->>>> code of hpet_mmap_enable.
->>>>
->>>> Before this patch:
->>>>
->>>> dmesg output with the kernel command line parameter hpet_mmap=1
->>>>
->>>> [    0.204152] HPET mmap disabled
->>>>
->>>> dmesg output with the kernel command line parameter hpet_mmap=0
->>>>
->>>> [    0.204192] HPET mmap disabled
->>>>
->>>> After this patch:
->>>>
->>>> dmesg output with the kernel command line parameter hpet_mmap=1
->>>>
->>>> [    0.203945] HPET mmap enabled
->>>>
->>>> dmesg output with the kernel command line parameter hpet_mmap=0
->>>>
->>>> [    0.204652] HPET mmap disabled
->>>>
->>>> Fixes: 3d035f580699 ("drivers/char/hpet.c: allow user controlled mmap for user processes")
->>>> Signed-off-by: Buland Singh <bsingh@redhat.com>
->>>> ---
->>>>    drivers/char/hpet.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
->>>> index 4a22b4b41aef..9bffcd37cc7b 100644
->>>> --- a/drivers/char/hpet.c
->>>> +++ b/drivers/char/hpet.c
->>>> @@ -377,7 +377,7 @@ static __init int hpet_mmap_enable(char *str)
->>>>    	pr_info("HPET mmap %s\n", hpet_mmap_enabled ? "enabled" : "disabled");
->>>>    	return 1;
->>>>    }
->>>> -__setup("hpet_mmap", hpet_mmap_enable);
->>>> +__setup("hpet_mmap=", hpet_mmap_enable);
->>
->> Hello Greag,
->>
->>> This has _never_ worked?  Since 3.13?
->>
->> Yes, that's true :)
->>
->>> Why not just remove the thing as it is obvious no one actually has ever used it.  > That would make the code even simpler :)
->>
->> Data Plane Development Kit (DPDK)[1] provides API that requires the CONFIG_HPET_MMAP
->> kernel configuration option to be enabled[2]. Some end users might want to use the
->> HPET MMAP functionality within the application.
-> 
-> But, obviously, they really don't need to do that from the kernel
-> command line as no one has ever noticed this didn't work :)
-> 
-> Also, that page:
-> 
->> [2] https://doc.dpdk.org/guides-18.08/linux_gsg/enable_func.html
-> 
-> Does not say to use this command line option either.  So if no one has
-> ever used it, please, let us just delete it.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Linus,
 
-Hello Greg,
-                                                                            
-It is better to allow a user to 'enable/disable' the HPET mmap from the
-kernel command line as per the requirement rather than recompiling the
-kernel to 'enable/disable' this functionality.
-                                                                            
-Also as per the description in the initial patch (commit 3d035f58), the
-'CONFIG_HPET_MMAP' Kconfig option has a security risk involved. Hence,
-keeping the CONFIG_HPET_MMAP_DEFAULT (disabled) and allowing a user to
-alter the default behavior using the kernel command line parameter
-hpet_mmap is a better solution.
+Please pull the latest x86-urgent-for-linus git tree from:
 
-Regards,
-Buland Singh
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
+   # HEAD: 6ac389346e6964e1f6a1c675cebf8bd0912526a5 Revert "kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs"
+
+The biggest part is a series of reverts for the macro based GCC inlining 
+workarounds. It caused regressions in distro build and other kernel 
+tooling environments, and the GCC project was very receptive to fixing 
+the underlying inliner weaknesses - so as time ran out we decided to do a 
+reasonably straightforward revert of the patches. The plan is to rely on 
+the 'asm inline' GCC 9 feature, which might be backported to GCC 8 and 
+could thus become reasonably widely available on modern distros.
+
+Other than those reverts, there's misc fixes from all around the place.
+
+I wish our final x86 pull request for v4.20 was smaller...
+
+  out-of-topic modifications in x86-urgent-for-linus:
+  -----------------------------------------------------
+  Makefile                           # 6ac389346e69: Revert "kbuild/Makefile: Pre
+  include/asm-generic/bug.h          # ffb61c6346d0: Revert "x86/bug: Macrofy the
+  include/linux/compiler.h           # 96af6cd02a10: Revert "x86/objtool: Use asm
+  scripts/Kbuild.include             # 6ac389346e69: Revert "kbuild/Makefile: Pre
+  scripts/mod/Makefile               # 6ac389346e69: Revert "kbuild/Makefile: Pre
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Alistair Strachan (1):
+      x86/vdso: Pass --eh-frame-hdr to the linker
+
+Chang S. Bae (1):
+      x86/fsgsbase/64: Fix the base write helper functions
+
+Colin Ian King (1):
+      x86/mtrr: Don't copy uninitialized gentry fields back to userspace
+
+Dan Williams (1):
+      x86/mm: Fix decoy address handling vs 32-bit builds
+
+Ingo Molnar (9):
+      Revert "x86/jump-labels: Macrofy inline assembly code to work around GCC inlining bugs"
+      Revert "x86/cpufeature: Macrofy inline assembly code to work around GCC inlining bugs"
+      Revert "x86/extable: Macrofy inline assembly code to work around GCC inlining bugs"
+      Revert "x86/paravirt: Work around GCC inlining bugs when compiling paravirt ops"
+      Revert "x86/bug: Macrofy the BUG table section handling, to work around GCC inlining bugs"
+      Revert "x86/alternatives: Macrofy lock prefixes to work around GCC inlining bugs"
+      Revert "x86/refcount: Work around GCC inlining bug"
+      Revert "x86/objtool: Use asm macros to work around GCC inlining bugs"
+      Revert "kbuild/Makefile: Prepare for using macros in inline assembly code to work around asm() related GCC inlining bugs"
+
+Kirill A. Shutemov (2):
+      x86/mm: Fix guard hole handling
+      x86/dump_pagetables: Fix LDT remap address marker
+
+Peter Zijlstra (1):
+      x86/mm/cpa: Fix cpa_flush_array() TLB invalidation
+
+Reinette Chatre (1):
+      x86/intel_rdt: Ensure a CPU remains online for the region's pseudo-locking sequence
+
+
+ Makefile                                    |  9 +--
+ arch/x86/Makefile                           |  7 --
+ arch/x86/entry/calling.h                    |  2 +-
+ arch/x86/entry/vdso/Makefile                |  3 +-
+ arch/x86/include/asm/alternative-asm.h      | 20 ++----
+ arch/x86/include/asm/alternative.h          | 11 +++-
+ arch/x86/include/asm/asm.h                  | 53 +++++++++------
+ arch/x86/include/asm/bug.h                  | 98 ++++++++++++----------------
+ arch/x86/include/asm/cpufeature.h           | 82 ++++++++++--------------
+ arch/x86/include/asm/fsgsbase.h             | 15 +++--
+ arch/x86/include/asm/jump_label.h           | 72 +++++++++++++++------
+ arch/x86/include/asm/paravirt_types.h       | 56 ++++++++--------
+ arch/x86/include/asm/pgtable_64_types.h     |  5 ++
+ arch/x86/include/asm/refcount.h             | 81 ++++++++++-------------
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c |  4 ++
+ arch/x86/kernel/cpu/mtrr/if.c               |  2 +
+ arch/x86/kernel/macros.S                    | 16 -----
+ arch/x86/kernel/process_64.c                | 99 ++++++++++++++++-------------
+ arch/x86/kernel/ptrace.c                    |  9 +--
+ arch/x86/mm/dump_pagetables.c               | 15 ++---
+ arch/x86/mm/pageattr.c                      | 24 ++++---
+ arch/x86/mm/pat.c                           | 13 +++-
+ arch/x86/xen/mmu_pv.c                       | 11 ++--
+ include/asm-generic/bug.h                   |  8 +--
+ include/linux/compiler.h                    | 56 ++++------------
+ scripts/Kbuild.include                      |  4 +-
+ scripts/mod/Makefile                        |  2 -
+ 27 files changed, 385 insertions(+), 392 deletions(-)
+ delete mode 100644 arch/x86/kernel/macros.S
+
+diff --git a/Makefile b/Makefile
+index e9fd22c8445e..da4bb1e10388 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1081,7 +1081,7 @@ scripts: scripts_basic scripts_dtc asm-generic gcc-plugins $(autoksyms_h)
+ # version.h and scripts_basic is processed / created.
+ 
+ # Listed in dependency order
+-PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
+ 
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
+@@ -1104,9 +1104,7 @@ prepare2: prepare3 outputmakefile asm-generic
+ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
+ 	$(cmd_crmodverdir)
+ 
+-macroprepare: prepare1 archmacros
+-
+-archprepare: archheaders archscripts macroprepare scripts_basic
++archprepare: archheaders archscripts prepare1 scripts_basic
+ 
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+@@ -1174,9 +1172,6 @@ archheaders:
+ PHONY += archscripts
+ archscripts:
+ 
+-PHONY += archmacros
+-archmacros:
+-
+ PHONY += __headers
+ __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 75ef499a66e2..85a66c4a8b65 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -232,13 +232,6 @@ archscripts: scripts_basic
+ archheaders:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+ 
+-archmacros:
+-	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
+-
+-ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
+-export ASM_MACRO_FLAGS
+-KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
+-
+ ###
+ # Kernel objects
+ 
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 25e5a6bda8c3..20d0885b00fb 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -352,7 +352,7 @@ For 32-bit we have the following conventions - kernel is built with
+ .macro CALL_enter_from_user_mode
+ #ifdef CONFIG_CONTEXT_TRACKING
+ #ifdef HAVE_JUMP_LABEL
+-	STATIC_BRANCH_JMP l_yes=.Lafter_call_\@, key=context_tracking_enabled, branch=1
++	STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
+ #endif
+ 	call enter_from_user_mode
+ .Lafter_call_\@:
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 0624bf2266fd..5bfe2243a08f 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -171,7 +171,8 @@ quiet_cmd_vdso = VDSO    $@
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+ 
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+-	$(call ld-option, --build-id) -Bsymbolic
++	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
++	-Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
+diff --git a/arch/x86/include/asm/alternative-asm.h b/arch/x86/include/asm/alternative-asm.h
+index 8e4ea39e55d0..31b627b43a8e 100644
+--- a/arch/x86/include/asm/alternative-asm.h
++++ b/arch/x86/include/asm/alternative-asm.h
+@@ -7,24 +7,16 @@
+ #include <asm/asm.h>
+ 
+ #ifdef CONFIG_SMP
+-.macro LOCK_PREFIX_HERE
++	.macro LOCK_PREFIX
++672:	lock
+ 	.pushsection .smp_locks,"a"
+ 	.balign 4
+-	.long 671f - .		# offset
++	.long 672b - .
+ 	.popsection
+-671:
+-.endm
+-
+-.macro LOCK_PREFIX insn:vararg
+-	LOCK_PREFIX_HERE
+-	lock \insn
+-.endm
++	.endm
+ #else
+-.macro LOCK_PREFIX_HERE
+-.endm
+-
+-.macro LOCK_PREFIX insn:vararg
+-.endm
++	.macro LOCK_PREFIX
++	.endm
+ #endif
+ 
+ /*
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index d7faa16622d8..4cd6a3b71824 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -31,8 +31,15 @@
+  */
+ 
+ #ifdef CONFIG_SMP
+-#define LOCK_PREFIX_HERE "LOCK_PREFIX_HERE\n\t"
+-#define LOCK_PREFIX "LOCK_PREFIX "
++#define LOCK_PREFIX_HERE \
++		".pushsection .smp_locks,\"a\"\n"	\
++		".balign 4\n"				\
++		".long 671f - .\n" /* offset */		\
++		".popsection\n"				\
++		"671:"
++
++#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
++
+ #else /* ! CONFIG_SMP */
+ #define LOCK_PREFIX_HERE ""
+ #define LOCK_PREFIX ""
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 21b086786404..6467757bb39f 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -120,25 +120,12 @@
+ /* Exception table entry */
+ #ifdef __ASSEMBLY__
+ # define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	ASM_EXTABLE_HANDLE from to handler
+-
+-.macro ASM_EXTABLE_HANDLE from:req to:req handler:req
+-	.pushsection "__ex_table","a"
+-	.balign 4
+-	.long (\from) - .
+-	.long (\to) - .
+-	.long (\handler) - .
++	.pushsection "__ex_table","a" ;				\
++	.balign 4 ;						\
++	.long (from) - . ;					\
++	.long (to) - . ;					\
++	.long (handler) - . ;					\
+ 	.popsection
+-.endm
+-#else /* __ASSEMBLY__ */
+-
+-# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
+-	"ASM_EXTABLE_HANDLE from=" #from " to=" #to		\
+-	" handler=\"" #handler "\"\n\t"
+-
+-/* For C file, we already have NOKPROBE_SYMBOL macro */
+-
+-#endif /* __ASSEMBLY__ */
+ 
+ # define _ASM_EXTABLE(from, to)					\
+ 	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
+@@ -161,7 +148,6 @@
+ 	_ASM_PTR (entry);					\
+ 	.popsection
+ 
+-#ifdef __ASSEMBLY__
+ .macro ALIGN_DESTINATION
+ 	/* check for bad alignment of destination */
+ 	movl %edi,%ecx
+@@ -185,7 +171,34 @@
+ 	_ASM_EXTABLE_UA(100b, 103b)
+ 	_ASM_EXTABLE_UA(101b, 103b)
+ 	.endm
+-#endif /* __ASSEMBLY__ */
++
++#else
++# define _EXPAND_EXTABLE_HANDLE(x) #x
++# define _ASM_EXTABLE_HANDLE(from, to, handler)			\
++	" .pushsection \"__ex_table\",\"a\"\n"			\
++	" .balign 4\n"						\
++	" .long (" #from ") - .\n"				\
++	" .long (" #to ") - .\n"				\
++	" .long (" _EXPAND_EXTABLE_HANDLE(handler) ") - .\n"	\
++	" .popsection\n"
++
++# define _ASM_EXTABLE(from, to)					\
++	_ASM_EXTABLE_HANDLE(from, to, ex_handler_default)
++
++# define _ASM_EXTABLE_UA(from, to)				\
++	_ASM_EXTABLE_HANDLE(from, to, ex_handler_uaccess)
++
++# define _ASM_EXTABLE_FAULT(from, to)				\
++	_ASM_EXTABLE_HANDLE(from, to, ex_handler_fault)
++
++# define _ASM_EXTABLE_EX(from, to)				\
++	_ASM_EXTABLE_HANDLE(from, to, ex_handler_ext)
++
++# define _ASM_EXTABLE_REFCOUNT(from, to)			\
++	_ASM_EXTABLE_HANDLE(from, to, ex_handler_refcount)
++
++/* For C file, we already have NOKPROBE_SYMBOL macro */
++#endif
+ 
+ #ifndef __ASSEMBLY__
+ /*
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 5090035e6d16..6804d6642767 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -4,8 +4,6 @@
+ 
+ #include <linux/stringify.h>
+ 
+-#ifndef __ASSEMBLY__
+-
+ /*
+  * Despite that some emulators terminate on UD2, we use it for WARN().
+  *
+@@ -22,15 +20,53 @@
+ 
+ #define LEN_UD2		2
+ 
++#ifdef CONFIG_GENERIC_BUG
++
++#ifdef CONFIG_X86_32
++# define __BUG_REL(val)	".long " __stringify(val)
++#else
++# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
++#endif
++
++#ifdef CONFIG_DEBUG_BUGVERBOSE
++
++#define _BUG_FLAGS(ins, flags)						\
++do {									\
++	asm volatile("1:\t" ins "\n"					\
++		     ".pushsection __bug_table,\"aw\"\n"		\
++		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
++		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
++		     "\t.word %c1"        "\t# bug_entry::line\n"	\
++		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
++		     "\t.org 2b+%c3\n"					\
++		     ".popsection"					\
++		     : : "i" (__FILE__), "i" (__LINE__),		\
++			 "i" (flags),					\
++			 "i" (sizeof(struct bug_entry)));		\
++} while (0)
++
++#else /* !CONFIG_DEBUG_BUGVERBOSE */
++
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
+-		     "flags=%c2 size=%c3"				\
+-		     : : "i" (__FILE__), "i" (__LINE__),                \
+-			 "i" (flags),                                   \
++	asm volatile("1:\t" ins "\n"					\
++		     ".pushsection __bug_table,\"aw\"\n"		\
++		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
++		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
++		     "\t.org 2b+%c1\n"					\
++		     ".popsection"					\
++		     : : "i" (flags),					\
+ 			 "i" (sizeof(struct bug_entry)));		\
+ } while (0)
+ 
++#endif /* CONFIG_DEBUG_BUGVERBOSE */
++
++#else
++
++#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
++
++#endif /* CONFIG_GENERIC_BUG */
++
+ #define HAVE_ARCH_BUG
+ #define BUG()							\
+ do {								\
+@@ -46,54 +82,4 @@ do {								\
+ 
+ #include <asm-generic/bug.h>
+ 
+-#else /* __ASSEMBLY__ */
+-
+-#ifdef CONFIG_GENERIC_BUG
+-
+-#ifdef CONFIG_X86_32
+-.macro __BUG_REL val:req
+-	.long \val
+-.endm
+-#else
+-.macro __BUG_REL val:req
+-	.long \val - 2b
+-.endm
+-#endif
+-
+-#ifdef CONFIG_DEBUG_BUGVERBOSE
+-
+-.macro ASM_BUG ins:req file:req line:req flags:req size:req
+-1:	\ins
+-	.pushsection __bug_table,"aw"
+-2:	__BUG_REL val=1b	# bug_entry::bug_addr
+-	__BUG_REL val=\file	# bug_entry::file
+-	.word \line		# bug_entry::line
+-	.word \flags		# bug_entry::flags
+-	.org 2b+\size
+-	.popsection
+-.endm
+-
+-#else /* !CONFIG_DEBUG_BUGVERBOSE */
+-
+-.macro ASM_BUG ins:req file:req line:req flags:req size:req
+-1:	\ins
+-	.pushsection __bug_table,"aw"
+-2:	__BUG_REL val=1b	# bug_entry::bug_addr
+-	.word \flags		# bug_entry::flags
+-	.org 2b+\size
+-	.popsection
+-.endm
+-
+-#endif /* CONFIG_DEBUG_BUGVERBOSE */
+-
+-#else /* CONFIG_GENERIC_BUG */
+-
+-.macro ASM_BUG ins:req file:req line:req flags:req size:req
+-	\ins
+-.endm
+-
+-#endif /* CONFIG_GENERIC_BUG */
+-
+-#endif /* __ASSEMBLY__ */
+-
+ #endif /* _ASM_X86_BUG_H */
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 7d442722ef24..aced6c9290d6 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -2,10 +2,10 @@
+ #ifndef _ASM_X86_CPUFEATURE_H
+ #define _ASM_X86_CPUFEATURE_H
+ 
+-#ifdef __KERNEL__
+-#ifndef __ASSEMBLY__
+-
+ #include <asm/processor.h>
++
++#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
++
+ #include <asm/asm.h>
+ #include <linux/bitops.h>
+ 
+@@ -161,10 +161,37 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+  */
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ {
+-	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
+-			  "cap_byte=\"%[cap_byte]\" "
+-			  "feature=%P[feature] t_yes=%l[t_yes] "
+-			  "t_no=%l[t_no] always=%P[always]"
++	asm_volatile_goto("1: jmp 6f\n"
++		 "2:\n"
++		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
++			 "((5f-4f) - (2b-1b)),0x90\n"
++		 "3:\n"
++		 ".section .altinstructions,\"a\"\n"
++		 " .long 1b - .\n"		/* src offset */
++		 " .long 4f - .\n"		/* repl offset */
++		 " .word %P[always]\n"		/* always replace */
++		 " .byte 3b - 1b\n"		/* src len */
++		 " .byte 5f - 4f\n"		/* repl len */
++		 " .byte 3b - 2b\n"		/* pad len */
++		 ".previous\n"
++		 ".section .altinstr_replacement,\"ax\"\n"
++		 "4: jmp %l[t_no]\n"
++		 "5:\n"
++		 ".previous\n"
++		 ".section .altinstructions,\"a\"\n"
++		 " .long 1b - .\n"		/* src offset */
++		 " .long 0\n"			/* no replacement */
++		 " .word %P[feature]\n"		/* feature bit */
++		 " .byte 3b - 1b\n"		/* src len */
++		 " .byte 0\n"			/* repl len */
++		 " .byte 0\n"			/* pad len */
++		 ".previous\n"
++		 ".section .altinstr_aux,\"ax\"\n"
++		 "6:\n"
++		 " testb %[bitnum],%[cap_byte]\n"
++		 " jnz %l[t_yes]\n"
++		 " jmp %l[t_no]\n"
++		 ".previous\n"
+ 		 : : [feature]  "i" (bit),
+ 		     [always]   "i" (X86_FEATURE_ALWAYS),
+ 		     [bitnum]   "i" (1 << (bit & 7)),
+@@ -199,44 +226,5 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
+ 					boot_cpu_data.x86_model
+ 
+-#else /* __ASSEMBLY__ */
+-
+-.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
+-1:
+-	jmp 6f
+-2:
+-	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
+-3:
+-	.section .altinstructions,"a"
+-	.long 1b - .		/* src offset */
+-	.long 4f - .		/* repl offset */
+-	.word \always		/* always replace */
+-	.byte 3b - 1b		/* src len */
+-	.byte 5f - 4f		/* repl len */
+-	.byte 3b - 2b		/* pad len */
+-	.previous
+-	.section .altinstr_replacement,"ax"
+-4:
+-	jmp \t_no
+-5:
+-	.previous
+-	.section .altinstructions,"a"
+-	.long 1b - .		/* src offset */
+-	.long 0			/* no replacement */
+-	.word \feature		/* feature bit */
+-	.byte 3b - 1b		/* src len */
+-	.byte 0			/* repl len */
+-	.byte 0			/* pad len */
+-	.previous
+-	.section .altinstr_aux,"ax"
+-6:
+-	testb \bitnum,\cap_byte
+-	jnz \t_yes
+-	jmp \t_no
+-	.previous
+-.endm
+-
+-#endif /* __ASSEMBLY__ */
+-
+-#endif /* __KERNEL__ */
++#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
+ #endif /* _ASM_X86_CPUFEATURE_H */
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index eb377b6e9eed..bca4c743de77 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -16,8 +16,8 @@
+  */
+ extern unsigned long x86_fsbase_read_task(struct task_struct *task);
+ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+-extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+-extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
++extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
++extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
+ 
+ /* Helper functions for reading/writing FS/GS base */
+ 
+@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
+ 	return gsbase;
+ }
+ 
+-extern void x86_fsbase_write_cpu(unsigned long fsbase);
+-extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
++static inline void x86_fsbase_write_cpu(unsigned long fsbase)
++{
++	wrmsrl(MSR_FS_BASE, fsbase);
++}
++
++static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
++{
++	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++}
+ 
+ #endif /* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index a5fb34fe56a4..21efc9d07ed9 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -2,6 +2,19 @@
+ #ifndef _ASM_X86_JUMP_LABEL_H
+ #define _ASM_X86_JUMP_LABEL_H
+ 
++#ifndef HAVE_JUMP_LABEL
++/*
++ * For better or for worse, if jump labels (the gcc extension) are missing,
++ * then the entire static branch patching infrastructure is compiled out.
++ * If that happens, the code in here will malfunction.  Raise a compiler
++ * error instead.
++ *
++ * In theory, jump labels and the static branch patching infrastructure
++ * could be decoupled to fix this.
++ */
++#error asm/jump_label.h included on a non-jump-label kernel
++#endif
++
+ #define JUMP_LABEL_NOP_SIZE 5
+ 
+ #ifdef CONFIG_X86_64
+@@ -20,9 +33,15 @@
+ 
+ static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("STATIC_BRANCH_NOP l_yes=\"%l[l_yes]\" key=\"%c0\" "
+-			  "branch=\"%c1\""
+-			: :  "i" (key), "i" (branch) : : l_yes);
++	asm_volatile_goto("1:"
++		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
++		".pushsection __jump_table,  \"aw\" \n\t"
++		_ASM_ALIGN "\n\t"
++		".long 1b - ., %l[l_yes] - . \n\t"
++		_ASM_PTR "%c0 + %c1 - .\n\t"
++		".popsection \n\t"
++		: :  "i" (key), "i" (branch) : : l_yes);
++
+ 	return false;
+ l_yes:
+ 	return true;
+@@ -30,8 +49,14 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 
+ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("STATIC_BRANCH_JMP l_yes=\"%l[l_yes]\" key=\"%c0\" "
+-			  "branch=\"%c1\""
++	asm_volatile_goto("1:"
++		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
++		"2:\n\t"
++		".pushsection __jump_table,  \"aw\" \n\t"
++		_ASM_ALIGN "\n\t"
++		".long 1b - ., %l[l_yes] - . \n\t"
++		_ASM_PTR "%c0 + %c1 - .\n\t"
++		".popsection \n\t"
+ 		: :  "i" (key), "i" (branch) : : l_yes);
+ 
+ 	return false;
+@@ -41,26 +66,37 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 
+ #else	/* __ASSEMBLY__ */
+ 
+-.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
+-.Lstatic_branch_nop_\@:
+-	.byte STATIC_KEY_INIT_NOP
+-.Lstatic_branch_no_after_\@:
++.macro STATIC_JUMP_IF_TRUE target, key, def
++.Lstatic_jump_\@:
++	.if \def
++	/* Equivalent to "jmp.d32 \target" */
++	.byte		0xe9
++	.long		\target - .Lstatic_jump_after_\@
++.Lstatic_jump_after_\@:
++	.else
++	.byte		STATIC_KEY_INIT_NOP
++	.endif
+ 	.pushsection __jump_table, "aw"
+ 	_ASM_ALIGN
+-	.long		.Lstatic_branch_nop_\@ - ., \l_yes - .
+-	_ASM_PTR        \key + \branch - .
++	.long		.Lstatic_jump_\@ - ., \target - .
++	_ASM_PTR	\key - .
+ 	.popsection
+ .endm
+ 
+-.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
+-.Lstatic_branch_jmp_\@:
+-	.byte 0xe9
+-	.long \l_yes - .Lstatic_branch_jmp_after_\@
+-.Lstatic_branch_jmp_after_\@:
++.macro STATIC_JUMP_IF_FALSE target, key, def
++.Lstatic_jump_\@:
++	.if \def
++	.byte		STATIC_KEY_INIT_NOP
++	.else
++	/* Equivalent to "jmp.d32 \target" */
++	.byte		0xe9
++	.long		\target - .Lstatic_jump_after_\@
++.Lstatic_jump_after_\@:
++	.endif
+ 	.pushsection __jump_table, "aw"
+ 	_ASM_ALIGN
+-	.long		.Lstatic_branch_jmp_\@ - ., \l_yes - .
+-	_ASM_PTR	\key + \branch - .
++	.long		.Lstatic_jump_\@ - ., \target - .
++	_ASM_PTR	\key + 1 - .
+ 	.popsection
+ .endm
+ 
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 26942ad63830..488c59686a73 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -348,11 +348,23 @@ extern struct paravirt_patch_template pv_ops;
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
+ 
++/*
++ * Generate some code, and mark it as patchable by the
++ * apply_paravirt() alternate instruction patcher.
++ */
++#define _paravirt_alt(insn_string, type, clobber)	\
++	"771:\n\t" insn_string "\n" "772:\n"		\
++	".pushsection .parainstructions,\"a\"\n"	\
++	_ASM_ALIGN "\n"					\
++	_ASM_PTR " 771b\n"				\
++	"  .byte " type "\n"				\
++	"  .byte 772b-771b\n"				\
++	"  .short " clobber "\n"			\
++	".popsection\n"
++
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_call							\
+-	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
+-	" clobber=\"%c[paravirt_clobber]\""				\
+-	" pv_opptr=\"%c[paravirt_opptr]\";"
++#define paravirt_alt(insn_string)					\
++	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -372,6 +384,16 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len);
+ 
+ int paravirt_disable_iospace(void);
+ 
++/*
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ */
++#define PARAVIRT_CALL					\
++	ANNOTATE_RETPOLINE_SAFE				\
++	"call *%c[paravirt_opptr];"
++
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -509,7 +531,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_call			\
++				     paravirt_alt(PARAVIRT_CALL)	\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -519,7 +541,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_call			\
++				     paravirt_alt(PARAVIRT_CALL)	\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -546,7 +568,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_call				\
++			     paravirt_alt(PARAVIRT_CALL)		\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -664,26 +686,6 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
+ 
+-#else	/* __ASSEMBLY__ */
+-
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
+-771:	ANNOTATE_RETPOLINE_SAFE
+-	call *\pv_opptr
+-772:	.pushsection .parainstructions,"a"
+-	_ASM_ALIGN
+-	_ASM_PTR 771b
+-	.byte \type
+-	.byte 772b-771b
+-	.short \clobber
+-	.popsection
+-.endm
+-
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 84bd9bdc1987..88bca456da99 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
+  */
+ #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
+ 
++#define GUARD_HOLE_PGD_ENTRY	-256UL
++#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
++#define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
++#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
++
+ #define LDT_PGD_ENTRY		-240UL
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index a8b5e1e13319..dbaed55c1c24 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,41 +4,6 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
+  */
+-
+-#ifdef __ASSEMBLY__
+-
+-#include <asm/asm.h>
+-#include <asm/bug.h>
+-
+-.macro REFCOUNT_EXCEPTION counter:req
+-	.pushsection .text..refcount
+-111:	lea \counter, %_ASM_CX
+-112:	ud2
+-	ASM_UNREACHABLE
+-	.popsection
+-113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-.endm
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-.macro REFCOUNT_CHECK_LT_ZERO counter:req
+-	js 111f
+-	REFCOUNT_EXCEPTION counter="\counter"
+-.endm
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-.macro REFCOUNT_CHECK_LE_ZERO counter:req
+-	jz 111f
+-	REFCOUNT_CHECK_LT_ZERO counter="\counter"
+-.endm
+-
+-/* Trigger refcount exception unconditionally. */
+-.macro REFCOUNT_ERROR counter:req
+-	jmp 111f
+-	REFCOUNT_EXCEPTION counter="\counter"
+-.endm
+-
+-#else /* __ASSEMBLY__ */
+-
+ #include <linux/refcount.h>
+ #include <asm/bug.h>
+ 
+@@ -50,12 +15,35 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
++#define _REFCOUNT_EXCEPTION				\
++	".pushsection .text..refcount\n"		\
++	"111:\tlea %[var], %%" _ASM_CX "\n"		\
++	"112:\t" ASM_UD2 "\n"				\
++	ASM_UNREACHABLE					\
++	".popsection\n"					\
++	"113:\n"					\
++	_ASM_EXTABLE_REFCOUNT(112b, 113b)
++
++/* Trigger refcount exception if refcount result is negative. */
++#define REFCOUNT_CHECK_LT_ZERO				\
++	"js 111f\n\t"					\
++	_REFCOUNT_EXCEPTION
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++#define REFCOUNT_CHECK_LE_ZERO				\
++	"jz 111f\n\t"					\
++	REFCOUNT_CHECK_LT_ZERO
++
++/* Trigger refcount exception unconditionally. */
++#define REFCOUNT_ERROR					\
++	"jmp 111f\n\t"					\
++	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+-		: [counter] "+m" (r->refs.counter)
++		REFCOUNT_CHECK_LT_ZERO
++		: [var] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+ }
+@@ -63,32 +51,31 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+-		: [counter] "+m" (r->refs.counter)
++		REFCOUNT_CHECK_LT_ZERO
++		: [var] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+ 
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+-		: [counter] "+m" (r->refs.counter)
++		REFCOUNT_CHECK_LE_ZERO
++		: [var] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+ 
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-
+ 	return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
+-					 "REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
++					 REFCOUNT_CHECK_LT_ZERO,
+ 					 r->refs.counter, e, "er", i, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+ 	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+-					"REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
++					REFCOUNT_CHECK_LT_ZERO,
+ 					r->refs.counter, e, "cx");
+ }
+ 
+@@ -106,8 +93,8 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+-				     : : [counter] "m" (r->refs.counter)
++			asm volatile(REFCOUNT_ERROR
++				     : : [var] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+ 		}
+@@ -122,6 +109,4 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
+-#endif /* __ASSEMBLY__ */
+-
+ #endif
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 27937458c231..efa4a519f5e5 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -23,6 +23,7 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
++#include <linux/cpu.h>
+ #include <linux/kernfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -310,9 +311,11 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 		return -EINVAL;
+ 	buf[nbytes - 1] = '\0';
+ 
++	cpus_read_lock();
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
+ 	if (!rdtgrp) {
+ 		rdtgroup_kn_unlock(of->kn);
++		cpus_read_unlock();
+ 		return -ENOENT;
+ 	}
+ 	rdt_last_cmd_clear();
+@@ -367,6 +370,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 
+ out:
+ 	rdtgroup_kn_unlock(of->kn);
++	cpus_read_unlock();
+ 	return ret ?: nbytes;
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 2e173d47b450..4d36dcc1cf87 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -165,6 +165,8 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
+ 
++	memset(&gentry, 0, sizeof(gentry));
++
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+deleted file mode 100644
+index 161c95059044..000000000000
+--- a/arch/x86/kernel/macros.S
++++ /dev/null
+@@ -1,16 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-
+-/*
+- * This file includes headers whose assembly part includes macros which are
+- * commonly used. The macros are precompiled into assmebly file which is later
+- * assembled together with each compiled file.
+- */
+-
+-#include <linux/compiler.h>
+-#include <asm/refcount.h>
+-#include <asm/alternative-asm.h>
+-#include <asm/bug.h>
+-#include <asm/paravirt.h>
+-#include <asm/asm.h>
+-#include <asm/cpufeature.h>
+-#include <asm/jump_label.h>
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index bbfbf017065c..ddd4fa718c43 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -339,24 +339,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	return base;
+ }
+ 
+-void x86_fsbase_write_cpu(unsigned long fsbase)
+-{
+-	/*
+-	 * Set the selector to 0 as a notion, that the segment base is
+-	 * overwritten, which will be checked for skipping the segment load
+-	 * during context switch.
+-	 */
+-	loadseg(FS, 0);
+-	wrmsrl(MSR_FS_BASE, fsbase);
+-}
+-
+-void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+-{
+-	/* Set the selector to 0 for the same reason as %fs above. */
+-	loadseg(GS, 0);
+-	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-}
+-
+ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
+@@ -385,38 +367,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
+ 	return gsbase;
+ }
+ 
+-int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
++void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
+ {
+-	/*
+-	 * Not strictly needed for %fs, but do it for symmetry
+-	 * with %gs
+-	 */
+-	if (unlikely(fsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.fsbase = fsbase;
+-	if (task == current)
+-		x86_fsbase_write_cpu(fsbase);
+-	task->thread.fsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+-int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
++void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
+ {
+-	if (unlikely(gsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.gsbase = gsbase;
+-	if (task == current)
+-		x86_gsbase_write_cpu_inactive(gsbase);
+-	task->thread.gsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+@@ -754,11 +716,60 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 
+ 	switch (option) {
+ 	case ARCH_SET_GS: {
+-		ret = x86_gsbase_write_task(task, arg2);
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * ARCH_SET_GS has always overwritten the index
++		 * and the base. Zero is the most sensible value
++		 * to put in the index, and is the only value that
++		 * makes any sense if FSGSBASE is unavailable.
++		 */
++		if (task == current) {
++			loadseg(GS, 0);
++			x86_gsbase_write_cpu_inactive(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.gsbase.
++			 */
++			task->thread.gsbase = arg2;
++
++		} else {
++			task->thread.gsindex = 0;
++			x86_gsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_SET_FS: {
+-		ret = x86_fsbase_write_task(task, arg2);
++		/*
++		 * Not strictly needed for %fs, but do it for symmetry
++		 * with %gs
++		 */
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * Set the selector to 0 for the same reason
++		 * as %gs above.
++		 */
++		if (task == current) {
++			loadseg(FS, 0);
++			x86_fsbase_write_cpu(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.fsbase.
++			 */
++			task->thread.fsbase = arg2;
++		} else {
++			task->thread.fsindex = 0;
++			x86_fsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_GET_FS: {
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index ffae9b9740fd..4b8ee05dd6ad 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		/*
+-		 * When changing the FS base, use the same
+-		 * mechanism as for do_arch_prctl_64().
++		 * When changing the FS base, use do_arch_prctl_64()
++		 * to set the index to zero and to set the base
++		 * as requested.
+ 		 */
+ 		if (child->thread.fsbase != value)
+-			return x86_fsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_FS, value);
+ 		return 0;
+ 	case offsetof(struct user_regs_struct,gs_base):
+ 		/*
+@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		if (child->thread.gsbase != value)
+-			return x86_gsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_GS, value);
+ 		return 0;
+ #endif
+ 	}
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index fc37bbd23eb8..abcb8d00b014 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -55,10 +55,10 @@ struct addr_marker {
+ enum address_markers_idx {
+ 	USER_SPACE_NR = 0,
+ 	KERNEL_SPACE_NR,
+-	LOW_KERNEL_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	LDT_NR,
+ #endif
++	LOW_KERNEL_NR,
+ 	VMALLOC_START_NR,
+ 	VMEMMAP_START_NR,
+ #ifdef CONFIG_KASAN
+@@ -66,9 +66,6 @@ enum address_markers_idx {
+ 	KASAN_SHADOW_END_NR,
+ #endif
+ 	CPU_ENTRY_AREA_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
+-	LDT_NR,
+-#endif
+ #ifdef CONFIG_X86_ESPFIX64
+ 	ESPFIX_START_NR,
+ #endif
+@@ -512,11 +509,11 @@ static inline bool is_hypervisor_range(int idx)
+ {
+ #ifdef CONFIG_X86_64
+ 	/*
+-	 * ffff800000000000 - ffff87ffffffffff is reserved for
+-	 * the hypervisor.
++	 * A hole in the beginning of kernel address space reserved
++	 * for a hypervisor.
+ 	 */
+-	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
+-		(idx <  pgd_index(__PAGE_OFFSET));
++	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
++		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
+ #else
+ 	return false;
+ #endif
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index db7a10082238..a1bcde35db4c 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -285,20 +285,16 @@ static void cpa_flush_all(unsigned long cache)
+ 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
+ }
+ 
+-static bool __cpa_flush_range(unsigned long start, int numpages, int cache)
++static bool __inv_flush_all(int cache)
+ {
+ 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+ 
+-	WARN_ON(PAGE_ALIGN(start) != start);
+-
+ 	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
+ 		cpa_flush_all(cache);
+ 		return true;
+ 	}
+ 
+-	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
+-
+-	return !cache;
++	return false;
+ }
+ 
+ static void cpa_flush_range(unsigned long start, int numpages, int cache)
+@@ -306,7 +302,14 @@ static void cpa_flush_range(unsigned long start, int numpages, int cache)
+ 	unsigned int i, level;
+ 	unsigned long addr;
+ 
+-	if (__cpa_flush_range(start, numpages, cache))
++	WARN_ON(PAGE_ALIGN(start) != start);
++
++	if (__inv_flush_all(cache))
++		return;
++
++	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
++
++	if (!cache)
+ 		return;
+ 
+ 	/*
+@@ -332,7 +335,12 @@ static void cpa_flush_array(unsigned long baddr, unsigned long *start,
+ {
+ 	unsigned int i, level;
+ 
+-	if (__cpa_flush_range(baddr, numpages, cache))
++	if (__inv_flush_all(cache))
++		return;
++
++	flush_tlb_all();
++
++	if (!cache)
+ 		return;
+ 
+ 	/*
+diff --git a/arch/x86/mm/pat.c b/arch/x86/mm/pat.c
+index 08013524fba1..4fe956a63b25 100644
+--- a/arch/x86/mm/pat.c
++++ b/arch/x86/mm/pat.c
+@@ -519,8 +519,13 @@ static u64 sanitize_phys(u64 address)
+ 	 * for a "decoy" virtual address (bit 63 clear) passed to
+ 	 * set_memory_X(). __pa() on a "decoy" address results in a
+ 	 * physical address with bit 63 set.
++	 *
++	 * Decoy addresses are not present for 32-bit builds, see
++	 * set_mce_nospec().
+ 	 */
+-	return address & __PHYSICAL_MASK;
++	if (IS_ENABLED(CONFIG_X86_64))
++		return address & __PHYSICAL_MASK;
++	return address;
+ }
+ 
+ /*
+@@ -546,7 +551,11 @@ int reserve_memtype(u64 start, u64 end, enum page_cache_mode req_type,
+ 
+ 	start = sanitize_phys(start);
+ 	end = sanitize_phys(end);
+-	BUG_ON(start >= end); /* end is exclusive */
++	if (start >= end) {
++		WARN(1, "%s failed: [mem %#010Lx-%#010Lx], req %s\n", __func__,
++				start, end - 1, cattr_name(req_type));
++		return -EINVAL;
++	}
+ 
+ 	if (!pat_enabled()) {
+ 		/* This is identical to page table setting without PAT */
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index a5d7ed125337..0f4fe206dcc2 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -648,19 +648,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
+ 			  unsigned long limit)
+ {
+ 	int i, nr, flush = 0;
+-	unsigned hole_low, hole_high;
++	unsigned hole_low = 0, hole_high = 0;
+ 
+ 	/* The limit is the last byte to be touched */
+ 	limit--;
+ 	BUG_ON(limit >= FIXADDR_TOP);
+ 
++#ifdef CONFIG_X86_64
+ 	/*
+ 	 * 64-bit has a great big hole in the middle of the address
+-	 * space, which contains the Xen mappings.  On 32-bit these
+-	 * will end up making a zero-sized hole and so is a no-op.
++	 * space, which contains the Xen mappings.
+ 	 */
+-	hole_low = pgd_index(USER_LIMIT);
+-	hole_high = pgd_index(PAGE_OFFSET);
++	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
++	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
++#endif
+ 
+ 	nr = pgd_index(limit) + 1;
+ 	for (i = 0; i < nr; i++) {
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index cdafa5edea49..20561a60db9c 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -17,8 +17,10 @@
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ 
+-struct bug_entry {
++#ifdef CONFIG_BUG
++
+ #ifdef CONFIG_GENERIC_BUG
++struct bug_entry {
+ #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+ 	unsigned long	bug_addr;
+ #else
+@@ -33,10 +35,8 @@ struct bug_entry {
+ 	unsigned short	line;
+ #endif
+ 	unsigned short	flags;
+-#endif	/* CONFIG_GENERIC_BUG */
+ };
+-
+-#ifdef CONFIG_BUG
++#endif	/* CONFIG_GENERIC_BUG */
+ 
+ /*
+  * Don't use BUG() or BUG_ON() unless there's really no way out; one
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 06396c1cf127..fc5004a4b07d 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -99,13 +99,22 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * unique, to convince GCC not to merge duplicate inline asm statements.
+  */
+ #define annotate_reachable() ({						\
+-	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
+-		     : : "i" (__COUNTER__));				\
++	asm volatile("%c0:\n\t"						\
++		     ".pushsection .discard.reachable\n\t"		\
++		     ".long %c0b - .\n\t"				\
++		     ".popsection\n\t" : : "i" (__COUNTER__));		\
+ })
+ #define annotate_unreachable() ({					\
+-	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
+-		     : : "i" (__COUNTER__));				\
++	asm volatile("%c0:\n\t"						\
++		     ".pushsection .discard.unreachable\n\t"		\
++		     ".long %c0b - .\n\t"				\
++		     ".popsection\n\t" : : "i" (__COUNTER__));		\
+ })
++#define ASM_UNREACHABLE							\
++	"999:\n\t"							\
++	".pushsection .discard.unreachable\n\t"				\
++	".long 999b - .\n\t"						\
++	".popsection\n\t"
+ #else
+ #define annotate_reachable()
+ #define annotate_unreachable()
+@@ -293,45 +302,6 @@ static inline void *offset_to_ptr(const int *off)
+ 	return (void *)((unsigned long)off + *off);
+ }
+ 
+-#else /* __ASSEMBLY__ */
+-
+-#ifdef __KERNEL__
+-#ifndef LINKER_SCRIPT
+-
+-#ifdef CONFIG_STACK_VALIDATION
+-.macro ANNOTATE_UNREACHABLE counter:req
+-\counter:
+-	.pushsection .discard.unreachable
+-	.long \counter\()b -.
+-	.popsection
+-.endm
+-
+-.macro ANNOTATE_REACHABLE counter:req
+-\counter:
+-	.pushsection .discard.reachable
+-	.long \counter\()b -.
+-	.popsection
+-.endm
+-
+-.macro ASM_UNREACHABLE
+-999:
+-	.pushsection .discard.unreachable
+-	.long 999b - .
+-	.popsection
+-.endm
+-#else /* CONFIG_STACK_VALIDATION */
+-.macro ANNOTATE_UNREACHABLE counter:req
+-.endm
+-
+-.macro ANNOTATE_REACHABLE counter:req
+-.endm
+-
+-.macro ASM_UNREACHABLE
+-.endm
+-#endif /* CONFIG_STACK_VALIDATION */
+-
+-#endif /* LINKER_SCRIPT */
+-#endif /* __KERNEL__ */
+ #endif /* __ASSEMBLY__ */
+ 
+ /* Compile time object size, -1 for unknown */
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index bb015551c2d9..3d09844405c9 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -115,9 +115,7 @@ __cc-option = $(call try-run,\
+ 
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+-# In addition, do not include the asm macros which are built later.
+-CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
+-CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
++CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
+ 
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
+index a5b4af47987a..42c5d50f2bcc 100644
+--- a/scripts/mod/Makefile
++++ b/scripts/mod/Makefile
+@@ -4,8 +4,6 @@ OBJECT_FILES_NON_STANDARD := y
+ hostprogs-y	:= modpost mk_elfconfig
+ always		:= $(hostprogs-y) empty.o
+ 
+-CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
+-
+ modpost-objs	:= modpost.o file2alias.o sumversion.o
+ 
+ devicetable-offsets-file := devicetable-offsets.h
