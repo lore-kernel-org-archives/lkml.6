@@ -2,102 +2,142 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B197FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E51AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2A421977
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48FE621927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZYb4o5aJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404488AbeLUSut (ORCPT
+        id S2404502AbeLUSvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:50:49 -0500
-Received: from sauhun.de ([88.99.104.3]:45294 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbeLUSut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:50:49 -0500
-Received: from localhost (p54B334FA.dip0.t-ipconnect.de [84.179.52.250])
-        by pokefinder.org (Postfix) with ESMTPSA id 889542E3542;
-        Fri, 21 Dec 2018 19:50:46 +0100 (CET)
-Date:   Fri, 21 Dec 2018 19:50:46 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-Message-ID: <20181221185045.5lw3d4y3znvfdlj3@ninjato>
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
- <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
- <20181219223341.GA998@kunai>
- <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
- <20181221145022.umsugdwadw5a5ag6@ninjato>
- <c1518533-ccc0-1a82-31b4-959682fb9b9e@axentia.se>
+        Fri, 21 Dec 2018 13:51:50 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46393 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730799AbeLUSvt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 13:51:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v15-v6so5597360ljh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0zApp6IS+WoZWhc5M0SkUqLBNZjji60b0VHaYT0YWxs=;
+        b=ZYb4o5aJncBjQAfYc+C05uVka9XxdOGnQnhvKj/OqagU7c2LE9ScYcylYovOPQiX6y
+         rEXD5IjuJLRQanfcTS1h5+EOyGlj6yZIvgzq+bsBwauuYvi2H3DRqCw4F7KAbEXCCRZc
+         Xgjo+vtWY7ItLDGNn9WfF6RpqHvrZZs4gskv8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0zApp6IS+WoZWhc5M0SkUqLBNZjji60b0VHaYT0YWxs=;
+        b=TdfZVwQtWMbGRZik6+qCmg0LR+af2mKJZizo+HDSF+XT71YNGBoYDRLR5PiTbmNTdj
+         4leXmVE1LejbjR66vPs0RDgWGCnz/7pn6Tk9+jjaTgGoiRBmzB1jjyue/T2KQnhF54gQ
+         t8SgVZJFvvVwvVDlkJ4cZOG6qm/FKDOdBSy9bn5NEHSUpL2oNGNbxLX3LMDNJuCO+cdR
+         VTPkdvM6g9oW1rLg49ezbTiGf+btpSia/Hfr0Rh7NxlqtF9OTZKPDjwD5N8ia2KvWRFK
+         Kfte3GXKXZcws2vWapgpFZjMjYVrnstnWkuLnk52j7PIN8HoQIZQpXjmUTibMVZX8cOa
+         AKFQ==
+X-Gm-Message-State: AJcUukfZ0lfsjBOhwv+W7e0QPBil7jMYJUMahqOdqw/Jr+n0/KeF6wmx
+        d7mm7sr1z3u7WUQ6pi8K0qkAZHO4UWk=
+X-Google-Smtp-Source: AFSGD/Xi2AmnzylqFZcr2LJo5kZfgw3+zgc7lAtp7zMemXTykKVpFzUV3HA8nshzwCSd/rrFXEKYrA==
+X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr2356488ljg.150.1545418306387;
+        Fri, 21 Dec 2018 10:51:46 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id d190sm5726055lfe.9.2018.12.21.10.51.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 10:51:45 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id t18-v6so5609709ljd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:51:45 -0800 (PST)
+X-Received: by 2002:a2e:310a:: with SMTP id x10-v6mr2534379ljx.6.1545418304974;
+ Fri, 21 Dec 2018 10:51:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xapu6r7mgpyebcwy"
-Content-Disposition: inline
-In-Reply-To: <c1518533-ccc0-1a82-31b4-959682fb9b9e@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181221175618.968519903@goodmis.org> <20181221175659.208858193@goodmis.org>
+In-Reply-To: <20181221175659.208858193@goodmis.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 21 Dec 2018 10:51:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+Message-ID: <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper macro
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 21, 2018 at 9:57 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> I figured the best thing to do is to create a helper macro and place it
+> into include/linux/string.h. And go around and fix all the open coded
+> versions of it later.
+>
+> I plan on only applying this patch and updating the tracing hooks for
+> this merge window. And perhaps use it to fix some of the bugs that were
+> found.
 
---xapu6r7mgpyebcwy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I like the helper function concept, but as they say about CS: "There
+is only one hard problem in computer science: naming and off-by-one
+errors".
 
-Hi Peter,
+And this one has that problem. The name makes absolutely no sense.
 
-> Yes, I agree with that analysis. All mux actions eventually end up with
+Calling it "strncmp_prefix()" when there is no "n" there makes no sense.
 
-Good!
+So drop the "n" from the name.
 
-> an __i2c_transfer() call on the relevant root adapter. Hmm, but not *all*
-> calls. How about SMBus adapters? Should there not be a similar WARN_ON
-> in __i2c_smbus_xfer?
+And honestly, maybe it would be better to use a different naming
+pattern entirely, and avoid the crazy non-boolean "str*cmp()" model.
+That thing is useful for search comparisons (where "before/after"
+matters), but it's horrible for the actual "is this true or not",
+where the code ends up being
 
-Yes, there should. Yeah, that's what I like about our way of hacking; I
-somewhen thought to not forget about SMBus, nevertheless forgot about it
-again, and then there is someone else to remind me \o/
+        if (!strcmp_prefix(a, "prefix")) {
+                // This is the "Yes, prefix matched" case, despite the
+"if !" syntax
 
-Thanks,
+which is just confusing.
 
-   Wolfram
+So I'd really prefer more of a
 
+        #define has_prefix(str, prefix) ...
 
---xapu6r7mgpyebcwy
-Content-Type: application/pgp-signature; name="signature.asc"
+model that actually returns a boolean (true if it has a prefix, false
+if it doesn't), rather than use the "str*cmp" naming and return
+values.
 
------BEGIN PGP SIGNATURE-----
+(But I agree that *if* you use the "strcmp" naming, then you do need
+to hold to the traditional strcmp return value semantics).
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwdNgEACgkQFA3kzBSg
-KbaRnA/+Kh2Zw+bQP/rVQJRA+DlW0Pfer3ht2Ot+W456V0UD1pV8LLILytqqit+s
-EUNkI7E0DqTTY0SPmj8UYTWOShV+a+jUpbXLxs9A+KAE2oa11k8Ktyls6DIDv5Xa
-h47CLMIto1P25c568n/j7aT5jo//UqV+7RsSzkrceUgc7qM4M/8s9GD8zRG068I3
-RvieQkk8pUFYaTC8H9jMu7Yz15bP/L7cv5xK1mS1tgiSnFUnYDtWBSl04aCtpbVL
-g3cGmYZZbo1672l1Aj1UYbhNHpI99buQQgaguPgYycYbOC99I4XjlypKoc0AfltX
-JQeJayLzlc5Yl2ljPkwFrRzMLCIvKgX29QFrhdw9qwNm8uTqLtCkqMKpoGfRBg1X
-RAcBzpOBZ47nfqt7YFKKvf4mhKs7OaAVcjkk2xMTja0lzGvVE6Zi+MEqwoLIS8NA
-8rXsfcREPRJ2kV6YhZCl2/P7rhlf7mgQjVuCE7HTTC3hBp2EjgkmNk0JunJXOHfo
-Ci6pcMeZZHIajHAbwZRsS6H7uJHV7ygIWrj0VTD03vaHAQ7+j6uNEmxndrDlN/KX
-orGXFxj4/Ot7xmUSIS/z7IxMrYVIO3aT/BgZuvlevYpud8l/6BnCOKHelktEjGOg
-qz4XWcEKtxc0Z1rbkBqSU12YDXwNKe011FBjwWwK7Lm5azy2b2o=
-=6tUM
------END PGP SIGNATURE-----
+Hmm?
 
---xapu6r7mgpyebcwy--
+Finally, I also suspect that your helper might be slightly fragile.
+Doing sizeof() seems broken. I could see somebody using some prefix
+define for arrays with constant sizes, and doing
+
+   #define PFX1 "cpp\0"
+   #define PFX2 "c\0\0\0"
+   #define PFX3 "h\0\0\0"
+
+or similar. Also, is there a reason you use "&prefix" for the constant
+test? I don't see that pattern anywhere else. Plus it looks entirely
+wrong without the parenthesis (ie "&(prefix)" to make sure we group
+things right).
+
+So a lot of small problems, but the naming one is big.
+
+                  Linus
