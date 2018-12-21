@@ -2,196 +2,165 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C07FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4FFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC16217F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 286892190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:14:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YimIdrgG"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="USjWzeir";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="USjWzeir"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404220AbeLUSL5 (ORCPT
+        id S2391220AbeLUSOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:11:57 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36297 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391186AbeLUSL4 (ORCPT
+        Fri, 21 Dec 2018 13:14:38 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49362 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbeLUSOh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:11:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id n2so2849128pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:11:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s+s0cCpjIWVQiboFpL5zFPaKNhtl7rE4uoN8aqs1kLI=;
-        b=YimIdrgGY5kOVlG+kPdeha0dYALLoL0bjb1JmPeUURrqxIDlMdxfvYSpiGsZ0iGmol
-         gCWlw+WkTsc8JvRW7g19ZIDhPwGQ7eDw87yKddTzTA7BhtzCQ8LRK9HdvT4SEPN9QP40
-         A20cT9XO+yZMY0u9a52rdr1fVMJZDDZhPA3p5QIVWJn0JOAj1ljqSb2duLO4h8VDzQi2
-         ZlDqExCtiF15mDyzzu7lxMprzH2n9y1Ipl4Hanx+LdH/3uQ9I1Bc05z5TNcxiw+ApspW
-         2AZVxK0qNh3VgMfyPoohoap0Ri2yyK2ut+hUq0QH8zoAMHVHmeMC7fcQ63ZGXMpkfAaP
-         gFoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s+s0cCpjIWVQiboFpL5zFPaKNhtl7rE4uoN8aqs1kLI=;
-        b=KZ0ZrJs9GWYbUZOC6WLm69eR6UC1PB30N771PzITfFa9NgdOohdOsjIr1lC6erhpUR
-         NAw2uIv9FftBWsI9/Apc69GpfUP0ekw/Ys/vKnYsnZywrKrBh7gtIPDfK6DQBTnol9qF
-         qmJPjSPzh5GZZNiuiUw8QZgZTj9UFLrMVZrbJEp6bW6WomoY3gM0tzT+tRRSGJ585JZw
-         RFPQYQDuU7QwjY4EJ0T1HGZJ8WLaJUWw5iX0fiu9fa2W4/KjxDf8N4gQ+GL5H70abemg
-         LHWHL/GVwPJSEv7LaPMnVe9FmEdy9w+e0l4IHoO3mdToV3sur5ql5a/n8YYGv0IASmpr
-         pVog==
-X-Gm-Message-State: AJcUuke/0EOykkQw6J5jfqS815Hm0nARfpYkgmmEnq+h+Mmg6jgjN2+y
-        0DIufz9JKsfsNc6CI+WT1Ygbj4M4y3Is7vEwDSkuUw==
-X-Google-Smtp-Source: ALg8bN7lftdti7rNkwuau6n+UL53WBYOLTn2sRichzFPafU22RR8xqToudo0eJodzgc4hxheyd66mmmDj0JlmSCWJVY=
-X-Received: by 2002:a63:42c1:: with SMTP id p184mr3374238pga.202.1545415914314;
- Fri, 21 Dec 2018 10:11:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20181215212304.19390-1-natechancellor@gmail.com>
-In-Reply-To: <20181215212304.19390-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 21 Dec 2018 10:11:43 -0800
-Message-ID: <CAKwvOdkfehycubxKDLs9vZvKWE4QR+EyerxNSaV72aDwySx8eQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Ensure that NEON code always compiles with Clang
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        linux-doc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Tri Vo <trong@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 21 Dec 2018 13:14:37 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AD0EC608FF; Fri, 21 Dec 2018 18:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545416076;
+        bh=eNcBOB0oC8jPEOuMuQlXtp6pKK6xhsf2vmaKb/Qq1xg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=USjWzeirGsGJPVTSBE6UoP0ahQ0Ue2ymBC5Axe12OTwaVf18v45Lw89NLlLmZ0lYF
+         p/Wr6THc1Z1cRziT+xgZ6vIBwKW2bFxXA49P6OVpQLLPaqi1VczsnRFhCnNq+TC5yE
+         tjgCCO29lNPl15FnINxT3CAEUPmIUKkjFozdL0Us=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2EF46608FB;
+        Fri, 21 Dec 2018 18:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545416076;
+        bh=eNcBOB0oC8jPEOuMuQlXtp6pKK6xhsf2vmaKb/Qq1xg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=USjWzeirGsGJPVTSBE6UoP0ahQ0Ue2ymBC5Axe12OTwaVf18v45Lw89NLlLmZ0lYF
+         p/Wr6THc1Z1cRziT+xgZ6vIBwKW2bFxXA49P6OVpQLLPaqi1VczsnRFhCnNq+TC5yE
+         tjgCCO29lNPl15FnINxT3CAEUPmIUKkjFozdL0Us=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EF46608FB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, david.brown@linaro.org,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
+        amit.kucheria@linaro.org, Matthias Kaehlcke <mka@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: sdm845: Add cpufreq device node
+Date:   Fri, 21 Dec 2018 23:44:23 +0530
+Message-Id: <1545416063-22552-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 1:23 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> While building arm32 allyesconfig, I ran into the following errors:
->
->   arch/arm/lib/xor-neon.c:17:2: error: You should compile this file with
->   '-mfloat-abi=softfp -mfpu=neon'
->
->   In file included from lib/raid6/neon1.c:27:
->   /home/nathan/cbl/prebuilt/lib/clang/8.0.0/include/arm_neon.h:28:2:
->   error: "NEON support not enabled"
->
-> Building V=1 showed NEON_FLAGS getting passed along to Clang but
-> __ARM_NEON__ was not getting defined. Ultimately, it boils down to Clang
-> only defining __ARM_NEON__ when targeting armv7, rather than armv6k,
-> which is the '-march' value for allyesconfig.
->
-> From lib/Basic/Targets/ARM.cpp in the Clang source:
->
->   // This only gets set when Neon instructions are actually available, unlike
->   // the VFP define, hence the soft float and arch check. This is subtly
->   // different from gcc, we follow the intent which was that it should be set
->   // when Neon instructions are actually available.
->   if ((FPU & NeonFPU) && !SoftFloat && ArchVersion >= 7) {
->     Builder.defineMacro("__ARM_NEON", "1");
->     Builder.defineMacro("__ARM_NEON__");
->     // current AArch32 NEON implementations do not support double-precision
->     // floating-point even when it is present in VFP.
->     Builder.defineMacro("__ARM_NEON_FP",
->                         "0x" + Twine::utohexstr(HW_FP & ~HW_FP_DP));
->   }
->
-> Ard Biesheuvel recommended explicitly adding '-march=armv7-a' at the
-> beginning of the NEON_FLAGS definitions so that __ARM_NEON__ always gets
-> definined by Clang. This doesn't functionally change anything because
-> that code will only run where NEON is supported, which is implicitly
-> armv7.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/287
-> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+This change adds the cpufreq node as per the bindings example for SDM845.
 
-Nathan,
-Thanks for sending the patch, and thanks to Ard for the suggestion.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-> ---
->  Documentation/arm/kernel_mode_neon.txt | 4 ++--
->  arch/arm/lib/Makefile                  | 2 +-
->  arch/arm/lib/xor-neon.c                | 2 +-
->  lib/raid6/Makefile                     | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/arm/kernel_mode_neon.txt b/Documentation/arm/kernel_mode_neon.txt
-> index 525452726d31..b9e060c5b61e 100644
-> --- a/Documentation/arm/kernel_mode_neon.txt
-> +++ b/Documentation/arm/kernel_mode_neon.txt
-> @@ -6,7 +6,7 @@ TL;DR summary
->  * Use only NEON instructions, or VFP instructions that don't rely on support
->    code
->  * Isolate your NEON code in a separate compilation unit, and compile it with
-> -  '-mfpu=neon -mfloat-abi=softfp'
-> +  '-march=armv7-a -mfpu=neon -mfloat-abi=softfp'
->  * Put kernel_neon_begin() and kernel_neon_end() calls around the calls into your
->    NEON code
->  * Don't sleep in your NEON code, and be aware that it will be executed with
-> @@ -87,7 +87,7 @@ instructions appearing in unexpected places if no special care is taken.
->  Therefore, the recommended and only supported way of using NEON/VFP in the
->  kernel is by adhering to the following rules:
->  * isolate the NEON code in a separate compilation unit and compile it with
-> -  '-mfpu=neon -mfloat-abi=softfp';
-> +  '-march=armv7-a -mfpu=neon -mfloat-abi=softfp';
->  * issue the calls to kernel_neon_begin(), kernel_neon_end() as well as the calls
->    into the unit containing the NEON code from a compilation unit which is *not*
->    built with the GCC flag '-mfpu=neon' set.
-> diff --git a/arch/arm/lib/Makefile b/arch/arm/lib/Makefile
-> index ad25fd1872c7..0bff0176db2c 100644
-> --- a/arch/arm/lib/Makefile
-> +++ b/arch/arm/lib/Makefile
-> @@ -39,7 +39,7 @@ $(obj)/csumpartialcopy.o:     $(obj)/csumpartialcopygeneric.S
->  $(obj)/csumpartialcopyuser.o:  $(obj)/csumpartialcopygeneric.S
->
->  ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
-> -  NEON_FLAGS                   := -mfloat-abi=softfp -mfpu=neon
-> +  NEON_FLAGS                   := -march=armv7-a -mfloat-abi=softfp -mfpu=neon
->    CFLAGS_xor-neon.o            += $(NEON_FLAGS)
->    obj-$(CONFIG_XOR_BLOCKS)     += xor-neon.o
->  endif
-> diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
-> index a6741a895189..4600b62d845f 100644
-> --- a/arch/arm/lib/xor-neon.c
-> +++ b/arch/arm/lib/xor-neon.c
-> @@ -14,7 +14,7 @@
->  MODULE_LICENSE("GPL");
->
->  #ifndef __ARM_NEON__
-> -#error You should compile this file with '-mfloat-abi=softfp -mfpu=neon'
-> +#error You should compile this file with '-march=armv7-a -mfloat-abi=softfp -mfpu=neon'
->  #endif
->
->  /*
-> diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-> index 2f8b61dfd9b0..bfec7c87c61e 100644
-> --- a/lib/raid6/Makefile
-> +++ b/lib/raid6/Makefile
-> @@ -25,7 +25,7 @@ endif
->  ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
->  NEON_FLAGS := -ffreestanding
->  ifeq ($(ARCH),arm)
-> -NEON_FLAGS += -mfloat-abi=softfp -mfpu=neon
-> +NEON_FLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
->  endif
->  CFLAGS_recov_neon_inner.o += $(NEON_FLAGS)
->  ifeq ($(ARCH),arm64)
-> --
-> 2.20.1
->
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 23a253b..a69a21e 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -99,6 +99,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 				compatible = "cache";
+@@ -114,6 +115,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&L2_100>;
+ 			L2_100: l2-cache {
+ 				compatible = "cache";
+@@ -126,6 +128,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x200>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&L2_200>;
+ 			L2_200: l2-cache {
+ 				compatible = "cache";
+@@ -138,6 +141,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x300>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 0>;
+ 			next-level-cache = <&L2_300>;
+ 			L2_300: l2-cache {
+ 				compatible = "cache";
+@@ -150,6 +154,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x400>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&L2_400>;
+ 			L2_400: l2-cache {
+ 				compatible = "cache";
+@@ -162,6 +167,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x500>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&L2_500>;
+ 			L2_500: l2-cache {
+ 				compatible = "cache";
+@@ -174,6 +180,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x600>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&L2_600>;
+ 			L2_600: l2-cache {
+ 				compatible = "cache";
+@@ -186,6 +193,7 @@
+ 			compatible = "qcom,kryo385";
+ 			reg = <0x0 0x700>;
+ 			enable-method = "psci";
++			qcom,freq-domain = <&cpufreq_hw 1>;
+ 			next-level-cache = <&L2_700>;
+ 			L2_700: l2-cache {
+ 				compatible = "cache";
+@@ -1686,6 +1694,17 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		cpufreq_hw: cpufreq@17d43000 {
++			compatible = "qcom,cpufreq-hw";
++			reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
++			reg-names = "freq-domain0", "freq-domain1";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
++			clock-names = "xo", "alternate";
++
++			#freq-domain-cells = <1>;
++		};
+ 	};
 
+ 	thermal-zones {
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
--- 
-Thanks,
-~Nick Desaulniers
