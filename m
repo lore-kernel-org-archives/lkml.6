@@ -2,128 +2,194 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD24EC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9B3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A713621903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75673218E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="f8gx0Kw/"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y8hd4ECS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389213AbeLUEzn (ORCPT
+        id S1725821AbeLUFBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 23:55:43 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:54978 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387425AbeLUEzn (ORCPT
+        Fri, 21 Dec 2018 00:01:19 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39722 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeLUFBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 23:55:43 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 851BECF6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 04:55:41 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kJofsAQlDY4G for <linux-kernel@vger.kernel.org>;
-        Thu, 20 Dec 2018 22:55:41 -0600 (CST)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 3483ECFB
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 22:55:41 -0600 (CST)
-Received: by mail-io1-f70.google.com with SMTP id h7so3339616iof.19
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 20:55:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=MBP4FkDC5u7iym32JDQSQJ7E5NApyVp5LNb2GTuR6pE=;
-        b=f8gx0Kw/Oyc0Mc84BMqPCDgjmBaW6DiGcMUG5K8VFMCRkgqp23fgojzTLzPsQW1xCp
-         2RrgQt3JQGX8bldLll0E69yQrcZ3fbplOAn9HopFnSO5ElN06yr9czVRCM2hzL9nw12Z
-         F4L+5QRFZtLNGH7L0dvqa1EdqjylfLC/GrcA8ZQ/LSoFUMzX22KJ1r17yJ31KYU54E8a
-         5R++k95uARkpHl/cv3QeMpOgJ13xggXUtVUa7roL/a1i+sVBAs9Cz9+p2rzOV2ZzNdnR
-         VGUkNpI+doAViGqbMZpJjMVbIIHc4t4Twqn6mKltCUWs6s7TBilrjbxg6ZS5icwTt3UF
-         oicA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MBP4FkDC5u7iym32JDQSQJ7E5NApyVp5LNb2GTuR6pE=;
-        b=sPXf+iYzQjvTF8W7sxtdMRPDuYQoodaV2jfQsx4XK1R/80xoKnHowQ4fy9ZTw+80on
-         Y7teVVt960hFBB6XK2fIGfTrII2iRMXkx221O+9SAscWoXfXgw72YtvdVQdRUdAjrhAz
-         9+KIlat49KPES1myAWBZH8AT7wrrwemP4yxUswaQoOZgDiFLJUKjjr+lE/ArYcwKHfL5
-         Hd0K2xLfS3kzTmWrmZ9oKq+iKN651RJn8TlFuLnnjJYXu7BSa73EK81iHf/LpfoHAWEE
-         03cBEYos1PSvl2emjbuluBt95X0ypZlCjbkTGqCrP0iWQc+owa7Q8krusn6NReQqbU1c
-         AM+A==
-X-Gm-Message-State: AA+aEWb2d7NzyhuuJo+4KLWuW8ONC9EWQQ/KSM9EGp7kGOQ5HfEm/xq4
-        r0Kxb8iPDbrMwT+CJQTCxpSkU1xU9aSLFtbFk9cbPwSopH/+hGGiS8PanZ4/2Ose9hDeJZtoGb9
-        MWRuMU/ch466mMYVQSRkID9nIookc
-X-Received: by 2002:a24:6c12:: with SMTP id w18mr1213506itb.14.1545368140787;
-        Thu, 20 Dec 2018 20:55:40 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/WeK7nmkTtjQR5Csl4eohGld5+jlJ4mgXIFQf/ox/gyMVG8X9jkcDJxAhrYQTjwsqiVC8gAQA==
-X-Received: by 2002:a24:6c12:: with SMTP id w18mr1213498itb.14.1545368140476;
-        Thu, 20 Dec 2018 20:55:40 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-23.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.23])
-        by smtp.gmail.com with ESMTPSA id l11sm10412539iob.24.2018.12.20.20.55.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Dec 2018 20:55:39 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Matthias Schwarzott <zzam@gentoo.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: si2165: fix a missing check of return value
-Date:   Thu, 20 Dec 2018 22:54:03 -0600
-Message-Id: <20181221045403.59303-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Fri, 21 Dec 2018 00:01:19 -0500
+Received: from avalon.localnet (unknown [212.213.198.112])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 78366558;
+        Fri, 21 Dec 2018 06:01:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1545368475;
+        bh=b/ny2p9pitdlV0AfO232pxMv/D3gBr9SRaVq4Gls2Es=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y8hd4ECSGVM4dgxnMyXB20Jv7do/jj5L/jm50XfR8XZEG/dQgA5u/F6EBHN/wkGFj
+         youXheUzZCuYZDDoKlsoPW/Bxvr27OlJw4mcW2Ei54xoCLYb6A1gzPr2teH3xfaY4y
+         RVBIlyvAu+s5yDL12pY61yEjC6A4yDVgtfRPk+tc=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu: anx7808: fix a missing check of return value
+Date:   Fri, 21 Dec 2018 07:02:11 +0200
+Message-ID: <3157460.hcpWlpvoCn@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181220074116.40546-1-kjlu@umn.edu>
+References: <20181220074116.40546-1-kjlu@umn.edu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
-that "val_tmp" will be an uninitialized value when regmap_read() fails.
-"val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
-"val" will be a random value. Further use will lead to undefined
-behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
-its error code upstream.
+Hi Kangjie,
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/media/dvb-frontends/si2165.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
-index feacd8da421d..d55d8f169dca 100644
---- a/drivers/media/dvb-frontends/si2165.c
-+++ b/drivers/media/dvb-frontends/si2165.c
-@@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
- 
- static int si2165_wait_init_done(struct si2165_state *state)
- {
--	int ret = -EINVAL;
-+	int ret;
- 	u8 val = 0;
- 	int i;
- 
- 	for (i = 0; i < 3; ++i) {
--		si2165_readreg8(state, REG_INIT_DONE, &val);
-+		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
-+		if (ret < 0)
-+			return ret;
- 		if (val == 0x01)
- 			return 0;
- 		usleep_range(1000, 50000);
- 	}
- 	dev_err(&state->client->dev, "init_done was not set\n");
--	return ret;
-+	return -EINVAL;
- }
- 
- static int si2165_upload_firmware_block(struct si2165_state *state,
+On Thursday, 20 December 2018 09:41:16 EET Kangjie Lu wrote:
+> Both anx78xx_set_bits() and anx78xx_clear_bits() in the poweron process
+> may fail. The fix inserts checks for their return values. If the poweron
+> process fails, it calls anx78xx_poweroff().
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/gpu/drm/bridge/analogix-anx78xx.c | 26 ++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> b/drivers/gpu/drm/bridge/analogix-anx78xx.c index
+> f8433c93f463..a57104c71739 100644
+> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> @@ -610,20 +610,20 @@ static int anx78xx_enable_interrupts(struct anx78xx
+> *anx78xx) return 0;
+>  }
+> 
+> -static void anx78xx_poweron(struct anx78xx *anx78xx)
+> +static int anx78xx_poweron(struct anx78xx *anx78xx)
+>  {
+>  	struct anx78xx_platform_data *pdata = &anx78xx->pdata;
+> -	int err;
+> +	int err = 0;
+> 
+>  	if (WARN_ON(anx78xx->powered))
+> -		return;
+> +		return err;
+
+You can return 0 here.
+
+> 
+>  	if (pdata->dvdd10) {
+>  		err = regulator_enable(pdata->dvdd10);
+>  		if (err) {
+>  			DRM_ERROR("Failed to enable DVDD10 regulator: %d\n",
+>  				  err);
+> -			return;
+> +			return err;
+>  		}
+> 
+>  		usleep_range(1000, 2000);
+> @@ -638,12 +638,18 @@ static void anx78xx_poweron(struct anx78xx *anx78xx)
+>  	gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
+> 
+>  	/* Power on registers module */
+> -	anx78xx_set_bits(anx78xx->map[I2C_IDX_TX_P2], SP_POWERDOWN_CTRL_REG,
+> +	err = anx78xx_set_bits(anx78xx->map[I2C_IDX_TX_P2], SP_POWERDOWN_CTRL_REG,
+> SP_HDCP_PD | SP_AUDIO_PD | SP_VIDEO_PD | SP_LINK_PD);
+> -	anx78xx_clear_bits(anx78xx->map[I2C_IDX_TX_P2], SP_POWERDOWN_CTRL_REG,
+> +	err |= anx78xx_clear_bits(anx78xx->map[I2C_IDX_TX_P2],
+> SP_POWERDOWN_CTRL_REG, SP_REGISTER_PD | SP_TOTAL_PD);
+
+If both functions fail with a different error code, this may result in a 
+meaningless error being returned. One option is to do
+
+	err = anx78xx_set_bits(...);
+	if (!err)
+		err = anx78xx_clear_bits(...);
+
+The construct gets quickly ugly though, so I sometimes define register 
+accessors as taking an int * for the error code instead of returning it.
+
+void write(..., int *status)
+{
+	if (*status)
+		return;
+
+	*status = real_write(...);
+}
+
+and then use it as
+
+	int status = 0;
+
+	write(..., &status);
+	write(..., &status);
+	write(..., &status);
+	write(..., &status);
+	write(..., &status);
+
+	return status;
+
+This may be overkill here.
+
+> +	if (err) {
+> +		anx78xx_poweroff(anx78xx);
+> +		return err;
+> +	}
+> 
+>  	anx78xx->powered = true;
+> +
+> +	return err;
+
+And return 0 here too, removing the need to initialize the err variable to 0.
+
+>  }
+> 
+>  static void anx78xx_poweroff(struct anx78xx *anx78xx)
+> @@ -1144,7 +1150,9 @@ static irqreturn_t anx78xx_hpd_threaded_handler(int
+> irq, void *data) mutex_lock(&anx78xx->lock);
+> 
+>  	/* Cable is pulled, power on the chip */
+> -	anx78xx_poweron(anx78xx);
+> +	err = anx78xx_poweron(anx78xx);
+> +	if (err)
+> +		DRM_ERROR("Failed to power on the chip: %d\n", err);
+
+Wouldn't it be better to move the error message to the an78xx_poweron() 
+function ? That way it would also be printed in the probe() path.
+
+>  	err = anx78xx_enable_interrupts(anx78xx);
+>  	if (err)
+> @@ -1379,7 +1387,9 @@ static int anx78xx_i2c_probe(struct i2c_client
+> *client, }
+> 
+>  	/* Look for supported chip ID */
+> -	anx78xx_poweron(anx78xx);
+> +	err = anx78xx_poweron(anx78xx);
+> +	if (err)
+> +		goto err_poweroff;
+
+If poweron fails, doesn't it clean up after itself ? Do you need to call 
+poweroff here ?
+
+>  	err = regmap_read(anx78xx->map[I2C_IDX_TX_P2], SP_DEVICE_IDL_REG,
+>  			  &idl);
+
 -- 
-2.17.2 (Apple Git-113)
+Regards,
+
+Laurent Pinchart
+
+
 
