@@ -2,82 +2,107 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80416C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C78C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5074A2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EBE521927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:27:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HYPdpERI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTBomzCP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391437AbeLUSZX (ORCPT
+        id S2391451AbeLUS1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:25:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35214 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388745AbeLUSZW (ORCPT
+        Fri, 21 Dec 2018 13:27:07 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38869 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731951AbeLUS1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:25:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+3oIgzMYSGpRMTGjMC8G5htx2OQ47BK5Wfpi+mdajPQ=; b=HYPdpERIQ336JfjJC5Z+FaPM1
-        vdg/xTlNXbSi4vE7USoDcgPsRi348Z7T6j9E+4vPV+lL05QVF0ObjEzzfHlNpARSsPKe6XKAaf/lR
-        Q9kzrkM+XZt+tH2LlsIoIr/2Sfqh3vdrTMI6rMfug+PKNalbIPXz5VIRFm8pbSkjCVw635TFem4oN
-        J9BbSShJ3tBRMHPDdSeMEyu8DFEV0fBAf8hNgk0IWL5kutI6LJKsY9u8OgsGmCdPOHIDN7uLnbO5K
-        zkJmYbQPur0QZC99nHHZVti/l3HIxC2V1sdj0pm7NcHyc7uNZTkh5Xr9Se45+ulSWRrmqGLrOjXIC
-        CiDlwZZuQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gaPU4-0004eG-EX; Fri, 21 Dec 2018 18:25:16 +0000
-Date:   Fri, 21 Dec 2018 10:25:16 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] x86_64: memset_user()
-Message-ID: <20181221182515.GF10600@bombadil.infradead.org>
-References: <20181221181423.20455-1-igor.stoppa@huawei.com>
- <20181221181423.20455-2-igor.stoppa@huawei.com>
+        Fri, 21 Dec 2018 13:27:07 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so6223951wrw.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:27:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=8+w9t5OKE0FQ9muwd/s67DyosSXruezMRXngmK6X5VY=;
+        b=fTBomzCP9w77wF7GjosVOBTekzPGdiixyaK+hKfkbMcHPh3fawWx/CrUTFn4unP/+h
+         wUBbDuVc4Hs/xFDpMhzXidbGY5zkEYTupArJ+K72zaoSfcgUK9dkPcmVeGkrJFh5Jzpb
+         clfL8Pp3uOkX/55POJdYDF0Rb+Ss2F7peD00FYBnhRnHljnI/clGm3PIM4fupIYsf0Lj
+         pLZN/b5xqOYdLwFUqsYI++2Hf5WosqP/3XmhZmDFhi/ryyfH6weA/lyc7gL+KmpAt0J/
+         hmgZNnBQBt3wkY61k8DBibt9sS860+gtHaJ+noF0JGy+d1ulQXmfSJ8fskSd3DgsSJ5m
+         GNgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=8+w9t5OKE0FQ9muwd/s67DyosSXruezMRXngmK6X5VY=;
+        b=kVLf9Z430qikePsCI8l5fG2+ZqghqspwCMxH5KcLOeUPbeg3w4mFGWwuhBMi+Wvn3q
+         FauJTnvqPIqpHxdO7kIuQkIDa4vykoX0zVFrjXVaE/ooREZfRHRDuAquRnEXAA0rn8/R
+         V5VUGazqhMLJMjodPmVSx5p0QCUzRbmu2EsOTBW9ltUH3g5lS1v0LE8oSsFIBvtWcHek
+         /kaPvx6uN5T1qm8hhBaUsoMjxehvYVcx5Q87LnT1JuQtS70VNXeNOZdwFoplVz6ylKku
+         vnzl2Ru9dbA1YuhSvGqLIgIRPgyxhqpFA/3EcoWTfQWGuwQabSo3kzQSJ86s10rUcVDo
+         pRFA==
+X-Gm-Message-State: AJcUukeZdq1kzIqVwgx8iek6FwIDsYNVEwIhi8ksC+3js1CRSAY3Ahpd
+        uyNWmkoyQ1sgMvqxFOcz7SE=
+X-Google-Smtp-Source: ALg8bN69Dqt1NwRzblzixefkuE4pRIAVIUd13x2jRI5ARUA71u1bt1rWbGhG0NbJjwUS+Yh1JSb0OA==
+X-Received: by 2002:adf:8b4d:: with SMTP id v13mr3599756wra.282.1545416825308;
+        Fri, 21 Dec 2018 10:27:05 -0800 (PST)
+Received: from ?IPv6:2a02:908:125b:9a00:a142:2be6:b7be:5a3a? ([2a02:908:125b:9a00:a142:2be6:b7be:5a3a])
+        by smtp.gmail.com with ESMTPSA id 199sm14765520wmh.21.2018.12.21.10.27.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 10:27:04 -0800 (PST)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
+To:     Dmitry Osipenko <digetx@gmail.com>, Eric Anholt <eric@anholt.net>,
+        dri-devel@lists.freedesktop.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org,
+        Jason Ekstrand <jason@jlekstrand.net>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20181108160422.17743-1-eric@anholt.net>
+ <20181108160422.17743-3-eric@anholt.net>
+ <faf15d58-a076-49fb-c903-15acdf6f8ffe@gmail.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <fadfc03c-7f80-216b-299f-27a1d8d7877b@gmail.com>
+Date:   Fri, 21 Dec 2018 19:27:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221181423.20455-2-igor.stoppa@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <faf15d58-a076-49fb-c903-15acdf6f8ffe@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 08:14:12PM +0200, Igor Stoppa wrote:
-> +unsigned long __memset_user(void __user *addr, int c, unsigned long size)
-> +{
-> +	long __d0;
-> +	unsigned long  pattern = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < 8; i++)
-> +		pattern = (pattern << 8) | (0xFF & c);
+Am 19.12.18 um 18:53 schrieb Dmitry Osipenko:
+> [SNIP]
+>> @@ -931,9 +718,6 @@ static signed long drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
+>>   
+>>   	if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
+>>   		for (i = 0; i < count; ++i) {
+>> -			if (entries[i].fence)
+>> -				continue;
+>> -
+>>   			drm_syncobj_fence_get_or_add_callback(syncobjs[i],
+>>   							      &entries[i].fence,
+>>   							      &entries[i].syncobj_cb,
+> Hello,
+>
+> The above three removed lines we added in commit 337fe9f5c1e7de ("drm/syncobj: Don't leak fences when WAIT_FOR_SUBMIT is set") that fixed a memleak. Removal of the lines returns the memleak because of disbalanced fence refcounting and it looks like they were removed unintentionally in this patch.
 
-That's inefficient.
+That was already fixed with 61a98b1b9a8c7 drm/syncobj: remove 
+drm_syncobj_cb and cleanup.
 
-	pattern = (unsigned char)c;
-	pattern |= pattern << 8;
-	pattern |= pattern << 16;
-	pattern |= pattern << 32;
+This cleanup removed all the duplicate checking and is now adding the 
+callback only once.
 
+Regards,
+Christian.
