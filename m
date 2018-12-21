@@ -2,109 +2,117 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E085DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30AAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A733D21929
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923AE21939
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:21:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CWEbq7GP"
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="0Kywe/eZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391867AbeLUUK1 (ORCPT
+        id S2390427AbeLUUVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:10:27 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45806 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391854AbeLUUKY (ORCPT
+        Fri, 21 Dec 2018 15:21:42 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36208 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731233AbeLUUVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:10:24 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so3059843pfd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 12:10:24 -0800 (PST)
+        Fri, 21 Dec 2018 15:21:42 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g11-v6so5815204ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 12:21:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TkQMS53u/0Pk1o6GD7eFKUQxD9ITUcTLmDsH4Ut9q0s=;
-        b=CWEbq7GPWlwQ6iMgiHrhv3oxoSL4rtrKFfFP20c1/fSCEWVOZyoL6ew/vRpDLfZ6Vo
-         Y/8G6dBql63+Xkf10aan42bRfUkR9RA8BabXmeHM3J/e/ftiOXIMJTl2f0zB952ofVbE
-         S2BF1PNSVhcso+VlmW0ePiusNbMNAOmOnHFAE=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oCuWIybZCBvA/WvzquDNFPGfWXKrZE1FK2XTD9BeqdE=;
+        b=0Kywe/eZIN5jNgVFiFnsd70xV3iJbzRm+wg6KsnpD4sDO96YzdcE/Xpg3chjvrozUP
+         +NUugEcQp9Id6Fi+bwCNQxYvnpcJxrSRd9TdpZ8UiOp5ORMaWuT8/I7D6CNUY5EryfjJ
+         Gle0nCXq/46KOT17NYfUuvJaAm6Up9x8fUVdA0nZ7NrQ1BpA8VFETws09u/uhkUsZmvh
+         +6jTWiIafS4/QH5j9v27DbcX1jQPricThP8q/kqL/5FfdmaNIeL+BeivscYHwWz0D2np
+         gI94xi6jU5ZsRjWkg0W/izRpgm/ISf2uQUaSeXsNH6ChYVGNzaKlZEqj4VMWPzbS2BVL
+         gUsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TkQMS53u/0Pk1o6GD7eFKUQxD9ITUcTLmDsH4Ut9q0s=;
-        b=PLXc0GVPCTkG/WH58UhgORRI63bKFOKcqBbFrTJ2wyEZC30r73B2qxONRMqDqme/kp
-         aE9ea+jCKYKjrxs8QCbTHBwmjAavy4xW/nPdIhVIFkhe9ZwlbfnAyt/kIPno7zBlsIlB
-         qIJ670BhSs4E7jKPEdG8eDT3WA6hs22AS4nA9fVW7xFDD61TSX1++rkL+hUAUlvPCJIs
-         mO/dN/eI4u7nlK+MOqPPwvBBFcnnm940STfQrOgDxsZkQndVDsDVPC5MDtkPgU0JQcDf
-         oP5ykRZw+Htzf2XHAsFUSfVTzyTTou3NyROxAYMeoV95RVGo3aINwmKs/+P/eIQ+VD/4
-         rRGQ==
-X-Gm-Message-State: AJcUukeI5/damnz7Ipvdb8ZVhXCLT5mds3cLuBnFtH5Cd4KBZYYhWMKH
-        KLAMOCwzSuVt2sALyvjIb5pBGA==
-X-Google-Smtp-Source: ALg8bN47i/VJhy6I/FBlTwf8bZAeg76QMXPRhxZHtwOZxCK0X+gbf9d0bVWsaSQ4ZWqAkwwFv/f+eg==
-X-Received: by 2002:a63:9809:: with SMTP id q9mr3723532pgd.109.1545423024160;
-        Fri, 21 Dec 2018 12:10:24 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id o1sm35300406pgn.63.2018.12.21.12.10.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 21 Dec 2018 12:10:23 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Ben Chan <benchan@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        linux-arm-msm@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] soc: qcom: rmtfs-mem: Make sysfs attributes world-readable
-Date:   Fri, 21 Dec 2018 12:10:01 -0800
-Message-Id: <20181221201001.160613-3-evgreen@chromium.org>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181221201001.160613-1-evgreen@chromium.org>
-References: <20181221201001.160613-1-evgreen@chromium.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oCuWIybZCBvA/WvzquDNFPGfWXKrZE1FK2XTD9BeqdE=;
+        b=BcZKdLjq+xsV/eFvniJQxStzA/8oDymnKogr3ktFew5WZnqpBIGWsaz6E/7UqSEQAb
+         kSeun4Pg+ofLGorf3aIWtgmsfo/etlDoVm68gN2GtEfLhR+Tlv1UMadNLHIcfnCo5JyV
+         j4fu38vhk3eZ20hvp82RIwnKpTolMokwrZ7eYTcfNl77YQ4shqtveyAj46oX0vZJfomY
+         tJiAx/ECekOXGq1rFf/c60D3sk5S9xmZDz6aHGjvJTxf5NTkBTqEwwUfLkI3Ki0NYeLg
+         qtVb5gJ26C38KGxVJT4A+iLXbLxlxetgNFLaYJ3KILa4jVlPWPV5Hrlvy4ShRbctj2Lf
+         3wxw==
+X-Gm-Message-State: AJcUukehghYPxSGWqm+4C4DtN7ikrEsBj/reyEQhM50pAFJ3E6qOS+E2
+        MpYOdpwmVwu9knSpJPxY1EuZAA==
+X-Google-Smtp-Source: ALg8bN4Aft2oOQKrqbOZo+FcuDdVDKKNsaeLb0gHys8m41Q8zS+PyxJ27zQ5cGcjg+zKNQZ9OUjiSw==
+X-Received: by 2002:a2e:9256:: with SMTP id v22-v6mr2740535ljg.178.1545423700080;
+        Fri, 21 Dec 2018 12:21:40 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (mm-127-199-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.199.127])
+        by smtp.gmail.com with ESMTPSA id g70-v6sm4912287ljg.92.2018.12.21.12.21.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 12:21:39 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 5562F300816; Fri, 21 Dec 2018 23:21:37 +0300 (+03)
+Date:   Fri, 21 Dec 2018 23:21:37 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to fix page
+ fault/truncate race
+Message-ID: <20181221202136.crrwojz3k7muvyrh@kshutemo-mobl1>
+References: <20181218223557.5202-1-mike.kravetz@oracle.com>
+ <20181218223557.5202-3-mike.kravetz@oracle.com>
+ <20181221102824.5v36l6l5t2zthpgr@kshutemo-mobl1>
+ <849f5202-2200-265f-7769-8363053e8373@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <849f5202-2200-265f-7769-8363053e8373@oracle.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to run an rmtfs daemon as an unprivileged user, that user would
-need access to the phys_addr and size sysfs attributes. Sharing these
-attributes with unprivileged users doesn't really leak anything
-sensitive, since if you have access to physical memory, the jig is
-up anyway.
+On Fri, Dec 21, 2018 at 10:28:25AM -0800, Mike Kravetz wrote:
+> On 12/21/18 2:28 AM, Kirill A. Shutemov wrote:
+> > On Tue, Dec 18, 2018 at 02:35:57PM -0800, Mike Kravetz wrote:
+> >> Instead of writing the required complicated code for this rare
+> >> occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
+> >> mode for the duration of page fault processing.  Hold i_mmap_rwsem
+> >> longer in truncation and hold punch code to cover the call to
+> >> remove_inode_hugepages.
+> > 
+> > One of remove_inode_hugepages() callers is noticeably missing --
+> > hugetlbfs_evict_inode(). Why?
+> > 
+> > It at least deserves a comment on why the lock rule doesn't apply to it.
+> 
+> In the case of hugetlbfs_evict_inode, the vfs layer guarantees there are
+> no more users of the inode/file.
 
-Make those attributes readable by all.
+I'm not convinced that it is true. See documentation for ->evict_inode()
+in Documentation/filesystems/porting:
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
----
+	Caller does *not* evict the pagecache or inode-associated
+	metadata buffers; the method has to use truncate_inode_pages_final() to get rid
+	of those.
 
-Changes in v2: None
+Is hugetlbfs special here?
 
- drivers/soc/qcom/rmtfs_mem.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-index 99a1363ece254..815c11aeceb93 100644
---- a/drivers/soc/qcom/rmtfs_mem.c
-+++ b/drivers/soc/qcom/rmtfs_mem.c
-@@ -45,9 +45,9 @@ static ssize_t qcom_rmtfs_mem_show(struct device *dev,
- 			      struct device_attribute *attr,
- 			      char *buf);
- 
--static DEVICE_ATTR(phys_addr, 0400, qcom_rmtfs_mem_show, NULL);
--static DEVICE_ATTR(size, 0400, qcom_rmtfs_mem_show, NULL);
--static DEVICE_ATTR(client_id, 0400, qcom_rmtfs_mem_show, NULL);
-+static DEVICE_ATTR(phys_addr, 0444, qcom_rmtfs_mem_show, NULL);
-+static DEVICE_ATTR(size, 0444, qcom_rmtfs_mem_show, NULL);
-+static DEVICE_ATTR(client_id, 0444, qcom_rmtfs_mem_show, NULL);
- 
- static ssize_t qcom_rmtfs_mem_show(struct device *dev,
- 			      struct device_attribute *attr,
 -- 
-2.18.1
-
+ Kirill A. Shutemov
