@@ -6,82 +6,182 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DCCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898D2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6E9218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E378218FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:13:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CsBEesqd"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gnVyb9KH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389063AbeLUDM7 (ORCPT
+        id S2390883AbeLUDND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 22:12:59 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:53264 "EHLO
+        Thu, 20 Dec 2018 22:13:03 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:53266 "EHLO
         conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388689AbeLUDM6 (ORCPT
+        with ESMTP id S1731899AbeLUDM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 22:12:58 -0500
+        Thu, 20 Dec 2018 22:12:59 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id wBL3Ci1o003819;
-        Fri, 21 Dec 2018 12:12:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com wBL3Ci1o003819
+        by conuserg-12.nifty.com with ESMTP id wBL3Ci1q003819;
+        Fri, 21 Dec 2018 12:12:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com wBL3Ci1q003819
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545361964;
-        bh=uwc4h7OaYnqTtMRVaURUeVDBjbGaCXyizVdHE15ae9w=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CsBEesqdpFekSo+Xj8X1sNVps9vZvdQXIjGppBx/mJ58EWAa3UWQpWvIKEqi/KOp4
-         6jCqTtOyWgbVivuW/df/R0+hU/hvYGEKOPSSpPdj7ryGaNXpfroA/nYnsEbQ7IunVe
-         9NdgmsPbQKYBOMmRimkSicmlranskbalqTfiMzkMdkmaRYH8GK911uOXSIyl0ie9mG
-         nrpWtUcej4qwd+ydx+8jfoLoMnLxIIQoGCNeGteKUb7COhgbIvN2MrIxgh8eN662W+
-         yQoCxHEkE/22HVEuujax2guA1/FhMAxNJgDvvufXRkne02AVkIjHVbYkB5Abx0jNOI
-         tAIdcL4MC2LzA==
+        s=dec2015msa; t=1545361965;
+        bh=7BUcAm2kzh0Oah2K4UpaMEeLxvXGjrdT7tbi0/n1Edg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gnVyb9KH6yRmJOX41ZPUv0rd2BP3fB2xGmD5eq2LQDmAcuLqczoe2QoICGZwUJKiV
+         OUw16z3JdKl3BSKtfxvlxWkZgHRckpyHENNOQuJZ6qowoGRAXA2hrXyfQQlMCHRjwh
+         6TaYsoBtn/VEGEPwaFzM2zLNz90bJb2T4U60S4Ue0VUnpE+UCrmcAPxfinAg2aB/VV
+         olZkbE/HrPNF4Jna61XSI2JK3RwE3IyvPTUhK6XRSXjp5+mO0gmOFDl6tacHgI+6XD
+         ctgB9eTFzWaytP8eHHi7kU3T/LKv0K/oaDpVAOjPrfMnQLVOniBC7ZniraYD8FUgIg
+         CX5qgEySgNvmQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] scripts: remove unnecessary ihex2fw and check-lc_ctypes from .gitignore
-Date:   Fri, 21 Dec 2018 12:12:39 +0900
-Message-Id: <1545361961-31990-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 3/3] firmware: rewrite Makefile
+Date:   Fri, 21 Dec 2018 12:12:41 +0900
+Message-Id: <1545361961-31990-3-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545361961-31990-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1545361961-31990-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c512d2544c68 ("gitignore: ignore scripts/ihex2fw") was unneeded
-because ihex2fw was generated in firmware/ instead of scripts/ at
-that time. I guess it was accidentally added because ihex2fw.c was
-pushed back and forth between those two directories according to
-8b249b6856f1 ("fix modules_install via NFS") and 556b0f58bbcd (Revert
-"fix modules_install via NFS"). Of course, you may cross file-moves
-during git-bisect, but we do not generally add removed binaries to
-the .gitignore file.
+Clean up the Makefile. Equivalent *.gen.S files are produced.
 
-check-lc_ctype was removed by commit cb43fb5775df ("docs: remove
-DocBook from the building system").
+ - Use filechk to remove ugly wordsize_deps
+
+ - Get FWNAME, FWSTR, ASM_WORD, ASM_ALIGN, and PROGBITS out of the
+   recipe for readability
+
+ - Move mkdir into the recipe
+
+ - Clean up generated directories by 'make clean'
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/.gitignore | 2 --
- 1 file changed, 2 deletions(-)
+For this patch to work correctly,
+the following prerequisite is necessary:
 
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index 12d302d..17f8cef 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -6,9 +6,7 @@ conmakehash
- kallsyms
- pnmtologo
- unifdef
--ihex2fw
- recordmcount
--check-lc_ctype
- sortextable
- asn1_compiler
- extract-cert
+https://patchwork.kernel.org/patch/10707461/
+
+So, I will queue this series to kbuild tree.
+
+BTW, my next plan is to move firmware/ to
+more relevant place, for example,
+drivers/base/firmware_loader/builtin.
+
+
+ firmware/Makefile | 89 ++++++++++++++++++++++---------------------------------
+ 1 file changed, 35 insertions(+), 54 deletions(-)
+
+diff --git a/firmware/Makefile b/firmware/Makefile
+index 2964138..18d1c84 100644
+--- a/firmware/Makefile
++++ b/firmware/Makefile
+@@ -1,61 +1,42 @@
+ # SPDX-License-Identifier: GPL-2.0
+-#
+-# kbuild file for firmware/
+-#
+ 
+-# Create $(fwabs) from $(CONFIG_EXTRA_FIRMWARE_DIR) -- if it doesn't have a
++# Create $(fwdir) from $(CONFIG_EXTRA_FIRMWARE_DIR) -- if it doesn't have a
+ # leading /, it's relative to $(srctree).
+ fwdir := $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE_DIR))
+-fwabs := $(addprefix $(srctree)/,$(filter-out /%,$(fwdir)))$(filter /%,$(fwdir))
+-
+-fw-external-y := $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE))
+-
+-quiet_cmd_fwbin = MK_FW   $@
+-      cmd_fwbin = FWNAME="$(patsubst firmware/%.gen.S,%,$@)";		     \
+-		  FWSTR="$(subst /,_,$(subst .,_,$(subst -,_,$(patsubst	     \
+-				firmware/%.gen.S,%,$@))))";		     \
+-		  ASM_WORD=$(if $(CONFIG_64BIT),.quad,.long);		     \
+-		  ASM_ALIGN=$(if $(CONFIG_64BIT),3,2);			     \
+-		  PROGBITS=$(if $(CONFIG_ARM),%,@)progbits;		     \
+-		  echo "/* Generated by firmware/Makefile */"		> $@;\
+-		  echo "    .section .rodata"				>>$@;\
+-		  echo "    .p2align $${ASM_ALIGN}"			>>$@;\
+-		  echo "_fw_$${FWSTR}_bin:"				>>$@;\
+-		  echo "    .incbin \"$(2)\""				>>$@;\
+-		  echo "_fw_end:"					>>$@;\
+-		  echo "   .section .rodata.str,\"aMS\",$${PROGBITS},1"	>>$@;\
+-		  echo "    .p2align $${ASM_ALIGN}"			>>$@;\
+-		  echo "_fw_$${FWSTR}_name:"				>>$@;\
+-		  echo "    .string \"$$FWNAME\""			>>$@;\
+-		  echo "    .section .builtin_fw,\"a\",$${PROGBITS}"	>>$@;\
+-		  echo "    .p2align $${ASM_ALIGN}"			>>$@;\
+-		  echo "    $${ASM_WORD} _fw_$${FWSTR}_name"		>>$@;\
+-		  echo "    $${ASM_WORD} _fw_$${FWSTR}_bin"		>>$@;\
+-		  echo "    $${ASM_WORD} _fw_end - _fw_$${FWSTR}_bin"	>>$@;
+-
+-# One of these files will change, or come into existence, whenever
+-# the configuration changes between 32-bit and 64-bit. The .S files
+-# need to change when that happens.
+-wordsize_deps := $(wildcard include/config/64bit.h include/config/32bit.h \
+-		include/config/ppc32.h include/config/ppc64.h \
+-		include/config/superh32.h include/config/superh64.h \
+-		include/config/x86_32.h include/config/x86_64.h \
+-		firmware/Makefile)
+-
+-$(patsubst %,$(obj)/%.gen.S, $(fw-external-y)): %: $(wordsize_deps) \
+-		include/config/extra/firmware/dir.h
+-	$(call cmd,fwbin,$(fwabs)/$(patsubst $(obj)/%.gen.S,%,$@))
++fwdir := $(addprefix $(srctree)/,$(filter-out /%,$(fwdir)))$(filter /%,$(fwdir))
++
++obj-y  := $(addsuffix .gen.o, $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE)))
++
++FWNAME    = $(patsubst $(obj)/%.gen.S,%,$@)
++FWSTR     = $(subst /,_,$(subst .,_,$(subst -,_,$(FWNAME))))
++ASM_WORD  = $(if $(CONFIG_64BIT),.quad,.long)
++ASM_ALIGN = $(if $(CONFIG_64BIT),3,2)
++PROGBITS  = $(if $(CONFIG_ARM),%,@)progbits
++
++filechk_fwbin = { \
++	echo "/* Generated by $(src)/Makefile */"		;\
++	echo "    .section .rodata"				;\
++	echo "    .p2align $(ASM_ALIGN)"			;\
++	echo "_fw_$(FWSTR)_bin:"				;\
++	echo "    .incbin \"$(fwdir)/$(FWNAME)\""		;\
++	echo "_fw_end:"						;\
++	echo "    .section .rodata.str,\"aMS\",$(PROGBITS),1"	;\
++	echo "    .p2align $(ASM_ALIGN)"			;\
++	echo "_fw_$(FWSTR)_name:"				;\
++	echo "    .string \"$(FWNAME)\""			;\
++	echo "    .section .builtin_fw,\"a\",$(PROGBITS)"	;\
++	echo "    .p2align $(ASM_ALIGN)"			;\
++	echo "    $(ASM_WORD) _fw_$(FWSTR)_name"		;\
++	echo "    $(ASM_WORD) _fw_$(FWSTR)_bin"			;\
++	echo "    $(ASM_WORD) _fw_end - _fw_$(FWSTR)_bin"	;\
++}
++
++$(obj)/%.gen.S: FORCE
++	@mkdir -p $(dir $@)
++	$(call filechk,fwbin)
+ 
+ # The .o files depend on the binaries directly; the .S files don't.
+-$(patsubst %,$(obj)/%.gen.o, $(fw-external-y)): $(obj)/%.gen.o: $(fwdir)/%
+-
+-obj-y				 += $(patsubst %,%.gen.o, $(fw-external-y))
+-
+-ifeq ($(KBUILD_SRC),)
+-# Makefile.build only creates subdirectories for O= builds, but external
+-# firmware might live outside the kernel source tree
+-_dummy := $(foreach d,$(addprefix $(obj)/,$(dir $(fw-external-y))), $(shell [ -d $(d) ] || mkdir -p $(d)))
+-endif
++$(addprefix $(obj)/, $(obj-y)): $(obj)/%.gen.o: $(fwdir)/%
+ 
+-targets := $(patsubst $(obj)/%,%, \
+-                                $(shell find $(obj) -name \*.gen.S 2>/dev/null))
++targets := $(shell cd $(obj) && find * -name '*.gen.S')
++clean-dirs := $(shell cd $(obj) && find * -maxdepth 0 -type d)
 -- 
 2.7.4
 
