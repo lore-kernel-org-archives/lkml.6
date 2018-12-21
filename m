@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B715FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235E7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74CA321906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D986921905
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545355087;
-	bh=DDHMCH+ea5TZgKtmOPy2JuZ2jQU/ODVXu7U6wawHuNM=;
+	s=default; t=1545355099;
+	bh=60JBschBnEvvqxiCWtKKuHoiVCFr+2AQqWWXEfD6i/I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AyTmEQZ6pxz095SKW4v8eO4e7oM9W6tUGrU5RaCx9A3Qjs9bBJWZj1/vskMMFtlpK
-	 E3VMxepDq4X2NyGxa5CL6B+orGPPwMMi605Ellr07YcR/M3SNdNY3rfdctKL+4LxMs
-	 cJhQ1Zw7XVdYt0IPCevGHnzil7+GVqyfX5UOuGZ0=
+	b=aIb0+KT40EYSi2zlTXYkxlpIgQhrp+gmImU5UWNzuQv+u1Y6xKiXn9UmQ/R9J+IPq
+	 UE7kPjGyfMiIiv7AVNo3lwmvcRXhg7KRSXaefRCumae7N4bRNGwCx+En5GR7ckpbTl
+	 NPhFyZvYsNz8RHE4ZZmw7HkkHhPID1oZ/H6+LKQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388588AbeLUBSG (ORCPT
+        id S2388633AbeLUBSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:18:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37010 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 20:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387963AbeLUBSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:18:05 -0500
+        id S2387963AbeLUBSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 20:18:11 -0500
 Received: from mail.kernel.org (unknown [185.216.33.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44AE1218E0;
-        Fri, 21 Dec 2018 01:18:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73E4D218E0;
+        Fri, 21 Dec 2018 01:18:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545355084;
-        bh=DDHMCH+ea5TZgKtmOPy2JuZ2jQU/ODVXu7U6wawHuNM=;
+        s=default; t=1545355091;
+        bh=60JBschBnEvvqxiCWtKKuHoiVCFr+2AQqWWXEfD6i/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qfabcGP9UJbuPcDBb/w6nJ1bdesdTc+Mv37rknPuDs/RQpb+Cax3PtWOZ25A/OWJo
-         usYV8w3c7lpEU1DR1zoO0BAipoZr9dAq8qoVYvaiYYAJdaA2nEI9hPGK7n6pXoF78X
-         NgjvEz6EbRHtCxDskniEHtKpSeYx0Y1WOSmOXHBY=
+        b=rt4arJHU5TBy5N1isrBVy+FTDnleGxO5DBAqbkFqSF50NhyfOH8iAoZOWxXmr3eHS
+         NOQkPwpyrS8ulKgxFwMr9snrXN3lzsauYe0I3C3AdHWsveNDG+JHoWIzZJJNn7ZcnH
+         S9JpIH1sNlXcedO7wH7FqZCUwF4FJ/+onHc6yxwc=
 From:   Sebastian Reichel <sre@kernel.org>
 To:     Sebastian Reichel <sre@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -50,10 +49,10 @@ Cc:     Rob Herring <robh@kernel.org>,
         linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH 01/14] ARM: dts: LogicPD Torpedo: Add WiLink UART node
-Date:   Fri, 21 Dec 2018 02:17:39 +0100
-Message-Id: <20181221011752.25627-2-sre@kernel.org>
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH 02/14] ARM: dts: IGEP: Add WiLink UART node
+Date:   Fri, 21 Dec 2018 02:17:40 +0100
+Message-Id: <20181221011752.25627-3-sre@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181221011752.25627-1-sre@kernel.org>
 References: <20181221011752.25627-1-sre@kernel.org>
@@ -68,33 +67,47 @@ From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
 Add a node for the UART part of WiLink chip.
 
-Cc: Adam Ford <aford173@gmail.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
 This is compile tested only!
 ---
- arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/omap3-igep0020-rev-f.dts | 8 ++++++++
+ arch/arm/boot/dts/omap3-igep0030-rev-g.dts | 8 ++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts b/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
-index 9d5d53fbe9c0..2699da12dc2d 100644
---- a/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
-+++ b/arch/arm/boot/dts/logicpd-torpedo-37xx-devkit.dts
-@@ -54,6 +54,14 @@
+diff --git a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
+index 285681d7af49..8bb4298ca05e 100644
+--- a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
++++ b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
+@@ -52,3 +52,11 @@
+ 		interrupts = <17 IRQ_TYPE_EDGE_RISING>; /* gpio 177 */
  	};
  };
- 
++
 +&uart2 {
 +	bluetooth {
-+		compatible = "ti,wl1283-st";
-+		enable-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>; /* gpio 162 */
-+		max-speed = <3000000>;
++		compatible = "ti,wl1835-st";
++		enable-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* gpio 137 */
++		max-speed = <300000>;
 +	};
 +};
+diff --git a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
+index 1adc73bd2ca0..03be171e9de7 100644
+--- a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
++++ b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
+@@ -74,3 +74,11 @@
+ 		interrupts = <8 IRQ_TYPE_EDGE_RISING>; /* gpio 136 */
+ 	};
+ };
 +
- &omap3_pmx_core {
- 	mmc3_pins: pinmux_mm3_pins {
- 		pinctrl-single,pins = <
++&uart2 {
++	bluetooth {
++		compatible = "ti,wl1835-st";
++		enable-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* gpio 137 */
++		max-speed = <300000>;
++	};
++};
 -- 
 2.19.2
 
