@@ -2,123 +2,126 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDD1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629C3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0872D21917
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:55:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvOdh14t"
+	by mail.kernel.org (Postfix) with ESMTP id 3AE672190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387756AbeLUPzB (ORCPT
+        id S2387764AbeLUPz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:55:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38450 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeLUPzA (ORCPT
+        Fri, 21 Dec 2018 10:55:27 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:65529 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeLUPz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:55:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19-v6so5151179lja.5;
-        Fri, 21 Dec 2018 07:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6GgTxgKujAL6bxZt3/XwrBWxuVSJAbJ+/4kL7P1mWVI=;
-        b=KvOdh14tGYG18VCF3126oz0g6CWBwgX//7LyQwzLPOO7sxlF8bZtPv9CZtGXMiL2TW
-         SCZ5f0trAXuyVbs9aPDg2x6zxdT05tT5BeDzkocMW4LOgYOcnsKuUzDwGRQ+QSrFp6Dj
-         fecCO7CcmA8/7b+C/Tb8+1t/Th/YfaBCHJhVsXGN5okmbKUUzpBtnYb8LL20idBxoT9U
-         fvsyoFTEEmy0IeGOwwfbn+fwQDvSyAAE3dbXIW/FOkB4JuIv5rZMXJ7pDTtigFvyeH0Y
-         t4TcxOKwOJmlC7R3pwRq44NfvdAUivZmR7SD3AHRkjfb5ORv4kUuwOhKSoTkDDKsL90k
-         nAfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6GgTxgKujAL6bxZt3/XwrBWxuVSJAbJ+/4kL7P1mWVI=;
-        b=K1g61Nz95FPakX6WdAUCLH8PnhGvliAzV/J24teT2fE6iS+GI+0c8AsCUC3KLZr59G
-         fesZ4NzbJEgcCpH7ld5gCwsuDfakcIRbfL+yxOCgJKzYF8HVQjlnGexN7udWK+btUNnR
-         70tPHNDgSQaYGj78181T5+A76SF3v+voLlIBKnEQ4jZl9Od4ozcUDM/x7+34M1/+mHZ+
-         qpUUqlyx3Y127kpwTFM5NC4rxmTzH2ksigkiYJHAtGXbSo8DS5RtDuKsUVlgWxO9kkCw
-         gqqYVNwkjEM00D/Gh5zJ98JRQMs92BYffMjId6Khi1nT6qlmdXpf/Y7bgrUjjxqdyzL0
-         Ez9w==
-X-Gm-Message-State: AA+aEWZEziQAgg+0K1rutJueFrkWdIrSYwIMC4FaeYcj6AAea+rytmHv
-        v1yduilgFRtftnAdXT1p/gQ=
-X-Google-Smtp-Source: AFSGD/VL8c/IpYbB+4qNXWlCl1jeVTCY/XGX2yTTPx8od8TNO62jBLBBtS8tw4NgBBvoa2rt1vEBRQ==
-X-Received: by 2002:a2e:630a:: with SMTP id x10-v6mr1895357ljb.11.1545407697451;
-        Fri, 21 Dec 2018 07:54:57 -0800 (PST)
-Received: from myhost.home (chs24.neoplus.adsl.tpnet.pl. [83.31.16.24])
-        by smtp.gmail.com with ESMTPSA id r203sm757153lff.13.2018.12.21.07.54.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 07:54:56 -0800 (PST)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        jacek.anaszewski@gmail.com, krzk@kernel.org, robh@kernel.org,
-        tiny.windzz@gmail.com
-Subject: [GIT PULL] LED updates for 4.21-rc1
-Date:   Fri, 21 Dec 2018 16:54:51 +0100
-Message-Id: <20181221155451.7024-1-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 21 Dec 2018 10:55:26 -0500
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wBLFtHbh012544
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 21 Dec 2018 07:55:18 -0800 (PST)
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 21 Dec 2018 07:55:17 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 0F4072E07C2; Fri, 21 Dec 2018 10:55:16 -0500 (EST)
+Date:   Fri, 21 Dec 2018 10:55:16 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        <patches@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 18/18] mfd: wm8400-core: Make it explicitly non-modular
+Message-ID: <20181221155516.GP4292@windriver.com>
+References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
+ <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
+ <20181219091742.GA16508@imbe.wolfsonmicro.main>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181219091742.GA16508@imbe.wolfsonmicro.main>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+[Re: [PATCH 18/18] mfd: wm8400-core: Make it explicitly non-modular] On 19/12/2018 (Wed 09:17) Charles Keepax wrote:
 
-Please pull LED updates for 4.21-rc1.
+> On Mon, Dec 17, 2018 at 03:31:28PM -0500, Paul Gortmaker wrote:
+> > The Kconfig currently controlling compilation of this code is:
+> > 
+> > drivers/mfd/Kconfig:config MFD_WM8400
+> > drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8400"
+> > 
+> > ...meaning that it currently is not being built as a module by anyone.
+> > 
+> > Lets remove the modular code that is essentially orphaned, so that
+> > when reading the driver there is no doubt it is builtin-only.
+> > 
+> > Since module_init was not in use by this code, the init ordering
+> > remains unchanged with this commit.
+> > 
+> > A trivial function rename from wm8400_module_init to the name
+> > wm8400_driver_init is also done to reduce possible confusion.
+> > 
+> > Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> > 
+> > We also delete the MODULE_LICENSE tag etc. since all that information
+> > is already contained at the top of the file in the comments.
+> > 
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> > Cc: patches@opensource.cirrus.com
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > ---
+> > -MODULE_DEVICE_TABLE(i2c, wm8400_i2c_id);
+> >  
+> >  static struct i2c_driver wm8400_i2c_driver = {
+> >  	.driver = {
+> > @@ -161,7 +160,7 @@ static struct i2c_driver wm8400_i2c_driver = {
+> >  };
+> >  #endif
+> 
+> Do we not want to add suppress_bind_attrs into the i2c_driver
+> struct here?
 
-There are several few-liners, where most of them are fixes
-and improvments. One thing standing out is ground preparation
-for inititializing trigger parameters via Device Tree.
+We can add one if you/maintainers want one, but if you look at the
+original patch, this driver was using the more classic/legacy case of
+subsys_init() vs. platform_driver_register() used in other drivers.
 
-We introduce LED_INIT_DEFAULT_TRIGGER flag for that purpose
-and set it when default trigger is matched. It indicates
-that trigger should parse DT properties to retrieve
-the initialization data when set as default one.
+Not adding a suppress_bind_attrs here was intentional, since I'd decided
+to put in the unbind entries for code that used platform_driver_register()
+where the author had created the .remove code, on the assumption that they
+had put some thought into the process of unbind/remove - to make it
+explicit that unbind is now disabled.
 
-The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
+To be clear, using the subsys_init() doesn't implicitly disable unbind.
+However, there are lots of non-modular drivers out there; ones I've not
+even touched, and to start a project to add an unbind disable to them
+all is beyond the scope of the goals I've listed in the 00/18 preamble.
 
-  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
+I'd hope maybe we can revisit the global default setting for non-modular
+code someday - to make non-modules opt-in instead of opt-out, and
+achieve better consistency from one driver to the next, without having
+to add a new .driver sub-struct to each file for the suppress entry.
 
-are available in the git repository at:
+I think LinusW hinted at in an earlier email in this ongoing review,
+that the default setting didn't quite make sense to him either.  But in
+any case, that is a separate discussion for another time and place.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/leds-for-4.21-rc1
-
-for you to fetch changes up to 8146aace60c7409cc60a1598bc9647a5bbb12eb4:
-
-  led: triggers: Initialize LED_INIT_DEFAULT_TRIGGER if trigger is brought after class (2018-12-10 21:31:55 +0100)
+Let me know if you explicitly want one added, otherwise I'll just leave
+the .remove + .suppress_bind_attrs pairing as described above.
 
 Thanks,
-Jacek Anaszewski
+Paul.
+--
 
-----------------------------------------------------------------
-LEDs for 4.21-rc1
-----------------------------------------------------------------
-Jacek Anaszewski (2):
-      led: triggers: Break the for loop after default trigger is found
-      led: triggers: Add LED_INIT_DEFAULT_TRIGGER flag
-
-Krzysztof Kozlowski (4):
-      leds: gpio: Drop unneeded manual of_node assignment
-      leds: pwm: Simplify with resource-managed devm_led_classdev_register()
-      leds: pwm: Use OF variant of LED registering function
-      led: triggers: Initialize LED_INIT_DEFAULT_TRIGGER if trigger is brought after class
-
-Rob Herring (1):
-      leds: 88pm860x: Use of_node_name_eq for node name comparisons
-
-Yangtao Li (1):
-      leds: powernv: add of_node_put()
-
- drivers/leds/led-triggers.c  |  9 +++++++--
- drivers/leds/leds-88pm860x.c |  2 +-
- drivers/leds/leds-gpio.c     |  1 -
- drivers/leds/leds-powernv.c  | 12 +++++++++---
- drivers/leds/leds-pwm.c      | 22 ++--------------------
- include/linux/leds.h         |  1 +
- 6 files changed, 20 insertions(+), 27 deletions(-)
+> 
+> Thanks, Charles
