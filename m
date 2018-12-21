@@ -6,79 +6,79 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B263CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A18C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8004221906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A4E621906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DVk5GHCz"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kUmZvrYa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732325AbeLUJ1v (ORCPT
+        id S1732408AbeLUJ2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:27:51 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]:40774 "EHLO
-        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729309AbeLUJ1v (ORCPT
+        Fri, 21 Dec 2018 04:28:13 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35634 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729309AbeLUJ2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:27:51 -0500
-Received: by mail-wr1-f48.google.com with SMTP id p4so4481131wrt.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:27:50 -0800 (PST)
+        Fri, 21 Dec 2018 04:28:13 -0500
+Received: by mail-wm1-f68.google.com with SMTP id c126so4949984wmh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:28:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=OimeRyiZm22nYIz6sAlZ0iDArgQfzAM04mHyqm9LWH8=;
-        b=DVk5GHCzVbhJPIwxm7o9f4gWYSJa174fPgTsxRps6718D+hPdOuLH1medehg+VGhlj
-         yEqDISGGD/QwLpjFunS2wD/CUoxRq8YhyFkkLrsLzU72gjBTKhYMX+alTSf7yc6NBgb2
-         fo83y5nyTVgwWIKpNvN/YFAJ+PBvsR64Jp/r8=
+        bh=Qcv3hGekMrrz1HMShgZB7Giu9Ho0A86gysP8ygrJWYU=;
+        b=kUmZvrYa3EVmifeNfcdAtX7HrDwStfauCVkduRBTmXjiYDsxAF2RwcKrDzadAUBfTp
+         Apicf/gkAhH+v5s+Nzmkf4t4x7fozk/DaVsF82I2cwLGFz6lFuBdPquOIABDJUK4vfgw
+         +EBxE+9Zpl8SWWYaIZ5xlSqy2O9GTTYc3CiQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=OimeRyiZm22nYIz6sAlZ0iDArgQfzAM04mHyqm9LWH8=;
-        b=IfWW1SafKz4tI4aNo4l+4KCc9a4DejAoWFeCH49YsjtVkEiDpx3BOVH3XPXV288GoK
-         kFzKtfTVjbhh8FBAoLUsSgQ2acZxx6Wwa4x1u4jYSIIKy8KNKYTrpX9AZELCwcbm8WaJ
-         DCcNk73lbJWvU7Y2bxOWIfGNzvYJ4OuRvoYMqVE+YNmAEV/wqkrxEV694Rce3L9X1ySW
-         JUTivcCyLg7wItLBPCLZe7ZBhnupxxdaciyx5t+zr1N0mecvlHtTwxvY14qsU5+s4+J0
-         ZFl3PqGTRc7KQFbCjVvWhNaaQoNTAFQbK4fjuFt6sWXr9u4HlDchSWtiSY46Pn8J0zah
-         C91Q==
-X-Gm-Message-State: AJcUukfi4N298bmgLSwPPC+w7nmYBB9iQIv8VYYCDTQNgYnjtYsVFDnz
-        xxeoFGnFNDkLNABNifCYhCDpvsD16us=
-X-Google-Smtp-Source: ALg8bN4Sui4JHvYc95/I2xB3Na0tHcaHSH7XPoaMKTvGzg65Bl+umVqfSj/RK+1vl7/sfHiRarb8gA==
-X-Received: by 2002:adf:f8cf:: with SMTP id f15mr1718579wrq.265.1545384469241;
-        Fri, 21 Dec 2018 01:27:49 -0800 (PST)
+        bh=Qcv3hGekMrrz1HMShgZB7Giu9Ho0A86gysP8ygrJWYU=;
+        b=PjsKkWjerjMDDcPcxfghSPewjM3cDecgqYw/OV3THO4QFtJlgnV6qwr3OIQeR8WkAr
+         W6KThwqBUFxK2LTHPTISWJrCRQgqbdvy0HJIt+vKapUJwj1GqfdPPq8CNk8CHo4EVbUe
+         71Kl+3yz1bgZg4yw+CDPJVvKYW2ahwyyJCNKLBl7bs2N3yHN1uOkfCz2jNfs3fdGT/5j
+         BN/7nax7uMA3NpOW3p0owEWcQMOtvHspSiwmxXXlYd6xsSIVUPbvWNp89Jzza+rUUBn4
+         DOubqOKY500gzjgR63ntcsEGaZfWoR7ni8u5tL/I0d0mwQ/tNnP8hOaOs2rNk+g+YstL
+         mwaw==
+X-Gm-Message-State: AJcUukc9ybBi70VTSCHtp9B0/IAOJZ005amwS0pgNfiW1vndVtw8lJ7d
+        DXFou/v+1TOZpguuhJpqrsXQTg==
+X-Google-Smtp-Source: AFSGD/XK/jV0Hl5+QL0jxYQ9gQD2ETIyI6Xab0dk9tjWTaYvqBsh3pV9wDvcZ8s55TGHyBNTytlrag==
+X-Received: by 2002:a1c:85d2:: with SMTP id h201mr1891110wmd.151.1545384491226;
+        Fri, 21 Dec 2018 01:28:11 -0800 (PST)
 Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id h127sm13110940wmd.31.2018.12.21.01.27.48
+        by smtp.gmail.com with ESMTPSA id g188sm8663497wmf.32.2018.12.21.01.28.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 01:27:48 -0800 (PST)
-Date:   Fri, 21 Dec 2018 09:27:47 +0000
+        Fri, 21 Dec 2018 01:28:10 -0800 (PST)
+Date:   Fri, 21 Dec 2018 09:28:09 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] mfd: rave-sp: fix typo in rave_sp_checksum comment
-Message-ID: <20181221092747.GD13248@dell>
-References: <20181215082918.26613-1-tiny.windzz@gmail.com>
+Subject: Re: [PATCH] mfd: ingenic-tcu: Fix bit field description in header
+Message-ID: <20181221092809.GE13248@dell>
+References: <20181216141044.14465-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181215082918.26613-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181216141044.14465-1-paul@crapouillou.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Dec 2018, Yangtao Li wrote:
+On Sun, 16 Dec 2018, Paul Cercueil wrote:
 
-> Caculated -> Calculated
+> The description of the bit was inverted.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  drivers/mfd/rave-sp.c | 2 +-
+>  include/linux/mfd/ingenic-tcu.h | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied, thanks.
