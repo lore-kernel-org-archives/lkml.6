@@ -6,53 +6,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73803C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2FAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42ED021917
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AACC217D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545405718;
-	bh=6hNfz3J/JXnzP0MOdgv9k3hkqS8MnbxlsEvS+ba3FuY=;
+	s=default; t=1545405728;
+	bh=A7a+OVbuOX/VxIHvz9W4CR4fXzWpt1up39Y78X9FbGs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=voX31Zi7PnRScXUhdg8+PHJ++iKYG8z+OLM4RFTPpIkGxreK29Mg1ci0y8gDpMS6A
-	 L9A748JDizkCgVs582MVW+SZsSLjFl35VazkFCiUL1lPOajhq+V/G8aZXOvVsP0OXt
-	 v523MYkPRXhUjVzHtCGA+CF36S2ifBtBqBa3Gfi0=
+	b=I/COJjCbfmMTww8RdYYApptoGb3i+VTYNZmre1r8xnIdfUq5bto2gmDGhInX+8KY+
+	 8v71vTMUxkcQ79rAH8pVPXffm4NIUkh2p98LXE5l8DhpO/7tDlevGwJ9XaBIDMPbbm
+	 dJQxJDCsLycGwFKZsG+fvD6yDE8F3eAq8/A4sXTg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404249AbeLUPV5 (ORCPT
+        id S2404262AbeLUPWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:21:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57378 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 10:22:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404204AbeLUPVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:21:46 -0500
+        id S2404183AbeLUPVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 10:21:43 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A2EA21929;
-        Fri, 21 Dec 2018 15:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7DE221928;
+        Fri, 21 Dec 2018 15:21:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545405706;
-        bh=6hNfz3J/JXnzP0MOdgv9k3hkqS8MnbxlsEvS+ba3FuY=;
+        s=default; t=1545405702;
+        bh=A7a+OVbuOX/VxIHvz9W4CR4fXzWpt1up39Y78X9FbGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=0DqI4pkL3+38bN1xiGByqmfTEDzA8iIRME48tcAnO5q82ble12QvzyJ2xVl57/r4M
-         ueGCUD652xuvsd/+5uVZ4F5+tpC4IP3h459kdw8+xV4q55vqGnar4zKWLG8ffEs8VV
-         IgeXgUDjJsSm7gXH3wz+BdH63mpOvf+8RZuirSco=
+        b=AYoF5IpV58q3d6H8lUBLas+CP7/l8znJY22OeIQA221zE9HnQNeUl/Oq6uNbjOUsP
+         oF49wvyagQjXgJRXIss+wktlUuaBiwrAiIDFEHfMhQvC8KKOcv7GS3kAc7Op6onmOu
+         +X1/QKqj2X18s7PLDjMf1J9MX4XxqMbOayXuU6ew=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
 Cc:     rostedt@goodmis.org, tglx@linutronix.de, C.Emde@osadl.org,
         jkacur@redhat.com, bigeasy@linutronix.de,
         daniel.wagner@siemens.com, julia@ni.com
-Subject: [PATCH RT 8/9] drm/i915: disable tracing on -RT
-Date:   Fri, 21 Dec 2018 09:21:20 -0600
-Message-Id: <bc045daf7dcb077b845955b25a8f2d1b6eaceac0.1545347029.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH RT 6/9] tty: serial: pl011: explicitly initialize the flags variable
+Date:   Fri, 21 Dec 2018 09:21:18 -0600
+Message-Id: <cbe003d988c3904bb5164e6b83282bafc85f6bd0.1545347029.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1545347029.git.tom.zanussi@linux.intel.com>
 References: <cover.1545347029.git.tom.zanussi@linux.intel.com>
 In-Reply-To: <cover.1545347029.git.tom.zanussi@linux.intel.com>
 References: <cover.1545347029.git.tom.zanussi@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,49 +65,43 @@ v3.18.129-rt111 rt-stable review patch.  If anyone has any objections,
 please let me know.
 
 ------------------
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Kurt Kanzenbach <kurt@linutronix.de>
 
-[Upstream commit 05cebb309b156646e61b898e92acc8e46c47ba75]
+[ Upstream commit 3260983a587d528811a15fc00fa2a9e4473c4453 ]
 
-Luca Abeni reported this:
-| BUG: scheduling while atomic: kworker/u8:2/15203/0x00000003
-| CPU: 1 PID: 15203 Comm: kworker/u8:2 Not tainted 4.19.1-rt3 #10
-| Call Trace:
-|  rt_spin_lock+0x3f/0x50
-|  gen6_read32+0x45/0x1d0 [i915]
-|  g4x_get_vblank_counter+0x36/0x40 [i915]
-|  trace_event_raw_event_i915_pipe_update_start+0x7d/0xf0 [i915]
+Silence the following gcc warning:
 
-The tracing events use trace_i915_pipe_update_start() among other events
-use functions acquire spin locks. A few trace points use
-intel_get_crtc_scanline(), others use ->get_vblank_counter() wich also
-might acquire a sleeping lock.
+drivers/tty/serial/amba-pl011.c: In function ‘pl011_console_write’:
+./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   _raw_spin_unlock_irqrestore(lock, flags); \
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/tty/serial/amba-pl011.c:2214:16: note: ‘flags’ was declared here
+  unsigned long flags;
+                ^~~~~
 
-Based on this I don't see any other way than disable trace points on RT.
+The code is correct. Thus, initializing flags to zero doesn't change the
+behavior and resolves the warning.
 
-Cc: stable-rt@vger.kernel.org
-Reported-by: Luca Abeni <lucabe72@gmail.com>
+Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- drivers/gpu/drm/i915/i915_trace.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/tty/serial/amba-pl011.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_trace.h b/drivers/gpu/drm/i915/i915_trace.h
-index f5aa0067755a..3b37567b76c8 100644
---- a/drivers/gpu/drm/i915/i915_trace.h
-+++ b/drivers/gpu/drm/i915/i915_trace.h
-@@ -1,6 +1,10 @@
- #if !defined(_I915_TRACE_H_) || defined(TRACE_HEADER_MULTI_READ)
- #define _I915_TRACE_H_
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 5ef2c62bb904..dede68aa679e 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1930,7 +1930,7 @@ pl011_console_write(struct console *co, const char *s, unsigned int count)
+ {
+ 	struct uart_amba_port *uap = amba_ports[co->index];
+ 	unsigned int status, old_cr, new_cr;
+-	unsigned long flags;
++	unsigned long flags = 0;
+ 	int locked = 1;
  
-+#ifdef CONFIG_PREEMPT_RT_BASE
-+#define NOTRACE
-+#endif
-+
- #include <linux/stringify.h>
- #include <linux/types.h>
- #include <linux/tracepoint.h>
+ 	clk_enable(uap->clk);
 -- 
 2.14.1
 
