@@ -2,167 +2,151 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A09EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCB1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB399218E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c33cxKe4"
+	by mail.kernel.org (Postfix) with ESMTP id 83DA3218E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387584AbeLUBTD (ORCPT
+        id S2390717AbeLUBTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:19:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41307 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387920AbeLUBS7 (ORCPT
+        Thu, 20 Dec 2018 20:19:09 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59778 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387888AbeLUBTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:18:59 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so1690656pgq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 17:18:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x/vXYZ31g3ABH1UZtxHJHemkMZpDKLKHrwM3x9jGNlQ=;
-        b=c33cxKe4uBU7BEYsZx6lgv0tAAjdPgS/8Mw/LHftDlJ9kqBpzJqly+FnBNsKUB/+3o
-         W1wTIM46JEduAp9Z3DmXwaYgyUI4NqadIzlQznCsiNPRzZhLelWTvbHGWCRElukXrn+H
-         RIwqU9q3XJHK5gfeMwll0Q4GNMIvvLeFeX5No=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x/vXYZ31g3ABH1UZtxHJHemkMZpDKLKHrwM3x9jGNlQ=;
-        b=qnSD/Af/r/AzlgpB1u8hLIr+R1g4IzdYKusYOjI17cr0ldfPTcWuJfwt8V+ojo1203
-         7WLCRCUmVzJ/ts8KZHgJ09JLYn08gjUn5crltLmf4LpVNHFsJP8RdvkcNyRifI2wpaJa
-         YlnAEzGwj3YG9OYvDqdSvO4w9SS4dVtEm+k+PXzk/GAKQVV+gVrqSU3o2Yk2v74CW28J
-         gMrZHIb0yMSwZS0G/Uy+TqGg7maKUVUUYs/M5umx3EktdF/jx+K/oButUehoksIrRsi9
-         a806c4hWKecV54tJIQN3PgB+reNJsO/+8B36o4AP3RIU1AzhJzOsKCoMRJ706iGKtWy/
-         YSSg==
-X-Gm-Message-State: AA+aEWasahM4kk2xpXwFyybHzCE89XQWAsj1f2F5d8Isg9LMXYQx8qh3
-        qh7Uu0ftlwgu7a3HUTOTenFuOg==
-X-Google-Smtp-Source: AFSGD/UrZ1/uKlhKhbW5A3qs6S9RVEF1S/udQL+Ymeqb+AfxtrmPT0sNNOcLJq3dBC1mPDMFJtXuHg==
-X-Received: by 2002:a62:7dcb:: with SMTP id y194mr463884pfc.113.1545355138374;
-        Thu, 20 Dec 2018 17:18:58 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id u69sm45723955pfj.116.2018.12.20.17.18.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 17:18:57 -0800 (PST)
-Date:   Thu, 20 Dec 2018 17:18:54 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ben Chan <benchan@chromium.org>, linux-arm-msm@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] soc: qcom: rmtfs-mem: Add class to enable uevents
-Message-ID: <20181221011853.GA189656@google.com>
-References: <20181218000834.201748-1-evgreen@chromium.org>
- <20181218000834.201748-2-evgreen@chromium.org>
+        Thu, 20 Dec 2018 20:19:07 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A1DFE72CC53;
+        Fri, 21 Dec 2018 04:19:03 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 928EA964E9F; Fri, 21 Dec 2018 04:19:03 +0300 (MSK)
+Date:   Fri, 21 Dec 2018 04:19:03 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Vineet Gupta <vgupta@synopsys.com>
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/27] Move EM_ARCOMPACT and EM_ARCV2 to
+ uapi/linux/elf-em.h
+Message-ID: <20181221011902.GA4591@altlinux.org>
+References: <20181213171833.GA5240@altlinux.org>
+ <20181213172142.GD6024@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
 Content-Disposition: inline
-In-Reply-To: <20181218000834.201748-2-evgreen@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181213172142.GD6024@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
 
-On Mon, Dec 17, 2018 at 04:08:33PM -0800, Evan Green wrote:
-> Currently the qcom_rmtfs_memN devices are entirely invisible to the udev world.
-> Add a class to the rmtfs device so that uevents fire when the device is added.
-> 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, Dec 13, 2018 at 08:21:42PM +0300, Dmitry V. Levin wrote:
+> These should never have been defined in the arch tree to begin with, and
+> now uapi/linux/audit.h header is going to use EM_ARCOMPACT and EM_ARCV2
+> in order to define AUDIT_ARCH_ARCOMPACT and AUDIT_ARCH_ARCV2 which are
+> needed to implement syscall_get_arch() which in turn is required to
+> extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+>=20
+> Acked-by: Vineet Gupta <vgupta@synopsys.com>
+> Cc: Elvira Khabirova <lineprinter@altlinux.org>
+> Cc: Eugene Syromyatnikov <esyr@redhat.com>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
+> Cc: linux-snps-arc@lists.infradead.org
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 > ---
-> 
->  drivers/soc/qcom/rmtfs_mem.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-> index 97bb5989aa211..0bf800ee2a978 100644
-> --- a/drivers/soc/qcom/rmtfs_mem.c
-> +++ b/drivers/soc/qcom/rmtfs_mem.c
-> @@ -132,6 +132,11 @@ static int qcom_rmtfs_mem_release(struct inode *inode, struct file *filp)
->  	return 0;
->  }
->  
-> +static struct class rmtfs_class = {
-> +	.owner          = THIS_MODULE,
-> +	.name           = "rmtfs",
-> +};
-> +
->  static const struct file_operations qcom_rmtfs_mem_fops = {
->  	.owner = THIS_MODULE,
->  	.open = qcom_rmtfs_mem_open,
-> @@ -173,9 +178,15 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  
->  	}
->  
-> +	ret  = class_register(&rmtfs_class);
-> +	if (ret)
-> +		return ret;
 
-Hmm, is this how classes are supposed to work? Usually, you have the
-possibility of more than 1 device per class, and therefore you don't
-register the class in the driver probe -- you register it in the init()
-routine, or something similar. As it is, I expect this will break if
-there were ever a second rmtfs device.
+Looks like the whole series is going to be pinged for quite some time yet,
+so would you mind taking this patch into your arc tree, please?
 
-Brian
+Thanks.
 
-> +
->  	rmtfs_mem = kzalloc(sizeof(*rmtfs_mem), GFP_KERNEL);
-> -	if (!rmtfs_mem)
-> -		return -ENOMEM;
-> +	if (!rmtfs_mem) {
-> +		ret = -ENOMEM;
-> +		goto unregister_class;
-> +	}
->  
->  	rmtfs_mem->addr = rmem->base;
->  	rmtfs_mem->client_id = client_id;
-> @@ -199,8 +210,8 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  
->  	dev_set_name(&rmtfs_mem->dev, "qcom_rmtfs_mem%d", client_id);
->  	rmtfs_mem->dev.id = client_id;
-> +	rmtfs_mem->dev.class = &rmtfs_class;
->  	rmtfs_mem->dev.devt = MKDEV(MAJOR(qcom_rmtfs_mem_major), client_id);
+> Notes:
+>     v6: unchanged
+>     v5: added Cc
+>     v2: added Acked-by
+>=20
+>  arch/arc/include/asm/elf.h  | 6 +-----
+>  include/uapi/linux/elf-em.h | 2 ++
+>  2 files changed, 3 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/arc/include/asm/elf.h b/arch/arc/include/asm/elf.h
+> index aa2d6da9d187..2b80c184c9c8 100644
+> --- a/arch/arc/include/asm/elf.h
+> +++ b/arch/arc/include/asm/elf.h
+> @@ -10,13 +10,9 @@
+>  #define __ASM_ARC_ELF_H
+> =20
+>  #include <linux/types.h>
+> +#include <linux/elf-em.h>
+>  #include <uapi/asm/elf.h>
+> =20
+> -/* These ELF defines belong to uapi but libc elf.h already defines them =
+*/
+> -#define EM_ARCOMPACT		93
 > -
->  	ret = cdev_device_add(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to add cdev: %d\n", ret);
-> @@ -235,11 +246,13 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  
->  	return 0;
->  
-> +
->  remove_cdev:
->  	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  put_device:
->  	put_device(&rmtfs_mem->dev);
+> -#define EM_ARCV2		195	/* ARCv2 Cores */
 > -
-> +unregister_class:
-> +	class_unregister(&rmtfs_class);
->  	return ret;
->  }
->  
-> @@ -258,7 +271,7 @@ static int qcom_rmtfs_mem_remove(struct platform_device *pdev)
->  
->  	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  	put_device(&rmtfs_mem->dev);
-> -
-> +	class_unregister(&rmtfs_class);
->  	return 0;
->  }
->  
-> -- 
-> 2.18.1
-> 
+>  #define EM_ARC_INUSE		(IS_ENABLED(CONFIG_ISA_ARCOMPACT) ? \
+>  					EM_ARCOMPACT : EM_ARCV2)
+> =20
+> diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+> index 93722e60204c..42b7546352a6 100644
+> --- a/include/uapi/linux/elf-em.h
+> +++ b/include/uapi/linux/elf-em.h
+> @@ -34,6 +34,7 @@
+>  #define EM_M32R		88	/* Renesas M32R */
+>  #define EM_MN10300	89	/* Panasonic/MEI MN10300, AM33 */
+>  #define EM_OPENRISC     92     /* OpenRISC 32-bit embedded processor */
+> +#define EM_ARCOMPACT	93	/* ARCompact processor */
+>  #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
+>  #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+>  #define EM_TI_C6000	140	/* TI C6X DSPs */
+> @@ -41,6 +42,7 @@
+>  #define EM_TILEPRO	188	/* Tilera TILEPro */
+>  #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+>  #define EM_TILEGX	191	/* Tilera TILE-Gx */
+> +#define EM_ARCV2	195	/* ARCv2 Cores */
+>  #define EM_RISCV	243	/* RISC-V */
+>  #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+>  #define EM_FRV		0x5441	/* Fujitsu FR-V */
+> --=20
+> ldv
+
+--=20
+ldv
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcHD+GAAoJEAVFT+BVnCUIXoEP/0MkGGzQjRQUakMDP05A7jqq
+bs5Kv7Svy6RBQ4OEgybHUIYEA9vRM6XixWV7X4pp4aXxr7Iz6FEpEYSQXFuvCydi
+lIDEv9QesxIfQkBeL45zNr6RUI3lnJAqDj2rFXV6fddlDEQPD0sT8ufLpy7IoM0N
+Enw+OQjl8+LeLEEe3qPegqnCiWOB5jbdmhlw08J7KMuS1KwKnMKVQF5t+QPvgemv
+5BI+9aPVub5Nceb3Z573819qb3rc6cwJKS/zY/Tos4/gnA9GBFL60G9tpEv4XEIu
+OPnkOHudBtSCIkYTRgy6ZNmuvEC3L1+f4Py20GQ2JuUC8YvWiPndPb9WJoGQoLe+
+sxFM6Lk1Yr3urxiXzPGUjSiUmqL4gekiQukod9anybiKCCIdADXDC1bdETRXrohG
+kP2Vty/1VkOjm5Q4GBv/532p6+8rowZEnJZsuZBHN9YKQYUZTgdYwmTCaFBvj3DR
+sfJmXPZEk1J7+lNA2dNmt5kDjdXyjbCtMJXz8UTbPhN8SZefSGcvf43JXfPDVgLD
+UuBQ248UVvqgkkMdeJmw+s7o4nmqpWzR664a9NXsYCPUJQXrRUbw25/+ihI4hPVn
+Nj7dGNXNUUCDkG4khK6pBa4Ji0B4rtz7RbjMzBhTHvH8Xaow0BAVg2xHrYLNWZqh
+knNfhapzFr0ssgAeDseT
+=lVyM
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
