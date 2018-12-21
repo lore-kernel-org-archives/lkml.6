@@ -2,191 +2,138 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA08EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F994C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E4EF21928
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE15421929
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R9B1oKGV"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="VPP+NlCr";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="WuJ+tfWX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392105AbeLUWFi (ORCPT
+        id S2392115AbeLUWGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 17:05:38 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41373 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392089AbeLUWFh (ORCPT
+        Fri, 21 Dec 2018 17:06:09 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:19985 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387590AbeLUWGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 17:05:37 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u6so3061781plm.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 14:05:37 -0800 (PST)
+        Fri, 21 Dec 2018 17:06:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1545429968; x=1576965968;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=0PKDVzVOfAWE6AbD7hU7Js0UF9v6uYViSnYDr1p6pZY=;
+  b=VPP+NlCrFQyosojSdi4xaHK/ZFGM6sZtEUFecUCupeVFgeNieF2HVdnd
+   J03BTHqlGO2o6KmtCVXr3iU1Wd+8rXZQ0uLoO0Tve7E4OiJi8NA+3v2Bm
+   VBisT/EPGNTvo0l5Hsd/eUcgktzNJqHuhwP1IirscheBymI8FyZEGLAcZ
+   lSD2HIkMVEaOjG87VEIRdk1grf3aKWcCQmRvY6IYa9FtrXb96yV0rSLMj
+   myguOE80eiKr9skg3wxmgfDK1WDlgAENL4yJE7oYsN38KFWB5J9VYarfF
+   nkkMMkcwMhmIi6ExUUV7VOSnr9QVH1grrAHr3yDKJVv+gFwoUbvR505fa
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,383,1539619200"; 
+   d="scan'208";a="98446506"
+Received: from mail-bn3nam04lp2059.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([104.47.46.59])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2018 06:06:07 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AsQsPg3ShIURHNXRg58ZbH/pPp0okhxVuZTUYM5av44=;
-        b=R9B1oKGV3nG/jxvqGU0EpTtXB9Q+6BhMv30KmuSkn4kCyYzKnewdwQ7iDXv5c98BK9
-         m0dVpkF1eMZbNgABxZgZmAe7weP1Qsjmnw45ItSD3To5gBVyteUOQXpzp9JiLTJU7fpE
-         OI0g62DGVXsHQ49yTDHWaxsSIt4jZrI0C4wR8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AsQsPg3ShIURHNXRg58ZbH/pPp0okhxVuZTUYM5av44=;
-        b=ooDIo8koqhEdgEQlE3qqkXhoEIm0Mjj9hSs4zJYHNGDfPwvr9zoSZIhOeBq03yQlj4
-         DxxkwyzrBjXtmQjL+YUesXgzSPzrAL+BSfxm4dvGsFsvZNlIn0jnNInIcriZqH1l1e4E
-         +Y3abZ6CGmzcV75agYDJpY860hLLPDdRr+nnaZ+gQ/EY0G45NSeF31rkzMrmy9UvANkK
-         ymh6eJbQ7Wh6J1sNQ5oD3xgtefCYtAj5Fxc7tBa7S9Ie8p8ijxTEx33lCEl9mASz4pjd
-         3F/rqm0VrGmZUcsQR88WOnG8G198XKYzBpiRjLsnl+dlWwGU/6oHMLdflj6062BCEH+V
-         KC2w==
-X-Gm-Message-State: AJcUukdyBRT3PGvcn0X+ZsnxLdnNt8yWWmBoPSRF00fFqYcTyVvzfX0v
-        oJb87TqJaNr8zVCxuwXxKqYAxA==
-X-Google-Smtp-Source: ALg8bN7WRz15jcIQMqDR4USgQ73Bv6HciGcKxCCn8Efuc0WPSA8vKpVvwy9TaB7fRG5C42Mv7pjUhA==
-X-Received: by 2002:a17:902:4681:: with SMTP id p1mr4364191pld.184.1545429936563;
-        Fri, 21 Dec 2018 14:05:36 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i73sm36700442pfi.66.2018.12.21.14.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 14:05:35 -0800 (PST)
-Date:   Fri, 21 Dec 2018 14:05:33 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Ben Chan <benchan@chromium.org>, linux-arm-msm@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] soc: qcom: rmtfs-mem: Add class to enable uevents
-Message-ID: <20181221220533.GB9704@minitux>
-References: <20181221201001.160613-1-evgreen@chromium.org>
- <20181221201001.160613-2-evgreen@chromium.org>
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0PKDVzVOfAWE6AbD7hU7Js0UF9v6uYViSnYDr1p6pZY=;
+ b=WuJ+tfWXZsMprmBdaysy/Z6emamTvKGLnPruLCiofuES7Ul8S6Q/BcTubUnaGQUHF7RCAuxv8JKw2xNf440/+ONJuU0V3G1N62SV2SbfSwXGhZUIQS/FdtPlMOlu2z6yKNTDB6/dG+CSf8swHJWkFCTzSxqaLceJeWGoufhGZ6o=
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com (10.173.48.18) by
+ MWHPR04MB0512.namprd04.prod.outlook.com (10.173.49.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.19; Fri, 21 Dec 2018 22:06:03 +0000
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::9067:fb44:66b2:7604]) by MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::9067:fb44:66b2:7604%4]) with mapi id 15.20.1446.022; Fri, 21 Dec 2018
+ 22:06:03 +0000
+From:   Alistair Francis <Alistair.Francis@wdc.com>
+To:     "Palmpalmer@sifive.com" <Palmpalmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alistair Francis <Alistair.Francis@wdc.com>
+Subject: [PATCH v2] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Topic: [PATCH v2] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Index: AQHUmXldu0Zay3Cr8UK9zdWwWtKLwQ==
+Date:   Fri, 21 Dec 2018 22:06:03 +0000
+Message-ID: <20181221220555.13679-1-alistair.francis@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.19.1
+x-clientproxiedby: BYAPR07CA0028.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::41) To MWHPR04MB0401.namprd04.prod.outlook.com
+ (2603:10b6:300:70::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alistair.Francis@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [199.255.44.171]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0512;6:fkfFa0C1LMcmCoi6vpGWq3TNWSOQeO+707IM9/EueXFDvwiKKY3JjmXpwBiJfM1R55ETu4f1ZRPVwGbaVAO+N2q7i5185kQfqKSxDXxsCFOVrA6BJmJ0GeShCovpLv1+lUEdD8BVb8bDvE+OcHlsuv0Evgiv7uuoShxsl9lL38LDHF25ofFj0G6wWmqbcRbMF6hIMIemyRyfsdKFZaeEEnd43ogQ28snAylUAnWhe2uvUdGZSnm16O3QNVCTzPPJc6u4+EQA/QFpspkjuKyaSZh5Hy0jSsR4ZvukxJ+hpOON+PYnbQ5fEiXRIc3ZeiX/aHu6I9yyx5YoeHNlmF60T+CA0gFS9q3WeaZbvtbfMter70+GntOM/VorE7fAhu9+W4QPwrodNi0IHoKmaF8HJ8SdV2AX6kYdCYwuMM5RvMgUBt7ZBl+2RwzvsUF1KBcx5efLSBFppMiHLZ/ZHCIDVQ==;5:yvuc1OfInwtMAEzMORR2qyFLPYyxXNPQ/xdUAUtmrLv8gTjfIruCXAgbs2jIQhYcjQJ+gg/0wI/R9gdMhK6Sz81mwDi3kqfazSTKnP/N6t+gndPhPAG6a2jWySi54RsZuc2m1+U+hEWUR24u+hwQLTbzx0h+ZRcIQ0MgZLFGBe4=;7:zSRgKApEOJ13Mk5fTWiHWyFw2x0ETg3XEqtMbA3GCW7H/QeCgc652LNH+8lYQP9h2WJiCmCOtI6hPZFakvop0lxC1nxXOc2vK50lHjif8DoOENHMnK8McJIF+XMsGOlTLpV6jJFMdmMHu1+oU6X30w==
+x-ms-office365-filtering-correlation-id: cfeffbe1-9873-43d8-74f5-08d667907f7c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0512;
+x-ms-traffictypediagnostic: MWHPR04MB0512:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0512325DAAAEF07A972801AF90B80@MWHPR04MB0512.namprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR04MB0512;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0512;
+x-forefront-prvs: 0893636978
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(136003)(376002)(39860400002)(366004)(199004)(189003)(486006)(44832011)(66066001)(102836004)(36756003)(52116002)(386003)(6506007)(2616005)(316002)(476003)(54906003)(68736007)(110136005)(186003)(1076003)(99286004)(97736004)(3846002)(26005)(50226002)(256004)(6116002)(8676002)(8936002)(25786009)(81156014)(81166006)(2501003)(14454004)(478600001)(86362001)(72206003)(2906002)(71190400001)(71200400001)(5660300001)(4326008)(6486002)(6512007)(305945005)(6436002)(105586002)(106356001)(53936002)(7736002)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0512;H:MWHPR04MB0401.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 5p1Y7JYZCmIsoDg2vaOHSZ0dxtQCXS9obous+rdc0kHPkT6dqvu48YBKF1gATSHhI+FXKlI4RXoKFVaOXk9geId3Pt+rWSkBWgSm5/XPcvwmKqaN9Xink9wc+XeFFaymJ5Ltq98FFUj/Gf2gVxRleKOXAGbrraVctZJEsqe84ra2Z3QvXrxmS4Q/L/k4mDGCRcy/ieXvI4PdhRNb8mr1DUgD64QHujPhaFNthufG65E6XVl/qBWV2I2J4AvFFNi0LS71T5+JWHpS6zH8R1D84asibPU0YtnOHtxCItFaAQMPIcYU0DT7pVaJLavCLNko
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221201001.160613-2-evgreen@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfeffbe1-9873-43d8-74f5-08d667907f7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 22:06:03.6632
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 21 Dec 12:10 PST 2018, Evan Green wrote:
+Enable generic PCIe by default in the RISC-V defconfig, this allows us
+to use QEMU's PCIe support out of the box.
 
-> Currently the qcom_rmtfs_memN devices are entirely invisible to the udev world.
-> Add a class to the rmtfs device so that uevents fire when the device is added.
-> 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+---
+v2:
+ - Keep the Xilinx PCIE enabled
 
-I agree with Brian on the whitespace chances, apart from that you have
-my
+ arch/riscv/configs/defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index ef4f15df9adf..2186d4ee1d4e 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -14,6 +14,13 @@ CONFIG_EXPERT=3Dy
+ CONFIG_BPF_SYSCALL=3Dy
+ CONFIG_SMP=3Dy
+ CONFIG_PCI=3Dy
++CONFIG_PCI_ECAM=3Dy
++CONFIG_PCI_HOST_COMMON=3Dy
++CONFIG_PCI_HOST_GENERIC=3Dy
++CONFIG_PCIEPORTBUS=3Dy
++CONFIG_PCIEAER=3Dy
++CONFIG_PCIEASPM=3Dy
++CONFIG_PCIEASPM_DEFAULT=3Dy
+ CONFIG_PCIE_XILINX=3Dy
+ CONFIG_MODULES=3Dy
+ CONFIG_MODULE_UNLOAD=3Dy
+--=20
+2.19.1
 
-Regards,
-Bjorn
-
-> ---
-> 
-> Changes in v2:
-> - Moved class registration/deregistration into init/exit routines (Brian)
-> 
->  drivers/soc/qcom/rmtfs_mem.c | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-> index 97bb5989aa211..99a1363ece254 100644
-> --- a/drivers/soc/qcom/rmtfs_mem.c
-> +++ b/drivers/soc/qcom/rmtfs_mem.c
-> @@ -132,6 +132,11 @@ static int qcom_rmtfs_mem_release(struct inode *inode, struct file *filp)
->  	return 0;
->  }
->  
-> +static struct class rmtfs_class = {
-> +	.owner          = THIS_MODULE,
-> +	.name           = "rmtfs",
-> +};
-> +
->  static const struct file_operations qcom_rmtfs_mem_fops = {
->  	.owner = THIS_MODULE,
->  	.open = qcom_rmtfs_mem_open,
-> @@ -199,8 +204,8 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  
->  	dev_set_name(&rmtfs_mem->dev, "qcom_rmtfs_mem%d", client_id);
->  	rmtfs_mem->dev.id = client_id;
-> +	rmtfs_mem->dev.class = &rmtfs_class;
->  	rmtfs_mem->dev.devt = MKDEV(MAJOR(qcom_rmtfs_mem_major), client_id);
-> -
->  	ret = cdev_device_add(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to add cdev: %d\n", ret);
-> @@ -239,7 +244,6 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  put_device:
->  	put_device(&rmtfs_mem->dev);
-> -
->  	return ret;
->  }
->  
-> @@ -258,7 +262,6 @@ static int qcom_rmtfs_mem_remove(struct platform_device *pdev)
->  
->  	cdev_device_del(&rmtfs_mem->cdev, &rmtfs_mem->dev);
->  	put_device(&rmtfs_mem->dev);
-> -
->  	return 0;
->  }
->  
-> @@ -277,32 +280,42 @@ static struct platform_driver qcom_rmtfs_mem_driver = {
->  	},
->  };
->  
-> -static int qcom_rmtfs_mem_init(void)
-> +static int __init qcom_rmtfs_mem_init(void)
->  {
->  	int ret;
->  
-> +	ret = class_register(&rmtfs_class);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = alloc_chrdev_region(&qcom_rmtfs_mem_major, 0,
->  				  QCOM_RMTFS_MEM_DEV_MAX, "qcom_rmtfs_mem");
->  	if (ret < 0) {
->  		pr_err("qcom_rmtfs_mem: failed to allocate char dev region\n");
-> -		return ret;
-> +		goto unregister_class;
->  	}
->  
->  	ret = platform_driver_register(&qcom_rmtfs_mem_driver);
->  	if (ret < 0) {
->  		pr_err("qcom_rmtfs_mem: failed to register rmtfs_mem driver\n");
-> -		unregister_chrdev_region(qcom_rmtfs_mem_major,
-> -					 QCOM_RMTFS_MEM_DEV_MAX);
-> +		goto unregister_chrdev;
->  	}
->  
-> +	return 0;
-> +
-> +unregister_chrdev:
-> +	unregister_chrdev_region(qcom_rmtfs_mem_major, QCOM_RMTFS_MEM_DEV_MAX);
-> +unregister_class:
-> +	class_unregister(&rmtfs_class);
->  	return ret;
->  }
->  module_init(qcom_rmtfs_mem_init);
->  
-> -static void qcom_rmtfs_mem_exit(void)
-> +static void __exit qcom_rmtfs_mem_exit(void)
->  {
->  	platform_driver_unregister(&qcom_rmtfs_mem_driver);
->  	unregister_chrdev_region(qcom_rmtfs_mem_major, QCOM_RMTFS_MEM_DEV_MAX);
-> +	class_unregister(&rmtfs_class);
->  }
->  module_exit(qcom_rmtfs_mem_exit);
->  
-> -- 
-> 2.18.1
-> 
