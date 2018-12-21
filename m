@@ -2,144 +2,134 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3986C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2102C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6788621908
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:46:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFRLZWj3"
+	by mail.kernel.org (Postfix) with ESMTP id B80A92173C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388700AbeLUJqI (ORCPT
+        id S2388730AbeLUJrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:46:08 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36304 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729789AbeLUJqH (ORCPT
+        Fri, 21 Dec 2018 04:47:31 -0500
+Received: from mail.netline.ch ([148.251.143.178]:57772 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729789AbeLUJrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:46:07 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so3463984lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rZpt6IZJExB+1DUmVUcp0qlAQJqjtaoSfZntRDcDJUk=;
-        b=ZFRLZWj3jysGlW8tRcnKahfc7Hn9I/Q/3aY1xlR6XRRvH2M620GzqtmSuVOKQ8Hj9m
-         FQuxO9RKLXFKE0edPbzw7DuqhYHBS3kcaMj9z795CREqe28DSSVASXW08ktQLDvCSIq0
-         5rfbCeipeqiZ6j1QEGeMNgC9TiqSwBmhG9gJ+YwYC37Gkqr8t/G1gg1pNbRHtHWS0gou
-         ChB/gJCsmw+nhgiuh12gqtooIlTYdJgWDSYe9qvx4ZDpjEU8bmZUEuxavO5dB26jr2SG
-         kyZ16UGaeiOvBjvMwKI4Cev34enYc390T9wUuj3CgN7fPSqLeZinVdw3/1EomWm9281E
-         UYAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rZpt6IZJExB+1DUmVUcp0qlAQJqjtaoSfZntRDcDJUk=;
-        b=TuZ5T0lEo6T3VV9LPExaWrGD9Lmnb8SZCLL3ydfEpGSz8xG820arN/EofQ4CmKo51Z
-         Vbd5r/B0rRIaVVPcNn3+T7VSNoYAqpfEVUDRBXwd0XRvoNysIbPZrfSyIw3pAmx4REh4
-         faHbzkk/P4VeZwhQvekPuFuNgAsEN7Epytn1Q3yDnE1H66EOyxl4q8VSccik6dvx0hhv
-         OBvFG5JfK70dPwMnEV2CMK91gnQ0ZJTDDLLUD6Eqp9JJByRIBnOgv5qJwjW0d2gydN34
-         P72kCZ3eJzmxKKQy5Pkv7PPLNRYU+AC1r4Fpp3VmWKITYpiVSreTv2HXxkR5TEzayoR4
-         LMVA==
-X-Gm-Message-State: AA+aEWZgm4UYRj9tj1K4LLyq30j9jTND5xUPRxSFvd1dlqHZLLKLW8l7
-        ktm6k5cypwEdVTIMEHzDm3rPaXB5
-X-Google-Smtp-Source: AFSGD/UUOeYUsa9qdSv8VLQbNlu50V7Kzy4KnMfVtEf6yGU2DGlmk270Ahd78hCvRxwVkWgmGgZvWg==
-X-Received: by 2002:a19:9904:: with SMTP id b4mr927334lfe.95.1545385565244;
-        Fri, 21 Dec 2018 01:46:05 -0800 (PST)
-Received: from maxim-H61M-D2-B3.d-systems.local ([185.75.190.112])
-        by smtp.gmail.com with ESMTPSA id k21-v6sm4430909ljc.15.2018.12.21.01.46.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 01:46:04 -0800 (PST)
-From:   Max Uvarov <muvarov@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     UNGLinuxDriver@microchip.com, steve.glendinning@shawell.net,
-        Max Uvarov <muvarov@gmail.com>
-Subject: [PATCH] usbnet: smsc95xx: allow to down ethernet link
-Date:   Fri, 21 Dec 2018 12:45:53 +0300
-Message-Id: <20181221094553.13137-1-muvarov@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Dec 2018 04:47:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 4D95C2A6056;
+        Fri, 21 Dec 2018 10:47:28 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 0dEzdcgAPg9s; Fri, 21 Dec 2018 10:47:27 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id A283C2A6055;
+        Fri, 21 Dec 2018 10:47:27 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1gaHOx-0001hh-CB; Fri, 21 Dec 2018 10:47:27 +0100
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexdeucher@gmail.com>
+Cc:     dnicoara@chromium.org,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>, kernel@collabora.com,
+        "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
+References: <20181123215326.14274-1-helen.koike@collabora.com>
+ <20181127133418.GT9144@intel.com>
+ <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
+ <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+ <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
+ <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
+ <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
+ <CADnq5_P9nsquCV95CSZC4NCr7YNJ76ZmCruJA=f1N8dLGYm=ow@mail.gmail.com>
+ <CAKMK7uHu5XMQzr7ocVEcpDS9H6pQ-BHfHNE51_YK7rLkTQC_9g@mail.gmail.com>
+ <CADnq5_P1smiGhYyoZQsEAJG0+jBx6f75HwEFAf2RkaoNp0HEiA@mail.gmail.com>
+ <CAKMK7uGSiBv9H_xAj2fuk=XYocefQU4bFk+fPr=iWGsaPxOwhw@mail.gmail.com>
+ <fb45217c-d9ad-b208-d55d-51299ead108b@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <9be83a7f-aa5f-8d8f-0486-db68e12c5feb@daenzer.net>
+Date:   Fri, 21 Dec 2018 10:47:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <fb45217c-d9ad-b208-d55d-51299ead108b@daenzer.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-allow ifconfig ethX to down ethernet link. Ethernet
-part of chip is switched to power down more and on
-ifconfig up driver does soft reset and restores it's
-state.
+On 2018-12-20 6:16 p.m., Michel Dänzer wrote:
+> On 2018-12-20 6:09 p.m., Daniel Vetter wrote:
+>> On Thu, Dec 20, 2018 at 6:03 PM Alex Deucher <alexdeucher@gmail.com> wrote:
+>>> On Thu, Dec 20, 2018 at 11:54 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+>>
+>>>> Not sure about the gamma thing since we had opposite bugs on i915
+>>>> about gamma not being vsynced and tearing terribly. Cursor is special
+>>>> since it tends to be too small to notice tearing.
+>>>
+>>> Our cursor hw (and possibly gamma as well Nicholas?  Harry?) is double
+>>> buffered, so we can update it any time for the most part and the
+>>> changes won't take affect until the next vupdate period.
+>>
+>> Hm, I guess we could make the gamma update optionally async, and let
+>> drivers deal. The issue is that the current async helper stuff won't
+>> cope with gamma updates (it's aimed at plane updates only, not at crtc
+>> property updates). Or we get userspace to do proper atomic updates. Or
+>> we do some faking in the kernel, e.g. waiting with the gamma update
+>> until the next atomic update happens. But that kinda breaks
+>> ->atomic_check.
+> 
+> Would it be possible to merge gamma changes into a pending commit, if
+> there is one, and create a new commit otherwise?
+> 
+> Otherwise the atomic API just moves this same problem to be solved by
+> userspace.
 
-Signed-off-by: Max Uvarov <muvarov@gmail.com>
----
- drivers/net/usb/smsc95xx.c | 34 +++++++++++++++++++++++++++++++++-
- drivers/net/usb/smsc95xx.h |  5 +++++
- 2 files changed, 38 insertions(+), 1 deletion(-)
+Actually, I'm not sure this is even solvable in a Xorg driver. When it
+gets called to update the gamma LUT:
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 41e283f3eeb9..e72b038cfb79 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1142,9 +1142,41 @@ static int smsc95xx_reset(struct usbnet *dev)
- 	return 0;
- }
- 
-+static int smsc95xx_lan_power_down(struct net_device *net)
-+{
-+	struct usbnet *dev = netdev_priv(net);
-+	struct mii_if_info *mii = &dev->mii;
-+	int ret;
-+
-+	ret = smsc95xx_mdio_read_nopm(net, mii->phy_id, SMSC95XX_PHY_BASIC);
-+	if (ret < 0)
-+		return ret;
-+	ret &= ~SMSC95XX_PHY_BASIC_BIT_AUTONEG; /* disable autoneg */
-+	smsc95xx_mdio_write_nopm(net, mii->phy_id, SMSC95XX_PHY_BASIC, ret);
-+
-+	ret = smsc95xx_mdio_read_nopm(net, mii->phy_id, SMSC95XX_PHY_BASIC);
-+	if (ret < 0)
-+		return ret;
-+	ret |= SMSC95XX_PHY_BASIC_BIT_POWER_DOWN; /* enable power down */
-+	smsc95xx_mdio_write_nopm(net, mii->phy_id, SMSC95XX_PHY_BASIC, ret);
-+
-+	return 0;
-+}
-+
-+static int smsc95xx_stop(struct net_device *net)
-+{
-+	int ret;
-+
-+	ret = smsc95xx_lan_power_down(net);
-+	if (ret)
-+		netdev_err(net, "err switch to power down mode\n");
-+
-+	return usbnet_stop(net);
-+}
-+
- static const struct net_device_ops smsc95xx_netdev_ops = {
- 	.ndo_open		= usbnet_open,
--	.ndo_stop		= usbnet_stop,
-+	.ndo_stop		= smsc95xx_stop,
- 	.ndo_start_xmit		= usbnet_start_xmit,
- 	.ndo_tx_timeout		= usbnet_tx_timeout,
- 	.ndo_change_mtu		= usbnet_change_mtu,
-diff --git a/drivers/net/usb/smsc95xx.h b/drivers/net/usb/smsc95xx.h
-index 526faa0c44e6..547e8053feba 100644
---- a/drivers/net/usb/smsc95xx.h
-+++ b/drivers/net/usb/smsc95xx.h
-@@ -47,6 +47,11 @@
- #define RX_STS_DB_			(0x00000004)	/* Dribbling */
- #define RX_STS_CRC_			(0x00000002)	/* CRC Error */
- 
-+/* Basic Control Register */
-+#define SMSC95XX_PHY_BASIC		  (0x0)
-+#define SMSC95XX_PHY_BASIC_BIT_AUTONEG	  BIT(12)
-+#define SMSC95XX_PHY_BASIC_BIT_POWER_DOWN BIT(11)
-+
- /* SCSRs */
- #define ID_REV				(0x00)
- #define ID_REV_CHIP_ID_MASK_		(0xFFFF0000)
+1. If there's a pending atomic commit, it cannot amend that, can it?
+
+2. It has no way of knowing when the next atomic commit would be
+submitted e.g. for a page flip, so it kind of has to create its own
+commit for the gamma update.
+
+
 -- 
-2.17.1
-
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
