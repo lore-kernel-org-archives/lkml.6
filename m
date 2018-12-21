@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF084C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED17AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA90218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB32F218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NwDKccBr"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OuWB2aR1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389591AbeLUKkn (ORCPT
+        id S2389902AbeLUKlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:40:43 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43310 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732887AbeLUKkn (ORCPT
+        Fri, 21 Dec 2018 05:41:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35819 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387699AbeLUKll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:40:43 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u18so3555654lff.10
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:40:42 -0800 (PST)
+        Fri, 21 Dec 2018 05:41:41 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so4311909ljb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:41:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DRYfLbBRwTZyuWd3nX/tqmFJpmA8TQYCaabirz+F2Ok=;
-        b=NwDKccBrW67G2Z6YLBqi9YNJzCw2exYd4p9qRcKgPEU9tGiPkSRrE4iJUjeaTsSeta
-         25D+anfhD7ZfLLAG3Wf+PuiASYfb2RzJ/iJk/pdDxbKCnNsCK7bVnCeOKOnkYnrA6lfy
-         onKXGGHbBViLx68JxE3mDUkcvX0FfW7SS4QY0=
+        bh=sIvqPSsZOybkj0dcwPZoMds3ZWz8q9/fchfuKkuCcJU=;
+        b=OuWB2aR19ekRnyOpO0NPwfqUd9HVOQuF75LCCQYp0tGKRSI6p2at9ODFOzrh4eql4u
+         Li2zFxoad8HO4f4KKzNd61H2lc91++U1kriPoqUb3rC6Jzf2dlEGv6hw5j0HEro2D3mK
+         WuNJfarm9t/TyXjjenZI8b9DLoPPq1zfMZawI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DRYfLbBRwTZyuWd3nX/tqmFJpmA8TQYCaabirz+F2Ok=;
-        b=dm5R9XfB+iJXtYmjWNOLugAckYfl/T9ITDJa4z3woSTvc65YlktSx2zU0miPWoO+FO
-         z4degBCKBac0U1+iSXh62PfgxTUOLvHNUG8OA3j9G9UKDSswudcWIgi0JFlVmL9doJas
-         uYaIQV2BGsHxOO8OJ16HNuiX7qgz4WDEbaoTO9oZkrcc0O/nhsiq/JTsF7Csk9q8Vsh2
-         xVDKhW0OUoZbEe7zNsDyxO7KIdHgn4xW0KMXTIzwvZgQiLMHLp/suijzuIxbizxu5+Us
-         4ZxNyKiTMICXeTIGD6QK08dUllElmp2LQ/5VXgbYx0Im8d6T6lJP3DGM3dNjS9rPJKhb
-         S+Bg==
-X-Gm-Message-State: AA+aEWYLCOCEJQVJ6w1NnMRZCLJ3UBAXWYEHdqVh6MzvTEVptSO68inR
-        tQx/3GStnqOdutQZ3gay3qIqjho2HubijtNgk8y7Kw==
-X-Google-Smtp-Source: AFSGD/UwqLDOwSguxOQW300KwiovB3IMyfhDOJa7Pi6usM8oPqF3O/PR50A9dW+jt/wM8jEzdbje9eiLJOxJO/9CfDg=
-X-Received: by 2002:a19:f813:: with SMTP id a19mr1051197lff.67.1545388841502;
- Fri, 21 Dec 2018 02:40:41 -0800 (PST)
+        bh=sIvqPSsZOybkj0dcwPZoMds3ZWz8q9/fchfuKkuCcJU=;
+        b=AkiH3Lndb65Sdd1v4ARnTsmQ6vCfQagiy70GptURO2Xnm/vreM7uNYkkPpuQYIQFy8
+         7por4kEA1+njmOZCyPoGD2OVGb//aghPLUnM2vrbBs4mBAQCrk0cBGeeRkZXzp61/acW
+         1UQ6cfi0gA25HlgwKWyB5aCZqP/v5+hh6Vca+cX7CMsmVXkNw9I2Wz2vDfSgGInZXWv0
+         TGOcN70TRBGENtXu0hxluiV148bRzycJIhnzYJTzfhT5C9jjqMOVvajAtz8e7DGIOrXy
+         4iFduKYajYJLm/cA5ji101YK0kZ8D7cCUAox+cuDgYIlzoheqdkasB3jRy29yNzXfqUr
+         aXQQ==
+X-Gm-Message-State: AJcUukedU1o96uXWNzMWXHLrBUJKOFgmQ0cCw/3hNbDfV6FeKmvUH+nG
+        TAjAqdXHsGGmQGNzGVi3clY090+S4TtlUkFDuK4CEA==
+X-Google-Smtp-Source: ALg8bN4KRS5dk5k1F7zHau9YhZ70sAuMip8rb40M1GJnaA0xPr2wIzjRM09rg7Bwc9CfxiwwDBNEOiRa9Mxg9H0kx1k=
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr1253683ljp.12.1545388899381;
+ Fri, 21 Dec 2018 02:41:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20181218161042.16366-1-jank@cadence.com> <20181218161042.16366-2-jank@cadence.com>
-In-Reply-To: <20181218161042.16366-2-jank@cadence.com>
+References: <20181218161042.16366-1-jank@cadence.com> <20181218161042.16366-3-jank@cadence.com>
+In-Reply-To: <20181218161042.16366-3-jank@cadence.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Dec 2018 11:40:29 +0100
-Message-ID: <CACRpkdYbTraTy_5qWagp26peuBzCP_K1u61C1OU2FufsoL2nXQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: gpio: Add bindings for Cadence GPIO
+Date:   Fri, 21 Dec 2018 11:41:27 +0100
+Message-ID: <CACRpkdat7h2xWXm-1Hr46rYywy5Bdd751qu4yKk3i7f72nG9xA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpio: Add Cadence GPIO driver
 To:     Jan Kotas <jank@cadence.com>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,13 +71,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Dec 18, 2018 at 5:11 PM Jan Kotas <jank@cadence.com> wrote:
 
-> This patch adds a DT binding documentation for
-> Cadence GPIO controller.
+> This patch adds a driver for Cadence GPIO controller.
+>
+> It can be enabled with GPIO_CADENCE Kconfig option.
+> It uses generic GPIO infrastructure and works
+> as an interrupt controller.
+> At the moment it only supports level sensitive irqs.
 >
 > Signed-off-by: Jan Kotas <jank@cadence.com>
 
-Patch applied stripping interrupt-parent as requested by Rob
-and applied his ACK from v2 (assume it's the same patch +/-).
+Pulled out the v2 and applied this v3 instead.
 
 Yours,
 Linus Walleij
