@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2177C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175A4C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9330205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7E46218E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391208AbeLUR5N (ORCPT
+        id S2391222AbeLUR5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:57:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55920 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 12:57:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391168AbeLUR5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2391167AbeLUR5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Dec 2018 12:57:00 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EEAD21929;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3269C2197F;
         Fri, 21 Dec 2018 17:57:00 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gaP2h-0002TF-Ew; Fri, 21 Dec 2018 12:56:59 -0500
-Message-Id: <20181221175659.352294134@goodmis.org>
+        id 1gaP2h-0002Si-A3; Fri, 21 Dec 2018 12:56:59 -0500
+Message-Id: <20181221175659.208858193@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 21 Dec 2018 12:56:42 -0500
+Date:   Fri, 21 Dec 2018 12:56:41 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@linux.intel.com>
-Subject: [for-next][PATCH 24/24] tracing: Use strncmp_prefix() helper for histogram code
+        Joe Perches <joe@perches.com>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper macro
 References: <20181221175618.968519903@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -46,116 +49,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-The tracing histogram code contains a lot of instances of the construct:
+A discussion came up in the trace triggers thread about converting a
+bunch of:
 
  strncmp(str, "const", sizeof("const") - 1)
 
-This can be prone to bugs due to typos or bad cut and paste. Use the
-strncmp_prefix() helper macro instead that removes the need for having two
-copies of the constant string.
+use cases into a helper macro. It started with:
 
-Cc: Tom Zanussi <zanussi@linux.intel.com>
+	strncmp(str, const, sizeof(const) - 1)
+
+But then Joe Perches mentioned that if a const is not used, the
+sizeof() will be the size of a pointer, which can be bad. And that
+gcc will optimize strlen("const") into "sizeof("const") - 1".
+
+Thinking about this more, a quick grep in the kernel tree found several
+(thousands!) of cases that use this construct. A quick grep also
+revealed that there's probably several bugs in that use case. Some are
+that people forgot the "- 1" (which I found) and others could be that
+the constant for the sizeof is different than the constant (although, I
+haven't found any of those, but I also didn't look hard).
+
+I figured the best thing to do is to create a helper macro and place it
+into include/linux/string.h. And go around and fix all the open coded
+versions of it later.
+
+I plan on only applying this patch and updating the tracing hooks for
+this merge window. And perhaps use it to fix some of the bugs that were
+found.
+
+I was going to just use:
+
+	strncmp(str, prefix, strlen(prefix))
+
+but then realized that "prefix" is used twice, and will break if
+someone does something like:
+
+	strncmp_prefix(str, ptr++);
+
+So instead I check with __builtin_constant_p() to see if the second
+parameter is truly a constant, which I use sizeof() anyway (why bother
+gcc to optimize it, if we already know it's a constant), and copy the
+parameter into a local variable and use that local variable for the non
+constant part (with strlen).
+
+Link: http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
+Link: http://lkml.kernel.org/r/20181219211615.2298e781@gandalf.local.home
+
+Cc: Joe Perches <joe@perches.com>
+Cc: Tom Zanussi <zanussi@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ include/linux/string.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index c5448c103770..a11653ac7087 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1881,8 +1881,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
- 	if (attrs->n_actions >= HIST_ACTIONS_MAX)
- 		return ret;
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 27d0482e5e05..a998a53333ef 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -14,6 +14,28 @@ extern void *memdup_user(const void __user *, size_t);
+ extern void *vmemdup_user(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
  
--	if ((strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) ||
--	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0)) {
-+	if ((strncmp_prefix(str, "onmatch(") == 0) ||
-+	    (strncmp_prefix(str, "onmax(") == 0)) {
- 		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->action_str[attrs->n_actions]) {
- 			ret = -ENOMEM;
-@@ -1899,34 +1899,34 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
- {
- 	int ret = 0;
- 
--	if ((strncmp(str, "key=", sizeof("key=") - 1) == 0) ||
--	    (strncmp(str, "keys=", sizeof("keys=") - 1) == 0)) {
-+	if ((strncmp_prefix(str, "key=") == 0) ||
-+	    (strncmp_prefix(str, "keys=") == 0)) {
- 		attrs->keys_str = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->keys_str) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--	} else if ((strncmp(str, "val=", sizeof("val=") - 1) == 0) ||
--		 (strncmp(str, "vals=", sizeof("vals=") - 1) == 0) ||
--		 (strncmp(str, "values=", sizeof("values=") - 1) == 0)) {
-+	} else if ((strncmp_prefix(str, "val=") == 0) ||
-+		   (strncmp_prefix(str, "vals=") == 0) ||
-+		   (strncmp_prefix(str, "values=") == 0)) {
- 		attrs->vals_str = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->vals_str) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--	} else if (strncmp(str, "sort=", sizeof("sort=") - 1) == 0) {
-+	} else if (strncmp_prefix(str, "sort=") == 0) {
- 		attrs->sort_key_str = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->sort_key_str) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--	} else if (strncmp(str, "name=", sizeof("name=") - 1) == 0) {
-+	} else if (strncmp_prefix(str, "name=") == 0) {
- 		attrs->name = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->name) {
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--	} else if (strncmp(str, "clock=", sizeof("clock=") - 1) == 0) {
-+	} else if (strncmp_prefix(str, "clock=") == 0) {
- 		strsep(&str, "=");
- 		if (!str) {
- 			ret = -EINVAL;
-@@ -1939,7 +1939,7 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
- 			ret = -ENOMEM;
- 			goto out;
- 		}
--	} else if (strncmp(str, "size=", sizeof("size=") - 1) == 0) {
-+	} else if (strncmp_prefix(str, "size=") == 0) {
- 		int map_bits = parse_map_size(str);
- 
- 		if (map_bits < 0) {
-@@ -3558,7 +3558,7 @@ static struct action_data *onmax_parse(char *str)
- 	if (!onmax_fn_name || !str)
- 		goto free;
- 
--	if (strncmp(onmax_fn_name, "save", sizeof("save") - 1) == 0) {
-+	if (strncmp_prefix(onmax_fn_name, "save") == 0) {
- 		char *params = strsep(&str, ")");
- 
- 		if (!params) {
-@@ -4346,7 +4346,7 @@ static int parse_actions(struct hist_trigger_data *hist_data)
- 	for (i = 0; i < hist_data->attrs->n_actions; i++) {
- 		str = hist_data->attrs->action_str[i];
- 
--		if (strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) {
-+		if (strncmp_prefix(str, "onmatch(") == 0) {
- 			char *action_str = str + sizeof("onmatch(") - 1;
- 
- 			data = onmatch_parse(tr, action_str);
-@@ -4355,7 +4355,7 @@ static int parse_actions(struct hist_trigger_data *hist_data)
- 				break;
- 			}
- 			data->fn = action_trace;
--		} else if (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0) {
-+		} else if (strncmp_prefix(str, "onmax(") == 0) {
- 			char *action_str = str + sizeof("onmax(") - 1;
- 
- 			data = onmax_parse(action_str);
++/*
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use strncmp_prefix().
++ */
++#define strncmp_prefix(str, prefix)					\
++	({								\
++		int ____strcmp_prefix_ret____;				\
++		if (__builtin_constant_p(&prefix)) {			\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, prefix, sizeof(prefix) - 1); \
++		} else {						\
++			typeof(prefix) ____strcmp_prefix____ = prefix;	\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, ____strcmp_prefix____,	\
++					strlen(____strcmp_prefix____));	\
++		}							\
++		____strcmp_prefix_ret____;				\
++	})
++
+ /*
+  * Include machine specific inline routines
+  */
 -- 
 2.19.2
 
