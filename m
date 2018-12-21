@@ -3,260 +3,178 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75835C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B83C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E1E218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A64218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388521AbeLUBhy (ORCPT
+        id S2390553AbeLUBiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:37:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52132 "EHLO mx1.redhat.com"
+        Thu, 20 Dec 2018 20:38:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33322 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730104AbeLUBhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:37:53 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1730104AbeLUBiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 20:38:50 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E45783E2AF;
-        Fri, 21 Dec 2018 01:37:52 +0000 (UTC)
-Received: from x1.home (ovpn-116-92.phx2.redhat.com [10.3.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 551501019627;
-        Fri, 21 Dec 2018 01:37:51 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 18:37:50 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Leonardo Augusto =?UTF-8?B?R3Vp?= =?UTF-8?B?bWFyw6Nlcw==?=
-         Garcia <lagarcia@br.ibm.com>,
-        Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH kernel v7 20/20] vfio_pci: Add NVIDIA GV100GL [Tesla
- V100 SXM2] subdriver
-Message-ID: <20181220183750.44535f1c@x1.home>
-In-Reply-To: <8c4ee37c-8759-a618-0c38-034210858b89@ozlabs.ru>
-References: <20181220082350.58113-1-aik@ozlabs.ru>
-        <20181220082350.58113-21-aik@ozlabs.ru>
-        <20181220094604.7d172cbe@x1.home>
-        <8c4ee37c-8759-a618-0c38-034210858b89@ozlabs.ru>
-Organization: Red Hat
+        by mx1.redhat.com (Postfix) with ESMTPS id 000F034CB;
+        Fri, 21 Dec 2018 01:38:49 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD4D1600C1;
+        Fri, 21 Dec 2018 01:38:42 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, bp@alien8.de, mingo@redhat.com, hpa@zytor.com,
+        jbohac@suse.cz, adobriyan@gmail.com, akpm@linux-foundation.org,
+        osandov@fb.com, bhsharma@redhat.com, kasong@redhat.com,
+        bhe@redhat.com, dyoung@redhat.com
+Subject: [PATCH 1/1] x86/gart/kcore: Exclude GART aperture from kcore
+Date:   Fri, 21 Dec 2018 09:38:12 +0800
+Message-Id: <20181221013812.22790-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Dec 2018 01:37:53 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Dec 2018 01:38:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Dec 2018 12:23:16 +1100
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+On machines where the GART aperture is mapped over physical RAM,
+/proc/kcore contains the GART aperture range and reading it may lead
+to kernel panic.
 
-> On 21/12/2018 03:46, Alex Williamson wrote:
-> > On Thu, 20 Dec 2018 19:23:50 +1100
-> > Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> >   
-> >> POWER9 Witherspoon machines come with 4 or 6 V100 GPUs which are not
-> >> pluggable PCIe devices but still have PCIe links which are used
-> >> for config space and MMIO. In addition to that the GPUs have 6 NVLinks
-> >> which are connected to other GPUs and the POWER9 CPU. POWER9 chips
-> >> have a special unit on a die called an NPU which is an NVLink2 host bus
-> >> adapter with p2p connections to 2 to 3 GPUs, 3 or 2 NVLinks to each.
-> >> These systems also support ATS (address translation services) which is
-> >> a part of the NVLink2 protocol. Such GPUs also share on-board RAM
-> >> (16GB or 32GB) to the system via the same NVLink2 so a CPU has
-> >> cache-coherent access to a GPU RAM.
-> >>
-> >> This exports GPU RAM to the userspace as a new VFIO device region. This
-> >> preregisters the new memory as device memory as it might be used for DMA.
-> >> This inserts pfns from the fault handler as the GPU memory is not onlined
-> >> until the vendor driver is loaded and trained the NVLinks so doing this
-> >> earlier causes low level errors which we fence in the firmware so
-> >> it does not hurt the host system but still better be avoided; for the same
-> >> reason this does not map GPU RAM into the host kernel (usual thing for
-> >> emulated access otherwise).
-> >>
-> >> This exports an ATSD (Address Translation Shootdown) register of NPU which
-> >> allows TLB invalidations inside GPU for an operating system. The register
-> >> conveniently occupies a single 64k page. It is also presented to
-> >> the userspace as a new VFIO device region. One NPU has 8 ATSD registers,
-> >> each of them can be used for TLB invalidation in a GPU linked to this NPU.
-> >> This allocates one ATSD register per an NVLink bridge allowing passing
-> >> up to 6 registers. Due to the host firmware bug (just recently fixed),
-> >> only 1 ATSD register per NPU was actually advertised to the host system
-> >> so this passes that alone register via the first NVLink bridge device in
-> >> the group which is still enough as QEMU collects them all back and
-> >> presents to the guest via vPHB to mimic the emulated NPU PHB on the host.
-> >>
-> >> In order to provide the userspace with the information about GPU-to-NVLink
-> >> connections, this exports an additional capability called "tgt"
-> >> (which is an abbreviated host system bus address). The "tgt" property
-> >> tells the GPU its own system address and allows the guest driver to
-> >> conglomerate the routing information so each GPU knows how to get directly
-> >> to the other GPUs.
-> >>
-> >> For ATS to work, the nest MMU (an NVIDIA block in a P9 CPU) needs to
-> >> know LPID (a logical partition ID or a KVM guest hardware ID in other
-> >> words) and PID (a memory context ID of a userspace process, not to be
-> >> confused with a linux pid). This assigns a GPU to LPID in the NPU and
-> >> this is why this adds a listener for KVM on an IOMMU group. A PID comes
-> >> via NVLink from a GPU and NPU uses a PID wildcard to pass it through.
-> >>
-> >> This requires coherent memory and ATSD to be available on the host as
-> >> the GPU vendor only supports configurations with both features enabled
-> >> and other configurations are known not to work. Because of this and
-> >> because of the ways the features are advertised to the host system
-> >> (which is a device tree with very platform specific properties),
-> >> this requires enabled POWERNV platform.
-> >>
-> >> The V100 GPUs do not advertise any of these capabilities via the config
-> >> space and there are more than just one device ID so this relies on
-> >> the platform to tell whether these GPUs have special abilities such as
-> >> NVLinks.
-> >>
-> >> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> >> ---
-> >> Changes:
-> >> v6.1:
-> >> * fixed outdated comment about VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD
-> >>
-> >> v6:
-> >> * reworked capabilities - tgt for nvlink and gpu and link-speed
-> >> for nvlink only
-> >>
-> >> v5:
-> >> * do not memremap GPU RAM for emulation, map it only when it is needed
-> >> * allocate 1 ATSD register per NVLink bridge, if none left, then expose
-> >> the region with a zero size
-> >> * separate caps per device type
-> >> * addressed AW review comments
-> >>
-> >> v4:
-> >> * added nvlink-speed to the NPU bridge capability as this turned out to
-> >> be not a constant value
-> >> * instead of looking at the exact device ID (which also changes from system
-> >> to system), now this (indirectly) looks at the device tree to know
-> >> if GPU and NPU support NVLink
-> >>
-> >> v3:
-> >> * reworded the commit log about tgt
-> >> * added tracepoints (do we want them enabled for entire vfio-pci?)
-> >> * added code comments
-> >> * added write|mmap flags to the new regions
-> >> * auto enabled VFIO_PCI_NVLINK2 config option
-> >> * added 'tgt' capability to a GPU so QEMU can recreate ibm,npu and ibm,gpu
-> >> references; there are required by the NVIDIA driver
-> >> * keep notifier registered only for short time
-> >> ---
-> >>  drivers/vfio/pci/Makefile           |   1 +
-> >>  drivers/vfio/pci/trace.h            | 102 ++++++
-> >>  drivers/vfio/pci/vfio_pci_private.h |  14 +
-> >>  include/uapi/linux/vfio.h           |  37 +++
-> >>  drivers/vfio/pci/vfio_pci.c         |  27 +-
-> >>  drivers/vfio/pci/vfio_pci_nvlink2.c | 482 ++++++++++++++++++++++++++++
-> >>  drivers/vfio/pci/Kconfig            |   6 +
-> >>  7 files changed, 667 insertions(+), 2 deletions(-)
-> >>  create mode 100644 drivers/vfio/pci/trace.h
-> >>  create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
-> >>  
-> > ...  
-> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >> index 8131028..5562587 100644
-> >> --- a/include/uapi/linux/vfio.h
-> >> +++ b/include/uapi/linux/vfio.h
-> >> @@ -353,6 +353,21 @@ struct vfio_region_gfx_edid {
-> >>  #define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
-> >>  };
-> >>  
-> >> +/*
-> >> + * 10de vendor sub-type
-> >> + *
-> >> + * NVIDIA GPU NVlink2 RAM is coherent RAM mapped onto the host address space.
-> >> + */
-> >> +#define VFIO_REGION_SUBTYPE_NVIDIA_NVLINK2_RAM	(1)
-> >> +
-> >> +/*
-> >> + * 1014 vendor sub-type
-> >> + *
-> >> + * IBM NPU NVlink2 ATSD (Address Translation Shootdown) register of NPU
-> >> + * to do TLB invalidation on a GPU.
-> >> + */
-> >> +#define VFIO_REGION_SUBTYPE_IBM_NVLINK2_ATSD	(1)
-> >> +
-> >>  /*
-> >>   * The MSIX mappable capability informs that MSIX data of a BAR can be mmapped
-> >>   * which allows direct access to non-MSIX registers which happened to be within
-> >> @@ -363,6 +378,28 @@ struct vfio_region_gfx_edid {
-> >>   */
-> >>  #define VFIO_REGION_INFO_CAP_MSIX_MAPPABLE	3
-> >>  
-> >> +/*
-> >> + * Capability with compressed real address (aka SSA - small system address)
-> >> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-> >> + */
-> >> +#define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT	4
-> >> +
-> >> +struct vfio_region_info_cap_nvlink2_ssatgt {
-> >> +	struct vfio_info_cap_header header;
-> >> +	__u64 tgt;
-> >> +};
-> >> +
-> >> +/*
-> >> + * Capability with an NVLink link speed.
-> >> + */  
-> > 
-> > I was really hoping for something more like SSATGT above indicating the
-> > intended users and purpose, and an update to SSATGT since it's now used
-> > by both the GPU and NPU2.  This comment is correct, but it's basically
-> > useless, it doesn't provide any information that isn't readily apparent
-> > from the structure definition.  AIUI, SSATGT is used not only for the
-> > GPU to determine where its RAM is mapped on the system bus, but also by
-> > the NPU2 to associate itself to a GPU, right?  
-> 
-> Correct. It could be improved by
-> 
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 5562587..ff238ef9c 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -380,7 +380,8 @@ struct vfio_region_gfx_edid {
-> 
->  /*
->   * Capability with compressed real address (aka SSA - small system address)
-> - * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing
-> + * and by the userspace to associate a NVLink bridge with a GPU.
->   */
->  #define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT    4
-> 
-> 
-> 
-> > And the link speed here
-> > is consumed by the NPU2 in order to fill in DT information for the
-> > guest for compatibility and possibly routing optimizations?  
-> 
-> 
-> It is just some speed number, 8 or 9, one works and the other does not,
-> depending on the actual system. The NVIDIA driver handles it in the
-> binary blob. The existing comment is not much use but I am really not
-> sure what other comment could be useful in here.
+In 'commit 2a3e83c6f96c ("x86/gart: Exclude GART aperture from vmcore")',
+a special workaround is applied for vmcore to let /proc/vmcore return
+zeroes when attempting to read the aperture region, as vmcore and kcore
+have the same issue, and after 'commit 707d4eefbdb3 ("Revert "[PATCH]
+Insert GART region into resource map"")', userspace tools can't detect and
+exclude GART region.
 
-So why do we need to expose it?  "Exposed on NPU2 devices for userspace
-to export to guest VM via DT(?) or else <something bad happens/doesn't
-work> in the guest".  Work with me, there must be some justification
-for why it gets exposed, not just what it is.  Thanks,
+This patch applies the same workaround for kcore. Let /proc/kcore return
+zeroes too when trying to read the aperture region to fix the issue that
+reading GART region may raise unexpected exceptions.
 
-Alex
+This applies to both first and second kernels as GART may get
+initialized in the first and second kernels.
+
+To get the same workaround work for kcore, this patch implement a hook
+infrastructure for kcore which is same as the hook infrastructure for
+vmcore introduced in 'commit 997c136f518c ("fs/proc/vmcore.c: add hook
+to read_from_oldmem() to check for non-ram pages")'', and reuses the
+checking function gart_oldmem_pfn_is_ram introduced in
+'commit 2a3e83c6f96c ("x86/gart: Exclude GART aperture from vmcore"),'
+as the hook function, but rename to gart_mem_pfn_is_ram as now it's
+for a more generic use.
+
+Suggested-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ arch/x86/kernel/aperture_64.c |  6 ++++--
+ fs/proc/kcore.c               | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/kcore.h         |  3 +++
+ 3 files changed, 41 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
+index 2c4d5ece7456..e2e45ae63309 100644
+--- a/arch/x86/kernel/aperture_64.c
++++ b/arch/x86/kernel/aperture_64.c
+@@ -14,6 +14,7 @@
+ #define pr_fmt(fmt) "AGP: " fmt
+ 
+ #include <linux/kernel.h>
++#include <linux/kcore.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/memblock.h>
+@@ -66,7 +67,7 @@ int fix_aperture __initdata = 1;
+  */
+ static unsigned long aperture_pfn_start, aperture_page_count;
+ 
+-static int gart_oldmem_pfn_is_ram(unsigned long pfn)
++static int gart_mem_pfn_is_ram(unsigned long pfn)
+ {
+ 	return likely((pfn < aperture_pfn_start) ||
+ 		      (pfn >= aperture_pfn_start + aperture_page_count));
+@@ -76,7 +77,8 @@ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
+ {
+ 	aperture_pfn_start = aper_base >> PAGE_SHIFT;
+ 	aperture_page_count = (32 * 1024 * 1024) << aper_order >> PAGE_SHIFT;
+-	WARN_ON(register_oldmem_pfn_is_ram(&gart_oldmem_pfn_is_ram));
++	WARN_ON(register_oldmem_pfn_is_ram(&gart_mem_pfn_is_ram));
++	WARN_ON(register_mem_pfn_is_ram(&gart_mem_pfn_is_ram));
+ }
+ #else
+ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index bbcc185062bb..24e13fcc31ea 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -54,6 +54,35 @@ static LIST_HEAD(kclist_head);
+ static DECLARE_RWSEM(kclist_lock);
+ static int kcore_need_update = 1;
+ 
++static int (*mem_pfn_is_ram)(unsigned long pfn);
++
++int register_mem_pfn_is_ram(int (*fn)(unsigned long pfn))
++{
++	if (mem_pfn_is_ram)
++		return -EBUSY;
++	mem_pfn_is_ram = fn;
++	return 0;
++}
++
++void unregister_mem_pfn_is_ram(void)
++{
++	mem_pfn_is_ram = NULL;
++	wmb();
++}
++
++static int pfn_is_ram(unsigned long pfn)
++{
++	int (*fn)(unsigned long pfn);
++	/* pfn is ram unless fn() checks pagetype */
++	int ret = 1;
++
++	fn = mem_pfn_is_ram;
++	if (fn)
++		ret = fn(pfn);
++
++	return ret;
++}
++
+ /* This doesn't grab kclist_lock, so it should only be used at init time. */
+ void __init kclist_add(struct kcore_list *new, void *addr, size_t size,
+ 		       int type)
+@@ -465,6 +494,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 				goto out;
+ 			}
+ 			m = NULL;	/* skip the list anchor */
++		} else if (!pfn_is_ram(__pa(start) >> PAGE_SHIFT)) {
++			if (clear_user(buffer, tsz)) {
++				ret = -EFAULT;
++				goto out;
++			}
+ 		} else if (m->type == KCORE_VMALLOC) {
+ 			vread(buf, (char *)start, tsz);
+ 			/* we have to zero-fill user buffer even if no read */
+diff --git a/include/linux/kcore.h b/include/linux/kcore.h
+index 8c3f8c14eeaa..6818156fe520 100644
+--- a/include/linux/kcore.h
++++ b/include/linux/kcore.h
+@@ -56,4 +56,7 @@ void kclist_add_remap(struct kcore_list *m, void *addr, void *vaddr, size_t sz)
+ }
+ #endif
+ 
++extern int register_mem_pfn_is_ram(int (*fn)(unsigned long pfn));
++extern void unregister_mem_pfn_is_ram(void);
++
+ #endif /* _LINUX_KCORE_H */
+-- 
+2.19.1
+
