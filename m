@@ -2,127 +2,174 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E4AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41F7218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F291821915
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:30:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cl599PYw"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOpqkp80"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387481AbeLUI1a (ORCPT
+        id S2387510AbeLUIa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:27:30 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33240 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeLUI1a (ORCPT
+        Fri, 21 Dec 2018 03:30:27 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40368 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731329AbeLUIa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:27:30 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z11so2196737pgu.0;
-        Fri, 21 Dec 2018 00:27:28 -0800 (PST)
+        Fri, 21 Dec 2018 03:30:26 -0500
+Received: by mail-it1-f196.google.com with SMTP id h193so5504098ita.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:30:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e+mpaMmJU3qd+NUv7lAudbCV8zcT9yIu7TTtWgRtRZE=;
-        b=Cl599PYwNWHiG68EUJcNV8HqaDgL+Bdi6TSCEW8T1AwZmjJfAenDQp9QFfWifwPjuH
-         9Q+yN7iWgMa+cRFH8Y81K38q1WbnOihIY16bkbuUIv7sQY4TlriBL43nlJ4rkcwto8zC
-         3tcdkk4nOAEvtXmOnyugk1aXZUT0+bhKqjduFfrKrdu7qA3vA3Sx1w2wlsNjkfqqKgEi
-         HHKpNXCYXE4koZ6h/Ra8RtJj/j3ye4eJPhGATSfh5gvE0xTsGbzRTj8RH+4od2kt/F80
-         KdFYDWcdWNvDbRKwjhEORS9RkWcbtOvbokN+20kb2GiSdb8l74YdvEg9T6bolHzbAmsE
-         2sUQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kg58iDoEj2/Ynp72zUhlECObona9Pdn11IvhQJoR7MI=;
+        b=XOpqkp80h4I50S3/DFbL3FKLVVPFHn4jv32SWx5LC3+iST111CaDku3tWrjDdIypZ2
+         wmw+uhMW6Sdp+TnmQDtTE+FXFea6pw9zfkKyDeThxJeZmeHMBrqvqnI4WQqMOoHVRqzX
+         76LdGTcfX28Jjx5CrIYqXUAwGe6q8wtZG1sCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e+mpaMmJU3qd+NUv7lAudbCV8zcT9yIu7TTtWgRtRZE=;
-        b=DjbIIrNzxq4gYbGgbbl4D4YdlSAzySHzvtMiPESdP37QtmEqdp9NfUggpTEdIxC9z/
-         figerwh1TCHeJ1SeanWt+RtBd1VQSSK1+XI1XQYY1lsFXEf62eByhp9k4yIdQfbve5gE
-         9KfxOH4s3+6/nArS0bxcB1NQTJYw/ZYdqZmD3cAQW15aWPFHA5km2++REJwILVDux2ak
-         UaTQJ6K/waQuwu1DBkuhoqfcHRTAn6LkPSw76qQ3Ie1B2fCCyxlDNf7cKH8FRWTPrPN3
-         X7WGlWn0XJrxxFK0kjtlYPJliFH4z/S75jrvv01kQvSn97Y1oZhI3nU0DSh++q3goeQN
-         MJYw==
-X-Gm-Message-State: AJcUukdI9YZI2bTeT1kYRwfjlW+AaNohvI3uE62ich+2ekzgyESIvRV5
-        Ka/Wkp1Q4k5FNvpV936ORlU=
-X-Google-Smtp-Source: ALg8bN7wPqGiqTlx9HA99OSA2TmZaYphO3fFxt54PU45PLJ8nzdDy0ObFmLVChaeHb4B1TCuBBwlOw==
-X-Received: by 2002:a65:60c2:: with SMTP id r2mr1486270pgv.393.1545380848117;
-        Fri, 21 Dec 2018 00:27:28 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 78sm41588597pft.184.2018.12.21.00.27.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 00:27:27 -0800 (PST)
-Date:   Fri, 21 Dec 2018 00:27:25 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] touchscreen: elants: fix a missing check of return values
-Message-ID: <20181221082725.GB211587@dtor-ws>
-References: <20181221065919.60129-1-kjlu@umn.edu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kg58iDoEj2/Ynp72zUhlECObona9Pdn11IvhQJoR7MI=;
+        b=SutOx26W8CgiemneJ09RVpoTuNzdHbYpUWT9aJaLtLvuUjyAC9ewWXnw8GZtmRvmsj
+         /U8Lh5K7ofmr+OpZVcBSzgL3oZKjpJ9oB6ne+wfYBtAtYwEmMsbfBXsRPzbWloJoMN7s
+         z25GJivCzE0ByEsfRXgBcC9F/rYp/r8OL44mJ73ZvY66XE8xxESARxPi1lfMyXKsemI4
+         D8Dr6dSeMNCu2/z7vbHWuDTuM7WH5bH3bMVCvhnk/D2zsUXrp3YWW4jvC4Ln84RvU/TR
+         Mr7XjWPGd2WWNldWKJkYB8e2mfwHvm+r7/GCrHdlwKaA72Dp/iRzNxEfhsgZJK/diHo+
+         DONw==
+X-Gm-Message-State: AA+aEWbBl56H75hnMgJvW8IC++WNbKWN/OPR5EOwm3HcbHcblX4PyBJF
+        3b8WtUfyBxtQDd7no5WyNkR3g6y6neo2dAxSdrirxw==
+X-Google-Smtp-Source: AFSGD/XApst9vY4UEfYrbvWQpWk+2Y2nbKW1Uo6woazfYu2bRs++mmbV7PtWPQb2Fv/dWcLo+adHrUHMx8jdN7BedK0=
+X-Received: by 2002:a24:6f42:: with SMTP id x63mr1327210itb.152.1545381025347;
+ Fri, 21 Dec 2018 00:30:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221065919.60129-1-kjlu@umn.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1545315417-14483-1-git-send-email-vincent.guittot@linaro.org> <CAPDyKFqZfCoL1N_Ca12mR0sk_JR7EhxchXGR_R3=9dFXu6Qoyw@mail.gmail.com>
+In-Reply-To: <CAPDyKFqZfCoL1N_Ca12mR0sk_JR7EhxchXGR_R3=9dFXu6Qoyw@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 21 Dec 2018 09:30:14 +0100
+Message-ID: <CAKfTPtBZqGY07mj2uKaMJXsOXfN708uJKSaiivXKZ5qdct0oZw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] drm/i915: Move on the new pm runtime interface
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        jani.nikula@linux.intel.com,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kangjie,
+On Thu, 20 Dec 2018 at 23:04, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Thu, 20 Dec 2018 at 15:17, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > Use the new pm runtime interface to get the accounted suspended time:
+> > pm_runtime_accounted_time_get()
+>
+> pm_runtime_suspended_time()
+>
+> This change also makes quite some nice cleanups to the code, which is
+> mostly because of converting to the new runtime PM API. I think the
+> changelog deserves to state that, in some simple way.
 
-On Fri, Dec 21, 2018 at 12:59:16AM -0600, Kangjie Lu wrote:
-> elants_i2c_send() may fail, let's check its return values. The fix does
-> the check and reports an error message upon the failure.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/input/touchscreen/elants_i2c.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-> index f2cb23121833..cb3c1470bb68 100644
-> --- a/drivers/input/touchscreen/elants_i2c.c
-> +++ b/drivers/input/touchscreen/elants_i2c.c
-> @@ -245,8 +245,14 @@ static int elants_i2c_calibrate(struct elants_data *ts)
->  	ts->state = ELAN_WAIT_RECALIBRATION;
->  	reinit_completion(&ts->cmd_done);
->  
-> -	elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
-> -	elants_i2c_send(client, rek, sizeof(rek));
-> +	error = elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
-> +	error |= elants_i2c_send(client, rek, sizeof(rek));
-
-I dislike this kind of error handling as this may result in invalid
-error code being reported, in case 2 commands produce different results.
-
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +				"error in sending I2C messages for calibration: %d\n",
-> +				error);
-> +		return error;
-
-If we just return like you do it here, interrupts will stay disabled and
-touchscreen will be completely dead. With the old code we'd report
-timeout on calibration, and touchscreen would have chance of working. We
-would also be able to retry calibration.
-
-> +	}
->  
->  	enable_irq(client->irq);
->  
-> -- 
-> 2.17.2 (Apple Git-113)
-> 
-
-Thanks.
-
--- 
-Dmitry
+ok
+>
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>
+> Other than the minor things above:
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Kind regards
+> Uffe
+>
+>
+> > ---
+> >  drivers/gpu/drm/i915/i915_pmu.c | 16 ++++++----------
+> >  drivers/gpu/drm/i915/i915_pmu.h |  4 ++--
+> >  2 files changed, 8 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> > index d6c8f8f..3f76f60 100644
+> > --- a/drivers/gpu/drm/i915/i915_pmu.c
+> > +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> > @@ -5,6 +5,7 @@
+> >   */
+> >
+> >  #include <linux/irq.h>
+> > +#include <linux/pm_runtime.h>
+> >  #include "i915_pmu.h"
+> >  #include "intel_ringbuffer.h"
+> >  #include "i915_drv.h"
+> > @@ -478,7 +479,6 @@ static u64 get_rc6(struct drm_i915_private *i915)
+> >                  * counter value.
+> >                  */
+> >                 spin_lock_irqsave(&i915->pmu.lock, flags);
+> > -               spin_lock(&kdev->power.lock);
+> >
+> >                 /*
+> >                  * After the above branch intel_runtime_pm_get_if_in_use failed
+> > @@ -491,16 +491,13 @@ static u64 get_rc6(struct drm_i915_private *i915)
+> >                  * suspended and if not we cannot do better than report the last
+> >                  * known RC6 value.
+> >                  */
+> > -               if (kdev->power.runtime_status == RPM_SUSPENDED) {
+> > -                       if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
+> > -                               i915->pmu.suspended_jiffies_last =
+> > -                                                 kdev->power.suspended_jiffies;
+> > +               if (pm_runtime_status_suspended(kdev)) {
+> > +                       val = pm_runtime_suspended_time(kdev);
+> >
+> > -                       val = kdev->power.suspended_jiffies -
+> > -                             i915->pmu.suspended_jiffies_last;
+> > -                       val += jiffies - kdev->power.accounting_timestamp;
+> > +                       if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
+> > +                               i915->pmu.suspended_time_last = val;
+> >
+> > -                       val = jiffies_to_nsecs(val);
+> > +                       val -= i915->pmu.suspended_time_last;
+> >                         val += i915->pmu.sample[__I915_SAMPLE_RC6].cur;
+> >
+> >                         i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur = val;
+> > @@ -510,7 +507,6 @@ static u64 get_rc6(struct drm_i915_private *i915)
+> >                         val = i915->pmu.sample[__I915_SAMPLE_RC6].cur;
+> >                 }
+> >
+> > -               spin_unlock(&kdev->power.lock);
+> >                 spin_unlock_irqrestore(&i915->pmu.lock, flags);
+> >         }
+> >
+> > diff --git a/drivers/gpu/drm/i915/i915_pmu.h b/drivers/gpu/drm/i915/i915_pmu.h
+> > index 7f164ca..3dc2a30 100644
+> > --- a/drivers/gpu/drm/i915/i915_pmu.h
+> > +++ b/drivers/gpu/drm/i915/i915_pmu.h
+> > @@ -95,9 +95,9 @@ struct i915_pmu {
+> >          */
+> >         struct i915_pmu_sample sample[__I915_NUM_PMU_SAMPLERS];
+> >         /**
+> > -        * @suspended_jiffies_last: Cached suspend time from PM core.
+> > +        * @suspended_time_last: Cached suspend time from PM core.
+> >          */
+> > -       unsigned long suspended_jiffies_last;
+> > +       u64 suspended_time_last;
+> >         /**
+> >          * @i915_attr: Memory block holding device attributes.
+> >          */
+> > --
+> > 2.7.4
+> >
