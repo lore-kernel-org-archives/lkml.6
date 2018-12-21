@@ -6,86 +6,122 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19ADC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F5021903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A3D21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GLFz+84N"
+	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="QiZ6QXX7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbeLUPhU (ORCPT
+        id S1731931AbeLUPhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:37:20 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33829 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbeLUPhU (ORCPT
+        Fri, 21 Dec 2018 10:37:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36373 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbeLUPhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:37:20 -0500
-Received: by mail-io1-f65.google.com with SMTP id l22so760304ioh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:37:19 -0800 (PST)
+        Fri, 21 Dec 2018 10:37:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u4so5692746wrp.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nux+WIMdjrFe5ctfdbiOAVW2IoHuttwcjmO4rDIlz4c=;
-        b=GLFz+84NZAGGQ0tEbOJDZyO0qnWI3gB9ROEux/TeJnsr3E52g5koHP2U9Ss+Tt8yw9
-         SSHXluBAJyO/FuYRuYFpHSec4U0/ZzZCyQwJU08XYWuXF7eBapaqF6oQcK1R0nbbU9vN
-         I3jqi5fUkq7ETKrmRRFh6rEjsjP+yUwOldvRw=
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dXhQBukfKWvAIAwxIDey7FTgXKt5X0FJHC3d9IIOa3Y=;
+        b=QiZ6QXX7LOzYWcy4f20zoVA+VTc2UVic3ktRvPXQO6G9W1GhAsjErvGsKvy1y/ijM1
+         t2/e5qoBCGn5zmH21/rH6yI8roh4hmJf5SH9XqUg5XxvyvGH9f/Gx0WW0Yd6TAYMpV7E
+         j1gs/KaEqcWC52lMjKtzyWe617mlaoq2SwQr8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nux+WIMdjrFe5ctfdbiOAVW2IoHuttwcjmO4rDIlz4c=;
-        b=BTbBqqSA1hBsosWPeknTdBrPp+wCvXQWo3Kb1vdvHC7wr0iIwhRuUdx18M0M+FKOB1
-         jkhNaLRw88dsxgFr8ESSS+nRNakHClZXzVNotOFU9Zod1LSNe8x1iaoimyI0z5N2i+UY
-         PgEv0ZAowNilEMQN+ipXmcuF/lXq50jl32b1J+s7ka1Ygz05bN5sXPhbqBV8wy23gp/5
-         nG2eg8lDdOJOXmyP14PZ/DQbB5QAN9cZibhIQbtiQRA8oW/WYKg6t2Kt0zD1xt4OsXcp
-         0M4QPcP86IM7AsY4XJRlwMzIUrZzHd9fnxW+Bylh9k90JnL8Z9kDDNLQAia5+rAD9g66
-         BQ3g==
-X-Gm-Message-State: AJcUukeYlROhLE9KkO3GOKGlcCUsyF3icbKVW7ObhAMGJY7/5x4Y5d52
-        G5qSz943oRiCUwBsZc7wI6zxZH5sFY/tbqkjvmKG5w==
-X-Google-Smtp-Source: ALg8bN7pu6amHgza86GECEHZaE3B7fTgzyHb3ZZwXaN3vCM2SQM2vyqG3+/k5PwhQf8i3hvBtnatVVcxnfdpn9nvkJk=
-X-Received: by 2002:a5d:8417:: with SMTP id i23mr36231ion.173.1545406639091;
- Fri, 21 Dec 2018 07:37:19 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dXhQBukfKWvAIAwxIDey7FTgXKt5X0FJHC3d9IIOa3Y=;
+        b=P92GZnRJsJdwQ+Y03976Dy6Gf1EiGmSFlMi7mYonkNZMxmtgxkA52SzJ0vzOemWTHt
+         MdP6MvpVApiGUcyAbTbGFobzc46ULdWz7i1OTqsSzcPc3FKDw7EKH2V6dftitMB9MZiM
+         ySO8mZ2Oi0cdk0whU3zHxoib9QDYcqOGXoN7O/qc8LG4eaHmPdBsgiRVMRZIBsO99owA
+         CBCNfx+vJR9pDoYUOLqo3G0ldURABVxOUIb6s7pC/k0AK04xMBGzA/gB6L5H0h1MIbyP
+         tpSW11Rt8Ad2D9HUWMRB3RCN2TY3nG+8qVr+UEpQMnoYYHKoK0qRRjXOacGNPSzNRXXL
+         k2eA==
+X-Gm-Message-State: AJcUukcWlC6JEP8ruYTqe4QDfYP038puCbHOxtWwgpdAQAIoIerNeWOJ
+        xR+B7lwC2sBW/0wCjPIjKTKpZ/SL9p4=
+X-Google-Smtp-Source: ALg8bN7Qj3TtmTV1Hh3pg5ZiAoGjslAb4LOqQjx1Punlqg8X3uhor25CthWu2sZAAW3mH1wE8bDmAw==
+X-Received: by 2002:a5d:4a45:: with SMTP id v5mr2958530wrs.7.1545406662873;
+        Fri, 21 Dec 2018 07:37:42 -0800 (PST)
+Received: from [192.168.0.104] ([79.134.172.72])
+        by smtp.googlemail.com with ESMTPSA id i186sm14407922wmd.19.2018.12.21.07.37.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 07:37:42 -0800 (PST)
+Subject: Re: [PATCH net-next 0/4] bridge: implement Multicast Router Discovery
+ (RFC4286)
+To:     =?UTF-8?Q?Linus_L=c3=bcssing?= <linus.luessing@c0d3.blue>,
+        netdev@vger.kernel.org
+Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        bridge@lists.linux-foundation.org, b.a.t.m.a.n@lists.open-mesh.org,
+        linux-kernel@vger.kernel.org
+References: <20181221151511.14923-1-linus.luessing@c0d3.blue>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <e930f996-de2c-3d69-ccb9-a512ef846de6@cumulusnetworks.com>
+Date:   Fri, 21 Dec 2018 17:37:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181130224736.GA38485@beast> <20181204154056.iyf333bcxqwk3obe@linutronix.de>
- <CAGXu5jLUMW3cCi1KVdSmOVn3O9BQ6ptYnyJbLHxojgzXd_YUxQ@mail.gmail.com> <20181204180612.z4az5yplw5oqb26a@linutronix.de>
-In-Reply-To: <20181204180612.z4az5yplw5oqb26a@linutronix.de>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 21 Dec 2018 16:37:07 +0100
-Message-ID: <CAKv+Gu8tXHmXrGezZpfkPsVpF09G1XfkpcsxeU2zyP+6OxRLmQ@mail.gmail.com>
-Subject: Re: [PATCH] pstore: Convert buf_lock to semaphore
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181221151511.14923-1-linus.luessing@c0d3.blue>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 at 19:06, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2018-12-04 09:23:13 [-0800], Kees Cook wrote:
-> > Okay, so, if kmsg_dump() uses rcu_read_lock(), that means efi-pstore
-> > can _never_ sleep, and it's nothing to do with pstore internals. :( I
-> > guess we just hard-code it, then? And efi-pstore should probably only
-> > attach to pstore if it has a nonblock implementation (and warn if one
-> > isn't available).
->
-> I was about to suggest that. I am not aware if anything else could use
-> efi_pstore_write() use that but otherwise you could hardcode it.
->
+On 12/21/18 5:15 PM, Linus Lüssing wrote:
+> Hi,
+> 
+> This patchset adds initial Multicast Router Discovery support to
+> the Linux bridge (RFC4286). With MRD it is possible to detect multicast
+> routers and mark bridge ports and forward multicast packets to such routers
+> accordingly.
+> 
+> So far, multicast routers are detected via IGMP/MLD queries and PIM
+> messages in the Linux bridge. As there is only one active, selected
+> querier at a time RFC4541 ("Considerations for Internet Group Management
+> Protocol (IGMP) and Multicast Listener Discovery (MLD) Snooping
+> Switches") section 2.1.1.a) recommends snooping Multicast Router
+> Advertisements as provided by MRD (RFC4286).
+> 
+> 
+> The first two patches are refactoring some existing code which is reused
+> for parsing the Multicast Router Advertisements later in the fourth
+> patch. The third patch lets the bridge join the all-snoopers multicast
+> address to be able to reliably receive the Multicast Router
+> Advertisements.
+> 
+> 
+> What is not implemented yet from RFC4286 yet:
+> 
+> * Sending Multicast Router Solicitations:
+>   -> RFC4286: "[...] may be sent when [...] an interface is
+>      (re-)initialized [or] MRD is enabled"
+> * Snooping Multicast Router Terminations:
+>   -> currently this only relies on our own timeouts
+> * Adjusting timeouts with the values provided in the announcements
+> 
+> 
+> Regards, Linus
+> 
+> 
+> 
 
-efivar_entry_set_safe() will only use the default backend if no
-non-blocking variant is provided, in which case it assumes that the
-default one is non-blocking. Perhaps we should just assign both
-function pointers to the same function in this case.
+Hi Linus,
+Nice work, unfortunately net-next is currenty closed. Anyway I'll
+review the patches in detail after the holidays so if there's
+anything it can be adjusted for when net-next opens up.
+
+Thanks,
+ Nik
+
