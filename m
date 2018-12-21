@@ -2,223 +2,204 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013AFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8A7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853F2218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB97721909
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:05:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQSIGj7X"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d/S+qQm4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbeLUFxS (ORCPT
+        id S1726462AbeLUGFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 00:53:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43862 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbeLUFxS (ORCPT
+        Fri, 21 Dec 2018 01:05:04 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34324 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeLUGFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 00:53:18 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so2051744pfk.10;
-        Thu, 20 Dec 2018 21:53:17 -0800 (PST)
+        Fri, 21 Dec 2018 01:05:04 -0500
+Received: by mail-oi1-f196.google.com with SMTP id r62so3931580oie.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 22:05:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+1oZR3dHaq/Eu17Sz3ttJHOWC/iaCGB0yJMQXAxGUa0=;
-        b=WQSIGj7XYbLDhTcIGOV9FAe/Zsj/+9KDXIUs9YsRCDbo5t5jQ/hZs3lPG2vbN2EAdA
-         av2OebcX79IucbbFqZihdtrkn/7XW/E7YP3AlBsO8+XaQJeZ8XpaXBij6rCFptxnwqD0
-         lNT1t5cFbras/5PYUVRiZ6aiX35bek47aVqhvuBeINMjNatD6+jKeLMkuHlD0dnRHZY/
-         XfPXIJNfiW70532w4zt/8tFpbxkWvx+hc5Vr3T6IPkFRWJyMJe4lf1Za0y1yOG6XaWd1
-         TCZPDhrmNzpHT3hf/e5IcF1lce9joznVGMowkRcXfzveJvqqQzzm3dou4JLUE30Z3+PV
-         PPgQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=SKCcAeW5H4+bwp7AQJhecAcvEZDXW19JmTrsciJug4w=;
+        b=d/S+qQm4oJbHT5p9lTGC2fWkz8K5Bk9hacHLmCj3635B3waQQqrx5BsYm1eXsQ0ofN
+         k7bHpO7LzV+uO2KMi4hYje8NjWgipT41BtnXfFpl7apqtWkonhyvTS418Ot0F+mo7a3y
+         84Jnd3CTPdbUOKlyHDZ3bUenjdcTDasJv6gL6xzs4V8LYgdoEnQ9BTxAWFN+0mB2VCKZ
+         QtlWaUUDtzHcNfPv99vv2HBzd4hsLqY3fMdfvpu22rgvr8iyW+19ZqoNxEvAxn6uzPBw
+         QODcLkazq5Inuis7qhWPuMSl8PeqFYZqoe58/JfDg3UdPdHtyPKY2GFiY4vKkUlKIkia
+         egKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+1oZR3dHaq/Eu17Sz3ttJHOWC/iaCGB0yJMQXAxGUa0=;
-        b=KlmNfF75MMyizMYwRO70zFhFdLllTCYJw1BzwC3XFU23TDbnn5bDXyV5MvLcPnYCG0
-         ruzVx+RrPbiqWNpHqHtm/C/pG4iKiZ+FfuWW+K2rIPaEmjtwI08q8YovYxwGbc7+HtHc
-         0Wrs6bbZNOyoDcFCZvCLz8FDPRRSe9hH2aTKFxzpuEnPcropxxAYjA4ECm/8fMQntfqc
-         Z/Gf9OsZAvS43yaYZFt5IgD+q2GxXMGjayems9kjBxGewVJYRu7opcrdxYj44ct59Wjj
-         vr7nxe5K1m0+bPdTIqRNI9AEzhZSZQ/lCgkG6L9nT9cBc7r0WQSmaPK14rjCifpw99kN
-         a9ag==
-X-Gm-Message-State: AA+aEWboCyitymmhiK5IXLnKrfNCbYz21RGz9cXBr7bjtOzr65Kzt8qy
-        zHRFshcDerXwwG4q8xxKlNLNYWY0eM5PEaDrlJY=
-X-Google-Smtp-Source: AFSGD/V8YEA90Ov6UPyF4X25rS6f+SYrpJfvVvUnURNkUebHW+rLERQffm6rTAqKVLWoDR9IO3BI67XCHnhTavrLtYY=
-X-Received: by 2002:a62:c683:: with SMTP id x3mr1180225pfk.10.1545371596534;
- Thu, 20 Dec 2018 21:53:16 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=SKCcAeW5H4+bwp7AQJhecAcvEZDXW19JmTrsciJug4w=;
+        b=EiEGSe264M4qiUKKX5vxzXzLnUkCeeLu2HUhBQk8wq0ctgnbIQxdVbLStiXHl+/5a/
+         Vl9PAvTLxYZkSsuLTpix7Nrf+l1ozcqecgF00tLg9i8Mlr5jPg746Y+bJz7LqXiAWZwZ
+         TvOxoo5GuxA8wn7UlrYtX57JpwKQBIJrTNBvkPIGQuBcrq/eUnekbF7sYueQikww+mJZ
+         /Bi4eYs5Gf4QVYnin5yq0llzKq0ucNUiZba/R8wLpdgBwxxoU7m0joKLPYL+lNx3+Jg0
+         TN8XYtgj6s7LOYnocnBxDHuGxnIyokpX5GKrHsF+HqF5hu6YchZ/V+IdgGsF1o8WVbdr
+         dBXg==
+X-Gm-Message-State: AJcUukcFmF95bUT3al9TPAjE33ASMSA5yMdA7zb8iKb83HIBEcLRNcOg
+        2EkMGHTe90ZjqzKJZhRD7W6Uow==
+X-Google-Smtp-Source: AFSGD/U3pqvjZE1z6kg3DO6N6JzfpwRIKFjQC/hqO5a3hIEZgtZ2zfpAN7HSr0idXBNAyfz++GeSvg==
+X-Received: by 2002:a05:6808:155:: with SMTP id h21mr594679oie.34.1545372301828;
+        Thu, 20 Dec 2018 22:05:01 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id s186sm11712006oie.13.2018.12.20.22.04.58
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Dec 2018 22:05:00 -0800 (PST)
+Date:   Thu, 20 Dec 2018 22:04:51 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        vbabka@suse.cz, hannes@cmpxchg.org, hughd@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH 1/2] mm: vmscan: skip KSM page in direct reclaim if
+ priority is low
+In-Reply-To: <20181220144513.bf099a67c1140865f496011f@linux-foundation.org>
+Message-ID: <alpine.LSU.2.11.1812202143340.2191@eggly.anvils>
+References: <1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com> <20181220144513.bf099a67c1140865f496011f@linux-foundation.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
- <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
- <20181219072250.GA18501@osadl.at> <6ef8274c8fc7adb7903cf3874fbab1098881ed4c.camel@perches.com>
-In-Reply-To: <6ef8274c8fc7adb7903cf3874fbab1098881ed4c.camel@perches.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 20 Dec 2018 23:53:04 -0600
-Message-ID: <CAH2r5mtrgq-tiSvLrc3sD_Op1HD0OFz2xOMywPoN=iu2nVShrQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: check kzalloc return
-To:     Joe Perches <joe@perches.com>
-Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Content-Type: multipart/mixed; boundary="0000000000000f081a057d81ddf8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000000f081a057d81ddf8
-Content-Type: text/plain; charset="UTF-8"
+On Thu, 20 Dec 2018, Andrew Morton wrote:
+> 
+> Is anyone interested in reviewing this?  Seems somewhat serious. 
+> Thanks.
 
-Updated the patch with Joe's signed off and Nicholas's reviewed-by and
-pushed to cifs-2.6.git for-next
+Somewhat serious, but no need to rush.
 
-See attached.
+> 
+> From: Yang Shi <yang.shi@linux.alibaba.com>
+> Subject: mm: vmscan: skip KSM page in direct reclaim if priority is low
+> 
+> When running a stress test, we occasionally run into the below hang issue:
 
-On Wed, Dec 19, 2018 at 4:58 AM Joe Perches via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> On Wed, 2018-12-19 at 08:22 +0100, Nicholas Mc Guire wrote:
-> > On Tue, Dec 18, 2018 at 09:33:58AM -0800, Joe Perches wrote:
-> > > On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
-> > > > kzalloc can return NULL so a check is needed. While there is a
-> > > > check for ret_buf there is no check for the allocation of
-> > > > ret_buf->crfid.fid - this check is thus added. Both call-sites
-> > > > of tconInfoAlloc() check for NULL return of tconInfoAlloc()
-> > > > so returning NULL on failure of kzalloc() here seems appropriate.
-> > > > As the kzalloc() is the only thing here that can fail it is
-> > > > moved to the beginning so as not to initialize other resources
-> > > > on failure of kzalloc.
-> > > >
-> > > Perhaps use a more common style by returning early on the
-> > > first possible failure too so the block can be unindented.
-> []
-> > > yup the restructured cleanup would be the better way to go
-> >
-> > rather than making this two patches I guess it would be the
-> > best to just skip the intermediate kzalloc only cleanup -
-> > atleast I see little value in that intermediat step - so
-> > could you take care of the kzalloc() in your refactoring
-> > please ?
->
-> I did that in the patch I proposed, which is trivial.
-> If you want to take it, please do.
->
-> If you want a sign-off:
->
-> Signed-off-by: Joe Perches <joe@perches.com>
->
-> > > diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
-> []
-> > > @@ -111,21 +111,27 @@ struct cifs_tcon *
-> > >  tconInfoAlloc(void)
-> > >  {
-> > >     struct cifs_tcon *ret_buf;
-> > > -   ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
-> > > -   if (ret_buf) {
-> > > -           atomic_inc(&tconInfoAllocCount);
-> > > -           ret_buf->tidStatus = CifsNew;
-> > > -           ++ret_buf->tc_count;
-> > > -           INIT_LIST_HEAD(&ret_buf->openFileList);
-> > > -           INIT_LIST_HEAD(&ret_buf->tcon_list);
-> > > -           spin_lock_init(&ret_buf->open_file_lock);
-> > > -           mutex_init(&ret_buf->crfid.fid_mutex);
-> > > -           ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
-> > > -                                        GFP_KERNEL);
-> > > -           spin_lock_init(&ret_buf->stat_lock);
-> > > -           atomic_set(&ret_buf->num_local_opens, 0);
-> > > -           atomic_set(&ret_buf->num_remote_opens, 0);
-> > > +
-> > > +   ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
-> > > +   if (!ret_buf)
-> > > +           return NULL;
-> > > +   ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
-> > > +   if (!ret_buf->crfid.fid) {
-> > > +           kfree(ret_buf);
-> > > +           return NULL;
-> > >     }
-> > > +
-> > > +   atomic_inc(&tconInfoAllocCount);
-> > > +   ret_buf->tidStatus = CifsNew;
-> > > +   ++ret_buf->tc_count;
-> > > +   INIT_LIST_HEAD(&ret_buf->openFileList);
-> > > +   INIT_LIST_HEAD(&ret_buf->tcon_list);
-> > > +   spin_lock_init(&ret_buf->open_file_lock);
-> > > +   mutex_init(&ret_buf->crfid.fid_mutex);
-> > > +   spin_lock_init(&ret_buf->stat_lock);
-> > > +   atomic_set(&ret_buf->num_local_opens, 0);
-> > > +   atomic_set(&ret_buf->num_remote_opens, 0);
-> > > +
-> > >     return ret_buf;
-> > >  }
-> > >
->
->
->
+Artificial load presumably.
 
+> 
+> INFO: task ksmd:205 blocked for more than 360 seconds.
+>       Tainted: G            E 4.9.128-001.ali3000_nightly_20180925_264.alios7.x86_64 #1
 
--- 
-Thanks,
+4.9-stable does not contain Andrea's 4.13 commit 2c653d0ee2ae
+("ksm: introduce ksm_max_page_sharing per page deduplication limit").
 
-Steve
+The patch below is more economical than Andrea's, but I don't think
+a second workaround should be added, unless Andrea's is shown to be
+insufficient, even with its ksm_max_page_sharing tuned down to suit.
 
---0000000000000f081a057d81ddf8
-Content-Type: text/x-patch; charset="US-ASCII"; name="0001-cifs-check-kzalloc-return.patch"
-Content-Disposition: attachment; 
-	filename="0001-cifs-check-kzalloc-return.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jpxmc8db0>
-X-Attachment-Id: f_jpxmc8db0
+Yang, please try to reproduce on upstream, or backport Andrea's to
+4.9-stable - thanks.
 
-RnJvbSA2ODdmOTgzZjQ5ZDgwMDM3YmVlMDEyNWY0MzFmOGUwMjQzYzdhYjc3IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBKb2UgUGVyY2hlcyA8am9lQHBlcmNoZXMuY29tPgpEYXRlOiBU
-aHUsIDIwIERlYyAyMDE4IDIzOjUwOjQ4IC0wNjAwClN1YmplY3Q6IFtQQVRDSF0gY2lmczogY2hl
-Y2sga3phbGxvYyByZXR1cm4KCmt6YWxsb2MgY2FuIHJldHVybiBOVUxMIHNvIGFuIGFkZGl0aW9u
-YWwgY2hlY2sgaXMgbmVlZGVkLiBXaGlsZSB0aGVyZQppcyBhIGNoZWNrIGZvciByZXRfYnVmIHRo
-ZXJlIGlzIG5vIGNoZWNrIGZvciB0aGUgYWxsb2NhdGlvbiBvZgpyZXRfYnVmLT5jcmZpZC5maWQg
-LSB0aGlzIGNoZWNrIGlzIHRodXMgYWRkZWQuIEJvdGggY2FsbC1zaXRlcwpvZiB0Y29uSW5mb0Fs
-bG9jKCkgY2hlY2sgZm9yIE5VTEwgcmV0dXJuIG9mIHRjb25JbmZvQWxsb2MoKQpzbyByZXR1cm5p
-bmcgTlVMTCBvbiBmYWlsdXJlIG9mIGt6YWxsb2MoKSBoZXJlIHNlZW1zIGFwcHJvcHJpYXRlLgpB
-cyB0aGUga3phbGxvYygpIGlzIHRoZSBvbmx5IHRoaW5nIGhlcmUgdGhhdCBjYW4gZmFpbCBpdCBp
-cwptb3ZlZCB0byB0aGUgYmVnaW5uaW5nIHNvIGFzIG5vdCB0byBpbml0aWFsaXplIG90aGVyIHJl
-c291cmNlcwpvbiBmYWlsdXJlIG9mIGt6YWxsb2MuCgpGaXhlczogM2Q0ZWY5YTE1MzQzICgic21i
-MzogZml4IHJlZHVuZGFudCBvcGVucyBvbiByb290IikKLS0tCgpQcm9ibGVtIGxvY2F0ZWQgd2l0
-aCBhbiBleHBlcmltZW50YWwgY29jY2luZWxsZSBzY3JpcHQKCldoaWxlIGF0IGl0IG1ha2UgY2hl
-Y2twYXRjaCBoYXBweSBieSB1c2luZyAqcmV0X2J1Zi0+Y3JmaWQuZmlkCnJhdGhlciB0aGFuIHN0
-cnVjdCBjaWZzX2ZpZC4KClNpZ25lZC1vZmYtYnk6IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5j
-b20+ClJlcG9ydGVkLWJ5OiBOaWNob2xhcyBNYyBHdWlyZSA8aG9mcmF0QG9zYWRsLm9yZz4KUmV2
-aWV3ZWQtYnk6IE5pY2hvbGFzIE1jIEd1aXJlIDxob2ZyYXRAb3NhZGwub3JnPgotLS0KIGZzL2Np
-ZnMvbWlzYy5jIHwgMzQgKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLQogMSBmaWxl
-IGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
-L2ZzL2NpZnMvbWlzYy5jIGIvZnMvY2lmcy9taXNjLmMKaW5kZXggMTEzOTgwZGJhNGQ4Li5iZWUy
-MDMwNTViMzAgMTAwNjQ0Ci0tLSBhL2ZzL2NpZnMvbWlzYy5jCisrKyBiL2ZzL2NpZnMvbWlzYy5j
-CkBAIC0xMTEsMjEgKzExMSwyNyBAQCBzdHJ1Y3QgY2lmc190Y29uICoKIHRjb25JbmZvQWxsb2Mo
-dm9pZCkKIHsKIAlzdHJ1Y3QgY2lmc190Y29uICpyZXRfYnVmOwotCXJldF9idWYgPSBremFsbG9j
-KHNpemVvZihzdHJ1Y3QgY2lmc190Y29uKSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKHJldF9idWYpIHsK
-LQkJYXRvbWljX2luYygmdGNvbkluZm9BbGxvY0NvdW50KTsKLQkJcmV0X2J1Zi0+dGlkU3RhdHVz
-ID0gQ2lmc05ldzsKLQkJKytyZXRfYnVmLT50Y19jb3VudDsKLQkJSU5JVF9MSVNUX0hFQUQoJnJl
-dF9idWYtPm9wZW5GaWxlTGlzdCk7Ci0JCUlOSVRfTElTVF9IRUFEKCZyZXRfYnVmLT50Y29uX2xp
-c3QpOwotCQlzcGluX2xvY2tfaW5pdCgmcmV0X2J1Zi0+b3Blbl9maWxlX2xvY2spOwotCQltdXRl
-eF9pbml0KCZyZXRfYnVmLT5jcmZpZC5maWRfbXV0ZXgpOwotCQlyZXRfYnVmLT5jcmZpZC5maWQg
-PSBremFsbG9jKHNpemVvZihzdHJ1Y3QgY2lmc19maWQpLAotCQkJCQkgICAgIEdGUF9LRVJORUwp
-OwotCQlzcGluX2xvY2tfaW5pdCgmcmV0X2J1Zi0+c3RhdF9sb2NrKTsKLQkJYXRvbWljX3NldCgm
-cmV0X2J1Zi0+bnVtX2xvY2FsX29wZW5zLCAwKTsKLQkJYXRvbWljX3NldCgmcmV0X2J1Zi0+bnVt
-X3JlbW90ZV9vcGVucywgMCk7CisKKwlyZXRfYnVmID0ga3phbGxvYyhzaXplb2YoKnJldF9idWYp
-LCBHRlBfS0VSTkVMKTsKKwlpZiAoIXJldF9idWYpCisJCXJldHVybiBOVUxMOworCXJldF9idWYt
-PmNyZmlkLmZpZCA9IGt6YWxsb2Moc2l6ZW9mKCpyZXRfYnVmLT5jcmZpZC5maWQpLCBHRlBfS0VS
-TkVMKTsKKwlpZiAoIXJldF9idWYtPmNyZmlkLmZpZCkgeworCQlrZnJlZShyZXRfYnVmKTsKKwkJ
-cmV0dXJuIE5VTEw7CiAJfQorCisJYXRvbWljX2luYygmdGNvbkluZm9BbGxvY0NvdW50KTsKKwly
-ZXRfYnVmLT50aWRTdGF0dXMgPSBDaWZzTmV3OworCSsrcmV0X2J1Zi0+dGNfY291bnQ7CisJSU5J
-VF9MSVNUX0hFQUQoJnJldF9idWYtPm9wZW5GaWxlTGlzdCk7CisJSU5JVF9MSVNUX0hFQUQoJnJl
-dF9idWYtPnRjb25fbGlzdCk7CisJc3Bpbl9sb2NrX2luaXQoJnJldF9idWYtPm9wZW5fZmlsZV9s
-b2NrKTsKKwltdXRleF9pbml0KCZyZXRfYnVmLT5jcmZpZC5maWRfbXV0ZXgpOworCXNwaW5fbG9j
-a19pbml0KCZyZXRfYnVmLT5zdGF0X2xvY2spOworCWF0b21pY19zZXQoJnJldF9idWYtPm51bV9s
-b2NhbF9vcGVucywgMCk7CisJYXRvbWljX3NldCgmcmV0X2J1Zi0+bnVtX3JlbW90ZV9vcGVucywg
-MCk7CisKIAlyZXR1cm4gcmV0X2J1ZjsKIH0KIAotLSAKMi4xNy4xCgo=
---0000000000000f081a057d81ddf8--
+Hugh
+
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> ksmd            D    0   205      2 0x00000000
+>  ffff882fa00418c0 0000000000000000 ffff882fa4b10000 ffff882fbf059d00
+>  ffff882fa5bc1800 ffffc900190c7c28 ffffffff81725e58 ffffffff810777c0
+>  00ffc900190c7c88 ffff882fbf059d00 ffffffff8138cc09 ffff882fa4b10000
+> Call Trace:
+>  [<ffffffff81725e58>] ? __schedule+0x258/0x720
+>  [<ffffffff810777c0>] ? do_flush_tlb_all+0x30/0x30
+>  [<ffffffff8138cc09>] ? free_cpumask_var+0x9/0x10
+>  [<ffffffff81726356>] schedule+0x36/0x80
+>  [<ffffffff81729916>] schedule_timeout+0x206/0x4b0
+>  [<ffffffff81077d0f>] ? native_flush_tlb_others+0x11f/0x180
+>  [<ffffffff8110ca40>] ? ktime_get+0x40/0xb0
+>  [<ffffffff81725b6a>] io_schedule_timeout+0xda/0x170
+>  [<ffffffff81726c50>] ? bit_wait+0x60/0x60
+>  [<ffffffff81726c6b>] bit_wait_io+0x1b/0x60
+>  [<ffffffff81726759>] __wait_on_bit_lock+0x59/0xc0
+>  [<ffffffff811aff76>] __lock_page+0x86/0xa0
+>  [<ffffffff810d53e0>] ? wake_atomic_t_function+0x60/0x60
+>  [<ffffffff8121a269>] ksm_scan_thread+0xeb9/0x1430
+>  [<ffffffff810d5340>] ? prepare_to_wait_event+0x100/0x100
+>  [<ffffffff812193b0>] ? try_to_merge_with_ksm_page+0x850/0x850
+>  [<ffffffff810ac226>] kthread+0xe6/0x100
+>  [<ffffffff810ac140>] ? kthread_park+0x60/0x60
+>  [<ffffffff8172b196>] ret_from_fork+0x46/0x60
+> 
+> ksmd found a suitable KSM page on the stable tree and is trying to lock
+> it.  But it is locked by the direct reclaim path which is walking the
+> page's rmap to get the number of referenced PTEs.
+> 
+> The KSM page rmap walk needs to iterate all rmap_items of the page and all
+> rmap anon_vmas of each rmap_item.  So it may take (# rmap_item * #
+> children processes) loops.  This number of loops might be very large in
+> the worst case, and may take a long time.
+> 
+> Typically, direct reclaim will not intend to reclaim too many pages, and
+> it is latency sensitive.  So it is not worth doing the long ksm page rmap
+> walk to reclaim just one page.
+> 
+> Skip KSM pages in direct reclaim if the reclaim priority is low, but still
+> try to reclaim KSM pages with high priority.
+> 
+> Link: http://lkml.kernel.org/r/1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  mm/vmscan.c |   23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> --- a/mm/vmscan.c~mm-vmscan-skip-ksm-page-in-direct-reclaim-if-priority-is-low
+> +++ a/mm/vmscan.c
+> @@ -1260,8 +1260,17 @@ static unsigned long shrink_page_list(st
+>  			}
+>  		}
+>  
+> -		if (!force_reclaim)
+> -			references = page_check_references(page, sc);
+> +		if (!force_reclaim) {
+> +			/*
+> +			 * Don't try to reclaim KSM page in direct reclaim if
+> +			 * the priority is not high enough.
+> +			 */
+> +			if (PageKsm(page) && !current_is_kswapd() &&
+> +			    sc->priority > (DEF_PRIORITY - 2))
+> +				references = PAGEREF_KEEP;
+> +			else
+> +				references = page_check_references(page, sc);
+> +		}
+>  
+>  		switch (references) {
+>  		case PAGEREF_ACTIVATE:
+> @@ -2136,6 +2145,16 @@ static void shrink_active_list(unsigned
+>  			}
+>  		}
+>  
+> +		/*
+> +		 * Skip KSM page in direct reclaim if priority is not
+> +		 * high enough.
+> +		 */
+> +		if (PageKsm(page) && !current_is_kswapd() &&
+> +		    sc->priority > (DEF_PRIORITY - 2)) {
+> +			putback_lru_page(page);
+> +			continue;
+> +		}
+> +
+>  		if (page_referenced(page, 0, sc->target_mem_cgroup,
+>  				    &vm_flags)) {
+>  			nr_rotated += hpage_nr_pages(page);
+> _
