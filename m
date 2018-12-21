@@ -2,176 +2,92 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0857C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6C5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6983321906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBBB621906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:07:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+w8gnkJ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAk/TH9i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389406AbeLUKHH (ORCPT
+        id S2389413AbeLUKHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:07:07 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38517 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731648AbeLUKHF (ORCPT
+        Fri, 21 Dec 2018 05:07:55 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41272 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732403AbeLUKHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:07:05 -0500
-Received: by mail-it1-f193.google.com with SMTP id h65so5817731ith.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:07:04 -0800 (PST)
+        Fri, 21 Dec 2018 05:07:55 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k15-v6so4203925ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:07:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ft4u393HmiXxDH+RT0NdO0p20EVuGq569qeRw+Yez3k=;
-        b=K+w8gnkJ51IFMI5TgNfY3u+cKmBXUl0Kz6oOmoo+MPc8Vwio33TIkDuxbs+u0VM28V
-         JDpl6wIpsQVOxtVIdwFj47uVeyI5Qcxt6RUd7ti/iabj8P/AiQp4YMkSoNtdoSsLAUdN
-         lPwVmZqj7k3LXy6TjfjKaw3tqeC/3RBxdJKWs=
+        bh=hWFs9n0wuX+juL6C3X3XuBmX2AMe66r/W6oxU0uW9hk=;
+        b=cAk/TH9in3xjBto9ngfdj7mpLsF3e7xxGoOp24dpboYgVYF75mNFoUABLo1ppVal1h
+         un9sSwWnWVGDIYSUUI1d6ufjPHYg2s4YB8g54Y4SFglphgAzSkPCXq6B1p9tfmPs4zpV
+         RkaJfzq5mEN6hsT/FkgOnqycLqXUG/DANac4g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ft4u393HmiXxDH+RT0NdO0p20EVuGq569qeRw+Yez3k=;
-        b=gZR7DmZpsdrygvPumBtjjAzaSiJn7ML3wBeqY5OYc+//wIX8oWrLonYJUbjHSnQNcT
-         JNChS1rjMy/6VANVqKAWYTQQVUVrx9VC2lVCIJsWXfXy6cDJ2T0LvV2G89rI0jPA+f6W
-         xH1beweD1Q0ZVB8uoaci5+IEusjvAYOEdpCn3yAThC4oCmxnGKvkkkkB6MPd6ZO3OtwZ
-         1DITwaDc3xV0Hs8ROVMklfKpCouK3PvRtliajdoPddCab+yNBLXNqM8VN8fCZCQIS2ed
-         aUTJad5Qnmbx1JdSyKvS/jMo9PUDwwIjjB08S5ksbzLOinHPZSwqlshYDbwHrgbcpS1f
-         wqlA==
-X-Gm-Message-State: AJcUukefJWpwLtrFbwAUq1DTfAPXeAfGbkQ28TSdNqPWXD24ATJqe0Qe
-        la4QjqrLImY4TQMee38VxGjOJvYpm7Jck1yOMWVhfw==
-X-Google-Smtp-Source: ALg8bN4kVBs+rMUCly4HhD6xFlS4Qi+wUeiwsFTmDZl2g9PooyUFRUbCXTuZELsrYOTU7CGHGvs8mxY5Aqv6uiOpr10=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr1578882itf.14.1545386824276;
- Fri, 21 Dec 2018 02:07:04 -0800 (PST)
+        bh=hWFs9n0wuX+juL6C3X3XuBmX2AMe66r/W6oxU0uW9hk=;
+        b=XafPL4XHRNRoQmhbqn/A0Lc1EhzlMtZIR70UqU9bkiQWf4VXWJWo6FBkJgO3h4c3KO
+         Ea0zPXYI/ZhGAvBsAJWmRzy/6ey1aHVHVXBP1JyKCJz/xWc9RT9/dPBRB6oOl4JRmX2Q
+         mn40CWbmMjf6yz1DMt1WxLtEmMIYxd73FZ+AnvSpyp2qpn2JI6YvHwTXVl3pIltBHUEy
+         ubWXUqOhBqIiPlY1xw/Txym5fmBaRBr1IsIOV5MfI7iacnXkDnHwdprTHQfuH9zu25sI
+         D+2Oe8vkqEXBoGRmh+Bymi37uKZ12zL7Y2QHu5DXa8tT8dFRhVPkuwIP57Vumxxi2BZK
+         RCrQ==
+X-Gm-Message-State: AA+aEWZGp7b0d+tsom8qyPUzuDOQbXuyzEVd6VMDm200AVu9JicZ8SUx
+        9e3H1XKwmhYslOj/jWLV89RdjiRAXgIyJlfr282LtA==
+X-Google-Smtp-Source: ALg8bN535X5Lut3CA/Pgh99+NdqaMfER0nDqxGnW7ep1wEpGtSvfwgphjvbyJogSG/y1OWx0/KjevEGd3vOlqdu9eug=
+X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr1021565ljj.120.1545386872356;
+ Fri, 21 Dec 2018 02:07:52 -0800 (PST)
 MIME-Version: 1.0
-References: <1545315426-14545-1-git-send-email-vincent.guittot@linaro.org>
- <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com> <CAJZ5v0jp-+rG2usiumWmORTvqCYDJJbFUB+ey3wLyQUrimdTLw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jp-+rG2usiumWmORTvqCYDJJbFUB+ey3wLyQUrimdTLw@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 21 Dec 2018 11:06:53 +0100
-Message-ID: <CAKfTPtC47-KHWJibvuN1oi==CrtRTNUyHfYZcJtZ+7Y6rM+Chg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] PM/runtime:Replace jiffies based accounting with
- ktime based accounting
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+References: <20181210205955.3254660-1-arnd@arndb.de>
+In-Reply-To: <20181210205955.3254660-1-arnd@arndb.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Dec 2018 11:07:40 +0100
+Message-ID: <CACRpkdYOU1-8Cj9zfYQ7i_gGhM-NrYcQOiZbJC=rdZKxPs_q+w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: msm: mark PM functions as __maybe_unused
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Evan Green <evgreen@chromium.org>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+On Mon, Dec 10, 2018 at 9:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-On Fri, 21 Dec 2018 at 09:58, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> Without CONFIG_PM_SLEEP, we get annoyting warnings about unused functions:
 >
-> On Thu, Dec 20, 2018 at 11:03 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Thu, 20 Dec 2018 at 15:17, Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > From: Thara Gopinath <thara.gopinath@linaro.org>
-> > >
-> > > This patch replaces jiffies based accounting for runtime_active_time
-> > > and runtime_suspended_time with ktime base accounting. This makes the
-> > > runtime debug counters inline with genpd and other pm subsytems which
-> > > uses ktime based accounting.
-> > >
-> > > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> > > [move from ktime to raw nsec]
-> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > ---
-> > >  drivers/base/power/runtime.c | 17 +++++++++--------
-> > >  drivers/base/power/sysfs.c   | 11 ++++++++---
-> > >  include/linux/pm.h           |  6 +++---
-> > >  3 files changed, 20 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > > index e695544..f700524 100644
-> > > --- a/drivers/base/power/runtime.c
-> > > +++ b/drivers/base/power/runtime.c
-> > > @@ -64,8 +64,8 @@ static int rpm_suspend(struct device *dev, int rpmflags);
-> > >   */
-> > >  void update_pm_runtime_accounting(struct device *dev)
-> > >  {
-> > > -       unsigned long now = jiffies;
-> > > -       unsigned long delta;
-> > > +       u64 now = ktime_to_ns(ktime_get());
-> > > +       u64 delta;
-> > >
-> > >         delta = now - dev->power.accounting_timestamp;
-> > >
-> > > @@ -75,9 +75,9 @@ void update_pm_runtime_accounting(struct device *dev)
-> > >                 return;
-> > >
-> > >         if (dev->power.runtime_status == RPM_SUSPENDED)
-> > > -               dev->power.suspended_jiffies += delta;
-> > > +               dev->power.suspended_time += delta;
-> > >         else
-> > > -               dev->power.active_jiffies += delta;
-> > > +               dev->power.active_time += delta;
-> > >  }
-> > >
-> > >  static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> > > @@ -88,17 +88,18 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> > >
-> > >  u64 pm_runtime_suspended_time(struct device *dev)
-> > >  {
-> > > -       unsigned long flags, time;
-> > > +       u64 time;
-> > > +       unsigned long flags;
-> > >
-> > >         spin_lock_irqsave(&dev->power.lock, flags);
-> > >
-> > >         update_pm_runtime_accounting(dev);
-> > >
-> > > -       time = dev->power.suspended_jiffies;
-> > > +       time = dev->power.suspended_time;
-> > >
-> > >         spin_unlock_irqrestore(&dev->power.lock, flags);
-> > >
-> > > -       return jiffies_to_nsecs(time);
-> > > +       return time;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
-> > >
-> > > @@ -1503,7 +1504,7 @@ void pm_runtime_init(struct device *dev)
-> > >         dev->power.request_pending = false;
-> > >         dev->power.request = RPM_REQ_NONE;
-> > >         dev->power.deferred_resume = false;
-> > > -       dev->power.accounting_timestamp = jiffies;
-> > > +       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
-> >
-> > This change worries me a bit, but it may not be a problem in practice.
-> >
-> > pm_runtime_init() is called when devices get initialized, via
-> > device_initialize(). If timekeeping has not been initialized prior a
-> > call to ktime_get() is done, it will fail and causing a NULL pointer
-> > deference or something along those lines.
-> >
-> > In other words, do we know that device_initialize() is always called
-> > after timekeeping has been initialized during boot?
+> drivers/pinctrl/qcom/pinctrl-msm.c:1082:12: error: 'msm_pinctrl_resume' defined but not used [-Werror=unused-function]
+>  static int msm_pinctrl_resume(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/qcom/pinctrl-msm.c:1075:12: error: 'msm_pinctrl_suspend' defined but not used [-Werror=unused-function]
+>  static int msm_pinctrl_suspend(struct device *dev)
 >
-> We do.
+> Mark them as __maybe_unused to shut up the warning and silently drop
+> the functions without having to add ugly #ifdefs.
 >
-> timekeeping_init() is called early in start_kernel() which is way
-> before driver_init() (and that's when devices can start to be
-> initialized) called from rest_init() via kernel_init_freeable() and
-> do_basic_setup().
+> Fixes: 977d057ad346 ("pinctrl: msm: Add sleep pinctrl state transitions")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks for the confirmation. I'm going to add your answer in the
-commit message so we will have the answer next time someone will
-wonder
+Patch applied w/ACKs and fixing a typo.
+
+Yours,
+Linus Walleij
