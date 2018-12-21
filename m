@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAC8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F928C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A16321939
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 146092195D
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545405704;
-	bh=+GUFcob1zAnoT5TEMD1SMg3L8/OrWZJKRXajWl2SOUM=;
+	s=default; t=1545405706;
+	bh=SQubZ9rDs9lg8qOzAj2FyjE5d/iJCcG1kmADqZzzLFY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=sGxbz4GeujIjT10pZ+JUyLnw3ellTYDuLVYJ4cWIjbWJ1Rt0zjleyAv5IQ1ps6ehF
-	 pZFuk2lGA2B46L4ANXL2c7yJx/i8GWFaiduot/JJaHm4oLAztefoOKzxfG8nzCgP2R
-	 bk9QCALBnsPkFu9yGpYuSzq0IRi5pVvAju3lI5RE=
+	b=ehn+0SIEF9vpnLXYoeQRQilggR/hL1NPeYFE357UnlT1cPSjJqyElCaGMfS/KZbkY
+	 T9bvkzSWGZ3o6enu3ytUfgcGrxTfYA7N/6ioiWm6T/SI3F8hz+OVjhR8XmdvRs7KWA
+	 uOH9qiP+893kkVck8yz863wm7RrSVuI7/WMuQpaI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404191AbeLUPVn (ORCPT
+        id S2404203AbeLUPVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:21:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57128 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 10:21:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404164AbeLUPVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:21:37 -0500
+        id S2404137AbeLUPVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 10:21:41 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D731321929;
-        Fri, 21 Dec 2018 15:21:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB58921917;
+        Fri, 21 Dec 2018 15:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545405696;
-        bh=+GUFcob1zAnoT5TEMD1SMg3L8/OrWZJKRXajWl2SOUM=;
+        s=default; t=1545405700;
+        bh=SQubZ9rDs9lg8qOzAj2FyjE5d/iJCcG1kmADqZzzLFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=Z1aLoUcikioTJvMG7l1oqdQC3NoU0rQ7SWulJZQCV3D4dkKiANGL1Uy1el0q4z6wS
-         pIsceTZ/0RK385w4YEhDMj9kW7f1h6I9q+xAPRIZo0/4kRNGtNFFCHv11AI0ngjlmU
-         Nd9E/QxTleKfiC0DnnzhFCZxHkVgolYknibGLfHw=
+        b=hn/sswHrwxj8Ivsl7G2R8mPBsMVI/wzggHA4qU4y6WYGX3zSo/PHGejyGUDK081yg
+         T+gak0ECrjsIqQspwqLOTMzKnbe9J0wvVQJf3wxQj3qXTz56UgIBEFV4JehbRFBKBu
+         4tSJEyeoypKPTQp/pVTS1B3/KpH0X3x4aLONyyfE=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
 Cc:     rostedt@goodmis.org, tglx@linutronix.de, C.Emde@osadl.org,
         jkacur@redhat.com, bigeasy@linutronix.de,
         daniel.wagner@siemens.com, julia@ni.com
-Subject: [PATCH RT 4/9] sched/core: Avoid __schedule() being called twice in a row
-Date:   Fri, 21 Dec 2018 09:21:16 -0600
-Message-Id: <f627dfe1a81b884fbe95dc0591722331e343f0bb.1545347029.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH RT 5/9] work-simple: drop a shit statement in SWORK_EVENT_PENDING
+Date:   Fri, 21 Dec 2018 09:21:17 -0600
+Message-Id: <eee0dde6de03de4a7adfe1119c9a2575d8109df5.1545347029.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1545347029.git.tom.zanussi@linux.intel.com>
 References: <cover.1545347029.git.tom.zanussi@linux.intel.com>
@@ -62,62 +62,39 @@ v3.18.129-rt111 rt-stable review patch.  If anyone has any objections,
 please let me know.
 
 ------------------
-From: Daniel Bristot de Oliveira <bristot@redhat.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 2bb94c48b2ffaabf8c15a51e5cc1b4c541988cab ]
+[ Upstream commit 22f41ebe5579cc847a7bb6c71916be92c8926216 ]
 
-If a worker invokes schedule() then we may have the call chain:
- schedule()
- -> sched_submit_work()
-    -> wq_worker_sleeping()
-       -> wake_up_worker()
-	  -> wake_up_process().
+Dan Carpenter reported
+| smatch warnings:
+|kernel/sched/swork.c:63 swork_kthread() warn: test_bit() takes a bit number
 
-The last wakeup may cause a schedule which is unnecessary because we are
-already in schedule() and do it anyway.
+This is not a bug because we shift by zero (and use the same value in
+both places).
+Nevertheless I'm dropping that shift by zero to keep smatch quiet.
 
-Add a preempt_disable() + preempt_enable_no_resched() around
-wq_worker_sleeping() so the context switch could be delayed until
-__schedule().
-
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@sssup.it>
-Cc: Romulo da Silva de Oliveira <romulo.deoliveira@ufsc.br>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-[bigeasy: rewrite changelog]
+Cc: Daniel Wagner <daniel.wagner@siemens.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+[ tom.zanussi: applied to work-simple.c instead of swork.c ]
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- kernel/sched/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/sched/work-simple.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d5534f439b4a..500c319fcfc5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3114,10 +3114,15 @@ static inline void sched_submit_work(struct task_struct *tsk)
- 	/*
- 	 * If a worker went to sleep, notify and ask workqueue whether
- 	 * it wants to wake up a task to maintain concurrency.
-+	 * As this function is called inside the schedule() context,
-+	 * we disable preemption to avoid it calling schedule() again
-+	 * in the possible wakeup of a kworker.
- 	 */
--	if (tsk->flags & PF_WQ_WORKER)
-+	if (tsk->flags & PF_WQ_WORKER) {
-+		preempt_disable();
- 		wq_worker_sleeping(tsk);
--
-+		preempt_enable_no_resched();
-+	}
+diff --git a/kernel/sched/work-simple.c b/kernel/sched/work-simple.c
+index c996f755dba6..4284dd37aebe 100644
+--- a/kernel/sched/work-simple.c
++++ b/kernel/sched/work-simple.c
+@@ -11,7 +11,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
  
- 	if (tsk_is_pi_blocked(tsk))
- 		return;
+-#define SWORK_EVENT_PENDING     (1 << 0)
++#define SWORK_EVENT_PENDING     1
+ 
+ static DEFINE_MUTEX(worker_mutex);
+ static struct sworker *glob_worker;
 -- 
 2.14.1
 
