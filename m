@@ -2,92 +2,127 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B87C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9B3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45D49218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A41F7218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:27:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cl599PYw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733259AbeLUIYw (ORCPT
+        id S2387481AbeLUI1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:24:52 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:59494 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732782AbeLUIYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:24:51 -0500
-Received: from [IPv6:2001:a62:180a:4401:23b6:57c7:ac31:7c25] (unknown [IPv6:2001:a62:180a:4401:23b6:57c7:ac31:7c25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: zzam)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id C1B48335C39;
-        Fri, 21 Dec 2018 08:24:49 +0000 (UTC)
-Subject: Re: [PATCH v2] media: si2165: fix a missing check of return value
+        Fri, 21 Dec 2018 03:27:30 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33240 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeLUI1a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 03:27:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z11so2196737pgu.0;
+        Fri, 21 Dec 2018 00:27:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e+mpaMmJU3qd+NUv7lAudbCV8zcT9yIu7TTtWgRtRZE=;
+        b=Cl599PYwNWHiG68EUJcNV8HqaDgL+Bdi6TSCEW8T1AwZmjJfAenDQp9QFfWifwPjuH
+         9Q+yN7iWgMa+cRFH8Y81K38q1WbnOihIY16bkbuUIv7sQY4TlriBL43nlJ4rkcwto8zC
+         3tcdkk4nOAEvtXmOnyugk1aXZUT0+bhKqjduFfrKrdu7qA3vA3Sx1w2wlsNjkfqqKgEi
+         HHKpNXCYXE4koZ6h/Ra8RtJj/j3ye4eJPhGATSfh5gvE0xTsGbzRTj8RH+4od2kt/F80
+         KdFYDWcdWNvDbRKwjhEORS9RkWcbtOvbokN+20kb2GiSdb8l74YdvEg9T6bolHzbAmsE
+         2sUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e+mpaMmJU3qd+NUv7lAudbCV8zcT9yIu7TTtWgRtRZE=;
+        b=DjbIIrNzxq4gYbGgbbl4D4YdlSAzySHzvtMiPESdP37QtmEqdp9NfUggpTEdIxC9z/
+         figerwh1TCHeJ1SeanWt+RtBd1VQSSK1+XI1XQYY1lsFXEf62eByhp9k4yIdQfbve5gE
+         9KfxOH4s3+6/nArS0bxcB1NQTJYw/ZYdqZmD3cAQW15aWPFHA5km2++REJwILVDux2ak
+         UaTQJ6K/waQuwu1DBkuhoqfcHRTAn6LkPSw76qQ3Ie1B2fCCyxlDNf7cKH8FRWTPrPN3
+         X7WGlWn0XJrxxFK0kjtlYPJliFH4z/S75jrvv01kQvSn97Y1oZhI3nU0DSh++q3goeQN
+         MJYw==
+X-Gm-Message-State: AJcUukdI9YZI2bTeT1kYRwfjlW+AaNohvI3uE62ich+2ekzgyESIvRV5
+        Ka/Wkp1Q4k5FNvpV936ORlU=
+X-Google-Smtp-Source: ALg8bN7wPqGiqTlx9HA99OSA2TmZaYphO3fFxt54PU45PLJ8nzdDy0ObFmLVChaeHb4B1TCuBBwlOw==
+X-Received: by 2002:a65:60c2:: with SMTP id r2mr1486270pgv.393.1545380848117;
+        Fri, 21 Dec 2018 00:27:28 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id 78sm41588597pft.184.2018.12.21.00.27.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 00:27:27 -0800 (PST)
+Date:   Fri, 21 Dec 2018 00:27:25 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181221045403.59303-1-kjlu@umn.edu>
-From:   Matthias Schwarzott <zzam@gentoo.org>
-Message-ID: <7a5d505d-692b-f067-51f6-815787cffba3@gentoo.org>
-Date:   Fri, 21 Dec 2018 09:24:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Joe Perches <joe@perches.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] touchscreen: elants: fix a missing check of return values
+Message-ID: <20181221082725.GB211587@dtor-ws>
+References: <20181221065919.60129-1-kjlu@umn.edu>
 MIME-Version: 1.0
-In-Reply-To: <20181221045403.59303-1-kjlu@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221065919.60129-1-kjlu@umn.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 21.12.18 um 05:54 schrieb Kangjie Lu:
-> si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
-> that "val_tmp" will be an uninitialized value when regmap_read() fails.
-> "val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
-> "val" will be a random value. Further use will lead to undefined
-> behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
-> its error code upstream.
+Hi Kangjie,
+
+On Fri, Dec 21, 2018 at 12:59:16AM -0600, Kangjie Lu wrote:
+> elants_i2c_send() may fail, let's check its return values. The fix does
+> the check and reports an error message upon the failure.
 > 
 > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-
-Reviewed-by: Matthias Schwarzott <zzam@gentoo.org>
-
 > ---
->  drivers/media/dvb-frontends/si2165.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/input/touchscreen/elants_i2c.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
-> index feacd8da421d..d55d8f169dca 100644
-> --- a/drivers/media/dvb-frontends/si2165.c
-> +++ b/drivers/media/dvb-frontends/si2165.c
-> @@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
+> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+> index f2cb23121833..cb3c1470bb68 100644
+> --- a/drivers/input/touchscreen/elants_i2c.c
+> +++ b/drivers/input/touchscreen/elants_i2c.c
+> @@ -245,8 +245,14 @@ static int elants_i2c_calibrate(struct elants_data *ts)
+>  	ts->state = ELAN_WAIT_RECALIBRATION;
+>  	reinit_completion(&ts->cmd_done);
 >  
->  static int si2165_wait_init_done(struct si2165_state *state)
->  {
-> -	int ret = -EINVAL;
-> +	int ret;
->  	u8 val = 0;
->  	int i;
+> -	elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
+> -	elants_i2c_send(client, rek, sizeof(rek));
+> +	error = elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
+> +	error |= elants_i2c_send(client, rek, sizeof(rek));
+
+I dislike this kind of error handling as this may result in invalid
+error code being reported, in case 2 commands produce different results.
+
+> +	if (error) {
+> +		dev_err(&client->dev,
+> +				"error in sending I2C messages for calibration: %d\n",
+> +				error);
+> +		return error;
+
+If we just return like you do it here, interrupts will stay disabled and
+touchscreen will be completely dead. With the old code we'd report
+timeout on calibration, and touchscreen would have chance of working. We
+would also be able to retry calibration.
+
+> +	}
 >  
->  	for (i = 0; i < 3; ++i) {
-> -		si2165_readreg8(state, REG_INIT_DONE, &val);
-> +		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
-> +		if (ret < 0)
-> +			return ret;
->  		if (val == 0x01)
->  			return 0;
->  		usleep_range(1000, 50000);
->  	}
->  	dev_err(&state->client->dev, "init_done was not set\n");
-> -	return ret;
-> +	return -EINVAL;
->  }
+>  	enable_irq(client->irq);
 >  
->  static int si2165_upload_firmware_block(struct si2165_state *state,
+> -- 
+> 2.17.2 (Apple Git-113)
 > 
 
+Thanks.
+
+-- 
+Dmitry
