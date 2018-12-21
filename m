@@ -2,96 +2,554 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184E1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB5E7218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E3FC21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Me3wI/U5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fiSz6gSP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388615AbeLUI46 (ORCPT
+        id S2388682AbeLUI5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:56:58 -0500
-Received: from mail.netline.ch ([148.251.143.178]:56924 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388577AbeLUI44 (ORCPT
+        Fri, 21 Dec 2018 03:57:02 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36006 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388577AbeLUI5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:56:56 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id F406E2A6056;
-        Fri, 21 Dec 2018 09:56:53 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id iSKgIW2nQwOr; Fri, 21 Dec 2018 09:56:53 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 52E3B2A6055;
-        Fri, 21 Dec 2018 09:56:53 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gaGc1-0001BQ-0l; Fri, 21 Dec 2018 09:56:53 +0100
-Subject: Re: [PATCH 1/3] drm/amd: fix race in page flip job
-To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     David Zhou <David1.Zhou@amd.com>,
-        Daniel Stone <daniels@collabora.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-References: <20181221031053.240161-1-yuzhao@google.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <02562071-6010-7c49-fb82-aceaf24d877f@daenzer.net>
-Date:   Fri, 21 Dec 2018 09:56:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 21 Dec 2018 03:57:00 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A7EC0608D2; Fri, 21 Dec 2018 08:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545382619;
+        bh=H6EMkrU9OklVGrrNiNzQxcRV1zcT8zVppCPyaLSgjpg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Me3wI/U5RS8Uod2SFfh7Y3k69QyQs935maqqkoMM3bwnMzfxYIRfaBlFGMF7+nbe8
+         YtkRBEXONxAYCBLd9TOjbTh/O+5gc2/w317cEYJk3j9YSHBVLdErXaFnjeSpv/5wfM
+         W6t8I0EH9QXKQegjSaGgFv1PFEL4hvGpveNXBT5o=
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 90689609D1;
+        Fri, 21 Dec 2018 08:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545382616;
+        bh=H6EMkrU9OklVGrrNiNzQxcRV1zcT8zVppCPyaLSgjpg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fiSz6gSPUM0BXCJEfR6j+4cv+XOizTjGpabsxyjNh6fj+ubbbz/aaqZ4dattr3NM4
+         /JfBAV68vtChHq2YSUq+FbsVWkt3OIAX302ujlNfuB2yiGTWOgrGLnSSZHAQIFavjU
+         HMkyiZ1ilUSFjc2ckj0eTTGOYYdTq4t1YzWlx4tg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90689609D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v8 06/10] soc: qcom: rpmhpd: Add RPMh power domain driver
+Date:   Fri, 21 Dec 2018 14:26:18 +0530
+Message-Id: <20181221085622.25573-7-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181221085622.25573-1-rnayak@codeaurora.org>
+References: <20181221085622.25573-1-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20181221031053.240161-1-yuzhao@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-21 4:10 a.m., Yu Zhao wrote:
-> Fix race between page flip job submission and completion. We invoke
-> page_flip callback to submit page flip job to GPU first and then set
-> pflip_status. If GPU fires page flip done irq in between, its handler
-> won't see the correct pflip_status thus will refuse to notify the job
-> completion. The job will eventually times out.
-> 
-> Reverse the order of calling page_flip and setting pflip_status to
-> fix the race.
+The RPMh power domain driver aggregates the corner votes from various
+consumers for the ARC resources and communicates it to RPMh.
 
-There is no race, amdgpu_crtc->pflip_status is protected by dev->event_lock.
+With RPMh we use 2 different numbering space for corners, one used
+by the clients to express their performance needs, and another used
+to communicate to RPMh hardware.
 
+The clients express their performance requirements using a sparse
+numbering space which are mapped to meaningful levels like RET, SVS,
+NOMINAL, TURBO etc which then get mapped to another number space
+between 0 and 15 which is communicated to RPMh. The sparse number space,
+also referred to as vlvl is mapped to the continuous number space of 0
+to 15, also referred to as hlvl, using command DB.
 
+Some power domain clients could request a performance state only while
+the CPU is active, while some others could request for a certain
+performance state all the time regardless of the state of the CPU.
+We handle this by internally aggregating the votes from both type of
+clients and then send the aggregated votes to RPMh.
+
+There are also 3 different types of votes that are comunicated to RPMh
+for every resource.
+1. ACTIVE_ONLY:
+	This specifies the requirement for the resource when the CPU is
+ 	active
+2. SLEEP:
+	This specifies the requirement for the resource when the CPU is
+	going to sleep
+3. WAKE_ONLY:
+	This specifies the requirement for the resource when the CPU is
+	coming out of sleep to active state
+
+We add data for all power domains on sdm845 SoC as part of the patch.
+The driver can be extended to support other SoCs which support RPMh
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/soc/qcom/Kconfig  |   9 +
+ drivers/soc/qcom/Makefile |   1 +
+ drivers/soc/qcom/rpmhpd.c | 400 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 410 insertions(+)
+ create mode 100644 drivers/soc/qcom/rpmhpd.c
+
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index df5cd9fa0d5e..6241d3e3b115 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -98,6 +98,15 @@ config QCOM_RPMH
+ 	  of hardware components aggregate requests for these resources and
+ 	  help apply the aggregated state on the resource.
+ 
++config QCOM_RPMHPD
++	bool "Qualcomm RPMh Power domain driver"
++	depends on QCOM_RPMH && QCOM_COMMAND_DB
++	help
++	  QCOM RPMh Power domain driver to support power-domains with
++	  performance states. The driver communicates a performance state
++	  value to RPMh which then translates it into corresponding voltage
++	  for the voltage rail.
++
+ config QCOM_RPMPD
+ 	bool "Qualcomm RPM Power domain driver"
+ 	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index f1b25fdcf2ad..ffe519b0cb66 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -21,4 +21,5 @@ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+ obj-$(CONFIG_QCOM_APR) += apr.o
+ obj-$(CONFIG_QCOM_LLCC) += llcc-slice.o
+ obj-$(CONFIG_QCOM_SDM845_LLCC) += llcc-sdm845.o
++obj-$(CONFIG_QCOM_RPMHPD) += rpmhpd.o
+ obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+new file mode 100644
+index 000000000000..e37976e87370
+--- /dev/null
++++ b/drivers/soc/qcom/rpmhpd.c
+@@ -0,0 +1,400 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved.*/
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mutex.h>
++#include <linux/pm_domain.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <soc/qcom/cmd-db.h>
++#include <soc/qcom/rpmh.h>
++#include <dt-bindings/power/qcom-rpmpd.h>
++
++#define domain_to_rpmhpd(domain) container_of(domain, struct rpmhpd, pd)
++
++#define RPMH_ARC_MAX_LEVELS	16
++
++/**
++ * struct rpmhpd - top level RPMh power domain resource data structure
++ * @dev:		rpmh power domain controller device
++ * @pd: 		generic_pm_domain corrresponding to the power domain
++ * @peer:		A peer power domain in case Active only Voting is supported
++ * @active_only:	True if it represents an Active only peer
++ * @level:		An array of level (vlvl) to corner (hlvl) mappings derived from cmd-db
++ * @level_count:	Number of levels supported by the power domain. max being 16 (0 - 15)
++ * @enabled:		true if the power domain is enabled
++ * @res_name:		Resource name used for cmd-db lookup
++ * @addr:		Resource address as looped up using resource name from cmd-db
++ */
++struct rpmhpd {
++	struct device	*dev;
++	struct generic_pm_domain pd;
++	struct generic_pm_domain *parent;
++	struct rpmhpd	*peer;
++	const bool	active_only;
++	unsigned int	corner;
++	unsigned int	active_corner;
++	u32		level[RPMH_ARC_MAX_LEVELS];
++	size_t		level_count;
++	bool		enabled;
++	const char	*res_name;
++	u32		addr;
++};
++
++struct rpmhpd_desc {
++	struct rpmhpd **rpmhpds;
++	size_t num_pds;
++};
++
++static DEFINE_MUTEX(rpmhpd_lock);
++
++/* SDM845 RPMH powerdomains */
++
++static struct rpmhpd sdm845_ebi = {
++	.pd = { .name = "ebi", },
++	.res_name = "ebi.lvl",
++};
++
++static struct rpmhpd sdm845_lmx = {
++	.pd = { .name = "lmx", },
++	.res_name = "lmx.lvl",
++};
++
++static struct rpmhpd sdm845_lcx = {
++	.pd = { .name = "lcx", },
++	.res_name = "lcx.lvl",
++};
++
++static struct rpmhpd sdm845_gfx = {
++	.pd = { .name = "gfx", },
++	.res_name = "gfx.lvl",
++};
++
++static struct rpmhpd sdm845_mss = {
++	.pd = { .name = "mss", },
++	.res_name = "mss.lvl",
++};
++
++static struct rpmhpd sdm845_mx_ao;
++static struct rpmhpd sdm845_mx = {
++	.pd = { .name = "mx", },
++	.peer = &sdm845_mx_ao,
++	.res_name = "mx.lvl",
++};
++
++static struct rpmhpd sdm845_mx_ao = {
++	.pd = { .name = "mx_ao", },
++	.peer = &sdm845_mx,
++	.res_name = "mx.lvl",
++};
++
++static struct rpmhpd sdm845_cx_ao;
++static struct rpmhpd sdm845_cx = {
++	.pd = { .name = "cx", },
++	.peer = &sdm845_cx_ao,
++	.res_name = "cx.lvl",
++};
++
++static struct rpmhpd sdm845_cx_ao = {
++	.pd = { .name = "cx_ao", },
++	.peer = &sdm845_cx,
++	.res_name = "cx.lvl",
++};
++
++static struct rpmhpd *sdm845_rpmhpds[] = {
++	[SDM845_EBI] = &sdm845_ebi,
++	[SDM845_MX] = &sdm845_mx,
++	[SDM845_MX_AO] = &sdm845_mx_ao,
++	[SDM845_CX] = &sdm845_cx,
++	[SDM845_CX_AO] = &sdm845_cx_ao,
++	[SDM845_LMX] = &sdm845_lmx,
++	[SDM845_LCX] = &sdm845_lcx,
++	[SDM845_GFX] = &sdm845_gfx,
++	[SDM845_MSS] = &sdm845_mss,
++};
++
++static const struct rpmhpd_desc sdm845_desc = {
++	.rpmhpds = sdm845_rpmhpds,
++	.num_pds = ARRAY_SIZE(sdm845_rpmhpds),
++};
++
++static const struct of_device_id rpmhpd_match_table[] = {
++	{ .compatible = "qcom,sdm845-rpmhpd", .data = &sdm845_desc },
++	{ }
++};
++
++static int rpmhpd_send_corner(struct rpmhpd *pd, int state,
++			      unsigned int corner, bool sync)
++{
++	struct tcs_cmd cmd = {
++		.addr = pd->addr,
++		.data = corner,
++	};
++
++	/*
++	 * Wait for an ack only when we are increasing the
++	 * perf state of the power domain
++	 */
++	if (sync)
++		return rpmh_write(pd->dev, state, &cmd, 1);
++	else
++		return rpmh_write_async(pd->dev, state, &cmd, 1);
++}
++
++static void to_active_sleep(struct rpmhpd *pd, unsigned int corner,
++			    unsigned int *active, unsigned int *sleep)
++{
++	*active = corner;
++
++	if (pd->active_only)
++		*sleep = 0;
++	else
++		*sleep = *active;
++}
++
++/*
++ * This function is used to aggregate the votes across the active only
++ * resources and its peers. The aggregated votes are sent to RPMh as
++ * ACTIVE_ONLY votes (which take effect immediately), as WAKE_ONLY votes
++ * (applied by RPMh on system wakeup) and as SLEEP votes (applied by RPMh
++ * on system sleep).
++ * We send ACTIVE_ONLY votes for resources without any peers. For others,
++ * which have an active only peer, all 3 votes are sent.
++ */
++static int rpmhpd_aggregate_corner(struct rpmhpd *pd, unsigned int corner)
++{
++	int ret;
++	struct rpmhpd *peer = pd->peer;
++	unsigned int active_corner, sleep_corner;
++	unsigned int this_active_corner = 0, this_sleep_corner = 0;
++	unsigned int peer_active_corner = 0, peer_sleep_corner = 0;
++
++	to_active_sleep(pd, corner, &this_active_corner, &this_sleep_corner);
++
++	if (peer && peer->enabled)
++		to_active_sleep(peer, peer->corner, &peer_active_corner,
++				&peer_sleep_corner);
++
++	active_corner = max(this_active_corner, peer_active_corner);
++
++	ret = rpmhpd_send_corner(pd, RPMH_ACTIVE_ONLY_STATE, active_corner,
++				 active_corner > pd->active_corner);
++	if (ret)
++		return ret;
++
++	pd->active_corner = active_corner;
++
++	if (peer) {
++		peer->active_corner = active_corner;
++
++		ret = rpmhpd_send_corner(pd, RPMH_WAKE_ONLY_STATE,
++					 active_corner, false);
++		if (ret)
++			return ret;
++
++		sleep_corner = max(this_sleep_corner, peer_sleep_corner);
++
++		return rpmhpd_send_corner(pd, RPMH_SLEEP_STATE, sleep_corner,
++					  false);
++	}
++
++	return ret;
++}
++
++static int rpmhpd_power_on(struct generic_pm_domain *domain)
++{
++	struct rpmhpd *pd = domain_to_rpmhpd(domain);
++	int ret = 0;
++
++	mutex_lock(&rpmhpd_lock);
++
++	if (pd->corner)
++		ret = rpmhpd_aggregate_corner(pd, pd->corner);
++
++	if (!ret)
++		pd->enabled = true;
++
++	mutex_unlock(&rpmhpd_lock);
++
++	return ret;
++}
++
++static int rpmhpd_power_off(struct generic_pm_domain *domain)
++{
++	struct rpmhpd *pd = domain_to_rpmhpd(domain);
++	int ret = 0;
++
++	mutex_lock(&rpmhpd_lock);
++
++	ret = rpmhpd_aggregate_corner(pd, pd->level[0]);
++
++	if (!ret)
++		pd->enabled = false;
++
++	mutex_unlock(&rpmhpd_lock);
++
++	return ret;
++}
++
++static int rpmhpd_set_performance_state(struct generic_pm_domain *domain,
++					unsigned int level)
++{
++	struct rpmhpd *pd = domain_to_rpmhpd(domain);
++	int ret = 0, i;
++
++	mutex_lock(&rpmhpd_lock);
++
++	for (i = 0; i < pd->level_count; i++)
++		if (level <= pd->level[i])
++			break;
++
++	/*
++	 * If the level requested is more than that supported by the
++	 * max corner, just set it to max anyway.
++	 */
++	if (i == pd->level_count)
++		i--;
++
++	if (pd->enabled) {
++		ret = rpmhpd_aggregate_corner(pd, i);
++		if (ret)
++			goto out;
++	}
++
++	pd->corner = i;
++out:
++	mutex_unlock(&rpmhpd_lock);
++
++	return ret;
++}
++
++static unsigned int rpmhpd_get_performance_state(struct generic_pm_domain *genpd,
++						 struct dev_pm_opp *opp)
++{
++	struct device_node *np;
++	unsigned int level = 0;
++
++	np = dev_pm_opp_get_of_node(opp);
++	if (of_property_read_u32(np, "qcom,level", &level))
++		pr_err("%s: missing 'qcom,level' property\n", __func__);
++
++	of_node_put(np);
++
++	return level;
++}
++
++static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
++{
++	int i;
++	const u16 *buf;
++
++	buf = cmd_db_read_aux_data(rpmhpd->res_name, &rpmhpd->level_count);
++	if (IS_ERR(buf))
++		return PTR_ERR(buf);
++
++	/* 2 bytes used for each command DB aux data entry */
++	rpmhpd->level_count >>= 1;
++
++	if (rpmhpd->level_count > RPMH_ARC_MAX_LEVELS)
++		return -EINVAL;
++
++	for (i = 0; i < rpmhpd->level_count; i++) {
++		rpmhpd->level[i] = buf[i];
++
++		/*
++		 * The AUX data may be zero padded.  These 0 valued entries at
++		 * the end of the map must be ignored.
++		 */
++		if (i > 0 && rpmhpd->level[i] == 0) {
++			rpmhpd->level_count = i;
++			break;
++		}
++		pr_debug("%s: ARC hlvl=%2d --> vlvl=%4u\n", rpmhpd->res_name, i,
++			 rpmhpd->level[i]);
++	}
++
++	return 0;
++}
++
++static int rpmhpd_probe(struct platform_device *pdev)
++{
++	int i, ret;
++	size_t num_pds;
++	struct device *dev = &pdev->dev;
++	struct genpd_onecell_data *data;
++	struct rpmhpd **rpmhpds;
++	const struct rpmhpd_desc *desc;
++
++	desc = of_device_get_match_data(dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpmhpds = desc->rpmhpds;
++	num_pds = desc->num_pds;
++
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->domains = devm_kcalloc(dev, num_pds, sizeof(*data->domains),
++				     GFP_KERNEL);
++	if (!data->domains)
++		return -ENOMEM;
++
++	data->num_domains = num_pds;
++
++	for (i = 0; i < num_pds; i++) {
++		if (!rpmhpds[i]) {
++			dev_warn(dev, "rpmhpds[%d] is empty\n", i);
++			continue;
++		}
++
++		rpmhpds[i]->dev = dev;
++		rpmhpds[i]->addr = cmd_db_read_addr(rpmhpds[i]->res_name);
++		if (!rpmhpds[i]->addr) {
++			dev_err(dev, "Could not find RPMh address for resource %s\n",
++				rpmhpds[i]->res_name);
++			return -ENODEV;
++		}
++
++		ret = cmd_db_read_slave_id(rpmhpds[i]->res_name);
++		if (ret != CMD_DB_HW_ARC) {
++			dev_err(dev, "RPMh slave ID mismatch\n");
++			return -EINVAL;
++		}
++
++		ret = rpmhpd_update_level_mapping(rpmhpds[i]);
++		if (ret)
++			return ret;
++
++		rpmhpds[i]->pd.power_off = rpmhpd_power_off;
++		rpmhpds[i]->pd.power_on = rpmhpd_power_on;
++		rpmhpds[i]->pd.set_performance_state = rpmhpd_set_performance_state;
++		rpmhpds[i]->pd.opp_to_performance_state = rpmhpd_get_performance_state;
++		pm_genpd_init(&rpmhpds[i]->pd, NULL, true);
++
++		data->domains[i] = &rpmhpds[i]->pd;
++	}
++
++	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
++}
++
++static struct platform_driver rpmhpd_driver = {
++	.driver = {
++		.name = "qcom-rpmhpd",
++		.of_match_table = rpmhpd_match_table,
++		.suppress_bind_attrs = true,
++	},
++	.probe = rpmhpd_probe,
++};
++
++static int __init rpmhpd_init(void)
++{
++	return platform_driver_register(&rpmhpd_driver);
++}
++core_initcall(rpmhpd_init);
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
