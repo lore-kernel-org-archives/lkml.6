@@ -6,56 +6,55 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31847C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D6DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00840218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46BC2218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:33:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aOWbgrGu"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJvPwxNG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389726AbeLUKdM (ORCPT
+        id S2389750AbeLUKdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:33:12 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:32838 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731232AbeLUKdM (ORCPT
+        Fri, 21 Dec 2018 05:33:44 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:39537 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389727AbeLUKdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:33:12 -0500
-Received: by mail-vk1-f196.google.com with SMTP id d201so1052816vka.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:33:11 -0800 (PST)
+        Fri, 21 Dec 2018 05:33:42 -0500
+Received: by mail-ua1-f68.google.com with SMTP id c12so1528473uas.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:33:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Yo7C3mfxMGpExGrsv/1VELR7Zr5lJCuNyK/T0CQ52wY=;
-        b=aOWbgrGus2A3mAMvIkJjp8JTXiF91d0D8W9xD5YfMYLXrWhJkHdlZWb7h1JtP0TZIE
-         lJAj67F5+1sor4yl+4SGZQwTn1Mv9hVBMz27tPZu6lT1UFy9NzANqZigcUaPJQD8xbFB
-         Zq+C7B41dhbb4vRho8IL8QX1Sb+v1uQ1Fuck8=
+        bh=w2stpEs+OWZ3uWLK9hlxi7mbh2HBhZzXFGkfrYf5BNE=;
+        b=dJvPwxNGtR1t8eM1+bkotVh4w7vuv0wzT70EFruj/tb77+W9g3DEtO8+cIyG6AeCNK
+         7zoB++UQYI3W4eO0c+gdaqdceq59eTgStJvs16dEsi2H1jg56yx1RYXdrkkpDYZ1BcV5
+         yngBfeG+lKVcdSbYc3cllH01+iAVhNyDQH7Gw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Yo7C3mfxMGpExGrsv/1VELR7Zr5lJCuNyK/T0CQ52wY=;
-        b=n8TpOnTDhQKvSOdswZQUiV60eQNDTdW9J02j0zGXvYibWGC4WxfdjfmGpLxpmiTl0z
-         7YD/Wu6veNIgf+RfbbswnlvtinqFr/wMNBenxakt4MBoM31EEmxJh42ndJUW9WpGc8kp
-         J3rvj7hrfB02KdSJ7RfCltgINpEG5FSlF35elzhUMU9m+o9xhtxU1RMkK1lEytw8pfQJ
-         GyXhzr/2chHp6N3DJ40tS1Ayo4mPGrrWuMF7nLkd8D3Qb60KVC+ZuWsOwYyWN25dh69S
-         c+mSNzgbyCpnWODpOg7Wmj4VG8MjX4THdh6cQZOkZJg+1/Bgcph6dkQNqSgOm4wrLE8X
-         z7Fw==
-X-Gm-Message-State: AJcUukfg9bUTG6XczrtPuMdnAzDac5CXlQfLfAefL4e29yXlLXtbC26x
-        U4iOot4W+6/o83rrrYddeavC3PEmv0l6AGlnfLeDfA==
-X-Google-Smtp-Source: ALg8bN44jxv68MkB14P6mTQcEylG+lj6bykDD89Og9bmxy06oJu5Ge81t5lPjd1WLju7MaiGiYsZj9EuhLuHCHMei+0=
-X-Received: by 2002:a1f:4982:: with SMTP id w124mr727563vka.4.1545388391385;
- Fri, 21 Dec 2018 02:33:11 -0800 (PST)
+        bh=w2stpEs+OWZ3uWLK9hlxi7mbh2HBhZzXFGkfrYf5BNE=;
+        b=DsmB8YuqX3KaY+6Gm0sSU+WUe4SBUKKO/Y5eJZ+S5POxS+BSXwq92MPw/9T+zLeEDK
+         mGDZV1AQDIAYj4ZvUAJGGqb+XQOhhby3/kjvOCxwVaDaZ+6r1PueolIfwooS+8o/FzFP
+         TZ9BLlQopDe4oTxOpe3RTT6lE71P0S4ZhLULXZm+/a5wbyiediGOD5eF4zFWFl8E9iMO
+         Ns1/Fp4Ieo/rHm25t9U2mP07vaeDu0Kqio+EoEyWKCh5AsWlizzNsoAr+VGAQ3kthGNQ
+         pnZazNviBHSn8Kp35TVBLmlLOGQDxWdjQwgR4NZdI65k2/TGJnFU7oG8re/aHIjHSS2+
+         qyqQ==
+X-Gm-Message-State: AJcUukfsSn50+9YhdfbXtochHyyU7J9Y6eW26lqNZN83x/6LJVEmoKFG
+        IcKHqJdStiegqGFNylcQejcI0KG0+vTtzZI0YEbqIA==
+X-Google-Smtp-Source: ALg8bN5V5lYTN6ZRvL8q5sP0oacnS5cekybnuDj1/72tTsnxpanPQvlEvu52X/XYBtr1xGZnvtw9EVWwp+vYXVbApT4=
+X-Received: by 2002:ab0:526:: with SMTP id 35mr713348uax.25.1545388420627;
+ Fri, 21 Dec 2018 02:33:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20181221085622.25573-1-rnayak@codeaurora.org> <20181221085622.25573-10-rnayak@codeaurora.org>
-In-Reply-To: <20181221085622.25573-10-rnayak@codeaurora.org>
+References: <20181221085622.25573-1-rnayak@codeaurora.org> <20181221085622.25573-11-rnayak@codeaurora.org>
+In-Reply-To: <20181221085622.25573-11-rnayak@codeaurora.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 21 Dec 2018 11:32:34 +0100
-Message-ID: <CAPDyKFoZmJ22uswL4nkbhfqeeSpcz09mgQ6-tsrJRxE5EwTUsw@mail.gmail.com>
-Subject: Re: [PATCH v8 09/10] soc: qcom: rpmpd: Use simple_opp_to_performance_state()
- helper
+Date:   Fri, 21 Dec 2018 11:33:03 +0100
+Message-ID: <CAPDyKFqFW-UmdBf00Rt5F=40QBys98f6WLRKMzYXGpiLYhwW4A@mail.gmail.com>
+Subject: Re: [PATCH v8 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
 To:     Rajendra Nayak <rnayak@codeaurora.org>
 Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
@@ -73,12 +72,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, 21 Dec 2018 at 09:57, Rajendra Nayak <rnayak@codeaurora.org> wrote:
 >
-> Get rid of the duplicate code across rpmpd and rpmhpd to read the
-> performance state value from Device tree and use the
-> simple_opp_to_performance_state() helper instead.
+> Specify the active + sleep and active-only MX power domains as
+> the parents of the corresponding CX power domains. This will ensure that
+> performance state requests on CX automatically generate equivalent requests
+> on MX power domains.
 >
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> This is used to enforce a requirement that exists for various
+> hardware blocks on SDM845 that MX performance state >= CX performance
+> state for a given operating frequency.
+>
 > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
@@ -87,54 +91,44 @@ Kind regards
 Uffe
 
 > ---
->  drivers/soc/qcom/rpmhpd.c | 11 +----------
->  drivers/soc/qcom/rpmpd.c  | 11 +----------
->  2 files changed, 2 insertions(+), 20 deletions(-)
+>  drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 >
 > diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-> index e37976e87370..f7fbe57f31ae 100644
+> index f7fbe57f31ae..71d693c31e3b 100644
 > --- a/drivers/soc/qcom/rpmhpd.c
 > +++ b/drivers/soc/qcom/rpmhpd.c
-> @@ -276,16 +276,7 @@ static int rpmhpd_set_performance_state(struct generic_pm_domain *domain,
->  static unsigned int rpmhpd_get_performance_state(struct generic_pm_domain *genpd,
->                                                  struct dev_pm_opp *opp)
->  {
-> -       struct device_node *np;
-> -       unsigned int level = 0;
-> -
-> -       np = dev_pm_opp_get_of_node(opp);
-> -       if (of_property_read_u32(np, "qcom,level", &level))
-> -               pr_err("%s: missing 'qcom,level' property\n", __func__);
-> -
-> -       of_node_put(np);
-> -
-> -       return level;
-> +       return simple_opp_to_performance_state(genpd, opp, "qcom,level");
+> @@ -97,12 +97,14 @@ static struct rpmhpd sdm845_cx_ao;
+>  static struct rpmhpd sdm845_cx = {
+>         .pd = { .name = "cx", },
+>         .peer = &sdm845_cx_ao,
+> +       .parent = &sdm845_mx.pd,
+>         .res_name = "cx.lvl",
+>  };
+>
+>  static struct rpmhpd sdm845_cx_ao = {
+>         .pd = { .name = "cx_ao", },
+>         .peer = &sdm845_cx,
+> +       .parent = &sdm845_mx_ao.pd,
+>         .res_name = "cx.lvl",
+>  };
+>
+> @@ -372,6 +374,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
+>                 data->domains[i] = &rpmhpds[i]->pd;
+>         }
+>
+> +       /* Add subdomains */
+> +       for (i = 0; i < num_pds; i++) {
+> +               if (!rpmhpds[i])
+> +                       continue;
+> +               if (rpmhpds[i]->parent)
+> +                       pm_genpd_add_subdomain(rpmhpds[i]->parent,
+> +                                              &rpmhpds[i]->pd);
+> +       }
+> +
+>         return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
 >  }
 >
->  static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
-> diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-> index 59e21c88a144..29288af502b0 100644
-> --- a/drivers/soc/qcom/rpmpd.c
-> +++ b/drivers/soc/qcom/rpmpd.c
-> @@ -248,16 +248,7 @@ static int rpmpd_set_performance(struct generic_pm_domain *domain,
->  static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
->                                           struct dev_pm_opp *opp)
->  {
-> -       struct device_node *np;
-> -       unsigned int corner = 0;
-> -
-> -       np = dev_pm_opp_get_of_node(opp);
-> -       if (of_property_read_u32(np, "qcom,level", &corner))
-> -               pr_err("%s: missing 'qcom,level' property\n", __func__);
-> -
-> -       of_node_put(np);
-> -
-> -       return corner;
-> +       return simple_opp_to_performance_state(genpd, opp, "qcom,level");
->  }
->
->  static int rpmpd_probe(struct platform_device *pdev)
 > --
 > QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 > of Code Aurora Forum, hosted by The Linux Foundation
