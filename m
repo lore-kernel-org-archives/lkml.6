@@ -2,124 +2,144 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DCAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3150C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5FE1218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8574821906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ce3g6XgA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYFUuUIM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388138AbeLUIkP (ORCPT
+        id S2388175AbeLUImR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:40:15 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55246 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388072AbeLUIkP (ORCPT
+        Fri, 21 Dec 2018 03:42:17 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36301 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732026AbeLUImQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:40:15 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so4480620wmh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:40:13 -0800 (PST)
+        Fri, 21 Dec 2018 03:42:16 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so2204583plo.3;
+        Fri, 21 Dec 2018 00:42:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=tf1B/0sMesJfH+HmA4iAP0Sn3AZ4Gs7mp4+bQjMC6yQ=;
-        b=Ce3g6XgAGR/pchMGQ49V8Snubp160RXDplkt9ta1jK2kH2sO+WZcC3B8EN0dCI4WHL
-         sJK6r2sbKOs7a4xwnfWv+Gn8tHe5iHbdl2xT4JjUQ0C3Nd7KfjVi5Lh6WjfteGRturVK
-         Y2QtwKsM22jiPp80nTFNc5Jo1HoQLteL1Uzck=
+         :content-disposition:in-reply-to:user-agent;
+        bh=XQA5CjVTo6GyyaRwAZb65VSbnCQPPLvjjE1b30vHv2w=;
+        b=mYFUuUIMHWNVwwTzrociju96qFhn4C3PZGH/KqhIk2P5TcMXnE0ldZbTvZVs/YwSLp
+         0EjX17/kKygnofgCtHGsn721LGlF8X0IPv+ehtNpkljNXc3m7DcZHqEAlDFhHa4UM5n9
+         Red4PI+SP3ALnH3JRSu4/lDLjgHyGGmGnx/sdUATltm+6Kx12M+6yW0LHMuEC7if7kic
+         y4Lp1Ex/4WX83LMCloISzm1kjJO5QWXJZ4MsCBRhUZAE7KynHmIikimLnlyoGxDmnjMk
+         CW0NfPfkRjgld2baSWMLFU9Uou40xbbve8ZzvJ5j/PBEbI395+MaNp7Z9ym/2iuuh0Zt
+         qFuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tf1B/0sMesJfH+HmA4iAP0Sn3AZ4Gs7mp4+bQjMC6yQ=;
-        b=LDBb9hOmJtBDocGKgF0Qfw1zzHFd39N724mHx0VHwBmDUq2wx8dfiGgIWQkjcBm/c9
-         92UvMRmUMw0mQRYgdA1jHhxx2a0RVpW5AVy5a1MyBLbT3i7A3+maePFhKixbWJV7PxdI
-         q0cY9DK2fmQlDEXRuiPrcsbjJHFOzoi9rQc5qI1T1Wy61onngXicH7xzfb5WLfrO+5Fn
-         SXfixPr6+YR/QgOlWxS+lMtgqOtoGTHHDRYHnmP6fjCstrMTWVdjRS2H6ObucuGjuBZF
-         a+iRQGKLYco6j/zVL4tTsnEG+h3qsjuEC5H8xyfRGS6PiYdd3b2GSCrawFJ4FBZBuCAf
-         DICQ==
-X-Gm-Message-State: AJcUukcqkqyzNgc0izqEuH8YHNOkaapdsq+CbJ7zrer9//uoZS3USmJQ
-        4mHwr6IeCEaUjLe/BhrBsxjz5Q==
-X-Google-Smtp-Source: AFSGD/U8Jzgwv+Bcm/0I+KzdmlOpTvdbyXBiYapL5R7RxmdAi+gsNj7Q/b2HnmtfHaGIMmmt60IPgg==
-X-Received: by 2002:a1c:7f0c:: with SMTP id a12mr1790293wmd.89.1545381613189;
-        Fri, 21 Dec 2018 00:40:13 -0800 (PST)
-Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id x186sm8881966wmg.41.2018.12.21.00.40.12
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XQA5CjVTo6GyyaRwAZb65VSbnCQPPLvjjE1b30vHv2w=;
+        b=gF9ePHYMzfVdY+Se30+vYr/cant7MBOkc2BGnmrF6SJhz0I7r0BVB4Y8FANYpQeNjT
+         Kxk9c+VmRTCyw0Hn+KnXNdF9FD6/20MGaMpSeMNnV3MnoZbRamY6/3e6vyRorgbaLD+d
+         6qDqMFqnd/T4Kdex2AihbZs7/U3rfOaGVNgFO+IGEvFpJf1Z3VmfxNKhoVkfSVg6ATWf
+         lBxPvkNnHLuLiMnnTJwojkjYAF775h4lLz5kyTM6JvAgiBLugK5TiGcnCAk2RhbYcpzo
+         WtKZAVCpCwSJdcPKl2nVDtoKcJXsecv92fnSIkuNA9wddlGGpF6CKST/6XfqDR9EmuNj
+         xgOQ==
+X-Gm-Message-State: AJcUukdP/8pYD5U6FL4BlC/PK5X9W03fnUSYkX3fI8SvsfnsUQG59Rt1
+        t+DpyTOc9O7g1uWS9YkxySo=
+X-Google-Smtp-Source: ALg8bN78C9u/u+HZq1jOl6aG7GB4FNnb2SJo+kYJF6xGWzktCsqXXWgvTyXJho5ZHJnLV1ImDjsfGQ==
+X-Received: by 2002:a17:902:4523:: with SMTP id m32mr1608032pld.53.1545381734908;
+        Fri, 21 Dec 2018 00:42:14 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b26sm50625041pfe.91.2018.12.21.00.42.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 00:40:12 -0800 (PST)
-Date:   Fri, 21 Dec 2018 08:40:10 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Olliver Schinagl <oliver@schinagl.nl>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v2 5/8] dt-bindings: mfd: axp20x: Add software based
- soft_start for AXP209 LDO3
-Message-ID: <20181221084010.GR4497@dell>
-References: <cover.923997dd7d7396bb4d71f8967698b58ca956b929.1544512919.git-series.plaes@plaes.org>
- <25e67fe9b5397aa5f11bdd7026e4ae6be51dd18b.1544512919.git-series.plaes@plaes.org>
+        Fri, 21 Dec 2018 00:42:14 -0800 (PST)
+Date:   Fri, 21 Dec 2018 00:42:12 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] Input: i8042 add i8042_is_mr_coffee() helper to avoid
+ refconut leak
+Message-ID: <20181221084212.GG211587@dtor-ws>
+References: <20181215090846.28009-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <25e67fe9b5397aa5f11bdd7026e4ae6be51dd18b.1544512919.git-series.plaes@plaes.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181215090846.28009-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018, Priit Laes wrote:
-
-> From: Olliver Schinagl <oliver@schinagl.nl>
+On Sat, Dec 15, 2018 at 04:08:46AM -0500, Yangtao Li wrote:
+> of_find_node_by_path() acquires a reference to the node returned by
+> it and that reference needs to be dropped by its caller. Add
+> i8042_is_mr_coffee() helper to avoid refconut leak.
 > 
-> In the past, there have been words on various lists that if LDO3 is
-> disabled in u-boot, but enabled in the DTS, the axp209 driver would
-> fail to continue/hang. Several enable/disable patches have been
-> issues to devicetree's in both the kernel and u-boot to address
-> this issue.
-> 
-> What really happened however, was that the AXP209 shuts down without
-> a notice and without setting an interrupt. This is caused when LDO3
-> gets overloaded, for example with large capacitors on the LDO3 output.
-> 
-> Normally, we would expect that AXP209 would source 200 mA as per
-> datasheet and set and trigger an interrupt when being overloaded.
-> For some reason however, this does not happen.
-> 
-> As a work-around, implement software-based 'regulator-soft-start'
-> property for AXP209 LDO3 regulator, which is used to first bring up
-> the LDO3 to the lowest possible voltage and then enable the LDO.
-> 
-> After that, we can set the requested voltage as usual.
-> 
-> Combining this setting with the regulator-ramp-delay allows LDO3 to
-> come up slowly and staggered, potentially reducing overall inrush current.
-> 
-> Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-> Signed-off-by: Priit Laes <plaes@plaes.org>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  Documentation/devicetree/bindings/mfd/axp20x.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> changes in v5:
+> -fix typo
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Has this at least been actually compiled by you?
+
+> 
+> changes in v4:
+> -fix typo
+> 
+> changes in v3:
+> -add i8042_is_mr_coffee
+> ---
+>  drivers/input/serio/i8042-sparcio.h | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
+> index 796289846204..9e9e512bc432 100644
+> --- a/drivers/input/serio/i8042-sparcio.h
+> +++ b/drivers/input/serio/i8042-sparcio.h
+> @@ -106,11 +106,23 @@ static struct platform_driver sparc_i8042_driver = {
+>  	.remove		= sparc_i8042_remove,
+>  };
+>  
+> +static inline bool i8042_is_mr_coffee(void)
+> +{
+> +	struct device_node *root;
+> +	bool is_mr_coffee;
+> +
+> +	root = of_find_node_by_path("/");
+> +	is_mr_coffee = !strcmp(root->name, "SUNW,JavaStation-1");
+> +	of_node_put(root);
+> +
+> +	return is_mr_coffee;
+> +}
+> +
+>  static int __init i8042_platform_init(void)
+>  {
+> -	struct device_node *root = of_find_node_by_path("/");
+> +	bool match = i8042_is_mr_coffee();
+>  
+> -	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
+> +	if (match) {
+>  		/* Hardcoded values for MrCoffee.  */
+>  		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
+>  		kbd_iobase = ioremap(0x71300060, 8);
+> @@ -138,9 +150,9 @@ static int __init i8042_platform_init(void)
+>  
+>  static inline void i8042_platform_exit(void)
+>  {
+> -	struct device_node *root = of_find_node_by_path("/");
+> +	bool match = i8042_is_mr_coffee();
+>  
+> -	if (strcmp(root->name, "SUNW,JavaStation-1"))
+> +	if (!match)
+>  		platform_driver_unregister(&sparc_i8042_driver);
+>  }
+>  
+> -- 
+> 2.17.0
+> 
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Dmitry
