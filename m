@@ -2,105 +2,227 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFB3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AC5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED8A2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:41:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ltZP66GU"
+	by mail.kernel.org (Postfix) with ESMTP id 7FE812190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390974AbeLURlj (ORCPT
+        id S2391022AbeLURlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:41:39 -0500
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:37161
-        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388325AbeLURli (ORCPT
+        Fri, 21 Dec 2018 12:41:46 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:35143 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388325AbeLURlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 12:41:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1545414096; bh=LHVWCV7tZZr8Mo2LtZi9Mt+UqgfTgREhbX1PqFeruog=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ltZP66GUDvZdfduvlkl9Nlp+o9upe+l2Z2opbCeREZRrTnN+EC+dE3xQv9ARijg7z3m+x9BTjZ0nYj9nV0sy46fS7G/M6AKGA6Bc+0DxsvlyaYZtfInXaQeS+vaEYXkF8iMKy2/drbKluoeb7oH9Jl2eiNlga37g1iSIM0YEs5+YyO/Vt9fRE+7obZu0sbEt1qfy91HivFeOAjLf8F3J8ub/ipM5g9CASPjODzuYEhTPiwWmmFRVAZDQRl/n3F2RnR6lbx/7g0wgI6nLPD/DMeKlEXUTDqbV6XX5Ubj3U05/hLqkWDjJboYGc6nUD14hsb7Pk2poGP/7NGRcq2EDGA==
-X-YMail-OSG: vOdHciQVM1mpTBlSwl6f0trxHEknnw6iakrwwx3ObD6_91Tsqgr882Is2zXZaG5
- UFbRZ8NNQEdSO3HpsoEFnIr6cK1TUTyPsGqTQbwvV9..NKvMZrVqvCyNIuztpQ5uHgrWmf1oMPaZ
- iyWsq0HloXout.WeYKuEpiHxvn74sk3R8j.HUzSYFxT.lgWE8n1n.3DX32fQOkVRvPVKnISmOnV0
- HxRocQrdq.Q6t.R0dYlS6DSvNDt72aHmQ8.hAXL.kSCGerlXodM0HUq5lOLPKgq3lEm7sBNiZByS
- 74h043tTCBJDUNToKZ.XSha6BF.gguTLnVVf910FU_Ja5O_uO2JJmrivqv4PJ9dctMazjzztnhxG
- y_4LSyJsapfi4whQhxL6ZFUryS5a27KIrlcG9FF3OvNLhu7eghoWMJlctNyL64UKaKJ7K9UYwkfU
- LjU6cJHxXupJDh5uZAXVChHAa2eOhPV29W9vdRUYgnWLbSxwZR93JV3DZUT8y5OGe02ntI.rUQs5
- S8UIHtcAOH8bLYQp0OSRiomFNH0ZCU8sxwKVYiCMoBCfA9PTh5sC7OrgjYUoZl36DOPNFCIwAioZ
- zc.vB1zcn26VqzLmMYPtX5xo81OY5jYiT7IyE8vlJfpPPaiRrdAdWAcA.kgont2MfCDxXPCN_hPt
- vDQBkJuZt2Ek79kSk352bE7g0uSvlAjX3Ws_1RAdbcJZTyhBFwFkdMInyrYAbfX.9bVX3kx19vqB
- Atz1fItn0Q38eLbW4EtrYt_qf98gOS.DInBBcpxZvhkvW5VD8ZZYj85.UHElwQdpCJPBi3TpncgX
- 6hBBAaJzLj4ym5LD9e4di1Cydc1OMlJCztbMAg0sR.fymvE.lkiiimMYU69hsAuR4Bbkq8oo6USJ
- 67e6svb21Wdeac9MBSVmzHQoMUm71VHaABhh3KSrVGY517Ip.74nOBy7BNz36c_vMkAVqzYJ_u6q
- Cf_88mzNXVxosRWMWDPsJSuwRHzn1UwTok2ari5yWh10oiuxxhsY_PignJfHO5scdJ4F8RNqCCPO
- ZVxMl25Ymy1NsIHU9Y.bkr34Zx6jT6VKqGPN2Dh8b2LVkG9ETSRlRgWmo1Dp2gDtg0BNIg6PiaJJ
- HoqSf_8c3A_D6A2TqPJY46RbeJ9jLUZf3CkOU
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Dec 2018 17:41:36 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp418.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fc15a6c7c3799222f033986be111029c;
-          Fri, 21 Dec 2018 17:41:36 +0000 (UTC)
-Subject: Re: [PATCH] smack: Fix a memory leak in smack_add_opt()
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20181221090958.GE2735@kadam>
- <20181221163654.GY2217@ZenIV.linux.org.uk>
- <20181221164219.GZ2217@ZenIV.linux.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <bd05d276-91a2-c849-065c-18aa17a0ff82@schaufler-ca.com>
-Date:   Fri, 21 Dec 2018 09:41:28 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Dec 2018 12:41:45 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gaOns-0006Ds-M4; Fri, 21 Dec 2018 18:41:40 +0100
+Date:   Fri, 21 Dec 2018 18:41:40 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v4.19.10-rt8
+Message-ID: <20181221174140.kni7sk4nlmgrmu7g@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20181221164219.GZ2217@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/21/2018 8:42 AM, Al Viro wrote:
-> On Fri, Dec 21, 2018 at 04:36:54PM +0000, Al Viro wrote:
->> On Fri, Dec 21, 2018 at 12:09:58PM +0300, Dan Carpenter wrote:
->>> The function is leaking "opts" on the error paths.
->>>
->>> Fixes: 90e3b564ab93 ("smack: take the guts of smack_parse_opts_str() into a new helper")
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> D'oh...  Applied, thanks for spotting that braino.
-> On the other hand, it's easier to do it this way - the caller will free the damn thing
-> on error, anyway:
+Dear RT folks!
 
-What tree/branch is the happening in?
+I'm pleased to announce the v4.19.10-rt8 patch set. 
 
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 11da1e2531c8..cf0c0380e5dd 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -608,6 +608,7 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
->  		opts = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
->  		if (!opts)
->  			return -ENOMEM;
-> +		*mnt_opts = opts;
->  	}
->  	if (!s)
->  		return -ENOMEM;
-> @@ -639,7 +640,6 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
->  		opts->fstransmute = s;
->  		break;
->  	}
-> -	*mnt_opts = opts;
->  	return 0;
->  
->  out_opt_err:
->
+Changes since v4.19.10-rt7:
 
+  - Additional trace points in i915 could fail to compile due to the
+    NOTRACE in statement since last release.
+
+  - Make a rwlock in kmemleak raw to avoid scheduling in wrong context.
+    Report and patch by He Zhe.
+
+  - Delay memory deallocation in perf on intel/x86. Reported by He Zhe,
+    patch by Peter Zijlstra.
+
+Known issues
+     - A warning triggered in "rcu_note_context_switch" originated from
+       SyS_timer_gettime(). The issue was always there, it is now
+       visible. Reported by Grygorii Strashko and Daniel Wagner.
+
+The delta patch against v4.19.10-rt7 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/incr/patch-4.19.10-rt7-rt8.patch.xz
+
+You can get this release via the git tree at:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.19.10-rt8
+
+The RT patch against v4.19.10 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.10-rt8.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patches-4.19.10-rt8.tar.xz
+
+Sebastian
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 155fa4b53c56b..d0b1862649419 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3439,6 +3439,11 @@ static void free_excl_cntrs(int cpu)
+ }
+ 
+ static void intel_pmu_cpu_dying(int cpu)
++{
++	fini_debug_store_on_cpu(cpu);
++}
++
++static void intel_pmu_cpu_dead(int cpu)
+ {
+ 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+ 	struct intel_shared_regs *pc;
+@@ -3451,8 +3456,6 @@ static void intel_pmu_cpu_dying(int cpu)
+ 	}
+ 
+ 	free_excl_cntrs(cpu);
+-
+-	fini_debug_store_on_cpu(cpu);
+ }
+ 
+ static void intel_pmu_sched_task(struct perf_event_context *ctx,
+@@ -3541,6 +3544,7 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.cpu_prepare		= intel_pmu_cpu_prepare,
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
++	.cpu_dead		= intel_pmu_cpu_dead,
+ };
+ 
+ static struct attribute *intel_pmu_attrs[];
+@@ -3581,6 +3585,8 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.cpu_prepare		= intel_pmu_cpu_prepare,
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
++	.cpu_dead		= intel_pmu_cpu_dead,
++
+ 	.guest_get_msrs		= intel_guest_get_msrs,
+ 	.sched_task		= intel_pmu_sched_task,
+ };
+diff --git a/drivers/gpu/drm/i915/i915_trace.h b/drivers/gpu/drm/i915/i915_trace.h
+index cc54ec0ef75c1..33028d8f470e5 100644
+--- a/drivers/gpu/drm/i915/i915_trace.h
++++ b/drivers/gpu/drm/i915/i915_trace.h
+@@ -683,7 +683,7 @@ DEFINE_EVENT(i915_request, i915_request_add,
+ 	    TP_ARGS(rq)
+ );
+ 
+-#if defined(CONFIG_DRM_I915_LOW_LEVEL_TRACEPOINTS)
++#if defined(CONFIG_DRM_I915_LOW_LEVEL_TRACEPOINTS) && !defined(NOTRACE)
+ DEFINE_EVENT(i915_request, i915_request_submit,
+ 	     TP_PROTO(struct i915_request *rq),
+ 	     TP_ARGS(rq)
+diff --git a/localversion-rt b/localversion-rt
+index 045478966e9f1..700c857efd9ba 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt7
++-rt8
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 17dd883198aea..b68a3d0d075f7 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -26,7 +26,7 @@
+  *
+  * The following locks and mutexes are used by kmemleak:
+  *
+- * - kmemleak_lock (rwlock): protects the object_list modifications and
++ * - kmemleak_lock (raw spinlock): protects the object_list modifications and
+  *   accesses to the object_tree_root. The object_list is the main list
+  *   holding the metadata (struct kmemleak_object) for the allocated memory
+  *   blocks. The object_tree_root is a red black tree used to look-up
+@@ -197,7 +197,7 @@ static LIST_HEAD(gray_list);
+ /* search tree for object boundaries */
+ static struct rb_root object_tree_root = RB_ROOT;
+ /* rw_lock protecting the access to object_list and object_tree_root */
+-static DEFINE_RWLOCK(kmemleak_lock);
++static DEFINE_RAW_SPINLOCK(kmemleak_lock);
+ 
+ /* allocation caches for kmemleak internal data */
+ static struct kmem_cache *object_cache;
+@@ -491,9 +491,9 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
+ 	struct kmemleak_object *object;
+ 
+ 	rcu_read_lock();
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	/* check whether the object is still available */
+ 	if (object && !get_object(object))
+@@ -513,13 +513,13 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
+ 	unsigned long flags;
+ 	struct kmemleak_object *object;
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+ 	if (object) {
+ 		rb_erase(&object->rb_node, &object_tree_root);
+ 		list_del_rcu(&object->object_list);
+ 	}
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	return object;
+ }
+@@ -593,7 +593,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	/* kernel backtrace */
+ 	object->trace_len = __save_stack_trace(object->trace);
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 
+ 	min_addr = min(min_addr, ptr);
+ 	max_addr = max(max_addr, ptr + size);
+@@ -624,7 +624,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 
+ 	list_add_tail_rcu(&object->object_list, &object_list);
+ out:
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 	return object;
+ }
+ 
+@@ -1310,7 +1310,7 @@ static void scan_block(void *_start, void *_end,
+ 	unsigned long *end = _end - (BYTES_PER_POINTER - 1);
+ 	unsigned long flags;
+ 
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	for (ptr = start; ptr < end; ptr++) {
+ 		struct kmemleak_object *object;
+ 		unsigned long pointer;
+@@ -1367,7 +1367,7 @@ static void scan_block(void *_start, void *_end,
+ 			spin_unlock(&object->lock);
+ 		}
+ 	}
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ }
+ 
+ /*
