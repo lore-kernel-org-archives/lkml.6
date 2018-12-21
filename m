@@ -2,239 +2,126 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE56C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766A5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B9021720
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2243821928
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:22:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="gXKElttA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="nCrdh6qe";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="cu9Hmd17"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391592AbeLUTUt (ORCPT
+        id S2391646AbeLUTWp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:20:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46240 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733119AbeLUTUt (ORCPT
+        Fri, 21 Dec 2018 14:22:45 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:12902 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389636AbeLUTWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:20:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id o10so5495465edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:20:47 -0800 (PST)
+        Fri, 21 Dec 2018 14:22:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1545420163; x=1576956163;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=3JtFwj7JIVLVqDsn3o7mL/ddTorrjWonzsYGX+cyCvs=;
+  b=nCrdh6qe3LbpG8H9mrl5KWumJ3y7KG4Ptpi9scwUDhd5mVNvrTrUcuuc
+   Fqxh/mu/UBsEToZzAdDMmFIhGrjstJMEojHZJV9rNL5vjqc56XYO46nvH
+   9NFFkrxgbSI5PfZnlgQC7wBSY3latPo5/wZ9X6DujlfWMpzJZSBz9DfZk
+   LEDYlTo22TzlGNEOj+IMzcyES3onPPjXevfbqhwdL5j0cRuPG6//QEFCK
+   eFRP6SDHrXE0rnVURbwg8gQYPisbZtUUrbqyEUJCn2C5cleAL2d6dgXAf
+   NMtiM9cyHgXZrD7BgixgcETDrldHgUYEteJ4S6FKuauUlldzBRL3OzZWC
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,382,1539619200"; 
+   d="scan'208";a="201937778"
+Received: from mail-sn1nam04lp2051.outbound.protection.outlook.com (HELO NAM04-SN1-obe.outbound.protection.outlook.com) ([104.47.44.51])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2018 03:22:42 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5dV2xlljyR3QeG0WQqomXTibLLG9fUR1NFyby9bAgVA=;
-        b=gXKElttA8enHA8JvPW/TFMt5nfUrDv3oK7bz7g1Cs5O7rFgu9/1fpLBfmmDMOx6K7x
-         fY58Zt5UE1lBaeZEvDhVxQW39sU/KLyngRARNmS6Ujg7GibWa8QzblfoNWSzyvl6EEKy
-         uQmF8RXnPyzBUOOQui4ZB0HbTmYO9DKoPIm53GVABtRQedI0OMpvlmcrvIhdAzohD5n9
-         p6kP+uSQwDkdsB7JODQ7v77IUg0EaNLyjDRjpDXpmBKHbOMYwKMeB78kHBwsGkSyFEtH
-         2hSFZaxjuBHEqIe8n2hsEScMh2Gk65A/0WRhMp8O/v6lpIH1YR1kej0T7JSVHkuLHKjT
-         PWIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5dV2xlljyR3QeG0WQqomXTibLLG9fUR1NFyby9bAgVA=;
-        b=k4mXeAs/2hR2PuIYL6MWzTrMkGXk9VA+rob87sUo0MowPGbBpueu8aSz6rUmEa4m7W
-         NuqqM/pjYK2l9fC9Nkkhxlc7S2dN/4J58erXQBsfsuvDGV5BsqZNSd3uIt7bOpyhyvBd
-         XGTGdEbULMSeDSWhWeBztZuSCc/XVG3lG/Zl2STJN722vNwlfLOWa7G+C8aLPltvVCXT
-         59AoejRyDlLk6iSJrq4AZ4v8BqEEF1EGwXDKYEaMGQDfz5X9LBK2XnpZd1kp230TgfZ7
-         IXs0nQFrrfKvHurAOmoTQFRh/yDmnl8/I0HWq1QMF0nNQA12aOt+wQEFCsvsg4PvU1kO
-         Jl7Q==
-X-Gm-Message-State: AA+aEWb0JtyjPZ7kY85jy9GtpC0WUADM8TBeEPK3AsxrAnqGZJlREd6O
-        3mcwxqUoKpZy9o1rx1jncsIGyg==
-X-Google-Smtp-Source: AFSGD/WtgeuzYcTaVyvqczA/0Q3yyZ9JD78PzLuNfYEvGBxeRGq1S8FFodxL2QNqCmQc+GVi2ZSJzQ==
-X-Received: by 2002:a50:cf41:: with SMTP id d1mr3340768edk.242.1545420046813;
-        Fri, 21 Dec 2018 11:20:46 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:6c14:58a0:c7b2:d756:db85])
-        by smtp.gmail.com with ESMTPSA id e35sm7196543eda.13.2018.12.21.11.20.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 11:20:46 -0800 (PST)
-Date:   Fri, 21 Dec 2018 20:20:45 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, tkjos@android.com,
-        linux-kernel@vger.kernel.org, arve@android.com,
-        joel@joelfernandes.org, maco@android.com
-Subject: Re: [PATCH] binderfs: implement sysctls
-Message-ID: <20181221192044.5yvfnuri7gdop4rs@brauner.io>
-References: <20181221133909.18794-1-christian@brauner.io>
- <20181221135509.GA30679@kroah.com>
- <20181221141241.gnxoiw7t5ajwcd6d@brauner.io>
- <20181221153758.GB14584@kroah.com>
- <20181221155918.b3sgv2adx5i74r6i@brauner.io>
- <20181221163316.GA8517@kroah.com>
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3JtFwj7JIVLVqDsn3o7mL/ddTorrjWonzsYGX+cyCvs=;
+ b=cu9Hmd172iKKa5ygzVTZpEBonolfc6jI1UIQdqz6ETcLrAk9XDd3uaSOKt2zi3Tmun7ZMBitjlwzCaaiJyO3MNlPdiPOp2d7ajXtWnT/QjLVmZqa7l8eY2xVnBAfLyeTpgdt6DS22MTDffSThzRDMmwrHiuADoHi2urzj5/pMv8=
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com (10.173.48.18) by
+ MWHPR04MB0896.namprd04.prod.outlook.com (10.174.174.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Fri, 21 Dec 2018 19:22:41 +0000
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::9067:fb44:66b2:7604]) by MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::9067:fb44:66b2:7604%4]) with mapi id 15.20.1446.022; Fri, 21 Dec 2018
+ 19:22:41 +0000
+From:   Alistair Francis <Alistair.Francis@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>
+CC:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Topic: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Index: AQHUmWBEawqGhX/hUk+WG09gQflaXKWJj9CAgAACgwA=
+Date:   Fri, 21 Dec 2018 19:22:41 +0000
+Message-ID: <541e8b85bc2d3010741daadddc71ada52b847b8f.camel@wdc.com>
+References: <20181221190615.19003-1-alistair.francis@wdc.com>
+         <alpine.DEB.2.21.9999.1812211110260.777@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1812211110260.777@viisi.sifive.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alistair.Francis@wdc.com; 
+x-originating-ip: [199.255.44.171]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0896;6:z/IJp3jtYLiLdz1Ts16gUR4x0Sq10QaVwyugubQTuDuh87QayC4oNtyj6hCkEkESfHVR66xOB9dHLyOW67tKmoDqvEeO5uoU+WW9LxWBBO/x20HUs/Pmso7HZc7rQZMdsxOil4gFfgb+B8mXwXuXQkYGZcKzdYf6CWoAEtKcLXzpIKDCDUGcIjlsqWR1S/3FRUIVkYbw5MpfBmSg0B59oIIVNdStXafAUEggQAW9HUh2Gyt9jxH++5u3STyePU+H8k2sLaJ0IVU3DOJKM7nmvhRFR+ExPnHjsOj1CIrGNcultlYZiVZZn4uB9c52Eicd+jPOU+CZjvcmHqNtl5tSKpMSFvBJBWM3rIHfBwuJ6d7Ja44e0Xqm+OqDXX555cMKRNSs6MoHUicIhlgFoNG5SVf2nLtzBvXJN/wutbMWUIbCC+F+ThLzH5PUpHx7wVo3W5w25bs1gcGDusNuAuzEqg==;5:4umdCcRnzj94qxJ1mkdkf3Ib8ECkzsOc1KOStxdQeowLJ55NTYEmKpmaeMRcWK7IbTgWnsdsCTCpiMKYUXkYc3MQfCn2gbDMeOv8J95cdc6lA3esTPU2FmxzRUz++2sDzXVOPOlJEfiav5U2Hze2zmbBSH94DW4Bhnzv4i2Jets=;7:FKrMOZOv5NtQwEq1B+ipAp9pUydaDePeVnX1n5mXeYcMYogvfHnW+/mU8QQaucLp7GUjNsXXkYr8GQtFlCLHQD4W+Y3uLJ3wLAb1FLcZ5D4cs5+0c/0EojjwWE84jVHcNpEcTzbt/cg0QZKYOveQtA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 665cec4e-dc50-4bc2-1f54-08d66779ad17
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0896;
+x-ms-traffictypediagnostic: MWHPR04MB0896:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0896536C1FA67F598E9A4F1790B80@MWHPR04MB0896.namprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR04MB0896;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0896;
+x-forefront-prvs: 0893636978
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(39860400002)(396003)(376002)(199004)(189003)(316002)(2616005)(25786009)(446003)(11346002)(66066001)(5660300001)(72206003)(486006)(6506007)(478600001)(6246003)(256004)(26005)(118296001)(186003)(476003)(4001150100001)(5640700003)(53936002)(102836004)(7736002)(4326008)(2501003)(6512007)(71190400001)(6486002)(36756003)(2351001)(229853002)(6436002)(86362001)(2906002)(81156014)(81166006)(8676002)(99286004)(106356001)(6916009)(97736004)(105586002)(6116002)(8936002)(14454004)(54906003)(305945005)(3846002)(76176011)(71200400001)(68736007)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0896;H:MWHPR04MB0401.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 1u45yUifKk5G3ju6E4wHCOEi/0EMwrX3ENSJbnJ4tgtMYWvY12DquWa7idiqNtyIMMtstBIqO23GNpLBYAz9n1CeDb5R+DMLM1v42nFI5hJjoRYPqyeZb4sVYX6q1v71/R4fPtmEIQmG7nWfvxt11a1wAvhXmTeJhc62XqvifD2k5vQbusKZLZvD46ZGmHx4HEO+OtVC1W0TBklkFWfKvzSdjYuwAuLg8jr0MpyVNCcK6mCWKFsKMevpJe2nbGn5JP6w6SZigU01oj+WOr/fspK0Ox3EWyLy5aDuHYs/NbI2ofLlYYux8ABD2d8tvyX5
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6679154E5971D444BD097404BD5A869E@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181221163316.GA8517@kroah.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 665cec4e-dc50-4bc2-1f54-08d66779ad17
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 19:22:41.1310
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0896
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 05:33:16PM +0100, Greg KH wrote:
-> On Fri, Dec 21, 2018 at 04:59:19PM +0100, Christian Brauner wrote:
-> > On Fri, Dec 21, 2018 at 04:37:58PM +0100, Greg KH wrote:
-> > > On Fri, Dec 21, 2018 at 03:12:42PM +0100, Christian Brauner wrote:
-> > > > On Fri, Dec 21, 2018 at 02:55:09PM +0100, Greg KH wrote:
-> > > > > On Fri, Dec 21, 2018 at 02:39:09PM +0100, Christian Brauner wrote:
-> > > > > > This implements three sysctls that have very specific goals:
-> > > > > 
-> > > > > Ick, why?
-> > > > > 
-> > > > > What are these going to be used for?  Who will "control" them?  As you
-> > > > 
-> > > > Only global root in the initial user namespace. See the reasons below. :)
-> > > > 
-> > > > > are putting them in the "global" namespace, that feels like something
-> > > > > that binderfs was trying to avoid in the first place.
-> > > > 
-> > > > There are a couple of reason imho:
-> > > > - Global root needs a way to restrict how many binder devices can be
-> > > >   allocated across all user + ipc namespace pairs.
-> > > >   One obvious reason is that otherwise userns root in a non-initial user
-> > > >   namespace can allocate a huge number of binder devices (pick a random
-> > > >   number say 10.000) and use up a lot of kernel memory.
-> > > 
-> > > Root can do tons of other bad things too, why are you picking on
-> > 
-> > That's global root not userns root though. :) These sysctls are about
-> > global root gaining the ability to proactively restrict binder device
-> > delegation.
-> > 
-> > > binderfs here?  :)
-> > > 
-> > > >   In addition they can pound on the binder.c code causing a lot of
-> > > >   contention for the remaining global lock in there.
-> > > 
-> > > That's the problem of that container, don't let it do that.  Or remove
-> > > the global lock :)
-> > > 
-> > > >   We should let global root explicitly restrict non-initial namespaces
-> > > >   in this respect. Imho, that's just good security design. :)
-> > > 
-> > > If you do not trust your container enough to have it properly allocate
-> > > the correct binder resources, then perhaps you shouldn't be allowing it
-> > > to allocate any resources at all?
-> > 
-> > Containers just like VMs get delegated and you might not have control
-> > over what is running in there. That's AWS in a nutshell. :) Restricting
-> > it by saying "just don't do that" seems not something that is
-> > appropriate given the workloads out there in the wild.
-> > In general, I do *understand* the reasoning but I think the premise is
-> > flawed if we can somewhat trivially make this safe.
-> > 
-> > > 
-> > > > - The reason for having a number of reserved devices is when the initial
-> > > >   binderfs mount needs to bump the number of binder devices after the
-> > > >   initial allocation done during say boot (e.g. it could've removed
-> > > >   devices and wants to reallocate new ones but all binder minor numbers
-> > > >   have been given out or just needs additional devices). By reserving an
-> > > >   initial pool of binder devices this can be easily accounted for and
-> > > >   future proofs userspace. This is to say: global root in the initial
-> > > >   userns + ipcns gets dibs on however many devices it wants. :)
-> > > 
-> > > binder devices do not "come and go" at runtime, you need to set them up
-> > > initially and then all is fine.  So there should never be a need for the
-> > > "global" instance to need "more" binder devices once it is up and
-> > > running.  So I don't see what you are really trying to solve here.
-> > 
-> > That's dismissing a whole range of use-cases where you might allocate
-> > and deallocate devices on the fly which this is somewhat designed for.
-> > But I guess ok for now.
-> > 
-> > > 
-> > > You seem to be trying to protect the system from the container you just
-> > > gave root to and trusted it with creating its own binder instances.
-> > > If you do not trust it to create binder instances then do not allow it
-> > > to create binder instances!  :)
-> > 
-> > Again, I get the reasoning but think that this dismisses major
-> > real-world use-cases not just for binderfs but for all instances where
-> > untrusted workloads are run which both containers and VMs aim to make
-> > sure are possible.
-> > Note, I mean untrusted not in the sense of necessarily being malicious
-> > but just "can't guarantee that things don't blow up in your face".
-> > 
-> > > 
-> > > > - The fact that we have a single shared pool of binder device minor
-> > > >   numbers for all namespaces imho makes it necessary for the global root
-> > > >   user in the initial ipc + user namespace to manage device allocation
-> > > >   and delegation.
-> > > 
-> > > You are managing the allocation, you are giving who ever asks for one a
-> > > device.  If you run out of devices, oops, you run out of devices, that's
-> > > it.  Are you really ever going to run out of a major's number of binder
-> > > devices?
-> > 
-> > The point is more about someone intentionally trying to do that.
-> > 
-> > > 
-> > > > The binderfs sysctl stuff is really small code-wise and adds a lot of
-> > > > security without any performance impact on the code itself. So we
-> > > > actually very strictly adhere to the requirement to not blindly
-> > > > sacrifice performance for security. :)
-> > > 
-> > > But you are adding a brand new user/kernel api by emulating one that is
-> > > very old and not the best at all, to try to protect from something that
-> > > seems like you can't really "protect" from in the first place.
-> > 
-> > Of course we can protect from that. It's about init root never running
-> > out of devices. We don't care about non-init-userns running out of
-> > devices at all.
-> > 
-> > > 
-> > > You now have a mis-match of sysctls, ioctls and file operations all
-> > > working on the same logical thing.  And all interacting in different and
-> > > uncertian ways.  Are you sure that's wise?
-> > 
-> > The sysctl approach is present in other pseudo-filesystems apart from
-> > devpts. For example, mqueue.
-> > 
-> > > 
-> > > If the binderfs code as-is isn't "safe enough" to use without this, then
-> > > we need to revisit it before someone starts to use it...
-> > 
-> > *It is safe.* I just don't see a good argument against additional
-> > hardening. *But I'm definitely not going to push this patch if it's
-> > additional hardening features are used to push the unsound argument that
-> > binderfs isn't safe.* :)
-> 
-> Ok, so what you really want is just "limits" to prevent a container from
-> doing something really crazy, right?  So, how about a limit of 10 binder
-> nodes per container?  Make it a kernel build option so it can be changed
-> by a vendor if they really find that is a problem.
-> 
-> Would that solve the issue you are thinking might be here?
-
-Actually you brought me to reason through this with a couple of people
-and one thing I totally forgot and which was pointed out to me is that
-we can limit the container's memory consumption via the memory cgroup.
-So consuming all kernel memory wouldn't be possible with this. And if
-you don't use the memory cgroup you're hosed in a variety of other ways
-anyway. :) So that attack is gone which means we can do away with a
-global limit. Which I very much prefer! Thanks for making me look harder
-into the attack surface!
-
-What still makes sense is a per-instance limit, i.e. a max=<count> mount
-option. So the initial root user can mount binderfs:
-
-mkdir /dev/binderfs
-mount -t binder binder -o max=1024 /dev/binderfs
-
-grant ACLs or whatever and bind-mount the whole binderfs host instance
-into another user + ipc namespace. This way there's a hard-cap at "max"
-since the "max" mount option cannot be changed by root in a non-initial
-user namespace. That secures the use-case where users don't want to have
-multiple binderfs mounts but rather use a single one which some
-requested afair.
-
-Thanks!
-Christian
+T24gRnJpLCAyMDE4LTEyLTIxIGF0IDExOjEzIC0wODAwLCBQYXVsIFdhbG1zbGV5IHdyb3RlOg0K
+PiBIZWxsbyBBbGlzdGFpciwNCj4gDQo+IE9uIEZyaSwgMjEgRGVjIDIwMTgsIEFsaXN0YWlyIEZy
+YW5jaXMgd3JvdGU6DQo+IA0KPiA+IEVuYWJsZSBnZW5lcmljIFBDSWUgYnkgZGVmYXVsdCBpbiB0
+aGUgUklTQy1WIGRlZmNvbmZpZywgdGhpcyBhbGxvd3MNCj4gPiB1cw0KPiA+IHRvIHVzZSBRRU1V
+J3MgUENJZSBzdXBwb3J0IG91dCBvZiB0aGUgYm94LiBBbHNvIHJlbW92ZSB0aGUgWGlsaW54DQo+
+ID4gUENJZQ0KPiA+IHN1cHBvcnQgYnkgZGVmYXVsdCBhcyB0aGlzIGlzIHJhcmVseSB1c2VkIGFu
+ZCBjb25mbGljdHMgd2l0aCB0aGUNCj4gPiBtb3JlDQo+ID4gY29tbW9ubHkgdXNlZCAob3V0IG9m
+IHRyZWUpIE1pY3JvU2VtaSBQQ0llIHJvb3QgY29tcGxleC4NCj4gDQo+IFRoZXJlIGFyZSBtYW55
+IGZvbGtzIHdvcmtpbmcgb24gRlBHQXMgd2hvIHVzZSB0aGUgWGlsaW54IGRyaXZlci4NCj4gDQo+
+IEFsc28sIHdlIHNob3VsZCBub3QgcmVtb3ZlIHN1cHBvcnQgZm9yIGFuIGluLXRyZWUgZHJpdmVy
+IGJlY2F1c2UgYW4gDQo+IG91dC1vZi10cmVlIGRyaXZlciBjb25mbGljdHMuICBUaGUgcmlnaHQg
+YXBwcm9hY2ggaXMgdG8gZ2V0IHRoZSANCj4gb3V0LW9mLXRyZWUgZHJpdmVyIHVwc3RyZWFtLg0K
+DQpJJ20gaGFwcHkgdG8ga2VlcCBpdCBpbi4NCg0KV2hlbiB0aGUgTWljcm9TZW1pIGRyaXZlciBk
+b2VzIGV2ZW50dWFsbHkgZ28gdXBzdHJlYW0gdGhpcyB3aWxsDQpwcm9iYWJseSBoYXZlIHRvIGJl
+IGRpc2N1c3NlZCB0aG91Z2ggYXMgZWl0aGVyIHRoZSBjb25maWcgb3IgZGV2aWNlDQp0cmVlIHdp
+bGwgbmVlZCB0byBiZSBlZGl0ZWQgdG8gZW5zdXJlIG9ubHkgb25lIFBDSWUgZGV2aWNlIGlzIHBy
+ZXNlbnQuDQoNCj4gDQo+IEVuYWJsaW5nIGdlbmVyYWwgc3VwcG9ydCBmb3IgUENJZSBpbiB0aGUg
+ZGVmY29uZmlnIHNob3VsZCBiZSBmaW5lLA0KPiB0aG91Z2guDQoNCk9rLCBJJ2xsIHNlbmQgYSB2
+MiB3aXRoIHRoZSBYaWxpbnggUENJZSBzdGlsbCBlbmFibGVkLg0KDQpBbGlzdGFpcg0KDQo+IA0K
+PiANCj4gLSBQYXVsDQo+IA0K
