@@ -2,194 +2,184 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916DFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F47FC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54AE22186A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E324821906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 04:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hd3Ba6ib"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YNmvigR7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389215AbeLUE2n (ORCPT
+        id S1732749AbeLUEd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 23:28:43 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33951 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732480AbeLUE2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 23:28:42 -0500
-Received: by mail-ot1-f67.google.com with SMTP id t5so4051081otk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 20:28:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:openpgp:autocrypt:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PzVmimZqUCoqW67suBOKRtaE6EMX/LAMuPw5GmRM/FE=;
-        b=hd3Ba6ibNHLs0cbk14sjlBnuybIDDF+sAcvXMI909QPCi8qWGUoc1W9phzHEN+Yyx3
-         MRtWUrIm2RFo69QI1f4UCxw0gQdE5p8CWXpBMsZwWshOL3vv9AYOXDcCRGr9RXcn9OSY
-         U8zKjQ0IrvLsuR0DALKA8Erjf7a7uId1rrHUdwmIf2JSXlgeY3OUgeEuyoztLevuUX7l
-         9v3Tax9V0SRKoHZ/cOkN7aVVPKD5sfIvE/RahFFJkZ+CaL2TAUKYHcnuctCFJ5z+QNXt
-         moS7g+jpXCQGwY7IXZvuLrDObDCbZWz4JgJ4slgXuB3rMWndEvVZPJQzik1F7QjrPKAu
-         Khng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:openpgp:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PzVmimZqUCoqW67suBOKRtaE6EMX/LAMuPw5GmRM/FE=;
-        b=EVtCLICW2uDU9ceJNmKV0Hb+d4bWC83kR6P7dXCkkdeLdZc376z6JcsqEA638XBKKH
-         wG8uaDFbhECj0//6BalNel1WgTbXFKoxa6a0LeuyGOXYCew4atGBhrNXpmVYuRCz9JkJ
-         eExXwt1yNib7lYH6mYzrJa2TWxBzsLnC0hT5XhDGymmRCVNOpy0PxDWrNyb6lsALJ2jF
-         z8oGKzGGOahc4raAK6yd04OtYldNT5RBclmUhyfpqz2DMP/m9hgD0cqNtAMy16hesX0k
-         gGMGOO8lnDJAJVNWHMFXaCOMEsTSMXddt3rg9XMUidW1AGz2dgQJ9ljVzvxxNWTVcJcn
-         vFKw==
-X-Gm-Message-State: AJcUuke3cTUfGwavailw+oqFBYHRbsNsOjDQUESWmTJgihLVJUsGNOQA
-        83STigJMHDZ5SNoTA2r358LMgdrI
-X-Google-Smtp-Source: ALg8bN6ltvYX9XMKRRrdvEqEPP/NZ4m2dnrh5ycTCjMsY/QF71qn8H1cG4pd6Q4eQYnfNe7goEc1rA==
-X-Received: by 2002:a9d:4687:: with SMTP id z7mr616221ote.350.1545366521312;
-        Thu, 20 Dec 2018 20:28:41 -0800 (PST)
-Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.googlemail.com with ESMTPSA id o189sm11483653oif.23.2018.12.20.20.28.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 20:28:40 -0800 (PST)
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20181115011125.GA32556@roeck-us.net>
- <20181220152111.GB17408@kroah.com> <20181220173844.GA5838@roeck-us.net>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
-Message-ID: <634702e3-41db-3761-b562-5afdc928b3d3@gmail.com>
-Date:   Thu, 20 Dec 2018 20:28:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181220173844.GA5838@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
+        Thu, 20 Dec 2018 23:33:57 -0500
+Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:31968
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727976AbeLUEd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 23:33:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4pvrTvDPlZ1AbzH6dOf6medo/eBpnpw/VonWXMEIc/w=;
+ b=YNmvigR7BNtBMft6VBH0tG1d7ZJna3e33hVtzcbpMUPFRF/0r65O6vta+DwCDaU1Q/4rE0eL5cgJtDQEHxJiduBn03tl9COOprmaTzPGychkrNTvERD3znylgdPmg8LQNJf4JETDVxiVQn3K0C7Yw40RK4FaV9h/0vsyLV1COoQ=
+Received: from AM6PR0402MB3573.eurprd04.prod.outlook.com (52.133.20.10) by
+ AM6PR0402MB3557.eurprd04.prod.outlook.com (52.133.19.158) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.21; Fri, 21 Dec 2018 04:33:38 +0000
+Received: from AM6PR0402MB3573.eurprd04.prod.outlook.com
+ ([fe80::7862:1b29:2780:1864]) by AM6PR0402MB3573.eurprd04.prod.outlook.com
+ ([fe80::7862:1b29:2780:1864%2]) with mapi id 15.20.1446.022; Fri, 21 Dec 2018
+ 04:33:38 +0000
+From:   Richard Zhu <hongxing.zhu@nxp.com>
+To:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "TheSven73@googlemail.com" <TheSven73@googlemail.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [v6] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+Thread-Topic: [v6] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+Thread-Index: AQHUmOZXutAsHiyvt06v7QdQeB+h1A==
+Date:   Fri, 21 Dec 2018 04:33:38 +0000
+Message-ID: <1545365708-13086-1-git-send-email-hongxing.zhu@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0021.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::33) To AM6PR0402MB3573.eurprd04.prod.outlook.com
+ (2603:10a6:209:8::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=hongxing.zhu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3557;6:6HUUWU7Ylyq83ygiwKaD0U/NMoCPnKQKCOFXIi0LxGENFizQLoAOEMXOzMDGcYjbeOYsaNFm8EdBa9OICDCcTAVsUTX9UiO1dpE+OtMrOzOlrkK1bE6aZqEGCioEFuXlsHJ/hLQonPvp/jE4haxuSZIy6a4PqFYkOhVzKharcTqGVJgL++U+NuTL2098AP2Jh0sGJMRNN5kUB4La3nZTsZjVRKbQ4+emVSPOUVUvLL2lBIrPP7/bZKQj+yGrpOup2eorMptrZYj0rp0XX46f0lTEOmwxMNBnxzG5pys6sscLpfxTyfzMvKJVAafgvjt5FSrBSU9dKgnf/NbbIrKAB/MwrDZk0CKIxjiVpajoPu9Igw716jkHuCU2YCJoqH9HZsU9pmnq4C4nJl3d4kqFnVcKAbq/fs0Nyaxep89Tg428gz15bglr5UDSXdzKJPrCQik7qMKuEd/4rV9PPq/8gQ==;5:yLlTR1V4xMBzQ/O66o/hoyp8FIEClY73DposvoFZ8YozUJ8qaPwfNfyGAJKQzZ8dSvrDqlHsEirqB0IpVUTBSKXp/sbcX7vXj1pE0/MhSi2RXWtnvas1BwY9BKnSIvxRpDrf1EYajdklfuEgnBz8jr5ibC75qUq1AxQBE82oXlU=;7:P9fO/HdDamyAZl8WVd4bTFYOPWKayvITFK7ylCO9SLqWX0Wub4McvTNxSxi8akH1s80c8XkAvHejG9w+ZxkIxewEOIRkOHpSYLkEasyakg1quISN5XO5VkXTP1wO0i9+uGLXua8jBaA6V7X4oZekGg==
+x-ms-office365-filtering-correlation-id: 755169f7-ba2b-4033-8a54-08d666fd7a45
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3557;
+x-ms-traffictypediagnostic: AM6PR0402MB3557:
+x-microsoft-antispam-prvs: <AM6PR0402MB3557FC345822A6B23A5B97D68CB80@AM6PR0402MB3557.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3557;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3557;
+x-forefront-prvs: 0893636978
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(376002)(346002)(39860400002)(189003)(199004)(3846002)(8676002)(6116002)(486006)(50226002)(7736002)(8936002)(81156014)(68736007)(81166006)(305945005)(99286004)(54906003)(110136005)(105586002)(106356001)(2501003)(316002)(5660300001)(6486002)(6436002)(97736004)(66066001)(6506007)(386003)(36756003)(478600001)(71200400001)(71190400001)(102836004)(39060400002)(4326008)(25786009)(2906002)(6512007)(26005)(14444005)(256004)(186003)(14454004)(53936002)(86362001)(575784001)(2616005)(476003)(2201001)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3557;H:AM6PR0402MB3573.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: oEEC6hoPDOztjoNWPp7IOgoVp340qKNqj5a9aBzosgEKCEgllAI4VHAlY+uZEkWVLiDkg5F2tQqX/O8iJUmeos1KvqbLwbz9F+ufzHg1jZ5uu9x+wFexiKjJp61VCk0Z4DKIVCvRKaZXXy7r3b6M3Mr/HF6NziaJhK7pgIZnMu+MN2C57SDKRXtSMT/XiU2ZEW5qvQ92tPulHA9EvtChWf+w4JgzVb5DQzE0dmjDvVOrhUqU792q7gUfWmmU/onzP4sCZglHtfM8Tl5TxkzjoCmLVuzEmvmdcqZiCjC54crd1I78f1OkaXvpOYHL3ELo
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 755169f7-ba2b-4033-8a54-08d666fd7a45
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 04:33:38.6921
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3557
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 12/20/18 à 9:38 AM, Guenter Roeck a écrit :
-> On Thu, Dec 20, 2018 at 04:21:11PM +0100, Greg Kroah-Hartman wrote:
->> On Wed, Nov 14, 2018 at 05:11:25PM -0800, Guenter Roeck wrote:
->>> On Thu, Nov 01, 2018 at 11:26:06AM -0700, Florian Fainelli wrote:
->>>> It is way too easy to miss enabling SERIAL_OF_PLATFORM which would
->>>> result in the inability for the kernel to have a valid console device,
->>>> which can be seen with:
->>>>
->>>> Warning: unable to open an initial console.
->>>>
->>>> and then:
->>>>
->>>> Run /init as init process
->>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000100
->>>>
->>>> Since SERIAL_OF_PLATFORM already depends on SERIAL_8250 && OF there
->>>> really is no drawback to defaulting this config to the value of
->>>> SERIAL_8250.
->>>>
->>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>
->>> This patch results in situations where CONFIG_SERIAL_OF_PLATFORM is now
->>> defined where it was not previously. Example mpc85xx_defconfig. This in
->>> turn results in boot failures for those configurations, with an error
->>> message of
->>>
->>> of_serial: probe of e0004500.serial failed with error -22
->>>
->>> which wasn't seen before.
->>>
->>> Not sure if replacing a potential problem with a real one is really an
->>> improvement.`
->>
->> What ever was the result of this long thread?  Should I revert
->> something?  Or was a patch proposed?
->>
-> The problem still exists in next-20181220.
+The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2)
+controls whether a Function can request service using MSI.
 
-I submitted a tentative patch to fix the problem, discussed it with
-Michael and he had an alternative patch to 8250_core.c that should work
-equally well though I was worried more breakage could be created that
-way. Since clearly we have not been able to make much progress, maybe a
-reversion of the original patch is appropriate, yes it's now sent a as a
-reply to this mail!	
+i.MX6 Root Ports implement the MSI Capability and may use MSI to
+request service for events like PME, hotplug, AER, etc.  In
+addition, on i.MX6, the MSI Enable bit controls delivery of MSI
+interrupts from components below the Root Port.
 
-> 
-> Unfortunately this is now just one failure of many in -next. I see more
-> than 90 boot failures (out of ~330) there, not counting the build failures.
-> And that is on a good day.
-> 
-> Guenter
-> 
+Prior to commit f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection
+of CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also
+enabled CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports,
+it set the MSI Enable bit so it could use PME, hotplug, AER, etc.
+As a side effect, that also enabled delivery of MSI interrupts from
+downstream components.
 
+After f3fdfc4ac3a2, the imx6q-pcie driver can operate without
+portdrv, but that means imx6q-pcie must set the MSI Enable bit
+itself if downstream components use MSI.
 
--- 
-Florian
+Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_P=
+CIEPORTBUS")
+
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+---
+Changes v1 -> v2:
+* Assert the MSI_EN unconditionally when MSI is supported.
+Changes v2 -> v3:
+* Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver depends on
+PCI_MSI_IRQ_DOMAIN
+* Extended with a check for pci_msi_enabled() to see if the user
+explicitly want legacy IRQs
+Changes v3 -> v4:
+* Refer to Bjorn's comments, refine the subject and commit log and change
+the PCI_MSI_CAP to PCIE_RC_IMX6_MSI_CAP.
+Changes v4 -> v5:
+* Correct one spell mistake from PCIE_RC_MSI_IMX6_CAP to
+PCIE_RC_IMX6_MSI_CAP.
+Changes v5 -> v6:
+* Update with Bjorn's commit.
+* One "commit" added in "Prior to f3fdfc4ac3a2" refer to the complain of
+checkpatch.pl.
+---
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller=
+/dwc/pci-imx6.c
+index e563ca9..73542dd 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -82,6 +82,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+=20
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCIE_RC_IMX6_MSI_CAP			0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -999,6 +1000,7 @@ static int imx6_pcie_probe(struct platform_device *pde=
+v)
+ 	struct resource *dbi_base;
+ 	struct device_node *node =3D dev->of_node;
+ 	int ret;
++	u16 val;
+=20
+ 	imx6_pcie =3D devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -1149,6 +1151,14 @@ static int imx6_pcie_probe(struct platform_device *p=
+dev)
+ 	if (ret < 0)
+ 		return ret;
+=20
++	if (pci_msi_enabled()) {
++		val =3D dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++				PCI_MSI_FLAGS);
++		val |=3D PCI_MSI_FLAGS_ENABLE;
++		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++				PCI_MSI_FLAGS, val);
++	}
++
+ 	return 0;
+ }
+=20
+--=20
+2.7.4
+
