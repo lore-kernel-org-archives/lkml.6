@@ -2,162 +2,187 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B20B6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC9FC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7E421920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1710E21920
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=metanate.com header.i=@metanate.com header.b="qFa5XFJl"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gegr0KxV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388202AbeLUQFQ (ORCPT
+        id S1732819AbeLUQLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:05:16 -0500
-Received: from dougal.metanate.com ([90.155.101.14]:39445 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729268AbeLUQFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:05:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References
-        :In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=NOwvhVdcPFWzLduLqDqyQbNnEYBnCK66DE311pDNx1E=; b=qFa5XFJltUiyPTZWQZjOxJxv9/
-        GL8nvZtPLU+QwPKdfGfnW7a2I9XT6J6h2y+dpy+R4Ym47LvZEsdDBdF0X6B0J9Mha9jAj8F/Qz7Xn
-        Tmzly7DbtownP2GLWESoLUQuyVUfiJN/lebH6qMTXEKqipk35xy+5Txu82k+86PqMCdTkWt3UH6v4
-        Z74c2D7F+DPfkUVgSOFGsBijh1TfrFilf5gHT2qFvNDbGCHwBRjik06AdvN95AH1XTfQcCZJ/Dp5C
-        fxm0TW/zY5z9WihTBUBlLrrfmm/QudwKkmKI/XChwfNo1kvwCEBfg+2JMrsVlsEOBeYjkFo4RVgjg
-        DosJV/cA==;
-Received: from johnkeeping.plus.com ([81.174.171.191] helo=donbot)
-        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <john@metanate.com>)
-        id 1gaNIR-00018m-2x; Fri, 21 Dec 2018 16:05:07 +0000
-Date:   Fri, 21 Dec 2018 16:05:04 +0000
-From:   John Keeping <john@metanate.com>
-To:     Minas Harutyunyan <minas.harutyunyan@synopsys.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "arthur.petrosyan@synopsys.com" <arthur.petrosyan@synopsys.com>
-Subject: Re: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
-Message-ID: <20181221160504.15e93827@donbot>
-In-Reply-To: <410670D7E743164D87FA6160E7907A56013A7BECBB@am04wembxa.internal.synopsys.com>
-References: <20181023134355.29829-1-john@metanate.com>
-        <410670D7E743164D87FA6160E7907A56013A79E7CE@am04wembxa.internal.synopsys.com>
-        <20181108173654.118f9e3e@donbot>
-        <410670D7E743164D87FA6160E7907A56013A7A0F2B@am04wembxa.internal.synopsys.com>
-        <410670D7E743164D87FA6160E7907A56013A7A12C1@am04wembxa.internal.synopsys.com>
-        <20181109184246.33cb4487@donbot>
-        <410670D7E743164D87FA6160E7907A56013A7A27D7@am04wembxa.internal.synopsys.com>
-        <20181112224626.6b44568a@donbot>
-        <410670D7E743164D87FA6160E7907A56013A7BAB28@am04wembxa.internal.synopsys.com>
-        <20181218143504.027fc53c@donbot>
-        <410670D7E743164D87FA6160E7907A56013A7BECBB@am04wembxa.internal.synopsys.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 21 Dec 2018 11:11:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60650 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeLUQLw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 11:11:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vErhfpBxubKBDMRUydyY8BRQTd9QafhudDOmkJWQNoo=; b=Gegr0KxVPyvu5SEM3AoLJveBX
+        ruVQKCzVTqwWPbu7heCxs/ALLv3e49K+Yu7jwc5j/LO0Wq7mB1Q3GxYOTiGEjfK3ubNSY22/JiucB
+        O0zu4GZZsiAyOhICFupoppPSz1FoySYm/3gQH51onoIJ9zuQffTDu6MunPELpd7rN4oFx0F4BrBcF
+        CPnFrk3V5zDcoNrt1rWuZgxl+WwxFuSF3O+RMO+NvNVqZmL9uIez+ecWyw6y7o9e+W7VP+Wt9xDfE
+        PI1NCfv3SRzcWWDflzdcISUY+Z5eFshLQT5C3oAHr5DBCuKO//mkXWJ/rAC0GAtZ8MAzDrhMdvywu
+        F/7hEM9yg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gaNOw-0004QW-VC; Fri, 21 Dec 2018 16:11:50 +0000
+Date:   Fri, 21 Dec 2018 08:11:50 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181221161150.GD10600@bombadil.infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Authenticated: YES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181101225230.88058-2-ebiggers@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Minas,
+On Thu, Nov 01, 2018 at 03:52:19PM -0700, Eric Biggers wrote:
+> +In the recommended configuration of SHA-256 and 4K blocks, 128 hash
+> +values fit in each block.  Thus, each level of the hash tree is 128
+> +times smaller than the previous, and for large files the Merkle tree's
+> +size converges to approximately 1/129 of the original file size.
 
-On Wed, 19 Dec 2018 14:09:01 +0000
-Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:
+I think you mean 1/127, not 1/129.
 
-> On 12/18/2018 6:35 PM, John Keeping wrote:
-> > Hi Minas,
-> > 
-> > On Fri, 14 Dec 2018 09:00:08 +0000
-> > Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:  
-> >> First of all, sorry for delayed answer.
-> >> Looks like similar issue seen by Andrzej Pietrasiewicz
-> >> <andrzej.p@samsung.com>: "dwc2 isochronous transfers issues". Same
-> >> feedback provided to Andrzej.
-> >>
-> >> I run tests on 4.20.0-rc4 in DDMA. By default IN ISOC traffic
-> >> failed because of BNA interrupts. It's happen because UAC2
-> >> requests count set by default to 2. Our core and driver can't work
-> >> in DDMA with descriptor list length equal to 2. It's not possible
-> >> on time prepare next descriptors to avoid BNA interrupt.
-> >>
-> >> By changing UAC2_DEF_REQ_NUM to 4 all audio gadget tests passed
-> >> smoothly. Could you please apply this patch and run tests in DDMA
-> >> mode:
-> >>
-> >> diff --git a/drivers/usb/gadget/function/u_uac2.h
-> >> b/drivers/usb/gadget/function/u_uac2.h
-> >> index 8362ee572e1e..5e649259ab76 100644
-> >> --- a/drivers/usb/gadget/function/u_uac2.h
-> >> +++ b/drivers/usb/gadget/function/u_uac2.h
-> >> @@ -21,7 +21,7 @@
-> >>    #define UAC2_DEF_CCHMASK 0x3
-> >>    #define UAC2_DEF_CSRATE 64000
-> >>    #define UAC2_DEF_CSSIZE 2
-> >> -#define UAC2_DEF_REQ_NUM 2
-> >> +#define UAC2_DEF_REQ_NUM 4
-> >>
-> >>    struct f_uac2_opts {
-> >>           struct usb_function_instance    func_inst;
-> >>
-> >>
-> >> If it will OK on your side also then will switch to BDMA mode and
-> >> debug.  
-> > 
-> > With DDMA enabled, I see the following error after the stream has
-> > been running for a while (anything from a few seconds to a few
-> > minutes): 
-> > -- >8 --  
-> > [ 1798.836322] dwc2 ff580000.usb: dwc2_hsotg_ep_disable: called for
-> > ep0 [ 1798.836329] dwc2 ff580000.usb: dwc2_hsotg_ep_disable: called
-> > for ep0 [ 1798.851092] dwc2 ff580000.usb: new device is high-speed
-> > [ 1798.924461] dwc2 ff580000.usb: new device is high-speed
-> > [ 1798.982887] dwc2 ff580000.usb: new address 25
-> > [ 1799.002463] configfs-gadget gadget: high-speed config #1: config
-> > -- 8< --
-> > 
-> > On the host side (Linux 4.18.16 Intel xHCI), I see this logged at
-> > the same time:
-> >   
-> > -- >8 --  
-> > [1735740.716242] retire_capture_urb: usb 1-2.2.7: frame 0 active:
-> > -71 [1735740.716990] retire_capture_urb: usb 1-2.2.7: frame 0
-> > active: -71 [1735740.717906] retire_capture_urb: usb 1-2.2.7: frame
-> > 0 active: -71 [1735740.718905] retire_capture_urb: usb 1-2.2.7:
-> > frame 0 active: -71 [1735740.719916] retire_capture_urb: usb
-> > 1-2.2.7: frame 0 active: -71 [1735740.720032] usb 1-2.2-port7:
-> > disabled by hub (EMI?), re-enabling... [1735740.720036] usb
-> > 1-2.2.7: USB disconnect, device number 28 [1735740.937500] usb
-> > 1-2.2.7: new high-speed USB device number 29 using xhci_hcd -- 8< --
-> > 
-> > The device does then enumerate and works for a period of time
-> > before the same error happens again.
-> >   
->  From logs not clear who initiate disconnect: host or device.  More 
-> probably host, after some errors in retire_capture_urb initiate 
-> disconnect. Do you have any idea?
-> Can't you connect device to host on same platform?
-> If root cause of disconnect by host is device issue, i.e. not able to 
-> send to host data packets in time then I need device side dmesg log
-> with debug enabled. USB trace around the disconnect will help to
-> debug.
+> +fsveritysetup format
+> +--------------------
+> +
+> +When enabling fs-verity on a file via the `FS_IOC_ENABLE_VERITY`_
+> +ioctl, the kernel requires that the verity metadata has been appended
+> +to the file contents.  Specifically, the file must be arranged as:
+> +
+> +#. Original file contents
+> +#. Zero-padding to next block boundary
+> +#. `Merkle tree`_
+> +#. `fs-verity descriptor`_
+> +#. fs-verity footer
+> +
+> +We call this file format the "fsveritysetup format".  It is not
+> +necessarily the on-disk format actually used by the filesystem, since
+> +the filesystem is free to move things around during the ioctl.
+> +However, the easiest way to implement fs-verity is to just keep this
+> +arrangement in-place, as ext4 and f2fs do; see `Filesystem support`_.
+> +
+> +Note that "block" here means the fs-verity block size, which is not
+> +necessarily the same as the filesystem's block size.  For example, on
+> +ext4, fs-verity can use 4K blocks on top of a filesystem formatted to
+> +use a 1K block size.
+> +
+> +The fs-verity footer is a structure of the following format::
+> +
+> +    struct fsverity_footer {
+> +            __le32 desc_reverse_offset;
+> +            __u8 magic[8];
+> +    };
+> +
+> +``desc_reverse_offset`` is the distance in bytes from the end of the
+> +fs-verity footer to the beginning of the fs-verity descriptor; this
+> +allows software to find the fs-verity descriptor.  ``magic`` is the
+> +ASCII bytes "FSVerity"; this allows software to quickly identify a
+> +file as being in the "fsveritysetup" format as well as find the
+> +fs-verity footer if zeroes have been appended.
+> +
+> +The kernel cannot handle fs-verity footers that cross a page boundary.
+> +Padding must be prepended as needed to meet this constaint.
 
-I remember running a test with a hardware USB analyzer and which showed
-an isochronous packet with an incorrect length (much larger than it
-should have been) when the failure occurred.
+I think this ioctl is the start of the disagreement.  How about this
+strawman:
 
-I don't have any logs from that test and I'm out of the office at the
-moment, but I will capture logs when I'm back in January.
+verity_fd = ioctl(fd, FS_IOC_VERITY_FD);
+write(verity_fd, &merkle_tree);
+close(verity_fd);
 
+At final close of that verity_fd, the filesystem behaves in the same way
+that it does on receipt of this FS_IOC_ENABLE_VERITY ioctl today.
 
-Thanks,
-John
+> +FS_IOC_MEASURE_VERITY
+> +---------------------
+> +
+> +The FS_IOC_MEASURE_VERITY ioctl retrieves the fs-verity measurement of
+> +a regular file.  This is a digest that cryptographically summarizes
+> +the file contents that are being enforced on reads.  The file must
+> +have fs-verity enabled.
+> +
+> +This ioctl takes in a pointer to a variable-length structure::
+> +
+> +    struct fsverity_digest {
+> +            __u16 digest_algorithm;
+> +            __u16 digest_size; /* input/output */
+> +            __u8 digest[];
+> +    };
+> +
+> +``digest_size`` is an input/output field.  On input, it must be
+> +initialized to the number of bytes allocated for the variable-length
+> +``digest`` field.
+> +
+> +On success, 0 is returned and the kernel fills in the structure as
+> +follows:
+> +
+> +- ``digest_algorithm`` will be the hash algorithm used for the file
+> +  measurement.  It will match the algorithm used in the Merkle tree,
+> +  e.g. FS_VERITY_ALG_SHA256.  See ``include/uapi/linux/fsverity.h``
+> +  for the list of possible values.
+> +- ``digest_size`` will be the size of the digest in bytes, e.g. 32
+> +  for SHA-256.  (This can be redundant with ``digest_algorithm``.)
+> +- ``digest`` will be the actual bytes of the digest.
+> +
+> +This ioctl is guaranteed to be very fast.  Due to fs-verity's use of a
+> +Merkle tree, its running time is independent of the file size.
+> +
+> +This ioctl can fail with the following errors:
+> +
+> +- ``EFAULT``: invalid buffer was specified
+> +- ``ENODATA``: the file is not a verity file
+> +- ``ENOTTY``: this type of filesystem does not implement fs-verity
+> +- ``EOPNOTSUPP``: the kernel was not configured with fs-verity support
+> +  for this filesystem, or the filesystem superblock has not had the
+> +  'verity' feature enabled on it.  (See `Filesystem support`_.)
+> +- ``EOVERFLOW``: the file measurement is longer than the specified
+> +  ``digest_size`` bytes.  Try providing a larger buffer.
+
+Should this ioctl be better implemented as an xattr?
+
+> +- Direct I/O is not supported on verity files.  Attempts to use direct
+> +  I/O on such files will fall back to buffered I/O.
+
+That makes sense; the filesystem can't verify the data before presenting
+it to userspace if it's being copied directly into userspace.
+
+> +- DAX (Direct Access) is not supported on verity files.
+
+That makes less sense.  The kernel can check the checksum before
+copying the data to the user.  Is this simply a current limitation of
+the implementation?
+
+> +Thus, when ascending the tree reading hash pages, fs-verity can stop
+> +as soon as it finds an already-checked hash page.  This optimization,
+> +which is also used by dm-verity, results in excellent sequential read
+> +performance since usually the deepest needed hash page will already be
+> +cached and checked.  However, random reads perform worse.
+
+I think you mean "all but the deepest"?
+
