@@ -6,61 +6,64 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B608AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F909C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8295D21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E1C121927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545420639;
-	bh=eAsfrio+ZfoZ/11yqKsbIynf1LEMeNxx8Bqy95Wmxqw=;
+	s=default; t=1545420643;
+	bh=tfx6TsOZZrcYC0pWHcsvZ4T2gUUB51E22aIbP7xvsrQ=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=RAupyY/qOD6GPmrnsY1QJ+55oPK499yjMHOjRWfKW5/vJarIGmozADLVyU0/dzmFU
-	 s9QooAgexwSmh2YJ+IjUtfQ8wzK8nwOJEyuCEU9Ndx4Dz+qGTOzkc462GtM00Cu57g
-	 fvukERKbIRgam9jFVnbQZ9R3DnxaaxbAUUdNBjMs=
+	b=sXQxGkWYPBZMI+lGQhmYIQvmcfUzRhRU5fE7BkfsQXopxcKI8Y44NW02iPKEQJihT
+	 GRzvxuYwHHGVnH9m4e8E8fiRY4fYP4GqzxDjuqWdRiMgPHydpsiiOGZbWdKYYf4cJT
+	 JvVq3SFK8dQlIeQ8c96pPtqPW7mnCWrIxXSD+sTQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404613AbeLUTai (ORCPT
+        id S2404539AbeLUTaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:30:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 14:30:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404545AbeLUTaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:30:04 -0500
-Subject: Re: [GIT PULL] Last straggler for 4.20-rc8 or final
+        id S2389784AbeLUTaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:30:03 -0500
+Subject: Re: [GIT PULL] GPIO fixes for v4.20
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545420603;
-        bh=eAsfrio+ZfoZ/11yqKsbIynf1LEMeNxx8Bqy95Wmxqw=;
+        s=default; t=1545420602;
+        bh=tfx6TsOZZrcYC0pWHcsvZ4T2gUUB51E22aIbP7xvsrQ=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HceU/C2lFevp635kMfcIzGvYr8nxQmQVNlc3t6UnmanTyOV/l2ZZtjxyZDWlGbif2
-         6fR+ry6jY6M00xLeRKZIetDlPqSe7BZBwZw2CuVoKUbz7FIFtIua4KG0XiaA2kd5du
-         AeaxCspP8z/1R4yWO+QF56JG8wM2zydhIL5I3kQA=
+        b=HW2QhG7pyo6YIM28wDZwwvXRo36GwvteMlsmADD91bZjZzpkb8mmmaojUwNKfmehC
+         UmoKtm5SiXJiKf5lT5KmvkaOHBOT0N4oYc5ZTYV9/rnvQf2KQ8dntxsLtoleLlLNv0
+         YFUn2WqIgEhG6AVAqbQ1fDNXsIymLMKHfWsLiWAI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
-References: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <CACRpkdYn7hPt5Etb5oeD-pTW6ME4QAwnTZEXu8siGNxi-OgQew@mail.gmail.com>
+References: <CACRpkdYn7hPt5Etb5oeD-pTW6ME4QAwnTZEXu8siGNxi-OgQew@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: 3cf85f9f6bd7b172122865432b4c6f0ec844e22a
+X-PR-Tracked-Message-Id: <CACRpkdYn7hPt5Etb5oeD-pTW6ME4QAwnTZEXu8siGNxi-OgQew@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ tags/gpio-v4.20-3
+X-PR-Tracked-Commit-Id: c8da642d41a6811c21177c9994aa7dc35be67d46
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5092adb2272e1760030a889aa4a3e9cf1d5f74b5
-Message-Id: <20181221193003.15695.2764.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 21 Dec 2018 19:30:03 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+X-PR-Merge-Commit-Id: bc380733a5e77ccc3b4d4622595e42f1b0902d66
+Message-Id: <20181221193002.15695.824.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Fri, 21 Dec 2018 19:30:02 +0000
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hans de Goede <hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 21 Dec 2018 14:09:02 +0100:
+The pull request you sent on Fri, 21 Dec 2018 09:59:10 +0100:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v4.20-3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5092adb2272e1760030a889aa4a3e9cf1d5f74b5
+https://git.kernel.org/torvalds/c/bc380733a5e77ccc3b4d4622595e42f1b0902d66
 
 Thank you!
 
