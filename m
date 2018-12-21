@@ -2,153 +2,126 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F005AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76BDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E8921924
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:49:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gOOalt98"
+	by mail.kernel.org (Postfix) with ESMTP id 7FDF121924
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404031AbeLUOtf (ORCPT
+        id S2390899AbeLUOu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 09:49:35 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39811 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729556AbeLUOtf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 09:49:35 -0500
-Received: by mail-it1-f193.google.com with SMTP id a6so6863536itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 06:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ajXD0D2eRmVhS3o1tEd/YhHeSKFGBsvzlDSiHq+YYZU=;
-        b=gOOalt98tkgOT7ER1HCCvB2hlNu3dkQqkHGopVg6oGQPypNGS14jjzikrMBq3CCf8A
-         zEFljV1SsHahQK+HeUkFougFfBL5mrBf7RdrG/zBtYagNysnhQGHw97yDeFeJVhIUIzW
-         h7LKXzOYsXruRkLHTMkCkgh9pc1EfbFeCsx7g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ajXD0D2eRmVhS3o1tEd/YhHeSKFGBsvzlDSiHq+YYZU=;
-        b=tBDJdHCPrFXGwbmHf3eniNDkZehAFu1b2Xg4WJ3kkRKdUYqAdn6UuyGhgYQEJmX/dt
-         OX2wdUgBvHYZSIInIFMQ9iqTp41EI8ePANRDny0xfN0RYtNOmIrJl3TvldTlCdOCzHzA
-         Ne5QOHBXePG6tCxrAf4z0ah3Ds5hldXNabPwmHhM55Cd2MyHrPe1iwbYlDmidZNUqbfv
-         hcaqfRMfyECC4SlH6Ts1cRZLfJlelmnFpNIncr5Vy2J/tJGgsuW/nSaz6gINL7FnWbOI
-         7rSboxNOWjDL45KlmJ72ZbjOdA8Ra7GTF9FhZPrd5Rxqp6Zhduh+lGtVY9rxtxUU+9xw
-         cv3A==
-X-Gm-Message-State: AA+aEWZ3wvQP3xEB0tNzYbq4XAT2/F+3pHKvRoERDq5gT3wBTUPvO3Kp
-        heG+MqB4fgZfS3YQvx3WAsigUlY4vkVZNn2hMPBFLA==
-X-Google-Smtp-Source: ALg8bN7+OW4UZr1RWba9QRggj9LEsaFQPG8mI8dR/moTDMxDYo2aoVlHDUtm5X04J+EGw3/+VTgxsYPyUWOVzkOT5L0=
-X-Received: by 2002:a05:660c:a8f:: with SMTP id m15mr2092306itk.114.1545403774021;
- Fri, 21 Dec 2018 06:49:34 -0800 (PST)
+        Fri, 21 Dec 2018 09:50:26 -0500
+Received: from sauhun.de ([88.99.104.3]:43864 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387417AbeLUOu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 09:50:26 -0500
+Received: from localhost (p54B334FA.dip0.t-ipconnect.de [84.179.52.250])
+        by pokefinder.org (Postfix) with ESMTPSA id ABBF62E3542;
+        Fri, 21 Dec 2018 15:50:22 +0100 (CET)
+Date:   Fri, 21 Dec 2018 15:50:22 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+Message-ID: <20181221145022.umsugdwadw5a5ag6@ninjato>
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
+ <20181219172250.ytronxeq2yc4vp4r@wunner.de>
+ <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
+ <20181219223341.GA998@kunai>
+ <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
 MIME-Version: 1.0
-References: <1545292547-18770-1-git-send-email-vincent.guittot@linaro.org>
- <1545292547-18770-4-git-send-email-vincent.guittot@linaro.org>
- <c482361e-cfb4-d172-32c3-4d82ceb1e7d2@arm.com> <CAKfTPtCQTMs=6yGbrfuUGyhwPHWvMODcyyDROVjbURHFxLTxCQ@mail.gmail.com>
- <d87cba1f-fa5c-3d82-ec7f-f2c72d40cb30@arm.com>
-In-Reply-To: <d87cba1f-fa5c-3d82-ec7f-f2c72d40cb30@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 21 Dec 2018 15:49:22 +0100
-Message-ID: <CAKfTPtBh5tFgSLfTtKafUMjtHMrFLKj1Ep9YwNn5hZS=p756aQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] sched/fair: fix unnecessary increase of balance interval
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s2jmrr4347zzegwl"
+Content-Disposition: inline
+In-Reply-To: <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 at 18:24, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> On 20/12/2018 14:50, Vincent Guittot wrote:
-> [...]
-> >> So now  we reset the interval for all active balances (expect last active
-> >> balance case), even when it is done as a last resort because all other
-> >> tasks were pinned.
-> >>
-> >> Arguably the current code isn't much better (always increase the interval
-> >> when active balancing), but at least it covers this case. It would be a
-> >> waste not to take this into account when we can detect this scenario
-> >
-> > So i'd like to remind the $subject of this patchset: fix some known
-> > issues for asym_packing.
-> > While looking at this, we have added few other voluntary active
-> > balances because it was "obvious" that this active migration were
-> > voluntary one. But in fact, we don't have any UC which show a problem
-> > for those additional UC so far.
-> >
-> > The default behavior for active migration is to increase the interval
-> > Now you want to extend the exception to others active migration UC
-> > whereas it's not clear that we don't fall in the default active
-> > migration UC and we should not increase the interval.
->
-> Well if we stick to the rule of only increasing balance_interval when
-> pinned tasks get in the way, it's clear to me that this use case shouldn't
-> be segregated from the others.
->
-> I do agree however that it's not entirely clear if that balance_interval
-> increase was also intended to slow down the nr_balance_failed migrations.
->
-> I had a look at the history and stumbled on:
->
->         8102679447da ("[PATCH] sched: improve load balancing pinned tasks")
->
-> Which explains the reasoning behind the active_balance balance_interval
-> increase:
->
->         """
->         this one attempts to work out whether the balancing failure has
->         been due to too many tasks pinned on the runqueue.  This allows it
->         to be basically invisible to the regular blancing paths (ie. when
->         there are no pinned tasks).
->         """
->
-> So AFAICT that is indeed the rule we should be following, and I would only
-> increase the balance_interval when there are pinned tasks, not because
-> of active_balance categories. So here it's a matter of fixing that
-> condition into what it was meant to be doing.
 
-After looking at shed.c at this sha1,  (sd->nr_balance_failed >
-sd->cache_nice_tries+2) was the only condition for doing active
-migration and as a result it was the only reason for doubling
-sd->balance_interval.
-My patch keeps exactly the same behavior for this condition
-'sd->nr_balance_failed > sd->cache_nice_tries+2). And, I'm even more
-convinced to exclude (sd->nr_balance_failed > sd->cache_nice_tries+2)
-condition because it's the condition that has introduced the doubling
-of the interval.
+--s2jmrr4347zzegwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As said previously, you can argue that this behavior is not optimal
-and discuss its validity, but the sha1 that you mentioned above,
-introduced the current policy for (sd->nr_balance_failed >
-sd->cache_nice_tries+2) condition.
-Reverting such behavior would need more studies, tests and cares which
-are out of the scope of this patchset and more related to a whole
-refactoring of load_balance and calculte_imbalance; FYI, I have
-submitted a topic on the subject for the next OSPM
 
->
-> > What you want is changing the behavior of the scheduler for UC that
-> > haven't raised any problem where asym_packing has known problem/
-> >
-> > Changing default behavior for active migration is not subject of this
-> > patchset and should be treated in another one like the one discussed
-> > with peter few days ago
-> > >> (I'll reiterate my LBF_ALL_PINNED suggestion).
-> >>
-> >>>               /* We were unbalanced, so reset the balancing interval */
-> >>>               sd->balance_interval = sd->min_interval;
-> >>>       } else {
-> >>>
+> > > I think this might be as simple as adding:
+> > >=20
+> > > 	if (WARN_ON(adap->dev.parent->power.is_suspended))
+> > > 		return -ESHUTDOWN;
+
+Peter, I think this should work for muxes, too, or? The i2c_transfer()
+call to the mux will not be rejected, but it will be later when we reach
+the root adapter. And then the error code will be pushed down the tree
+until we arrive at the mux again. So, the rejection will not happen at
+the earliest time, but it will happen. Is my understanding correct?
+
+> > I have seen this flag but decided against it. One reason is because it
+> > is marked as "PM core only".
+>=20
+> Right and we definitely should not be touching it, but reading it should
+> be fine.
+
+Seems like it. So far, no rejection from the other PM people :)
+
+> No you are right, there is a race here, but I don't think we are likely to
+> hit that race. Normally there won't be any ongoing i2c-transfers during
+> a system suspend and more over, the goal of adding this check is to help
+> find problems, so even if the check sometimes does not trigger because
+> of the race that is not really a big deal.
+
+You are right that the impact of a missed detection is not fatal. That
+helps. The low likeliness was not an argument for me, though, because
+detecting rare things is very important IMO. Because, well, they are
+rare and especially hard to debug.
+
+> I think we need to get really unlucky to have both a suspend ordering
+> problem in the first case (already a somewhat rare thing) combined with
+> hitting this race in such a way *each time* that we don't trigger the
+> WARN_ON.
+
+And here you convinced me: even if we miss a detection once, I agree it
+is super super unlikely to hit the race every time.
+
+> To me this seems a case of perfect being the enemy of good. When we
+> first started discussing this you wanted to not have to modify the
+> adapter/bus drivers for the check, using adap->dev.parent->power.is_suspe=
+nded
+> gives us that and it will also work for complex cases like
+> the i2c-designware case, so I believe the benefits outway the downsides.
+
+I'll try it.
+
+
+--s2jmrr4347zzegwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwc/aoACgkQFA3kzBSg
+Kbb5bQ//URYlNvbXXExtMF0qLfiMDARGWqfm2kgBo2NeAlG+mCOpUuKOdjzF2Xbc
+32cnfKCyw1bvKLMTyLLdaEzuQihOCUlKSsc1le6qepNiOvedI6Tp9XfS17Q6Z73K
+fJLIjImgM5ZHOEN0y2GnSfz3QxM265h5VUBqyZzfkAddi5QrDwDP1wniTXVrw0Z7
+04q1EQ1ypXbgvkHgRtnzg/gv5OkmovUEV7QBFS9U8RchgiXmYOvlJZkR/l4ZW60K
+PEqv6IuBgfC6ikHMaRyovnhVm2jiEm6bsLi/RgwJxxAWPwFJaFcF2hf4r6rnBSi4
+sZrDP0jOQxKARqKaiRv/Szp2RlJY5f/PFsrmwDt/LD7F591vhVZdG8/mO4oYLphd
+pKgnu2VBFENJVEMVZ76KbhAGz6J4mh+agjOlX0NKKXWO/au0+qFWVrcqJfP0VbiC
+CL7Dux/fjMsBvmDwaawP0uR2dSsKgnL8YQhDDxjN9PXU/RmFzF1dpGaAa/nuXKVZ
+8KsbZaricdNv+jrHLklZPTZi9a9hTJrOtjeTvbYt2DLpitZRdiTjtC6bds9sWisz
+4SGO8KMgxm0tBMSwsTIYNmMA8d/5AdVMCtPxlrUXk7AgPFjzAhU/li+emcQ5pUO4
+GkrPLtjbUll25du9Gr4O1I6qcq+x7hwgBr4uSClf63QizTK4L24=
+=LQSI
+-----END PGP SIGNATURE-----
+
+--s2jmrr4347zzegwl--
