@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC52C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FF4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47159218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8788E218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390260AbeLUMIO (ORCPT
+        id S2390272AbeLUMIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:08:14 -0500
+        Fri, 21 Dec 2018 07:08:17 -0500
 Received: from mga03.intel.com ([134.134.136.65]:34195 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390242AbeLUMIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:08:11 -0500
+        id S2390255AbeLUMIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:08:13 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 04:08:11 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 04:08:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="131862498"
+   d="scan'208";a="131862504"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 04:08:09 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 04:08:11 -0800
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] perf thread-stack: Allow for a thread stack array
-Date:   Fri, 21 Dec 2018 14:06:16 +0200
-Message-Id: <20181221120620.9659-5-adrian.hunter@intel.com>
+Subject: [PATCH 5/8] perf thread-stack: Factor out thread_stack__init()
+Date:   Fri, 21 Dec 2018 14:06:17 +0200
+Message-Id: <20181221120620.9659-6-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181221120620.9659-1-adrian.hunter@intel.com>
 References: <20181221120620.9659-1-adrian.hunter@intel.com>
@@ -44,106 +44,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In preparation for fixing thread stack processing for the idle task,
-allow for a thread stack array.
+factor out thread_stack__init().
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/thread-stack.c | 40 +++++++++++++++++++++++++++++-----
- 1 file changed, 34 insertions(+), 6 deletions(-)
+ tools/perf/util/thread-stack.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index e13127755293..e59f6fa4c67d 100644
+index e59f6fa4c67d..4340381d54c2 100644
 --- a/tools/perf/util/thread-stack.c
 +++ b/tools/perf/util/thread-stack.c
-@@ -60,6 +60,7 @@ struct thread_stack_entry {
-  * @last_time: last timestamp
-  * @crp: call/return processor
-  * @comm: current comm
-+ * @arr_sz: size of array if this is the first element of an array
-  */
- struct thread_stack {
- 	struct thread_stack_entry *stack;
-@@ -71,6 +72,7 @@ struct thread_stack {
- 	u64 last_time;
- 	struct call_return_processor *crp;
- 	struct comm *comm;
-+	unsigned int arr_sz;
- };
+@@ -93,6 +93,24 @@ static int thread_stack__grow(struct thread_stack *ts)
+ 	return 0;
+ }
  
- static int thread_stack__grow(struct thread_stack *ts)
-@@ -100,6 +102,8 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
- 	if (!ts)
- 		return NULL;
- 
-+	ts->arr_sz = 1;
++static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
++			      struct call_return_processor *crp)
++{
++	int err;
 +
- 	if (thread_stack__grow(ts)) {
++	err = thread_stack__grow(ts);
++	if (err)
++		return err;
++
++	if (thread->mg && thread->mg->machine)
++		ts->kernel_start = machine__kernel_start(thread->mg->machine);
++	else
++		ts->kernel_start = 1ULL << 63;
++	ts->crp = crp;
++
++	return 0;
++}
++
+ static struct thread_stack *thread_stack__new(struct thread *thread,
+ 					      struct call_return_processor *crp)
+ {
+@@ -104,17 +122,11 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
+ 
+ 	ts->arr_sz = 1;
+ 
+-	if (thread_stack__grow(ts)) {
++	if (thread_stack__init(ts, thread, crp)) {
  		free(ts);
  		return NULL;
-@@ -234,11 +238,19 @@ static int __thread_stack__flush(struct thread *thread, struct thread_stack *ts)
- int thread_stack__flush(struct thread *thread)
- {
- 	struct thread_stack *ts = thread->ts;
-+	unsigned int pos;
-+	int err = 0;
- 
--	if (ts)
--		return __thread_stack__flush(thread, ts);
-+	if (ts) {
-+		for (pos = 0; pos < ts->arr_sz; pos++) {
-+			int ret = __thread_stack__flush(thread, ts + pos);
- 
--	return 0;
-+			if (ret)
-+				err = ret;
-+		}
-+	}
-+
-+	return err;
- }
- 
- int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
-@@ -314,13 +326,29 @@ void thread_stack__set_trace_nr(struct thread *thread, u64 trace_nr)
- 	}
- }
- 
-+static void __thread_stack__free(struct thread *thread, struct thread_stack *ts)
-+{
-+	__thread_stack__flush(thread, ts);
-+	zfree(&ts->stack);
-+}
-+
-+static void thread_stack__reset(struct thread *thread, struct thread_stack *ts)
-+{
-+	unsigned int arr_sz = ts->arr_sz;
-+
-+	__thread_stack__free(thread, ts);
-+	memset(ts, 0, sizeof(*ts));
-+	ts->arr_sz = arr_sz;
-+}
-+
- void thread_stack__free(struct thread *thread)
- {
- 	struct thread_stack *ts = thread->ts;
-+	unsigned int pos;
- 
- 	if (ts) {
--		__thread_stack__flush(thread, ts);
--		zfree(&ts->stack);
-+		for (pos = 0; pos < ts->arr_sz; pos++)
-+			__thread_stack__free(thread, ts + pos);
- 		zfree(&thread->ts);
- 	}
- }
-@@ -611,7 +639,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
- 
- 	if (ts && !ts->crp) {
- 		/* Supersede thread_stack__event() */
--		thread_stack__free(thread);
-+		thread_stack__reset(thread, ts);
- 		ts = NULL;
  	}
  
+-	if (thread->mg && thread->mg->machine)
+-		ts->kernel_start = machine__kernel_start(thread->mg->machine);
+-	else
+-		ts->kernel_start = 1ULL << 63;
+-	ts->crp = crp;
+-
+ 	thread->ts = ts;
+ 
+ 	return ts;
 -- 
 2.17.1
 
