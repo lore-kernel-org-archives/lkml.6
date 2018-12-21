@@ -2,121 +2,102 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3F3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3ACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1444721927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBA7F21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:35:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mvg44wIB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbeLUSet (ORCPT
+        id S2391474AbeLUSfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:34:49 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59205 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731525AbeLUSes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:34:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 10:34:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
-   d="scan'208";a="120214985"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by orsmga002.jf.intel.com with ESMTP; 21 Dec 2018 10:34:47 -0800
-Subject: Re: [v2 PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-To:     Yang Shi <yang.shi@linux.alibaba.com>, ying.huang@intel.com,
-        tim.c.chen@intel.com, minchan@kernel.org, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1545351679-23596-1-git-send-email-yang.shi@linux.alibaba.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
- dvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Message-ID: <c3c77f08-f7af-7633-636d-c467759fbf20@linux.intel.com>
-Date:   Fri, 21 Dec 2018 10:34:47 -0800
+        Fri, 21 Dec 2018 13:35:44 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44354 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731525AbeLUSfn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 13:35:43 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so2957598pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:35:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SJVdAMn3u/1jD44xLq1y25JgZtRFdtu4vOos6twk9NA=;
+        b=Mvg44wIB+I3/OaqOoHVYFaB+kPhICqoKgZ/AZ9ZBjF+kuf6XWoFlkblQMBEUo1e0GY
+         AyNcB+lIcF+8LHdxohQqCIUzuTF1sAvJiqdr8H4H+wqp2WqgCDkSnQ3boVX/I5EBB2oP
+         gFIbeYwCuGJPAQVaKi8wSf1RulspsdmWYWDeDRteMjwe2AraHkjvOjiEZnHWVJQVJig0
+         YZhhT8dnURE2SC69vOa9snMT6NgV423Mg9Xn+nvVyGK/dLnXaskVzBqp69jOQIbkKgPD
+         8sNGUg3Oq2uNjUtNGU/kQg7P6hE/GARoN1uGP6ir8+AXrz0T+zUgXXN53j7Vj8YdnhV8
+         mgUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SJVdAMn3u/1jD44xLq1y25JgZtRFdtu4vOos6twk9NA=;
+        b=k20fiaHfKwZnG5cVd8oeLkoLg+JQ3YU14FQR3Cgn2FI3S7XUSmUOLK5MC21xrDIuKZ
+         Lt9wMnJT2JuF56L8ob6JZdbiAgXTKMNTUhWHJPli1S4vwSUgLZjP6mosrmHxXZ58+837
+         VHx5FFRFK6QAT0RHTWKS/n0b49h5NYKODyP5J+Q74sgTwfSGxaNIeorffcyhyu2ORdtQ
+         sRJFKFmypEHHGvPFVfvfhWpO14mmnaN6d8h9ntXeMurUzlzcjRi4UurZk59lLG1O9060
+         aTw3LhWWNdTuSKoF+CDxm+3d8qw++iv1J8dIP2ZtBv4wFd8VkC/cOxQo8YLxTfEFvHKp
+         vN+A==
+X-Gm-Message-State: AJcUukfdwxGEnaDEtPSdeDMo0CwBeAB4eKbROsSWgCUkglXAFBUk4ljH
+        R71i7ebXkIkljOQejzltGfo=
+X-Google-Smtp-Source: ALg8bN6Suh2HDgKIF7R+2ICqjugui991mw3tW5j+yPbBqOk7QTs7hcr+D0L5tOUL/VbSAeIJe5rhbA==
+X-Received: by 2002:a63:4384:: with SMTP id q126mr3443903pga.160.1545417342435;
+        Fri, 21 Dec 2018 10:35:42 -0800 (PST)
+Received: from [192.168.2.145] ([94.29.36.169])
+        by smtp.googlemail.com with ESMTPSA id g190sm28653444pgc.28.2018.12.21.10.35.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 10:35:41 -0800 (PST)
+Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
+To:     christian.koenig@amd.com, Eric Anholt <eric@anholt.net>,
+        dri-devel@lists.freedesktop.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org, Jason Ekstrand <jason@jlekstrand.net>
+References: <20181108160422.17743-1-eric@anholt.net>
+ <20181108160422.17743-3-eric@anholt.net>
+ <faf15d58-a076-49fb-c903-15acdf6f8ffe@gmail.com>
+ <fadfc03c-7f80-216b-299f-27a1d8d7877b@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <44f25278-fbbd-f95b-c2ab-87834e5d095e@gmail.com>
+Date:   Fri, 21 Dec 2018 21:35:34 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1545351679-23596-1-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <fadfc03c-7f80-216b-299f-27a1d8d7877b@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 4:21 PM, Yang Shi wrote:
+On 21.12.2018 21:27, Christian König wrote:
+> Am 19.12.18 um 18:53 schrieb Dmitry Osipenko:
+>> [SNIP]
+>>> @@ -931,9 +718,6 @@ static signed long drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
+>>>         if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
+>>>           for (i = 0; i < count; ++i) {
+>>> -            if (entries[i].fence)
+>>> -                continue;
+>>> -
+>>>               drm_syncobj_fence_get_or_add_callback(syncobjs[i],
+>>>                                     &entries[i].fence,
+>>>                                     &entries[i].syncobj_cb,
+>> Hello,
+>>
+>> The above three removed lines we added in commit 337fe9f5c1e7de ("drm/syncobj: Don't leak fences when WAIT_FOR_SUBMIT is set") that fixed a memleak. Removal of the lines returns the memleak because of disbalanced fence refcounting and it looks like they were removed unintentionally in this patch.
+> 
+> That was already fixed with 61a98b1b9a8c7 drm/syncobj: remove drm_syncobj_cb and cleanup.
+> 
+> This cleanup removed all the duplicate checking and is now adding the callback only once.
 
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -538,11 +538,17 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->  	bool do_poll = true, page_allocated;
->  	struct vm_area_struct *vma = vmf->vma;
->  	unsigned long addr = vmf->address;
-> +	struct inode *inode = si->swap_file->f_mapping->host;
->  
->  	mask = swapin_nr_pages(offset) - 1;
->  	if (!mask)
->  		goto skip;
->  
-> +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
-
-Maybe move the inode dereference here: 
-
-		inode = si->swap_file->f_mapping->host;
-
-> +		if (inode_read_congested(inode))
-> +			goto skip;
-> +	}
-> +
-
-Thanks.
-
-Tim
+Okay, though that commit is not in linux-next. I assume it will show up eventually.
