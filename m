@@ -2,151 +2,164 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FBBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399B8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7C8218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBmpMe80"
+	by mail.kernel.org (Postfix) with ESMTP id 069C221909
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545382713;
+	bh=Ro4yIaTCeQsTGbVC/sLEVI60Q0pt6plj5g0qoTyyFOM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=TU09m7vIU27a4PYxtrrJACMoN3G8ru0qgpMTr3RYl9kZK53jS3WquiABUgxOBxcYx
+	 tZGGLWNKEktJ5C0RBesPpDjWXrDolG2/IQiSmn459Oc4bu6/3nSYBzyRIU04HV2xTU
+	 nxZ1ebaHwr8TsU5xGzbUf4qX47cQ6olOaYq4IGXI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbeLUI61 (ORCPT
+        id S1733249AbeLUI6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:58:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33459 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbeLUI60 (ORCPT
+        Fri, 21 Dec 2018 03:58:32 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44821 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbeLUI6b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:58:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so4049626ljd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:58:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
-        b=LBmpMe80RCJiJJDepYii2pBc0VEzM6ng7JfMLmFU3TTBJaHPM5wMZ8kD0LHjUVmMol
-         wT8K78U5Uh8/BXcAk39aqoPKPtoKIO0Gw/Vkyur6J3t+163dvth14GXdi8TxOqJk3zbA
-         wjlePJ5ocZLPxHlleGwbXIxooa/lSlAFCAaXU=
+        Fri, 21 Dec 2018 03:58:31 -0500
+Received: by mail-ot1-f66.google.com with SMTP id f18so4458136otl.11;
+        Fri, 21 Dec 2018 00:58:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
-        b=BCBdDRPk1IHwqSKfNZM/Gzta7KnIPolT1wyFlNvBmSzg969C6c5BJ3x8WviXZkjmeQ
-         7I7uxW+Ty2YQdwfAEr5NDqHNb8rY2Fdc8CsUgweF8eOs2en18w29Ydkao5jDJ2YGy2gv
-         ZmiHCbdJoKmYyv5eSqz6Qnoa73Hd5axZd+Gn4sediQ5FlWDsPOXj8LRbsTBG/HhUW9HY
-         E6mL0+XEGpI8ZiYK2NAfc9v+Rk+xJVuq5QPxKMs5kMPfjpaLEI+jlkvzyPQ6YYzcSmM6
-         GxASNT2AlSrVHXt/RpM/H/jXuqFlEcQOAkiZHNwVAJe+HzP53xtnlk5/c8j8DhePghiF
-         qwaw==
-X-Gm-Message-State: AJcUukcjVtt4MFAwIndIXlYZNnkulYHRb9msIGiQdApuPRPEkhk25P9o
-        C2YQnC4+OxaKPyaokXnkbdKNkPwEcGTU2DdQrMJsPQ==
-X-Google-Smtp-Source: ALg8bN6eW/Hn2gIzMscu8uhKuxGFduqv3LK7G9172varKs1DhipCX/v6RKncqi+zuOdlqQZw/ZA9r/U0JjoRnCRnxlo=
-X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr964640ljf.47.1545382704170;
- Fri, 21 Dec 2018 00:58:24 -0800 (PST)
+        bh=hxp37XsPBprIwPTDNqXiT9gyPfRsLk1dntwC8kVxdZw=;
+        b=Dc4z9LMcThKvx9wkXkYATL7aCUgICOwcIoFLtZoP4si3B5HCtxoMtBj3GiU8vFjisr
+         HWhifUtjbW+mXnWgNYjuJPldm4YaIOs1n0hARy/m4D9mSPW6TFVMU541IuvPBmjA+WLm
+         wpNRysnRdlBv5g2oT6MjHnvjUwsEq6LWawS51qBe8dbdpZKHs4EiMDHGf4BBCtUWm3Gh
+         zGkuCcZjBVUPjbANm4DOrIBWGjPCcLBMoAi3EwVXK0v3Gvc7TO5GjeuRm7aAl0YvsCes
+         eba9zFyMhdDITk8UcvckJIthSkdxAK3mrjrFfCWmSxg3gsZPxUHidXchfdMQkXZjb9rK
+         /Xkw==
+X-Gm-Message-State: AJcUukdDwYfdT7XoA0vQEnPIZQ3zCJsJ6/TSpkvuulyODt6o9AUcRSMx
+        JOTKEWA/nXDJzh9U9kAfVUW0QV+vyecT9l3W1+E=
+X-Google-Smtp-Source: ALg8bN4C/7p9UlnJPcjrwfrh0QMGoG/5lIks3mR8+50uf2WcILwscu3y/ZaHz56rm1ccddw5aIKZ8qBvK/HR/Y6mycM=
+X-Received: by 2002:a9d:4c84:: with SMTP id m4mr982652otf.124.1545382710109;
+ Fri, 21 Dec 2018 00:58:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 21 Dec 2018 16:58:11 +0800
-Message-ID: <CAMz4kuKSepzktF+ZUVsrxD-pAgRDiGUC_f0oLL2CTyBMz3tfoQ@mail.gmail.com>
-Subject: Re: [PATCH 06/10] i2c: sprd: don't use pdev as variable name for
- struct device *
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <1545315426-14545-1-git-send-email-vincent.guittot@linaro.org> <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com>
+In-Reply-To: <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 21 Dec 2018 09:58:18 +0100
+Message-ID: <CAJZ5v0jp-+rG2usiumWmORTvqCYDJJbFUB+ey3wLyQUrimdTLw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] PM/runtime:Replace jiffies based accounting with
+ ktime based accounting
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+On Thu, Dec 20, 2018 at 11:03 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Thu, 20 Dec 2018 at 15:17, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > From: Thara Gopinath <thara.gopinath@linaro.org>
+> >
+> > This patch replaces jiffies based accounting for runtime_active_time
+> > and runtime_suspended_time with ktime base accounting. This makes the
+> > runtime debug counters inline with genpd and other pm subsytems which
+> > uses ktime based accounting.
+> >
+> > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> > [move from ktime to raw nsec]
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  drivers/base/power/runtime.c | 17 +++++++++--------
+> >  drivers/base/power/sysfs.c   | 11 ++++++++---
+> >  include/linux/pm.h           |  6 +++---
+> >  3 files changed, 20 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index e695544..f700524 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -64,8 +64,8 @@ static int rpm_suspend(struct device *dev, int rpmflags);
+> >   */
+> >  void update_pm_runtime_accounting(struct device *dev)
+> >  {
+> > -       unsigned long now = jiffies;
+> > -       unsigned long delta;
+> > +       u64 now = ktime_to_ns(ktime_get());
+> > +       u64 delta;
+> >
+> >         delta = now - dev->power.accounting_timestamp;
+> >
+> > @@ -75,9 +75,9 @@ void update_pm_runtime_accounting(struct device *dev)
+> >                 return;
+> >
+> >         if (dev->power.runtime_status == RPM_SUSPENDED)
+> > -               dev->power.suspended_jiffies += delta;
+> > +               dev->power.suspended_time += delta;
+> >         else
+> > -               dev->power.active_jiffies += delta;
+> > +               dev->power.active_time += delta;
+> >  }
+> >
+> >  static void __update_runtime_status(struct device *dev, enum rpm_status status)
+> > @@ -88,17 +88,18 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
+> >
+> >  u64 pm_runtime_suspended_time(struct device *dev)
+> >  {
+> > -       unsigned long flags, time;
+> > +       u64 time;
+> > +       unsigned long flags;
+> >
+> >         spin_lock_irqsave(&dev->power.lock, flags);
+> >
+> >         update_pm_runtime_accounting(dev);
+> >
+> > -       time = dev->power.suspended_jiffies;
+> > +       time = dev->power.suspended_time;
+> >
+> >         spin_unlock_irqrestore(&dev->power.lock, flags);
+> >
+> > -       return jiffies_to_nsecs(time);
+> > +       return time;
+> >  }
+> >  EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
+> >
+> > @@ -1503,7 +1504,7 @@ void pm_runtime_init(struct device *dev)
+> >         dev->power.request_pending = false;
+> >         dev->power.request = RPM_REQ_NONE;
+> >         dev->power.deferred_resume = false;
+> > -       dev->power.accounting_timestamp = jiffies;
+> > +       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
+>
+> This change worries me a bit, but it may not be a problem in practice.
+>
+> pm_runtime_init() is called when devices get initialized, via
+> device_initialize(). If timekeeping has not been initialized prior a
+> call to ktime_get() is done, it will fail and causing a NULL pointer
+> deference or something along those lines.
+>
+> In other words, do we know that device_initialize() is always called
+> after timekeeping has been initialized during boot?
 
-On Thu, 20 Dec 2018 at 00:48, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> The pointer to a device is usually named 'dev'. These 'pdev' here look
-> much like copy&paste errors. Fix them to avoid confusion.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+We do.
 
-Thanks for fixing the copy&paste errors.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
-
-> ---
->  drivers/i2c/busses/i2c-sprd.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-> index a94e724f51dc..e266d8a713d9 100644
-> --- a/drivers/i2c/busses/i2c-sprd.c
-> +++ b/drivers/i2c/busses/i2c-sprd.c
-> @@ -586,40 +586,40 @@ static int sprd_i2c_remove(struct platform_device *pdev)
->         return 0;
->  }
->
-> -static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
->         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->         i2c_dev->is_suspended = true;
->         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->
-> -       return pm_runtime_force_suspend(pdev);
-> +       return pm_runtime_force_suspend(dev);
->  }
->
-> -static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
->         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->         i2c_dev->is_suspended = false;
->         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->
-> -       return pm_runtime_force_resume(pdev);
-> +       return pm_runtime_force_resume(dev);
->  }
->
-> -static int __maybe_unused sprd_i2c_runtime_suspend(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_runtime_suspend(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
->         clk_disable_unprepare(i2c_dev->clk);
->
->         return 0;
->  }
->
-> -static int __maybe_unused sprd_i2c_runtime_resume(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_runtime_resume(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->         int ret;
->
->         ret = clk_prepare_enable(i2c_dev->clk);
-> --
-> 2.11.0
->
-
-
--- 
-Baolin Wang
-Best Regards
+timekeeping_init() is called early in start_kernel() which is way
+before driver_init() (and that's when devices can start to be
+initialized) called from rest_init() via kernel_init_freeable() and
+do_basic_setup().
