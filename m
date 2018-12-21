@@ -7,56 +7,52 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD21C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79630C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A8621927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:44:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CCEA21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:45:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PyEaJUCG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u86E7Ln+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390650AbeLUVoj (ORCPT
+        id S2390743AbeLUVpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 16:44:39 -0500
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:33787 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388783AbeLUVoj (ORCPT
+        Fri, 21 Dec 2018 16:45:38 -0500
+Received: from mail-yb1-f201.google.com ([209.85.219.201]:45277 "EHLO
+        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeLUVph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 16:44:39 -0500
-Received: by mail-qt1-f202.google.com with SMTP id k90so7356877qte.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:44:38 -0800 (PST)
+        Fri, 21 Dec 2018 16:45:37 -0500
+Received: by mail-yb1-f201.google.com with SMTP id r191so4130101ybr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:45:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
+        h=date:message-id:mime-version:subject:from:to:cc;
         bh=3M95R2lYj1eiHAOwr1QaEJcZfmF9z6ovRwKgy9mSvwc=;
-        b=PyEaJUCGwECfYVUpPhTcL6VqyTwmbLSeFy7KdlLJs3LlwEcjs8j7f1RPXA8xQDtK5M
-         tFavruw+u9qOpBpkjEdOKhtbKV7qBVdqD1JfKyeUfQvLYUP8ilOI+Y9LvNh/V6S9ACKH
-         1EddF5juwNy4DWV7Yaii9GkUu9xDx6KArHTdEe7uqtD2l8ZWtilIX0fpy+4VKyiCZWsc
-         OBiC3aRd6j7nepVzsIeQ8t2LbuQoh2y5+GfEIqrtbrXnanEb/Z4rtOFt9O8eaJJxf//y
-         5bVJ+kcqI+QqdEoHusKVeFt+2dU0iIKt3LbVyWtkTShvgo4UyxA0OC+dnwMo+euQ4VAs
-         1NYg==
+        b=u86E7Ln+Po43ykog9OqSh7eTi5dGWO6WdhHigKtV7TfkAjC94MPacNw0bXFnvCuxwj
+         9C6vFbmFftmpo8f/tlQTWJfu5QKUa08+pdfyiWJ2SgVWByhjUuqFpscxeRCBZmskF7ra
+         laqCsPY8HOGlHwZ/PwVcxWYzTIM8k1skZv2Ys6d4pFwW6hBLhPmFpC7kolTcKR64aNj8
+         uK75sE9rPj+WrJlX33b3tNDhYfev8vClFbnvpoAMjrZt1Q8NdAtthz9B+MrFlH3QE+1s
+         b6wEIurEPCcPDCj8VbcZu9B1qluo1k4CC2BH8EL1PQ1hKaFEEDdiO5riAVrnx5oKSQaF
+         GMvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
         bh=3M95R2lYj1eiHAOwr1QaEJcZfmF9z6ovRwKgy9mSvwc=;
-        b=NbU274Ubgtk/gF8npxcSlB3V5urNXlHae8SDGMPknk92YmY3LYZBNnQo3lKoGcHB2h
-         amzUZbr88kgkfalvWv1cv5l3p34cq2A+9F8bYpi2XB5Mg6IdPU9UlBlVY+/4ekjbY9uz
-         mm5+RCPMzi/MUmzMkemEGdeLT472TV5z4nuldjdJpjwuF3K4dWPcV5DsBmBD04wsvFp1
-         ayntEE6v5cK1tpDL7kqvD4MkY2LVbDQDKFq+BNOYruZvy85+nNhGmNEUGHBSIQNTj/i2
-         kiZQt/efPJPB/S3BDnw8SEw4hWqbPoj00n5wJ9IsxAq1h7ZJnVzHEpu6Ns2tqVtHG/dR
-         65KA==
-X-Gm-Message-State: AJcUukdATKA8piSVlZjGfqjv08KtZg70GLBZcN6iHeUxqf+5KQsmm4aP
-        w1kne9IWBVIa1whhVfKunRyyBYuYuTL8ag==
-X-Google-Smtp-Source: ALg8bN5acLn+CLiyArj42/fiMhnUMWAjKXnAH7f91Ga8ig/o6Sltt3RBLy1pAAfLplxsqrGqCFiCFfu1135B9g==
-X-Received: by 2002:a37:12e1:: with SMTP id 94mr2738085qks.25.1545428677545;
- Fri, 21 Dec 2018 13:44:37 -0800 (PST)
-Date:   Fri, 21 Dec 2018 13:44:33 -0800
-In-Reply-To: <20181207222223.GA240898@google.com>
-Message-Id: <20181221214433.256656-1-egranata@chromium.org>
+        b=iLe7gUQ8cOKR7YHUvJzVw97rOkzDUI4F2aPBEl0VvC3SGf8TcPhDimx0oEenWCFBRv
+         kuLLRmYDOzlRYbfKgCGhKT9yCfJI4f+tl7JE/C887vwfuEXwhwIKEazezh4RkMf6MsM6
+         Pjr6J8fMBOt0V9qK3H+fg9C8jeGFLWpa+hURs0SQb7NgzNDM53n6fOhKJfnEhyh90lf9
+         vDdUBnAqjTGpSR1CDa6aYYVLbDdkzzmzkB+BnbA90JvZxNJNttZT7Pp3cXAhVXSodmGi
+         nilWen6Nlcn5RTGq9WUEiFs6+oRCMTaz4aYSQLGTF2q/M8NOtO0ASk7lWo8pw2uZsCUn
+         0cNQ==
+X-Gm-Message-State: AJcUukeQzvDrjpXfJTpN2qLn4awLXj2dWcywJDHB5BDfPSrfKNMOXDR1
+        McnLZhGsf3SvmDNeSqC44GM82MIrp60NLQ==
+X-Google-Smtp-Source: AFSGD/UnQeInO8SPx0UCwkbAh4YK3BapXx4luu5S1JXbfRvccKytiGGEbWjpzPTqAdfGml7hpRnfoIdXqdVjJQ==
+X-Received: by 2002:a25:ab06:: with SMTP id u6mr2308043ybi.14.1545428736797;
+ Fri, 21 Dec 2018 13:45:36 -0800 (PST)
+Date:   Fri, 21 Dec 2018 13:45:29 -0800
+Message-Id: <20181221214529.257492-1-egranata@chromium.org>
 Mime-Version: 1.0
-References: <20181207222223.GA240898@google.com>
 X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 Subject: [PATCH v2] mfd: cros_ec: Add support for MKBP more event flags
 From:   <egranata@google.com>
