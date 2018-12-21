@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B400C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51242C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2FE218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2CF218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="fC0st1r5"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="FRj+Yc+s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388998AbeLUI5z (ORCPT
+        id S2389015AbeLUI57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:57:55 -0500
-Received: from mail-eopbgr700064.outbound.protection.outlook.com ([40.107.70.64]:64672
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Fri, 21 Dec 2018 03:57:59 -0500
+Received: from mail-eopbgr750077.outbound.protection.outlook.com ([40.107.75.77]:23190
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388874AbeLUI5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:57:52 -0500
+        id S2388942AbeLUI56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 03:57:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/upsBXiWFcBkiXwIzP/sqKhEHtHgdDI1j+CfXKccRw0=;
- b=fC0st1r5v0BudOC1a3up3oFQjnAtFh/pcT7XYMw9fV1nuJyhjGLjze1fttcA1hy9Kql8HU5LXJIWN7+qXujynTVJCx++GQdmj2am+u0fCPB0Mpjmrb46UEP9SYf/fyPIafCNefkjHelZWA0k3l+YJELS1KpjaI7Zx6/aHK4yec0=
-Received: from MWHPR02CA0006.namprd02.prod.outlook.com (2603:10b6:300:4b::16)
- by CY1PR0201MB0730.namprd02.prod.outlook.com (2a01:111:e400:4c28::17) with
+ bh=u+03DAiZB5js5BikNBciH7ygRilqKFRe0tczg6agIH4=;
+ b=FRj+Yc+seQde9YYzj+sBAeasbH9ziqEO5p4vcmoXrdjzZM4XyzeP8QbXOuDwPAxzQLbqcig+26gy9IexWPlJRu+4+/JEN3Jw1XwTYv+2PFUmbDLvr85uPQpPe7MoR6ufsC17T1MzIQcQpuPMUG6gpKYtJJ2r9lLLieh1GxmMAec=
+Received: from BL0PR02CA0049.namprd02.prod.outlook.com (2603:10b6:207:3d::26)
+ by SN6PR02MB5230.namprd02.prod.outlook.com (2603:10b6:805:70::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.22; Fri, 21 Dec
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1446.19; Fri, 21 Dec
  2018 08:57:49 +0000
-Received: from BL2NAM02FT025.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::202) by MWHPR02CA0006.outlook.office365.com
- (2603:10b6:300:4b::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1446.17 via Frontend
+Received: from CY1NAM02FT023.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::209) by BL0PR02CA0049.outlook.office365.com
+ (2603:10b6:207:3d::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1446.19 via Frontend
  Transport; Fri, 21 Dec 2018 08:57:48 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
  header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- BL2NAM02FT025.mail.protection.outlook.com (10.152.77.151) with Microsoft SMTP
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT023.mail.protection.outlook.com (10.152.74.237) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1446.11
- via Frontend Transport; Fri, 21 Dec 2018 08:57:48 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:33478 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+ via Frontend Transport; Fri, 21 Dec 2018 08:57:47 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gaGct-0002E3-GE; Fri, 21 Dec 2018 00:57:47 -0800
+        id 1gaGct-0004PE-F9; Fri, 21 Dec 2018 00:57:47 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gaGco-0008U5-Dn; Fri, 21 Dec 2018 00:57:42 -0800
-Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wBL8vdZA031579;
-        Fri, 21 Dec 2018 00:57:39 -0800
+        id 1gaGco-0008U5-CB; Fri, 21 Dec 2018 00:57:42 -0800
+Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wBL8vY86026643;
+        Fri, 21 Dec 2018 00:57:35 -0800
 Received: from [172.23.29.77] (helo=xhdyacto-vnc1.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
-        id 1gaGck-0008Rq-Bw; Fri, 21 Dec 2018 00:57:38 -0800
+        id 1gaGcf-0008Rq-NP; Fri, 21 Dec 2018 00:57:34 -0800
 From:   Maruthi Srinivas Bayyavarapu 
         <maruthi.srinivas.bayyavarapu@xilinx.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
@@ -79,9 +79,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <alsa-devel@alsa-project.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 3/3] ASoC: xlnx: enable audio formatter driver build
-Date:   Fri, 21 Dec 2018 14:27:29 +0530
-Message-ID: <1545382649-181411-4-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+Subject: [PATCH v2 2/3] ASoC: xlnx: add pcm formatter platform driver
+Date:   Fri, 21 Dec 2018 14:27:28 +0530
+Message-ID: <1545382649-181411-3-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545382649-181411-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
 References: <1545382649-181411-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
@@ -90,92 +90,641 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(2980300002)(189003)(199004)(106466001)(8676002)(2616005)(2906002)(186003)(356004)(446003)(11346002)(63266004)(76176011)(51416003)(26005)(39060400002)(305945005)(77096007)(36756003)(426003)(7696005)(336012)(9786002)(16586007)(110136005)(47776003)(316002)(81156014)(81166006)(36386004)(50226002)(8936002)(106002)(478600001)(7416002)(476003)(126002)(50466002)(5660300001)(2201001)(48376002)(486006)(6666004)(107986001)(921003)(5001870100001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0201MB0730;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT025;1:LIXMFVJxvktfvUu1GoViZKzxwr6qy6+Yb963Sr0hb1CBLMI9HktuG7k/6bmLwxBWe0BW/ALYfNt6W9lhhQKq51KTeTqiC81GheO7v7rerz69n8me1ggIcAYD+ursKUGW
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(39850400004)(346002)(2980300002)(199004)(189003)(478600001)(63266004)(106466001)(2906002)(9786002)(36756003)(486006)(126002)(14444005)(186003)(77096007)(26005)(426003)(11346002)(446003)(336012)(5660300001)(356004)(6666004)(4744004)(16586007)(476003)(316002)(7416002)(110136005)(305945005)(106002)(39060400002)(36386004)(2201001)(47776003)(8676002)(81156014)(81166006)(8936002)(50466002)(50226002)(7696005)(76176011)(48376002)(51416003)(2616005)(107986001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5230;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT023;1:TR98F6uUuB15V/HCC/wqvT0vyq2wwpyCSN89gbSyFIxX7krD98yMaFZGnyb+GxqgQVIqWrWuMbVrb/d2P32lLZ31cBeAycaTn36BmTjDoxELdLcTU4CKfBolNogw55Mj
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a8a5408f-7a86-4082-027b-08d667226189
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:CY1PR0201MB0730;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB0730;3:1B9SYA6C1zXrvLkPBV64wBuIcx9uVPvPkL3AcUqyf+IuD6JVQO4j+Fc6aYOyaCs6oFkm+0JZzZq2x1Ps7ywTCLEwwnumQkXFOastZzj2UYBT19aJ+iddI9MDkgq4Z5cgATWjOkRD6+GuLXrZF+nUVG/CblYvI320PtaCZy0ajKwDl/XFjQYjzDa3EJpmeFwn4jqeMxEDvTl677/cdD0gJAAyTGqDNLT445EocWUjzPHiePC03YZlVFEWHq1atQPLprLnTpyQC58/iTCXY5zQutYOsylANs4cAsphuWJZDxKh4TAMlDHwraAwqsM4MIleXAj/XvxlDeUtU9Qo0UevKacWU7n8GxvqSiTBSsXNckE=;25:zcbt1nFOYDE5ldBlKnnnrVbD2hZgLcnDZX+9GfscxYvF9Ff4rMOEDCvcNAJESIDzzRLfArkiW1GiYcd2uWeVUve5HuLmYNA46svBU4t9EiWmAwPvrQGn0I26YBQ0BmSZKS34JidMU8Y2oG9e7a7iVF9BqBvefZsJw9f8J16YYcG65jEw0gnjNseWPG5Q/zTGejJoEA+2WOQ/hE1aV5TWsMnXRQoFpNMTpOZa4zDAl9JuF80YJBdII8fIgx5LOofkbJYw9+un9/PyCGTK9lYjDjRbvcs5uQIkrE4g8DwvNWQh0AcjDuV4Ws50F7hTIGHhge0Yn/9qFnmm5ugfd8ctURK5yNyFDcZhKS9ofgOUoH8=
-X-MS-TrafficTypeDiagnostic: CY1PR0201MB0730:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB0730;31:AsYQ92/4Kxcu10HlzFtKXjSRfqpSReSdNOyMQGQ0X22hTGkFU9Uj9J3GqoCvtkFeTMvtLRyi+8P+RS9MANkg4xjzG2I/nS6n1GZnWtxBoszutHsf4lZpcQEbajW8som+k5t7AGsK3e871p0Mx2I9CAehWM0AwiA/yTkuVhGRXY78g0qHckrYyMOmrnJjA1CX1d4b0CmPtrksBu9PWvYOmrPgaGYp8ftYCg6mF0WrRWA=;20:DEEPRi0u6gj4IGCEp6WnAimxKCw/j9/SvlR/QUhpxcdY6sbX5QG5ZOpI/nvab+tYPneCTAuQn2hhJOl5+75D6nqfG6dbf3ahsVuwmvVR7Lpm69FOqi/KhWgZZ+Do37P2id7aZRfUSbZnsi3bdzuJnuzFlPQQwKnmVV3EkwGCcwELzr+xMoi3qYtXL/GzOdX/8jHXOt2ZYPNK/Dx5jDnzu8NXQ2YE61tqhi4IiHaBtjyU73SGVYE9GD3Szrze6FiIa0C95BTOv+eaIbA6/xV7Al7oN2MjFkslVksbQ+SvRx6wPCR9mIjUKRdyuJhRZkUuLqesQfZUesHdogP8BwbjW2ztEpbABuqHbree0kP8hJBHNhzIIj+qQ882a4dCFPN8UZSEPPw5FTsQLdUx+Gzmu8W/v+VPkkPYn2Lzrhnil9Mw54LqlEGxEtK1ox6x828CWFDCaFBx3k6v81/yIITcyVMASx7HpTzOB8rYz3mawDv8StQSDPaT1p5nSrHYsic+
+X-MS-Office365-Filtering-Correlation-Id: 30c5c8ee-baab-4c54-10cb-08d6672261b8
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB5230;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5230;3:9PAG3EwmygdctiNnPTuBX+XMROS7RfPjTgk3ZdudkYFxo/xCW3w9Cre8FTYWqiZkHQT+m3csHdU2bDbgyKpHet0+AkGfb87yFVoeNi/L8r+0buAqLJw8umf1a/T6sPatPgxg++5fIeKl0U1RbR73JzF4WbKFPBmVrRYiLOuHwfsc9adOWb6pw/75j8jVx0L8NpaK4W0qRZ9ZFeJ76Pwzd1MQ5kIAu+ChmqLmlXU3oi6q6JjUG3l/1YzOADjHL8AgxutfJmNWLcBIkNoM+pOHbGBMaOMnjND123nkwsMlkgqNr3I84+mPaypsE7KBuypWqxVtuGsUH++XBWypTtgIraWMtBnTGc5Np2cx24gXnEg=;25:UEi1oycrutzuw4ZOF/r6dYs3s6L83FcF/XuZ9bNDzKHpFIFIpEoOfCNDoK2lJqB1GwXQ9kKrIoq8TRADfyzL4Ce72ffg1+wOd9dVzh/Un1W7LlSd/aqSlRDCMJwg67tMcHc/rNXQMojdKGFO55ogkPyFt1khQGMK9GrfM5AjcVfL6U8+YA3gFVHnwNrdpPesNbNB8wewISrBQNH7gO8gxaipcseDnP9QnREb0grJoNiO0uKYF1mHRcUtoVdSRMdygv/vgb9+Pq0jF1HZdaGJEnaOLLMlKguLqxXh3EmDApIc6GyaJfLqFcM0Rb85wXzqlqoy+hrdQlKv5gmkQwa6bg==
+X-MS-TrafficTypeDiagnostic: SN6PR02MB5230:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5230;31:rliFjoiPiUgE0qX0oBq21iySq2UBRubVs2dJNccrRjmwu1mGzyVREePlr6vLylD0J63Z2va2Omwl+/ciQmpCW9CbkFuAD63x4CfZIwFcAZSAwpUlsEDhopvl3vj3U38G0UwBUxQoSWAAM7ziTUEGyFjCrjng+JEmNpzDhVDRM7V7suX8LgKThHRCNAOCQ5u2VkDOOBk5t08OOkJ0/emlLnF5DYoVTU2nUoKw5GrUh94=;20:Jc21mQ/zlTWhu+sp33teYq0o68hxs9rxp0uGLPWNWT0PXzXm5DgEf74vl6cs1zhz4WGyrB4oPq+AsPKVCJccTrH8mTmH5JQnK0ivi7hP3OYPxR80WNce0688QxtH5AFC//1Ea6dP3RdosAOp/ORpwxWknUGe+dTpBWbcrzpg14LbBy27eBWs8NFFOaT4UzYpHgzHie51JkALZxKg4E9WXO2uh5gaCERM+hIxtRwT3lbapvDEMYR5pfxN2X23f4crwORJF2F1hsplvyc678JILqLvwyqWxLYcoH8XIRAhhtzEfMFMKu+g/Sp/Bu9PHZyvHgcYyQjQoNaiRHoTtO7ydlNfTVWnXoJQwnTvLolqd54BIeM5AeKq2POwPKQs9iD9r5KINz33bxbP2g+JYfG46vdJU3MDubJoT47+6qfvWItFfx2nIYxmZR4uvirEv/PTpuyHxxaq8ftfPH7USciWQeBFw8kgOYi7aqHNFhkmMIJlYoV3AY1Q7D7H4zTOmHgb
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CY1PR0201MB0730E7ABD4D40F6924BDC6BABAB80@CY1PR0201MB0730.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <SN6PR02MB5230B3534801EF4D46912064BAB80@SN6PR02MB5230.namprd02.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93004095)(3231475)(944501520)(52105112)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY1PR0201MB0730;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0201MB0730;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB0730;4:MKGTEJdFGuSq9DWYZOQd4/M1IKqm0WzVnoHfFIpznPLSI108S4k5/68KR0HGhprX2gU284DEdQh+EFt0VBLCxartHXufsiJ3OSQjueHenIOpCc5peJzORQsoZojGlWU1oKnZtvF5uq9+R1ogk8WnNirYW4CCFTb/gXoVuSmAH9v9n4rZ5gKYCedHf+U1X5LlqsmtrIrd1TJzlPPDRxe9dXPlf89sQJrh9AxbU46s5wWKMLK3jGJB1p0K4pGE5Slcw45e6ObI7ggIh4NFbkNDJQ==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(93006095)(93004095)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR02MB5230;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB5230;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5230;4:E25oeme61saAJUWJ/9nzdpkfAYlVtaet73Gec62SHRsIViL1F+bayb1Mg6h556e0YzOKH1FAZQIj/HX3YZxG6c7AV40sEz6E+/5dzu0homTBL/MDEN2l6DmKrRBLFe8nBEL8+72xpE5Syqk3PiLvQTOaIeSjgEh1VBJfxV84FiAgNQdbsPSg1w4ViRH+IGDMKSMO7a0aMLxQ35btCmzAqVbj45u5761xvaEUXeqKg9Tau6eBX/vFNxdheanSlYMqjQb9yf1u0V3FEc46dFtxlA==
 X-Forefront-PRVS: 0893636978
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0201MB0730;23:jEqJq74LyHsoq4YAojjQ2PH2hiUKM1QhXrcT5q0?=
- =?us-ascii?Q?r6IKUmLUxoWr6VCobS6i4mMkPyANj0R891aRVi/O2VvpvKqlFa2834kM1Nki?=
- =?us-ascii?Q?PMK9kupR4m7CqMv9gR8lMlhK1V3WL4ZgPgSj63XuDTMZX6j9/Ea12YAHEzop?=
- =?us-ascii?Q?YpPozoIXqh+n4xRxH37baMF3J45gO9fqBmjiL3jMyX8M8LZysa4Lx/2zhyby?=
- =?us-ascii?Q?1HrF7N33u7HEtXILRaUQR9X5bNO70cAFT9gfGQ5e77z7JwPly5eADpRz8ENm?=
- =?us-ascii?Q?J5c7xgby+iNXLMxvnlPiAnrdy2jPEwrHmIDxFArBcoa1BQRBAxpAqbRg8b05?=
- =?us-ascii?Q?9y2pcxOenohzy36M95CEr7CrdYerrnDLGRHJfG1CjIs6d1HpFA3jrPQadOKj?=
- =?us-ascii?Q?x+jyBvPTHQDGO7xKYPkVoxKcSD71WhPJF0EetLOWnjw+UMtg4hmMbzry8LVz?=
- =?us-ascii?Q?yuAaV48RYS3gloTv0UK9erbP9h+Z/phwDeCM4HdEqCMD01Vlt1oQ1arIZthF?=
- =?us-ascii?Q?mU40bxiLOM6cbQg2coY/9+DMk3BqBlsCX1pvgb7gprLKCt2GTB+Snhvf/F4b?=
- =?us-ascii?Q?AqbNKws6rOxRULLTtnL0xzk5ohK1ZghfWcU1h9ELSo5NQ2/rYjEDmUgnP+De?=
- =?us-ascii?Q?nwb34CHmYrqUaVI9XyN/WKiNeqGU9xOgORUGBuor5zhQ7sxiUmp/L63Gh2dH?=
- =?us-ascii?Q?8mI+Qvv4UdnWudP5EQwXbFeGEvYSB6RdeqYko/NJ8lEYFKLdH8cv06K2I4s9?=
- =?us-ascii?Q?DIM7t9vLJMilLFwqbFhrwYrTz1jZ6W0mdiPdGECOilgs2Sl7KsMyU4tr+Uje?=
- =?us-ascii?Q?keqmXjQT7AeXGS967yoPbNNBAoioNSd5sBogk8WaO3RieZ/DxnY47PIDdW1F?=
- =?us-ascii?Q?ARuAsWB0Mrx/4PuUVOx/qzBFegAHUAIIitFyMw5vKPPVhY6WjzRWljp1kmcX?=
- =?us-ascii?Q?pwI7qnuHGmrIsJmluEcXKy1DjpHg7NYjaxjIbahPsQm9n2HWfkRQcQ8y/lVu?=
- =?us-ascii?Q?a+Otm65BZ6VNO8OVDWlJStJSwF0rd77ZnqMvNfRcwra+XPMSNSF1x1WL/17D?=
- =?us-ascii?Q?J28hWxNiDI3vDukFOIJn5mvbhEiSemOm89jEo5CZ30T7K6Ter/K7KqxsLSz6?=
- =?us-ascii?Q?HrwT44slM9554/811M+7X1U64PNKEjULdflvEHOS4wAMfWhHRiZ5r0w=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: 42FZE+UehodH4Pj++VoUwFlWQoERCqevxWliNXpWZKsyODrVzHPVeYKZgqrN5nubo4tc6e5/KA1qIcmaVJVyJPNEk7C2A40yM9vKR9xKrBGK708SWo2Qj6aVkl8vniNuqSiGdWw2c2NpQsHthwM9N5BIWQBNS3gvrbZ7jo+OfkHvEp+lOYBeYMfpWSr/H1sVgiofpqlzPXPeIKOlseePvPNKoVwTi76PlbeBzb07QU+HQipezvOCT7Sc29lrWkFp1r8YfAoreGWqpQU+DYG/CNFmVLWzhy0BqJnNhA/dO7XKk5nWFyZ4CjLWx4B7TM/8
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0201MB0730;6:GVHXAAUHJyOmHkF/B9JXxQqZBNym9u1sm0pwPlCxnxrvwz9/NicFcSF/pgq+Jl+L1yFI6RjR/jJz+60wZEcsougdgblJ0ufrjQPj0pjTdoRFVMVqA4qvmL5q89Y8rJzuj0sIFXtExY2aub5K/Kf+reTOkW/p7b34NyPl+PMoTc6BcU8uiBbnpV0Pq98ei7EmAMCFh3sUscGDzZTwnlmhizVuOPZUcPnMKtBk8c0bvCoUmsvroYxQqPgQu7KnuU0hKbIa/nGI8XER0veCRsss4/qMq8b2UEF2HZs/FERd4NEGewE9FOk15+OwJ4HXEjK54U1TJWTa3mKi9GdSUQsy1efY32nk+b3rzqt8H47aaF99sfEjCkZXAeOLB1XG+CDdGOqWPWYVa89JZ8X8MJHbHNmYMX/eeLH6BByJfLzAlxxXSJNlQVh7cUzqZnl6u+9OShkt8VLJtFo5ofbE1Xf/OA==;5:Af3ypxbbxVoD/QYfEPVdZsnd4jj3EhIRe/cZThDQKFicMv522n5s8mFjzISawMQnvenPZWfSzoQbjcvtyNoQOlBdJ5lC+TRs/fIchREk+IlgQpV7pUjDvYF64fylDv4sWrAQkYOe6Gji3nN8AC9DAKevWbUiFr0p2YqQWLbEmuo=;7:SGzICvJAIFdbtjSrqlzjw3GdN/6C40zjNb5OTYqTfrerGHwVwyNBEOxiLeh4Rh8GTN4rj7xtbU86rScnR1a6fdg19UGn9OhRcsACl6zb7TvDNX3+iTjBxZ2S1o9tc8bDtUaSjVh0o3UZm//cEcE6bw==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB5230;23:VqcF6zKVt4ZISwtvuzEUndsgsmud/5SjuVmXGdcQ5?=
+ =?us-ascii?Q?XcJ4jUu0UBE6dJ5zIC4qnkORZFL/lzvzZVkVqxIRTxE/Vb+Gt9hlrh2aSWHl?=
+ =?us-ascii?Q?Z7fOJf4YHY6Q3nvdNVVwoYJUDxVGG03gNBUlogZIqIUxWU6Wp7BUxfaZxLkY?=
+ =?us-ascii?Q?Z3X/d+sAuZtHufwprhb5kKDcSRTeEMkYKm2t3+j7oQ71IYZU6asc62qeOLZb?=
+ =?us-ascii?Q?HxB2iRzep/R38tRuXgK1oidNyw5bL7P7I5GICa9xCkp06pyXurIwBAJhrjcM?=
+ =?us-ascii?Q?gd4gaFP1oNGDdyOVS0TANtMQSxSqqstfDy382zQqe0LnLMMAhJphr8EYPkZn?=
+ =?us-ascii?Q?8272XhEvW7U/BrpXKoVpq8WAtoKlySXRRw40okIRQ65YLzPU1S+tfzkrhnvg?=
+ =?us-ascii?Q?2+o+f63UAzQmIfeScDshe41WYDBS3bGn3brdeaIa2lmXVHj/7Da2EKr9sg2h?=
+ =?us-ascii?Q?ou/KmYj4sc3EBzodmVUV+ssoRBec0tEM6stAYVsWZnGckX/3/az2jimLcKl3?=
+ =?us-ascii?Q?25wufUpp3utvwxoQ1M/wB9RnegNY+TzRUZ6P1UqsBDaj287zR4RWvSBkUt5U?=
+ =?us-ascii?Q?xT6czQVcEuQiQjJ4+n1vru7EjeUcnq1/yj4KndGDKBSklxILrJxJz0WjrvjU?=
+ =?us-ascii?Q?9fXcFnWiQi6Ln0dJN/8kxjX0+VERHBF4eu9rNfEcb+6MiWLeOHIIkOyhcYXX?=
+ =?us-ascii?Q?PGTl1QZPyL6B1OTZDKPj3Rf2zFNtWFfFpt/QyWM9q5DytZOfv/9oeO5QDVHb?=
+ =?us-ascii?Q?jdaB+r5BpIX6ynl5+e3ki8L+giKR0SgsKx9i0kQ4H9A8zomMmuOxIs2aAbAI?=
+ =?us-ascii?Q?sy/4oaW3tJfyiE9/qzBHApuQTRyP3ua2iWNDpPxZ4AOf+jZJ81nQZ8W+cqac?=
+ =?us-ascii?Q?JPxiq2kBw8Bll/BCmO0tuEw6ltoCSdyGH3Rwv1IhAy78vejerNncok1Uh83/?=
+ =?us-ascii?Q?aCCntNYfC64Vo8+3g7tGt5T4V8nifAPuYrp1gcLm1uyHaVmgY4NfgjIdlfjU?=
+ =?us-ascii?Q?r9Ylveg9wUHwouyXt+bAbEpMFJWdpr/5JmtfTZK17MPM/hsP8Vqbm89MXnG7?=
+ =?us-ascii?Q?1/6d+8pW3WSTAa2pBeG2XIXXw8CYnVk64pKefYo8Tuxtsb9qUllE2SJSBqav?=
+ =?us-ascii?Q?Y3qFtAE+vtDJcs3w4k18/z5tdwQ38MX64lYMZh8GQ/+4YmJf1mMnA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: Kj0gVKvZd0ygf3b9trqSmaVB+Amu58iBLkX9OnMDTJgnIZ7ngQC0VVh4vFOGmF+2qNGUPix/rnN6euHHHUU78kGZ+3MqRzogCOqWkfOeuzexYfmolMaNW76Q+cFFjOJCEY32oln0rLdaC21Rs80lb999808IlH4L8hwOpP+NF0EyAByZQEo1n69OvnGJxRafNXkJAjGGRbu+fnvHenWJxlNkJGZOmFHo3d5Jnxi8k7TvANd9j9hN1sjBDMVn344I1f/H7828Gw8aHziYMpz77i34v48IRXHeflz6reF+XFjTErHsyljmUUUcRs7RkIqQ
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5230;6:Dm1vXK2DECFbm+fb2Vgened7gTEHjxfJuTi0622NX6ohASBMSCdh3pjhEu0NIz/OBjs0jItpKRTysDcJF1sLvhjSPg4r7S5iEr0cY4VaYEld3AtGymEZ0Dzysh7vxCbBrT2uEClpC0qbiKoZ48rEykRHU1Aee4mnVg5YhqZXyEVAj7UwxlEmW4lui8gAZEX/OkA+ZcwLLml0bsfa3yrygrCKNbknGORN4Sv5I2FPQKbPiUCtOCktuTg9oNxKgszi4rDXFnl6gooQAvGYgrkwh29x0pSwOkjvHtfL/zv/2ZxmJCys2WYUxDGNw8lcBmpT5RzF39LuEfkD4IcqzEOh8UlBR5ZSj+IWGflblj7nWhR6MDKSjoW1RVo2MjmRjvAgUt16GfoQmXzLgjiR9QmGXwRdOHbuzb8c+dia2/9M6AD4vrGVMa8wz1TH5N84mhxJ0//7Fl3pyTMrQmaq15IQng==;5:SIrXcKWdoniVaQ0qIsBtrcPyk79rqqqZSunsK7cFxpQeATjAtQ3yDxEcypELwrN6IcPWxN1GeW3nK98NtFR20Pz6wA9tbUMd92ul+fbP4hfBgkJ+ttyoQx5jT8gxXBGKMn+Cd7yK9MaqbaD2fdNTdYgpT7CvgGmsoF/62nVE6gw=;7:VW+fXJE/e6A96pn5rexurcvn79AYRf7GXAg+k7Iagf6xSo95XbgKnzNwvYXobhN/vxNFFSYE+OhGFXXZ/IsiHc+xLD7ijjBiYqy0J9tWrE67xDwDMxbAZ6TeQUV++Dugwx3hEq8u5s6P9F5ZmF9YBg==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Dec 2018 08:57:48.0703
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Dec 2018 08:57:47.8942
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8a5408f-7a86-4082-027b-08d667226189
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30c5c8ee-baab-4c54-10cb-08d6672261b8
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0201MB0730
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable audio formatter driver build.
+The audio formatter PL IP supports DMA of two streams -
+mm2s and s2mm for playback and capture respectively. Apart from
+DMA, IP also does conversions like PCM to AES and viceversa.
+This patch adds DMA component driver for the IP.
 
 Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
 ---
- sound/soc/xilinx/Kconfig  | 7 +++++++
- sound/soc/xilinx/Makefile | 2 ++
- 2 files changed, 9 insertions(+)
+ sound/soc/xilinx/xlnx_formatter_pcm.c | 565 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 565 insertions(+)
+ create mode 100644 sound/soc/xilinx/xlnx_formatter_pcm.c
 
-diff --git a/sound/soc/xilinx/Kconfig b/sound/soc/xilinx/Kconfig
-index 723a583..ac48d6a 100644
---- a/sound/soc/xilinx/Kconfig
-+++ b/sound/soc/xilinx/Kconfig
-@@ -6,3 +6,10 @@ config SND_SOC_XILINX_I2S
- 	  mode, IP receives audio in AES format, extracts PCM and sends
- 	  PCM data. In receiver mode, IP receives PCM audio and
- 	  encapsulates PCM in AES format and sends AES data.
+diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
+new file mode 100644
+index 0000000..f7235f7
+--- /dev/null
++++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
+@@ -0,0 +1,565 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Xilinx ASoC audio formatter support
++//
++// Copyright (C) 2018 Xilinx, Inc.
++//
++// Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
 +
-+config SND_SOC_XILINX_AUDIO_FORMATTER
-+        tristate "Audio support for the the Xilinx audio formatter"
-+        help
-+          Select this option to enable Xilinx audio formatter
-+          support. This provides DMA platform device support for
-+          audio functionality.
-diff --git a/sound/soc/xilinx/Makefile b/sound/soc/xilinx/Makefile
-index 6c1209b..432693b 100644
---- a/sound/soc/xilinx/Makefile
-+++ b/sound/soc/xilinx/Makefile
-@@ -1,2 +1,4 @@
- snd-soc-xlnx-i2s-objs      := xlnx_i2s.o
- obj-$(CONFIG_SND_SOC_XILINX_I2S) += snd-soc-xlnx-i2s.o
-+snd-soc-xlnx-formatter-pcm-objs := xlnx_formatter_pcm.o
-+obj-$(CONFIG_SND_SOC_XILINX_AUDIO_FORMATTER) += snd-soc-xlnx-formatter-pcm.o
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/sizes.h>
++
++#include <sound/soc.h>
++#include <sound/pcm_params.h>
++
++#define DRV_NAME "xlnx_formatter_pcm"
++
++#define XLNX_S2MM_OFFSET	0
++#define XLNX_MM2S_OFFSET	0x100
++
++#define XLNX_AUD_CORE_CONFIG	0x4
++#define XLNX_AUD_CTRL		0x10
++#define XLNX_AUD_STS		0x14
++
++#define AUD_CTRL_RESET_MASK	BIT(1)
++#define AUD_CFG_MM2S_MASK	BIT(15)
++#define AUD_CFG_S2MM_MASK	BIT(31)
++
++#define XLNX_AUD_FS_MULTIPLIER	0x18
++#define XLNX_AUD_PERIOD_CONFIG	0x1C
++#define XLNX_AUD_BUFF_ADDR_LSB	0x20
++#define XLNX_AUD_BUFF_ADDR_MSB	0x24
++#define XLNX_AUD_XFER_COUNT	0x28
++#define XLNX_AUD_CH_STS_START	0x2C
++#define XLNX_BYTES_PER_CH	0x44
++
++#define AUD_STS_IOC_IRQ_MASK	BIT(31)
++#define AUD_STS_CH_STS_MASK	BIT(29)
++#define AUD_CTRL_IOC_IRQ_MASK	BIT(13)
++#define AUD_CTRL_TOUT_IRQ_MASK	BIT(14)
++#define AUD_CTRL_DMA_EN_MASK	BIT(0)
++
++#define CFG_MM2S_CH_MASK	GENMASK(11, 8)
++#define CFG_MM2S_CH_SHIFT	8
++#define CFG_MM2S_XFER_MASK	GENMASK(14, 13)
++#define CFG_MM2S_XFER_SHIFT	13
++#define CFG_MM2S_PKG_MASK	BIT(12)
++
++#define CFG_S2MM_CH_MASK	GENMASK(27, 24)
++#define CFG_S2MM_CH_SHIFT	24
++#define CFG_S2MM_XFER_MASK	GENMASK(30, 29)
++#define CFG_S2MM_XFER_SHIFT	29
++#define CFG_S2MM_PKG_MASK	BIT(28)
++
++#define AUD_CTRL_DATA_WIDTH_SHIFT	16
++#define AUD_CTRL_ACTIVE_CH_SHIFT	19
++#define PERIOD_CFG_PERIODS_SHIFT	16
++
++#define PERIODS_MIN		2
++#define PERIODS_MAX		6
++#define PERIOD_BYTES_MIN	192
++#define PERIOD_BYTES_MAX	(50 * 1024)
++
++enum bit_depth {
++	BIT_DEPTH_8,
++	BIT_DEPTH_16,
++	BIT_DEPTH_20,
++	BIT_DEPTH_24,
++	BIT_DEPTH_32,
++};
++
++struct xlnx_pcm_drv_data {
++	void __iomem *mmio;
++	bool s2mm_presence;
++	bool mm2s_presence;
++	unsigned int s2mm_irq;
++	unsigned int mm2s_irq;
++	struct snd_pcm_substream *play_stream;
++	struct snd_pcm_substream *capture_stream;
++	struct clk *axi_clk;
++};
++
++/*
++ * struct xlnx_pcm_stream_param - stream configuration
++ * @mmio: base address offset
++ * @interleaved: audio channels arrangement in buffer
++ * @xfer_mode: data formatting mode during transfer
++ * @ch_limit: Maximum channels supported
++ * @buffer_size: stream ring buffer size
++ */
++struct xlnx_pcm_stream_param {
++	void __iomem *mmio;
++	bool interleaved;
++	u32 xfer_mode;
++	u32 ch_limit;
++	u64 buffer_size;
++};
++
++static const struct snd_pcm_hardware xlnx_pcm_hardware = {
++	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_BLOCK_TRANSFER |
++		SNDRV_PCM_INFO_BATCH | SNDRV_PCM_INFO_PAUSE |
++		SNDRV_PCM_INFO_RESUME,
++	.formats = SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE |
++		   SNDRV_PCM_FMTBIT_S24_LE,
++	.channels_min = 2,
++	.channels_max = 2,
++	.rates = SNDRV_PCM_RATE_8000_192000,
++	.rate_min = 8000,
++	.rate_max = 192000,
++	.buffer_bytes_max = PERIODS_MAX * PERIOD_BYTES_MAX,
++	.period_bytes_min = PERIOD_BYTES_MIN,
++	.period_bytes_max = PERIOD_BYTES_MAX,
++	.periods_min = PERIODS_MIN,
++	.periods_max = PERIODS_MAX,
++};
++
++static int xlnx_formatter_pcm_reset(void __iomem *mmio_base)
++{
++	u32 val, retries = 0;
++
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_RESET_MASK;
++	writel(val, mmio_base + XLNX_AUD_CTRL);
++
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	/* Poll for maximum timeout of approximately 100ms (1 * 100)*/
++	while ((val & AUD_CTRL_RESET_MASK) && (retries < 100)) {
++		mdelay(1);
++		retries++;
++		val = readl(mmio_base + XLNX_AUD_CTRL);
++	}
++	if (val & AUD_CTRL_RESET_MASK)
++		return -ENODEV;
++
++	return 0;
++}
++
++static void xlnx_formatter_disable_irqs(void __iomem *mmio_base, int stream)
++{
++	u32 val;
++
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val &= ~AUD_CTRL_IOC_IRQ_MASK;
++	if (stream == SNDRV_PCM_STREAM_CAPTURE)
++		val &= ~AUD_CTRL_TOUT_IRQ_MASK;
++
++	writel(val, mmio_base + XLNX_AUD_CTRL);
++}
++
++static irqreturn_t xlnx_mm2s_irq_handler(int irq, void *arg)
++{
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
++
++	reg = adata->mmio + XLNX_MM2S_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->play_stream)
++			snd_pcm_period_elapsed(adata->play_stream);
++		return IRQ_HANDLED;
++	}
++
++	return IRQ_NONE;
++}
++
++static irqreturn_t xlnx_s2mm_irq_handler(int irq, void *arg)
++{
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
++
++	reg = adata->mmio + XLNX_S2MM_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->capture_stream)
++			snd_pcm_period_elapsed(adata->capture_stream);
++		return IRQ_HANDLED;
++	}
++
++	return IRQ_NONE;
++}
++
++static int xlnx_formatter_pcm_open(struct snd_pcm_substream *substream)
++{
++	int err;
++	u32 val, data_format_mode;
++	u32 ch_count_mask, ch_count_shift, data_xfer_mode, data_xfer_shift;
++	struct xlnx_pcm_stream_param *stream_data;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(component->dev);
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
++	    !adata->mm2s_presence)
++		return -ENODEV;
++	else if (substream->stream == SNDRV_PCM_STREAM_CAPTURE &&
++		 !adata->s2mm_presence)
++		return -ENODEV;
++
++	stream_data = kzalloc(sizeof(*stream_data), GFP_KERNEL);
++	if (!stream_data)
++		return -ENOMEM;
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		ch_count_mask = CFG_MM2S_CH_MASK;
++		ch_count_shift = CFG_MM2S_CH_SHIFT;
++		data_xfer_mode = CFG_MM2S_XFER_MASK;
++		data_xfer_shift = CFG_MM2S_XFER_SHIFT;
++		data_format_mode = CFG_MM2S_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_MM2S_OFFSET;
++		adata->play_stream = substream;
++
++	} else {
++		ch_count_mask = CFG_S2MM_CH_MASK;
++		ch_count_shift = CFG_S2MM_CH_SHIFT;
++		data_xfer_mode = CFG_S2MM_XFER_MASK;
++		data_xfer_shift = CFG_S2MM_XFER_SHIFT;
++		data_format_mode = CFG_S2MM_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_S2MM_OFFSET;
++		adata->capture_stream = substream;
++	}
++
++	val = readl(adata->mmio + XLNX_AUD_CORE_CONFIG);
++
++	if (!(val & data_format_mode))
++		stream_data->interleaved = true;
++
++	stream_data->xfer_mode = (val & data_xfer_mode) >> data_xfer_shift;
++	stream_data->ch_limit = (val & ch_count_mask) >> ch_count_shift;
++	dev_info(component->dev,
++		 "stream %d : format = %d mode = %d ch_limit = %d\n",
++		 substream->stream, stream_data->interleaved,
++		 stream_data->xfer_mode, stream_data->ch_limit);
++
++	snd_soc_set_runtime_hwparams(substream, &xlnx_pcm_hardware);
++	runtime->private_data = stream_data;
++
++	/* Resize the period size divisible by 64 */
++	err = snd_pcm_hw_constraint_step(runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES, 64);
++	if (err) {
++		dev_err(component->dev,
++			"unable to set constraint on period bytes\n");
++		return err;
++	}
++
++	/* enable DMA IOC irq */
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_IOC_IRQ_MASK;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_close(struct snd_pcm_substream *substream)
++{
++	int ret;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++
++	ret = xlnx_formatter_pcm_reset(stream_data->mmio);
++	if (ret) {
++		dev_err(component->dev, "audio formatter reset failed\n");
++		goto err_reset;
++	}
++	xlnx_formatter_disable_irqs(stream_data->mmio, substream->stream);
++
++err_reset:
++	kfree(stream_data);
++	return 0;
++}
++
++static snd_pcm_uframes_t
++xlnx_formatter_pcm_pointer(struct snd_pcm_substream *substream)
++{
++	u32 pos;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	pos = readl(stream_data->mmio + XLNX_AUD_XFER_COUNT);
++
++	if (pos >= stream_data->buffer_size)
++		pos = 0;
++
++	return bytes_to_frames(runtime, pos);
++}
++
++static int xlnx_formatter_pcm_hw_params(struct snd_pcm_substream *substream,
++					struct snd_pcm_hw_params *params)
++{
++	u32 low, high, active_ch, val, bytes_per_ch, bits_per_sample;
++	int status;
++	u64 size;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	active_ch = params_channels(params);
++	if (active_ch > stream_data->ch_limit)
++		return -EINVAL;
++
++	size = params_buffer_bytes(params);
++	status = snd_pcm_lib_malloc_pages(substream, size);
++	if (status < 0)
++		return status;
++
++	stream_data->buffer_size = size;
++
++	low = lower_32_bits(substream->dma_buffer.addr);
++	high = upper_32_bits(substream->dma_buffer.addr);
++	writel(low, stream_data->mmio + XLNX_AUD_BUFF_ADDR_LSB);
++	writel(high, stream_data->mmio + XLNX_AUD_BUFF_ADDR_MSB);
++
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	bits_per_sample = params_width(params);
++	switch (bits_per_sample) {
++	case 8:
++		val |= (BIT_DEPTH_8 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 16:
++		val |= (BIT_DEPTH_16 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 20:
++		val |= (BIT_DEPTH_20 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 24:
++		val |= (BIT_DEPTH_24 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 32:
++		val |= (BIT_DEPTH_32 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	val |= active_ch << AUD_CTRL_ACTIVE_CH_SHIFT;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++
++	val = (params_periods(params) << PERIOD_CFG_PERIODS_SHIFT)
++		| params_period_bytes(params);
++	writel(val, stream_data->mmio + XLNX_AUD_PERIOD_CONFIG);
++	bytes_per_ch = DIV_ROUND_UP(params_period_bytes(params), active_ch);
++	writel(bytes_per_ch, stream_data->mmio + XLNX_BYTES_PER_CH);
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++static int xlnx_formatter_pcm_trigger(struct snd_pcm_substream *substream,
++				      int cmd)
++{
++	u32 val;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	case SNDRV_PCM_TRIGGER_RESUME:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val |= AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val &= ~AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	}
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd,
++								    DRV_NAME);
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++			SNDRV_DMA_TYPE_DEV, component->dev,
++			xlnx_pcm_hardware.buffer_bytes_max,
++			xlnx_pcm_hardware.buffer_bytes_max);
++}
++
++static const struct snd_pcm_ops xlnx_formatter_pcm_ops = {
++	.open = xlnx_formatter_pcm_open,
++	.close = xlnx_formatter_pcm_close,
++	.ioctl = snd_pcm_lib_ioctl,
++	.hw_params = xlnx_formatter_pcm_hw_params,
++	.hw_free = xlnx_formatter_pcm_hw_free,
++	.trigger = xlnx_formatter_pcm_trigger,
++	.pointer = xlnx_formatter_pcm_pointer,
++};
++
++static const struct snd_soc_component_driver xlnx_asoc_component = {
++	.name = DRV_NAME,
++	.ops = &xlnx_formatter_pcm_ops,
++	.pcm_new = xlnx_formatter_pcm_new,
++};
++
++static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
++{
++	int ret;
++	u32 val;
++	struct xlnx_pcm_drv_data *aud_drv_data;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++
++	aud_drv_data = devm_kzalloc(dev, sizeof(*aud_drv_data), GFP_KERNEL);
++	if (!aud_drv_data)
++		return -ENOMEM;
++
++	aud_drv_data->axi_clk = devm_clk_get(dev, "s_axi_lite_aclk");
++	if (IS_ERR(aud_drv_data->axi_clk)) {
++		ret = PTR_ERR(aud_drv_data->axi_clk);
++		dev_err(dev, "failed to get s_axi_lite_aclk(%d)\n", ret);
++		return ret;
++	}
++	ret = clk_prepare_enable(aud_drv_data->axi_clk);
++	if (ret) {
++		dev_err(dev,
++			"failed to enable s_axi_lite_aclk(%d)\n", ret);
++		return ret;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(dev, "audio formatter node:addr to resource failed\n");
++		ret = -ENXIO;
++		goto clk_err;
++	}
++	aud_drv_data->mmio = devm_ioremap_resource(dev, res);
++	if (IS_ERR(aud_drv_data->mmio)) {
++		dev_err(dev, "audio formatter ioremap failed\n");
++		ret = PTR_ERR(aud_drv_data->mmio);
++		goto clk_err;
++	}
++
++	val = readl(aud_drv_data->mmio + XLNX_AUD_CORE_CONFIG);
++	if (val & AUD_CFG_MM2S_MASK) {
++		aud_drv_data->mm2s_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_MM2S_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_MM2S_OFFSET,
++					    SNDRV_PCM_STREAM_PLAYBACK);
++
++		aud_drv_data->mm2s_irq = platform_get_irq_byname(pdev,
++								 "irq_mm2s");
++		if (aud_drv_data->mm2s_irq < 0) {
++			dev_err(dev, "xlnx audio mm2s irq resource failed\n");
++			ret = aud_drv_data->mm2s_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->mm2s_irq,
++				       xlnx_mm2s_irq_handler, 0,
++				       "xlnx_formatter_pcm_mm2s_irq", dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio mm2s irq request failed\n");
++			goto clk_err;
++		}
++	}
++	if (val & AUD_CFG_S2MM_MASK) {
++		aud_drv_data->s2mm_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_S2MM_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_S2MM_OFFSET,
++					    SNDRV_PCM_STREAM_CAPTURE);
++
++		aud_drv_data->s2mm_irq = platform_get_irq_byname(pdev,
++								 "irq_s2mm");
++		if (aud_drv_data->s2mm_irq < 0) {
++			dev_err(dev, "xlnx audio s2mm irq resource failed\n");
++			ret = aud_drv_data->s2mm_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->s2mm_irq,
++				       xlnx_s2mm_irq_handler, 0,
++				       "xlnx_formatter_pcm_s2mm_irq",
++				       dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio s2mm irq request failed\n");
++			goto clk_err;
++		}
++	}
++
++	dev_set_drvdata(dev, aud_drv_data);
++
++	ret = devm_snd_soc_register_component(dev, &xlnx_asoc_component,
++					      NULL, 0);
++	if (ret) {
++		dev_err(dev, "pcm platform device register failed\n");
++		goto clk_err;
++	}
++
++	return 0;
++
++clk_err:
++	clk_disable_unprepare(aud_drv_data->axi_clk);
++	return ret;
++}
++
++static int xlnx_formatter_pcm_remove(struct platform_device *pdev)
++{
++	int ret = 0;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(&pdev->dev);
++
++	if (adata->s2mm_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_S2MM_OFFSET);
++
++	/* Try MM2S reset, even if S2MM  reset fails */
++	if (adata->mm2s_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_MM2S_OFFSET);
++
++	if (ret)
++		dev_err(&pdev->dev, "audio formatter reset failed\n");
++
++	clk_disable_unprepare(adata->axi_clk);
++	return ret;
++}
++
++static const struct of_device_id xlnx_formatter_pcm_of_match[] = {
++	{ .compatible = "xlnx,audio-formatter-1.0"},
++	{},
++};
++MODULE_DEVICE_TABLE(of, xlnx_formatter_pcm_of_match);
++
++static struct platform_driver xlnx_formatter_pcm_driver = {
++	.probe	= xlnx_formatter_pcm_probe,
++	.remove	= xlnx_formatter_pcm_remove,
++	.driver	= {
++		.name	= DRV_NAME,
++		.of_match_table	= xlnx_formatter_pcm_of_match,
++	},
++};
++
++module_platform_driver(xlnx_formatter_pcm_driver);
++MODULE_AUTHOR("Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
