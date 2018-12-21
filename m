@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BB0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC6EC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D1B21920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F1E21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="l6jfWtW8"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="su6N+hDK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388000AbeLUQCx (ORCPT
+        id S2388023AbeLUQCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:02:53 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38167 "EHLO
+        Fri, 21 Dec 2018 11:02:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54301 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387894AbeLUQCv (ORCPT
+        with ESMTP id S2387900AbeLUQCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:02:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m22so6227361wml.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:02:49 -0800 (PST)
+        Fri, 21 Dec 2018 11:02:53 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so5766498wmh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:02:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q0bZMELC53/x8lmD+PNUs3INXGEckOq2dahFVEILk4Y=;
-        b=l6jfWtW8zw6HpCHInoVQo9lVhkWxNtmWdR9n+MN57AY5Usq7zyqeaBLrHrmPevHmMU
-         brDqtNFgqL9aTvLdwaPO1J1yoxlHJopCYi5YRiTv39em/7R2W7vNIM+jrdVZZcwgZUaO
-         N/Y8i/XbgHeXCOu6NWOZIhY+twYfpYcULOR/KwKLUat7AClGrzumtB+yhYT//SmoStB3
-         L9kPyY9ma/MXtOL2QwYn5TnGJtQfuw9XZejOrPltK8zzS2j9KIwMxC0bqkFmyjmILkIz
-         Qbudj8a8nLkX/uOGlre/gD7V5RLmOsfLS/zVIRKzbtrfJGj2/+c2CSajKI5qun+oORVc
-         Oxuw==
+        bh=qDOhg70hFYOwseCBHyxAEd0RE2ixDZurR5a6abXMMmM=;
+        b=su6N+hDKVAiNS5Jd6Z/sNgQPv6iyvC3hN2KRF7OOWM2CwwEs91Vj9dgAps9xVxc/4w
+         QbcwQ7hGyQeizNHXM84Hc8y1knKW/tcgNaE3ZKM57o8XG0h4+mzfwK4JPnMutPLm4nBr
+         ufMJP7PhF/VGKbY/Qfz69pV5mzjdV/ppemgr8C9c0NOGdGg5/SpD6FcQT+iQkGBRNLq4
+         6bb6I7xzvDHiY7xoSuuhHqes1Bg/KI1lhMijFkvilm9BcmyeMk76AKAOu6w+tQuryDZN
+         HU59twCQWCJA7Y2mEcmEGXcNLCwkP3Y3CX2PNrEahxvyFGskfsM1ZSC6M9bymqdufCId
+         K3Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q0bZMELC53/x8lmD+PNUs3INXGEckOq2dahFVEILk4Y=;
-        b=KFDVSDdCT5ipx/2FvAhSTDlyOQkhP1TD3+eNLg7e99CcZxdkifapeyn+awSDCRxUkq
-         125YrlgkAIiFcjAjh6zx5omeKOUqCd1avArVr4tidvFRwgkl2GOS34pPWZzeHg2z03Zg
-         QZvO8QsA1evAA7qGssw7cJIGo/Zr8/vJsGv0WMaJGKBVtGx/9FP+niPQITwB1U9SI5T3
-         lcw+Hp9qdzvp7lZczFX7Z2csAMbodMXMhrBLczwcLPgvf8s5zPrz9dc2G4nf8wA5Z4hV
-         Jdfx03ACx9NXtn6SRQHG+Lde6VBbH+f3BpARwm9y/G6GvsKlFGHJacs5rW89J7gTiu3A
-         u2qQ==
-X-Gm-Message-State: AJcUukc6LdeEZmCh5d2ncHPeXMKdz3wTmb6N9ujHffhF0k4Ll5ouXswZ
-        mgCCjHQWHonv3rBM0Z4V1xNWsQ==
-X-Google-Smtp-Source: AFSGD/XcJFjdXUbsOUstk2t2ZUggTMRPjoYtpWM6g2Oicv9kaxsoqEqE4RdHniZ20c2sErVwk4FWQA==
-X-Received: by 2002:a7b:c8d7:: with SMTP id f23mr3327549wml.121.1545408168817;
-        Fri, 21 Dec 2018 08:02:48 -0800 (PST)
+        bh=qDOhg70hFYOwseCBHyxAEd0RE2ixDZurR5a6abXMMmM=;
+        b=jpl+c//bU/wHdearG6t1+oXF8poLDmR7R1ro/CoGiL0bYCK+YxsN8SC8xFoXPA5AY+
+         +yNt/nagNSXSyA7jhZBIKsE0OVRltl+GwzvCKHNSOyRIIZvEc3ycLZfZ2q/kfKspamXg
+         L89bysqsCQLnaKp4vfx3vNiT+wiKRbLm9EXEbwr4lXzEamDRykApy2/+fZVRUgCumDF/
+         pvyH/80x75mM7zE+loYQ/C/LkU0HNGBT4cG6rwrzb1lvxEAPrkk7pF9moQlbbtw3b8VO
+         2YSFNaJFZMMckt4vbL4Tlu+vE/Ey7rrKshgtQVJIfx5SNx/jrl0zQ3D6Fh1sWvejWssc
+         P/Dg==
+X-Gm-Message-State: AA+aEWa3M5jwE9AkWrcxg7pWE4rGsB2LKK4F22PjML/fyvfGqgkAGrB0
+        wrIN0+xluwcZ6sQsnuM7r1WE+Q==
+X-Google-Smtp-Source: ALg8bN4chblCMfZezJ4NOJzu7yuQDWL120ghh9NaRoNpwN2pTUp9Mh15rexywcQDtXlMIvGEymFG6g==
+X-Received: by 2002:a1c:5dd1:: with SMTP id r200mr3487436wmb.93.1545408170446;
+        Fri, 21 Dec 2018 08:02:50 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id y138sm13044021wmc.16.2018.12.21.08.02.47
+        by smtp.googlemail.com with ESMTPSA id y138sm13044021wmc.16.2018.12.21.08.02.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 08:02:48 -0800 (PST)
+        Fri, 21 Dec 2018 08:02:49 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
@@ -62,9 +62,9 @@ To:     Neil Armstrong <narmstrong@baylibre.com>,
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 1/5] dt-bindings: clk: meson: add ao slow clock path ids
-Date:   Fri, 21 Dec 2018 17:02:35 +0100
-Message-Id: <20181221160239.26265-2-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/5] clk: meson: clean-up clock registration
+Date:   Fri, 21 Dec 2018 17:02:36 +0100
+Message-Id: <20181221160239.26265-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181221160239.26265-1-jbrunet@baylibre.com>
 References: <20181221160239.26265-1-jbrunet@baylibre.com>
@@ -75,49 +75,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the CLKIDs for the slow clock generation path
+Order, ids and size  between the table of regmap clocks and the onecell
+data table could be different.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Set regmap pointer in all the regmap clocks before starting the
+registration using the onecell data, to make sure we don't
+get into an incoherent situation.
+
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- include/dt-bindings/clock/axg-aoclkc.h  | 7 ++++++-
- include/dt-bindings/clock/gxbb-aoclkc.h | 7 +++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/clk/meson/meson-aoclk.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-index 61955016a55b..8ec4a269c7a6 100644
---- a/include/dt-bindings/clock/axg-aoclkc.h
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -21,6 +21,11 @@
- #define CLKID_AO_SAR_ADC_SEL	8
- #define CLKID_AO_SAR_ADC_DIV	9
- #define CLKID_AO_SAR_ADC_CLK	10
--#define CLKID_AO_ALT_XTAL	11
-+#define CLKID_AO_CTS_OSCIN	11
-+#define CLKID_AO_32K_PRE	12
-+#define CLKID_AO_32K_DIV	13
-+#define CLKID_AO_32K_SEL	14
-+#define CLKID_AO_32K		15
-+#define CLKID_AO_CTS_RTC_OSCIN	16
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index f965845917e3..258c8d259ea1 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -65,15 +65,20 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- #endif
-diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
-index 9d15e2221fdb..ec3b26319fc4 100644
---- a/include/dt-bindings/clock/gxbb-aoclkc.h
-+++ b/include/dt-bindings/clock/gxbb-aoclkc.h
-@@ -63,5 +63,12 @@
- #define CLKID_AO_UART2		4
- #define CLKID_AO_IR_BLASTER	5
- #define CLKID_AO_CEC_32K	6
-+#define CLKID_AO_CTS_OSCIN	7
-+#define CLKID_AO_32K_PRE	8
-+#define CLKID_AO_32K_DIV	9
-+#define CLKID_AO_32K_SEL	10
-+#define CLKID_AO_32K		11
-+#define CLKID_AO_CTS_RTC_OSCIN	12
-+#define CLKID_AO_CLK81		13
+-	/*
+-	 * Populate regmap and register all clks
+-	 */
+-	for (clkid = 0; clkid < data->num_clks; clkid++) {
++	/* Populate regmap */
++	for (clkid = 0; clkid < data->num_clks; clkid++)
+ 		data->clks[clkid]->map = regmap;
  
- #endif
++	/* Register all clks */
++	for (clkid = 0; clkid < data->hw_data->num; clkid++) {
++		if (!data->hw_data->hws[clkid])
++			continue;
++
+ 		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
+-		if (ret)
++		if (ret) {
++			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
++		}
+ 	}
+ 
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
 -- 
 2.19.2
 
