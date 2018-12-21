@@ -2,218 +2,307 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57A7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04690C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C4C21939
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B53B321903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:39:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dMlYaSQy"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NVRBfNmy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeLUQjP (ORCPT
+        id S2388717AbeLUQje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:39:15 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42606 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeLUQjP (ORCPT
+        Fri, 21 Dec 2018 11:39:34 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51290 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732851AbeLUQje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:39:15 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so5271742lja.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:39:12 -0800 (PST)
+        Fri, 21 Dec 2018 11:39:34 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so7699748ite.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:39:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=77hOC+aRarRpZO88sL6E8aKzVRukop1Y6dKNN3+Oiks=;
-        b=dMlYaSQyqiCpp/L5zi86Ze9KJNfFp2U8E28Xx4UiS7T/DEIPH4rvy+KJD5O+6cedp1
-         V195qWcJUpOTbdUzdKy166xHWRyDI3RmhuoGGttLn7pQ1120ZbG0K7LMO47u/4EK5C+q
-         LKHRTbwtcrazFcAk9pPngbYSaENWuV2qvHopQICXVJ6V6QtVlnrR+5ok7UVNmLR6G2UH
-         4bitAhNaqKNk/AGyrwdkJFhla3pDyhx6EA4b+611NQ1T13/xnedZVaaHYKrVo7Ofxy8o
-         sbJL/jHiGgRpbHm9UtYlYB1Qqd0YcY4T7jK+n3GiuF0KZUJUPHBitr+xDiIXcpt3MFEr
-         js0w==
+        bh=XraM5WUeK23rXa1xoKBrqeBBCshgPfte+/8YLIj79Q8=;
+        b=NVRBfNmyDhXKYmvvR0703WQpE7jSm7u+YaJglQSTnrONLa71KfpCTdfA+u/BZXQvK/
+         1T7U7UfWvjrmHP4kNY5Pms+FiIXeIzs7jvhfxi6NnJIDMMZVtrhhi//Ogiw8c5J3rRvm
+         Ow0js5/FEfGlgGl24gR9Nv5cya2EoR9T/q3P8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=77hOC+aRarRpZO88sL6E8aKzVRukop1Y6dKNN3+Oiks=;
-        b=s8N3O6e5FkG0t0f2qUVfiJt18AbrI8HXDDsRGx2Vo8EaIbZmhoNkvXFt/S0L1is6QP
-         SwZoZdgFhJfN3Ipsji82gOPurxanwaUwrzJgBDXsxy4KZmzfs7GRHW1/D2gph8yoeZBU
-         cy7P5bVGyUSc2bGznx7yfLYIytNJxJRmyuAJwPqXSXGRnt9R7nV896UhGthEEgwDmn6P
-         G/My6FN+gCP8hF8AOcohs/HrhaAv02hSBAr++c4QQqTnOC8XsRUKgZE/rNcc6pAiUZgu
-         CcvwfRT64q7HKBVq4xH9CqcWcBmJzq6hClKMwx7q+v4VlrwPz0oF4V4+GQfXVKliKX51
-         piPA==
-X-Gm-Message-State: AA+aEWapFcA25w8jSO7XMyGj8zOO+YmuB+DRrWna4Z+wdNzeMoG+jGNz
-        l4R0pVpbzxUcpRMn0e0pPAOJhMGnuwGT/oTDftKNtK193/Q=
-X-Google-Smtp-Source: ALg8bN7llGC5UqQ8EbOYvbykSwEEJLnRZTPtHpX4aehaGAJ3FVqBPPecaHtbd/vPWSFxjFPe92TDObgwNPxCpxiX/sA=
-X-Received: by 2002:a2e:9655:: with SMTP id z21-v6mr2280994ljh.136.1545410351201;
- Fri, 21 Dec 2018 08:39:11 -0800 (PST)
+        bh=XraM5WUeK23rXa1xoKBrqeBBCshgPfte+/8YLIj79Q8=;
+        b=iCfmiR/09RsRL6gPLdjOnNH6bZIwiR7kVrxZIsl480W674z6tUTczNSR+shttvfRno
+         J3BcfcXzPVEZvA6Ij5bwL7f7gdQTzghFR2ygKvDyrjWtuPmg8J2mAWvaxgXQkFb1ZfWB
+         PIugv8Ge4jxMjl7BDP2KV3NGoXm8CmhOyVBNEJ7QJMaNME/5P8QJR9HDrzEVecC3WryU
+         aL62BiWRGWkZ7FRcEoSyqfOhiSSdHbfjzLVZkpuXDUi+YHx3j8oWELF8fbHq2U/owQzs
+         j4lo1xDWEoF8VYsmxaLBBvJ0BDiP3kBqQ3Og75IU0J7NDbXckH2+PGjLYyj6fCAhgUfr
+         aYRw==
+X-Gm-Message-State: AA+aEWYohkis1hUhz6GT8ZPridv7SA++YXsQEzMMgn6e7yMa9j3sXSC/
+        YdHjZ8SShbQOH2vMdtohIxPpZGrMLOLhxTT1pZhICA==
+X-Google-Smtp-Source: AFSGD/WMUXG3EqZc6WkBZTmux9jDoCAOaFEZrpMzcSbohWykU7FMgXREfnFsx3F9KIFtLKgmSrTwujMy54mXiY6ybEM=
+X-Received: by 2002:a24:edc4:: with SMTP id r187mr2673475ith.158.1545410372665;
+ Fri, 21 Dec 2018 08:39:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20181221133909.18794-1-christian@brauner.io> <20181221135509.GA30679@kroah.com>
- <20181221141241.gnxoiw7t5ajwcd6d@brauner.io> <20181221153758.GB14584@kroah.com>
- <20181221155918.b3sgv2adx5i74r6i@brauner.io> <20181221163316.GA8517@kroah.com>
-In-Reply-To: <20181221163316.GA8517@kroah.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Fri, 21 Dec 2018 08:38:59 -0800
-Message-ID: <CAHRSSEx+gDVW4fKKK8oZNAir9G5icJLyodO8hykv3O0O1jt2FQ@mail.gmail.com>
-Subject: Re: [PATCH] binderfs: implement sysctls
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christian Brauner <christian@brauner.io>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Todd Kjos <tkjos@android.com>,
+References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
+ <20181212000354.31955-2-rick.p.edgecombe@intel.com> <CALCETrVP577NvdeYj8bzpEfTXj3GZD3nFcJxnUq5n1daDBxU=g@mail.gmail.com>
+In-Reply-To: <CALCETrVP577NvdeYj8bzpEfTXj3GZD3nFcJxnUq5n1daDBxU=g@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 21 Dec 2018 17:39:21 +0100
+Message-ID: <CAKv+Gu_kunBqhUAQt6==SN-ei4Xc+z6=Z=pKXHHJYjk4Gdw73g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] vmalloc: New flags for safe vfree on special perms
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        joel@joelfernandes.org, Martijn Coenen <maco@android.com>
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jessica Yu <jeyu@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 8:33 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+On Wed, 12 Dec 2018 at 03:20, Andy Lutomirski <luto@kernel.org> wrote:
 >
-> On Fri, Dec 21, 2018 at 04:59:19PM +0100, Christian Brauner wrote:
-> > On Fri, Dec 21, 2018 at 04:37:58PM +0100, Greg KH wrote:
-> > > On Fri, Dec 21, 2018 at 03:12:42PM +0100, Christian Brauner wrote:
-> > > > On Fri, Dec 21, 2018 at 02:55:09PM +0100, Greg KH wrote:
-> > > > > On Fri, Dec 21, 2018 at 02:39:09PM +0100, Christian Brauner wrote:
-> > > > > > This implements three sysctls that have very specific goals:
-> > > > >
-> > > > > Ick, why?
-> > > > >
-> > > > > What are these going to be used for?  Who will "control" them?  As you
-> > > >
-> > > > Only global root in the initial user namespace. See the reasons below. :)
-> > > >
-> > > > > are putting them in the "global" namespace, that feels like something
-> > > > > that binderfs was trying to avoid in the first place.
-> > > >
-> > > > There are a couple of reason imho:
-> > > > - Global root needs a way to restrict how many binder devices can be
-> > > >   allocated across all user + ipc namespace pairs.
-> > > >   One obvious reason is that otherwise userns root in a non-initial user
-> > > >   namespace can allocate a huge number of binder devices (pick a random
-> > > >   number say 10.000) and use up a lot of kernel memory.
-> > >
-> > > Root can do tons of other bad things too, why are you picking on
+> On Tue, Dec 11, 2018 at 4:12 PM Rick Edgecombe
+> <rick.p.edgecombe@intel.com> wrote:
 > >
-> > That's global root not userns root though. :) These sysctls are about
-> > global root gaining the ability to proactively restrict binder device
-> > delegation.
+> > This adds two new flags VM_IMMEDIATE_UNMAP and VM_HAS_SPECIAL_PERMS, for
+> > enabling vfree operations to immediately clear executable TLB entries to freed
+> > pages, and handle freeing memory with special permissions.
 > >
-> > > binderfs here?  :)
-> > >
-> > > >   In addition they can pound on the binder.c code causing a lot of
-> > > >   contention for the remaining global lock in there.
-> > >
-> > > That's the problem of that container, don't let it do that.  Or remove
-> > > the global lock :)
-> > >
-> > > >   We should let global root explicitly restrict non-initial namespaces
-> > > >   in this respect. Imho, that's just good security design. :)
-> > >
-> > > If you do not trust your container enough to have it properly allocate
-> > > the correct binder resources, then perhaps you shouldn't be allowing it
-> > > to allocate any resources at all?
+> > In order to support vfree being called on memory that might be RO, the vfree
+> > deferred list node is moved to a kmalloc allocated struct, from where it is
+> > today, reusing the allocation being freed.
 > >
-> > Containers just like VMs get delegated and you might not have control
-> > over what is running in there. That's AWS in a nutshell. :) Restricting
-> > it by saying "just don't do that" seems not something that is
-> > appropriate given the workloads out there in the wild.
-> > In general, I do *understand* the reasoning but I think the premise is
-> > flawed if we can somewhat trivially make this safe.
+> > arch_vunmap is a new __weak function that implements the actual unmapping and
+> > resetting of the direct map permissions. It can be overridden by more efficient
+> > architecture specific implementations.
 > >
-> > >
-> > > > - The reason for having a number of reserved devices is when the initial
-> > > >   binderfs mount needs to bump the number of binder devices after the
-> > > >   initial allocation done during say boot (e.g. it could've removed
-> > > >   devices and wants to reallocate new ones but all binder minor numbers
-> > > >   have been given out or just needs additional devices). By reserving an
-> > > >   initial pool of binder devices this can be easily accounted for and
-> > > >   future proofs userspace. This is to say: global root in the initial
-> > > >   userns + ipcns gets dibs on however many devices it wants. :)
-> > >
-> > > binder devices do not "come and go" at runtime, you need to set them up
-> > > initially and then all is fine.  So there should never be a need for the
-> > > "global" instance to need "more" binder devices once it is up and
-> > > running.  So I don't see what you are really trying to solve here.
+> > For the default implementation, it uses architecture agnostic methods which are
+> > equivalent to what most usages do before calling vfree. So now it is just
+> > centralized here.
 > >
-> > That's dismissing a whole range of use-cases where you might allocate
-> > and deallocate devices on the fly which this is somewhat designed for.
-> > But I guess ok for now.
+> > This implementation derives from two sketches from Dave Hansen and Andy
+> > Lutomirski.
 > >
-> > >
-> > > You seem to be trying to protect the system from the container you just
-> > > gave root to and trusted it with creating its own binder instances.
-> > > If you do not trust it to create binder instances then do not allow it
-> > > to create binder instances!  :)
+> > Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> > Suggested-by: Andy Lutomirski <luto@kernel.org>
+> > Suggested-by: Will Deacon <will.deacon@arm.com>
+> > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> > ---
+> >  include/linux/vmalloc.h |  2 ++
+> >  mm/vmalloc.c            | 73 +++++++++++++++++++++++++++++++++++++----
+> >  2 files changed, 69 insertions(+), 6 deletions(-)
 > >
-> > Again, I get the reasoning but think that this dismisses major
-> > real-world use-cases not just for binderfs but for all instances where
-> > untrusted workloads are run which both containers and VMs aim to make
-> > sure are possible.
-> > Note, I mean untrusted not in the sense of necessarily being malicious
-> > but just "can't guarantee that things don't blow up in your face".
+> > diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> > index 398e9c95cd61..872bcde17aca 100644
+> > --- a/include/linux/vmalloc.h
+> > +++ b/include/linux/vmalloc.h
+> > @@ -21,6 +21,8 @@ struct notifier_block;                /* in notifier.h */
+> >  #define VM_UNINITIALIZED       0x00000020      /* vm_struct is not fully initialized */
+> >  #define VM_NO_GUARD            0x00000040      /* don't add guard page */
+> >  #define VM_KASAN               0x00000080      /* has allocated kasan shadow memory */
+> > +#define VM_IMMEDIATE_UNMAP     0x00000200      /* flush before releasing pages */
+> > +#define VM_HAS_SPECIAL_PERMS   0x00000400      /* may be freed with special perms */
+> >  /* bits [20..32] reserved for arch specific ioremap internals */
 > >
-> > >
-> > > > - The fact that we have a single shared pool of binder device minor
-> > > >   numbers for all namespaces imho makes it necessary for the global root
-> > > >   user in the initial ipc + user namespace to manage device allocation
-> > > >   and delegation.
-> > >
-> > > You are managing the allocation, you are giving who ever asks for one a
-> > > device.  If you run out of devices, oops, you run out of devices, that's
-> > > it.  Are you really ever going to run out of a major's number of binder
-> > > devices?
+> >  /*
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 97d4b25d0373..02b284d2245a 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -18,6 +18,7 @@
+> >  #include <linux/interrupt.h>
+> >  #include <linux/proc_fs.h>
+> >  #include <linux/seq_file.h>
+> > +#include <linux/set_memory.h>
+> >  #include <linux/debugobjects.h>
+> >  #include <linux/kallsyms.h>
+> >  #include <linux/list.h>
+> > @@ -38,6 +39,11 @@
 > >
-> > The point is more about someone intentionally trying to do that.
+> >  #include "internal.h"
 > >
-> > >
-> > > > The binderfs sysctl stuff is really small code-wise and adds a lot of
-> > > > security without any performance impact on the code itself. So we
-> > > > actually very strictly adhere to the requirement to not blindly
-> > > > sacrifice performance for security. :)
-> > >
-> > > But you are adding a brand new user/kernel api by emulating one that is
-> > > very old and not the best at all, to try to protect from something that
-> > > seems like you can't really "protect" from in the first place.
+> > +struct vfree_work {
+> > +       struct llist_node node;
+> > +       void *addr;
+> > +};
+> > +
+> >  struct vfree_deferred {
+> >         struct llist_head list;
+> >         struct work_struct wq;
+> > @@ -50,9 +56,13 @@ static void free_work(struct work_struct *w)
+> >  {
+> >         struct vfree_deferred *p = container_of(w, struct vfree_deferred, wq);
+> >         struct llist_node *t, *llnode;
+> > +       struct vfree_work *cur;
 > >
-> > Of course we can protect from that. It's about init root never running
-> > out of devices. We don't care about non-init-userns running out of
-> > devices at all.
+> > -       llist_for_each_safe(llnode, t, llist_del_all(&p->list))
+> > -               __vunmap((void *)llnode, 1);
+> > +       llist_for_each_safe(llnode, t, llist_del_all(&p->list)) {
+> > +               cur = container_of(llnode, struct vfree_work, node);
+> > +               __vunmap(cur->addr, 1);
+> > +               kfree(cur);
+> > +       }
+> >  }
 > >
-> > >
-> > > You now have a mis-match of sysctls, ioctls and file operations all
-> > > working on the same logical thing.  And all interacting in different and
-> > > uncertian ways.  Are you sure that's wise?
+> >  /*** Page table manipulation functions ***/
+> > @@ -1494,6 +1504,48 @@ struct vm_struct *remove_vm_area(const void *addr)
+> >         return NULL;
+> >  }
 > >
-> > The sysctl approach is present in other pseudo-filesystems apart from
-> > devpts. For example, mqueue.
-> >
-> > >
-> > > If the binderfs code as-is isn't "safe enough" to use without this, then
-> > > we need to revisit it before someone starts to use it...
-> >
-> > *It is safe.* I just don't see a good argument against additional
-> > hardening. *But I'm definitely not going to push this patch if it's
-> > additional hardening features are used to push the unsound argument that
-> > binderfs isn't safe.* :)
+> > +/*
+> > + * This function handles unmapping and resetting the direct map as efficiently
+> > + * as it can with cross arch functions. The three categories of architectures
+> > + * are:
+> > + *   1. Architectures with no set_memory implementations and no direct map
+> > + *      permissions.
+> > + *   2. Architectures with set_memory implementations but no direct map
+> > + *      permissions
+> > + *   3. Architectures with set_memory implementations and direct map permissions
+> > + */
+> > +void __weak arch_vunmap(struct vm_struct *area, int deallocate_pages)
 >
-> Ok, so what you really want is just "limits" to prevent a container from
-> doing something really crazy, right?  So, how about a limit of 10 binder
-> nodes per container?  Make it a kernel build option so it can be changed
-> by a vendor if they really find that is a problem.
+> My general preference is to avoid __weak functions -- they don't
+> optimize well.  Instead, I prefer either:
 >
-> Would that solve the issue you are thinking might be here?
+> #ifndef arch_vunmap
+> void arch_vunmap(...);
+> #endif
+>
+> or
+>
+> #ifdef CONFIG_HAVE_ARCH_VUNMAP
+> ...
+> #endif
+>
+>
+> > +{
+> > +       unsigned long addr = (unsigned long)area->addr;
+> > +       int immediate = area->flags & VM_IMMEDIATE_UNMAP;
+> > +       int special = area->flags & VM_HAS_SPECIAL_PERMS;
+> > +
+> > +       /*
+> > +        * In case of 2 and 3, use this general way of resetting the permissions
+> > +        * on the directmap. Do NX before RW, in case of X, so there is no W^X
+> > +        * violation window.
+> > +        *
+> > +        * For case 1 these will be noops.
+> > +        */
+> > +       if (immediate)
+> > +               set_memory_nx(addr, area->nr_pages);
+> > +       if (deallocate_pages && special)
+> > +               set_memory_rw(addr, area->nr_pages);
+>
+> Can you elaborate on the intent here?  VM_IMMEDIATE_UNMAP means "I
+> want that alias gone before any deallocation happens".
+> VM_HAS_SPECIAL_PERMS means "I mucked with the direct map -- fix it for
+> me, please".  deallocate means "this was vfree -- please free the
+> pages".  I'm not convinced that all the various combinations make
+> sense.  Do we really need both flags?
+>
+> (VM_IMMEDIATE_UNMAP is a bit of a lie, since, if in_interrupt(), it's
+> not immediate.)
+>
+> If we do keep both flags, maybe some restructuring would make sense,
+> like this, perhaps.  Sorry about horrible whitespace damage.
+>
+> if (special) {
+>   /* VM_HAS_SPECIAL_PERMS makes little sense without deallocate_pages. */
+>   WARN_ON_ONCE(!deallocate_pages);
+>
+>   if (immediate) {
+>     /* It's possible that the vmap alias is X and we're about to make
+> the direct map RW.  To avoid a window where executable memory is
+> writable, first mark the vmap alias NX.  This is silly, since we're
+> about to *unmap* it, but this is the best we can do if all we have to
+> work with is the set_memory_abc() APIs.  Architectures should override
+> this whole function to get better behavior. */
 
-We already have CONFIG_ANDROID_BINDER_DEVICES which specifies 3
-devices (binder,hwbinder,vndbinder). How about limiting each container
-to no more than the number of devices specified there?
+So can't we fix this first? Assuming that architectures that bother to
+implement them will not have executable mappings in the linear region,
+all we'd need is set_linear_range_ro/rw() routines that default to
+doing nothing, and encapsulate the existing code for x86 and arm64.
+That way, we can handle do things in the proper order, i.e., release
+the vmalloc mapping (without caring about the permissions), restore
+the linear alias attributes, and finally release the pages.
 
+
+>     set_memory_nx(...);
+>   }
 >
-> thanks,
+>   set_memory_rw(addr, area->nr_pages);
+> }
 >
-> greg k-h
+>
+> > +
+> > +       /* Always actually remove the area */
+> > +       remove_vm_area(area->addr);
+> > +
+> > +       /*
+> > +        * Need to flush the TLB before freeing pages in the case of this flag.
+> > +        * As long as that's happening, unmap aliases.
+> > +        *
+> > +        * For 2 and 3, this will not be needed because of the set_memory_nx
+> > +        * above, because the stale TLBs will be NX.
+>
+> I'm not sure I agree with this comment.  If the caller asked for an
+> immediate unmap, we should give an immediate unmap.  But I'm still not
+> sure I see why VM_IMMEDIATE_UNMAP needs to exist as a separate flag.
+>
+> > +        */
+> > +       if (immediate && !IS_ENABLED(ARCH_HAS_SET_MEMORY))
+> > +               vm_unmap_aliases();
+> > +}
+> > +
+> >  static void __vunmap(const void *addr, int deallocate_pages)
+> >  {
+> >         struct vm_struct *area;
+> > @@ -1515,7 +1567,8 @@ static void __vunmap(const void *addr, int deallocate_pages)
+> >         debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
+> >         debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
+> >
+> > -       remove_vm_area(addr);
+> > +       arch_vunmap(area, deallocate_pages);
+> > +
+> >         if (deallocate_pages) {
+> >                 int i;
+> >
+> > @@ -1542,8 +1595,15 @@ static inline void __vfree_deferred(const void *addr)
+> >          * nother cpu's list.  schedule_work() should be fine with this too.
+> >          */
+> >         struct vfree_deferred *p = raw_cpu_ptr(&vfree_deferred);
+> > +       struct vfree_work *w = kmalloc(sizeof(struct vfree_work), GFP_ATOMIC);
+> > +
+> > +       /* If no memory for the deferred list node, give up */
+> > +       if (!w)
+> > +               return;
+>
+> That's nasty.  I see what you're trying to do here, but I think you're
+> solving a problem that doesn't need solving quite so urgently.  How
+> about dropping this part and replacing it with a comment like "NB:
+> this writes a word to a potentially executable address.  It would be
+> nice if we could avoid doing this."  And maybe a future patch could
+> more robustly avoid it without risking memory leaks.
