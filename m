@@ -2,120 +2,97 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1EEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8EC0C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5292B21903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A12C21903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+v8BjIw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="UzBJBBgh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387603AbeLUHaP (ORCPT
+        id S2389249AbeLUHaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:30:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37420 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387432AbeLUH1u (ORCPT
+        Fri, 21 Dec 2018 02:30:16 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46680 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730788AbeLUH1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Dec 2018 02:27:50 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so2186980pfb.4;
-        Thu, 20 Dec 2018 23:27:49 -0800 (PST)
+Received: by mail-wr1-f65.google.com with SMTP id l9so4112558wrt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 23:27:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=J1XPUyhdugQdjD1RjA8TcbqShFQ6vNfPgtVDRPKD26M=;
-        b=D+v8BjIwaeBkHWCUn0SIc9Vauqh6k/EcRAx/6NL+x5IkPsPR441bJb8zpvorrru7tf
-         WQpOaXEz0F1I4yQjIp9cCpkZZstdoQUvPF3cliFgyAXSrybbqb/8LC1ZPsZ/pgufsNk1
-         AqoNPMrKD5/PZcnFX859gEz7gy30NgnwpnnDc2apCYY1C/yyrzFwKlpvRbN19PuE17mw
-         +WDInCgOVD3V4o4MLInCLYjY7gnhvqx71hXA3y/rOjwfCq96gemXDtl252k3YS+E2Rbb
-         76bKO8WtEZwQ1BWm8+h7aJDHIQopoRuLzD2zYjXfyDwD9usA8s80o2WQvuznD7ZxgcER
-         j7Bw==
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=rjZtowWUqDsN4RH1qNFnjBtrtgFPRxVMd6Ulv41qXsY=;
+        b=UzBJBBgh/BktdVnXhtKlHk9itqQASDm1jkyxMpvkc0BTrgrKsvEK0KgNKHME45pX5b
+         CjE9h+ehASd3NjO2Bv3ERDNOHXJ3o9PKQRzabLxniQzm6IZKqY8CQPszdhDtX4SVwD+m
+         2GAloryPe1M/CWnDPrDTq/Lnmu4FcMoUe0YfG9cYWNoCcbni3KJTPTEAeFDcNZWo2gnf
+         JoDKgEJhhkz2/31JuwrtwBW3i1P0Gv990vx14n9aeGv80hRY7Kykj73I3hwe1mT8lcky
+         NP53i9XxwCDdc/zaoY58JCuF6ErnjGRsPlkfi06tYLWanVjM77oT0gbDvkJlWRbmKDQv
+         AF7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=J1XPUyhdugQdjD1RjA8TcbqShFQ6vNfPgtVDRPKD26M=;
-        b=FNR5LcGb6LNCSN7wNwbCm6TLui4I/L+U7tYlKSKmQ/wXkVqJOwVzb1KgzOP4+2cMXi
-         k+ysMilWqD5GZeASBCiGdAWMArtedA2eFqQYUrOSeKGKqea+sR6yF7XbjxXV13gPLzbD
-         HhvAC5WUlIsJgHpY5gVNJv2CRFfHCumQVnNmNwb+VCYnFP/D18hMI6tZIxeo+fI4XKON
-         /dOcCieWa1B4SNizM570SQqCZRFCrCpOwgbonHaDR4zv8WS2cOgA6iTEFhSdLimz1VXR
-         3CHPW+j45lUkWPjqp0WWaO4Jj+6l6YrbckNJ+5VZx4lOPKCFG9FjvhIIxiyXHSI1kLMr
-         w7eQ==
-X-Gm-Message-State: AJcUukdIdnnbzHDsTemJUdIkIvHxQcCzchfL2j40X0Y/5mFJ8att+LjZ
-        RiUTT9kbfGO5/sjJzfXCr0MMZXFv
-X-Google-Smtp-Source: ALg8bN7DefFb9r+kRTFCRUxMnRCb2jxCddzSWYYkcXZREmCl0oq4M1VuRrjtSzH7qve+8RIUv4nlxw==
-X-Received: by 2002:a63:70c:: with SMTP id 12mr1315807pgh.352.1545377268946;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=rjZtowWUqDsN4RH1qNFnjBtrtgFPRxVMd6Ulv41qXsY=;
+        b=lg+JRi50BV9pHlXZubyqiCnkXemMi2d8nkj1W0i+VszfDdUvluXwvYcyVNEqMKvdpa
+         lCeg97QAlX/BDATTu3ZILB9791V9O2ORqjl1Gfq0Jdt1Yf8Asmx9d/d5yFHhZQ2fHSc5
+         aelFT1OEa4/B9wnA9EQJgODZqgUoK9LhWaXL2JCZFjHPVyeXOaQOeCdbgHmorkK0rE70
+         iip7SydP1wNGROcEYIg2ZAHuOcaavThTQZmsYcI5YKboyFSk3JVDDksLZb1PX9W+9rKO
+         5+QaQMIeCTxGMQfqZlDfa6ITUYnmPDrDyc7TRehix/ODkMKRBFX2JVVP0XYzUrMUn44r
+         k4WA==
+X-Gm-Message-State: AJcUukcsJs0c41kmnXdQLM0hKwzVqAY/6jBfRypRn/I578q1y09OUXFk
+        E2MiHq/Rhq0OAxgsPbcxeB6NoaiiK4E=
+X-Google-Smtp-Source: ALg8bN6EI3K4mQSZ/jfercd++i3hNRLl4DCcExiMm5U3ZpaNdmJhQ4Pekw9u30NKzwLEOVNY83Nojw==
+X-Received: by 2002:adf:9d4c:: with SMTP id o12mr1221981wre.94.1545377268837;
         Thu, 20 Dec 2018 23:27:48 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.27.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+Received: from ?IPv6:2a02:8109:b6c0:6c14:e5c3:3a2b:437c:4c9c? ([2a02:8109:b6c0:6c14:e5c3:3a2b:437c:4c9c])
+        by smtp.gmail.com with ESMTPSA id y34sm28543053wrd.68.2018.12.20.23.27.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 20 Dec 2018 23:27:48 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pci@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/21] PCI: imx6: Remove PCIE_PL_PFLR_* constants
-Date:   Thu, 20 Dec 2018 23:27:00 -0800
-Message-Id: <20181221072716.29017-6-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
-References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
+Date:   Fri, 21 Dec 2018 08:27:45 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAB0TPYF6hgNt0QcYNj0_jZmKVxuUpko-nSoRGwz19_M0OFzmCA@mail.gmail.com>
+References: <20181220104057.18628-1-christian@brauner.io> <20181220105444.GB8548@kroah.com> <B16ED4A7-5C64-4285-A076-1CBFEFE47DDB@brauner.io> <20181220110923.GA10786@kroah.com> <CAB0TPYF6hgNt0QcYNj0_jZmKVxuUpko-nSoRGwz19_M0OFzmCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] MAINTAINERS: update Android binder
+To:     Martijn Coenen <maco@android.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     Todd Kjos <tkjos@google.com>, LKML <linux-kernel@vger.kernel.org>
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <2DBEE08C-32BB-48F4-B2CD-63966B47CF72@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code using these constants was removed in commit a71280722eeb ("PCI:
-imx6: Remove LTSSM disable workaround"). No functional change
-intended.
+On December 20, 2018 1:13:26 PM GMT+01:00, Martijn Coenen <maco@android=2Ec=
+om> wrote:
+>Thanks Christian for signing up!
+>
+>On Thu, Dec 20, 2018 at 12:09 PM Greg KH <gregkh@linuxfoundation=2Eorg>
+>wrote:
+>> Ok, no objection from me, Todd/Martijn/Joel/Arve, can I get an ack
+>from
+>> someone?
+>
+>Acked-By: Martijn Coenen <maco@android=2Ecom>
 
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/pci/controller/dwc/pci-imx6.c | 3 ---
- 1 file changed, 3 deletions(-)
+Thanks Martijn! Happy holidays!
+Christian
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 2265f4b40e39..60803f1f16f8 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -82,9 +82,6 @@ struct imx6_pcie {
- 
- /* PCIe Port Logic registers (memory-mapped) */
- #define PL_OFFSET 0x700
--#define PCIE_PL_PFLR (PL_OFFSET + 0x08)
--#define PCIE_PL_PFLR_LINK_STATE_MASK		(0x3f << 16)
--#define PCIE_PL_PFLR_FORCE_LINK			(1 << 15)
- #define PCIE_PHY_DEBUG_R0 (PL_OFFSET + 0x28)
- #define PCIE_PHY_DEBUG_R1 (PL_OFFSET + 0x2c)
- #define PCIE_PHY_DEBUG_R1_XMLH_LINK_IN_TRAINING	(1 << 29)
--- 
-2.19.1
+>
+>>
+>> thanks,
+>>
+>> greg k-h
 
