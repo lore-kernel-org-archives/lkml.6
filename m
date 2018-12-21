@@ -2,294 +2,192 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32126C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BE6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0082D21906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBB2F21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390706AbeLUNne (ORCPT
+        id S2388867AbeLUNq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:43:34 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47985 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732931AbeLUNne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:43:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 05:43:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="103821304"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by orsmga008.jf.intel.com with ESMTP; 21 Dec 2018 05:43:31 -0800
-Subject: Re: [PATCH V2 1/2] mmc: sdhci: Fix O2 Host PLL and card detect issue
-To:     "Ernest Zhang(WH)" <ernest.zhang@bayhubtech.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Andy Dai (WH)" <andy.dai@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "Mike Li (WH)" <mike.li@bayhubtech.com>
-References: <20181218114003.10002-1-ernest.zhang@bayhubtech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <4124aeab-b281-372f-7802-a699d3226da7@intel.com>
-Date:   Fri, 21 Dec 2018 15:42:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 21 Dec 2018 08:46:57 -0500
+Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:60045 "EHLO
+        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731766AbeLUNq4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 08:46:56 -0500
+Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
+        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1gaL8c-0005b8-Ae; Fri, 21 Dec 2018 14:46:50 +0100
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1gaL8c-000BCi-5I; Fri, 21 Dec 2018 14:46:50 +0100
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
+        dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
+        digetx@gmail.com, lee.jones@linaro.org, coquelin.stm32@gmail.com,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 2/8] mfd: stmpe: Move ADC related defines to header of mfd
+Date:   Fri, 21 Dec 2018 14:46:31 +0100
+Message-Id: <20181221134638.20600-3-dev@pschenker.ch>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181221134638.20600-1-dev@pschenker.ch>
+References: <20181221134638.20600-1-dev@pschenker.ch>
 MIME-Version: 1.0
-In-Reply-To: <20181218114003.10002-1-ernest.zhang@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/12/18 1:40 PM, Ernest Zhang(WH) wrote:
-> From: "Ernest Zhang" <ernest.zhang@bayhubtech.com>
-> 
-> 1. O2 Host Controller PLL lock status is not in compliance with
-> CLOCK_CONTROL register bit 1
-> 2. O2 Host Controller card detect function only work when PLL is
-> enabled and locked
-> 
-> Signed-off-by: Ernest Zhang <ernest.zhang@bayhubtech.com>
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-If you put the other patch first, then this patch will need some minor
-modifications, otherwise I have no further comments.
+Move defines that are ADC related to the header of the overlying mfd,
+so they can be used from multiple sub-devices.
 
-> ---
-> Change in V2:
-> 	1. Remove unused sdhci_ops function pointer
-> 	2. Change kind of timeout check, get the time first
-> 	3. Rename CARD PRESENT register bit16 and bit 18 macro
-> 
-> Change in V1:
-> 	N/A
-> ---
->  drivers/mmc/host/sdhci-pci-core.c    |   9 +++
->  drivers/mmc/host/sdhci-pci-o2micro.c | 121 ++++++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci-pci.h         |   1 +
->  drivers/mmc/host/sdhci.h             |   4 ++
->  4 files changed, 132 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> index 2a6eba74b94e..fc4f35653602 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -1257,6 +1257,14 @@ static int jmicron_resume(struct sdhci_pci_chip *chip)
->  }
->  #endif
->  
-> +static const struct sdhci_ops sdhci_pci_o2_ops = {
-> +	.set_clock = sdhci_pci_o2_set_clock,
-> +	.enable_dma = sdhci_pci_enable_dma,
-> +	.set_bus_width = sdhci_set_bus_width,
-> +	.reset = sdhci_reset,
-> +	.set_uhs_signaling = sdhci_set_uhs_signaling,
-> +};
-> +
->  static const struct sdhci_pci_fixes sdhci_o2 = {
->  	.probe = sdhci_pci_o2_probe,
->  	.quirks = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
-> @@ -1265,6 +1273,7 @@ static const struct sdhci_pci_fixes sdhci_o2 = {
->  #ifdef CONFIG_PM_SLEEP
->  	.resume = sdhci_pci_o2_resume,
->  #endif
-> +	.ops = &sdhci_pci_o2_ops,
->  };
->  
->  static const struct sdhci_pci_fixes sdhci_jmicron = {
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index cc3ffeffd7a2..506b93e5dcd8 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -60,6 +60,13 @@
->  #define O2_SD_VENDOR_SETTING2	0x1C8
->  #define O2_SD_HW_TUNING_DISABLE	BIT(4)
->  
-> +#define O2_PLL_WDT_CONTROL1	0x1CC
-> +#define  O2_PLL_FORCE_ACTIVE	BIT(18)
-> +#define  O2_PLL_LOCK_STATUS	BIT(14)
-> +#define  O2_PLL_SOFT_RESET	BIT(12)
-> +
-> +#define O2_SD_DETECT_SETTING 0x324
-> +
->  static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
->  {
->  	u16 reg;
-> @@ -283,6 +290,113 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
->  	host->irq = pci_irq_vector(chip->pdev, 0);
->  }
->  
-> +static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u32 scratch32;
-> +
-> +	/* Wait max 50 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 50);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> +		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
-> +		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
-> +			break;
-> +
-> +		if (timedout) {
-> +			pr_err("%s: Card Detect debounce never finished.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			return;
-> +		}
-> +		udelay(10);
-> +	}
-> +}
-> +
-> +static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u16 scratch;
-> +	u32 scratch32;
-> +
-> +	/* PLL software reset */
-> +	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
-> +	scratch32 |= O2_PLL_SOFT_RESET;
-> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +	udelay(1);
-> +	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +
-> +	/* PLL force active */
-> +	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +
-> +	/* Wait max 20 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 20);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch = sdhci_readw(host, O2_PLL_WDT_CONTROL1);
-> +		if (scratch & O2_PLL_LOCK_STATUS)
-> +			break;
-> +		if (timedout) {
-> +			pr_err("%s: Internal clock never stabilised.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			goto out;
-> +		}
-> +		udelay(10);
-> +	}
-> +
-> +	/* Wait for card detect finish */
-> +	udelay(1);
-> +	sdhci_o2_wait_card_detect_stable(host);
-> +
-> +out:
-> +	/* Cancel PLL force active */
-> +	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
-> +	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +}
-> +
-> +static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +
-> +	sdhci_o2_enable_internal_clock(host);
-> +
-> +	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
-> +}
-> +
-> +static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
-> +{
-> +	/* Enable internal clock */
-> +	clk |= SDHCI_CLOCK_INT_EN;
-> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-> +
-> +	if (sdhci_o2_get_cd(host->mmc)) {
-> +		clk |= SDHCI_CLOCK_CARD_EN;
-> +		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-> +	}
-> +}
-> +
-> +void sdhci_pci_o2_set_clock(struct sdhci_host *host, unsigned int clock)
-> +{
-> +	u16 clk;
-> +
-> +	host->mmc->actual_clock = 0;
-> +
-> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-> +
-> +	if (clock == 0)
-> +		return;
-> +
-> +	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
-> +	sdhci_o2_enable_clk(host, clk);
-> +}
-> +
->  int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
->  {
->  	struct sdhci_pci_chip *chip;
-> @@ -316,7 +430,11 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
->  				host->flags |= SDHCI_SIGNALING_180;
->  				host->mmc->caps2 |= MMC_CAP2_NO_SD;
->  				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
-> +				pci_write_config_dword(chip->pdev,
-> +						       O2_SD_DETECT_SETTING, 3);
->  			}
-> +
-> +			slot->host->mmc_host_ops.get_cd = sdhci_o2_get_cd;
->  		}
->  
->  		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
-> @@ -490,9 +608,6 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
->  		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
->  		break;
->  	case PCI_DEVICE_ID_O2_SEABIRD0:
-> -		if (chip->pdev->revision == 0x01)
-> -			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-> -		/* fall through */
->  	case PCI_DEVICE_ID_O2_SEABIRD1:
->  		/* UnLock WP */
->  		ret = pci_read_config_byte(chip->pdev,
-> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
-> index 2ef0bdca9197..e41a85f0b40a 100644
-> --- a/drivers/mmc/host/sdhci-pci.h
-> +++ b/drivers/mmc/host/sdhci-pci.h
-> @@ -184,6 +184,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip);
->  #ifdef CONFIG_PM_SLEEP
->  int sdhci_pci_o2_resume(struct sdhci_pci_chip *chip);
->  #endif
-> +void sdhci_pci_o2_set_clock(struct sdhci_host *host, unsigned int clock);
->  
->  extern const struct sdhci_pci_fixes sdhci_arasan;
->  extern const struct sdhci_pci_fixes sdhci_snps;
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 6cc9a3c2ac66..924e03332cf7 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -73,6 +73,10 @@
->  #define  SDHCI_SPACE_AVAILABLE	0x00000400
->  #define  SDHCI_DATA_AVAILABLE	0x00000800
->  #define  SDHCI_CARD_PRESENT	0x00010000
-> +#define   SDHCI_CARD_PRES_SHIFT	16
-> +#define  SDHCI_CD_STABLE	0x00020000
-> +#define  SDHCI_CD_LVL		0x00040000
-> +#define   SDHCI_CD_LVL_SHIFT	18
->  #define  SDHCI_WRITE_PROTECT	0x00080000
->  #define  SDHCI_DATA_LVL_MASK	0x00F00000
->  #define   SDHCI_DATA_LVL_SHIFT	20
-> 
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+---
+
+Changes in v5:
+ - Changed author of commit to use correct email
+
+Changes in v4:
+ - Added Lee Jone's Ack
+ - Added Dmitry Torokhov's Ack
+
+Changes in v3: None
+Changes in v2:
+ - This is a new added commit. Separate commit for moving the defines
+   out of drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device
+   drivers/mfd/stmpe.c
+ - Pre-fix defines with STMPE_
+
+ drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
+ include/linux/mfd/stmpe.h            | 11 +++++++++
+ 2 files changed, 24 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
+index 2a78e27b4495..c5d9006588a2 100644
+--- a/drivers/input/touchscreen/stmpe-ts.c
++++ b/drivers/input/touchscreen/stmpe-ts.c
+@@ -49,17 +49,6 @@
+ 
+ #define STMPE_IRQ_TOUCH_DET		0
+ 
+-#define SAMPLE_TIME(x)			((x & 0xf) << 4)
+-#define MOD_12B(x)			((x & 0x1) << 3)
+-#define REF_SEL(x)			((x & 0x1) << 1)
+-#define ADC_FREQ(x)			(x & 0x3)
+-#define AVE_CTRL(x)			((x & 0x3) << 6)
+-#define DET_DELAY(x)			((x & 0x7) << 3)
+-#define SETTLING(x)			(x & 0x7)
+-#define FRACTION_Z(x)			(x & 0x7)
+-#define I_DRIVE(x)			(x & 0x1)
+-#define OP_MODE(x)			((x & 0x7) << 1)
+-
+ #define STMPE_TS_NAME			"stmpe-ts"
+ #define XY_MASK				0xfff
+ 
+@@ -213,9 +202,10 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 		return ret;
+ 	}
+ 
+-	adc_ctrl1 = SAMPLE_TIME(ts->sample_time) | MOD_12B(ts->mod_12b) |
+-		REF_SEL(ts->ref_sel);
+-	adc_ctrl1_mask = SAMPLE_TIME(0xff) | MOD_12B(0xff) | REF_SEL(0xff);
++	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
++		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
++	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
++			 STMPE_REF_SEL(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+ 			adc_ctrl1_mask, adc_ctrl1);
+@@ -225,15 +215,17 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+-			ADC_FREQ(0xff), ADC_FREQ(ts->adc_freq));
++			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
+ 	if (ret) {
+ 		dev_err(dev, "Could not setup ADC\n");
+ 		return ret;
+ 	}
+ 
+-	tsc_cfg = AVE_CTRL(ts->ave_ctrl) | DET_DELAY(ts->touch_det_delay) |
+-			SETTLING(ts->settling);
+-	tsc_cfg_mask = AVE_CTRL(0xff) | DET_DELAY(0xff) | SETTLING(0xff);
++	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
++		  STMPE_DET_DELAY(ts->touch_det_delay) |
++		  STMPE_SETTLING(ts->settling);
++	tsc_cfg_mask = STMPE_AVE_CTRL(0xff) | STMPE_DET_DELAY(0xff) |
++		       STMPE_SETTLING(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CFG, tsc_cfg_mask, tsc_cfg);
+ 	if (ret) {
+@@ -242,14 +234,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
+-			FRACTION_Z(0xff), FRACTION_Z(ts->fraction_z));
++			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
+-			I_DRIVE(0xff), I_DRIVE(ts->i_drive));
++			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+@@ -263,7 +255,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
+-			OP_MODE(0xff), OP_MODE(OP_MOD_XYZ));
++			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
+ 	if (ret) {
+ 		dev_err(dev, "Could not set mode\n");
+ 		return ret;
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index 4a827af17e59..c0353f6431f9 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -10,6 +10,17 @@
+ 
+ #include <linux/mutex.h>
+ 
++#define STMPE_SAMPLE_TIME(x)	((x & 0xf) << 4)
++#define STMPE_MOD_12B(x)	((x & 0x1) << 3)
++#define STMPE_REF_SEL(x)	((x & 0x1) << 1)
++#define STMPE_ADC_FREQ(x)	(x & 0x3)
++#define STMPE_AVE_CTRL(x)	((x & 0x3) << 6)
++#define STMPE_DET_DELAY(x)	((x & 0x7) << 3)
++#define STMPE_SETTLING(x)	(x & 0x7)
++#define STMPE_FRACTION_Z(x)	(x & 0x7)
++#define STMPE_I_DRIVE(x)	(x & 0x1)
++#define STMPE_OP_MODE(x)	((x & 0x7) << 1)
++
+ struct device;
+ struct regulator;
+ 
+-- 
+2.19.2
 
