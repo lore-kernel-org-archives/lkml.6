@@ -3,96 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9E4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35370C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B82218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECDAC218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CFEfadjU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5pGoZ8yR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388408AbeLUAx2 (ORCPT
+        id S2388414AbeLUA5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 19:53:28 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37841 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388380AbeLUAxZ (ORCPT
+        Thu, 20 Dec 2018 19:57:11 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:35608 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732145AbeLUA5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 19:53:25 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b5so1665134plr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:53:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:from
-         :in-reply-to:user-agent:references:message-id:date;
-        bh=YwqAQrS6U2HgrHrXdYvfquS5nQLto8PCMYPBgLcuTu8=;
-        b=CFEfadjUFv/2Cyrz91+3b1j4pelvbRYG2IklmkaLkO5l76rn6R0InsWwrUGad3zOFX
-         zP0pDMa4Wzt7N5+gCZj5B7PizjrreC5rfv/vyBkjYZhyYoQHOLUoMVbQ3MmoCOHWUekT
-         p6Bxzr/q2Baq3b1cav646TyS5L/LfK9wfxcSo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:from:in-reply-to:user-agent:references:message-id:date;
-        bh=YwqAQrS6U2HgrHrXdYvfquS5nQLto8PCMYPBgLcuTu8=;
-        b=ZvyS3ZUW9sM+IQN21jtpHyvl0HbMm8641wtn2uLENJg0Ri0T6TDjdv9vCSRZBsUb4x
-         76HNxldcaewIhMzYPJDtogvz9mHgECw2mmeroNHMrWkrV/shmphQhSs/cpeZiGfT1xuG
-         U6/FhbW88wCyIXjH4VTGY47sb1HkFYuCskyisXwWmlkdOss3uCt7XWDnJoZECvJbh/cE
-         2QeVTZQDPwLLMLJm61+rxkuayDEqBmSpFgvKPLijr0HXu+27SG4qn+loHZwCFgOFsuMY
-         hcNtoe5mCopD9TY/SGn52a7nxnHQt6zb8O36M9z9/IR8zxTd3vn4pa64cOhyn/i8UXry
-         JLjA==
-X-Gm-Message-State: AJcUukcqMN8M1yx7n0PpbiMI/RknC+/MuMdAC31CL+X+KV/SR6jFb0Hg
-        kBYt8BPpePZy8oRGt2Nip/E0Jg==
-X-Google-Smtp-Source: ALg8bN5/ATMmDyOr3O2+zpRSbsVJDiySWzuhvWyLHnyDQpVCDlCxXvFTSvoMxULs1SSqwQILeRG0nA==
-X-Received: by 2002:a17:902:a60f:: with SMTP id u15mr365520plq.275.1545353605371;
-        Thu, 20 Dec 2018 16:53:25 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id f67sm47522891pff.29.2018.12.20.16.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 16:53:24 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 20 Dec 2018 19:57:11 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBL0rZGS117329;
+        Fri, 21 Dec 2018 00:56:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=N0RiKFGwwPh4uMrqe21MVvoEH7V26R0d4bsV6EyoWyY=;
+ b=5pGoZ8yROxdqzuG+EtsFIIrxS0O4Ofyul+qeBq6PSePbzBwn/FGAim63TFNXgTaE+9Jg
+ 0kwgAfNrw1YRt/xKd/IcU5QjSb9RFPAzAj3/d8tbM7Cr26eL7elIT19zWqZqkCSl/WmL
+ aoiY7sUkUO+C1iIj2674HTYrjDXegAscyCfFEtozhqU5HYqp0he/c7wfyjWalf4pZe6i
+ Rn0bXW0aj0VGjUlGTtOIkQkezmQyjPVJEbiPNH/i8lCLNOp8XnXKnrfPdguvo1qgBeMl
+ hr7n9l+u4iVS9dPBrYjLQFR4tBnfEE44KHPtwFAJPa37+r/RRQ8c+9JknNGBsaB+bE+m 1A== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2pfh3aa1sy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Dec 2018 00:56:57 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBL0uv3W025963
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Dec 2018 00:56:57 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBL0uu90001642;
+        Fri, 21 Dec 2018 00:56:56 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Dec 2018 16:56:56 -0800
+To:     Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        intel-linux-scu <intel-linux-scu@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 17/41] scsi: isci: phy: Mark expected switch fall-through
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+        <ceff1b50e91a4c13b49423b08ec9447b@fmsmsx108.amr.corp.intel.com>
+        <cfd08179-b03a-53d6-9765-b1555eaf9719@intel.com>
+Date:   Thu, 20 Dec 2018 19:56:53 -0500
+In-Reply-To: <cfd08179-b03a-53d6-9765-b1555eaf9719@intel.com> (Artur
+        Paszkiewicz's message of "Thu, 20 Dec 2018 09:51:22 +0100")
+Message-ID: <yq1muozbstm.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 4/8] drm/msm/dsi: 14nm PHY: Get ref clock from the DT
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181219235528.114830-5-mka@chromium.org>
-User-Agent: alot/0.8
-References: <20181219235528.114830-1-mka@chromium.org> <20181219235528.114830-5-mka@chromium.org>
-Message-ID: <154535360384.13075.2908354282137993320@swboyd.mtv.corp.google.com>
-Date:   Thu, 20 Dec 2018 16:53:23 -0800
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9113 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=847
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812210004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Kaehlcke (2018-12-19 15:55:24)
-> Get the ref clock of the PHY from the device tree instead of
-> hardcoding its name and rate.
->=20
-> Note: This change could break old out-of-tree DTS files that
-> use the 14nm PHY.
->=20
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> ---
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Artur,
 
+> On 11/28/18 5:29 AM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>> 
+>> Addresses-Coverity-ID: 703127 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>
+> Acked-by: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+
+Applied the 4 isci patches to 4.21/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
