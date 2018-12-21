@@ -2,153 +2,142 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E650C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB6DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B0521920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E268421927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:06:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="r8K0LsTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388956AbeLUOCE (ORCPT
+        id S2390819AbeLUOGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 09:02:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730556AbeLUOCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 09:02:04 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DC4AC073D79;
-        Fri, 21 Dec 2018 14:02:03 +0000 (UTC)
-Received: from sky.random (ovpn-120-37.rdu2.redhat.com [10.10.120.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 310551001F3D;
-        Fri, 21 Dec 2018 14:01:44 +0000 (UTC)
-Date:   Fri, 21 Dec 2018 09:01:42 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, mhocko@kernel.org,
-        vbabka@suse.cz, hannes@cmpxchg.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>
-Subject: Re: [PATCH 1/2] mm: vmscan: skip KSM page in direct reclaim if
- priority is low
-Message-ID: <20181221140142.GA4322@redhat.com>
-References: <1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com>
- <20181220144513.bf099a67c1140865f496011f@linux-foundation.org>
- <alpine.LSU.2.11.1812202143340.2191@eggly.anvils>
- <575fdffe-abfa-e52b-7b91-97e5e6ffb4bb@linux.alibaba.com>
+        Fri, 21 Dec 2018 09:06:06 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39408 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389027AbeLUOGG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 09:06:06 -0500
+Received: by mail-vk1-f193.google.com with SMTP id s184so1176103vkd.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 06:06:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sWKARN8/VCXibTg+NNQexXIY2rqC24fDbGVY37avEas=;
+        b=r8K0LsTXrL50PWWvc8H3HRzopFOoWXVhd4rX+i3LSpnfy8TvRq6M2V+xBF3jnhNuj2
+         YmmKtiRezLDTZGiU+cfVEW7N62g1gpNBDyVxR4D0ezGU9R8cwfcyPFBJ8zf633RwJTyN
+         wxhtFOcQ9RwEoAKViywMHDl0JZSPF8pr/Gub8DleEIo4cH5Zx6gM8DLUp/OwnDx3ZhAY
+         ajdACTikjnw0hmq8RjYM4yW5svqeXCKR2tHgXTW9pqUoH/5ZFz9MBIJ/qwaOlf/g1qG+
+         gu0alGrHLZXCMRdfEa4Yh0Lh71MXNjSSYo9MdAVRFKekHLsHABhj2sRixCV2gLRfMDy7
+         KSjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sWKARN8/VCXibTg+NNQexXIY2rqC24fDbGVY37avEas=;
+        b=lr7LjG95BCFESSXu2uOoeg5veUKWYW1HnTcMEP50INckS43VujKNsOLyGa7G2vgpci
+         wnevTqn01yi1A6R8Lml02Hw4J1ewqwKs9uXHaxKqrOwOyNYwUFLZi2VF6BnQmFFsSIms
+         hrDzoULYWyoEg1jsahaOnd3igY7FQrz5NcrVATBgbVPgwnBsJpclNjs2l0nEMjNXb3jX
+         nzu+JHYrCRT+dOwz3ueqcqhrhdT0L+QU1XSouusYUjpxrbZeAJ8yPPMxncuEqzE3D6tu
+         /oJVtNCFQ+8XvW1Sihz6epv8eRIw6o4z5PJq7NDUXmu0dOUFUbjyYbTcmh5A3/OZUC/J
+         /TPQ==
+X-Gm-Message-State: AJcUukdWVnp1zlInwPm+8IVu5fR2HOCfkcnmuwac8LDJS+BE8QlVnAZ/
+        MS5MycLHQ4GeVDXSMxLeZaoJtMFpXq7T4ExqqsOWdw==
+X-Google-Smtp-Source: ALg8bN6hFgWDu3D1YmWAptStk/IVSD/UuC+h32t30mytGyaxfChiKMwXR/qqga7zA98CZLn4JRbS3NitrL+wRaBRCCk=
+X-Received: by 2002:a1f:a702:: with SMTP id q2mr965502vke.43.1545401164447;
+ Fri, 21 Dec 2018 06:06:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <575fdffe-abfa-e52b-7b91-97e5e6ffb4bb@linux.alibaba.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Dec 2018 14:02:03 +0000 (UTC)
+References: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu>
+ <1544708187.5826.1.camel@amazon.de> <CANBxJ=FP9GSfMES3e5dSct2qV0Z=uz7uPXufQNqoi5e+sWxvgQ@mail.gmail.com>
+In-Reply-To: <CANBxJ=FP9GSfMES3e5dSct2qV0Z=uz7uPXufQNqoi5e+sWxvgQ@mail.gmail.com>
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Fri, 21 Dec 2018 16:05:01 +0200
+Message-ID: <CANBxJ=H7x_LZ1h=+HrbTcBd2Qt+RWz+c+0_JkUseZG6k-ozvuQ@mail.gmail.com>
+Subject: Re: [PATCH V7 0/10] KVM: X86: Introducing ROE Protection Kernel Hardening
+To:     jsteckli@amazon.de
+Cc:     Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ahmed Soliman <ahmedsoliman0x666@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?6rmA7J246rK4?= <ovich00@gmail.com>, x86@kernel.org,
+        Igor Stoppa <igor.stoppa@gmail.com>, hpa@zytor.com,
+        Ingo Molnar <mingo@redhat.com>, nigel.edwards@hpe.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        kernel-hardening@lists.openwall.com, rkrcmar@redhat.com,
+        linux-doc@vger.kernel.org,
+        Boris Lukashev <blukashev@sempervictus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yang,
+Hello,
 
-On Thu, Dec 20, 2018 at 10:33:26PM -0800, Yang Shi wrote:
-> 
-> 
-> On 12/20/18 10:04 PM, Hugh Dickins wrote:
-> > On Thu, 20 Dec 2018, Andrew Morton wrote:
-> >> Is anyone interested in reviewing this?  Seems somewhat serious.
-> >> Thanks.
-> > Somewhat serious, but no need to rush.
-> >
-> >> From: Yang Shi <yang.shi@linux.alibaba.com>
-> >> Subject: mm: vmscan: skip KSM page in direct reclaim if priority is low
-> >>
-> >> When running a stress test, we occasionally run into the below hang issue:
-> > Artificial load presumably.
-> >
-> >> INFO: task ksmd:205 blocked for more than 360 seconds.
-> >>        Tainted: G            E 4.9.128-001.ali3000_nightly_20180925_264.alios7.x86_64 #1
-> > 4.9-stable does not contain Andrea's 4.13 commit 2c653d0ee2ae
-> > ("ksm: introduce ksm_max_page_sharing per page deduplication limit").
-> >
-> > The patch below is more economical than Andrea's, but I don't think
-> > a second workaround should be added, unless Andrea's is shown to be
-> > insufficient, even with its ksm_max_page_sharing tuned down to suit.
-> >
-> > Yang, please try to reproduce on upstream, or backport Andrea's to
-> > 4.9-stable - thanks.
+> > I don't  understand why this path needs to be optimized. To me it seems, a straight-
+> > forward userspace implementation with no additional code in the kernel achieves
+> > the same feature. Can you elaborate?
 
-I think it's reasonable to backport it and it should be an easy
-backport. Just make sure to backport
-b4fecc67cc569b14301f5a1111363d5818b8da5e too which was the only bug
-there was in the initial patch and it happened with
-"merge_across_nodes = 0" (not the default).
+I was doing some benchmarking to figure out the overhead introduced by
+ROE, I think I can add more
+details about the overhead I am talking about, first I will explain
+the existing paths for a memory write
+attempts:
+[1] Normal memory write is done directly in guest kernel space.
+[2] Writing into Fully ROE protected page (The write operation will fail).
+[3] Writing into Partial ROE protected region (The write operation will fail).
+[4] Writing into writable memory in a page that contains Partial ROE
+protected region (The write operation is committed to memory).
 
-We shipped it in production years ago and it was pretty urgent for
-those workloads that initially run into this issue.
+Path [1] is the normal write... guest kernel will not have to switch
+to guest and the performance was almost the same between host and
+guest, Writing 1 MB (a byte at a time) took no more than 4
+milliseconds. This will not be affected by whether ROE is done from
+users pace or kernel space.
 
-> 
-> I believe Andrea's commit could workaround this problem too by limiting 
-> the number of sharing pages.
-> 
-> However, IMHO, even though we just have a few hundred pages share one 
-> KSM page, it still sounds not worth reclaiming it in direct reclaim in 
-> low priority. According to Andrea's commit log, it still takes a few 
+Path [2] will switch between guest's kernel to host kernel, then the
+host kernel switches to user space to decide what should be done.  The
+guest host ->host kernel -> host user space switch is done on ever
+separate write attempt (which is approx 1000000 in this case) It took
+~5000 milliseconds to fail the 1M write attempt. and as the above one
+user space ROE will not affect this one that much and I am not aware
+of any possible optimization, yet ideas are welcomed.
 
-You've still to walk the entire chain for compaction and memory
-hotplug, otherwise the KSM page becomes practically
-unmovable. Allowing the rmap chain to grow to infinitely is still not
-ok.
+Path [3] will also switch between guest kernel to host kernel to host
+users pace...However the time taken to attempt 1M write took ~5000
+when the guest had less than 32 protected chunks system wide, as the
+number of chunks increased, the time also increased in a linear
+fashion till it reached 20 seconds took to do 1M write attempt when
+the system had about separate 2048 protected chunks. For this
+benchmark I allocated a page and protected every other byte :). I
+think this can be optimized by replacing the linked list used to keep
+track of chunks with maybe skip-list or Red Black tree. and It will be
+available in the next patch set. as the previous cases user space VS
+kernel space will not affect performance here at all.
 
-If the page should be reclaimed or not in direct reclaim is already
-told by page_referenced(), the more mappings there are the more likely
-at least one was touched and has the young bit set in the pte.
+Path [4] The guest kernel switches to host kernel and the write
+operation is done in the host kernel (note we saved a switch from host
+kernel to host user space)
+The host kernel emulates the write operation and get back to guest
+kernel. The writing speed was notably slow but on average twice the
+speed at Path[3] (~2900 ms for less than 32 chunks and it went up to
+11 seconds for 2048 chunks. Path [4] can be optimized the same way
+path [3].
 
-> msec to walk the rmap for 256 shared pages.
+Note that the dominating factor here is how many switches are done, If
+ROE was implemented in user-space, Path [4] which will be at least as
+slow as Path [3] which is about 2x slower.
 
-Those ~2.5msec was in the context of page migration: in the previous
-sentence I specified it takes 10usec for the IPI and all other stuff
-page migration has to do (which also largely depends on multiple
-factors like the total number of CPUs).
-
-page_referenced() doesn't flush the TLB during the rmap walk when it
-clears the accessed bit, so it's orders of magnitude faster than the
-real page migration at walking the KSM rmap chain.
-
-If the page migration latency of 256 max mappings is a concern the max
-sharing can be configured at runtime or the default max sharing can be
-reduced to 10 to give a max latency of ~100usec and it would still
-give a fairly decent x10 compression ratio. That's a minor detail to
-change if that's a concern.
-
-The only difference compared to all other page types is KSM pages can
-occasionally merge very aggressively and the apps have no way to limit
-the merging or even avoid it. We simply can't ask the app to create
-fewer equal pages..
-
-This is why the max sharing has to be limited inside KSM, then we
-don't need anything special in the VM anymore to threat KSM pages.
-
-As opposed the max sharing of COW anon memory post fork is limited by
-the number of fork invocations, for MAP_SHARED the sharing is limited
-by the number of mmaps, those don't tend to escalate to the million or
-they would run into other limits first. It's reasonable to expect the
-developer to optimize the app to create fewer mmaps or to use thread
-instead of processes to reduce the VM overhead in general (which will
-improve the rmap walks too).
-
-Note the MAP_SHARED/PRIVATE/anon-COW sharing can exceed 256 mappings
-too, you've just to fork 257 times in a row or much more realistically
-mmap the same glibc library 257 times in a row, so if something KSM is
-now less of a concern for occasional page_referenced worst case
-latencies, than all the rest of the page types.
-
-KSM by enforcing the max sharing is now the most RMAP walk
-computational complexity friendly of all the page types out there. So
-there's no need to threat it specially at low priority reclaim scans.
+I hope it is less ambiguous now.
 
 Thanks,
-Andrea
+
+--
+Ahmed.
+Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
+University, & CIS @  VMI
