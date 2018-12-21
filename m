@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0CEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39A7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82B8E2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEB72190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545378917;
-	bh=l37aqJNOKxj4jj6KYPCR6moiZ8hIl9Ypibh5fz8YXss=;
+	s=default; t=1545378920;
+	bh=QI9QzemGCZuiQ0yVS6Op/Kfzd4d/q4rBU/EK3EOMQjs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IccwSi90QFp9JzizxHQj5qcBasestDANo2v8iMvpc98dERdwqkxmLVnSK7S6/B9Ot
-	 UftT6SICHLqBrefx5KIgsXQbGwFrVlENUDcZoVEXMABQlLNjarSfsqm0+e2aHoYbjf
-	 7QUcbeZwRWiLUs0jq/XPrgGs5XZ0OqsjGho3V6EQ=
+	b=azTN/tBmHSDNsNEHhqrvj+5CWUDZDCrlEEyFkS1uOfREftg/8KFdV4dURCW3fhHZP
+	 dy5QGf/NnqZ5oHOYJgl7CbNCLRTjT9Hw0MaRlWpcLW6JYD67GuI3+GFcmuWiDN/HLu
+	 /tq6lDchjABOxarnLKk4JupRO/MlZu4Ztc4QADA4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbeLUHzQ (ORCPT
+        id S2387579AbeLUHzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:55:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59556 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 02:55:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730539AbeLUHzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:55:15 -0500
+        id S1730539AbeLUHzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 02:55:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F41821908;
-        Fri, 21 Dec 2018 07:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D01CE21908;
+        Fri, 21 Dec 2018 07:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545378914;
-        bh=l37aqJNOKxj4jj6KYPCR6moiZ8hIl9Ypibh5fz8YXss=;
+        s=default; t=1545378917;
+        bh=QI9QzemGCZuiQ0yVS6Op/Kfzd4d/q4rBU/EK3EOMQjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iD/Rds6GahO4OnDak9qUcYispzLapbGi+cswsHosF4azQGZ0er5EPDFlOpBZ2YIov
-         UuWaMJWhB6csKuQm1phJ4Igag5Zu0ZCCJvsHRTlJC+0wg1l1fvXWRX/pMbJKKs10gM
-         q5nG/v1Py93ER5/pTtM+15iDA6QPOK8lnEfT4leU=
+        b=qn/Mg2xavPOz+q9SCQ3FBCg68z91B8mMdDSzSgBnBiHSQQLe1acLE8IehDw51nYqQ
+         z/3dmuSNMgYNqL1m0zOxQ2jzzM5m17f7bLHi57TtNzQRUsZ5UQUNYzBHwQyhHvJ7L5
+         Y/piUFPK3wgXqPVERdyaVa1vmD0jAgjFW7YuNcVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 09/10] driver core: drop use of BUS_ATTR()
-Date:   Fri, 21 Dec 2018 08:54:41 +0100
-Message-Id: <20181221075442.17109-10-gregkh@linuxfoundation.org>
+Subject: [PATCH 10/10] driver core: remove BUS_ATTR()
+Date:   Fri, 21 Dec 2018 08:54:42 +0100
+Message-Id: <20181221075442.17109-11-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181221075442.17109-1-gregkh@linuxfoundation.org>
 References: <20181221075442.17109-1-gregkh@linuxfoundation.org>
@@ -55,36 +55,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are trying to get rid of BUS_ATTR() so drop the last user of it from
-the tree.  We had to "open code" it in order to prevent a function name
-conflict due to the use of DEVICE_ATTR_WO() earlier in the file :(
+There are now no in-kernel users of BUS_ATTR() so drop it from device.h
+
+Everyone should use BUS_ATTR_RO/RW/WO() from now on.
 
 Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/bus.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ include/linux/device.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index f10d56c61a46..575bd6d752bd 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -830,7 +830,14 @@ static ssize_t bus_uevent_store(struct bus_type *bus,
- 	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
- 	return count;
- }
--static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
-+/*
-+ * "open code" the old BUS_ATTR() macro here.  We want to use BUS_ATTR_WO()
-+ * here, but can not use it as earlier in the file we have
-+ * DEVICE_ATTR_WO(uevent), which would cause a clash with the with the store
-+ * function name.
-+ */
-+static struct bus_attribute bus_attr_uevent = __ATTR(uevent, S_IWUSR, NULL,
-+						     bus_uevent_store);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 1b25c7a43f4c..1e8ae731fb97 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -49,8 +49,6 @@ struct bus_attribute {
+ 	ssize_t (*store)(struct bus_type *bus, const char *buf, size_t count);
+ };
  
- /**
-  * bus_register - register a driver-core subsystem
+-#define BUS_ATTR(_name, _mode, _show, _store)	\
+-	struct bus_attribute bus_attr_##_name = __ATTR(_name, _mode, _show, _store)
+ #define BUS_ATTR_RW(_name) \
+ 	struct bus_attribute bus_attr_##_name = __ATTR_RW(_name)
+ #define BUS_ATTR_RO(_name) \
 -- 
 2.20.1
 
