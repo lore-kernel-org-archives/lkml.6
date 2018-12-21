@@ -2,280 +2,99 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03334C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D511C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF3E218E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC72A21905
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:15:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Y5j1IZG0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403772AbeLUCIZ (ORCPT
+        id S2403782AbeLUCPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 21:08:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728307AbeLUCIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 21:08:24 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CDEE2169747;
-        Fri, 21 Dec 2018 02:08:23 +0000 (UTC)
-Received: from x1.home (ovpn-116-92.phx2.redhat.com [10.3.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 293DF6B64E;
-        Fri, 21 Dec 2018 02:08:22 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 19:08:21 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Leonardo Augusto =?UTF-8?B?R3Vp?= =?UTF-8?B?bWFyw6Nlcw==?=
-         Garcia <lagarcia@br.ibm.com>,
-        Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH kernel v7 20/20] vfio_pci: Add NVIDIA GV100GL [Tesla
- V100 SXM2] subdriver
-Message-ID: <20181220190821.5a408f93@x1.home>
-In-Reply-To: <b296128d-be96-8683-b0c0-1eac0a7f18ca@ozlabs.ru>
-References: <20181220082350.58113-1-aik@ozlabs.ru>
-        <20181220082350.58113-21-aik@ozlabs.ru>
-        <20181220094604.7d172cbe@x1.home>
-        <8c4ee37c-8759-a618-0c38-034210858b89@ozlabs.ru>
-        <20181220183750.44535f1c@x1.home>
-        <b296128d-be96-8683-b0c0-1eac0a7f18ca@ozlabs.ru>
-Organization: Red Hat
+        Thu, 20 Dec 2018 21:15:36 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11673 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728307AbeLUCPg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 21:15:36 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1c4cc10001>; Thu, 20 Dec 2018 18:15:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 20 Dec 2018 18:15:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 20 Dec 2018 18:15:35 -0800
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 21 Dec
+ 2018 02:15:35 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Fri, 21 Dec 2018 02:15:35 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c1c40f70000>; Thu, 20 Dec 2018 17:25:16 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
+        <ulf.hansson@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V5 0/3] HW Command Queue support for Tegra SDMMC
+Date:   Thu, 20 Dec 2018 17:25:06 -0800
+Message-ID: <1545355509-6914-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Dec 2018 02:08:24 +0000 (UTC)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545358529; bh=aaSnbL4eGvdYFH7b2ggmhWrZuqvFNA6cvrjtDhBxGds=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Y5j1IZG0W0BMA8BS2aNeotfEBMadsf+z7tKJVUi/LWrjUprwURHclGEfPfRiTDKYg
+         6u2tN3H4rDwSOFfae+K8IqEJIuPJ2noGDd6KbEZBODYvwqb7e8hbpchHl2AV1wOLSN
+         1yBEeCcUqIXHJqs8ptHCmm8+y/Gq8FukjgiSLnKV1f1KqfKEHut/LldqAZqxJjBAEI
+         /6ipOb1+2qqzivrWmWZsHm1/x0AC7GtbaW/iE1XpyR+OWJMspn1V97ZizEj5u7g0Iw
+         imqNHZ/FYd1x67C0/1l6zhEPSUDwMSJ7W9uM7aDdKNSTAEYZqGMmsMupwrkmxllUhp
+         t7mX2YwP1oriQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Dec 2018 12:50:00 +1100
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+This patch series is for HW Command Queue support for Tegra SDMMC.
 
-> On 21/12/2018 12:37, Alex Williamson wrote:
-> > On Fri, 21 Dec 2018 12:23:16 +1100
-> > Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> >   
-> >> On 21/12/2018 03:46, Alex Williamson wrote:  
-> >>> On Thu, 20 Dec 2018 19:23:50 +1100
-> >>> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> >>>     
-> >>>> POWER9 Witherspoon machines come with 4 or 6 V100 GPUs which are not
-> >>>> pluggable PCIe devices but still have PCIe links which are used
-> >>>> for config space and MMIO. In addition to that the GPUs have 6 NVLinks
-> >>>> which are connected to other GPUs and the POWER9 CPU. POWER9 chips
-> >>>> have a special unit on a die called an NPU which is an NVLink2 host bus
-> >>>> adapter with p2p connections to 2 to 3 GPUs, 3 or 2 NVLinks to each.
-> >>>> These systems also support ATS (address translation services) which is
-> >>>> a part of the NVLink2 protocol. Such GPUs also share on-board RAM
-> >>>> (16GB or 32GB) to the system via the same NVLink2 so a CPU has
-> >>>> cache-coherent access to a GPU RAM.
-> >>>>
-> >>>> This exports GPU RAM to the userspace as a new VFIO device region. This
-> >>>> preregisters the new memory as device memory as it might be used for DMA.
-> >>>> This inserts pfns from the fault handler as the GPU memory is not onlined
-> >>>> until the vendor driver is loaded and trained the NVLinks so doing this
-> >>>> earlier causes low level errors which we fence in the firmware so
-> >>>> it does not hurt the host system but still better be avoided; for the same
-> >>>> reason this does not map GPU RAM into the host kernel (usual thing for
-> >>>> emulated access otherwise).
-> >>>>
-> >>>> This exports an ATSD (Address Translation Shootdown) register of NPU which
-> >>>> allows TLB invalidations inside GPU for an operating system. The register
-> >>>> conveniently occupies a single 64k page. It is also presented to
-> >>>> the userspace as a new VFIO device region. One NPU has 8 ATSD registers,
-> >>>> each of them can be used for TLB invalidation in a GPU linked to this NPU.
-> >>>> This allocates one ATSD register per an NVLink bridge allowing passing
-> >>>> up to 6 registers. Due to the host firmware bug (just recently fixed),
-> >>>> only 1 ATSD register per NPU was actually advertised to the host system
-> >>>> so this passes that alone register via the first NVLink bridge device in
-> >>>> the group which is still enough as QEMU collects them all back and
-> >>>> presents to the guest via vPHB to mimic the emulated NPU PHB on the host.
-> >>>>
-> >>>> In order to provide the userspace with the information about GPU-to-NVLink
-> >>>> connections, this exports an additional capability called "tgt"
-> >>>> (which is an abbreviated host system bus address). The "tgt" property
-> >>>> tells the GPU its own system address and allows the guest driver to
-> >>>> conglomerate the routing information so each GPU knows how to get directly
-> >>>> to the other GPUs.
-> >>>>
-> >>>> For ATS to work, the nest MMU (an NVIDIA block in a P9 CPU) needs to
-> >>>> know LPID (a logical partition ID or a KVM guest hardware ID in other
-> >>>> words) and PID (a memory context ID of a userspace process, not to be
-> >>>> confused with a linux pid). This assigns a GPU to LPID in the NPU and
-> >>>> this is why this adds a listener for KVM on an IOMMU group. A PID comes
-> >>>> via NVLink from a GPU and NPU uses a PID wildcard to pass it through.
-> >>>>
-> >>>> This requires coherent memory and ATSD to be available on the host as
-> >>>> the GPU vendor only supports configurations with both features enabled
-> >>>> and other configurations are known not to work. Because of this and
-> >>>> because of the ways the features are advertised to the host system
-> >>>> (which is a device tree with very platform specific properties),
-> >>>> this requires enabled POWERNV platform.
-> >>>>
-> >>>> The V100 GPUs do not advertise any of these capabilities via the config
-> >>>> space and there are more than just one device ID so this relies on
-> >>>> the platform to tell whether these GPUs have special abilities such as
-> >>>> NVLinks.
-> >>>>
-> >>>> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> >>>> ---
-> >>>> Changes:
-> >>>> v6.1:
-> >>>> * fixed outdated comment about VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD
-> >>>>
-> >>>> v6:
-> >>>> * reworked capabilities - tgt for nvlink and gpu and link-speed
-> >>>> for nvlink only
-> >>>>
-> >>>> v5:
-> >>>> * do not memremap GPU RAM for emulation, map it only when it is needed
-> >>>> * allocate 1 ATSD register per NVLink bridge, if none left, then expose
-> >>>> the region with a zero size
-> >>>> * separate caps per device type
-> >>>> * addressed AW review comments
-> >>>>
-> >>>> v4:
-> >>>> * added nvlink-speed to the NPU bridge capability as this turned out to
-> >>>> be not a constant value
-> >>>> * instead of looking at the exact device ID (which also changes from system
-> >>>> to system), now this (indirectly) looks at the device tree to know
-> >>>> if GPU and NPU support NVLink
-> >>>>
-> >>>> v3:
-> >>>> * reworded the commit log about tgt
-> >>>> * added tracepoints (do we want them enabled for entire vfio-pci?)
-> >>>> * added code comments
-> >>>> * added write|mmap flags to the new regions
-> >>>> * auto enabled VFIO_PCI_NVLINK2 config option
-> >>>> * added 'tgt' capability to a GPU so QEMU can recreate ibm,npu and ibm,gpu
-> >>>> references; there are required by the NVIDIA driver
-> >>>> * keep notifier registered only for short time
-> >>>> ---
-> >>>>  drivers/vfio/pci/Makefile           |   1 +
-> >>>>  drivers/vfio/pci/trace.h            | 102 ++++++
-> >>>>  drivers/vfio/pci/vfio_pci_private.h |  14 +
-> >>>>  include/uapi/linux/vfio.h           |  37 +++
-> >>>>  drivers/vfio/pci/vfio_pci.c         |  27 +-
-> >>>>  drivers/vfio/pci/vfio_pci_nvlink2.c | 482 ++++++++++++++++++++++++++++
-> >>>>  drivers/vfio/pci/Kconfig            |   6 +
-> >>>>  7 files changed, 667 insertions(+), 2 deletions(-)
-> >>>>  create mode 100644 drivers/vfio/pci/trace.h
-> >>>>  create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
-> >>>>    
-> >>> ...    
-> >>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >>>> index 8131028..5562587 100644
-> >>>> --- a/include/uapi/linux/vfio.h
-> >>>> +++ b/include/uapi/linux/vfio.h
-> >>>> @@ -353,6 +353,21 @@ struct vfio_region_gfx_edid {
-> >>>>  #define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
-> >>>>  };
-> >>>>  
-> >>>> +/*
-> >>>> + * 10de vendor sub-type
-> >>>> + *
-> >>>> + * NVIDIA GPU NVlink2 RAM is coherent RAM mapped onto the host address space.
-> >>>> + */
-> >>>> +#define VFIO_REGION_SUBTYPE_NVIDIA_NVLINK2_RAM	(1)
-> >>>> +
-> >>>> +/*
-> >>>> + * 1014 vendor sub-type
-> >>>> + *
-> >>>> + * IBM NPU NVlink2 ATSD (Address Translation Shootdown) register of NPU
-> >>>> + * to do TLB invalidation on a GPU.
-> >>>> + */
-> >>>> +#define VFIO_REGION_SUBTYPE_IBM_NVLINK2_ATSD	(1)
-> >>>> +
-> >>>>  /*
-> >>>>   * The MSIX mappable capability informs that MSIX data of a BAR can be mmapped
-> >>>>   * which allows direct access to non-MSIX registers which happened to be within
-> >>>> @@ -363,6 +378,28 @@ struct vfio_region_gfx_edid {
-> >>>>   */
-> >>>>  #define VFIO_REGION_INFO_CAP_MSIX_MAPPABLE	3
-> >>>>  
-> >>>> +/*
-> >>>> + * Capability with compressed real address (aka SSA - small system address)
-> >>>> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-> >>>> + */
-> >>>> +#define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT	4
-> >>>> +
-> >>>> +struct vfio_region_info_cap_nvlink2_ssatgt {
-> >>>> +	struct vfio_info_cap_header header;
-> >>>> +	__u64 tgt;
-> >>>> +};
-> >>>> +
-> >>>> +/*
-> >>>> + * Capability with an NVLink link speed.
-> >>>> + */    
-> >>>
-> >>> I was really hoping for something more like SSATGT above indicating the
-> >>> intended users and purpose, and an update to SSATGT since it's now used
-> >>> by both the GPU and NPU2.  This comment is correct, but it's basically
-> >>> useless, it doesn't provide any information that isn't readily apparent
-> >>> from the structure definition.  AIUI, SSATGT is used not only for the
-> >>> GPU to determine where its RAM is mapped on the system bus, but also by
-> >>> the NPU2 to associate itself to a GPU, right?    
-> >>
-> >> Correct. It could be improved by
-> >>
-> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >> index 5562587..ff238ef9c 100644
-> >> --- a/include/uapi/linux/vfio.h
-> >> +++ b/include/uapi/linux/vfio.h
-> >> @@ -380,7 +380,8 @@ struct vfio_region_gfx_edid {
-> >>
-> >>  /*
-> >>   * Capability with compressed real address (aka SSA - small system address)
-> >> - * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-> >> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing
-> >> + * and by the userspace to associate a NVLink bridge with a GPU.
-> >>   */
-> >>  #define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT    4
-> >>
-> >>
-> >>  
-> >>> And the link speed here
-> >>> is consumed by the NPU2 in order to fill in DT information for the
-> >>> guest for compatibility and possibly routing optimizations?    
-> >>
-> >>
-> >> It is just some speed number, 8 or 9, one works and the other does not,
-> >> depending on the actual system. The NVIDIA driver handles it in the
-> >> binary blob. The existing comment is not much use but I am really not
-> >> sure what other comment could be useful in here.  
-> > 
-> > So why do we need to expose it?  "Exposed on NPU2 devices for userspace
-> > to export to guest VM via DT(?) or else <something bad happens/doesn't  
-> > work> in the guest".  Work with me, there must be some justification  
-> > for why it gets exposed, not just what it is.  Thanks,  
-> 
-> 
-> How about this?
-> 
-> /*
->  * Capability with an NVLink link speed. The value is read by
->  * the NVlink2 bridge driver from the bridge's "ibm,nvlink-speed"
->  * property in the device tree. The value is fixed in the hardware
->  * and failing to provide the correct value results in the link
->  * not working with no indication from the driver why.
->  */
+Patch[3] adds HW Command Queue support for Tegra SDMMC and has
+dependencies on other patches in this series as explained below.
 
-I'll take it.  With the above two changes,
+Patch[2] SDMMC address range:
+This patch defines exact register space for all the SDMMC
+Controllers. Controllers supporting command queue are having
+CQHCI register space from offset 0xF000.
+Patch[3] uses address range of sdmmc controllers to identify command
+queue supported controllers
 
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
+Patch[1] Fix V4 Mode enable:
+V4 Mode need to be enabled to select Host Version 4.0 mode for HW Command
+queue support with Tegra SDHCI.
+
+Sowjanya Komatineni (3):
+  mmc: sdhci: Fix sdhci_do_enable_v4_mode
+  arm64: dtsi: Fix SDMMC address range
+  mmc: tegra: HW Command Queue Support for Tegra SDMMC
+
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi |   6 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi |   4 +-
+ drivers/mmc/host/Kconfig                 |   1 +
+ drivers/mmc/host/sdhci-tegra.c           | 138 ++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.c                 |   4 +-
+ 5 files changed, 145 insertions(+), 8 deletions(-)
+
+-- 
+2.7.4
+
