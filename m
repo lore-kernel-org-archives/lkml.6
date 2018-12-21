@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6444EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433C4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FB321903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B8C21903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLZtvqA4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4fXCXVg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389189AbeLUH27 (ORCPT
+        id S2389224AbeLUH3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:28:59 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43348 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389094AbeLUH24 (ORCPT
+        Fri, 21 Dec 2018 02:29:02 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40550 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389094AbeLUH27 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:28:56 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so2174728pfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 23:28:56 -0800 (PST)
+        Fri, 21 Dec 2018 02:28:59 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so2106338plq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 23:28:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oDlspMEXY11pfuqnXgV8Ua5/Uhfl1wFudJcG8S4/wow=;
-        b=dLZtvqA4mEk8wQmafr7J6dgJ5cx1PK6/B1CcO7UIJU3awqykyTxb1ndk31kSJtl25f
-         080zWhemTbzwSqvOs5VRLMb/k4CP69TJpNBg7UcmyEW8t6tHqqKpWZmcfEf3cN64uX6B
-         8cZ2jLGfVUrsihZjBBhGEywKIqj4MAe/rOyXUSjLC4/ik98GmhD5KnF2YFFUiRPjYpR8
-         6Ls4HUCCm5SQWRtZO/iFsfkr/IKHjEuG9HdjFcN3jr62KuSz7to0ZjSZwxBO8hS76Jyd
-         KWdiFsBZA8qxlZ9chcxyznBBXmRCQJwsjABTiQwAt7nZkU2OrpK4aSxO1OAOwVd8FxrD
-         FBTg==
+        bh=RaqdtYUCJCieQNtJZqwmymeAd3xo0RQ7s0z68Qw6EnM=;
+        b=d4fXCXVgKv/RnGcqnZVrs285PR1WONMXGRdsHIkdLA4UCngE/NalIRQgDwI4vnMgjK
+         6Stz4Fz684Il7TYq76ET+ZpSm2CV48jF8Qr29wjU7O+TRMsIM0clna8AyX2A9cfwO/VQ
+         YFZp+S6rwf3OYHVuaqH//1yrsp0uC6yJ8t5SOywbLFdD113RaO2mZQv1Qh6hkJ38M+tn
+         Hzp1OdXGphMhpGUanfA+RQqimzSv0GbFlzEmIhuTv6CBqZ2xTnpq5f+imQ6Z2qD4apGn
+         gTH9d26b1Y1arInxzJZfGYnK/KmHcqW/2rIAMzkRPV6A+9sKS493baTj3AAA1f7SyQXc
+         d9Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oDlspMEXY11pfuqnXgV8Ua5/Uhfl1wFudJcG8S4/wow=;
-        b=h+9GAAXDgseA42eiI2sVwDrzf2qub3h/ptDJG9KX/tLA7mXw39+hby2Sek4t3Ti5XN
-         vF5o1UjF+jhiIw3h579X+b7qR8eVB/XWfNVNS72AghXjKMd2WzitYPgH+9fDktdk/J5J
-         asSwMWAkz+75KHX9nzG416EMqdHy5hJAQkIiLseVpSFvWKBYM+BD+klZEnMOBUt6q+ny
-         QK+CE4woiXQ7nG62FAywPqhdxFBMxRvLMQq6s8hs44G+T75l1MHgI8qk9C952FN+n/8z
-         Cq3NjUq2+8UbGhO3CqTBzjpXavE9Z0L6+kq16ytYtrFFk41y4W+1oABfIzwX7pXbRL0Q
-         P5cQ==
-X-Gm-Message-State: AA+aEWY3kia4MOxJ/t+Qo7z9S3QRXrjDpXVgdqPVJWr/2DRfWONbQ3hm
-        9ihC5zd9y02G6T2+uqGAhveptpRV
-X-Google-Smtp-Source: AFSGD/XDaMP55AZlZ778x+Z4TEe82nLbX+s2Mkp6fg1Lqpzbh4TlhIRR0g6xEuJERFK7N3opnvTamQ==
-X-Received: by 2002:a62:442:: with SMTP id 63mr1399337pfe.156.1545377335613;
-        Thu, 20 Dec 2018 23:28:55 -0800 (PST)
+        bh=RaqdtYUCJCieQNtJZqwmymeAd3xo0RQ7s0z68Qw6EnM=;
+        b=a/VyjRmGX1KM3tKMj37rU3JAkfI1neiH5rBFNjZWrBIWOjQ70qYW6WATVYSF1osVLP
+         fuAPAcEcFQNO5H4Hast5YM1vw81WYE+utH29bP3bXoTJXGgTT/HZXiv5UrQ+USBGa4ZJ
+         vgznzTFofOs/DCMOgwVRTKYIpGRQ1hFpBik/n3xhTsutmlCuQrAPUILvuxHHdoCOCbNl
+         12Z7Wsaop6RjvWCl2FTK/9VscfvDJ6ns617w+1AqSGGGRUL02YgWKN+8gTGJBBj1ryxD
+         n0YhagbtNOX7Wvna26HfmlUFEWT/C97ewOSbGRiCD4MAYnrBb9Lnwo4iYIEeBCbOKtGe
+         5GEw==
+X-Gm-Message-State: AJcUuke5HD0AZ9wzONq8XLXg//kAZc8rq/ysJ1zI/vX7Nx4iY38JbPBT
+        vLx6v2AZxjvvoOTf+zYKjKucZ6sS
+X-Google-Smtp-Source: ALg8bN74SOnI/fjEYbyqeJgA4P/baUVCtiTo9IKkOnrGUt9T2vQEHupfJ8i96Teu7UX8udZOJfxmnQ==
+X-Received: by 2002:a17:902:6bc7:: with SMTP id m7mr1470918plt.106.1545377338843;
+        Thu, 20 Dec 2018 23:28:58 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id f20sm27688275pfn.177.2018.12.20.23.28.53
+        by smtp.gmail.com with ESMTPSA id f20sm27688275pfn.177.2018.12.20.23.28.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:28:54 -0800 (PST)
+        Thu, 20 Dec 2018 23:28:58 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-kernel <linux-kernel@vger.kernel.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         David Woodhouse <dwmw2@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 3/5] ihex: Simplify next record offset calculation
-Date:   Thu, 20 Dec 2018 23:28:39 -0800
-Message-Id: <20181221072841.30199-4-andrew.smirnov@gmail.com>
+Subject: [PATCH 5/5] tools/firmware/ihex2fw: Replace explicit alignment with ALIGN
+Date:   Thu, 20 Dec 2018 23:28:41 -0800
+Message-Id: <20181221072841.30199-6-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221072841.30199-1-andrew.smirnov@gmail.com>
 References: <20181221072841.30199-1-andrew.smirnov@gmail.com>
@@ -78,43 +78,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next record calucaltion can be reduced to a much more tivial ALIGN
-operation as follows:
-
-1. Splitting 5 into 2 + 3 we get
-
-   next = ((be16_to_cpu(rec->len) + 2 + 3) & ~3) - 2            (1)
-
-2. Using ALIGN macro we reduce (1) to:
-
-   ALIGN(be16_to_cpu(rec->len) + 2, 4) - 2                      (2)
-
-3. Subsituting 'next' in original next record calucation we get:
-
-   (void *)&rec->data[ALIGN(be16_to_cpu(rec->len) + 2, 4) - 2]  (3)
-
-4. Converting array index to pointer arithmetic we convert (3) into:
-
-   (void *)rec + sizeof(*rec) +
-   	 ALIGN(be16_to_cpu(rec->len) + 2, 4) - 2		(4)
-
-5. Subsituting sizeof(*rec) with its value, 6, and substracting 2,
-   in (4) we get:
-
-   (void *)rec + ALIGN(be16_to_cpu(rec->len) + 2, 4) + 4        (5)
-
-6. Since ALIGN(X, 4) + 4 == ALIGN(X + 4, 4), (5) can be converted to:
-
-   (void *)rec + ALIGN(be16_to_cpu(rec->len) + 6, 4)            (6)
-
-5. Subsituting 6 in (6) to sizeof(*rec) we get:
-
-   (void *)rec + ALIGN(be16_to_cpu(rec->len) + sizeof(*rec), 4) (7)
-
-Using expression (7) should make it more clear that next record is
-located by adding full size of the current record (payload + auxiliary
-data) aligned to 4 bytes, to the location of the current one. No
-functional change intended.
+(X + 3) & ~3 is the same as ALIGN(X, 4), so replace all of the
+instances of the formwer in the code with the latter. While at it,
+introduce a helper variable 'record_size' to avoid duplicating length
+calculatin code. No functional change intended.
 
 Cc: Chris Healy <cphealy@gmail.com>
 Cc: Kyle McMartin <kyle@kernel.org>
@@ -125,35 +92,37 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- include/linux/ihex.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/firmware/ihex2fw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ihex.h b/include/linux/ihex.h
-index 9130f307a420..98cb5ce0b0a0 100644
---- a/include/linux/ihex.h
-+++ b/include/linux/ihex.h
-@@ -21,14 +21,18 @@ struct ihex_binrec {
- 	uint8_t data[0];
- } __attribute__((packed));
- 
-+static inline uint16_t ihex_binrec_size(const struct ihex_binrec *p)
-+{
-+	return be16_to_cpu(p->len) + sizeof(*p);
-+}
-+
- /* Find the next record, taking into account the 4-byte alignment */
- static inline const struct ihex_binrec *
- __ihex_next_binrec(const struct ihex_binrec *rec)
+diff --git a/tools/firmware/ihex2fw.c b/tools/firmware/ihex2fw.c
+index e081cef730d8..8925b60e51f5 100644
+--- a/tools/firmware/ihex2fw.c
++++ b/tools/firmware/ihex2fw.c
+@@ -135,6 +135,7 @@ int main(int argc, char **argv)
+ static int process_ihex(uint8_t *data, ssize_t size)
  {
--	int next = ((be16_to_cpu(rec->len) + 5) & ~3) - 2;
--	rec = (void *)&rec->data[next];
-+	const void *p = rec;
+ 	struct ihex_binrec *record;
++	size_t record_size;
+ 	uint32_t offset = 0;
+ 	uint32_t data32;
+ 	uint8_t type, crc = 0, crcbyte = 0;
+@@ -161,12 +162,13 @@ static int process_ihex(uint8_t *data, ssize_t size)
+ 		len <<= 8;
+ 		len += hex(data + i, &crc); i += 2;
+ 	}
+-	record = malloc((sizeof (*record) + len + 3) & ~3);
++	record_size = ALIGN(sizeof(*record) + len, 4);
++	record = malloc(record_size);
+ 	if (!record) {
+ 		fprintf(stderr, "out of memory for records\n");
+ 		return -ENOMEM;
+ 	}
+-	memset(record, 0, (sizeof(*record) + len + 3) & ~3);
++	memset(record, 0, record_size);
+ 	record->len = len;
  
--	return rec;
-+	return p + ALIGN(ihex_binrec_size(rec), 4);
- }
- 
- static inline const struct ihex_binrec *
+ 	/* now check if we have enough data to read everything */
 -- 
 2.19.1
 
