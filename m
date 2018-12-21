@@ -2,139 +2,112 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D8CC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C5DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1001D21920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFE521924
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545403735;
-	bh=T5elvB5MF4G4yEKPHw9Ik3m5fzWfaBaOaXVwOSl8syE=;
+	s=default; t=1545403769;
+	bh=tEdcXntZBNF5npTYm4g0ETjv8TdsgAsyd0iFGuyz7e4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mkm7tgy+dz6jdK4oqwk258G6R/CB1NLWcFbzgMG+UA2+cFQs243aHSgOmHrekIcfS
-	 qOc3Bm40yPv7FtsXU7h1q3ox5Nwb0pKTzU9Gjrtus4G967YB38cCEFYoAC42MTN3M9
-	 dqU+GqyZBRLG0LpzQ1twypOmgPl+2UtPuE7sIDTk=
+	b=W/SB+0lelzlc/ln8AaPepDDvCzUdf51OTGOD/SdPPDdwA1Ljer9xwPANAJHLgTLMu
+	 7KmIgML7yuMGbgH6haDmo/RX4JdBdsTVJbUlD6UvpLGezVMpDDcIKuYGPqschmJFgo
+	 fLwwF0h/tZQBebQAIyNzVd3YFdgP9eMb/y7yFKeY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404009AbeLUOss (ORCPT
+        id S2390879AbeLUOt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 09:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41170 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 09:49:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403992AbeLUOso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 09:48:44 -0500
+        id S1729556AbeLUOt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 09:49:27 -0500
 Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98E0621920;
-        Fri, 21 Dec 2018 14:48:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE1E321920;
+        Fri, 21 Dec 2018 14:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545403722;
-        bh=T5elvB5MF4G4yEKPHw9Ik3m5fzWfaBaOaXVwOSl8syE=;
+        s=default; t=1545403767;
+        bh=tEdcXntZBNF5npTYm4g0ETjv8TdsgAsyd0iFGuyz7e4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FHqPKpnmHFzxGMBOTYPHMfN0PuNPcqjO2pV5kHNLsPjjsCSE1Q5MWrRfe5RElDpxn
-         oThPACnY+sG62rPli33QtJwUPMoSFcw/vfBUIhOEBKBqOGNnyGjlCQyy3B4HyflbTx
-         9UcDr+dSaavyNQUrCg5KAGctTt5xRIspl4Gys0TE=
-Date:   Fri, 21 Dec 2018 22:48:36 +0800
+        b=PmP9haVwWc6DKinmAB9Iz4MLDiaRWuDWT6E4Vv50wAozVCxWNx1h/LnWXpLP6Idio
+         tt/jEW6zsS+FlwngLkgnCImVmDmK4xpps+zCXi/GaO2jtuguyMDy+JPsXf74epYVlJ
+         YDyMJ1+mUzIcEWfM3mANgWQHx7TnFVQ3/RlZdQ54=
+Date:   Fri, 21 Dec 2018 22:49:21 +0800
 From:   Guo Ren <guoren@kernel.org>
 To:     "Dmitry V. Levin" <ldv@altlinux.org>
 Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/27] csky: define syscall_get_arch()
-Message-ID: <20181221144836.GA4267@guoren-Inspiron-7460>
+Subject: Re: [PATCH v6 07/27] elf-em.h: add EM_CSKY
+Message-ID: <20181221144921.GB4267@guoren-Inspiron-7460>
 References: <20181213171833.GA5240@altlinux.org>
- <20181213172207.GH6024@altlinux.org>
- <20181214044412.GB15793@guoren-Inspiron-7460>
- <20181221023641.GC5396@altlinux.org>
+ <20181213172200.GG6024@altlinux.org>
+ <20181214044308.GA15793@guoren-Inspiron-7460>
+ <20181221023552.GB5396@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181221023641.GC5396@altlinux.org>
+In-Reply-To: <20181221023552.GB5396@altlinux.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 05:36:41AM +0300, Dmitry V. Levin wrote:
+On Fri, Dec 21, 2018 at 05:35:52AM +0300, Dmitry V. Levin wrote:
 > Hi,
 > 
-> On Fri, Dec 14, 2018 at 12:44:12PM +0800, Guo Ren wrote:
-> > Thx Dmitry,
-> > 
+> On Fri, Dec 14, 2018 at 12:43:08PM +0800, Guo Ren wrote:
 > > Reviewed-by: Guo Ren <guoren@kernel.org>
 > 
 > Given that the whole series is going to be pinged for quite some
 > time yet, would you mind taking this patch into the csky tree?
-OK.
+Ok
 
 Best Regards
  Guo Ren
-
->  
+> 
 > Thanks.
 > 
-> > On Thu, Dec 13, 2018 at 08:22:07PM +0300, Dmitry V. Levin wrote:
-> > > syscall_get_arch() is required to be implemented on all architectures
-> > > in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
-> > > request.
+> > On Thu, Dec 13, 2018 at 08:22:00PM +0300, Dmitry V. Levin wrote:
+> > > The uapi/linux/audit.h header is going to use EM_CSKY in order
+> > > to define AUDIT_ARCH_CSKY which is needed to implement
+> > > syscall_get_arch() which in turn is required to extend
+> > > the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+> > > 
+> > > The value for EM_CSKY has been taken from arch/csky/include/asm/elf.h
+> > > and confirmed by binutils:include/elf/common.h
 > > > 
 > > > Cc: Guo Ren <guoren@kernel.org>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Cc: Eric Paris <eparis@redhat.com>
 > > > Cc: Oleg Nesterov <oleg@redhat.com>
 > > > Cc: Andy Lutomirski <luto@kernel.org>
 > > > Cc: Elvira Khabirova <lineprinter@altlinux.org>
 > > > Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> > > Cc: linux-audit@redhat.com
 > > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 > > > ---
 > > > 
 > > > Notes:
 > > >     v6: unchanged
 > > > 
-> > >  arch/csky/include/asm/syscall.h | 7 +++++++
-> > >  include/uapi/linux/audit.h      | 1 +
-> > >  2 files changed, 8 insertions(+)
+> > >  include/uapi/linux/elf-em.h | 1 +
+> > >  1 file changed, 1 insertion(+)
 > > > 
-> > > diff --git a/arch/csky/include/asm/syscall.h b/arch/csky/include/asm/syscall.h
-> > > index 926a64a8b4ee..d637445737b7 100644
-> > > --- a/arch/csky/include/asm/syscall.h
-> > > +++ b/arch/csky/include/asm/syscall.h
-> > > @@ -6,6 +6,7 @@
-> > >  #include <linux/sched.h>
-> > >  #include <linux/err.h>
-> > >  #include <abi/regdef.h>
-> > > +#include <uapi/linux/audit.h>
+> > > diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+> > > index 42b7546352a6..ee0b26ab92b0 100644
+> > > --- a/include/uapi/linux/elf-em.h
+> > > +++ b/include/uapi/linux/elf-em.h
+> > > @@ -45,6 +45,7 @@
+> > >  #define EM_ARCV2	195	/* ARCv2 Cores */
+> > >  #define EM_RISCV	243	/* RISC-V */
+> > >  #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+> > > +#define EM_CSKY		252	/* C-SKY processor family */
+> > >  #define EM_FRV		0x5441	/* Fujitsu FR-V */
 > > >  
-> > >  static inline int
-> > >  syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
-> > > @@ -68,4 +69,10 @@ syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
-> > >  	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
-> > >  }
-> > >  
-> > > +static inline int
-> > > +syscall_get_arch(void)
-> > > +{
-> > > +	return AUDIT_ARCH_CSKY;
-> > > +}
-> > > +
-> > >  #endif	/* __ASM_SYSCALL_H */
-> > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > > index 72aeea0a740d..55904a40d768 100644
-> > > --- a/include/uapi/linux/audit.h
-> > > +++ b/include/uapi/linux/audit.h
-> > > @@ -384,6 +384,7 @@ enum {
-> > >  #define AUDIT_ARCH_C6X		(EM_TI_C6000|__AUDIT_ARCH_LE)
-> > >  #define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
-> > >  #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
-> > > +#define AUDIT_ARCH_CSKY		(EM_CSKY|__AUDIT_ARCH_LE)
-> > >  #define AUDIT_ARCH_FRV		(EM_FRV)
-> > >  #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
-> > >  #define AUDIT_ARCH_IA64		(EM_IA_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+> > >  /*
 > > > -- 
 > > > ldv
 > 
