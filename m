@@ -2,234 +2,111 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582A1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08A6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1372D218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:13:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BB30218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H5rxtO1A";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X8prDouE"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mMlR30Ny"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732976AbeLUINS (ORCPT
+        id S1733095AbeLUIOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:13:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40998 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730509AbeLUINR (ORCPT
+        Fri, 21 Dec 2018 03:14:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48506 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732939AbeLUIOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:13:17 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2F5296053B; Fri, 21 Dec 2018 08:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545379996;
-        bh=GjwTpVy9d8uEuliEBXqbCqXteFKRpN0TvzzwTpPcbXk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=H5rxtO1AKd8W9jS5QauqQxKfvsZtQyFb6YCfdfMNPFGy09XEqwyeqlK9rWTuMTGu4
-         hvaWckG8lPodgJlEY+qz1N3y5E8EVAScR21dQPanMM9Fj2h8Jfde/FrrNVqRCMdKSt
-         DqTNTlK3n9gpvOxJ9UJoMwSuc1ggEV+u2V5fj2TA=
-Received: from [10.206.25.155] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mgautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 060F8606FC;
-        Fri, 21 Dec 2018 08:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545379995;
-        bh=GjwTpVy9d8uEuliEBXqbCqXteFKRpN0TvzzwTpPcbXk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=X8prDouEiy5KRHAjiNHD7Jev2JETQnSDAc6vXEf5VGxKuqpdAXLQyH60a0e2LYQRV
-         OCWhWjmTS37j59z7XRaP7vSPi8NPPDHCnfpKdbwE9Tu+MWhk4CD4gyw/UYdAcLFdhB
-         XoVytbaAx4bzLDClJTm+zEbxucmY3q1OgNXDGHAE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 060F8606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v6 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY
- driver
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Jack Pham <jackp@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-References: <20181220010112.16824-1-shawn.guo@linaro.org>
- <20181220010112.16824-3-shawn.guo@linaro.org>
- <f106782b6d8e26ebf851f00563c68948@codeaurora.org>
- <20181220110956.GA17416@dragon>
-From:   Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <f5981b24-b769-2f48-7f93-10fb4f61caec@codeaurora.org>
-Date:   Fri, 21 Dec 2018 13:43:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 21 Dec 2018 03:14:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xj8v9RiCbsYFgncrU2PXgIx0psdaYzSXHjjjO5PYYDk=; b=mMlR30NyrMrmYfpBUO82lGYR1
+        Q18NYmKiGGVfpsJ9GRadPhfVQ9QJO+dBjiqGVmB1B8H7GqjVyjxhB/84x9CzEGoUeKAag9uCkk70S
+        dVCUjthvBBH0LMaEB9+cIXafXBG7jBIy2NxEKu8jEMlKAfBlPvuAf2OX/iDrmUKXjDv0gt0/U+l4V
+        7vXphmaPJobkLr91Pik7s5CchCARLNQmiI5tbEl5H5TERiQZR+JLynokQBiBSmfNvJq1HYDPlHb7e
+        xEH48Ycj8ElbCfWPrwEu5lZzrCGP3HQ7mu5a6KSI8FQIMc74IjhBlMGxeKeiKmCJijsZW9waLvkfa
+        EctBE5gHw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gaFwV-0005p4-Le; Fri, 21 Dec 2018 08:13:59 +0000
+Date:   Fri, 21 Dec 2018 00:13:59 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        rostedt@goodmis.org, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+Message-ID: <20181221081359.GA14707@infradead.org>
+References: <20181213140329.GA25339@infradead.org>
+ <CAAFQd5BudF84jVaiy7KwevzBZnfYUZggDK=4W=g+Znf5VJjHsQ@mail.gmail.com>
+ <20181214123624.GA5824@infradead.org>
+ <CAAFQd5BnZHhNjOc6HKt=YVBVQFCcqN0RxAcfDp3S+gDKRvciqQ@mail.gmail.com>
+ <20181218073847.GA4552@infradead.org>
+ <CAAFQd5AT3ixnbZRm3TOjoWrk2UNH0bXqgR+Z8wyjMhr0xHtSOg@mail.gmail.com>
+ <20181219075150.GA26656@infradead.org>
+ <CAAFQd5DJPDpFDxU_m2r02bA59J8RCHW7iE8zYQUmkL4sFSz05Q@mail.gmail.com>
+ <20181219145122.GA31947@infradead.org>
+ <CAAFQd5CsX-YJdwQUS+eEK6kj1xU94AiGHY0QX=QGnf67JcKyaQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181220110956.GA17416@dragon>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAFQd5CsX-YJdwQUS+eEK6kj1xU94AiGHY0QX=QGnf67JcKyaQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Dec 20, 2018 at 12:23:46PM +0900, Tomasz Figa wrote:
+> I haven't been following the problems with virtually tagged cases,
+> would you mind sharing some background, so that we can consider it
+> when adding non-consistent allocations to VB2?
 
-On 12/20/2018 4:39 PM, Shawn Guo wrote:
-> Hi Manu,
->
-> On Thu, Dec 20, 2018 at 09:33:43AM +0530, mgautam@codeaurora.org wrote:
->> Hi Shawn,
->>
->> On 2018-12-20 06:31, Shawn Guo wrote:
->>> It adds Synopsys 28nm Femto High-Speed USB PHY driver support, which
->>> is usually paired with Synopsys DWC3 USB controllers on Qualcomm SoCs.
->>>
->>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
->>> ---
->>
-...
->>> +struct hsphy_priv {
->> nit-pick - indentation for following structure members?
-> Hmm, my personal taste says no, because I found that it's hard to keep
-> the indentation when adding new members later.
-ok
->
->>> +	void __iomem *base;
->>> +	struct clk_bulk_data *clks;
->>> +	int num_clks;
->>> +	struct reset_control *phy_reset;
->>> +	struct reset_control *por_reset;
->>> +	struct regulator_bulk_data vregs[VREG_NUM];
->>> +	unsigned int voltages[VREG_NUM][VOL_NUM];
->>> +	const struct hsphy_data *data;
->>> +	bool cable_connected;
->> You can get cable-connected state from "enum phy_mode mode" which
->> is present in this driver.
->> E.g. cable_connected is false if mode is neither HOST nor DEVICE.
->>
->>
->>> +	struct extcon_dev *vbus_edev;
->>> +	struct notifier_block vbus_notify;
->> extcons not needed if you use "mode" for the same purpose.
-> The extcon is there for indicating cable connection status.  I'm not
-> sure that phy_mode can be used for that purpose.  For example, what
-> value would phy core set phy_mode to, if we disconnect the cable from
-> phy_mode being HOST or DEVICE?
+The problem exists at least partially with the current consistent
+allocator, and we need to fix it.  My non-coherent series does not have
+it, but we would add it if we allowed virtual remapping.
 
-it depends how it is used. Looks like it is used to decide whether to turn-off
-regulators or not. Unless you plan to add low power support as part of
-runtime-suspend of PHY during host mode, there is no reason to not turn-off
-regulators on pm_suspend(). Please refer to my comments below.
+The problem with get_sgtable is that it creates aliasing of kernel
+virtual addresses used to access memory and thus the cache.  We have
+the mapping return from dma_alloc_*, which in case of a remap contains
+a vmap/ioremap style address that is different from the kernel direct
+mapping address you get from using page_address/kmap on the pages
+backing that mapping.  (assuming you even have pages - in a few corner
+cases we don't and the whole interface concept breaks down).
 
->
->>
->>> +	enum phy_mode mode;
->>> +};
->>> +
->>
->>> +
->>> +static int qcom_snps_hsphy_vbus_notifier(struct notifier_block *nb,
->>> +					 unsigned long event, void *ptr)
->>> +{
->>> +	struct hsphy_priv *priv = container_of(nb, struct hsphy_priv,
->>> +						    vbus_notify);
->>> +	priv->cable_connected = !!event;
->>> +	return 0;
->>> +}
->>> +
->>> +static int qcom_snps_hsphy_power_on(struct phy *phy)
->> Can you instead merge this power_on function with phy_init?
-> I can do that, but what's the gain/advantage from doing that?
+This creates various problems as the the scatterlist returned from
+get_stable now gives a second way to access this memory through direct
+mapping addresses in the pages contained in it, but as soon as we do
+that we:
 
-dwc3 core calls phy_init() before power_on(). AFAIK, PHY regulators
-need to be ON before initializing it.
-
->
->>> +{
->>> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
->>> +	int ret;
->>> +
->>> +	if (priv->cable_connected) {
->> Why distinguish between cable connected vs not-connected?
-> This is based on the vendor driver implementation.  It does a more
-> aggressive low power management in case that cable is not connected,
-> i.e. turning off regulator and entering retention mode.
-
-I believe 'aggressive low power management' will be triggered on
-pm_suspend?
-And dwc3 core will in any case perform phy_exit()->phy_init() across
-pm_suspend/resume which will reset PHYs. Hence, there is no need to check
-for cable connected state here.
-
-
->
->>> +		ret = clk_bulk_prepare_enable(priv->num_clks, priv->clks);
->>> +		if (ret)
->>> +			return ret;
->>> +		qcom_snps_hsphy_disable_hv_interrupts(priv);
->>> +	} else {
->>> +		ret = qcom_snps_hsphy_enable_regulators(priv);
->>> +		if (ret)
->>> +			return ret;
->>> +		ret = clk_bulk_prepare_enable(priv->num_clks, priv->clks);
->>> +		if (ret)
->>> +			return ret;
->>> +		qcom_snps_hsphy_exit_retention(priv);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int qcom_snps_hsphy_power_off(struct phy *phy)
->>> +{
->>> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
->>> +
->>> +	if (priv->cable_connected) {
->>> +		qcom_snps_hsphy_enable_hv_interrupts(priv);
->>> +		clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
->>> +	} else {
->>> +		qcom_snps_hsphy_enter_retention(priv);
->>> +		clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
->>> +		qcom_snps_hsphy_disable_regulators(priv);
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>
->>
->> ..
->>> +static const struct phy_ops qcom_snps_hsphy_ops = {
->>> +	.init = qcom_snps_hsphy_init,
->>> +	.power_on = qcom_snps_hsphy_power_on,
->>> +	.power_off = qcom_snps_hsphy_power_off,
->>> +	.set_mode = qcom_snps_hsphy_set_mode,
->> .phy_exit()?
->> I believe that is needed as dwc3 core driver performs
->> phy_exit/phy_init across pm_suspend/resume.
-> I just do not see anything that we should be doing in .exit hook right
-> now.
-
-After you merge power_on() with phy_init() as per my previous comment,
-you can rely on phy_exit() to take care of putting PHY in low power state
-and turn off regulators as well.
-
->
-> Shawn
->
->>
->>> +	.owner = THIS_MODULE,
->>> +};
->>> +
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+ a) don't use the nocache mapping used by the coherent allocator if that
+    is on a per-mapping basis (which it is for many architectures), so
+    you do get data in the cache even when that might not be assumed
+ b) if the data returned from dma_alloc_coherent was not actually a
+    remap but a special pool of non-cached address the cache flushing
+    instructions might be invalid and caused problems
+ c) any cache flushing now operates on just those direct mappings, which
+    in case of the non-coherent allocator and access through the
+    remapped address does the wrong thing for virtually tagged caches
