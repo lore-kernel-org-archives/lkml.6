@@ -2,112 +2,135 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CF2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DC0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76FC621927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:23:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NxSrbpi5"
+	by mail.kernel.org (Postfix) with ESMTP id 9293221903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388618AbeLUQXt (ORCPT
+        id S2388712AbeLUQXz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:23:49 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33969 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388202AbeLUQXt (ORCPT
+        Fri, 21 Dec 2018 11:23:55 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:35027 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388202AbeLUQXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:23:49 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j2so5878111wrw.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:23:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MtxMedezO/SO2ydy0vk2j3ybDj6JbE4oP2cGnPpI5Zc=;
-        b=NxSrbpi5kRDPhyF7PbDz8tJGxTG6zf2v5rGgTjceDWTKm5Vo0mKm566wdJje9kq/U9
-         9dMdkZZ5A+wxfYw6VpjqWI5EZYteQhK6JVuFMPmJE9Eu/iX6Y/P8HlJlimnZCoOohn9V
-         wk7dYJQ5UGdPoTEE9nIbrcRoC4czmtRw3l/11Bh2rnXzZR/NORzqGPLjci06fMu6wMy8
-         MozeVxr0k7UXOzc6gZRcW0oLgBrinB3cNLW4WRz4xTHJqtEkbcBFgSkoNl2ntkOrFxkc
-         Bpcc/501nlL99fmrq12aVRlPeXD2FemsdvuUfddYVO0jcFqVpaiw8qAjNQWgG40nY+J2
-         a0zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MtxMedezO/SO2ydy0vk2j3ybDj6JbE4oP2cGnPpI5Zc=;
-        b=dXr3BoORzYiyt122S8cp41DHicPAStmPHbG1EQyzzVmcdaCbfovhvfGtDX/ZnTxWaa
-         A78OBjOuRwvFo8hLEe9zXP5InpZ33z1bV+/XSVUIuoioMvyCYo9VCiJGnVJbhzfklqRx
-         Djxu/xFcw4X97cjVOlygCGe4Lr6AoOKPLz9rFLb6Tymf0LLH5GCqatuFALmVqSc2Hh5A
-         nGDXRyHW2BP+XLsfoevwijWhEI8TQGZrEl/jDp8T2v2niSf+xxKHV3UraHGPzhQt0ugQ
-         H4J77PpmFHC+IdG5l7mu/taStFXqRjCINx8X2g3qtm8KXijzr6WtvJyuRkHYlw3elz9H
-         R4ow==
-X-Gm-Message-State: AJcUukdrAsl5MzJmfHIliyKbLwmNJpAxOdgVDAcsA5b/MFJRligD/Yl/
-        +uvTAgoP8BayeNXOEP7N/QUSJg==
-X-Google-Smtp-Source: ALg8bN4D9IA7ldCkcaDihBOGVxrYU3X/w2FnadUPOHt6tYF3r84YQpvEpNYy0RSYQ80qT5GTzJtx1w==
-X-Received: by 2002:a5d:6988:: with SMTP id g8mr3162627wru.33.1545409427230;
-        Fri, 21 Dec 2018 08:23:47 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id b13sm15712373wrn.28.2018.12.21.08.23.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 08:23:46 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
+        Fri, 21 Dec 2018 11:23:54 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gaNaM-0004aJ-UV; Fri, 21 Dec 2018 17:23:39 +0100
+Date:   Fri, 21 Dec 2018 17:23:38 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH] driver core: silence device link messages unless debugging
-Date:   Fri, 21 Dec 2018 17:23:41 +0100
-Message-Id: <20181221162341.9847-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.2
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Jari Ruusu <jariruusu@users.sourceforge.net>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3I/bcOhPw==?= <rkrcmar@redhat.com>,
+        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>
+Subject: [PATCH v4.9 STABLE] x86/fpu: Disable bottom halves while loading FPU
+ registers
+Message-ID: <20181221162338.dir7z3c76kucm6uh@linutronix.de>
+References: <20181204103726.750894136@linuxfoundation.org>
+ <20181204103731.697870447@linuxfoundation.org>
+ <5C07FC30.43601034@users.sourceforge.net>
+ <20181205190020.GO29510@zn.tnic>
+ <20181206105407.GH19891@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181206105407.GH19891@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On platforms making a fair use of regulators, the dev_info() messages
-coming from the device link function are a bit too verbose. The amount
-of message will increase further with the clock framework joining the
-device link party.
+The sequence
 
-These messages looks valuable for people debugging device link related
-issues, so dev_dbg() looks more appropriate than dev_info().
+  fpu->initialized = 1;		/* step A */
+  preempt_disable();		/* step B */
+  fpu__restore(fpu);
+  preempt_enable();
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+in __fpu__restore_sig() is racy in regard to a context switch.
+
+For 32bit frames, __fpu__restore_sig() prepares the FPU state within
+fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+particular) does not modify fpu->state it uses fpu__drop() which sets
+fpu->initialized to 0.
+
+After fpu->initialized is cleared, the CPU's FPU state is not saved
+to fpu->state during a context switch. The new state is loaded via
+fpu__restore(). It gets loaded into fpu->state from userland and
+ensured it is sane. fpu->initialized is then set to 1 in order to avoid
+fpu__initialize() doing anything (overwrite the new state) which is part
+of fpu__restore().
+
+A context switch between step A and B above would save CPU's current FPU
+registers to fpu->state and overwrite the newly prepared state. This
+looks like a tiny race window but the Kernel Test Robot reported this
+back in 2016 while we had lazy FPU support. Borislav Petkov made the
+link between that report and another patch that has been posted. Since
+the removal of the lazy FPU support, this race goes unnoticed because
+the warning has been removed.
+
+Disable bottom halves around the restore sequence to avoid the race. BH
+need to be disabled because BH is allowed to run (even with preemption
+disabled) and might invoke kernel_fpu_begin() by doing IPsec.
+
+ [ bp: massage commit message a bit. ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: stable@vger.kernel.org
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181120102635.ddv3fvavxajjlfqk@linutronix.de
+Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/base/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/fpu/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 04bbcd779e11..8d330f921ad7 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -301,7 +301,7 @@ struct device_link *device_link_add(struct device *consumer,
- 	list_add_tail_rcu(&link->s_node, &supplier->links.consumers);
- 	list_add_tail_rcu(&link->c_node, &consumer->links.suppliers);
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index ae52ef05d0981..769831d9fd114 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -342,10 +342,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
  
--	dev_info(consumer, "Linked as a consumer to %s\n", dev_name(supplier));
-+	dev_dbg(consumer, "Linked as a consumer to %s\n", dev_name(supplier));
++		local_bh_disable();
+ 		fpu->fpstate_active = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
  
-  out:
- 	device_pm_unlock();
-@@ -327,8 +327,8 @@ static void __device_link_del(struct kref *kref)
- {
- 	struct device_link *link = container_of(kref, struct device_link, kref);
- 
--	dev_info(link->consumer, "Dropping the link to %s\n",
--		 dev_name(link->supplier));
-+	dev_dbg(link->consumer, "Dropping the link to %s\n",
-+		dev_name(link->supplier));
- 
- 	if (link->flags & DL_FLAG_PM_RUNTIME)
- 		pm_runtime_drop_link(link->consumer);
+ 		return err;
+ 	} else {
 -- 
-2.19.2
+2.20.1
 
