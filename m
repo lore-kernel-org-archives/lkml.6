@@ -3,103 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8C5C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B57FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16B2121920
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545431098;
-	bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
-	h=Subject:Cc:To:From:In-Reply-To:References:Date:List-ID:From;
-	b=J2GY30yG/mbsa2rkUB8CG74ymP4Vn8GcQAeUkdgHNa2laU/zBDnjLSDbWky7awIhn
-	 IRFoXQzi4tP6+DDpGYvhdXVW4Dqp2IR3jKX0hObXR3eAEiDaS8Wa89IYOYuKO1YLnC
-	 uQ2RSd8teIeYfCY6+MNn2CRCvndRf+zklmtu/x54=
+	by mail.kernel.org (Postfix) with ESMTP id 522A921927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:29:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IqHU1uzx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404621AbeLUWY5 (ORCPT
+        id S2392151AbeLUW3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 17:24:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730887AbeLUWY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 17:24:56 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5774F21920;
-        Fri, 21 Dec 2018 22:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545431096;
-        bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
-        h=Subject:Cc:To:From:In-Reply-To:References:Date:From;
-        b=AryT69FKwnfM8l/GMYXzkyCEUepTNWGeBtUCKL66W42Ziw/tBfxBy25cM4+8hBXQN
-         Q8FFjMa7PZbvv6XIO9qHdlq/yGUj67CaI9EXTnqNZLpt5pQOK+T8xnc4lhP6xmw+Pd
-         kvLURBXzKMv8pVKRNX7g04FYtMXh2RUCVuCv2RaE=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 21 Dec 2018 17:29:51 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34027 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388822AbeLUW3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 17:29:50 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u89-v6so6060515lje.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 14:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d6F/ntyeS0LimzOMvDEhUtehPjr1FxHPx5RemdaDyDo=;
+        b=IqHU1uzx+SCFh2O2GRUNpfW15C/DK82UXXVEnR/NXmKcX5UqBy4LAchcJB/k6UsSw8
+         XnBB+ks/IZhoteINfxbXzFCG1cnYUhiE0wHKoIPB7nP2yo3aTMlA/bwrS3tbqRc/A45z
+         1UEOgAFRJqxd4PUWOWcdY2mk0RYTU5Tu9RhyQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d6F/ntyeS0LimzOMvDEhUtehPjr1FxHPx5RemdaDyDo=;
+        b=Vvw6nKoNA4Uy9+OvhvwD7xbo0a6H0Of4B9jx6qu7RxjgQppCA+4PODjgC9t1tiJon5
+         aY9DacwZyDIZRjemVJb+U5+liX93A9jHn+PtfAbIRkAihpOZu39B1mWZcDykMrha0n6B
+         Jtj6urcpyKyXiuUF+0/u37/eBNDFuTUDacHeQd9Owj0mtjLsGpBuH6HcJ6OrzwTMOOFY
+         aoQk1p8INxVcExMbSevrTNEqblu7rwfUP45WM35y18yKD83OD1Cb55uV0AwOMaIf0X9T
+         PWvZ9dRHVJaR01ja0L6Jm7iAuuTqah3lWIC+/B4jU5g0eBmRDY20FI1DekhksfEtP8UA
+         AeTA==
+X-Gm-Message-State: AJcUukdZ7keTVwcAssO+Z8RKGbjoru4TLwrJ2Iqd8Xr+f+5ey6r7R0jP
+        ueR8srt240kYgxnodNGoS9+NkAjiqnY=
+X-Google-Smtp-Source: ALg8bN71Au51UC45xuX+qtPKD/vz9qbXOkmZJfhq/tokONmOeQcgA07gYALr/Q38f2s6ce/FlPxPTQ==
+X-Received: by 2002:a2e:6c04:: with SMTP id h4-v6mr2592965ljc.92.1545431388012;
+        Fri, 21 Dec 2018 14:29:48 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id y11-v6sm4860924ljc.85.2018.12.21.14.29.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 14:29:47 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id g11-v6so6050119ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 14:29:46 -0800 (PST)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr2599069ljh.59.1545431386374;
+ Fri, 21 Dec 2018 14:29:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent clocks"
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
-User-Agent: alot/0.8
-References: <20181204163257.32085-1-jbrunet@baylibre.com> <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com> <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com> <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com> <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com> <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com> <63f9b6f613cab0db91c8363635aa673a11f75fba.camel@baylibre.com> <154509805561.19322.14057956205431846882@swboyd.mtv.corp.google.com> <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
-Message-ID: <154543109549.13075.4102525082189864496@swboyd.mtv.corp.google.com>
-Date:   Fri, 21 Dec 2018 14:24:55 -0800
+References: <20181221175618.968519903@goodmis.org> <20181221175659.208858193@goodmis.org>
+ <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+ <20181221144054.20bdeb33@gandalf.local.home> <CAHk-=wgSvRhj6KNRdn9gbK9RJVAswdtKSNjAxdf9O9vn04T5XQ@mail.gmail.com>
+ <20181221153526.5e6055ca@gandalf.local.home> <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
+ <20181221155435.38a9a221@gandalf.local.home> <871s6ad2br.fsf@igel.home>
+ <20181221160826.34c544e6@gandalf.local.home> <84199633fd49db573c9ba71f1992936422e907d4.camel@perches.com>
+In-Reply-To: <84199633fd49db573c9ba71f1992936422e907d4.camel@perches.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 21 Dec 2018 14:29:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whLFsxr751LsJoxe-E=4LVvh=hB-3MmQTLVRA5mMLHzJA@mail.gmail.com>
+Message-ID: <CAHk-=whLFsxr751LsJoxe-E=4LVvh=hB-3MmQTLVRA5mMLHzJA@mail.gmail.com>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper macro
+To:     Joe Perches <joe@perches.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2018-12-21 08:03:29)
-> On Mon, 2018-12-17 at 17:54 -0800, Stephen Boyd wrote:
-> >=20
-> > Ok. Thanks for the explanation. What should the framework do when the
-> > parent is not known? Mark the clk as not an orphan but parent it to
-> > NULL? That might work here.
->=20
-> I don't really get the difference in the framework ATM. Is this linked to=
- the
-> 'orphan probe defer logic' WIP you have been mentionning ?
+On Fri, Dec 21, 2018 at 2:20 PM Joe Perches <joe@perches.com> wrote:
+>
+> Using
+>
+> static inline bool str_has_prefix(const char *str, const char prefix[])
+> {
+>         return !strncmp(str, prefix, strlen(prefix));
+> }
+>
+> eliminates the strlen with gcc 4.8 (oldest I still have)
 
-Yes, we have orphan marking logic, but we haven't finished the topic and
-returned PROBE_DEFER for orphaned clks. It was blocked on some Allwinner
-drivers having problems but that was over a year ago so I don't see
-anything blocking us now. I really want to do it soon so now is the time
-to fix all of this and see what breaks.
+Ok, that looks like the right thing to do.
 
->=20
-> All this below is very interresting but it looks like a very complex way =
-to
-> solve what was initially a very simple problem, with considerations that =
-are
-> still WIP a this stage.
->=20
-> Even with these future constraints in mind, I don't understand how the
-> proposed patch changes anything to the situtation. A clock with a get_par=
-ent()
-> callback (and several known parents) may still return an out of bound val=
-ue
-> ... CCF will still have to deal with this case gracefully, as it is curre=
-ntly
-> doing
+Side note: in the kernel we disable the whole "unsigned vs signed"
+pointer warning entirely, exactly because of the "char *" vs "unsigned
+char *" problem.
 
-Ok. I think the problem you see is that the clk provider doesn't know
-anything besides parent name is a string? And so you're not sure how the
-provider can return NULL for "this clk won't ever appear", vs. an error
-pointer for "things failed while reading"?
-
-I think you understand I'm not trying to change clk_ops::get_parent().
-I'm sidestepping the problem and other problems that we have with the
-return type of that clk_op (u8) by introducing a new clk_op that can
-return an error pointer for exceptional cases. Drivers would need to
-migrate to this new clk op to fix the problem you're solving, and those
-drivers will also need to know what their clk parents are and what the
-clk_hw pointers are for them.
-
+                 Linus
