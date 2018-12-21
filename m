@@ -2,314 +2,70 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94456C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24816C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5892221906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:16:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Sh1qd7dx"
+	by mail.kernel.org (Postfix) with ESMTP id ED8C421905
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390821AbeLUCQN (ORCPT
+        id S2388708AbeLUCT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 21:16:13 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11701 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403803AbeLUCQK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 21:16:10 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1c4ce00000>; Thu, 20 Dec 2018 18:16:02 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 20 Dec 2018 18:16:09 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 20 Dec 2018 18:16:09 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 21 Dec
- 2018 02:16:06 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 21 Dec 2018 02:16:06 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1c410b0003>; Thu, 20 Dec 2018 17:25:36 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
-        <ulf.hansson@linaro.org>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V5 3/3] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-Date:   Thu, 20 Dec 2018 17:25:09 -0800
-Message-ID: <1545355509-6914-4-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545355509-6914-1-git-send-email-skomatineni@nvidia.com>
-References: <1545355509-6914-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 20 Dec 2018 21:19:59 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43865 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732301AbeLUCT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 21:19:59 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3E4EEBBAC63C5;
+        Fri, 21 Dec 2018 10:19:56 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 21 Dec 2018
+ 10:19:46 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dennis.dalessandro@intel.com>, <mike.marciniszyn@intel.com>,
+        <dledford@redhat.com>, <jgg@ziepe.ca>
+CC:     <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] IB/qib: Add missing err handle for qib_user_sdma_rb_insert
+Date:   Fri, 21 Dec 2018 10:19:38 +0800
+Message-ID: <20181221021938.13784-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545358563; bh=YcW0jSk2mEpyBkq9C9NZTaHi4y0btI5OvMS6KLex5fk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=Sh1qd7dxM9iBO1y16E3M+Kr+V5YFS9cs70E6epZsP7Znfjt8kI5+iICMZgvegz3MN
-         QGKe7sMzNDQLyn2+RFXyqVqn1wIGa4DXf7LXSH9N5cy7n7iUSaTl8k/A7vlIJ3WfRH
-         0yAfJurMT4Bu0xMLNWzbwPRUMqtWRGqxO5N8Tls87eQEgP4iVn8ahXflKFhdsKhKn6
-         0o1q7281CkwDEq0shwpEiRcoTcJGnTzotxe6dQDQIlL7UQHWpVFpjsTffeIJbw20w0
-         PWlFX7s90tSFzET78jjm/SxI/lIIrn149ZJFpP0c8pr8CGpGdkbL0IeNDkUE4k3Gwl
-         t1NjwnINDOJUg==
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds HW Command Queue for supported Tegra SDMMC
-controllers.
+It should goto err handle if qib_user_sdma_rb_insert fails,
+other than success return.
 
-Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
-use of 64_BIT DMA to disable 64-bit addressing mode access to the
-system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
-for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
-
-CQE need to use ADMA3 as it need to fetch task descriptor along
-with transfer descriptor, so this patch forces DMA Select to be
-ADMA3 for CQE.
-
-Tegra SDMMC Host design prevents write access to BLOCK_COUNT
-register when CQE is enabled to prevent SW from updating block
-size during Command Queue mode. As per eMMC5.1 device spec, block
-size of 512 B need to be set prior to enabling Command Queue.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Fixes: 67810e8c3c01 ("RDMA/qib: Remove all occurrences of BUG_ON()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/mmc/host/Kconfig       |   1 +
- drivers/mmc/host/sdhci-tegra.c | 138 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 138 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/qib/qib_user_sdma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 1b58739d9744..5aa2de2c7609 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
- 	depends on ARCH_TEGRA
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_CQHCI
- 	help
- 	  This selects the Tegra SD/MMC controller. If you have a Tegra
- 	  platform with SD or MMC devices, say Y or M here.
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7b95d088fdef..68b328df05ed 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -33,6 +33,7 @@
- #include <linux/ktime.h>
+diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband/hw/qib/qib_user_sdma.c
+index 31c523b..e87c0a7 100644
+--- a/drivers/infiniband/hw/qib/qib_user_sdma.c
++++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
+@@ -237,6 +237,8 @@ qib_user_sdma_queue_create(struct device *dev, int unit, int ctxt, int sctxt)
  
- #include "sdhci-pltfm.h"
-+#include "cqhci.h"
- 
- /* Tegra SDHOST controller vendor register definitions */
- #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-@@ -89,6 +90,9 @@
- #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
- #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
- 
-+/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-+#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-+
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
- 	u32 nvquirks;
-@@ -128,6 +132,7 @@ struct sdhci_tegra {
- 	u32 default_tap;
- 	u32 default_trim;
- 	u32 dqs_trim;
-+	bool enable_hwcq;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -836,6 +841,80 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
- 		tegra_host->pad_calib_required = true;
- }
- 
-+static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct cqhci_host *cq_host = mmc->cqe_private;
-+	unsigned long flags;
-+	u8 ctrl;
-+	u32 cqcfg = 0;
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
-+	ctrl &= ~SDHCI_CTRL_DMA_MASK;
-+	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
-+			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
-+		ctrl |= SDHCI_CTRL_ADMA64;
-+	else
-+		ctrl |= SDHCI_CTRL_ADMA32;
-+	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
-+
-+	/* Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
-+	 * registers when CQE is enabled.
-+	 */
-+	cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
-+	if (cqcfg & CQHCI_ENABLE)
-+		cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
-+
-+	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, 512),
-+		     SDHCI_BLOCK_SIZE);
-+
-+	if (cqcfg & CQHCI_ENABLE)
-+		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+
-+	/* Set maximum timeout */
-+	sdhci_writeb(host, 0xE, SDHCI_TIMEOUT_CONTROL);
-+
-+	host->ier = host->cqe_ier;
-+
-+	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-+	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-+
-+	host->cqe_on = true;
-+
-+	pr_debug("%s: sdhci: CQE on, IRQ mask %#x, IRQ status %#x\n",
-+		 mmc_hostname(mmc), host->ier,
-+		 sdhci_readl(host, SDHCI_INT_STATUS));
-+
-+	mmiowb();
-+	spin_unlock_irqrestore(&host->lock, flags);
-+}
-+
-+static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
-+
-+static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+
-+static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-+	.enable	= sdhci_tegra_cqe_enable,
-+	.disable = sdhci_cqe_disable,
-+	.dumpregs = sdhci_tegra_dumpregs,
-+};
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
-@@ -989,6 +1068,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
- 	.get_max_clock = tegra_sdhci_get_max_clock,
-+	.irq = sdhci_tegra_cqhci_irq,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-@@ -1030,6 +1110,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
- 
-+static int sdhci_tegra_add_host(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct cqhci_host *cq_host;
-+	bool dma64;
-+	int ret;
-+
-+	if (!tegra_host->enable_hwcq)
-+		return sdhci_add_host(host);
-+
-+	host->v4_mode = true;
-+
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent,
-+				sizeof(*cq_host), GFP_KERNEL);
-+	if (!cq_host) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-+	cq_host->ops = &sdhci_tegra_cqhci_ops;
-+
-+	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-+	if (dma64)
-+		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+
-+	ret = cqhci_init(cq_host, host->mmc, dma64);
-+	if (ret)
-+		goto cleanup;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	sdhci_cleanup_host(host);
-+	return ret;
-+
-+}
-+
- static int sdhci_tegra_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -1039,6 +1168,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	struct sdhci_tegra *tegra_host;
- 	struct clk *clk;
- 	int rc;
-+	struct resource *iomem;
- 
- 	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
- 	if (!match)
-@@ -1056,6 +1186,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->pad_control_available = false;
- 	tegra_host->soc_data = soc_data;
- 
-+	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-+		tegra_host->enable_hwcq = true;
-+	else
-+		tegra_host->enable_hwcq = false;
-+
- 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
- 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
- 		if (rc == 0)
-@@ -1117,7 +1253,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- 	usleep_range(2000, 4000);
- 
--	rc = sdhci_add_host(host);
-+	rc = sdhci_tegra_add_host(host);
- 	if (rc)
- 		goto err_add_host;
+ 		ret = qib_user_sdma_rb_insert(&qib_user_sdma_rb_root,
+ 					sdma_rb_node);
++		if (ret == 0)
++			goto err_rb;
+ 	}
+ 	pq->sdma_rb_node = sdma_rb_node;
  
 -- 
-2.7.4
+2.7.0
+
 
