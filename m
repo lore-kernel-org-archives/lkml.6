@@ -2,126 +2,137 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2207C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B18DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF4021903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:27:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPCt8xVC"
+	by mail.kernel.org (Postfix) with ESMTP id 16E9321903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:27:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbeLUH1k (ORCPT
+        id S1732889AbeLUH1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:27:40 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44930 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730788AbeLUH1k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:27:40 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e11so2096345plt.11;
-        Thu, 20 Dec 2018 23:27:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kOc0ZMWuA+wm6aVDJRuGECq2GcrB/9tzKOsAAmB0XOw=;
-        b=TPCt8xVCVDNxQebkP1nin8NzBDcA1ymLh+qmgaDZK2/R84wnC0MGL83O2AbRWUOMIl
-         aBz+6aVlXOFXp87rfma2dUDM7+FQhc/0kNuzxmMs0aojYjVMlulbqZH972LaSDHUaR3t
-         QWdxj4ms/Hqvayzoyuy4YlyJ4OLZP5BixfI6GlXQtL+7RegjwPqIVOJPYTouv1H0T5b+
-         5jiJBS+SI1eP2mSf4dbyd3Bv7MpN3YIP51YYOP5PuxYWALLGPM8fNEg0CdVWAw/SrKGw
-         LUSgAkc78RNyeNHrAExKXm8zzBtGaxLPB8ZQ/NmI+saNZAif8Rm5Zxfqbys0PDMuhohf
-         c4Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kOc0ZMWuA+wm6aVDJRuGECq2GcrB/9tzKOsAAmB0XOw=;
-        b=Tug9pO7nwi6O7T4vnX9ZQDN7RFmvW85Q9cZrWLYsVIrx3EkiNKVLYJEqHtP8Qvk9cF
-         hztYrVTGdcz9u6meCmT8qBy1Qs+0+2a9btOhAum4cT5UgJFToexGJU6wlctdibZQb4bL
-         pymRKBjJ7cQRGlixL/ML0ph3EALjt9WSqR185b2M/VCBOxFXsntECD9MtLJ/EoIe8ktk
-         4Ucy9fPyRu/epPKzePUJBCi5TwMOqVDaWKyj6X+9VhCIYLoYKztl7QWuJ+wwLeGP8R0q
-         3PbVduR6fa1IgmAHG7tS/v9vsJdmjJ09/hLJHWekDEAw67sxuKRmbsglYlhf7MMGhtla
-         ySLA==
-X-Gm-Message-State: AJcUukdq6017qwfLeSe/YqhPfGrbywCHlqxmYFHaND7I+UPDpBndNvFY
-        YJm1tZM9VYAH7Pnu+9iq35+y0rU3
-X-Google-Smtp-Source: ALg8bN7yfpjuiwJOykG2+SWyVOxDLnQslYnPFMp5CGu0sCI/4m5T4u96cgAQER5ge0VU9qEafNlb7w==
-X-Received: by 2002:a17:902:28e9:: with SMTP id f96mr1405913plb.169.1545377259137;
-        Thu, 20 Dec 2018 23:27:39 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:27:38 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pci@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/21] i.MX6, DesignWare PCI improvements
-Date:   Thu, 20 Dec 2018 23:26:55 -0800
-Message-Id: <20181221072716.29017-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 21 Dec 2018 02:27:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732589AbeLUH1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 02:27:43 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DA4EAC049587;
+        Fri, 21 Dec 2018 07:27:42 +0000 (UTC)
+Received: from localhost (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58BA51001914;
+        Fri, 21 Dec 2018 07:27:38 +0000 (UTC)
+Date:   Fri, 21 Dec 2018 15:27:36 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Pingfan Liu <kernelfans@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, kexec@lists.infradead.org
+Subject: Re: [PATCHv2] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20181221072736.GB2526@MiWiFi-R3L-srv>
+References: <1544760446-506-1-git-send-email-kernelfans@gmail.com>
+ <20181221071823.GA2526@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221071823.GA2526@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 21 Dec 2018 07:27:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Everyone:
-
-This is the series containing various small improvements that I made
-while reading the code and researching commit history of pci-imx6.c
-and pcie-designware*.c files. All changes are optional, so commits
-that don't seem like an improvement can be easily dropped. Hopefully
-each patch is self-explanatory.
-
-I tested this series on i.MX6Q, i.MX7D and i.MX8MQ.
-
-Feedback is welcome!
-
-Thanks,
-Andrey Smirnov
-
-Andrey Smirnov (21):
-  PCI: imx6: Simplify imx7d_pcie_wait_for_phy_pll_lock()
-  PCI: imx6: Remove redundant debug tracing
-  PCI: imx6: Return -ETIMEOUT from imx6_pcie_wait_for_speed_change()
-  PCI: imx6: Remove duplicate macro definitions
-  PCI: imx6: Remove PCIE_PL_PFLR_* constants
-  PCI: imx6: Remove PCIE_PHY_RX_ASIC_OUT* constants
-  PCI: designware: Make use of IS_ALIGNED()
-  PCI: designware: Share code for dw_pcie_rd/wr_other_conf()
-  PCI: imx6: Drop imx6_pcie_link_up()
-  PCI: designware: imx6: Share PHY debug register definitions
-  PCI: designware: Make use of BIT() in constant definitions
-  PCI: imx6: Make use of BIT() in constant definitions
-  PCI: imx6: Simplify bit operations in PHY functions
-  PCI: imx6: Simplify pcie_phy_poll_ack()
-  PCI: imx6: Restrict PHY register data to 16-bit
-  PCI: imx6: Pass data to dw_pcie_writel_dbi() directly
-  PCI: imx6: Use common mask in imx6_pcie_reset_phy()
-  PCI: imx6: Simplify bit operations in imx6_setup_phy_mpll()
-  PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
-  PCI: designware: Make use of GENMASK/FIELD_PREP
-  PCI: designware: Remove superfluous shifting in definitions
-
- drivers/pci/controller/dwc/pci-imx6.c         | 151 +++++++-----------
- .../pci/controller/dwc/pcie-designware-host.c |  61 +++----
- drivers/pci/controller/dwc/pcie-designware.c  |  18 +--
- drivers/pci/controller/dwc/pcie-designware.h  |  60 +++----
- 4 files changed, 116 insertions(+), 174 deletions(-)
-
--- 
-2.19.1
-
+On 12/21/18 at 03:18pm, Baoquan He wrote:
+> On 12/14/18 at 12:07pm, Pingfan Liu wrote:
+> > Customer reported a bug on a high end server with many pcie devices, where
+> > kernel bootup with crashkernel=384M, and kaslr is enabled. Even
+> > though we still see much memory under 896 MB, the finding still failed
+> > intermittently. Because currently we can only find region under 896 MB,
+> > if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
+> > randomly, and crashkernel reservation need be aligned to 128 MB, that's
+> > why failure is found. It raises confusion to the end user that sometimes
+> > crashkernel=X works while sometimes fails.
+> > If want to make it succeed, customer can change kernel option to
+> > "crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
+> > limited space to behave even though its grammer looks more generic.
+> > And we can't answer questions raised from customer that confidently:
+> > 1) why it doesn't succeed to reserve 896 MB;
+> > 2) what's wrong with memory region under 4G;
+> > 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
+> > 
+> > This patch simplifies the method suggested in the mail [1]. It just goes
+> > bottom-up to find a candidate region for crashkernel. The bottom-up may be
+> > better compatible with the old reservation style, i.e. still want to get
+> > memory region from 896 MB firstly, then [896 MB, 4G], finally above 4G.
+> > 
+> > There is one trivial thing about the compatibility with old kexec-tools:
+> > if the reserved region is above 896M, then old tool will fail to load
+> > bzImage. But without this patch, the old tool also fail since there is no
+> > memory below 896M can be reserved for crashkernel.
+> > 
+> > [1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Baoquan He <bhe@redhat.com>
+> > Cc: yinghai@kernel.org,
+> > Cc: vgoyal@redhat.com
+> > Cc: kexec@lists.infradead.org
+> > 
+> > ---
+> > v1->v2:
+> >   improve commit log
+> >  arch/x86/kernel/setup.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> This is a bug fix and urged by our customer.
+> 
+> I personally think crashkernel=xx@ is a generic synctax, the current
+                                 ~~ s/@/M
+> code making it search only under 896 MB seems not so reasonable.
+> 
+> Ack this patch.
+> 
+> Acked-by: Baoquan He <bhe@redhat.com>
+> 
+> Thanks
+> Baoquan
+> 
+> > 
+> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> > index d494b9b..60f12c4 100644
+> > --- a/arch/x86/kernel/setup.c
+> > +++ b/arch/x86/kernel/setup.c
+> > @@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
+> >  
+> >  	/* 0 means: find the address automatically */
+> >  	if (crash_base <= 0) {
+> > +		if (!memblock_bottom_up())
+> > +			memblock_set_bottom_up(true);
+> >  		/*
+> >  		 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
+> >  		 * as old kexec-tools loads bzImage below that, unless
+> >  		 * "crashkernel=size[KMG],high" is specified.
+> >  		 */
+> >  		crash_base = memblock_find_in_range(CRASH_ALIGN,
+> > -						    high ? CRASH_ADDR_HIGH_MAX
+> > -							 : CRASH_ADDR_LOW_MAX,
+> > -						    crash_size, CRASH_ALIGN);
+> > +			(max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
+> > +		if (!memblock_bottom_up())
+> > +			memblock_set_bottom_up(false);
+> > +
+> >  		if (!crash_base) {
+> >  			pr_info("crashkernel reservation failed - No suitable area found.\n");
+> >  			return;
+> > -- 
+> > 2.7.4
+> > 
