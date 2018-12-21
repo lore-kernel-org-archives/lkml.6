@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E1CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E994FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27E7218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B664F218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aKAOnzu3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R+dOB9dR"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KswQH5j7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vac2hGx2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388799AbeLUI5O (ORCPT
+        id S2388858AbeLUI5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:57:14 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36278 "EHLO
+        Fri, 21 Dec 2018 03:57:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36410 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731074AbeLUI5M (ORCPT
+        with ESMTP id S1731074AbeLUI5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:57:12 -0500
+        Fri, 21 Dec 2018 03:57:21 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1473360A34; Fri, 21 Dec 2018 08:57:09 +0000 (UTC)
+        id F2ADD60907; Fri, 21 Dec 2018 08:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545382631;
-        bh=loUAJ0iboL6djJPrZSB0IL3O5omoEDQdV+xk5yNOd6A=;
+        s=default; t=1545382639;
+        bh=nuHWGcWUUThB6j8DcysQBCA4+Kh2aUc8emNk//sFmdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aKAOnzu3cDJ89VmDnL6kUXur/YGkldBm9JUgnQfGQwwUe1knLJFAt+Mw9MO9IFvuR
-         Sk9/AVK/PXdh8BOHfhKJ8z/mlV45HebAE9Nb0QFSqunb73SxJop3/E0P7v9qdm3NN2
-         /3lWMpqlCzOf54KQX6xo7Gn6i+6LOunHT++wNYBg=
+        b=KswQH5j7aN8fEWHAqsj8TanoehnyrRTdDhfrbbBWBVP4fgC00y+GK3kxMJrT3a7H9
+         RqyS+jLvfXv8BU6TDQw/LXo/UMr09/DKB4zAjyLRCKIxgz+/BFuFbS42NrzNJ5AQDi
+         x/YmsSID6FXtxAtJourFxssCo8rVH2K9Rjwb48+Q=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7753609FD;
-        Fri, 21 Dec 2018 08:57:04 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F3E8260854;
+        Fri, 21 Dec 2018 08:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545382628;
-        bh=loUAJ0iboL6djJPrZSB0IL3O5omoEDQdV+xk5yNOd6A=;
+        s=default; t=1545382632;
+        bh=nuHWGcWUUThB6j8DcysQBCA4+Kh2aUc8emNk//sFmdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+dOB9dR5oiVRFrr3XUYq6ncPZhHasHd1FEzCa/KRbm8qmWSJx0WI6XpIFBxinsOi
-         3AG9YFDm9ZOwFAzHf40/1ntKWLKFwLD2ABo4dJFyWaq1FR/szOCoYwCyt/NQctBRK3
-         5+0+QaPmCC8BGrnTwy4JCTvHw9eZUbh0spb9mko8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7753609FD
+        b=Vac2hGx2i+748nA4OHzFJltxO1Wy9HTSbTnRWP/GsTE2ThMpniPrwJYbA3ZJ9F1fW
+         GCrqf+sFxhi5fWRUHS5KHofL9MD2e/n2SiJqdX5auqr2mqGDouLSGoci+2Els7zWMF
+         fth08QOwzpXmVXgtnb+Ctr4fXFpJrMaA+WNW/dxo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3E8260854
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -55,9 +55,9 @@ To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v8 09/10] soc: qcom: rpmpd: Use simple_opp_to_performance_state() helper
-Date:   Fri, 21 Dec 2018 14:26:21 +0530
-Message-Id: <20181221085622.25573-10-rnayak@codeaurora.org>
+Subject: [PATCH v8 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
+Date:   Fri, 21 Dec 2018 14:26:22 +0530
+Message-Id: <20181221085622.25573-11-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221085622.25573-1-rnayak@codeaurora.org>
 References: <20181221085622.25573-1-rnayak@codeaurora.org>
@@ -68,62 +68,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get rid of the duplicate code across rpmpd and rpmhpd to read the
-performance state value from Device tree and use the
-simple_opp_to_performance_state() helper instead.
+Specify the active + sleep and active-only MX power domains as
+the parents of the corresponding CX power domains. This will ensure that
+performance state requests on CX automatically generate equivalent requests
+on MX power domains.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
+This is used to enforce a requirement that exists for various
+hardware blocks on SDM845 that MX performance state >= CX performance
+state for a given operating frequency.
+
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/soc/qcom/rpmhpd.c | 11 +----------
- drivers/soc/qcom/rpmpd.c  | 11 +----------
- 2 files changed, 2 insertions(+), 20 deletions(-)
+ drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-index e37976e87370..f7fbe57f31ae 100644
+index f7fbe57f31ae..71d693c31e3b 100644
 --- a/drivers/soc/qcom/rpmhpd.c
 +++ b/drivers/soc/qcom/rpmhpd.c
-@@ -276,16 +276,7 @@ static int rpmhpd_set_performance_state(struct generic_pm_domain *domain,
- static unsigned int rpmhpd_get_performance_state(struct generic_pm_domain *genpd,
- 						 struct dev_pm_opp *opp)
- {
--	struct device_node *np;
--	unsigned int level = 0;
--
--	np = dev_pm_opp_get_of_node(opp);
--	if (of_property_read_u32(np, "qcom,level", &level))
--		pr_err("%s: missing 'qcom,level' property\n", __func__);
--
--	of_node_put(np);
--
--	return level;
-+	return simple_opp_to_performance_state(genpd, opp, "qcom,level");
+@@ -97,12 +97,14 @@ static struct rpmhpd sdm845_cx_ao;
+ static struct rpmhpd sdm845_cx = {
+ 	.pd = { .name = "cx", },
+ 	.peer = &sdm845_cx_ao,
++	.parent = &sdm845_mx.pd,
+ 	.res_name = "cx.lvl",
+ };
+ 
+ static struct rpmhpd sdm845_cx_ao = {
+ 	.pd = { .name = "cx_ao", },
+ 	.peer = &sdm845_cx,
++	.parent = &sdm845_mx_ao.pd,
+ 	.res_name = "cx.lvl",
+ };
+ 
+@@ -372,6 +374,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
+ 		data->domains[i] = &rpmhpds[i]->pd;
+ 	}
+ 
++	/* Add subdomains */
++	for (i = 0; i < num_pds; i++) {
++		if (!rpmhpds[i])
++			continue;
++		if (rpmhpds[i]->parent)
++			pm_genpd_add_subdomain(rpmhpds[i]->parent,
++					       &rpmhpds[i]->pd);
++	}
++
+ 	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
  }
  
- static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 59e21c88a144..29288af502b0 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -248,16 +248,7 @@ static int rpmpd_set_performance(struct generic_pm_domain *domain,
- static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
- 					  struct dev_pm_opp *opp)
- {
--	struct device_node *np;
--	unsigned int corner = 0;
--
--	np = dev_pm_opp_get_of_node(opp);
--	if (of_property_read_u32(np, "qcom,level", &corner))
--		pr_err("%s: missing 'qcom,level' property\n", __func__);
--
--	of_node_put(np);
--
--	return corner;
-+	return simple_opp_to_performance_state(genpd, opp, "qcom,level");
- }
- 
- static int rpmpd_probe(struct platform_device *pdev)
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
