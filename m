@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2DEC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284AD2176F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF58E2176F
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389540AbeLUK1x (ORCPT
+        id S2389561AbeLUK15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:27:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58678 "EHLO mx1.redhat.com"
+        Fri, 21 Dec 2018 05:27:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47070 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731787AbeLUK1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:27:52 -0500
+        id S2389541AbeLUK14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:27:56 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A73CD2EDB;
-        Fri, 21 Dec 2018 10:27:52 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id BD39D7FDE4;
+        Fri, 21 Dec 2018 10:27:55 +0000 (UTC)
 Received: from f28server.default (ovpn-116-118.phx2.redhat.com [10.3.116.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B8D6661527;
-        Fri, 21 Dec 2018 10:27:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9377A61527;
+        Fri, 21 Dec 2018 10:27:52 +0000 (UTC)
 From:   Daniel Bristot de Oliveira <bristot@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -42,20 +42,20 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V3 2/9] jump_label: Add the jump_label_can_update_check() helper
-Date:   Fri, 21 Dec 2018 11:27:27 +0100
-Message-Id: <1e758cd3b2206be96091a57a17b26585e94792b6.1545228276.git.bristot@redhat.com>
+Subject: [PATCH V3 3/9] x86/jump_label: Move checking code away from __jump_label_transform()
+Date:   Fri, 21 Dec 2018 11:27:28 +0100
+Message-Id: <296d5a75c4aee4a957ee7923127c0604903f9daa.1545228276.git.bristot@redhat.com>
 In-Reply-To: <cover.1545228276.git.bristot@redhat.com>
 References: <cover.1545228276.git.bristot@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 21 Dec 2018 10:27:52 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 21 Dec 2018 10:27:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the check of if a jump_entry is valid to a specific function. No
-functional change.
+Move the check of the current code, before updating an entry, to specialized
+functions. No changes in the method, only code relocation.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -76,56 +76,99 @@ Cc: Clark Williams <williams@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- kernel/jump_label.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ arch/x86/kernel/jump_label.c | 60 +++++++++++++++++++++++++-----------
+ 1 file changed, 42 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 65965eb1cf05..26bf54251218 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -376,22 +376,32 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
- 	return enabled ^ branch;
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index aac0c1f7e354..7894080bd02f 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -37,16 +37,53 @@ static void bug_at(unsigned char *ip, int line)
+ 	BUG();
  }
  
-+bool jump_label_can_update_check(struct jump_entry *entry, bool init)
++static inline void __jump_label_trans_check_enable(struct jump_entry *entry,
++						   enum jump_label_type type,
++						   const unsigned char *ideal_nop,
++						   int init)
 +{
-+	/*
-+	 * An entry->code of 0 indicates an entry which has been
-+	 * disabled because it was in an init text area.
-+	 */
-+	if (init || !jump_entry_is_init(entry)) {
-+		if (!kernel_text_address(jump_entry_code(entry))) {
-+			WARN_ONCE(1, "can't patch jump_label at %pS",
-+				  (void *)jump_entry_code(entry));
-+			return 0;
-+		}
-+		return 1;
++	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
++	const void *expect;
++	int line;
++
++	if (init) {
++		expect = default_nop; line = __LINE__;
++	} else {
++		expect = ideal_nop; line = __LINE__;
 +	}
-+	return 0;
++
++	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
++		bug_at((void *)jump_entry_code(entry), line);
 +}
 +
- static void __jump_label_update(struct static_key *key,
- 				struct jump_entry *entry,
- 				struct jump_entry *stop,
- 				bool init)
++static inline void __jump_label_trans_check_disable(struct jump_entry *entry,
++						    enum jump_label_type type,
++						    union jump_code_union *jmp,
++						    int init)
++{
++	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
++	const void *expect;
++	int line;
++
++	if (init) {
++		expect = default_nop; line = __LINE__;
++	} else {
++		expect = jmp->code; line = __LINE__;
++	}
++
++	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
++		bug_at((void *)jump_entry_code(entry), line);
++}
++
++
+ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 					 enum jump_label_type type,
+ 					 void *(*poker)(void *, const void *, size_t),
+ 					 int init)
  {
- 	for_each_label_entry(key, entry, stop) {
--		/*
--		 * An entry->code of 0 indicates an entry which has been
--		 * disabled because it was in an init text area.
--		 */
--		if (init || !jump_entry_is_init(entry)) {
--			if (kernel_text_address(jump_entry_code(entry)))
--				arch_jump_label_transform(entry, jump_label_type(entry));
--			else
--				WARN_ONCE(1, "can't patch jump_label at %pS",
--					  (void *)jump_entry_code(entry));
-+		if (jump_label_can_update_check(entry, init)) {
-+			arch_jump_label_transform(entry,
-+						  jump_label_type(entry));
- 		}
+ 	union jump_code_union jmp;
+-	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+ 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
+-	const void *expect, *code;
+-	int line;
++	const void *code;
+ 
+ 	jmp.jump = 0xe9;
+ 	jmp.offset = jump_entry_target(entry) -
+@@ -56,26 +93,13 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		poker = text_poke_early;
+ 
+ 	if (type == JUMP_LABEL_JMP) {
+-		if (init) {
+-			expect = default_nop; line = __LINE__;
+-		} else {
+-			expect = ideal_nop; line = __LINE__;
+-		}
+-
++		__jump_label_trans_check_enable(entry, type, ideal_nop, init);
+ 		code = &jmp.code;
+ 	} else {
+-		if (init) {
+-			expect = default_nop; line = __LINE__;
+-		} else {
+-			expect = &jmp.code; line = __LINE__;
+-		}
+-
++		__jump_label_trans_check_disable(entry, type, &jmp, init);
+ 		code = ideal_nop;
  	}
- }
+ 
+-	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
+-		bug_at((void *)jump_entry_code(entry), line);
+-
+ 	/*
+ 	 * Make text_poke_bp() a default fallback poker.
+ 	 *
 -- 
 2.17.1
 
