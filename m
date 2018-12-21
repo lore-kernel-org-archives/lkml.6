@@ -3,115 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4C8C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5619EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212E021773
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24FCC2190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391866AbeLUUgH (ORCPT
+        id S2390454AbeLUUjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:36:07 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:58889 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732146AbeLUUgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:36:07 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43M0l54Cvnz1qvwC;
-        Fri, 21 Dec 2018 21:36:01 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43M0l50hjwz1qsJh;
-        Fri, 21 Dec 2018 21:36:01 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id PpUddr77N0NU; Fri, 21 Dec 2018 21:35:59 +0100 (CET)
-X-Auth-Info: T06MoJD12PDo90wuQYGN6QtiOuFp/1X2KFMzFVVBw+k=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 21 Dec 2018 21:35:59 +0100 (CET)
-Subject: Re: [PATCH] Revert "serial: 8250: Fix clearing FIFOs in RS485 mode
- again"
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        Daniel Jedrychowski <avistel@gmail.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-References: <20181213174834.kxdy6fphaeoivqgh@pburton-laptop>
- <20181216200833.27928-1-paul.burton@mips.com>
- <93a3c76b-f4ba-57ae-9d80-6e945b4f3181@denx.de>
- <20181216213901.hpll7wqzhqvfgkfy@pburton-laptop>
- <28a1d4ae-493d-8bbc-46f7-ad41ca04d782@denx.de>
- <20181216222815.4t4xhaiy6rvfaogq@pburton-laptop>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <78839e8c-0278-6060-0dd2-a84a19258a8a@denx.de>
-Date:   Fri, 21 Dec 2018 21:08:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 21 Dec 2018 15:39:13 -0500
+Received: from mga18.intel.com ([134.134.136.126]:13640 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730319AbeLUUjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 15:39:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 12:39:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
+   d="scan'208";a="261396455"
+Received: from kmorgan8-mobl3.amr.corp.intel.com (HELO [10.252.128.152]) ([10.252.128.152])
+  by orsmga004.jf.intel.com with ESMTP; 21 Dec 2018 12:39:11 -0800
+Subject: Re: [alsa-devel] linux-next: Tree for Dec 21
+ (SND_HDA_INTEL_DSP_DETECTION)
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181221193244.3a6ed685@canb.auug.org.au>
+ <4d04710b-d661-fea7-2542-8e9c46f59173@infradead.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <ff6289e5-64c8-5787-0556-4e339205b5f6@linux.intel.com>
+Date:   Fri, 21 Dec 2018 14:39:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181216222815.4t4xhaiy6rvfaogq@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <4d04710b-d661-fea7-2542-8e9c46f59173@infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/2018 11:28 PM, Paul Burton wrote:
-> Hi Marek,
-> 
-> On Sun, Dec 16, 2018 at 11:01:18PM +0100, Marek Vasut wrote:
->>>>> I did suggest an alternative approach which would rename
->>>>> serial8250_clear_fifos() and split it into 2 variants - one that
->>>>> disables FIFOs & one that does not, then use the latter in
->>>>> __do_stop_tx_rs485():
->>>>>
->>>>> https://lore.kernel.org/lkml/20181213014805.77u5dzydo23cm6fq@pburton-laptop/
->>>>>
->>>>> However I have no access to the OMAP3 hardware that Marek's patch was
->>>>> attempting to fix & have heard nothing back with regards to him testing
->>>>> that approach, so here's a simple revert that fixes the Ingenic JZ4780.
->>>>>
->>>>> I've marked for stable back to v4.10 presuming that this is how far the
->>>>> broken patch may be backported, given that this is where commit
->>>>> 2bed8a8e7072 ("Clearing FIFOs in RS485 emulation mode causes subsequent
->>>>> transmits to break") that it tried to fix was introduced.
->>>>
->>>> OK, I tested this on AM335x / OMAP3 and the system is again broken, so
->>>> that's a NAK.
->>>
->>> To be clear - what did you test? This revert or the patch linked to
->>> above?
->>>
->>> This revert would of course reintroduce your RS485 issue because it just
->>> undoes your change.
+
+On 12/21/18 12:02 PM, Randy Dunlap wrote:
+> On 12/21/18 12:32 AM, Stephen Rothwell wrote:
+>> Hi all,
 >>
->> The revert. Which of the two patches do you need me to test.
-> 
-> The one in the email I sent on Thursday 13th at 01:48:06 UTC, linked to
-> at lore.kernel.org in the quote right above:
-> 
-> https://lore.kernel.org/lkml/20181213014805.77u5dzydo23cm6fq@pburton-laptop/
-> 
-> You replied with comments on the patch, you just never tested it or
-> never told me if you did. The lack of response means I don't know
-> whether that potential patch even still works for your system, hence the
-> revert.
+>> News: there will be no linux-next release until Jan 2.  Have a good break.
+>>
+>> Changes since 20181220:
+>>
+> on x86_64:
+>
+> A new group of Kconfig "select"s is causing kconfig warnings:
+>
+> WARNING: unmet direct dependencies detected for SND_HDA_INTEL_DSP_DETECTION_CFL
+>    Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_HDA [=n] && SND_HDA_INTEL [=n]
+>    Selected by [y]:
+>    - SND_SOC_INTEL_SKYLAKE_COMMON [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_INTEL_SST_TOPLEVEL [=y] && SND_SOC_INTEL_SKYLAKE_FAMILY [=y] && SND_SOC_INTEL_CFL [=y]
 
-I shared the entire testcase, which now fails on AM335x due to this
-revert. Is there any progress on a proper fix from your side which does
-not break the AM335x ?
+Ack, thanks for the report. This shouldn't have any functional impact 
+but we can easily remove the warnings. will send a patch shortly.
 
--- 
-Best regards,
-Marek Vasut
+-Pierre
+
