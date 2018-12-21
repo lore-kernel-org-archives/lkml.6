@@ -2,114 +2,160 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF01C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42C7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB21206BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B89821903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:33:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cE1+93jW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NwKnrSXn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388086AbeLUAbG (ORCPT
+        id S2388133AbeLUAdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 19:31:06 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35731 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729523AbeLUAbF (ORCPT
+        Thu, 20 Dec 2018 19:33:16 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:62082 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbeLUAdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 19:31:05 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so1707493pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z8IX5khWv6NwCaeddsyQb3gmTaVRx0LhYfdFanUsyfM=;
-        b=cE1+93jWliwNGhlYPDAEWMc7vrx2LgcjvWB7bzWGqCfbTIilOB4/8ouHRGONHzkX2f
-         iRZw1Btdp5LHCvdHtr74bo0FZvEJs3jWgiUR85qP4uZlUwOD5cEIBnVeYPQJGrthwAqC
-         0wwUv1MgMVZANzse9IHtodVKAmGohWY2qDh6o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=z8IX5khWv6NwCaeddsyQb3gmTaVRx0LhYfdFanUsyfM=;
-        b=bSLxOmDBN9DCXfDcpxtLkvYLPXogVkkDK7hmk9ZNMrLEAW4cZ24BGCych7mvPvcpTs
-         pY2jlbtVEXo7lXrI1GYiQ5s25TZuDqGThNgyI2hdyE42Jiu0k7108xYMZpnhQ7pPTSKn
-         QnjuuqGGOW05xANkOXsOfDxLLDe7VprElB/0NcNpO6YrVNXhdIeN4FJVu19bRIuAxGUP
-         mAOscGW+26Btk9DGgghKEsn5UbedKYRtBdhRBi8QtceG4tguP5+G4GR+VRDv/YNZWu24
-         WcLUzVueI6NnTgLsiw7KF+kxEHmkLLBUMOWBgXZ+iAXimBSM31oYXX/2lwCp7Cdq6fdk
-         Qfmg==
-X-Gm-Message-State: AJcUukeKuByo1DrtN8ag/+mGLba083cmpbpXuXN0vK5wBQRuxG/FWghG
-        79hxtzNVoAN+ZNs1ugJSnV3mYQ==
-X-Google-Smtp-Source: ALg8bN5tjTbW+nAM1EQ1AjO/CUPKBy1g0aF29q7HkVtIfuD4cztvU1V5IcSww19HoYXYwfwfEEQR0w==
-X-Received: by 2002:a63:c303:: with SMTP id c3mr342806pgd.268.1545352264917;
-        Thu, 20 Dec 2018 16:31:04 -0800 (PST)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:db8d:8e3f:2514:5db8])
-        by smtp.gmail.com with ESMTPSA id s21sm36607971pfk.133.2018.12.20.16.31.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 16:31:04 -0800 (PST)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH] clk: Remove global clk traversal on fetch parent index
-Date:   Thu, 20 Dec 2018 16:31:00 -0800
-Message-Id: <20181221003100.157581-1-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 20 Dec 2018 19:33:15 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181221003311epoutp03a9285e969214b2b04d38591b749e5033~yMdAKdFOk1259012590epoutp03T
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:33:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181221003311epoutp03a9285e969214b2b04d38591b749e5033~yMdAKdFOk1259012590epoutp03T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545352391;
+        bh=7dtocj51qYu8hNBeOSL3dkVqRxypPh57FOVK2N4+jlk=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=NwKnrSXnKhSGnB960JtCGO9MZBYfG7yTYJRbjCMl4ubalhTcSjVfH5/vxbvu6YYi8
+         JF91EVbcGSJP+gVCN7ZDjtpORePcOqlArss4kfoFecADob+DO7lLbA8KqYWGZIYWQN
+         hHhXrt6EQ77VBZW6+w+eWLYWr5LA0wt+DohWI8tM=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.155]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181221003306epcas1p3213e28f4c5fb4f5ae0e1497893af23af~yMc7Jj7lH0603906039epcas1p32;
+        Fri, 21 Dec 2018 00:33:06 +0000 (GMT)
+X-AuditID: b6c32a36-d19ff70000000fd9-67-5c1c34c27094
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F4.11.04057.2C43C1C5; Fri, 21 Dec 2018 09:33:06 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH v3 4/5] drivers: power: suspend: call devfreq
+ suspend/resume
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6@epcms1p7>
+Date:   Fri, 21 Dec 2018 09:33:05 +0900
+X-CMS-MailID: 20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkl+LIzCtJLcpLzFFi42LZdlhTT/eQiUyMQecTfouDWzUtNs5Yz2qx
+        feM3VovrX56zWsw/co7VonnxejaLM925Fv2PXzNbnD+/gd3ibNMbdotbDTIWs6bsZbLY9Pga
+        q8XlXXPYLD73HmG0mHF+H5PF2iN32S2WXr/IZHH31FGg9tOXWC1a9x5ht2hb/YHV4s2FeywO
+        4h7bdm9j9Vgzbw2jx+yGiyweE/o/MXos3vOSyWPTqk42j/1z17B7bF5S7/HvGLvHwXd7mDy2
+        XG1n8ejbsorRY8Xq7+wenzfJBfBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqY
+        KynkJeam2iq5+AToumXmAL2vpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNAr
+        TswtLs1L10vOz7UyNDAwMgUqTMjOOPewnaVgLXfFka//WRoY93N2MXJwSAiYSMw/atHFyMUh
+        JLCDUaJt4l1mkDivgKDE3x3CXYycHMICYRL3Th5hBLGFBJQkGm7uY4aI60t0PNgGFmcT0JXY
+        uuEuC8gcEYFGZokle76wgjjMApPZJGY9a2ADqZIQ4JWY0f6UBcKWlti+fCtYN6eAu0TH11NQ
+        cVGJm6vfssPY74/NZ4SwRSRa751lhrAFJR783A0Vl5J48nYhVH21xKOei8wgiyUEWhglVs3c
+        xgSR0Jc4M/ck2BG8Ar4SF48+B7NZBFQlHs3tZ4WEhIvEzMtpIGFmAXmJ7W/ngAOCWUBTYv0u
+        fYgwn8S7rz2sMK/smPcEarqaxKHdS6BOkJE4PX0h1JkeEk/vPWCGBO4EJok7Fz6yT2CUn4UI
+        31lIts1C2LaAkXkVo1hqQXFuemqxYYERcoxuYgQnfy2zHYyLzvkcYhTgYFTi4b2wXTpGiDWx
+        rLgy9xCjBAezkghvKYtMjBBvSmJlVWpRfnxRaU5q8SFGU6CfJzJLiSbnAzNTXkm8oamRsbGx
+        hYmhmamhoZI47xOpudFCAumJJanZqakFqUUwfUwcnFINjF6/v5fPVl9r/TM5bfcap615cTP3
+        5UX+ON/DK6DdraPo/Yx/ldzlbWxONZejzu6bxnXXfH/K2gKZpzd5+Tpizr/Zbjs7WbwrT2zy
+        S8bAe3ZX/xk2P7z7pES4fs6MGdc9Wd0eKHiETrsWlLVaSZQnokxzgjyvSSXrujz9zdsPXe4+
+        dPy1vfONciWW4oxEQy3mouJEAPoMnEIUBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f
+References: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
+        <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f@epcms1p7>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's not required to traverse the entire clk tree when the parents
-array contains a NULL value. You already have the parent clk_core
-pointer, so you can just compare the parent->name and parent_names[i]
-pointers.
+>On 2018-12-05 12:05, Lukasz Luba wrote:
+>> Devfreq framework supports suspend of its devices.
+>> Call the the devfreq interface and allow devfreq devices preserve/restore
+>> their states during suspend/resume.
+>>
+>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 
-In cases where clk names are never registered, this can be
-a substantial power improvement since a mux having an unregistered
-parent name will traverse the clk tree on every set_rate. This can
-happen hundreds of times a second on CPU clks.
+This looks all good to me.
 
-Change-Id: I85499d2e576249568ff508e424ca8d5009e6e2b1
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- drivers/clk/clk.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index af011974d4ec..57a95c713286 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1516,9 +1516,18 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 	if (!parent)
- 		return -EINVAL;
- 
--	for (i = 0; i < core->num_parents; i++)
--		if (clk_core_get_parent_by_index(core, i) == parent)
-+	for (i = 0; i < core->num_parents; i++) {
-+		if (core->parents[i] == parent)
-+			return i;
-+
-+		if (core->parents[i])
-+			continue;
-+
-+		if (!strcmp(parent->name, core->parent_names[i])) {
-+			core->parents[i] = parent;
- 			return i;
-+		}
-+	}
- 
- 	return -EINVAL;
- }
--- 
-2.20.1.415.g653613c723-goog
-
+>> ---
+>>  drivers/base/power/main.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>> index a690fd4..0992e67 100644
+>> --- a/drivers/base/power/main.c
+>> +++ b/drivers/base/power/main.c
+>> @@ -32,6 +32,7 @@
+>>  #include <trace/events/power.h>
+>>  #include <linux/cpufreq.h>
+>>  #include <linux/cpuidle.h>
+>> +#include <linux/devfreq.h>
+>>  #include <linux/timer.h>
+>>  
+>>  #include "../base.h"
+>> @@ -1078,6 +1079,7 @@ void dpm_resume(pm_message_t state)
+>>  	dpm_show_time(starttime, state, 0, NULL);
+>>  
+>>  	cpufreq_resume();
+>> +	devfreq_resume();
+>>  	trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>>  }
+>>  
+>> @@ -1852,6 +1854,7 @@ int dpm_suspend(pm_message_t state)
+>>  	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+>>  	might_sleep();
+>>  
+>> +	devfreq_suspend();
+>>  	cpufreq_suspend();
+>>  
+>>  	mutex_lock(&dpm_list_mtx);
