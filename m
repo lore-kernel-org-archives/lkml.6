@@ -2,151 +2,92 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C503AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFB4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB7A21928
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:42:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C443D21929
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 22:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390805AbeLUWmP (ORCPT
+        id S2390862AbeLUWnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 17:42:15 -0500
-Received: from mga02.intel.com ([134.134.136.20]:28619 "EHLO mga02.intel.com"
+        Fri, 21 Dec 2018 17:43:12 -0500
+Received: from mga14.intel.com ([192.55.52.115]:11325 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729217AbeLUWmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 17:42:14 -0500
+        id S1729217AbeLUWnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 17:43:11 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 14:42:14 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 14:43:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="128115153"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Dec 2018 14:42:14 -0800
-Subject: Re: [v3 PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-To:     Yang Shi <yang.shi@linux.alibaba.com>, ying.huang@intel.com,
-        tim.c.chen@intel.com, minchan@kernel.org, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1545428420-126557-1-git-send-email-yang.shi@linux.alibaba.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- mQINBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
- BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
- 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
- 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
- AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
- AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
- L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
- XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
- oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
- wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABtDRUaW0gQ2hlbiAo
- d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+iQI+BBMBAgAoAhsD
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWfPBPgUJDyfxUQAKCRCiZ7WKota4SReFEACa
- 5ruzJM/hXJguHJY8i95rxHfLOgE7QoDgsR2aK2C1BSu84StTcT9BMikndQ0em28mpd1zROCs
- FvJ8Dzpp923699FU7s70+bFG9zIWtAOLWt2QyIMYImILzKkzkyLZo2RTcLNdUWS5fkAtjspQ
- QPg29W+kcbX1NhB6WDdbvk2HNeZoDh4A5ucOzKjEPqbSFIbw2Wt3RUmXxezjH1NzZG3fMkEN
- cT7JezYhUxvi2PrJlD+mo26q2/PQmFgF49tneRJXmYyie5o2+ClfFVO9I6Rd1k7hS9uXQLg3
- udpnDKobNYZ7/+O5+ucp0Y/MwzTfBYmtJ5fBjUTi2L1RMDJee8WqCNY1VU6cQ8MD4KstxUp2
- bxlSRAYaDtNa1Omr61E7BA1Cc2E3cIt/O1mMfudWUjCND8qrAtEnugqKjk5tJJZzmzIKSHPY
- dCiJtOBQaVAYYchXF2hwOKhpFS43V4FdWLlM1CnFXsmbk48hGbiA8XHU85JBCXmG0i4qUlKn
- x2ilChvq4A102ahnlGbEmFaSwxuqR/5lhai6lOkwHXDFUT6jblaSs24L3MTn/vXtvwaLEEKh
- SPzNaj7yFvEhrJoLiZmDm0SZuPbQ+wrmPWUbzyf5te2Oq0JyrHTQJoQqn+CwGqwF/JaUq60f
- VuUD3T0icgsfljsOA4apyH7kyfxXGP0hOLkCDQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
- 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
- 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
- N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
- KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
- jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
- cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
- hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
- O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
- VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
- dhkZDGwKnAUAEQEAAYkCJQQYAQIADwIbDAUCWfPBJQUJDyfxOAAKCRCiZ7WKota4SZKQD/wL
- u3j8kgATic+wF3ekngjwPcW3JhbQJeHxUZwsb9OgVMHumlrZHGoltKQuFfAhG/sOfuAh5f7Q
- MzzA1M+2JD1Q6lr74vUHNBu+xBFMgZstE6hpkKmn0pNZ5JS3iZRVRLBxdWw63DYr0GM80vmb
- HjAhwxoF2PsO2/PkWTc68+pFyl3Dy0heZSJii81hkzh8FnF8CaMH0VXuMJoWyuYgnC058hHj
- 0QqXvlNx9LzMtmrsskTmPvwqXTgG/dTEfTkQ4RfX3enrBy55cg9tMc88BEQ/0/JV1bCDwyWX
- KRpz6FsHbICGQ4G9TTD4pS5QJ+oRQccMjfiDM3rFTcG1RYP2lHXjSm9c0VnimpQBz3LarrdH
- JilmTHbAWf5KLmtWfYXHrlncnhnCtw2nfwBBdy8cQW4tUyniSVRLOwGmeJziyuPJ5SVVZcil
- 2oN5/o7js7BYAeAV/WVF2Sk/blnXaaObIYIVqnDhV4N0oUz1KXq1LeemUvjo5rljmmhOBdgl
- 6D0scXCWICbuuWN9eW2fZl38hBSI3M0MX0jnV2e+0FY+76iNmKadpTDwgY3OaQAZ/UlJVI+p
- RV4JtRrajtpo9Vb38SBPXwp9moWmwVQyIdFUXjCTQARvxjRsUoPVu9oASCd9W74oOgrqC1ha
- dvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Message-ID: <ead38fbf-50e4-e03c-48eb-c1666e78aeda@linux.intel.com>
-Date:   Fri, 21 Dec 2018 14:42:13 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <1545428420-126557-1-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
+   d="scan'208";a="109243744"
+Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Dec 2018 14:43:11 -0800
+Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
+ ORSMSX110.amr.corp.intel.com (10.22.240.8) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 21 Dec 2018 14:43:10 -0800
+Received: from orsmsx101.amr.corp.intel.com ([169.254.8.175]) by
+ ORSMSX151.amr.corp.intel.com ([169.254.7.147]) with mapi id 14.03.0415.000;
+ Fri, 21 Dec 2018 14:43:10 -0800
+From:   "Greensky, James J" <james.j.greensky@intel.com>
+To:     Jinpu Wang <jinpuwang@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v3.14+, only the raid10 part" <stable@vger.kernel.org>
+Subject: RE: Fix "perf tools: Synthesize GROUP_DESC feature in pipe mode" in
+ the LT 4.14 branch
+Thread-Topic: Fix "perf tools: Synthesize GROUP_DESC feature in pipe mode"
+ in the LT 4.14 branch
+Thread-Index: AdSYqhOOjTeuqArwRNuweSLcVqXhpQAtQAGAAAfIgUA=
+Date:   Fri, 21 Dec 2018 22:43:09 +0000
+Message-ID: <05BD5679F4A9234798A0693ABF94E75ADFF7FA54@ORSMSX101.amr.corp.intel.com>
+References: <05BD5679F4A9234798A0693ABF94E75ADFF7F3A5@ORSMSX101.amr.corp.intel.com>
+ <CAD9gYJKvcn5kzMKhHU2UO=99Vdus_v=5D-fZb6-+Fy=gDokZFA@mail.gmail.com>
+In-Reply-To: <CAD9gYJKvcn5kzMKhHU2UO=99Vdus_v=5D-fZb6-+Fy=gDokZFA@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTNiMTFkZjctNGUwMi00YjBlLWI0ZDEtOTVmMmFkZTA3ODMxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTUE2NzJpUUk5VGtPN2c1cnRaREExeFwva0k0YVphTlZYRXBnYU5iRXZQcHFxR1JMTnVmTTZmSUpJNWdmOUlFYlUifQ==
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/21/18 1:40 PM, Yang Shi wrote:
-> Swap readahead would read in a few pages regardless if the underlying
-> device is busy or not.  It may incur long waiting time if the device is
-> congested, and it may also exacerbate the congestion.
-> 
-> Use inode_read_congested() to check if the underlying device is busy or
-> not like what file page readahead does.  Get inode from swap_info_struct.
-> Although we can add inode information in swap_address_space
-> (address_space->host), it may lead some unexpected side effect, i.e.
-> it may break mapping_cap_account_dirty().  Using inode from
-> swap_info_struct seems simple and good enough.
-> 
-> Just does the check in vma_cluster_readahead() since
-> swap_vma_readahead() is just used for non-rotational device which
-> much less likely has congestion than traditional HDD.
-> 
-> Although swap slots may be consecutive on swap partition, it still may be
-> fragmented on swap file. This check would help to reduce excessive stall
-> for such case.
-> 
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Tim Chen <tim.c.chen@intel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
-> v3: Move inode deference under swap device type check per Tim Chen
-> v2: Check the swap device type per Tim Chen
-> 
->  mm/swap_state.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index fd2f21e..78d500e 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -538,11 +538,18 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->  	bool do_poll = true, page_allocated;
->  	struct vm_area_struct *vma = vmf->vma;
->  	unsigned long addr = vmf->address;
-> +	struct inode *inode = NULL;
->  
->  	mask = swapin_nr_pages(offset) - 1;
->  	if (!mask)
->  		goto skip;
->  
-> +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
-> +		inode = si->swap_file->f_mapping->host;
-> +		if (inode_read_congested(inode))
-> +			goto skip;
-> +	}
-> +
->  	do_poll = false;
->  	/* Read a page_cluster sized and aligned cluster around offset. */
->  	start_offset = offset & ~mask;
-> 
-
-Acked-by: Tim Chen <tim.c.chen@linux.intel.com>
+VGhpcyBjb21taXQgZG9lcyBub3QgYXBwbHkgY2xlYW5seSBkdWUgdG8gb3RoZXIgY2hhbmdlcy4g
+SXMgdGhlcmUgc29tZXRoaW5nIEkgY2FuIGRvIHRvIG1ha2UgaXQgZWFzaWVyLg0KDQpUaGlzIGxp
+bmU6DQoJSWYgKGRhdGEtPmlzX3BpcGUpICB7DQpNdXN0IGJlIGNoYW5nZWQgdG86DQoJSWYgKGZp
+bGUtPmlzX3BpcGUpIHsNCg0KTGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYSBtb3JlIHN0YW5kYXJk
+IHdheSBvZiBjb21tdW5pY2F0aW5nIGNoZXJyeS1waWNrZWQgY2hhbmdlcyBmb3IgaW5jbHVzaW9u
+Lg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogSmlucHUgV2FuZyBbbWFpbHRv
+OmppbnB1d2FuZ0BnbWFpbC5jb21dIA0KU2VudDogRnJpZGF5LCBEZWNlbWJlciAyMSwgMjAxOCAy
+OjU4IEFNDQpUbzogR3JlZW5za3ksIEphbWVzIEogPGphbWVzLmouZ3JlZW5za3lAaW50ZWwuY29t
+PjsgR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCkNjOiBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyB2My4xNCssIG9ubHkgdGhlIHJhaWQxMCBwYXJ0
+IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0KU3ViamVjdDogUmU6IEZpeCAicGVyZiB0b29sczog
+U3ludGhlc2l6ZSBHUk9VUF9ERVNDIGZlYXR1cmUgaW4gcGlwZSBtb2RlIiBpbiB0aGUgTFQgNC4x
+NCBicmFuY2gNCg0KK2NjIEdyZWcsIHN0YWJsZQ0KDQpHcmVlbnNreSwgSmFtZXMgSiA8amFtZXMu
+ai5ncmVlbnNreUBpbnRlbC5jb20+IOS6jjIwMTjlubQxMuaciDIx5pel5ZGo5LqUIOS4iuWNiDEx
+OjQ45YaZ6YGT77yaDQo+DQo+IENvbW1pdCBkMzhkMjcyNTkyNzM3ZWE4OGEyMCAoInBlcmYgdG9v
+bHM6IFN5bnRoZXNpemUgR1JPVVBfREVTQyBmZWF0dXJlIGluIHBpcGUgbW9kZSIpIGJyb2tlIHRo
+ZSBMVCA0LjE0IGJyYW5jaCB3aGVuIHVzaW5nIGV2ZW50IGdyb3VwcyBpbiBwaXBlLW1vZGUuDQo+
+DQo+ICAgIyBwZXJmIHJlY29yZCAtZSAne2N5Y2xlcyxpbnN0cnVjdGlvbnMsYnJhbmNoZXN9JyAt
+LSBzbGVlcCA0IHwgcGVyZiByZXBvcnQNCj4gICAjIFRvIGRpc3BsYXkgdGhlIHBlcmYuZGF0YSBo
+ZWFkZXIgaW5mbywgcGxlYXNlIHVzZSAtLWhlYWRlci8tLWhlYWRlci1vbmx5IG9wdGlvbnMNCj4g
+ICAjDQo+ICAgT3hkN2MgWzB4NjBdOiBmYWlsZWQgdG8gcHJvY2VzcyB0eXBlOiA4MA0KPiAgIEVy
+cm9yOg0KPiAgIEZhaWxlZCB0byBwcm9jZXNzIHNhbXBsZQ0KPg0KPiBDb21taXQgYTIwMTU1MTZj
+NWMwYmU5MzJhNjkgKCJwZXJmIHJlY29yZDogU3ludGhlc2l6ZSBmZWF0dXJlcyBiZWZvcmUgZXZl
+bnRzIGluIHBpcGUgbW9kZSIpIGlzIHRoZSBmaXguIENhbiB3ZSBnZXQgdGhpcyBjaGVycnktcGlj
+a2VkIGFuZCBhcHBsaWVkPw0KPg0K
