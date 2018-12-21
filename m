@@ -2,130 +2,140 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6132C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F443C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29D4218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBD9218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GEf3nue1"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dkgm+xXZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725868AbeLUI7Y (ORCPT
+        id S1725941AbeLUJDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:59:24 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37989 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeLUI7X (ORCPT
+        Fri, 21 Dec 2018 04:03:25 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38311 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeLUJDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:59:23 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p86so3353014lfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:59:22 -0800 (PST)
+        Fri, 21 Dec 2018 04:03:24 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p86so3361651lfg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:03:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=wEj9mf6/K3+8mm6FE491gffK4bFYjj0XiCuphCsYXng=;
-        b=GEf3nue1FMYZIurUG7nhiRWjwxqUE+2r5/fOKV3Hiqhyi825c2CUGEB6S+NW734CY2
-         8GXxN6O5iLI0oQ5ZzRwcpZndcL+wCWf39AXzN0wok52lezght2mPAyuyg+fFrfyp8zDE
-         Q+leCaRHUoHJww5sL6jYmKaD7ODVJnH19l8OU=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
+        b=dkgm+xXZk74Cg2BNDCm/20NQdtrWMwIe0yoKv4DArWUbA22TL3cuEXSr9/CNqSHNVw
+         mn5eLVbGIs56liR+SE1pEw2i5Odhz2ETGTAH/tJoXcBHFuAYmvUrTu57WR7JT2UX9hs/
+         l+LuzaxwiUn9sq0tG688SBhVLLbwEY46BvoH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=wEj9mf6/K3+8mm6FE491gffK4bFYjj0XiCuphCsYXng=;
-        b=po2BC+xOOohGtUXhy28r1V3rzx29xM4jGLSyOZ3LzkmyTTW7F9+zg/Hk6doa22s0MP
-         Ms93eBX7FCB54yQQyYnsUxPncxkm2fYSH2nZYQguxRlzuHhUMpX56NvByO9ovCjW7t9C
-         7OdhSRGbVKPnjqdgv6u6w5WaAAht4y/dXkQiTTFEpaIg1kFB0A8tVFRFn4nO0ZdUfg3t
-         Wbk/iGKKjRcOAtKGL7PO4xScpCR14EhNg3Z3+27NM4eL+e79qHbqO1pVYbwjk5KRp16E
-         vHMOi+8JV2LGb106TS/SqOPMFdYqDp5yqqnMocOH5ql5BPrq9exCfvVW7q4SAzkwlfjt
-         tCrQ==
-X-Gm-Message-State: AA+aEWaULCifYqbcVjvCjkYVyOhsv+24j1K1IglFluTm/e6poG9Fw/03
-        HNQSkAjUovcZGjUUGC+fPbki7zaMlXrE8yd+7TrQ9g==
-X-Google-Smtp-Source: AFSGD/XRuBw4+GU+V3rE+WtyYwC1VbK3l0goZe1HGxUoHUFrBdF0dS0nuPw+Jl+cNnx+hPcUTnnLyT1vYGkPsjoOKOs=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr872433lfa.62.1545382761475;
- Fri, 21 Dec 2018 00:59:21 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
+        b=t0LVcuQH0TCDhcRddMaTBPtHgMeWTuD1e9U/elNTCY9bZtIu9n4QBirYoLZgMPTU5H
+         jerZf05wBG09Os84Q0nqEBYzY+r1GUgh80wRq8Pi+0vIL5hGESaM37NTyn5lkELdkb6Q
+         GHTgUfhNDcqiozYJdCbUVnh4vwAQrtMOZIAhHgU+xgv9V5drUVGq/mkKdwEEg/LODLRN
+         96T1i6o/ahvbbcaLyyhlF9GMM9JSGAhpTF7AajzQbmQPKA42yDwtUY5qQSGi6yJw/Utl
+         Pl0JDSzT/ucqer4zZALMNNQ7CXH7YgaCMDUn6/xD/r61ePYYQHPmGQ082aECEZz6d96f
+         4Oww==
+X-Gm-Message-State: AA+aEWarA/OBkouQCse6blaz389NjNXnYAizrW2YWy/ZjnTEfReH8EOd
+        qK0d05yzHhuLtwv7nf+0+DpoU8cWps1+HsVOKzGltQ==
+X-Google-Smtp-Source: AFSGD/WWHVd8zr/biKpKvHjmEj8TL5SWd9I6l53as8Xl+0kFHieFSstFXwVpLi6wMvEseHQRjbY3ODdLwJcmc1Rlkfg=
+X-Received: by 2002:a19:5601:: with SMTP id k1mr781748lfb.99.1545383001128;
+ Fri, 21 Dec 2018 01:03:21 -0800 (PST)
 MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Dec 2018 09:59:10 +0100
-Message-ID: <CACRpkdYn7hPt5Etb5oeD-pTW6ME4QAwnTZEXu8siGNxi-OgQew@mail.gmail.com>
-Subject: [GIT PULL] GPIO fixes for v4.20
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hans de Goede <hdegoede@redhat.com>
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 21 Dec 2018 17:03:09 +0800
+Message-ID: <CAMz4kuLv_s6t6n0OfRP8EW3=z8QD0ezn2=45sKg9aXJs5Agrbg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] i2c: sprd: use core helper to mark adapter suspended
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Wolfram,
 
-this is the hopefully last round of GPIO fixes.
+On Thu, 20 Dec 2018 at 00:48, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Rejecting transfers should be handled by the core.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The ACPI patch is pretty important for some laptop users, the
-rest is driver-specific for embedded (mostly ARM) systems.
+Great to see the I2C core can handle this issue.
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
 
-I took out one ACPI patch that wasn't critical enough because I
-couldn't justify sending it at this point, and that is why the commit
-date is today, but the patches have been in linux-next.
+> ---
+>  drivers/i2c/busses/i2c-sprd.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+> index e266d8a713d9..961123529678 100644
+> --- a/drivers/i2c/busses/i2c-sprd.c
+> +++ b/drivers/i2c/busses/i2c-sprd.c
+> @@ -86,7 +86,6 @@ struct sprd_i2c {
+>         u32 count;
+>         int irq;
+>         int err;
+> -       bool is_suspended;
+>  };
+>
+>  static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
+> @@ -284,9 +283,6 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
+>         struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
+>         int im, ret;
+>
+> -       if (i2c_dev->is_suspended)
+> -               return -EBUSY;
+> -
+>         ret = pm_runtime_get_sync(i2c_dev->dev);
+>         if (ret < 0)
+>                 return ret;
+> @@ -590,10 +586,7 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+>  {
+>         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = true;
+> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_suspended(&i2c_dev->adap);
+>         return pm_runtime_force_suspend(dev);
+>  }
+>
+> @@ -601,10 +594,7 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
+>  {
+>         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = false;
+> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_resumed(&i2c_dev->adap);
+>         return pm_runtime_force_resume(dev);
+>  }
+>
+> --
+> 2.11.0
+>
 
-Sorry for not sending some of them earlier :(
 
-Notice that we have a co-maintainer for GPIO now, Bartosz
-Golaszewski, and he might jump in and make some pull requests
-at times when I am off.
-
-Please pull it in!
-
-Yours,
-Linus Walleij
-
-The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436=
-:
-
-  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.20-3
-
-for you to fetch changes up to c8da642d41a6811c21177c9994aa7dc35be67d46:
-
-  gpio: mvebu: only fail on missing clk if pwm is actually to be used
-(2018-12-21 09:23:46 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for v4.20:
-- ACPI IRQ request deferral
-- OMAP: revert deferred wakeup quirk
-- MAX7301: fix DMA safe memory handling
-- MVEBU: selective probe failure on missing clk
-
-----------------------------------------------------------------
-Christophe Leroy (1):
-      gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
-
-Hans de Goede (1):
-      gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
-
-Tony Lindgren (1):
-      gpio: gpio-omap: Revert deferred wakeup quirk handling for regression=
-s
-
-Uwe Kleine-K=C3=B6nig (1):
-      gpio: mvebu: only fail on missing clk if pwm is actually to be used
-
- drivers/gpio/gpio-max7301.c |  12 +---
- drivers/gpio/gpio-mvebu.c   |   6 +-
- drivers/gpio/gpio-omap.c    |  64 ++------------------
- drivers/gpio/gpiolib-acpi.c | 144 ++++++++++++++++++++++++++--------------=
-----
- 4 files changed, 95 insertions(+), 131 deletions(-)
+-- 
+Baolin Wang
+Best Regards
