@@ -2,164 +2,130 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399B8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6132C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069C221909
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545382713;
-	bh=Ro4yIaTCeQsTGbVC/sLEVI60Q0pt6plj5g0qoTyyFOM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TU09m7vIU27a4PYxtrrJACMoN3G8ru0qgpMTr3RYl9kZK53jS3WquiABUgxOBxcYx
-	 tZGGLWNKEktJ5C0RBesPpDjWXrDolG2/IQiSmn459Oc4bu6/3nSYBzyRIU04HV2xTU
-	 nxZ1ebaHwr8TsU5xGzbUf4qX47cQ6olOaYq4IGXI=
+	by mail.kernel.org (Postfix) with ESMTP id A29D4218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:59:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GEf3nue1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733249AbeLUI6c (ORCPT
+        id S1725868AbeLUI7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:58:32 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44821 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbeLUI6b (ORCPT
+        Fri, 21 Dec 2018 03:59:24 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37989 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeLUI7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:58:31 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f18so4458136otl.11;
-        Fri, 21 Dec 2018 00:58:30 -0800 (PST)
+        Fri, 21 Dec 2018 03:59:23 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p86so3353014lfg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:59:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=wEj9mf6/K3+8mm6FE491gffK4bFYjj0XiCuphCsYXng=;
+        b=GEf3nue1FMYZIurUG7nhiRWjwxqUE+2r5/fOKV3Hiqhyi825c2CUGEB6S+NW734CY2
+         8GXxN6O5iLI0oQ5ZzRwcpZndcL+wCWf39AXzN0wok52lezght2mPAyuyg+fFrfyp8zDE
+         Q+leCaRHUoHJww5sL6jYmKaD7ODVJnH19l8OU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hxp37XsPBprIwPTDNqXiT9gyPfRsLk1dntwC8kVxdZw=;
-        b=Dc4z9LMcThKvx9wkXkYATL7aCUgICOwcIoFLtZoP4si3B5HCtxoMtBj3GiU8vFjisr
-         HWhifUtjbW+mXnWgNYjuJPldm4YaIOs1n0hARy/m4D9mSPW6TFVMU541IuvPBmjA+WLm
-         wpNRysnRdlBv5g2oT6MjHnvjUwsEq6LWawS51qBe8dbdpZKHs4EiMDHGf4BBCtUWm3Gh
-         zGkuCcZjBVUPjbANm4DOrIBWGjPCcLBMoAi3EwVXK0v3Gvc7TO5GjeuRm7aAl0YvsCes
-         eba9zFyMhdDITk8UcvckJIthSkdxAK3mrjrFfCWmSxg3gsZPxUHidXchfdMQkXZjb9rK
-         /Xkw==
-X-Gm-Message-State: AJcUukdDwYfdT7XoA0vQEnPIZQ3zCJsJ6/TSpkvuulyODt6o9AUcRSMx
-        JOTKEWA/nXDJzh9U9kAfVUW0QV+vyecT9l3W1+E=
-X-Google-Smtp-Source: ALg8bN4C/7p9UlnJPcjrwfrh0QMGoG/5lIks3mR8+50uf2WcILwscu3y/ZaHz56rm1ccddw5aIKZ8qBvK/HR/Y6mycM=
-X-Received: by 2002:a9d:4c84:: with SMTP id m4mr982652otf.124.1545382710109;
- Fri, 21 Dec 2018 00:58:30 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=wEj9mf6/K3+8mm6FE491gffK4bFYjj0XiCuphCsYXng=;
+        b=po2BC+xOOohGtUXhy28r1V3rzx29xM4jGLSyOZ3LzkmyTTW7F9+zg/Hk6doa22s0MP
+         Ms93eBX7FCB54yQQyYnsUxPncxkm2fYSH2nZYQguxRlzuHhUMpX56NvByO9ovCjW7t9C
+         7OdhSRGbVKPnjqdgv6u6w5WaAAht4y/dXkQiTTFEpaIg1kFB0A8tVFRFn4nO0ZdUfg3t
+         Wbk/iGKKjRcOAtKGL7PO4xScpCR14EhNg3Z3+27NM4eL+e79qHbqO1pVYbwjk5KRp16E
+         vHMOi+8JV2LGb106TS/SqOPMFdYqDp5yqqnMocOH5ql5BPrq9exCfvVW7q4SAzkwlfjt
+         tCrQ==
+X-Gm-Message-State: AA+aEWaULCifYqbcVjvCjkYVyOhsv+24j1K1IglFluTm/e6poG9Fw/03
+        HNQSkAjUovcZGjUUGC+fPbki7zaMlXrE8yd+7TrQ9g==
+X-Google-Smtp-Source: AFSGD/XRuBw4+GU+V3rE+WtyYwC1VbK3l0goZe1HGxUoHUFrBdF0dS0nuPw+Jl+cNnx+hPcUTnnLyT1vYGkPsjoOKOs=
+X-Received: by 2002:a19:4849:: with SMTP id v70mr872433lfa.62.1545382761475;
+ Fri, 21 Dec 2018 00:59:21 -0800 (PST)
 MIME-Version: 1.0
-References: <1545315426-14545-1-git-send-email-vincent.guittot@linaro.org> <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com>
-In-Reply-To: <CAPDyKFqPf3RzUG+YjSQmMPESjDhmgQmQXpbQdp5j7zk7b9hVNA@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 21 Dec 2018 09:58:18 +0100
-Message-ID: <CAJZ5v0jp-+rG2usiumWmORTvqCYDJJbFUB+ey3wLyQUrimdTLw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] PM/runtime:Replace jiffies based accounting with
- ktime based accounting
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Dec 2018 09:59:10 +0100
+Message-ID: <CACRpkdYn7hPt5Etb5oeD-pTW6ME4QAwnTZEXu8siGNxi-OgQew@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v4.20
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hans de Goede <hdegoede@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 11:03 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Thu, 20 Dec 2018 at 15:17, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > From: Thara Gopinath <thara.gopinath@linaro.org>
-> >
-> > This patch replaces jiffies based accounting for runtime_active_time
-> > and runtime_suspended_time with ktime base accounting. This makes the
-> > runtime debug counters inline with genpd and other pm subsytems which
-> > uses ktime based accounting.
-> >
-> > Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> > [move from ktime to raw nsec]
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  drivers/base/power/runtime.c | 17 +++++++++--------
-> >  drivers/base/power/sysfs.c   | 11 ++++++++---
-> >  include/linux/pm.h           |  6 +++---
-> >  3 files changed, 20 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index e695544..f700524 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -64,8 +64,8 @@ static int rpm_suspend(struct device *dev, int rpmflags);
-> >   */
-> >  void update_pm_runtime_accounting(struct device *dev)
-> >  {
-> > -       unsigned long now = jiffies;
-> > -       unsigned long delta;
-> > +       u64 now = ktime_to_ns(ktime_get());
-> > +       u64 delta;
-> >
-> >         delta = now - dev->power.accounting_timestamp;
-> >
-> > @@ -75,9 +75,9 @@ void update_pm_runtime_accounting(struct device *dev)
-> >                 return;
-> >
-> >         if (dev->power.runtime_status == RPM_SUSPENDED)
-> > -               dev->power.suspended_jiffies += delta;
-> > +               dev->power.suspended_time += delta;
-> >         else
-> > -               dev->power.active_jiffies += delta;
-> > +               dev->power.active_time += delta;
-> >  }
-> >
-> >  static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> > @@ -88,17 +88,18 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
-> >
-> >  u64 pm_runtime_suspended_time(struct device *dev)
-> >  {
-> > -       unsigned long flags, time;
-> > +       u64 time;
-> > +       unsigned long flags;
-> >
-> >         spin_lock_irqsave(&dev->power.lock, flags);
-> >
-> >         update_pm_runtime_accounting(dev);
-> >
-> > -       time = dev->power.suspended_jiffies;
-> > +       time = dev->power.suspended_time;
-> >
-> >         spin_unlock_irqrestore(&dev->power.lock, flags);
-> >
-> > -       return jiffies_to_nsecs(time);
-> > +       return time;
-> >  }
-> >  EXPORT_SYMBOL_GPL(pm_runtime_suspended_time);
-> >
-> > @@ -1503,7 +1504,7 @@ void pm_runtime_init(struct device *dev)
-> >         dev->power.request_pending = false;
-> >         dev->power.request = RPM_REQ_NONE;
-> >         dev->power.deferred_resume = false;
-> > -       dev->power.accounting_timestamp = jiffies;
-> > +       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
->
-> This change worries me a bit, but it may not be a problem in practice.
->
-> pm_runtime_init() is called when devices get initialized, via
-> device_initialize(). If timekeeping has not been initialized prior a
-> call to ktime_get() is done, it will fail and causing a NULL pointer
-> deference or something along those lines.
->
-> In other words, do we know that device_initialize() is always called
-> after timekeeping has been initialized during boot?
+Hi Linus,
 
-We do.
+this is the hopefully last round of GPIO fixes.
 
-timekeeping_init() is called early in start_kernel() which is way
-before driver_init() (and that's when devices can start to be
-initialized) called from rest_init() via kernel_init_freeable() and
-do_basic_setup().
+The ACPI patch is pretty important for some laptop users, the
+rest is driver-specific for embedded (mostly ARM) systems.
+
+I took out one ACPI patch that wasn't critical enough because I
+couldn't justify sending it at this point, and that is why the commit
+date is today, but the patches have been in linux-next.
+
+Sorry for not sending some of them earlier :(
+
+Notice that we have a co-maintainer for GPIO now, Bartosz
+Golaszewski, and he might jump in and make some pull requests
+at times when I am off.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436=
+:
+
+  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.20-3
+
+for you to fetch changes up to c8da642d41a6811c21177c9994aa7dc35be67d46:
+
+  gpio: mvebu: only fail on missing clk if pwm is actually to be used
+(2018-12-21 09:23:46 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for v4.20:
+- ACPI IRQ request deferral
+- OMAP: revert deferred wakeup quirk
+- MAX7301: fix DMA safe memory handling
+- MVEBU: selective probe failure on missing clk
+
+----------------------------------------------------------------
+Christophe Leroy (1):
+      gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+
+Hans de Goede (1):
+      gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
+
+Tony Lindgren (1):
+      gpio: gpio-omap: Revert deferred wakeup quirk handling for regression=
+s
+
+Uwe Kleine-K=C3=B6nig (1):
+      gpio: mvebu: only fail on missing clk if pwm is actually to be used
+
+ drivers/gpio/gpio-max7301.c |  12 +---
+ drivers/gpio/gpio-mvebu.c   |   6 +-
+ drivers/gpio/gpio-omap.c    |  64 ++------------------
+ drivers/gpio/gpiolib-acpi.c | 144 ++++++++++++++++++++++++++--------------=
+----
+ 4 files changed, 95 insertions(+), 131 deletions(-)
