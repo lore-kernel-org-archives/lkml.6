@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84190C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5518F21929
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E81E21920
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388794AbeLUVg7 (ORCPT
+        id S2390504AbeLUVhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 16:36:59 -0500
+        Fri, 21 Dec 2018 16:37:01 -0500
 Received: from mga14.intel.com ([192.55.52.115]:6014 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732832AbeLUVg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 16:36:58 -0500
+        id S1733050AbeLUVg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 16:36:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 13:36:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="112483876"
+   d="scan'208";a="112483879"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
   by orsmga003.jf.intel.com with ESMTP; 21 Dec 2018 13:36:58 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
@@ -40,9 +40,9 @@ Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
         Rik van Riel <riel@surriel.com>,
         Yu-cheng Yu <yu-cheng.yu@intel.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v3 1/2] x86/fault: Reword initial BUG message for unhandled page faults
-Date:   Fri, 21 Dec 2018 13:36:56 -0800
-Message-Id: <20181221213657.27628-2-sean.j.christopherson@intel.com>
+Subject: [PATCH v3 2/2] x86/fault: Decode and print #PF oops in human readable form
+Date:   Fri, 21 Dec 2018 13:36:57 -0800
+Message-Id: <20181221213657.27628-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181221213657.27628-1-sean.j.christopherson@intel.com>
 References: <20181221213657.27628-1-sean.j.christopherson@intel.com>
@@ -53,34 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reword the NULL pointer dereference case to simply state that a NULL
-pointer was dereferenced, i.e. drop "unable to handle" as that implies
-that there are instances where the kernel actual does handle NULL
-pointer dereferences, which is not true barring funky exception fixup.
+Linus pointed out that deciphering the raw #PF error code and printing
+a more human readable message are two different things, and also that
+printing the negative cases is mostly just noise[1].  For example, the
+USER bit doesn't mean the fault originated in user code and stating
+that an oops wasn't due to a protection keys violation isn't interesting
+since an oops on a keys violation is a one-in-a-million scenario.
 
-For the non-NULL case, replace "kernel paging request" with "page fault"
-as the kernel can technically oops on faults that originated in user
-code.  Dropping "kernel" also allows future patches to provide detailed
-information on where the fault occurred, e.g. user vs. kernel, without
-conflicting with the initial BUG message.
+Remove the per-bit decoding of the error code and instead print:
+  - the raw error code
+  - why the fault occurred
+  - the effective privilege level of the access
+  - the type of access
+  - whether the fault originated in user code or kernel code
 
-In both cases, replace "at address=" with wording more appropriate to
-the oops, as "at" may be interpreted as stating that the address is the
-RIP of the instruction that faulted.
+This provides the user with the information needed to triage 99.9% of
+oopses without polluting the log with useless information or conflating
+the error_code with the CPL.
 
-Last, and probably least, further qualify the NULL-pointer path by
-checking that the fault actually originated in kernel code.  It's
-technically possible for userspace to map address 0, and not printing
-a super specific message is the least of our worries if the kernel does
-manage to oops on an actual NULL pointer dereference from userspace.
+Sample output:
 
-Before:
-    BUG: unable to handle kernel NULL pointer dereference at ffffbeef00000000
-    BUG: unable to handle kernel paging request at ffffbeef00000000
-
-After:
     BUG: kernel NULL pointer dereference, address = 0000000000000008
+    #PF: supervisor-privileged instruction fetch from kernel code
+    #PF: error_code(0x0010) - not-present page
+
     BUG: unable to handle page fault for address = ffffbeef00000000
+    #PF: supervisor-privileged instruction fetch from kernel code
+    #PF: error_code(0x0010) - not-present page
+
+    BUG: unable to handle page fault for address = ffffc90000230000
+    #PF: supervisor-privileged write access from kernel code
+    #PF: error_code(0x000b) - reserved bit violation
+
+[1] https://lkml.kernel.org/r/CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -96,29 +101,77 @@ Cc: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/mm/fault.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/mm/fault.c | 42 +++++++++++-------------------------------
+ 1 file changed, 11 insertions(+), 31 deletions(-)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..39dccdfef496 100644
+index 39dccdfef496..a4421cbd230b 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
-@@ -644,9 +644,12 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
- 				from_kuid(&init_user_ns, current_uid()));
- 	}
+@@ -603,24 +603,9 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
+ 		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
+ }
  
--	pr_alert("BUG: unable to handle kernel %s at %px\n",
--		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
--		 (void *)address);
-+	if (address < PAGE_SIZE && !user_mode(regs))
-+		pr_alert("BUG: kernel NULL pointer dereference, address = %px\n",
-+			(void *)address);
-+	else
-+		pr_alert("BUG: unable to handle page fault for address = %px\n",
-+			(void *)address);
+-/*
+- * This helper function transforms the #PF error_code bits into
+- * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
+- */
+-static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
+-{
+-	if (error_code & mask) {
+-		if (buf[0])
+-			strcat(buf, " ");
+-		strcat(buf, txt);
+-	}
+-}
+-
+ static void
+ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long address)
+ {
+-	char err_txt[64];
+-
+ 	if (!oops_may_print())
+ 		return;
  
- 	err_txt[0] = 0;
+@@ -651,27 +636,22 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
+ 		pr_alert("BUG: unable to handle page fault for address = %px\n",
+ 			(void *)address);
  
+-	err_txt[0] = 0;
+-
+-	/*
+-	 * Note: length of these appended strings including the separation space and the
+-	 * zero delimiter must fit into err_txt[].
+-	 */
+-	err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
+-	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
+-	err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
+-	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
+-	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
+-	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
+-
+-	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
++	pr_alert("#PF: %s-privileged %s from %s code\n",
++		 (error_code & X86_PF_USER)  ? "user" : "supervisor",
++		 (error_code & X86_PF_INSTR) ? "instruction fetch" :
++		 (error_code & X86_PF_WRITE) ? "write access" :
++					       "read access",
++			     user_mode(regs) ? "user" : "kernel");
++	pr_alert("#PF: error_code(0x%04lx) - %s\n", error_code,
++		 !(error_code & X86_PF_PROT) ? "not-present page" :
++		 (error_code & X86_PF_RSVD)  ? "reserved bit violation" :
++		 (error_code & X86_PF_PK)    ? "protection keys violation" :
++					       "permissions violation");
+ 
+ 	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
+ 		struct desc_ptr idt, gdt;
+ 		u16 ldtr, tr;
+ 
+-		pr_alert("This was a system access from user code\n");
+-
+ 		/*
+ 		 * This can happen for quite a few reasons.  The more obvious
+ 		 * ones are faults accessing the GDT, or LDT.  Perhaps
 -- 
 2.19.2
 
