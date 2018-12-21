@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F30A6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2893C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1B7C21903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C16721903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIAPuSL/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9+tbe7C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388599AbeLUH2Q (ORCPT
+        id S2388731AbeLUH2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:28:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44230 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388415AbeLUH2O (ORCPT
+        Fri, 21 Dec 2018 02:28:20 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37872 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388601AbeLUH2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:28:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so2172378pfh.11;
-        Thu, 20 Dec 2018 23:28:14 -0800 (PST)
+        Fri, 21 Dec 2018 02:28:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id c25so2115489pgb.4;
+        Thu, 20 Dec 2018 23:28:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5ARpz9jknH5H4OT3/qhVId8qmQoNOpINqmDP2FaaZjU=;
-        b=NIAPuSL/hJ9VQhEPvORXCppBEwzMPcpOj+Yz1GdpGMptpcWx6R/lfmtmqP52n7x6NE
-         Y/jNRWGJhUvcF0oks69JriSQNc4Q6xDTQT6Fjn/VsLFiL+sYTznDXO4g4p27zWTzfudR
-         ItnCJqyGMARxqtTyEOSOVdi4pfnje11fMcLawX3vBpuKhfQBlIbmSlcrW/RXPD0xdapR
-         I5oFZvehmIFXXCyOFEpl4FbGq7UDdC+bB3/jomelhAUpNK7YMv53b7wV6vsnbMPFqcXJ
-         tUM0upyMAiRySpzkZeTtBu6ngv7iKvq5euUG9Fg9pEOWWVtvYw+OGcak7W6Ln9Nhtu2g
-         C3VA==
+        bh=TOnTTJb5k0hJqk9drUFS28Vo1VkvNAjAcTVESkJjprE=;
+        b=a9+tbe7CR5UO46XozmMgmDfw5gfEdE1Cgh/dugA1o/gngbng/PNMICEPKMOiEGVoE/
+         S0Ury7jhXQ3IZSU3XOlfgsUgm3Gm+r8Y+T9uVMR0xWRL3q11dZRUJOauZzRLcULGHUDT
+         GpL0O2KCZ5lokYMl7OSIMwYg3ON5jlbc0hYt1mPV854yc7ORVA2U7BrX2O2Ygl15xElB
+         KG5R7F6pXhg1WnrRHBZX+ZeX6Jqp6JTXxB5Ze8oqeWbYGxS90UMK7DbyjxWWs0yV8CQd
+         xqSncCapvzUcfhyzzvyqVR+ZpsNwczR1ZHh/6rZbf++CF2o6d/rgeCQd2yNlpaPcsYd1
+         Gqgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5ARpz9jknH5H4OT3/qhVId8qmQoNOpINqmDP2FaaZjU=;
-        b=n/7vH4gSIwa6mhyf+SsnV4Dc2aA+N2edmy5AoO1ojQm74ME8KpacPMuqVezw4vd+pX
-         /6jgOhUS4EKsKrzZk1q+9J/axgnyGGSS3ag8Rk/AayfmN5YpxGzTzdf8kE7zvDlYSaRG
-         dMPuHTD5Xmom8Zvck4bZVw+xbfuW9NSEwyAwUW4UlnoW7xwUiot/7d+6P8vXCNuTY6ta
-         pOZafmqBYy4N+8BGNLuFrYwV28KnTT+JKrfxgryUCVQrWSr3r2onQawjoJWjhqgC8lWA
-         HqpcbEvbYsVenJqJqV+o5N2+LDa48ni+vWMI4yNqh8IVAukGdmAUcqMmq6a6Phz02CKa
-         A2uw==
-X-Gm-Message-State: AA+aEWbkuM4I3BbOzehEnuSz3sb0ORY+scFQydHfxM83tTRwmtQj27bA
-        h8XYDXjyHGpLK2inkVxgxx4kWrx0
-X-Google-Smtp-Source: AFSGD/WHbfSdl51UrygLkZMS8SUXS+WuEQRRNZr7+xB+nhOhArYgwZi+iDHx+rhFP2zfPhYRg/P9+w==
-X-Received: by 2002:a62:35c7:: with SMTP id c190mr1466498pfa.76.1545377293403;
-        Thu, 20 Dec 2018 23:28:13 -0800 (PST)
+        bh=TOnTTJb5k0hJqk9drUFS28Vo1VkvNAjAcTVESkJjprE=;
+        b=jXCgzulPJqLJKYxM+6zSyCqOyl1NwPdWb6DdVFrLWr9UqgCzdLZmUTaLU2rPOlGzZv
+         16eI06qfTTy0c8A9gxv7IBW+Yv8ZZzIz9TZ7GDgegc11Ijhay2sNqUwnBJGHEI8D+bsu
+         43aczfADV0wwhcMcn9SB2E+/d0q9odHF/9M8DjPNaJp82rsdotu+HEEecCWeFV7yhr+l
+         XcPH1QGcSwSBRM/yivaFNqdKJTgJQgsfHMS5SxwVAmlqK29nBWCiDSYvsQBremBu0oRO
+         elwQ3L5ud7tnDEZh575Y1fsCpy135YxBJVshGwU9xsZYuUatFsvgPoKPwMQ3EWBzcV6E
+         Ne2w==
+X-Gm-Message-State: AA+aEWY2eJKBZ7pl9QvVfvi9K4z9HPGlKWO/dYkJpGT+WMKx6hinfr94
+        KA3eIP7Z+6r57qZcJWLelA5hE8h7
+X-Google-Smtp-Source: ALg8bN50gFFgY3nBEzPGNZnloJzl5Z8OSiIYjw1gQKEwJYi3/td0fh6QxZjdAqqMWVWlHBHpzlhj2A==
+X-Received: by 2002:a62:15d5:: with SMTP id 204mr1421947pfv.103.1545377295233;
+        Thu, 20 Dec 2018 23:28:15 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.11
+        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:28:12 -0800 (PST)
+        Thu, 20 Dec 2018 23:28:14 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-pci@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 18/21] PCI: imx6: Simplify bit operations in imx6_setup_phy_mpll()
-Date:   Thu, 20 Dec 2018 23:27:13 -0800
-Message-Id: <20181221072716.29017-19-andrew.smirnov@gmail.com>
+Subject: [PATCH 19/21] PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
+Date:   Thu, 20 Dec 2018 23:27:14 -0800
+Message-Id: <20181221072716.29017-20-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
 References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
@@ -81,8 +81,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify bit operations in imx6_setup_phy_mpll() by using
-GENMASK/FIELD_PREP. No functional change intended.
+Explicitly define PCIE_RC_LCSR_LINK_SPEED and remove magic numbers
+from imx6_pcie_establish_link(). No functional change intended.
 
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
@@ -98,49 +98,33 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 38c8e8baa077..678f5fa85e12 100644
+index 678f5fa85e12..2b312f287fd7 100644
 --- a/drivers/pci/controller/dwc/pci-imx6.c
 +++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -96,12 +96,10 @@ struct imx6_pcie {
- /* PHY registers (not memory-mapped) */
- #define PCIE_PHY_ATEOVRD			0x10
- #define  PCIE_PHY_ATEOVRD_EN			BIT(2)
--#define  PCIE_PHY_ATEOVRD_REF_CLKDIV_SHIFT	0
--#define  PCIE_PHY_ATEOVRD_REF_CLKDIV_MASK	0x1
-+#define  PCIE_PHY_ATEOVRD_REF_CLKDIV		BIT(0)
+@@ -79,6 +79,7 @@ struct imx6_pcie {
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK	0xf
  
- #define PCIE_PHY_MPLL_OVRD_IN_LO		0x11
--#define  PCIE_PHY_MPLL_MULTIPLIER_SHIFT		2
--#define  PCIE_PHY_MPLL_MULTIPLIER_MASK		0x7f
-+#define  PCIE_PHY_MPLL_MULTIPLIER		GENMASK(8, 2)
- #define  PCIE_PHY_MPLL_MULTIPLIER_OVRD		BIT(9)
+ #define PCIE_RC_LCSR				0x80
++#define PCIE_RC_LCSR_LINK_SPEED			GENMASK(19, 16)
  
- #define PHY_RX_OVRD_IN_LO 0x1005
-@@ -565,16 +563,14 @@ static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie)
+ /* PCIe Port Logic registers (memory-mapped) */
+ #define PL_OFFSET 0x700
+@@ -688,8 +689,9 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+ 		dev_info(dev, "Link: Gen2 disabled\n");
  	}
  
- 	pcie_phy_read(imx6_pcie, PCIE_PHY_MPLL_OVRD_IN_LO, &val);
--	val &= ~(PCIE_PHY_MPLL_MULTIPLIER_MASK <<
--		 PCIE_PHY_MPLL_MULTIPLIER_SHIFT);
--	val |= mult << PCIE_PHY_MPLL_MULTIPLIER_SHIFT;
-+	val &= ~PCIE_PHY_MPLL_MULTIPLIER;
-+	val |= FIELD_PREP(PCIE_PHY_MPLL_MULTIPLIER, mult);
- 	val |= PCIE_PHY_MPLL_MULTIPLIER_OVRD;
- 	pcie_phy_write(imx6_pcie, PCIE_PHY_MPLL_OVRD_IN_LO, val);
+-	tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCSR);
+-	dev_info(dev, "Link up, Gen%i\n", (tmp >> 16) & 0xf);
++	tmp = FIELD_GET(PCIE_RC_LCSR_LINK_SPEED,
++			dw_pcie_readl_dbi(pci, PCIE_RC_LCSR));
++	dev_info(dev, "Link up, Gen%i\n", tmp);
+ 	return 0;
  
- 	pcie_phy_read(imx6_pcie, PCIE_PHY_ATEOVRD, &val);
--	val &= ~(PCIE_PHY_ATEOVRD_REF_CLKDIV_MASK <<
--		 PCIE_PHY_ATEOVRD_REF_CLKDIV_SHIFT);
--	val |= div << PCIE_PHY_ATEOVRD_REF_CLKDIV_SHIFT;
-+	val &= ~PCIE_PHY_ATEOVRD_REF_CLKDIV;
-+	val |= FIELD_PREP(PCIE_PHY_ATEOVRD_REF_CLKDIV, div);
- 	val |= PCIE_PHY_ATEOVRD_EN;
- 	pcie_phy_write(imx6_pcie, PCIE_PHY_ATEOVRD, val);
- 
+ err_reset_phy:
 -- 
 2.19.1
 
