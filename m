@@ -2,67 +2,97 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEB3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F72EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E72D521927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0324F21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391906AbeLUU6C (ORCPT
+        id S2391917AbeLUU6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:58:02 -0500
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:50608 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390193AbeLUU6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:58:01 -0500
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1gaRrc-0005rE-GW; Fri, 21 Dec 2018 21:57:44 +0100
-Date:   Fri, 21 Dec 2018 21:57:44 +0100
-From:   Florian Westphal <fw@strlen.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Fri, 21 Dec 2018 15:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730307AbeLUU6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 15:58:22 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00D8E21927;
+        Fri, 21 Dec 2018 20:58:20 +0000 (UTC)
+Date:   Fri, 21 Dec 2018 15:58:19 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Theodore Ts'o <tytso@mit.edu>, Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wen He <wen.he_1@nxp.com>, Peng Ma <peng.ma@nxp.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: Tree for Dec 21
-Message-ID: <20181221205744.piiwyctaxbbkdc56@breakpoint.cc>
-References: <20181221193244.3a6ed685@canb.auug.org.au>
- <20181221162149.GA32500@roeck-us.net>
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
+ macro
+Message-ID: <20181221155819.0513c6dd@gandalf.local.home>
+In-Reply-To: <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
+References: <20181221175618.968519903@goodmis.org>
+        <20181221175659.208858193@goodmis.org>
+        <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+        <20181221144054.20bdeb33@gandalf.local.home>
+        <CAHk-=wgSvRhj6KNRdn9gbK9RJVAswdtKSNjAxdf9O9vn04T5XQ@mail.gmail.com>
+        <20181221153526.5e6055ca@gandalf.local.home>
+        <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221162149.GA32500@roeck-us.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guenter Roeck <linux@roeck-us.net> wrote:
-> 	mips:cavium_octeon_defconfig [4]
+On Fri, 21 Dec 2018 12:46:47 -0800
+Joe Perches <joe@perches.com> wrote:
 
-> git bisect bad 4165079ba328dd47262a2183049d3591f0a750b1
-> # first bad commit: [4165079ba328dd47262a2183049d3591f0a750b1] net: switch secpath to use skb extension infrastructure
+> I think all the underscores are unnecessary and confusing.
 
-Indeed, sorry.  staging/octeon needs a small fix.  Will send a patch asap.
+Here. I removed a beginning and ending underscore from each variable ;-)
+
+-- Steve
+
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 27d0482e5e05..7f88444471f7 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -14,6 +14,28 @@ extern void *memdup_user(const void __user *, size_t);
+ extern void *vmemdup_user(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
+ 
++/**
++ * str_has_prefix - Test if a string has a given prefix
++ * @str: The string to test
++ * @prefix: The string to see if @str starts with
++ *
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use str_has_prefix().
++ *
++ * Returns: 0 if @str does not start with @prefix
++         strlen(@prefix) if @str does start with @prefix
++ */
++#define str_has_prefix(str, prefix)					\
++	({								\
++		const char *___prefix___ = (const char *)(prefix);	\
++		int ___len___ = strlen(___prefix___);			\
++		strncmp(str, ___prefix___, ___len___) == 0 ?		\
++			___len___ : 0;					\
++	})
++
+ /*
+  * Include machine specific inline routines
+  */
