@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F2AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7495DC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80EB21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEEE21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389661AbeLUTeg (ORCPT
+        id S2389866AbeLUTei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:34:36 -0500
-Received: from mga12.intel.com ([192.55.52.136]:48296 "EHLO mga12.intel.com"
+        Fri, 21 Dec 2018 14:34:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:36265 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730537AbeLUTeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:34:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1731715AbeLUTeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:34:37 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 11:34:33 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 11:34:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
-   d="xz'?scan'208";a="100586852"
+   d="xz'?scan'208";a="120301143"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 21 Dec 2018 11:34:31 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Dec 2018 11:34:30 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1gaQZ4-000AOQ-GR; Sat, 22 Dec 2018 03:34:30 +0800
-Date:   Sat, 22 Dec 2018 03:34:03 +0800
+        id 1gaQZ4-000AO2-FB; Sat, 22 Dec 2018 03:34:30 +0800
+Date:   Sat, 22 Dec 2018 03:34:04 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Joerg Roedel <jroedel@suse.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
 Subject: [iommu/of]  641fb0efbf: BUG:KASAN:null-ptr-deref_in_i
-Message-ID: <20181221193403.5fml7owgvffhvvu2@inn2.lkp.intel.com>
+Message-ID: <20181221193403.ch7p7b3lueqqizck@inn2.lkp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="7wlneodlxmfvdofo"
+Content-Type: multipart/mixed; boundary="dkfsvwybhanw7ns4"
 Content-Disposition: inline
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,7 +48,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---7wlneodlxmfvdofo
+--dkfsvwybhanw7ns4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -247,7 +246,7 @@ To reproduce:
 Thanks,
 lkp
 
---7wlneodlxmfvdofo
+--dkfsvwybhanw7ns4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="config-4.20.0-rc1-00031-g641fb0e"
 
@@ -5409,7 +5408,128 @@ CONFIG_X86_DEBUG_FPU=y
 CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
 
---7wlneodlxmfvdofo
+--dkfsvwybhanw7ns4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=job-script
+
+#!/bin/sh
+
+export_top_env()
+{
+	export suite='trinity'
+	export testcase='trinity'
+	export category='functional'
+	export runtime=300
+	export job_origin='/lkp/lkp/src/allot/rand/vm-snb-quantal-x86_64/trinity.yaml'
+	export queue='validate'
+	export testbox='vm-snb-quantal-x86_64-29'
+	export tbox_group='vm-snb-quantal-x86_64'
+	export branch='linux-devel/devel-hourly-2018122002'
+	export commit='641fb0efbff063ed57f108c2eb4a4d26dbd5badd'
+	export kconfig='x86_64-randconfig-ws0-12200647'
+	export repeat_to=4
+	export submit_id='5c1d21c70b9a931a5746c017'
+	export job_file='/lkp/jobs/scheduled/vm-snb-quantal-x86_64-29/trinity-300s-quantal-core-x86_64-2018-11-09.cgz-641fb0efbff063ed57f108c2eb4a4d26dbd5badd-20181222-72279-ysdvzi-3.yaml'
+	export id='f9b9266d75b674b8d1b911d18a502589fcc10a55'
+	export queuer_version='/lkp/lkp/.src-20181221-155100'
+	export need_kconfig='CONFIG_KVM_GUEST=y'
+	export compiler='gcc-7'
+	export enqueue_time='2018-12-22 01:24:23 +0800'
+	export _id='5c1d21c70b9a931a5746c018'
+	export _rt='/result/trinity/300s/vm-snb-quantal-x86_64/quantal-core-x86_64-2018-11-09.cgz/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd'
+	export user='lkp'
+	export result_root='/result/trinity/300s/vm-snb-quantal-x86_64/quantal-core-x86_64-2018-11-09.cgz/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd/3'
+	export scheduler_version='/lkp/lkp/.src-20181221-155100'
+	export LKP_SERVER='inn'
+	export max_uptime=1500
+	export initrd='/osimage/quantal/quantal-core-x86_64-2018-11-09.cgz'
+	export bootloader_append='root=/dev/ram0
+user=lkp
+job=/lkp/jobs/scheduled/vm-snb-quantal-x86_64-29/trinity-300s-quantal-core-x86_64-2018-11-09.cgz-641fb0efbff063ed57f108c2eb4a4d26dbd5badd-20181222-72279-ysdvzi-3.yaml
+ARCH=x86_64
+kconfig=x86_64-randconfig-ws0-12200647
+branch=linux-devel/devel-hourly-2018122002
+commit=641fb0efbff063ed57f108c2eb4a4d26dbd5badd
+BOOT_IMAGE=/pkg/linux/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd/vmlinuz-4.20.0-rc1-00031-g641fb0e
+max_uptime=1500
+RESULT_ROOT=/result/trinity/300s/vm-snb-quantal-x86_64/quantal-core-x86_64-2018-11-09.cgz/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd/3
+LKP_SERVER=inn
+debug
+apic=debug
+sysrq_always_enabled
+rcupdate.rcu_cpu_stall_timeout=100
+net.ifnames=0
+printk.devkmsg=on
+panic=-1
+softlockup_panic=1
+nmi_watchdog=panic
+oops=panic
+load_ramdisk=2
+prompt_ramdisk=0
+drbd.minor_count=8
+systemd.log_level=err
+ignore_loglevel
+console=tty0
+earlyprintk=ttyS0,115200
+console=ttyS0,115200
+vga=normal
+rw'
+	export modules_initrd='/pkg/linux/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd/modules.cgz'
+	export bm_initrd='/osimage/pkg/debian-x86_64-2016-08-31.cgz/trinity-static-x86_64-x86_64-6ddabfd2_2017-11-10.cgz'
+	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
+	export site='inn'
+	export LKP_CGI_PORT=80
+	export LKP_CIFS_PORT=139
+	export model='qemu-system-x86_64 -enable-kvm -cpu SandyBridge'
+	export nr_cpu=2
+	export memory='768M'
+	export rootfs='quantal-core-x86_64-2018-11-09.cgz'
+	export hdd_partitions='/dev/vda'
+	export swap_partitions='/dev/vdb'
+	export kernel='/pkg/linux/x86_64-randconfig-ws0-12200647/gcc-7/641fb0efbff063ed57f108c2eb4a4d26dbd5badd/vmlinuz-4.20.0-rc1-00031-g641fb0e'
+	export dequeue_time='2018-12-22 01:26:20 +0800'
+	export nr_vm=48
+	export job_initrd='/lkp/jobs/scheduled/vm-snb-quantal-x86_64-29/trinity-300s-quantal-core-x86_64-2018-11-09.cgz-641fb0efbff063ed57f108c2eb4a4d26dbd5badd-20181222-72279-ysdvzi-3.cgz'
+
+	[ -n "$LKP_SRC" ] ||
+	export LKP_SRC=/lkp/${user:-lkp}/src
+}
+
+run_job()
+{
+	echo $$ > $TMP/run-job.pid
+
+	. $LKP_SRC/lib/http.sh
+	. $LKP_SRC/lib/job.sh
+	. $LKP_SRC/lib/env.sh
+
+	export_top_env
+
+	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper oom-killer
+	run_monitor $LKP_SRC/monitors/plain/watchdog
+
+	run_test $LKP_SRC/tests/wrapper trinity
+}
+
+extract_stats()
+{
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper meminfo
+
+	$LKP_SRC/stats/wrapper time trinity.time
+	$LKP_SRC/stats/wrapper time
+	$LKP_SRC/stats/wrapper dmesg
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper stderr
+	$LKP_SRC/stats/wrapper last_state
+}
+
+"$@"
+
+--dkfsvwybhanw7ns4
 Content-Type: application/x-xz
 Content-Disposition: attachment; filename="dmesg.xz"
 Content-Transfer-Encoding: base64
@@ -5637,4 +5757,4 @@ oVaxthvssq2O5BVo/L0nYmyhMEAFmVpUn0VLZluw4dv5VeeKFpH82tc0ycZyW3EFcV9v11+Y
 v/0FLf/VhBw1V2jD/0r06M8XPPjG+ugD/jHLmzSTyh7RU3NHuElrSP3wL+nibrgfHtLcg7wI
 GH395MFuGZ2LTmwAAABkbiHMajHuQgABp12sqAQAkJF1s7HEZ/sCAAAAAARZWg==
 
---7wlneodlxmfvdofo--
+--dkfsvwybhanw7ns4--
