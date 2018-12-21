@@ -3,97 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25757C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0F0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48D721928
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADCDA21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:27:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ApGBR02A"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Am4bIxoU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389972AbeLUT0B (ORCPT
+        id S2389985AbeLUT1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:26:01 -0500
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:45570 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbeLUT0B (ORCPT
+        Fri, 21 Dec 2018 14:27:42 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43073 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbeLUT1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:26:01 -0500
-Received: by mail-lf1-f43.google.com with SMTP id b20so4634778lfa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:26:00 -0800 (PST)
+        Fri, 21 Dec 2018 14:27:42 -0500
+Received: by mail-io1-f66.google.com with SMTP id q17so1081126ior.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:27:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pbVPioklnrOZ9q2JoEyS4aAJN0QpxdEcLEvRni2WRgI=;
-        b=ApGBR02AGWWaNYXpNXdi8cQqZRQeLfXir0p3iLe1LLkli8MjzVRJrAOdTP2JQRzbw0
-         8FZMbVxq5gQjZd8PBpwr7NB/z+CtgzDORXjZxz/h12lK7fk3d3EykN90JTW+YP8dgqEX
-         TWSJFIJeJym+4DJbMDnS13FtfeX/xEyGhPy6g=
+        d=sifive.com; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=rZjr0t7r+0yrFfTECBQDjKIAbla4O7UXrgAYzrDfzF0=;
+        b=Am4bIxoUKSMqUVhwRhlo7/sR5IbLv6JUb1lMtOXDsy+4J9b+VUrFS0//M6njQKIi3M
+         GcYbfMKlEb+BpXiMRt2N08oB5d8s/1S4lk1S3HscfQFU8B3jdVwGlesDpWjpZ/jy7adF
+         RsaG11V9eM6aVLCmeLLmUF8u/n3dJJNYUYRPq/XbX/xaVeXL1dMwR7GV48nL88/ZKSJ/
+         4yzNayxiSkKVjQKB06kyRvRWRmZFkCHvCg33XQMGbp2YzzfDLtGLE0+orY1mC8wkG5ux
+         Ge2RjFJZ5F1Xq5lEtvc6/ootCWDCZ3bywWvY2PvF4oT5ByRYKxb9ZB3NpWWvLQUR1ouf
+         DhjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pbVPioklnrOZ9q2JoEyS4aAJN0QpxdEcLEvRni2WRgI=;
-        b=rxmue3PYgSlBy7yJ1PVzGmHtrTQ6PRQ1Ii6rG4diXH9/bE2V648+TNilNwij9AqnXb
-         8Ztx4FMKLABcQutOdVUeIvMGFsTz5a604j9IreLbgRa57i1we7O629PgbGVekqRRt2mu
-         U6bnsfvNDi+Am1Mz45dIA4mtBWydhztek1097RR5FTnNLvCvg/hu0mpAHqrEkqtPMiP9
-         WQ1PqIXjihF5kgH4hiinCNFpk51G/C9KjqlDO29fMj10x3fJgNdskF7VExClRcA09CaM
-         qgeANAVRYj72HnECPFFRFI8EPDsOmBbnW0w7NCMntLlUmzytOQF3RiqFC7nZNHxlIqjS
-         JyIw==
-X-Gm-Message-State: AA+aEWa9g5km2404tscwq480RKD9dvFpF2X+nAODqNoTInouSmrNH/J8
-        PJlzktNH2Uoat0X2iuK3FGrphdrdyvU=
-X-Google-Smtp-Source: AFSGD/XNhjpU0GR1B1VpmhD4TbY1SDr1oOjJ4er/ghB0zbALDazm9+9rrWAGG6jAoutT4fi/fgFjnQ==
-X-Received: by 2002:a19:c70a:: with SMTP id x10mr2133635lff.88.1545420358825;
-        Fri, 21 Dec 2018 11:25:58 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm4717539ljw.84.2018.12.21.11.25.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 11:25:57 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id c16so4652889lfj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:25:57 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr2211898lfa.135.1545420357336;
- Fri, 21 Dec 2018 11:25:57 -0800 (PST)
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=rZjr0t7r+0yrFfTECBQDjKIAbla4O7UXrgAYzrDfzF0=;
+        b=nI02eg1MQ0fiobuiHjNv+WN/cMf0YiaBqj4SsY9F8K4C2qDGoEIGiLsgaIfehZpCj3
+         bTGzpOuIwSUKGrbcJHaBPSinPsIGI0WJEL53TMDCX503XDJXYMLtPEwoTCOs1NoFv6Yj
+         a3ZbgbpI0uj+8XbRrwwwh887TUQBKEig6YgBfZyus4EtcYmd74KNkVuyEhu+kLOQwb3+
+         kWvl9xHQbheSobe5Zc0H8Yva67voklwTNlXUe3p/0f7qrxxZs5wl887DsVMJYo0HioqH
+         jAIjdfo2wDD0ZxacwXJfprMbUTpq1xDzYDn9cOfl13OVs5ep9F3g+g5VuWEhrTpRn87a
+         O08A==
+X-Gm-Message-State: AJcUuke6L+1dQ2oUfqhdzqNk1EKJ8Faf8Qq4j/rojRrbnORS02TE+qtG
+        eiiDIz6ChblogjreXHPLf2kjQQ==
+X-Google-Smtp-Source: ALg8bN4cHLxcqS2VbI6j1wI964qIPqab1mnS29FQS4DLd30OCQWQiktpcX0qe7BhBD+JbEa2LQEq6w==
+X-Received: by 2002:a6b:b28a:: with SMTP id b132mr2513633iof.256.1545420460856;
+        Fri, 21 Dec 2018 11:27:40 -0800 (PST)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id l186sm6411860itl.22.2018.12.21.11.27.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 11:27:40 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
+Date:   Fri, 21 Dec 2018 11:27:39 -0800 (PST)
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+cc:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
+In-Reply-To: <541e8b85bc2d3010741daadddc71ada52b847b8f.camel@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1812211124180.777@viisi.sifive.com>
+References: <20181221190615.19003-1-alistair.francis@wdc.com>  <alpine.DEB.2.21.9999.1812211110260.777@viisi.sifive.com> <541e8b85bc2d3010741daadddc71ada52b847b8f.camel@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-References: <20181221083226.GI23332@shao2-debian>
-In-Reply-To: <20181221083226.GI23332@shao2-debian>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 21 Dec 2018 11:25:41 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whM09ZxdrrN-o3k1JOAn0keF5aXtPAcEYiukn7kW7yp2g@mail.gmail.com>
-Message-ID: <CAHk-=whM09ZxdrrN-o3k1JOAn0keF5aXtPAcEYiukn7kW7yp2g@mail.gmail.com>
-Subject: Re: [LKP] [bochs] df2052cc92: WARNING:at_drivers/gpu/drm/drm_mode_config.c:#drm_mode_config_cleanup
-To:     rong.a.chen@intel.com
-Cc:     peter@lekensteyn.nl, kraxel@redhat.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 12:32 AM kernel test robot
-<rong.a.chen@intel.com> wrote:
->
-> FYI, we noticed commit df2052cc9221 ("bochs: convert to
-> drm_fb_helper_fbdev_setup/teardown") caused
->
-> [  487.591733] WARNING: CPU: 0 PID: 1 at drivers/gpu/drm/drm_mode_config.c:478 drm_mode_config_cleanup+0x270/0x290
 
-Ok, this is apparently just a leak for what appears to be a not
-particularly interesting error case, but the warning is new to 4.20
-(*) so it would be nice to have somebody look at it.
+On Fri, 21 Dec 2018, Alistair Francis wrote:
 
-That commit is supposed to fix a leak, but there's apparently
-something still there.
+> When the MicroSemi driver does eventually go upstream this will
+> probably have to be discussed though as either the config or device
+> tree will need to be edited to ensure only one PCIe device is present.
 
-Daniel, Peter, Gerd?
+The right way to do that is to have two separate DT files: one for the 
+HiFive-U board alone; the other for the HiFive-U plus the expansion board 
+combo.  There shouldn't be any problems with keeping both drivers enabled 
+in the defconfig.
 
-                       Linus
 
-(*) the *problem* is probably not new, it's just now exposed by the
-switch to drm_mode_config_cleanup().
+- Paul
