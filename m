@@ -2,128 +2,137 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADB7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF67C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E16F2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 941D121928
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="SphlE1vi"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a/KXPV7n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391549AbeLUTKt (ORCPT
+        id S2391559AbeLUTN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:10:49 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:53852 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387709AbeLUTKs (ORCPT
+        Fri, 21 Dec 2018 14:13:29 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34928 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391558AbeLUTN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:10:48 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 1735FCBA
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 19:10:47 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id TMX1ROehLsg3 for <linux-kernel@vger.kernel.org>;
-        Fri, 21 Dec 2018 13:10:46 -0600 (CST)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id DF16ECCC
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:10:46 -0600 (CST)
-Received: by mail-io1-f69.google.com with SMTP id u2so5302740iob.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:10:46 -0800 (PST)
+        Fri, 21 Dec 2018 14:13:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so5678082ljb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=yy2/4a+ag6m7ATAsbo+6+iGfjYwWjT+Z5BCSnIA0FJE=;
-        b=SphlE1viJQPCKS9vzHNT97u3mU0UUw+7JFpMYHTQypzwYPfgRCpw8DfORPcloev60C
-         T16WNTrqqkXMwo6cMYVcqQNs5LAzuSxia3l1E/2N7satIkmJGJrXxic5gAfHer1pkr2d
-         TMwvWexqxxPTwlEJJaqlJA0MepTzRLgrj7RHeSK3kwVETvGkSia6BHKkphdfV+1qLGgP
-         B1YHO31WRBipgt+Uiv9Yxc9pC0XPa5LXzN8pAXdB3hXQ5k7YuaoDTM7feWk5DcDOJihw
-         Rb4fJhlmP458vDFLK2WLz9eIZ30EFSpdlq5vcB3NGB/kZ+yppDOT1/r4/hiJSrJhsFMP
-         Xj1g==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=GoaAF/5YI5Z45IZvCYu5JL7bMo3j0XtljW+8zGPMK0s=;
+        b=a/KXPV7n0rvMsJnMnbJzEBym23mlzA+RFBmS6UI5Xw56BbHkyLfli0p+TgOAq9tDpm
+         FSJh8wHalcdAXf4r2n0okZfdsHaNnHuL3Tv+TqYO1LSXu3qkOLqW/WgVGI1OBD20u2Ip
+         u4DUX8tLzYgLqRkKDJvDE4Vjp3Wp6hOTk2bBE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yy2/4a+ag6m7ATAsbo+6+iGfjYwWjT+Z5BCSnIA0FJE=;
-        b=eQdiR91oNkcM7qwjJ8Ru6wutgXdBRIrbLGtKjEe+sjTC84faeetAhPzBCNvrO9WQCf
-         BYpXhc4Ms50p8bQaIKDXcaBmQNsZKSHLXBpibOaLScppf+lAdNl3hbFM3YS66BeYjudM
-         ICZzkt7DBKFgavK8TQrmX2zgetr7vUAlTQgmWEr6Pr01+h9nnQNP3nk4sIyRLhoplN58
-         /Pi3804xmo1M7p6hK2qr8g0laSjwNf6VbdE7U8vTphYM5VRrUuNmAk1G7ff3Qf18YtFm
-         rZlaJVDnaV0d5tdTOgVFr8xek45/Up7hW2wMyJFQDhh2C+zEG8DHPmZI/l9i7XuoX3cL
-         p0TQ==
-X-Gm-Message-State: AA+aEWaKEi/WqwdQUIOSMnx8GP+cZZg9Rxg6dLxakmHW3tLqkUwmEIf4
-        Ldd7JbZpg7zYbJxn5LtLUk1t0m5ZIlJC03qCC3VXKMWFW1TzYZ/IQ9wwn3rzFG6ap0tBv+QUsqc
-        og989F/mOTWRz+G+HcVj+X27q/EFu
-X-Received: by 2002:a02:1885:: with SMTP id 5mr2543511jar.110.1545419446237;
-        Fri, 21 Dec 2018 11:10:46 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/U6b9FsC3mfRmMpH52tiHgYujKHtFvPkHksUlnEn9vcbrn1r8tvQZ7UV8B8gezUQHYkhcXZEw==
-X-Received: by 2002:a02:1885:: with SMTP id 5mr2543469jar.110.1545419445145;
-        Fri, 21 Dec 2018 11:10:45 -0800 (PST)
-Received: from bee.cs.umn.edu (cs-bee0u.cs.umn.edu. [134.84.121.28])
-        by smtp.gmail.com with ESMTPSA id h8sm585454ioj.9.2018.12.21.11.10.43
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=GoaAF/5YI5Z45IZvCYu5JL7bMo3j0XtljW+8zGPMK0s=;
+        b=btiDrcH9Gz+6iOci4Nxw1zlZpdYWGKj3zkGm7YX2FkduUbGVtnbjUpGoIs2eW2A0uH
+         UK/ZjoOwajtt+pU/Z4617rDkad/dBO/ShFKJmEXD5biaI+GeRCt6reRcK3OIfgy4KEmJ
+         iUoYFIXPtpQtGITmH86NIv3v6vB0JbknEyN13rZCy6IqE93Uy3XjkvnLCTJRMpYYWcsR
+         8jwwqapSGACYD8wcKKIDd5HWwIlnIEmknVhJCTYlW9tv+C0W3eUSlI58CampAKTVHSY+
+         ZPdxN4zNaY3fOULgCosiJ41XkIW4tVgFe05ezZMRCWgu41AVYrR6EQiiqHY+T0sax9uR
+         pzeg==
+X-Gm-Message-State: AJcUukc0UacfCBioRjtQtppuGFZ167oDBhM9t9jqHxeI2RiposdnZ9E5
+        qwiAM2gA4WecY26ahNc9BkvxVrf2yC8=
+X-Google-Smtp-Source: ALg8bN51It94ofsHsB5rtVIO3t/QaFNVGghzszoAgh8ZsSZ4P6Jc6Qg0UeFwiOyP9gEX8dmNUwUe5Q==
+X-Received: by 2002:a2e:1b47:: with SMTP id b68-v6mr2031085ljb.104.1545419606588;
+        Fri, 21 Dec 2018 11:13:26 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 12-v6sm4754679ljf.96.2018.12.21.11.13.23
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 11:10:44 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] hwmon: (lm80) fix a missing check of bus read in lm80 probe
-Date:   Fri, 21 Dec 2018 13:10:39 -0600
-Message-Id: <20181221191039.1519-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Dec 2018 11:13:24 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id k19-v6so5644394lji.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 11:13:23 -0800 (PST)
+X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr2429758ljs.118.1545419603234;
+ Fri, 21 Dec 2018 11:13:23 -0800 (PST)
+MIME-Version: 1.0
+References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org> <20181221154714.GA26547@mit.edu>
+In-Reply-To: <20181221154714.GA26547@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 21 Dec 2018 11:13:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+Message-ID: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In lm80_probe(), if lm80_read_value() fails, it returns a negative
-error number which is stored to data->fan[f_min] and will be further
-used. We should avoid using the data if the read fails.
+On Fri, Dec 21, 2018 at 7:47 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> Linus --- we're going round and round, and I don't think this is
+> really a technical dispute at this point, but rather an aesthetics
+> one.
 
-The fix checks if lm80_read_value() fails, and if so, returns with the
-error number.
+Grr.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/hwmon/lm80.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+So honestly, I personally *like* the model of "the file contains its
+own validation data" model. I think that's the right model, so that
+you can then basically just do "enable verification on this file, and
+verify that the root hash is this".
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index d91333557f04..85f797501aaf 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -627,6 +627,7 @@ static int lm80_probe(struct i2c_client *client,
- 	struct device *dev = &client->dev;
- 	struct device *hwmon_dev;
- 	struct lm80_data *data;
-+	int rv;
- 
- 	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
- 	if (!data)
-@@ -639,8 +640,14 @@ static int lm80_probe(struct i2c_client *client,
- 	lm80_init_client(client);
- 
- 	/* A few vars need to be filled upon startup */
--	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
--	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][0] = rv;
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][1] = rv;
- 
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
- 							   data, lm80_groups);
--- 
-2.17.1
+So that part I like. I think the people who argue for "let's have a
+separate interface that writes the merkle tree data" are completely
+wrong.
 
+HOWEVER.
+
+I do agree that your particular model is pretty damn broken in lots of ways.
+
+Why is it filesystem specific? If the whole point is that the file
+itself has its own verification data (which I like), then I don't see
+why this is then documented as some filesystem-specific layout model.
+That's complete and utter garbage.
+
+In other words: either the model is that the file *itself* contains
+its own merkle tree that validates the file, or it isn't. You can't
+have it two ways. No silly "layout changes when you apply the hash"
+garbage. That's just crazy talk and invalidates the whole model.
+
+And honestly, I still think that it's very odd to add the merge data
+to the end, when the filesystem already supports xattrs. It would have
+made much more sense to just make one xattr contain the merkle tree
+validation data.
+
+So why is this sold as some unholy mess of "filesystem-specific" and
+"generic"? That part just annoys the hell out of me. Why isn't this
+sold as an *actual* generic model, where you just say "append the
+merkle tree to the file, then enable verity testing of the end result
+and validate the top-level hash".
+
+That kind of thing could be done with absolutely _zero_ per-filesystem
+code, and made 100% generic, and we'd just verify the merge data in
+readpages().
+
+So what's the excuse for doing the crazy odd "let's just support one
+single filesystem" model?
+
+                    Linus
