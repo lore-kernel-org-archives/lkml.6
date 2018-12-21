@@ -2,140 +2,116 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CC8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BA5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B512821905
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 02:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A2421905
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="LvPUFcYt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeSGlxjc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388908AbeLUC50 (ORCPT
+        id S2388978AbeLUDLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 21:57:26 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42437 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732679AbeLUC50 (ORCPT
+        Thu, 20 Dec 2018 22:11:12 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35761 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732931AbeLUDLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 21:57:26 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so1785300plp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 18:57:25 -0800 (PST)
+        Thu, 20 Dec 2018 22:11:11 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so4784246itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:11:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=24eEBE1DNaoYzJAX8F1cGsu7ikWEKHhNLqwnZLIAHEA=;
-        b=LvPUFcYt3jy6W5+hW7SkPr7ANj4lHrRdrg4hsTSuHQJSXFd2KzobZ6RYXhuZVjbzaX
-         x1NZhHPjcapJVmf/XDP+4KowmS5PsPmt60xlDEQ1lLCgRmD7iBaJgeKIhDmaOdHy6dIk
-         nI/IdCKtv/kI9REo/DX8TLYVYCGJizTguBZajetbtPgETyIx62iHMHcjGIOC7xJ34ugx
-         +N4D3xexJ2eQQKnjsqYd7OtGyFN1sbIPywVe/MXVmukQ0HK0XEoEQohCeT0R6TZniJA1
-         ZLU5qUnzJe3EZpkYlCZlXtUX/W0ztQcBcEPYzfWjy+0i8ZvSyhOcg/PHAab98AowIQu1
-         fSrg==
+        bh=qVA79DYVZGjAPTiYQY7DmNDV4w0iyvWD1MDEJ+YKub0=;
+        b=IeSGlxjcI+TpjYCFxk147TXVKJ6dQAo/r1SVykZSPMRC/+hLQx/e3+kRL/qRGTRziR
+         D57iE8nfffDLLTuCHE+QanvltxfhOGFHkG+okuXLGAm85pBceLPSnmZ87tIxRTZXTiqd
+         P6c8diV5rzx5xrkPbI7RNtwE11NRn5lAKIxv0SQGbQEO1VbthIqvAzeEc1CCNVmKW7wb
+         M6ybHVfOf3AK1nLHUYOTJr2Ote38tS51AC8iAPdn6MDrUt8Pm1XHF3dU4oyKMf1MMcYR
+         WMKSc+o+TL3yfLKoHRtkQoJ5gsTWu80aBLVtXok9c8bTtSBULqqlJIqGnyGvpFrcR9zK
+         ALSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=24eEBE1DNaoYzJAX8F1cGsu7ikWEKHhNLqwnZLIAHEA=;
-        b=JPJe9t4B7MjDVZYj8AgTcjlWc54OPK176KxwfHn+OhFdBxlNohbOcI5shLF8WIe8IP
-         qyhN0DRBe7a8e66uGgk6huvAWFWRHBZ0EUkupKLocOI5sCcGiX/W4mwpULziJpD/zOxb
-         hW+G9tMQOHpmDUZXlkP2UM7RTuQgP9wB55XT86yhQDPpXOCyy3gSV1IXbcRolDvs28pn
-         5eO3YwqIcOAqC7D411KGTgbpOPkdB5JKEoj/XcCtidRTL2t71HWdaUVveSjkGfk/c82T
-         dYtmult63Ft73h5tbliznLlhXz3VHhDq3WuW3CqYbax+vslFP3PgUdf+AO0ZXCb4527N
-         8+/g==
-X-Gm-Message-State: AJcUukcpKtybx9z+OxwoCe23jx/OcmkbrdXJJniYMit41/ZbHTjgPpMk
-        ONKYY38lRRIhbnWruBS//YC6bLhFlFs=
-X-Google-Smtp-Source: ALg8bN5eoD48NeQXDlIGNuSavc5ct/G+japQxzpamH6xCxCb2t6vnTTRiwC5Vd/G/wBXTJWUAnGCMg==
-X-Received: by 2002:a17:902:1101:: with SMTP id d1mr764329pla.136.1545361045248;
-        Thu, 20 Dec 2018 18:57:25 -0800 (PST)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id d129sm33424487pfc.31.2018.12.20.18.57.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 18:57:25 -0800 (PST)
-Date:   Thu, 20 Dec 2018 18:57:22 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Paul Turner <pjt@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/4] net: use indirect call wrappers at GRO
- transport layer
-Message-ID: <20181220185722.1bc7540d@xeon-e3>
-In-Reply-To: <fa7128969d8739cca9018c9577120fed8f44433a.1544032300.git.pabeni@redhat.com>
-References: <cover.1544032300.git.pabeni@redhat.com>
-        <fa7128969d8739cca9018c9577120fed8f44433a.1544032300.git.pabeni@redhat.com>
+        bh=qVA79DYVZGjAPTiYQY7DmNDV4w0iyvWD1MDEJ+YKub0=;
+        b=plUqdiKKeM/ED5wwlpgrVE6Xn/9kYrqaJ/kOJI2XDMFeRtoOkcnLqYczreFs5enDme
+         z7wJusWg3WfX8YI1x3nDA1VSQkxypi8+Y22byNfom/WBF4r057JUx2CTeqD0RV0F25gn
+         m8EYDgyKrK0BHM6BRPD5P0KGfAD/9YCXso9nrG9dEvR12uSwctTEtHfIPzdW4MS7f5sH
+         LHI6KrFGgBkzvknJybCV780lCRS/QCyHU029590pRGS7SdwtBagbIChj+D/1LKdfNb50
+         waaQA3bg2rXOg6Ilnnwx3HPFDGA7btL/ttrpXyRY0YSSepBCdE/JqCH56yMenRzm7mPW
+         2OTg==
+X-Gm-Message-State: AA+aEWbl2aMwK9lWQ6QBvfOOQ1vs4ZGZBQ7dtml8Hku8UkKvZNolSHMt
+        t/ddYrlwyUfOa/HYGxcMhSbEqA==
+X-Google-Smtp-Source: AFSGD/Wb1zz1L6dikxFAP2P19uZ8ZwOp9ieoLSAIff/lPxBGlEW/CpQOCnWgtzhARedVDipspgQZww==
+X-Received: by 2002:a02:1dc8:: with SMTP id 191mr550671jaj.55.1545361870187;
+        Thu, 20 Dec 2018 19:11:10 -0800 (PST)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id d133sm5425783itd.1.2018.12.20.19.11.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 19:11:09 -0800 (PST)
+From:   Yu Zhao <yuzhao@google.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Cc:     David Zhou <David1.Zhou@amd.com>, Samuel Li <Samuel.Li@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH 2/3] drm/amd: validate user pitch alignment
+Date:   Thu, 20 Dec 2018 20:10:52 -0700
+Message-Id: <20181221031053.240161-2-yuzhao@google.com>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+In-Reply-To: <20181221031053.240161-1-yuzhao@google.com>
+References: <20181221031053.240161-1-yuzhao@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  5 Dec 2018 19:13:41 +0100
-Paolo Abeni <pabeni@redhat.com> wrote:
+Userspace may request pitch alignment that is not supported by GPU.
+Some requests 32, but GPU ignores it and uses default 64 when cpp is
+4. If GEM object is allocated based on the smaller alignment, GPU
+DMA will go out of bound.
 
-> This avoids an indirect call in the receive path for TCP and UDP
-> packets. TCP takes precedence on UDP, so that we have a single
-> additional conditional in the common case.
->=20
-> v1 -> v2:
->  - adapted to INDIRECT_CALL_ changes
->=20
-> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+For GPU that does frame buffer compression, DMA writing out of bound
+memory will cause memory corruption.
 
-This introduces a bunch of new warnings when kernel is built with W=3D1.
-Please add the necessary prototypes in header files.
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Putting prototypes in C file for global function is not the right way to fix
-this.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index e309d26170db..755daa332f8a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -527,6 +527,15 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+ 	struct drm_gem_object *obj;
+ 	struct amdgpu_framebuffer *amdgpu_fb;
+ 	int ret;
++	struct amdgpu_device *adev = dev->dev_private;
++	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
++	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
++
++	if (mode_cmd->pitches[0] != pitch) {
++		dev_err(&dev->pdev->dev, "Invalid pitch: expecting %d but got %d\n",
++			pitch, mode_cmd->pitches[0]);
++		return ERR_PTR(-EINVAL);
++	}
+ 
+ 	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
+ 	if (obj ==  NULL) {
+-- 
+2.20.1.415.g653613c723-goog
 
-net/ipv4/tcp_offload.c:310:17: warning: no previous prototype for =E2=80=98=
-tcp4_gro_receive=E2=80=99 [-Wmissing-prototypes]
- struct sk_buff *tcp4_gro_receive(struct list_head *head, struct sk_buff *s=
-kb)
-                 ^~~~~~~~~~~~~~~~
-net/ipv4/tcp_offload.c:323:29: warning: no previous prototype for =E2=80=98=
-tcp4_gro_complete=E2=80=99 [-Wmissing-prototypes]
- INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int tho=
-ff)
-                             ^~~~~~~~~~~~~~~~~
-  CC      net/ipv4/datagram.o
-  CC      net/ipv4/udp_offload.o
-net/ipv4/udp_offload.c:459:17: warning: no previous prototype for =E2=80=98=
-udp4_gro_receive=E2=80=99 [-Wmissing-prototypes]
- struct sk_buff *udp4_gro_receive(struct list_head *head, struct sk_buff *s=
-kb)
-                 ^~~~~~~~~~~~~~~~
-net/ipv4/udp_offload.c:533:29: warning: no previous prototype for =E2=80=98=
-udp4_gro_complete=E2=80=99 [-Wmissing-prototypes]
- INDIRECT_CALLABLE_SCOPE int udp4_gro_complete(struct sk_buff *skb, int nho=
-ff)
-                             ^~~~~~~~~~~~~~~~~
-  CC      net/ipv4/arp.o
-  CC      net/ipv6/ip6_offload.o
-net/ipv6/ip6_offload.c:188:41: warning: no previous prototype for =E2=80=98=
-ipv6_gro_receive=E2=80=99 [-Wmissing-prototypes]
- INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head =
-*head,
-                                         ^~~~~~~~~~~~~~~~
-net/ipv6/ip6_offload.c:328:29: warning: no previous prototype for =E2=80=98=
-ipv6_gro_complete=E2=80=99 [-Wmissing-prototypes]
- INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nho=
-ff)
-                             ^~~~~~~~~~~~~~~~~
-  CC      net/ipv6/tcpv6_offload.o
-net/ipv6/tcpv6_offload.c:20:17: warning: no previous prototype for =E2=80=
-=98tcp6_gro_receive=E2=80=99 [-Wmissing-prototypes]
- struct sk_buff *tcp6_gro_receive(struct list_head *head, struct sk_buff *s=
-kb)
-                 ^~~~~~~~~~~~~~~~
-net/ipv6/tcpv6_offload.c:33:29: warning: no previous prototype for =E2=80=
-=98tcp6_gro_complete=E2=80=99 [-Wmissing-prototypes]
- INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct sk_buff *skb, int tho=
-ff)
-                             ^~~~~~~~~~~~~~~~~
-  CC      net/ipv6/exthdrs_offload.o
