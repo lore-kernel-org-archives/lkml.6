@@ -6,63 +6,60 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B3DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87BAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3DB21906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9624421906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545420614;
-	bh=3w1uuC0IuS9yzJxUKgubI9vsqywcWFn4Qr2CuOTDi6I=;
+	s=default; t=1545420624;
+	bh=/NPTmLiA8awCAkguRmnT0l14zjzzMvMD9kP9bShubAE=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=gDIKZOOMx80zAqTEcKeqG65OWNevs3n0VcMwpWc2b4MJPgN5nv3N0tTqf39YYyQvU
-	 YrtBBoAua0/kxFvK7H0DAAEG7EGHz85YyBhsxgG01Q5dppoS3RGFDxz4fnIMccMa1B
-	 q/MX1ETC68BHN1AfnKY5Gxmzcr53Ps3uaq7VBUqo=
+	b=rjBF/w4jyrU/3inrNheA+DQng79kSnh3BeK8drSmQx+ZDoEuahiSVowGOESaPYj8J
+	 kGXJvsRvW2ggKEs+1xkPCYP5UUMz926bnYPPG0AGUNJ1h6axDuGciPcQ5TmPTC7TlE
+	 5VBJAeKGuZRq2TJZ9sb6ZCCY+2Kx4G3GHsfFP6HM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404593AbeLUTaN (ORCPT
+        id S2404557AbeLUTaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:30:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404544AbeLUTaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Dec 2018 14:30:04 -0500
-Subject: Re: [GIT PULL] timer fix
+Received: from mail.kernel.org ([198.145.29.99]:58288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404534AbeLUTaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:30:03 -0500
+Subject: Re: [git pull] Input updates for v4.20-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1545420603;
-        bh=3w1uuC0IuS9yzJxUKgubI9vsqywcWFn4Qr2CuOTDi6I=;
+        bh=/NPTmLiA8awCAkguRmnT0l14zjzzMvMD9kP9bShubAE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iagsj4en7K4ixQrjfnB0z6fgg4AMiQ463OqjTK66Vbyt7CX783+j0aK1XXR7ots7M
-         GA9+nfxoeMd/jeo87ekUwBTi7e8lGL/VfykpAD5vkIDf35hngh663W+ukthMUebqo3
-         TS2/hgT2rh7gBIOlYYTiDvnRBgPLawLRM9e6ClWU=
+        b=mAAcxTRIEWKxu0YYNwIE5HroFpf2QJ2vTsX8M/DvzKL/96F0C/IRq6ViRT0DSc9Ic
+         4PsKoOjgpEtcyJUH+dakfAjz85IPWQZ3UXyNcpdQN8PrNBDbntpNWHJaySXUWa9Ael
+         nXS0Ln0ZQa0agFHVf3fs9J9KrQgO9Rl3szhc0fmU=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181221123453.GA102366@gmail.com>
-References: <20181221123453.GA102366@gmail.com>
+In-Reply-To: <20181221091258.GA63423@dtor-ws>
+References: <20181221091258.GA63423@dtor-ws>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181221123453.GA102366@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- timers-urgent-for-linus
-X-PR-Tracked-Commit-Id: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
+X-PR-Tracked-Message-Id: <20181221091258.GA63423@dtor-ws>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+X-PR-Tracked-Commit-Id: 7a71712293ba303aad928f580b89addb0be2892e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e572fa0e840154d33a69622af030dda551eee606
-Message-Id: <20181221193003.15695.22091.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: 0b517333721c1b7a740e54b1cbe78a14884d51e7
+Message-Id: <20181221193003.15695.29715.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Fri, 21 Dec 2018 19:30:03 +0000
-To:     Ingo Molnar <mingo@kernel.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 21 Dec 2018 13:34:53 +0100:
+The pull request you sent on Fri, 21 Dec 2018 01:12:58 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e572fa0e840154d33a69622af030dda551eee606
+https://git.kernel.org/torvalds/c/0b517333721c1b7a740e54b1cbe78a14884d51e7
 
 Thank you!
 
