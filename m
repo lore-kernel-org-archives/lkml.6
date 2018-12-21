@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FF4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D373C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8788E218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65EDC218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390272AbeLUMIR (ORCPT
+        id S2390285AbeLUMIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:08:17 -0500
-Received: from mga03.intel.com ([134.134.136.65]:34195 "EHLO mga03.intel.com"
+        Fri, 21 Dec 2018 07:08:22 -0500
+Received: from mga03.intel.com ([134.134.136.65]:34218 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390255AbeLUMIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:08:13 -0500
+        id S2388320AbeLUMIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:08:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 04:08:12 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 04:08:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="131862504"
+   d="scan'208";a="131862529"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 04:08:11 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 04:08:16 -0800
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] perf thread-stack: Factor out thread_stack__init()
-Date:   Fri, 21 Dec 2018 14:06:17 +0200
-Message-Id: <20181221120620.9659-6-adrian.hunter@intel.com>
+Subject: [PATCH 8/8] perf session: Add comment for perf_session__register_idle_thread()
+Date:   Fri, 21 Dec 2018 14:06:20 +0200
+Message-Id: <20181221120620.9659-9-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181221120620.9659-1-adrian.hunter@intel.com>
 References: <20181221120620.9659-1-adrian.hunter@intel.com>
@@ -43,62 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for fixing thread stack processing for the idle task,
-factor out thread_stack__init().
+Add a comment to perf_session__register_idle_thread() to bring attention to
+a pitfall with the idle task thread structure. The pitfall is that there
+should really be a 'struct thread' for the idle task of each cpu, but there
+is only one that can have pid == tid == 0.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/thread-stack.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ tools/perf/util/session.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index e59f6fa4c67d..4340381d54c2 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -93,6 +93,24 @@ static int thread_stack__grow(struct thread_stack *ts)
- 	return 0;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 78a067777144..5456c84c7dd1 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1527,6 +1527,13 @@ struct thread *perf_session__findnew(struct perf_session *session, pid_t pid)
+ 	return machine__findnew_thread(&session->machines.host, -1, pid);
  }
  
-+static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
-+			      struct call_return_processor *crp)
-+{
-+	int err;
-+
-+	err = thread_stack__grow(ts);
-+	if (err)
-+		return err;
-+
-+	if (thread->mg && thread->mg->machine)
-+		ts->kernel_start = machine__kernel_start(thread->mg->machine);
-+	else
-+		ts->kernel_start = 1ULL << 63;
-+	ts->crp = crp;
-+
-+	return 0;
-+}
-+
- static struct thread_stack *thread_stack__new(struct thread *thread,
- 					      struct call_return_processor *crp)
++/*
++ * Threads are identified by pid and tid, and the idle task has pid == tid == 0.
++ * So here a single thread is created for that, but actually there is a separate
++ * idle task per cpu, so there should be one 'struct thread' per cpu, but there
++ * is only 1. That causes problems for some tools, requiring workarounds. For
++ * example get_idle_thread() in builtin-sched.c, or thread_stack__per_cpu().
++ */
+ int perf_session__register_idle_thread(struct perf_session *session)
  {
-@@ -104,17 +122,11 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
- 
- 	ts->arr_sz = 1;
- 
--	if (thread_stack__grow(ts)) {
-+	if (thread_stack__init(ts, thread, crp)) {
- 		free(ts);
- 		return NULL;
- 	}
- 
--	if (thread->mg && thread->mg->machine)
--		ts->kernel_start = machine__kernel_start(thread->mg->machine);
--	else
--		ts->kernel_start = 1ULL << 63;
--	ts->crp = crp;
--
- 	thread->ts = ts;
- 
- 	return ts;
+ 	struct thread *thread;
 -- 
 2.17.1
 
