@@ -2,129 +2,223 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575F7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013AFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6FD21906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853F2218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 05:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LSZa3j3q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQSIGj7X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbeLUFQf (ORCPT
+        id S1726049AbeLUFxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 00:16:35 -0500
-Received: from ozlabs.org ([203.11.71.1]:36297 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeLUFQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 00:16:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43LcL640cjz9s9G;
-        Fri, 21 Dec 2018 16:16:30 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545369390;
-        bh=ISWk+WOrKWvQEamQkmzmkrnfq+IfcK+e7YbtmGEyJWM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LSZa3j3qqJdwxb6UdHd91yU8tnLZJBi4Cx1N3kbo5X3nIOdRi0590U+tmmrgxnBAB
-         M5oEIctTQZ9/Myblw9Ue6jZEnu1k8VxTbTpfEM8doVjoRFmg8eep/k9E0DqInMLBES
-         HZDvX9SJ11X0/x6PSVfEUWmcu17QdOOKD/ou8mPBcpHJTy2/Z2nF6YVjwZiUE04gSf
-         xxVH9ACAW9sA7Ff9S79N87bF7cJbdJjMsQNU7OWR/ZW/Ppbxi61GrIDkoDxOItr1EX
-         04znqiUjKye5xPOuos8ZarfIbDJib7b30G6Gxll3VpnVV290dTuioZ+u5CVp1gH1pU
-         j7575aDRdcSDw==
-Date:   Fri, 21 Dec 2018 16:16:29 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: linux-next: manual merge of the kvm tree with the powerpc tree
-Message-ID: <20181221161629.34429a4c@canb.auug.org.au>
+        Fri, 21 Dec 2018 00:53:18 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43862 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbeLUFxS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 00:53:18 -0500
+Received: by mail-pf1-f193.google.com with SMTP id w73so2051744pfk.10;
+        Thu, 20 Dec 2018 21:53:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+1oZR3dHaq/Eu17Sz3ttJHOWC/iaCGB0yJMQXAxGUa0=;
+        b=WQSIGj7XYbLDhTcIGOV9FAe/Zsj/+9KDXIUs9YsRCDbo5t5jQ/hZs3lPG2vbN2EAdA
+         av2OebcX79IucbbFqZihdtrkn/7XW/E7YP3AlBsO8+XaQJeZ8XpaXBij6rCFptxnwqD0
+         lNT1t5cFbras/5PYUVRiZ6aiX35bek47aVqhvuBeINMjNatD6+jKeLMkuHlD0dnRHZY/
+         XfPXIJNfiW70532w4zt/8tFpbxkWvx+hc5Vr3T6IPkFRWJyMJe4lf1Za0y1yOG6XaWd1
+         TCZPDhrmNzpHT3hf/e5IcF1lce9joznVGMowkRcXfzveJvqqQzzm3dou4JLUE30Z3+PV
+         PPgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+1oZR3dHaq/Eu17Sz3ttJHOWC/iaCGB0yJMQXAxGUa0=;
+        b=KlmNfF75MMyizMYwRO70zFhFdLllTCYJw1BzwC3XFU23TDbnn5bDXyV5MvLcPnYCG0
+         ruzVx+RrPbiqWNpHqHtm/C/pG4iKiZ+FfuWW+K2rIPaEmjtwI08q8YovYxwGbc7+HtHc
+         0Wrs6bbZNOyoDcFCZvCLz8FDPRRSe9hH2aTKFxzpuEnPcropxxAYjA4ECm/8fMQntfqc
+         Z/Gf9OsZAvS43yaYZFt5IgD+q2GxXMGjayems9kjBxGewVJYRu7opcrdxYj44ct59Wjj
+         vr7nxe5K1m0+bPdTIqRNI9AEzhZSZQ/lCgkG6L9nT9cBc7r0WQSmaPK14rjCifpw99kN
+         a9ag==
+X-Gm-Message-State: AA+aEWboCyitymmhiK5IXLnKrfNCbYz21RGz9cXBr7bjtOzr65Kzt8qy
+        zHRFshcDerXwwG4q8xxKlNLNYWY0eM5PEaDrlJY=
+X-Google-Smtp-Source: AFSGD/V8YEA90Ov6UPyF4X25rS6f+SYrpJfvVvUnURNkUebHW+rLERQffm6rTAqKVLWoDR9IO3BI67XCHnhTavrLtYY=
+X-Received: by 2002:a62:c683:: with SMTP id x3mr1180225pfk.10.1545371596534;
+ Thu, 20 Dec 2018 21:53:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1Tu+T81aBrhnsG8kUuDRLI+"; protocol="application/pgp-signature"
+References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
+ <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
+ <20181219072250.GA18501@osadl.at> <6ef8274c8fc7adb7903cf3874fbab1098881ed4c.camel@perches.com>
+In-Reply-To: <6ef8274c8fc7adb7903cf3874fbab1098881ed4c.camel@perches.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 20 Dec 2018 23:53:04 -0600
+Message-ID: <CAH2r5mtrgq-tiSvLrc3sD_Op1HD0OFz2xOMywPoN=iu2nVShrQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: check kzalloc return
+To:     Joe Perches <joe@perches.com>
+Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Content-Type: multipart/mixed; boundary="0000000000000f081a057d81ddf8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1Tu+T81aBrhnsG8kUuDRLI+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--0000000000000f081a057d81ddf8
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+Updated the patch with Joe's signed off and Nicholas's reviewed-by and
+pushed to cifs-2.6.git for-next
 
-Today's linux-next merge of the kvm tree got a conflict in:
+See attached.
 
-  arch/powerpc/mm/fault.c
+On Wed, Dec 19, 2018 at 4:58 AM Joe Perches via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> On Wed, 2018-12-19 at 08:22 +0100, Nicholas Mc Guire wrote:
+> > On Tue, Dec 18, 2018 at 09:33:58AM -0800, Joe Perches wrote:
+> > > On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
+> > > > kzalloc can return NULL so a check is needed. While there is a
+> > > > check for ret_buf there is no check for the allocation of
+> > > > ret_buf->crfid.fid - this check is thus added. Both call-sites
+> > > > of tconInfoAlloc() check for NULL return of tconInfoAlloc()
+> > > > so returning NULL on failure of kzalloc() here seems appropriate.
+> > > > As the kzalloc() is the only thing here that can fail it is
+> > > > moved to the beginning so as not to initialize other resources
+> > > > on failure of kzalloc.
+> > > >
+> > > Perhaps use a more common style by returning early on the
+> > > first possible failure too so the block can be unindented.
+> []
+> > > yup the restructured cleanup would be the better way to go
+> >
+> > rather than making this two patches I guess it would be the
+> > best to just skip the intermediate kzalloc only cleanup -
+> > atleast I see little value in that intermediat step - so
+> > could you take care of the kzalloc() in your refactoring
+> > please ?
+>
+> I did that in the patch I proposed, which is trivial.
+> If you want to take it, please do.
+>
+> If you want a sign-off:
+>
+> Signed-off-by: Joe Perches <joe@perches.com>
+>
+> > > diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+> []
+> > > @@ -111,21 +111,27 @@ struct cifs_tcon *
+> > >  tconInfoAlloc(void)
+> > >  {
+> > >     struct cifs_tcon *ret_buf;
+> > > -   ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+> > > -   if (ret_buf) {
+> > > -           atomic_inc(&tconInfoAllocCount);
+> > > -           ret_buf->tidStatus = CifsNew;
+> > > -           ++ret_buf->tc_count;
+> > > -           INIT_LIST_HEAD(&ret_buf->openFileList);
+> > > -           INIT_LIST_HEAD(&ret_buf->tcon_list);
+> > > -           spin_lock_init(&ret_buf->open_file_lock);
+> > > -           mutex_init(&ret_buf->crfid.fid_mutex);
+> > > -           ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+> > > -                                        GFP_KERNEL);
+> > > -           spin_lock_init(&ret_buf->stat_lock);
+> > > -           atomic_set(&ret_buf->num_local_opens, 0);
+> > > -           atomic_set(&ret_buf->num_remote_opens, 0);
+> > > +
+> > > +   ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
+> > > +   if (!ret_buf)
+> > > +           return NULL;
+> > > +   ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
+> > > +   if (!ret_buf->crfid.fid) {
+> > > +           kfree(ret_buf);
+> > > +           return NULL;
+> > >     }
+> > > +
+> > > +   atomic_inc(&tconInfoAllocCount);
+> > > +   ret_buf->tidStatus = CifsNew;
+> > > +   ++ret_buf->tc_count;
+> > > +   INIT_LIST_HEAD(&ret_buf->openFileList);
+> > > +   INIT_LIST_HEAD(&ret_buf->tcon_list);
+> > > +   spin_lock_init(&ret_buf->open_file_lock);
+> > > +   mutex_init(&ret_buf->crfid.fid_mutex);
+> > > +   spin_lock_init(&ret_buf->stat_lock);
+> > > +   atomic_set(&ret_buf->num_local_opens, 0);
+> > > +   atomic_set(&ret_buf->num_remote_opens, 0);
+> > > +
+> > >     return ret_buf;
+> > >  }
+> > >
+>
+>
+>
 
-between commit:
 
-  49a502ea23bf ("powerpc/mm: Make NULL pointer deferences explicit on bad p=
-age faults.")
+-- 
+Thanks,
 
-from the powerpc tree and commit:
+Steve
 
-  d7b456152230 ("KVM: PPC: Book3S HV: Implement functions to access quadran=
-ts 1 & 2")
+--0000000000000f081a057d81ddf8
+Content-Type: text/x-patch; charset="US-ASCII"; name="0001-cifs-check-kzalloc-return.patch"
+Content-Disposition: attachment; 
+	filename="0001-cifs-check-kzalloc-return.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jpxmc8db0>
+X-Attachment-Id: f_jpxmc8db0
 
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/powerpc/mm/fault.c
-index c866d9a710fe,2e6fb1d758c3..000000000000
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@@ -650,9 -636,9 +650,10 @@@ void bad_page_fault(struct pt_regs *reg
-  	switch (TRAP(regs)) {
-  	case 0x300:
-  	case 0x380:
-+ 	case 0xe00:
- -		printk(KERN_ALERT "Unable to handle kernel paging request for "
- -			"data at address 0x%08lx\n", regs->dar);
- +		pr_alert("BUG: %s at 0x%08lx\n",
- +			 regs->dar < PAGE_SIZE ? "Kernel NULL pointer dereference" :
- +			 "Unable to handle kernel data access", regs->dar);
-  		break;
-  	case 0x400:
-  	case 0x480:
-
---Sig_/1Tu+T81aBrhnsG8kUuDRLI+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwcdy0ACgkQAVBC80lX
-0Gz55Af9Hb0oQbR+WvZr//StQJa+AP0WJs9+QGPFONEX7LjCCwESIjKRB4nXvD/Z
-jy57wyBzJd4SyfkTnzmJfGgwYl55kP+ALq8eoWLjhuzt+qNqLdWssdCYu87R6KEl
-Vy7JzK1Uld8m/fymRKLh9w/b8aev06qcuZ1GfLclvT+LJXk9xlLISzMAnpfdcp8V
-TrVaqJHEGicH/Bsbmp6kVPXchgyAzaeLxQuG0uKExCofD8OUhSzvdoRJxwGbaQaC
-NhPOobXXOpyGNVYcxWVyqOQLeKYNDdJf7ZApotpm2hbZVwkeYVgHyyuMehV6+JFt
-0admZHYABDZz52XVC/EIZ167n270aQ==
-=uXXL
------END PGP SIGNATURE-----
-
---Sig_/1Tu+T81aBrhnsG8kUuDRLI+--
+RnJvbSA2ODdmOTgzZjQ5ZDgwMDM3YmVlMDEyNWY0MzFmOGUwMjQzYzdhYjc3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBKb2UgUGVyY2hlcyA8am9lQHBlcmNoZXMuY29tPgpEYXRlOiBU
+aHUsIDIwIERlYyAyMDE4IDIzOjUwOjQ4IC0wNjAwClN1YmplY3Q6IFtQQVRDSF0gY2lmczogY2hl
+Y2sga3phbGxvYyByZXR1cm4KCmt6YWxsb2MgY2FuIHJldHVybiBOVUxMIHNvIGFuIGFkZGl0aW9u
+YWwgY2hlY2sgaXMgbmVlZGVkLiBXaGlsZSB0aGVyZQppcyBhIGNoZWNrIGZvciByZXRfYnVmIHRo
+ZXJlIGlzIG5vIGNoZWNrIGZvciB0aGUgYWxsb2NhdGlvbiBvZgpyZXRfYnVmLT5jcmZpZC5maWQg
+LSB0aGlzIGNoZWNrIGlzIHRodXMgYWRkZWQuIEJvdGggY2FsbC1zaXRlcwpvZiB0Y29uSW5mb0Fs
+bG9jKCkgY2hlY2sgZm9yIE5VTEwgcmV0dXJuIG9mIHRjb25JbmZvQWxsb2MoKQpzbyByZXR1cm5p
+bmcgTlVMTCBvbiBmYWlsdXJlIG9mIGt6YWxsb2MoKSBoZXJlIHNlZW1zIGFwcHJvcHJpYXRlLgpB
+cyB0aGUga3phbGxvYygpIGlzIHRoZSBvbmx5IHRoaW5nIGhlcmUgdGhhdCBjYW4gZmFpbCBpdCBp
+cwptb3ZlZCB0byB0aGUgYmVnaW5uaW5nIHNvIGFzIG5vdCB0byBpbml0aWFsaXplIG90aGVyIHJl
+c291cmNlcwpvbiBmYWlsdXJlIG9mIGt6YWxsb2MuCgpGaXhlczogM2Q0ZWY5YTE1MzQzICgic21i
+MzogZml4IHJlZHVuZGFudCBvcGVucyBvbiByb290IikKLS0tCgpQcm9ibGVtIGxvY2F0ZWQgd2l0
+aCBhbiBleHBlcmltZW50YWwgY29jY2luZWxsZSBzY3JpcHQKCldoaWxlIGF0IGl0IG1ha2UgY2hl
+Y2twYXRjaCBoYXBweSBieSB1c2luZyAqcmV0X2J1Zi0+Y3JmaWQuZmlkCnJhdGhlciB0aGFuIHN0
+cnVjdCBjaWZzX2ZpZC4KClNpZ25lZC1vZmYtYnk6IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5j
+b20+ClJlcG9ydGVkLWJ5OiBOaWNob2xhcyBNYyBHdWlyZSA8aG9mcmF0QG9zYWRsLm9yZz4KUmV2
+aWV3ZWQtYnk6IE5pY2hvbGFzIE1jIEd1aXJlIDxob2ZyYXRAb3NhZGwub3JnPgotLS0KIGZzL2Np
+ZnMvbWlzYy5jIHwgMzQgKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLQogMSBmaWxl
+IGNoYW5nZWQsIDIwIGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
+L2ZzL2NpZnMvbWlzYy5jIGIvZnMvY2lmcy9taXNjLmMKaW5kZXggMTEzOTgwZGJhNGQ4Li5iZWUy
+MDMwNTViMzAgMTAwNjQ0Ci0tLSBhL2ZzL2NpZnMvbWlzYy5jCisrKyBiL2ZzL2NpZnMvbWlzYy5j
+CkBAIC0xMTEsMjEgKzExMSwyNyBAQCBzdHJ1Y3QgY2lmc190Y29uICoKIHRjb25JbmZvQWxsb2Mo
+dm9pZCkKIHsKIAlzdHJ1Y3QgY2lmc190Y29uICpyZXRfYnVmOwotCXJldF9idWYgPSBremFsbG9j
+KHNpemVvZihzdHJ1Y3QgY2lmc190Y29uKSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKHJldF9idWYpIHsK
+LQkJYXRvbWljX2luYygmdGNvbkluZm9BbGxvY0NvdW50KTsKLQkJcmV0X2J1Zi0+dGlkU3RhdHVz
+ID0gQ2lmc05ldzsKLQkJKytyZXRfYnVmLT50Y19jb3VudDsKLQkJSU5JVF9MSVNUX0hFQUQoJnJl
+dF9idWYtPm9wZW5GaWxlTGlzdCk7Ci0JCUlOSVRfTElTVF9IRUFEKCZyZXRfYnVmLT50Y29uX2xp
+c3QpOwotCQlzcGluX2xvY2tfaW5pdCgmcmV0X2J1Zi0+b3Blbl9maWxlX2xvY2spOwotCQltdXRl
+eF9pbml0KCZyZXRfYnVmLT5jcmZpZC5maWRfbXV0ZXgpOwotCQlyZXRfYnVmLT5jcmZpZC5maWQg
+PSBremFsbG9jKHNpemVvZihzdHJ1Y3QgY2lmc19maWQpLAotCQkJCQkgICAgIEdGUF9LRVJORUwp
+OwotCQlzcGluX2xvY2tfaW5pdCgmcmV0X2J1Zi0+c3RhdF9sb2NrKTsKLQkJYXRvbWljX3NldCgm
+cmV0X2J1Zi0+bnVtX2xvY2FsX29wZW5zLCAwKTsKLQkJYXRvbWljX3NldCgmcmV0X2J1Zi0+bnVt
+X3JlbW90ZV9vcGVucywgMCk7CisKKwlyZXRfYnVmID0ga3phbGxvYyhzaXplb2YoKnJldF9idWYp
+LCBHRlBfS0VSTkVMKTsKKwlpZiAoIXJldF9idWYpCisJCXJldHVybiBOVUxMOworCXJldF9idWYt
+PmNyZmlkLmZpZCA9IGt6YWxsb2Moc2l6ZW9mKCpyZXRfYnVmLT5jcmZpZC5maWQpLCBHRlBfS0VS
+TkVMKTsKKwlpZiAoIXJldF9idWYtPmNyZmlkLmZpZCkgeworCQlrZnJlZShyZXRfYnVmKTsKKwkJ
+cmV0dXJuIE5VTEw7CiAJfQorCisJYXRvbWljX2luYygmdGNvbkluZm9BbGxvY0NvdW50KTsKKwly
+ZXRfYnVmLT50aWRTdGF0dXMgPSBDaWZzTmV3OworCSsrcmV0X2J1Zi0+dGNfY291bnQ7CisJSU5J
+VF9MSVNUX0hFQUQoJnJldF9idWYtPm9wZW5GaWxlTGlzdCk7CisJSU5JVF9MSVNUX0hFQUQoJnJl
+dF9idWYtPnRjb25fbGlzdCk7CisJc3Bpbl9sb2NrX2luaXQoJnJldF9idWYtPm9wZW5fZmlsZV9s
+b2NrKTsKKwltdXRleF9pbml0KCZyZXRfYnVmLT5jcmZpZC5maWRfbXV0ZXgpOworCXNwaW5fbG9j
+a19pbml0KCZyZXRfYnVmLT5zdGF0X2xvY2spOworCWF0b21pY19zZXQoJnJldF9idWYtPm51bV9s
+b2NhbF9vcGVucywgMCk7CisJYXRvbWljX3NldCgmcmV0X2J1Zi0+bnVtX3JlbW90ZV9vcGVucywg
+MCk7CisKIAlyZXR1cm4gcmV0X2J1ZjsKIH0KIAotLSAKMi4xNy4xCgo=
+--0000000000000f081a057d81ddf8--
