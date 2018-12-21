@@ -6,370 +6,146 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304D8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB237C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0E1218E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8707421903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="pXcz2mXn"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="5VoNMU7e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388297AbeLUBXa (ORCPT
+        id S2388339AbeLUB3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:23:30 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45659 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730627AbeLUBX3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:23:29 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so1748881pfd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 17:23:29 -0800 (PST)
+        Thu, 20 Dec 2018 20:29:37 -0500
+Received: from mail-eopbgr700088.outbound.protection.outlook.com ([40.107.70.88]:23433
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731379AbeLUB3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 20:29:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uuQ2y23RVmQdjm6pU+NxUGBE3j9CHqH5+Wog7jn5GBE=;
-        b=pXcz2mXnLL1Mge+eZHoCDMhOKX17ap7W6gtPwNTPCvOo9T90JzGTB9DhwCJIVJsFng
-         vAxiTeQhgfFm2fNsZQ8ej4TWzTTAx2u0d4vEnv9Q/9/6yqIYPjmjhld3lzv2MaFCnXlf
-         Rw9pvsRl2lnS3xpPjza71vpY9gGGMxAkZ8tKAJE2FFn0x0lsi5J4upjvT7b7ZM9bCITz
-         rMk7mJU2kb6eJWpJlNhpDxE5/SZFN4ifQ9mpgBCCLcLTjHBPBDEZub2Vrnb60aIM8Vhz
-         cS4fJFObpRV/ccLVu9amOdQSvVDbz1+PPHJ6wblXETfgMR4gC3X/4pnywjNuhsw9dXKb
-         PbDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=uuQ2y23RVmQdjm6pU+NxUGBE3j9CHqH5+Wog7jn5GBE=;
-        b=faP5tr2llpH50eb9+jp3jzOFV8wu/DeczE97qGbTNMA+576MEXWaLIpXDE4N/DvF7i
-         5S01AobUtV18QVGTigeTRDtwpXA6xSjqb1ZGhx1Pqeiy13VZX5FS5jW8B0Uf9/AhTm9p
-         NKgBR8+dGYD/ELZgqBh5jglTqjkHKcUwt3KEuR7/FHoWppKsKK/pr5eFuDQLsMfhUSu7
-         LHTkHnmfpsp7Flu2rl8Ng49nS/9AEsM46xbitQg5Xuw8zTdoKaqmGsqWhnahklrho5+F
-         j1uyYAsNq9+5ma/wAsARC3uP4kU8wWnEyjRzWOXZn5R82tmUizRVmE2D8fGMEZBNDOa5
-         3OUQ==
-X-Gm-Message-State: AJcUukc18JlkdMzCvN8jiWHn3uqrI7VgFiqebM9K1r6MzZXh4PMJPkEk
-        iC3FjzlATw/yNrN6zAyjg5Ackw==
-X-Google-Smtp-Source: ALg8bN69eNVoFQa6+kG4GFyMdKK1UR5qCouXxCKHGTnECcwPW/m7h7V0VbGYfYXY/igR7mQN/l9HZQ==
-X-Received: by 2002:a63:c451:: with SMTP id m17mr462586pgg.27.1545355408683;
-        Thu, 20 Dec 2018 17:23:28 -0800 (PST)
-Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id r2sm32408182pgo.18.2018.12.20.17.23.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 17:23:26 -0800 (PST)
-Subject: Re: [PATCH kernel v7 20/20] vfio_pci: Add NVIDIA GV100GL [Tesla V100
- SXM2] subdriver
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        =?UTF-8?Q?Leonardo_Augusto_Guimar=c3=a3es_Garcia?= 
-        <lagarcia@br.ibm.com>, Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-References: <20181220082350.58113-1-aik@ozlabs.ru>
- <20181220082350.58113-21-aik@ozlabs.ru> <20181220094604.7d172cbe@x1.home>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aik@ozlabs.ru; keydata=
- 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
-Message-ID: <8c4ee37c-8759-a618-0c38-034210858b89@ozlabs.ru>
-Date:   Fri, 21 Dec 2018 12:23:16 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181220094604.7d172cbe@x1.home>
-Content-Type: text/plain; charset=utf-8
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e63wd8Zd2GH7RwEsiOg18be3WuhRHbKksqXyoLDDB4Y=;
+ b=5VoNMU7euD4FWEYJn25XRHIo16xJhI8Mr1Xvz/9KPC4TZ0W2AradCLq9S90bsFdB4pPG3GAtGu93aKgYYKDDsgA3CH1IxmhZg08rehtuQYRgiOO9QTB6kIYj1PWbPMj3QTcgW0H1d4eAjmhBPK5ffUfn9US5qsmSyT7aqNqEHek=
+Received: from BYAPR12MB2597.namprd12.prod.outlook.com (20.176.255.158) by
+ BYAPR12MB3320.namprd12.prod.outlook.com (20.178.55.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.17; Fri, 21 Dec 2018 01:29:31 +0000
+Received: from BYAPR12MB2597.namprd12.prod.outlook.com
+ ([fe80::b55e:6c0:7c93:41c]) by BYAPR12MB2597.namprd12.prod.outlook.com
+ ([fe80::b55e:6c0:7c93:41c%2]) with mapi id 15.20.1446.020; Fri, 21 Dec 2018
+ 01:29:18 +0000
+From:   "Zhang, Jerry" <Jerry.Zhang@amd.com>
+To:     =?utf-8?B?TWljaGVsIETDpG56ZXI=?= <michel@daenzer.net>
+CC:     "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/ttm: Use drm_debug_printer for all
+ ttm_bo_mem_space_debug output
+Thread-Topic: [PATCH] drm/ttm: Use drm_debug_printer for all
+ ttm_bo_mem_space_debug output
+Thread-Index: AQHUmFZGo6LE/eW5tkqbwd1rP82n0KWIaK8A
+Date:   Fri, 21 Dec 2018 01:29:18 +0000
+Message-ID: <E6378BBE-6AB0-4B75-B59F-81315DB397E5@amd.com>
+References: <20181220112209.8063-1-michel@daenzer.net>
+In-Reply-To: <20181220112209.8063-1-michel@daenzer.net>
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jerry.Zhang@amd.com; 
+x-originating-ip: [140.207.236.70]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3320;20:urgW0hIgvG1Hd5Gf1gAzUaupcAYueeYy+byeGFpFcIs1VjVQlh9ZhI35j4BIEPRTHQ6oX3pQXDZVCec0LDA+O5eINTkdzgodox9JPwYs3iqVpoIXppOsAGqP2lO9nLfBCsnhTk8aiZyvKa+wXLAVm1EmNMVoST8ADKz+fFJTcHfeBNlFIM9mhQClhKzj8VAFR7g/VMa5hjkMsObMBYZ9XR2g7nP2bpIXlUBeYvvmrerxiaudUIDzdn/vh+Fdahhv
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(346002)(396003)(136003)(199004)(189003)(6512007)(99286004)(6916009)(102836004)(26005)(476003)(2906002)(2616005)(53936002)(82746002)(316002)(11346002)(54906003)(66066001)(229853002)(446003)(72206003)(68736007)(25786009)(5660300001)(186003)(7736002)(36756003)(106356001)(6246003)(8936002)(71190400001)(71200400001)(8676002)(33656002)(305945005)(14454004)(86362001)(97736004)(4326008)(81156014)(81166006)(6436002)(256004)(6116002)(478600001)(6506007)(105586002)(3846002)(6486002)(76176011)(486006)(83716004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3320;H:BYAPR12MB2597.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 509b4052-11c0-4cf7-8231-08d666e3b9f9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3320;
+x-ms-traffictypediagnostic: BYAPR12MB3320:
+x-microsoft-antispam-prvs: <BYAPR12MB33201A87D7018579D3D31DDEFFB80@BYAPR12MB3320.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR12MB3320;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB3320;
+x-forefront-prvs: 0893636978
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: IRVK91wDeXuSJ6f3QnVQly95XMs17zKs1ucyl95N5wz3TGvqV/Dcb1rJhepMZSVg1ICGUZwgWnYVax7OtU0Vqv5ubkwsGTRP6iZdGZ36gCBtnBE0PJTQZoZK/ZOCLQ5biuJ/kZhnC9fOiuEy6F3rhQFBlOqm1VerSydj3f5GBESN9GDXDiooO7CZHvdf7PFSzIM5Wnj7vGlHahFrekkvNCPRduLDPeIV/2j7iHQ1hKyeGWlp8tsIgbsUHiPH9b5zbljscbz8OR/RhEEHFCAPgheiLes3nojfLMylTsGaq0EJnNfTh0hcbzQ8j14FpYJ0
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2892442BCD41264EADD8A7AA7B9AA718@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 509b4052-11c0-4cf7-8231-08d666e3b9f9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 01:29:18.1999
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3320
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 21/12/2018 03:46, Alex Williamson wrote:
-> On Thu, 20 Dec 2018 19:23:50 +1100
-> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> 
->> POWER9 Witherspoon machines come with 4 or 6 V100 GPUs which are not
->> pluggable PCIe devices but still have PCIe links which are used
->> for config space and MMIO. In addition to that the GPUs have 6 NVLinks
->> which are connected to other GPUs and the POWER9 CPU. POWER9 chips
->> have a special unit on a die called an NPU which is an NVLink2 host bus
->> adapter with p2p connections to 2 to 3 GPUs, 3 or 2 NVLinks to each.
->> These systems also support ATS (address translation services) which is
->> a part of the NVLink2 protocol. Such GPUs also share on-board RAM
->> (16GB or 32GB) to the system via the same NVLink2 so a CPU has
->> cache-coherent access to a GPU RAM.
->>
->> This exports GPU RAM to the userspace as a new VFIO device region. This
->> preregisters the new memory as device memory as it might be used for DMA.
->> This inserts pfns from the fault handler as the GPU memory is not onlined
->> until the vendor driver is loaded and trained the NVLinks so doing this
->> earlier causes low level errors which we fence in the firmware so
->> it does not hurt the host system but still better be avoided; for the same
->> reason this does not map GPU RAM into the host kernel (usual thing for
->> emulated access otherwise).
->>
->> This exports an ATSD (Address Translation Shootdown) register of NPU which
->> allows TLB invalidations inside GPU for an operating system. The register
->> conveniently occupies a single 64k page. It is also presented to
->> the userspace as a new VFIO device region. One NPU has 8 ATSD registers,
->> each of them can be used for TLB invalidation in a GPU linked to this NPU.
->> This allocates one ATSD register per an NVLink bridge allowing passing
->> up to 6 registers. Due to the host firmware bug (just recently fixed),
->> only 1 ATSD register per NPU was actually advertised to the host system
->> so this passes that alone register via the first NVLink bridge device in
->> the group which is still enough as QEMU collects them all back and
->> presents to the guest via vPHB to mimic the emulated NPU PHB on the host.
->>
->> In order to provide the userspace with the information about GPU-to-NVLink
->> connections, this exports an additional capability called "tgt"
->> (which is an abbreviated host system bus address). The "tgt" property
->> tells the GPU its own system address and allows the guest driver to
->> conglomerate the routing information so each GPU knows how to get directly
->> to the other GPUs.
->>
->> For ATS to work, the nest MMU (an NVIDIA block in a P9 CPU) needs to
->> know LPID (a logical partition ID or a KVM guest hardware ID in other
->> words) and PID (a memory context ID of a userspace process, not to be
->> confused with a linux pid). This assigns a GPU to LPID in the NPU and
->> this is why this adds a listener for KVM on an IOMMU group. A PID comes
->> via NVLink from a GPU and NPU uses a PID wildcard to pass it through.
->>
->> This requires coherent memory and ATSD to be available on the host as
->> the GPU vendor only supports configurations with both features enabled
->> and other configurations are known not to work. Because of this and
->> because of the ways the features are advertised to the host system
->> (which is a device tree with very platform specific properties),
->> this requires enabled POWERNV platform.
->>
->> The V100 GPUs do not advertise any of these capabilities via the config
->> space and there are more than just one device ID so this relies on
->> the platform to tell whether these GPUs have special abilities such as
->> NVLinks.
->>
->> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
->> ---
->> Changes:
->> v6.1:
->> * fixed outdated comment about VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD
->>
->> v6:
->> * reworked capabilities - tgt for nvlink and gpu and link-speed
->> for nvlink only
->>
->> v5:
->> * do not memremap GPU RAM for emulation, map it only when it is needed
->> * allocate 1 ATSD register per NVLink bridge, if none left, then expose
->> the region with a zero size
->> * separate caps per device type
->> * addressed AW review comments
->>
->> v4:
->> * added nvlink-speed to the NPU bridge capability as this turned out to
->> be not a constant value
->> * instead of looking at the exact device ID (which also changes from system
->> to system), now this (indirectly) looks at the device tree to know
->> if GPU and NPU support NVLink
->>
->> v3:
->> * reworded the commit log about tgt
->> * added tracepoints (do we want them enabled for entire vfio-pci?)
->> * added code comments
->> * added write|mmap flags to the new regions
->> * auto enabled VFIO_PCI_NVLINK2 config option
->> * added 'tgt' capability to a GPU so QEMU can recreate ibm,npu and ibm,gpu
->> references; there are required by the NVIDIA driver
->> * keep notifier registered only for short time
->> ---
->>  drivers/vfio/pci/Makefile           |   1 +
->>  drivers/vfio/pci/trace.h            | 102 ++++++
->>  drivers/vfio/pci/vfio_pci_private.h |  14 +
->>  include/uapi/linux/vfio.h           |  37 +++
->>  drivers/vfio/pci/vfio_pci.c         |  27 +-
->>  drivers/vfio/pci/vfio_pci_nvlink2.c | 482 ++++++++++++++++++++++++++++
->>  drivers/vfio/pci/Kconfig            |   6 +
->>  7 files changed, 667 insertions(+), 2 deletions(-)
->>  create mode 100644 drivers/vfio/pci/trace.h
->>  create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
->>
-> ...
->> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
->> index 8131028..5562587 100644
->> --- a/include/uapi/linux/vfio.h
->> +++ b/include/uapi/linux/vfio.h
->> @@ -353,6 +353,21 @@ struct vfio_region_gfx_edid {
->>  #define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
->>  };
->>  
->> +/*
->> + * 10de vendor sub-type
->> + *
->> + * NVIDIA GPU NVlink2 RAM is coherent RAM mapped onto the host address space.
->> + */
->> +#define VFIO_REGION_SUBTYPE_NVIDIA_NVLINK2_RAM	(1)
->> +
->> +/*
->> + * 1014 vendor sub-type
->> + *
->> + * IBM NPU NVlink2 ATSD (Address Translation Shootdown) register of NPU
->> + * to do TLB invalidation on a GPU.
->> + */
->> +#define VFIO_REGION_SUBTYPE_IBM_NVLINK2_ATSD	(1)
->> +
->>  /*
->>   * The MSIX mappable capability informs that MSIX data of a BAR can be mmapped
->>   * which allows direct access to non-MSIX registers which happened to be within
->> @@ -363,6 +378,28 @@ struct vfio_region_gfx_edid {
->>   */
->>  #define VFIO_REGION_INFO_CAP_MSIX_MAPPABLE	3
->>  
->> +/*
->> + * Capability with compressed real address (aka SSA - small system address)
->> + * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
->> + */
->> +#define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT	4
->> +
->> +struct vfio_region_info_cap_nvlink2_ssatgt {
->> +	struct vfio_info_cap_header header;
->> +	__u64 tgt;
->> +};
->> +
->> +/*
->> + * Capability with an NVLink link speed.
->> + */
-> 
-> I was really hoping for something more like SSATGT above indicating the
-> intended users and purpose, and an update to SSATGT since it's now used
-> by both the GPU and NPU2.  This comment is correct, but it's basically
-> useless, it doesn't provide any information that isn't readily apparent
-> from the structure definition.  AIUI, SSATGT is used not only for the
-> GPU to determine where its RAM is mapped on the system bus, but also by
-> the NPU2 to associate itself to a GPU, right?
-
-Correct. It could be improved by
-
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index 5562587..ff238ef9c 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -380,7 +380,8 @@ struct vfio_region_gfx_edid {
-
- /*
-  * Capability with compressed real address (aka SSA - small system address)
-- * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing.
-+ * where GPU RAM is mapped on a system bus. Used by a GPU for DMA routing
-+ * and by the userspace to associate a NVLink bridge with a GPU.
-  */
- #define VFIO_REGION_INFO_CAP_NVLINK2_SSATGT    4
-
-
-
-> And the link speed here
-> is consumed by the NPU2 in order to fill in DT information for the
-> guest for compatibility and possibly routing optimizations?
-
-
-It is just some speed number, 8 or 9, one works and the other does not,
-depending on the actual system. The NVIDIA driver handles it in the
-binary blob. The existing comment is not much use but I am really not
-sure what other comment could be useful in here.
-
-
-
-
-
-
-> 
-> Alex
-> 
->> +#define VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD	5
->> +
->> +struct vfio_region_info_cap_nvlink2_lnkspd {
->> +	struct vfio_info_cap_header header;
->> +	__u32 link_speed;
->> +	__u32 __pad;
->> +};
->> +
-
--- 
-Alexey
+DQo+IOWcqCAyMDE45bm0MTLmnIgyMOaXpe+8jDE5OjIy77yMTWljaGVsIETDpG56ZXIgPG1pY2hl
+bEBkYWVuemVyLm5ldD4g5YaZ6YGT77yaDQo+IA0KPiBGcm9tOiBNaWNoZWwgRMOkbnplciA8bWlj
+aGVsLmRhZW56ZXJAYW1kLmNvbT4NClJldmlld2VkLWJ5OiBKdW53ZWkgWmhhbmcgPEplcnJ5Llpo
+YW5nQGFtZC5jb20+DQoNCj4gDQo+IE5vIG5lZWQgZm9yIHByX2VyciBoZXJlLCB0aGUgcHJfZXJy
+IG1lc3NhZ2UgaW4gdHRtX2JvX2V2aWN0IGlzIGVub3VnaA0KPiB0byBkcmF3IGF0dGVudGlvbiB0
+byBzb21ldGhpbmcgbm90IGdvaW5nIGFzIHBsYW5uZWQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBN
+aWNoZWwgRMOkbnplciA8bWljaGVsLmRhZW56ZXJAYW1kLmNvbT4NCj4gLS0tDQo+IA0KPiBTaW1p
+bGFyIHRvIGEgcHJldmlvdXMgcGF0Y2gsIGJ1dCB0aGlzIG9uZSBsZWF2ZXMgdGhlIHByX2VyciBt
+ZXNzYWdlcyBpbg0KPiB0dG1fYm9fZXZpY3QgdW50b3VjaGVkLg0KPiANCj4gZHJpdmVycy9ncHUv
+ZHJtL3R0bS90dG1fYm8uYyB8IDMzICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQ0K
+PiAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pDQo+IA0K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fYm8uYyBiL2RyaXZlcnMvZ3B1
+L2RybS90dG0vdHRtX2JvLmMNCj4gaW5kZXggZDg3OTM1YmY4ZTMwLi4wZWMwODM5NGUxN2EgMTAw
+NjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX2JvLmMNCj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL3R0bS90dG1fYm8uYw0KPiBAQCAtNzcsMzggKzc3LDM5IEBAIHN0YXRpYyBpbmxp
+bmUgaW50IHR0bV9tZW1fdHlwZV9mcm9tX3BsYWNlKGNvbnN0IHN0cnVjdCB0dG1fcGxhY2UgKnBs
+YWNlLA0KPiAJcmV0dXJuIDA7DQo+IH0NCj4gDQo+IC1zdGF0aWMgdm9pZCB0dG1fbWVtX3R5cGVf
+ZGVidWcoc3RydWN0IHR0bV9ib19kZXZpY2UgKmJkZXYsIGludCBtZW1fdHlwZSkNCj4gK3N0YXRp
+YyB2b2lkIHR0bV9tZW1fdHlwZV9kZWJ1ZyhzdHJ1Y3QgdHRtX2JvX2RldmljZSAqYmRldiwgc3Ry
+dWN0IGRybV9wcmludGVyICpwLA0KPiArCQkJICAgICAgIGludCBtZW1fdHlwZSkNCj4gew0KPiAJ
+c3RydWN0IHR0bV9tZW1fdHlwZV9tYW5hZ2VyICptYW4gPSAmYmRldi0+bWFuW21lbV90eXBlXTsN
+Cj4gLQlzdHJ1Y3QgZHJtX3ByaW50ZXIgcCA9IGRybV9kZWJ1Z19wcmludGVyKFRUTV9QRlgpOw0K
+PiANCj4gLQlwcl9lcnIoIiAgICBoYXNfdHlwZTogJWRcbiIsIG1hbi0+aGFzX3R5cGUpOw0KPiAt
+CXByX2VycigiICAgIHVzZV90eXBlOiAlZFxuIiwgbWFuLT51c2VfdHlwZSk7DQo+IC0JcHJfZXJy
+KCIgICAgZmxhZ3M6IDB4JTA4WFxuIiwgbWFuLT5mbGFncyk7DQo+IC0JcHJfZXJyKCIgICAgZ3B1
+X29mZnNldDogMHglMDhsbFhcbiIsIG1hbi0+Z3B1X29mZnNldCk7DQo+IC0JcHJfZXJyKCIgICAg
+c2l6ZTogJWxsdVxuIiwgbWFuLT5zaXplKTsNCj4gLQlwcl9lcnIoIiAgICBhdmFpbGFibGVfY2Fj
+aGluZzogMHglMDhYXG4iLCBtYW4tPmF2YWlsYWJsZV9jYWNoaW5nKTsNCj4gLQlwcl9lcnIoIiAg
+ICBkZWZhdWx0X2NhY2hpbmc6IDB4JTA4WFxuIiwgbWFuLT5kZWZhdWx0X2NhY2hpbmcpOw0KPiAr
+CWRybV9wcmludGYocCwgIiAgICBoYXNfdHlwZTogJWRcbiIsIG1hbi0+aGFzX3R5cGUpOw0KPiAr
+CWRybV9wcmludGYocCwgIiAgICB1c2VfdHlwZTogJWRcbiIsIG1hbi0+dXNlX3R5cGUpOw0KPiAr
+CWRybV9wcmludGYocCwgIiAgICBmbGFnczogMHglMDhYXG4iLCBtYW4tPmZsYWdzKTsNCj4gKwlk
+cm1fcHJpbnRmKHAsICIgICAgZ3B1X29mZnNldDogMHglMDhsbFhcbiIsIG1hbi0+Z3B1X29mZnNl
+dCk7DQo+ICsJZHJtX3ByaW50ZihwLCAiICAgIHNpemU6ICVsbHVcbiIsIG1hbi0+c2l6ZSk7DQo+
+ICsJZHJtX3ByaW50ZihwLCAiICAgIGF2YWlsYWJsZV9jYWNoaW5nOiAweCUwOFhcbiIsIG1hbi0+
+YXZhaWxhYmxlX2NhY2hpbmcpOw0KPiArCWRybV9wcmludGYocCwgIiAgICBkZWZhdWx0X2NhY2hp
+bmc6IDB4JTA4WFxuIiwgbWFuLT5kZWZhdWx0X2NhY2hpbmcpOw0KPiAJaWYgKG1lbV90eXBlICE9
+IFRUTV9QTF9TWVNURU0pDQo+IC0JCSgqbWFuLT5mdW5jLT5kZWJ1ZykobWFuLCAmcCk7DQo+ICsJ
+CSgqbWFuLT5mdW5jLT5kZWJ1ZykobWFuLCBwKTsNCj4gfQ0KPiANCj4gc3RhdGljIHZvaWQgdHRt
+X2JvX21lbV9zcGFjZV9kZWJ1ZyhzdHJ1Y3QgdHRtX2J1ZmZlcl9vYmplY3QgKmJvLA0KPiAJCQkJ
+CXN0cnVjdCB0dG1fcGxhY2VtZW50ICpwbGFjZW1lbnQpDQo+IHsNCj4gKwlzdHJ1Y3QgZHJtX3By
+aW50ZXIgcCA9IGRybV9kZWJ1Z19wcmludGVyKFRUTV9QRlgpOw0KPiAJaW50IGksIHJldCwgbWVt
+X3R5cGU7DQo+IA0KPiAtCXByX2VycigiTm8gc3BhY2UgZm9yICVwICglbHUgcGFnZXMsICVsdUss
+ICVsdU0pXG4iLA0KPiAtCSAgICAgICBibywgYm8tPm1lbS5udW1fcGFnZXMsIGJvLT5tZW0uc2l6
+ZSA+PiAxMCwNCj4gLQkgICAgICAgYm8tPm1lbS5zaXplID4+IDIwKTsNCj4gKwlkcm1fcHJpbnRm
+KCZwLCAiTm8gc3BhY2UgZm9yICVwICglbHUgcGFnZXMsICVsdUssICVsdU0pXG4iLA0KPiArCQkg
+ICBibywgYm8tPm1lbS5udW1fcGFnZXMsIGJvLT5tZW0uc2l6ZSA+PiAxMCwNCj4gKwkJICAgYm8t
+Pm1lbS5zaXplID4+IDIwKTsNCj4gCWZvciAoaSA9IDA7IGkgPCBwbGFjZW1lbnQtPm51bV9wbGFj
+ZW1lbnQ7IGkrKykgew0KPiAJCXJldCA9IHR0bV9tZW1fdHlwZV9mcm9tX3BsYWNlKCZwbGFjZW1l
+bnQtPnBsYWNlbWVudFtpXSwNCj4gCQkJCQkJJm1lbV90eXBlKTsNCj4gCQlpZiAocmV0KQ0KPiAJ
+CQlyZXR1cm47DQo+IC0JCXByX2VycigiICBwbGFjZW1lbnRbJWRdPTB4JTA4WCAoJWQpXG4iLA0K
+PiAtCQkgICAgICAgaSwgcGxhY2VtZW50LT5wbGFjZW1lbnRbaV0uZmxhZ3MsIG1lbV90eXBlKTsN
+Cj4gLQkJdHRtX21lbV90eXBlX2RlYnVnKGJvLT5iZGV2LCBtZW1fdHlwZSk7DQo+ICsJCWRybV9w
+cmludGYoJnAsICIgIHBsYWNlbWVudFslZF09MHglMDhYICglZClcbiIsDQo+ICsJCQkgICBpLCBw
+bGFjZW1lbnQtPnBsYWNlbWVudFtpXS5mbGFncywgbWVtX3R5cGUpOw0KPiArCQl0dG1fbWVtX3R5
+cGVfZGVidWcoYm8tPmJkZXYsICZwLCBtZW1fdHlwZSk7DQo+IAl9DQo+IH0NCj4gDQo+IC0tIA0K
+PiAyLjIwLjENCj4gDQoNCg==
