@@ -2,262 +2,121 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1038EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE8CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D394020866
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 069B521917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:48:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbeLUNrk (ORCPT
+        id S2388928AbeLUNsi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:47:40 -0500
-Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:16145 "EHLO
-        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732364AbeLUNq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:46:57 -0500
-Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gaL8d-000BDQ-4V; Fri, 21 Dec 2018 14:46:51 +0100
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gaL8c-000BCi-RK; Fri, 21 Dec 2018 14:46:51 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
-        dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
-        digetx@gmail.com, lee.jones@linaro.org, coquelin.stm32@gmail.com,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 3/8] mfd: stmpe: preparations for STMPE ADC driver
-Date:   Fri, 21 Dec 2018 14:46:32 +0100
-Message-Id: <20181221134638.20600-4-dev@pschenker.ch>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181221134638.20600-1-dev@pschenker.ch>
-References: <20181221134638.20600-1-dev@pschenker.ch>
+        Fri, 21 Dec 2018 08:48:38 -0500
+Received: from mga17.intel.com ([192.55.52.151]:31678 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbeLUNsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 08:48:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 05:48:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
+   d="scan'208";a="129753180"
+Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.231])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Dec 2018 05:48:31 -0800
+Date:   Fri, 21 Dec 2018 15:48:30 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181221134830.GA5799@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219144343.GA31189@wind.enjellic.com>
+ <20181220103400.GC26410@linux.intel.com>
+ <20181220220638.GA25110@wind.enjellic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220220638.GA25110@wind.enjellic.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+On Thu, Dec 20, 2018 at 04:06:38PM -0600, Dr. Greg wrote:
+> On Thu, Dec 20, 2018 at 12:34:00PM +0200, Jarkko Sakkinen wrote:
+> 
+> Good afternoon to everyone.
+> 
+> > On Wed, Dec 19, 2018 at 08:43:43AM -0600, Dr. Greg wrote:
+> > > I believe it is a silent response to the issues we were
+> > > prosecuting 4-5 weeks ago, regarding the requirement for an SGX
+> > > driver on an FLC hardware platform to have some semblance of
+> > > policy management to be relevant from a security/privacy
+> > > perspective.  It would have certainly been collegial to include a
+> > > reference to our discussions and concerns in the changelog.
+> > >
+> > > See 364f68f5a3c in Jarkko's next/master.
+> > >
+> > > The changeset addresses enclave access to the PROVISION key but is
+> > > still insufficient to deliver guarantees that are consistent with
+> > > the SGX security model.  In order to achieve that, policy
+> > > management needs to embrace the use of MRSIGNER values, which is
+> > > what our SFLC patchset uses.
+> > >
+> > > The noted changeset actually implements most of the 'kernel bloat'
+> > > that our SFLC patchset needs to bolt onto.
+> > >
+> > > As of yesterday afternoon next/master still won't initialize a
+> > > non-trivial enclave.  Since there now appears to be a wholesale
+> > > change in the driver architecture and UAPI we are sitting on the
+> > > sidelines waiting for an indication all of that has some hope of
+> > > working before we introduce our approach.
+> > >
+> > > Part of SFLC won't be popular but it is driven by clients who are
+> > > actually paying for SGX security engineering and architectures.
+> 
+> > How many of these people are actually posting here?
+> 
+> None that I know of.
+> 
+> The individuals I was referring to are CISO's and security risk
+> managers of multi-billion dollar corporations and/or 3-letter
+> entities.  It has been my own personal observation that they don't
+> have time to post to the Linux Kernel Mailing List.
+> 
+> The time they do spend on this technology seems to involve sitting in
+> meetings and making decisions on whether or not to authorize capital
+> expenditure budgets for Intel processors and chipsets, based on
+> whether or not an SGX security stack can definably implement the
+> security controls that are being imposed on their organizations by the
+> government and/or their liability carriers.
+> 
+> Such issues may be out of mainstream kernel concerns but hopefully not
+> conceptually elusive with respect to their implications.
 
-This prepares the MFD for the STMPE ADC driver. This commit introduces
-devicetree settings that are used by the ADC and adds an init function.
-Common ADC settings that are shared with the touchscreen driver can now
-reside in the overlying MFD.
+Well, the process is anyway what it is. I'm sending v18 and you are free
+to comment the code change associated with the provision.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
----
-
-Changes in v5:
- - Added Lee Jone's Ack
- - Changed author of commit. Previous patch versions author was wrong
-   by mistake.
-
-Changes in v4:
- - New patch: split mfd changes into this precursor patch
- - Export the added stmpe811_adc_commmon_init function
- - Disabling adc when mfd is removed
-
-Changes in v3: None
-Changes in v2:
- - Move code to setup ADC to MFD device, as it is used by both drivers
-   adc and touchscreen
-
- drivers/mfd/Kconfig       |  3 +-
- drivers/mfd/stmpe.c       | 68 +++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/stmpe.h | 10 ++++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdce4326..bba159e8eaa4 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1204,7 +1204,7 @@ config MFD_STMPE
- 
- 	  Currently supported devices are:
- 
--		STMPE811: GPIO, Touchscreen
-+		STMPE811: GPIO, Touchscreen, ADC
- 		STMPE1601: GPIO, Keypad
- 		STMPE1801: GPIO, Keypad
- 		STMPE2401: GPIO, Keypad
-@@ -1217,6 +1217,7 @@ config MFD_STMPE
- 		GPIO: stmpe-gpio
- 		Keypad: stmpe-keypad
- 		Touchscreen: stmpe-ts
-+		ADC: stmpe-adc
- 
- menu "STMicroelectronics STMPE Interface Drivers"
- depends on MFD_STMPE
-diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-index 566caca4efd8..f582531a8f3e 100644
---- a/drivers/mfd/stmpe.c
-+++ b/drivers/mfd/stmpe.c
-@@ -463,6 +463,28 @@ static const struct mfd_cell stmpe_ts_cell = {
- 	.num_resources	= ARRAY_SIZE(stmpe_ts_resources),
- };
- 
-+/*
-+ * ADC (STMPE811)
-+ */
-+
-+static struct resource stmpe_adc_resources[] = {
-+	{
-+		.name	= "STMPE_TEMP_SENS",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.name	= "STMPE_ADC",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static const struct mfd_cell stmpe_adc_cell = {
-+	.name		= "stmpe-adc",
-+	.of_compatible	= "st,stmpe-adc",
-+	.resources	= stmpe_adc_resources,
-+	.num_resources	= ARRAY_SIZE(stmpe_adc_resources),
-+};
-+
- /*
-  * STMPE811 or STMPE610
-  */
-@@ -497,6 +519,11 @@ static struct stmpe_variant_block stmpe811_blocks[] = {
- 		.irq	= STMPE811_IRQ_TOUCH_DET,
- 		.block	= STMPE_BLOCK_TOUCHSCREEN,
- 	},
-+	{
-+		.cell	= &stmpe_adc_cell,
-+		.irq	= STMPE811_IRQ_TEMP_SENS,
-+		.block	= STMPE_BLOCK_ADC,
-+	},
- };
- 
- static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
-@@ -517,6 +544,35 @@ static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
- 				enable ? 0 : mask);
- }
- 
-+int stmpe811_adc_common_init(struct stmpe *stmpe)
-+{
-+	int ret;
-+	u8 adc_ctrl1, adc_ctrl1_mask;
-+
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
-+		    STMPE_MOD_12B(stmpe->mod_12b) |
-+		    STMPE_REF_SEL(stmpe->ref_sel);
-+	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
-+			 STMPE_REF_SEL(0xff);
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
-+			adc_ctrl1_mask, adc_ctrl1);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		return ret;
-+	}
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(stmpe811_adc_common_init);
-+
- static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block block)
- {
- 	/* 0 for touchscreen, 1 for GPIO */
-@@ -1325,6 +1381,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	struct device_node *np = ci->dev->of_node;
- 	struct stmpe *stmpe;
- 	int ret;
-+	u32 val;
- 
- 	pdata = devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -1342,6 +1399,15 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	mutex_init(&stmpe->irq_lock);
- 	mutex_init(&stmpe->lock);
- 
-+	if (!of_property_read_u32(np, "st,sample-time", &val))
-+		stmpe->sample_time = val;
-+	if (!of_property_read_u32(np, "st,mod-12b", &val))
-+		stmpe->mod_12b = val;
-+	if (!of_property_read_u32(np, "st,ref-sel", &val))
-+		stmpe->ref_sel = val;
-+	if (!of_property_read_u32(np, "st,adc-freq", &val))
-+		stmpe->adc_freq = val;
-+
- 	stmpe->dev = ci->dev;
- 	stmpe->client = ci->client;
- 	stmpe->pdata = pdata;
-@@ -1433,6 +1499,8 @@ int stmpe_remove(struct stmpe *stmpe)
- 	if (!IS_ERR(stmpe->vcc))
- 		regulator_disable(stmpe->vcc);
- 
-+	__stmpe_disable(stmpe, STMPE_BLOCK_ADC);
-+
- 	mfd_remove_devices(stmpe->dev);
- 
- 	return 0;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index c0353f6431f9..07f55aac9390 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -21,6 +21,9 @@
- #define STMPE_I_DRIVE(x)	(x & 0x1)
- #define STMPE_OP_MODE(x)	((x & 0x7) << 1)
- 
-+#define STMPE811_REG_ADC_CTRL1	0x20
-+#define STMPE811_REG_ADC_CTRL2	0x21
-+
- struct device;
- struct regulator;
- 
-@@ -134,6 +137,12 @@ struct stmpe {
- 	u8 ier[2];
- 	u8 oldier[2];
- 	struct stmpe_platform_data *pdata;
-+
-+	/* For devices that use an ADC */
-+	u8 sample_time;
-+	u8 mod_12b;
-+	u8 ref_sel;
-+	u8 adc_freq;
- };
- 
- extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
-@@ -147,6 +156,7 @@ extern int stmpe_set_altfunc(struct stmpe *stmpe, u32 pins,
- 			     enum stmpe_block block);
- extern int stmpe_enable(struct stmpe *stmpe, unsigned int blocks);
- extern int stmpe_disable(struct stmpe *stmpe, unsigned int blocks);
-+extern int stmpe811_adc_common_init(struct stmpe *stmpe);
- 
- #define STMPE_GPIO_NOREQ_811_TOUCH	(0xf0)
- 
--- 
-2.19.2
-
+/Jarkko
