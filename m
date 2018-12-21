@@ -2,134 +2,128 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5974DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A37C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF63218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:17:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="mMEhpCUN"
+	by mail.kernel.org (Postfix) with ESMTP id 7799C218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389605AbeLULR6 (ORCPT
+        id S2389830AbeLULSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 06:17:58 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:16105 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730960AbeLULRx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 06:17:53 -0500
-X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="24670754"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 21 Dec 2018 04:17:53 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 21 Dec 2018 04:18:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g4mHf4dk0HFn93tmLI3qQjKNl7LUo4XHeDUOOUy6kaQ=;
- b=mMEhpCUNrfxS5ut4BZYGW9pM3+yDQ6NUwh3V4appaF4/VV0mqR6Utfb36ktbKmWKijP1QsyWpj6ALtFhmfIyKTIUboHAGvnrYdbzMW3eiVb8Ke3Q9yGv7UJhuJl9NFYF2/0s/+07gZv24WfHrMC3RYKZUa+gy9rhcEv9fYeS7LA=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1406.namprd11.prod.outlook.com (10.169.234.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.17; Fri, 21 Dec 2018 11:17:50 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::d4e0:49b4:1b0a:8ae6]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::d4e0:49b4:1b0a:8ae6%6]) with mapi id 15.20.1446.022; Fri, 21 Dec 2018
- 11:17:50 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <axel.lin@ingics.com>, <broonie@kernel.org>
-CC:     <Andrei.Stefanescu@microchip.com>, <lgirdwood@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>,
-        <Ludovic.Desroches@microchip.com>
-Subject: Re: [PATCH] regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around
- mcp16502_suspend/resume_noirq
-Thread-Topic: [PATCH] regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around
- mcp16502_suspend/resume_noirq
-Thread-Index: AQHUmR7P+RCUftXxtk+md7qXXbwhgQ==
-Date:   Fri, 21 Dec 2018 11:17:50 +0000
-Message-ID: <3751abc0-1377-2a66-3fa9-7ceee93b7aab@microchip.com>
-References: <20181220131413.21922-1-axel.lin@ingics.com>
-In-Reply-To: <20181220131413.21922-1-axel.lin@ingics.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0124.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:53::16) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR11MB1406;6:lOJJyAd+pLtl8gc1EDGGUpzGP5LdHcjxE5WkYbKs+6mpwojNratm3qXtDzoEhcK8VvmPUmslByvm+nlhwm6Doz8a1GcTYy53rmzPKW3gqPaYbAxfCOiI6W57uC9YCPehEAnHwYjQtSSHVrlYnYCd4UpI2JER7RO2+hbLlASKpGK/Hp/5JJ5IH7mGTfFMrVbqXfibMBxDgA1PdZHMWbnwwJjGXy7R8u86OYmWOG0nVNhdGXocOEsyoJdSSWLjSZg96HrPEkUnuxnt0IexkqSuk2RdvB2+33g//yS7zbllNjV0cd5pX29+bAVWvD/ZZIfVwPNCtljxjybLyOx8G6TbKoAhzolXX3NmXrzr68TP9S24FI7P+XN+4VwYqUGKifoHJCFbDI/IH3lUuikafQEBnc5xdLmz7Ms1iJ3EuZKDed5BK+zCNdNc0k27MF0vOwlkscgE2zW/eIcPd+Lv17Z92w==;5:6n5LvdY8MrXcQ8qv5CikVhhO/GO5fn90DK3ERlsomzWrqnIqu1Rmz5IaoVDXm+DueqIGLeeEY9AuCIlemSFu39r19/64Jx5RcnIR/5UgbbQOiSN2B+3PZrKGTISp50hk11ylHKCyzaAZ5PK9nrCMpZYNMUNE7hVj97wwEOq42i8=;7:OhcO4nBCs4Wg8XhVLb11DqU1tkGYZbquPIXNrrRDEZtMpDJJdX8Cta4W0Q24MSQqzYpbXFvLnzgRwmmZzsROx9nlg6HR5C1uxmF+VUTd6gkzrGlxeBinkWrS8cXEcY63L7RQzG88Z3T596YhUIGKlA==
-x-ms-office365-filtering-correlation-id: 09ff3ace-44c8-4268-74ef-08d66735f169
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1406;
-x-ms-traffictypediagnostic: MWHPR11MB1406:
-x-microsoft-antispam-prvs: <MWHPR11MB14066CFD3BC3DBAB7D21BF38E0B80@MWHPR11MB1406.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR11MB1406;BCL:0;PCL:0;RULEID:;SRVR:MWHPR11MB1406;
-x-forefront-prvs: 0893636978
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(366004)(39860400002)(376002)(189003)(199004)(31696002)(305945005)(14454004)(86362001)(25786009)(106356001)(72206003)(6436002)(6246003)(8936002)(81156014)(8676002)(81166006)(478600001)(36756003)(71200400001)(71190400001)(6486002)(97736004)(2906002)(105586002)(6512007)(107886003)(186003)(3846002)(6116002)(53546011)(6506007)(386003)(229853002)(102836004)(76176011)(54906003)(5660300001)(4326008)(446003)(26005)(2616005)(53936002)(11346002)(476003)(486006)(316002)(66066001)(256004)(14444005)(52116002)(99286004)(31686004)(39060400002)(7736002)(68736007)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1406;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VCJaI2zlQDv4CBLrbvXlsRZ6Uig+t7WxgRb0IC0pRkKunUd6KYhe/HIqy9Z8LEeYh2/6pcJtYJ86eadqbcjzkbKjI1RCYZHbMEAsLPXLwQB45rvtr11cwJpB7btNiCKamXn37Qac+BbsT5Qbbc+jdz/j6JLjqI24hYCY182r3qUD7q9G30fvuEt5sSFF+B5fUvQwBs4W7h1Z8Nrz5zZwMzjYHsoCkOP7KoSxUlsUPVq4JfJu76n1Nv53dhmQHhidOMkRTRj4bU/wRFDWKvU3c87qhEZZvtC92JJ1C3DOflcCjggtyQOUFao/WsOP2p7B
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <28CAA01342A08E48998ED200641EEF62@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 21 Dec 2018 06:18:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733141AbeLULSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 06:18:15 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 382F383F3C;
+        Fri, 21 Dec 2018 11:18:15 +0000 (UTC)
+Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9D1F75D737;
+        Fri, 21 Dec 2018 11:18:12 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org
+References: <20181219110613.24459-1-vkuznets@redhat.com>
+ <20181220200630.GC25497@flask> <8736qrw5vn.fsf@vitty.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <92c7795c-8d0c-bfb6-e272-27e8441783dd@redhat.com>
+Date:   Fri, 21 Dec 2018 12:18:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09ff3ace-44c8-4268-74ef-08d66735f169
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 11:17:50.6036
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1406
-X-OriginatorOrg: microchip.com
+In-Reply-To: <8736qrw5vn.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 21 Dec 2018 11:18:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAvMTIvMjAxOCBhdCAxNDoxNCwgQXhlbCBMaW4gd3JvdGU6DQo+IG1jcDE2NTAyX3N1c3Bl
-bmQvcmVzdW1lX25vaXJxIGlzIG9ubHkgdXNlZCBieSBTRVRfTk9JUlFfU1lTVEVNX1NMRUVQX1BN
-X09QUw0KPiB3aGVuIENPTkZJR19QTV9TTEVFUCBpcyBkZWZpbmVkLg0KPiBTbyB1c2UgI2lmZGVm
-IENPTkZJR19QTV9TTEVFUCBpbnN0ZWFkIENPTkZJR19TVVNQRU5EIGd1YXJkLg0KPiANCj4gU2ln
-bmVkLW9mZi1ieTogQXhlbCBMaW4gPGF4ZWwubGluQGluZ2ljcy5jb20+DQoNCkknbSBub3QgYWdh
-aW5zdCB0aGlzIHBhdGNoIGFuZCBkb24ndCBrbm93IHRoZSBoYWJpdHMgYWJvdXQgdGhpcy4uLiBv
-bmUgDQpyZW1hcmsgYmVsb3cuLi4NCg0KDQo+IC0tLQ0KPiBUaGlzIHBhdGNoIHJlcGxhY2VzIGJl
-bG93IHBhdGNoIEkgc2VudCB0b2RheS4NCj4gcmVndWxhdG9yOiBtY3AxNjUwMjogRml4IGJ1aWxk
-IGVycm9yIHdoZW4gIUNPTkZJR19TVVNQRU5EICYmIENPTkZJR19QTV9TTEVFUA0KPiBDaGFuZ2Vk
-IHRoZSBzdWJqZWN0IGxpbmUgYmVjYXVzZSBhZnRlciBjb21taXQgMzA4MTQ0Y2U4ZTUxICgicmVn
-dWxhdG9yOiBtY3AxNjUwMjogY29kZSBjbGVhbnVwIikNCj4gaXQncyBub3QgcmVsYXRlZCB0byBi
-dWlsZCBlcnJvciBub3cuDQo+IA0KPiAgIGRyaXZlcnMvcmVndWxhdG9yL21jcDE2NTAyLmMgfCA3
-ICsrLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9u
-cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVndWxhdG9yL21jcDE2NTAyLmMgYi9k
-cml2ZXJzL3JlZ3VsYXRvci9tY3AxNjUwMi5jDQo+IGluZGV4IDgwOWE2NjQ3MzNhNC4uY2IxMWZi
-MjA2ODk5IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3JlZ3VsYXRvci9tY3AxNjUwMi5jDQo+ICsr
-KyBiL2RyaXZlcnMvcmVndWxhdG9yL21jcDE2NTAyLmMNCj4gQEAgLTQ5Nyw3ICs0OTcsNyBAQCBz
-dGF0aWMgaW50IG1jcDE2NTAyX3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQsDQo+ICAg
-CXJldHVybiAwOw0KPiAgIH0NCj4gICANCj4gLSNpZmRlZiBDT05GSUdfU1VTUEVORA0KPiArI2lm
-ZGVmIENPTkZJR19QTV9TTEVFUA0KDQpXaHkgbm90IHVzZSBDT05GSUdfUE0ganVzdCBsaWtlIC4u
-Lg0KDQo+ICAgc3RhdGljIGludCBtY3AxNjUwMl9zdXNwZW5kX25vaXJxKHN0cnVjdCBkZXZpY2Ug
-KmRldikNCj4gICB7DQo+ICAgCXN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQgPSB0b19pMmNfY2xp
-ZW50KGRldik7DQo+IEBAIC01MTcsMTAgKzUxNyw3IEBAIHN0YXRpYyBpbnQgbWNwMTY1MDJfcmVz
-dW1lX25vaXJxKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gICANCj4gICAJcmV0dXJuIDA7DQo+ICAg
-fQ0KPiAtI2Vsc2UgLyogIUNPTkZJR19TVVNQRU5EICovDQo+IC0jZGVmaW5lIG1jcDE2NTAyX3N1
-c3BlbmRfbm9pcnEgTlVMTA0KPiAtI2RlZmluZSBtY3AxNjUwMl9yZXN1bWVfbm9pcnEgTlVMTA0K
-PiAtI2VuZGlmIC8qICFDT05GSUdfU1VTUEVORCAqLw0KPiArI2VuZGlmDQo+ICAgDQo+ICAgI2lm
-ZGVmIENPTkZJR19QTQ0KDQouLi4gaGVyZS4uLi4gb3IgdW5pZnkgYm90aCBkaXJlY3RpdmVzIHRv
-ICJDT05GSUdfUE1fU0xFRVAiID8NCg0KDQpPdGhlcndpc2UsIG5vIHByb2JsZW0gaW4gYWRkaW5n
-IG15Og0KQWNrZWQtYnk6IE5pY29sYXMgRmVycmUgPG5pY29sYXMuZmVycmVAbWljcm9jaGlwLmNv
-bT4NCg0KKGFzIEFuZHJlaSBpcyBub3Qgd2l0aCBNaWNyb2NoaXAgYW55bW9yZSkuDQoNCg0KPiAg
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2X3BtX29wcyBtY3AxNjUwMl9wbV9vcHMgPSB7DQo+IA0K
-DQoNCi0tIA0KTmljb2xhcyBGZXJyZQ0K
+On 21/12/18 11:06, Vitaly Kuznetsov wrote:
+>> Btw, I would prefer this without the
+>>
+>>   default: break;
+>>
+>> as I don't think we'll ever add something there.
+> 
+> "640K ought to be enough for anybody" :-)
+> 
+> But in case you commit it as
+> 
+> return index != MSR_IA32_MCG_EXT_CTL; 
+> 
+> I won't object. Thanks,
+
+Radim committed it as it, but I think he did want the switch statement
+(hey, vmx_has_emulated_msr has *two* cases!).  It's just the "default:
+break;" that is unnecessary or could be "default: return true;".
+
+Paolo
