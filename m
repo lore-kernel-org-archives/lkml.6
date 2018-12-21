@@ -2,43 +2,42 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CBFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08FCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5069721905
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AFF321904
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545355104;
-	bh=2Xm8Agh6iR6Aviv+khszZ2EMzWfoouXmg4JjdE/GOio=;
+	s=default; t=1545355109;
+	bh=tytiSmQOqHm4N1cq03I32DUKolSOX1kji1iS3bg0fGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vcLFZw04H/X5TMvXeB07Xwv4BcRGO+vqPz2DPxj7H+FZ2EhhyZwYTfgdP13TvhM2/
-	 rIc1Oo+1lTCCIi+134iQ1JSlTDERNzsYJGyG/WyrvnywQ/QWhYRrE9OQId2ZnuzlKJ
-	 nIy3kQStqF2eyIK9pdlpBIex8VdVeslSig5kImXI=
+	b=q50Qh1kx9E5B0ZkuY9nc3IpwLfVXnho8Z1brUkCEK1o49GPtijVh61ddvxWCgbBNX
+	 dChbszWdx8NS1mD3Cdekms7cADOpLkET19JNWJA11+7H7M4ksLnAelb4d6MSrszN2/
+	 NJIKt/x226VLIcEakhW4brnfjb+65oJ8yTO7UOLo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388674AbeLUBSW (ORCPT
+        id S2388813AbeLUBS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:18:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37184 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 20:18:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388604AbeLUBSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:18:15 -0500
+        id S2388648AbeLUBSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 20:18:20 -0500
 Received: from mail.kernel.org (unknown [185.216.33.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B753F21904;
-        Fri, 21 Dec 2018 01:18:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5D4021907;
+        Fri, 21 Dec 2018 01:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545355094;
-        bh=2Xm8Agh6iR6Aviv+khszZ2EMzWfoouXmg4JjdE/GOio=;
+        s=default; t=1545355099;
+        bh=tytiSmQOqHm4N1cq03I32DUKolSOX1kji1iS3bg0fGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BKztesz9+EZd9iisGHnVBW3TDeD/Dm77SeP1Gd//quLBqQFKtv4C2XfMvZVxs3hRm
-         M7E4NpnDAEZSzM1bFVGaicBkrNAqCIqNavMVQNQR3rguGyDw8exJOR+H0ZoSyD/ZeS
-         GdQJnhvC8G4Cw8nUj/VdqbWzo7Es1hv69KzZm4pQ=
+        b=GulHGxSNtHauBAnDTqzV4KuOSpSbDvfvqrLTaVbpajc+bYvuH0r43XHoqeCTk3UoV
+         qbL+n7F2B9fSkeEsMioY7+jY35xYGwrkOSNaK1UgfACk+gkYrGfNKuTUctP/ij/qvO
+         mnGUwvCm/GlxPdsxlE1904frit1Z9dRnbnCLdWKQ=
 From:   Sebastian Reichel <sre@kernel.org>
 To:     Sebastian Reichel <sre@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -50,9 +49,9 @@ Cc:     Rob Herring <robh@kernel.org>,
         linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 03/14] ARM: OMAP2+: pdata-quirks: drop TI_ST/KIM support
-Date:   Fri, 21 Dec 2018 02:17:41 +0100
-Message-Id: <20181221011752.25627-4-sre@kernel.org>
+Subject: [PATCH 05/14] media: wl128x-radio: remove global radio_disconnected
+Date:   Fri, 21 Dec 2018 02:17:43 +0100
+Message-Id: <20181221011752.25627-6-sre@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181221011752.25627-1-sre@kernel.org>
 References: <20181221011752.25627-1-sre@kernel.org>
@@ -65,99 +64,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-All TI_ST users have been migrated to the new serdev based HCILL
-bluetooth driver. That driver is initialized from DT and does not
-need any platform quirks.
+Move global radio_disconnected into device structure to
+prepare converting this driver into a normal platform
+device driver supporting multiple instances.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- arch/arm/mach-omap2/pdata-quirks.c | 52 ------------------------------
- 1 file changed, 52 deletions(-)
+ drivers/media/radio/wl128x/fmdrv.h      |  1 +
+ drivers/media/radio/wl128x/fmdrv_v4l2.c | 15 +++++++--------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-index 9fec5f84bf77..2bd83ac74b7a 100644
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -14,7 +14,6 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/of_platform.h>
--#include <linux/ti_wilink_st.h>
- #include <linux/wl12xx.h>
- #include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
-@@ -141,53 +140,6 @@ static void __init omap3_sbc_t3530_legacy_init(void)
- 	omap3_sbc_t3x_usb_hub_init(167, "sb-t35 usb hub");
- }
+diff --git a/drivers/media/radio/wl128x/fmdrv.h b/drivers/media/radio/wl128x/fmdrv.h
+index 8ed7c0aeb8b9..fa89eef59295 100644
+--- a/drivers/media/radio/wl128x/fmdrv.h
++++ b/drivers/media/radio/wl128x/fmdrv.h
+@@ -201,6 +201,7 @@ struct fmdev {
+ 	struct v4l2_device v4l2_dev;	/* V4L2 top level struct */
+ 	struct snd_card *card;	/* Card which holds FM mixer controls */
+ 	u16 asci_id;
++	u8 radio_disconnected;
+ 	spinlock_t rds_buff_lock; /* To protect access to RDS buffer */
+ 	spinlock_t resp_skb_lock; /* To protect access to received SKB */
  
--static struct ti_st_plat_data wilink_pdata = {
--	.nshutdown_gpio = 137,
--	.dev_name = "/dev/ttyO1",
--	.flow_cntrl = 1,
--	.baud_rate = 300000,
--};
--
--static struct platform_device wl18xx_device = {
--	.name	= "kim",
--	.id	= -1,
--	.dev	= {
--		.platform_data = &wilink_pdata,
--	}
--};
--
--static struct ti_st_plat_data wilink7_pdata = {
--	.nshutdown_gpio = 162,
--	.dev_name = "/dev/ttyO1",
--	.flow_cntrl = 1,
--	.baud_rate = 3000000,
--};
--
--static struct platform_device wl128x_device = {
--	.name	= "kim",
--	.id	= -1,
--	.dev	= {
--		.platform_data = &wilink7_pdata,
--	}
--};
--
--static struct platform_device btwilink_device = {
--	.name	= "btwilink",
--	.id	= -1,
--};
--
--static void __init omap3_igep0020_rev_f_legacy_init(void)
--{
--	platform_device_register(&wl18xx_device);
--	platform_device_register(&btwilink_device);
--}
--
--static void __init omap3_igep0030_rev_g_legacy_init(void)
--{
--	platform_device_register(&wl18xx_device);
--	platform_device_register(&btwilink_device);
--}
--
- static void __init omap3_evm_legacy_init(void)
- {
- 	hsmmc2_internal_input_clk();
-@@ -301,8 +253,6 @@ static void __init omap3_tao3530_legacy_init(void)
- static void __init omap3_logicpd_torpedo_init(void)
- {
- 	omap3_gpio126_127_129();
--	platform_device_register(&wl128x_device);
--	platform_device_register(&btwilink_device);
- }
+diff --git a/drivers/media/radio/wl128x/fmdrv_v4l2.c b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+index e25fd4d4d280..f541b5802844 100644
+--- a/drivers/media/radio/wl128x/fmdrv_v4l2.c
++++ b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+@@ -33,7 +33,6 @@
+ #include "fmdrv_tx.h"
  
- /* omap3pandora legacy devices */
-@@ -623,8 +573,6 @@ static struct pdata_init pdata_quirks[] __initdata = {
- 	{ "nokia,omap3-n900", nokia_n900_legacy_init, },
- 	{ "nokia,omap3-n9", hsmmc2_internal_input_clk, },
- 	{ "nokia,omap3-n950", hsmmc2_internal_input_clk, },
--	{ "isee,omap3-igep0020-rev-f", omap3_igep0020_rev_f_legacy_init, },
--	{ "isee,omap3-igep0030-rev-g", omap3_igep0030_rev_g_legacy_init, },
- 	{ "logicpd,dm3730-torpedo-devkit", omap3_logicpd_torpedo_init, },
- 	{ "ti,omap3-evm-37xx", omap3_evm_legacy_init, },
- 	{ "ti,am3517-evm", am3517_evm_legacy_init, },
+ static struct video_device gradio_dev;
+-static u8 radio_disconnected;
+ 
+ /* -- V4L2 RADIO (/dev/radioX) device file operation interfaces --- */
+ 
+@@ -47,7 +46,7 @@ static ssize_t fm_v4l2_fops_read(struct file *file, char __user * buf,
+ 
+ 	fmdev = video_drvdata(file);
+ 
+-	if (!radio_disconnected) {
++	if (!fmdev->radio_disconnected) {
+ 		fmerr("FM device is already disconnected\n");
+ 		return -EIO;
+ 	}
+@@ -126,14 +125,14 @@ static int fm_v4l2_fops_open(struct file *file)
+ 	int ret;
+ 	struct fmdev *fmdev = NULL;
+ 
++	fmdev = video_drvdata(file);
++
+ 	/* Don't allow multiple open */
+-	if (radio_disconnected) {
++	if (fmdev->radio_disconnected) {
+ 		fmerr("FM device is already opened\n");
+ 		return -EBUSY;
+ 	}
+ 
+-	fmdev = video_drvdata(file);
+-
+ 	if (mutex_lock_interruptible(&fmdev->mutex))
+ 		return -ERESTARTSYS;
+ 	ret = fmc_prepare(fmdev);
+@@ -149,7 +148,7 @@ static int fm_v4l2_fops_open(struct file *file)
+ 		fmerr("Unable to load FM RX firmware\n");
+ 		goto open_unlock;
+ 	}
+-	radio_disconnected = 1;
++	fmdev->radio_disconnected = 1;
+ 
+ open_unlock:
+ 	mutex_unlock(&fmdev->mutex);
+@@ -162,7 +161,7 @@ static int fm_v4l2_fops_release(struct file *file)
+ 	struct fmdev *fmdev;
+ 
+ 	fmdev = video_drvdata(file);
+-	if (!radio_disconnected) {
++	if (!fmdev->radio_disconnected) {
+ 		fmdbg("FM device is already closed\n");
+ 		return 0;
+ 	}
+@@ -179,7 +178,7 @@ static int fm_v4l2_fops_release(struct file *file)
+ 		fmerr("FM CORE release failed\n");
+ 		goto release_unlock;
+ 	}
+-	radio_disconnected = 0;
++	fmdev->radio_disconnected = 0;
+ 
+ release_unlock:
+ 	mutex_unlock(&fmdev->mutex);
 -- 
 2.19.2
 
