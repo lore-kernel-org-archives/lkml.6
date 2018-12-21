@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12646C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C34C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3E81218E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7531A218E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 01:20:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545355186;
-	bh=+Bt4mMi8YqMYFjKJbypQUlvKkRIjSTGbKPlFNh58u9I=;
+	s=default; t=1545355200;
+	bh=rwCJS7LxUaf+cIczKJrdX1wVEI0teHsOKIWCd6xIIQQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jl8IaGpxM82YbBZNVm3Zn5X7+9pP0XZ9UFC4Un4UcYU2lQuqrvUWvGq1IaeTX15yX
-	 quxhcSlM28CTEDBozw1EuZvgA2bEqmSmTIHR7483oKOiAdhi2wKkSmczCj+blitJk8
-	 kyWe6SHcyZnsqfRmpu+GGg5l29NkvB7HwAkfZrrc=
+	b=W0tg8oqKWrdpJCFJgMIHp2oWWxNOZZuBcWykcNv38WRMR3xsTuXBRThRPsrXJC4gh
+	 NypcJJ/tUKp+7vOqqancHoQZymi56qMZz8e0Ka9njHQs4oHTzRahozYPIfakmFJgxa
+	 D6ajeDKFY/gRZPowHVf6koZhkjaO4AELVhHCYCPc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390736AbeLUBTp (ORCPT
+        id S2390745AbeLUBT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37378 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 20:19:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388680AbeLUBSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:18:25 -0500
+        id S2388626AbeLUBSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 20:18:17 -0500
 Received: from mail.kernel.org (unknown [185.216.33.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2602521904;
-        Fri, 21 Dec 2018 01:18:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A3DF218E0;
+        Fri, 21 Dec 2018 01:18:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545355104;
-        bh=+Bt4mMi8YqMYFjKJbypQUlvKkRIjSTGbKPlFNh58u9I=;
+        s=default; t=1545355096;
+        bh=rwCJS7LxUaf+cIczKJrdX1wVEI0teHsOKIWCd6xIIQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pt33fX5REvws5Bc9lx5yt6hqdH4nzdKepGUjObe12bqylEqjNhZAf/qvrGPYUF0nJ
-         Wwy1WtcxecM6iV8/gQScWTuIQ0Y1IhI2wjVVlVRAkMg1b7oEqthamoypXmjSU/h/Jq
-         jmIzhTt5cXPMMxql5TN19woePwUGklT0Sr67whYw=
+        b=xHmmfzA2YBPVMXTvgkRYNRve4QO4qsTQwwQJtSRex+vRvRs4aK0QGvs8WP61hpVwL
+         ELINZNFbRO1cUiHy6yi4i9/0zS3DglEc3vaF/ZTavD07lP3YhKEyCG09YJHznO+hkC
+         azsAAfYPMhMMpDkIQQdjL1g9sb4cl+Y7xoFLr6kE=
 From:   Sebastian Reichel <sre@kernel.org>
 To:     Sebastian Reichel <sre@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     Rob Herring <robh@kernel.org>,
         linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 07/14] media: wl128x-radio: convert to platform device
-Date:   Fri, 21 Dec 2018 02:17:45 +0100
-Message-Id: <20181221011752.25627-8-sre@kernel.org>
+Subject: [PATCH 04/14] media: wl128x-radio: remove module version
+Date:   Fri, 21 Dec 2018 02:17:42 +0100
+Message-Id: <20181221011752.25627-5-sre@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181221011752.25627-1-sre@kernel.org>
 References: <20181221011752.25627-1-sre@kernel.org>
@@ -65,101 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-This converts the wl128x FM radio module into a platform device.
-It's a preparation for using it from hci_ll Bluetooth driver instead
-of TI_ST.
+Drop module version. We already have the kernel's version and
+this module is mainline.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/media/radio/wl128x/fmdrv_common.c | 30 ++++++++++++-----------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ drivers/media/radio/wl128x/fmdrv.h        | 1 -
+ drivers/media/radio/wl128x/fmdrv_common.c | 5 ++---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/media/radio/wl128x/fmdrv.h b/drivers/media/radio/wl128x/fmdrv.h
+index 1ff2eec4ed52..8ed7c0aeb8b9 100644
+--- a/drivers/media/radio/wl128x/fmdrv.h
++++ b/drivers/media/radio/wl128x/fmdrv.h
+@@ -29,7 +29,6 @@
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-ctrls.h>
+ 
+-#define FM_DRV_VERSION            "0.1.1"
+ #define FM_DRV_NAME               "ti_fmdrv"
+ #define FM_DRV_CARD_SHORT_NAME    "TI FM Radio"
+ #define FM_DRV_CARD_LONG_NAME     "Texas Instruments FM Radio"
 diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index f77acec0addf..9526613adf91 100644
+index 800d69c3f80b..6bbae074f02d 100644
 --- a/drivers/media/radio/wl128x/fmdrv_common.c
 +++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -35,11 +35,10 @@
- #include "fmdrv_v4l2.h"
- #include "fmdrv_common.h"
- #include <linux/ti_wilink_st.h>
-+#include <linux/platform_device.h>
- #include "fmdrv_rx.h"
- #include "fmdrv_tx.h"
- 
--struct fmdev *global_fmdev;
--
- /* Region info */
- static struct region_info region_configs[] = {
- 	/* Europe/US */
-@@ -1615,23 +1614,19 @@ int fmc_release(struct fmdev *fmdev)
- 	return ret;
- }
- 
--/*
-- * Module init function. Ask FM V4L module to register video device.
-- * Allocate memory for FM driver context and RX RDS buffer.
-- */
--static int __init fm_drv_init(void)
-+static int wl128x_fm_probe(struct platform_device *dev)
- {
+@@ -1622,7 +1622,7 @@ static int __init fm_drv_init(void)
  	struct fmdev *fmdev = NULL;
  	int ret = -ENOMEM;
  
- 	fmdbg("FM driver\n");
+-	fmdbg("FM driver version %s\n", FM_DRV_VERSION);
++	fmdbg("FM driver\n");
  
-+	/* Allocate memory for FM driver context and RX RDS buffer. */
  	fmdev = kzalloc(sizeof(struct fmdev), GFP_KERNEL);
  	if (NULL == fmdev) {
- 		fmerr("Can't allocate operation structure memory\n");
- 		return ret;
- 	}
--	global_fmdev = fmdev;
- 	fmdev->rx.rds.buf_size = default_rds_buf * FM_RDS_BLK_SIZE;
- 	fmdev->rx.rds.buff = kzalloc(fmdev->rx.rds.buf_size, GFP_KERNEL);
- 	if (NULL == fmdev->rx.rds.buff) {
-@@ -1639,6 +1634,7 @@ static int __init fm_drv_init(void)
- 		goto rel_dev;
- 	}
+@@ -1671,6 +1671,5 @@ module_exit(fm_drv_exit);
  
-+	/* Ask FM V4L module to register video device. */
- 	ret = fm_v4l2_init_video_device(fmdev, radio_nr);
- 	if (ret < 0)
- 		goto rel_rdsbuf;
-@@ -1657,10 +1653,9 @@ static int __init fm_drv_init(void)
- 	return ret;
- }
- 
--/* Module exit function. Ask FM V4L module to unregister video device */
--static void __exit fm_drv_exit(void)
-+static int wl128x_fm_remove(struct platform_device *dev)
- {
--	struct fmdev *fmdev = global_fmdev;
-+	struct fmdev *fmdev = platform_get_drvdata(pdev);
- 
- 	/* Ask FM V4L module to unregister video device */
- 	fm_v4l2_deinit_video_device(fmdev);
-@@ -1668,12 +1663,19 @@ static void __exit fm_drv_exit(void)
- 		kfree(fmdev->rx.rds.buff);
- 		kfree(fmdev);
- 	}
-+
-+	return 0;
- }
- 
--module_init(fm_drv_init);
--module_exit(fm_drv_exit);
-+static struct platform_driver wl128x_fm_drv = {
-+	.driver	= {
-+		.name	= "wl128x-fm",
-+	},
-+	.probe		= wl128x_fm_probe,
-+	.remove		= wl128x_fm_remove,
-+};
-+module_platform_driver(wl128x_fm_drv);
- 
--/* ------------- Module Info ------------- */
+ /* ------------- Module Info ------------- */
  MODULE_AUTHOR("Manjunatha Halli <manjunatha_halli@ti.com>");
- MODULE_DESCRIPTION("FM Driver for TI's Connectivity chip");
+-MODULE_DESCRIPTION("FM Driver for TI's Connectivity chip. " FM_DRV_VERSION);
+-MODULE_VERSION(FM_DRV_VERSION);
++MODULE_DESCRIPTION("FM Driver for TI's Connectivity chip");
  MODULE_LICENSE("GPL");
 -- 
 2.19.2
