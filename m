@@ -3,109 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B98C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0104C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E1D218D3
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545405743;
-	bh=CA8kPAFpYpNNtBIzfNjXCVdgd6oU5AXibeM3VUsftCs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=KLCRbc5eCwQ7ymGKbfjT4Mlxfxd2cYru1UUw+hc4x6K6K99mNx3AUEkVRsnP3XDi9
-	 4WOR+icmx71OutgU9vQt9uApB5pJgEvDgfjFR50SYVQksBH6XOLSssYV5NARSTJV6i
-	 1E8oDLm1asLmfvjkkFq3hRO6LxO8Ic6o/QjpAI1Y=
+	by mail.kernel.org (Postfix) with ESMTP id 6EA79218D3
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:22:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6qr585s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404146AbeLUPVf (ORCPT
+        id S2391015AbeLUPVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:21:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404114AbeLUPVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:21:33 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B52E721928;
-        Fri, 21 Dec 2018 15:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545405692;
-        bh=CA8kPAFpYpNNtBIzfNjXCVdgd6oU5AXibeM3VUsftCs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=znFfDkxQc5CxDIODO0G6zlnSd0N/S1/2dG9DoeAgSlQ+AcuLvzwdtrSndlBrmZsE/
-         BurnnLf5bWx4JzDA7S+eXg5rprR5X0bgVhRuzM0GcCdlEYXSmpGBn+S5Us4x38VWfV
-         ebA6JczXL8bbVKtfWvYXKbgHy9Hs0/6oKdrXhHTc=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, C.Emde@osadl.org,
-        jkacur@redhat.com, bigeasy@linutronix.de,
-        daniel.wagner@siemens.com, julia@ni.com
-Subject: [PATCH RT 2/9] efi: Disable runtime services on RT
-Date:   Fri, 21 Dec 2018 09:21:14 -0600
-Message-Id: <4b7dce66c503f20080605dc39b812056c51d4a23.1545347029.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1545347029.git.tom.zanussi@linux.intel.com>
-References: <cover.1545347029.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1545347029.git.tom.zanussi@linux.intel.com>
-References: <cover.1545347029.git.tom.zanussi@linux.intel.com>
+        Fri, 21 Dec 2018 10:21:30 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41532 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390988AbeLUPVY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 10:21:24 -0500
+Received: by mail-lf1-f67.google.com with SMTP id c16so4157150lfj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WaF8AFfF7zchnr6jMRHrk5C2QYC8GMssuw/nTJO62Vo=;
+        b=U6qr585sBxSIfLRDrNicqGEN9uOJKrt4fr8LvaAGKDSD3SyvethIWfaIaYiDajbcH2
+         3klFQ8CEJz3MgAXjRXbMvvxMBzbTYrVW/7C283WJG5nE9fMszouSKk61cXVdWlq/XRKg
+         AXzC99PWUUDJ6AZpqCDvtPLVyBamtqWAu3Hea6ZH0ALIZHFpLWUgtsZYkxRGakzEg748
+         I/2uMhp8fFlizqFGJAyTy6tAbd4JFrL2c6XnXq1zd03R/KNm5O1kBxhjm8qupywToYYr
+         KxVTBH4VZAgM7+YaNPmveC3UxJXfrzPrMu+k7GP6usCZ3qRN7cr4ngLcMI/uS971ae1l
+         KBuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WaF8AFfF7zchnr6jMRHrk5C2QYC8GMssuw/nTJO62Vo=;
+        b=WJ/Td0+zeV21bBuU6ks7jlBBPrFDNWTiXSIrGSJTZ3HafUN7jrVA0g61xQlmq9t7Sk
+         0zxxz665tjE2qFtoeJKL4o1OB6a00bnl/vTMfqZZeEeJZF0lhSdr9mIhymoFxXZXUq0H
+         YsTS26+Vx0Yr+MfrTA78HjAz5yfvs0zj5hM9bm5ghvz8zLrgpfkl/9mjT1R/3xIV12OV
+         qIQsnUKF+wA1kWbi+k2Q5tCYpQrX7oACQB85uhV+IJaEn7el5LMWQS7kKiggb6M4YTED
+         Reaq3Fw5s1TkUa6rj3vErRB7slwViqjC5s7qofKOVNlJ9tQXXkyt/J3TefltUaL36Ep0
+         guEA==
+X-Gm-Message-State: AA+aEWb8G6/Uu7Hj9E7pKILbQYvUvd9GiLIvvMVRaPxXPFdaqANAK8JF
+        AGTI0K5T8btdSm/oVlMOQ6c=
+X-Google-Smtp-Source: AFSGD/V5wWqjvO4yJ3wN68om6a2DmjCFJ9oGRSa6cS+wnGo2HshVYZcficms1BX9spXd0OPO4ZR2Rg==
+X-Received: by 2002:a19:c115:: with SMTP id r21mr1682969lff.144.1545405682998;
+        Fri, 21 Dec 2018 07:21:22 -0800 (PST)
+Received: from localhost.localdomain (c90-142-43-138.bredband.comhem.se. [90.142.43.138])
+        by smtp.gmail.com with ESMTPSA id q30sm5005601lfi.94.2018.12.21.07.21.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 07:21:22 -0800 (PST)
+From:   codekipper@gmail.com
+To:     maxime.ripard@free-electrons.com, wens@csie.org,
+        linux-sunxi@googlegroups.com
+Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
+        Marcus Cooper <codekipper@gmail.com>
+Subject: [PATCH v3 8/9] ASoC: sun4i-i2s: Add set_tdm_slot functionality
+Date:   Fri, 21 Dec 2018 16:21:09 +0100
+Message-Id: <20181221152110.17982-9-codekipper@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181221152110.17982-1-codekipper@gmail.com>
+References: <20181221152110.17982-1-codekipper@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3.18.129-rt111 rt-stable review patch.  If anyone has any objections,
-please let me know.
+From: Marcus Cooper <codekipper@gmail.com>
 
-------------------
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Some codecs require a different amount of a bit clocks per frame than
+what is calculated by the sample width. Use the tdm slot bindings to
+provide this mechanism.
 
-[ Upstream commit 55544e1d5eb0d7608e2b41452729649c8ea1607a ]
-
-Based on meassurements the EFI functions get_variable /
-get_next_variable take up to 2us which looks okay.
-The functions get_time, set_time take around 10ms. Those 10ms are too
-much. Even one ms would be too much.
-Ard mentioned that SetVariable might even trigger larger latencies if
-the firware will erase flash blocks on NOR.
-
-The time-functions are used by efi-rtc and can be triggered during
-runtimed (either via explicit read/write or ntp sync).
-
-The variable write could be used by pstore.
-These functions can be disabled without much of a loss. The poweroff /
-reboot hooks may be provided by PSCI.
-
-Disable EFI's runtime wrappers.
-
-This was observed on "EFI v2.60 by SoftIron Overdrive 1000".
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-
- Conflicts:
-	drivers/firmware/efi/efi.c
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 ---
- drivers/firmware/efi/efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sunxi/sun4i-i2s.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index e47c522e1d8f..f2be407247e5 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -41,7 +41,7 @@ struct efi __read_mostly efi = {
- };
- EXPORT_SYMBOL(efi);
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 8cec2f42c94e..cfcf427270fd 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -196,6 +196,9 @@ struct sun4i_i2s {
+ 	const struct sun4i_i2s_quirks	*variant;
  
--static bool disable_runtime;
-+static bool disable_runtime = IS_ENABLED(CONFIG_PREEMPT_RT_BASE);
- static int __init setup_noefi(char *arg)
- {
- 	disable_runtime = true;
+ 	bool bit_clk_master;
++
++	unsigned int	tdm_slots;
++	unsigned int	slot_width;
+ };
+ 
+ struct sun4i_i2s_clk_div {
+@@ -385,7 +388,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
+ 	if (i2s->variant->has_fmt_set_lrck_period)
+ 		regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
+ 				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
+-				   SUN8I_I2S_FMT0_LRCK_PERIOD(32));
++				   SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
+ 
+ 	/* Set sign extension to pad out LSB with 0 */
+ 	regmap_field_write(i2s->field_fmt_sext, 0);
+@@ -498,7 +501,8 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
+ 			   sr + i2s->variant->fmt_offset);
+ 
+ 	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
+-				      params_width(params));
++				      i2s->tdm_slots ?
++				      i2s->slot_width : params_width(params));
+ }
+ 
+ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+@@ -749,11 +753,25 @@ static int sun4i_i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id,
+ 	return 0;
+ }
+ 
++static int sun4i_i2s_set_dai_tdm_slot(struct snd_soc_dai *dai,
++	unsigned int tx_mask, unsigned int rx_mask,
++	int slots, int width)
++{
++	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++
++	i2s->tdm_slots = slots;
++
++	i2s->slot_width = width;
++
++	return 0;
++}
++
+ static const struct snd_soc_dai_ops sun4i_i2s_dai_ops = {
+ 	.hw_params	= sun4i_i2s_hw_params,
+ 	.set_fmt	= sun4i_i2s_set_fmt,
+ 	.set_sysclk	= sun4i_i2s_set_sysclk,
+ 	.trigger	= sun4i_i2s_trigger,
++	.set_tdm_slot	= sun4i_i2s_set_dai_tdm_slot,
+ };
+ 
+ static int sun4i_i2s_dai_probe(struct snd_soc_dai *dai)
 -- 
-2.14.1
+2.20.1
 
