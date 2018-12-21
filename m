@@ -6,91 +6,86 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEDAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB79C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA7221720
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F77A21928
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391613AbeLUTTB (ORCPT
+        id S2391626AbeLUTTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:19:01 -0500
-Received: from mga12.intel.com ([192.55.52.136]:46826 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391592AbeLUTTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:19:00 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 11:18:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
-   d="asc'?scan'208";a="103892744"
-Received: from unknown (HELO jtkirshe-MOBL1.amr.corp.intel.com) ([10.252.206.126])
-  by orsmga008.jf.intel.com with ESMTP; 21 Dec 2018 11:18:58 -0800
-Message-ID: <7478abbc4022a29414367cacdac1b89bff18c54c.camel@intel.com>
-Subject: Re: [PATCH] net: 80003es2lan: fix a missing check of read failure
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 21 Dec 2018 11:18:58 -0800
-In-Reply-To: <20181220212359.564-1-kjlu@umn.edu>
-References: <20181220212359.564-1-kjlu@umn.edu>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-+YbPRRiB0GEbaxIaBGso"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
+        Fri, 21 Dec 2018 14:19:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57100 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391592AbeLUTT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:19:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13B2280D;
+        Fri, 21 Dec 2018 11:19:26 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EBD13F575;
+        Fri, 21 Dec 2018 11:19:25 -0800 (PST)
+Subject: Re: [PATCH] firmware: arm_sdei: fix wrong of_node_put() in init
+ function
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181126121536.28739-1-nsaenzjulienne@suse.de>
+ <08d6b9e6-7aa0-9342-193b-1ce6e0417f77@arm.com>
+ <7a75afd030cbd17c986a3ad486aab35ad3418b28.camel@suse.de>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <cf4e5313-c467-8343-ac90-bb4b937b63ff@arm.com>
+Date:   Fri, 21 Dec 2018 19:19:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <7a75afd030cbd17c986a3ad486aab35ad3418b28.camel@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Nicolas,
 
---=-+YbPRRiB0GEbaxIaBGso
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 03/12/2018 12:25, Nicolas Saenz Julienne wrote:
+> On Fri, 2018-11-30 at 18:31 +0000, James Morse wrote:
+>> On 26/11/2018 12:15, Nicolas Saenz Julienne wrote:
+>>> After finding a "firmware" dt node arm_sdei tries to match it's
+>>> compatible string with it. To do so it's calling
+>>> of_find_matching_node()
+>>> which already takes care of decreasing the refcount on the
+>>> "firmware"
+>>> node. We are then incorrectly decreasing the refcount on that node
+>>> again.
+>>>
+>>> This patch removes the unwarranted call to of_node_put().
+>>>
+>>> Fixes: ad6eb31ef903 ("firmware: arm_sdei: Add driver for Software
+>>> Delegated Exceptions")
+>>> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>>
+>> Thanks!, I agree this is unwarranted.
+>> Is there a tool that picks these up? I remember sparse giving me a
+>> headache, but
+>> I don't remember this one... I probably cargo-culted it from
+>> somewhere else.
+> 
+> We stumbled upon this one on a test system. TBH I don't really know
+> much about these tools so I can't tell. That said, I sent 4 more fixes
+> on this bug (one more in drivers/firmware) so there definitively was
+> some cargo-culting happening.
 
-On Thu, 2018-12-20 at 15:23 -0600, Kangjie Lu wrote:
-> When e1000_read_kmrn_reg_80003es2lan() fails, "kum_reg_data" is
-> uninitialized and may contain random value. However, it is further
-> used in the following execution, which will lead to undefined
-> behaviors.
-> The fix checks the failure of e1000_read_kmrn_reg_80003es2lan() and
-> returns with its error code if it fails.
->=20
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/net/ethernet/intel/e1000e/80003es2lan.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+Well this is embarrassing. I was trying to test this before re-posting it, to
+discover dt-probing hasn't worked properly since it was merged, so I evidently
+didn't test it properly after the merge-window. (at the same time the OF core
+code took over creating platform devices from the firmware node, meaning my
+attempt here fails, and the driver never gets registered).
 
-This is a good catch, although we do not want to exit out on failure.  I
-have an alternative patch to resolve both issues, which I will submit later
-today.  Just need to finish holiday shopping for my wife... :-)
+I'll post the additional patch, and drop the fixes tag as this has never worked.
 
---=-+YbPRRiB0GEbaxIaBGso
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+Thanks!
 
-iQIzBAABCgAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlwdPKIACgkQ5W/vlVpL
-7c7iog/7BxLiCagwOurMC2peeHxluDO2ehrVQmtZd0DX/c9hGjriznThvo/3xxa8
-xgTu4J1te9bMSr7Gl8zt2dKlEIbwoBcdndDSnjVR7t8utuqw4BDyD3sCwXXcn5EU
-vS0G73d5PAAJEhpXbzFD9f4Ldbd8hk18aq9K9KCuPLO5RkTCD6S39lIQg1B/+76F
-AegW24mPISmz7Qh1VV0wjJD+vpP1YQ6DxoUWs6EIiRi0Pln25Fbg3FBKwp0wGoJA
-Ep+qviTtJm4RqNQekcwLpH3S9wMOxsFSrxTW5HHLy3sRTzjDn1+qQMKw7T+rCZ2R
-dS4exRbS3qzq/K9ouERiXRr0dosimuIw0mEbsS8n598HjHkqxw79UDZoFK3xKpiW
-qRAb8241paF4/3YibxHfDoa7Fzao19ysZH4EJbxZs2eG6cfKO/+qVvQu6vCZHT8A
-h7IBD2zwJJwVxqGmCyVCxI1ODxhQnPg8Qog4WN3xmTfwqBueXGr1mPnBKYAMVCT1
-QmWFxEM91TBi9s6R7j6qDo2zR1c+ctK1lIQoIoJSkL35XSS6H0txQrQKCbP/fTdX
-17dLttnCQo1ErEFXVDdZzJZGGHHdXnnbf5KtcWHn9Pzo12r3NDWeCYIj9rlSV3nH
-kBlRlYC195ESeTa1JMEdfdgSfPJGkxBBWJB55DBj4FcGka2/wKk=
-=/GqL
------END PGP SIGNATURE-----
-
---=-+YbPRRiB0GEbaxIaBGso--
-
+James
