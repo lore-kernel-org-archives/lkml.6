@@ -2,97 +2,105 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D38C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C365DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B4A21906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9240521906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:25:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="b2ftWzVW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbeLUJYw (ORCPT
+        id S1731958AbeLUJZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:24:52 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54454 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbeLUJYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:24:50 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F11F120763; Fri, 21 Dec 2018 10:24:47 +0100 (CET)
-Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C0C5620747;
-        Fri, 21 Dec 2018 10:24:47 +0100 (CET)
-Date:   Fri, 21 Dec 2018 10:24:47 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Andy Gross <andy.gross@linaro.org>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V5 2/4] rtc: add i.MX system controller RTC support
-Message-ID: <20181221092447.GM2188@piout.net>
-References: <1545295872-20169-1-git-send-email-Anson.Huang@nxp.com>
- <1545295872-20169-3-git-send-email-Anson.Huang@nxp.com>
+        Fri, 21 Dec 2018 04:25:44 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18475 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731852AbeLUJZn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 04:25:43 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1cb1900000>; Fri, 21 Dec 2018 01:25:36 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 21 Dec 2018 01:25:43 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 21 Dec 2018 01:25:43 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 21 Dec
+ 2018 09:25:40 +0000
+Subject: Re: [PATCH 4.9 00/61] 4.9.147-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181220085843.743900603@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <979c4bfa-6eeb-6629-9aa8-ebe6dece471a@nvidia.com>
+Date:   Fri, 21 Dec 2018 09:25:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545295872-20169-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545384336; bh=rOi/f6QDwfx1synMmky5WY6/wDjTf/JSuHeaA80gAW4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=b2ftWzVWWZ8lGfQBxuYa9SW4+sUcVJtOrHYRvnrhR7q/qKctavNddL767U+jAP/bC
+         s9M7xNpG4SEBX7lOjaAOBUHEvW8uOSr3ljvQHto1zRHIXpFQqtdWYUUbzzgR3/F6AS
+         9wlQ25fIJp/Ehsowq32axRsiaksXuQD5Kk/3GnC54NHVixKVqZgy378aaJvGpBune4
+         dPOMNJacodikU1K+nNXutwBivGUhbR1EST4gJv79C9Gxpfz9kdvs3PiBhMiL1smAV1
+         Tfr+buH1yZGELxWqQFEob3iej1ssdMnymTGCEqJa6kVaZ+5TieKxY34Xzv1/cctax+
+         ODBcoCJz/rGkw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2018 08:56:16+0000, Anson Huang wrote:
-> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
-> inside, the system controller is in charge of controlling power,
-> clock and secure rtc etc..
-> 
-> This patch adds i.MX system controller RTC driver support,
-> Linux kernel has to communicate with system controller via MU
-> (message unit) IPC to set/get RTC time and other alarm functions,
-> since the RTC set time needs to be done in secure EL3 mode (required
-> by system controller firmware) and alarm functions needs to be done
-> with general MU IRQ handle, these depend on other components which
-> are NOT ready, so this patch ONLY enables the RTC time read.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> ChangeLog since V4:
->     - Add dependency on IMX_SCU to avoid compile error when IMX_SCU is NOT enabled;
->     - Use dev_err instead of pr_err;
->     - Remove unneccssary different errors check in imx_scu_get_handle which is already done in API.
-> ---
->  drivers/rtc/Kconfig      |  7 ++++
->  drivers/rtc/Makefile     |  1 +
->  drivers/rtc/rtc-imx-sc.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 99 insertions(+)
->  create mode 100644 drivers/rtc/rtc-imx-sc.c
-> 
-Applied, thanks.
 
+On 20/12/2018 09:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.147 release.
+> There are 61 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec 22 08:58:31 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.147-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests passing for Tegra ...
+
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.9.147-rc1-g2758b13
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+nvpublic
