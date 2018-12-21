@@ -2,138 +2,199 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C43C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A001C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 353112190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C63AB2190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:08:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="IEeI303O";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="KHEARROT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im/Mlm+c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391538AbeLUTG1 (ORCPT
+        id S2391551AbeLUTIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:06:27 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:62316 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389409AbeLUTG0 (ORCPT
+        Fri, 21 Dec 2018 14:08:00 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33478 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389409AbeLUTIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:06:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1545419186; x=1576955186;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=2v/udaTVPKKcQrMUv0H11Xq5jUdx8felW1O2UdTYoSk=;
-  b=IEeI303OZuuBBeIeuEbYrEFH6DzWYKzFJgOJ+U1dN+Bg9gP2TeBaThx9
-   zRonSi5kd1bfNBna068TiLMnIc8W9z2fK5mEKQ1Y9Kt6WkeM1mfQWRr+V
-   QmbWC4cGs0AUz7w2tDVwkp5XuVVY+IiO3WoeV0CKTSrDix5muLGw/DSrC
-   5f2TwsqJh1g/YsFrt6mK+DAVCZLZqi3oTh21Ik0iqqzOORjFr9KuvWuUd
-   nEKWKITCAnn8+H6hmf7BxsOwTkoMkZGL2Wj5G7g5MdoMzA7Diili1DsHA
-   mbMYYiSmkEgo0mQqrsGasz3aedX1nJlbnlP2m/y6wwOz6FDtp589ZxUhG
-   g==;
-X-IronPort-AV: E=Sophos;i="5.56,382,1539619200"; 
-   d="scan'208";a="98968597"
-Received: from mail-co1nam05lp2050.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.50])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Dec 2018 03:06:26 +0800
+        Fri, 21 Dec 2018 14:08:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so4655386lfc.0;
+        Fri, 21 Dec 2018 11:07:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2v/udaTVPKKcQrMUv0H11Xq5jUdx8felW1O2UdTYoSk=;
- b=KHEARROT+a28FngR8Zn1a/T5aNrVYuClGdH8D/k+T3lV7zer2CfIzFygmRbmeQTxClRUmFGcnGeHjMzFnaIVGtMVcfqdcUBEI23CpEmTlXl8+RrsXBjD9lERvAuF0US+PDukNPV0cO5bpdsRoN41YMeIblA1p5qXYIDIn4jO5kI=
-Received: from MWHPR04MB0401.namprd04.prod.outlook.com (10.173.48.18) by
- MWHPR04MB1072.namprd04.prod.outlook.com (10.174.250.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.19; Fri, 21 Dec 2018 19:06:24 +0000
-Received: from MWHPR04MB0401.namprd04.prod.outlook.com
- ([fe80::9067:fb44:66b2:7604]) by MWHPR04MB0401.namprd04.prod.outlook.com
- ([fe80::9067:fb44:66b2:7604%4]) with mapi id 15.20.1446.022; Fri, 21 Dec 2018
- 19:06:24 +0000
-From:   Alistair Francis <Alistair.Francis@wdc.com>
-To:     "Palmpalmer@sifive.com" <Palmpalmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>
-Subject: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
-Thread-Topic: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
-Thread-Index: AQHUmWBEawqGhX/hUk+WG09gQflaXA==
-Date:   Fri, 21 Dec 2018 19:06:24 +0000
-Message-ID: <20181221190615.19003-1-alistair.francis@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.19.1
-x-clientproxiedby: BYAPR08CA0018.namprd08.prod.outlook.com
- (2603:10b6:a03:100::31) To MWHPR04MB0401.namprd04.prod.outlook.com
- (2603:10b6:300:70::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alistair.Francis@wdc.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB1072;6:5UKoR9YMWa6puUb7f+zowibKuSFey4Eeg5Xqk1HYc54MvwyM/2zHf9CZDToiuC59PtX+kZ8i6whiFl9PCzLekISwrNs9pS9P28ftVNyWSObeBsaqunma2WhFzg2mFOMYL/uwXFJdMMvu6KJU0fifNufSuX6uT2/bAMt9C7k0v4tmZI5QOoABIA7e4fXH3Qm/pb58Vd7MdyTBBFTuQVCwufOPaMGzIUsJKUJRv32swjSXw5V5MX9mpao2RToDnyELBGlg1rQF1x+VQ0I0gXXxgU98DYmmrX8bV5Nyt/YQd44B6kmS40mbQx/RhyphzRuPOe9R+UDZu/n9BHdvoZ1eXTd8nmGnKkVWcuN5kZsdn2ZyxCrXsEKSTM96mAa4EHApAIaTU0jwpONsXaiTomxDKj6izOdaZp+YgD++0ZcwOH/mgdj2UI9aNRN1ZGZQdf46IbayD0zjz2zMDF2xpBUsoQ==;5:npFH9Xcwz+Z2jaS+cuALRFYRDCZ94UGquY/gTrykpRHSU96t1lfO9arM92MRRoE7ANE1Qlu+PXEVR4v74Y+ZCVNHwg2iZF9JbdlGmuiJEvq9OPH8kHnfl58TaOYS/rHsV9vCesmZlX6obiECaevsPTdyNGdslbS0lsdTd47WzeI=;7:ABsSrfIsPeS0eghrJiNtriq1Vl27iJn7enUeZpfPFaNRJXWUlHRNmX4qOcEn5j0Nx09ehDTEC8t6UZx1nXieSUfYNdYEeSuMqLS2fUEAnKk5skY2WK1T4yaq3ytlzDOUMH97YGyVq+X4Lvbt3u5iPQ==
-x-ms-office365-filtering-correlation-id: c0e52baf-c5fa-45bc-8cd8-08d6677766c3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1072;
-x-ms-traffictypediagnostic: MWHPR04MB1072:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB10727D9DC2DF82507E6D08C590B80@MWHPR04MB1072.namprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR04MB1072;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1072;
-x-forefront-prvs: 0893636978
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(366004)(346002)(376002)(199004)(189003)(316002)(6436002)(478600001)(186003)(1076003)(106356001)(476003)(256004)(14444005)(50226002)(110136005)(72206003)(66066001)(6486002)(36756003)(52116002)(54906003)(2616005)(8936002)(6512007)(71200400001)(71190400001)(14454004)(4326008)(6116002)(5660300001)(2501003)(25786009)(99286004)(97736004)(81166006)(81156014)(86362001)(486006)(8676002)(53936002)(105586002)(44832011)(68736007)(26005)(7736002)(3846002)(6506007)(102836004)(386003)(305945005)(2906002)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1072;H:MWHPR04MB0401.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: JflewFs44uPI/UoNSBTsYkrgGbwz/bOM7vs5uvZ3e82Yq3VjfpHm7HTiUPD+Ii4XwO8tcDXUQ8ZpXkAeLeK/g67WgPhhRUG6/DKm6R1kLatt+l7LDL35YX2ptMqc69WaV63N1kJfm42kOMDACkbq1BD+E50LnojAfB0Zh+Kq29APpa0cO0yU4Somi20RCaA/3tD6PvtVPil53s4wGrWEVZoL4yS/sQ5V2oB5Ctb1ifkkMNXWMnI13SX0ru24ZPnO2Rp2uy4QUIYyFGqlVx1eXC8a2V6+uoefKs1xPqf6FHscJ8sQOy9wg2k7nsexJg5E
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
+        b=im/Mlm+c2j/AxAaz7es2VdN9/H1+kt9/iAqdOYY9SotYhfR2ToDieyP46bdUC3Yl/O
+         3W64atjFM8q9HOs+wuAyewAzX7Y0y6e4dOK5BeWWII9jxvBRPqMeGSnypIpxmDx95sTT
+         QRc2T/nahGo1nT6u3PTXITy44drVil/FmR+csv4nouQzJawoJFaWnNQSnCotKUqViGBA
+         I390nT8mONQu15dxkpUSCHTrpi+Yflw9YJv/e4kbxrOQ4R03d0HvfK4MhW/dbN5rdTxN
+         YSzAEKVq1oKoYApV3QdNEY5wswtq+K8dvt1SuS4X0wN+Mz3QEafxAgxxQB3UNTBzOvxM
+         IjDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jXFLTI8JHQDvVJR/RJzDh54rUI3Cr7wPyRKQV5m3vEg=;
+        b=LPfyJBjSBBqghKfCl99GVhkyUri0dusHj4E0WrSPuZ0ImItBQnCT4x3+LIUV4zL1I8
+         s2KoZlvMNtX5iAgkO8LfYSHaFKq0evok+MNs3TooyltFtbOKOJqW+8SnIHoU3taV/jlg
+         oOmySEJ/xdrxhEs1PxIcko1LUbNZ8AOMCMDtm+ADwjkEssucPoA74aoIdHZNrLbS223P
+         yZbf9KpVd8MBHWXufkr7A3yiA5Ijqm0hDBzoL4zfSpdG1QYV81Vb/BcOXTduSpY6WhFA
+         FTmvALjpcz8XQ4piz+stm/okC1dQaC77OPZND4GdgRnlyfKvevw7SVvucY3n1M66zVRE
+         LjbA==
+X-Gm-Message-State: AA+aEWbMGFOVpVh49JoM6Br35E0tA2khy1ysXhZ9Pj50FoJvVABlIx6o
+        TOtJmimd/EgjBTCicYOlPRQI4HqFPzs=
+X-Google-Smtp-Source: AFSGD/USLps/3VikByvmsmlxstgZZfuLrFey2O+zLKgZErnqAgraGUnZxyKIdeZmZ0F0e1Vtpl4USQ==
+X-Received: by 2002:a19:cfc6:: with SMTP id f189mr2249346lfg.102.1545419277138;
+        Fri, 21 Dec 2018 11:07:57 -0800 (PST)
+Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
+        by smtp.gmail.com with ESMTPSA id u11sm5046544lfb.85.2018.12.21.11.07.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 11:07:56 -0800 (PST)
+Subject: Re: [PATCH 03/12] __wr_after_init: generic functionality
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181221181423.20455-1-igor.stoppa@huawei.com>
+ <20181221181423.20455-4-igor.stoppa@huawei.com>
+ <20181221184120.GG10600@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <14487401-dec3-6a7d-a0b1-e369e93aa9c4@gmail.com>
+Date:   Fri, 21 Dec 2018 21:07:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0e52baf-c5fa-45bc-8cd8-08d6677766c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 19:06:24.7358
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1072
+In-Reply-To: <20181221184120.GG10600@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable generic PCIe by default in the RISC-V defconfig, this allows us
-to use QEMU's PCIe support out of the box. Also remove the Xilinx PCIe
-support by default as this is rarely used and conflicts with the more
-commonly used (out of tree) MicroSemi PCIe root complex.
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- arch/riscv/configs/defconfig | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index ef4f15df9adf..71475c20b8ce 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -14,7 +14,13 @@ CONFIG_EXPERT=3Dy
- CONFIG_BPF_SYSCALL=3Dy
- CONFIG_SMP=3Dy
- CONFIG_PCI=3Dy
--CONFIG_PCIE_XILINX=3Dy
-+CONFIG_PCI_ECAM=3Dy
-+CONFIG_PCI_HOST_COMMON=3Dy
-+CONFIG_PCI_HOST_GENERIC=3Dy
-+CONFIG_PCIEPORTBUS=3Dy
-+CONFIG_PCIEAER=3Dy
-+CONFIG_PCIEASPM=3Dy
-+CONFIG_PCIEASPM_DEFAULT=3Dy
- CONFIG_MODULES=3Dy
- CONFIG_MODULE_UNLOAD=3Dy
- CONFIG_NET=3Dy
---=20
-2.19.1
+On 21/12/2018 20:41, Matthew Wilcox wrote:
+> On Fri, Dec 21, 2018 at 08:14:14PM +0200, Igor Stoppa wrote:
+>> +static inline int memtst(void *p, int c, __kernel_size_t len)
+> 
+> I don't understand why you're verifying that writes actually happen
+> in production code.  Sure, write lib/test_wrmem.c or something, but
+> verifying every single rare write seems like a mistake to me.
 
+This is actually something I wrote more as a stop-gap.
+I have the feeling there should be already something similar available.
+And probably I could not find it. Unless it's so trivial that it doesn't 
+deserve to become a function?
+
+But if there is really no existing alternative, I can put it in a 
+separate file.
+
+> 
+>> +#ifndef CONFIG_PRMEM
+> 
+> So is this PRMEM or wr_mem?  It's not obvious that CONFIG_PRMEM controls
+> wrmem.
+
+In my mind (maybe still clinging to the old implementation), PRMEM is 
+the master toggle, for protected memory.
+
+Then there are various types and the first one being now implemented is 
+write rare after init (because ro after init already exists).
+
+However, the same levels of protection should then follow for 
+dynamically allocated memory (ye old pmalloc).
+
+PRMEM would then become the moniker for the whole shebang.
+
+>> +#define wr_assign(var, val)	((var) = (val))
+> 
+> The hamming distance between 'var' and 'val' is too small.  The convention
+> in the line immediately below (p and v) is much more readable.
+
+ok, I'll fix it
+
+>> +#define wr_rcu_assign_pointer(p, v)	rcu_assign_pointer(p, v)
+>> +#define wr_assign(var, val) ({			\
+>> +	typeof(var) tmp = (typeof(var))val;	\
+>> +						\
+>> +	wr_memcpy(&var, &tmp, sizeof(var));	\
+>> +	var;					\
+>> +})
+> 
+> Doesn't wr_memcpy return 'var' anyway?
+
+It should return the destination, which is &var.
+
+But I wanted to return the actual value of the assignment, val
+
+Like if I do  (a = 7)  it evaluates to 7,
+
+similarly wr_assign(a, 7) would also evaluate to 7
+
+The reason why i returned var instead of val is that it would allow to 
+detect any error.
+
+>> +/**
+>> + * wr_memcpy() - copyes size bytes from q to p
+> 
+> typo
+
+:-( thanks
+
+>> + * @p: beginning of the memory to write to
+>> + * @q: beginning of the memory to read from
+>> + * @size: amount of bytes to copy
+>> + *
+>> + * Returns pointer to the destination
+> 
+>> + * The architecture code must provide:
+>> + *   void __wr_enable(wr_state_t *state)
+>> + *   void *__wr_addr(void *addr)
+>> + *   void *__wr_memcpy(void *p, const void *q, __kernel_size_t size)
+>> + *   void __wr_disable(wr_state_t *state)
+> 
+> This section shouldn't be in the user documentation of wr_memcpy().
+
+ok
+
+>> + */
+>> +void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
+>> +{
+>> +	wr_state_t wr_state;
+>> +	void *wr_poking_addr = __wr_addr(p);
+>> +
+>> +	if (WARN_ONCE(!wr_ready, "No writable mapping available") ||
+> 
+> Surely not.  If somebody's called wr_memcpy() before wr_ready is set,
+> that means we can just call memcpy().
+
+
+What I was trying to catch is the case where, after a failed init, the 
+writable mapping doesn't exist. In that case wr_ready is also not set.
+
+The problem is that I just don't know what to do in a case where there 
+has been such a major error which prevents he creation of hte alternate 
+mapping.
+
+I understand that we still want to continue, to provide as much debug 
+info as possible, but I am at a loss about finding the saner course of 
+actions.
+
+--
+igor
