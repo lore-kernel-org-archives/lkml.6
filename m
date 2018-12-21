@@ -2,138 +2,128 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 069AEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BABFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA03321903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 376E621903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xs5vn3hJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C0lLKc4j"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShvpZPrv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388139AbeLUH3u (ORCPT
+        id S2388187AbeLUHaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:29:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51900 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733056AbeLUH3r (ORCPT
+        Fri, 21 Dec 2018 02:30:06 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42665 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387631AbeLUH1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:29:47 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D884460E3D; Fri, 21 Dec 2018 07:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545377387;
-        bh=0rh/Y3orgABr/6NpLslESGMZRGQdp5fE3fGdz1kPfxM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xs5vn3hJ7Pc9C2m/D/wAwjQGZvQmlGZNCdIpQxD/mrbafwQQjCqXKh0TO43nDh4rY
-         SYjCtWdU0l/i2GWIvLQDcRRTxDYdzZMs6o++gPQCnqJ6nFiyrPZ0e2NEfu8ZZEIIXW
-         piXrqv+jzVrdidzRnEKjExX0+Q1OcQAdNPtch3I0=
-Received: from prsood-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: prsood@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 46DC960DE9;
-        Fri, 21 Dec 2018 07:29:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545377369;
-        bh=0rh/Y3orgABr/6NpLslESGMZRGQdp5fE3fGdz1kPfxM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C0lLKc4jpCmAfCR7d5Ju3wHNHN59GDgOKaOv1hAukMQzI5o4go/ZRG1hzmIfWEuFd
-         Gqwg8aLMlGXyF9zYhgRfO9WBUv/G5NdelsahC4kfGuILI4Sml5EVtigLyqfx6wqFCa
-         GR1Vj1PN8m1sCbgdLP7/ZRt0/Qh4Ih0KT1B7cZKU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 46DC960DE9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=prsood@codeaurora.org
-From:   Prateek Sood <prsood@codeaurora.org>
-To:     dbueso@suse.de, andrea.parri@amarulasolutions.com,
-        peterz@infradead.org, mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org, sramana@codeaurora.org,
-        Prateek Sood <prsood@codeaurora.org>
-Subject: [PATCH] percpu_rwsem: fix missed wakeup due to reordering of load
-Date:   Fri, 21 Dec 2018 12:59:13 +0530
-Message-Id: <1545377353-30441-1-git-send-email-prsood@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <aa864e194ee4c987b7e2025d1fe6e88b@suse.de>
-References: <aa864e194ee4c987b7e2025d1fe6e88b@suse.de>
+        Fri, 21 Dec 2018 02:27:54 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so2177445pfr.9;
+        Thu, 20 Dec 2018 23:27:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dUwToKhhL89vx1LjgzipUu4yk4Mqqx0vIAofTHjHZac=;
+        b=ShvpZPrvcZfDw0J1ASzD0s3YT+jY0oS1MadiUlCWWjzz5X5zDssoIvCHAloq9QV5xC
+         NjF1rpzikWkybtHcGu4YjiZKY4KAoohtfSZsMzW1qJB+ZSiDdNcHxyug7LkwUWD5OpTk
+         qmksrnvAHxMg9bf3m5lOM4e7opmqBfi2JuMtRoBinthmsui86Y5DvN1TzH8lKSWPBgWh
+         xCjIGY45Q6rwEo5Bm/5Vo8c6WxKZO2lCzUp0tchyY/Odxeyts6XvWLZjmlZhEtuekZCE
+         UlTYTDThf99GmmFa6/nTdxRaY+Jr7AJymU93pMSI6FDUAjJHf3J/K4+4q5TDxLV9RDrS
+         PerA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dUwToKhhL89vx1LjgzipUu4yk4Mqqx0vIAofTHjHZac=;
+        b=EhpsuuXV3TGAN0ycM5PrmJo45kMjY11LpmvEhlhVIsjT6pCKX6RyGXt/xb6w9VpWNC
+         Ei8BK4jK/lM+HNykHA5SBx2fwCjbXWuj39fbXko+tYWOJ7cFobgi+1sQvotQ6+aBbWXC
+         O4DmIOl1ST7w1S4CDPOX5VTdbogj9fJG6RKuXbijCSffXI+5vN+TkMaeqEft36MdYwMX
+         YbLneWqEwBeUIDxgvkdkPC37y1+Xxb8s5M+RlXTPCqzo0853/5Td08IPWu3uisGSxtp1
+         OhqjOIDVxuYSqFNVGHQTxzjoheVj3Ph+7mV7CZM5Bc6hmnLi4sNKgrAIxiACWftPOMSC
+         3DwA==
+X-Gm-Message-State: AA+aEWZbgoYqRy3NlJ0sNLTYk8Tar61RClVoJic2UgR7wJ+65RiAbN/U
+        o7XSV6x//kl8T7lePq8RitF/O+0f
+X-Google-Smtp-Source: AFSGD/VUQQi8yisb9aoewB9+qE7nuQLuYz8kYTpt3NojM7V2vPNF3ZlRLRnTQ6Sz6/Yix3QYYdtGqw==
+X-Received: by 2002:a62:a99:: with SMTP id 25mr1380678pfk.121.1545377272845;
+        Thu, 20 Dec 2018 23:27:52 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.27.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 23:27:52 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 07/21] PCI: designware: Make use of IS_ALIGNED()
+Date:   Thu, 20 Dec 2018 23:27:02 -0800
+Message-Id: <20181221072716.29017-8-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
+References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-P1 is releaseing the cpu_hotplug_lock and P2 is acquiring
-cpu_hotplug_lock.
+Make the intent a bit more clear as well as get rid of explicit
+arithmetic by using IS_ALIGNED() to determine if "addr" is aligned to
+"size". No functional change intended.
 
-P1                                               P2
-percpu_up_read() path                      percpu_down_write() path
-
-                                          rcu_sync_enter() //gp_state=GP_PASSED
-
-rcu_sync_is_idle() //returns false        down_write(rw_sem)
-
-__percpu_up_read()
-
-[L] task = rcu_dereference(w->task) //NULL
-
-smp_rmb()                                  [S] w->task = current
-
-                                            smp_mb()
-
-                                           [L] readers_active_check() //fails
-					     schedule()
-
-[S] __this_cpu_dec(read_count)
-
-Since load of task can result in NULL, it can lead to missed wakeup
-in rcuwait_wake_up(). Above sequence violated the following constraint
-in rcuwait_wake_up():
-
-	 WAIT                WAKE
-[S] tsk = current	  [S] cond = true
-MB (A)	                    MB (B)
-[L] cond		  [L] tsk
-
-This can happen as smp_rmb() in rcuwait_wake_up() will provide ordering
-of load before barrier with load and store after barrier for arm64
-architecture. Here the requirement is to order store before smp_rmb()
-with load after the smp_rmb().
-
-For the usage of rcuwait_wake_up() in __percpu_up_read() full barrier
-(smp_mb) is required to complete the constraint of rcuwait_wake_up().
-
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
-
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: linux-imx@nxp.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- kernel/exit.c | 4 ++--
+ drivers/pci/controller/dwc/pcie-designware.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index ac1a814..696e0e1 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -298,7 +298,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	/*
- 	 * Order condition vs @task, such that everything prior to the load
- 	 * of @task is visible. This is the condition as to why the user called
--	 * rcuwait_trywake() in the first place. Pairs with set_current_state()
-+	 * rcuwait_wake_up() in the first place. Pairs with set_current_state()
- 	 * barrier (A) in rcuwait_wait_event().
- 	 *
- 	 *    WAIT                WAKE
-@@ -306,7 +306,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	 *        MB (A)	      MB (B)
- 	 *    [L] cond		  [L] tsk
- 	 */
--	smp_rmb(); /* (B) */
-+	smp_mb(); /* (B) */
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 93ef8c31fb39..67236379c61a 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -22,7 +22,7 @@
  
- 	/*
- 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
+ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+ {
+-	if ((uintptr_t)addr & (size - 1)) {
++	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+ 		*val = 0;
+ 		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 	}
+@@ -43,7 +43,7 @@ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+ 
+ int dw_pcie_write(void __iomem *addr, int size, u32 val)
+ {
+-	if ((uintptr_t)addr & (size - 1))
++	if (!IS_ALIGNED((uintptr_t)addr, size))
+ 		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 
+ 	if (size == 4)
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., 
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.19.1
 
