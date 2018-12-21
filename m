@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DBDC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E409C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4D921903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F24D921903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0RQ48qV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfjIAf5E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733126AbeLUH1r (ORCPT
+        id S2387462AbeLUHab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:27:47 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44531 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732605AbeLUH1o (ORCPT
+        Fri, 21 Dec 2018 02:30:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46319 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732882AbeLUH1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:27:44 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t13so2099655pgr.11;
-        Thu, 20 Dec 2018 23:27:43 -0800 (PST)
+        Fri, 21 Dec 2018 02:27:46 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so2096256pgp.13;
+        Thu, 20 Dec 2018 23:27:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ztf5h/VWPT7ArQCZI10FTS3FX1Is4iZLXtzrxnewglA=;
-        b=Z0RQ48qVC17QilVa8yi3aGpnZwguKR/WyE+4MBjNXYtoiFkEn3DbOkzl8eTrDH8SrC
-         hJxXDFDktmaS/zbBB7u4k4n89JoZKkbpYgQpZ0x8yEWuP+8XT9bZudbtFTtRBq1Nj4k4
-         q98upDxxo743ASCAc0YT6fzWT6US+YxYF/TmvELJXb1oNidOjrDrU9sDCceGlgxfThCw
-         RePdxCZi4zJC+0ftJoX8+WDBYlZ23u8Z3mt/pA0mLyqp7DHFWYYzRmUWTHmYPZZuPvNk
-         diXoM5kSofwsbhYNkV8FmyIQzIhmnu7lH0P/NhWmVTh+RP56PJtGN5SwEohDLdQgYU7g
-         hp+Q==
+        bh=O4mASvI0bC/QugbLYbpYLoCaECc3OWgx8IVqS8xMLbI=;
+        b=PfjIAf5EaQ4lUe8mFdDhZEXTw9YDuTBnZNuNCgOaIqXKdeiCfnEHFnYYEwSd1z8YN7
+         PrgsP3bh5563mr/+qA3bXaP0taH3DBzdn2kdZHMAJmwf9Ua5EafJzp76aWf8lyPrJWRB
+         0WndyHY+qDCbfJYyjIqZgvBfGBYR1YA5jpyZAQO4KCGhRtow+wHb2+Rm9qTlx3yZ+9Q/
+         /1W9Gsx1vhJ6J1dl0VR08NVrfAXGjo3e6SsKN9ePnzvx1N8Xkv+5XTD/Vgs9Bj31EOgd
+         DCBINsu3cMbgeSTrQlZ76PzZoANdiwI/MFx4cow8RWKkijlz7jxXEZpfPhhANd3N+wyW
+         MlnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ztf5h/VWPT7ArQCZI10FTS3FX1Is4iZLXtzrxnewglA=;
-        b=rYwIKNHezRtQP6lPpw4QDcgrJPfKU3/AHfoPgBs0kb6F6dgG2jnvATT155kBrfXRos
-         t2yMy1IGl7RV3ufZlk9T3WspfbSB2XM7Y/mU6AMLVEk7uCF57nM9CK2C7SwHqhTa4/Ab
-         NNHBXmxRliPwHOXUL3kFO9U7WEZ/htQAYyCNjsQKD7rN7VyyJ1IwIOVGho9ZrcufTZAI
-         IRjrK4NaRfwE8lCuN5pTkyA4hE5lcNSW/SnNpByldivhMBj9w/qNCzYyhqhrZFLcumHo
-         ws1z8Mi4GwgMhQmOOC9/jQOTc/zmCT3zHxdTowzLkvgRetjBHKisDN/idxs0u/Hi0sH8
-         8BVA==
-X-Gm-Message-State: AJcUukdQhkdFS4R8UfjCH03FyldL7+zM+4Hpjqy1WRNDiYU25ri/LiDH
-        CiSWXyFjz4hlEf1hUazAacpbmIh5
-X-Google-Smtp-Source: ALg8bN4kuEkoNrTKNB0wpF/5vWQcMC7fRyxDCmjDgx2qgcgkIg7lFa/THiq5EvaaYM5XXMW22MMbpQ==
-X-Received: by 2002:a63:9712:: with SMTP id n18mr1307291pge.295.1545377262911;
-        Thu, 20 Dec 2018 23:27:42 -0800 (PST)
+        bh=O4mASvI0bC/QugbLYbpYLoCaECc3OWgx8IVqS8xMLbI=;
+        b=LtFTLUn39MBTXrUvduCluUJhDjtY1xhbhwkDgt5Z4l85dYFRBUetrraZiBbl6SClYh
+         ePFcI00aAuH6hWryeFR/nNxQW95VLsyQv8a645LTUvlxP9bSGEGepFfhqO3NFsOijsLD
+         d2vvAc6jJFhBSnaHvO1zGF+RWuFngmVP9oCyVxTtdTyhufbselNwW7iSTuwo88/SYlu7
+         gR3PVuRKtECN4fppSem4tui+zCM2ei7RH9MqOv+UAxF5hSLAHn7AQkdafyeeyslwb//c
+         FSiHZIipykqoac+DZO9fbzbOaIcods0Nx2ndj4MsH+c0LqflTZ0geXRix91KntCRWDH6
+         WgWw==
+X-Gm-Message-State: AJcUukciu+ZOxT82lgjllmyEsUM6ZU4zYXKXY7i/oYER7XDyxPHIxTnE
+        Mgo7moHK3RAG9k+64gHqyx0kMll0
+X-Google-Smtp-Source: ALg8bN4ONRm6Owxg+TWoErIgIUP722JgVl/i35d0LJyd36E21155w3ghEdpl/I6V0E928xCSKECv2Q==
+X-Received: by 2002:a63:2e88:: with SMTP id u130mr1366861pgu.9.1545377264837;
+        Thu, 20 Dec 2018 23:27:44 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.27.41
+        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.27.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:27:42 -0800 (PST)
+        Thu, 20 Dec 2018 23:27:44 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-pci@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/21] PCI: imx6: Remove redundant debug tracing
-Date:   Thu, 20 Dec 2018 23:26:57 -0800
-Message-Id: <20181221072716.29017-3-andrew.smirnov@gmail.com>
+Subject: [PATCH 03/21] PCI: imx6: Return -ETIMEOUT from imx6_pcie_wait_for_speed_change()
+Date:   Thu, 20 Dec 2018 23:26:58 -0800
+Message-Id: <20181221072716.29017-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
 References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
@@ -81,8 +81,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All calls to imx6_pcie_wait_for_link() share the same error path and
-the state of PHY debug registers will already be printed there.
+Change error code from EINVAL to ETIMEDOUT in
+imx6_pcie_wait_for_speed_change() since that error code seems more
+appropriate.
 
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
@@ -98,31 +99,22 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index c87ecc305dc7..6ffadc29d21b 100644
+index 6ffadc29d21b..e990030564d8 100644
 --- a/drivers/pci/controller/dwc/pci-imx6.c
 +++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -603,16 +603,9 @@ static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie)
- static int imx6_pcie_wait_for_link(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
--	struct device *dev = pci->dev;
+@@ -624,7 +624,7 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+ 	}
  
- 	/* check if the link is up or not */
--	if (!dw_pcie_wait_for_link(pci))
--		return 0;
--
--	dev_dbg(dev, "DEBUG_R0: 0x%08x, DEBUG_R1: 0x%08x\n",
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R0),
--		dw_pcie_readl_dbi(pci, PCIE_PHY_DEBUG_R1));
--	return -ETIMEDOUT;
-+	return dw_pcie_wait_for_link(pci);
+ 	dev_err(dev, "Speed change timeout\n");
+-	return -EINVAL;
++	return -ETIMEDOUT;
  }
  
- static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+ static void imx6_pcie_ltssm_enable(struct device *dev)
 -- 
 2.19.1
 
