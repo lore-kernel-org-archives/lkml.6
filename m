@@ -2,165 +2,92 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021F6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0660FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C3D21939
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C7F21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:26:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhI73Ffe"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="dbdhsJmG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391025AbeLUPXJ (ORCPT
+        id S1730462AbeLUP0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:23:09 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34343 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbeLUPVR (ORCPT
+        Fri, 21 Dec 2018 10:26:06 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34769 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729898AbeLUP0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:21:17 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u89-v6so5070311lje.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:21:15 -0800 (PST)
+        Fri, 21 Dec 2018 10:26:06 -0500
+Received: by mail-io1-f67.google.com with SMTP id l22so730712ioh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:26:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=u9DJPsrcLc6oh7vQnwaHi4ETgHtWCJup4CIGYGOLEJw=;
-        b=RhI73FfecY10i517z4dn4KZIR//252tKpnd/MBq6T4GukITBKlLPF8OeXjSEqh5ugu
-         rHk1eJXGaoyDulW47ccEKBN6p6LIGeyQt3iBVPi8yhNdLs4wjyqEMcKxO2b+xD4VwxKG
-         DDNevi04KuZlzGqheDRHYESMPQcB5o5NEQ2yIR/8nGRoL2/eZWaXdlXGbfpp7qJ4o2MU
-         mfA0hi4qrF42VKk82vwH0j5xR/wyy4PgR2m1+qlU7vNDVsNX8q+wKDyBxS36oBDe4BDX
-         YCDAtrm1uS8yaYv7KEjGeruoNaXF7OuubP2GFnQcxRxUeOBqUm7WBaEDf5Vnm74St7Q3
-         5kAg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/MOIU7hCsgrd/rUq3ud9ch+X2/+EbU8ewisM4YIgtGY=;
+        b=dbdhsJmGsOSB+AA63/Q6jCU3vqxbAlLr63XWlj390FEt8OOeuM8ZmgoHB9RvePlScG
+         VCowq9+tpRgDDO1iJVDD643fvYoqdq6iVvwwElexMCjsSp8f8eYI5Un57Jgrr1izJqbS
+         eO+ZoyGAjGIBk8XE3ZfS+DsOiFW2VkOcDXFSWGCA26RPrXbFZi2HLP15TXbj578glYcL
+         j+XqEX6bz+cccsuhirxecTJIRP7QvDp/NGjFO+VssqVRkDvEUkso2Qy+3X9qKez3lvd1
+         pB1jOso2VDpT1GLcb9c81ge/FimYGArb3SyvrJxVE4MUfLVtgWxPENFGAEJdTt45+FqJ
+         uCpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=u9DJPsrcLc6oh7vQnwaHi4ETgHtWCJup4CIGYGOLEJw=;
-        b=akPJmL8WnmZQv/uzsaxQxPGqBG1/ogEh3lFYTBfLjH0ZugB1U4dRC41gvJ/fsy1mKz
-         CLx4CxS5R5js1YVcrz7wm14caGDOaN1n6r66V0f8k4e22hQbbGbXTjscG2d4p/bpgBIf
-         orZtIjveFJsvdtF3aJP8kVyMsorqFnYSULep8CuVczIzMi2HripDMj9jv2BtlajMyuEU
-         RLKiI+KT1EeHuCAUz3W9SqXwHVuA+Gy3C++U0mw8GU+nJb72HG/MvKzLwVm39FtxI1Yi
-         CE9wz3gk+14EEE2ZehZuCK85e+0YPQCCCPe2vA99Uf2bCctyBUFhxNToZxOfyg/bjArp
-         0XLw==
-X-Gm-Message-State: AA+aEWbeL0jo/POX/zuo3Yy9P0xA2rlFZa6QfVelN7iGEpkQbmw/eNbB
-        gA9slFGA5OoDP8j2nkKq/6c=
-X-Google-Smtp-Source: ALg8bN55Pr2b7hOgI+w4rFgqkX2o4BxYYUtrOUK+qjOIGxWIgG4EwqTrg0zBy+JmTZjy1wE3KuKo8w==
-X-Received: by 2002:a2e:20f:: with SMTP id 15-v6mr1934020ljc.172.1545405675172;
-        Fri, 21 Dec 2018 07:21:15 -0800 (PST)
-Received: from localhost.localdomain (c90-142-43-138.bredband.comhem.se. [90.142.43.138])
-        by smtp.gmail.com with ESMTPSA id q30sm5005601lfi.94.2018.12.21.07.21.13
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/MOIU7hCsgrd/rUq3ud9ch+X2/+EbU8ewisM4YIgtGY=;
+        b=FjhVOnnTOWVoRm0U3dtysU+ceqziWLowBSNRNY04SKek0UbIUBLwFbGXbIOn5d7XKz
+         3sjW0/VGw0KDz1G/1wQX8cuMRI7ksq7f00s7RkjkPxh1dgYYe5klE7dOg2ecr6eK84FE
+         8Z9CkiRLo1TlLgtodAMh15WZ2bKFw3H7NQmBqPYATsoVjzOY+4qhnHzByCTddO0uv+mu
+         p0MpkRlHmcRfPM01HTPzmoxd82zaOf0+2AXGNvntVJTE0dtkATpYHL1jsnyH5MYcIOvV
+         Vh7zvUi8zWHplibkup+iK+6v/IHsixlA0x/nNs7sh+jBZ2ZuVRiJVGxydV1EckNn+SJn
+         feyg==
+X-Gm-Message-State: AJcUuke59FRShrthJa+bm1owJSPg7dkIZ6N3Mg382cnjii5huMBVU03t
+        z6Vd3F0EbHDvZbejDLf3lGzW+qrK3p8NrQ==
+X-Google-Smtp-Source: ALg8bN7eb4DsG7be1azb0kU80jXkAxew9Aky/32eIZBv1A2iAPECCzCmdxuWsAcCaQgH4XWgIH03fg==
+X-Received: by 2002:a6b:3bc8:: with SMTP id i191mr1974794ioa.23.1545405964947;
+        Fri, 21 Dec 2018 07:26:04 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id p19sm9205231itp.13.2018.12.21.07.26.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 07:21:14 -0800 (PST)
-From:   codekipper@gmail.com
-To:     maxime.ripard@free-electrons.com, wens@csie.org,
-        linux-sunxi@googlegroups.com
-Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v3 2/9] ASoC: sun4i-i2s: Add regmap field to sign extend sample
-Date:   Fri, 21 Dec 2018 16:21:03 +0100
-Message-Id: <20181221152110.17982-3-codekipper@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181221152110.17982-1-codekipper@gmail.com>
-References: <20181221152110.17982-1-codekipper@gmail.com>
+        Fri, 21 Dec 2018 07:26:03 -0800 (PST)
+Subject: Re: [PATCH] blkcg: add rcu lock to bio_clone_blkg_association()
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181221145441.13814-1-dennis@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f1dacd9e-7c3d-44e5-aff1-923d9e7a374c@kernel.dk>
+Date:   Fri, 21 Dec 2018 08:26:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181221145441.13814-1-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Cooper <codekipper@gmail.com>
+On 12/21/18 7:54 AM, Dennis Zhou wrote:
+> I cleaned up blkg_tryget_closest() to require rcu_read_lock() earlier.
+> However, this was a subtle case too which clearly was too subtle for me.
+> The idea was the src bio should be holding a ref to the blkg so rcu
+> wasn't technically needed. If it doesn't hold a ref, it should be %NULL
+> and the blkg->parent pointers are unused.
+> 
+> This adds the appropriate read lock in bio_clone_blkg_association().
 
-On the newer SoCs this is set by default to transfer a 0 after
-each sample in each slot. Add the regmap field to configure this
-and set it so that it pads the sample with 0s.
+Shall I just fold this with the previous? I staged it in a
+later-in-merge-cycle branch, so that's not an issue to amend.
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 64d073cb2aee..80bf29e0cc86 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -138,6 +138,7 @@
-  * @field_fmt_bclk: regmap field to set clk polarity.
-  * @field_fmt_lrclk: regmap field to set frame polarity.
-  * @field_fmt_mode: regmap field to set the operational mode.
-+ * @field_fmt_sext: regmap field to set the sign extension.
-  * @field_txchanmap: location of the tx channel mapping register.
-  * @field_rxchanmap: location of the rx channel mapping register.
-  * @field_txchansel: location of the tx channel select bit fields.
-@@ -163,6 +164,7 @@ struct sun4i_i2s_quirks {
- 	struct reg_field		field_fmt_bclk;
- 	struct reg_field		field_fmt_lrclk;
- 	struct reg_field		field_fmt_mode;
-+	struct reg_field		field_fmt_sext;
- 	struct reg_field		field_txchanmap;
- 	struct reg_field		field_rxchanmap;
- 	struct reg_field		field_txchansel;
-@@ -187,6 +189,7 @@ struct sun4i_i2s {
- 	struct regmap_field	*field_fmt_bclk;
- 	struct regmap_field	*field_fmt_lrclk;
- 	struct regmap_field	*field_fmt_mode;
-+	struct regmap_field	*field_fmt_sext;
- 	struct regmap_field	*field_txchanmap;
- 	struct regmap_field	*field_rxchanmap;
- 	struct regmap_field	*field_txchansel;
-@@ -346,6 +349,9 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
- 				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
- 				   SUN8I_I2S_FMT0_LRCK_PERIOD(32));
- 
-+	/* Set sign extension to pad out LSB with 0 */
-+	regmap_field_write(i2s->field_fmt_sext, 0);
-+
- 	return 0;
- }
- 
-@@ -876,6 +882,7 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.has_slave_select_bit	= true,
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
- 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -893,6 +900,7 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.has_slave_select_bit	= true,
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
- 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -933,6 +941,7 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
- 	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
- 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 19, 19),
- 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_CTRL_REG, 4, 5),
-+	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 4, 5),
- 	.field_txchanmap	= REG_FIELD(SUN8I_I2S_TX_CHAN_MAP_REG, 0, 31),
- 	.field_rxchanmap	= REG_FIELD(SUN8I_I2S_RX_CHAN_MAP_REG, 0, 31),
- 	.field_txchansel	= REG_FIELD(SUN8I_I2S_TX_CHAN_SEL_REG, 0, 2),
-@@ -995,6 +1004,12 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
- 	if (IS_ERR(i2s->field_fmt_mode))
- 		return PTR_ERR(i2s->field_fmt_mode);
- 
-+	i2s->field_fmt_sext =
-+			devm_regmap_field_alloc(dev, i2s->regmap,
-+						i2s->variant->field_fmt_sext);
-+	if (IS_ERR(i2s->field_fmt_sext))
-+		return PTR_ERR(i2s->field_fmt_sext);
-+
- 	i2s->field_txchanmap =
- 			devm_regmap_field_alloc(dev, i2s->regmap,
- 						i2s->variant->field_txchanmap);
 -- 
-2.20.1
+Jens Axboe
 
