@@ -2,59 +2,59 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6055CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719A5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F73A217D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8BA2192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SD91lDlO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbnRDcCj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390948AbeLUPVP (ORCPT
+        id S2390962AbeLUPVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:21:15 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43732 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbeLUPVO (ORCPT
+        Fri, 21 Dec 2018 10:21:18 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40455 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730002AbeLUPVQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:21:14 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2-v6so5048692lji.10
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:21:13 -0800 (PST)
+        Fri, 21 Dec 2018 10:21:16 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so5060835lji.7
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:21:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ffmZcVfSfeQA3nmlJnD8pY5wfE+gHGqpjgHkWfO9544=;
-        b=SD91lDlOM/WdjbURKKFSIHqQ0g0Gza3k7dVUJuwxrVD9duJAgtW3/Br9SYYSinDk0o
-         skLAClHMdQVoxMtT4oYo1BwQiUs7+29V9GeZg1Xxf2JAXVGHCEgfpQagwJL3wSeDFobU
-         k4lHJocQY3Zy9n9n1RQ4sPQDxPEAZ0LCfnlBO+frO9XOTJqddKA0KN/WNWUH9/8T6NWl
-         U/bp/XG86ixxNN1aCGvZVwfBNnVUnUaiIAh6JOPhY1q6RyqepS52LPtUv7nusrfMQ0vE
-         DBl3U+8b2WXVtwSz1jOOsGDII7pHRxvzQCqqSy4sdrqyeHxAKzOz/kwx3tSLdRpxddXM
-         brUA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qEcYU4dIdCj1tEvw3O0OUqERPL+d1F9Ff4CVGy8XRSI=;
+        b=bbnRDcCj/uIkEBl9QZJ69SY22RPvzzn+IrDbWj+ln/31R8X5h1Bvh7r3QWpThpH3iV
+         ZL1qFf7PWvzmZ5HPtZgdmBC1WN3M7bc0BC0SeHHvqrpM8xHcRexzd7K82SuSDq4ItFg6
+         sA1MCPPpYDiw1y00ifuK/PQEe3UnTvL5yFqDL/EWHxQUGc16w84otdm8+BHDnWkblNlc
+         mEbjbYk0fuLN5oIlEg41wsKxzyCMveMRSeCkyfIceJSk6IB4kzyx4TshCvvQeSAsTTY+
+         RaQ3LMDgLp811mVdI/kSrWOwWmx3ioq/HTM8jsFr3brmIwhjihJJ1KNoYXn1a39vxjoQ
+         7O8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ffmZcVfSfeQA3nmlJnD8pY5wfE+gHGqpjgHkWfO9544=;
-        b=aJZqBbmDKFepJ6l6UBB/Ht1pgJoqmV7ldN2pXyppLZ0x4suZTheYVxVzYssQoJOgzR
-         hsKKYNOepgekLvFFc8pUGzkTar4rQsyVA4sumCy7IyPpJz9x3SxDiIq1wSWmwS5qV/NC
-         xQalkonX7EXB6kZ4CgRn7s5kOP22YuOBBawAC/7I+PoQ8+4TkG2ND6P32hv12s8e+qMC
-         kqQfTuLpw5KKn7oM7QJ7dc9oYxgBD71BzxCFip1GGLYCHqqC6YFUdllsv0cDfP5VXUem
-         QkZpmdV03S80TZsckiEy4rNB7MJsDSsEIAswQSiq0e5TQXARN2qk+j2kVfi8MBw8Lkkw
-         u3Iw==
-X-Gm-Message-State: AJcUukeVAye31vtv60iWbN+Qv9+zA2dvMg3/tdplYPX3oI2XVILreE7Z
-        9DnThaDeAIn6x/fjetuTLng=
-X-Google-Smtp-Source: ALg8bN6aGwsBuFCCEliK6zyyS9ARcHvGGy/zL+6jGizSb7I2yBBOhhkBUQo0Pxs7Kzj0EMUKRsOZAQ==
-X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr2099630ljj.18.1545405672729;
-        Fri, 21 Dec 2018 07:21:12 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qEcYU4dIdCj1tEvw3O0OUqERPL+d1F9Ff4CVGy8XRSI=;
+        b=RTlVOgpP2NWAhVVS+b4fEbnYktp34Ueby6on8P0lqlv9FAxkmZh3GjKkfiv3DjoUQk
+         gMeGgOnjYqDHbgcou6wHLB+koS9Ggv4nUfdZg8U23JRAtLBsvxuISHPBSOSwtQOhQMyY
+         CiSAalp1wre5xSj8exIosI+QMcLaaIvest3P5v2ayhPWKgiikhpBJl9M7NBJw/PhwU1S
+         uv1iBNF8EZjI6EBBZbHEp2x7VDsRAY0YdSmjTxR04Cmv/63p6kUm8N5/oOMc589q753u
+         e88UjvqHvbPL2f/Y+F1JpnZ5nKN46KXTJ5kXzk+EMf2pGzc6saG08SUtdJxgcQFUekCQ
+         Sg4w==
+X-Gm-Message-State: AJcUukeZ3j2B+TD6BY0+u1Mh7BTqgt8ziqTwJW8ceGaPvUqzBd7jLu9r
+        dPbn/W2srf33wWJWpkKA4QQ=
+X-Google-Smtp-Source: ALg8bN7w7hW0VBgGhQC2cFPSqUzf9GIlxqRXQjASurv8lmd5PbdF0IDGUQnOlRmjccBCgEaCI0ryDQ==
+X-Received: by 2002:a2e:6595:: with SMTP id e21-v6mr2068298ljf.123.1545405673924;
+        Fri, 21 Dec 2018 07:21:13 -0800 (PST)
 Received: from localhost.localdomain (c90-142-43-138.bredband.comhem.se. [90.142.43.138])
-        by smtp.gmail.com with ESMTPSA id q30sm5005601lfi.94.2018.12.21.07.21.11
+        by smtp.gmail.com with ESMTPSA id q30sm5005601lfi.94.2018.12.21.07.21.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 07:21:11 -0800 (PST)
+        Fri, 21 Dec 2018 07:21:13 -0800 (PST)
 From:   codekipper@gmail.com
 To:     maxime.ripard@free-electrons.com, wens@csie.org,
         linux-sunxi@googlegroups.com
@@ -62,10 +62,12 @@ Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
         broonie@kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
         Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v3 0/9] ASoC: sun4i-i2s: Updates to the driver
-Date:   Fri, 21 Dec 2018 16:21:01 +0100
-Message-Id: <20181221152110.17982-1-codekipper@gmail.com>
+Subject: [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap settings
+Date:   Fri, 21 Dec 2018 16:21:02 +0100
+Message-Id: <20181221152110.17982-2-codekipper@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181221152110.17982-1-codekipper@gmail.com>
+References: <20181221152110.17982-1-codekipper@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,70 +77,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcus Cooper <codekipper@gmail.com>
 
-Hi All,
+Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
+to reflect this.
 
-here is a patch series to add some improvements to the sun4i-i2s driver
-found whilst getting slave clocking and hdmi audio working on the newer
-SoCs. Since the last push there has been some activity getting surround
-sound working and this is included.
-
-The functionality included with the new patch set has been extended to
-cover more sample resolutions, multi-lane data output for HDMI audio
-and some bug fixes that have been discovered along the way.
-
-I can see more usage of the tdm property since I last attempted to push
-these patches and the examples currently in mainline sort of the opposite
-to what I'm trying to achieve. When we first started looking at the i2s
-driver, the codecs that we were using allowed for the frame width to be
-determined based on the sampling resolution but in most use cases it
-seems that a fixed width is required(my highest priority should be to get
-HDMI audio support in). We're using the tdm property to override the old
-way to calculate the frame width. What I've seen in what has already been
-mainlined is that the i2s driver has a frame width that is fixed to 32
-bits and this can be overridden using the tdm property.
-
-Anyway, I've moved the more controversial patches to the top of the stack
-as I'm expecting feedback.
-
-Have a great Xmas and New Year,
-
-BR,
-CK
-
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 ---
+ sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
-v3 changes compared to v2 are:
- - added back slave mode changes
- - added back the use of tdm properties
- - changes to regmap and caching
- - removed loopback functionality
- - fixes to the channel offset mask
-
-v2 changes compared to v1 are:
- - removed slave mode changes which didn't set mclk and bclk div.
- - removed use of tdm and now use a dedicated property.
- - fix commit message to better explain reason for sign extending
- - add divider calculations for newer SoCs.
- - add support for multi-lane i2s data output.
- - add support for 20, 24 and 32 bit samples.
- - add loopback property so blocks can be tested without a codec.
-
----
-
-Marcus Cooper (9):
-  ASoC: sun4i-i2s: Adjust regmap settings
-  ASoC: sun4i-i2s: Add regmap field to sign extend sample
-  ASoc: sun4i-i2s: Add 20, 24 and 32 bit support
-  ASoC: sun4i-i2s: Fix offset mask
-  ASoC: sun4i-i2s: Correct divider calculations
-  ASoC: sun4i-i2s: Add multi-lane functionality
-  ASoC: sun4i-i2s: Do not divide clocks when slave
-  ASoC: sun4i-i2s: Add set_tdm_slot functionality
-  ASoC: sun4i-i2s: Add multichannel functionality
-
- sound/soc/sunxi/sun4i-i2s.c | 399 ++++++++++++++++++++++++------------
- 1 file changed, 267 insertions(+), 132 deletions(-)
-
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index d5ec1a20499d..64d073cb2aee 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -548,9 +548,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
+ {
+ 	/* Flush RX FIFO */
++	regcache_cache_bypass(i2s->regmap, true);
+ 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
+ 			   SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
+ 			   SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
++	regcache_cache_bypass(i2s->regmap, false);
+ 
+ 	/* Clear RX counter */
+ 	regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
+@@ -569,9 +571,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
+ static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
+ {
+ 	/* Flush TX FIFO */
++	regcache_cache_bypass(i2s->regmap, true);
+ 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
+ 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
+ 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
++	regcache_cache_bypass(i2s->regmap, false);
+ 
+ 	/* Clear TX counter */
+ 	regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
+@@ -703,13 +707,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
+ 
+ static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
+ {
+-	switch (reg) {
+-	case SUN4I_I2S_FIFO_TX_REG:
+-		return false;
+-
+-	default:
+-		return true;
+-	}
++	return true;
+ }
+ 
+ static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
+@@ -728,6 +726,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case SUN4I_I2S_FIFO_RX_REG:
++	case SUN4I_I2S_FIFO_TX_REG:
++	case SUN4I_I2S_FIFO_STA_REG:
+ 	case SUN4I_I2S_INT_STA_REG:
+ 	case SUN4I_I2S_RX_CNT_REG:
+ 	case SUN4I_I2S_TX_CNT_REG:
+@@ -738,23 +738,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
+-{
+-	switch (reg) {
+-	case SUN8I_I2S_FIFO_TX_REG:
+-		return false;
+-
+-	default:
+-		return true;
+-	}
+-}
+-
+ static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+ {
+ 	if (reg == SUN8I_I2S_INT_STA_REG)
+ 		return true;
+ 	if (reg == SUN8I_I2S_FIFO_TX_REG)
+-		return false;
++		return true;
+ 
+ 	return sun4i_i2s_volatile_reg(dev, reg);
+ }
+@@ -809,7 +798,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
+ 	.reg_defaults	= sun8i_i2s_reg_defaults,
+ 	.num_reg_defaults	= ARRAY_SIZE(sun8i_i2s_reg_defaults),
+ 	.writeable_reg	= sun4i_i2s_wr_reg,
+-	.readable_reg	= sun8i_i2s_rd_reg,
++	.readable_reg	= sun4i_i2s_rd_reg,
+ 	.volatile_reg	= sun8i_i2s_volatile_reg,
+ };
+ 
 -- 
 2.20.1
 
