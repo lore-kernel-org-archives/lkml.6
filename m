@@ -2,98 +2,196 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E18C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048ACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB9A21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:38:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFBuax9Z"
+	by mail.kernel.org (Postfix) with ESMTP id C851221927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389981AbeLUTiU (ORCPT
+        id S2391741AbeLUTk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:38:20 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35584 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731715AbeLUTiT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:38:19 -0500
-Received: by mail-pf1-f194.google.com with SMTP id z9so3041210pfi.2;
-        Fri, 21 Dec 2018 11:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zg8IBCyvdbP3FSmSDVhFlyLN8F9l7w4fDkG6UJ5MlO4=;
-        b=AFBuax9ZFl+eODfPgC+PnEqpqvLFXvqhdi622ZYFwebTQpEGVxPB2vlNpa0EVDtl81
-         cBRA9EyCq+gXOvV24hdTtM0qhwDb4ufmN4zG8k2Wk8QB2+gJ4zvYzLJTu8HPtbmTW7FK
-         1zrr0vczV99JvKMIN2ST6MLpRdwWDwrodKTeLKr87MnyucEasP6rE/G5ooo1LwVDBk1M
-         /4jx48ZQwjV1BdAyf/4swEkcwOLXwGeXqTgZc0fZHDTITZL3aj3SQoiLFQ0J0dfJMAxV
-         eDOuktZ5hYNu3U9KeW/poxLel5vjxEtnxd8Q3+vaqzZno/dN/KSclsau3mwOzCy3jsOL
-         pfhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=zg8IBCyvdbP3FSmSDVhFlyLN8F9l7w4fDkG6UJ5MlO4=;
-        b=il8eESQdYaPzz2nvcZq+J2kRZ8n42kwNoH37k1l/7nVuot7b1GIgw9DXX0KbG7XcjE
-         b1A/HleM7Gb85hh3cBKhPKTMZCFJhGl9aGEx4tHHT/i/76vCsferSKVm36/VCrHaHe1P
-         bc7/PvVgnLm9Y81EaaqKFVD6Bfa7M4uc4tnO2h5VJQfTtsAH0A7XMXFbOq+Pl31cTtko
-         XHecCD2R+6b4khQf/9RWNqYybbANFQvcgSDnkmege3IcbCW0CiFEqY+15LZ6VDm8LFau
-         jta7VJ88sP5JIqcYZmFOeH5WhbDVny5YrGy6yJ1WXVMOL04m+Ctz2uwXGfKGivrsFllF
-         tFBg==
-X-Gm-Message-State: AA+aEWZ56rLnHD2nLIRrbuVV1sza3yRREeShBRZqrhBCpLllu9m1nUY5
-        VsRQGayY14CJSB0MfS0KFF8=
-X-Google-Smtp-Source: AFSGD/WTiHUOWqMMVwETBoR2uXmn1DpHwdjQmuSJ1gXgQ5l6CiAz+KeOQkuH/45aruSKaE90C5nZQg==
-X-Received: by 2002:a62:6143:: with SMTP id v64mr3834408pfb.142.1545421098820;
-        Fri, 21 Dec 2018 11:38:18 -0800 (PST)
-Received: from [10.2.19.70] ([208.91.2.1])
-        by smtp.gmail.com with ESMTPSA id r2sm40323787pgo.18.2018.12.21.11.38.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 11:38:17 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH 03/12] __wr_after_init: generic header
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181219213338.26619-4-igor.stoppa@huawei.com>
-Date:   Fri, 21 Dec 2018 11:38:16 -0800
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
-        Kees Cook <keescook@chromium.org>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
+        Fri, 21 Dec 2018 14:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389698AbeLUTk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:40:57 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD11E21927;
+        Fri, 21 Dec 2018 19:40:55 +0000 (UTC)
+Date:   Fri, 21 Dec 2018 14:40:54 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
+ macro
+Message-ID: <20181221144054.20bdeb33@gandalf.local.home>
+In-Reply-To: <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+References: <20181221175618.968519903@goodmis.org>
+ <20181221175659.208858193@goodmis.org>
+ <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <8474D7CA-E5FF-40B1-9428-855854CDDB5F@gmail.com>
-References: <20181219213338.26619-1-igor.stoppa@huawei.com>
- <20181219213338.26619-4-igor.stoppa@huawei.com>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 19, 2018, at 1:33 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+On Fri, 21 Dec 2018 10:51:29 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Fri, Dec 21, 2018 at 9:57 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > I figured the best thing to do is to create a helper macro and place it
+> > into include/linux/string.h. And go around and fix all the open coded
+> > versions of it later.
+> >
+> > I plan on only applying this patch and updating the tracing hooks for
+> > this merge window. And perhaps use it to fix some of the bugs that were
+> > found.  
 > 
-> +static inline void *wr_memset(void *p, int c, __kernel_size_t len)
-> +{
-> +	return __wr_op((unsigned long)p, (unsigned long)c, len, WR_MEMSET);
-> +}
+> I like the helper function concept, but as they say about CS: "There
+> is only one hard problem in computer science: naming and off-by-one
+> errors".
+> 
+> And this one has that problem. The name makes absolutely no sense.
 
-What do you think about doing something like:
+Good thing I rebased and put these patches at the end before running
+my tests :-) (Specifically because I was expecting to have feedback like
+this).
 
-#define __wr          __attribute__((address_space(5)))
+> 
+> Calling it "strncmp_prefix()" when there is no "n" there makes no sense.
+> 
+> So drop the "n" from the name.
 
-And then make all the pointers to write-rarely memory to use this attribute?
-It might require more changes to the code, but can prevent bugs.
+I originally did that, but then I thought strcmp() is a full compare,
+and 'n' denotes it is partial. But thinking about it more, yeah one
+would think it would need a parameter to represent 'n'.
+
+> 
+> And honestly, maybe it would be better to use a different naming
+> pattern entirely, and avoid the crazy non-boolean "str*cmp()" model.
+> That thing is useful for search comparisons (where "before/after"
+> matters), but it's horrible for the actual "is this true or not",
+> where the code ends up being
+> 
+>         if (!strcmp_prefix(a, "prefix")) {
+>                 // This is the "Yes, prefix matched" case, despite the
+> "if !" syntax
+> 
+> which is just confusing.
+> 
+> So I'd really prefer more of a
+> 
+>         #define has_prefix(str, prefix) ...
+
+I like changing the name.
+
+> 
+> model that actually returns a boolean (true if it has a prefix, false
+> if it doesn't), rather than use the "str*cmp" naming and return
+> values.
+
+Actually, instead of returning a bool, it can return the length if it
+matches.
+
+Reason being, there's several locations that does something like:
+
+	while (...) {
+		len = strlen("const");
+		if (strncmp(str, "const", len) == 0) {
+			str += len;
+			break;
+		}
+	}
+
+And I was having trouble thinking about how to deal with these. But if
+we have a has_prefix() that returns the length on match then we can do:
+
+	if ((len = has_prefix(str, "const")) {
+		str += len;
 
 
+
+> 
+> (But I agree that *if* you use the "strcmp" naming, then you do need
+> to hold to the traditional strcmp return value semantics).
+> 
+> Hmm?
+> 
+> Finally, I also suspect that your helper might be slightly fragile.
+> Doing sizeof() seems broken. I could see somebody using some prefix
+> define for arrays with constant sizes, and doing
+> 
+>    #define PFX1 "cpp\0"
+>    #define PFX2 "c\0\0\0"
+>    #define PFX3 "h\0\0\0"
+> 
+> or similar. Also, is there a reason you use "&prefix" for the constant
+
+That was left over in my original tests in userspace. When I first
+tried it with __builtin_constant_p() I got an error, and added the '&',
+but then fixed something else. The something else was what actually
+caused the error, but since it didn't complain (and past all my tests),
+I left in the '&'.
+
+> test? I don't see that pattern anywhere else. Plus it looks entirely
+> wrong without the parenthesis (ie "&(prefix)" to make sure we group
+> things right).
+> 
+> So a lot of small problems, but the naming one is big.
+
+OK, what about if we just use strlen() and say that this macro is not
+safe for parameters with side effects.
+
+-- Steve
+
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 27d0482e5e05..f9d274a81276 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -14,6 +14,29 @@ extern void *memdup_user(const void __user *, size_t);
+ extern void *vmemdup_user(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
+ 
++/**
++ * have_prefix - Test if a string has a given prefix
++ * @str: The string to test
++ * @prefix: The string to see if @str starts with
++ *
++ * IMPORTANT; @prefix must not have side effects (used more than once here)
++ *
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use has_prefix().
++ *
++ * Returns: 0 if @str does not start with @prefix
++         strlen(@prefix) if @str does start with @prefix
++ */
++#define has_prefix(str, prefix)						\
++	({								\
++		int ____strcmp_prefix_len____ = strlen(prefix);		\
++		strncmp(str, prefix, ____strcmp_prefix_len____) == 0 ?	\
++			____strcmp_prefix_len____ : 0;			\
++	})
++
+ /*
+  * Include machine specific inline routines
+  */
