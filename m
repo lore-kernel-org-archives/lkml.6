@@ -3,186 +3,202 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1460DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D722C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30F021906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 270E02190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732795AbeLUIDE (ORCPT
+        id S1732665AbeLUIHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:03:04 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:38213 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732379AbeLUIDB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:03:01 -0500
-X-UUID: 825da9160cde4d3f86d22be463450247-20181221
-X-UUID: 825da9160cde4d3f86d22be463450247-20181221
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 967893425; Fri, 21 Dec 2018 16:02:49 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 21 Dec
- 2018 16:02:47 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 21 Dec 2018 16:02:46 +0800
-Message-ID: <1545379367.29587.53.camel@mhfsdcap03>
-Subject: Re: [PATCH v4 13/18] memory: mtk-smi: Add bus_sel for mt8183
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
-        <yingjoe.chen@mediatek.com>, <youlin.pei@mediatek.com>,
-        "Arvind Yadav" <arvind.yadav.cs@gmail.com>
-Date:   Fri, 21 Dec 2018 16:02:47 +0800
-In-Reply-To: <CANMq1KA4GLZHcDH31=W==8BTBZOVbRX9HBTJrpPFNQ3rWaM4xg@mail.gmail.com>
-References: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
-         <1544258371-4600-14-git-send-email-yong.wu@mediatek.com>
-         <CANMq1KA4GLZHcDH31=W==8BTBZOVbRX9HBTJrpPFNQ3rWaM4xg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        Fri, 21 Dec 2018 03:07:55 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:65320 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730509AbeLUIHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 03:07:55 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43Lh7q6T5mz9tyL4;
+        Fri, 21 Dec 2018 09:07:51 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id AXYKGTvTcQyv; Fri, 21 Dec 2018 09:07:51 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43Lh7q5qNGz9tyL3;
+        Fri, 21 Dec 2018 09:07:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C26068B8E5;
+        Fri, 21 Dec 2018 09:07:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id mYoISYYE-_yH; Fri, 21 Dec 2018 09:07:52 +0100 (CET)
+Received: from PO15451.localdomain (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 97C1F8B75F;
+        Fri, 21 Dec 2018 09:07:52 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 4F16E7176E; Fri, 21 Dec 2018 08:07:52 +0000 (UTC)
+Message-Id: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v3] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Horia Geanta <horia.geanta@nxp.com>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
+Date:   Fri, 21 Dec 2018 08:07:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-21 at 12:47 +0800, Nicolas Boichat wrote:
-> On Sat, Dec 8, 2018 at 4:43 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> >
-> > There are 2 mmu cells in a M4U HW. we could adjust some larbs entering
-> > mmu0 or mmu1 to balance the bandwidth via the smi-common register
-> > SMI_BUS_SEL(0x220)(Each larb occupy 2 bits).
-> >
-> > In mt8183, For better performance, we switch larb1/2/5/7 to enter
-> > mmu1 while the others still keep enter mmu0.
-> >
-> > In mt8173 and mt2712, we don't get the performance issue,
-> > Keep its default value(0x0), that means all the larbs enter mmu0.
-> >
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> >  drivers/memory/mtk-smi.c | 22 ++++++++++++++++++++--
-> >  1 file changed, 20 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-> > index ee6165e..88eb61a 100644
-> > --- a/drivers/memory/mtk-smi.c
-> > +++ b/drivers/memory/mtk-smi.c
-> > @@ -49,6 +49,12 @@
-> >  #define SMI_LARB_NONSEC_CON(id)        (0x380 + ((id) * 4))
-> >  #define F_MMU_EN               BIT(0)
-> >
-> > +/* SMI COMMON */
-> > +#define SMI_BUS_SEL                    0x220
-> > +#define SMI_BUS_LARB_SHIFT(larbid)     ((larbid) << 1)
-> > +/* All are MMU0 defaultly. Only specialize mmu1 here. */
-> > +#define F_MMU1_LARB(larbid)            (0x1 << SMI_BUS_LARB_SHIFT(larbid))
-> > +
-> >  enum mtk_smi_gen {
-> >         MTK_SMI_GEN1,
-> >         MTK_SMI_GEN2
-> > @@ -57,6 +63,7 @@ enum mtk_smi_gen {
-> >  struct mtk_smi_common_plat {
-> >         enum mtk_smi_gen gen;
-> >         bool             has_gals;
-> > +       u32              bus_sel; /* Balance some larbs to enter mmu0 or mmu1 */
-> >  };
-> >
-> >  struct mtk_smi_larb_gen {
-> > @@ -72,8 +79,8 @@ struct mtk_smi {
-> >         struct clk                      *clk_apb, *clk_smi;
-> >         struct clk                      *clk_gals0, *clk_gals1;
-> >         struct clk                      *clk_async; /*only needed by mt2701*/
-> > -       void __iomem                    *smi_ao_base;
-> > -
-> > +       void __iomem                    *smi_ao_base; /* only for gen1 */
-> > +       void __iomem                    *base;        /* only for gen2 */
-> >         const struct mtk_smi_common_plat *plat;
-> >  };
-> >
-> > @@ -409,6 +416,8 @@ static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
-> >  static const struct mtk_smi_common_plat mtk_smi_common_mt8183 = {
-> >         .gen      = MTK_SMI_GEN2,
-> >         .has_gals = true,
-> > +       .bus_sel  = F_MMU1_LARB(1) | F_MMU1_LARB(2) | F_MMU1_LARB(5) |
-> > +                   F_MMU1_LARB(7),
-> 
-> Maybe it's ok for now, but I wonder if this is something that should
-> be specified in device tree? Maybe different applications will want
-> different larb split between MMU0 and MMU1?
+[    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
+[    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
+[    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
+[    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+[    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
+[    2.406669]
+[    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
+[    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
+[    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
+[    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
+[    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
+[    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
+[    2.451762] Call Trace:
+[    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
+[    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
+[    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
+[    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
+[    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
+[    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
+[    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
+[    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
+[    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
+[    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
+[    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+[    2.515532] Instruction dump:
+[    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
+[    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
+[    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
+[    2.539123] talitos ff020000.crypto: master data transfer error
+[    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
+[    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
 
-Good question. Many Thanks. This value is recommended from the HW DE. In
-some SoCs, It may be different in different scenarios. and in some SoCs
-like mt8183, the bus_sel always use a fixed value.
+IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
+cannot be DMA mapped anymore.
 
-I guess it should not be in device tree if it may be changed in
-different applications.
+This patch copies the IV into the extended descriptor when iv is not
+a valid linear address.
 
-BTW, Is there some existed IOCTL command or the similar interface that
-can tell the kernel driver(SMI here) which scenario it is currently,
-like it is playing video or the camera is running. 
+Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v3: Using struct edesc buffer.
 
-Currently the SMI driver is so simple, it doesn't know which application
-it is. All use the HW default value. of course, the default also is ok,
-only the bandwidth may be not so good.
+ v2: Using per-request context.
 
-For the bus_sel of mt8183, I think it is ok right now. Sure, it can be
-improved if we can change it dynamically.
+ drivers/crypto/talitos.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-> 
-> >  };
-> >
-> >  static const struct of_device_id mtk_smi_common_of_ids[] = {
-> > @@ -481,6 +490,11 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
-> >                 ret = clk_prepare_enable(common->clk_async);
-> >                 if (ret)
-> >                         return ret;
-> > +       } else {
-> > +               res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +               common->base = devm_ioremap_resource(dev, res);
-> > +               if (IS_ERR(common->base))
-> > +                       return PTR_ERR(common->base);
-> >         }
-> >         pm_runtime_enable(dev);
-> >         platform_set_drvdata(pdev, common);
-> > @@ -496,6 +510,7 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
-> >  static int __maybe_unused mtk_smi_common_resume(struct device *dev)
-> >  {
-> >         struct mtk_smi *common = dev_get_drvdata(dev);
-> > +       u32 bus_sel = common->plat->bus_sel;
-> >         int ret;
-> >
-> >         ret = mtk_smi_clk_enable(common);
-> > @@ -503,6 +518,9 @@ static int __maybe_unused mtk_smi_common_resume(struct device *dev)
-> >                 dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
-> >                 return ret;
-> >         }
-> > +
-> > +       if (common->plat->gen == MTK_SMI_GEN2 && bus_sel)
-> > +               writel(bus_sel, common->base + SMI_BUS_SEL);
-> >         return 0;
-> >  }
-> >
-> > --
-> > 1.9.1
-> >
-
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index 6988012deca4..160702b119bb 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1355,29 +1355,23 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ {
+ 	struct talitos_edesc *edesc;
+ 	int src_nents, dst_nents, alloc_len, dma_len, src_len, dst_len;
+-	dma_addr_t iv_dma = 0;
+ 	gfp_t flags = cryptoflags & CRYPTO_TFM_REQ_MAY_SLEEP ? GFP_KERNEL :
+ 		      GFP_ATOMIC;
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+ 	int max_len = is_sec1 ? TALITOS1_MAX_DATA_LEN : TALITOS2_MAX_DATA_LEN;
+-	void *err;
+ 
+ 	if (cryptlen + authsize > max_len) {
+ 		dev_err(dev, "length exceeds h/w max limit\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (ivsize)
+-		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
+-
+ 	if (!dst || dst == src) {
+ 		src_len = assoclen + cryptlen + authsize;
+ 		src_nents = sg_nents_for_len(src, src_len);
+ 		if (src_nents < 0) {
+ 			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		src_nents = (src_nents == 1) ? 0 : src_nents;
+ 		dst_nents = dst ? src_nents : 0;
+@@ -1387,16 +1381,14 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 		src_nents = sg_nents_for_len(src, src_len);
+ 		if (src_nents < 0) {
+ 			dev_err(dev, "Invalid number of src SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		src_nents = (src_nents == 1) ? 0 : src_nents;
+ 		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
+ 		dst_nents = sg_nents_for_len(dst, dst_len);
+ 		if (dst_nents < 0) {
+ 			dev_err(dev, "Invalid number of dst SG.\n");
+-			err = ERR_PTR(-EINVAL);
+-			goto error_sg;
++			return ERR_PTR(-EINVAL);
+ 		}
+ 		dst_nents = (dst_nents == 1) ? 0 : dst_nents;
+ 	}
+@@ -1423,17 +1415,24 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 	/* if its a ahash, add space for a second desc next to the first one */
+ 	if (is_sec1 && !dst)
+ 		alloc_len += sizeof(struct talitos_desc);
++	if (ivsize && !virt_addr_valid(iv))
++		alloc_len += ivsize;
+ 
+ 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
+-	if (!edesc) {
+-		err = ERR_PTR(-ENOMEM);
+-		goto error_sg;
+-	}
++	if (!edesc)
++		return ERR_PTR(-ENOMEM);
+ 	memset(&edesc->desc, 0, sizeof(edesc->desc));
+ 
++	if (ivsize && !virt_addr_valid(iv))
++		iv = memcpy(((u8 *)edesc) + alloc_len - ivsize, iv, ivsize);
++
+ 	edesc->src_nents = src_nents;
+ 	edesc->dst_nents = dst_nents;
+-	edesc->iv_dma = iv_dma;
++	if (ivsize)
++		edesc->iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
++	else
++		edesc->iv_dma = 0;
++
+ 	edesc->dma_len = dma_len;
+ 	if (dma_len) {
+ 		void *addr = &edesc->link_tbl[0];
+@@ -1445,10 +1444,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 						     DMA_BIDIRECTIONAL);
+ 	}
+ 	return edesc;
+-error_sg:
+-	if (iv_dma)
+-		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
+-	return err;
+ }
+ 
+ static struct talitos_edesc *aead_edesc_alloc(struct aead_request *areq, u8 *iv,
+-- 
+2.13.3
 
