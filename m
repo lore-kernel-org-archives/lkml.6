@@ -2,115 +2,195 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9852CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EAFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A59218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5045206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:07:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pBEpKGya"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbeLUJHa (ORCPT
+        id S1730691AbeLUJHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:07:30 -0500
-Received: from mail.netline.ch ([148.251.143.178]:57123 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728109AbeLUJH3 (ORCPT
+        Fri, 21 Dec 2018 04:07:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33051 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729563AbeLUJHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:07:29 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 2C2FB2A6056;
-        Fri, 21 Dec 2018 10:07:27 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id looKmFOUW0kE; Fri, 21 Dec 2018 10:07:26 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 96C5B2A6055;
-        Fri, 21 Dec 2018 10:07:26 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gaGmE-0001JO-As; Fri, 21 Dec 2018 10:07:26 +0100
-Subject: Re: [PATCH 2/3] drm/amd: validate user pitch alignment
-To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     David Zhou <David1.Zhou@amd.com>,
-        Daniel Stone <daniels@collabora.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-References: <20181221031053.240161-1-yuzhao@google.com>
- <20181221031053.240161-2-yuzhao@google.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <90677da7-d74d-c725-f669-88fe18789d5b@daenzer.net>
-Date:   Fri, 21 Dec 2018 10:07:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 21 Dec 2018 04:07:37 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so2320409pfb.0;
+        Fri, 21 Dec 2018 01:07:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NB5trgo9uCGGn6yAxl6VATsZwvzz/OOpZhr/f7H8Mhg=;
+        b=pBEpKGyaE6Rfo7n29PaF6ttiGAzp9Qp4Nte8GXK6vw7uZSOofQTfae+2LjnHRscoCN
+         qaYtTvTnog9OEi0u/vcKM6hVs4aPZjVTqZn3T3c7XsmJAkuaQqd+IKpBDGuSdRylTQCl
+         mKvfDO6bpkpj8ieUxNr2hXMW0Ks21G0Tfm0QBoWuWCFNzRBy0gR4EDmI1XD9fMnFtw5A
+         Cfd4/sdeqwNqtfcZ5xOfkMOa5S24shv1qqCtPGOtASXQZrXw3wyvFPrP4OH9yM+F+TCo
+         6j9ny7q1x5qKKu/ip9ioDBmtw4pLrP0boqUB0o+RzoUEyOXWMOaZeDTnI86HRYr7pX2h
+         EfyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NB5trgo9uCGGn6yAxl6VATsZwvzz/OOpZhr/f7H8Mhg=;
+        b=gHDvGcTG45eqzr2NmuQOKIdyEx1l9q85tYNDw7VA4qNmAo08XRV21ch2W/7sK/Lsdw
+         ilg+PulJB+MnLhbI3kUhLFHi4hyqN0v7DnNH+/N7MXf+2GOBeyzFe7cmhca0ospFBetF
+         Z6k3iB/DrpvILNXBG3oIoCv4XU+TUCB3FGuMUjb4YuKl0Ti78B56OLylso5fb8mFyS7z
+         oTq+jM7pNYfFFa+NT9FVc1+IC7mx5CCWej1T1JuBkxsRAFI9gAGOBOpe1Q0/2F82w5x2
+         T2oRtcni0wy8OjQf8aM+oPzABelKjLTgYo/X8szFDarWzZ/cDCfbAhE3o/6I1opAar92
+         W2zQ==
+X-Gm-Message-State: AJcUukdT9YC11lEYKU/I/LbRJo2S2wheDWokAYIIN6i5RP5CzTtmiWMq
+        GwL2Ic+G/3rmwEFkvcx3el4=
+X-Google-Smtp-Source: ALg8bN5YYg0WmPE6W5ay20si0GlC4H8j0VyEVXyDLlVZ0XlZspkj8ho+TejhwhiGhAHQC13nMmCmSQ==
+X-Received: by 2002:a63:9b11:: with SMTP id r17mr1617303pgd.416.1545383255606;
+        Fri, 21 Dec 2018 01:07:35 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id h79sm47713757pfj.186.2018.12.21.01.07.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 01:07:34 -0800 (PST)
+Date:   Fri, 21 Dec 2018 01:07:33 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Cc:     michael.hennerich@analog.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joe@perches.com
+Subject: Re: [PATCH v3] Input: touchscreen: Fix coding style issue
+Message-ID: <20181221090733.GL211587@dtor-ws>
+References: <20181211111740.25643-1-hardiksingh.k@gmail.com>
+ <20181211130332.27781-1-hardiksingh.k@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181221031053.240161-2-yuzhao@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211130332.27781-1-hardiksingh.k@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-21 4:10 a.m., Yu Zhao wrote:
-> Userspace may request pitch alignment that is not supported by GPU.
-> Some requests 32, but GPU ignores it and uses default 64 when cpp is
-> 4. If GEM object is allocated based on the smaller alignment, GPU
-> DMA will go out of bound.
+On Tue, Dec 11, 2018 at 06:33:32PM +0530, Hardik Singh Rathore wrote:
+> This patch fixes the coding style problem reported
+> by checkpatch.pl as below:
 > 
-> For GPU that does frame buffer compression, DMA writing out of bound
-> memory will cause memory corruption.
+> ERROR: foo* bar should be "foo *bar"
 > 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+
+Applied, thank you.
+
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> v3:
+> - v2 was depends on v1 so it didn't solve the issue.
 > 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> index e309d26170db..755daa332f8a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> @@ -527,6 +527,15 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
->  	struct drm_gem_object *obj;
->  	struct amdgpu_framebuffer *amdgpu_fb;
->  	int ret;
-> +	struct amdgpu_device *adev = dev->dev_private;
-> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
-> +	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
-
-Also, this needs to use mode_cmd->pitches[0] instead of mode_cmd->width,
-otherwise it'll spuriously fail for larger but well-aligned pitches.
-
+>  drivers/input/touchscreen/ad7879.c   | 2 +-
+>  drivers/input/touchscreen/ektf2127.c | 2 +-
+>  drivers/input/touchscreen/gunze.c    | 4 ++--
+>  drivers/input/touchscreen/inexio.c   | 4 ++--
+>  drivers/input/touchscreen/mtouch.c   | 4 ++--
+>  5 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
+> index 6bad23ee47a1..b68902c17f2e 100644
+> --- a/drivers/input/touchscreen/ad7879.c
+> +++ b/drivers/input/touchscreen/ad7879.c
+> @@ -290,7 +290,7 @@ static int ad7879_open(struct input_dev *input)
+>  	return 0;
+>  }
+>  
+> -static void ad7879_close(struct input_dev* input)
+> +static void ad7879_close(struct input_dev *input)
+>  {
+>  	struct ad7879 *ts = input_get_drvdata(input);
+>  
+> diff --git a/drivers/input/touchscreen/ektf2127.c b/drivers/input/touchscreen/ektf2127.c
+> index 0ed34ff787ce..28fa1b36f7a5 100644
+> --- a/drivers/input/touchscreen/ektf2127.c
+> +++ b/drivers/input/touchscreen/ektf2127.c
+> @@ -51,7 +51,7 @@ struct ektf2127_ts {
+>  	struct touchscreen_properties prop;
+>  };
+>  
+> -static void ektf2127_parse_coordinates(const u8* buf, unsigned int touch_count,
+> +static void ektf2127_parse_coordinates(const u8 *buf, unsigned int touch_count,
+>  				       struct input_mt_pos *touches)
+>  {
+>  	int index = 0;
+> diff --git a/drivers/input/touchscreen/gunze.c b/drivers/input/touchscreen/gunze.c
+> index 054c2537b392..56cf1a1ea3ea 100644
+> --- a/drivers/input/touchscreen/gunze.c
+> +++ b/drivers/input/touchscreen/gunze.c
+> @@ -53,7 +53,7 @@ struct gunze {
+>  	char phys[32];
+>  };
+>  
+> -static void gunze_process_packet(struct gunze* gunze)
+> +static void gunze_process_packet(struct gunze *gunze)
+>  {
+>  	struct input_dev *dev = gunze->dev;
+>  
+> @@ -72,7 +72,7 @@ static void gunze_process_packet(struct gunze* gunze)
+>  static irqreturn_t gunze_interrupt(struct serio *serio,
+>  		unsigned char data, unsigned int flags)
+>  {
+> -	struct gunze* gunze = serio_get_drvdata(serio);
+> +	struct gunze *gunze = serio_get_drvdata(serio);
+>  
+>  	if (data == '\r') {
+>  		gunze_process_packet(gunze);
+> diff --git a/drivers/input/touchscreen/inexio.c b/drivers/input/touchscreen/inexio.c
+> index b9bc56233ccc..13bd0bf580a7 100644
+> --- a/drivers/input/touchscreen/inexio.c
+> +++ b/drivers/input/touchscreen/inexio.c
+> @@ -79,7 +79,7 @@ static void inexio_process_data(struct inexio *pinexio)
+>  static irqreturn_t inexio_interrupt(struct serio *serio,
+>  		unsigned char data, unsigned int flags)
+>  {
+> -	struct inexio* pinexio = serio_get_drvdata(serio);
+> +	struct inexio *pinexio = serio_get_drvdata(serio);
+>  
+>  	pinexio->data[pinexio->idx] = data;
+>  
+> @@ -97,7 +97,7 @@ static irqreturn_t inexio_interrupt(struct serio *serio,
+>  
+>  static void inexio_disconnect(struct serio *serio)
+>  {
+> -	struct inexio* pinexio = serio_get_drvdata(serio);
+> +	struct inexio *pinexio = serio_get_drvdata(serio);
+>  
+>  	input_get_device(pinexio->dev);
+>  	input_unregister_device(pinexio->dev);
+> diff --git a/drivers/input/touchscreen/mtouch.c b/drivers/input/touchscreen/mtouch.c
+> index a3707fad4d1c..8278a9058640 100644
+> --- a/drivers/input/touchscreen/mtouch.c
+> +++ b/drivers/input/touchscreen/mtouch.c
+> @@ -90,7 +90,7 @@ static void mtouch_process_response(struct mtouch *mtouch)
+>  static irqreturn_t mtouch_interrupt(struct serio *serio,
+>  		unsigned char data, unsigned int flags)
+>  {
+> -	struct mtouch* mtouch = serio_get_drvdata(serio);
+> +	struct mtouch *mtouch = serio_get_drvdata(serio);
+>  
+>  	mtouch->data[mtouch->idx] = data;
+>  
+> @@ -110,7 +110,7 @@ static irqreturn_t mtouch_interrupt(struct serio *serio,
+>  
+>  static void mtouch_disconnect(struct serio *serio)
+>  {
+> -	struct mtouch* mtouch = serio_get_drvdata(serio);
+> +	struct mtouch *mtouch = serio_get_drvdata(serio);
+>  
+>  	input_get_device(mtouch->dev);
+>  	input_unregister_device(mtouch->dev);
+> -- 
+> 2.17.1
+> 
 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Dmitry
