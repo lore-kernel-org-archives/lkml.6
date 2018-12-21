@@ -2,121 +2,114 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D7EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC15C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB91821906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:00:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1PoHdwd"
+	by mail.kernel.org (Postfix) with ESMTP id 44D6021915
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:00:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390533AbeLUNAK (ORCPT
+        id S2390549AbeLUNA2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 08:00:10 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43304 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387690AbeLUNAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:00:10 -0500
-Received: by mail-oi1-f196.google.com with SMTP id u18so4668484oie.10;
-        Fri, 21 Dec 2018 05:00:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yhOUNi2BURW/oJMQHdq3jAOE7mhlMlhIopCWrHWu/To=;
-        b=P1PoHdwdyCmQehx9TT5KvPSLu8eO5vtfhalYYS9QK4LQnQ07fL8wzwzJw38w/sKkqD
-         vK4RanL2zY4z7DqNflIhdBzy6Gv//b8+AjLi6aoti3H6CXaY4P+gYl496+Rjd06ntvNM
-         +XBV/Sh4lIgaZ3tZeEt8x4/d59i4kmL9x+y26UK3Y6yFr/AtLKmYP+OXJB9Xf9CQOEg1
-         qfmnwcQA3wlL6i8q9Kjc2MUgncFdI9hicXh4SyO3kXZeBu++is65EbZuNcj6G30i2wki
-         DRSaU2nTIKqvzU1sReYZKpTSzJQRC6XE+Q8H1SGVc1W2Ba+T4Vusr0hqOGA7BrVVCtRH
-         MkMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yhOUNi2BURW/oJMQHdq3jAOE7mhlMlhIopCWrHWu/To=;
-        b=NK4WNwx0IMr+by/nfjhKJwm0cDFWefqWgr9IEzQdXmk6mUXvRppBIsFBuHqvXmbqn1
-         +VP6XpjQ8yLB17yzFTRXjHMy38QTey+wqABK0ggOx1UpO4vuYHN99JKI2pbKhTZMW7bW
-         hSz952Cil8NkoXnJd4PnHo9FeziczFnyRU/XcFF90BfJWeGa9g6TXKhkYz8luZg6EavL
-         Gcyi07oBV/JukXADZdkcgPlh9et0BlVNCVMEA2+hlYY0qZVN9MteFvgxVaivRI8UsF69
-         sHFmyU4dOjdlyObVfPKfdw8Y5oC3e03mahl7h/1DLk+W0VI60p7nPsW1/0WFcgkQ30Uo
-         WeTA==
-X-Gm-Message-State: AA+aEWalG4EVehJMN0Q+PuvrNRfPa2DDCoDvlpHNr2zsyzJNboR05GSP
-        xYV1o8qJSzjsgGhM7BVtdGPpgUsWDXs31ajvHaU=
-X-Google-Smtp-Source: AFSGD/WrG5r/fTlhKZN363XjNKzAciBuPFsoWJa3UaEzHS642/Aq6rB/4feBNmydpywof79+ZPbhpIs5A50KNCTzwNM=
-X-Received: by 2002:aca:3c06:: with SMTP id j6mr1294703oia.126.1545397208995;
- Fri, 21 Dec 2018 05:00:08 -0800 (PST)
+        Fri, 21 Dec 2018 08:00:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58820 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390437AbeLUNA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 08:00:28 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9C429207D4; Fri, 21 Dec 2018 14:00:25 +0100 (CET)
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6B9FC207AD;
+        Fri, 21 Dec 2018 14:00:25 +0100 (CET)
+Date:   Fri, 21 Dec 2018 14:00:25 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH v5 2/6] media: sun6i: Add mod_rate quirk
+Message-ID: <20181221130025.lbvw7yvy74brf3jn@flea>
+References: <20181220125438.11700-1-jagan@amarulasolutions.com>
+ <20181220125438.11700-3-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20181220085922.332225035@linuxfoundation.org> <20181220085923.488666294@linuxfoundation.org>
- <CADVatmPEbBoEeVvAOMkcrsge19ceAkDT5fzEZbMAdTnD5wg6eA@mail.gmail.com>
- <20181220154030.GA9962@kroah.com> <20181220184941.ykfjubbo3nj2mnpm@debian> <20181220230509.2lwlz2w46iqac2px@linutronix.de>
-In-Reply-To: <20181220230509.2lwlz2w46iqac2px@linutronix.de>
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Date:   Fri, 21 Dec 2018 12:59:32 +0000
-Message-ID: <CADVatmPOFLH2fe8VON1ohra+QOzaAZE+tT-uiKZhfceFwobjTQ@mail.gmail.com>
-Subject: Re: [PATCH 4.14 29/72] locking/qspinlock, x86: Provide liveness guarantee
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        andrea.parri@amarulasolutions.com, longman@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181220125438.11700-3-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 11:05 PM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2018-12-20 18:49:41 [+0000], Sudip Mukherjee wrote:
-> > On Thu, Dec 20, 2018 at 04:40:30PM +0100, Greg Kroah-Hartman wrote:
-> > > On Thu, Dec 20, 2018 at 12:14:00PM +0000, Sudip Mukherjee wrote:
-> > > > Hi Greg,
-> > > >
-> > > > On Thu, Dec 20, 2018 at 9:28 AM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > > > >
-> > > > > ------------------
-> > > > >
-> > > > > commit 7aa54be2976550f17c11a1c3e3630002dea39303 upstream.
-> > > >
-> > > > Another upstream commit fixes this.
-> > > > b987ffc18fb3 ("x86/qspinlock: Fix compile error")
-> > >
-> > > Maybe, but that commit doesn't apply to any of these stable trees :(
-> > >
-> > > Care to provide a backport?
-> >
-> > Attached now.
->
-> Are you sure that it fails to compile without that patch? I have here
-> Debian's gcc version 8.2.0 which probably isn't affected and I can
-> compile kernel/locking/ in v4.19 + 4.14.
->
-> I'm asking because in my backport the GEN_BINARY_RMWcc macro is used
-> like in all the other functions which use it - unlike like in the
-> original commit where the macro is used directly in the if condition. So
-> it  might not be affected by the problem.
+On Thu, Dec 20, 2018 at 06:24:34PM +0530, Jagan Teki wrote:
+> Unfortunately default CSI_SCLK rate cannot work properly to
+> drive the connected sensor interface, particularly on few
+> Allwinner SoC's like A64.
+> 
+> So, add mod_rate quirk via driver data so-that the respective
+> SoC's which require to alter the default mod clock rate can assign
+> the operating clock rate.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 34 +++++++++++++++----
+>  1 file changed, 28 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> index ee882b66a5ea..fe002beae09c 100644
+> --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/ioctl.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+> @@ -28,8 +29,13 @@
+>  
+>  #define MODULE_NAME	"sun6i-csi"
+>  
+> +struct sun6i_csi_variant {
+> +	unsigned long			mod_rate;
+> +};
+> +
+>  struct sun6i_csi_dev {
+>  	struct sun6i_csi		csi;
+> +	const struct sun6i_csi_variant	*variant;
+>  	struct device			*dev;
+>  
+>  	struct regmap			*regmap;
+> @@ -822,33 +828,43 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
+>  		return PTR_ERR(sdev->clk_mod);
+>  	}
+>  
+> +	if (sdev->variant->mod_rate)
+> +		clk_set_rate_exclusive(sdev->clk_mod, sdev->variant->mod_rate);
+> +
 
-ofcourse.. and I overlooked that part. Sorry.
-The original problem was using the "goto" inside if() and with your
-backported patch the problem should not exist.
+It still doesn't make any sense to do it in the probe function...
 
-Greg, please do not add it to your queue.
+We discussed this in the previous iteration already.
+
+What we didn't discuss is the variant function that you introduce,
+while the previous approach was enough.
+
+Maxime
 
 -- 
-Regards
-Sudip
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
