@@ -2,106 +2,147 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49B8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0675C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7252190C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545396378;
-	bh=APe+L7skTQcDmKppYb0jhRqW68QpmYd83miFL3Jx3wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=h3CmMZjxrpVjCLK05vz+Ibcxv0B/oPVEC6ShzRYj7xtfEsAdWIukpUpCX/BrRiDyg
-	 TeY5aPv2vvtPl8VWOv8722yIDXZ7+MyKnfflohqQfv5EitQy3wjvbMtKqM3FWvlN52
-	 7M2fJBYGEQW26vMHlvXu5pM1zhLOOOhkMT8EuFNU=
+	by mail.kernel.org (Postfix) with ESMTP id 79F91218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390438AbeLUMqQ (ORCPT
+        id S2390443AbeLUMxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:46:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390384AbeLUMqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:46:15 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A64D92190C;
-        Fri, 21 Dec 2018 12:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545396374;
-        bh=APe+L7skTQcDmKppYb0jhRqW68QpmYd83miFL3Jx3wo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=opG31RPEukuA/kUmq0JbafLywJqgB2EYYfaTRjbm4JVKdPwYS2MFy7zzPPnY7denI
-         NvP2JN7HoZN6wE1+LY4j3HsyWaY538Q107otfqKGcuTnVfVWRgRImrQPBx3+KO5w7O
-         jUy2YuRAR69WoSPhd/HhMM5jVvTaCGQR529v86WE=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 331BF403A8; Fri, 21 Dec 2018 09:46:11 -0300 (-03)
-Date:   Fri, 21 Dec 2018 09:46:11 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] perf trace: use correct SECCOMP prefix spelling,
- "SECOMP_*" -> "SECCOMP_*"
-Message-ID: <20181221124611.GA4210@kernel.org>
-References: <20181221084809.6108-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221084809.6108-1-colin.king@canonical.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 21 Dec 2018 07:53:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388253AbeLUMxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:53:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 92E18AE72;
+        Fri, 21 Dec 2018 12:53:22 +0000 (UTC)
+From:   Nikolay Borisov <nborisov@suse.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH] mm: Define VM_(MAX|MIN)_READAHEAD via sizes.h constants
+Date:   Fri, 21 Dec 2018 14:53:14 +0200
+Message-Id: <20181221125314.5177-1-nborisov@suse.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Dec 21, 2018 at 08:48:09AM +0000, Colin King escreveu:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The spelling of the SECCOMP is incorrect, fix these.
+All users of the aformentioned macros convert them to kbytes by
+multplying. Instead, directly define the macros via the aptly named
+SZ_16K/SZ_128K ones. Also remove the now redundant comments explaining
+that VM_* are defined in kbytes it's obvious. No functional changes.
 
-Thanks, applied.
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+---
 
-- Arnaldo
+I guess it makes sense for this to land via Andrew's mmotm tree?
+
+ block/blk-core.c   | 3 +--
+ fs/9p/vfs_super.c  | 2 +-
+ fs/afs/super.c     | 2 +-
+ fs/btrfs/disk-io.c | 2 +-
+ fs/fuse/inode.c    | 2 +-
+ include/linux/mm.h | 5 +++--
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index deb56932f8c4..d28b2eeec07e 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1031,8 +1031,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id,
+ 	if (!q->stats)
+ 		goto fail_stats;
  
-> Fixes: c65c83ffe904 ("perf trace: Allow asking for not suppressing common string prefixes")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  tools/perf/trace/beauty/seccomp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/trace/beauty/seccomp.c b/tools/perf/trace/beauty/seccomp.c
-> index 4600c28a3cfe..637722e2796b 100644
-> --- a/tools/perf/trace/beauty/seccomp.c
-> +++ b/tools/perf/trace/beauty/seccomp.c
-> @@ -9,7 +9,7 @@
->  static size_t syscall_arg__scnprintf_seccomp_op(char *bf, size_t size, struct syscall_arg *arg)
->  {
->  	bool show_prefix = arg->show_string_prefix;
-> -	const char *prefix = "SECOMP_SET_MODE_";
-> +	const char *prefix = "SECCOMP_SET_MODE_";
->  	int op = arg->val;
->  	size_t printed = 0;
->  
-> @@ -34,7 +34,7 @@ static size_t syscall_arg__scnprintf_seccomp_flags(char *bf, size_t size,
->  						   struct syscall_arg *arg)
->  {
->  	bool show_prefix = arg->show_string_prefix;
-> -	const char *prefix = "SECOMP_FILTER_FLAG_";
-> +	const char *prefix = "SECCOMP_FILTER_FLAG_";
->  	int printed = 0, flags = arg->val;
->  
->  #define	P_FLAG(n) \
-> -- 
-> 2.19.1
-
+-	q->backing_dev_info->ra_pages =
+-			(VM_MAX_READAHEAD * 1024) / PAGE_SIZE;
++	q->backing_dev_info->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
+ 	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
+ 	q->backing_dev_info->name = "block";
+ 	q->node = node_id;
+diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
+index 48ce50484e80..5c9f757410ae 100644
+--- a/fs/9p/vfs_super.c
++++ b/fs/9p/vfs_super.c
+@@ -92,7 +92,7 @@ v9fs_fill_super(struct super_block *sb, struct v9fs_session_info *v9ses,
+ 		return ret;
+ 
+ 	if (v9ses->cache)
+-		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
++		sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
+ 
+ 	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
+ 	if (!v9ses->cache)
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index dcd07fe99871..d1f3af74481a 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -399,7 +399,7 @@ static int afs_fill_super(struct super_block *sb,
+ 	ret = super_setup_bdi(sb);
+ 	if (ret)
+ 		return ret;
+-	sb->s_bdi->ra_pages	= VM_MAX_READAHEAD * 1024 / PAGE_SIZE;
++	sb->s_bdi->ra_pages	= VM_MAX_READAHEAD / PAGE_SIZE;
+ 
+ 	/* allocate the root inode and dentry */
+ 	if (as->dyn_root) {
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 6d776717d8b3..d84e7283d24b 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2900,7 +2900,7 @@ int open_ctree(struct super_block *sb,
+ 	sb->s_bdi->congested_fn = btrfs_congested_fn;
+ 	sb->s_bdi->congested_data = fs_info;
+ 	sb->s_bdi->capabilities |= BDI_CAP_CGROUP_WRITEBACK;
+-	sb->s_bdi->ra_pages = VM_MAX_READAHEAD * SZ_1K / PAGE_SIZE;
++	sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
+ 	sb->s_bdi->ra_pages *= btrfs_super_num_devices(disk_super);
+ 	sb->s_bdi->ra_pages = max(sb->s_bdi->ra_pages, SZ_4M / PAGE_SIZE);
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 568abed20eb2..25766e9035b1 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1009,7 +1009,7 @@ static int fuse_bdi_init(struct fuse_conn *fc, struct super_block *sb)
+ 	if (err)
+ 		return err;
+ 
+-	sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024) / PAGE_SIZE;
++	sb->s_bdi->ra_pages = VM_MAX_READAHEAD / PAGE_SIZE;
+ 	/* fuse does it's own writeback accounting */
+ 	sb->s_bdi->capabilities = BDI_CAP_NO_ACCT_WB | BDI_CAP_STRICTLIMIT;
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5411de93a363..e2085eaceae9 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -26,6 +26,7 @@
+ #include <linux/page_ref.h>
+ #include <linux/memremap.h>
+ #include <linux/overflow.h>
++#include <linux/sizes.h>
+ 
+ struct mempolicy;
+ struct anon_vma;
+@@ -2396,8 +2397,8 @@ int __must_check write_one_page(struct page *page);
+ void task_dirty_inc(struct task_struct *tsk);
+ 
+ /* readahead.c */
+-#define VM_MAX_READAHEAD	128	/* kbytes */
+-#define VM_MIN_READAHEAD	16	/* kbytes (includes current page) */
++#define VM_MAX_READAHEAD	SZ_128K
++#define VM_MIN_READAHEAD	SZ_16K	/* includes current page */
+ 
+ int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
+ 			pgoff_t offset, unsigned long nr_to_read);
 -- 
+2.17.1
 
-- Arnaldo
