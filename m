@@ -2,198 +2,102 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=FREEMAIL_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6317DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E047C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2802921916
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB92F21928
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbeLUQoX (ORCPT
+        id S2389239AbeLUQpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:44:23 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42116 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeLUQoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:44:22 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y20so5163027edw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:44:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bV0KAnk3tQchKK12t/V41YVSjxMoTHWPpGkNXrDUEIk=;
-        b=MxJZ00FpZkm2dtiQaF5HAejDTh7J1fx+5aczQjmsdZrjqMIBGme0eZaOYwiQYQBrvZ
-         CZTYoqd0vsWdZ+x1JFpeBsOK1Ay/1wQzACn8d+f+ulgsXVO+bMV0UvjlHZvU4X0SQCke
-         Ab6fEKyTkmYorHdeVdA8m4jHNc/u97bwaSFdv7L4SiSdT7vw13yyK4BdLa5/c5MQQea/
-         4RObJ4jKQ0+iFvSGcOl7+NV8QfqvSz/0QUOcpGn7OK1kOdbeOVkaso1sqZKtK+Uhdg5a
-         7D3p8eMsyCFxz9tI+OVGrpID3YVKgxhpAjE1NCYvmo9zVBEilR5QP3EEdo/1oDETdUax
-         2ePw==
-X-Gm-Message-State: AA+aEWZkK0a0Ho2Ka42lzQc6H+C6ynDnpEZFoNHVoer/hJ3fTzUBqjY1
-        tMlL5yuthLu4yofxRKIX0EJ/5OUhvUc=
-X-Google-Smtp-Source: AFSGD/Uf+Txi3nkQw0CJamXslqA/Rc+WcMJSEXZT5I0KI3IRNVx94yaYPWpvqNMKv4JT2t247kpaBA==
-X-Received: by 2002:a17:906:6011:: with SMTP id o17-v6mr2553149ejj.237.1545410659933;
-        Fri, 21 Dec 2018 08:44:19 -0800 (PST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id j4sm3138649edh.69.2018.12.21.08.44.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 08:44:19 -0800 (PST)
-Received: by mail-wm1-f43.google.com with SMTP id m22so6355728wml.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 08:44:19 -0800 (PST)
-X-Received: by 2002:a1c:2382:: with SMTP id j124mr3483733wmj.14.1545410659115;
- Fri, 21 Dec 2018 08:44:19 -0800 (PST)
+        Fri, 21 Dec 2018 11:45:42 -0500
+Received: from mout.gmx.net ([212.227.15.15]:44687 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeLUQpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 11:45:42 -0500
+Received: from macchiato.fritz.box ([84.118.159.3]) by mail.gmx.com (mrgmx003
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MQQzk-1gxaBL1FoS-00TmfP; Fri, 21
+ Dec 2018 17:45:15 +0100
+From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
+To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>
+Cc:     Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>
+Subject: [PATCH v2 1/1] arm64: dts: marvell: armada-ap806: reserve PSCI area
+Date:   Fri, 21 Dec 2018 17:45:03 +0100
+Message-Id: <20181221164503.5128-1-xypron.glpk@gmx.de>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181221152110.17982-1-codekipper@gmail.com> <20181221152110.17982-2-codekipper@gmail.com>
-In-Reply-To: <20181221152110.17982-2-codekipper@gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 22 Dec 2018 00:44:07 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
-Message-ID: <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap settings
-To:     Code Kipper <codekipper@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:NTsIIujFJRNYukWdFSnzEwLKoB+tAHo8mjNhGy1vmiPMhNrt9yB
+ 0RV2/cbI8AFWbZeEw/cR3Tx5fgzAtQK/oDQNowpRvsGqJ+90JoEpmTcruX7R8Vhtpy6n6oj
+ U3sGGP8Ll9FsIcAVT1NSa0ZdMGsX7M/SS5wNKcXwJYRYn5QwhRCR6bgwpjwQxJAjel9soWQ
+ GiFCH9CRO8Gjejs7vAMJw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PVgJ3hldQEA=:+XLn2eHOpxnvM1urPXFi16
+ Rp3g3T1TN/jEjhE43tMT0huQ7SSuXzJX51aEiNOE9ssqu6FFD9Mi/oKQAFNhtuFybCb1cstVD
+ 6D6i2gcWmp/n9flRpl5ZEUqJwg7CHRNVUXtAsM1chOGy3IUATcvTzTIl2YOSOyCroPewvnOHZ
+ uanUTICmSSeGExkJ4wYtL1VOwoRCWGIaSRxO6EhDTOMOj878nawlgZVzj7vqSgX2qvghywByX
+ +w6JkJxpXstkWQGDR8SUAl+9pZPNnxR9Dupch3lSyRp7txbrTa0EGuWEsB95tWdyXf7kp0VAy
+ Rxof1wl8mjaW+gR1PonHHmTHWVig19/ePUfIBDKBLVnJCOafeVMBmofMdSQOK/PLm528y5ZUP
+ pHuKYnuAuVDV8VGxtkq9AVNoV3wESFxDf0mSpxMH9F7OpqihyxZZoUH0FMHlThyk424Ri4WVL
+ 4o0FbK+xKsn1IXmCSoh2e9ZkxH5R8baTF9ANbGlFoJ+GGZWi1SYNs8I+baXuxkI6f3gjEg4bN
+ JvafrbF6EnAArUEWGiRUFFPVIvq+MTWkalmRyOiRPqAAhZZEWvXetPLr3poj2s63usjW4yMt0
+ ssAuT7YjHaP3E2kT0HvaUMd+J1s3e2XtUhwHCzF9ZFBHu54n7xV/jJPT8P7Cyg/ZMV3DSQa7p
+ hrfdKm/88dEzQ4Ijj8UwlDQcj11fH1hf2A/fQS3hEyA/XViiyjKj+0oJnx56iiTI1U9SUiB+/
+ PPSz4MSoek8uZ7unzg++ehoRuKmfFbyqBaEcAt4Sl8kZX+OLnwDctBBt/So3nvSumgamQg9Ge
+ 6CU89qDxA0X7k+b7W3zxAUXp7Mq8N4i2/Xo8snXdTVjzjVqFo7vxGjnor5Amsyqt0zyD4kssh
+ bIiwUnPdKwdW0jz7PIDuZohnn2H/DHOx8rEFrq6M09i+NJPirWN1W9AnwiQpSi
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 11:21 PM <codekipper@gmail.com> wrote:
->
-> From: Marcus Cooper <codekipper@gmail.com>
->
-> Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
-> to reflect this.
->
-> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> ---
->  sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
->  1 file changed, 9 insertions(+), 20 deletions(-)
->
-> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> index d5ec1a20499d..64d073cb2aee 100644
-> --- a/sound/soc/sunxi/sun4i-i2s.c
-> +++ b/sound/soc/sunxi/sun4i-i2s.c
-> @@ -548,9 +548,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
->  static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
->  {
->         /* Flush RX FIFO */
-> +       regcache_cache_bypass(i2s->regmap, true);
->         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
->                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
->                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
-> +       regcache_cache_bypass(i2s->regmap, false);
+The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
+attempt to access it from Linux leads to an immediate crash.
 
-IIRC the flush cache bit is self-clearing. So you likely want to mark
-this register as volatile. If it is marked as volatile, then all access
-to that register bypasses the cache, so the regcache_cache_bypass calls
-are unneeded.
+So let's make the same memory reservation as the vendor kernel.
 
-However, looking at the code, the write would seem to be ignored if the
-regmap is in the cache_only state. We only set this when the bus clock
-is disabled. Under such a condition, bypassing the cache and forcing a
-write would be unwise, as the system either drops the write, or stalls
-altogether.
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+---
+v2
+	Move the change from armada-8040-mcbin.dts to armada-ap806.dtsi.
+	I only have a MACCHIATObin for testing but
+	https://github.com/MarvellEmbeddedProcessors/linux-marvell
+	has the reservation in that file.
+---
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
->
->         /* Clear RX counter */
->         regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
-> @@ -569,9 +571,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
->  static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
->  {
->         /* Flush TX FIFO */
-> +       regcache_cache_bypass(i2s->regmap, true);
->         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
->                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
->                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
-> +       regcache_cache_bypass(i2s->regmap, false);
->
->         /* Clear TX counter */
->         regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
-> @@ -703,13 +707,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
->
->  static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
->  {
-> -       switch (reg) {
-> -       case SUN4I_I2S_FIFO_TX_REG:
-> -               return false;
-> -
-> -       default:
-> -               return true;
-> -       }
-> +       return true;
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+index 7d94c1fa592a..f8dafef83db0 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+@@ -28,6 +28,17 @@
+ 		method = "smc";
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		psci-area@4000000 {
++			reg = <0x0 0x4000000 0x0 0x200000>;
++			no-map;
++		};
++	};
++
+ 	ap806 {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+-- 
+2.19.2
 
-I don't understand why this is relevant. Do you need to read back from the TX
-FIFO?
-
-If so, just drop the call-back altogether. If no callback is provided and no
-rd_table is provided either, it defaults to all registers under max_register
-(if max_register < 0) are readable.
-
-However this seems like it deserves to be a separate patch (where you explain
-in the commit log why it's needed).
-
-Regards
-ChenYu
-
->  }
->
->  static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
-> @@ -728,6 +726,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->  {
->         switch (reg) {
->         case SUN4I_I2S_FIFO_RX_REG:
-> +       case SUN4I_I2S_FIFO_TX_REG:
-> +       case SUN4I_I2S_FIFO_STA_REG:
->         case SUN4I_I2S_INT_STA_REG:
->         case SUN4I_I2S_RX_CNT_REG:
->         case SUN4I_I2S_TX_CNT_REG:
-> @@ -738,23 +738,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->         }
->  }
->
-> -static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
-> -{
-> -       switch (reg) {
-> -       case SUN8I_I2S_FIFO_TX_REG:
-> -               return false;
-> -
-> -       default:
-> -               return true;
-> -       }
-> -}
-> -
->  static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->  {
->         if (reg == SUN8I_I2S_INT_STA_REG)
->                 return true;
->         if (reg == SUN8I_I2S_FIFO_TX_REG)
-> -               return false;
-> +               return true;
->
->         return sun4i_i2s_volatile_reg(dev, reg);
->  }
-> @@ -809,7 +798,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
->         .reg_defaults   = sun8i_i2s_reg_defaults,
->         .num_reg_defaults       = ARRAY_SIZE(sun8i_i2s_reg_defaults),
->         .writeable_reg  = sun4i_i2s_wr_reg,
-> -       .readable_reg   = sun8i_i2s_rd_reg,
-> +       .readable_reg   = sun4i_i2s_rd_reg,
->         .volatile_reg   = sun8i_i2s_volatile_reg,
->  };
->
-> --
-> 2.20.1
->
