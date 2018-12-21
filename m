@@ -2,92 +2,79 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A814FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4D2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8234121909
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF28C218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:15:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5I2IPL2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389443AbeLUKNt (ORCPT
+        id S1732064AbeLUKPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:13:49 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:28225 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731874AbeLUKNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:13:49 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 5CD3513F8BA;
-        Fri, 21 Dec 2018 11:13:18 +0100 (CET)
-To:     Kishon Vijay Abraham <kishon@ti.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Yaniv Gardi <ygardi@codeaurora.org>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Matt Wagantall <mattw@codeaurora.org>,
-        Mitchel Humpherys <mitchelh@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v1] phy: qcom-ufs: Use iopoll.h readl_poll_timeout macro
-Message-ID: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
-Date:   Fri, 21 Dec 2018 11:13:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 21 Dec 2018 05:15:03 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37508 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731021AbeLUKPD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:15:03 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t18-v6so4231864ljd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DGstlgzAhYekvSI+PJ9By92VAGAoLLwYkDeZkhyu6X0=;
+        b=c5I2IPL2v2/au8jFT5du0k+RJP1kCtptQ6y4dH+1/Bit8xmzEJc4/12YMmnPUnpUh2
+         ojVRNIlnxl/nKp7jqAplsaizrmh3z38cOghW302OAWFagOg4SG8pZ9J5t5RpWCJlYRsc
+         8wDphWPt32yfcmnPlelX7NX9Mw+fGekaPCElM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DGstlgzAhYekvSI+PJ9By92VAGAoLLwYkDeZkhyu6X0=;
+        b=ejl3W4cKYXRi71vJvuCpArWPxdwkSLVt4LLO962tVg8Nz67rNuGF1s2DmfjrHw+0zb
+         +EZP+QOiKFkwnTH+XZkfWBu1Q7IgXsiPkM+CFQOCvCFgs9EfYc8aSec2FbHutV9qR6X5
+         pPPc/3Xo6M8/UN2+BgYaokfKyztGxF1HHJt2dLYUQbBx4Tp8X6bGIdU9CCApZSjAC7yF
+         VzKNYHbLMttRM9QESLvT8ciFaoQh2AbJ2M+5IBKIwDuF348QJ7l/gRJ9Sh61VKhUUmfu
+         I4ERDbKUKVGQJnklfnurLlMGTBiYYuCqyIrlctHlm2Y1BZ/JPC/rI8GZS31jpQ28S0ql
+         XAnQ==
+X-Gm-Message-State: AJcUukd/SoC5rXe16t9D4j5+fNgYFZeRst2YJKsDWN8rP/h4XO2UC3UT
+        UVISCwfTiSPjVghaW+IPE/QvQ5GetHFBd6uBReKGxA==
+X-Google-Smtp-Source: ALg8bN7AopW4FfqmbqbcDvGxfNYRDMgbPHW18qr/+SeYk+5GjNXRgJbQgLxxSX/kfbkrDMjq5hpbL14VpZIRL4d2eK8=
+X-Received: by 2002:a2e:9e16:: with SMTP id e22-v6mr1190314ljk.4.1545387301141;
+ Fri, 21 Dec 2018 02:15:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181212215305.3852170-1-taoren@fb.com>
+In-Reply-To: <20181212215305.3852170-1-taoren@fb.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Dec 2018 11:14:48 +0100
+Message-ID: <CACRpkdZr7zX2cvk-T93Ahj3Q2cE7-ey+T4Kr0n_==jae3KGr0Q@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aspeed: remove duplicated statement
+To:     Tao Ren <taoren@fb.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The private copy of readl_poll_timeout is no longer needed.
-Use the implementation in iopoll.h instead.
+On Wed, Dec 12, 2018 at 10:53 PM Tao Ren <taoren@fb.com> wrote:
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- drivers/phy/qualcomm/phy-qcom-ufs-i.h | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+> Remove duplicated assignment statement from aspeed_gpio_probe() function.
+>
+> Signed-off-by: Tao Ren <taoren@fb.com>
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-index 681644e43248..f798fb64de94 100644
---- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-+++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-@@ -23,24 +23,7 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/delay.h>
--
--#define readl_poll_timeout(addr, val, cond, sleep_us, timeout_us) \
--({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
--	might_sleep_if(timeout_us); \
--	for (;;) { \
--		(val) = readl(addr); \
--		if (cond) \
--			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
--			(val) = readl(addr); \
--			break; \
--		} \
--		if (sleep_us) \
--			usleep_range(DIV_ROUND_UP(sleep_us, 4), sleep_us); \
--	} \
--	(cond) ? 0 : -ETIMEDOUT; \
--})
-+#include <linux/iopoll.h>
- 
- #define UFS_QCOM_PHY_CAL_ENTRY(reg, val)	\
- 	{				\
--- 
-2.17.1
+Patch applied with Joel's ACK.
+
+Yours,
+Linus Walleij
