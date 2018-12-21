@@ -2,167 +2,345 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0BDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894AFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BA321905
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346DE2173C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 03:51:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gY9pc8Nr"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MJ+ympuq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390951AbeLUDnz (ORCPT
+        id S2389120AbeLUDvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 22:43:55 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41509 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390930AbeLUDnx (ORCPT
+        Thu, 20 Dec 2018 22:51:21 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:41916 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388989AbeLUDvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 22:43:53 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u6so1842521plm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:43:52 -0800 (PST)
+        Thu, 20 Dec 2018 22:51:21 -0500
+Received: by mail-yb1-f193.google.com with SMTP id e124so1586172ybb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:51:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9mhHGO13bVohChjIAZJCbUoJwXKO5hCdLnoJYxQkBt4=;
-        b=gY9pc8NrEY2ez0EwC3oTovmvZl45qh9Bow/av7Hhbdxi1AvwxCcrihQAJfVZ8hARx9
-         n1MKK1yF7HJw96O35uzWli9Q4yJYD3ketoDhIEaghfMUDNj0pdVc0dmrUzqEF3eoFd5Y
-         NgpMN7FgLnUrakaWna9Mn52q56HUoB5mBudEY8C0M3PV8e9F3CMNE1aUKEj9G42A3t03
-         Jps0tS8DZfcH4cBoqghjPk1XrtUU6JTh6a/yg3pfUSKh0JOAOFJxAncQnVwLW7s7K1bw
-         dkOb4oWfBaIkbKb9XVj5TYUQoH8peTRaXh166kt5JQeH61LG0dOKW0QDAXfkpWvKieye
-         OGJA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=VcOlkMUhw8kXIfqcy8OogdgXsgC7ccy5T4AjrxiTixw=;
+        b=MJ+ympuqgwFYqKZ7Lon8ZWblglA/ZYP2nG67bkGbV4G0MT734+FSiKyrrUSP0z09NA
+         bKHdDaUtXYASrY4wlYXUA+2pEobUsXegaP1vXzlL0lVVsf+VXvQ1NPG6rWmNW8pIlO9P
+         jLf60tzaRL+c3kTD2+VdrfdBzKdQyIFg/7BoE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9mhHGO13bVohChjIAZJCbUoJwXKO5hCdLnoJYxQkBt4=;
-        b=smmGq3IxJTcI/YufR0j2gk/4Xc8xm08T8dm5hxZB/gCoN0qazqbkaUwAPnKK2AjGSn
-         quqgXCDvq6iXOgQ8UVGDEqXfe3Fknnh8jwjoRlC1AUFLIf6yaf+0+XfurCZq+nbRClRH
-         oDA2CyJN2+h6awVuclgot4X2fshbuhS1kwVfnUNQl8klr7DTYiQAV7CAzdJ+vQL2ji/6
-         YMbna8UfKNy7NI64RCOJVeUeUcXysoU0Jd1q7xxiGYQj9N+D0p9HRbEZvesclK8A9vf7
-         2I6TwBtHazZvzLc8rmHMZ2uSfxy5uLwd9d6zO3m2ZABVPiqYL+QoNt721JjJzOqPlqxA
-         Y/1A==
-X-Gm-Message-State: AJcUukfrzMyHYm8cWOUiPW/2hT2DStESozfWwYYPWFbQOMMuPElOE0UE
-        2lHv25imjDqA222Ot3TonalMJH4h
-X-Google-Smtp-Source: ALg8bN7KIcJ4277OOXDG68Hvw1rPa4aghzJR88ltHfVhc4SJTCGx4q7CTONkEP4ReWtHNmj1RujUMQ==
-X-Received: by 2002:a17:902:145:: with SMTP id 63mr899003plb.256.1545363831247;
-        Thu, 20 Dec 2018 19:43:51 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q199sm39749695pfc.97.2018.12.20.19.43.49
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=VcOlkMUhw8kXIfqcy8OogdgXsgC7ccy5T4AjrxiTixw=;
+        b=Guvi6PR9aX5627jW8ndP9ydLaY8HoN+FOGho36J14mQfLAZcar3e2X1N/cU890Nnr+
+         3VK7m918zln0zpXM5MiY/QR6OD69Cz+bmIj9dIpUAvkvJjlaIVU7hTOz1Q5l5V8W2K77
+         vGaBef5XmDcpRciCB3j7f40p4R9dGU/BsRE8vHtFGzfP3mxhw5Z/adqNGfrVx4Z1Dstq
+         mKx39mzbFy03f779YR9so+/d7hlHGNoOCOQJK7b49hMMQG0hrYBFz00ZLAJg5SCZQFj2
+         BkmdaH/e1mGYHZ0P5Bt41cWn/7HBO5YEnKpmdgBtKMiargNkJkUAiQTNdvVS1IzTMOb0
+         dLLA==
+X-Gm-Message-State: AJcUukcTBrpa5nzlkyZ9vIOqEx0uABCLLnUMYRQZD5kuoQ/7LaC7rPxz
+        wgW2CeXnong8whsELWoSnIQyt1vt25OZ7g==
+X-Google-Smtp-Source: AFSGD/VrlfayPRIPvM2UHtmSZkowNkwfUc8Hn2oOO9qwiiotoNBjpx8MA/MUWdPSHL5TfXsEOhfkQg==
+X-Received: by 2002:a25:9bc9:: with SMTP id w9mr848869ybo.13.1545364279895;
+        Thu, 20 Dec 2018 19:51:19 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 131sm8108956ywn.88.2018.12.20.19.51.17
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 19:43:50 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     cphealy@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
-Subject: [PATCH v3 2/2] perf tests: Add a test for the ARM 32-bit [vectors] page
-Date:   Thu, 20 Dec 2018 19:43:37 -0800
-Message-Id: <20181221034337.26663-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181221034337.26663-1-f.fainelli@gmail.com>
-References: <20181221034337.26663-1-f.fainelli@gmail.com>
+        Thu, 20 Dec 2018 19:51:18 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id r11so1579960ybp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:51:17 -0800 (PST)
+X-Received: by 2002:a25:910f:: with SMTP id v15mr825769ybl.285.1545364276711;
+ Thu, 20 Dec 2018 19:51:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20181123215326.14274-1-helen.koike@collabora.com>
+ <20181127133418.GT9144@intel.com> <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
+ <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+ <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com> <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
+ <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
+In-Reply-To: <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 21 Dec 2018 12:51:05 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Aj=UZXqB+M=5+7N8RvT=aoSombHLf203yb7XM-UQhoQQ@mail.gmail.com>
+Message-ID: <CAAFQd5Aj=UZXqB+M=5+7N8RvT=aoSombHLf203yb7XM-UQhoQQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>,
+        dnicoara@chromium.org, Sean Paul <seanpaul@google.com>,
+        dcastagna@chromium.org
+Cc:     helen.koike@collabora.com,
+        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf on ARM requires CONFIG_KUSER_HELPERS to be turned on to allow some
-independance with respect to the ARM CPU being used. Add a test which
-tries to locate the [vectors] page, created when CONFIG_KUSER_HELPERS is
-turned on to help asses the system's health.
+On Thu, Dec 20, 2018 at 7:47 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> On Thu, Dec 20, 2018 at 10:07 AM Tomasz Figa <tfiga@chromium.org> wrote:
+> >
+> > Hi Helen,
+> >
+> > On Fri, Dec 14, 2018 at 10:35 AM Helen Koike <helen.koike@collabora.com=
+> wrote:
+> > >
+> > > Hi Tomasz,
+> > >
+> > > On 12/13/18 2:02 AM, Tomasz Figa wrote:
+> > > > On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabora.c=
+om> wrote:
+> > > >>
+> > > >> Hi Ville
+> > > >>
+> > > >> On 11/27/18 11:34 AM, Ville Syrj=C3=A4l=C3=A4 wrote:
+> > > >>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
+> > > >>>> Allow userspace to identify if the driver supports async update.
+> > > >>>
+> > > >>> And what exactly is an "async update"?
+> > > >>
+> > > >> I agree we are lacking docs on this, I'll send in the next version=
+ as
+> > > >> soon as we agree on a name (please see below).
+> > > >>
+> > > >> For reference:
+> > > >> https://lists.freedesktop.org/archives/dri-devel/2017-April/138586=
+.html
+> > > >>
+> > > >>>
+> > > >>> I keep asking people to come up with the a better name for this, =
+and to
+> > > >>> document what it actually means. Recently I've been think we shou=
+ld
+> > > >>> maybe just adopt the vulkan terminology (immediate/fifo/mailbox) =
+to
+> > > >>> avoid introducing yet another set of names for the same thing. We=
+'d
+> > > >>> still want to document things properly though.
+> > > >>
+> > > >> Another name it was suggested was "atomic amend", this feature bas=
+ically
+> > > >> allows userspace to complement an update previously sent (i.e. its=
+ in
+> > > >> the queue and wasn't commited yet), it allows adding a plane updat=
+e to
+> > > >> the next commit. So what do you think in renaming it to "atomic am=
+end"?
+> > > >
+> > > > Note that it doesn't seem to be what the code currently is doing. F=
+or
+> > > > example, for cursor updates, it doesn't seem to be working on the
+> > > > currently pending commit, but just directly issues an atomic async
+> > > > update call to the planes. The code actually seems to fall back to =
+a
+> > > > normal sync commit, if there is an already pending commit touching =
+the
+> > > > same plane or including a modeset.
+> > >
+> > > It should fail as discussed at:
+> > > https://patchwork.freedesktop.org/patch/243088/
+> > >
+> > > There was the following code inside the drm_atomic_helper_async_check=
+()
+> > > in the previous patch which would fallback to a normal commit if ther=
+e
+> > > isn't any pending commit to amend:
+> > >
+> > > +       if (!old_plane_state->commit)
+> > > +               return -EINVAL;
+> > >
+> > > In the v2 of the patch https://patchwork.freedesktop.org/patch/263712=
+/
+> > > this got removed, but which means that async update will be enabled
+> > > anyway. So the following code is wrong:
+> > >
+> > > -       if (state->legacy_cursor_update)
+> > > +       if (state->async_update || state->legacy_cursor_update)
+> > >                 state->async_update =3D !drm_atomic_helper_async_chec=
+k(dev, state);
+> > >
+> > > Does it make sense? If yes I'll fix this in the next version of the
+> > > Atomic IOCTL patch (and also those two patches should be in the same
+> > > series, I'll send them together next time).
+> > >
+> > > Thanks for pointing this out.
+> > >
+> > > Please let me know if you still don't agree on the name "atomic amend=
+",
+> > > or if I am missing something.
+> >
+> > I'll defer it to the DRM maintainers. From Chrome OS perspective, we
+> > need a way to commit the cursor plane asynchronously from other
+> > commits any time the cursor changes its position or framebuffer. As
+> > long as the new API allows that and the maintainers are fine with it,
+> > I think I should be okay with it too.
+>
+> If this is just about the cursor, why is the current legacy cursor
+> ioctl not good enough? It's 2 ioctls instead of one, but I'm not sure
+> if we want to support having a normal atomic commit and a cursor
+> update in the same atomic ioctl, coming up with reasonable semantics
+> for that will be complicated.
+>
+> Pointer to code that uses this would be better ofc.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- tools/perf/arch/arm/tests/Build          |  1 +
- tools/perf/arch/arm/tests/arch-tests.c   |  4 ++++
- tools/perf/arch/arm/tests/vectors-page.c | 24 ++++++++++++++++++++++++
- tools/perf/tests/tests.h                 |  5 +++++
- 4 files changed, 34 insertions(+)
- create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+Sorry, let me clarify that I was mostly referring to the respective
+kernel functionality here, not the userspace extension.
 
-diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
-index 883c57ff0c08..d9ae2733f9cc 100644
---- a/tools/perf/arch/arm/tests/Build
-+++ b/tools/perf/arch/arm/tests/Build
-@@ -1,4 +1,5 @@
- libperf-y += regs_load.o
- libperf-y += dwarf-unwind.o
-+libperf-y += vectors-page.o
- 
- libperf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm/tests/arch-tests.c b/tools/perf/arch/arm/tests/arch-tests.c
-index 5b1543c98022..6848101a855f 100644
---- a/tools/perf/arch/arm/tests/arch-tests.c
-+++ b/tools/perf/arch/arm/tests/arch-tests.c
-@@ -10,6 +10,10 @@ struct test arch_tests[] = {
- 		.func = test__dwarf_unwind,
- 	},
- #endif
-+	{
-+		.desc = "Vectors page",
-+		.func = test__vectors_page,
-+	},
- 	{
- 		.func = NULL,
- 	},
-diff --git a/tools/perf/arch/arm/tests/vectors-page.c b/tools/perf/arch/arm/tests/vectors-page.c
-new file mode 100644
-index 000000000000..7ffdd79971c8
---- /dev/null
-+++ b/tools/perf/arch/arm/tests/vectors-page.c
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <stdio.h>
-+#include <string.h>
-+#include <linux/compiler.h>
-+
-+#include "debug.h"
-+#include "tests/tests.h"
-+#include "util/find-map.c"
-+
-+#define VECTORS__MAP_NAME "[vectors]"
-+
-+int test__vectors_page(struct test *test __maybe_unused,
-+		       int subtest __maybe_unused)
-+{
-+	void *start, *end;
-+
-+	if (find_map(&start, &end, VECTORS__MAP_NAME)) {
-+		pr_err("%s not found, is CONFIG_KUSER_HELPERS enabled?\n",
-+		       VECTORS__MAP_NAME);
-+		return TEST_FAIL;
-+	}
-+
-+	return TEST_OK;
-+}
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index b82f55fcc294..399f18ca71a3 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -119,4 +119,9 @@ int test__arch_unwind_sample(struct perf_sample *sample,
- 			     struct thread *thread);
- #endif
- #endif
-+
-+#if defined(__arm__)
-+int test__vectors_page(struct test *test, int subtest);
-+#endif
-+
- #endif /* TESTS_H */
--- 
-2.17.1
+As far as I know, Chromium still uses the legacy cursor ioctls and we
+have our drivers implement them directly, bypassing the atomic commit
+mechanism. However, it sounds like this async commit could let us
+remove the custom implementations from the drivers and have a common
+helper for it, which would be a good step forward.
 
+Daniel, Daniele, Sean, Stephane, could you clarify what are our needs
+for this userspace interface?
+
+> -Daniel
+>
+> > Best regards,
+> > Tomasz
+> >
+> > >
+> > > Helen
+> > >
+> > > >
+> > > > Best regards,
+> > > > Tomasz
+> > > >
+> > > >> Or do you suggest another name? I am not familiar with vulkan term=
+inology.
+> > > >>
+> > > >>
+> > > >> Thanks
+> > > >> Helen
+> > > >>
+> > > >>>
+> > > >>>>
+> > > >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.=
+com>
+> > > >>>> [prepared for upstream]
+> > > >>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> > > >>>>
+> > > >>>> ---
+> > > >>>> Hi,
+> > > >>>>
+> > > >>>> This patch introduces the ASYNC_UPDATE cap, which originated fro=
+m the
+> > > >>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user=
+ to
+> > > >>>> figure that async_update exists.
+> > > >>>>
+> > > >>>> This was tested using a small program that exercises the uAPI fo=
+r easy
+> > > >>>> sanity testing. The program was created by Alexandros and modifi=
+ed by
+> > > >>>> Enric to test the capability flag [2].
+> > > >>>>
+> > > >>>> The test worked on a rockchip Ficus v1.1 board on top of mainlin=
+e plus
+> > > >>>> the patch to update cursors asynchronously through atomic plus t=
+he patch
+> > > >>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip drive=
+r.
+> > > >>>>
+> > > >>>> To test, just build the program and use the --atomic flag to use=
+ the cursor
+> > > >>>> plane with the ATOMIC_AMEND flag. E.g.
+> > > >>>>
+> > > >>>>   drm_cursor --atomic
+> > > >>>>
+> > > >>>> [1] https://patchwork.freedesktop.org/patch/243088/
+> > > >>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/as=
+ync-capability
+> > > >>>>
+> > > >>>> Thanks
+> > > >>>> Helen
+> > > >>>>
+> > > >>>>
+> > > >>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
+> > > >>>>  include/uapi/drm/drm.h      |  1 +
+> > > >>>>  2 files changed, 12 insertions(+)
+> > > >>>>
+> > > >>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_i=
+octl.c
+> > > >>>> index 94bd872d56c4..4a7e0f874171 100644
+> > > >>>> --- a/drivers/gpu/drm/drm_ioctl.c
+> > > >>>> +++ b/drivers/gpu/drm/drm_ioctl.c
+> > > >>>> @@ -31,6 +31,7 @@
+> > > >>>>  #include <drm/drm_ioctl.h>
+> > > >>>>  #include <drm/drmP.h>
+> > > >>>>  #include <drm/drm_auth.h>
+> > > >>>> +#include <drm/drm_modeset_helper_vtables.h>
+> > > >>>>  #include "drm_legacy.h"
+> > > >>>>  #include "drm_internal.h"
+> > > >>>>  #include "drm_crtc_internal.h"
+> > > >>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev=
+, void *data, struct drm_file *file_
+> > > >>>>  {
+> > > >>>>      struct drm_get_cap *req =3D data;
+> > > >>>>      struct drm_crtc *crtc;
+> > > >>>> +    struct drm_plane *plane;
+> > > >>>>
+> > > >>>>      req->value =3D 0;
+> > > >>>>
+> > > >>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *de=
+v, void *data, struct drm_file *file_
+> > > >>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
+> > > >>>>              req->value =3D 1;
+> > > >>>>              break;
+> > > >>>> +    case DRM_CAP_ASYNC_UPDATE:
+> > > >>>> +            req->value =3D 1;
+> > > >>>> +            list_for_each_entry(plane, &dev->mode_config.plane_=
+list, head) {
+> > > >>>> +                    if (!plane->helper_private->atomic_async_up=
+date) {
+> > > >>>> +                            req->value =3D 0;
+> > > >>>> +                            break;
+> > > >>>> +                    }
+> > > >>>> +            }
+> > > >>>> +            break;
+> > > >>>>      default:
+> > > >>>>              return -EINVAL;
+> > > >>>>      }
+> > > >>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+> > > >>>> index 300f336633f2..ff01540cbb1d 100644
+> > > >>>> --- a/include/uapi/drm/drm.h
+> > > >>>> +++ b/include/uapi/drm/drm.h
+> > > >>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
+> > > >>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
+> > > >>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
+> > > >>>>  #define DRM_CAP_SYNCOBJ             0x13
+> > > >>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
+> > > >>>>
+> > > >>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
+> > > >>>>  struct drm_get_cap {
+> > > >>>> --
+> > > >>>> 2.19.1
+> > > >>>>
+> > > >>>> _______________________________________________
+> > > >>>> dri-devel mailing list
+> > > >>>> dri-devel@lists.freedesktop.org
+> > > >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > > >>>
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
