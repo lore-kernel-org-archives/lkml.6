@@ -2,121 +2,115 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A389C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF78BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7CFB21939
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D6621903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:55:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qMF2eoYC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391119AbeLURwz (ORCPT
+        id S2390901AbeLURzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:52:55 -0500
-Received: from mga06.intel.com ([134.134.136.31]:53777 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731150AbeLURwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 12:52:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 09:52:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
-   d="scan'208";a="100566650"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga007.jf.intel.com with ESMTP; 21 Dec 2018 09:52:53 -0800
-Received: from orsmsx159.amr.corp.intel.com (10.22.240.24) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 21 Dec 2018 09:52:52 -0800
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.59]) by
- ORSMSX159.amr.corp.intel.com ([169.254.11.100]) with mapi id 14.03.0415.000;
- Fri, 21 Dec 2018 09:52:52 -0800
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "bhsharma@redhat.com" <bhsharma@redhat.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
-        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Topic: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Index: AQHUiJNT1thRYrJKskifWLlncDcXfqWDUdzAgACK0QD//3p94IAAnSqA//97RiCABqNEgP//hjYw
-Date:   Fri, 21 Dec 2018 17:52:52 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F48606B36@ORSMSX114.amr.corp.intel.com>
-References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
- <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
- <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
- <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
- <FFF73D592F13FD46B8700F0A279B802F486046A9@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu99VdPero0yrXiaByURyp1idYE948Qi4j1eqY0ENCrF5A@mail.gmail.com>
-In-Reply-To: <CAKv+Gu99VdPero0yrXiaByURyp1idYE948Qi4j1eqY0ENCrF5A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWEwMDJlZGMtZTQ2OC00Nzk1LWIwNzItZjU2MzQ0MzBjN2Q0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR3BEQysxNUJST1g2V3ZLblBKcUVPZm9pdFl0SURmVXpYdDF3bFUwZUdRT0liaUJxUFhRTmx0OHFid3A2Q2V0VCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 21 Dec 2018 12:55:21 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34506 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731626AbeLURzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 12:55:21 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j10so2834217pga.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 09:55:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wZtEj0971+V2tIVyM/LvVmpA3o38XeK4CDzb54p+S6g=;
+        b=qMF2eoYCS2DefMCPPq/yjVvbBQqG6Uv6QB+EDPBpsbq3FGw/C0f3qkeogMfOI3Ive0
+         QquC6lkxUXa9pHuUDP5BqQLtFXVM2byBLpGDFU5ScbaexMfwjz3i0BjR9xd8NLgg7ku9
+         mnzojkK92uYQQRgnMbllg/BeUnStFOna/Su8BOtM2jFXibGolCYwLkB60jkLJDO7jm9e
+         LJWVK58cStxQJHPu5lYqOjRmUQtn7qDfx1EKSnvFqtublv3/Ovn9hW5WwFvSfcR2AXfp
+         p9INThhB1USaCdUD4LLlR6pJ4fmxema2VpEuCuCwffy7+pl72wHBy9hFUeHNShYYCBYO
+         8kZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wZtEj0971+V2tIVyM/LvVmpA3o38XeK4CDzb54p+S6g=;
+        b=tJ3NwvXyUSCqb00Xdl1RotoZWRScf2aUHJdGh4W0QoUx4nfCD1O8EQTxvdfyFbGgEB
+         /v41B+uNHcb19Lq9z7lCJAkU+Ut7tPrnhGgDq9XJ9BQW8leTEtGl6B88GoRwTsj+GmY6
+         D5oFZqanHNAVfaBZ4WDGgZtmrcpzl/VJ9jcnFl//dp0Hy/ArNmzVs8jTKTU6dV4rvmKY
+         EpgrEpQidU1zs4iQ1EKcLFxg7A0uKwn1Ss2pAGHK8tkM3E7V5qZsDKKYabu3/y6gyVp/
+         5n8Y2JaHwgJsdctp9fW9twjhKBut/7E46LF3ViYjdJ1bAhtSoup+cfdhN4WFHeLK7C2y
+         wF0Q==
+X-Gm-Message-State: AJcUukfNTrvmrZP+CZ55sq/rdyMGaeeNCZTkdcZhinR2IcfLKIz7VT7R
+        8/tM+XwuqZMYdK8Luvz0BOlVk7/XzS+szX/j4ybGbQ==
+X-Google-Smtp-Source: ALg8bN70ZOkiOMU/ta5Q4DM4NTTVUypBZ6BawXZKDxhWOrGZBVxNawDWWj/PK6JILlbFOIOynwEfCHQHpTYc16PwSUw=
+X-Received: by 2002:a63:42c1:: with SMTP id p184mr3317692pga.202.1545414919590;
+ Fri, 21 Dec 2018 09:55:19 -0800 (PST)
 MIME-Version: 1.0
+References: <20181220193856.7833-1-natechancellor@gmail.com> <20181220215727.GA29539@flashbox>
+In-Reply-To: <20181220215727.GA29539@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 21 Dec 2018 09:55:08 -0800
+Message-ID: <CAKwvOdngQgK4f+TLNKx-d=iKTCCciLCqKtHEsAUhACFyzsaN_Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / tables: Add an ifdef around amlcode and dsdt_amlcode
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ID4gRm9yIHRoZSBzaG9ydCB0ZXJtLCBjb3VsZCB3ZSBzaW1wbHkgbWFrZSB5b3VyIGNoYW5n
-ZXMgZGVwZW5kZW50IG9uDQo+ID4gPiBlZmkgIT0gb2xkX21hcD8gVGhhdCBnaXZlcyB1cyBzb21l
-IHRpbWUgdG8gZml4IHRoZSBvbGRfbWFwIGNhc2UgcHJvcGVybHkuDQo+ID4NCj4gPiBZZXMsIEkg
-dGhpbmsgd2UgY291bGQgYW5kIGl0IHNob3VsZCB3b3JrIGJ1dCBJIGhlc2l0YXRlZCB0byBwcm9w
-b3NlIGl0DQo+ID4gYmVjYXVzZSAoYXMgeW91IGFscmVhZHkgbm90ZWQpIGl0J3MgYSBzaG9ydCB0
-ZXJtIGZpeCBhbmQgbm90IHRoZSByaWdodCBmaXguDQo+ID4NCj4gDQo+IFdoYXQgaXMgdGhlIHN0
-YXR1cyBoZXJlPw0KDQpNYWtpbmcgdGhlIHVubWFwcGluZyBjb2RlIGNvbmRpdGlvbmFsIG9uICFv
-bGRfbWFwIGlzIHJlYWR5IGFuZCBJIHdpbGwgc2VuZCBpdCBvdXQuDQpJIGFtIHdvcmtpbmcgb24g
-dW5tYXBwaW5nIGJvb3Qgc2VydmljZXMgY29kZS9kYXRhIHdoZW4gb2xkX21hcCBpcyBlbmFibGVk
-IA0KYW5kIHJhbiBpbnRvIGlzc3VlcyB3aXRoIG1lbWJsb2NrIGFuZCBkaXJlY3QgbWFwcGluZyBp
-biBrZXJuZWwuIFdpbGwgcG9zdCB0aG9zZSBkZXRhaWxzIA0KaW4gYSBzZXBhcmF0ZSB0aHJlYWQu
-DQoNCj4gDQo+ID4gQWx0ZXJuYXRpdmVseSwgd2UgY291bGQgYWxzbyBldmFsdWF0ZSBpZiB3ZSBu
-ZWVkIHRvIHN1cHBvcnQgZWZpPW9sZF9tYXAgY2FzZQ0KPiBnb2luZyBmdXJ0aGVyLg0KPiA+IEkg
-dGhvdWdodCBkcm9wcGluZyBpdCB3b3VsZCBiZSBhIGJhZCBpZGVhIGJlY2F1c2UgaXQgY2hhbmdl
-cyBrZXJuZWwNCj4gPiB1c2VyIHZpc2libGUgaW50ZXJmYWNlIChiZWNhdXNlIGl0J3MgYSBrZXJu
-ZWwgY29tbWFuZCBsaW5lIGFyZ3VtZW50KSBhbmQgbmV2ZXINCj4gYnJvdWdodCBpdCB1cC4NCj4g
-PiBOb3Qgc3VyZSB3aGF0IFRob21hcywgSW5nbyBvciBMaW51cyBtaWdodCB0aGluayBhYm91dCBk
-cm9wcGluZyBhDQo+ID4ga2VybmVsIGNvbW1hbmQgbGluZSBhcmd1bWVudC4NCj4gPg0KPiANCj4g
-RHJvcHBpbmcgYSBjb21tYW5kIGxpbmUgYXJndW1lbnQgaXMgbm90IGEgcHJvYmxlbSBpbiBpdHNl
-bGYsIHVubGVzcyBhbnlvbmUgaXMNCj4gYWN0aXZlbHkgdXNpbmcgaXQgOi0pDQo+IA0KPiBBcyBm
-YXIgYXMgSSBjYW4gdGVsbCwgdGhlIFNHSSB4ODYgVVYgcGxhdGZvcm1zIHN0aWxsIHJlbHkgb24g
-dGhpcywgc28gd2UncmUgc3R1Y2sgd2l0aA0KPiBpdCBmb3IgdGhlIGZvcmVzZWVhYmxlIGZ1dHVy
-ZS4NCg0KVGhhbmtzIChhbHNvIEJvcmlzKSBmb3IgdGhlIGluZm8uIE1ha2VzIHNlbnNlIHdoeSB3
-ZSBuZWVkIGVmaT1vbGRfbWFwLg0KDQo+IA0KPiBUaGlzIG1lYW5zIHdlIG5lZWQgYSBmaXhlcyB0
-aGF0IG1ha2VzIHlvdXIgdW5tYXBwaW5nIGNvZGUgY29uZGl0aW9uYWwgb24NCj4gIW9sZF9tZW1t
-YXAuIERvIHlvdSBoYXZlIGFuIEVUQSBmb3IgdGhhdD8NCg0KU3VyZSEgSSB3aWxsIGRvIHNvbWUg
-bW9yZSB0ZXN0aW5nIGFuZCBpZiBpdCB3b3JrcyBhcyBleHBlY3RlZCwgd2lsbCBzZW5kIGl0IGJl
-Zm9yZSB0aGlzIFN1bmRheS4NCg0KUmVnYXJkcywNClNhaQ0K
+On Thu, Dec 20, 2018 at 1:57 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Thu, Dec 20, 2018 at 12:38:56PM -0700, Nathan Chancellor wrote:
+> > Clang warns:
+> >
+> > drivers/acpi/tables.c:715:14: warning: unused variable 'amlcode'
+> > [-Wunused-variable]
+> > static void *amlcode __attribute__ ((weakref("AmlCode")));
+> >              ^
+> > drivers/acpi/tables.c:716:14: warning: unused variable 'dsdt_amlcode'
+> > [-Wunused-variable]
+> > static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
+> >              ^
+> > 2 warnings generated.
+> >
+> > The only uses of these variables are hiddem behind CONFIG_ACPI_CUSTOM_DSDT
+> > so do the same thing here.
+> >
+> > Fixes: 82e4eb4e9653 ("ACPI / tables: add DSDT AmlCode new declaration name support")
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/acpi/tables.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> > index ccb90eff00e5..48eabb6c2d4f 100644
+> > --- a/drivers/acpi/tables.c
+> > +++ b/drivers/acpi/tables.c
+> > @@ -712,8 +712,10 @@ acpi_os_physical_table_override(struct acpi_table_header *existing_table,
+> >                                         table_length);
+> >  }
+> >
+> > +#ifdef CONFIG_ACPI_CUSTOM_DSDT
+> >  static void *amlcode __attribute__ ((weakref("AmlCode")));
+> >  static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
+> > +#endif
+
+Thanks for this patch Nathan.  I'm curious if rather than adding a
+second set of preprocessor guards, we could simply move the
+declaration of these 2 variables closer to their use, putting them in
+the existing preprocessor guards from 82e4eb4e9653?
+
+-- 
+Thanks,
+~Nick Desaulniers
