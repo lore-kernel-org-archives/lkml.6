@@ -3,87 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E49B2190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A4021906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390311AbeLUMIh (ORCPT
+        id S2388471AbeLUMMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:08:37 -0500
-Received: from mga03.intel.com ([134.134.136.65]:34195 "EHLO mga03.intel.com"
+        Fri, 21 Dec 2018 07:12:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58139 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390081AbeLUMII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:08:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 04:08:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,381,1539673200"; 
-   d="scan'208";a="131862478"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 04:08:06 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] perf thread-stack: Tidy thread_stack__bottom() usage
-Date:   Fri, 21 Dec 2018 14:06:14 +0200
-Message-Id: <20181221120620.9659-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181221120620.9659-1-adrian.hunter@intel.com>
-References: <20181221120620.9659-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1729043AbeLUMMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:12:09 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 103EB207AE; Fri, 21 Dec 2018 13:12:07 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B13DB2078E;
+        Fri, 21 Dec 2018 13:12:06 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     bcm-kernel-feedback-list@broadcom.com, linux-i2c@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH] i2c: bcm2835: Clear current message and count after a transaction
+Date:   Fri, 21 Dec 2018 13:11:35 +0100
+Message-Id: <20181221121135.4847-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for fixing thread stack processing for the idle task,
-tidy thread_stack__bottom() usage. Specifically, the parameter 'thread' is
-not needed.
+The driver's interrupt handler checks whether a message is currently
+being handled with the curr_msg pointer. When it is NULL, the interrupt
+is considered to be unexpected. Similarly, the i2c_start_transfer
+routine checks for the remaining number of messages to handle in
+num_msgs.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+However, these values are never cleared and always keep the message and
+number relevant to the latest transfer (which might be done already and
+the underlying message memory might have been freed).
+
+When an unexpected interrupt hits with the DONE bit set, the isr will
+then try to access the flags field of the curr_msg structure, leading
+to a fatal page fault.
+
+Fix the issue by systematically clearing curr_msg and num_msgs in the
+driver-wide device structure when a transfer is considered complete.
+
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- tools/perf/util/thread-stack.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-bcm2835.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index 115dc4b27a1b..068c7c8db4be 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -449,7 +449,7 @@ static int thread_stack__pop_cp(struct thread *thread, struct thread_stack *ts,
- 	return 1;
- }
- 
--static int thread_stack__bottom(struct thread *thread, struct thread_stack *ts,
-+static int thread_stack__bottom(struct thread_stack *ts,
- 				struct perf_sample *sample,
- 				struct addr_location *from_al,
- 				struct addr_location *to_al, u64 ref)
-@@ -474,7 +474,7 @@ static int thread_stack__bottom(struct thread *thread, struct thread_stack *ts,
- 	if (!cp)
- 		return -ENOMEM;
- 
--	return thread_stack__push_cp(thread->ts, ip, sample->time, ref, cp,
-+	return thread_stack__push_cp(ts, ip, sample->time, ref, cp,
- 				     true, false);
- }
- 
-@@ -617,8 +617,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
- 
- 	/* If the stack is empty, put the current symbol on the stack */
- 	if (!ts->cnt) {
--		err = thread_stack__bottom(thread, ts, sample, from_al, to_al,
--					   ref);
-+		err = thread_stack__bottom(ts, sample, from_al, to_al, ref);
- 		if (err)
- 			return err;
+diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
+index 44deae78913e..5486252f5f2f 100644
+--- a/drivers/i2c/busses/i2c-bcm2835.c
++++ b/drivers/i2c/busses/i2c-bcm2835.c
+@@ -298,6 +298,9 @@ static int bcm2835_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 		return -ETIMEDOUT;
  	}
+ 
++	i2c_dev->curr_msg = NULL;
++	i2c_dev->num_msgs = 0;
++
+ 	if (!i2c_dev->msg_err)
+ 		return num;
+ 
 -- 
-2.17.1
+2.20.1
 
