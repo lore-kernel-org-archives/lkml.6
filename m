@@ -2,94 +2,98 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E17DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FA4C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A94020869
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:52:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gQgLVrzS"
+	by mail.kernel.org (Postfix) with ESMTP id 0956320869
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 14:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545404092;
+	bh=wml/K4J5nP74r7L4X1Q7BI5a3B0V6HI6ZnhR5bPn9MY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=lQIH5MuixwZxbtOGcbO9LZ7YMD+INyiurh9DRAoPdCL4EIf7xkMBnh6cKuEqE/UKl
+	 Qw9EV5ntR1TrsX//xLpsMN03VfGYour/jHFTg4qWXdD63VEzipgb3a4bt8bgE29UX2
+	 s2BAWsYnz8Dr5+DdOy/Nx1s61zlN5TujTDFhRhJ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390896AbeLUOwP (ORCPT
+        id S2390919AbeLUOyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 09:52:15 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50787 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729556AbeLUOwO (ORCPT
+        Fri, 21 Dec 2018 09:54:51 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33755 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729556AbeLUOyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 09:52:14 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n190so5578613wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 06:52:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=h7oPD4QRGURIfXCPY6d4YwKeIawezyIYFatQq00CU3Y=;
-        b=gQgLVrzS6Lfd1vlXlJxE+U1SWqNktqoUn5yGuavAtvzU36/hY1Fs10VyUGgwWGqPwP
-         HIJ50NdpnPGfgqm+pKYXehBry0QlwspAk4rOp9KC47G8WhPdb1JVCeUEMxnJH+UcMqR6
-         kRfRSKMl4eEGnKp0M86ZdC8zOnvy1pz3Yavxs=
+        Fri, 21 Dec 2018 09:54:50 -0500
+Received: by mail-yw1-f66.google.com with SMTP id p65so1045183ywe.0;
+        Fri, 21 Dec 2018 06:54:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=h7oPD4QRGURIfXCPY6d4YwKeIawezyIYFatQq00CU3Y=;
-        b=XVeQRRIwHebv7B5XwaA7pHRB/+t8ktxPP8/8STQ23ZKrEOyGlg+dA0TutOrpw3Lkf/
-         WdnB8rF6NeFghVFAlfAk0vLsxxEMkYXkrYy+7jW1rFwKglquYYyeDwsoGrbgfMl5Ujjz
-         yCCau1V7HhNCANNqzrSjoe4TzWXy18pUUMMT7Bx2X9LPhArWn+ZWtJ/6GU7xdkGWE3vf
-         Wb1B5+r0TqPwGJH9l/IWt65GJWJ7rIJKi74Ttt1TqKm69+8zYvKlPo382hmDp+oug+l4
-         MDTV15zeurJ0eVRbXAj8+ijD448Ju+MvI9yUokH4Q25ebic0A5LhZ69IvloKRasj+P1m
-         3YTg==
-X-Gm-Message-State: AJcUukcxgNtHi26wxPyfA7sVQAOEJ/zlDMD1R6fmfN03tr3qN8BKHHVJ
-        GqqA1eLvEJSjCIDkssYUTUij9Q==
-X-Google-Smtp-Source: AFSGD/WOPa3kPTdjNFXtm33D9WKPYAotX/JerR+F9FpTCSsDkdUaAklWOIX1QzZH/ZNEX6/RgpN9Ew==
-X-Received: by 2002:a1c:6489:: with SMTP id y131mr3131488wmb.34.1545403932685;
-        Fri, 21 Dec 2018 06:52:12 -0800 (PST)
-Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id 200sm11661342wmw.31.2018.12.21.06.52.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 06:52:11 -0800 (PST)
-Date:   Fri, 21 Dec 2018 14:52:10 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: mc13xxx: fix a missing check of a register-read
- failure
-Message-ID: <20181221145210.GT13248@dell>
-References: <20181220211211.32608-1-kjlu@umn.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181220211211.32608-1-kjlu@umn.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GnWw34EUMHWcEqLf5GmmebOYoPKtH2U+0j1NgExUaKU=;
+        b=C/wwgs+tjgaFwRDJuD1li3++9RkBelnk7FFu4unOJ8XxHOSjsm52ghixMygfORmTvp
+         hHpvPx5hlHVVCy7+DRNTYWlCiKDfafQvalL5Hvq9uZ0HugmxW38IRmLQo2LXFrKVxIEX
+         7zBiH1qigW6y/wN9HllNe4bBpwQprMTQ0c/HJBJSCSWfzWlv+iNBmEFwt0dvFqR5j8/M
+         Vxe/icsfF3QwaBxIXBm0U0u0pAqtwYMjR+F0XrvP3Pf/iQgoevhdqGnMHCeD6WxxS2MS
+         CAruEYOr53JsV0e11KtHbA3gc9kkz8dO+10W2ifTPNph92iUG9+TPuTvzc4B62IO5WGP
+         Dtkg==
+X-Gm-Message-State: AA+aEWb849ETqqNY7y11hGlNY/X11FPMn9JyRokGX2PEF3yL9ig0B25P
+        IeeVcedP8nfUIztzd0P/1dA=
+X-Google-Smtp-Source: AFSGD/XN4KedZRhXoVbszrZqpjSqrf41FyH5qN0dMTUVpbTP6ogg1LZl5ztEZJXcuKcMvXE5tRSiMQ==
+X-Received: by 2002:a81:9184:: with SMTP id i126mr2746230ywg.371.1545404088874;
+        Fri, 21 Dec 2018 06:54:48 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.2])
+        by smtp.gmail.com with ESMTPSA id x4sm14607101ywj.80.2018.12.21.06.54.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 21 Dec 2018 06:54:48 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH] blkcg: add rcu lock to bio_clone_blkg_association()
+Date:   Fri, 21 Dec 2018 08:54:41 -0600
+Message-Id: <20181221145441.13814-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018, Kangjie Lu wrote:
+I cleaned up blkg_tryget_closest() to require rcu_read_lock() earlier.
+However, this was a subtle case too which clearly was too subtle for me.
+The idea was the src bio should be holding a ref to the blkg so rcu
+wasn't technically needed. If it doesn't hold a ref, it should be %NULL
+and the blkg->parent pointers are unused.
 
-> When mc13xxx_reg_read() fails, "old_adc0" is uninitialized and will
-> contain random value. Further execution uses "old_adc0" even when
-> mc13xxx_reg_read() fails.
-> The fix checks the return value of mc13xxx_reg_read(), and exits
-> the execution when it fails.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/mfd/mc13xxx-core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+This adds the appropriate read lock in bio_clone_blkg_association().
 
-Applied, thanks.
+Fixes: 80fd3c272c1a ("blkcg: clean up blkg_tryget_closest()")
+Reported-by: syzbot+a36a3ba92bea3b315c64@syzkaller.appspotmail.com
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+---
+ block/bio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/block/bio.c b/block/bio.c
+index c288b9057042..9194d8ad3d5e 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -2096,8 +2096,12 @@ EXPORT_SYMBOL_GPL(bio_associate_blkg);
+  */
+ void bio_clone_blkg_association(struct bio *dst, struct bio *src)
+ {
++	rcu_read_lock();
++
+ 	if (src->bi_blkg)
+ 		__bio_associate_blkg(dst, src->bi_blkg);
++
++	rcu_read_unlock();
+ }
+ EXPORT_SYMBOL_GPL(bio_clone_blkg_association);
+ #endif /* CONFIG_BLK_CGROUP */
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
