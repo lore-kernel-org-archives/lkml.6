@@ -2,118 +2,124 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE253C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2BF218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:09:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACeDVPG0"
+	by mail.kernel.org (Postfix) with ESMTP id A3EA6218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:09:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbeLUJJR (ORCPT
+        id S1731119AbeLUJJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:09:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37519 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbeLUJJR (ORCPT
+        Fri, 21 Dec 2018 04:09:28 -0500
+Received: from mail.netline.ch ([148.251.143.178]:57159 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725845AbeLUJJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:09:17 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so4905846wmd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:09:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lg6ichzFk8wIExz6Pe5kNBRiJn7EfeWsfNM6dOqrNMw=;
-        b=ACeDVPG0UKxarsO69o8oD8PMhHwCrUPmV0Zu8b9NFF50oSO0RAF/rXgtl0rj6z3lbH
-         rv0hq0b6HIeXRJnvK3A1ptfNyygew/UzQJNnvFExpUeliDLRKClR2TkKlC5mQW2uwgYi
-         FInZy3a7UFaqXukLpImlbdEhy2RnWyKBcPO9k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lg6ichzFk8wIExz6Pe5kNBRiJn7EfeWsfNM6dOqrNMw=;
-        b=Vmxm9bmniNsPWtgzKTpDvd3bRRfRcjL3dO66N4CKbkkdkCJtmWBJ0TBjnB/L0Aj+Ve
-         qn3plmSGaNPKG16BHjKLUv7hBUYL8wWNKfp+G2BnF72FTmtgGd73MPFLBUmTOeyvT1d/
-         5ChsKAbUKfqlcjX5QCum5hE08gxdTgSfBUuGFI/zTxooj12djP7B2R4UsKNuiMsZ1sTU
-         HTCCiOURYl6Qbqbhd0LsxyRpDflhOjQRKvDhZn08MlvcuYX2lUUUvoDrjYNLeIHMQt0O
-         41037oq08FQZUVTMv3gtp6D8WZ7/NsLNeQ/4ROh2bFnk24PhAM08HuwYFwLnoZXXyMdz
-         ifSA==
-X-Gm-Message-State: AA+aEWaLBRF+ddrsb7tQ0yoE4bDntNPn9lUfoxtCXuixEE2COVws/EWS
-        vA818iMe2ASq1RYXggph4tGS9g==
-X-Google-Smtp-Source: AFSGD/UWQ3Y4ELWeIEycQxRDxuMGqT1x/TcP/wA0x5KpkOZXqJeWU02Vj7tHzurFGISBKc1MASQgGw==
-X-Received: by 2002:a1c:b607:: with SMTP id g7mr2026934wmf.97.1545383355158;
-        Fri, 21 Dec 2018 01:09:15 -0800 (PST)
-Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id s16sm8749977wrt.77.2018.12.21.01.09.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 01:09:14 -0800 (PST)
-Date:   Fri, 21 Dec 2018 09:09:12 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org
-Subject: Re: [PATCH v5 2/7] mfd / platform: cros_ec: move lightbar attributes
- to its own driver
-Message-ID: <20181221090912.GT4497@dell>
-References: <20181212173402.27086-1-enric.balletbo@collabora.com>
- <20181212173402.27086-3-enric.balletbo@collabora.com>
+        Fri, 21 Dec 2018 04:09:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id B5C672A6056;
+        Fri, 21 Dec 2018 10:09:25 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id Few-6Rukxvrp; Fri, 21 Dec 2018 10:09:25 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 16B992A6055;
+        Fri, 21 Dec 2018 10:09:25 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1gaGo8-0001Lw-Pi; Fri, 21 Dec 2018 10:09:24 +0100
+Subject: Re: [PATCH 3/3] drm/amd: validate user GEM object size
+To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Cc:     David Zhou <David1.Zhou@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>
+References: <20181221031053.240161-1-yuzhao@google.com>
+ <20181221031053.240161-3-yuzhao@google.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <1e804635-e7a4-2cf6-956a-3e140f8d0e7d@daenzer.net>
+Date:   Fri, 21 Dec 2018 10:09:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20181221031053.240161-3-yuzhao@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212173402.27086-3-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018, Enric Balletbo i Serra wrote:
-
-> The entire way how cros sysfs attibutes are created is broken.
-> cros_ec_lightbar should be its own driver and its attributes should be
-> associated with a lightbar driver not the mfd driver. In order to retain
-> the path, the lightbar attributes are attached to the cros_class.
+On 2018-12-21 4:10 a.m., Yu Zhao wrote:
+> When creating frame buffer, userspace may request to attach to a
+> previously allocated GEM object that is smaller than what GPU
+> requires. Validation must be done to prevent out-of-bound DMA,
+> which could not only corrupt memory but also reveal sensitive data.
 > 
-> The patch also adds the sysfs documentation.
+> This fix is not done in a common code path because individual
+> driver might have different requirement.
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Guenter Roeck <groeck@chromium.org>
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 > ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> Changes in v5: None
-> Changes in v4:
-> - Use <ec-device-name> instead <cros-ec> in documentation.
-> 
-> Changes in v3:
-> - Removed unneded check for ec_dev.
-> 
-> Changes in v2:
-> - Removed the two exported functions to attach/detach to the cros_class.
-> - Use dev_warn instead of dev_err when adding the lightbar.
-> 
->  ...sfs-class-chromeos-driver-cros-ec-lightbar | 74 +++++++++++++++
->  drivers/mfd/cros_ec_dev.c                     | 24 ++---
->  drivers/mfd/cros_ec_dev.h                     |  6 --
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> index 755daa332f8a..bb48b016cc68 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> @@ -527,6 +527,7 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>  	struct drm_gem_object *obj;
+>  	struct amdgpu_framebuffer *amdgpu_fb;
+>  	int ret;
+> +	int height;
+>  	struct amdgpu_device *adev = dev->dev_private;
+>  	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
+>  	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
+> @@ -550,6 +551,13 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	height = ALIGN(mode_cmd->height, 8);
+> +	if (obj->size < pitch * height) {
+> +		dev_err(&dev->pdev->dev, "Invalid GEM size: expecting %d but got %d\n",
+> +			pitch * height, obj->size);
 
->  drivers/platform/chrome/Kconfig               | 11 +++
->  drivers/platform/chrome/Makefile              |  3 +-
->  drivers/platform/chrome/cros_ec_lightbar.c    | 95 ++++++++++++++-----
->  include/linux/mfd/cros_ec.h                   |  1 -
+Same comment as patch 2, and maybe write "expecting >= %d but got %d"
+for clarity.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
