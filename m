@@ -2,112 +2,187 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C34DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD72C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13254218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:29:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="ludmSIzR"
+	by mail.kernel.org (Postfix) with ESMTP id B308D218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 06:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbeLUG3n (ORCPT
+        id S1731613AbeLUGez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 01:29:43 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:47986 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729454AbeLUG3n (ORCPT
+        Fri, 21 Dec 2018 01:34:55 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:43444 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731064AbeLUGez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 01:29:43 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id EC410C7B
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 06:29:41 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id cssXRRq-gMDM for <linux-kernel@vger.kernel.org>;
-        Fri, 21 Dec 2018 00:29:41 -0600 (CST)
-Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id BA4169A6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:29:41 -0600 (CST)
-Received: by mail-it1-f197.google.com with SMTP id i12so4071543ita.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 22:29:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=GyCf0+JGZZewWFEvo6aoME0rP8a9l7e6l9yI2i7GQn8=;
-        b=ludmSIzRLL96m1KrINuwN6odlGR/1OdBPcDlCnFKoWt0Cs7PjukR1uA5bWAaHngzF4
-         PtZdb6LxmvMDK9nC1N4AZpjQd0X7sY34mQs7dZsnPxpz8SgcOTUnt0lGJI0kTdbTTXyd
-         3sPIY1mtgZw+7ibeJR/AJYn5htdzs/lFt6aZXirNSl61AklLBFruiQoWySlEvzkHSjUz
-         qjF5L4DGGOw5HAosypNmGDDiFWrIj5IVD8ZHJZz/7Q1Fi6menFcHjQF/MftZR0HsbLCG
-         eaSkI2PfFy4/7uckpeV9hMHp0TNmFx7KJjuvR8wlFvHaiFaN2a+Zhts/yVPVk0OwNstZ
-         CLRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GyCf0+JGZZewWFEvo6aoME0rP8a9l7e6l9yI2i7GQn8=;
-        b=EJxDwAQzjuh2g/R+0GaRD0cgUan38ZwVgrsuTCbTmxZwcNAovBM+c8v8Jy5i3iW/rm
-         494lsnbicUeKbfiN2zJvcSPWjqoP7mrNHokCQLcy1FyIyekZY4xrIVgDx4fboApA7XfT
-         SQXXJjjyWUWU0sSnvqmHpyE6tuH7XE08jTBtFeYkJq2p8Glq/bX8aQqR/T45Cq6kqfYl
-         6feceaSBQdt4gftHL7oyoomKUjtQIH9RFvBlJGA1xawcVDX5ongcuOX1sGl9vB7rnUSq
-         PmNcibJnRWKmCx6PIJhWtMHcpx1ttBD6rN3m1vEEF9+fv2d3z/oJqsw3rkJkaPHtH3w6
-         S4GA==
-X-Gm-Message-State: AJcUukeaDlWaMwf1tzfLG7/hrZ4vVMEW73BpqdXDgZtbD2zAPpOIV8Pt
-        a0ptTZ+iGUMVnkW4CHprdBgWbSTspe9cC+sGa/YMNTAFMAXiuTQySBFn10ubjMVDc29QvfyFcEy
-        WFRi2uyTv8HUkcsFiw9d4eS1Wwepx
-X-Received: by 2002:a6b:720f:: with SMTP id n15mr801564ioc.175.1545373781354;
-        Thu, 20 Dec 2018 22:29:41 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5SUVfiiML3Qp9nKdKLtPIn2fI4qZ4PNwrjYAqzxBpGz6HXFR0XIycswLWE0MmQWFkjPlJMtQ==
-X-Received: by 2002:a6b:720f:: with SMTP id n15mr801554ioc.175.1545373781101;
-        Thu, 20 Dec 2018 22:29:41 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-23.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.23])
-        by smtp.gmail.com with ESMTPSA id x128sm6145606itb.8.2018.12.20.22.29.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Dec 2018 22:29:40 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: tps65910: fix a missing check of return value
-Date:   Fri, 21 Dec 2018 00:29:19 -0600
-Message-Id: <20181221062919.59871-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Fri, 21 Dec 2018 01:34:55 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TGIAz8b_1545374007;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TGIAz8b_1545374007)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 21 Dec 2018 14:33:30 +0800
+Subject: Re: [PATCH 1/2] mm: vmscan: skip KSM page in direct reclaim if
+ priority is low
+To:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@kernel.org, vbabka@suse.cz, hannes@cmpxchg.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+References: <1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20181220144513.bf099a67c1140865f496011f@linux-foundation.org>
+ <alpine.LSU.2.11.1812202143340.2191@eggly.anvils>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <575fdffe-abfa-e52b-7b91-97e5e6ffb4bb@linux.alibaba.com>
+Date:   Thu, 20 Dec 2018 22:33:26 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.LSU.2.11.1812202143340.2191@eggly.anvils>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tps65910_reg_set_bits() may fail. The fix checks if it fails, and if so,
-returns with its error code.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/regulator/tps65910-regulator.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/tps65910-regulator.c b/drivers/regulator/tps65910-regulator.c
-index 02ccdaa226a7..5ebb6ee73f07 100644
---- a/drivers/regulator/tps65910-regulator.c
-+++ b/drivers/regulator/tps65910-regulator.c
-@@ -1102,8 +1102,10 @@ static int tps65910_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, pmic);
- 
- 	/* Give control of all register to control port */
--	tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
-+	err = tps65910_reg_set_bits(pmic->mfd, TPS65910_DEVCTRL,
- 				DEVCTRL_SR_CTL_I2C_SEL_MASK);
-+	if (err < 0)
-+		return err;
- 
- 	switch (tps65910_chip_id(tps65910)) {
- 	case TPS65910:
--- 
-2.17.2 (Apple Git-113)
+On 12/20/18 10:04 PM, Hugh Dickins wrote:
+> On Thu, 20 Dec 2018, Andrew Morton wrote:
+>> Is anyone interested in reviewing this?  Seems somewhat serious.
+>> Thanks.
+> Somewhat serious, but no need to rush.
+>
+>> From: Yang Shi <yang.shi@linux.alibaba.com>
+>> Subject: mm: vmscan: skip KSM page in direct reclaim if priority is low
+>>
+>> When running a stress test, we occasionally run into the below hang issue:
+> Artificial load presumably.
+>
+>> INFO: task ksmd:205 blocked for more than 360 seconds.
+>>        Tainted: G            E 4.9.128-001.ali3000_nightly_20180925_264.alios7.x86_64 #1
+> 4.9-stable does not contain Andrea's 4.13 commit 2c653d0ee2ae
+> ("ksm: introduce ksm_max_page_sharing per page deduplication limit").
+>
+> The patch below is more economical than Andrea's, but I don't think
+> a second workaround should be added, unless Andrea's is shown to be
+> insufficient, even with its ksm_max_page_sharing tuned down to suit.
+>
+> Yang, please try to reproduce on upstream, or backport Andrea's to
+> 4.9-stable - thanks.
+
+I believe Andrea's commit could workaround this problem too by limiting 
+the number of sharing pages.
+
+However, IMHO, even though we just have a few hundred pages share one 
+KSM page, it still sounds not worth reclaiming it in direct reclaim in 
+low priority. According to Andrea's commit log, it still takes a few 
+msec to walk the rmap for 256 shared pages.
+
+Thanks,
+Yang
+
+>
+> Hugh
+>
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> ksmd            D    0   205      2 0x00000000
+>>   ffff882fa00418c0 0000000000000000 ffff882fa4b10000 ffff882fbf059d00
+>>   ffff882fa5bc1800 ffffc900190c7c28 ffffffff81725e58 ffffffff810777c0
+>>   00ffc900190c7c88 ffff882fbf059d00 ffffffff8138cc09 ffff882fa4b10000
+>> Call Trace:
+>>   [<ffffffff81725e58>] ? __schedule+0x258/0x720
+>>   [<ffffffff810777c0>] ? do_flush_tlb_all+0x30/0x30
+>>   [<ffffffff8138cc09>] ? free_cpumask_var+0x9/0x10
+>>   [<ffffffff81726356>] schedule+0x36/0x80
+>>   [<ffffffff81729916>] schedule_timeout+0x206/0x4b0
+>>   [<ffffffff81077d0f>] ? native_flush_tlb_others+0x11f/0x180
+>>   [<ffffffff8110ca40>] ? ktime_get+0x40/0xb0
+>>   [<ffffffff81725b6a>] io_schedule_timeout+0xda/0x170
+>>   [<ffffffff81726c50>] ? bit_wait+0x60/0x60
+>>   [<ffffffff81726c6b>] bit_wait_io+0x1b/0x60
+>>   [<ffffffff81726759>] __wait_on_bit_lock+0x59/0xc0
+>>   [<ffffffff811aff76>] __lock_page+0x86/0xa0
+>>   [<ffffffff810d53e0>] ? wake_atomic_t_function+0x60/0x60
+>>   [<ffffffff8121a269>] ksm_scan_thread+0xeb9/0x1430
+>>   [<ffffffff810d5340>] ? prepare_to_wait_event+0x100/0x100
+>>   [<ffffffff812193b0>] ? try_to_merge_with_ksm_page+0x850/0x850
+>>   [<ffffffff810ac226>] kthread+0xe6/0x100
+>>   [<ffffffff810ac140>] ? kthread_park+0x60/0x60
+>>   [<ffffffff8172b196>] ret_from_fork+0x46/0x60
+>>
+>> ksmd found a suitable KSM page on the stable tree and is trying to lock
+>> it.  But it is locked by the direct reclaim path which is walking the
+>> page's rmap to get the number of referenced PTEs.
+>>
+>> The KSM page rmap walk needs to iterate all rmap_items of the page and all
+>> rmap anon_vmas of each rmap_item.  So it may take (# rmap_item * #
+>> children processes) loops.  This number of loops might be very large in
+>> the worst case, and may take a long time.
+>>
+>> Typically, direct reclaim will not intend to reclaim too many pages, and
+>> it is latency sensitive.  So it is not worth doing the long ksm page rmap
+>> walk to reclaim just one page.
+>>
+>> Skip KSM pages in direct reclaim if the reclaim priority is low, but still
+>> try to reclaim KSM pages with high priority.
+>>
+>> Link: http://lkml.kernel.org/r/1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>> ---
+>>
+>>   mm/vmscan.c |   23 +++++++++++++++++++++--
+>>   1 file changed, 21 insertions(+), 2 deletions(-)
+>>
+>> --- a/mm/vmscan.c~mm-vmscan-skip-ksm-page-in-direct-reclaim-if-priority-is-low
+>> +++ a/mm/vmscan.c
+>> @@ -1260,8 +1260,17 @@ static unsigned long shrink_page_list(st
+>>   			}
+>>   		}
+>>   
+>> -		if (!force_reclaim)
+>> -			references = page_check_references(page, sc);
+>> +		if (!force_reclaim) {
+>> +			/*
+>> +			 * Don't try to reclaim KSM page in direct reclaim if
+>> +			 * the priority is not high enough.
+>> +			 */
+>> +			if (PageKsm(page) && !current_is_kswapd() &&
+>> +			    sc->priority > (DEF_PRIORITY - 2))
+>> +				references = PAGEREF_KEEP;
+>> +			else
+>> +				references = page_check_references(page, sc);
+>> +		}
+>>   
+>>   		switch (references) {
+>>   		case PAGEREF_ACTIVATE:
+>> @@ -2136,6 +2145,16 @@ static void shrink_active_list(unsigned
+>>   			}
+>>   		}
+>>   
+>> +		/*
+>> +		 * Skip KSM page in direct reclaim if priority is not
+>> +		 * high enough.
+>> +		 */
+>> +		if (PageKsm(page) && !current_is_kswapd() &&
+>> +		    sc->priority > (DEF_PRIORITY - 2)) {
+>> +			putback_lru_page(page);
+>> +			continue;
+>> +		}
+>> +
+>>   		if (page_referenced(page, 0, sc->target_mem_cgroup,
+>>   				    &vm_flags)) {
+>>   			nr_rotated += hpage_nr_pages(page);
+>> _
 
