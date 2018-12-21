@@ -2,283 +2,687 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A8AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3426C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBB552192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRZ+PyBu"
+	by mail.kernel.org (Postfix) with ESMTP id 7DDE821927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545416143;
+	bh=9n5dts6dlOUN610RHizsSZ5KK9dPPfz27ZdRvVgfxiA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=pzzfmqk8zlvceLrLpoCCxPkcYSnDbCLj+SlkEEHRZmqcULVMjQit7vpDOMdhFUCi+
+	 K1gIBmOzRyq9Rvts4o8PLOhagWHKVP0hheTVnwtUxLsznQi8WfTg9xyWSu7a7NXii5
+	 xW9NsvSusiLhQEzeiSv9FzzBCVyrFRYO+YHMArD0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404463AbeLUSPf (ORCPT
+        id S2404477AbeLUSPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:15:35 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33606 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbeLUSPI (ORCPT
+        Fri, 21 Dec 2018 13:15:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37164 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404464AbeLUSPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:15:08 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so5549484ljd.0;
-        Fri, 21 Dec 2018 10:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=Aq308heKsk4esUtukI9Gf9fzo9QCFgtk6ZobMHavXuA=;
-        b=IRZ+PyBuxLaMslt65054k/kYU+s6Lx4w0X2OysMfSTyO41jhjmWgxTFGHtjyQ+KZr4
-         w/HUG2V9Vk8dOcm1pqIsGS53R0nxnYgaSv6NZ3MoEoX/E1QDatB0JLr4N5vj3Fvppvor
-         hCCePLAOY147qrKlxJ3LwlvB6bl167jmFzii0cT5+me9jty91p++RXSs9DjhigrN674h
-         nm2kyyk7NRrUo5nAjy3R6lnishwEuKRoaRRdd45ioq3et6t/YlIx/N1NvAnzY24H7BB8
-         ZzUlKdl4g0sHWU4V1pL7qAnuA8szUKCICBLuXyeNK3U94W4ZJynrNRrhd5I2AXNHp4X3
-         l8tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:reply-to:mime-version:content-transfer-encoding;
-        bh=Aq308heKsk4esUtukI9Gf9fzo9QCFgtk6ZobMHavXuA=;
-        b=OXCFAoR7SET7Pf/DUlus6XOCnhn4CgYj9HcQayojW91Ssl7/J3Mq/ba6W9USNO4m8W
-         LZUQ5nNjK7kvz8LW8mAZgKvNqhJZgcs1NWb8N0edVdOxKQmAMt7LzJLZ8vD2tL3+OPaf
-         tpZGPFLJPnIr4v/NCk9EwqSjZ72bTr68CBTNHSA8QiUydWmPYn2vIN986n1EMBVL+g0s
-         gH8r01P9NcyH2BrCcuu2E/QgdAraW6I1Li2yH1sH9PyzPAIzQt+zI4j5UIyu6XHjqQ8w
-         XwxEbOSUQYpGCtNBqF3HLmMKpreh7NmJ/y8hIdmy+fNhehTHWN39ImPFWcCrh6shpGRU
-         gHhw==
-X-Gm-Message-State: AA+aEWafOqchn9OVjT4GuWneawblQf5WnJN9R5b/tVNqIUvb/Seskz1y
-        Uutj/XdFU/YrKI174tmw8PM=
-X-Google-Smtp-Source: AFSGD/UTO2+5Y57wxsVOt0L54LzOA6GkKnWKM/unPMbnjSXwDXmTroHSZC9Qk0m9UrkBOXswSYZzSA==
-X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr2230934ljg.164.1545416105497;
-        Fri, 21 Dec 2018 10:15:05 -0800 (PST)
-Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm5444564lje.81.2018.12.21.10.15.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 10:15:04 -0800 (PST)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/12] __wr_after_init: test write rare functionality
-Date:   Fri, 21 Dec 2018 20:14:21 +0200
-Message-Id: <20181221181423.20455-11-igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181221181423.20455-1-igor.stoppa@huawei.com>
-References: <20181221181423.20455-1-igor.stoppa@huawei.com>
-Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 21 Dec 2018 13:15:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=yzXDoApcww88R3efFug8UjxBpb/bi5WJhpi/w6Hi5pM=; b=i35Ssz1jhHLt
+        szdLlhHvYLRFoyaZD8E1MIsBm6UMkOhwC8Dbv61i1d32nsC7OOEkxtKl8Ev7EvO1puxkkgarhoASo
+        PHguYz3HaGRC/5VTJSk64k426Qd+gzy9F5+ltHzQsl+tgZ77Ct0y1nT7qJk8XR1zD2QR/H76RgibV
+        q77nw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gaPKX-0003rc-Ab; Fri, 21 Dec 2018 18:15:25 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id F217B1121B93; Fri, 21 Dec 2018 18:15:24 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vishal Sagar <vsagar@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: xlnx: add pcm formatter platform driver" to the asoc tree
+In-Reply-To:  <1545382649-181411-3-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20181221181524.F217B1121B93@debutante.sirena.org.uk>
+Date:   Fri, 21 Dec 2018 18:15:24 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set of test cases meant to confirm that the write rare functionality
-works as expected.
-It can be optionally compiled as module.
+The patch
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+   ASoC: xlnx: add pcm formatter platform driver
 
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Nadav Amit <nadav.amit@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-CC: linux-integrity@vger.kernel.org
-CC: kernel-hardening@lists.openwall.com
-CC: linux-mm@kvack.org
-CC: linux-kernel@vger.kernel.org
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 796175a94a7f128c696b793a90f9088005df774b Mon Sep 17 00:00:00 2001
+From: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Date: Fri, 21 Dec 2018 14:27:28 +0530
+Subject: [PATCH] ASoC: xlnx: add pcm formatter platform driver
+
+The audio formatter PL IP supports DMA of two streams -
+mm2s and s2mm for playback and capture respectively. Apart from
+DMA, IP also does conversions like PCM to AES and viceversa.
+This patch adds DMA component driver for the IP.
+
+Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- mm/Kconfig.debug     |   8 +++
- mm/Makefile          |   1 +
- mm/test_write_rare.c | 135 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 144 insertions(+)
- create mode 100644 mm/test_write_rare.c
+ sound/soc/xilinx/xlnx_formatter_pcm.c | 565 ++++++++++++++++++++++++++
+ 1 file changed, 565 insertions(+)
+ create mode 100644 sound/soc/xilinx/xlnx_formatter_pcm.c
 
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index b10305cfac3c..ae018e56c4e4 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -102,3 +102,11 @@ config DEBUG_PRMEM
-     help
-       After any write rare operation, compares the data written with the
-       value provided by the caller.
-+
-+config DEBUG_PRMEM_TEST
-+    tristate "Run self test for statically allocated protected memory"
-+    depends on PRMEM
-+    default n
-+    help
-+      Tries to verify that the protection for statically allocated memory
-+      works correctly and that the memory is effectively protected.
-diff --git a/mm/Makefile b/mm/Makefile
-index ef3867c16ce0..8de1d468f4e7 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -59,6 +59,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
- obj-$(CONFIG_PRMEM) += prmem.o
-+obj-$(CONFIG_DEBUG_PRMEM_TEST) += test_write_rare.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/test_write_rare.c b/mm/test_write_rare.c
+diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
 new file mode 100644
-index 000000000000..30574bc34a20
+index 000000000000..f7235f7664d7
 --- /dev/null
-+++ b/mm/test_write_rare.c
-@@ -0,0 +1,135 @@
++++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
+@@ -0,0 +1,565 @@
 +// SPDX-License-Identifier: GPL-2.0
++//
++// Xilinx ASoC audio formatter support
++//
++// Copyright (C) 2018 Xilinx, Inc.
++//
++// Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
++
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/sizes.h>
++
++#include <sound/soc.h>
++#include <sound/pcm_params.h>
++
++#define DRV_NAME "xlnx_formatter_pcm"
++
++#define XLNX_S2MM_OFFSET	0
++#define XLNX_MM2S_OFFSET	0x100
++
++#define XLNX_AUD_CORE_CONFIG	0x4
++#define XLNX_AUD_CTRL		0x10
++#define XLNX_AUD_STS		0x14
++
++#define AUD_CTRL_RESET_MASK	BIT(1)
++#define AUD_CFG_MM2S_MASK	BIT(15)
++#define AUD_CFG_S2MM_MASK	BIT(31)
++
++#define XLNX_AUD_FS_MULTIPLIER	0x18
++#define XLNX_AUD_PERIOD_CONFIG	0x1C
++#define XLNX_AUD_BUFF_ADDR_LSB	0x20
++#define XLNX_AUD_BUFF_ADDR_MSB	0x24
++#define XLNX_AUD_XFER_COUNT	0x28
++#define XLNX_AUD_CH_STS_START	0x2C
++#define XLNX_BYTES_PER_CH	0x44
++
++#define AUD_STS_IOC_IRQ_MASK	BIT(31)
++#define AUD_STS_CH_STS_MASK	BIT(29)
++#define AUD_CTRL_IOC_IRQ_MASK	BIT(13)
++#define AUD_CTRL_TOUT_IRQ_MASK	BIT(14)
++#define AUD_CTRL_DMA_EN_MASK	BIT(0)
++
++#define CFG_MM2S_CH_MASK	GENMASK(11, 8)
++#define CFG_MM2S_CH_SHIFT	8
++#define CFG_MM2S_XFER_MASK	GENMASK(14, 13)
++#define CFG_MM2S_XFER_SHIFT	13
++#define CFG_MM2S_PKG_MASK	BIT(12)
++
++#define CFG_S2MM_CH_MASK	GENMASK(27, 24)
++#define CFG_S2MM_CH_SHIFT	24
++#define CFG_S2MM_XFER_MASK	GENMASK(30, 29)
++#define CFG_S2MM_XFER_SHIFT	29
++#define CFG_S2MM_PKG_MASK	BIT(28)
++
++#define AUD_CTRL_DATA_WIDTH_SHIFT	16
++#define AUD_CTRL_ACTIVE_CH_SHIFT	19
++#define PERIOD_CFG_PERIODS_SHIFT	16
++
++#define PERIODS_MIN		2
++#define PERIODS_MAX		6
++#define PERIOD_BYTES_MIN	192
++#define PERIOD_BYTES_MAX	(50 * 1024)
++
++enum bit_depth {
++	BIT_DEPTH_8,
++	BIT_DEPTH_16,
++	BIT_DEPTH_20,
++	BIT_DEPTH_24,
++	BIT_DEPTH_32,
++};
++
++struct xlnx_pcm_drv_data {
++	void __iomem *mmio;
++	bool s2mm_presence;
++	bool mm2s_presence;
++	unsigned int s2mm_irq;
++	unsigned int mm2s_irq;
++	struct snd_pcm_substream *play_stream;
++	struct snd_pcm_substream *capture_stream;
++	struct clk *axi_clk;
++};
 +
 +/*
-+ * test_write_rare.c
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ * struct xlnx_pcm_stream_param - stream configuration
++ * @mmio: base address offset
++ * @interleaved: audio channels arrangement in buffer
++ * @xfer_mode: data formatting mode during transfer
++ * @ch_limit: Maximum channels supported
++ * @buffer_size: stream ring buffer size
 + */
++struct xlnx_pcm_stream_param {
++	void __iomem *mmio;
++	bool interleaved;
++	u32 xfer_mode;
++	u32 ch_limit;
++	u64 buffer_size;
++};
 +
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/mm.h>
-+#include <linux/bug.h>
-+#include <linux/prmem.h>
++static const struct snd_pcm_hardware xlnx_pcm_hardware = {
++	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_BLOCK_TRANSFER |
++		SNDRV_PCM_INFO_BATCH | SNDRV_PCM_INFO_PAUSE |
++		SNDRV_PCM_INFO_RESUME,
++	.formats = SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE |
++		   SNDRV_PCM_FMTBIT_S24_LE,
++	.channels_min = 2,
++	.channels_max = 2,
++	.rates = SNDRV_PCM_RATE_8000_192000,
++	.rate_min = 8000,
++	.rate_max = 192000,
++	.buffer_bytes_max = PERIODS_MAX * PERIOD_BYTES_MAX,
++	.period_bytes_min = PERIOD_BYTES_MIN,
++	.period_bytes_max = PERIOD_BYTES_MAX,
++	.periods_min = PERIODS_MIN,
++	.periods_max = PERIODS_MAX,
++};
 +
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+extern long __start_wr_after_init;
-+extern long __end_wr_after_init;
-+
-+static __wr_after_init int scalar = '0';
-+static __wr_after_init u8 array[PAGE_SIZE * 3] __aligned(PAGE_SIZE);
-+
-+/* The section must occupy a non-zero number of whole pages */
-+static bool test_alignment(void)
++static int xlnx_formatter_pcm_reset(void __iomem *mmio_base)
 +{
-+	unsigned long pstart = (unsigned long)&__start_wr_after_init;
-+	unsigned long pend = (unsigned long)&__end_wr_after_init;
++	u32 val, retries = 0;
 +
-+	if (WARN((pstart & ~PAGE_MASK) || (pend & ~PAGE_MASK) ||
-+		 (pstart >= pend), "Boundaries test failed."))
-+		return false;
-+	pr_info("Boundaries test passed.");
-+	return true;
-+}
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_RESET_MASK;
++	writel(val, mmio_base + XLNX_AUD_CTRL);
 +
-+static bool test_pattern(void)
-+{
-+	return (memtst(array, '0', PAGE_SIZE / 2) ||
-+		memtst(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 3 / 4) ||
-+		memtst(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2) ||
-+		memtst(array + PAGE_SIZE * 7 / 4, '1', PAGE_SIZE * 3 / 4) ||
-+		memtst(array + PAGE_SIZE * 5 / 2, '0', PAGE_SIZE / 2));
-+}
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	/* Poll for maximum timeout of approximately 100ms (1 * 100)*/
++	while ((val & AUD_CTRL_RESET_MASK) && (retries < 100)) {
++		mdelay(1);
++		retries++;
++		val = readl(mmio_base + XLNX_AUD_CTRL);
++	}
++	if (val & AUD_CTRL_RESET_MASK)
++		return -ENODEV;
 +
-+static bool test_wr_memset(void)
-+{
-+	int new_val = '1';
-+
-+	wr_memset(&scalar, new_val, sizeof(scalar));
-+	if (WARN(memtst(&scalar, new_val, sizeof(scalar)),
-+		 "Scalar write rare memset test failed."))
-+		return false;
-+
-+	pr_info("Scalar write rare memset test passed.");
-+
-+	wr_memset(array, '0', PAGE_SIZE * 3);
-+	if (WARN(memtst(array, '0', PAGE_SIZE * 3),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	wr_memset(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 2);
-+	if (WARN(memtst(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 2),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	wr_memset(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2);
-+	if (WARN(memtst(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	if (WARN(test_pattern(), "Array write rare memset test failed."))
-+		return false;
-+
-+	pr_info("Array write rare memset test passed.");
-+	return true;
-+}
-+
-+static u8 array_1[PAGE_SIZE * 2];
-+static u8 array_2[PAGE_SIZE * 2];
-+
-+static bool test_wr_memcpy(void)
-+{
-+	int new_val = 0x12345678;
-+
-+	wr_assign(scalar, new_val);
-+	if (WARN(memcmp(&scalar, &new_val, sizeof(scalar)),
-+		 "Scalar write rare memcpy test failed."))
-+		return false;
-+	pr_info("Scalar write rare memcpy test passed.");
-+
-+	wr_memset(array, '0', PAGE_SIZE * 3);
-+	memset(array_1, '1', PAGE_SIZE * 2);
-+	memset(array_2, '0', PAGE_SIZE * 2);
-+	wr_memcpy(array + PAGE_SIZE / 2, array_1, PAGE_SIZE * 2);
-+	wr_memcpy(array + PAGE_SIZE * 5 / 4, array_2, PAGE_SIZE / 2);
-+
-+	if (WARN(test_pattern(), "Array write rare memcpy test failed."))
-+		return false;
-+
-+	pr_info("Array write rare memcpy test passed.");
-+	return true;
-+}
-+
-+static __wr_after_init int *dst;
-+static int reference = 0x54;
-+
-+static bool test_wr_rcu_assign_pointer(void)
-+{
-+	wr_rcu_assign_pointer(dst, &reference);
-+	return dst == &reference;
-+}
-+
-+static int __init test_static_wr_init_module(void)
-+{
-+	pr_info("static write_rare test");
-+	if (WARN(!(test_alignment() &&
-+		   test_wr_memset() &&
-+		   test_wr_memcpy() &&
-+		   test_wr_rcu_assign_pointer()),
-+		 "static rare-write test failed"))
-+		return -EFAULT;
-+	pr_info("static write_rare test passed");
 +	return 0;
 +}
 +
-+module_init(test_static_wr_init_module);
++static void xlnx_formatter_disable_irqs(void __iomem *mmio_base, int stream)
++{
++	u32 val;
 +
++	val = readl(mmio_base + XLNX_AUD_CTRL);
++	val &= ~AUD_CTRL_IOC_IRQ_MASK;
++	if (stream == SNDRV_PCM_STREAM_CAPTURE)
++		val &= ~AUD_CTRL_TOUT_IRQ_MASK;
++
++	writel(val, mmio_base + XLNX_AUD_CTRL);
++}
++
++static irqreturn_t xlnx_mm2s_irq_handler(int irq, void *arg)
++{
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
++
++	reg = adata->mmio + XLNX_MM2S_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->play_stream)
++			snd_pcm_period_elapsed(adata->play_stream);
++		return IRQ_HANDLED;
++	}
++
++	return IRQ_NONE;
++}
++
++static irqreturn_t xlnx_s2mm_irq_handler(int irq, void *arg)
++{
++	u32 val;
++	void __iomem *reg;
++	struct device *dev = arg;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(dev);
++
++	reg = adata->mmio + XLNX_S2MM_OFFSET + XLNX_AUD_STS;
++	val = readl(reg);
++	if (val & AUD_STS_IOC_IRQ_MASK) {
++		writel(val & AUD_STS_IOC_IRQ_MASK, reg);
++		if (adata->capture_stream)
++			snd_pcm_period_elapsed(adata->capture_stream);
++		return IRQ_HANDLED;
++	}
++
++	return IRQ_NONE;
++}
++
++static int xlnx_formatter_pcm_open(struct snd_pcm_substream *substream)
++{
++	int err;
++	u32 val, data_format_mode;
++	u32 ch_count_mask, ch_count_shift, data_xfer_mode, data_xfer_shift;
++	struct xlnx_pcm_stream_param *stream_data;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(component->dev);
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
++	    !adata->mm2s_presence)
++		return -ENODEV;
++	else if (substream->stream == SNDRV_PCM_STREAM_CAPTURE &&
++		 !adata->s2mm_presence)
++		return -ENODEV;
++
++	stream_data = kzalloc(sizeof(*stream_data), GFP_KERNEL);
++	if (!stream_data)
++		return -ENOMEM;
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		ch_count_mask = CFG_MM2S_CH_MASK;
++		ch_count_shift = CFG_MM2S_CH_SHIFT;
++		data_xfer_mode = CFG_MM2S_XFER_MASK;
++		data_xfer_shift = CFG_MM2S_XFER_SHIFT;
++		data_format_mode = CFG_MM2S_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_MM2S_OFFSET;
++		adata->play_stream = substream;
++
++	} else {
++		ch_count_mask = CFG_S2MM_CH_MASK;
++		ch_count_shift = CFG_S2MM_CH_SHIFT;
++		data_xfer_mode = CFG_S2MM_XFER_MASK;
++		data_xfer_shift = CFG_S2MM_XFER_SHIFT;
++		data_format_mode = CFG_S2MM_PKG_MASK;
++		stream_data->mmio = adata->mmio + XLNX_S2MM_OFFSET;
++		adata->capture_stream = substream;
++	}
++
++	val = readl(adata->mmio + XLNX_AUD_CORE_CONFIG);
++
++	if (!(val & data_format_mode))
++		stream_data->interleaved = true;
++
++	stream_data->xfer_mode = (val & data_xfer_mode) >> data_xfer_shift;
++	stream_data->ch_limit = (val & ch_count_mask) >> ch_count_shift;
++	dev_info(component->dev,
++		 "stream %d : format = %d mode = %d ch_limit = %d\n",
++		 substream->stream, stream_data->interleaved,
++		 stream_data->xfer_mode, stream_data->ch_limit);
++
++	snd_soc_set_runtime_hwparams(substream, &xlnx_pcm_hardware);
++	runtime->private_data = stream_data;
++
++	/* Resize the period size divisible by 64 */
++	err = snd_pcm_hw_constraint_step(runtime, 0,
++					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES, 64);
++	if (err) {
++		dev_err(component->dev,
++			"unable to set constraint on period bytes\n");
++		return err;
++	}
++
++	/* enable DMA IOC irq */
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	val |= AUD_CTRL_IOC_IRQ_MASK;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_close(struct snd_pcm_substream *substream)
++{
++	int ret;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++
++	ret = xlnx_formatter_pcm_reset(stream_data->mmio);
++	if (ret) {
++		dev_err(component->dev, "audio formatter reset failed\n");
++		goto err_reset;
++	}
++	xlnx_formatter_disable_irqs(stream_data->mmio, substream->stream);
++
++err_reset:
++	kfree(stream_data);
++	return 0;
++}
++
++static snd_pcm_uframes_t
++xlnx_formatter_pcm_pointer(struct snd_pcm_substream *substream)
++{
++	u32 pos;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	pos = readl(stream_data->mmio + XLNX_AUD_XFER_COUNT);
++
++	if (pos >= stream_data->buffer_size)
++		pos = 0;
++
++	return bytes_to_frames(runtime, pos);
++}
++
++static int xlnx_formatter_pcm_hw_params(struct snd_pcm_substream *substream,
++					struct snd_pcm_hw_params *params)
++{
++	u32 low, high, active_ch, val, bytes_per_ch, bits_per_sample;
++	int status;
++	u64 size;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
++
++	active_ch = params_channels(params);
++	if (active_ch > stream_data->ch_limit)
++		return -EINVAL;
++
++	size = params_buffer_bytes(params);
++	status = snd_pcm_lib_malloc_pages(substream, size);
++	if (status < 0)
++		return status;
++
++	stream_data->buffer_size = size;
++
++	low = lower_32_bits(substream->dma_buffer.addr);
++	high = upper_32_bits(substream->dma_buffer.addr);
++	writel(low, stream_data->mmio + XLNX_AUD_BUFF_ADDR_LSB);
++	writel(high, stream_data->mmio + XLNX_AUD_BUFF_ADDR_MSB);
++
++	val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++	bits_per_sample = params_width(params);
++	switch (bits_per_sample) {
++	case 8:
++		val |= (BIT_DEPTH_8 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 16:
++		val |= (BIT_DEPTH_16 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 20:
++		val |= (BIT_DEPTH_20 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 24:
++		val |= (BIT_DEPTH_24 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	case 32:
++		val |= (BIT_DEPTH_32 << AUD_CTRL_DATA_WIDTH_SHIFT);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	val |= active_ch << AUD_CTRL_ACTIVE_CH_SHIFT;
++	writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++
++	val = (params_periods(params) << PERIOD_CFG_PERIODS_SHIFT)
++		| params_period_bytes(params);
++	writel(val, stream_data->mmio + XLNX_AUD_PERIOD_CONFIG);
++	bytes_per_ch = DIV_ROUND_UP(params_period_bytes(params), active_ch);
++	writel(bytes_per_ch, stream_data->mmio + XLNX_BYTES_PER_CH);
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++static int xlnx_formatter_pcm_trigger(struct snd_pcm_substream *substream,
++				      int cmd)
++{
++	u32 val;
++	struct xlnx_pcm_stream_param *stream_data =
++			substream->runtime->private_data;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++	case SNDRV_PCM_TRIGGER_RESUME:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val |= AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++		val = readl(stream_data->mmio + XLNX_AUD_CTRL);
++		val &= ~AUD_CTRL_DMA_EN_MASK;
++		writel(val, stream_data->mmio + XLNX_AUD_CTRL);
++		break;
++	}
++
++	return 0;
++}
++
++static int xlnx_formatter_pcm_new(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd,
++								    DRV_NAME);
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++			SNDRV_DMA_TYPE_DEV, component->dev,
++			xlnx_pcm_hardware.buffer_bytes_max,
++			xlnx_pcm_hardware.buffer_bytes_max);
++}
++
++static const struct snd_pcm_ops xlnx_formatter_pcm_ops = {
++	.open = xlnx_formatter_pcm_open,
++	.close = xlnx_formatter_pcm_close,
++	.ioctl = snd_pcm_lib_ioctl,
++	.hw_params = xlnx_formatter_pcm_hw_params,
++	.hw_free = xlnx_formatter_pcm_hw_free,
++	.trigger = xlnx_formatter_pcm_trigger,
++	.pointer = xlnx_formatter_pcm_pointer,
++};
++
++static const struct snd_soc_component_driver xlnx_asoc_component = {
++	.name = DRV_NAME,
++	.ops = &xlnx_formatter_pcm_ops,
++	.pcm_new = xlnx_formatter_pcm_new,
++};
++
++static int xlnx_formatter_pcm_probe(struct platform_device *pdev)
++{
++	int ret;
++	u32 val;
++	struct xlnx_pcm_drv_data *aud_drv_data;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++
++	aud_drv_data = devm_kzalloc(dev, sizeof(*aud_drv_data), GFP_KERNEL);
++	if (!aud_drv_data)
++		return -ENOMEM;
++
++	aud_drv_data->axi_clk = devm_clk_get(dev, "s_axi_lite_aclk");
++	if (IS_ERR(aud_drv_data->axi_clk)) {
++		ret = PTR_ERR(aud_drv_data->axi_clk);
++		dev_err(dev, "failed to get s_axi_lite_aclk(%d)\n", ret);
++		return ret;
++	}
++	ret = clk_prepare_enable(aud_drv_data->axi_clk);
++	if (ret) {
++		dev_err(dev,
++			"failed to enable s_axi_lite_aclk(%d)\n", ret);
++		return ret;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(dev, "audio formatter node:addr to resource failed\n");
++		ret = -ENXIO;
++		goto clk_err;
++	}
++	aud_drv_data->mmio = devm_ioremap_resource(dev, res);
++	if (IS_ERR(aud_drv_data->mmio)) {
++		dev_err(dev, "audio formatter ioremap failed\n");
++		ret = PTR_ERR(aud_drv_data->mmio);
++		goto clk_err;
++	}
++
++	val = readl(aud_drv_data->mmio + XLNX_AUD_CORE_CONFIG);
++	if (val & AUD_CFG_MM2S_MASK) {
++		aud_drv_data->mm2s_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_MM2S_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_MM2S_OFFSET,
++					    SNDRV_PCM_STREAM_PLAYBACK);
++
++		aud_drv_data->mm2s_irq = platform_get_irq_byname(pdev,
++								 "irq_mm2s");
++		if (aud_drv_data->mm2s_irq < 0) {
++			dev_err(dev, "xlnx audio mm2s irq resource failed\n");
++			ret = aud_drv_data->mm2s_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->mm2s_irq,
++				       xlnx_mm2s_irq_handler, 0,
++				       "xlnx_formatter_pcm_mm2s_irq", dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio mm2s irq request failed\n");
++			goto clk_err;
++		}
++	}
++	if (val & AUD_CFG_S2MM_MASK) {
++		aud_drv_data->s2mm_presence = true;
++		ret = xlnx_formatter_pcm_reset(aud_drv_data->mmio +
++					       XLNX_S2MM_OFFSET);
++		if (ret) {
++			dev_err(dev, "audio formatter reset failed\n");
++			goto clk_err;
++		}
++		xlnx_formatter_disable_irqs(aud_drv_data->mmio +
++					    XLNX_S2MM_OFFSET,
++					    SNDRV_PCM_STREAM_CAPTURE);
++
++		aud_drv_data->s2mm_irq = platform_get_irq_byname(pdev,
++								 "irq_s2mm");
++		if (aud_drv_data->s2mm_irq < 0) {
++			dev_err(dev, "xlnx audio s2mm irq resource failed\n");
++			ret = aud_drv_data->s2mm_irq;
++			goto clk_err;
++		}
++		ret = devm_request_irq(dev, aud_drv_data->s2mm_irq,
++				       xlnx_s2mm_irq_handler, 0,
++				       "xlnx_formatter_pcm_s2mm_irq",
++				       dev);
++		if (ret) {
++			dev_err(dev, "xlnx audio s2mm irq request failed\n");
++			goto clk_err;
++		}
++	}
++
++	dev_set_drvdata(dev, aud_drv_data);
++
++	ret = devm_snd_soc_register_component(dev, &xlnx_asoc_component,
++					      NULL, 0);
++	if (ret) {
++		dev_err(dev, "pcm platform device register failed\n");
++		goto clk_err;
++	}
++
++	return 0;
++
++clk_err:
++	clk_disable_unprepare(aud_drv_data->axi_clk);
++	return ret;
++}
++
++static int xlnx_formatter_pcm_remove(struct platform_device *pdev)
++{
++	int ret = 0;
++	struct xlnx_pcm_drv_data *adata = dev_get_drvdata(&pdev->dev);
++
++	if (adata->s2mm_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_S2MM_OFFSET);
++
++	/* Try MM2S reset, even if S2MM  reset fails */
++	if (adata->mm2s_presence)
++		ret = xlnx_formatter_pcm_reset(adata->mmio + XLNX_MM2S_OFFSET);
++
++	if (ret)
++		dev_err(&pdev->dev, "audio formatter reset failed\n");
++
++	clk_disable_unprepare(adata->axi_clk);
++	return ret;
++}
++
++static const struct of_device_id xlnx_formatter_pcm_of_match[] = {
++	{ .compatible = "xlnx,audio-formatter-1.0"},
++	{},
++};
++MODULE_DEVICE_TABLE(of, xlnx_formatter_pcm_of_match);
++
++static struct platform_driver xlnx_formatter_pcm_driver = {
++	.probe	= xlnx_formatter_pcm_probe,
++	.remove	= xlnx_formatter_pcm_remove,
++	.driver	= {
++		.name	= DRV_NAME,
++		.of_match_table	= xlnx_formatter_pcm_of_match,
++	},
++};
++
++module_platform_driver(xlnx_formatter_pcm_driver);
++MODULE_AUTHOR("Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>");
 +MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Igor Stoppa <igor.stoppa@huawei.com>");
-+MODULE_DESCRIPTION("Test module for static write rare.");
 -- 
-2.19.1
+2.20.1
 
