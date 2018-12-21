@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2893C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2B4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C16721903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4C921906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:28:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9+tbe7C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLSqRc9d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388731AbeLUH2U (ORCPT
+        id S2388872AbeLUH2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:28:20 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37872 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388601AbeLUH2R (ORCPT
+        Fri, 21 Dec 2018 02:28:23 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38951 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388687AbeLUH2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:28:17 -0500
-Received: by mail-pg1-f193.google.com with SMTP id c25so2115489pgb.4;
-        Thu, 20 Dec 2018 23:28:15 -0800 (PST)
+        Fri, 21 Dec 2018 02:28:19 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so2180675pfc.6;
+        Thu, 20 Dec 2018 23:28:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TOnTTJb5k0hJqk9drUFS28Vo1VkvNAjAcTVESkJjprE=;
-        b=a9+tbe7CR5UO46XozmMgmDfw5gfEdE1Cgh/dugA1o/gngbng/PNMICEPKMOiEGVoE/
-         S0Ury7jhXQ3IZSU3XOlfgsUgm3Gm+r8Y+T9uVMR0xWRL3q11dZRUJOauZzRLcULGHUDT
-         GpL0O2KCZ5lokYMl7OSIMwYg3ON5jlbc0hYt1mPV854yc7ORVA2U7BrX2O2Ygl15xElB
-         KG5R7F6pXhg1WnrRHBZX+ZeX6Jqp6JTXxB5Ze8oqeWbYGxS90UMK7DbyjxWWs0yV8CQd
-         xqSncCapvzUcfhyzzvyqVR+ZpsNwczR1ZHh/6rZbf++CF2o6d/rgeCQd2yNlpaPcsYd1
-         Gqgg==
+        bh=8dhLzSnPx3HKyxwtCcSuNx1W6yfU30Y/Wfx+1/N/Vew=;
+        b=bLSqRc9dwd9ei5Ve+zw/9pLETxqpu8pBnK9BeL8a2X3DonypYSPOmVeYpocbvhAmZi
+         OblCtyzJyjuoDulFLvvONYRpinSVdrHXiYRe7vPro4Eq5n7SH0FsQcTZiOh9xsv09uYF
+         yroXC7ScFFbGTjW9qaa+z67bAKFqMkdzQZvLO4G9Z2Zw2JfJKj2ypNX5GlKIhEuhKqWw
+         JUO1ml2sFBMha9Tp2dl9KpDVUqhf9mTY5MutviY1sIP6RFa3R3fuUL+F8d4h5J6bl6A/
+         JFkOcIQwYFNHwR61CL2e4DT/DxT4PmmtA8Hct8PEsbpyqA/QxKlMlYUPa5xeMvs1twYZ
+         dGZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TOnTTJb5k0hJqk9drUFS28Vo1VkvNAjAcTVESkJjprE=;
-        b=jXCgzulPJqLJKYxM+6zSyCqOyl1NwPdWb6DdVFrLWr9UqgCzdLZmUTaLU2rPOlGzZv
-         16eI06qfTTy0c8A9gxv7IBW+Yv8ZZzIz9TZ7GDgegc11Ijhay2sNqUwnBJGHEI8D+bsu
-         43aczfADV0wwhcMcn9SB2E+/d0q9odHF/9M8DjPNaJp82rsdotu+HEEecCWeFV7yhr+l
-         XcPH1QGcSwSBRM/yivaFNqdKJTgJQgsfHMS5SxwVAmlqK29nBWCiDSYvsQBremBu0oRO
-         elwQ3L5ud7tnDEZh575Y1fsCpy135YxBJVshGwU9xsZYuUatFsvgPoKPwMQ3EWBzcV6E
-         Ne2w==
-X-Gm-Message-State: AA+aEWY2eJKBZ7pl9QvVfvi9K4z9HPGlKWO/dYkJpGT+WMKx6hinfr94
-        KA3eIP7Z+6r57qZcJWLelA5hE8h7
-X-Google-Smtp-Source: ALg8bN50gFFgY3nBEzPGNZnloJzl5Z8OSiIYjw1gQKEwJYi3/td0fh6QxZjdAqqMWVWlHBHpzlhj2A==
-X-Received: by 2002:a62:15d5:: with SMTP id 204mr1421947pfv.103.1545377295233;
-        Thu, 20 Dec 2018 23:28:15 -0800 (PST)
+        bh=8dhLzSnPx3HKyxwtCcSuNx1W6yfU30Y/Wfx+1/N/Vew=;
+        b=K6tIIA9oWiO0dynSyk+5Wdo7dDP4gcIpEoLAV6u86LZ56RMBSSajs5VAmmlaUyzLYW
+         QDHLGU0oBy58a4M7BrGy6gq2xO1lKl9RY5VcP+D4S8+oUgE5ur5RjdMgjLrRNDUPvgRE
+         cXCB0Djj9VwASVtTIBG6/gZAOiirQGdZTxpz6j2cE4yjm5zXzbyQ7S5H6C9YZKJqRb8C
+         6cprfusSkZ+hAjJ3iUoe+Sfg62kvLqFXSu8Obd1vimOwy2vdZCdXwgnEK61wKo+BzSZQ
+         uMJp6j1T8AG7QviMW1f6qa864NrvjVQFbpiG90yFN26QwOXjwGgUZwGuz/U3h2Y7LciP
+         TiMg==
+X-Gm-Message-State: AA+aEWZKAW8c8u9ezmAx4gtvX4hKBkwZ9HEc4Fxp7ltMyDLdTDn8l+QC
+        DmRd2yYacNgayU2idXVZ/v4pNjZr
+X-Google-Smtp-Source: ALg8bN7J7z15Vw9jy9SjMTeALt7WAUznlJJWop7q8AhJdKts8Qxw224THgFRSQek6rXMFVsm083Vkg==
+X-Received: by 2002:a62:34c6:: with SMTP id b189mr1424691pfa.229.1545377298459;
+        Thu, 20 Dec 2018 23:28:18 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.13
+        by smtp.gmail.com with ESMTPSA id t90sm44971921pfj.23.2018.12.20.23.28.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 23:28:14 -0800 (PST)
+        Thu, 20 Dec 2018 23:28:17 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-pci@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 19/21] PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
-Date:   Thu, 20 Dec 2018 23:27:14 -0800
-Message-Id: <20181221072716.29017-20-andrew.smirnov@gmail.com>
+Subject: [PATCH 21/21] PCI: designware: Remove superfluous shifting in definitions
+Date:   Thu, 20 Dec 2018 23:27:16 -0800
+Message-Id: <20181221072716.29017-22-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
 References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
@@ -81,8 +81,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explicitly define PCIE_RC_LCSR_LINK_SPEED and remove magic numbers
-from imx6_pcie_establish_link(). No functional change intended.
+Surrounding definitions no longer use explicit shift, so "<< 0" here
+serve no purpose. Remove them. No functional change intended.
 
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
@@ -98,33 +98,35 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pci@vger.kernel.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 678f5fa85e12..2b312f287fd7 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -79,6 +79,7 @@ struct imx6_pcie {
- #define PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK	0xf
- 
- #define PCIE_RC_LCSR				0x80
-+#define PCIE_RC_LCSR_LINK_SPEED			GENMASK(19, 16)
- 
- /* PCIe Port Logic registers (memory-mapped) */
- #define PL_OFFSET 0x700
-@@ -688,8 +689,9 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
- 		dev_info(dev, "Link: Gen2 disabled\n");
- 	}
- 
--	tmp = dw_pcie_readl_dbi(pci, PCIE_RC_LCSR);
--	dev_info(dev, "Link up, Gen%i\n", (tmp >> 16) & 0xf);
-+	tmp = FIELD_GET(PCIE_RC_LCSR_LINK_SPEED,
-+			dw_pcie_readl_dbi(pci, PCIE_RC_LCSR));
-+	dev_info(dev, "Link up, Gen%i\n", tmp);
- 	return 0;
- 
- err_reset_phy:
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 0de653284fca..636689fd4ee7 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -63,14 +63,14 @@
+ #define PCIE_ATU_VIEWPORT		0x900
+ #define PCIE_ATU_REGION_INBOUND		BIT(31)
+ #define PCIE_ATU_REGION_OUTBOUND	0
+-#define PCIE_ATU_REGION_INDEX2		(0x2 << 0)
+-#define PCIE_ATU_REGION_INDEX1		(0x1 << 0)
+-#define PCIE_ATU_REGION_INDEX0		(0x0 << 0)
++#define PCIE_ATU_REGION_INDEX2		0x2
++#define PCIE_ATU_REGION_INDEX1		0x1
++#define PCIE_ATU_REGION_INDEX0		0x0
+ #define PCIE_ATU_CR1			0x904
+-#define PCIE_ATU_TYPE_MEM		(0x0 << 0)
+-#define PCIE_ATU_TYPE_IO		(0x2 << 0)
+-#define PCIE_ATU_TYPE_CFG0		(0x4 << 0)
+-#define PCIE_ATU_TYPE_CFG1		(0x5 << 0)
++#define PCIE_ATU_TYPE_MEM		0x0
++#define PCIE_ATU_TYPE_IO		0x2
++#define PCIE_ATU_TYPE_CFG0		0x4
++#define PCIE_ATU_TYPE_CFG1		0x5
+ #define PCIE_ATU_CR2			0x908
+ #define PCIE_ATU_ENABLE			BIT(31)
+ #define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
 -- 
 2.19.1
 
