@@ -2,74 +2,77 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5C9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3108BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D9B21903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAA16218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 07:40:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TaOKGUsn"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DLmQE0zg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeLUHiB (ORCPT
+        id S1731574AbeLUHkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 02:38:01 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37726 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730689AbeLUHiA (ORCPT
+        Fri, 21 Dec 2018 02:40:36 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35659 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730294AbeLUHke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 02:38:00 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so4158422wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 23:37:59 -0800 (PST)
+        Fri, 21 Dec 2018 02:40:34 -0500
+Received: by mail-wr1-f67.google.com with SMTP id 96so4177245wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 23:40:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=QZZ7YADYnialSsrPRHFulkT8AqPoFrFrOJYuHyaVHX8=;
-        b=TaOKGUsnP0/yUI2ghUWynEPssb4nZyEcE9EibV1Qn5I7QzyGABJz9RPCPYZk56Vzxf
-         rT17Y92S9T/tlBlyHRZo4l3eF/J/ccB3T1xn3ip41BufEly5yG5LL6pQmGZZeS8t3umo
-         WN/vH8qcWKoRJYUzRnzzA5eGZD3WEoz+oIuTY=
+        bh=U3hF2lzG0nCdgTLxyEE6CaVxamDCtOZv9Y7nedTds7w=;
+        b=DLmQE0zgKdiFuG+ryKJijs62w9eV0DTeIiLIAgH1fqekbztxihECkwl6qKxVFdVNYv
+         tCKZ2a6uU7WZ+B1u1oc9KE6ErVYLyujm4PGQsV9BLdbF9CPHf7lfmpH4NMhcXdUU+Kp/
+         CF4LnHSPnX938RJMDbyV6kFhOGJD9bHGh2Tdg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=QZZ7YADYnialSsrPRHFulkT8AqPoFrFrOJYuHyaVHX8=;
-        b=pWTU6e8AnCgKXxbxrqkWaOouw7hLqRQ3mcRMBj+0Dn33gfjYXLF0JOK6LbfAGtFEJ4
-         ptRttFSKEOrCeSOvC753W+KqqOHABN7aZ8v7plk+WmmG/SpV1QkgBrBnHBar+3IokSo9
-         ffNNt4BT4cmwN5VpKlGEXZVTYF0jGpW/FuKkLjNRpG1tDv6a/Ne5xq8baUebM1tEzNAX
-         /QXutSuCNg91W/RSsHlaUa3Mv+1B0Y2rPGNQI3lYPSzPwPJqD4+F5a8UE4tMYc00zxY6
-         L6+Z4WceaTiLjU1kqVK4Xh4Ghr9vICZ3bWG6FgSek2TOqt3bqubd0sm0cxGinXQYKhSl
-         mVcQ==
-X-Gm-Message-State: AJcUukenSvkQTpQtDfUBjnz4H04y0R85DxUpa/ElMk4keIioUuxY+mBi
-        z9TTYooMJ0b0Gya4JZNzqNpVLQ==
-X-Google-Smtp-Source: ALg8bN7tCnQwJus4DiqOdXF8IF3IGqEcJEGJY9T2QFR2TKf6RdHbmo0KsVGCoNyFBd6al7jBbUsSKA==
-X-Received: by 2002:adf:e284:: with SMTP id v4mr1305310wri.26.1545377878949;
-        Thu, 20 Dec 2018 23:37:58 -0800 (PST)
+        bh=U3hF2lzG0nCdgTLxyEE6CaVxamDCtOZv9Y7nedTds7w=;
+        b=p8/vJu2Xs0sM0vM9hn9gWxodDQdC5LXWGsaE+ditVinc5UYKGC1037nDTLZc4BwljD
+         ARuWQVfpnqbAHzr9PP65qXN3HdkCYNxaNTo3i6/hgPuyyJo/kN2YcUrFRFsOn+W4bsy1
+         nkvqpqRhtlFIr2c4B54i3aa2OfDjIXoWEW/oBiZkOrrdEt+ZNy2s6b47tGizO3JJksrs
+         l3x+GcoHDhq2UBpE5KmlQp5iwiKivuUA8FgSmFX1+CBm0vq2HgwXBtnZ6kg2eZQNruFi
+         l6TzeoY1SI37qx06H6xwZEuKZiAe3Bk/fOuQXJq9eRuxVapV2j68/GLqRiFE+mnKbKtW
+         7Lcg==
+X-Gm-Message-State: AJcUukcCIP0+ZUeA6unm+93VR0hU9qioxC/AhcnXHVfLLZkuyx4gk8TX
+        92PFRfM8jEnh4PPycCs/4tNySw==
+X-Google-Smtp-Source: ALg8bN7JqZNyaB4RHZ5tAzCYZ/QTzHWrRCThn662CeNSGiMY1jnc1p5HsvQJQLQIzM/Tn1Eb6l7IIA==
+X-Received: by 2002:adf:84e4:: with SMTP id 91mr1300185wrg.237.1545378031878;
+        Thu, 20 Dec 2018 23:40:31 -0800 (PST)
 Received: from [192.168.1.2] (119.red-79-146-81.dynamicip.rima-tde.net. [79.146.81.119])
-        by smtp.gmail.com with ESMTPSA id j63sm7969927wmb.40.2018.12.20.23.37.57
+        by smtp.gmail.com with ESMTPSA id c9sm13726882wmh.27.2018.12.20.23.40.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 23:37:58 -0800 (PST)
+        Thu, 20 Dec 2018 23:40:31 -0800 (PST)
 Subject: Re: [PATCH 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
  bindings
-To:     Stephen Boyd <swboyd@chromium.org>, gregkh@linuxfoundation.org,
-        kishon@ti.com, mark.rutland@arm.com, robh+dt@kernel.org
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
-        vkoul@kernel.org
+To:     Jack Pham <jackp@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>, gregkh@linuxfoundation.org,
+        mark.rutland@arm.com, kishon@ti.com, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.guo@linaro.org, vkoul@kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Sriharsha Allenki <sallenki@codeaurora.org>
 References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
  <1544176558-7946-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <154533751009.79149.13940391507897650993@swboyd.mtv.corp.google.com>
+ <20181220170531.GA19862@bogus>
+ <20181220173633.GA19912@jackp-linux.qualcomm.com>
 From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <14fc8e2e-f3c9-ef87-ec8f-51bdaea90470@linaro.org>
-Date:   Fri, 21 Dec 2018 08:37:56 +0100
+Message-ID: <3107e7b1-7d5f-8a67-34ec-e2d6f31cb28f@linaro.org>
+Date:   Fri, 21 Dec 2018 08:40:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <154533751009.79149.13940391507897650993@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181220173633.GA19912@jackp-linux.qualcomm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -78,21 +81,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 21:25, Stephen Boyd wrote:
-> Quoting Jorge Ramirez-Ortiz (2018-12-07 01:55:57)
->> +
->> +- qcom,vdd-voltage-level:
->> +    Value type: <prop-array>
->> +    Definition: This is a list of three integer values <no min max> where
->> +                each value corresponding to voltage corner in uV.
-> As far as I'm aware, this isn't how qcom's voltage corners are handled
-> or are going to be handled. Can't you hardcode it in the driver for now?
+On 12/20/18 18:37, Jack Pham wrote:
+> Hi Rob, Jorge,
 >
+> On Thu, Dec 20, 2018 at 11:05:31AM -0600, Rob Herring wrote:
+>> On Fri, Dec 07, 2018 at 10:55:57AM +0100, Jorge Ramirez-Ortiz wrote:
+>>> Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
+>>> controller embedded in QCS404.
+>>>
+>>> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
+>>> definitions.
+>>>
+>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>>> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+>>> ---
+>>>   .../devicetree/bindings/usb/qcom,usb-ssphy.txt     | 78 ++++++++++++++++++++++
+>>>   1 file changed, 78 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>>> new file mode 100644
+>>> index 0000000..fcf4e01
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>>> @@ -0,0 +1,78 @@
+>>> +Qualcomm Synopsys 1.0.0 SS phy controller
+>>> +===========================================
+>>> +
+>>> +Synopsys 1.0.0 ss phy controller supports SS usb connectivity on Qualcomm
+>>> +chipsets
+>>> +
+>>> +Required properties:
+>>> +
+>>> +- compatible:
+>>> +    Value type: <string>
+>>> +    Definition: Should contain "qcom,usb-ssphy".
+>> What is "qcom,dwc3-ss-usb-phy" which already exists then?
+> Uh, apparently only the bindings doc is there but the driver never
+> landed. I guess it fell through the cracks nearly 4 years ago.
 >
+> https://lore.kernel.org/patchwork/patch/499502/
+>
+> Jorge, does Andy's version of this driver at all resemble what can be
+> used for QCS404?
 
-ok so you mean use a regulator to control the supply (with 
-regulator-min-microvolt and max-microvolt properties instead?
-I'll look into that
+the drivers seem quite different but I'll give it a go as well and 
+compare (it is my understanding that the controller is the same - I will 
+have access to the hardware documentation soon to compare)
 
-I guess we should pull back on this one as well?
-https://lore.kernel.org/patchwork/patch/1026641/
+but I'll come back to you on this.
+
+>
+> Jack
+
