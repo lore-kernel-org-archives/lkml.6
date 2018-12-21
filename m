@@ -2,140 +2,129 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F443C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFE6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBD9218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dkgm+xXZ"
+	by mail.kernel.org (Postfix) with ESMTP id 9A950218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbeLUJDZ (ORCPT
+        id S1726334AbeLUJER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:03:25 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38311 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeLUJDY (ORCPT
+        Fri, 21 Dec 2018 04:04:17 -0500
+Received: from mail.netline.ch ([148.251.143.178]:57049 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbeLUJER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:03:24 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p86so3361651lfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:03:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
-        b=dkgm+xXZk74Cg2BNDCm/20NQdtrWMwIe0yoKv4DArWUbA22TL3cuEXSr9/CNqSHNVw
-         mn5eLVbGIs56liR+SE1pEw2i5Odhz2ETGTAH/tJoXcBHFuAYmvUrTu57WR7JT2UX9hs/
-         l+LuzaxwiUn9sq0tG688SBhVLLbwEY46BvoH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
-        b=t0LVcuQH0TCDhcRddMaTBPtHgMeWTuD1e9U/elNTCY9bZtIu9n4QBirYoLZgMPTU5H
-         jerZf05wBG09Os84Q0nqEBYzY+r1GUgh80wRq8Pi+0vIL5hGESaM37NTyn5lkELdkb6Q
-         GHTgUfhNDcqiozYJdCbUVnh4vwAQrtMOZIAhHgU+xgv9V5drUVGq/mkKdwEEg/LODLRN
-         96T1i6o/ahvbbcaLyyhlF9GMM9JSGAhpTF7AajzQbmQPKA42yDwtUY5qQSGi6yJw/Utl
-         Pl0JDSzT/ucqer4zZALMNNQ7CXH7YgaCMDUn6/xD/r61ePYYQHPmGQ082aECEZz6d96f
-         4Oww==
-X-Gm-Message-State: AA+aEWarA/OBkouQCse6blaz389NjNXnYAizrW2YWy/ZjnTEfReH8EOd
-        qK0d05yzHhuLtwv7nf+0+DpoU8cWps1+HsVOKzGltQ==
-X-Google-Smtp-Source: AFSGD/WWHVd8zr/biKpKvHjmEj8TL5SWd9I6l53as8Xl+0kFHieFSstFXwVpLi6wMvEseHQRjbY3ODdLwJcmc1Rlkfg=
-X-Received: by 2002:a19:5601:: with SMTP id k1mr781748lfb.99.1545383001128;
- Fri, 21 Dec 2018 01:03:21 -0800 (PST)
+        Fri, 21 Dec 2018 04:04:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 33FA32A6056;
+        Fri, 21 Dec 2018 10:04:14 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id muQ0hnR01oLW; Fri, 21 Dec 2018 10:04:13 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id BA9FA2A6055;
+        Fri, 21 Dec 2018 10:04:13 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1gaGj7-0001H1-EL; Fri, 21 Dec 2018 10:04:13 +0100
+Subject: Re: [PATCH 2/3] drm/amd: validate user pitch alignment
+To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Cc:     David Zhou <David1.Zhou@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>
+References: <20181221031053.240161-1-yuzhao@google.com>
+ <20181221031053.240161-2-yuzhao@google.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <00f353df-037d-ec84-b86b-5081b8c3a907@daenzer.net>
+Date:   Fri, 21 Dec 2018 10:04:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 21 Dec 2018 17:03:09 +0800
-Message-ID: <CAMz4kuLv_s6t6n0OfRP8EW3=z8QD0ezn2=45sKg9aXJs5Agrbg@mail.gmail.com>
-Subject: Re: [PATCH 07/10] i2c: sprd: use core helper to mark adapter suspended
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181221031053.240161-2-yuzhao@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
-
-On Thu, 20 Dec 2018 at 00:48, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Rejecting transfers should be handled by the core.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Great to see the I2C core can handle this issue.
-Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
-
+On 2018-12-21 4:10 a.m., Yu Zhao wrote:
+> Userspace may request pitch alignment that is not supported by GPU.
+> Some requests 32, but GPU ignores it and uses default 64 when cpp is
+> 4. If GEM object is allocated based on the smaller alignment, GPU
+> DMA will go out of bound.
+> 
+> For GPU that does frame buffer compression, DMA writing out of bound
+> memory will cause memory corruption.
+> 
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 > ---
->  drivers/i2c/busses/i2c-sprd.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-> index e266d8a713d9..961123529678 100644
-> --- a/drivers/i2c/busses/i2c-sprd.c
-> +++ b/drivers/i2c/busses/i2c-sprd.c
-> @@ -86,7 +86,6 @@ struct sprd_i2c {
->         u32 count;
->         int irq;
->         int err;
-> -       bool is_suspended;
->  };
->
->  static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
-> @@ -284,9 +283,6 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
->         struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
->         int im, ret;
->
-> -       if (i2c_dev->is_suspended)
-> -               return -EBUSY;
-> -
->         ret = pm_runtime_get_sync(i2c_dev->dev);
->         if (ret < 0)
->                 return ret;
-> @@ -590,10 +586,7 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
->  {
->         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
-> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
-> -       i2c_dev->is_suspended = true;
-> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
-> -
-> +       i2c_mark_adapter_suspended(&i2c_dev->adap);
->         return pm_runtime_force_suspend(dev);
->  }
->
-> @@ -601,10 +594,7 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
->  {
->         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
-> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
-> -       i2c_dev->is_suspended = false;
-> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
-> -
-> +       i2c_mark_adapter_resumed(&i2c_dev->adap);
->         return pm_runtime_force_resume(dev);
->  }
->
-> --
-> 2.11.0
->
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> index e309d26170db..755daa332f8a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+> @@ -527,6 +527,15 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>  	struct drm_gem_object *obj;
+>  	struct amdgpu_framebuffer *amdgpu_fb;
+>  	int ret;
+> +	struct amdgpu_device *adev = dev->dev_private;
+> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
+> +	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
+> +
+> +	if (mode_cmd->pitches[0] != pitch) {
+> +		dev_err(&dev->pdev->dev, "Invalid pitch: expecting %d but got %d\n",
+> +			pitch, mode_cmd->pitches[0]);
+
+This message shouldn't be printed by default, or buggy / malicious
+userspace can spam dmesg. I suggest using DRM_DEBUG_KMS or DRM_DEBUG_DRIVER.
+
+
+> +		return ERR_PTR(-EINVAL);
+> +	}
+>  
+>  	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
+>  	if (obj ==  NULL) {
+> 
+
+Other than that, looks good to me.
 
 
 -- 
-Baolin Wang
-Best Regards
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
