@@ -6,104 +6,81 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A426C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4232EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6351321906
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545397450;
-	bh=/xCDfivwcoDbVTI+Ok8fMbaRbpB7NQr8rGPkVocJo6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QMiywYNI1cGqaiqNtA1hzxhDlJQ9KAFejiwBW2bSZxCr+gA2vHhUcMyGqneMbXkeR
-	 uh7C0M45LVJBXyOlPrEceBBEztO52lMBeZbwNnNo5Y3jCelXbW5lByEKn5BsO12s03
-	 ushqXoc6Wxbyxrn5EtgwDbueaMMdj1UdYw1JDuxM=
+	by mail.kernel.org (Postfix) with ESMTP id 1191E21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 13:04:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fwMgjLRI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388521AbeLUNEJ (ORCPT
+        id S2388797AbeLUNEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 21 Dec 2018 08:04:12 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55728 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388218AbeLUNEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Dec 2018 08:04:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41602 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387821AbeLUNEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 08:04:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2AFA9AF67;
-        Fri, 21 Dec 2018 13:04:05 +0000 (UTC)
-Date:   Fri, 21 Dec 2018 14:04:04 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] ARC: show_regs: fix lockdep splat for good
-Message-ID: <20181221130404.GF16107@dhcp22.suse.cz>
-References: <1545159239-30628-1-git-send-email-vgupta@synopsys.com>
- <1545159239-30628-3-git-send-email-vgupta@synopsys.com>
- <20181220130450.GB17350@dhcp22.suse.cz>
- <C2D7FE5348E1B147BCA15975FBA23075014642389B@US01WEMBX2.internal.synopsys.com>
+Received: from zn.tnic (p200300EC2BD18000183B79CE2301FC6B.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8000:183b:79ce:2301:fc6b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 17D8F1EC0B86;
+        Fri, 21 Dec 2018 14:04:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1545397448;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=1O5XXWm3rA90JAEGE8F8oBHLF68/5lBe4VI+XYmT3mA=;
+        b=fwMgjLRIH947aR0d2Atcch8nUtyYcFwqwUm4a2mWoG+YuHYp4dqO8RlymKynG5Zy6PA/0K
+        VSiqBozZNhgOJqdlijrfXWfz6gUe1YDsWhV/BLyMQhvIXeiWdOz4L30LCEj5Kagguh5lP1
+        E4M1Vz1j30iqe3qzD5pWlIhhCKGFZEU=
+Date:   Fri, 21 Dec 2018 14:04:03 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] x86/cpu: sort cpuinfo flags
+Message-ID: <20181221130403.GD1325@zn.tnic>
+References: <20181219195014.A0962820@viggo.jf.intel.com>
+ <20181220120240.ermrc3hnixkin2yg@black.fi.intel.com>
+ <20181220160411.GC31403@zn.tnic>
+ <20181221124037.s57lt567pgzbz7z3@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014642389B@US01WEMBX2.internal.synopsys.com>
+In-Reply-To: <20181221124037.s57lt567pgzbz7z3@black.fi.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 20-12-18 18:45:48, Vineet Gupta wrote:
-> On 12/20/18 5:04 AM, Michal Hocko wrote:
-> > On Tue 18-12-18 10:53:59, Vineet Gupta wrote:
-> >> signal handling core calls ARCH show_regs() with preemption disabled
-> >> which causes __might_sleep functions such as mmput leading to lockdep
-> >> splat.  Workaround by re-enabling preemption temporarily.
-> >>
-> >> This may not be as bad as it sounds since the preemption disabling
-> >> itself was introduced for a supressing smp_processor_id() warning in x86
-> >> code by commit 3a9f84d354ce ("signals, debug: fix BUG: using
-> >> smp_processor_id() in preemptible code in print_fatal_signal()")
-> > The commit you are referring to here sounds dubious in itself.
-> 
-> Indeed that was my thought as well, but it did introduce the preemption disabling
-> logic aroung core calling show_regs() !
-> 
-> > We do not
-> > want to stick a preempt_disable just to silence a warning.
-> 
-> I presume you are referring to original commit, not my anti-change in ARC code,
-> which is actually re-enabling it.
+On Fri, Dec 21, 2018 at 03:40:37PM +0300, Kirill A. Shutemov wrote:
+> But I don't see an improvement in readability of data presented to user as
+> a silly idea.
 
-Yes, but you are building on a broken concept I believe. What
-implications does re-enabling really have? Now you could reschedule and
-you can move to another CPU. Is this really safe? I believe that yes
-because the preemption disabling is simply bogus. Which doesn't sound
-like a proper justification, does it?
- 
-> > show_regs is
-> > called from preemptible context at several places (e.g. __warn).
-> 
-> Right, but do we have other reports which show this, perhaps not too many distros
-> have CONFIG__PREEMPT enabled ?
+Improving readability is not a silly idea and I never said that. Rather,
+the cost of what you're trying to accomplish, needs to be weighed.
 
-I do not follow. If there is some path to require show_regs to run with
-preemption disabled while others don't then something is clearly wrong.
+The final goal of this is, AFAIU, finding whether a feature flag is
+there or not and you can use grep for that now, on *any* kernel.
 
-> > Maybe
-> > this was not the case in 2009 when the change was introduced but this
-> > seems like a relict from the past. So can we fix the actual problem
-> > rather than build on top of it instead?
-> 
-> The best/correct fix is to remove the preempt diabling in core code, but that
-> affects every arch out there and will likely trip dormant land mines, needed
-> localized fixes like I'm dealing with now.
+And if you need the feature flags sorted, you can do that too:
 
-Yes, the fix might be more involved but I would much rather prefer a
-correct code which builds on solid assumptions.
+$ grep -m 1 flags /proc/cpuinfo | tr " " "\n" | sort | xargs
+
+and there probably is even a simpler way to do that.
+
+Or add a shell alias for that or a small script or ...
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
