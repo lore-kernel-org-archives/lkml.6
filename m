@@ -2,108 +2,83 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E49C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B95CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B9720989
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 005D621927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391513AbeLUSwY (ORCPT
+        id S2389434AbeLUSyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:52:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:56798 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731021AbeLUSwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:52:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A1D380D;
-        Fri, 21 Dec 2018 10:52:23 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D25A03F575;
-        Fri, 21 Dec 2018 10:52:21 -0800 (PST)
-Subject: Re: [PATCH] ACPI/APEI: Clear GHES block_status before panic()
-To:     Borislav Petkov <bp@alien8.de>, David Arcari <darcari@redhat.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <1545238252-79630-1-git-send-email-darcari@redhat.com>
- <20181220192447.GG31403@zn.tnic> <1691682.ckC9UJvgEr@aspire.rjw.lan>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <0bb80989-4fe5-c320-8ffc-0f39502110c9@arm.com>
-Date:   Fri, 21 Dec 2018 18:52:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 21 Dec 2018 13:54:38 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:34376 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731021AbeLUSyi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 13:54:38 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07449;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TGL1Hog_1545418274;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TGL1Hog_1545418274)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 22 Dec 2018 02:51:17 +0800
+Subject: Re: [v2 PATCH 1/2] mm: swap: check if swap backing device is
+ congested or not
+To:     Tim Chen <tim.c.chen@linux.intel.com>, ying.huang@intel.com,
+        tim.c.chen@intel.com, minchan@kernel.org, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1545351679-23596-1-git-send-email-yang.shi@linux.alibaba.com>
+ <c3c77f08-f7af-7633-636d-c467759fbf20@linux.intel.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <6878473d-3d3a-bbab-e187-f618c17db044@linux.alibaba.com>
+Date:   Fri, 21 Dec 2018 10:51:11 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1691682.ckC9UJvgEr@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <c3c77f08-f7af-7633-636d-c467759fbf20@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/12/2018 11:17, Rafael J. Wysocki wrote:
-> On Thursday, December 20, 2018 8:24:47 PM CET Borislav Petkov wrote:
->> + James.
+
+
+On 12/21/18 10:34 AM, Tim Chen wrote:
+> On 12/20/18 4:21 PM, Yang Shi wrote:
+>
+>> --- a/mm/swap_state.c
+>> +++ b/mm/swap_state.c
+>> @@ -538,11 +538,17 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+>>   	bool do_poll = true, page_allocated;
+>>   	struct vm_area_struct *vma = vmf->vma;
+>>   	unsigned long addr = vmf->address;
+>> +	struct inode *inode = si->swap_file->f_mapping->host;
+>>   
+>>   	mask = swapin_nr_pages(offset) - 1;
+>>   	if (!mask)
+>>   		goto skip;
+>>   
+>> +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
+> Maybe move the inode dereference here:
+>
+> 		inode = si->swap_file->f_mapping->host;
+
+Yes, it looks better since nobody deference inode except the below code. 
+Will fix in v3.
 
 Thanks,
+Yang
 
->> On Wed, Dec 19, 2018 at 11:50:52AM -0500, David Arcari wrote:
->>> From: Lenny Szubowicz <lszubowi@redhat.com>
->>>
->>> In __ghes_panic() clear the block status in the APEI generic
->>> error status block for that generic hardware error source before
->>> calling panic() to prevent a second panic() in the crash kernel
->>> for exactly the same fatal error.
->>>
->>> Otherwise ghes_probe(), running in the crash kernel, would see
->>> an unhandled error in the APEI generic error status block and
->>> panic again, thereby precluding any crash dump.
+>
+>> +		if (inode_read_congested(inode))
+>> +			goto skip;
+>> +	}
+>> +
+> Thanks.
+>
+> Tim
 
-I bet that was fun to watch!
-
-
->>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->>> index 02c6fd9..f008ba7 100644
->>> --- a/drivers/acpi/apei/ghes.c
->>> +++ b/drivers/acpi/apei/ghes.c
->>> @@ -691,6 +691,8 @@ static void __ghes_panic(struct ghes *ghes)
->>>  {
->>>  	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
->>>  
->>> +	ghes_clear_estatus(ghes);
->>> +
->>>  	/* reboot to log the error! */
->>>  	if (!panic_timeout)
->>>  		panic_timeout = ghes_panic_timeout;
->>
->> Acked-by: Borislav Petkov <bp@suse.de>
-> 
-> Patch applied, thanks!
-
-Great!
-
-Do we need to ghes_ack_error() too?
-
-With the location cleared the new kernel will never find the records, and
-firmware can never re-use that location because it wasn't ack'd. The upshot is
-RAS records can't be generated for the kdump kernel. The acpi spec talks about
-use of the memory, so I don't think its fair for it to use this to disarm a
-watchdog.
-
-I think we can live with this as the kdump kernel isn't going to handle RAS
-errors for the bulk of memory anyway.
-
-
-Thanks,
-
-James
