@@ -2,216 +2,219 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7A4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABE5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FAD218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3704218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AJjZIyVk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbeLUJEU (ORCPT
+        id S1729469AbeLUJEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:04:20 -0500
-Received: from mx139-tc.baidu.com ([61.135.168.139]:17600 "EHLO
-        tc-sys-mailedm06.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725883AbeLUJES (ORCPT
+        Fri, 21 Dec 2018 04:04:48 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49382 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbeLUJEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:04:18 -0500
-X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Dec 2018 04:04:16 EST
-Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
-        by tc-sys-mailedm06.tc.baidu.com (Postfix) with ESMTP id E3ED3263C007;
-        Fri, 21 Dec 2018 16:57:01 +0800 (CST)
-From:   Li RongQing <lirongqing@baidu.com>
-To:     linux-kernel@vger.kernel.org, jslaby@suse.com,
-        gregkh@linuxfoundation.org, gkohli@codeaurora.org,
-        alan@linux.intel.com
-Subject: [PATCH] tty: fix race between flush_to_ldisc and tty_open
-Date:   Fri, 21 Dec 2018 16:57:01 +0800
-Message-Id: <1545382621-2093-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        Fri, 21 Dec 2018 04:04:48 -0500
+Received: from emerald.amanokami.net (173-16-160-11.client.mchsi.com [173.16.160.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33152558;
+        Fri, 21 Dec 2018 10:04:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1545383085;
+        bh=mt96DXKMKuCa2+i0ih/l/ZXWPLKmvzgn1HY2xQqr+vY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AJjZIyVkqxpaZFkEp1WSzhrdHEXWi/ZV8zJviZAz6NDS6RF5M36x8YocNYLOtrPuD
+         NcIUc5sonH/H6a+Ix7crP53KTm+rgr9NAWBD/shxcHjQoo0t7lBSxbsmpQoFO7n1mQ
+         C23ouRGwIpmkC9/zm9dl3slqeDiv1BAlX4jWjT34=
+Date:   Fri, 21 Dec 2018 03:04:38 -0600
+From:   Paul Elder <paul.elder@ideasonboard.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        b-liu@ti.com, rogerq@ti.com, balbi@kernel.org,
+        gregkh@linuxfoundation.org, USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+Message-ID: <20181221090438.GA2140@emerald.amanokami.net>
+References: <20181219092647.12397-5-paul.elder@ideasonboard.com>
+ <Pine.LNX.4.44L0.1812191048580.1260-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1812191048580.1260-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There still can be a race after the commit b027e2298bd588
-("tty: fix data race between tty_init_dev and flush of buf"),
-if receive_buf call comes before tty initialization completes
-in n_tty_open and tty->driver_data may be NULL.
+On Wed, Dec 19, 2018 at 11:01:52AM -0500, Alan Stern wrote:
+> On Wed, 19 Dec 2018, Paul Elder wrote:
+> 
+> > A usb gadget function driver may or may not want to delay the status
+> > stage of a control OUT request. An instance it might want to is to
+> ---------------------------------------------^
+> Typo: missing "where"
 
-CPU0                                    CPU1
-----                                    ----
-                                      n_tty_open
-                                      tty_init_dev
-                                      tty_ldisc_unlock
-                                      schedule
-flush_to_ldisc
-n_tty_receive_buf
-uart_flush_chars
-uart_start
+ack
 
-Extending ldisc semaphore lock in tty_init_dev till driver_data
-initializes completely after tty->ops->open().
+> 
+> > asynchronously validate the data of a class-specific request.
+> > 
+> > A function driver that wants an explicit status stage should set the
+> > newly added explicit_status flag of the usb_request corresponding to the
+> > data stage. Later on the function driver can explicitly complete the
+> > status stage by enqueueing a usb_request for ACK, or calling
+> > usb_ep_set_halt() for STALL.
+> > 
+> > To support both explicit and implicit status stages, a UDC driver must
+> > call the newly added usb_gadget_control_complete function right after
+> > calling usb_gadget_giveback_request. The status of the request that was
+> > just given back must be fed into usb_gadget_control_complete. To support
+> > the explicit status stage, it might then check what stage the
+> > usb_request was queued in, and send an ACK.
+> 
+> I don't really understand that last sentence.  Perhaps what you mean is
+> that depending on the direction of the control transfer, the driver
+> should either ACK the host's 0-length data packet (control-IN) or send
+> a 0-length DATA1 packet (control-OUT)?
 
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
-we see this bug in centos 7.4, and think b027e2298bd588 can not
-fix it, since driver_data is NULL;
+Yes, that is what I meant, though for MUSB I've only implemented and
+tested the control OUT case.
 
-the trace is that:
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> > Changes from v2:
+> > 
+> > Add status parameter to usb_gadget_control_complete, so that a
+> > usb_request is not queued if the status of the just given back request
+> > is nonzero.
+> > 
+> > Changes from v1:
+> > 
+> > Complete change of API. Now we use a flag that should be set in the
+> > usb_request that is queued for the data stage to signal to the UDC that
+> > we want to delay the status stage (as opposed to setting a flag in the
+> > UDC itself, that persists across all requests). We now also provide a
+> > function for UDC drivers to very easily allow implicit status stages, to
+> > mitigate the need to convert all function drivers to this new API at
+> > once, and to make it easier for UDC drivers to convert.
+> > 
+> >  drivers/usb/gadget/udc/core.c | 34 ++++++++++++++++++++++++++++++++++
+> >  include/linux/usb/gadget.h    | 10 ++++++++++
+> >  2 files changed, 44 insertions(+)
+> > 
+> > diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> > index af88b48c1cea..0a0ccd2b7639 100644
+> > --- a/drivers/usb/gadget/udc/core.c
+> > +++ b/drivers/usb/gadget/udc/core.c
+> > @@ -894,6 +894,40 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
+> >  
+> >  /* ------------------------------------------------------------------------- */
+> >  
+> > +/**
+> > + * usb_gadget_control_complete - complete the status stage of a control
+> > + *	request, or delay it
+> > + * Context: in_interrupt()
+> > + *
+> > + * @gadget: gadget whose control request's status stage should be completed
+> > + * @explicit_status: true to delay status stage, false to complete here
+> > + * @status: completion code of previously completed request
+> > + *
+> > + * This is called by device controller drivers after returning the completed
+> > + * request back to the gadget layer, to either complete or delay the status
+> > + * stage.
+> > + */
+> > +void usb_gadget_control_complete(struct usb_gadget *gadget,
+> > +		unsigned int explicit_status, int status)
+> > +{
+> > +	struct usb_request *req;
+> > +
+> > +	if (explicit_status || status)
+> > +		return;
+> > +
+> > +	/* Send an implicit status-stage request for ep0 */
+> > +	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
+> > +	if (req) {
+> > +		req->length = 0;
+> > +		req->explicit_status = 0;
+> 
+> Oops!  I should have spotted this in the previous version, sorry. The
+> implicit status-stage request should have its ->explicit_status set, so
+> that we don't try to submit another status request when this one
+> completes.
 
-    [exception RIP: uart_start+24]
-    RIP: ffffffff814908b8  RSP: ffff881c23ab7d18  RFLAGS: 00010282
-    RAX: 0000000000000000  RBX: ffff88182bafc400  RCX: 0000000000000000
-    RDX: 0000000000020001  RSI: 000000000000001d  RDI: ffff88182bafc400
-    RBP: ffff881c23ab7d30   R8: ffff881fff956060   R9: ffffffff81b5dc20
-    R10: 0000000000005a07  R11: 0000000000000001  R12: ffff88182bafc400
-    R13: ffff881ff90c852d  R14: ffff88182baff400  R15: 0000000000000000
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-#11 [ffff881c23ab7d38] uart_flush_chars at ffffffff81490ade
-#12 [ffff881c23ab7d48] n_tty_receive_buf at ffffffff81478b1d
-#13 [ffff881c23ab7de0] flush_to_ldisc at ffffffff8147bdc4
-#14 [ffff881c23ab7e28] process_one_work at ffffffff8109e210
-#15 [ffff881c23ab7e70] worker_thread at ffffffff8109e69e
-#16 [ffff881c23ab7ec8] kthread at ffffffff810a62d1
-#17 [ffff881c23ab7f50] ret_from_fork at ffffffff8171d677
+No, it's fine; the previous version had it set to 1 :)
 
-other one
+I didn't think it mattered, but the way you describe it makes it seem
+like it would matter depending on the UDC driver implementation, so I'll
+put it back in.
 
-PID: 922    TASK: ffff881c7fbc1f40  CPU: 29  COMMAND: "agetty"
- #0 [ffff8818e9677a20] __schedule at ffffffff817114f2
- #1 [ffff8818e9677a78] preempt_schedule at ffffffff81711f4f
- #2 [ffff8818e9677a90] _raw_spin_unlock_irqrestore at ffffffff81713f7d
- #3 [ffff8818e9677aa8] __wake_up at ffffffff810b03c4
- #4 [ffff8818e9677ae0] n_tty_set_termios at ffffffff814770d3
- #5 [ffff8818e9677b10] n_tty_open at ffffffff814772ec` 
- 
- 
- drivers/staging/speakup/spk_ttyio.c |  1 +
- drivers/tty/pty.c                   |  2 ++
- drivers/tty/serdev/serdev-ttyport.c |  2 ++
- drivers/tty/tty_io.c                | 14 +++++++++++---
- 4 files changed, 16 insertions(+), 3 deletions(-)
+> Also, would it look better if the type of explicit_status was bool 
+> instead of unsigned int (both here and in the structure)?
 
-diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-index 979e3ae249c1..c31f08c98383 100644
---- a/drivers/staging/speakup/spk_ttyio.c
-+++ b/drivers/staging/speakup/spk_ttyio.c
-@@ -155,6 +155,7 @@ static int spk_ttyio_initialise_ldisc(struct spk_synth *synth)
- 	else
- 		ret = -ENODEV;
- 
-+	tty_ldisc_unlock(tty);
- 	if (ret) {
- 		tty_unlock(tty);
- 		return ret;
-diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-index 00099a8439d2..1b9684d4f718 100644
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -873,9 +873,11 @@ static int ptmx_open(struct inode *inode, struct file *filp)
- 
- 	tty_debug_hangup(tty, "opening (count=%d)\n", tty->count);
- 
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	return 0;
- err_release:
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	// This will also put-ref the fsi
- 	tty_release(inode, filp);
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index fa1672993b4c..ce16cb303e28 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -123,6 +123,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
- 	if (ret)
- 		goto err_close;
- 
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(serport->tty);
- 
- 	/* Bring the UART into a known 8 bits no parity hw fc state */
-@@ -145,6 +146,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
- err_close:
- 	tty->ops->close(tty, NULL);
- err_unlock:
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	tty_release_struct(tty, serport->tty_idx);
- 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 687250ec8032..199f45e2e1b1 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1351,7 +1351,6 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
- 	retval = tty_ldisc_setup(tty, tty->link);
- 	if (retval)
- 		goto err_release_tty;
--	tty_ldisc_unlock(tty);
- 	/* Return the tty locked so that it cannot vanish under the caller */
- 	return tty;
- 
-@@ -1926,7 +1925,7 @@ EXPORT_SYMBOL_GPL(tty_kopen);
-  *	  - concurrent tty removal from driver table
-  */
- static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
--					     struct file *filp)
-+					     struct file *filp, bool *unlock)
- {
- 	struct tty_struct *tty;
- 	struct tty_driver *driver = NULL;
-@@ -1970,6 +1969,7 @@ static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
- 		}
- 	} else { /* Returns with the tty_lock held for now */
- 		tty = tty_init_dev(driver, index);
-+		*unlock = true;
- 		mutex_unlock(&tty_mutex);
- 	}
- out:
-@@ -2007,6 +2007,7 @@ static int tty_open(struct inode *inode, struct file *filp)
- 	int noctty, retval;
- 	dev_t device = inode->i_rdev;
- 	unsigned saved_flags = filp->f_flags;
-+	bool unlock = false;
- 
- 	nonseekable_open(inode, filp);
- 
-@@ -2017,7 +2018,7 @@ static int tty_open(struct inode *inode, struct file *filp)
- 
- 	tty = tty_open_current_tty(device, filp);
- 	if (!tty)
--		tty = tty_open_by_driver(device, inode, filp);
-+		tty = tty_open_by_driver(device, inode, filp, &unlock);
- 
- 	if (IS_ERR(tty)) {
- 		tty_free_file(filp);
-@@ -2042,6 +2043,10 @@ static int tty_open(struct inode *inode, struct file *filp)
- 	if (retval) {
- 		tty_debug_hangup(tty, "open error %d, releasing\n", retval);
- 
-+		if (unlock) {
-+			unlock = false;
-+			tty_ldisc_unlock(tty);
-+		}
- 		tty_unlock(tty); /* need to call tty_release without BTM */
- 		tty_release(inode, filp);
- 		if (retval != -ERESTARTSYS)
-@@ -2067,6 +2072,9 @@ static int tty_open(struct inode *inode, struct file *filp)
- 		  tty->driver->subtype == PTY_TYPE_MASTER);
- 	if (!noctty)
- 		tty_open_proc_set_tty(filp, tty);
-+
-+	if (unlock)
-+		tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	return 0;
- }
--- 
-2.16.2
+Yes, it would; I'll make the change.
 
+> Either way, once this change is made:
+> 
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+
+Thank you :)
+
+> > +		req->complete = usb_ep_free_request;
+> > +		usb_ep_queue(gadget->ep0, req, GFP_ATOMIC);
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL_GPL(usb_gadget_control_complete);
+> > +
+> > +/* ------------------------------------------------------------------------- */
+> > +
+> >  /**
+> >   * gadget_find_ep_by_name - returns ep whose name is the same as sting passed
+> >   *	in second parameter or NULL if searched endpoint not found
+> > diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+> > index e5cd84a0f84a..1e3a23637468 100644
+> > --- a/include/linux/usb/gadget.h
+> > +++ b/include/linux/usb/gadget.h
+> > @@ -73,6 +73,7 @@ struct usb_ep;
+> >   *	Note that for writes (IN transfers) some data bytes may still
+> >   *	reside in a device-side FIFO when the request is reported as
+> >   *	complete.
+> > + * @explicit_status: If true, delays the status stage
+> >   *
+> >   * These are allocated/freed through the endpoint they're used with.  The
+> >   * hardware's driver can add extra per-request data to the memory it returns,
+> > @@ -114,6 +115,8 @@ struct usb_request {
+> >  
+> >  	int			status;
+> >  	unsigned		actual;
+> > +
+> > +	unsigned		explicit_status:1;
+> >  };
+> >  
+> >  /*-------------------------------------------------------------------------*/
+> > @@ -850,6 +853,13 @@ extern void usb_gadget_giveback_request(struct usb_ep *ep,
+> >  
+> >  /*-------------------------------------------------------------------------*/
+> >  
+> > +/* utility to complete or delay status stage */
+> > +
+> > +void usb_gadget_control_complete(struct usb_gadget *gadget,
+> > +		unsigned int explicit_status, int status);
+> > +
+> > +/*-------------------------------------------------------------------------*/
+> > +
+> >  /* utility to find endpoint by name */
+> >  
+> >  extern struct usb_ep *gadget_find_ep_by_name(struct usb_gadget *g,
+> > 
+> 
+
+Paul Elder
