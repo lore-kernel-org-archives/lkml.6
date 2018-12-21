@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7085FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731F0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1F321903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F52221903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:47:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JfGOBZzQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJuUMcrQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391069AbeLURpC (ORCPT
+        id S2391077AbeLURrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:45:02 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40769 "EHLO
+        Fri, 21 Dec 2018 12:47:45 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53145 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731150AbeLURpB (ORCPT
+        with ESMTP id S1731150AbeLURro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 12:45:01 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so6486023wmf.5;
-        Fri, 21 Dec 2018 09:44:58 -0800 (PST)
+        Fri, 21 Dec 2018 12:47:44 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so6068286wml.2;
+        Fri, 21 Dec 2018 09:47:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=yQkmZzZyXGoJXiFchhrQyJkpQERkH20QIS6NwSQuAKE=;
-        b=JfGOBZzQ0xR3v/7e2LHBANjASAi3Zb3rBEnpMdDQuaYKrUax44Z4oGXmr9sdL9SjCn
-         dI3+7vzTxOb1CirBqMVFqtPDQWOr+zmag6j0cGV4siTb+BorNqtHrJrsGXgLd02nL7Dh
-         GSGwgfdycx/GvwJ3CzsI+FFQfAQ34gKoXTbaoEpXLzTyFSbgopdauG6Fr1VVIYlRzLG8
-         RTjX5p6w77ThpzeSNrwtMRAw7EPO4pC1FfVmqebwp06qMvog8srV0UwGJSmXPweGCh1i
-         i9/lkA2QoXr33ZEANnaWJzC3P/hcadD5ieNoENiNCpg37KwUZUdMDrmyTK+Eq6JswQ5M
-         qf7w==
+        bh=8bB0rJmEzScf63gcQCpVOR2nQyBnbfHYF7eW9RZU64Y=;
+        b=bJuUMcrQZgRtos2TJUBIby91fQktvoeTWJANz5p+saua2BPnn34Al6a0Egc0yETnos
+         kX6vJQRV1eVPjfftxaBCILRfRt8Kys6coDJOguB3S++IPyvkNrEBMIw0J0CUSZi2UtTh
+         uC341RVwdkvVZhv/skGnm0q5Mj1nLOLDV047c3JvVPfXmTKPOhDEX0M/3NtjZcbNqR/d
+         VeCs1jm9K5MrVBVW/MPWvZkP27yKyQEaHxRw/kk4n0NWMR1czBBUbN4cHm4tmDmrajmK
+         2RaqSa9AlZNfAd23XSEgBWvry+nRwTSV5EWF2L+/YaSFvmFxadfivIZIAX3LNCMBvTf2
+         NC1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=yQkmZzZyXGoJXiFchhrQyJkpQERkH20QIS6NwSQuAKE=;
-        b=jbFuB/suGQ1NkkPP3EtF4SoKKPTCWKhkVwYcAGSo1MdU2GfO/BeYfbmm30Orv8fyfY
-         iderwdRUAye0JrsHjV6AjR0TXIWrHrCe/XqcAA8e4PCRR+xdzI50brmVJ6QkEHPR1N2H
-         m/qaoQ0tb/xQ20Ye+ju4adYbFEtye8lfjypXUovAXLvoR+lIiEj2lw3CvIJYPa2P01pM
-         OGtlHpso70VVXM7DDWAz9efqu9xar6bNngG1aO1U8jmT5A0ihyw0BnM9v5l6C3H/4+yc
-         hUJnlEz+Q1+c1ez1dfzCNB37kFDOUiVs2Wm3H+7GsqxNmHGFc9VWj6rduIPxZilXd0hs
-         AukQ==
-X-Gm-Message-State: AA+aEWYxr2n+Q8iRWFqN6EmjsOaE09LjnFSuZREuGEz3kClsVW3S9Gzz
-        zkkfNv6bO+Ap2gW7iJO8SMU=
-X-Google-Smtp-Source: ALg8bN5XH5wpT2OmAspg1wposIdIDVur4eXTCz7M/w5cRTaFu6H74juUFSvFoNaHlBolDr3EzMhu6A==
-X-Received: by 2002:a1c:30b:: with SMTP id 11mr3674570wmd.110.1545414297742;
-        Fri, 21 Dec 2018 09:44:57 -0800 (PST)
+        bh=8bB0rJmEzScf63gcQCpVOR2nQyBnbfHYF7eW9RZU64Y=;
+        b=dNLF0Qz0ErfTpFvHA6AFg0Yj6uJBOLbTToPBI3rrvot3DGLWil6eLRDDguAKLQuwXA
+         K8ZpXk0TThf4LQGwIkGXmpDfBPiPDTltnTYL3t1LcQtu8tXJ2dMI8+g8vYsofl4c2uwx
+         kW4OI2OrO4bVzIcIxx1vKLZivzRcE4ijgjVZOO9EPQ5cqnM2EwHj2hiGo2fJ2bkjYzkF
+         WEG7hDzhcKRSHe9KQsr5+/Nn+ILhPwwoZ+pfrO89rDFJiozHH09ThX6PJk86xlKRhySC
+         k8CT5Ibuvv0oX1Lisrl+mODHU57WlGE658pzlJvf8r38PduLl4RuvcIEL8dPk2dLubWj
+         0v+g==
+X-Gm-Message-State: AJcUukeV0Va6tXVW3Ph3ctfuWAwoIo0ro8u9DeCXEapXqlj/VWzMHexX
+        yVtRJF+74om+QQ9LlG5j9pk=
+X-Google-Smtp-Source: ALg8bN53X5AmI2BQwUt7l3wBiwoEYMc/7w14j5Gcc2fZHpbx6cGnMQOmANEt9q9XK/Jdhf0mCWqiQQ==
+X-Received: by 2002:a1c:b189:: with SMTP id a131mr3837885wmf.38.1545414461708;
+        Fri, 21 Dec 2018 09:47:41 -0800 (PST)
 Received: from ziggy.stardust ([93.176.153.35])
-        by smtp.gmail.com with ESMTPSA id w18sm9398387wru.54.2018.12.21.09.44.55
+        by smtp.gmail.com with ESMTPSA id 67sm3713183wra.37.2018.12.21.09.47.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 09:44:56 -0800 (PST)
-Subject: Re: [PATCH v4 02/18] iommu/mediatek: Use a struct as the platform
- data
+        Fri, 21 Dec 2018 09:47:41 -0800 (PST)
+Subject: Re: [PATCH v4 03/18] memory: mtk-smi: Use a general config_port
+ interface
 To:     Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -71,7 +71,7 @@ Cc:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Arvind Yadav <arvind.yadav.cs@gmail.com>
 References: <1544258371-4600-1-git-send-email-yong.wu@mediatek.com>
- <1544258371-4600-3-git-send-email-yong.wu@mediatek.com>
+ <1544258371-4600-4-git-send-email-yong.wu@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -167,15 +167,15 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <be32c912-359e-73c9-ca24-d0cbface47d3@gmail.com>
-Date:   Fri, 21 Dec 2018 18:44:55 +0100
+Message-ID: <aa91ceb7-673b-7022-d718-f9f61d4b2f23@gmail.com>
+Date:   Fri, 21 Dec 2018 18:47:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <1544258371-4600-3-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1544258371-4600-4-git-send-email-yong.wu@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -184,117 +184,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 08/12/2018 09:39, Yong Wu wrote:
-> Use a struct as the platform special data instead of the enumeration.
-> This is a prepare patch for adding mt8183 iommu support.
+> The config_port of mt2712 and mt8183 are the same. Use a general
+> config_port interface instead.
+> 
+> In addition, in mt2712, larb8 and larb9 are the bdpsys larbs which
+> are not the normal larb, their register space are different from the
+> normal one. thus, we can not call the general config_port. In mt8183,
+> IPU0/1 and CCU connect with smi-common directly, they also are not
+> the normal larb. Hence, we add a "larb_special_mask" for these special
+> larbs.
+> 
+> This is also a preparing patch for adding mt8183 SMI support.
 > 
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 > ---
+>  drivers/memory/mtk-smi.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+> index 8f2d152..3b9ad0e 100644
+> --- a/drivers/memory/mtk-smi.c
+> +++ b/drivers/memory/mtk-smi.c
+> @@ -53,6 +53,7 @@ struct mtk_smi_larb_gen {
+>  	bool need_larbid;
+>  	int port_in_larb[MTK_LARB_NR_MAX + 1];
+>  	void (*config_port)(struct device *);
+> +	unsigned int larb_special_mask; /* The special larbs mask. */
+
+I'm not really happy with the name larb_special_mask but I can't think of
+anything else. The comment is not needed as it just rewords the name of the
+variable.
+
+Other then that (or even without changing anything):
 
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
->  drivers/iommu/mtk_iommu.c | 24 ++++++++++++++++--------
->  drivers/iommu/mtk_iommu.h |  6 +++++-
->  2 files changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index 44bd5b9..9a2225b 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -54,7 +54,7 @@
->  #define REG_MMU_CTRL_REG			0x110
->  #define F_MMU_PREFETCH_RT_REPLACE_MOD		BIT(4)
->  #define F_MMU_TF_PROTECT_SEL_SHIFT(data) \
-> -	((data)->m4u_plat == M4U_MT2712 ? 4 : 5)
-> +	((data)->plat_data->m4u_plat == M4U_MT2712 ? 4 : 5)
->  /* It's named by F_MMU_TF_PROT_SEL in mt2712. */
->  #define F_MMU_TF_PROTECT_SEL(prot, data) \
->  	(((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
-> @@ -517,7 +517,7 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
->  	}
->  
->  	regval = F_MMU_TF_PROTECT_SEL(2, data);
-> -	if (data->m4u_plat == M4U_MT8173)
-> +	if (data->plat_data->m4u_plat == M4U_MT8173)
->  		regval |= F_MMU_PREFETCH_RT_REPLACE_MOD;
->  	writel_relaxed(regval, data->base + REG_MMU_CTRL_REG);
->  
-> @@ -538,14 +538,14 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
->  		F_INT_PRETETCH_TRANSATION_FIFO_FAULT;
->  	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
->  
-> -	if (data->m4u_plat == M4U_MT8173)
-> +	if (data->plat_data->m4u_plat == M4U_MT8173)
->  		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
->  	else
->  		regval = lower_32_bits(data->protect_base) |
->  			 upper_32_bits(data->protect_base);
->  	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
->  
-> -	if (data->enable_4GB && data->m4u_plat != M4U_MT8173) {
-> +	if (data->enable_4GB && data->plat_data->m4u_plat != M4U_MT8173) {
->  		/*
->  		 * If 4GB mode is enabled, the validate PA range is from
->  		 * 0x1_0000_0000 to 0x1_ffff_ffff. here record bit[32:30].
-> @@ -556,7 +556,7 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
->  	writel_relaxed(0, data->base + REG_MMU_DCM_DIS);
->  
->  	/* It's MISC control register whose default value is ok except mt8173.*/
-> -	if (data->m4u_plat == M4U_MT8173)
-> +	if (data->plat_data->m4u_plat == M4U_MT8173)
->  		writel_relaxed(0, data->base + REG_MMU_STANDARD_AXI_MODE);
->  
->  	if (devm_request_irq(data->dev, data->irq, mtk_iommu_isr, 0,
-> @@ -589,7 +589,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
->  	if (!data)
->  		return -ENOMEM;
->  	data->dev = dev;
-> -	data->m4u_plat = (enum mtk_iommu_plat)of_device_get_match_data(dev);
-> +	data->plat_data = of_device_get_match_data(dev);
->  
->  	/* Protect memory. HW will access here while translation fault.*/
->  	protect = devm_kzalloc(dev, MTK_PROTECT_PA_ALIGN * 2, GFP_KERNEL);
-> @@ -733,9 +733,17 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
->  	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_iommu_suspend, mtk_iommu_resume)
 >  };
 >  
-> +static const struct mtk_iommu_plat_data mt2712_data = {
-> +	.m4u_plat     = M4U_MT2712,
-> +};
-> +
-> +static const struct mtk_iommu_plat_data mt8173_data = {
-> +	.m4u_plat     = M4U_MT8173,
-> +};
-> +
->  static const struct of_device_id mtk_iommu_of_ids[] = {
-> -	{ .compatible = "mediatek,mt2712-m4u", .data = (void *)M4U_MT2712},
-> -	{ .compatible = "mediatek,mt8173-m4u", .data = (void *)M4U_MT8173},
-> +	{ .compatible = "mediatek,mt2712-m4u", .data = &mt2712_data},
-> +	{ .compatible = "mediatek,mt8173-m4u", .data = &mt8173_data},
->  	{}
+>  struct mtk_smi {
+> @@ -176,17 +177,13 @@ void mtk_smi_larb_put(struct device *larbdev)
+>  	return -ENODEV;
+>  }
+>  
+> -static void mtk_smi_larb_config_port_mt2712(struct device *dev)
+> +static void mtk_smi_larb_config_port_gen2_general(struct device *dev)
+>  {
+>  	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
+>  	u32 reg;
+>  	int i;
+>  
+> -	/*
+> -	 * larb 8/9 is the bdpsys larb, the iommu_en is enabled defaultly.
+> -	 * Don't need to set it again.
+> -	 */
+> -	if (larb->larbid == 8 || larb->larbid == 9)
+> +	if (BIT(larb->larbid) & larb->larb_gen->larb_special_mask)
+>  		return;
+>  
+>  	for_each_set_bit(i, (unsigned long *)larb->mmu, 32) {
+> @@ -261,7 +258,8 @@ static void mtk_smi_larb_config_port_gen1(struct device *dev)
+>  
+>  static const struct mtk_smi_larb_gen mtk_smi_larb_mt2712 = {
+>  	.need_larbid = true,
+> -	.config_port = mtk_smi_larb_config_port_mt2712,
+> +	.config_port       = mtk_smi_larb_config_port_gen2_general,
+> +	.larb_special_mask = BIT(8) | BIT(9),          /* bdpsys */
 >  };
 >  
-> diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-> index 778498b..333a0ef 100644
-> --- a/drivers/iommu/mtk_iommu.h
-> +++ b/drivers/iommu/mtk_iommu.h
-> @@ -41,6 +41,10 @@ enum mtk_iommu_plat {
->  	M4U_MT8173,
->  };
->  
-> +struct mtk_iommu_plat_data {
-> +	enum mtk_iommu_plat m4u_plat;
-> +};
-> +
->  struct mtk_iommu_domain;
->  
->  struct mtk_iommu_data {
-> @@ -57,7 +61,7 @@ struct mtk_iommu_data {
->  	bool				tlb_flush_active;
->  
->  	struct iommu_device		iommu;
-> -	enum mtk_iommu_plat		m4u_plat;
-> +	const struct mtk_iommu_plat_data *plat_data;
->  
->  	struct list_head		list;
->  };
+>  static const struct of_device_id mtk_smi_larb_of_ids[] = {
 > 
