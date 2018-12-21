@@ -2,129 +2,216 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFE6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7A4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A950218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7FAD218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbeLUJER (ORCPT
+        id S1728588AbeLUJEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:04:17 -0500
-Received: from mail.netline.ch ([148.251.143.178]:57049 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbeLUJER (ORCPT
+        Fri, 21 Dec 2018 04:04:20 -0500
+Received: from mx139-tc.baidu.com ([61.135.168.139]:17600 "EHLO
+        tc-sys-mailedm06.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbeLUJES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:04:17 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 33FA32A6056;
-        Fri, 21 Dec 2018 10:04:14 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id muQ0hnR01oLW; Fri, 21 Dec 2018 10:04:13 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id BA9FA2A6055;
-        Fri, 21 Dec 2018 10:04:13 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gaGj7-0001H1-EL; Fri, 21 Dec 2018 10:04:13 +0100
-Subject: Re: [PATCH 2/3] drm/amd: validate user pitch alignment
-To:     Yu Zhao <yuzhao@google.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     David Zhou <David1.Zhou@amd.com>,
-        Daniel Stone <daniels@collabora.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, Samuel Li <Samuel.Li@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-References: <20181221031053.240161-1-yuzhao@google.com>
- <20181221031053.240161-2-yuzhao@google.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <00f353df-037d-ec84-b86b-5081b8c3a907@daenzer.net>
-Date:   Fri, 21 Dec 2018 10:04:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181221031053.240161-2-yuzhao@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+        Fri, 21 Dec 2018 04:04:18 -0500
+X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Dec 2018 04:04:16 EST
+Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
+        by tc-sys-mailedm06.tc.baidu.com (Postfix) with ESMTP id E3ED3263C007;
+        Fri, 21 Dec 2018 16:57:01 +0800 (CST)
+From:   Li RongQing <lirongqing@baidu.com>
+To:     linux-kernel@vger.kernel.org, jslaby@suse.com,
+        gregkh@linuxfoundation.org, gkohli@codeaurora.org,
+        alan@linux.intel.com
+Subject: [PATCH] tty: fix race between flush_to_ldisc and tty_open
+Date:   Fri, 21 Dec 2018 16:57:01 +0800
+Message-Id: <1545382621-2093-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-21 4:10 a.m., Yu Zhao wrote:
-> Userspace may request pitch alignment that is not supported by GPU.
-> Some requests 32, but GPU ignores it and uses default 64 when cpp is
-> 4. If GEM object is allocated based on the smaller alignment, GPU
-> DMA will go out of bound.
-> 
-> For GPU that does frame buffer compression, DMA writing out of bound
-> memory will cause memory corruption.
-> 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> index e309d26170db..755daa332f8a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-> @@ -527,6 +527,15 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
->  	struct drm_gem_object *obj;
->  	struct amdgpu_framebuffer *amdgpu_fb;
->  	int ret;
-> +	struct amdgpu_device *adev = dev->dev_private;
-> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
-> +	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
-> +
-> +	if (mode_cmd->pitches[0] != pitch) {
-> +		dev_err(&dev->pdev->dev, "Invalid pitch: expecting %d but got %d\n",
-> +			pitch, mode_cmd->pitches[0]);
+There still can be a race after the commit b027e2298bd588
+("tty: fix data race between tty_init_dev and flush of buf"),
+if receive_buf call comes before tty initialization completes
+in n_tty_open and tty->driver_data may be NULL.
 
-This message shouldn't be printed by default, or buggy / malicious
-userspace can spam dmesg. I suggest using DRM_DEBUG_KMS or DRM_DEBUG_DRIVER.
+CPU0                                    CPU1
+----                                    ----
+                                      n_tty_open
+                                      tty_init_dev
+                                      tty_ldisc_unlock
+                                      schedule
+flush_to_ldisc
+n_tty_receive_buf
+uart_flush_chars
+uart_start
 
+Extending ldisc semaphore lock in tty_init_dev till driver_data
+initializes completely after tty->ops->open().
 
-> +		return ERR_PTR(-EINVAL);
-> +	}
->  
->  	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
->  	if (obj ==  NULL) {
-> 
+Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+we see this bug in centos 7.4, and think b027e2298bd588 can not
+fix it, since driver_data is NULL;
 
-Other than that, looks good to me.
+the trace is that:
 
+    [exception RIP: uart_start+24]
+    RIP: ffffffff814908b8  RSP: ffff881c23ab7d18  RFLAGS: 00010282
+    RAX: 0000000000000000  RBX: ffff88182bafc400  RCX: 0000000000000000
+    RDX: 0000000000020001  RSI: 000000000000001d  RDI: ffff88182bafc400
+    RBP: ffff881c23ab7d30   R8: ffff881fff956060   R9: ffffffff81b5dc20
+    R10: 0000000000005a07  R11: 0000000000000001  R12: ffff88182bafc400
+    R13: ffff881ff90c852d  R14: ffff88182baff400  R15: 0000000000000000
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+#11 [ffff881c23ab7d38] uart_flush_chars at ffffffff81490ade
+#12 [ffff881c23ab7d48] n_tty_receive_buf at ffffffff81478b1d
+#13 [ffff881c23ab7de0] flush_to_ldisc at ffffffff8147bdc4
+#14 [ffff881c23ab7e28] process_one_work at ffffffff8109e210
+#15 [ffff881c23ab7e70] worker_thread at ffffffff8109e69e
+#16 [ffff881c23ab7ec8] kthread at ffffffff810a62d1
+#17 [ffff881c23ab7f50] ret_from_fork at ffffffff8171d677
 
+other one
+
+PID: 922    TASK: ffff881c7fbc1f40  CPU: 29  COMMAND: "agetty"
+ #0 [ffff8818e9677a20] __schedule at ffffffff817114f2
+ #1 [ffff8818e9677a78] preempt_schedule at ffffffff81711f4f
+ #2 [ffff8818e9677a90] _raw_spin_unlock_irqrestore at ffffffff81713f7d
+ #3 [ffff8818e9677aa8] __wake_up at ffffffff810b03c4
+ #4 [ffff8818e9677ae0] n_tty_set_termios at ffffffff814770d3
+ #5 [ffff8818e9677b10] n_tty_open at ffffffff814772ec` 
+ 
+ 
+ drivers/staging/speakup/spk_ttyio.c |  1 +
+ drivers/tty/pty.c                   |  2 ++
+ drivers/tty/serdev/serdev-ttyport.c |  2 ++
+ drivers/tty/tty_io.c                | 14 +++++++++++---
+ 4 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
+index 979e3ae249c1..c31f08c98383 100644
+--- a/drivers/staging/speakup/spk_ttyio.c
++++ b/drivers/staging/speakup/spk_ttyio.c
+@@ -155,6 +155,7 @@ static int spk_ttyio_initialise_ldisc(struct spk_synth *synth)
+ 	else
+ 		ret = -ENODEV;
+ 
++	tty_ldisc_unlock(tty);
+ 	if (ret) {
+ 		tty_unlock(tty);
+ 		return ret;
+diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
+index 00099a8439d2..1b9684d4f718 100644
+--- a/drivers/tty/pty.c
++++ b/drivers/tty/pty.c
+@@ -873,9 +873,11 @@ static int ptmx_open(struct inode *inode, struct file *filp)
+ 
+ 	tty_debug_hangup(tty, "opening (count=%d)\n", tty->count);
+ 
++	tty_ldisc_unlock(tty);
+ 	tty_unlock(tty);
+ 	return 0;
+ err_release:
++	tty_ldisc_unlock(tty);
+ 	tty_unlock(tty);
+ 	// This will also put-ref the fsi
+ 	tty_release(inode, filp);
+diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+index fa1672993b4c..ce16cb303e28 100644
+--- a/drivers/tty/serdev/serdev-ttyport.c
++++ b/drivers/tty/serdev/serdev-ttyport.c
+@@ -123,6 +123,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
+ 	if (ret)
+ 		goto err_close;
+ 
++	tty_ldisc_unlock(tty);
+ 	tty_unlock(serport->tty);
+ 
+ 	/* Bring the UART into a known 8 bits no parity hw fc state */
+@@ -145,6 +146,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
+ err_close:
+ 	tty->ops->close(tty, NULL);
+ err_unlock:
++	tty_ldisc_unlock(tty);
+ 	tty_unlock(tty);
+ 	tty_release_struct(tty, serport->tty_idx);
+ 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 687250ec8032..199f45e2e1b1 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1351,7 +1351,6 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 	retval = tty_ldisc_setup(tty, tty->link);
+ 	if (retval)
+ 		goto err_release_tty;
+-	tty_ldisc_unlock(tty);
+ 	/* Return the tty locked so that it cannot vanish under the caller */
+ 	return tty;
+ 
+@@ -1926,7 +1925,7 @@ EXPORT_SYMBOL_GPL(tty_kopen);
+  *	  - concurrent tty removal from driver table
+  */
+ static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
+-					     struct file *filp)
++					     struct file *filp, bool *unlock)
+ {
+ 	struct tty_struct *tty;
+ 	struct tty_driver *driver = NULL;
+@@ -1970,6 +1969,7 @@ static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
+ 		}
+ 	} else { /* Returns with the tty_lock held for now */
+ 		tty = tty_init_dev(driver, index);
++		*unlock = true;
+ 		mutex_unlock(&tty_mutex);
+ 	}
+ out:
+@@ -2007,6 +2007,7 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 	int noctty, retval;
+ 	dev_t device = inode->i_rdev;
+ 	unsigned saved_flags = filp->f_flags;
++	bool unlock = false;
+ 
+ 	nonseekable_open(inode, filp);
+ 
+@@ -2017,7 +2018,7 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 
+ 	tty = tty_open_current_tty(device, filp);
+ 	if (!tty)
+-		tty = tty_open_by_driver(device, inode, filp);
++		tty = tty_open_by_driver(device, inode, filp, &unlock);
+ 
+ 	if (IS_ERR(tty)) {
+ 		tty_free_file(filp);
+@@ -2042,6 +2043,10 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 	if (retval) {
+ 		tty_debug_hangup(tty, "open error %d, releasing\n", retval);
+ 
++		if (unlock) {
++			unlock = false;
++			tty_ldisc_unlock(tty);
++		}
+ 		tty_unlock(tty); /* need to call tty_release without BTM */
+ 		tty_release(inode, filp);
+ 		if (retval != -ERESTARTSYS)
+@@ -2067,6 +2072,9 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 		  tty->driver->subtype == PTY_TYPE_MASTER);
+ 	if (!noctty)
+ 		tty_open_proc_set_tty(filp, tty);
++
++	if (unlock)
++		tty_ldisc_unlock(tty);
+ 	tty_unlock(tty);
+ 	return 0;
+ }
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.16.2
+
