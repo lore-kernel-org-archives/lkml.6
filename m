@@ -2,136 +2,170 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D8DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19772C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F048C218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B2A218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 00:46:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQ7q3f8b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388162AbeLUAqQ (ORCPT
+        id S2388206AbeLUAqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 19:46:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47804 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387715AbeLUAqQ (ORCPT
+        Thu, 20 Dec 2018 19:46:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33207 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732038AbeLUAqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 19:46:16 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBL0hSbP102106
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:46:15 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pghnnrk97-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 19:46:14 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <michaele@au1.ibm.com>;
-        Fri, 21 Dec 2018 00:46:12 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Dec 2018 00:46:09 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBL0k8Ii9044406
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Dec 2018 00:46:08 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE5944C044;
-        Fri, 21 Dec 2018 00:46:07 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98E834C040;
-        Fri, 21 Dec 2018 00:46:07 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Dec 2018 00:46:07 +0000 (GMT)
-Received: from localhost (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A6003A0220;
-        Fri, 21 Dec 2018 11:46:04 +1100 (AEDT)
-From:   Michael Ellerman <michaele@au1.ibm.com>
-To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        kvm@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm-ppc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Leonardo Augusto =?utf-8?Q?Guimar=C3=A3es?= Garcia 
-        <lagarcia@br.ibm.com>, Reza Arbab <arbab@linux.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>
-Subject: Re: [PATCH kernel v7 20/20] vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver
-In-Reply-To: <20181220163006.GA31987@kermit-br-ibm-com.br.ibm.com>
-References: <20181220082350.58113-1-aik@ozlabs.ru> <20181220082350.58113-21-aik@ozlabs.ru> <20181220163006.GA31987@kermit-br-ibm-com.br.ibm.com>
-Date:   Fri, 21 Dec 2018 11:46:04 +1100
+        Thu, 20 Dec 2018 19:46:30 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i20so3703355otl.0;
+        Thu, 20 Dec 2018 16:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3jpjGwfi+rSF7Gc7fLV7zYp5ruLZVpA2cEJfcBl2cII=;
+        b=QQ7q3f8b06inK2seFbjLnx/9mSOpFt3QYEpM2RWt4OkasvWFplrqwrVW8DeLyCyqOz
+         mZ/VNmcBRgc/VVh3exL3cyecDvGmmwmmFpeBbAM3fcFIGZJ07Cv49LjR1ROiAHIaQRtq
+         JSEgpO+k8jTh7y9IHHvvRoQwfRmfy+w0Z+kFNuTTfxR+3mi2dUSlC45hlft27pzE4Dw4
+         Z2UzQN28jKZGbvuf/GFaBBtoqcMLI+50KVv3fOddvyd29+3K9MsYjAdDUHmWOkEcy/Al
+         HgNUMPIvPDNS3F4UNd2pAlpGOs/cDvwK6GwVbOLcoaczv2NVT9KTh62939M+nIpCg81/
+         eWyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3jpjGwfi+rSF7Gc7fLV7zYp5ruLZVpA2cEJfcBl2cII=;
+        b=dbbicUtjy7/QiY4PwLeDK19uPDNSb8BwzGRLFiVVl+DeKnID+MdfxbpO4nas2GoUMD
+         I+CrbU9MQhgFKrjnDO6/SEuimUGUQGz2mXcmY22MAJU2qLudNVn07Dzt2YnexPueY9er
+         pMNU+vAMPbxRChpykTdy+HU9Gtp0V/fJ4O0mxN6ith1kvLIjol4xW461OiO2q3Hz3DLl
+         CmHR/bQwf8uVHhzmEl3jYlfLqcm2azrEYHSGtyKXTgGVl9k8csFEpXn4WLzA1O1Qa/SK
+         kZe/h8LJSY2obWpVleFVfAbIJ0aCv477AwOu/nWbx9JASdnrc1OPokXbe8pPYdk7nMVi
+         dU7g==
+X-Gm-Message-State: AJcUukeaNDlr7ahUk+pJeiEglAWKm4pREiobmJSqfVS1/T3FmOeutjMy
+        gQBVhJMjwhJ0v/+++nTfuVGwkBCqvrsuEUriHbDSgAY2
+X-Google-Smtp-Source: ALg8bN79FcBNRPQ7gnuJzXlTTgZoB05F1brZirVbJ29wXzhHmLSRVqOF2vi+fFueZZG+Q915+HhkzNaS0f+ic6RzFeU=
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr254898oti.258.1545353189048;
+ Thu, 20 Dec 2018 16:46:29 -0800 (PST)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18122100-0028-0000-0000-0000032D7B8A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122100-0029-0000-0000-000023E9E383
-Message-Id: <87y38jpv03.fsf@concordia.ellerman.id.au>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=44 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812210003
+References: <1544083089-13000-1-git-send-email-wanpengli@tencent.com> <20181220144345.GB19579@flask>
+In-Reply-To: <20181220144345.GB19579@flask>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 21 Dec 2018 08:46:32 +0800
+Message-ID: <CANRm+Cx4HKfXDpCUtkScjQ-wzCBCpx91twBodkqDRD7U1rZBHg@mail.gmail.com>
+Subject: Re: [PATCH] KVM: MMU: Introduce single thread to zap collapsible sptes
+To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
-> On Thu, Dec 20, 2018 at 07:23:50PM +1100, Alexey Kardashevskiy wrote:
-...
->> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
->> new file mode 100644
->> index 0000000..b80d2d3
->> --- /dev/null
->> +++ b/drivers/vfio/pci/trace.h
-...
->> +TRACE_EVENT(vfio_pci_npu2_mmap,
->> +	TP_PROTO(struct pci_dev *pdev, unsigned long hpa, unsigned long ua,
->> +			unsigned long size, int ret),
->> +	TP_ARGS(pdev, hpa, ua, size, ret),
->> +
->> +	TP_STRUCT__entry(
->> +		__field(const char *, name)
->> +		__field(unsigned long, hpa)
->> +		__field(unsigned long, ua)
->> +		__field(unsigned long, size)
->> +		__field(int, ret)
->> +	),
->> +
->> +	TP_fast_assign(
->> +		__entry->name = dev_name(&pdev->dev),
->> +		__entry->hpa = hpa;
->> +		__entry->ua = ua;
->> +		__entry->size = size;
->> +		__entry->ret = ret;
->> +	),
->> +
->> +	TP_printk("%s: %lx -> %lx size=%lx ret=%d", __entry->name, __entry->hpa,
->> +			__entry->ua, __entry->size, __entry->ret)
->> +);
->> +
->> +#endif /* _TRACE_SUBSYS_H */
+On Thu, 20 Dec 2018 at 22:43, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.c=
+om> wrote:
 >
-> I think it's too late but this line I guess should read:
+> 2018-12-06 15:58+0800, Wanpeng Li:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > Last year guys from huawei reported that the call of memory_global_dirt=
+y_log_start/stop()
+> > takes 13s for 4T memory and cause guest freeze too long which increases=
+ the unacceptable
+> > migration downtime. [1] [2]
+> >
+> > Guangrong pointed out:
+> >
+> > | collapsible_sptes zaps 4k mappings to make memory-read happy, it is n=
+ot
+> > | required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
+> > | urgent for vCPU's running, it could be done in a separate thread and =
+use
+> > | lock-break technology.
+> >
+> > [1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
+> > [2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
+> >
+> > Several TB memory guest is common now after NVDIMM is deployed in cloud=
+ environment.
+> > This patch utilizes worker thread to zap collapsible sptes in order to =
+lazy collapse
+> > small sptes into large sptes during roll-back after live migration fail=
+s.
+> >
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> > @@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct=
+ kvm *kvm,
+> >       return need_tlb_flush;
+> >  }
+> >
+> > +void zap_collapsible_sptes_fn(struct work_struct *work)
+> > +{
+> > +     struct kvm_memory_slot *memslot;
+> > +     struct kvm_memslots *slots;
+> > +     struct delayed_work *dwork =3D to_delayed_work(work);
+> > +     struct kvm_arch *ka =3D container_of(dwork, struct kvm_arch,
+> > +                                        kvm_mmu_zap_collapsible_sptes_=
+work);
+> > +     struct kvm *kvm =3D container_of(ka, struct kvm, arch);
+> > +     int i;
+> > +
+> > +     mutex_lock(&kvm->slots_lock);
+> > +     for (i =3D 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> > +             spin_lock(&kvm->mmu_lock);
+> > +             slots =3D __kvm_memslots(kvm, i);
+> > +             kvm_for_each_memslot(memslot, slots) {
+> > +                     slot_handle_leaf(kvm, (struct kvm_memory_slot *)m=
+emslot,
+> > +                             kvm_mmu_zap_collapsible_spte, true);
+> > +                     if (need_resched() || spin_needbreak(&kvm->mmu_lo=
+ck))
+> > +                             cond_resched_lock(&kvm->mmu_lock);
 >
->   #endif /* _TRACE_VFIO_PCI_H */
+> I think we shouldn't zap all memslots when kvm_mmu_zap_collapsible_sptes
+> only wanted to zap a specific one.
+> Please add a list of memslots to be zapped; delete from the list here
+> and add in kvm_mmu_zap_collapsible_sptes().
 
-Thanks I'll fix it up.
+Yeah, that's my original plan, however, i observe a lot of races here,
+the memslot can disappear/modify underneath before the worker thread
+start to zap even if i introduce lock to protect the list. This patch
+delays the worker thread by 60s(to assume memory_global_dirty_log_stop
+can absolutely complete) to coalesce all the zap requirements after
+live migration fails.
 
-cheers
+Regards,
+Wanpeng Li
 
+>
+> > +             }
+> > +             spin_unlock(&kvm->mmu_lock);
+> > +     }
+> > +     kvm->arch.zap_in_progress =3D false;
+> > +     mutex_unlock(&kvm->slots_lock);
+> > +}
+> > +
+> > +#define KVM_MMU_ZAP_DELAYED (60 * HZ)
+> >  void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+> >                                  const struct kvm_memory_slot *memslot)
+> >  {
+> > -     /* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+> > -     spin_lock(&kvm->mmu_lock);
+> > -     slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+> > -                      kvm_mmu_zap_collapsible_spte, true);
+> > -     spin_unlock(&kvm->mmu_lock);
+> > +     if (!kvm->arch.zap_in_progress) {
+>
+> The list can also serve in place of zap_in_progress -- if there were any
+> elements in it, then there is no need to schedule the work again.
+>
+> Thanks.
