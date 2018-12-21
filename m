@@ -2,87 +2,121 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254A5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE00C2176F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C0321908
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:32:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S03OrjfN"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I2fF/a2f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389666AbeLUKbi (ORCPT
+        id S2389711AbeLUKcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:31:38 -0500
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:42856 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389558AbeLUKbh (ORCPT
+        Fri, 21 Dec 2018 05:32:07 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34279 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389558AbeLUKcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:31:37 -0500
-Received: by mail-lf1-f49.google.com with SMTP id l10so3543857lfh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:31:36 -0800 (PST)
+        Fri, 21 Dec 2018 05:32:07 -0500
+Received: by mail-vs1-f68.google.com with SMTP id y27so2956806vsi.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:32:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MahSN5eHYGobUqPuHbiUtLe6WiUqGq9YkG+F2XfFA2Q=;
-        b=S03OrjfNhUzgexQT0DqjvZuFpROC+uIpMR541i5C8CgfB5dLxNQhJ4aCoBuvuZD1tF
-         eqqm1SeW0lLh/XbH3PZovqmRT2hnHUiETsyDs/ryYdmwAg5rucP1LPJ2Zl+NiGUeaXB1
-         WDR/e8aKa6sS3zNcknOJkoborulq9vh60RVqU=
+         :cc;
+        bh=izWgaZduLJ4ZZfBJHh9HqZfbpzXJM1zAJ7oJFAku28g=;
+        b=I2fF/a2f4vW7u8hZdQ5+V9wjJ3ZcjpziqH0ZMY+7yieM5pWB23n/AadzirGIy1TK5Q
+         Uwnx7A/vp0uLtcYxwZtSq2aHvU0Uu3aiMnmGFhBLrmoT6rJWkOvOKe8N2jhHadKJMump
+         juNpFiMWZnBeUnsAd5tUFcT/4aCn+7g7FDZIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MahSN5eHYGobUqPuHbiUtLe6WiUqGq9YkG+F2XfFA2Q=;
-        b=sUdJ2Ei98ODk40W95F+dI3h3MzQRvnPcoH3b0xdrp5wYaqnr60aExkVDqSS5IzRGgG
-         PTcaYTjWLSaVlRvSQpApDBniYMDrKvHNOvTcDp3R4G8iBrVMCcxFa5WsIcaQ8pvy8JNK
-         kNzdUhNDonj3DbWV9LjHVApKiPc7ODdNanSWblMy/3yl5dHRUo6HsdicmbXQ1tkWKJIE
-         OF3NAwQufcJ/qhub8kfZ3Mm53jVdYnlenrwd4NCxnLQuYtfCcPWJKsIVdt/7i0c1Z5tM
-         4GCmkwNUJVfeNh4/S/FbtXVh1mi42k6qAky21mQdpTFzgU7zoQLBprWuAX6x0+hBT43F
-         k1Og==
-X-Gm-Message-State: AA+aEWamZYI+P80dsnn7Msz9KJefFRB6lqiU+rXluzFQneIZt+rf5SoZ
-        8NOj/z+8Qx0t202dwkD3iuO7r93pMXBbblMCCyQEcQ==
-X-Google-Smtp-Source: AFSGD/XH16hyGVElrgk1eguiGY+871P/JAFm6bEDD2j1GxOL2B2r/KlGbJLaOCyy+ny+D10fWrq9SgcTnmbjCzgB+1M=
-X-Received: by 2002:a19:41c4:: with SMTP id o187mr1120498lfa.32.1545388295781;
- Fri, 21 Dec 2018 02:31:35 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=izWgaZduLJ4ZZfBJHh9HqZfbpzXJM1zAJ7oJFAku28g=;
+        b=CecwJ0nyOYkTQOrEOYugHNUdRZyJc3cDjVG3fydPh2nVWjdV/e8y4g8k4FDht7CIcs
+         uhgJzGVdN8CkojbjyIwxBANqk1urL3VD6IrIINY9qR9Z2qXDIa5zSGOK5UFW5Z6zngQm
+         7tGVJBq00+See3LXXLCB6rbX3RLZRipEUCqkAEMBviXb90gZIJXrfITeoOQhqKjkFlcP
+         +nIbET07GIzCMrfgEe+CJjWIY52qd4KsEDnGBgbBBbVEmiNiH54ll17SK9GuCE//xjfx
+         ajAnbK85hFRfCCBFuJpKYlgGXUP9NtAanzu6cD0EgoPj8krc8PuBlGrdfm7x73GUHBoU
+         3Dgg==
+X-Gm-Message-State: AA+aEWbBFBdcKFx04Xbpt32NEGMVaICuJ1PwN//8GLUWnLw/X0otpt13
+        rKI8AN2O31pR+5LOEPcK+G3tvfrwkBZAVhE9yuwnUw==
+X-Google-Smtp-Source: ALg8bN5n3BhspuwPUcPwCxKyIyXv2drDDa+vuwxmaj2r+Uj45LqavGxTe6FyylLb7fcgmwk05lLKiC018qVa1VDgkJM=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr812832vsh.200.1545388326240;
+ Fri, 21 Dec 2018 02:32:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20181218122802.28157-1-colin.king@canonical.com>
-In-Reply-To: <20181218122802.28157-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Dec 2018 11:31:24 +0100
-Message-ID: <CACRpkdZn_s6LHeqTZqEMhzpY=u2jcda_YUvnfX0qwEw8kMWJOw@mail.gmail.com>
-Subject: Re: [PATCH][next] gpiolib-acpi: remove unused variable 'err', cleans
- up build warning
-To:     Colin King <colin.king@canonical.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181221085622.25573-1-rnayak@codeaurora.org> <20181221085622.25573-9-rnayak@codeaurora.org>
+In-Reply-To: <20181221085622.25573-9-rnayak@codeaurora.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 21 Dec 2018 11:31:28 +0100
+Message-ID: <CAPDyKFpsqGJ4mMYEMto4nHcYeNr0z-dEea9LFfCuSeTfok8SDQ@mail.gmail.com>
+Subject: Re: [PATCH v8 08/10] PM / Domains: Add a simple_opp_to_performance_state()
+ helper
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 1:28 PM Colin King <colin.king@canonical.com> wrote=
-:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, 21 Dec 2018 at 09:57, Rajendra Nayak <rnayak@codeaurora.org> wrote:
 >
-> Variable err is defined but never used. Remove it. Cleans up warning:
+> Now that we have atleast 2 genpd providers, both using a simple
+> routine to read a performance state value from device tree and
+> return it, in order to implement the .opp_to_performance_state
+> callback, add a simple_opp_to_performance_state() helper to do
+> it, so it can be resued across all such genpd providers which
+> just need to read the value from DT.
 >
-> warning: unused variable =E2=80=98err=E2=80=99 [-Wunused-variable]
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/base/power/domain.c | 17 +++++++++++++++++
+>  include/linux/pm_domain.h   |  9 +++++++++
+>  2 files changed, 26 insertions(+)
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 8e554e6a82a2..193872afbe20 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2520,6 +2520,23 @@ int of_genpd_parse_idle_states(struct device_node *dn,
+>  }
+>  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+>
+> +unsigned int simple_opp_to_performance_state(struct generic_pm_domain *genpd,
+> +                                            struct dev_pm_opp *opp,
+> +                                            const char *name)
+> +{
 
-Patch applied with Mika's ACK.
+Looks like this function should be moved into the OPP library instead.
+There is no use of the genpd.
 
-Yours,
-Linus Walleij
+> +       struct device_node *np;
+> +       unsigned int perf_state = 0;
+> +
+> +       np = dev_pm_opp_get_of_node(opp);
+> +       if (of_property_read_u32(np, name, &perf_state))
+> +               pr_err("%s: missing %s property\n", __func__, name);
+> +
+> +       of_node_put(np);
+> +
+> +       return perf_state;
+> +}
+> +EXPORT_SYMBOL_GPL(simple_opp_to_performance_state);
+> +
+
+Kind regards
+Uffe
