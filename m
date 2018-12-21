@@ -2,203 +2,234 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D722C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582A1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270E02190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1372D218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:13:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H5rxtO1A";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X8prDouE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732665AbeLUIHz (ORCPT
+        id S1732976AbeLUINS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:07:55 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:65320 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730509AbeLUIHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:07:55 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43Lh7q6T5mz9tyL4;
-        Fri, 21 Dec 2018 09:07:51 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id AXYKGTvTcQyv; Fri, 21 Dec 2018 09:07:51 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43Lh7q5qNGz9tyL3;
-        Fri, 21 Dec 2018 09:07:51 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C26068B8E5;
-        Fri, 21 Dec 2018 09:07:52 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mYoISYYE-_yH; Fri, 21 Dec 2018 09:07:52 +0100 (CET)
-Received: from PO15451.localdomain (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 97C1F8B75F;
-        Fri, 21 Dec 2018 09:07:52 +0100 (CET)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id 4F16E7176E; Fri, 21 Dec 2018 08:07:52 +0000 (UTC)
-Message-Id: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Horia Geanta <horia.geanta@nxp.com>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
-Date:   Fri, 21 Dec 2018 08:07:52 +0000 (UTC)
+        Fri, 21 Dec 2018 03:13:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40998 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730509AbeLUINR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 03:13:17 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2F5296053B; Fri, 21 Dec 2018 08:13:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545379996;
+        bh=GjwTpVy9d8uEuliEBXqbCqXteFKRpN0TvzzwTpPcbXk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=H5rxtO1AKd8W9jS5QauqQxKfvsZtQyFb6YCfdfMNPFGy09XEqwyeqlK9rWTuMTGu4
+         hvaWckG8lPodgJlEY+qz1N3y5E8EVAScR21dQPanMM9Fj2h8Jfde/FrrNVqRCMdKSt
+         DqTNTlK3n9gpvOxJ9UJoMwSuc1ggEV+u2V5fj2TA=
+Received: from [10.206.25.155] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 060F8606FC;
+        Fri, 21 Dec 2018 08:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545379995;
+        bh=GjwTpVy9d8uEuliEBXqbCqXteFKRpN0TvzzwTpPcbXk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=X8prDouEiy5KRHAjiNHD7Jev2JETQnSDAc6vXEf5VGxKuqpdAXLQyH60a0e2LYQRV
+         OCWhWjmTS37j59z7XRaP7vSPi8NPPDHCnfpKdbwE9Tu+MWhk4CD4gyw/UYdAcLFdhB
+         XoVytbaAx4bzLDClJTm+zEbxucmY3q1OgNXDGHAE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 060F8606FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v6 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY
+ driver
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sriharsha Allenki <sallenki@codeaurora.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Jack Pham <jackp@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+References: <20181220010112.16824-1-shawn.guo@linaro.org>
+ <20181220010112.16824-3-shawn.guo@linaro.org>
+ <f106782b6d8e26ebf851f00563c68948@codeaurora.org>
+ <20181220110956.GA17416@dragon>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <f5981b24-b769-2f48-7f93-10fb4f61caec@codeaurora.org>
+Date:   Fri, 21 Dec 2018 13:43:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181220110956.GA17416@dragon>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
-[    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
-[    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
-[    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
-[    2.406669]
-[    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
-[    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
-[    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
-[    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
-[    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
-[    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
-[    2.451762] Call Trace:
-[    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
-[    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
-[    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
-[    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
-[    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
-[    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
-[    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
-[    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
-[    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
-[    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
-[    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    2.515532] Instruction dump:
-[    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
-[    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
-[    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
-[    2.539123] talitos ff020000.crypto: master data transfer error
-[    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
-[    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
+Hi,
 
-IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
-cannot be DMA mapped anymore.
+On 12/20/2018 4:39 PM, Shawn Guo wrote:
+> Hi Manu,
+>
+> On Thu, Dec 20, 2018 at 09:33:43AM +0530, mgautam@codeaurora.org wrote:
+>> Hi Shawn,
+>>
+>> On 2018-12-20 06:31, Shawn Guo wrote:
+>>> It adds Synopsys 28nm Femto High-Speed USB PHY driver support, which
+>>> is usually paired with Synopsys DWC3 USB controllers on Qualcomm SoCs.
+>>>
+>>> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+>>> ---
+>>
+...
+>>> +struct hsphy_priv {
+>> nit-pick - indentation for following structure members?
+> Hmm, my personal taste says no, because I found that it's hard to keep
+> the indentation when adding new members later.
+ok
+>
+>>> +	void __iomem *base;
+>>> +	struct clk_bulk_data *clks;
+>>> +	int num_clks;
+>>> +	struct reset_control *phy_reset;
+>>> +	struct reset_control *por_reset;
+>>> +	struct regulator_bulk_data vregs[VREG_NUM];
+>>> +	unsigned int voltages[VREG_NUM][VOL_NUM];
+>>> +	const struct hsphy_data *data;
+>>> +	bool cable_connected;
+>> You can get cable-connected state from "enum phy_mode mode" which
+>> is present in this driver.
+>> E.g. cable_connected is false if mode is neither HOST nor DEVICE.
+>>
+>>
+>>> +	struct extcon_dev *vbus_edev;
+>>> +	struct notifier_block vbus_notify;
+>> extcons not needed if you use "mode" for the same purpose.
+> The extcon is there for indicating cable connection status.  I'm not
+> sure that phy_mode can be used for that purpose.  For example, what
+> value would phy core set phy_mode to, if we disconnect the cable from
+> phy_mode being HOST or DEVICE?
 
-This patch copies the IV into the extended descriptor when iv is not
-a valid linear address.
+it depends how it is used. Looks like it is used to decide whether to turn-off
+regulators or not. Unless you plan to add low power support as part of
+runtime-suspend of PHY during host mode, there is no reason to not turn-off
+regulators on pm_suspend(). Please refer to my comments below.
 
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v3: Using struct edesc buffer.
+>
+>>
+>>> +	enum phy_mode mode;
+>>> +};
+>>> +
+>>
+>>> +
+>>> +static int qcom_snps_hsphy_vbus_notifier(struct notifier_block *nb,
+>>> +					 unsigned long event, void *ptr)
+>>> +{
+>>> +	struct hsphy_priv *priv = container_of(nb, struct hsphy_priv,
+>>> +						    vbus_notify);
+>>> +	priv->cable_connected = !!event;
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int qcom_snps_hsphy_power_on(struct phy *phy)
+>> Can you instead merge this power_on function with phy_init?
+> I can do that, but what's the gain/advantage from doing that?
 
- v2: Using per-request context.
+dwc3 core calls phy_init() before power_on(). AFAIK, PHY regulators
+need to be ON before initializing it.
 
- drivers/crypto/talitos.c | 35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+>
+>>> +{
+>>> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
+>>> +	int ret;
+>>> +
+>>> +	if (priv->cable_connected) {
+>> Why distinguish between cable connected vs not-connected?
+> This is based on the vendor driver implementation.  It does a more
+> aggressive low power management in case that cable is not connected,
+> i.e. turning off regulator and entering retention mode.
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 6988012deca4..160702b119bb 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1355,29 +1355,23 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
- {
- 	struct talitos_edesc *edesc;
- 	int src_nents, dst_nents, alloc_len, dma_len, src_len, dst_len;
--	dma_addr_t iv_dma = 0;
- 	gfp_t flags = cryptoflags & CRYPTO_TFM_REQ_MAY_SLEEP ? GFP_KERNEL :
- 		      GFP_ATOMIC;
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
- 	int max_len = is_sec1 ? TALITOS1_MAX_DATA_LEN : TALITOS2_MAX_DATA_LEN;
--	void *err;
- 
- 	if (cryptlen + authsize > max_len) {
- 		dev_err(dev, "length exceeds h/w max limit\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	if (ivsize)
--		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
--
- 	if (!dst || dst == src) {
- 		src_len = assoclen + cryptlen + authsize;
- 		src_nents = sg_nents_for_len(src, src_len);
- 		if (src_nents < 0) {
- 			dev_err(dev, "Invalid number of src SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		src_nents = (src_nents == 1) ? 0 : src_nents;
- 		dst_nents = dst ? src_nents : 0;
-@@ -1387,16 +1381,14 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
- 		src_nents = sg_nents_for_len(src, src_len);
- 		if (src_nents < 0) {
- 			dev_err(dev, "Invalid number of src SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		src_nents = (src_nents == 1) ? 0 : src_nents;
- 		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
- 		dst_nents = sg_nents_for_len(dst, dst_len);
- 		if (dst_nents < 0) {
- 			dev_err(dev, "Invalid number of dst SG.\n");
--			err = ERR_PTR(-EINVAL);
--			goto error_sg;
-+			return ERR_PTR(-EINVAL);
- 		}
- 		dst_nents = (dst_nents == 1) ? 0 : dst_nents;
- 	}
-@@ -1423,17 +1415,24 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
- 	/* if its a ahash, add space for a second desc next to the first one */
- 	if (is_sec1 && !dst)
- 		alloc_len += sizeof(struct talitos_desc);
-+	if (ivsize && !virt_addr_valid(iv))
-+		alloc_len += ivsize;
- 
- 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
--	if (!edesc) {
--		err = ERR_PTR(-ENOMEM);
--		goto error_sg;
--	}
-+	if (!edesc)
-+		return ERR_PTR(-ENOMEM);
- 	memset(&edesc->desc, 0, sizeof(edesc->desc));
- 
-+	if (ivsize && !virt_addr_valid(iv))
-+		iv = memcpy(((u8 *)edesc) + alloc_len - ivsize, iv, ivsize);
-+
- 	edesc->src_nents = src_nents;
- 	edesc->dst_nents = dst_nents;
--	edesc->iv_dma = iv_dma;
-+	if (ivsize)
-+		edesc->iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
-+	else
-+		edesc->iv_dma = 0;
-+
- 	edesc->dma_len = dma_len;
- 	if (dma_len) {
- 		void *addr = &edesc->link_tbl[0];
-@@ -1445,10 +1444,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
- 						     DMA_BIDIRECTIONAL);
- 	}
- 	return edesc;
--error_sg:
--	if (iv_dma)
--		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
--	return err;
- }
- 
- static struct talitos_edesc *aead_edesc_alloc(struct aead_request *areq, u8 *iv,
+I believe 'aggressive low power management' will be triggered on
+pm_suspend?
+And dwc3 core will in any case perform phy_exit()->phy_init() across
+pm_suspend/resume which will reset PHYs. Hence, there is no need to check
+for cable connected state here.
+
+
+>
+>>> +		ret = clk_bulk_prepare_enable(priv->num_clks, priv->clks);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +		qcom_snps_hsphy_disable_hv_interrupts(priv);
+>>> +	} else {
+>>> +		ret = qcom_snps_hsphy_enable_regulators(priv);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +		ret = clk_bulk_prepare_enable(priv->num_clks, priv->clks);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +		qcom_snps_hsphy_exit_retention(priv);
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int qcom_snps_hsphy_power_off(struct phy *phy)
+>>> +{
+>>> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
+>>> +
+>>> +	if (priv->cable_connected) {
+>>> +		qcom_snps_hsphy_enable_hv_interrupts(priv);
+>>> +		clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
+>>> +	} else {
+>>> +		qcom_snps_hsphy_enter_retention(priv);
+>>> +		clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
+>>> +		qcom_snps_hsphy_disable_regulators(priv);
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>
+>>
+>> ..
+>>> +static const struct phy_ops qcom_snps_hsphy_ops = {
+>>> +	.init = qcom_snps_hsphy_init,
+>>> +	.power_on = qcom_snps_hsphy_power_on,
+>>> +	.power_off = qcom_snps_hsphy_power_off,
+>>> +	.set_mode = qcom_snps_hsphy_set_mode,
+>> .phy_exit()?
+>> I believe that is needed as dwc3 core driver performs
+>> phy_exit/phy_init across pm_suspend/resume.
+> I just do not see anything that we should be doing in .exit hook right
+> now.
+
+After you merge power_on() with phy_init() as per my previous comment,
+you can rely on phy_exit() to take care of putting PHY in low power state
+and turn off regulators as well.
+
+>
+> Shawn
+>
+>>
+>>> +	.owner = THIS_MODULE,
+>>> +};
+>>> +
+
 -- 
-2.13.3
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
