@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEA2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A0EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9333D2176F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FFE32176F
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389605AbeLUK2E (ORCPT
+        id S2389631AbeLUK2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:28:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39810 "EHLO mx1.redhat.com"
+        Fri, 21 Dec 2018 05:28:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49160 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389541AbeLUK2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:28:03 -0500
+        id S2389465AbeLUK2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:28:06 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3B5AA3403;
-        Fri, 21 Dec 2018 10:28:02 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20769C049587;
+        Fri, 21 Dec 2018 10:28:06 +0000 (UTC)
 Received: from f28server.default (ovpn-116-118.phx2.redhat.com [10.3.116.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7FD985D737;
-        Fri, 21 Dec 2018 10:27:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EBCBB6152F;
+        Fri, 21 Dec 2018 10:28:02 +0000 (UTC)
 From:   Daniel Bristot de Oliveira <bristot@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -42,27 +42,22 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V3 5/9] x86/alternative: Split text_poke_bp() into tree steps
-Date:   Fri, 21 Dec 2018 11:27:30 +0100
-Message-Id: <67c326c50f8efa728d3040d3563f258949ff32c4.1545228276.git.bristot@redhat.com>
+Subject: [PATCH V3 6/9] jump_label: Sort entries of the same key by the code
+Date:   Fri, 21 Dec 2018 11:27:31 +0100
+Message-Id: <7006ec86c40e5ec5d546dcd76ccc42d46079a963.1545228276.git.bristot@redhat.com>
 In-Reply-To: <cover.1545228276.git.bristot@redhat.com>
 References: <cover.1545228276.git.bristot@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 21 Dec 2018 10:28:02 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 21 Dec 2018 10:28:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-text_poke_bp() updates instructions on live kernel on SMP in three steps:
- 1) add a int3 trap to the address that will be patched
- 2) update all but the first byte of the patched range
- 3) replace the first byte (int3) by the first byte of
-
-This patch creates one function for each of these steps.
+In the batching mode, entries with the same key should also be sorted by the
+code, enabling a bsearch() of a code/addr when updating a key.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -81,84 +76,42 @@ Cc: Clark Williams <williams@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/kernel/alternative.c | 38 +++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ kernel/jump_label.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ebeac487a20c..6f5ad8587de0 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -767,6 +767,29 @@ int poke_int3_handler(struct pt_regs *regs)
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 26bf54251218..22093b5f57c9 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -38,12 +38,28 @@ static int jump_label_cmp(const void *a, const void *b)
+ 	const struct jump_entry *jea = a;
+ 	const struct jump_entry *jeb = b;
  
++	/*
++	 * Entrires are sorted by key.
++	 */
+ 	if (jump_entry_key(jea) < jump_entry_key(jeb))
+ 		return -1;
+ 
+ 	if (jump_entry_key(jea) > jump_entry_key(jeb))
+ 		return 1;
+ 
++#ifdef HAVE_JUMP_LABEL_BATCH
++	/*
++	 * In the batching mode, entries should also be sorted by the code
++	 * inside the already sorted list of entries, enabling a bsearch in
++	 * the vector.
++	 */
++	if (jump_entry_code(jea) < jump_entry_code(jeb))
++		return -1;
++
++	if (jump_entry_code(jea) > jump_entry_code(jeb))
++		return 1;
++#endif
++
+ 	return 0;
  }
  
-+static void text_poke_bp_set_handler(void *addr, void *handler,
-+				     unsigned char int3)
-+{
-+	bp_int3_handler = handler;
-+	bp_int3_addr = (u8 *)addr + sizeof(int3);
-+	text_poke(addr, &int3, sizeof(int3));
-+}
-+
-+static void patch_all_but_first_byte(void *addr, const void *opcode,
-+				     size_t len, unsigned char int3)
-+{
-+	/* patch all but the first byte */
-+	text_poke((char *)addr + sizeof(int3),
-+		  (const char *) opcode + sizeof(int3),
-+		  len - sizeof(int3));
-+}
-+
-+static void patch_first_byte(void *addr, const void *opcode, unsigned char int3)
-+{
-+	/* patch the first byte */
-+	text_poke(addr, opcode, sizeof(int3));
-+}
-+
- /**
-  * text_poke_bp() -- update instructions on live kernel on SMP
-  * @addr:	address to patch
-@@ -791,27 +814,21 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- {
- 	unsigned char int3 = 0xcc;
- 
--	bp_int3_handler = handler;
--	bp_int3_addr = (u8 *)addr + sizeof(int3);
--	bp_patching_in_progress = true;
--
- 	lockdep_assert_held(&text_mutex);
- 
-+	bp_patching_in_progress = true;
- 	/*
- 	 * Corresponding read barrier in int3 notifier for making sure the
- 	 * in_progress and handler are correctly ordered wrt. patching.
- 	 */
- 	smp_wmb();
- 
--	text_poke(addr, &int3, sizeof(int3));
-+	text_poke_bp_set_handler(addr, handler, int3);
- 
- 	on_each_cpu(do_sync_core, NULL, 1);
- 
- 	if (len - sizeof(int3) > 0) {
--		/* patch all but the first byte */
--		text_poke((char *)addr + sizeof(int3),
--			  (const char *) opcode + sizeof(int3),
--			  len - sizeof(int3));
-+		patch_all_but_first_byte(addr, opcode, len, int3);
- 		/*
- 		 * According to Intel, this core syncing is very likely
- 		 * not necessary and we'd be safe even without it. But
-@@ -820,8 +837,7 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 		on_each_cpu(do_sync_core, NULL, 1);
- 	}
- 
--	/* patch the first byte */
--	text_poke(addr, opcode, sizeof(int3));
-+	patch_first_byte(addr, opcode, int3);
- 
- 	on_each_cpu(do_sync_core, NULL, 1);
- 	/*
 -- 
 2.17.1
 
