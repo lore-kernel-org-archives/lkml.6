@@ -2,147 +2,161 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08940C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E13C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3137218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD6E821908
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:23:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="rL3JU099"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fs0hIHGA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389488AbeLUKWa (ORCPT
+        id S2389486AbeLUKXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:22:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42840 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389473AbeLUKW3 (ORCPT
+        Fri, 21 Dec 2018 05:23:37 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42333 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731708AbeLUKXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:22:29 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so4242595lja.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 02:22:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4bcZukLakkWf6+CfNvRBmI9VoGjGKAsi/dt6R8KXiHc=;
-        b=rL3JU099+gWXXtm11ylhAkmC8PxaAQmFtNRaCbW2wKWBZNft89w96D2oL6lX0ktCQP
-         OpEQwd8WKscH0mSMhqG640/TvMJYF/yIOAWTY/OtLRs9cIK28IsATu2535sw0iEL3QP7
-         jxtws8/rl6SP8PiSfWaYdHlR/u0wdR655rMl3Z6XUtXyVEDCuR5VBPjtofBP9UhM9IJi
-         mdcx99EBCqfZcWQYDrHeK9MIR4sqCo0gzaeq6r0onJebUhRCK1W1QBD1r8aq/M5dW53B
-         Nv/YTgop0pgddtKa6ZB4qVgWoPxIpm0fJLxd82MvIxEZwzoIRLE2964b3UxI8ceJKMhr
-         +KFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=4bcZukLakkWf6+CfNvRBmI9VoGjGKAsi/dt6R8KXiHc=;
-        b=CeC284I7NJPCWxdLh8t+yavYslpC67+LNmw+ifWAa2HjLkQidkmb//qRPwb7mQMvhU
-         mPutWW/V4PHbcVwLOCqSRceRn1wYARAt4lDZ0AxJijDA5xkUvmQBejSt3hDuekY1Lw61
-         +Cy1NzdKhm3xI8SSF83gvsYf1Ydn6yfFNHkgT5JNWtOFuXUN4BcFz8ZPEZK3MbpbPuDZ
-         SffvMmZtGtG5p/ZPgwlLKO+lWRQQmeoJd6PomQGu1+Y+JrZSESxIrPhUUhoclThEt9MA
-         kXEfBHg3U98tbK+argvbPidB9I8nxjxTJTmDxslac7M+hhAqF7mfcsi62KkWc3Ebc8QM
-         zO/Q==
-X-Gm-Message-State: AJcUukfhtPbEj1pmjmG6ECChZWrYBZx1gVRaLQQCwDkY7oEnWJwoLD+H
-        1W75BkDOfmJOPW2ujKjLNEaZ2Q==
-X-Google-Smtp-Source: ALg8bN5iEFaWWXW1jzDXDzl32WH8EAwtjYoGVYGVQBidbIz23YwQ+Af5zerzXXygm361IBn6gw9bGw==
-X-Received: by 2002:a2e:8719:: with SMTP id m25-v6mr1283855lji.121.1545387748169;
-        Fri, 21 Dec 2018 02:22:28 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.81.170])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm4511334ljj.34.2018.12.21.02.22.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 02:22:27 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
- <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
- <b638fedc-551a-63e4-9654-f9fed8d0e292@cogentembedded.com>
- <OFC335F545.7543A0F2-ON4825836A.0007E65A-4825836A.0008428D@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <9945f585-ab50-978a-7290-249336b7f107@cogentembedded.com>
-Date:   Fri, 21 Dec 2018 13:22:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 21 Dec 2018 05:23:37 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181221102335euoutp011274f7d7024709eb6af727f4b80c9d71~yUgfYgrFy1219612196euoutp01a
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:23:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181221102335euoutp011274f7d7024709eb6af727f4b80c9d71~yUgfYgrFy1219612196euoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545387815;
+        bh=O/ucLtkM5Qg/zU83iKty74smZi+/dkmNMNiDAlDPziQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=fs0hIHGAG0TdAapoqv44P8lqIMeVeNIFbtDEMgK9tfJkZYtiOFBjLzeuND2zYyPLI
+         kMbv7mW0qKSlpWPjrf31JyIkRWf5CRAELrKqS5+zC4VzqmedxdiPpxle4Tjsy1LU3G
+         jEsgl1HsYxXjcEsK0+buF6ZNpONF3VNI8kUrX4CE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181221102335eucas1p2d961ab35bf2d1f46ff40d35bcea06590~yUgewLOJg2028120281eucas1p2o;
+        Fri, 21 Dec 2018 10:23:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 14.12.04441.62FBC1C5; Fri, 21
+        Dec 2018 10:23:34 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181221102333eucas1p201a4730db5b171abaa927f5f6d2dfe9e~yUgdrtQHa2029220292eucas1p2r;
+        Fri, 21 Dec 2018 10:23:33 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181221102333eusmtrp23691ea48cd3635b39437d9a94bc09214~yUgdcwy302615126151eusmtrp2i;
+        Fri, 21 Dec 2018 10:23:33 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-4a-5c1cbf26d259
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B1.7A.04284.52FBC1C5; Fri, 21
+        Dec 2018 10:23:33 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181221102333eusmtip20abbca83896363629e7b728175f854f6~yUgc-E1hY0039600396eusmtip2p;
+        Fri, 21 Dec 2018 10:23:33 +0000 (GMT)
+Subject: Re: [PATCH 3/4] tty: serial: samsung: Increase maximum baudrate
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Beomho Seo <beomho.seo@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <9be9bcd6-5b8a-da40-b232-a650eaa88d38@samsung.com>
+Date:   Fri, 21 Dec 2018 11:23:32 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <OFC335F545.7543A0F2-ON4825836A.0007E65A-4825836A.0008428D@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <20181221101553.GI13248@dell>
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7pq+2ViDGa90LfYOGM9q8XpT9vY
+        LZoXr2ezOH9+A7vF/a9HGS0u75rDZjHj/D4mizOLe9ktDr9pZ7WYMfklmwOXx6ZVnWwed67t
+        YfPYP3cNu0ffllWMHp83yQWwRnHZpKTmZJalFunbJXBlTN4rVzCXp+LCnY2MDYztXF2MnBwS
+        AiYS83b1M3UxcnEICaxglPj0czKU84VRov1oCzNIlZDAZ0aJZc9LYToOHDrHDFG0nFFiw9wt
+        rBDOe0aJCRsms4NUCQt4SHxZ8YCti5GDQ0RAReLcG3OQMLPAZyaJh+8DQGw2AUOJrrddbCA2
+        r4CdxK5175lAbBYBVYmP93ewgNiiAjESTxv2sUDUCEqcnPkEzOYU0JKYcaObFWKmvMT2t3OY
+        IWxxiVtP5oN9ICFwil3i67NOVoirXSQe7ehjhLCFJV4d38IOYctI/N8J09AM9PKMWewQTg+j
+        xNY5O9ggqqwlDh+/yAryDbOApsT6XfoQYUeJ+atmgj0pIcAnceOtIMQRfBKTtk1nhgjzSnS0
+        CUFUq0nMOr4Obu3BC5eYJzAqzULy2iwk78xC8s4shL0LGFlWMYqnlhbnpqcWG+allusVJ+YW
+        l+al6yXn525iBKan0/+Of9rB+PVS0iFGAQ5GJR7eC9ulY4RYE8uKK3MPMUpwMCuJ8HbYysQI
+        8aYkVlalFuXHF5XmpBYfYpTmYFES561meBAtJJCeWJKanZpakFoEk2Xi4JRqYOSq0ef/s8vZ
+        rOORl/Cd5LxMbc17e4N4+W4EVHyq1dmx+G6Lb3k6t5DawZi2339V2la7pMkLykj9sDq4wvax
+        fdy77+v38ukeDrp5YEpdzryVhuWnpu5t3fYtSd6IN/5Ni6iehGs8s3E1+10Rx1PMQdITIhRW
+        vPSe7nI1aHn2gwUbTqp03vAOV2Ipzkg01GIuKk4EAEbtVnFLAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7qq+2ViDKY/VbfYOGM9q8XpT9vY
+        LZoXr2ezOH9+A7vF/a9HGS0u75rDZjHj/D4mizOLe9ktDr9pZ7WYMfklmwOXx6ZVnWwed67t
+        YfPYP3cNu0ffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
+        6dvZpKTmZJalFunbJehlTN4rVzCXp+LCnY2MDYztXF2MnBwSAiYSBw6dY+5i5OIQEljKKNHz
+        biUzREJG4uS0BlYIW1jiz7UuNoiit4wS/4/1s4EkhAU8JL6seABkc3CICKhInHtjDlLDLPCZ
+        SeLAp0ZGiIanjBI7NzeCNbAJGEp0ve0Cs3kF7CR2rXvPBGKzCKhKfLy/gwVkkKhAjMSzBdUQ
+        JYISJ2c+YQGxOQW0JGbc6AY7iFlAXeLPvEvMELa8xPa3c6BscYlbT+YzTWAUmoWkfRaSlllI
+        WmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMCK3Hfu5eQfjpY3BhxgFOBiVeHg1
+        dknHCLEmlhVX5h5ilOBgVhLh7bCViRHiTUmsrEotyo8vKs1JLT7EaAr020RmKdHkfGCyyCuJ
+        NzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwNiswHPe/4XTsVKGM5cY
+        i5eJSr18rGZ4falfV6PWu5jNF1TO2DoKbl/hmsZ8f6LO4/v393GmTL+zy1T8A2fIdevXByzP
+        Hrd3PNGj4vczd/F9qUehdsdWHPoa57r99x/V69391/SZOzondgcvEvnN+n61peiJteUb599r
+        9fz6S+t0p9SnPzVJB+YpsRRnJBpqMRcVJwIAciDRwd4CAAA=
+X-CMS-MailID: 20181221102333eucas1p201a4730db5b171abaa927f5f6d2dfe9e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181214113418eucas1p2bfb6f0d04010e73f6ca35c3a6664b316
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181214113418eucas1p2bfb6f0d04010e73f6ca35c3a6664b316
+References: <20181214113410.22848-1-m.szyprowski@samsung.com>
+        <CGME20181214113418eucas1p2bfb6f0d04010e73f6ca35c3a6664b316@eucas1p2.samsung.com>
+        <20181214113410.22848-4-m.szyprowski@samsung.com>
+        <20181221101553.GI13248@dell>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+Hi
 
-On 12/21/2018 04:30 AM, masonccyang@mxic.com.tw wrote:
-
->> > diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
->> > new file mode 100644
->> > index 0000000..cec5669
->> > --- /dev/null
->> > +++ b/drivers/spi/spi-renesas-rpc.c
->> > @@ -0,0 +1,776 @@
->> [...]
->> > +static const struct soc_device_attribute r8a7795es1[] __initconst = {
+On 2018-12-21 11:15, Lee Jones wrote:
+> On Fri, 14 Dec 2018, Marek Szyprowski wrote:
+>> From: Seung-Woo Kim <sw0312.kim@samsung.com>
 >>
->>    This __initconst shouldn't be there, it causes a build warning.
+>> This driver can be used to communicate with Bluetooth chip in high-speed
+>> UART mode, so increase the maximum baudrate to 3Mbps.
 >>
->> > +   { .soc_id = "r8a7795", .revision = "ES1.*" },
+>> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+>> [mszyprow: rephrased commit message]
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/tty/serial/samsung.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>    Wait, the driver doesn't really probe on R8A7795 yet!
-> 
-> yup, this is for RPC_PHYCNT_STRTIM setting by Marek's comments.
-> 
-> On H3 ES1.x, the value should be 0, while on others, the value should be 6.
-> 
-> ES1.x is r8a7795.
+>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>> index 2a49b6d876b8..9fc3559f80d9 100644
+>> --- a/drivers/tty/serial/samsung.c
+>> +++ b/drivers/tty/serial/samsung.c
+>> @@ -1287,7 +1287,7 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+>>  	 * Ask the core to calculate the divisor for us.
+>>  	 */
+>>  
+>> -	baud = uart_get_baud_rate(port, termios, old, 0, 115200*8);
+>> +	baud = uart_get_baud_rate(port, termios, old, 0, 3000000);
+> Does that mean the low speed devices will stop working?  It looks like
+> this should be dynamically configurable based on what device is
+> connected to it, no?
 
-   Why care if we don't support H3 yet? Add this when the R8A77950 support is added.
+The changed parameter is maximum supported rate, so this change doesn't
+affect any low speed device.
 
->> > +   { /* sentinel */ }
->> > +};
->> > +
->> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
->> > +{
->> > +   int strtim;
->> > +   /*
->> > +    * NOTE: The 0x260 are undocumented bits, but they must be set.
->> > +    *   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
->> > +    *   0x0 : the delay is biggest,
->> > +    *   0x1 : the delay is 2nd biggest,
->> > +    *   On H3 ES1.x, the value should be 0, while on others,
->> > +    *   the value should be 6.
->> > +    */
->> > +   if (soc_device_match(r8a7795es1))
->> > +      strtim = 0;
->> > +   else
->> > +      strtim = 6;
->> [...]
->> > +static const struct of_device_id rpc_spi_of_ids[] = {
->> > +   { .compatible = "renesas,r8a77995-rpc", },
->>
->>    We only support R8A77995 now.
-> 
-> see above !
+>>  	quot = s3c24xx_serial_getclk(ourport, baud, &clk, &clk_sel);
+>>  	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
+>>  		quot = port->custom_divisor;
 
-   There's difference between R8A77995 and R8A77950, right?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-[...]
-> thanks & best regards,
-> Mason
-
-MBR, Sergei
