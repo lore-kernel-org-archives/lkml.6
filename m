@@ -2,114 +2,102 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A187BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C76C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1D32190B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:00:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qrbanMnj"
+	by mail.kernel.org (Postfix) with ESMTP id 20ABB21909
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 10:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545386419;
+	bh=hENGQRcjLT0VxodouxKXjzeSrD648XvUB7kfyjFZ9Ug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ciAkJBaNbAPGNsrDYZsw+0iG4iAXR8YR8cOPUjLGbLpwiG8vitdZxiRJu2+HSXoaC
+	 t08SYqQ4DN8AlVAOv2p0hZAmZPJo1jB+DoaaWZ4cO2W90VztPTXdJkE2CJWxe9C1GX
+	 d+wFAVuUxt8yUIsgNHLbr/SPB6RufQcOpS/GTvCE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389213AbeLUKAG (ORCPT
+        id S2389240AbeLUKAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:00:06 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44351 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389173AbeLUJ76 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:59:58 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so4168343lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:59:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=EZY0VwWEPq9uTwm+I+YKStnf5E+WhmoJ6xAAPWM1I/w=;
-        b=qrbanMnj85ZJP9DYVhhqsFw+/rgj714z/fFezJnbkAOS7RKW6kApRjly++TtwFBE3a
-         aAT/p1MK1xVAL2/SZaB4jYjZyK/gjl9Pw8fOqK3rZzuYFw1A63Vu3M14QTVgqh84j6kl
-         VeFn4GWGA18A1Q23V/5XZ3Sp6JtBTRf4QBbnuxIRPRoweS5ChiJdZTtyrQTICTptMNG6
-         8JBwjNuTEd+WvtLLYX7DS33Ijx108c25pWq/F/uLvQ0ewcS8zb3OOpNb6mkJJKqSny3d
-         GNxUbSaXKHkLdkUH6x0J/KEEHmExSY2+pz9vJvWW4vTpp1oVuJ517IuRbwpHTUqES0Oi
-         9R3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=EZY0VwWEPq9uTwm+I+YKStnf5E+WhmoJ6xAAPWM1I/w=;
-        b=m+kSkGQciKmm5O9/T38W9GiFlkd43ssyZxwkpAGcZW7h8yS3ESKg5tAfSMNKu8CmCW
-         AZfbJZKbpUDLrSQG8mCRF23t10hlgRv4bnxw16UNGCsBXLZNkl0FsfKrBaCL+UuIV9HO
-         upUL9Y16mStbHtnSO/CzKn9i+odG8SaTk+8Yq4+1kUHi7Qt9opQNISDulEiob+1lfwhx
-         uYUt1ky3BRLvL9tUF7kFL4Hu5UdmGG9MikFlLH5PA1bRdkOvMTNlvoflI+b20W7ut0Lu
-         w6gAJrBBI/mr3x6eQf2Fo0JIM3uwtXMsWFfBPjd6nxR2g10TrbYtx/9U2S/nPn5XJEBj
-         3JSA==
-X-Gm-Message-State: AJcUukeYzkEfpP2BMXgIXhJ86eRIMHjTh4q9lQipmny6N2/7gApcB8hX
-        qbEewfrg7C1ELIZGFlIWj74=
-X-Google-Smtp-Source: ALg8bN6GcRjj5luxD+TnqROhGbb2yOXiv0ryQ/e5uQAyCC4LUp21NQ/vwNGWpXwfKGnJKE6e/GxiRA==
-X-Received: by 2002:a2e:7801:: with SMTP id t1-v6mr1156210ljc.84.1545386395371;
-        Fri, 21 Dec 2018 01:59:55 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id f16-v6sm4647652lji.88.2018.12.21.01.59.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 01:59:54 -0800 (PST)
-Subject: Re: [PATCH 01/10] drm/virtio: log error responses
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-References: <20181219122708.4586-1-kraxel@redhat.com>
- <20181219122708.4586-2-kraxel@redhat.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <7af5ce00-d751-5c21-51f9-fdea793fd57b@gmail.com>
-Date:   Fri, 21 Dec 2018 11:59:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 21 Dec 2018 05:00:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389173AbeLUKAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 05:00:09 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 518C621906;
+        Fri, 21 Dec 2018 10:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545386407;
+        bh=hENGQRcjLT0VxodouxKXjzeSrD648XvUB7kfyjFZ9Ug=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PmCw4w9wK5oYzzxifJc1rt7J6wGcjqghuyAZ5ovzUhdAL2plUASQ9/3fQ9Tkhzdsg
+         YJv38LYCX2h4NEp5Xzr1e2g/qc3ujfnDwv4jsY5BdRQ8mWGUBBOMgHu68nVd3DSt9I
+         7kK/ammiXvSdE+updGsAIlGKNNUinOkY4mRYnzus=
+Date:   Fri, 21 Dec 2018 11:00:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jinpu Wang <jinpu.wang@cloud.ionos.com>
+Cc:     Jinpu Wang <jinpu.wang@profitbricks.com>,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+        patches@kernelci.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        shuah@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org
+Subject: Re: [PATCH 4.14 00/72] 4.14.90-stable review
+Message-ID: <20181221100005.GA24805@kroah.com>
+References: <20181220085922.332225035@linuxfoundation.org>
+ <CA+res+QQt7GEL0td1FraSJNnR2yOcDgXGahW+YyiuMSeWTshfw@mail.gmail.com>
+ <CAMGffEn_TMi_17YBbg2KYk=_QArEJkdPdfV52wSqM+8QMhWyNg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181219122708.4586-2-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMGffEn_TMi_17YBbg2KYk=_QArEJkdPdfV52wSqM+8QMhWyNg@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 2:26 PM, Gerd Hoffmann wrote:
-> If we got an error response code from the host, print it to the log.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/gpu/drm/virtio/virtgpu_vq.c | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index e27c4aedb8..6bc2008b0d 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -192,8 +192,16 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
->   
->   	list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
->   		resp = (struct virtio_gpu_ctrl_hdr *)entry->resp_buf;
-> -		if (resp->type != cpu_to_le32(VIRTIO_GPU_RESP_OK_NODATA))
-> -			DRM_DEBUG("response 0x%x\n", le32_to_cpu(resp->type));
-> +		if (resp->type != cpu_to_le32(VIRTIO_GPU_RESP_OK_NODATA)) {
-> +			if (resp->type >= cpu_to_le32(VIRTIO_GPU_RESP_ERR_UNSPEC)) {
-> +				struct virtio_gpu_ctrl_hdr *cmd;
-> +				cmd = (struct virtio_gpu_ctrl_hdr *)entry->buf;
-> +				DRM_ERROR("response 0x%x (command 0x%x)\n",
-> +					  le32_to_cpu(resp->type),
-> +					  le32_to_cpu(cmd->type));
-> +			} else
-> +				DRM_DEBUG("response 0x%x\n", le32_to_cpu(resp->type));
-> +		}
->   		if (resp->flags & cpu_to_le32(VIRTIO_GPU_FLAG_FENCE)) {
->   			u64 f = le64_to_cpu(resp->fence_id);
->   
+On Fri, Dec 21, 2018 at 08:54:35AM +0100, Jinpu Wang wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Date: 2018年12月20日周四 上午10:39
+> > Subject: [PATCH 4.14 00/72] 4.14.90-stable review
+> > To: <linux-kernel@vger.kernel.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+> > <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+> > <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+> > <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+> > <stable@vger.kernel.org>
+> >
+> >
+> > This is the start of the stable review cycle for the 4.14.90 release.
+> > There are 72 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat Dec 22 08:59:06 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.90-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > linux-4.14.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Merged, basic functional tests, no regression found.
 
+Great, thanks for testing and letting me know.
+
+greg k-h
