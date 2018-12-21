@@ -2,123 +2,145 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF00EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E43CC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D26E21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:38:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpv/X5f6"
+	by mail.kernel.org (Postfix) with ESMTP id E534621927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 23:41:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404004AbeLUXik (ORCPT
+        id S2404018AbeLUXlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 18:38:40 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39181 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392288AbeLUXik (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 18:38:40 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r136so3257730pfc.6;
-        Fri, 21 Dec 2018 15:38:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SRHddD8lv1TnSXNuiikyj4+AKS6QXBbmS1nSVmNJzAE=;
-        b=cpv/X5f6PusaG+xc2juzYcAaD3i21rqzbTVqteRy0QHt9mB2LKDA/zNA6b0Aqj8Azb
-         LQttlfwxZ/O4+oBtEegysJ8OQuNYTEUVHWKAupds3lWGhJZVtlGFzxazenAaknkNv3Cn
-         fBeRW4T924L6Nf9FKaPkGdh9tFqDl1/ODZMddMBtU6l7htGOtdb9HzkJ15CeMPCnfubE
-         LT8eQqrVUA+2ZmmfDu7uuADxwtXe6UTwET5dMLQh4RiRB8ZUwt+OK5F6xIUxf3TSU9bD
-         msP9e/kgrjjwPnCH5jRJX7UkOyBWfWaGuBrVfM6i579WLenceveE+BtSEoRx4tlauA/c
-         97Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SRHddD8lv1TnSXNuiikyj4+AKS6QXBbmS1nSVmNJzAE=;
-        b=EecAIeDObdrdqRAlHL2dJo/rQCSrMkZkNZCxwJL8Eym9xTALlwUfBXtJGpPOvGD2Ri
-         D5YxBEA6TuLKj27FeeH4mgDtWSTOXyelaESO7r+oqyQVrjuIN9WNtLubGj9krlBIol6H
-         fbGYhTW+X5tdqdsJX1Q9nP0ZUsFLjgD1goawWiBPNl9Wh4skfuEOgj+bIRL5HRLuuJEc
-         5/tmx4d5UPX4C3f46SEW+bzes9MbMO/1sSkB+Xp2uOEgKThZekUGFUGdUQ86KVhmOr5K
-         yhry29r5gYKBSuGKV3YZb92rGUoJDS9LgZAM1N++KqL3EB75DRqblTfU9ugRZQTCMO68
-         YAdg==
-X-Gm-Message-State: AA+aEWYI49ccNAo8pt0s9sBFC1GWJu8a7mMf+XlD3AFGz1ZJCCMNUlye
-        uUMFXuKJ1/TgmPe2BlALC3e0vF6/
-X-Google-Smtp-Source: AFSGD/WQZosxW0keLHP6WEkbI5QFEDBKVqwZ9UC/8fn0wjgFJQTTBhf8bx7sJ3fjPyAcuE1XFUW8fA==
-X-Received: by 2002:a62:1289:: with SMTP id 9mr4567111pfs.102.1545435518262;
-        Fri, 21 Dec 2018 15:38:38 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j185sm30579564pge.72.2018.12.21.15.38.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 15:38:37 -0800 (PST)
-Date:   Fri, 21 Dec 2018 15:38:36 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Jean Delvare <jdelvare@suse.com>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: (lm80) fix a missing check of bus read in lm80
- probe
-Message-ID: <20181221233836.GA17485@roeck-us.net>
-References: <20181221191039.1519-1-kjlu@umn.edu>
+        Fri, 21 Dec 2018 18:41:36 -0500
+Received: from mga12.intel.com ([192.55.52.136]:3270 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729062AbeLUXlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 18:41:35 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 15:41:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
+   d="scan'208";a="120273468"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
+  by orsmga002.jf.intel.com with ESMTP; 21 Dec 2018 15:41:28 -0800
+Date:   Sat, 22 Dec 2018 01:41:26 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181221234126.GB8160@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <CALCETrX+KisMCbptrnPSO79-YF4E3nR1XHt+a7hCs1GXsxAbtw@mail.gmail.com>
+ <20181221182454.GA27371@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181221191039.1519-1-kjlu@umn.edu>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181221182454.GA27371@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 01:10:39PM -0600, Kangjie Lu wrote:
-> In lm80_probe(), if lm80_read_value() fails, it returns a negative
-> error number which is stored to data->fan[f_min] and will be further
-> used. We should avoid using the data if the read fails.
+On Fri, Dec 21, 2018 at 10:24:54AM -0800, Sean Christopherson wrote:
+> On Fri, Dec 21, 2018 at 09:12:46AM -0800, Andy Lutomirski wrote:
+> > > On Dec 21, 2018, at 9:28 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+> > >>> On Dec 19, 2018, at 6:45 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > >>>
+> > >>>>> On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
+> > >>>
+> > >>> I agree with Jethro, passing the enclave_fd as a param is obnoxious.
+> > >>> And it means the user needs to open /dev/sgx to do anything with an
+> > >>> enclave fd, e.g. the enclave fd might be passed to a builder thread,
+> > >>> it shouldn't also need the device fd.
+> > >>>
+> > >>> E.g.:
+> > >>>
+> > >>>   sgx_fd = open("/dev/sgx", O_RDWR);
+> > >>>   BUG_ON(sgx_fd < 0);
+> > >>>
+> > >>>   enclave_fd = ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
+> > >>>   BUG_ON(enclave_fd < 0);
+> > >>>
+> > >>>   ret = ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
+> > >>>   BUG_ON(ret);
+> > >>>
+> > >>>   ...
+> > >>>
+> > >>>   ret = ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
+> > >>>   BUG_ON(ret);
+> > >>>
+> > >>>   ...
+> > >>>
+> > >>>   close(enclave_fd);
+> > >>>   close(sgx_fd);
+> > >>>
+> > >>>
+> > >>> Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
+> > >>> and ioctls for VMs and vCPUs.
+> > >>
+> > >> Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > >> opening a new instance of /dev/sgx for each encalve?
+> > >
+> > > Directly associating /dev/sgx with an enclave means /dev/sgx can't be
+> > > used to provide ioctl()'s for other SGX-related needs, e.g. to mmap()
+> > > raw EPC and expose it a VM.  Proposed layout in the link below.  I'll
+> > > also respond to Jarkko's question about exposing EPC through /dev/sgx
+> > > instead of having KVM allocate it on behalf of the VM.
+> > 
+> > Hmm. I guess this makes some sense.  My instinct would be to do it a
+> > little differently and have:
+> > 
+> > /dev/sgx/enclave: Each instance is an enclave.
+> > 
+> > /dev/sgx/epc: Used to get raw EPC for KVM. Might have different
+> > permissions, perhaps 0660 and group kvm.
+> > 
+> > /dev/sgx/something_else: For when SGX v3 adds something else :)
 > 
-> The fix checks if lm80_read_value() fails, and if so, returns with the
-> error number.
+> Mmmm, I like this approach a lot.  It would allow userspace to easily
+> manage permissions for each "feature", e.g. give all users access to
+> /dev/sgx/epc but restrict /dev/sgx/enclave.
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-
-Applied.
-
-Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/lm80.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> And we could add e.g. /dev/sgx/admin if we wanted to exposed ioctls()
+> that apply to all aspects of SGX.
 > 
-> diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-> index d91333557f04..85f797501aaf 100644
-> --- a/drivers/hwmon/lm80.c
-> +++ b/drivers/hwmon/lm80.c
-> @@ -627,6 +627,7 @@ static int lm80_probe(struct i2c_client *client,
->  	struct device *dev = &client->dev;
->  	struct device *hwmon_dev;
->  	struct lm80_data *data;
-> +	int rv;
->  
->  	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
->  	if (!data)
-> @@ -639,8 +640,14 @@ static int lm80_probe(struct i2c_client *client,
->  	lm80_init_client(client);
->  
->  	/* A few vars need to be filled upon startup */
-> -	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
-> -	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-> +	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
-> +	if (rv < 0)
-> +		return rv;
-> +	data->fan[f_min][0] = rv;
-> +	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-> +	if (rv < 0)
-> +		return rv;
-> +	data->fan[f_min][1] = rv;
->  
->  	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
->  							   data, lm80_groups);
+> Do you know if /dev/sgx/epc could be dynamically created, e.g. by
+> KVM when the kvm_intel module is loaded?  That would seal the deal for
+> me as it'd keep open the option of having KVM handle oversubscription
+> of guest EPC while exposing EPC through /dev/sgx instead of /dev/kvm.  
+
+No issues with this approach from my side but won't use it for v19.
+
+Please share these comments when reviewing v19. Neither objections to
+have this interface.
+
+/Jarkko
