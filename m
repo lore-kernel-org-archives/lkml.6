@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5886DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCA6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235EB218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED3A921906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 08:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387510AbeLUIiE (ORCPT
+        id S2388074AbeLUIjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:38:04 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:42044 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730104AbeLUIiE (ORCPT
+        Fri, 21 Dec 2018 03:39:07 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:52487 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733259AbeLUIjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:38:04 -0500
-Received: by mail-io1-f69.google.com with SMTP id c10so554319iot.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:38:03 -0800 (PST)
+        Fri, 21 Dec 2018 03:39:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id h7so3785503iof.19
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 00:39:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=PSgb5oNS3XvzkcYfgKkT1oZI77IABywP2awk8ua+Uw4=;
-        b=Kf8E1wjEzDqewJ10Xdb+MebjZpvjLuVIqPOzX/bLsHMO27Yvo5HM9Em2Rcd39fzbAI
-         Q42hR2Hy8rorMkOuPkhvOW6UZx22q7zH/3nDbT/lVLrB59i3/FIcgVhSH/X2WJ9FfeOQ
-         bOoTLosBOLR77ZEMeuKKN05A9i9Fvb6yfkVdWw1982l16CzKNih1hMJQiqMcSCX/KEW+
-         sv/JgaMzPIkIElI5LVs9mYGE9526irKebHXM5VAVmsc2n6EHrAYmKJLrrRBXwywtuENR
-         xxu/QSbgz6RNx4HzVilY1PVzcsknAct1eLTnODggPnpWmOM7r5wyoNJKSE6HxLhFvwz6
-         whZA==
-X-Gm-Message-State: AJcUukfRUBCkxV+jU0h16nVHmfPcLL+MBCmP3k+0892vxTW5zbnocFsz
-        0pJKRS5Tjwl8cwebwZZuEQNKKQcBzKow4wSUHR1rwcW7q3Sv
-X-Google-Smtp-Source: AFSGD/ULMFw5V5T53OraKUCDaKQXubwC4a5dX74BhSuAXANjtuh0D+h8t15M5Ex4EbTv46NmmdJp5OYhNiUJ9qKiReAJfRYK/Ksc
+        bh=raGVYVw5CbZD8v7IXy6KaW0AEOkP0eF7+khRVlege/M=;
+        b=agAOfe8Iepw7X/JIvaCwcJnf96QtJ8IXnKyzD6hzB4oFvhSqEGU11GaAA0vbrn5mHY
+         ViofH4HFBF/hVi4clB68N53LTR/vBJvRGN1Q1fMzCOfPpeIOis2mMMcNpf6NXs3+INiM
+         5Z+saJ//N4nB3vJUVBnHhsuJDJ2N7+6wLEcLaPxQv0DW3apKbhkO8ZlLCHDBcHjIvEIn
+         P0i3KrpDfLE4K3/IsoN3qGsv6UFRhHIVNDbLXUtRGvWGb1q+B1vFd/I79mm1HF6UX6BE
+         2nAHLDQULloYMEX0raD5YndCG5u8DnTsIaA+Ii6hd0bVVEVMYqqyB8ZuBT/OfQPcuXND
+         kJpg==
+X-Gm-Message-State: AA+aEWZzwdFf9mzJ0xB+Wm0B/T8m6Ah7pOJTDDhLQY/sI9pPT43sLqVt
+        P0DWVcsDILTXfQbwPOjo9/SXIriuHlBYUyaqurO0lIfl3b20
+X-Google-Smtp-Source: ALg8bN5t+UM62d4rnm419Tu5KOnTUGFa2rd/ZO3f6l2SKr47QdOQ2ibqD1/IpJoT7XXD8YyeqNuDgC6TcH969ONM7LPHghOVf6mi
 MIME-Version: 1.0
-X-Received: by 2002:a24:4c42:: with SMTP id a63mr1457831itb.40.1545381483310;
- Fri, 21 Dec 2018 00:38:03 -0800 (PST)
-Date:   Fri, 21 Dec 2018 00:38:03 -0800
+X-Received: by 2002:a24:dcb:: with SMTP id 194mr1365486itx.25.1545381545183;
+ Fri, 21 Dec 2018 00:39:05 -0800 (PST)
+Date:   Fri, 21 Dec 2018 00:39:05 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005afe60057d842aa4@google.com>
-Subject: BUG: unable to handle kernel paging request in iptunnel_xmit
-From:   syzbot <syzbot+61816a2458fec4918227@syzkaller.appspotmail.com>
+Message-ID: <0000000000000b3723057d842e1e@google.com>
+Subject: general protection fault in ip6_route_output_flags
+From:   syzbot <syzbot+565c30183e86122a8e32@syzkaller.appspotmail.com>
 To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
@@ -57,70 +57,179 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    d84e7bc0595a rds: Fix warning.
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=14615435400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-dashboard link: https://syzkaller.appspot.com/bug?extid=61816a2458fec4918227
+HEAD commit:    a9cd3439e3c6 neighbor: Use nda_policy for validating attri..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=143d3a0d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1f6442435a55ea09
+dashboard link: https://syzkaller.appspot.com/bug?extid=565c30183e86122a8e32
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+61816a2458fec4918227@syzkaller.appspotmail.com
+Reported-by: syzbot+565c30183e86122a8e32@syzkaller.appspotmail.com
 
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor4'.
-ip_tunnel: non-ECT from 172.20.255.187 with TOS=0x3
-Enabling of bearer <udp:syz1> rejected, already enabled
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor4'.
-New replicast peer: 172.20.20.187
-BUG: unable to handle kernel paging request at ffffde2071b70933
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 30871 Comm: syz-executor3 Not tainted 4.20.0-rc6+ #241
+New replicast peer: 0000:0000:0000:0000:0000:0000:0000:0001
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 24165 Comm: syz-executor4 Not tainted 4.20.0-rc6+ #355
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:iptunnel_xmit_stats include/net/ip_tunnels.h:422 [inline]
-RIP: 0010:iptunnel_xmit+0x795/0x9c0 net/ipv4/ip_tunnel_core.c:94
-Code: e9 03 80 3c 11 00 0f 85 00 02 00 00 4c 03 24 c5 20 40 27 89 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 18 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 ea 01 00 00 49 8d 7c 24 10 48 63 db 48 b8 00 00
-RSP: 0018:ffff8881569becd0 EFLAGS: 00010a06
-kobject: 'loop4' (00000000a27d9137): kobject_uevent_env
-RAX: dffffc0000000000 RBX: 00000000000000dc RCX: 1ffffffff124e805
-kobject: 'loop4' (00000000a27d9137): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-RDX: 1fffe22071b70933 RSI: ffffffff83933588 RDI: ffff11038db84998
-RBP: ffff8881569bed30 R08: ffff88818d334500 R09: ffffed103b5e5b5f
-R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: ffff11038db84980
-R13: ffff8881bbe64ec0 R14: ffff8881baab7900 R15: ffff88818fbe8380
-FS:  00007fef14ce2700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+RIP: 0010:ip6_route_output_flags+0x1f2/0x350 net/ipv6/route.c:2093
+Code: 02 00 0f 85 69 01 00 00 4d 8b bc 24 60 04 00 00 e8 43 9c a1 fa 49 8d  
+7f 4e 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 10
+RSP: 0018:ffff88818ee76b38 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff88818ee76f00 RCX: ffffc9000de38000
+RDX: 0000000000000009 RSI: ffffffff86dde7fd RDI: 000000000000004e
+RBP: ffff88818ee76b70 R08: ffff8881bfdfe200 R09: ffff8881b981da00
+R10: ffffed1032373386 R11: ffff888191b99c37 R12: ffff8881d3a649c0
+R13: 0000000000000001 R14: 0000000000000080 R15: 0000000000000000
+FS:  00007f14f3caa700(0000) GS:ffff8881dac00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffde2071b70933 CR3: 00000001af822000 CR4: 00000000001406e0
+CR2: 00007ffd46f97980 CR3: 00000001c4084000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  udp_tunnel_xmit_skb+0x248/0x320 net/ipv4/udp_tunnel.c:182
-  tipc_udp_xmit.isra.14+0xaaf/0xef0 net/tipc/udp_media.c:181
-  tipc_udp_send_msg+0x391/0x670 net/tipc/udp_media.c:247
-  tipc_bearer_xmit_skb+0x171/0x350 net/tipc/bearer.c:502
-  tipc_enable_bearer+0xc5e/0xf10 net/tipc/bearer.c:327
-kobject: 'loop2' (00000000d7ca5ab8): kobject_uevent_env
-  __tipc_nl_bearer_enable+0x37c/0x4a0 net/tipc/bearer.c:897
-kobject: 'loop2' (00000000d7ca5ab8): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-  tipc_nl_bearer_enable+0x22/0x30 net/tipc/bearer.c:905
+  ip6_route_output include/net/ip6_route.h:88 [inline]
+  ip6_dst_lookup_tail+0xe27/0x1d50 net/ipv6/ip6_output.c:957
+  ip6_dst_lookup+0x4b/0x60 net/ipv6/ip6_output.c:1064
+  tipc_udp_xmit.isra.14+0x3bd/0xee0 net/tipc/udp_media.c:193
+  tipc_udp_send_msg+0x3a1/0x680 net/tipc/udp_media.c:247
+  tipc_bearer_xmit_skb+0x171/0x350 net/tipc/bearer.c:504
+  tipc_enable_bearer+0xc5e/0xf10 net/tipc/bearer.c:329
+kobject: 'loop5' (0000000089e6a38e): kobject_uevent_env
+  __tipc_nl_bearer_enable+0x37c/0x4a0 net/tipc/bearer.c:900
+kobject: 'loop5' (0000000089e6a38e): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+  tipc_nl_bearer_enable+0x22/0x30 net/tipc/bearer.c:908
   genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
-kobject: 'loop1' (00000000c9d8a67f): kobject_uevent_env
-  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
-  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
-kobject: 'loop1' (00000000c9d8a67f): fill_kobj_path: path  
+kobject: 'loop1' (0000000093656527): kobject_uevent_env
+kobject: 'loop1' (0000000093656527): fill_kobj_path: path  
 = '/devices/virtual/block/loop1'
+  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x16c/0x430 net/netlink/af_netlink.c:2477
+kobject: 'loop5' (0000000089e6a38e): kobject_uevent_env
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
+  netlink_unicast+0x59f/0x750 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
+kobject: 'loop5' (0000000089e6a38e): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457669
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f14f3ca9c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
+RDX: 0000000000000000 RSI: 00000000200008c0 RDI: 0000000000000003
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f14f3caa6d4
+R13: 00000000004c4252 R14: 00000000004d71d0 R15: 00000000ffffffff
+Modules linked in:
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#2] PREEMPT SMP KASAN
+CPU: 0 PID: 24165 Comm: syz-executor4 Tainted: G      D            
+4.20.0-rc6+ #355
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ip6_route_output_flags+0x1f2/0x350 net/ipv6/route.c:2093
+Code: 02 00 0f 85 69 01 00 00 4d 8b bc 24 60 04 00 00 e8 43 9c a1 fa 49 8d  
+7f 4e 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 10
+RSP: 0018:ffff8881dac06f90 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff8881dac07358 RCX: ffffffff86dde7c3
+RDX: 0000000000000009 RSI: ffffffff86dde7fd RDI: 000000000000004e
+RBP: ffff8881dac06fc8 R08: ffff8881bfdfe200 R09: ffff8881b981da00
+R10: ffffed10335cd37e R11: ffff88819ae69bf7 R12: ffff8881d3a649c0
+R13: 0000000000000001 R14: 0000000000000080 R15: 0000000000000000
+FS:  00007f14f3caa700(0000) GS:ffff8881dac00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd46f97980 CR3: 00000001c4084000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  ip6_route_output include/net/ip6_route.h:88 [inline]
+  ip6_dst_lookup_tail+0xe27/0x1d50 net/ipv6/ip6_output.c:957
+  ip6_dst_lookup+0x4b/0x60 net/ipv6/ip6_output.c:1064
+  tipc_udp_xmit.isra.14+0x3bd/0xee0 net/tipc/udp_media.c:193
+  tipc_udp_send_msg+0x3a1/0x680 net/tipc/udp_media.c:247
+  tipc_bearer_xmit_skb+0x171/0x350 net/tipc/bearer.c:504
+  tipc_disc_timeout+0xb2b/0xfc0 net/tipc/discover.c:332
+  call_timer_fn+0x272/0x920 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x7e5/0xc70 kernel/time/timer.c:1682
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1695
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:preempt_schedule_irq+0xaf/0x140 kernel/sched/core.c:3699
+Code: 00 e8 85 44 76 f9 e8 f0 2a a6 f9 4c 89 f0 48 c1 e8 03 42 80 3c 20 00  
+75 73 48 83 3d ba 7f 92 01 00 74 61 fb 66 0f 1f 44 00 00 <bf> 01 00 00 00  
+e8 f7 cd ff ff 41 80 7d 00 00 75 6c 48 83 3d 90 7f
+RSP: 0018:ffff88818ee76920 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff12e4020 RBX: 0000000000000000 RCX: ffffc9000de38000
+RDX: 0000000000000000 RSI: ffffffff8185acd4 RDI: ffffffff8a373934
+RBP: ffff88818ee76948 R08: ffff8881bfdfe200 R09: ffffed103b5859a1
+R10: ffffed103b5859a1 R11: ffff8881dac2cd0b R12: dffffc0000000000
+R13: fffffbfff12e401f R14: ffffffff89720100 R15: ffffffff897200f8
+  retint_kernel+0x1b/0x2d
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
+[inline]
+RIP: 0010:oops_end+0x69/0x100 arch/x86/kernel/dumpstack.c:343
+Code: 05 18 37 42 08 ff ff ff ff e8 63 2a 1c 00 83 2d 34 4d 46 09 01 74 69  
+48 83 3d 32 47 45 08 00 0f 84 8c 00 00 00 48 89 df 57 9d <0f> 1f 44 00 00  
+e8 fd 31 1c 00 be 02 00 00 00 48 c7 c7 00 07 73 8a
+RSP: 0018:ffff88818ee76a08 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff02
+RAX: 0000000000040000 RBX: 0000000000000286 RCX: ffffc9000de38000
+RDX: 0000000000040000 RSI: ffffffff8148e439 RDI: 0000000000000286
+RBP: ffff88818ee76a20 R08: ffff8881bfdfe200 R09: fffffbfff146e726
+R10: fffffbfff146e726 R11: ffffffff8a373937 R12: 000000000000000b
+R13: ffff88818ee76a88 R14: 0000000000000000 R15: 0000000000000000
+  die+0x3d/0x46 arch/x86/kernel/dumpstack.c:405
+  do_general_protection+0x18a/0x2f0 arch/x86/kernel/traps.c:559
+  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1142
+RIP: 0010:ip6_route_output_flags+0x1f2/0x350 net/ipv6/route.c:2093
+Code: 02 00 0f 85 69 01 00 00 4d 8b bc 24 60 04 00 00 e8 43 9c a1 fa 49 8d  
+7f 4e 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 10
+RSP: 0018:ffff88818ee76b38 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff88818ee76f00 RCX: ffffc9000de38000
+RDX: 0000000000000009 RSI: ffffffff86dde7fd RDI: 000000000000004e
+RBP: ffff88818ee76b70 R08: ffff8881bfdfe200 R09: ffff8881b981da00
+R10: ffffed1032373386 R11: ffff888191b99c37 R12: ffff8881d3a649c0
+R13: 0000000000000001 R14: 0000000000000080 R15: 0000000000000000
+  ip6_route_output include/net/ip6_route.h:88 [inline]
+  ip6_dst_lookup_tail+0xe27/0x1d50 net/ipv6/ip6_output.c:957
+  ip6_dst_lookup+0x4b/0x60 net/ipv6/ip6_output.c:1064
+  tipc_udp_xmit.isra.14+0x3bd/0xee0 net/tipc/udp_media.c:193
+  tipc_udp_send_msg+0x3a1/0x680 net/tipc/udp_media.c:247
+  tipc_bearer_xmit_skb+0x171/0x350 net/tipc/bearer.c:504
+  tipc_enable_bearer+0xc5e/0xf10 net/tipc/bearer.c:329
+  __tipc_nl_bearer_enable+0x37c/0x4a0 net/tipc/bearer.c:900
+  tipc_nl_bearer_enable+0x22/0x30 net/tipc/bearer.c:908
+  genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
+  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x16c/0x430 net/netlink/af_netlink.c:2477
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x59f/0x750 net/netlink/af_netlink.c:1336
   netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
   sock_sendmsg_nosec net/socket.c:621 [inline]
   sock_sendmsg+0xd5/0x120 net/socket.c:631
@@ -135,29 +244,27 @@ RIP: 0033:0x457669
 Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fef14ce1c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RSP: 002b:00007f14f3ca9c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
 RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
-RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000004
+RDX: 0000000000000000 RSI: 00000000200008c0 RDI: 0000000000000003
 RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fef14ce26d4
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f14f3caa6d4
 R13: 00000000004c4252 R14: 00000000004d71d0 R15: 00000000ffffffff
 Modules linked in:
-CR2: ffffde2071b70933
----[ end trace bf7dbdfd80cac9f4 ]---
-RIP: 0010:iptunnel_xmit_stats include/net/ip_tunnels.h:422 [inline]
-RIP: 0010:iptunnel_xmit+0x795/0x9c0 net/ipv4/ip_tunnel_core.c:94
-Code: e9 03 80 3c 11 00 0f 85 00 02 00 00 4c 03 24 c5 20 40 27 89 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 18 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 ea 01 00 00 49 8d 7c 24 10 48 63 db 48 b8 00 00
-RSP: 0018:ffff8881569becd0 EFLAGS: 00010a06
-RAX: dffffc0000000000 RBX: 00000000000000dc RCX: 1ffffffff124e805
-RDX: 1fffe22071b70933 RSI: ffffffff83933588 RDI: ffff11038db84998
-RBP: ffff8881569bed30 R08: ffff88818d334500 R09: ffffed103b5e5b5f
-R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: ffff11038db84980
-R13: ffff8881bbe64ec0 R14: ffff8881baab7900 R15: ffff88818fbe8380
-FS:  00007fef14ce2700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+---[ end trace 2a8589f8073d0444 ]---
+RIP: 0010:ip6_route_output_flags+0x1f2/0x350 net/ipv6/route.c:2093
+Code: 02 00 0f 85 69 01 00 00 4d 8b bc 24 60 04 00 00 e8 43 9c a1 fa 49 8d  
+7f 4e 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
+89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2 0f 85 10
+RSP: 0018:ffff88818ee76b38 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff88818ee76f00 RCX: ffffc9000de38000
+RDX: 0000000000000009 RSI: ffffffff86dde7fd RDI: 000000000000004e
+RBP: ffff88818ee76b70 R08: ffff8881bfdfe200 R09: ffff8881b981da00
+R10: ffffed1032373386 R11: ffff888191b99c37 R12: ffff8881d3a649c0
+R13: 0000000000000001 R14: 0000000000000080 R15: 0000000000000000
+FS:  00007f14f3caa700(0000) GS:ffff8881dac00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffde2071b70933 CR3: 00000001af822000 CR4: 00000000001406e0
+CR2: 00007ffd46f97980 CR3: 00000001c4084000 CR4: 00000000001406f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
