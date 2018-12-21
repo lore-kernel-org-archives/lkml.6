@@ -2,318 +2,580 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D09C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3984CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C7221917
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBAFF21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 15:16:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=c0d3.blue header.i=@c0d3.blue header.b="YAPCTbOl"
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="CJfMl9Uc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404122AbeLUPPm (ORCPT
+        id S2404132AbeLUPQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 10:15:42 -0500
-Received: from mail.aperture-lab.de ([138.201.29.205]:38584 "EHLO
-        mail.aperture-lab.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730803AbeLUPPd (ORCPT
+        Fri, 21 Dec 2018 10:16:29 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41904 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731892AbeLUPQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 10:15:33 -0500
-From:   =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue; s=2018;
-        t=1545405328; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TYa1I6A9mAqiy2mVxfLKMpD05GmkBCsXsZIcZEc578Q=;
-        b=YAPCTbOl9xJ0CZcU9wP5D8qJlv27bra6LQnBLEm6WvaX5qiP36Br3/p1D9vi9b9jh396Qb
-        840FlXXZoz5wbFHY/chPajgB+jEnYJ0Yedng2GBUTab/xmw98m7AfJQzSYXYRwCO3Im8mP
-        4TKbkWCNRqHeOKDtn+9xjghBvU5ZnLRI3l3dMtbSkSupb9/+o4UqoXk2Vd3OV1uW2Fsfcj
-        ITVVTtSIKUCpeez6shFZC0mTxY6UDi6+fFa8ZYG/YP/0IUxiDBC9lYdJWellKlv/i0mfp4
-        /hhND+zblXrlqO4VmbwHERkSi2sOYByFkHqtM1sgBgPhTdJ5pxAO/10MkKfrwQ==
-To:     netdev@vger.kernel.org
-Cc:     Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        bridge@lists.linux-foundation.org, b.a.t.m.a.n@lists.open-mesh.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Subject: [PATCH net-next 4/4] bridge: Snoop Multicast Router Advertisements
-Date:   Fri, 21 Dec 2018 16:15:11 +0100
-Message-Id: <20181221151511.14923-5-linus.luessing@c0d3.blue>
-In-Reply-To: <20181221151511.14923-1-linus.luessing@c0d3.blue>
-References: <20181221151511.14923-1-linus.luessing@c0d3.blue>
+        Fri, 21 Dec 2018 10:16:29 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g19so4944386edy.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 07:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1sxKNj03vWSUtZFp1RK/YAsnDPvEic9J1QLCRCD5IlM=;
+        b=CJfMl9UcVIRKI8hBuKPCCGMWaq5+0HpjDnzfHcBwmpK32m2uQ/oYbYjf60M9fIXNA8
+         R6VXAbJMZe/KOlMRoe1rSa8RcK0VgrGbvfxsasffgUNzAyjjj9dvmMgSQV1YMA5OXv2w
+         BcQSTkh8Z/y203zhufwP0oFGz6Dx0EKgfUyu1kg1vL+bJL1K6b1qYOs+VzxawW3YmKiV
+         SsxRnNcXyoB6Cr2458L+GTT3Z+sDxPGDZO+ibY22FwxQXzoqlNtu/Ca1v2jAH2b0Kbjf
+         ZWsarqiZ98Zob1Ppy/PkwxCVAATouGmpRoIm5kMIW2txiV3AePohXufWDqlQ2mH4ouWk
+         VnXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1sxKNj03vWSUtZFp1RK/YAsnDPvEic9J1QLCRCD5IlM=;
+        b=RdhV1TvBQaWXCol4F6l7po8PeJFjaC0tfVH/WQikX2aOcSnhWGBrkZSSMgdhjMSdZX
+         5X3HBeoeEzjD6nEAgtTAqSX6/BEdqmOnD2cPw5Tg4Z2wrsA9uIZhFBXEufkNKVNPuBYc
+         UFmpzaJ043KjJdK9n449UNYAQA/XX5U1fhf1tMHFFMBRNq5fk2PY/5oloKdVs2OTDZHh
+         zpTtAwDevQIZRq+nE9TtlIYpNo71JpjiNyZaQqjeBB396MU47l0Ec7L3hK5zrPvggK5P
+         s5YtYWTOI76fwVV1dJYuRfCRrFVCslGQnNI58Esj/I/uC30Z6TR4D9AOWFUUTNk3Mnrp
+         tD+w==
+X-Gm-Message-State: AA+aEWbDod2SHN0NGOEidjQpM2kPuFRvCrKmxPPUE0YaxK2wVO1Kd8Vm
+        52tgeLY1vwbcXjZrRYvlL3lE8Fjm1D2nCnf99CYhvg==
+X-Google-Smtp-Source: AFSGD/W1CudoEcZi/tM0T/MdTu+Fng4rBGfkf6sdSwFteOgW18R6bL1sVQ2O2mZFqfotl54em6Z3G6q+Y1hpNWL81uc=
+X-Received: by 2002:a17:906:798e:: with SMTP id c14-v6mr2374082ejo.123.1545405385817;
+ Fri, 21 Dec 2018 07:16:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=c0d3.blue;
-        s=2018; t=1545405328; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TYa1I6A9mAqiy2mVxfLKMpD05GmkBCsXsZIcZEc578Q=;
-        b=lAGLtdf4lhZMo8nNXMQ0DFozZFJAyTaJuyisY477XoUh+WK+P8nq/TvgJyLm733jGS2LPo
-        PIl4adTBAZG1TAqVEIlQb+ELLqJfONIXWgtXfEvUBs/4gn95wJ9hRW1aFxiiP/AGSHR7jy
-        fcLVO9OMAxwPG25le8efD/n5vd1PefqRCiIoj47lccuh2nb8oyAiU81mga2eoWG+rrsnQA
-        TDDXrNGEp9SFyFBtR45Lg9QBQMzFbiO1qiT3M8qoON07BZGHMXznt9QDG/8iHOtPKreQRK
-        Xvsc3BekTM5mG+9YwTniUlHfcttX81BrrPssx0ZtdbmhNAca32k2jiJot1n0Rw==
-ARC-Seal: i=1; s=2018; d=c0d3.blue; t=1545405328; a=rsa-sha256; cv=none;
-        b=maGdttnhLwMVdlUfqUpc8yR4pfpqk6D6NMH2tqYKh81r15qH2RsIJnfY2hU6Qco3f5KMmT
-        5Jm82j3A7JDhuxlmVxXr4UWRCOtWqo3RczCzQCO2srKt6i3xLEJdDGkc4/UVKJXnTppK3S
-        8Ep6VrZz/SczPyORDkri6VyG3XLb4Ynb1hLj3RukWe7YK58g2YghfWv+Dd+q/VjJEo16b7
-        xfOypiWWOdEiUnpQjCIYD+7OvkeBCNlcrSHherHrO0wZj17DLQ5LTVIyG1wls0FgZb/uNm
-        W8NMrLqXuHX56dVrC2yL9qWLJi4JYh7JYfCSfjfWOPPYu1AkjsA4NEoDWSWcYw==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=linus.luessing@c0d3.blue smtp.mailfrom=linus.luessing@c0d3.blue
+References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
+ <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
+ <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com> <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
+ <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com> <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
+ <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com> <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
+ <38e4563f-99ae-d5ee-782d-1c309599cfbf@gmail.com> <CAB4CAwcBqDDUkwOZLHd5_MbWFKj3QHQa9Yq24LE+V+BeGS486g@mail.gmail.com>
+ <269c9203-7b2e-a8fe-1d1e-fbe88f903ee8@gmail.com>
+In-Reply-To: <269c9203-7b2e-a8fe-1d1e-fbe88f903ee8@gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Fri, 21 Dec 2018 23:16:14 +0800
+Message-ID: <CAB4CAwffD0yaYaKKJr8QDONTvNi7RWTn0NY_o1gS8An-oJpEAw@mail.gmail.com>
+Subject: Re: A weird problem of Realtek r8168 after resume from S3
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When multiple multicast routers are present in a broadcast domain then
-only one of them will be detectable via IGMP/MLD query snooping. The
-multicast router with the lowest IP address will become the selected and
-active querier while all other multicast routers will then refrain from
-sending queries.
+On Fri, Dec 21, 2018 at 3:22 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>
+> On 20.12.2018 10:43, Chris Chiu wrote:
+> > On Thu, Dec 20, 2018 at 3:41 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>
+> >> On 19.12.2018 16:32, Chris Chiu wrote:
+> >>> On Wed, Dec 19, 2018 at 4:28 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>>>
+> >>>> On 18.12.2018 14:25, Chris Chiu wrote:
+> >>>>> On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>>>>>
+> >>>>>> On 17.12.2018 14:25, Chris Chiu wrote:
+> >>>>>>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>>>>>>>
+> >>>>>>>> On 14.12.2018 04:33, Chris Chiu wrote:
+> >>>>>>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
+> >>>>>>>>>>
+> >>>>>>>>>> Hi,
+> >>>>>>>>>>     We got an acer laptop which has a problem with ethernet networking after
+> >>>>>>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
+> >>>>>>>>>> follows.
+> >>>>>>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+> >>>>>>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+> >>>>>>>>>>
+> >>>>>>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
+> >>>>>>>>
+> >>>>>>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
+> >>>>>>> (uninitialized): mac_version = 0x2b
+> >>>>>>> [   22.365580] libphy: r8169: probed
+> >>>>>>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
+> >>>>>>> XID 5c800800, IRQ 38
+> >>>>>>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
+> >>>>>>> bytes, tx checksumming: ko]
+> >>>>>>>
+> >>>>>> Thanks for the info.
+> >>>>>>
+> >>>>>>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
+> >>>>>>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
+> >>>>>>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
+> >>>>>>>>>> interface, the networking is back to alive. But it's dead again after
+> >>>>>>>>>> I stop tcpdump.
+> >>>>>>>>>> One more thing, if I ping the problematic machine from others, it achieves the
+> >>>>>>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
+> >>>>>>>>>>
+> >>>>>>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
+> >>>>>>>> to find out whether there's a difference.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Actually, I just found I lead the wrong direction. The S3 suspend does
+> >>>>>>> help to reproduce,
+> >>>>>>> but it's not necessary. All I need to do is ping around 5 mins and the
+> >>>>>>> network connection
+> >>>>>>> fails.  And I also find one thing interesting, disabling the  MSI-X
+> >>>>>>> interrupt like commit
+> >>>>>>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
+> >>>>>>> Although I don't
+> >>>>>>> understand the root cause. Anything I can do to help?
+> >>>>>>>
+> >>>>>> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
+> >>>>>> the issue, but also pinging the machine from outside brings back the network.
+> >>>>>> Both actions affect totally different corners.
+> >>>>>>
+> >>>>>> The commit and related issue you mention was a workaround in the driver,
+> >>>>>> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
+> >>>>>> in the PCI core. After this was fixed we removed the workaround again.
+> >>>>>> This shouldn't be related to your issue.
+> >>>>>>
+> >>>>>> Hard to say for now is whether the issue is:
+> >>>>>> - a driver issue
+> >>>>>> - a hardware issue in the RTL8411
+> >>>>>> - an issue with the chipset on your mainboard
+> >>>>>>
+> >>>>>> According to your description it doesn't take a special scenario to trigger
+> >>>>>> the issue, so most likely also other users of Acer notebooks with RTL8411
+> >>>>>> should be affected (after briefly checking this should be at least Aspire
+> >>>>>> F15, V15, V7). Therefore I wonder why there aren't more reports.
+> >>>>>>
+> >>>>>> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
+> >>>>>> So you could test this revision and the one before.
+> >>>>>>
+> >>>>>> Eventually, if the issue really should be caused by a side effect of using
+> >>>>>> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
+> >>>>>> in general or just for RTL8411 and a certain subsystem id.
+> >>>>>>
+> >>>>>
+> >>>>> I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
+> >>>>> interrupt handling"),
+> >>>>> the problem still there. Then I revert to the previous revision, the
+> >>>>> problem goes away.
+> >>>>> So I think it's pretty much the side effect of MSI-X. However, as you
+> >>>>> mentioned that
+> >>>>> you didn't hit this problem, I'll ask the vendor to verify if this
+> >>>>> problem also happens on
+> >>>>> other machines with the same chip. Then we can determine to disable for specific
+> >>>>> mac version or just a certain subsystem id.
+> >>>>>
+> >>>>>>>>>>     I tried the latest 4.20 rc version but the problem still there. I
+> >>>>>>>>>> also tried some
+> >>>>>>>>>> hw_reset or init thing in the resume path but no effect. Any
+> >>>>>>>>>> suggestion for this?
+> >>>>>>>>>> Thanks
+> >>>>>>>>>>
+> >>>>>>>> Did previous kernel versions work? If it's a regression, a bisect would be
+> >>>>>>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
+> >>>>>>>>
+> >>>>>>>>>> Chris
+> >>>>>>>>>
+> >>>>>>>>> Gentle ping. Any additional information required?
+> >>>>>>>>>
+> >>>>>>>>> Chris
+> >>>>>>>>>
+> >>>>>>>> Heiner
+> >>>>>>>
+> >>>>>>
+> >>>>>
+> >>>>
+> >>>> As an additional note:
+> >>>> I found that the rtsx_pci driver doesn't support MSI-X currently.
+> >>>> The following patch adds MSI-X support (it's compile-tested only
+> >>>> because I don't have a system with RTL8411).
+> >>>> Would be interesting to see whether it makes a difference if both
+> >>>> components on this combo chip use MSI-X.
+> >>>>
+> >>>> ---
+> >>>>  drivers/misc/cardreader/rtsx_pcr.c | 51 ++++++++++--------------------
+> >>>>  include/linux/rtsx_pci.h           |  1 -
+> >>>>  2 files changed, 16 insertions(+), 36 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+> >>>> index da445223f..d1349c248 100644
+> >>>> --- a/drivers/misc/cardreader/rtsx_pcr.c
+> >>>> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+> >>>> @@ -35,10 +35,6 @@
+> >>>>
+> >>>>  #include "rtsx_pcr.h"
+> >>>>
+> >>>> -static bool msi_en = true;
+> >>>> -module_param(msi_en, bool, S_IRUGO | S_IWUSR);
+> >>>> -MODULE_PARM_DESC(msi_en, "Enable MSI");
+> >>>> -
+> >>>>  static DEFINE_IDR(rtsx_pci_idr);
+> >>>>  static DEFINE_SPINLOCK(rtsx_pci_lock);
+> >>>>
+> >>>> @@ -1049,22 +1045,21 @@ static irqreturn_t rtsx_pci_isr(int irq, void *dev_id)
+> >>>>
+> >>>>  static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
+> >>>>  {
+> >>>> -       pcr_dbg(pcr, "%s: pcr->msi_en = %d, pci->irq = %d\n",
+> >>>> -                       __func__, pcr->msi_en, pcr->pci->irq);
+> >>>> +       int ret;
+> >>>>
+> >>>> -       if (request_irq(pcr->pci->irq, rtsx_pci_isr,
+> >>>> -                       pcr->msi_en ? 0 : IRQF_SHARED,
+> >>>> -                       DRV_NAME_RTSX_PCI, pcr)) {
+> >>>> -               dev_err(&(pcr->pci->dev),
+> >>>> -                       "rtsx_sdmmc: unable to grab IRQ %d, disabling device\n",
+> >>>> -                       pcr->pci->irq);
+> >>>> -               return -1;
+> >>>> -       }
+> >>>> +       ret = pci_alloc_irq_vectors(pcr->pci, 1, 1, PCI_IRQ_ALL_TYPES);
+> >>>> +       if (ret < 0)
+> >>>> +               goto err;
+> >>>>
+> >>>> -       pcr->irq = pcr->pci->irq;
+> >>>> -       pci_intx(pcr->pci, !pcr->msi_en);
+> >>>> +       ret = pci_request_irq(pcr->pci, 0, rtsx_pci_isr, NULL, pcr,
+> >>>> +                             DRV_NAME_RTSX_PCI);
+> >>>> +       if (ret)
+> >>>> +               goto err;
+> >>>>
+> >>>>         return 0;
+> >>>> +err:
+> >>>> +       pci_err(pcr->pci, "rtsx_sdmmc: unable to grab interrupt\n");
+> >>>> +       return ret;
+> >>>>  }
+> >>>>
+> >>>>  static void rtsx_enable_aspm(struct rtsx_pcr *pcr)
+> >>>> @@ -1496,19 +1491,11 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+> >>>>         INIT_DELAYED_WORK(&pcr->carddet_work, rtsx_pci_card_detect);
+> >>>>         INIT_DELAYED_WORK(&pcr->idle_work, rtsx_pci_idle_work);
+> >>>>
+> >>>> -       pcr->msi_en = msi_en;
+> >>>> -       if (pcr->msi_en) {
+> >>>> -               ret = pci_enable_msi(pcidev);
+> >>>> -               if (ret)
+> >>>> -                       pcr->msi_en = false;
+> >>>> -       }
+> >>>> -
+> >>>>         ret = rtsx_pci_acquire_irq(pcr);
+> >>>>         if (ret < 0)
+> >>>> -               goto disable_msi;
+> >>>> +               goto free_dma;
+> >>>>
+> >>>>         pci_set_master(pcidev);
+> >>>> -       synchronize_irq(pcr->irq);
+> >>>>
+> >>>>         ret = rtsx_pci_init_chip(pcr);
+> >>>>         if (ret < 0)
+> >>>> @@ -1528,10 +1515,8 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+> >>>>         return 0;
+> >>>>
+> >>>>  disable_irq:
+> >>>> -       free_irq(pcr->irq, (void *)pcr);
+> >>>> -disable_msi:
+> >>>> -       if (pcr->msi_en)
+> >>>> -               pci_disable_msi(pcr->pci);
+> >>>> +       pci_free_irq(pcr->pci, 0, pcr);
+> >>>> +free_dma:
+> >>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+> >>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+> >>>>  unmap:
+> >>>> @@ -1568,9 +1553,7 @@ static void rtsx_pci_remove(struct pci_dev *pcidev)
+> >>>>
+> >>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+> >>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+> >>>> -       free_irq(pcr->irq, (void *)pcr);
+> >>>> -       if (pcr->msi_en)
+> >>>> -               pci_disable_msi(pcr->pci);
+> >>>> +       pci_free_irq(pcr->pci, 0, pcr);
+> >>>>         iounmap(pcr->remap_addr);
+> >>>>
+> >>>>         pci_release_regions(pcidev);
+> >>>> @@ -1664,9 +1647,7 @@ static void rtsx_pci_shutdown(struct pci_dev *pcidev)
+> >>>>         rtsx_pci_power_off(pcr, HOST_ENTER_S1);
+> >>>>
+> >>>>         pci_disable_device(pcidev);
+> >>>> -       free_irq(pcr->irq, (void *)pcr);
+> >>>> -       if (pcr->msi_en)
+> >>>> -               pci_disable_msi(pcr->pci);
+> >>>> +       pci_free_irq(pcr->pci, 0, pcr);
+> >>>>  }
+> >>>>
+> >>>>  #else /* CONFIG_PM */
+> >>>> diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+> >>>> index e964bbd03..10abfe7f2 100644
+> >>>> --- a/include/linux/rtsx_pci.h
+> >>>> +++ b/include/linux/rtsx_pci.h
+> >>>> @@ -1190,7 +1190,6 @@ struct rtsx_pcr {
+> >>>>         /* pci resources */
+> >>>>         unsigned long                   addr;
+> >>>>         void __iomem                    *remap_addr;
+> >>>> -       int                             irq;
+> >>>>
+> >>>>         /* host reserved buffer */
+> >>>>         void                            *rtsx_resv_buf;
+> >>>> --
+> >>>> 2.20.0
+> >>>>
+> >>>
+> >>> As mentioned in the last email, the rtsx_pci seems to make no
+> >>> difference. I still tried the kernel with this patch applied, the
+> >>> problem still persists. I also tried the vendor driver and it works
+> >>> without any problem. I'd rather like to find out the root cause
+> >>> instead of a workaround. Any better idea?
+> >>>
+> >> Thanks for your efforts! The vendor driver doesn't support MSI-X,
+> >> therefore the issue doesn't occur. I'm running out of ideas, so
+> >> I will write to a contact in Realtek who few times provided helpful
+> >> information already.
+> >>
+> >
+> > Hi Heiner,
+> >     After lots of repeating tests, I have to correct my previous finding
+> > to prevent from leading the wrong way. Sometimes the network also
+> > fails with unknown reason. Here's the summarize.
+> > 1. The S3 suspend resume can reproduce it 100%. However, echo
+> > different types (core, devices...) in /sys/power/pm_test is not able
+> > to achieve the same thing.
+> > 2. The network could randomly fail at any time. Maybe during boot,
+> > sometimes fail after few minutes web surfing.
+> > 3. After many times of verifications, it's not about MSI-X. I repeatedly
+> > boot from my own build kernel (w/ MSI-X workaround, w/ pci_alloc_irq,
+> > w/o pci_alloc_irq), even the revision before 6c6aa15fdea5 ("r8169:
+> > improve interrupt handling")
+> > still fails after S3, but I get the wrong impression because I access the
+> > internet w/o problem for quite a long time.
+> > 4. When it happens, executing tcpdump on this NIC can always get
+> > network access back. But fails again after stop tcpdump.
+> > 5. Vendor driver works w/o any problem. I'm still trying to find the difference.
+> >
+> > Sorry that if I caused any confusion. I'll appreciate if there's any kind of
+> > useful information. Thanks.
+> >
+> >>> Chris
+> >>>
+> >> Heiner
+> > .
+> >
 
-To detect such rather silent multicast routers, too, RFC4286
-("Multicast Router Discovery") provides a standardized protocol to
-detect multicast routers for multicast snooping switches.
+Sorry that I complicated the problem. Because this laptop will fail to
+enter suspend with old amdgpu driver, so it's not easy to do kernel
+bisecting. And the problem only 100% reproducible after S3
+suspend/resume, it was difficult for me to define a criteria to judge
+good/bad for each test. The following test result is based on the
+kernel 4.20.0-rc7 which has no suspend/resume problem. Run each test
+for 3 reboots.
 
-This patch implements the necessary MRD Advertisement message parsing
-and after successful processing adds such routers to the internal
-multicast router list.
+>As one more small test: Could you comment out the last statement in
+>rtl_hw_start_8411_2() ? Then ASPM should be disabled on the chip side.
 
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
----
- include/linux/in.h          |  5 +++++
- include/net/addrconf.h      | 15 +++++++++++++
- include/uapi/linux/icmpv6.h |  2 ++
- include/uapi/linux/igmp.h   |  1 +
- net/bridge/br_multicast.c   | 55 +++++++++++++++++++++++++++++++++++++++++++++
- net/ipv6/mcast_snoop.c      |  5 ++++-
- 6 files changed, 82 insertions(+), 1 deletion(-)
+2 of 3 reboots, it never gets IP address from DHCP since boot and each
+plug/unplug ethernet cable.
+The other reboot, It fails after resume from S3.
 
-diff --git a/include/linux/in.h b/include/linux/in.h
-index 31b493734763..435e7f2a513a 100644
---- a/include/linux/in.h
-+++ b/include/linux/in.h
-@@ -60,6 +60,11 @@ static inline bool ipv4_is_lbcast(__be32 addr)
- 	return addr == htonl(INADDR_BROADCAST);
- }
- 
-+static inline bool ipv4_is_all_snoopers(__be32 addr)
-+{
-+	return addr == htonl(INADDR_ALLSNOOPERS_GROUP);
-+}
-+
- static inline bool ipv4_is_zeronet(__be32 addr)
- {
- 	return (addr & htonl(0xff000000)) == htonl(0x00000000);
-diff --git a/include/net/addrconf.h b/include/net/addrconf.h
-index daf11dcb0f70..20d523ee2fec 100644
---- a/include/net/addrconf.h
-+++ b/include/net/addrconf.h
-@@ -229,6 +229,7 @@ void ipv6_mc_unmap(struct inet6_dev *idev);
- void ipv6_mc_remap(struct inet6_dev *idev);
- void ipv6_mc_init_dev(struct inet6_dev *idev);
- void ipv6_mc_destroy_dev(struct inet6_dev *idev);
-+int ipv6_mc_check_icmpv6(struct sk_buff *skb);
- int ipv6_mc_check_mld(struct sk_buff *skb);
- void addrconf_dad_failure(struct sk_buff *skb, struct inet6_ifaddr *ifp);
- 
-@@ -499,6 +500,20 @@ static inline bool ipv6_addr_is_solict_mult(const struct in6_addr *addr)
- #endif
- }
- 
-+static inline bool ipv6_addr_is_all_snoopers(const struct in6_addr *addr)
-+{
-+#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) && BITS_PER_LONG == 64
-+	__be64 *p = (__be64 *)addr;
-+
-+	return ((p[0] ^ cpu_to_be64(0xff02000000000000UL)) |
-+		(p[1] ^ cpu_to_be64(0x6a))) == 0UL;
-+#else
-+	return ((addr->s6_addr32[0] ^ htonl(0xff020000)) |
-+		addr->s6_addr32[1] | addr->s6_addr32[2] |
-+		(addr->s6_addr32[3] ^ htonl(0x0000006a))) == 0;
-+#endif
-+}
-+
- #ifdef CONFIG_PROC_FS
- int if6_proc_init(void);
- void if6_proc_exit(void);
-diff --git a/include/uapi/linux/icmpv6.h b/include/uapi/linux/icmpv6.h
-index caf8dc019250..325395f56bfa 100644
---- a/include/uapi/linux/icmpv6.h
-+++ b/include/uapi/linux/icmpv6.h
-@@ -108,6 +108,8 @@ struct icmp6hdr {
- #define ICMPV6_MOBILE_PREFIX_SOL	146
- #define ICMPV6_MOBILE_PREFIX_ADV	147
- 
-+#define ICMPV6_MRDISC_ADV		151
-+
- /*
-  *	Codes for Destination Unreachable
-  */
-diff --git a/include/uapi/linux/igmp.h b/include/uapi/linux/igmp.h
-index 7e44ac02ca18..90c28bc466c6 100644
---- a/include/uapi/linux/igmp.h
-+++ b/include/uapi/linux/igmp.h
-@@ -93,6 +93,7 @@ struct igmpv3_query {
- #define IGMP_MTRACE_RESP		0x1e
- #define IGMP_MTRACE			0x1f
- 
-+#define IGMP_MRDISC_ADV			0x30	/* From RFC4286 */
- 
- /*
-  *	Use the BSD names for these for compatibility
-diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
-index 2366f4a2780e..2c46c7aca571 100644
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -14,6 +14,7 @@
- #include <linux/export.h>
- #include <linux/if_ether.h>
- #include <linux/igmp.h>
-+#include <linux/in.h>
- #include <linux/jhash.h>
- #include <linux/kernel.h>
- #include <linux/log2.h>
-@@ -29,10 +30,12 @@
- #include <net/ip.h>
- #include <net/switchdev.h>
- #if IS_ENABLED(CONFIG_IPV6)
-+#include <linux/icmpv6.h>
- #include <net/ipv6.h>
- #include <net/mld.h>
- #include <net/ip6_checksum.h>
- #include <net/addrconf.h>
-+#include <net/ipv6.h>
- #endif
- 
- #include "br_private.h"
-@@ -1583,6 +1586,19 @@ static void br_multicast_pim(struct net_bridge *br,
- 	br_multicast_mark_router(br, port);
- }
- 
-+static int br_ip4_multicast_mrd_rcv(struct net_bridge *br,
-+				    struct net_bridge_port *port,
-+				    struct sk_buff *skb)
-+{
-+	if (ip_hdr(skb)->protocol != IPPROTO_IGMP ||
-+	    igmp_hdr(skb)->type != IGMP_MRDISC_ADV)
-+		return -ENOMSG;
-+
-+	br_multicast_mark_router(br, port);
-+
-+	return 0;
-+}
-+
- static int br_multicast_ipv4_rcv(struct net_bridge *br,
- 				 struct net_bridge_port *port,
- 				 struct sk_buff *skb,
-@@ -1600,7 +1616,15 @@ static int br_multicast_ipv4_rcv(struct net_bridge *br,
- 		} else if (pim_ipv4_all_pim_routers(ip_hdr(skb)->daddr)) {
- 			if (ip_hdr(skb)->protocol == IPPROTO_PIM)
- 				br_multicast_pim(br, port, skb);
-+		} else if (ipv4_is_all_snoopers(ip_hdr(skb)->daddr)) {
-+			err = br_ip4_multicast_mrd_rcv(br, port, skb);
-+
-+			if (err < 0 && err != -ENOMSG) {
-+				br_multicast_err_count(br, port, skb->protocol);
-+				return err;
-+			}
- 		}
-+
- 		return 0;
- 	} else if (err < 0) {
- 		br_multicast_err_count(br, port, skb->protocol);
-@@ -1635,6 +1659,27 @@ static int br_multicast_ipv4_rcv(struct net_bridge *br,
- }
- 
- #if IS_ENABLED(CONFIG_IPV6)
-+static int br_ip6_multicast_mrd_rcv(struct net_bridge *br,
-+				    struct net_bridge_port *port,
-+				    struct sk_buff *skb)
-+{
-+	int ret;
-+
-+	if (ipv6_hdr(skb)->nexthdr != IPPROTO_ICMPV6)
-+		return -ENOMSG;
-+
-+	ret = ipv6_mc_check_icmpv6(skb);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (icmp6_hdr(skb)->icmp6_type != ICMPV6_MRDISC_ADV)
-+		return -ENOMSG;
-+
-+	br_multicast_mark_router(br, port);
-+
-+	return 0;
-+}
-+
- static int br_multicast_ipv6_rcv(struct net_bridge *br,
- 				 struct net_bridge_port *port,
- 				 struct sk_buff *skb,
-@@ -1649,6 +1694,16 @@ static int br_multicast_ipv6_rcv(struct net_bridge *br,
- 	if (err == -ENOMSG) {
- 		if (!ipv6_addr_is_ll_all_nodes(&ipv6_hdr(skb)->daddr))
- 			BR_INPUT_SKB_CB(skb)->mrouters_only = 1;
-+
-+		if (ipv6_addr_is_all_snoopers(&ipv6_hdr(skb)->daddr)) {
-+			err = br_ip6_multicast_mrd_rcv(br, port, skb);
-+
-+			if (err < 0 && err != -ENOMSG) {
-+				br_multicast_err_count(br, port, skb->protocol);
-+				return err;
-+			}
-+		}
-+
- 		return 0;
- 	} else if (err < 0) {
- 		br_multicast_err_count(br, port, skb->protocol);
-diff --git a/net/ipv6/mcast_snoop.c b/net/ipv6/mcast_snoop.c
-index a72ddfc40eb3..55e2ac179f28 100644
---- a/net/ipv6/mcast_snoop.c
-+++ b/net/ipv6/mcast_snoop.c
-@@ -41,6 +41,8 @@ static int ipv6_mc_check_ip6hdr(struct sk_buff *skb)
- 	if (skb->len < len || len <= offset)
- 		return -EINVAL;
- 
-+	skb_set_transport_header(skb, offset);
-+
- 	return 0;
- }
- 
-@@ -142,7 +144,7 @@ static inline __sum16 ipv6_mc_validate_checksum(struct sk_buff *skb)
- 	return skb_checksum_validate(skb, IPPROTO_ICMPV6, ip6_compute_pseudo);
- }
- 
--static int ipv6_mc_check_icmpv6(struct sk_buff *skb)
-+int ipv6_mc_check_icmpv6(struct sk_buff *skb)
- {
- 	unsigned int len = skb_transport_offset(skb) + sizeof(struct icmp6hdr);
- 	unsigned int transport_len = ipv6_transport_len(skb);
-@@ -161,6 +163,7 @@ static int ipv6_mc_check_icmpv6(struct sk_buff *skb)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(ipv6_mc_check_icmpv6);
- 
- /**
-  * ipv6_mc_check_mld - checks whether this is a sane MLD packet
--- 
-2.11.0
+> OK, here come two patches based on ideas from Realtek. Could you please test:
+> 1. patch 1
+2 of 3 reboots, It fails after resume from S3.
+The other reboot never gets IP address from DHCP since boot.
 
+> 2. patch 2
+It's just like the test result of patch 1 only.
+
+> 3. patch 1 + 2
+>
+It never gets IP address from DHCP since boot and each plug/unplug
+ethernet cable for 3 reboots.
+
+I think we can simple take these results as all failed.
+
+
+
+
+
+>
+> patch 1:
+> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+> index 99bc3de90..eda35c0ce 100644
+> --- a/drivers/net/ethernet/realtek/r8169.c
+> +++ b/drivers/net/ethernet/realtek/r8169.c
+> @@ -5049,7 +5049,7 @@ static void rtl_hw_start_8168g(struct rtl8169_private *tp)
+>         RTL_W8(tp, MaxTxPacketSize, EarlySize);
+>
+>         rtl_eri_write(tp, 0xc0, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
+> -       rtl_eri_write(tp, 0xb8, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
+> +       rtl_eri_write(tp, 0xb8, ERIAR_MASK_1111, 0, ERIAR_EXGMAC);
+>
+>         /* Adjust EEE LED frequency */
+>         RTL_W8(tp, EEE_LED, RTL_R8(tp, EEE_LED) & ~0x07);
+> --
+> 2.20.1
+>
+>
+> patch 2:
+> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+> index eda35c0ce..921e258a3 100644
+> --- a/drivers/net/ethernet/realtek/r8169.c
+> +++ b/drivers/net/ethernet/realtek/r8169.c
+> @@ -5109,7 +5109,137 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+>         /* disable aspm and clock request before access ephy */
+>         rtl_hw_aspm_clkreq_enable(tp, false);
+>         rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
+> -       rtl_hw_aspm_clkreq_enable(tp, true);
+> +
+> +       r8168_mac_ocp_write(tp, 0xFC28, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC2A, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC2C, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC2E, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC30, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC32, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC34, 0x0000);
+> +       r8168_mac_ocp_write(tp, 0xFC36, 0x0000);
+> +       msleep(3);
+> +       r8168_mac_ocp_write(tp, 0xFC26, 0x0000);
+> +
+> +       r8168_mac_ocp_write( tp, 0xF800, 0xE008 );
+> +       r8168_mac_ocp_write( tp, 0xF802, 0xE00A );
+> +       r8168_mac_ocp_write( tp, 0xF804, 0xE00C );
+> +       r8168_mac_ocp_write( tp, 0xF806, 0xE00E );
+> +       r8168_mac_ocp_write( tp, 0xF808, 0xE027 );
+> +       r8168_mac_ocp_write( tp, 0xF80A, 0xE04F );
+> +       r8168_mac_ocp_write( tp, 0xF80C, 0xE05E );
+> +       r8168_mac_ocp_write( tp, 0xF80E, 0xE065 );
+> +       r8168_mac_ocp_write( tp, 0xF810, 0xC602 );
+> +       r8168_mac_ocp_write( tp, 0xF812, 0xBE00 );
+> +       r8168_mac_ocp_write( tp, 0xF814, 0x0000 );
+> +       r8168_mac_ocp_write( tp, 0xF816, 0xC502 );
+> +       r8168_mac_ocp_write( tp, 0xF818, 0xBD00 );
+> +       r8168_mac_ocp_write( tp, 0xF81A, 0x074C );
+> +       r8168_mac_ocp_write( tp, 0xF81C, 0xC302 );
+> +       r8168_mac_ocp_write( tp, 0xF81E, 0xBB00 );
+> +       r8168_mac_ocp_write( tp, 0xF820, 0x080A );
+> +       r8168_mac_ocp_write( tp, 0xF822, 0x6420 );
+> +       r8168_mac_ocp_write( tp, 0xF824, 0x48C2 );
+> +       r8168_mac_ocp_write( tp, 0xF826, 0x8C20 );
+> +       r8168_mac_ocp_write( tp, 0xF828, 0xC516 );
+> +       r8168_mac_ocp_write( tp, 0xF82A, 0x64A4 );
+> +       r8168_mac_ocp_write( tp, 0xF82C, 0x49C0 );
+> +       r8168_mac_ocp_write( tp, 0xF82E, 0xF009 );
+> +       r8168_mac_ocp_write( tp, 0xF830, 0x74A2 );
+> +       r8168_mac_ocp_write( tp, 0xF832, 0x8CA5 );
+> +       r8168_mac_ocp_write( tp, 0xF834, 0x74A0 );
+> +       r8168_mac_ocp_write( tp, 0xF836, 0xC50E );
+> +       r8168_mac_ocp_write( tp, 0xF838, 0x9CA2 );
+> +       r8168_mac_ocp_write( tp, 0xF83A, 0x1C11 );
+> +       r8168_mac_ocp_write( tp, 0xF83C, 0x9CA0 );
+> +       r8168_mac_ocp_write( tp, 0xF83E, 0xE006 );
+> +       r8168_mac_ocp_write( tp, 0xF840, 0x74F8 );
+> +       r8168_mac_ocp_write( tp, 0xF842, 0x48C4 );
+> +       r8168_mac_ocp_write( tp, 0xF844, 0x8CF8 );
+> +       r8168_mac_ocp_write( tp, 0xF846, 0xC404 );
+> +       r8168_mac_ocp_write( tp, 0xF848, 0xBC00 );
+> +       r8168_mac_ocp_write( tp, 0xF84A, 0xC403 );
+> +       r8168_mac_ocp_write( tp, 0xF84C, 0xBC00 );
+> +       r8168_mac_ocp_write( tp, 0xF84E, 0x0BF2 );
+> +       r8168_mac_ocp_write( tp, 0xF850, 0x0C0A );
+> +       r8168_mac_ocp_write( tp, 0xF852, 0xE434 );
+> +       r8168_mac_ocp_write( tp, 0xF854, 0xD3C0 );
+> +       r8168_mac_ocp_write( tp, 0xF856, 0x49D9 );
+> +       r8168_mac_ocp_write( tp, 0xF858, 0xF01F );
+> +       r8168_mac_ocp_write( tp, 0xF85A, 0xC526 );
+> +       r8168_mac_ocp_write( tp, 0xF85C, 0x64A5 );
+> +       r8168_mac_ocp_write( tp, 0xF85E, 0x1400 );
+> +       r8168_mac_ocp_write( tp, 0xF860, 0xF007 );
+> +       r8168_mac_ocp_write( tp, 0xF862, 0x0C01 );
+> +       r8168_mac_ocp_write( tp, 0xF864, 0x8CA5 );
+> +       r8168_mac_ocp_write( tp, 0xF866, 0x1C15 );
+> +       r8168_mac_ocp_write( tp, 0xF868, 0xC51B );
+> +       r8168_mac_ocp_write( tp, 0xF86A, 0x9CA0 );
+> +       r8168_mac_ocp_write( tp, 0xF86C, 0xE013 );
+> +       r8168_mac_ocp_write( tp, 0xF86E, 0xC519 );
+> +       r8168_mac_ocp_write( tp, 0xF870, 0x74A0 );
+> +       r8168_mac_ocp_write( tp, 0xF872, 0x48C4 );
+> +       r8168_mac_ocp_write( tp, 0xF874, 0x8CA0 );
+> +       r8168_mac_ocp_write( tp, 0xF876, 0xC516 );
+> +       r8168_mac_ocp_write( tp, 0xF878, 0x74A4 );
+> +       r8168_mac_ocp_write( tp, 0xF87A, 0x48C8 );
+> +       r8168_mac_ocp_write( tp, 0xF87C, 0x48CA );
+> +       r8168_mac_ocp_write( tp, 0xF87E, 0x9CA4 );
+> +       r8168_mac_ocp_write( tp, 0xF880, 0xC512 );
+> +       r8168_mac_ocp_write( tp, 0xF882, 0x1B00 );
+> +       r8168_mac_ocp_write( tp, 0xF884, 0x9BA0 );
+> +       r8168_mac_ocp_write( tp, 0xF886, 0x1B1C );
+> +       r8168_mac_ocp_write( tp, 0xF888, 0x483F );
+> +       r8168_mac_ocp_write( tp, 0xF88A, 0x9BA2 );
+> +       r8168_mac_ocp_write( tp, 0xF88C, 0x1B04 );
+> +       r8168_mac_ocp_write( tp, 0xF88E, 0xC508 );
+> +       r8168_mac_ocp_write( tp, 0xF890, 0x9BA0 );
+> +       r8168_mac_ocp_write( tp, 0xF892, 0xC505 );
+> +       r8168_mac_ocp_write( tp, 0xF894, 0xBD00 );
+> +       r8168_mac_ocp_write( tp, 0xF896, 0xC502 );
+> +       r8168_mac_ocp_write( tp, 0xF898, 0xBD00 );
+> +       r8168_mac_ocp_write( tp, 0xF89A, 0x0300 );
+> +       r8168_mac_ocp_write( tp, 0xF89C, 0x051E );
+> +       r8168_mac_ocp_write( tp, 0xF89E, 0xE434 );
+> +       r8168_mac_ocp_write( tp, 0xF8A0, 0xE018 );
+> +       r8168_mac_ocp_write( tp, 0xF8A2, 0xE092 );
+> +       r8168_mac_ocp_write( tp, 0xF8A4, 0xDE20 );
+> +       r8168_mac_ocp_write( tp, 0xF8A6, 0xD3C0 );
+> +       r8168_mac_ocp_write( tp, 0xF8A8, 0xC50F );
+> +       r8168_mac_ocp_write( tp, 0xF8AA, 0x76A4 );
+> +       r8168_mac_ocp_write( tp, 0xF8AC, 0x49E3 );
+> +       r8168_mac_ocp_write( tp, 0xF8AE, 0xF007 );
+> +       r8168_mac_ocp_write( tp, 0xF8B0, 0x49C0 );
+> +       r8168_mac_ocp_write( tp, 0xF8B2, 0xF103 );
+> +       r8168_mac_ocp_write( tp, 0xF8B4, 0xC607 );
+> +       r8168_mac_ocp_write( tp, 0xF8B6, 0xBE00 );
+> +       r8168_mac_ocp_write( tp, 0xF8B8, 0xC606 );
+> +       r8168_mac_ocp_write( tp, 0xF8BA, 0xBE00 );
+> +       r8168_mac_ocp_write( tp, 0xF8BC, 0xC602 );
+> +       r8168_mac_ocp_write( tp, 0xF8BE, 0xBE00 );
+> +       r8168_mac_ocp_write( tp, 0xF8C0, 0x0C4C );
+> +       r8168_mac_ocp_write( tp, 0xF8C2, 0x0C28 );
+> +       r8168_mac_ocp_write( tp, 0xF8C4, 0x0C2C );
+> +       r8168_mac_ocp_write( tp, 0xF8C6, 0xDC00 );
+> +       r8168_mac_ocp_write( tp, 0xF8C8, 0xC707 );
+> +       r8168_mac_ocp_write( tp, 0xF8CA, 0x1D00 );
+> +       r8168_mac_ocp_write( tp, 0xF8CC, 0x8DE2 );
+> +       r8168_mac_ocp_write( tp, 0xF8CE, 0x48C1 );
+> +       r8168_mac_ocp_write( tp, 0xF8D0, 0xC502 );
+> +       r8168_mac_ocp_write( tp, 0xF8D2, 0xBD00 );
+> +       r8168_mac_ocp_write( tp, 0xF8D4, 0x00AA );
+> +       r8168_mac_ocp_write( tp, 0xF8D6, 0xE0C0 );
+> +       r8168_mac_ocp_write( tp, 0xF8D8, 0xC502 );
+> +       r8168_mac_ocp_write( tp, 0xF8DA, 0xBD00 );
+> +       r8168_mac_ocp_write( tp, 0xF8DC, 0x0132 );
+> +       r8168_mac_ocp_write( tp, 0xFC26, 0x8000 );
+> +       r8168_mac_ocp_write( tp, 0xFC2A, 0x0743 );
+> +       r8168_mac_ocp_write( tp, 0xFC2C, 0x0801 );
+> +       r8168_mac_ocp_write( tp, 0xFC2E, 0x0BE9 );
+> +       r8168_mac_ocp_write( tp, 0xFC30, 0x02FD );
+> +       r8168_mac_ocp_write( tp, 0xFC32, 0x0C25 );
+> +       r8168_mac_ocp_write( tp, 0xFC34, 0x00A9 );
+> +       r8168_mac_ocp_write( tp, 0xFC36, 0x012D );
+>  }
+>
+>  static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+> --
+> 2.20.1
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
