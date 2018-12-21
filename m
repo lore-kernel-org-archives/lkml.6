@@ -2,158 +2,93 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DDEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAADC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E09218D3
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A02AA218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 09:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4faB2EM"
+	dkim=pass (2048-bit key) header.d=bytedance-com.20150623.gappssmtp.com header.i=@bytedance-com.20150623.gappssmtp.com header.b="sHrbCxIl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbeLUJc1 (ORCPT
+        id S2387575AbeLUJgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 04:32:27 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54261 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730185AbeLUJc0 (ORCPT
+        Fri, 21 Dec 2018 04:36:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36979 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731114AbeLUJgL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 04:32:26 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so4621096wmb.3;
-        Fri, 21 Dec 2018 01:32:24 -0800 (PST)
+        Fri, 21 Dec 2018 04:36:11 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so2350812pfb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 01:36:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+fN/h94TFzyeT8dOZ+uMS0YktL5gqzo6kfvRvZ3NbPI=;
-        b=a4faB2EMQqnvm9POPXcEL/qmqOSM0WyPIPbYrze+/8BXrJS009sT4H7nNsAkkJEMPN
-         8G7UZtru+m0rErJvBptVyCxguMvkNg4jdZYoAwNaa4ypVSOp6NlyjlvjrosixJwOAmeH
-         86rTpQdcCvbAkn1nSs11+Htm+ypSopGyaMBYHDHKDrL8ritLmYbgycUz54+u4mkoGpWa
-         UUxIHX7+D2QldmmUCAgLkoKmFVAbxJHvWiu5UUhuv554guABnxWA3RhXM5UIYjUMm6ik
-         gXXicaq8z3HmksWE2ueyUfjD8e3bGS4z+Ek8wKTB24msjE070aecj6NO6zOUup7+woqC
-         TNVw==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=jOg5unArcqZ+VdWb7aU7utg4uQN/o7oo7CVo+2rNe/E=;
+        b=sHrbCxIlwmo1PszNoDeqH9j4bcGdmpDq6jl9FX67h9iJRDEqgO8e3u6MZaQRwe+LmO
+         SIYM9RCGKHDo0PzLiam08+UcC158NjBbyzYq/qDZkd70IcRnEUa0Cd4DMeWb3rUNwuMT
+         2ns2s0YTxVREampBsNoZP7fOc/hov/bEed+hsXX1a7YSjQjFsuXHAs7T7RssAJbABzvo
+         pGn6S8vZI0g1JMUIwONvts4kC9HBpo9BsHjqy33UuVL/uLhCfuoFX5h3+b6QUprLqLI3
+         i6MmJCk03dp894RbNoy8+NcTJIba/oYK+qalLNyU2yvtjmww9X7NHJUB3O8waA98hPVZ
+         5Xqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+fN/h94TFzyeT8dOZ+uMS0YktL5gqzo6kfvRvZ3NbPI=;
-        b=YFfS7T7a1ezy8CY8KRX/mY9xNU51wUvPHqtpx7Vse5S0y6BwMOMuHmtK2io0e8wLZh
-         IY6nADzaO2Dg2g94Tz5a+G7CEWOW1AQtqworPkNZfF+GMUcr4hKX7ofCO3qhmk/mjLeu
-         0/DcsQVr45zFLEdDWRxLFXUpOrC9adFSsgN8T9vYOITlf8cDDkO10DJ3taSvXw5JspT6
-         uAf+XrHHR4vsGYObcSpzIfL9TWBX/pR4j/BmJJ/CCoxopMCH/9GzDuQDWhyCcrzztsha
-         IPiIKsNmRKD7Ysaz1qPnZk22p2ytga89PRNqeiLjgQIHzSKO6sScqhVjkHv/OidukHg+
-         6U7g==
-X-Gm-Message-State: AA+aEWbz4G5kc66YT8vbj9mb4f0ps6ShrvyxMc5wMpBplkMwDW5C6emg
-        2Yi/PIczOOKfkM9gCmrYmL4=
-X-Google-Smtp-Source: ALg8bN67V5K91BLn/F9RefeBRJV6/EYwtkVcu44d9Kl+YkZhLQawY1HJa7NjOTTC1SrzVII1OLjRzw==
-X-Received: by 2002:a1c:3d44:: with SMTP id k65mr2010349wma.76.1545384743270;
-        Fri, 21 Dec 2018 01:32:23 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.googlemail.com with ESMTPSA id y145sm10629640wmd.30.2018.12.21.01.32.21
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jOg5unArcqZ+VdWb7aU7utg4uQN/o7oo7CVo+2rNe/E=;
+        b=eBlaY8ejWxGmswwAMoMzDiYyyatX1F294AadbDLLQfS3NDftIXD6nI/Yj69w7PhMBh
+         JwyeEmCAYRXhnGvxSd5vv1uPIoWzbSzV95ZQ3sdrF+k/zpQzTrNFwWymJo8Vi4Vs+A2L
+         Ru9qqmyix3FMYivnQeYLSrsKgKRA1TmF2tTX/JbBBaQAK6jM5AfIKgfITq0YnUjVnx9U
+         3ozbE9gVrNhsdJ9ukHkVd/17hNFDbRBEqdySorC/KP9BT1x+/yXC9bHOSAjZ95XDsr8y
+         HBTOiQNAxVzJOdFGfyz+9w0P9I1KfRHeFQWnUvJ8GiyF55Dijsy2fgJ1cy1ZpPPMt2AQ
+         KlCA==
+X-Gm-Message-State: AA+aEWaqJYyeC/2Du6fBiIAdNOOsEbafPxR2VGohg0iGasiCW0StmNa0
+        PkcCMaU+pxRdmUJMovFFCUcX5g==
+X-Google-Smtp-Source: AFSGD/WOCiRyxTe9pWFuLL7JQRMZYoSb65x37DvfsVQXCq0e2e97AxrqafQ4ZDb/S+EdRMb8LQznDg==
+X-Received: by 2002:a62:1289:: with SMTP id 9mr1799825pfs.102.1545384969977;
+        Fri, 21 Dec 2018 01:36:09 -0800 (PST)
+Received: from n3-021-216.byted.org ([122.14.241.161])
+        by smtp.gmail.com with ESMTPSA id g3sm51601804pfe.37.2018.12.21.01.36.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 01:32:22 -0800 (PST)
-Subject: Re: [Resend PATCH V5 2/10] x86/hyper-v: Add HvFlushGuestAddressList
- hypercall support
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devel@linuxdriverproject.org,
-        kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
-        vkuznets@redhat.com
-References: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
- <20181206132113.2691-3-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
- nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
- 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
- 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
- //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
- gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
- scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
- DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
- i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
- JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
- krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
- Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
- bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
- MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
- b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
- 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
- SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
- TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
- 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
- R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
- nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
- yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
- HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
- QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
- 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
- 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
- eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
- IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
- Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
- 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
- ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
- Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
- DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
- S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <3f936a6e-b727-c152-05fb-4d77f33e1745@redhat.com>
-Date:   Fri, 21 Dec 2018 10:32:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181206132113.2691-3-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Dec 2018 01:36:08 -0800 (PST)
+From:   Xiaozhou Liu <liuxiaozhou@bytedance.com>
+To:     netdev@vger.kernel.org
+Cc:     Xiaozhou Liu <liuxiaozhou@bytedance.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next] selftests/bpf: fix error printing in test_devmap()
+Date:   Fri, 21 Dec 2018 17:35:11 +0800
+Message-Id: <20181221093512.117777-1-liuxiaozhou@bytedance.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/18 14:21, lantianyu1986@gmail.com wrote:
->  static inline int hyperv_flush_guest_mapping(u64 as) { return -1; }
-> +static inline int hyperv_flush_guest_mapping_range(u64 as,
-> +		hyperv_fill_flush_list_func fill_func, void *data);
-> +{
-> +	return -1;
+As a simple fix, just print the correct map type.
 
-This part for !IS_ENABLED(CONFIG_HYPERV) does not compile.
+Signed-off-by: Xiaozhou Liu <liuxiaozhou@bytedance.com>
+---
+ tools/testing/selftests/bpf/test_maps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No big deal, but please add that to your testing procedures.
+diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
+index 9c79ee017df3..e2b9eee37187 100644
+--- a/tools/testing/selftests/bpf/test_maps.c
++++ b/tools/testing/selftests/bpf/test_maps.c
+@@ -510,7 +510,7 @@ static void test_devmap(int task, void *data)
+ 	fd = bpf_create_map(BPF_MAP_TYPE_DEVMAP, sizeof(key), sizeof(value),
+ 			    2, 0);
+ 	if (fd < 0) {
+-		printf("Failed to create arraymap '%s'!\n", strerror(errno));
++		printf("Failed to create devmap '%s'!\n", strerror(errno));
+ 		exit(1);
+ 	}
+ 
+-- 
+2.11.0
 
-Paolo
