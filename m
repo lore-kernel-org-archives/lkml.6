@@ -2,64 +2,133 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629F9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E487DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BA942190A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE442190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391391AbeLUSYT (ORCPT
+        id S2391403AbeLUSY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:24:19 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:50484 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391377AbeLUSYS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:24:18 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3441314B646A0;
-        Fri, 21 Dec 2018 10:24:17 -0800 (PST)
-Date:   Fri, 21 Dec 2018 10:24:14 -0800 (PST)
-Message-Id: <20181221.102414.1992688460948808079.davem@davemloft.net>
-To:     rostedt@goodmis.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        akpm@linux-foundation.org, namhyung@kernel.org,
-        mhiramat@kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [for-next][PATCH 06/24] sparc64: Use
- ftrace_graph_get_ret_stack() instead of curr_ret_stack
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181221175656.191575102@goodmis.org>
-References: <20181221175618.968519903@goodmis.org>
-        <20181221175656.191575102@goodmis.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 21 Dec 2018 10:24:17 -0800 (PST)
+        Fri, 21 Dec 2018 13:24:57 -0500
+Received: from mga03.intel.com ([134.134.136.65]:31912 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388745AbeLUSY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 13:24:56 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 10:24:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
+   d="scan'208";a="131949895"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Dec 2018 10:24:54 -0800
+Date:   Fri, 21 Dec 2018 10:24:54 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181221182454.GA27371@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <CALCETrX+KisMCbptrnPSO79-YF4E3nR1XHt+a7hCs1GXsxAbtw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX+KisMCbptrnPSO79-YF4E3nR1XHt+a7hCs1GXsxAbtw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 21 Dec 2018 12:56:24 -0500
-
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Fri, Dec 21, 2018 at 09:12:46AM -0800, Andy Lutomirski wrote:
+> > On Dec 21, 2018, at 9:28 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+> >>> On Dec 19, 2018, at 6:45 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> >>>
+> >>>>> On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
+> >>>
+> >>> I agree with Jethro, passing the enclave_fd as a param is obnoxious.
+> >>> And it means the user needs to open /dev/sgx to do anything with an
+> >>> enclave fd, e.g. the enclave fd might be passed to a builder thread,
+> >>> it shouldn't also need the device fd.
+> >>>
+> >>> E.g.:
+> >>>
+> >>>   sgx_fd = open("/dev/sgx", O_RDWR);
+> >>>   BUG_ON(sgx_fd < 0);
+> >>>
+> >>>   enclave_fd = ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
+> >>>   BUG_ON(enclave_fd < 0);
+> >>>
+> >>>   ret = ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
+> >>>   BUG_ON(ret);
+> >>>
+> >>>   ...
+> >>>
+> >>>   ret = ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
+> >>>   BUG_ON(ret);
+> >>>
+> >>>   ...
+> >>>
+> >>>   close(enclave_fd);
+> >>>   close(sgx_fd);
+> >>>
+> >>>
+> >>> Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
+> >>> and ioctls for VMs and vCPUs.
+> >>
+> >> Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> >> opening a new instance of /dev/sgx for each encalve?
+> >
+> > Directly associating /dev/sgx with an enclave means /dev/sgx can't be
+> > used to provide ioctl()'s for other SGX-related needs, e.g. to mmap()
+> > raw EPC and expose it a VM.  Proposed layout in the link below.  I'll
+> > also respond to Jarkko's question about exposing EPC through /dev/sgx
+> > instead of having KVM allocate it on behalf of the VM.
 > 
-> The structure of the ret_stack array on the task struct is going to
-> change, and accessing it directly via the curr_ret_stack index will no
-> longer give the ret_stack entry that holds the return address. To access
-> that, architectures must now use ftrace_graph_get_ret_stack() to get the
-> associated ret_stack that matches the saved return address.
+> Hmm. I guess this makes some sense.  My instinct would be to do it a
+> little differently and have:
 > 
-> Cc: sparclinux@vger.kernel.org
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> /dev/sgx/enclave: Each instance is an enclave.
+> 
+> /dev/sgx/epc: Used to get raw EPC for KVM. Might have different
+> permissions, perhaps 0660 and group kvm.
+> 
+> /dev/sgx/something_else: For when SGX v3 adds something else :)
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Mmmm, I like this approach a lot.  It would allow userspace to easily
+manage permissions for each "feature", e.g. give all users access to
+/dev/sgx/epc but restrict /dev/sgx/enclave.
+
+And we could add e.g. /dev/sgx/admin if we wanted to exposed ioctls()
+that apply to all aspects of SGX.
+
+Do you know if /dev/sgx/epc could be dynamically created, e.g. by
+KVM when the kvm_intel module is loaded?  That would seal the deal for
+me as it'd keep open the option of having KVM handle oversubscription
+of guest EPC while exposing EPC through /dev/sgx instead of /dev/kvm.  
