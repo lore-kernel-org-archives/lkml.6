@@ -2,130 +2,137 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4037EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3619AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7DE20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545390624;
-	bh=bMKR6v+Nx30QQGClN+v0/3R+hCfqucBxJXv5WDoGDXs=;
-	h=From:Date:Subject:To:Cc:List-ID:From;
-	b=qL1ry3x+jAby5mp5R0mlDuj4sKXHmgBEDRAWMzFfGbinVv7gt0KKi2mEmGXc5WbNT
-	 sAqQgkoLSjLAP9euKfh50Wrr4Hik3gfQifjNH1nWwB3dfIJ96LW0ihWAuCuasKcSI1
-	 472d+39wBdMbvwTJfKCalX2SWheB1Xr1h9rohNVE=
+	by mail.kernel.org (Postfix) with ESMTP id 0C0D720866
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 11:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388941AbeLULKX (ORCPT
+        id S2389167AbeLULLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 06:10:23 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34126 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731657AbeLULKW (ORCPT
+        Fri, 21 Dec 2018 06:11:05 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:35300 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbeLULLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 06:10:22 -0500
-Received: by mail-oi1-f195.google.com with SMTP id r62so4482565oie.1;
-        Fri, 21 Dec 2018 03:10:22 -0800 (PST)
+        Fri, 21 Dec 2018 06:11:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id i11so296531iog.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 03:11:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=8jTfp1UZOjXRP0H8i7rIDBSl/QOQDcHlnoRDZCJ638c=;
-        b=i9hE6ZlcacCtxEZX/kSZ3/wABWrW5yWA01w1hQb6aGByl0fk5dT3xj3B2rhE9YB+iP
-         LPs4AXuR4P2rsG/vRWzLYHknFzCRKMXiruqsK1KLVlKt/EyxVXvLgedlSHeYZ5Doxb3z
-         wH0nFHwBO/ywwYsQK56bma+N37TiqMwvQPw8WWLXkeTYhAEKQEBOtFjg83cwbanXKkfx
-         VpYfDsHHo76DHppBCRIr3X+z6RYw8PnWJLZiWHJQknS0NCO/FQSeSyonvQuH/Fb/jyCH
-         CIkImqoTp5DAq1VeMBuxcLtPUZipaRf5/SR6TqbhNK/6myv6LCIS48bvZlGcYNljKRx2
-         rCCQ==
-X-Gm-Message-State: AJcUukfQBEEwZGyWnU4VBq8R3BQKN9CBw3xmTRsJTTpJEqnJq4Hk8Pjf
-        /7wFp+HkBn+Vtt+2XDw5oisi6uv8eSzgCMIv1j4=
-X-Google-Smtp-Source: ALg8bN4jX1tRikvK8qY1pg0uT4eTyVW2tmteTOqfra4n6ZCsnef0hRoRF4B89V/VOSanzOEonAI3sLANekNxqnPijoA=
-X-Received: by 2002:aca:6c8b:: with SMTP id h133mr1101813oic.33.1545390621547;
- Fri, 21 Dec 2018 03:10:21 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=UBVrCdieYg9UK0EPEY0nGUoPuxOHIQH4409NbwCEasI=;
+        b=Pog+ferZltMHhCUfhL9Fk7lJnbSQcxbVosfveyCfZkK30Ts3RNLizTVYKCb56zi0EB
+         ig32hwKN7GvBFU1sdmMFfxONn6ZMJS9w2homH0UuM0KmMTkduoWmSE7Dss5PMhlUcrwV
+         KQu3kfXoI5UDx/edR3EzD+1CPhmHEuJyjDbpu3hVvdagLqvYzooKuz0q0kQvdGc1LTYw
+         r8+O6FNAVk3ISWm/f6Kryirs5LUoGC40/cOYjy3rqThsvHp/BidVcYEhQ5aHRvDaRPBf
+         ru0fqbpdNHdLMKYax3+haJPJmlkZH3WT+uO800xZUo/lhd0JB4s9wqjGMthEhuLmzVNi
+         71dg==
+X-Gm-Message-State: AA+aEWagcUo+aBNICVuPbU3GBvCJz5eSTRfXXYGPnSpXMWKGbprHE8rO
+        QwqYrhcOGpF7ilgunVEJ1orkuDqKFuKm/RRjYls//iwEgAvV
+X-Google-Smtp-Source: AFSGD/UUGDflqs4Aka6fSMF5nfeoOkp1KEiEBoXBwfx1gM/LEfzV4NRvXfS1qv1Yrm+gJmXjDlD9TfPSl7keyXfVox3Lju74Bk1Y
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 21 Dec 2018 12:10:10 +0100
-Message-ID: <CAJZ5v0ja-twfG-0a7=JewPeyQxc2FmqPaN8Vi5ZVTNDjcFCX8g@mail.gmail.com>
-Subject: [GIT PULL] Device properties framework updates for v4.21-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:4ac4:: with SMTP id k187mr1672823itb.8.1545390663620;
+ Fri, 21 Dec 2018 03:11:03 -0800 (PST)
+Date:   Fri, 21 Dec 2018 03:11:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008b5eb5057d864dab@google.com>
+Subject: linux-next test error: WARNING in __bio_associate_blkg
+From:   syzbot <syzbot+a36a3ba92bea3b315c64@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hello,
 
-This goes early due to the upcoming holidays period.
+syzbot found the following crash on:
 
-Please pull from the tag
+HEAD commit:    340ae71f9dd4 Add linux-next specific files for 20181221
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d95667400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c190b602a5d2d731
+dashboard link: https://syzkaller.appspot.com/bug?extid=a36a3ba92bea3b315c64
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- devprop-4.21-rc1
+Unfortunately, I don't have any reproducer for this crash yet.
 
-with top-most commit f569da8c994c2254a106bdb537aa271399e288ec
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a36a3ba92bea3b315c64@syzkaller.appspotmail.com
 
- device property: fix fwnode_graph_get_next_endpoint() documentation
+sshd (6102) used greatest stack depth: 15720 bytes left
+IPVS: ftp: loaded support on port[0] = 21
+WARNING: CPU: 1 PID: 1520 at include/linux/blk-cgroup.h:518  
+blkg_tryget_closest include/linux/blk-cgroup.h:518 [inline]
+WARNING: CPU: 1 PID: 1520 at include/linux/blk-cgroup.h:518  
+__bio_associate_blkg.isra.36+0x80b/0x8f0 block/bio.c:2010
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 1520 Comm: kworker/u4:3 Not tainted 4.20.0-rc7-next-20181221  
+#182
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn (flush-8:0)
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  panic+0x2ad/0x632 kernel/panic.c:214
+  __warn.cold.8+0x20/0x4f kernel/panic.c:571
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:176 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:269
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:288
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:blkg_tryget_closest include/linux/blk-cgroup.h:518 [inline]
+RIP: 0010:__bio_associate_blkg.isra.36+0x80b/0x8f0 block/bio.c:2010
+Code: 7b 50 48 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 f1 00 00 00 48 8b 43  
+50 4c 89 ef e8 bf c6 88 04 e9 a4 f9 ff ff e8 c5 ad 07 fe <0f> 0b e9 5c fa  
+ff ff e8 b9 ad 07 fe e8 ab e2 88 fd e9 fe f9 ff ff
+RSP: 0018:ffff8881d462d738 EFLAGS: 00010293
+RAX: ffff8881d461e380 RBX: 0000000000000000 RCX: ffffffff83779576
+RDX: 0000000000000000 RSI: ffffffff83779b1b RDI: 0000000000000005
+RBP: ffff8881d462d8b8 R08: ffff8881d461e380 R09: ffffed103b5e5b77
+R10: ffffed103b5e5b77 R11: ffff8881daf2dbbb R12: ffff8881cee19340
+R13: ffff8881b3354a40 R14: ffff8881bdf4a218 R15: ffff8881cee19340
+  bio_clone_blkg_association block/bio.c:2101 [inline]
+  __bio_clone_fast+0x412/0x5e0 block/bio.c:612
+  bio_clone_fast+0x42/0x110 block/bio.c:633
+  bio_split+0x86/0x260 block/bio.c:1819
+  blk_bio_segment_split block/blk-merge.c:231 [inline]
+  blk_queue_split+0xa1e/0x2080 block/blk-merge.c:262
+  blk_mq_make_request+0x2e7/0x1e30 block/blk-mq.c:1917
+  generic_make_request+0x9a5/0x1890 block/blk-core.c:1087
+  submit_bio+0xba/0x460 block/blk-core.c:1195
+  ext4_io_submit+0x197/0x230 fs/ext4/page-io.c:356
+  ext4_writepages+0x1c4b/0x4190 fs/ext4/inode.c:2911
+  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2335
+  __writeback_single_inode+0x20a/0x1660 fs/fs-writeback.c:1316
+  writeback_sb_inodes+0x71f/0x1210 fs/fs-writeback.c:1580
+  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1649
+  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1758
+  wb_check_old_data_flush fs/fs-writeback.c:1860 [inline]
+  wb_do_writeback fs/fs-writeback.c:1913 [inline]
+  wb_workfn+0x1008/0x1790 fs/fs-writeback.c:1942
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-on top of commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436
 
- Linux 4.20-rc4
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-to receive device properties framework updates for 4.21-rc1.
-
-These introduce "software nodes" that are analogous to the DT and ACPI
-firmware nodes except that they can be created by drivers themselves
-and do a couple of assorted cleanups.
-
-Specifics:
-
- - Introduce "software nodes", analogous to the DT and ACPI firmware
-   nodes except that they can be created by kernel code, in order to
-   complement fwnodes representing real firmware nodes when they are
-   incomplete (for example missing device properties) and to supply
-   the primary fwnode when the firmware lacks hardware description
-   for a device completely, and replace the "property_set" struct
-   fwnode_handle type with software nodes (Heikki Krogerus).
-
- - Clean up the just introduced software nodes support and fix a comment
-   in the graph-handling code (Colin Ian King, Marco Felsch).
-
-Thanks!
-
-
----------------
-
-Colin Ian King (1):
-      drivers: base: swnode: remove need for a temporary string for
-the node name
-
-Heikki Krogerus (6):
-      driver core: platform: Remove duplicated device_remove_properties() call
-      drivers core: Prepare support for multiple platform notifications
-      ACPI / glue: Add acpi_platform_notify() function
-      drivers: base: Introducing software nodes to the firmware node framework
-      device property: Move device_add_properties() to swnode.c
-      device property: Remove struct property_set
-
-Marco Felsch (1):
-      device property: fix fwnode_graph_get_next_endpoint() documentation
-
----------------
-
- .../ABI/testing/sysfs-devices-software_node        |  10 +
- drivers/acpi/bus.c                                 |   1 -
- drivers/acpi/glue.c                                |  21 +-
- drivers/acpi/internal.h                            |   1 -
- drivers/base/Makefile                              |   2 +-
- drivers/base/core.c                                |  34 +-
- drivers/base/platform.c                            |   1 -
- drivers/base/property.c                            | 513 +---------------
- drivers/base/swnode.c                              | 675 +++++++++++++++++++++
- include/linux/acpi.h                               |  10 +
- include/linux/property.h                           |  12 +
- 11 files changed, 766 insertions(+), 514 deletions(-)
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
