@@ -2,217 +2,454 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33FBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDFEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8847E21908
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545395423;
-	bh=Mos/EK8uRqZjoZ/ri3ZBKJKMbrplPrO3wiT7bZspYwQ=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=lbjCPoIe2nAutTxf8Z0AZ+RM4w9m/Fka7gIdFvIlTJywtcPJDdGITET6OB/2qkqKH
-	 5KBs9rD1ffpUEQhXeOhOEaoDXAMz4od9Q83e58wENnoiUYQyeAM3J91vJ1A0y9m3gq
-	 mhwTiY8l49Yu4LwKiXksUNFiMMShe7APKccUzC40=
+	by mail.kernel.org (Postfix) with ESMTP id 7D3D021908
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390309AbeLUMaW (ORCPT
+        id S2390333AbeLUMbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:30:22 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40768 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732708AbeLUMaV (ORCPT
+        Fri, 21 Dec 2018 07:31:39 -0500
+Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:46860 "EHLO
+        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732614AbeLUMbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:30:21 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so5530729wmf.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 04:30:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=JJx6kdozMqFqKYg69bTBTWXtnZ8/Mn7kJPccKxhjcYA=;
-        b=jjRrgtNxkHh1koeKPq7UTFZ89YOSuRXq0fZnL/A6GGtq299/p2P/OA8y+yDihbcJ+4
-         p5VpmSXY86DT+ClQXVapWuo+AWB9dp8QqgIPev6VPc68zqv7vvDC9aSt9jpdhxA/+z04
-         5V1HTfhrBzKeyZwh9iJIlRjfO0aqKkIKuPzdQ/OCaNjy182UwMrkSMquXgZc8M1fQaur
-         OY4lmmunDQMQLc/KujDqpSAV3sLX8e0cZ5ZoYVIJqMw/segEdejpFscVSJ2Ai5+muMD1
-         sk6+Ov4+4PNXt8VzO3ecQnhRgm/PhbZgXfpmjB0wP8ZuaxTqXfVgHYv+vpia5iXisrOt
-         tLdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=JJx6kdozMqFqKYg69bTBTWXtnZ8/Mn7kJPccKxhjcYA=;
-        b=KTJCUxQs39/LPqsOPEI/2judeoz3GAojBCgvl34MWEZua7Kbt6MjW7CQaQSzoLZ8nj
-         AN7Cdr5L3VhqurwxR4mZpBokk51yOPpaaPPb9M45Ct7IkjBu7jWAUQvK13Fg/lKqTA96
-         7mqN7aKD84Qs4s1etERgl3X7GbZx2lqfx9s5BUIg8LMzXBSxh5rcNimUZ74jR89N0E9B
-         /oShgyYFGs1WG75AmAqMQqM42bEA9fvAcuFq4wVxIFP5c0tqSOBe4zJS1ye+agvXnXws
-         fYmiz3bOtOVffklovrsGTTLgptwWbDCi4+UrkwCKP3qRFjwIuobcXMZnW6i8M8yq346a
-         r8Xw==
-X-Gm-Message-State: AJcUukduyDwwRDXNH7JRX0eOub6s8ryUg/GhFP5SowBjLxnSFc5+ACZb
-        NfNoFRMEFiRzzrYWKgQ8SfU=
-X-Google-Smtp-Source: ALg8bN7a/RWqas1plcVaDqGOr8RnUemHHxm4zpR/Xuenvp8jD7vyk2zsgCGhALTsLI/eefaESblLKw==
-X-Received: by 2002:a7b:c7c2:: with SMTP id z2mr2567516wmk.47.1545395418427;
-        Fri, 21 Dec 2018 04:30:18 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v19sm18577564wrd.46.2018.12.21.04.30.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 04:30:17 -0800 (PST)
-Date:   Fri, 21 Dec 2018 13:30:15 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] futex fix
-Message-ID: <20181221123015.GA66918@gmail.com>
+        Fri, 21 Dec 2018 07:31:39 -0500
+Received: from ip4d142c80.dynamic.kabel-deutschland.de ([77.20.44.128] helo=[192.168.66.118]); authenticated
+        by wp227.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1gaJxl-0006SL-BY; Fri, 21 Dec 2018 13:31:33 +0100
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181217152043.9989-1-linux@leemhuis.info>
+ <20181217112437.5fe868eb@lwn.net>
+ <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
+ <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
+ <20181220082819.69fc3e5c@lwn.net>
+ <a02caf89-9221-8e31-4a2d-44b46b81cda2@infradead.org>
+ <0996ba55-e5e1-49e2-f0ed-82cb1619ee03@leemhuis.info>
+ <abd75184-1d33-4877-eef7-eeca436e5220@infradead.org>
+From:   Thorsten Leemhuis <linux@leemhuis.info>
+Openpgp: preference=signencrypt
+Autocrypt: addr=linux@leemhuis.info; prefer-encrypt=mutual; keydata=
+ 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
+ 5iv6NKaV29GWHbY=
+Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
+ it more comprehensible
+Message-ID: <a610b68c-9469-a96e-9d2d-cfe0453e3c6d@leemhuis.info>
+Date:   Fri, 21 Dec 2018 13:31:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <abd75184-1d33-4877-eef7-eeca436e5220@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1545395496;fb8432d1;
+X-HE-SMSGID: 1gaJxl-0006SL-BY
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Am 20.12.18 um 21:10 schrieb Randy Dunlap:
+> On 12/20/18 10:21 AM, Thorsten Leemhuis wrote:
+>> Am 20.12.18 um 17:38 schrieb Randy Dunlap:
+>>> On 12/20/18 7:28 AM, Jonathan Corbet wrote:
+>>>> On Thu, 20 Dec 2018 16:23:38 +0100
+>>>> Thorsten Leemhuis <linux@leemhuis.info> wrote:
+>>>>> While at it: Jonathan, you mentioned putting the script in scripts/, but
+>>>>> according to the Makefile in that directory it is "for various helper
+>>>>> programs used throughout the kernel for the build process". That's one
+>>>>> reason why it feels wrong to put it there. Another one: that script
+>>>>> targets users and thus we should try to make sure they can access it
+>>>>> easily. That's why I'm currently inclined to put it in tools/ somewhere.
+>>>> Yeah, tools/ is a better place.  Maybe a tools/debugging directory or some
+>>>> such?
+>>> chktaint
+>> BTW, I renamed it to kernel-taintstatus, sounded more appropriate to me.
+>> Does anyone mind?
+> Not terribly, although that seems too long to me.  ;)
+> maybe 'taintstatus'?
 
-Please pull the latest locking-urgent-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
-
-   # HEAD: da791a667536bf8322042e38ca85d55a78d3c273 futex: Cure exit race
-
-A single fix for a robust futexes race between sys_exit() and 
-sys_futex_lock_pi().
-
- Thanks,
-
-	Ingo
-
------------------->
-Thomas Gleixner (1):
-      futex: Cure exit race
-
-
- kernel/futex.c | 69 +++++++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 63 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/futex.c b/kernel/futex.c
-index f423f9b6577e..5cc8083a4c89 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1148,11 +1148,65 @@ static int attach_to_pi_state(u32 __user *uaddr, u32 uval,
- 	return ret;
- }
+I settled to "kernel-chktaint" for now. I'm not attached to the name, but IMHO
+making it obvious what this tool checks is worth the "kernel-" prefix.
  
-+static int handle_exit_race(u32 __user *uaddr, u32 uval,
-+			    struct task_struct *tsk)
+>> BTW, for those following this thread and my earlier quest for a simple
+>> cmd to decode /proc/sys/kernel/tainted: looks like @apexo on twitter
+>> (thx again!) found a trick to do what I want which should work on most
+>> systems out-of-the-box:
+>> $ for i in $(seq 18); do echo $i $(($(cat
+>> /proc/sys/kernel/tainted)>>($i-1)&1));done
+> I think Jon mentioned this:  The output should begin with bit #0,
+> not bit #1, so it should show bits 0 - 17 (or whatever the max is),
+> not 1 - 18.
+
+No worries, replying to that is nearly next on my todo list.
+
+BTW & FYI, find below the patch I have prepared now.
+
+Ciao, Thorsten
+
+commit 2aa04b7a65a5ecceac27a0d9c0d64a4b04ae943a
+Author: Thorsten Leemhuis <linux@leemhuis.info>
+Date:   Fri Dec 21 12:24:19 2018 +0100
+
+    tools: create tools/debugging/ and add a script decoding /proc/sys/kernel/tainted
+    
+    Add a script to the tools/ directory that shows if or why the running kernel was
+    tainted. The script was mostly written by Randy Dunlap (thx!), who published it
+    while discussing changes that try to make admin-guide/tainted-kernels.rst more
+    comprehensible (https://lore.kernel.org/lkml/8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org/);
+    I enhanced the script a bit and created this patch.
+    
+    As the script targets users I did not want to add it to scripts/, as according
+    to its Makefile "contains sources for various helper programs used throughout
+    the kernel for the build process". The directory tools/scripts/ also did not
+    look like a good fit, as the stuff that's there already is used for other
+    purposes. That's why I created a new directory for tools like this; maybe we
+    should move scripts/decodecode there as well, but that's something for another
+    day.
+    
+    Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+    Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+
+diff --git a/tools/Makefile b/tools/Makefile
+index abb358a70ad0..c0d1e59f5abb 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -12,6 +12,7 @@ help:
+ 	@echo '  acpi                   - ACPI tools'
+ 	@echo '  cgroup                 - cgroup tools'
+ 	@echo '  cpupower               - a tool for all things x86 CPU power'
++	@echo '  debugging              - tools for debugging'
+ 	@echo '  firewire               - the userspace part of nosy, an IEEE-1394 traffic sniffer'
+ 	@echo '  freefall               - laptop accelerometer program for disk protection'
+ 	@echo '  gpio                   - GPIO tools'
+@@ -60,7 +61,7 @@ acpi: FORCE
+ cpupower: FORCE
+ 	$(call descend,power/$@)
+ 
+-cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi pci: FORCE
++cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi pci debugging: FORCE
+ 	$(call descend,$@)
+ 
+ liblockdep: FORCE
+@@ -95,7 +96,8 @@ kvm_stat: FORCE
+ all: acpi cgroup cpupower gpio hv firewire liblockdep \
+ 		perf selftests spi turbostat usb \
+ 		virtio vm bpf x86_energy_perf_policy \
+-		tmon freefall iio objtool kvm_stat wmi pci
++		tmon freefall iio objtool kvm_stat wmi \
++		pci debugging
+ 
+ acpi_install:
+ 	$(call descend,power/$(@:_install=),install)
+@@ -103,7 +105,7 @@ acpi_install:
+ cpupower_install:
+ 	$(call descend,power/$(@:_install=),install)
+ 
+-cgroup_install firewire_install gpio_install hv_install iio_install perf_install spi_install usb_install virtio_install vm_install bpf_install objtool_install wmi_install pci_install:
++cgroup_install firewire_install gpio_install hv_install iio_install perf_install spi_install usb_install virtio_install vm_install bpf_install objtool_install wmi_install pci_install debugging_install:
+ 	$(call descend,$(@:_install=),install)
+ 
+ liblockdep_install:
+@@ -129,7 +131,7 @@ install: acpi_install cgroup_install cpupower_install gpio_install \
+ 		perf_install selftests_install turbostat_install usb_install \
+ 		virtio_install vm_install bpf_install x86_energy_perf_policy_install \
+ 		tmon_install freefall_install objtool_install kvm_stat_install \
+-		wmi_install pci_install
++		wmi_install pci_install debugging_install
+ 
+ acpi_clean:
+ 	$(call descend,power/acpi,clean)
+@@ -137,7 +139,7 @@ acpi_clean:
+ cpupower_clean:
+ 	$(call descend,power/cpupower,clean)
+ 
+-cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean:
++cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean debugging_clean:
+ 	$(call descend,$(@:_clean=),clean)
+ 
+ liblockdep_clean:
+@@ -175,6 +177,6 @@ clean: acpi_clean cgroup_clean cpupower_clean hv_clean firewire_clean \
+ 		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
+ 		vm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+ 		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
+-		gpio_clean objtool_clean leds_clean wmi_clean pci_clean
++		gpio_clean objtool_clean leds_clean wmi_clean pci_clean debugging_clean
+ 
+ .PHONY: FORCE
+diff --git a/tools/debugging/Makefile b/tools/debugging/Makefile
+new file mode 100644
+index 000000000000..e2b7c1a6fb8f
+--- /dev/null
++++ b/tools/debugging/Makefile
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for debugging tools
++
++PREFIX ?= /usr
++BINDIR ?= bin
++INSTALL ?= install
++
++TARGET = kernel-chktaint
++
++all: $(TARGET)
++
++clean:
++
++install: kernel-chktaint
++	$(INSTALL) -D -m 755 $(TARGET) $(DESTDIR)$(PREFIX)/$(BINDIR)/$(TARGET)
++
+diff --git a/tools/debugging/kernel-chktaint b/tools/debugging/kernel-chktaint
+new file mode 100644
+index 000000000000..98861858b192
+--- /dev/null
++++ b/tools/debugging/kernel-chktaint
+@@ -0,0 +1,199 @@
++#! /bin/sh
++# SPDX-License-Identifier: GPL-2.0
++#
++# Randy Dunlap <rdunlap@infradead.org>, 2018
++# Thorsten Leemhuis <linux@leemhuis.info>, 2018
++
++usage()
 +{
-+	u32 uval2;
++	cat <<EOF
++usage: ${0##*/}
++       ${0##*/} <int>
 +
-+	/*
-+	 * If PF_EXITPIDONE is not yet set, then try again.
-+	 */
-+	if (tsk && !(tsk->flags & PF_EXITPIDONE))
-+		return -EAGAIN;
++Call without parameters to decode /proc/sys/kernel/tainted.
 +
-+	/*
-+	 * Reread the user space value to handle the following situation:
-+	 *
-+	 * CPU0				CPU1
-+	 *
-+	 * sys_exit()			sys_futex()
-+	 *  do_exit()			 futex_lock_pi()
-+	 *                                futex_lock_pi_atomic()
-+	 *   exit_signals(tsk)		    No waiters:
-+	 *    tsk->flags |= PF_EXITING;	    *uaddr == 0x00000PID
-+	 *  mm_release(tsk)		    Set waiter bit
-+	 *   exit_robust_list(tsk) {	    *uaddr = 0x80000PID;
-+	 *      Set owner died		    attach_to_pi_owner() {
-+	 *    *uaddr = 0xC0000000;	     tsk = get_task(PID);
-+	 *   }				     if (!tsk->flags & PF_EXITING) {
-+	 *  ...				       attach();
-+	 *  tsk->flags |= PF_EXITPIDONE;     } else {
-+	 *				       if (!(tsk->flags & PF_EXITPIDONE))
-+	 *				         return -EAGAIN;
-+	 *				       return -ESRCH; <--- FAIL
-+	 *				     }
-+	 *
-+	 * Returning ESRCH unconditionally is wrong here because the
-+	 * user space value has been changed by the exiting task.
-+	 *
-+	 * The same logic applies to the case where the exiting task is
-+	 * already gone.
-+	 */
-+	if (get_futex_value_locked(&uval2, uaddr))
-+		return -EFAULT;
++Call with a positive integer as parameter to decode a value you
++retrieved from /proc/sys/kernel/tainted on another system.
 +
-+	/* If the user space value has changed, try again. */
-+	if (uval2 != uval)
-+		return -EAGAIN;
-+
-+	/*
-+	 * The exiting task did not have a robust list, the robust list was
-+	 * corrupted or the user space value in *uaddr is simply bogus.
-+	 * Give up and tell user space.
-+	 */
-+	return -ESRCH;
++EOF
 +}
 +
- /*
-  * Lookup the task for the TID provided from user space and attach to
-  * it after doing proper sanity checks.
-  */
--static int attach_to_pi_owner(u32 uval, union futex_key *key,
-+static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
- 			      struct futex_pi_state **ps)
- {
- 	pid_t pid = uval & FUTEX_TID_MASK;
-@@ -1162,12 +1216,15 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
- 	/*
- 	 * We are the first waiter - try to look up the real owner and attach
- 	 * the new pi_state to it, but bail out when TID = 0 [1]
-+	 *
-+	 * The !pid check is paranoid. None of the call sites should end up
-+	 * with pid == 0, but better safe than sorry. Let the caller retry
- 	 */
- 	if (!pid)
--		return -ESRCH;
-+		return -EAGAIN;
- 	p = find_get_task_by_vpid(pid);
- 	if (!p)
--		return -ESRCH;
-+		return handle_exit_race(uaddr, uval, NULL);
- 
- 	if (unlikely(p->flags & PF_KTHREAD)) {
- 		put_task_struct(p);
-@@ -1187,7 +1244,7 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
- 		 * set, we know that the task has finished the
- 		 * cleanup:
- 		 */
--		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
-+		int ret = handle_exit_race(uaddr, uval, p);
- 
- 		raw_spin_unlock_irq(&p->pi_lock);
- 		put_task_struct(p);
-@@ -1244,7 +1301,7 @@ static int lookup_pi_state(u32 __user *uaddr, u32 uval,
- 	 * We are the first waiter - try to look up the owner based on
- 	 * @uval and attach to it.
- 	 */
--	return attach_to_pi_owner(uval, key, ps);
-+	return attach_to_pi_owner(uaddr, uval, key, ps);
- }
- 
- static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
-@@ -1352,7 +1409,7 @@ static int futex_lock_pi_atomic(u32 __user *uaddr, struct futex_hash_bucket *hb,
- 	 * attach to the owner. If that fails, no harm done, we only
- 	 * set the FUTEX_WAITERS bit in the user space variable.
- 	 */
--	return attach_to_pi_owner(uval, key, ps);
-+	return attach_to_pi_owner(uaddr, newval, key, ps);
- }
- 
- /**
++if [ "$1"x != "x" ]; then
++	if  [ "$1"x == "--helpx" ] || [ "$1"x == "-hx" ] ; then
++		usage
++		exit 1
++	elif  [ $1 -ge 0 ] 2>/dev/null ; then
++		taint=$1
++	else
++		echo "Error: Parameter '$1' not a positive interger. Aborting." >&2
++		exit 1
++	fi
++else
++	TAINTFILE="/proc/sys/kernel/tainted"
++	if [ ! -r $TAINTFILE ]; then
++		echo "No file: $TAINTFILE"
++		exit
++	fi
++
++	taint=`cat $TAINTFILE`
++fi
++
++if [ $taint -eq 0 ]; then
++	echo "Kernel not Tainted"
++	exit
++else
++	echo "Kernel is Tainted for following reasons:"
++fi
++
++T=$taint
++out=
++
++addout() {
++	out=$out$1
++}
++
++if [ `expr $T % 2` -eq 0 ]; then
++	addout "G"
++else
++	addout "P"
++	echo " * Proprietary module was loaded."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "F"
++	echo " * Module was force loaded."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "S"
++	echo " * SMP kernel oops on an officially SMP incapable processor."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "R"
++	echo " * Module was force unloaded."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "M"
++	echo " * Processor reported a Machine Check Exception (MCE)."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "B"
++	echo " * Bad page referenced or some unexpected page flags."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "U"
++	echo " * Taint requested by userspace application."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "D"
++	echo " * Kernel died recently, i.e. there was an OOPS or BUG"
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "A"
++	echo " * ACPI table overridden by user."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "W"
++	echo " * Kernel issued warning."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "C"
++	echo " * Staging driver was loaded."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "I"
++	echo " * Workaround for bug in platform firmware applied."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "O"
++	echo " * Externally-built ('out-of-tree') module was loaded"
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "E"
++	echo " * Unsigned module was loaded."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "L"
++	echo " * Soft lockup occurred."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "K"
++	echo " * Kernel live patched."
++fi
++
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "X"
++	echo " * Auxiliary taint, defined for and used by distros."
++
++fi
++T=`expr $T / 2`
++if [ `expr $T % 2` -eq 0 ]; then
++	addout " "
++else
++	addout "T"
++	echo " * Kernel was built with the struct randomization plugin."
++fi
++
++echo "Raw taint value as int/string: $taint/'$out'"
++#EOF#
