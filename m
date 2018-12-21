@@ -2,83 +2,95 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE74EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208C6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FBAB21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:45:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VWYboavZ"
+	by mail.kernel.org (Postfix) with ESMTP id E8DB821929
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 21:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392023AbeLUVp4 (ORCPT
+        id S2392036AbeLUVqF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 16:45:56 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40613 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730243AbeLUVpz (ORCPT
+        Fri, 21 Dec 2018 16:46:05 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:37359 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730243AbeLUVqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 16:45:55 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so3048887pgp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:45:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:cc:to:from
-         :in-reply-to:user-agent:references:message-id:date;
-        bh=TykQrWcxURowkDO/EedupXH0E00UsWc5rFelsJXoyYQ=;
-        b=VWYboavZlMgn0OU8EwbXYXYZ2y6QzniUOoj6RI5FmTdIE5rcL9dY9Ui0h6MuxKAiZo
-         QcejrqoyljlOXxXfde9cq+BJFMKAW+qzG5fRrcx4zaH90LfW3fyLTc5x7gTcuxgPSHWA
-         HGNjxr2aN9EK6UfXjRk6FXQbGIq/nD3zgpb/4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :cc:to:from:in-reply-to:user-agent:references:message-id:date;
-        bh=TykQrWcxURowkDO/EedupXH0E00UsWc5rFelsJXoyYQ=;
-        b=aSJ4cDjOjpHj6aUmUKb1lnZ405ZS5HAsP5lS3wHdJRSUPimeuN5DE9PnMuON+c1sAM
-         7YFRdLp/+kOXqJZIltbdZ5pb/GmWp2S02yiuWhwhQDupR9WQpvuptmA8CJL8YcI+xvPU
-         SUSiunwhsALARC5i49y/B/dqWywYs+GxGiNtDLBzuDUypxXO0n97VPLqlAJCVeBXkG48
-         Rhg9llV1MHSd1JTTphvVx3erDtdYe5R8IGYeZEcOQb/Rk8rsbKDa5lxlm0iZ2Cl6gf/e
-         182Ghfqr5VSSSs5mLcTKopH+NtZYnWFv0/9lBCEWQUboUV5PPnyaFzYsskCROPLMqiWm
-         t7EQ==
-X-Gm-Message-State: AJcUukc7O6UyWB56UkL4iTpupBgMNIOhNN9uVvDFn+b7rSPSZwkoPCmk
-        sk//HvULBDRckt2P3tPzCgCObg==
-X-Google-Smtp-Source: ALg8bN5P4n4+DfMMJNHAoNZMOqXem7jv5yIqCRyMh32MVzkRfC5cRqaJdLZ1tpLrh+zWsVpPuq78NA==
-X-Received: by 2002:a63:c24c:: with SMTP id l12mr4042158pgg.146.1545428754940;
-        Fri, 21 Dec 2018 13:45:54 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 24sm56309511pfl.32.2018.12.21.13.45.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 13:45:54 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] cpufreq: qcom: Read voltage LUT and populate OPP
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        Matthias Kaehlcke <mka@chromium.org>, evgreen@google.com,
-        Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <1545415608-15163-1-git-send-email-tdas@codeaurora.org>
-User-Agent: alot/0.8
-References: <1545415608-15163-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <154542875327.13075.3548703610883534822@swboyd.mtv.corp.google.com>
-Date:   Fri, 21 Dec 2018 13:45:53 -0800
+        Fri, 21 Dec 2018 16:46:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07449;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TGLFtxI_1545428421;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TGLFtxI_1545428421)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 22 Dec 2018 05:40:28 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     ying.huang@intel.com, tim.c.chen@intel.com, minchan@kernel.org,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v3 PATCH 1/2] mm: swap: check if swap backing device is congested or not
+Date:   Sat, 22 Dec 2018 05:40:19 +0800
+Message-Id: <1545428420-126557-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-12-21 10:06:48)
-> Add support to read the voltage look up table and populate OPP for all
-> corresponding CPUS.
+Swap readahead would read in a few pages regardless if the underlying
+device is busy or not.  It may incur long waiting time if the device is
+congested, and it may also exacerbate the congestion.
 
-Yes, but why? Please specify the motivations in the commit text.
+Use inode_read_congested() to check if the underlying device is busy or
+not like what file page readahead does.  Get inode from swap_info_struct.
+Although we can add inode information in swap_address_space
+(address_space->host), it may lead some unexpected side effect, i.e.
+it may break mapping_cap_account_dirty().  Using inode from
+swap_info_struct seems simple and good enough.
+
+Just does the check in vma_cluster_readahead() since
+swap_vma_readahead() is just used for non-rotational device which
+much less likely has congestion than traditional HDD.
+
+Although swap slots may be consecutive on swap partition, it still may be
+fragmented on swap file. This check would help to reduce excessive stall
+for such case.
+
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Tim Chen <tim.c.chen@intel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+v3: Move inode deference under swap device type check per Tim Chen
+v2: Check the swap device type per Tim Chen
+
+ mm/swap_state.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index fd2f21e..78d500e 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -538,11 +538,18 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 	bool do_poll = true, page_allocated;
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	unsigned long addr = vmf->address;
++	struct inode *inode = NULL;
+ 
+ 	mask = swapin_nr_pages(offset) - 1;
+ 	if (!mask)
+ 		goto skip;
+ 
++	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
++		inode = si->swap_file->f_mapping->host;
++		if (inode_read_congested(inode))
++			goto skip;
++	}
++
+ 	do_poll = false;
+ 	/* Read a page_cluster sized and aligned cluster around offset. */
+ 	start_offset = offset & ~mask;
+-- 
+1.8.3.1
 
