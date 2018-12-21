@@ -2,165 +2,177 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B481C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F19C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52546218E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 17:59:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AUBuTw6h";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o/iZX2iW"
+	by mail.kernel.org (Postfix) with ESMTP id 2F1D9218E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391126AbeLUR7L (ORCPT
+        id S1732780AbeLUSAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 12:59:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:34168 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730901AbeLUR7K (ORCPT
+        Fri, 21 Dec 2018 13:00:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50260 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725937AbeLUSAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 12:59:10 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BB85D608FF; Fri, 21 Dec 2018 17:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545415148;
-        bh=ToaKA+6kwMe5bmJIcLqmQ8j2a69VMR6t5WiM4eu5240=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AUBuTw6hAl5yAWrjM9s8pNSDxl71r+Y0aAJVwfqYyuTV9PPWTFcVhjwW3P1rAaqHB
-         VOGhKGjAjpnkJNGkEfNyRJ5aIcMldjG7s3vdhuTc0in5quDhioN8l5pi9wYEV1UJ3h
-         9alN4pZcleKDBbUgiUHram7xocu7GNgXe06znOSk=
-Received: from [192.168.225.247] (unknown [49.32.116.12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 74724606CF;
-        Fri, 21 Dec 2018 17:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545415143;
-        bh=ToaKA+6kwMe5bmJIcLqmQ8j2a69VMR6t5WiM4eu5240=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=o/iZX2iWacHywN+CVwHpV3qK4M02LmP9sUwTINPTn+7g7wZ4v1k6QSxEDj0o39C56
-         76IkKiXK8V/Oe371klqyc91BTYPGTURQzeIOMxskE6yGEhuQKovh4WGF5h2N45l/PH
-         ywD4bEIOBFtO0fi/4cjob7yQHHHmgGJzCzTZ2riM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74724606CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating
- frequency
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com
-Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
-        niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org>
- <6814777f-1e5f-bd99-db63-a0050dcdd930@linaro.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <874ce15d-67f5-8e55-8b62-73071fe6ae06@codeaurora.org>
-Date:   Fri, 21 Dec 2018 23:28:49 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 21 Dec 2018 13:00:07 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBLHwc9W066816
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:00:06 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ph22qgnb3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 13:00:05 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 21 Dec 2018 18:00:05 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Dec 2018 18:00:01 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBLI00IO20709428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Dec 2018 18:00:00 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8375FB2066;
+        Fri, 21 Dec 2018 18:00:00 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 60BDEB205F;
+        Fri, 21 Dec 2018 18:00:00 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Dec 2018 18:00:00 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3C71216C36A7; Fri, 21 Dec 2018 10:00:07 -0800 (PST)
+Date:   Fri, 21 Dec 2018 10:00:07 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, hubicka@ucw.cz
+Subject: Re: [PATCH 0/7] ARM: hacks for link-time optimization
+Reply-To: paulmck@linux.ibm.com
+References: <20180220215954.4092811-1-arnd@arndb.de>
+ <20181217225020.GA16520@hirez.programming.kicks-ass.net>
+ <20181218000800.GB25620@tassilo.jf.intel.com>
+ <20181218091824.GI2218@hirez.programming.kicks-ass.net>
+ <20181221172044.GE25620@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <6814777f-1e5f-bd99-db63-a0050dcdd930@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221172044.GE25620@tassilo.jf.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18122118-0064-0000-0000-0000038A71D9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010262; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01135049; UDB=6.00590197; IPR=6.00915221;
+ MB=3.00024789; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-21 18:00:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122118-0065-0000-0000-00003BC300C5
+Message-Id: <20181221180007.GQ4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812210137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Dec 21, 2018 at 09:20:44AM -0800, Andi Kleen wrote:
+> > In particular turning an address-dependency into a control-dependency,
+> > which is something allowed by the C language, since it doesn't recognise
+> > these concepts as such.
+> > 
+> > The 'optimization' is allowed currently, but LTO will make it much more
+> > likely since it will have a much wider view of things. Esp. when combined
+> > with PGO.
+> > 
+> > Specifically; if you have something like:
+> > 
+> > int idx;
+> > struct object objs[2];
+> > 
+> > the statement:
+> > 
+> >   val = objs[idx & 1].ponies;
+> > 
+> > which you 'need' to be translated like:
+> > 
+> >   struct object *obj = objs;
+> >   obj += (idx & 1);
+> >   val = obj->ponies;
+> > 
+> > Such that the load of obj->ponies depends on the load of idx. However
+> > our dear compiler is allowed to make it:
+> > 
+> >   if (idx & 1)
+> >     obj = &objs[1];
+> >   else
+> >     obj = &objs[0];
+> > 
+> >   val = obj->ponies;
+> 
+> I don't see why a compiler would do such an optimization. Clearly
+> the second variant is worse than the first, bigger and needs
+> branch prediction resources.
+> 
+> In fact compilers usually try hard to go into the other direction
+> and apply if conversion.
+> 
+> Has anyone seen real world examples of such changes being done, or is this
+> all language lawyering theory?
 
-On 12/21/2018 6:06 PM, Jorge Ramirez wrote:
-> On 12/21/18 12:19, Taniya Das wrote:
->>
->>
->> On 12/17/2018 3:16 PM, Jorge Ramirez-Ortiz wrote:
->>> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
->>> specifications.
->>>
->>> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
->>> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
->>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->>> ---
->>>   drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/gcc-qcs404.c 
->>> b/drivers/clk/qcom/gcc-qcs404.c
->>> index 64da032..833436a 100644
->>> --- a/drivers/clk/qcom/gcc-qcs404.c
->>> +++ b/drivers/clk/qcom/gcc-qcs404.c
->>> @@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
->>>       },
->>>   };
->>>   +static const struct pll_vco gpll0_ao_out_vco[] = {
->>> +    { 800000000, 800000000, 0 },
->>> +};
->>> +
->>>   static struct clk_alpha_pll gpll0_ao_out_main = {
->>>       .offset = 0x21000,
->>>       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
->>>       .flags = SUPPORTS_FSM_MODE,
->>> +    .vco_table = gpll0_ao_out_vco,
->>> +    .num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
->>
->> Could you please help as to why this is required? This is a fixed PLL 
->> and we do not require a VCO table for it.
+I have not seen it myself, but I have heard others claim to.  For example,
+if "idx & 1" had to be computed for some other reason, especially if there
+was a pre-exiting "if" statement with this as its condition.  Or if you
+have hardware that has a conditional-move instruction.  And so on.
+
+Do you have a way to guarantee that it never happens?
+
+							Thanx, Paul
+
+> -Andi
 > 
-> Hi Taniya,
-> 
-> this patch - the additional information that it provides about the 
-> hardware - helps to select the right parent clock for a given frequency.
-> 
-> On the qcs404 this clock is one of the two parent clocks of the apcs 
-> clock controller (the other one being the high frequency pll)
-> When cpufreq sets a target frequency, there is an iteration through the 
-> list of parents to select the one that delivers the best match.
-> 
-> When attempting to set the clock for an alpha_pll, the operation does a 
-> sanity check to validate that the requested frequency is in fact 
-> reachable using the vco range: trying to set a value that is not in 
-> range will fail.
-> 
-> This patch makes sure that its range is explicitly defined.
-> 
-> It also helps making sure there are no rounding issues when setting its 
-> value: without it the clock was being read at 799MHz
-> 
+> > 
+> > Because C doesn't recognise this as being different. However this is
+> > utterly broken, because in this translation we can speculate the load
+> > of obj->ponies such that it no longer depends on the load of idx, which
+> > breaks RCU.
+> > 
+> > Note that further 'optimization' is possible and the compiler could even
+> > make it:
+> > 
+> >   if (idx & 1)
+> >     val = objs[1].ponies;
+> >   else
+> >     val = objs[0].ponies;
+> > 
+> > Now, granted, this is a fairly artificial example, but it does
+> > illustrate the exact problem.
+> > 
+> > The more the compiler can see of the complete program, the more likely
+> > it can make inferrences like this, esp. when coupled with PGO.
+> > 
+> > Now, we're (usually) very careful to wrap things in READ_ONCE() and
+> > rcu_dereference() and the like, which makes it harder on the compiler
+> > (because 'volatile' is special), but nothing really stops it from doing
+> > this.
+> > 
+> > Paul has been trying to beat clue into the language people, but given
+> > he's been at it for 10 years now, and there's no resolution, I figure we
+> > ought to get compiler implementations to give us a knob.
 > 
 
-If the PLL is being read as 799MHz it would because not all the 40 bits 
-of the ALPHA_VAL being programmed by the bootloaders(which are the 
-original owners of this PLL). So we should go with the way they are 
-being set by bootloaders and read by HLOS driver.
-
-And a VCO range you have considered is wrong from a PLL perspective. As 
-these are fixed PLLs and VCO range really does not matter here, so 
-please drop this change.
-
->>
->>>       .clkr = {
->>>           .enable_reg = 0x45000,
->>>           .enable_mask = BIT(0),
->>>
->>
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
