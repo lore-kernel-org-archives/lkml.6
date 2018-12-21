@@ -2,80 +2,109 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC47C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A050CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6859421903
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:13:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="XxVl2hsI"
+	by mail.kernel.org (Postfix) with ESMTP id 686F921927
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbeLUQNC (ORCPT
+        id S2387998AbeLUQQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:13:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55814 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbeLUQNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:13:01 -0500
-Received: from zn.tnic (p200300EC2BD1800085E495616F32D17F.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8000:85e4:9561:6f32:d17f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9982A1EC0980;
-        Fri, 21 Dec 2018 17:13:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545408780;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Svq6/fgzmeLokrW/KjAf3UpDO+H3IAqw0Yo5pBQ2Iwg=;
-        b=XxVl2hsICvYXIXxcYdbM3q4dDzh3dhD25Y++faIlpS7P7wHuzJhjz1PJBsDs0XY47kSLvL
-        k9qHBLdXwwdez1gZW6KJ7Ni6wIzy7OMJzSVZyad0KIAYqCQcCnzcSOolIMxGe+KZOvfUq2
-        ETrmAGgbR/l5C5ImQmTkh6ns+eErudk=
-Date:   Fri, 21 Dec 2018 17:12:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] x86/cpu: sort cpuinfo flags
-Message-ID: <20181221161255.GF1325@zn.tnic>
-References: <20181219195014.A0962820@viggo.jf.intel.com>
- <20181220120240.ermrc3hnixkin2yg@black.fi.intel.com>
- <20181220160411.GC31403@zn.tnic>
- <20181221124037.s57lt567pgzbz7z3@black.fi.intel.com>
- <20181221130403.GD1325@zn.tnic>
- <dfd39410-7b02-c478-7228-820ab737d4a1@intel.com>
+        Fri, 21 Dec 2018 11:16:56 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:50456 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeLUQQ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 11:16:56 -0500
+X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
+   d="scan'208";a="24678281"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Dec 2018 09:16:51 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch05.mchp-main.com
+ (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Fri, 21 Dec 2018
+ 09:17:08 -0700
+Date:   Fri, 21 Dec 2018 17:16:51 +0100
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     <linux-i2c@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <me@jue.yt>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] i2c: at91: slave mode support
+Message-ID: <20181221161651.5n4zzapliyxzb76l@M43218.corp.atmel.com>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        me@jue.yt, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org
+References: <20180716094037.1843-1-ludovic.desroches@microchip.com>
+ <20180720224141.lawanibd7v4hmbym@ninjato>
+ <20180730071443.clib3swtsommj7jk@M43218.corp.atmel.com>
+ <20181211192805.qsxptzkmczmm5vlz@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <dfd39410-7b02-c478-7228-820ab737d4a1@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181211192805.qsxptzkmczmm5vlz@ninjato>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 07:19:06AM -0800, Dave Hansen wrote:
-> /proc/cpuinfo is supposed to be human-readable.  But, the flags field,
-> as it stands, is not.  You've further proved my point by having to
-> machine post-process it to make it usable by humans. :)
+Hi Wolfram,
 
-No, it is usable now as it is. *You* claimed it isn't and I showed you
-that you can sort this thing without adding code to the kernel, so that
-you can have it sorted too, without the need to add more useless code to
-the kernel.
+On Tue, Dec 11, 2018 at 08:28:05PM +0100, Wolfram Sang wrote:
+> Hi Ludovic,
+> 
+> > > >  - fix checkpatch errors
+> > > >  - tests:
+> > > >    - hangs with a SAMA5D4 (master and slave on different busses) after about
+> > > >    100 transfers. It's the firs time I do this test.
+> > > >    - some mismatches with a SAMA5D4 as slave and a SAMA5D2 as master
+> > > >    I don't know if it's a regression. I don't remember having seen this
+> > > >    behavior previously.
+> > > >    I think it's worth taking those patches even if there are some possible
+> > > >    bugs. It'll allow to get more people using it and so to consolidate the
+> > > >    slave mode support.
+> > > 
+> > > I really want to see those patches go upstream, too. But I am also not a
+> > > big fan of delivering the user something with known issues. Especially
+> > > not when they affect the main feature to be added. My rationale here is
+> > > that someone who is able to fix the issues remaining will also be able
+> > > to pick up and apply patches.
+> > > 
+> > > Maybe, maybe if it was to be enabled by a special
+> > > I2C_AT91_SLAVE_EXPERIMANTEL symbol with lots of explanations. I need to
+> > > think twice about that, though.
+> > > 
+> > 
+> > I understand your point. The experimental mentionning could be a good
+> > trade-off. Let me know once you make up your mind.
+> > 
+> > > Speaking of Kconfig, I think this series needs to place a
+> > > 
+> > > 	select I2C_SLAVE
+> > > 
+> > > somewhere.
+> > > 
+> > 
+> > Ok I'll update it if we go further with this set of patches.
+> 
+> Ok, I give in. If you:
+> 
+> * add 'select I2C_SLAVE'
+> * make slave support selectable by I2C_AT91_SLAVE_STAGING or
+>   _EXPERIMENTAL or something alike (default n)
+> * and add to the help text of that symbol the above known issues
+>   and 'not for production' and 'help wanted' and where to get more
+>   info and all that
+> 
+> then I'll apply this series soonish. Promised!
 
--- 
-Regards/Gruss,
-    Boris.
+Ok I will handle these requests and resend it.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thanks
+
+Ludovic
