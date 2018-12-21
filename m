@@ -2,102 +2,959 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=FREEMAIL_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E047C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24347C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB92F21928
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBEB321916
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545410793;
+	bh=HAPiyoxjoKbOlWRzFD0OWj+BNbXLY4/h3CYJ7wsPztU=;
+	h=To:Cc:From:Subject:Date:List-ID:From;
+	b=XF+uasOpOvRBThMQc67hBmyI7oXh9AYTbaNB30x/3mE9KWknUhlbSOg2w87r/2Mra
+	 5m9s7SYq8Fsp/UbpLhPdMLHhzZY8KIpkLhzwx29ZUFgtn30PA4EowHyjoUVNr0dptY
+	 xTaa84mBU7SGkiP+IQq9HGMl2KkzxE4sczI30VHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389239AbeLUQpm (ORCPT
+        id S2389356AbeLUQqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:45:42 -0500
-Received: from mout.gmx.net ([212.227.15.15]:44687 "EHLO mout.gmx.net"
+        Fri, 21 Dec 2018 11:46:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeLUQpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:45:42 -0500
-Received: from macchiato.fritz.box ([84.118.159.3]) by mail.gmx.com (mrgmx003
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0MQQzk-1gxaBL1FoS-00TmfP; Fri, 21
- Dec 2018 17:45:15 +0100
-From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
-To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>
-Subject: [PATCH v2 1/1] arm64: dts: marvell: armada-ap806: reserve PSCI area
-Date:   Fri, 21 Dec 2018 17:45:03 +0100
-Message-Id: <20181221164503.5128-1-xypron.glpk@gmx.de>
-X-Mailer: git-send-email 2.19.2
+        id S1725868AbeLUQqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 11:46:31 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66F3321916;
+        Fri, 21 Dec 2018 16:46:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545410786;
+        bh=HAPiyoxjoKbOlWRzFD0OWj+BNbXLY4/h3CYJ7wsPztU=;
+        h=To:Cc:From:Subject:Date:From;
+        b=nEfL5fkrJR7IBF3+h8yW0qYwAWJaLFg5LwJW9GlKS7zVwswuwJtMisZA0O50cnlP6
+         Uxni+u53Z/yVhnbnalQyac76q2wEP3+dE3CNC30PtPG8g0xoxEit1zOf3RpRV18WTu
+         aw2Oc6VpvyZY+7Ye7/2p8oeMKtgPU0UfbBoOB2ew=
+To:     torvalds@linux-foundation.org
+Cc:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   shuah <shuah@kernel.org>
+Subject: [GIT PULL] kselftest update for Linux 4.21-rc1
+Message-ID: <6d5aa143-4c9b-0bd9-4c14-8801f64ac40c@kernel.org>
+Date:   Fri, 21 Dec 2018 09:45:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:NTsIIujFJRNYukWdFSnzEwLKoB+tAHo8mjNhGy1vmiPMhNrt9yB
- 0RV2/cbI8AFWbZeEw/cR3Tx5fgzAtQK/oDQNowpRvsGqJ+90JoEpmTcruX7R8Vhtpy6n6oj
- U3sGGP8Ll9FsIcAVT1NSa0ZdMGsX7M/SS5wNKcXwJYRYn5QwhRCR6bgwpjwQxJAjel9soWQ
- GiFCH9CRO8Gjejs7vAMJw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:PVgJ3hldQEA=:+XLn2eHOpxnvM1urPXFi16
- Rp3g3T1TN/jEjhE43tMT0huQ7SSuXzJX51aEiNOE9ssqu6FFD9Mi/oKQAFNhtuFybCb1cstVD
- 6D6i2gcWmp/n9flRpl5ZEUqJwg7CHRNVUXtAsM1chOGy3IUATcvTzTIl2YOSOyCroPewvnOHZ
- uanUTICmSSeGExkJ4wYtL1VOwoRCWGIaSRxO6EhDTOMOj878nawlgZVzj7vqSgX2qvghywByX
- +w6JkJxpXstkWQGDR8SUAl+9pZPNnxR9Dupch3lSyRp7txbrTa0EGuWEsB95tWdyXf7kp0VAy
- Rxof1wl8mjaW+gR1PonHHmTHWVig19/ePUfIBDKBLVnJCOafeVMBmofMdSQOK/PLm528y5ZUP
- pHuKYnuAuVDV8VGxtkq9AVNoV3wESFxDf0mSpxMH9F7OpqihyxZZoUH0FMHlThyk424Ri4WVL
- 4o0FbK+xKsn1IXmCSoh2e9ZkxH5R8baTF9ANbGlFoJ+GGZWi1SYNs8I+baXuxkI6f3gjEg4bN
- JvafrbF6EnAArUEWGiRUFFPVIvq+MTWkalmRyOiRPqAAhZZEWvXetPLr3poj2s63usjW4yMt0
- ssAuT7YjHaP3E2kT0HvaUMd+J1s3e2XtUhwHCzF9ZFBHu54n7xV/jJPT8P7Cyg/ZMV3DSQa7p
- hrfdKm/88dEzQ4Ijj8UwlDQcj11fH1hf2A/fQS3hEyA/XViiyjKj+0oJnx56iiTI1U9SUiB+/
- PPSz4MSoek8uZ7unzg++ehoRuKmfFbyqBaEcAt4Sl8kZX+OLnwDctBBt/So3nvSumgamQg9Ge
- 6CU89qDxA0X7k+b7W3zxAUXp7Mq8N4i2/Xo8snXdTVjzjVqFo7vxGjnor5Amsyqt0zyD4kssh
- bIiwUnPdKwdW0jz7PIDuZohnn2H/DHOx8rEFrq6M09i+NJPirWN1W9AnwiQpSi
+Content-Type: multipart/mixed;
+ boundary="------------672F4AFC297C06A475485459"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
-attempt to access it from Linux leads to an immediate crash.
+This is a multi-part message in MIME format.
+--------------672F4AFC297C06A475485459
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-So let's make the same memory reservation as the vendor kernel.
+Hi Linus,
 
-Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
----
-v2
-	Move the change from armada-8040-mcbin.dts to armada-ap806.dtsi.
-	I only have a MACCHIATObin for testing but
-	https://github.com/MarvellEmbeddedProcessors/linux-marvell
-	has the reservation in that file.
----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Please pull the following Kselftest update for Linux 4.21-rc1.
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 7d94c1fa592a..f8dafef83db0 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -28,6 +28,17 @@
- 		method = "smc";
- 	};
+This Kselftest update for Linux 4.21-rc1 consists of:
+
+- fixes, and improvements to the framework, and individual tests.
+- a new media test for IR encoders from Sean Young.
+- a new watchdog test option to find time left on a timer.
+
+diff is attached.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
+tags/linux-kselftest-4.21-rc1
+
+for you to fetch changes up to 283ac6d5fb2a47f12bcef7806b78acf6ad89907e:
+
+   selftests: Fix test errors related to lib.mk khdr target (2018-12-17 
+09:17:55 -0700)
+
+----------------------------------------------------------------
+linux-kselftest-4.21-rc1
+
+This Kselftest update for Linux 4.21-rc1 consists of:
+
+- fixes, and improvements to the framework, and individual tests.
+- a new media test for IR encoders from Sean Young.
+- a new watchdog test option to find time left on a timer.
+
+----------------------------------------------------------------
+Colin Ian King (1):
+       selftests: watchdog: fix spelling mistake "experies" -> "expires"
+
+Dan Rue (2):
+       selftests: firmware: remove use of non-standard diff -Z option
+       selftests: firmware: add CONFIG_FW_LOADER_USER_HELPER_FALLBACK to 
+config
+
+Daniel Díaz (1):
+       selftests: gpio: Find libmount with pkg-config if available
+
+Dmitry V. Levin (1):
+       selftests: do not macro-expand failed assertion expressions
+
+Jerry Hoemann (1):
+       selftests: watchdog: Add gettimeleft command line arg
+
+Sean Young (1):
+       media: rc: self test for IR encoders and decoders
+
+Shuah Khan (1):
+       selftests: Fix test errors related to lib.mk khdr target
+
+Thomas Gleixner (1):
+       selftests/ftrace: Fix invalid SPDX identifiers
+
+Tom Murphy (1):
+       fix dma-buf/udmabuf selftest
+
+tools/testing/selftests/Makefile                   |   2 +
+  tools/testing/selftests/android/Makefile           |   2 +-
+  tools/testing/selftests/drivers/dma-buf/Makefile   |   2 +
+  tools/testing/selftests/drivers/dma-buf/udmabuf.c  |  11 +-
+  tools/testing/selftests/firmware/config            |   1 +
+  tools/testing/selftests/firmware/fw_filesystem.sh  |   9 +-
+  .../ftrace/test.d/ftrace/func-filter-stacktrace.tc |   2 +-
+  .../selftests/ftrace/test.d/ftrace/func_cpumask.tc |   2 +-
+  tools/testing/selftests/ftrace/test.d/template     |   2 +-
+  .../selftests/ftrace/test.d/tracer/wakeup.tc       |   2 +-
+  .../selftests/ftrace/test.d/tracer/wakeup_rt.tc    |   2 +-
+  tools/testing/selftests/futex/functional/Makefile  |   1 +
+  tools/testing/selftests/gpio/Makefile              |  16 +-
+  tools/testing/selftests/ir/.gitignore              |   1 +
+  tools/testing/selftests/ir/Makefile                |   5 +
+  tools/testing/selftests/ir/ir_loopback.c           | 199 
++++++++++++++++++++++
+  tools/testing/selftests/ir/ir_loopback.sh          |  20 +++
+  tools/testing/selftests/kselftest_harness.h        |  42 ++---
+  tools/testing/selftests/kvm/Makefile               |   2 +-
+  tools/testing/selftests/lib.mk                     |   8 +-
+  .../selftests/networking/timestamping/Makefile     |   1 +
+  tools/testing/selftests/tc-testing/bpf/Makefile    |   1 +
+  tools/testing/selftests/vm/Makefile                |   1 +
+  tools/testing/selftests/watchdog/watchdog-test.c   |  13 +-
+  24 files changed, 301 insertions(+), 46 deletions(-)
+  create mode 100644 tools/testing/selftests/ir/.gitignore
+  create mode 100644 tools/testing/selftests/ir/Makefile
+  create mode 100644 tools/testing/selftests/ir/ir_loopback.c
+  create mode 100755 tools/testing/selftests/ir/ir_loopback.sh
+
+----------------------------------------------------------------
+
+--------------672F4AFC297C06A475485459
+Content-Type: text/x-patch;
+ name="linux-kselftest-4.21-rc1.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="linux-kselftest-4.21-rc1.diff"
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index f1fe492c8e17..9ced25e61df7 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -6,6 +6,7 @@ TARGETS += capabilities
+ TARGETS += cgroup
+ TARGETS += cpufreq
+ TARGETS += cpu-hotplug
++TARGETS += drivers/dma-buf
+ TARGETS += efivarfs
+ TARGETS += exec
+ TARGETS += filesystems
+@@ -15,6 +16,7 @@ TARGETS += futex
+ TARGETS += gpio
+ TARGETS += intel_pstate
+ TARGETS += ipc
++TARGETS += ir
+ TARGETS += kcmp
+ TARGETS += kvm
+ TARGETS += lib
+diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
+index d9a725478375..72c25a3cb658 100644
+--- a/tools/testing/selftests/android/Makefile
++++ b/tools/testing/selftests/android/Makefile
+@@ -6,7 +6,7 @@ TEST_PROGS := run.sh
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
+ include ../lib.mk
+ 
+-all: khdr
++all:
+ 	@for DIR in $(SUBDIRS); do		\
+ 		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
+ 		mkdir $$BUILD_TARGET  -p;	\
+diff --git a/tools/testing/selftests/drivers/dma-buf/Makefile b/tools/testing/selftests/drivers/dma-buf/Makefile
+index 4154c3d7aa58..f22c3f7cf612 100644
+--- a/tools/testing/selftests/drivers/dma-buf/Makefile
++++ b/tools/testing/selftests/drivers/dma-buf/Makefile
+@@ -2,4 +2,6 @@ CFLAGS += -I../../../../../usr/include/
+ 
+ TEST_GEN_PROGS := udmabuf
+ 
++top_srcdir ?=../../../../..
 +
-+		psci-area@4000000 {
-+			reg = <0x0 0x4000000 0x0 0x200000>;
-+			no-map;
-+		};
-+	};
+ include ../../lib.mk
+diff --git a/tools/testing/selftests/drivers/dma-buf/udmabuf.c b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+index 376b1d6730bd..4de902ea14d8 100644
+--- a/tools/testing/selftests/drivers/dma-buf/udmabuf.c
++++ b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+@@ -4,7 +4,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <errno.h>
+-#include <fcntl.h>
++#include <linux/fcntl.h>
+ #include <malloc.h>
+ 
+ #include <sys/ioctl.h>
+@@ -33,12 +33,19 @@ int main(int argc, char *argv[])
+ 		exit(77);
+ 	}
+ 
+-	memfd = memfd_create("udmabuf-test", MFD_CLOEXEC);
++	memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+ 	if (memfd < 0) {
+ 		printf("%s: [skip,no-memfd]\n", TEST_PREFIX);
+ 		exit(77);
+ 	}
+ 
++	ret = fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK);
++	if (ret < 0) {
++		printf("%s: [skip,fcntl-add-seals]\n", TEST_PREFIX);
++		exit(77);
++	}
 +
- 	ap806 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
--- 
-2.19.2
++
+ 	size = getpagesize() * NUM_PAGES;
+ 	ret = ftruncate(memfd, size);
+ 	if (ret == -1) {
+diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
+index bf634dda0720..913a25a4a32b 100644
+--- a/tools/testing/selftests/firmware/config
++++ b/tools/testing/selftests/firmware/config
+@@ -1,5 +1,6 @@
+ CONFIG_TEST_FIRMWARE=y
+ CONFIG_FW_LOADER=y
+ CONFIG_FW_LOADER_USER_HELPER=y
++CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
+index a4320c4b44dc..466cf2f91ba0 100755
+--- a/tools/testing/selftests/firmware/fw_filesystem.sh
++++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+@@ -155,11 +155,8 @@ read_firmwares()
+ {
+ 	for i in $(seq 0 3); do
+ 		config_set_read_fw_idx $i
+-		# Verify the contents are what we expect.
+-		# -Z required for now -- check for yourself, md5sum
+-		# on $FW and DIR/read_firmware will yield the same. Even
+-		# cmp agrees, so something is off.
+-		if ! diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
++		# Verify the contents match
++		if ! diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
+ 			echo "request #$i: firmware was not loaded" >&2
+ 			exit 1
+ 		fi
+@@ -171,7 +168,7 @@ read_firmwares_expect_nofile()
+ 	for i in $(seq 0 3); do
+ 		config_set_read_fw_idx $i
+ 		# Ensures contents differ
+-		if diff -q -Z "$FW" $DIR/read_firmware 2>/dev/null ; then
++		if diff -q "$FW" $DIR/read_firmware 2>/dev/null ; then
+ 			echo "request $i: file was not expected to match" >&2
+ 			exit 1
+ 		fi
+diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-stacktrace.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-stacktrace.tc
+index bf72e783d014..36fb59f886ea 100644
+--- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-stacktrace.tc
++++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-stacktrace.tc
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL2.0
++# SPDX-License-Identifier: GPL-2.0
+ # description: ftrace - stacktrace filter command
+ # flags: instance
+ 
+diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+index 0e6810743576..86a1f07ef2ca 100644
+--- a/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
++++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL2.0
++# SPDX-License-Identifier: GPL-2.0
+ # description: ftrace - function trace with cpumask
+ 
+ if ! which nproc ; then
+diff --git a/tools/testing/selftests/ftrace/test.d/template b/tools/testing/selftests/ftrace/test.d/template
+index 799da7e0b3c9..e1a5d14c4eaf 100644
+--- a/tools/testing/selftests/ftrace/test.d/template
++++ b/tools/testing/selftests/ftrace/test.d/template
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL2.0
++# SPDX-License-Identifier: GPL-2.0
+ # description: %HERE DESCRIBE WHAT THIS DOES%
+ # you have to add ".tc" extention for your testcase file
+ # Note that all tests are run with "errexit" option.
+diff --git a/tools/testing/selftests/ftrace/test.d/tracer/wakeup.tc b/tools/testing/selftests/ftrace/test.d/tracer/wakeup.tc
+index e3005fa785f0..b0893d7edda3 100644
+--- a/tools/testing/selftests/ftrace/test.d/tracer/wakeup.tc
++++ b/tools/testing/selftests/ftrace/test.d/tracer/wakeup.tc
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL2.0
++# SPDX-License-Identifier: GPL-2.0
+ # description: Test wakeup tracer
+ 
+ if ! which chrt ; then
+diff --git a/tools/testing/selftests/ftrace/test.d/tracer/wakeup_rt.tc b/tools/testing/selftests/ftrace/test.d/tracer/wakeup_rt.tc
+index f99b5178e00a..b9b6669a623b 100644
+--- a/tools/testing/selftests/ftrace/test.d/tracer/wakeup_rt.tc
++++ b/tools/testing/selftests/ftrace/test.d/tracer/wakeup_rt.tc
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL2.0
++# SPDX-License-Identifier: GPL-2.0
+ # description: Test wakeup RT tracer
+ 
+ if ! which chrt ; then
+diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
+index ad1eeb14fda7..30996306cabc 100644
+--- a/tools/testing/selftests/futex/functional/Makefile
++++ b/tools/testing/selftests/futex/functional/Makefile
+@@ -19,6 +19,7 @@ TEST_GEN_FILES := \
+ TEST_PROGS := run.sh
+ 
+ top_srcdir = ../../../../..
++KSFT_KHDR_INSTALL := 1
+ include ../../lib.mk
+ 
+ $(TEST_GEN_FILES): $(HEADERS)
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 46648427d537..0bb80619db58 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -1,7 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+-LDLIBS += -lmount -I/usr/include/libmount
++MOUNT_CFLAGS := $(shell pkg-config --cflags mount 2>/dev/null)
++MOUNT_LDLIBS := $(shell pkg-config --libs mount 2>/dev/null)
++ifeq ($(MOUNT_LDLIBS),)
++MOUNT_LDLIBS := -lmount -I/usr/include/libmount
++endif
++
++CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ $(MOUNT_CFLAGS)
++LDLIBS += $(MOUNT_LDLIBS)
+ 
+ TEST_PROGS := gpio-mockup.sh
+ TEST_FILES := gpio-mockup-sysfs.sh
+@@ -10,8 +16,6 @@ TEST_PROGS_EXTENDED := gpio-mockup-chardev
+ GPIODIR := $(realpath ../../../gpio)
+ GPIOOBJ := gpio-utils.o
+ 
+-include ../lib.mk
+-
+ all: $(TEST_PROGS_EXTENDED)
+ 
+ override define CLEAN
+@@ -19,7 +23,9 @@ override define CLEAN
+ 	$(MAKE) -C $(GPIODIR) OUTPUT=$(GPIODIR)/ clean
+ endef
+ 
+-$(TEST_PROGS_EXTENDED):| khdr
++KSFT_KHDR_INSTALL := 1
++include ../lib.mk
++
+ $(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
+ 
+ $(GPIODIR)/$(GPIOOBJ):
+diff --git a/tools/testing/selftests/ir/.gitignore b/tools/testing/selftests/ir/.gitignore
+new file mode 100644
+index 000000000000..070ea0c75fb8
+--- /dev/null
++++ b/tools/testing/selftests/ir/.gitignore
+@@ -0,0 +1 @@
++ir_loopback
+diff --git a/tools/testing/selftests/ir/Makefile b/tools/testing/selftests/ir/Makefile
+new file mode 100644
+index 000000000000..f4ba8eb84b95
+--- /dev/null
++++ b/tools/testing/selftests/ir/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++TEST_PROGS := ir_loopback.sh
++TEST_GEN_PROGS_EXTENDED := ir_loopback
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/ir/ir_loopback.c b/tools/testing/selftests/ir/ir_loopback.c
+new file mode 100644
+index 000000000000..858c19caf224
+--- /dev/null
++++ b/tools/testing/selftests/ir/ir_loopback.c
+@@ -0,0 +1,199 @@
++// SPDX-License-Identifier: GPL-2.0
++// test ir decoder
++//
++// Copyright (C) 2018 Sean Young <sean@mess.org>
++
++// When sending LIRC_MODE_SCANCODE, the IR will be encoded. rc-loopback
++// will send this IR to the receiver side, where we try to read the decoded
++// IR. Decoding happens in a separate kernel thread, so we will need to
++// wait until that is scheduled, hence we use poll to check for read
++// readiness.
++
++#include <linux/lirc.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdbool.h>
++#include <string.h>
++#include <unistd.h>
++#include <poll.h>
++#include <time.h>
++#include <sys/types.h>
++#include <sys/ioctl.h>
++#include <dirent.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include "../kselftest.h"
++
++#define TEST_SCANCODES	10
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
++
++static const struct {
++	enum rc_proto proto;
++	const char *name;
++	unsigned int mask;
++	const char *decoder;
++} protocols[] = {
++	{ RC_PROTO_RC5, "rc-5", 0x1f7f, "rc-5" },
++	{ RC_PROTO_RC5X_20, "rc-5x-20", 0x1f7f3f, "rc-5" },
++	{ RC_PROTO_RC5_SZ, "rc-5-sz", 0x2fff, "rc-5-sz" },
++	{ RC_PROTO_JVC, "jvc", 0xffff, "jvc" },
++	{ RC_PROTO_SONY12, "sony-12", 0x1f007f, "sony" },
++	{ RC_PROTO_SONY15, "sony-15", 0xff007f, "sony" },
++	{ RC_PROTO_SONY20, "sony-20", 0x1fff7f, "sony" },
++	{ RC_PROTO_NEC, "nec", 0xffff, "nec" },
++	{ RC_PROTO_NECX, "nec-x", 0xffffff, "nec" },
++	{ RC_PROTO_NEC32, "nec-32", 0xffffffff, "nec" },
++	{ RC_PROTO_SANYO, "sanyo", 0x1fffff, "sanyo" },
++	{ RC_PROTO_RC6_0, "rc-6-0", 0xffff, "rc-6" },
++	{ RC_PROTO_RC6_6A_20, "rc-6-6a-20", 0xfffff, "rc-6" },
++	{ RC_PROTO_RC6_6A_24, "rc-6-6a-24", 0xffffff, "rc-6" },
++	{ RC_PROTO_RC6_6A_32, "rc-6-6a-32", 0xffffffff, "rc-6" },
++	{ RC_PROTO_RC6_MCE, "rc-6-mce", 0x00007fff, "rc-6" },
++	{ RC_PROTO_SHARP, "sharp", 0x1fff, "sharp" },
++};
++
++int lirc_open(const char *rc)
++{
++	struct dirent *dent;
++	char buf[100];
++	DIR *d;
++	int fd;
++
++	snprintf(buf, sizeof(buf), "/sys/class/rc/%s", rc);
++
++	d = opendir(buf);
++	if (!d)
++		ksft_exit_fail_msg("cannot open %s: %m\n", buf);
++
++	while ((dent = readdir(d)) != NULL) {
++		if (!strncmp(dent->d_name, "lirc", 4)) {
++			snprintf(buf, sizeof(buf), "/dev/%s", dent->d_name);
++			break;
++		}
++	}
++
++	if (!dent)
++		ksft_exit_fail_msg("cannot find lirc device for %s\n", rc);
++
++	closedir(d);
++
++	fd = open(buf, O_RDWR | O_NONBLOCK);
++	if (fd == -1)
++		ksft_exit_fail_msg("cannot open: %s: %m\n", buf);
++
++	return fd;
++}
++
++int main(int argc, char **argv)
++{
++	unsigned int mode;
++	char buf[100];
++	int rlircfd, wlircfd, protocolfd, i, n;
++
++	srand(time(NULL));
++
++	if (argc != 3)
++		ksft_exit_fail_msg("Usage: %s <write rcN> <read rcN>\n",
++				   argv[0]);
++
++	rlircfd = lirc_open(argv[2]);
++	mode = LIRC_MODE_SCANCODE;
++	if (ioctl(rlircfd, LIRC_SET_REC_MODE, &mode))
++		ksft_exit_fail_msg("failed to set scancode rec mode %s: %m\n",
++				   argv[2]);
++
++	wlircfd = lirc_open(argv[1]);
++	if (ioctl(wlircfd, LIRC_SET_SEND_MODE, &mode))
++		ksft_exit_fail_msg("failed to set scancode send mode %s: %m\n",
++				   argv[1]);
++
++	snprintf(buf, sizeof(buf), "/sys/class/rc/%s/protocols", argv[2]);
++	protocolfd = open(buf, O_WRONLY);
++	if (protocolfd == -1)
++		ksft_exit_fail_msg("failed to open %s: %m\n", buf);
++
++	printf("Sending IR on %s and receiving IR on %s.\n", argv[1], argv[2]);
++
++	for (i = 0; i < ARRAY_SIZE(protocols); i++) {
++		if (write(protocolfd, protocols[i].decoder,
++			  strlen(protocols[i].decoder)) == -1)
++			ksft_exit_fail_msg("failed to set write decoder\n");
++
++		printf("Testing protocol %s for decoder %s (%d/%d)...\n",
++		       protocols[i].name, protocols[i].decoder,
++		       i + 1, (int)ARRAY_SIZE(protocols));
++
++		for (n = 0; n < TEST_SCANCODES; n++) {
++			unsigned int scancode = rand() & protocols[i].mask;
++			unsigned int rc_proto = protocols[i].proto;
++
++			if (rc_proto == RC_PROTO_RC6_MCE)
++				scancode |= 0x800f0000;
++
++			if (rc_proto == RC_PROTO_NECX &&
++			    (((scancode >> 16) ^ ~(scancode >> 8)) & 0xff) == 0)
++				continue;
++
++			if (rc_proto == RC_PROTO_NEC32 &&
++			    (((scancode >> 8) ^ ~scancode) & 0xff) == 0)
++				continue;
++
++			struct lirc_scancode lsc = {
++				.rc_proto = rc_proto,
++				.scancode = scancode
++			};
++
++			printf("Testing scancode:%x\n", scancode);
++
++			while (write(wlircfd, &lsc, sizeof(lsc)) < 0) {
++				if (errno == EINTR)
++					continue;
++
++				ksft_exit_fail_msg("failed to send ir: %m\n");
++			}
++
++			struct pollfd pfd = { .fd = rlircfd, .events = POLLIN };
++			struct lirc_scancode lsc2;
++
++			poll(&pfd, 1, 1000);
++
++			bool decoded = true;
++
++			while (read(rlircfd, &lsc2, sizeof(lsc2)) < 0) {
++				if (errno == EINTR)
++					continue;
++
++				ksft_test_result_error("no scancode decoded: %m\n");
++				decoded = false;
++				break;
++			}
++
++			if (!decoded)
++				continue;
++
++			if (lsc.rc_proto != lsc2.rc_proto)
++				ksft_test_result_error("decoded protocol is different: %d\n",
++						       lsc2.rc_proto);
++
++			else if (lsc.scancode != lsc2.scancode)
++				ksft_test_result_error("decoded scancode is different: %llx\n",
++						       lsc2.scancode);
++			else
++				ksft_inc_pass_cnt();
++		}
++
++		printf("OK\n");
++	}
++
++	close(rlircfd);
++	close(wlircfd);
++	close(protocolfd);
++
++	if (ksft_get_fail_cnt() > 0)
++		ksft_exit_fail();
++	else
++		ksft_exit_pass();
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/ir/ir_loopback.sh b/tools/testing/selftests/ir/ir_loopback.sh
+new file mode 100755
+index 000000000000..0a0b8dfa39be
+--- /dev/null
++++ b/tools/testing/selftests/ir/ir_loopback.sh
+@@ -0,0 +1,20 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++if ! /sbin/modprobe -q -n rc-loopback; then
++        echo "ir_loopback: module rc-loopback is not found [SKIP]"
++        exit $ksft_skip
++fi
++
++/sbin/modprobe rc-loopback
++if [ $? -ne 0 ]; then
++	exit
++fi
++
++RCDEV=$(grep -l DRV_NAME=rc-loopback /sys/class/rc/rc*/uevent | grep -o 'rc[0-9]\+')
++
++./ir_loopback $RCDEV $RCDEV
++exit
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 6ae3730c4ee3..76d654ef3234 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -354,7 +354,7 @@
+  * ASSERT_EQ(expected, measured): expected == measured
+  */
+ #define ASSERT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 1)
++	__EXPECT(expected, #expected, seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_NE(expected, seen)
+@@ -365,7 +365,7 @@
+  * ASSERT_NE(expected, measured): expected != measured
+  */
+ #define ASSERT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 1)
++	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_LT(expected, seen)
+@@ -376,7 +376,7 @@
+  * ASSERT_LT(expected, measured): expected < measured
+  */
+ #define ASSERT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 1)
++	__EXPECT(expected, #expected, seen, #seen, <, 1)
+ 
+ /**
+  * ASSERT_LE(expected, seen)
+@@ -387,7 +387,7 @@
+  * ASSERT_LE(expected, measured): expected <= measured
+  */
+ #define ASSERT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 1)
++	__EXPECT(expected, #expected, seen, #seen, <=, 1)
+ 
+ /**
+  * ASSERT_GT(expected, seen)
+@@ -398,7 +398,7 @@
+  * ASSERT_GT(expected, measured): expected > measured
+  */
+ #define ASSERT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 1)
++	__EXPECT(expected, #expected, seen, #seen, >, 1)
+ 
+ /**
+  * ASSERT_GE(expected, seen)
+@@ -409,7 +409,7 @@
+  * ASSERT_GE(expected, measured): expected >= measured
+  */
+ #define ASSERT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 1)
++	__EXPECT(expected, #expected, seen, #seen, >=, 1)
+ 
+ /**
+  * ASSERT_NULL(seen)
+@@ -419,7 +419,7 @@
+  * ASSERT_NULL(measured): NULL == measured
+  */
+ #define ASSERT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 1)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_TRUE(seen)
+@@ -429,7 +429,7 @@
+  * ASSERT_TRUE(measured): measured != 0
+  */
+ #define ASSERT_TRUE(seen) \
+-	ASSERT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_FALSE(seen)
+@@ -439,7 +439,7 @@
+  * ASSERT_FALSE(measured): measured == 0
+  */
+ #define ASSERT_FALSE(seen) \
+-	ASSERT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_STREQ(expected, seen)
+@@ -472,7 +472,7 @@
+  * EXPECT_EQ(expected, measured): expected == measured
+  */
+ #define EXPECT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 0)
++	__EXPECT(expected, #expected, seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_NE(expected, seen)
+@@ -483,7 +483,7 @@
+  * EXPECT_NE(expected, measured): expected != measured
+  */
+ #define EXPECT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 0)
++	__EXPECT(expected, #expected, seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_LT(expected, seen)
+@@ -494,7 +494,7 @@
+  * EXPECT_LT(expected, measured): expected < measured
+  */
+ #define EXPECT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 0)
++	__EXPECT(expected, #expected, seen, #seen, <, 0)
+ 
+ /**
+  * EXPECT_LE(expected, seen)
+@@ -505,7 +505,7 @@
+  * EXPECT_LE(expected, measured): expected <= measured
+  */
+ #define EXPECT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 0)
++	__EXPECT(expected, #expected, seen, #seen, <=, 0)
+ 
+ /**
+  * EXPECT_GT(expected, seen)
+@@ -516,7 +516,7 @@
+  * EXPECT_GT(expected, measured): expected > measured
+  */
+ #define EXPECT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 0)
++	__EXPECT(expected, #expected, seen, #seen, >, 0)
+ 
+ /**
+  * EXPECT_GE(expected, seen)
+@@ -527,7 +527,7 @@
+  * EXPECT_GE(expected, measured): expected >= measured
+  */
+ #define EXPECT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 0)
++	__EXPECT(expected, #expected, seen, #seen, >=, 0)
+ 
+ /**
+  * EXPECT_NULL(seen)
+@@ -537,7 +537,7 @@
+  * EXPECT_NULL(measured): NULL == measured
+  */
+ #define EXPECT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 0)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_TRUE(seen)
+@@ -547,7 +547,7 @@
+  * EXPECT_TRUE(measured): 0 != measured
+  */
+ #define EXPECT_TRUE(seen) \
+-	EXPECT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_FALSE(seen)
+@@ -557,7 +557,7 @@
+  * EXPECT_FALSE(measured): 0 == measured
+  */
+ #define EXPECT_FALSE(seen) \
+-	EXPECT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_STREQ(expected, seen)
+@@ -597,7 +597,7 @@
+ 	if (_metadata->passed && _metadata->step < 255) \
+ 		_metadata->step++;
+ 
+-#define __EXPECT(_expected, _seen, _t, _assert) do { \
++#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
+@@ -606,8 +606,8 @@
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+ 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
+-			 #_expected, __exp_print, #_t, \
+-			 #_seen, __seen_print); \
++			 _expected_str, __exp_print, #_t, \
++			 _seen_str, __seen_print); \
+ 		_metadata->passed = 0; \
+ 		/* Ensure the optional handler is triggered */ \
+ 		_metadata->trigger = 1; \
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 01a219229238..52bfe5e76907 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -1,6 +1,7 @@
+ all:
+ 
+ top_srcdir = ../../../..
++KSFT_KHDR_INSTALL := 1
+ UNAME_M := $(shell uname -m)
+ 
+ LIBKVM = lib/assert.c lib/elf.c lib/io.c lib/kvm_util.c lib/ucall.c lib/sparsebit.c
+@@ -44,7 +45,6 @@ $(OUTPUT)/libkvm.a: $(LIBKVM_OBJ)
+ 
+ all: $(STATIC_LIBS)
+ $(TEST_GEN_PROGS): $(STATIC_LIBS)
+-$(STATIC_LIBS):| khdr
+ 
+ cscope: include_paths = $(LINUX_TOOL_INCLUDE) $(LINUX_HDR_PATH) include lib ..
+ cscope:
+diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+index 0a8e75886224..8b0f16409ed7 100644
+--- a/tools/testing/selftests/lib.mk
++++ b/tools/testing/selftests/lib.mk
+@@ -16,18 +16,18 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
+ TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
+ TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
+ 
++ifdef KSFT_KHDR_INSTALL
+ top_srcdir ?= ../../../..
+ include $(top_srcdir)/scripts/subarch.include
+ ARCH		?= $(SUBARCH)
+ 
+-all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
+-
+ .PHONY: khdr
+ khdr:
+ 	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
+ 
+-ifdef KSFT_KHDR_INSTALL
+-$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
++all: khdr $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
++else
++all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
+ endif
+ 
+ .ONESHELL:
+diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
+index 14cfcf006936..c46c0eefab9e 100644
+--- a/tools/testing/selftests/networking/timestamping/Makefile
++++ b/tools/testing/selftests/networking/timestamping/Makefile
+@@ -6,6 +6,7 @@ TEST_PROGS := hwtstamp_config rxtimestamp timestamping txtimestamp
+ all: $(TEST_PROGS)
+ 
+ top_srcdir = ../../../../..
++KSFT_KHDR_INSTALL := 1
+ include ../../lib.mk
+ 
+ clean:
+diff --git a/tools/testing/selftests/tc-testing/bpf/Makefile b/tools/testing/selftests/tc-testing/bpf/Makefile
+index dc92eb271d9a..be5a5e542804 100644
+--- a/tools/testing/selftests/tc-testing/bpf/Makefile
++++ b/tools/testing/selftests/tc-testing/bpf/Makefile
+@@ -4,6 +4,7 @@ APIDIR := ../../../../include/uapi
+ TEST_GEN_FILES = action.o
+ 
+ top_srcdir = ../../../../..
++KSFT_KHDR_INSTALL := 1
+ include ../../lib.mk
+ 
+ CLANG ?= clang
+diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+index 6e67e726e5a5..e13eb6cc8901 100644
+--- a/tools/testing/selftests/vm/Makefile
++++ b/tools/testing/selftests/vm/Makefile
+@@ -25,6 +25,7 @@ TEST_GEN_FILES += virtual_address_range
+ 
+ TEST_PROGS := run_vmtests
+ 
++KSFT_KHDR_INSTALL := 1
+ include ../lib.mk
+ 
+ $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index c6bd9a68306b..c2333c78cf04 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -19,7 +19,7 @@
+ 
+ int fd;
+ const char v = 'V';
+-static const char sopts[] = "bdehp:t:Tn:N";
++static const char sopts[] = "bdehp:t:Tn:NL";
+ static const struct option lopts[] = {
+ 	{"bootstatus",          no_argument, NULL, 'b'},
+ 	{"disable",             no_argument, NULL, 'd'},
+@@ -30,6 +30,7 @@ static const struct option lopts[] = {
+ 	{"gettimeout",          no_argument, NULL, 'T'},
+ 	{"pretimeout",    required_argument, NULL, 'n'},
+ 	{"getpretimeout",       no_argument, NULL, 'N'},
++	{"gettimeleft",		no_argument, NULL, 'L'},
+ 	{NULL,                  no_argument, NULL, 0x0}
+ };
+ 
+@@ -77,6 +78,7 @@ static void usage(char *progname)
+ 	printf(" -T, --gettimeout    Get the timeout\n");
+ 	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
+ 	printf(" -N, --getpretimeout Get the pretimeout\n");
++	printf(" -L, --gettimeleft   Get the time left until timer expires\n");
+ 	printf("\n");
+ 	printf("Parameters are parsed left-to-right in real-time.\n");
+ 	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
+@@ -180,6 +182,15 @@ int main(int argc, char *argv[])
+ 			else
+ 				printf("WDIOC_GETPRETIMEOUT error '%s'\n", strerror(errno));
+ 			break;
++		case 'L':
++			oneshot = 1;
++			ret = ioctl(fd, WDIOC_GETTIMELEFT, &flags);
++			if (!ret)
++				printf("WDIOC_GETTIMELEFT returns %u seconds.\n", flags);
++			else
++				printf("WDIOC_GETTIMELEFT error '%s'\n", strerror(errno));
++			break;
++
+ 		default:
+ 			usage(argv[0]);
+ 			goto end;
 
+--------------672F4AFC297C06A475485459--
