@@ -2,117 +2,292 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30AAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A210C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923AE21939
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E40192190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 20:28:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="0Kywe/eZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpSEw3Wl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390427AbeLUUVm (ORCPT
+        id S2390339AbeLUU2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:21:42 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36208 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731233AbeLUUVm (ORCPT
+        Fri, 21 Dec 2018 15:28:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46703 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388606AbeLUU2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:21:42 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so5815204ljk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 12:21:40 -0800 (PST)
+        Fri, 21 Dec 2018 15:28:01 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c73so3070507pfe.13;
+        Fri, 21 Dec 2018 12:27:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oCuWIybZCBvA/WvzquDNFPGfWXKrZE1FK2XTD9BeqdE=;
-        b=0Kywe/eZIN5jNgVFiFnsd70xV3iJbzRm+wg6KsnpD4sDO96YzdcE/Xpg3chjvrozUP
-         +NUugEcQp9Id6Fi+bwCNQxYvnpcJxrSRd9TdpZ8UiOp5ORMaWuT8/I7D6CNUY5EryfjJ
-         Gle0nCXq/46KOT17NYfUuvJaAm6Up9x8fUVdA0nZ7NrQ1BpA8VFETws09u/uhkUsZmvh
-         +6jTWiIafS4/QH5j9v27DbcX1jQPricThP8q/kqL/5FfdmaNIeL+BeivscYHwWz0D2np
-         gI94xi6jU5ZsRjWkg0W/izRpgm/ISf2uQUaSeXsNH6ChYVGNzaKlZEqj4VMWPzbS2BVL
-         gUsQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xIRdOhGKRSWRyxL3s5x83RnEVTZuPGUkWvFDmjWCx+I=;
+        b=DpSEw3WlTBFxkovyU7WfqVuf3p3qF4kRre2Vsthq2C1jIfVaWCyENkznIvQ7KMybI0
+         HdPgafdX9sjzH+lW8j5+j03ggDR6hobxhSXo9s2fQL7tuN7x1rObfv049Q9n9sATkhEE
+         c4Bwum1ypf0GtFTSTKOHJaic7Wuw47MleUR9olWKi5IRZ/CMinbH4rtIzDy+NGuvou9q
+         Qhq3szgg91cI+Yzx1CwJMuOCtIHr7H73G4pzF+/RJqenW4z7bP45wpiW+Aw3R1bgQdXw
+         lKZxIoSkAtAx09LUDLzZg325UBrctvjXiRW3WQAkgoEi4lue2xWROBSnCKAmiin7aiRn
+         s1uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oCuWIybZCBvA/WvzquDNFPGfWXKrZE1FK2XTD9BeqdE=;
-        b=BcZKdLjq+xsV/eFvniJQxStzA/8oDymnKogr3ktFew5WZnqpBIGWsaz6E/7UqSEQAb
-         kSeun4Pg+ofLGorf3aIWtgmsfo/etlDoVm68gN2GtEfLhR+Tlv1UMadNLHIcfnCo5JyV
-         j4fu38vhk3eZ20hvp82RIwnKpTolMokwrZ7eYTcfNl77YQ4shqtveyAj46oX0vZJfomY
-         tJiAx/ECekOXGq1rFf/c60D3sk5S9xmZDz6aHGjvJTxf5NTkBTqEwwUfLkI3Ki0NYeLg
-         qtVb5gJ26C38KGxVJT4A+iLXbLxlxetgNFLaYJ3KILa4jVlPWPV5Hrlvy4ShRbctj2Lf
-         3wxw==
-X-Gm-Message-State: AJcUukehghYPxSGWqm+4C4DtN7ikrEsBj/reyEQhM50pAFJ3E6qOS+E2
-        MpYOdpwmVwu9knSpJPxY1EuZAA==
-X-Google-Smtp-Source: ALg8bN4Aft2oOQKrqbOZo+FcuDdVDKKNsaeLb0gHys8m41Q8zS+PyxJ27zQ5cGcjg+zKNQZ9OUjiSw==
-X-Received: by 2002:a2e:9256:: with SMTP id v22-v6mr2740535ljg.178.1545423700080;
-        Fri, 21 Dec 2018 12:21:40 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain (mm-127-199-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.199.127])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm4912287ljg.92.2018.12.21.12.21.38
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xIRdOhGKRSWRyxL3s5x83RnEVTZuPGUkWvFDmjWCx+I=;
+        b=QH/zGIf4F+fGsWBTW9aOBNCbw7iV97GsMQjk5CXiTyaa8ocxNS+XeKp4EbBYtohKtt
+         udAXl9gJrUVLi78bZYr6wecXhv9l2Tdtvfw5V0FCDbeIniBZCHO1nWH4zmUapvEOzGp1
+         5AxyHioo3lej3QlwN+RcDdqxSNUtM/VAvUxAG2KbWxX/aFzqSa+rYeGmrcgUjbJb3+zu
+         YpdRtGtaLyeV69DAXh6q/VBi/CL1npPmtRRmzd9H9e+PCH/TK0FTF+emVAqWeWZZsYsh
+         NB4peEriSQs4ndz+pwUw7XRN1WawR3zNZlQsWMR8KNnaKkNEklKI6qLgU+/sl8EEJVlz
+         0sbQ==
+X-Gm-Message-State: AJcUukehl2VtAdQEqufs6ZTXw8X84xEYSXYwPEHu3/feQWVGtivRSQLo
+        1AL2d1cuizk8JwydJxpKujY41QiG
+X-Google-Smtp-Source: ALg8bN5BKmh0iWhQNpOXwYCs14fdeVrROdGxSyx3VJWdF5DdSgencF3D8ORM05LOIVkigykVRP1dZw==
+X-Received: by 2002:a63:ff16:: with SMTP id k22mr3837689pgi.244.1545424079137;
+        Fri, 21 Dec 2018 12:27:59 -0800 (PST)
+Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id r12sm29108794pgv.83.2018.12.21.12.27.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 12:21:39 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 5562F300816; Fri, 21 Dec 2018 23:21:37 +0300 (+03)
-Date:   Fri, 21 Dec 2018 23:21:37 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to fix page
- fault/truncate race
-Message-ID: <20181221202136.crrwojz3k7muvyrh@kshutemo-mobl1>
-References: <20181218223557.5202-1-mike.kravetz@oracle.com>
- <20181218223557.5202-3-mike.kravetz@oracle.com>
- <20181221102824.5v36l6l5t2zthpgr@kshutemo-mobl1>
- <849f5202-2200-265f-7769-8363053e8373@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <849f5202-2200-265f-7769-8363053e8373@oracle.com>
-User-Agent: NeoMutt/20180716
+        Fri, 21 Dec 2018 12:27:58 -0800 (PST)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, arnd@arndb.de, y2038@lists.linaro.org
+Subject: [PATCH] sock: Make sock->sk_tstamp thread-safe
+Date:   Fri, 21 Dec 2018 12:27:33 -0800
+Message-Id: <20181221202733.19627-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:28:25AM -0800, Mike Kravetz wrote:
-> On 12/21/18 2:28 AM, Kirill A. Shutemov wrote:
-> > On Tue, Dec 18, 2018 at 02:35:57PM -0800, Mike Kravetz wrote:
-> >> Instead of writing the required complicated code for this rare
-> >> occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
-> >> mode for the duration of page fault processing.  Hold i_mmap_rwsem
-> >> longer in truncation and hold punch code to cover the call to
-> >> remove_inode_hugepages.
-> > 
-> > One of remove_inode_hugepages() callers is noticeably missing --
-> > hugetlbfs_evict_inode(). Why?
-> > 
-> > It at least deserves a comment on why the lock rule doesn't apply to it.
-> 
-> In the case of hugetlbfs_evict_inode, the vfs layer guarantees there are
-> no more users of the inode/file.
+Al Viro mentioned that there is probably a race condition
+lurking in accesses of sk_tstamp on 32-bit machines.
 
-I'm not convinced that it is true. See documentation for ->evict_inode()
-in Documentation/filesystems/porting:
+sock->sk_tstamp is of type ktime_t which is always an s64.
+On a 32 bit architecture, we might run into situations of
+unsafe access as the access to the field becomes non atomic.
 
-	Caller does *not* evict the pagecache or inode-associated
-	metadata buffers; the method has to use truncate_inode_pages_final() to get rid
-	of those.
+Use seqlocks for synchronization.
+This allows us to avoid using spinlocks for readers as
+readers do not need mutual exclusion.
 
-Is hugetlbfs special here?
+Another approach to solve this is to require sk_lock for all
+modifications of the timestamps. The current approach allows
+for timestamps to have their own lock: sk_tstamp_lock.
+This allows for the patch to not compete with already
+existing critical sections, and side effects are limited
+to the paths in the patch.
 
+The addition of the new field maintains the data locality
+optimizations from
+commit 9115e8cd2a0c ("net: reorganize struct sock for better data
+locality")
+
+Note that all the instances of the sk_tstamp accesses
+are either through the ioctl or the syscall recvmsg.
+
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+---
+ include/net/sock.h | 16 +++++++++++++---
+ net/compat.c       | 30 +++++++++++++++++++++++++-----
+ net/core/sock.c    | 34 +++++++++++++++++++++++++++++-----
+ 3 files changed, 67 insertions(+), 13 deletions(-)
+
+diff --git a/include/net/sock.h b/include/net/sock.h
+index fe58aec00d09..2cb641606533 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -298,6 +298,7 @@ struct sock_common {
+   *	@sk_filter: socket filtering instructions
+   *	@sk_timer: sock cleanup timer
+   *	@sk_stamp: time stamp of last packet received
++  *	@sk_stamp_seq: lock for accessing sk_stamp
+   *	@sk_tsflags: SO_TIMESTAMPING socket options
+   *	@sk_tskey: counter to disambiguate concurrent tstamp requests
+   *	@sk_zckey: counter to order MSG_ZEROCOPY notifications
+@@ -474,6 +475,7 @@ struct sock {
+ 	const struct cred	*sk_peer_cred;
+ 	long			sk_rcvtimeo;
+ 	ktime_t			sk_stamp;
++	seqlock_t		sk_stamp_seq;
+ 	u16			sk_tsflags;
+ 	u8			sk_shutdown;
+ 	u32			sk_tskey;
+@@ -2311,8 +2313,11 @@ sock_recv_timestamp(struct msghdr *msg, struct sock *sk, struct sk_buff *skb)
+ 	    (hwtstamps->hwtstamp &&
+ 	     (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE)))
+ 		__sock_recv_timestamp(msg, sk, skb);
+-	else
++	else {
++		write_seqlock(&sk->sk_stamp_seq);
+ 		sk->sk_stamp = kt;
++		write_sequnlock(&sk->sk_stamp_seq);
++	}
+ 
+ 	if (sock_flag(sk, SOCK_WIFI_STATUS) && skb->wifi_acked_valid)
+ 		__sock_recv_wifi_status(msg, sk, skb);
+@@ -2332,10 +2337,15 @@ static inline void sock_recv_ts_and_drops(struct msghdr *msg, struct sock *sk,
+ 
+ 	if (sk->sk_flags & FLAGS_TS_OR_DROPS || sk->sk_tsflags & TSFLAGS_ANY)
+ 		__sock_recv_ts_and_drops(msg, sk, skb);
+-	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP)))
++	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP))) {
++		write_seqlock(&sk->sk_stamp_seq);
+ 		sk->sk_stamp = skb->tstamp;
+-	else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP))
++		write_sequnlock(&sk->sk_stamp_seq);
++	} else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP)) {
++		write_seqlock(&sk->sk_stamp_seq);
+ 		sk->sk_stamp = 0;
++		write_sequnlock(&sk->sk_stamp_seq);
++	}
+ }
+ 
+ void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags);
+diff --git a/net/compat.c b/net/compat.c
+index 6c9fceeefac0..3022f4941687 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -459,6 +459,7 @@ int compat_sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
+ {
+ 	struct compat_timeval __user *ctv;
+ 	int err;
++	unsigned int seq;
+ 	struct timeval tv;
+ 
+ 	if (COMPAT_USE_64BIT_TIME)
+@@ -467,11 +468,20 @@ int compat_sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
+ 	ctv = (struct compat_timeval __user *) userstamp;
+ 	err = -ENOENT;
+ 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	tv = ktime_to_timeval(sk->sk_stamp);
++
++	do {
++		seq = read_seqbegin(&sk->sk_stamp_seq);
++		tv = ktime_to_timeval(sk->sk_stamp);
++	} while (read_seqretry(&sk->sk_stamp_seq, seq));
++
+ 	if (tv.tv_sec == -1)
+ 		return err;
+ 	if (tv.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
++		ktime_t kt = ktime_get_real();
++
++		write_seqlock(&sk->sk_stamp_seq);
++		sk->sk_stamp = kt;
++		write_sequnlock(&sk->sk_stamp_seq);
+ 		tv = ktime_to_timeval(sk->sk_stamp);
+ 	}
+ 	err = 0;
+@@ -486,6 +496,7 @@ int compat_sock_get_timestampns(struct sock *sk, struct timespec __user *usersta
+ {
+ 	struct compat_timespec __user *ctv;
+ 	int err;
++	unsigned int seq;
+ 	struct timespec ts;
+ 
+ 	if (COMPAT_USE_64BIT_TIME)
+@@ -494,12 +505,21 @@ int compat_sock_get_timestampns(struct sock *sk, struct timespec __user *usersta
+ 	ctv = (struct compat_timespec __user *) userstamp;
+ 	err = -ENOENT;
+ 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	ts = ktime_to_timespec(sk->sk_stamp);
++
++	do {
++		seq = read_seqbegin(&sk->sk_stamp_seq);
++		ts = ktime_to_timespec(sk->sk_stamp);
++	} while (read_seqretry(&sk->sk_stamp_seq, seq));
++
+ 	if (ts.tv_sec == -1)
+ 		return err;
+ 	if (ts.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		ts = ktime_to_timespec(sk->sk_stamp);
++		ktime_t kt = ktime_get_real();
++
++		write_seqlock(&sk->sk_stamp_seq);
++		sk->sk_stamp = kt;
++		write_sequnlock(&sk->sk_stamp_seq);
++		ts = ktime_to_timespec(kt);
+ 	}
+ 	err = 0;
+ 	if (put_user(ts.tv_sec, &ctv->tv_sec) ||
+diff --git a/net/core/sock.c b/net/core/sock.c
+index f0e0e12b2e0d..a9a99af24a95 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2783,6 +2783,7 @@ void sock_init_data(struct socket *sock, struct sock *sk)
+ 	sk->sk_sndtimeo		=	MAX_SCHEDULE_TIMEOUT;
+ 
+ 	sk->sk_stamp = SK_DEFAULT_STAMP;
++	seqlock_init(&sk->sk_stamp_seq);
+ 	atomic_set(&sk->sk_zckey, 0);
+ 
+ #ifdef CONFIG_NET_RX_BUSY_POLL
+@@ -2880,15 +2881,27 @@ EXPORT_SYMBOL(lock_sock_fast);
+ int sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
+ {
+ 	struct timeval tv;
++	unsigned int seq;
+ 
+ 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	tv = ktime_to_timeval(sk->sk_stamp);
++
++	do {
++		seq = read_seqbegin(&sk->sk_stamp_seq);
++		tv = ktime_to_timeval(sk->sk_stamp);
++	} while (read_seqretry(&sk->sk_stamp_seq, seq));
++
+ 	if (tv.tv_sec == -1)
+ 		return -ENOENT;
+ 	if (tv.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		tv = ktime_to_timeval(sk->sk_stamp);
++		ktime_t kt = ktime_get_real();
++
++		write_seqlock(&sk->sk_stamp_seq);
++		sk->sk_stamp = kt;
++		write_sequnlock(&sk->sk_stamp_seq);
++
++		tv = ktime_to_timeval(kt);
+ 	}
++
+ 	return copy_to_user(userstamp, &tv, sizeof(tv)) ? -EFAULT : 0;
+ }
+ EXPORT_SYMBOL(sock_get_timestamp);
+@@ -2896,13 +2909,24 @@ EXPORT_SYMBOL(sock_get_timestamp);
+ int sock_get_timestampns(struct sock *sk, struct timespec __user *userstamp)
+ {
+ 	struct timespec ts;
++	unsigned int seq;
+ 
+ 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	ts = ktime_to_timespec(sk->sk_stamp);
++
++	do {
++		seq = read_seqbegin(&sk->sk_stamp_seq);
++		ts = ktime_to_timespec(sk->sk_stamp);
++	} while (read_seqretry(&sk->sk_stamp_seq, seq));
++
+ 	if (ts.tv_sec == -1)
+ 		return -ENOENT;
+ 	if (ts.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
++		ktime_t kt = ktime_get_real();
++
++		write_seqlock(&sk->sk_stamp_seq);
++		sk->sk_stamp = kt;
++		write_sequnlock(&sk->sk_stamp_seq);
++
+ 		ts = ktime_to_timespec(sk->sk_stamp);
+ 	}
+ 	return copy_to_user(userstamp, &ts, sizeof(ts)) ? -EFAULT : 0;
 -- 
- Kirill A. Shutemov
+2.17.1
+
