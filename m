@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232CFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B3DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E510B21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F3DB21906
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 19:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545420610;
-	bh=ktu6ycnTW/gF0kQeREaWgg/NuLDMJTJ5z1Mj4fYRMQE=;
+	s=default; t=1545420614;
+	bh=3w1uuC0IuS9yzJxUKgubI9vsqywcWFn4Qr2CuOTDi6I=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=ot0gLcNJnaweuu8o8GToEz09V8vZuL90rdnlOHQ5l+Uv1/k7hj6PKc/oYKDH20Otp
-	 Wt2AuFR88C6H6aNLMzuezfAgoRDTn2YvDzE+QkPoWVxUYLFNugpnEZBu4W/2X5exXQ
-	 /xNzcynG9linasJm1mLiLGC3aGvDzSQDfakOIV54=
+	b=gDIKZOOMx80zAqTEcKeqG65OWNevs3n0VcMwpWc2b4MJPgN5nv3N0tTqf39YYyQvU
+	 YrtBBoAua0/kxFvK7H0DAAEG7EGHz85YyBhsxgG01Q5dppoS3RGFDxz4fnIMccMa1B
+	 q/MX1ETC68BHN1AfnKY5Gxmzcr53Ps3uaq7VBUqo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404581AbeLUTaI (ORCPT
+        id S2404593AbeLUTaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:30:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58322 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 14:30:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404541AbeLUTaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:30:03 -0500
-Subject: Re: [GIT PULL] futex fix
+        id S2404544AbeLUTaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 14:30:04 -0500
+Subject: Re: [GIT PULL] timer fix
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1545420603;
-        bh=ktu6ycnTW/gF0kQeREaWgg/NuLDMJTJ5z1Mj4fYRMQE=;
+        bh=3w1uuC0IuS9yzJxUKgubI9vsqywcWFn4Qr2CuOTDi6I=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iZSmgtj3xhfWRijk5c68JpuIcBtZQlMXykoqRHIBY+fgKCXR0fJRixI9wDL56XP+0
-         BxXHrfE/EyHxky2Ye2uXKQ1i9jFm2H2dxL+738h9UKX/1iFBNDukCSMKKyAgPVBDDp
-         VG46m0a09V0BnCgKlvt+uq/NBjLuyH1vAYowJFpg=
+        b=iagsj4en7K4ixQrjfnB0z6fgg4AMiQ463OqjTK66Vbyt7CX783+j0aK1XXR7ots7M
+         GA9+nfxoeMd/jeo87ekUwBTi7e8lGL/VfykpAD5vkIDf35hngh663W+ukthMUebqo3
+         TS2/hgT2rh7gBIOlYYTiDvnRBgPLawLRM9e6ClWU=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181221123015.GA66918@gmail.com>
-References: <20181221123015.GA66918@gmail.com>
+In-Reply-To: <20181221123453.GA102366@gmail.com>
+References: <20181221123453.GA102366@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181221123015.GA66918@gmail.com>
+X-PR-Tracked-Message-Id: <20181221123453.GA102366@gmail.com>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- locking-urgent-for-linus
-X-PR-Tracked-Commit-Id: da791a667536bf8322042e38ca85d55a78d3c273
+ timers-urgent-for-linus
+X-PR-Tracked-Commit-Id: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d5fa080d4ceaa8fec0fb28e27c7447caf4b4d22b
-Message-Id: <20181221193003.15695.75464.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: e572fa0e840154d33a69622af030dda551eee606
+Message-Id: <20181221193003.15695.22091.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Fri, 21 Dec 2018 19:30:03 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -57,12 +57,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 21 Dec 2018 13:30:15 +0100:
+The pull request you sent on Fri, 21 Dec 2018 13:34:53 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d5fa080d4ceaa8fec0fb28e27c7447caf4b4d22b
+https://git.kernel.org/torvalds/c/e572fa0e840154d33a69622af030dda551eee606
 
 Thank you!
 
