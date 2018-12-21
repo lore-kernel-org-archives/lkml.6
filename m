@@ -2,109 +2,462 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A050CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17681C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686F921927
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9726C21903
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 16:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvtHZ7XO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbeLUQQ4 (ORCPT
+        id S2388216AbeLUQVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 11:16:56 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:50456 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeLUQQ4 (ORCPT
+        Fri, 21 Dec 2018 11:21:54 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45534 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731601AbeLUQVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 11:16:56 -0500
-X-IronPort-AV: E=Sophos;i="5.56,382,1539673200"; 
-   d="scan'208";a="24678281"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Dec 2018 09:16:51 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch05.mchp-main.com
- (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Fri, 21 Dec 2018
- 09:17:08 -0700
-Date:   Fri, 21 Dec 2018 17:16:51 +0100
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <me@jue.yt>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/3] i2c: at91: slave mode support
-Message-ID: <20181221161651.5n4zzapliyxzb76l@M43218.corp.atmel.com>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        me@jue.yt, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org
-References: <20180716094037.1843-1-ludovic.desroches@microchip.com>
- <20180720224141.lawanibd7v4hmbym@ninjato>
- <20180730071443.clib3swtsommj7jk@M43218.corp.atmel.com>
- <20181211192805.qsxptzkmczmm5vlz@ninjato>
+        Fri, 21 Dec 2018 11:21:54 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so2809649pfd.12;
+        Fri, 21 Dec 2018 08:21:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AYvTWNbri+LoKuFGS6R/l/2BgX4pMt89+RTwHQSSd0c=;
+        b=UvtHZ7XOjaGXB4zDt9P8bLkHOVDSHnE70+f1FcucjoQHwCGkieEfiRw6cl1jo+0gsa
+         +Z4bUIq8RCpvFRAcVX6Sl81akUj0l4Wp6x8uBxEmG/kbNvbfS7FOprJVtYWOI3PtrJsF
+         CnGIsFJWwNrkXTqsB7RWwV9pInNoXEX+FxDE79fHLm2JRoTQOzCGJmME2QiFiawK5ifv
+         UtiDY0juPv+sSVowrD5wG0AC7WTuED3W4dTE/B8hfPco3ZEKiIyIHMp+j5m+jULqPgUM
+         R5oZbuCKw1+E9W0Q+B2Tkch2hY1WjEnzcO8dQoozQSu+FwA7hPCQ9PBTe7LKgYhPHhga
+         tyig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AYvTWNbri+LoKuFGS6R/l/2BgX4pMt89+RTwHQSSd0c=;
+        b=j0SGsqTpQMdaNbWd3dBncNNn/dTxfYe0jYvsBdq4OGlPd0OwiYSavvzOlbXjbcaG0h
+         qEnUWNDHNS3FQ+1nUOfHLgQEmRgEWcKvSHeAksUaSbgHsJmKh5lTXGzPLX7slZH6Rmhl
+         c3s5MxoHNYoqqtKNBrgyOwRQF4tzFqMA2PSyhGgFWAfoe1Te2bQX2l3Gkb3jic2qrKBk
+         sykNYKTq8y2xMU2HIbIOxR0jUvt5seCrmAX6T2v5AeLDll+MhR4y8sH1GYz6cEe03MBM
+         gttxxWgSorRVsFw8yaT54SkG4U2CaEJrwUPn5BqrBrrHUO3iIRNfx+Y/AWVA64KmI/LA
+         g5RA==
+X-Gm-Message-State: AJcUukeBubmxo9ic2/vy5T+teAdf3qJBXd6oFNe2IKQecMcypNQx0LZu
+        gcW0YGNbMI2/0LLCfSmbMH8=
+X-Google-Smtp-Source: ALg8bN7lKBR+rQNJss9PvpekYU1hPKRC/qhRgWo94YVYn+ej8R1iFULcRklrW7dgLV0S+16CLLM6aQ==
+X-Received: by 2002:a63:6c48:: with SMTP id h69mr2899322pgc.139.1545409312391;
+        Fri, 21 Dec 2018 08:21:52 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id n22sm45036671pfh.166.2018.12.21.08.21.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 08:21:51 -0800 (PST)
+Date:   Fri, 21 Dec 2018 08:21:49 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sinan Kaya <okaya@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Theodore Ts'o <tytso@mit.edu>, Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wen He <wen.he_1@nxp.com>, Peng Ma <peng.ma@nxp.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: Tree for Dec 21
+Message-ID: <20181221162149.GA32500@roeck-us.net>
+References: <20181221193244.3a6ed685@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211192805.qsxptzkmczmm5vlz@ninjato>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181221193244.3a6ed685@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
-
-On Tue, Dec 11, 2018 at 08:28:05PM +0100, Wolfram Sang wrote:
-> Hi Ludovic,
+On Fri, Dec 21, 2018 at 07:32:44PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > > >  - fix checkpatch errors
-> > > >  - tests:
-> > > >    - hangs with a SAMA5D4 (master and slave on different busses) after about
-> > > >    100 transfers. It's the firs time I do this test.
-> > > >    - some mismatches with a SAMA5D4 as slave and a SAMA5D2 as master
-> > > >    I don't know if it's a regression. I don't remember having seen this
-> > > >    behavior previously.
-> > > >    I think it's worth taking those patches even if there are some possible
-> > > >    bugs. It'll allow to get more people using it and so to consolidate the
-> > > >    slave mode support.
-> > > 
-> > > I really want to see those patches go upstream, too. But I am also not a
-> > > big fan of delivering the user something with known issues. Especially
-> > > not when they affect the main feature to be added. My rationale here is
-> > > that someone who is able to fix the issues remaining will also be able
-> > > to pick up and apply patches.
-> > > 
-> > > Maybe, maybe if it was to be enabled by a special
-> > > I2C_AT91_SLAVE_EXPERIMANTEL symbol with lots of explanations. I need to
-> > > think twice about that, though.
-> > > 
-> > 
-> > I understand your point. The experimental mentionning could be a good
-> > trade-off. Let me know once you make up your mind.
-> > 
-> > > Speaking of Kconfig, I think this series needs to place a
-> > > 
-> > > 	select I2C_SLAVE
-> > > 
-> > > somewhere.
-> > > 
-> > 
-> > Ok I'll update it if we go further with this set of patches.
+> News: there will be no linux-next release until Jan 2.  Have a good break.
 > 
-> Ok, I give in. If you:
+> Changes since 20181220:
 > 
-> * add 'select I2C_SLAVE'
-> * make slave support selectable by I2C_AT91_SLAVE_STAGING or
->   _EXPERIMENTAL or something alike (default n)
-> * and add to the help text of that symbol the above known issues
->   and 'not for production' and 'help wanted' and where to get more
->   info and all that
+> New tree: gpio-brgl
 > 
-> then I'll apply this series soonish. Promised!
+> The pm tree gained a conflict against the kbuild tree.
+> 
+> The bpf-next tree gained a conflict against Linus' tree.
+> 
+> The kvm tree gained a conflict against the powerpc tree.
+> 
+> The akpm tree lost a patch that turned up elsewhere.
+> 
+> Non-merge commits (relative to Linus' tree): 10464
+>  10564 files changed, 495226 insertions(+), 271806 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
 
-Ok I will handle these requests and resend it.
+Build results:
+	total: 158 pass: 146 fail: 12
+Failed builds: 
+	csky:defconfig  [1]
+	csky:allnoconfig 
+	csky:tinyconfig 
+	h8300:allnoconfig [2]
+	h8300:tinyconfig 
+	h8300:edosk2674_defconfig 
+	h8300:h8300h-sim_defconfig 
+	h8300:h8s-sim_defconfig 
+	ia64:defconfig [3]
+	ia64:allnoconfig 
+	ia64:tinyconfig 
+	mips:cavium_octeon_defconfig [4]
+Qemu test results:
+	total: 330 pass: 297 fail: 33
+Failed tests: 
+	ppc:mpc8544ds:mpc85xx_defconfig:initrd [5]
+	ppc:mpc8544ds:mpc85xx_defconfig:scsi[53C895A]:rootfs 
+	ppc:mpc8544ds:mpc85xx_defconfig:sata-sii3112:rootfs 
+	ppc:mpc8544ds:mpc85xx_defconfig:mmc:rootfs 
+	ppc:mpc8544ds:mpc85xx_smp_defconfig:initrd 
+	ppc:mpc8544ds:mpc85xx_smp_defconfig:scsi[DC395]:rootfs 
+	ppc:mpc8544ds:mpc85xx_smp_defconfig:scsi[53C895A]:rootfs 
+	ppc:mpc8544ds:mpc85xx_smp_defconfig:sata-sii3112:rootfs 
+	ppc64:mpc8544ds:ppc64_e5500_defconfig:nosmp:initrd [5]
+	ppc64:mpc8544ds:ppc64_e5500_defconfig:smp:initrd 
+	ppc64:ppce500:corenet64_smp_defconfig:e5500:initrd [6]
+	ppc64:ppce500:corenet64_smp_defconfig:e5500:nvme:rootfs 
+	ppc64:ppce500:corenet64_smp_defconfig:e5500:mmc:rootfs 
+	ppc64:ppce500:corenet64_smp_defconfig:e5500:scsi[53C895A]:rootfs
+	ppc64:ppce500:corenet64_smp_defconfig:e5500:sata-sii3112:rootfs 
+	riscv:virt:defconfig:initrd [7]
+	riscv:virt:defconfig:virtio-blk:rootfs 
+	riscv:virt:defconfig:virtio:rootfs 
+	riscv:virt:defconfig:virtio-pci:rootfs 
+	riscv:virt:defconfig:mmc:rootfs 
+	riscv:virt:defconfig:nvme:rootfs 
+	riscv:virt:defconfig:usb-ehci:rootfs 
+	riscv:virt:defconfig:usb-xhci:rootfs 
+	riscv:virt:defconfig:usb-uas-ehci:rootfs 
+	riscv:virt:defconfig:usb-uas-xhci:rootfs 
+	riscv:virt:defconfig:scsi[53C810]:rootfs 
+	riscv:virt:defconfig:scsi[53C895A]:rootfs 
+	riscv:virt:defconfig:scsi[MEGASAS]:rootfs 
+	riscv:virt:defconfig:scsi[MEGASAS2]:rootfs 
+	riscv:virt:defconfig:scsi[FUSION]:rootfs 
+	riscv:virt:defconfig:scsi[virtio]:rootfs 
+	riscv:virt:defconfig:scsi[virtio-pci]:rootfs 
+	i386:pc:Westmere:defconfig:pae:smp:efi32:usb:rootfs [8]
 
-Thanks
+We are down to eight distinct failures. Bisect logs below. Patch
+submitters, reviewers, and and maintainers in the commit chain copied.
 
-Ludovic
+Note that this is not necessarily a complete list of failures: Build
+failures tend to accumulate over time, and build failures in -next have
+for at least some part been ignored in the last month or so, meaning
+that newer failures might hide older ones (or vice versa).
+
+Guenter
+
+---
+[1]:
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# good: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect good 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# good: [f4dd556a2cc77f672b9ba585aaad094a6fe09cf7] Merge remote-tracking branch 'spi/for-next'
+git bisect good f4dd556a2cc77f672b9ba585aaad094a6fe09cf7
+# good: [75f0840128c421df5e1741f5df22a34409bb5d72] Merge remote-tracking branch 'char-misc/char-misc-next'
+git bisect good 75f0840128c421df5e1741f5df22a34409bb5d72
+# good: [4faff5eba474594068ea7f4542af209ab3e66911] Merge remote-tracking branch 'scsi/for-next'
+git bisect good 4faff5eba474594068ea7f4542af209ab3e66911
+# good: [6cd372e81ef4eed2bacbba722d498d3ebb2ffb94] Merge remote-tracking branch 'cisco/for-next'
+git bisect good 6cd372e81ef4eed2bacbba722d498d3ebb2ffb94
+# good: [6009414b962c12b8f91e1c7334d4cc1de6c03e1a] tools/vm/page-types.c: fix "kpagecount returned fewer pages than expected" failures
+git bisect good 6009414b962c12b8f91e1c7334d4cc1de6c03e1a
+# good: [2182abbea4e705ef03cf32dc8149c5af5fe23af3] fs-epoll-deal-with-wait_queue-only-once-fix
+git bisect good 2182abbea4e705ef03cf32dc8149c5af5fe23af3
+# good: [7a9558236e6f0ec8d66f7f5fb8ad369f51732a0a] Merge branch 'akpm-current/current'
+git bisect good 7a9558236e6f0ec8d66f7f5fb8ad369f51732a0a
+# bad: [6ffd75c6e43f093a5d5c7da8bb1bf67b377b6af5] kernel/locking/mutex.c: remove caller signal_pending branch predictions
+git bisect bad 6ffd75c6e43f093a5d5c7da8bb1bf67b377b6af5
+# bad: [11b48366a8e46e3fbeb28b33fc8451651c85f9ce] mm: balloon: update comment about isolation/migration/compaction
+git bisect bad 11b48366a8e46e3fbeb28b33fc8451651c85f9ce
+# bad: [7aeffc4837665c6f984406296cb080482d1eb53a] mm/mremap: fix 'move_normal_pmd' unused function warning
+git bisect bad 7aeffc4837665c6f984406296cb080482d1eb53a
+# bad: [f41d8d849a1e1428f1e93ef491ae7d6c9be6d568] mm: treewide: remove unused address argument from pte_alloc functions
+git bisect bad f41d8d849a1e1428f1e93ef491ae7d6c9be6d568
+# good: [23ba691cd51345b549239bf36d2311e7b95c46f0] scripts/atomic/check-atomics.sh: don't assume that scripts are executable
+git bisect good 23ba691cd51345b549239bf36d2311e7b95c46f0
+# first bad commit: [f41d8d849a1e1428f1e93ef491ae7d6c9be6d568] mm: treewide: remove unused address argument from pte_alloc functions
+
+---
+[2]:
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# bad: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect bad 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# good: [f915ece8cdbafa705badb5417e8c70ff83a63172] Merge remote-tracking branch 'hid/for-next'
+git bisect good f915ece8cdbafa705badb5417e8c70ff83a63172
+# good: [24654f095ed68eafcdfdbfccbe6324ad1475c1bb] bnxt_en: Don't set ETS on unused TCs.
+git bisect good 24654f095ed68eafcdfdbfccbe6324ad1475c1bb
+# bad: [e14a42c5f051966e6b491e8791d95c868d650e0f] Merge remote-tracking branch 'rdma/for-next'
+git bisect bad e14a42c5f051966e6b491e8791d95c868d650e0f
+# good: [cc560fe1833b77498fc68f8ceb147d0de223e856] Merge remote-tracking branch 'v4l-dvb/master'
+git bisect good cc560fe1833b77498fc68f8ceb147d0de223e856
+# bad: [bcd49032d09ce5c06ae55f3c6296fce763cd2bda] Merge remote-tracking branch 'dlm/next'
+git bisect bad bcd49032d09ce5c06ae55f3c6296fce763cd2bda
+# good: [38caad5e1ec9ab3cef7aaf3445147c9d4a0a2b22] Merge branch 'devprop' into linux-next
+git bisect good 38caad5e1ec9ab3cef7aaf3445147c9d4a0a2b22
+# good: [537b994f705c86d5bad567c23230d948a9ce99b9] Merge remote-tracking branch 'fbdev/fbdev-for-next'
+git bisect good 537b994f705c86d5bad567c23230d948a9ce99b9
+# bad: [7de527b81572a3d45425a11f4593790c9e4b9c5d] Merge remote-tracking branch 'pm/linux-next'
+git bisect bad 7de527b81572a3d45425a11f4593790c9e4b9c5d
+# good: [635e69d15509617205e389e670a79dd572262f52] Merge branch 'acpi-osi' into linux-next
+git bisect good 635e69d15509617205e389e670a79dd572262f52
+# bad: [43554cebba50e709b9207c55ceca6bc281748586] ACPI/IORT: Stub out ACS functions when CONFIG_PCI is not set
+git bisect bad 43554cebba50e709b9207c55ceca6bc281748586
+# good: [bd23fac3eaaa8bd79c02a2f139f68ac6424a9a7c] ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is unset
+git bisect good bd23fac3eaaa8bd79c02a2f139f68ac6424a9a7c
+# bad: [52146173a0333a8c9fbc1a3dd92958f376511b38] arm64: select ACPI PCI code only when both features are enabled
+git bisect bad 52146173a0333a8c9fbc1a3dd92958f376511b38
+# bad: [5d32a66541c4683456507481a0944ed2985e75c7] PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
+git bisect bad 5d32a66541c4683456507481a0944ed2985e75c7
+# first bad commit: [5d32a66541c4683456507481a0944ed2985e75c7] PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
+
+---
+[3]:
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# bad: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect bad 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# bad: [f915ece8cdbafa705badb5417e8c70ff83a63172] Merge remote-tracking branch 'hid/for-next'
+git bisect bad f915ece8cdbafa705badb5417e8c70ff83a63172
+# good: [bf1c4d50b9fa6e80ad13293b4acace16dfddad0b] Merge remote-tracking branch 'arm-soc/for-next'
+git bisect good bf1c4d50b9fa6e80ad13293b4acace16dfddad0b
+# good: [4419ffc60fb0eb3c5c61ac4d41d2b45f5fa001ed] Merge remote-tracking branch 's390/features'
+git bisect good 4419ffc60fb0eb3c5c61ac4d41d2b45f5fa001ed
+# bad: [26b69eb30a87a11edf53924ea0051f28070f5223] Merge remote-tracking branch 'jfs/jfs-next'
+git bisect bad 26b69eb30a87a11edf53924ea0051f28070f5223
+# good: [0078a3f8bf05002d636a6d4816c2635096803c24] Merge branch 'for-next-current-v4.19-20181219' into for-next-20181219
+git bisect good 0078a3f8bf05002d636a6d4816c2635096803c24
+# good: [fb468109d7cffc217b8cbc73909d2236b308779e] Merge remote-tracking branch 'xtensa/xtensa-for-next'
+git bisect good fb468109d7cffc217b8cbc73909d2236b308779e
+# bad: [46aa53167cf1b522a2144cc3f5543a2b9c6fdf2b] Merge remote-tracking branch 'ext3/for_next'
+git bisect bad 46aa53167cf1b522a2144cc3f5543a2b9c6fdf2b
+# bad: [3a370c761f2bd1cf771e3a2d691c9ee2e71c109f] Merge remote-tracking branch 'befs/for-next'
+git bisect bad 3a370c761f2bd1cf771e3a2d691c9ee2e71c109f
+# good: [bff49d3e9affae6f9e38a9103a4166ade2c310dd] ext4: add basic fs-verity support
+git bisect good bff49d3e9affae6f9e38a9103a4166ade2c310dd
+# bad: [c942d68713c322c27ecb8287af077571b4ab0c08] ext4: use IS_VERITY() to check inode's fsverity status
+git bisect bad c942d68713c322c27ecb8287af077571b4ab0c08
+# good: [dc82005ead5de0e5bb764c0c1c50a19891b6de15] ext4: use IS_ENCRYPTED() to check encryption status
+git bisect good dc82005ead5de0e5bb764c0c1c50a19891b6de15
+# bad: [f3fd6cd74fedf99b6060f75df00943fda13b65f2] fscrypt: remove filesystem specific build config option
+git bisect bad f3fd6cd74fedf99b6060f75df00943fda13b65f2
+# good: [1dcfeb539c09237c98b99685fb9cd156241db13f] f2fs: use IS_ENCRYPTED() to check encryption status
+git bisect good 1dcfeb539c09237c98b99685fb9cd156241db13f
+# first bad commit: [f3fd6cd74fedf99b6060f75df00943fda13b65f2] fscrypt: remove filesystem specific build config option
+
+---
+[4]:
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# bad: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect bad 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# good: [f915ece8cdbafa705badb5417e8c70ff83a63172] Merge remote-tracking branch 'hid/for-next'
+git bisect good f915ece8cdbafa705badb5417e8c70ff83a63172
+# good: [24654f095ed68eafcdfdbfccbe6324ad1475c1bb] bnxt_en: Don't set ETS on unused TCs.
+git bisect good 24654f095ed68eafcdfdbfccbe6324ad1475c1bb
+# good: [e14a42c5f051966e6b491e8791d95c868d650e0f] Merge remote-tracking branch 'rdma/for-next'
+git bisect good e14a42c5f051966e6b491e8791d95c868d650e0f
+# bad: [e69fbf31ca2cf6d6a2afedd0f8b30dcd10e76049] Merge tag 'wireless-drivers-next-for-davem-2018-12-20' of git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
+git bisect bad e69fbf31ca2cf6d6a2afedd0f8b30dcd10e76049
+# bad: [0c2ff8d796895448b3a23c9cf7f37e721daeea48] bnxt_en: Adjust default RX coalescing ticks to 10 us.
+git bisect bad 0c2ff8d796895448b3a23c9cf7f37e721daeea48
+# good: [5a862f86b8e86562fc8532160c5530a13e1e944b] Merge tag 'mac80211-next-for-davem-2018-12-19' of git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next
+git bisect good 5a862f86b8e86562fc8532160c5530a13e1e944b
+# bad: [eb18a510b5cd4daeb9736ad8db57a9fc49db185b] tipc: add trace_events for tipc node
+git bisect bad eb18a510b5cd4daeb9736ad8db57a9fc49db185b
+# good: [22bba80500fdf624a7cfbb65fdfa97a038ae224d] Bluetooth: hci_bcm: Handle specific unknown packets after firmware loading
+git bisect good 22bba80500fdf624a7cfbb65fdfa97a038ae224d
+# good: [2294be0f11e22b6197d025e5d3ab42888879ec4e] net: use skb_sec_path helper in more places
+git bisect good 2294be0f11e22b6197d025e5d3ab42888879ec4e
+# good: [a84e3f533324e40e4a99f50dee2188bf140d8098] xfrm: prefer secpath_set over secpath_dup
+git bisect good a84e3f533324e40e4a99f50dee2188bf140d8098
+# bad: [b4b9771bcbbd5839b0f77aba55e2f85989ed6779] tipc: enable tracepoints in tipc
+git bisect bad b4b9771bcbbd5839b0f77aba55e2f85989ed6779
+# bad: [4a54877ee767fe70a6966352c788fc5f405aa3c6] Merge branch 'sk_buff-add-extension-infrastructure'
+git bisect bad 4a54877ee767fe70a6966352c788fc5f405aa3c6
+# bad: [4165079ba328dd47262a2183049d3591f0a750b1] net: switch secpath to use skb extension infrastructure
+git bisect bad 4165079ba328dd47262a2183049d3591f0a750b1
+# first bad commit: [4165079ba328dd47262a2183049d3591f0a750b1] net: switch secpath to use skb extension infrastructure
+
+---
+[5]:
+
+The bisect is old, but still applies. Revering the offending patch fixes the problem.
+
+# bad: [8c9733fd9806c71e7f2313a280f98cb3051f93df] Add linux-next specific files for 20181123
+# good: [9ff01193a20d391e8dbce4403dd5ef87c7eaaca6] Linux 4.20-rc3
+git bisect start 'HEAD' 'v4.20-rc3'
+# good: [34c2101b4f765edf1b91c2837da9c60fbf9f6912] Merge remote-tracking branch 'spi-nor/spi-nor/next'
+git bisect good 34c2101b4f765edf1b91c2837da9c60fbf9f6912
+# good: [15367a0657fc8027ff3466bf0202bde9f270259b] Merge remote-tracking branch 'kgdb/kgdb-next'
+git bisect good 15367a0657fc8027ff3466bf0202bde9f270259b
+# bad: [d29686ab179c34c5dbaac067a9effbeeb6a8073e] Merge remote-tracking branch 'soundwire/next'
+git bisect bad d29686ab179c34c5dbaac067a9effbeeb6a8073e
+# good: [7cd63670817c236ccaf21ffe9d7b4921afeab130] Merge remote-tracking branch 'tip/auto-latest'
+git bisect good 7cd63670817c236ccaf21ffe9d7b4921afeab130
+# good: [597140853698c0dc174b93eb534406a40e467375] Merge remote-tracking branch 'rcu/rcu/next'
+git bisect good 597140853698c0dc174b93eb534406a40e467375
+# good: [acb97a35ae6d363144f4e3916bff5284a5a03d01] Merge remote-tracking branch 'phy-next/next'
+git bisect good acb97a35ae6d363144f4e3916bff5284a5a03d01
+# bad: [3f45b9087678824f50a34783db5a519f0d4d5e03] Merge remote-tracking branch 'tty/tty-next'
+git bisect bad 3f45b9087678824f50a34783db5a519f0d4d5e03
+# good: [61e169ee7683630ee0276dd5dcb5599976757770] serial: fsl_lpuart: fix the typo: UARTCR1_PE -> UARTCTRL_PE
+git bisect good 61e169ee7683630ee0276dd5dcb5599976757770
+# good: [646097940ad35aa2c1f2012af932d55976a9f255] serial: set suppress_bind_attrs flag only if builtin
+git bisect good 646097940ad35aa2c1f2012af932d55976a9f255
+# bad: [d6e1935819db0c91ce4a5af82466f3ab50d17346] serial: core: Allow processing sysrq at port unlock time
+git bisect bad d6e1935819db0c91ce4a5af82466f3ab50d17346
+# bad: [6d11023c345e369bcb9d5a68b271764e362c1f6e] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+git bisect bad 6d11023c345e369bcb9d5a68b271764e362c1f6e
+# good: [347a28b586802d09604a149c1a1f6de5dccbe6fa] writeback: don't decrement wb->refcnt if !wb->bdi
+git bisect good 347a28b586802d09604a149c1a1f6de5dccbe6fa
+# first bad commit: [6d11023c345e369bcb9d5a68b271764e362c1f6e] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+---
+[6]:
+
+Build failure.
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# good: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect good 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# good: [f4dd556a2cc77f672b9ba585aaad094a6fe09cf7] Merge remote-tracking branch 'spi/for-next'
+git bisect good f4dd556a2cc77f672b9ba585aaad094a6fe09cf7
+# good: [75f0840128c421df5e1741f5df22a34409bb5d72] Merge remote-tracking branch 'char-misc/char-misc-next'
+git bisect good 75f0840128c421df5e1741f5df22a34409bb5d72
+# bad: [4faff5eba474594068ea7f4542af209ab3e66911] Merge remote-tracking branch 'scsi/for-next'
+git bisect bad 4faff5eba474594068ea7f4542af209ab3e66911
+# good: [e894075934a44ef66413fd1046808542011d8552] staging: mt7621-mmc: Fix incompletely removed #if 0 block in sd.c
+git bisect good e894075934a44ef66413fd1046808542011d8552
+# good: [c1b104755b0b11579e292aa153c0605264c81648] scsi: smartpqi: add support for huawei controllers
+git bisect good c1b104755b0b11579e292aa153c0605264c81648
+# good: [695e62f9d1350169ed2bb6c5f164a6a1b1aaae50] Merge remote-tracking branch 'icc/icc-next'
+git bisect good 695e62f9d1350169ed2bb6c5f164a6a1b1aaae50
+# bad: [2b4b64840d7f6929213c0abce72eec7b7b784949] Merge branch 'topic/fsl' into next
+git bisect bad 2b4b64840d7f6929213c0abce72eec7b7b784949
+# good: [c03ec9cbc1c18058d5175998dffec24e40cb709f] Merge branch 'topic/dw' into next
+git bisect good c03ec9cbc1c18058d5175998dffec24e40cb709f
+# good: [1fa4ce0b2caccfd5fb0a37a03cade2ee1dbb0452] Merge branch 'topic/dmatest' into next
+git bisect good 1fa4ce0b2caccfd5fb0a37a03cade2ee1dbb0452
+# good: [531971231dac0edf17af32b06f09681f6506c0a1] dmaengine: sprd: Add me as one of the module authors
+git bisect good 531971231dac0edf17af32b06f09681f6506c0a1
+# bad: [b1bd47b638d4d304b98f68abfee9ee897c1a1939] dt-bindings: fsl-qdma: Add NXP Layerscpae qDMA controller bindings
+git bisect bad b1bd47b638d4d304b98f68abfee9ee897c1a1939
+# bad: [68997fff94afa51b5f74dd90aceec74ce13b3253] dmaengine: fsldma: Adding macro FSL_DMA_IN/OUT implement for ARM platform
+git bisect bad 68997fff94afa51b5f74dd90aceec74ce13b3253
+# good: [ca4f826040111c6746e2378dc45d9c0af3991a09] dmaengine: fsldma: Replace DMA_IN/OUT by FSL_DMA_IN/OUT
+git bisect good ca4f826040111c6746e2378dc45d9c0af3991a09
+# first bad commit: [68997fff94afa51b5f74dd90aceec74ce13b3253] dmaengine: fsldma: Adding macro FSL_DMA_IN/OUT implement for ARM platform
+
+---
+[7]:
+
+Reverting the patch fixes the problem. Exposed by combination of CONFIG_PREEMPT=y
+with CONFIG_LOCK_TORTURE_TEST=y.
+
+# bad: [02fc169594e96f7c51c4f23114e12b7a18e85a0a] Add linux-next specific files for 20181219
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# bad: [423ff56561dc1c3fdd7c51a6697cc30b8d18d49a] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect bad 423ff56561dc1c3fdd7c51a6697cc30b8d18d49a
+# bad: [df9d2fc64d6fa6bbaaa25269ea3bc34e0ed7b47a] Merge remote-tracking branch 'pstore/for-next/pstore'
+git bisect bad df9d2fc64d6fa6bbaaa25269ea3bc34e0ed7b47a
+# good: [e71bcc2f73a9a6e68bcf6c3d692f1c1c15b3a9a6] Merge remote-tracking branch 'arm-soc/for-next'
+git bisect good e71bcc2f73a9a6e68bcf6c3d692f1c1c15b3a9a6
+# good: [e512b75b058ce0871513fa42f527ed2a957ddb2e] Merge remote-tracking branch 'powerpc/next'
+git bisect good e512b75b058ce0871513fa42f527ed2a957ddb2e
+# bad: [e54f3ffff6f0ff3d12d56a1473ed3dae5e557a32] Merge remote-tracking branch 'btrfs-kdave/for-next'
+git bisect bad e54f3ffff6f0ff3d12d56a1473ed3dae5e557a32
+# bad: [ea4ceac9e834a2dd6ff21b241b2442e92d84906f] Merge remote-tracking branch 'fscrypt/master'
+git bisect bad ea4ceac9e834a2dd6ff21b241b2442e92d84906f
+# good: [c31f54cdc8da03ba5dc422e37567c8846dfebd5b] Merge branch 'xtensa-tracehook' into xtensa-for-next
+git bisect good c31f54cdc8da03ba5dc422e37567c8846dfebd5b
+# bad: [e98b2ff0a03c7548d8bcaaf1e31673673aac5571] Merge remote-tracking branch 's390/features'
+git bisect bad e98b2ff0a03c7548d8bcaaf1e31673673aac5571
+# good: [a2d260bbba28ee242ef3865bbd821e020284b091] automerging branch "kernel.org-palmer-linux/next-ojn" into "for-next"
+git bisect good a2d260bbba28ee242ef3865bbd821e020284b091
+# good: [a7b1868a5f473fb93d912a618883cef0d43653b9] s390/zcrypt: rework ap scan bus code
+git bisect good a7b1868a5f473fb93d912a618883cef0d43653b9
+# bad: [9c60096d499e2b963d2680996b03c8c77eab7cdd] automerging branch "kernel.org-palmer-linux/next-sg_chain" into "for-next"
+git bisect bad 9c60096d499e2b963d2680996b03c8c77eab7cdd
+# bad: [dd88b540ab6d94a4ede88730ff92104e0d716815] automerging branch "kernel.org-palmer-linux/next-preempt" into "for-next"
+git bisect bad dd88b540ab6d94a4ede88730ff92104e0d716815
+# bad: [55a5606e563cafba64b59ece8f75f9c0862eb1c4] RISC-V: Add CONFIG_PREEMPT=y to defconfig
+git bisect bad 55a5606e563cafba64b59ece8f75f9c0862eb1c4
+# first bad commit: [55a5606e563cafba64b59ece8f75f9c0862eb1c4] RISC-V: Add CONFIG_PREEMPT=y to defconfig
+
+---
+[8]:
+
+This problem results in a stall on reboot. Reverting the offending patch
+fixes the problem.
+
+# bad: [340ae71f9dd421227a58c14a909b63033745dca4] Add linux-next specific files for 20181221
+# good: [7566ec393f4161572ba6f11ad5171fd5d59b0fbd] Linux 4.20-rc7
+git bisect start 'HEAD' 'v4.20-rc7'
+# good: [9f3de88514b2b5666214f0be3bc98d4e7136a7f1] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect good 9f3de88514b2b5666214f0be3bc98d4e7136a7f1
+# good: [f4dd556a2cc77f672b9ba585aaad094a6fe09cf7] Merge remote-tracking branch 'spi/for-next'
+git bisect good f4dd556a2cc77f672b9ba585aaad094a6fe09cf7
+# bad: [75f0840128c421df5e1741f5df22a34409bb5d72] Merge remote-tracking branch 'char-misc/char-misc-next'
+git bisect bad 75f0840128c421df5e1741f5df22a34409bb5d72
+# bad: [759c7b0b404422c61ad9de57ef74a7fbe32c398c] Merge remote-tracking branch 'edac-amd/for-next'
+git bisect bad 759c7b0b404422c61ad9de57ef74a7fbe32c398c
+# bad: [d05ef4b240949dd78c319b3e8f3f162e5d3e332c] Merge branch 'x86/fpu'
+git bisect bad d05ef4b240949dd78c319b3e8f3f162e5d3e332c
+# bad: [1bce5ee16f83cf13a2a6d95c1bd579384036adff] Merge branch 'locking/atomics'
+git bisect bad 1bce5ee16f83cf13a2a6d95c1bd579384036adff
+# good: [eaaf055f27a0eaaed0cdb0d3aa8d7fb892829ccb] Merge branches 'bug.2018.11.12a', 'consolidate.2018.12.01a', 'doc.2018.11.12a', 'fixes.2018.11.12a', 'initrd.2018.11.08b', 'sil.2018.11.12a' and 'srcu.2018.11.27a' into HEAD
+git bisect good eaaf055f27a0eaaed0cdb0d3aa8d7fb892829ccb
+# good: [a97b5635d2d670fc351f7d34a84e040a2597c185] Merge branch 'core/rcu'
+git bisect good a97b5635d2d670fc351f7d34a84e040a2597c185
+# bad: [d0e9d5b657c44e0d2584ca6272852ddc6da97b7a] Merge branch 'efi/urgent'
+git bisect bad d0e9d5b657c44e0d2584ca6272852ddc6da97b7a
+# good: [47c33a095e1fae376d74b4160a0d73c1a4e73969] x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+git bisect good 47c33a095e1fae376d74b4160a0d73c1a4e73969
+# good: [80424b02d42bb22f8ff8839cb93a84ade53b39c0] efi: Reduce the amount of memblock reservations for persistent allocations
+git bisect good 80424b02d42bb22f8ff8839cb93a84ade53b39c0
+# bad: [793423cf07e51e3185b8680167115813589c057d] efi: Align 'efi_guid_t' to 64 bits
+git bisect bad 793423cf07e51e3185b8680167115813589c057d
+# good: [a0fc5578f1d63ba6e80d9509991b4c14f6eaf488] efi: Let kmemleak ignore false positives
+git bisect good a0fc5578f1d63ba6e80d9509991b4c14f6eaf488
+# first bad commit: [793423cf07e51e3185b8680167115813589c057d] efi: Align 'efi_guid_t' to 64 bits
