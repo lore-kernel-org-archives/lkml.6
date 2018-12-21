@@ -2,110 +2,93 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F3BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C65D4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F1621970
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9508B2190A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 18:59:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpmsUmYQ"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ISzQgvg5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391517AbeLUS7g (ORCPT
+        id S2391531AbeLUS7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:59:36 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33724 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731021AbeLUS7g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:59:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so2898962plo.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 10:59:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aMJEbotsY0CcZMlWLeMf5Uy0Q/EdQui9y5jYRTd4RfU=;
-        b=ZpmsUmYQBgK71TI7MvLTByionVl0kD61PcPeuLkSJ80tNnbmSbQnMg9v+B8pUNR9o8
-         358tXxXDZU4NBJKblxU+Sm1zddTKbD5geU8cs/2beNVnkTSlWLEqsdPO4lLNXRv88Lfa
-         01qs0IMXnfrsFm7fCrzOEEmj80GJvVdYaTAefor/YIsp+Pkno7gO/YLMf5tMf3ARG4Tu
-         fDLjDBDdpN8uk+J08BWnf1f4m92MUPOCCBrfRq61SUZs9K1CKjVF6NPPkqhFqMUpzr2J
-         9WDEg/IRy2f39EBqKMg66UUhCf+As99mFuLqDjHiNRcmEGDDXj4A7yg/YM+TsLLRwLTs
-         sY4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aMJEbotsY0CcZMlWLeMf5Uy0Q/EdQui9y5jYRTd4RfU=;
-        b=QcOTw0AZK86GU8xum+wd33CLe8MGC/FU0oGxUR5VDDww0j5IfQ65VgPvESvHWHUH9z
-         rqSFmAowsf8NUbGsVZink0NaSIk6lR70UtyZS3hn9XcSFcf+2Uwbcshc2l2Q4pi5SG64
-         CnCiS6kaZZf2Wv36ENBN6UXEVtO1EejypR5NjR4B0owKx2dkbwhtz+LfU4RE8UzNVqSN
-         rM53xyv21orB1DT7jtMSNlmfD7nCMhf0hz7ww3XS0a32NiEcSSuGp/yWKXYxmWfrud+y
-         +ZqUdUAFd37RAmrimynAr91zSTvblfE9Llzm1yG/zvfDJaos8T1ipppd6iRS1aDjZcRn
-         nNXA==
-X-Gm-Message-State: AJcUukfeFyX3LEUB9ekZpRbzjv0eXH+EHPoLqTjYQEfMhWOyo4KtkRUr
-        2zV2VSD8+fq79qJyorJ9l4pSwSjX
-X-Google-Smtp-Source: ALg8bN4vJSOGEKAC0zfHBKKq3GARueXSm1EUkMlA2QM2PH3gKpci4Xf32Hq/mgfw2acsJKMx5BGUmg==
-X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr3687563plo.316.1545418775929;
-        Fri, 21 Dec 2018 10:59:35 -0800 (PST)
-Received: from [192.168.2.145] ([94.29.36.169])
-        by smtp.googlemail.com with ESMTPSA id h9sm34899448pgd.53.2018.12.21.10.59.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 10:59:35 -0800 (PST)
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Eric Anholt <eric@anholt.net>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jason Ekstrand <jason@jlekstrand.net>
-References: <20181108160422.17743-1-eric@anholt.net>
- <20181108160422.17743-3-eric@anholt.net>
- <faf15d58-a076-49fb-c903-15acdf6f8ffe@gmail.com>
- <fadfc03c-7f80-216b-299f-27a1d8d7877b@gmail.com>
- <44f25278-fbbd-f95b-c2ab-87834e5d095e@gmail.com>
- <6773eadb-5c15-8168-9bba-5e1cfd1c3194@amd.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <540f2669-4686-fec1-31f5-b8dacc5c16d4@gmail.com>
-Date:   Fri, 21 Dec 2018 21:59:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 21 Dec 2018 13:59:44 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51244 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731021AbeLUS7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 13:59:43 -0500
+Received: from zn.tnic (p200300EC2BD180001911F64A521FA286.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8000:1911:f64a:521f:a286])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D88EC1EC0987;
+        Fri, 21 Dec 2018 19:59:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1545418782;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Ae2sv8S/OzHcQlqPR29Y8PNqNGcrO0lS1WfbgYt1NSs=;
+        b=ISzQgvg50f+2Y9UFmrd1VPpY8qNrivf8N+a5m09e9Y+3XUQh/4TfpqsGyuxmiIpqpm5lr1
+        8QOZdjCMDsaIpmXshVC4M7+ki9Q48/1YGr3QGffE528ZzIxqUbydQMxf7VHZ31DPdq19o9
+        nB1WzR1tVoRpWxA5HV1UTG9ZhlYee1g=
+Date:   Fri, 21 Dec 2018 19:59:37 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     James Morse <james.morse@arm.com>
+Cc:     David Arcari <darcari@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI/APEI: Clear GHES block_status before panic()
+Message-ID: <20181221185937.GL1325@zn.tnic>
+References: <1545238252-79630-1-git-send-email-darcari@redhat.com>
+ <20181220192447.GG31403@zn.tnic>
+ <1691682.ckC9UJvgEr@aspire.rjw.lan>
+ <0bb80989-4fe5-c320-8ffc-0f39502110c9@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <6773eadb-5c15-8168-9bba-5e1cfd1c3194@amd.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <0bb80989-4fe5-c320-8ffc-0f39502110c9@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.12.2018 21:45, Koenig, Christian wrote:
-> Am 21.12.18 um 19:35 schrieb Dmitry Osipenko:
->> On 21.12.2018 21:27, Christian König wrote:
->>> Am 19.12.18 um 18:53 schrieb Dmitry Osipenko:
->>>> [SNIP]
->>>>> @@ -931,9 +718,6 @@ static signed long drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
->>>>>          if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
->>>>>            for (i = 0; i < count; ++i) {
->>>>> -            if (entries[i].fence)
->>>>> -                continue;
->>>>> -
->>>>>                drm_syncobj_fence_get_or_add_callback(syncobjs[i],
->>>>>                                      &entries[i].fence,
->>>>>                                      &entries[i].syncobj_cb,
->>>> Hello,
->>>>
->>>> The above three removed lines we added in commit 337fe9f5c1e7de ("drm/syncobj: Don't leak fences when WAIT_FOR_SUBMIT is set") that fixed a memleak. Removal of the lines returns the memleak because of disbalanced fence refcounting and it looks like they were removed unintentionally in this patch.
->>> That was already fixed with 61a98b1b9a8c7 drm/syncobj: remove drm_syncobj_cb and cleanup.
->>>
->>> This cleanup removed all the duplicate checking and is now adding the callback only once.
->> Okay, though that commit is not in linux-next. I assume it will show up eventually.
-> 
-> Need to double check, that could indeed be a problem.
+On Fri, Dec 21, 2018 at 06:52:20PM +0000, James Morse wrote:
+> Do we need to ghes_ack_error() too?
 
-Thanks for taking care!
+That's GHES v2 AFAICT.
+
+> With the location cleared the new kernel will never find the records, and
+> firmware can never re-use that location because it wasn't ack'd. The upshot is
+> RAS records can't be generated for the kdump kernel. The acpi spec talks about
+> use of the memory, so I don't think its fair for it to use this to disarm a
+> watchdog.
+> 
+> I think we can live with this as the kdump kernel isn't going to handle RAS
+> errors for the bulk of memory anyway.
+
+Usually, handling hw errors is always better than not but the second
+kernel can't do anything better in that respect than the first, right?
+If it panics, it panics - no matter the kernel. Generally.
+
+Therefore I think the role of the second kernel should be to be as
+resilient as possible to hw errors - like, not even see them :-) - dump
+the memory of the first kernel as quickly as possible and reboot for
+analysis.
+
+IMHO, of course.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
