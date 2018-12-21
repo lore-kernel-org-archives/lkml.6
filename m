@@ -2,109 +2,880 @@ Return-Path: <SRS0=OLKc=O6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762A1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA70CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436E9218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C4B218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Dec 2018 12:03:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SYptSWyG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VLQ6a+m0"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="a8z90ggo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390238AbeLUMAx (ORCPT
+        id S2387591AbeLUMDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:00:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39786 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729787AbeLUMAv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 07:00:51 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EEF7E608FF; Fri, 21 Dec 2018 12:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545393651;
-        bh=CkDdgRmS1HHJL7SV/HFC2wSaUMuRXE6vNsAOzcLl9p4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SYptSWyGkit+nMVV73RYyI/DUm9aYVSjtwSuNxxEuLeb1PNSC8sCvTbyL0bjyqrum
-         4BKoHg7je7vPGP5OXEWV5FBwlQyvvja5vvMUTmKiwwtvCBgLxsbqtQq5fVSlgHedUW
-         ih6Tj8+eXxndb235/2iUnAgTnuVUIH4pikKKffH0=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8EA0E60928;
-        Fri, 21 Dec 2018 12:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545393648;
-        bh=CkDdgRmS1HHJL7SV/HFC2wSaUMuRXE6vNsAOzcLl9p4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VLQ6a+m0KCTtIZKhnysfZIXFbx45uIZqlbfqtjznx+YdPDc1mklkWNEb0PJWUS7qG
-         8M+J03CquX/aPABwnHHR4kRDvpZKI89A7Jz1jASiG8Mx/IasAUYZhLLEMKsLQAJUU/
-         jpdPtN8E++WmU8LJdpJwu6TEO9Y6RN4a3OGHswu4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EA0E60928
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
-        mka@chromium.org, ilina@codeaurora.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH RFC 5/5] arm64: dts: msm: add PDC timer for apps_rsc for SDM845
-Date:   Fri, 21 Dec 2018 17:29:46 +0530
-Message-Id: <20181221115946.10095-6-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181221115946.10095-1-rplsssn@codeaurora.org>
-References: <20181221115946.10095-1-rplsssn@codeaurora.org>
+        Fri, 21 Dec 2018 07:03:36 -0500
+Received: from mail-eopbgr50081.outbound.protection.outlook.com ([40.107.5.81]:18800
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729043AbeLUMDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 07:03:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nEWVBnksLhqvZjHokbJ2OptFGWaS5yJIRDtnZ2mkgaQ=;
+ b=a8z90ggoT9pYgSXfyhcNXrVb+DRlVie9nr2qdX9rOnCFzFGoJwYL5/8lPz+aN7a/yur8LOYa0FveVkVq5K7jxFYgQSgsOJXueD6Rk4VpeeQaq3n7/Ho6G7Pep0gwHfFWTA/Jfd1voaGp99pAY/hetT/yCVP0nNn1glzU2f3AMHo=
+Received: from AM0PR08MB4483.eurprd08.prod.outlook.com (20.179.35.149) by
+ AM0PR08MB3841.eurprd08.prod.outlook.com (20.178.23.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.19; Fri, 21 Dec 2018 11:48:20 +0000
+Received: from AM0PR08MB4483.eurprd08.prod.outlook.com
+ ([fe80::1dff:434f:5905:45db]) by AM0PR08MB4483.eurprd08.prod.outlook.com
+ ([fe80::1dff:434f:5905:45db%5]) with mapi id 15.20.1446.020; Fri, 21 Dec 2018
+ 11:48:20 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>, "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH v3 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
+Thread-Topic: [PATCH v3 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
+Thread-Index: AQHUmSMSVCabQVuuG0yEg72XpGCd0w==
+Date:   Fri, 21 Dec 2018 11:48:20 +0000
+Message-ID: <20181221114742.25060-1-james.qian.wang@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: SYXPR01CA0109.ausprd01.prod.outlook.com
+ (2603:10c6:0:2d::18) To AM0PR08MB4483.eurprd08.prod.outlook.com
+ (2603:10a6:208:145::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3841;6:5p4jKFbPPj8TwfrGZhRR5nhCAoMEGlWicE8YTz3/bn9Iyr2SB2kC23Pcs9fcG+gMIz3FTCOGMY3p78GEQc+rs5zh5jYh2SUaoNEG6TuDAaDgz3AnFYE9JJEnfOy/2gd6WjLyb7ttQ9G+676H98cW//+6itYpFGM5nwRed180dAJYxkcceyM9zqTS1ZZlwLthv5++BBdepMiWM3aFzHR2J/alHR6Prnj8mjsHfF11PRjAlDp75O+g8QFQx7RmLdeQzkOYETajlrjIK692/nZhwlN8xuTW7PQlMYPwQbtEjibl5RVpUkjrogGPwGDIeRVBWodzohsjK9kwtIpPXsbi+tGyeGoOicIWBOLRDFZQuZD17lQi1ylrl4qUW7GEYC8BDIahJzVpVARVZQiWH8kZ31pxcaEyUXl4aQO0YUCjhRlvgb/hgRTR02ddJshhmFrPBzAWLTM1t47wT+DmpoOaYw==;5:gga70Wpy5IP0vvOYRMbn9gTc2ZbVwAG2VvOOiisl5lxZpE5Pird8SD/HZKaYtJoDScaSsIV7xaJdd+PdcWs1GFpqbuAjHuOB5MIk6aJFlCOWhJsZm9NJC9vHdtfiWn0jfhIeDjRQVZdjgeywBuZYQoEQ8lbR7lHTQceo5IflGCQ=;7:RHACoA3JHPY9pp3gWWUVaGhsTTP5v+Js7gyUULSN90GtnIw+p94F4vnVOfS8qxCHVORRrcQ6Lc+M0/DCTqMekG9mwRR87NutWosmCFRxFCXlzNOXuQIY2QWenMGBw8jkofttH8s7JvxxFhZw5ozxAg==
+x-ms-office365-filtering-correlation-id: dc91bc82-6d73-4cfe-b141-08d6673a3415
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3841;
+x-ms-traffictypediagnostic: AM0PR08MB3841:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB384128C7697155EBDADF5A0EB3B80@AM0PR08MB3841.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3841;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3841;
+x-forefront-prvs: 0893636978
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(396003)(136003)(376002)(189003)(199004)(2616005)(486006)(105586002)(476003)(52116002)(386003)(6506007)(102836004)(55236004)(575784001)(36756003)(186003)(26005)(7736002)(2906002)(71190400001)(4744004)(14444005)(5024004)(106356001)(71200400001)(256004)(8676002)(81156014)(81166006)(3846002)(305945005)(53946003)(7416002)(478600001)(6512007)(6116002)(37006003)(99286004)(54906003)(53936002)(25786009)(316002)(6436002)(5660300001)(6636002)(4326008)(1076003)(6486002)(6862004)(66066001)(68736007)(97736004)(8936002)(14454004)(103116003)(86362001)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3841;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: XypJ1IR7+kTSlBL3QY+QkHmWlJ0okY7RyGu7Vg6Ebj3SYbOfmjsw43cm0bOtn3QDx/tD7wvcNl9gJb7Z3LV7S0Q9NYUW2xwevFMOwiMkCKL+fGFXlZoqSRnOK4kKF7DXUgW34Afz2UQ189Eu9FBR/WeNOswB0U0FCABj81B06wDWNYCh5CVjetuBg7vpTX+WM2NsgbrtuyyOkVN4q7PtjsMHkGT0LaItedQYz93jkNbDfsNNwsbvuqvgkOSMIdLDs0HWlD00Mndnzv8Y2KcXRd4ODapRJqlCgVCmkNup9F6ubaG7EWttGY6g5kixAF0N
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc91bc82-6d73-4cfe-b141-08d6673a3415
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 11:48:20.7550
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3841
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PDC timer node for apps_rsc to program next wake-up
-timer value.
+Add komeda_kms abstracton to attach komeda_dev to DRM-KMS
+  CRTC: according to the komeda_pipeline
+  PLANE: according to komeda_layer (layer input pipeline)
+  PRIVATE_OBJS: komeda_pipeline/component all will be treat as private_objs
 
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+komeda_kms is for connecting DRM-KMS and komeda_dev, like reporting the
+kms object properties according to the komeda_dev, and pass/convert KMS's
+requirement to komeda_dev.
+
+Changes in v3:
+- Fixed style problem found by checkpatch.pl --strict.
+
+Changes in v2:
+- Unified abbreviation of "pipeline" to "pipe".
+
+Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/arm/display/komeda/Makefile   |   6 +-
+ .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 106 +++++++++++
+ .../gpu/drm/arm/display/komeda/komeda_drv.c   |  20 ++-
+ .../gpu/drm/arm/display/komeda/komeda_kms.c   | 169 ++++++++++++++++++
+ .../gpu/drm/arm/display/komeda/komeda_kms.h   | 113 ++++++++++++
+ .../drm/arm/display/komeda/komeda_pipeline.h  |   3 +
+ .../gpu/drm/arm/display/komeda/komeda_plane.c | 109 +++++++++++
+ .../arm/display/komeda/komeda_private_obj.c   |  88 +++++++++
+ 8 files changed, 609 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.h
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b256357e4db1..c73b717ed8ea 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1372,6 +1372,9 @@
- 			      <0x179d0000 0x10000>,
- 			      <0x179e0000 0x10000>;
- 			reg-names = "drv-0", "drv-1", "drv-2";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
- 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1382,6 +1385,12 @@
- 					  <WAKE_TCS    3>,
- 					  <CONTROL_TCS 1>;
- 
-+			pdc_timer@38 {
-+				compatible = "qcom,pdc-timer";
-+				reg = <0x38 0x1>,
-+				      <0x40 0x1>;
-+			};
+diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/=
+arm/display/komeda/Makefile
+index 25beae900ed2..1b875e5dc0f6 100644
+--- a/drivers/gpu/drm/arm/display/komeda/Makefile
++++ b/drivers/gpu/drm/arm/display/komeda/Makefile
+@@ -9,7 +9,11 @@ komeda-y :=3D \
+ 	komeda_dev.o \
+ 	komeda_format_caps.o \
+ 	komeda_pipeline.o \
+-	komeda_framebuffer.o
++	komeda_framebuffer.o \
++	komeda_kms.o \
++	komeda_crtc.o \
++	komeda_plane.o \
++	komeda_private_obj.o
+=20
+ komeda-y +=3D \
+ 	d71/d71_dev.o
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
+/drm/arm/display/komeda/komeda_crtc.c
+new file mode 100644
+index 000000000000..5bb5a55f6b31
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+@@ -0,0 +1,106 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++#include <linux/clk.h>
++#include <linux/spinlock.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_plane_helper.h>
++#include <drm/drm_crtc_helper.h>
++#include <linux/pm_runtime.h>
++#include "komeda_dev.h"
++#include "komeda_kms.h"
 +
- 			rpmhcc: clock-controller {
- 				compatible = "qcom,sdm845-rpmh-clk";
- 				#clock-cells = <1>;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of the Code Aurora Forum, hosted by The Linux Foundation.
++struct drm_crtc_helper_funcs komeda_crtc_helper_funcs =3D {
++};
++
++static const struct drm_crtc_funcs komeda_crtc_funcs =3D {
++};
++
++int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
++			   struct komeda_dev *mdev)
++{
++	struct komeda_crtc *crtc;
++	struct komeda_pipeline *master;
++	char str[16];
++	int i;
++
++	kms->n_crtcs =3D 0;
++
++	for (i =3D 0; i < mdev->n_pipelines; i++) {
++		crtc =3D &kms->crtcs[kms->n_crtcs];
++		master =3D mdev->pipelines[i];
++
++		crtc->master =3D master;
++		crtc->slave  =3D NULL;
++
++		if (crtc->slave)
++			sprintf(str, "pipe-%d", crtc->slave->id);
++		else
++			sprintf(str, "None");
++
++		DRM_INFO("crtc%d: master(pipe-%d) slave(%s) output: %s.\n",
++			 kms->n_crtcs, master->id, str,
++			 master->of_output_dev ?
++			 master->of_output_dev->full_name : "None");
++
++		kms->n_crtcs++;
++	}
++
++	return 0;
++}
++
++static struct drm_plane *
++get_crtc_primary(struct komeda_kms_dev *kms, struct komeda_crtc *crtc)
++{
++	struct komeda_plane *kplane;
++	struct drm_plane *plane;
++
++	drm_for_each_plane(plane, &kms->base) {
++		if (plane->type !=3D DRM_PLANE_TYPE_PRIMARY)
++			continue;
++
++		kplane =3D to_kplane(plane);
++		/* only master can be primary */
++		if (kplane->layer->base.pipeline =3D=3D crtc->master)
++			return plane;
++	}
++
++	return NULL;
++}
++
++static int komeda_crtc_add(struct komeda_kms_dev *kms,
++			   struct komeda_crtc *kcrtc)
++{
++	struct drm_crtc *crtc =3D &kcrtc->base;
++	int err;
++
++	err =3D drm_crtc_init_with_planes(&kms->base, crtc,
++					get_crtc_primary(kms, kcrtc), NULL,
++					&komeda_crtc_funcs, NULL);
++	if (err)
++		return err;
++
++	drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
++	drm_crtc_vblank_reset(crtc);
++
++	crtc->port =3D kcrtc->master->of_output_port;
++
++	return 0;
++}
++
++int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *md=
+ev)
++{
++	int i, err;
++
++	for (i =3D 0; i < kms->n_crtcs; i++) {
++		err =3D komeda_crtc_add(kms, &kms->crtcs[i]);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/=
+drm/arm/display/komeda/komeda_drv.c
+index 326ae264481f..d421d13e9742 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
+@@ -10,21 +10,25 @@
+ #include <linux/component.h>
+ #include <drm/drm_of.h>
+ #include "komeda_dev.h"
++#include "komeda_kms.h"
+=20
+ struct komeda_drv {
+ 	struct komeda_dev *mdev;
++	struct komeda_kms_dev *kms;
+ };
+=20
+ static void komeda_unbind(struct device *dev)
+ {
+ 	struct komeda_drv *mdrv =3D dev_get_drvdata(dev);
+=20
+-	dev_set_drvdata(dev, NULL);
+-
+ 	if (!mdrv)
+ 		return;
+=20
++	komeda_kms_detach(mdrv->kms);
++
+ 	komeda_dev_destroy(mdrv->mdev);
++
++	dev_set_drvdata(dev, NULL);
+ 	kfree(mdrv);
+ }
+=20
+@@ -33,7 +37,7 @@ static int komeda_bind(struct device *dev)
+ 	struct komeda_drv *mdrv;
+ 	int err;
+=20
+-	mdrv =3D kzalloc(sizeof(*mdrv), GFP_KERNEL);
++	mdrv =3D devm_kzalloc(dev, sizeof(*mdrv), GFP_KERNEL);
+ 	if (!mdrv)
+ 		return -ENOMEM;
+=20
+@@ -45,10 +49,18 @@ static int komeda_bind(struct device *dev)
+=20
+ 	dev_set_drvdata(dev, mdrv);
+=20
++	mdrv->kms =3D komeda_kms_attach(mdrv->mdev);
++	if (IS_ERR(mdrv->kms)) {
++		err =3D PTR_ERR(mdrv->kms);
++		goto destroy_mdev;
++	}
++
+ 	return 0;
+=20
++destroy_mdev:
++	komeda_dev_destroy(mdrv->mdev);
+ free_mdrv:
+-	kfree(mdrv);
++	devm_kfree(dev, mdrv);
+ 	return err;
+ }
+=20
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/=
+drm/arm/display/komeda/komeda_kms.c
+new file mode 100644
+index 000000000000..fd48360ca524
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++#include <linux/component.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_gem_cma_helper.h>
++#include <drm/drm_fb_helper.h>
++#include <linux/interrupt.h>
++#include "komeda_dev.h"
++#include "komeda_kms.h"
++#include "komeda_framebuffer.h"
++
++DEFINE_DRM_GEM_CMA_FOPS(komeda_cma_fops);
++
++static int komeda_gem_cma_dumb_create(struct drm_file *file,
++				      struct drm_device *dev,
++				      struct drm_mode_create_dumb *args)
++{
++	u32 alignment =3D 16; /* TODO get alignment from dev */
++
++	args->pitch =3D ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8),
++			    alignment);
++
++	return drm_gem_cma_dumb_create_internal(file, dev, args);
++}
++
++static struct drm_driver komeda_kms_driver =3D {
++	.driver_features =3D DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
++			   DRIVER_PRIME,
++	.lastclose			=3D drm_fb_helper_lastclose,
++	.gem_free_object_unlocked	=3D drm_gem_cma_free_object,
++	.gem_vm_ops			=3D &drm_gem_cma_vm_ops,
++	.dumb_create			=3D komeda_gem_cma_dumb_create,
++	.prime_handle_to_fd		=3D drm_gem_prime_handle_to_fd,
++	.prime_fd_to_handle		=3D drm_gem_prime_fd_to_handle,
++	.gem_prime_export		=3D drm_gem_prime_export,
++	.gem_prime_import		=3D drm_gem_prime_import,
++	.gem_prime_get_sg_table		=3D drm_gem_cma_prime_get_sg_table,
++	.gem_prime_import_sg_table	=3D drm_gem_cma_prime_import_sg_table,
++	.gem_prime_vmap			=3D drm_gem_cma_prime_vmap,
++	.gem_prime_vunmap		=3D drm_gem_cma_prime_vunmap,
++	.gem_prime_mmap			=3D drm_gem_cma_prime_mmap,
++	.fops =3D &komeda_cma_fops,
++	.name =3D "komeda",
++	.desc =3D "ARM Mali Komeda Display Processor driver",
++	.date =3D "20181101",
++	.major =3D 0,
++	.minor =3D 1,
++};
++
++static void komeda_kms_commit_tail(struct drm_atomic_state *old_state)
++{
++	struct drm_device *dev =3D old_state->dev;
++
++	drm_atomic_helper_commit_modeset_disables(dev, old_state);
++
++	drm_atomic_helper_commit_planes(dev, old_state, 0);
++
++	drm_atomic_helper_commit_modeset_enables(dev, old_state);
++
++	drm_atomic_helper_wait_for_flip_done(dev, old_state);
++
++	drm_atomic_helper_commit_hw_done(old_state);
++
++	drm_atomic_helper_cleanup_planes(dev, old_state);
++}
++
++static const struct drm_mode_config_helper_funcs komeda_mode_config_helper=
+s =3D {
++	.atomic_commit_tail =3D komeda_kms_commit_tail,
++};
++
++static const struct drm_mode_config_funcs komeda_mode_config_funcs =3D {
++	.fb_create		=3D komeda_fb_create,
++	.atomic_check		=3D NULL,/*komeda_kms_check*/
++	.atomic_commit		=3D drm_atomic_helper_commit,
++};
++
++static void komeda_kms_mode_config_init(struct komeda_kms_dev *kms,
++					struct komeda_dev *mdev)
++{
++	struct drm_mode_config *config =3D &kms->base.mode_config;
++
++	drm_mode_config_init(&kms->base);
++
++	komeda_kms_setup_crtcs(kms, mdev);
++
++	/* Get value from dev */
++	config->min_width	=3D 0;
++	config->min_height	=3D 0;
++	config->max_width	=3D 4096;
++	config->max_height	=3D 4096;
++	config->allow_fb_modifiers =3D true;
++
++	config->funcs =3D &komeda_mode_config_funcs;
++	config->helper_private =3D &komeda_mode_config_helpers;
++}
++
++struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
++{
++	struct komeda_kms_dev *kms =3D kzalloc(sizeof(*kms), GFP_KERNEL);
++	struct drm_device *drm;
++	int err;
++
++	if (!kms)
++		return ERR_PTR(-ENOMEM);
++
++	drm =3D &kms->base;
++	err =3D drm_dev_init(drm, &komeda_kms_driver, mdev->dev);
++	if (err)
++		goto free_kms;
++
++	drm->dev_private =3D mdev;
++
++	komeda_kms_mode_config_init(kms, mdev);
++
++	err =3D komeda_kms_add_private_objs(kms, mdev);
++	if (err)
++		goto cleanup_mode_config;
++
++	err =3D komeda_kms_add_planes(kms, mdev);
++	if (err)
++		goto cleanup_mode_config;
++
++	err =3D drm_vblank_init(drm, kms->n_crtcs);
++	if (err)
++		goto cleanup_mode_config;
++
++	err =3D komeda_kms_add_crtcs(kms, mdev);
++	if (err)
++		goto cleanup_mode_config;
++
++	err =3D component_bind_all(mdev->dev, kms);
++	if (err)
++		goto cleanup_mode_config;
++
++	drm_mode_config_reset(drm);
++
++	err =3D drm_dev_register(drm, 0);
++	if (err)
++		goto uninstall_irq;
++
++	return kms;
++
++uninstall_irq:
++	drm_irq_uninstall(drm);
++cleanup_mode_config:
++	drm_mode_config_cleanup(drm);
++free_kms:
++	kfree(kms);
++	return ERR_PTR(err);
++}
++
++void komeda_kms_detach(struct komeda_kms_dev *kms)
++{
++	struct drm_device *drm =3D &kms->base;
++	struct komeda_dev *mdev =3D drm->dev_private;
++
++	drm_dev_unregister(drm);
++	component_unbind_all(mdev->dev, drm);
++	komeda_kms_cleanup_private_objs(mdev);
++	drm_mode_config_cleanup(drm);
++	drm->dev_private =3D NULL;
++	drm_dev_put(drm);
++}
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.h b/drivers/gpu/=
+drm/arm/display/komeda/komeda_kms.h
+new file mode 100644
+index 000000000000..f13666004a42
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
+@@ -0,0 +1,113 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++#ifndef _KOMEDA_KMS_H_
++#define _KOMEDA_KMS_H_
++
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_writeback.h>
++
++/** struct komeda_plane - komeda instance of drm_plane */
++struct komeda_plane {
++	/** @base: &drm_plane */
++	struct drm_plane base;
++	/**
++	 * @layer:
++	 *
++	 * represents available layer input pipelines for this plane.
++	 *
++	 * NOTE:
++	 * the layer is not for a specific Layer, but indicate a group of
++	 * Layers with same capabilities.
++	 */
++	struct komeda_layer *layer;
++};
++
++/**
++ * struct komeda_plane_state
++ *
++ * The plane_state can be split into two data flow (left/right) and handle=
+d
++ * by two layers &komeda_plane.layer and &komeda_plane.layer.right
++ */
++struct komeda_plane_state {
++	/** @base: &drm_plane_state */
++	struct drm_plane_state base;
++
++	/* private properties */
++};
++
++/**
++ * struct komeda_wb_connector
++ */
++struct komeda_wb_connector {
++	/** @base: &drm_writeback_connector */
++	struct drm_writeback_connector base;
++
++	/** @wb_layer: represents associated writeback pipeline of komeda */
++	struct komeda_layer *wb_layer;
++};
++
++/**
++ * struct komeda_crtc
++ */
++struct komeda_crtc {
++	/** @base: &drm_crtc */
++	struct drm_crtc base;
++	/** @master: only master has display output */
++	struct komeda_pipeline *master;
++	/**
++	 * @slave: optional
++	 *
++	 * Doesn't have its own display output, the handled data flow will
++	 * merge into the master.
++	 */
++	struct komeda_pipeline *slave;
++};
++
++/** struct komeda_crtc_state */
++struct komeda_crtc_state {
++	/** @base: &drm_crtc_state */
++	struct drm_crtc_state base;
++
++	/* private properties */
++
++	/* computed state which are used by validate/check */
++	u32 affected_pipes;
++	u32 active_pipes;
++};
++
++/** struct komeda_kms_dev - for gather KMS related things */
++struct komeda_kms_dev {
++	/** @base: &drm_device */
++	struct drm_device base;
++
++	/** @n_crtcs: valid numbers of crtcs in &komeda_kms_dev.crtcs */
++	int n_crtcs;
++	/** @crtcs: crtcs list */
++	struct komeda_crtc crtcs[KOMEDA_MAX_PIPELINES];
++};
++
++#define to_kplane(p)	container_of(p, struct komeda_plane, base)
++#define to_kplane_st(p)	container_of(p, struct komeda_plane_state, base)
++#define to_kconn(p)	container_of(p, struct komeda_wb_connector, base)
++#define to_kcrtc(p)	container_of(p, struct komeda_crtc, base)
++#define to_kcrtc_st(p)	container_of(p, struct komeda_crtc_state, base)
++#define to_kdev(p)	container_of(p, struct komeda_kms_dev, base)
++
++int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *=
+mdev);
++
++int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *md=
+ev);
++int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *m=
+dev);
++int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
++				struct komeda_dev *mdev);
++void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev);
++
++struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev);
++void komeda_kms_detach(struct komeda_kms_dev *kms);
++
++#endif /*_KOMEDA_KMS_H_*/
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
+/gpu/drm/arm/display/komeda/komeda_pipeline.h
+index 2d68ffeae25d..114129d96851 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+@@ -333,6 +333,9 @@ struct komeda_pipeline_state {
+ #define to_improc_st(c)	container_of(c, struct komeda_improc_state, base)
+ #define to_ctrlr_st(c)	container_of(c, struct komeda_timing_ctrlr_state, b=
+ase)
+=20
++#define priv_to_comp_st(o) container_of(o, struct komeda_component_state, =
+obj)
++#define priv_to_pipe_st(o)  container_of(o, struct komeda_pipeline_state, =
+obj)
++
+ /* pipeline APIs */
+ struct komeda_pipeline *
+ komeda_pipeline_add(struct komeda_dev *mdev, size_t size,
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gp=
+u/drm/arm/display/komeda/komeda_plane.c
+new file mode 100644
+index 000000000000..0a4953a9a909
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+@@ -0,0 +1,109 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_plane_helper.h>
++#include "komeda_dev.h"
++#include "komeda_kms.h"
++
++static const struct drm_plane_helper_funcs komeda_plane_helper_funcs =3D {
++};
++
++static void komeda_plane_destroy(struct drm_plane *plane)
++{
++	drm_plane_cleanup(plane);
++
++	kfree(to_kplane(plane));
++}
++
++static const struct drm_plane_funcs komeda_plane_funcs =3D {
++};
++
++/* for komeda, which is pipeline can be share between crtcs */
++static u32 get_possible_crtcs(struct komeda_kms_dev *kms,
++			      struct komeda_pipeline *pipe)
++{
++	struct komeda_crtc *crtc;
++	u32 possible_crtcs =3D 0;
++	int i;
++
++	for (i =3D 0; i < kms->n_crtcs; i++) {
++		crtc =3D &kms->crtcs[i];
++
++		if ((pipe =3D=3D crtc->master) || (pipe =3D=3D crtc->slave))
++			possible_crtcs |=3D BIT(i);
++	}
++
++	return possible_crtcs;
++}
++
++/* use Layer0 as primary */
++static u32 get_plane_type(struct komeda_kms_dev *kms,
++			  struct komeda_component *c)
++{
++	bool is_primary =3D (c->id =3D=3D KOMEDA_COMPONENT_LAYER0);
++
++	return is_primary ? DRM_PLANE_TYPE_PRIMARY : DRM_PLANE_TYPE_OVERLAY;
++}
++
++static int komeda_plane_add(struct komeda_kms_dev *kms,
++			    struct komeda_layer *layer)
++{
++	struct komeda_dev *mdev =3D kms->base.dev_private;
++	struct komeda_component *c =3D &layer->base;
++	struct komeda_plane *kplane;
++	struct drm_plane *plane;
++	u32 *formats, n_formats =3D 0;
++	int err;
++
++	kplane =3D kzalloc(sizeof(*kplane), GFP_KERNEL);
++	if (!kplane)
++		return -ENOMEM;
++
++	plane =3D &kplane->base;
++	kplane->layer =3D layer;
++
++	formats =3D komeda_get_layer_fourcc_list(&mdev->fmt_tbl,
++					       layer->layer_type, &n_formats);
++
++	err =3D drm_universal_plane_init(&kms->base, plane,
++			get_possible_crtcs(kms, c->pipeline),
++			&komeda_plane_funcs,
++			formats, n_formats, NULL,
++			get_plane_type(kms, c),
++			"%s", c->name);
++
++	komeda_put_fourcc_list(formats);
++
++	if (err)
++		goto cleanup;
++
++	drm_plane_helper_add(plane, &komeda_plane_helper_funcs);
++
++	return 0;
++cleanup:
++	komeda_plane_destroy(plane);
++	return err;
++}
++
++int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *m=
+dev)
++{
++	struct komeda_pipeline *pipe;
++	int i, j, err;
++
++	for (i =3D 0; i < mdev->n_pipelines; i++) {
++		pipe =3D mdev->pipelines[i];
++
++		for (j =3D 0; j < pipe->n_layers; j++) {
++			err =3D komeda_plane_add(kms, pipe->layers[j]);
++			if (err)
++				return err;
++		}
++	}
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/driv=
+ers/gpu/drm/arm/display/komeda/komeda_private_obj.c
+new file mode 100644
+index 000000000000..9edfd6ab0c12
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++#include "komeda_dev.h"
++#include "komeda_kms.h"
++
++static struct drm_private_state *
++komeda_pipeline_atomic_duplicate_state(struct drm_private_obj *obj)
++{
++	struct komeda_pipeline_state *st;
++
++	st =3D kmemdup(obj->state, sizeof(*st), GFP_KERNEL);
++	if (!st)
++		return NULL;
++
++	st->active_comps =3D 0;
++
++	__drm_atomic_helper_private_obj_duplicate_state(obj, &st->obj);
++
++	return &st->obj;
++}
++
++static void
++komeda_pipeline_atomic_destroy_state(struct drm_private_obj *obj,
++				     struct drm_private_state *state)
++{
++	kfree(priv_to_pipe_st(state));
++}
++
++static const struct drm_private_state_funcs komeda_pipeline_obj_funcs =3D =
+{
++	.atomic_duplicate_state	=3D komeda_pipeline_atomic_duplicate_state,
++	.atomic_destroy_state	=3D komeda_pipeline_atomic_destroy_state,
++};
++
++static int komeda_pipeline_obj_add(struct komeda_kms_dev *kms,
++				   struct komeda_pipeline *pipe)
++{
++	struct komeda_pipeline_state *st;
++
++	st =3D kzalloc(sizeof(*st), GFP_KERNEL);
++	if (!st)
++		return -ENOMEM;
++
++	st->pipe =3D pipe;
++	drm_atomic_private_obj_init(&pipe->obj, &st->obj,
++				    &komeda_pipeline_obj_funcs);
++
++	return 0;
++}
++
++int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
++				struct komeda_dev *mdev)
++{
++	struct komeda_pipeline *pipe;
++	int i, err;
++
++	for (i =3D 0; i < mdev->n_pipelines; i++) {
++		pipe =3D mdev->pipelines[i];
++
++		err =3D komeda_pipeline_obj_add(kms, pipe);
++		if (err)
++			return err;
++
++		/* Add component */
++	}
++
++	return 0;
++}
++
++void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev)
++{
++	struct komeda_pipeline *pipe;
++	struct komeda_component *c;
++	int i, id;
++
++	for (i =3D 0; i < mdev->n_pipelines; i++) {
++		pipe =3D mdev->pipelines[i];
++		dp_for_each_set_bit(id, pipe->avail_comps) {
++			c =3D komeda_pipeline_get_component(pipe, id);
++
++			drm_atomic_private_obj_fini(&c->obj);
++		}
++		drm_atomic_private_obj_fini(&pipe->obj);
++	}
++}
+--=20
+2.17.1
 
