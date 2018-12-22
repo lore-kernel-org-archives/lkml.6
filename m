@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C9EC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D04AC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA8F21927
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:16:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E730721927
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545437760;
-	bh=mZfC7GdI6ibYlIxeNHfjh2ZpL23ahqOeMNCfr5RjwJs=;
+	s=default; t=1545437770;
+	bh=b4GDJSnPgE697ZATEUZ5ghkyV04y2gqW0krSz6m3sTE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CoAQgrM9G8kQCRnMsfuxhMlesq3qQ8YjH/Cb7+Sbz0hxczbWHuDLciSYCK09KSAzO
-	 fllEVYSfd1zLNWWRJUbCn7vsQEvYqB8sbHRPEYdWz36dyh/snexzjNVxgVdSxnSck8
-	 ox4/69Z6FtkBd2CpQa4KP6GncLKSKjaK2RATEOmg=
+	b=YiPsQWLyazUqp5XMgUpgPZW4Hie+Fe/xSrD9Gy4mOlGD4LEGy4HQ5xCBZd2Gx39Lf
+	 H1lahexk4MthgjbMJ499miiEywWiVom03V2Ne5TYxnpIOG6DmJNiycARqTaZnrK44B
+	 p1Lci2SZGF9MPEtLGMKPlGjtoTRo0BZDnxHepaRc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404827AbeLVAP7 (ORCPT
+        id S2404839AbeLVAQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:15:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45268 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 19:16:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404721AbeLVAPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:15:09 -0500
+        id S2390972AbeLVAPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:15:02 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [13.82.132.90])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D40E21934;
-        Sat, 22 Dec 2018 00:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5367521934;
+        Sat, 22 Dec 2018 00:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545437708;
-        bh=mZfC7GdI6ibYlIxeNHfjh2ZpL23ahqOeMNCfr5RjwJs=;
+        s=default; t=1545437702;
+        bh=b4GDJSnPgE697ZATEUZ5ghkyV04y2gqW0krSz6m3sTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3gpESN5YnYO3m6N33Dsr7CLGTnLaezkw6Q/PixHZjFIn2Hh8UENo/OH0hbcMg0XU
-         eRuzChBZmmTQkj+/rc6FyUhfCDqv53JnTmP9xNbw4mgtQVHblA7HnbizzyJ2Tsrugj
-         StoZdjR8/ihoHk8nS7MuHfMhq7ocVqbx2VequL4k=
+        b=DjZocuCf9mYqxaOatWUEug8fxYsybFFngfxjG5oAhUfrC3U5paJjLRG0inrvc63XU
+         JkBHjn1jsSLS3AdpJf26wGf9ayNP3Ngs8YMzIo0ybpH/nMNuGMLsJW76gDntQ6zoyh
+         GCBb9DZKpAiJoy0AwwkYwDvJ8+1VGTTyFijybjQo=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 07/11] drivers: thermal: Hide PCI driver when CONFIG_PCI is unset
-Date:   Sat, 22 Dec 2018 00:14:48 +0000
-Message-Id: <20181222001452.7474-8-okaya@kernel.org>
+Subject: [PATCH v1 03/11] vga-switcheroo: make PCI dependency explicit
+Date:   Sat, 22 Dec 2018 00:14:44 +0000
+Message-Id: <20181222001452.7474-4-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181222001452.7474-1-okaya@kernel.org>
 References: <20181222001452.7474-1-okaya@kernel.org>
@@ -61,55 +61,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver is both a platform and PCI driver. Hide PCI specific pieces
-when CONFIG_PCI is unset.
+This driver depends on the PCI infrastructure but the dependency has not
+been explicitly called out.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- .../intel/int340x_thermal/processor_thermal_device.c      | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/vga/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-index 284cf2c5a8fd..b84a475a1162 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-@@ -374,6 +374,7 @@ static int int3401_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PCI
- static irqreturn_t proc_thermal_pci_msi_irq(int irq, void *devid)
- {
- 	struct proc_thermal_device *proc_priv;
-@@ -482,6 +483,7 @@ static struct pci_driver proc_thermal_pci_driver = {
- 	.remove		= proc_thermal_pci_remove,
- 	.id_table	= proc_thermal_pci_ids,
- };
-+#endif
- 
- static const struct acpi_device_id int3401_device_ids[] = {
- 	{"INT3401", 0},
-@@ -505,16 +507,18 @@ static int __init proc_thermal_init(void)
- 	ret = platform_driver_register(&int3401_driver);
- 	if (ret)
- 		return ret;
--
-+#ifdef CONFIG_PCI
- 	ret = pci_register_driver(&proc_thermal_pci_driver);
--
-+#endif
- 	return ret;
- }
- 
- static void __exit proc_thermal_exit(void)
- {
- 	platform_driver_unregister(&int3401_driver);
-+#ifdef CONFIG_PCI
- 	pci_unregister_driver(&proc_thermal_pci_driver);
-+#endif
- }
- 
- module_init(proc_thermal_init);
+diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
+index b677e5d524e6..d5f1d8e1c6f8 100644
+--- a/drivers/gpu/vga/Kconfig
++++ b/drivers/gpu/vga/Kconfig
+@@ -21,6 +21,7 @@ config VGA_SWITCHEROO
+ 	bool "Laptop Hybrid Graphics - GPU switching support"
+ 	depends on X86
+ 	depends on ACPI
++	depends on PCI
+ 	select VGA_ARB
+ 	help
+ 	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
 -- 
 2.19.0
 
