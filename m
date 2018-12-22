@@ -2,72 +2,94 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB42C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E9AC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 220DD218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19D6E21927
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:12:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDQz/dDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387497AbeLVCA5 (ORCPT
+        id S1729246AbeLVCMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 21:00:57 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:38626 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeLVCA4 (ORCPT
+        Fri, 21 Dec 2018 21:12:45 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38090 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeLVCMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 21:00:56 -0500
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gaWWa-0000MD-Ma; Fri, 21 Dec 2018 19:56:20 -0600
-Message-ID: <930cf79431defc6fd4da2c2e64bd9a8a2c2f72bb.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 21 Dec 2018 19:56:19 -0600
-In-Reply-To: <CAJr6mf0HfJNdsHG2H6VnRMYW1WGqBr1gvwMQoWk3mSdDhO3EmQ@mail.gmail.com>
-References: <5bdfa97d.1c69fb81.4aef7.c9f7@mx.google.com>
-         <CAJr6mf0HfJNdsHG2H6VnRMYW1WGqBr1gvwMQoWk3mSdDhO3EmQ@mail.gmail.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: sabyasachi.linux@gmail.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, brajeswar.linux@gmail.com, linuxppc-dev@lists.ozlabs.org, jrdr.linux@gmail.com, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH] arch/powerpc: Use dma_zalloc_coherent
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Fri, 21 Dec 2018 21:12:45 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so3268586plb.5;
+        Fri, 21 Dec 2018 18:12:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DpBXnTrI3d3LSp9uVlQfU7VTXWrDm9hWpNXZOCmAIV4=;
+        b=XDQz/dDAou1ZwGcANy2a0ttg8Lym0TQc8Rz4TlghW30bOwvkLzIxqQ0/gr4GgCHalR
+         tjeICMQnd+TDgd41hwbYlZzwsvsBLoYgIvbWoPMsSwHHE281PcPCVsbemFMeLVGXOCya
+         +/47lc0a4fH3JztoqNnyYReVqrpY1Xe16fGG8ywpPBjuEaj+x1HVo0bZRkIG6LqVe9rD
+         Rrf4WhnE3viDBjL9I0aeX3qMZj5jv8dGJBp2RloMeTuW5VZJf0Qi+Ulryh3P7vdd3fNI
+         AoM8A1Ibae6E2bnNclW2kWDJSLWzzXmbuLwzKTv6qk0db4tz9eYdJ3kfWET1SyJ/KBv7
+         M4NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DpBXnTrI3d3LSp9uVlQfU7VTXWrDm9hWpNXZOCmAIV4=;
+        b=c4TA5ae2icr67Bdefcd8SUO8ST8SJCBEF0OAhGbF2UuJdx8edgJGJHU0NaEGjD1q7a
+         1DSZvZMVYEyQS12/IkLApiKDO9LrpWpFxNN0vg4hw/76svYDtXNTJUUQmg8VdWUCmQMD
+         AdF4zAsx9c3/p7coKDDNfDgZOeZidUgKLhLAtYzsIqIWxQwPnGZ1YS9L4C4MVQtjnjBp
+         mMk8NhkUIeGruG8YrLsRXxkWHWFoAMH74hdAgQ5IDV01lu2l/Twz9GaKSknFd4Mjz9iy
+         pJsdMlyDizk/4HoMJX5ACNZu2v0liZOBtA7zc0c230j8ErbiL8fa15xHW/nztDd+FeKV
+         DVdA==
+X-Gm-Message-State: AJcUuke0C3e4GKfh0rAvy8qyXv8zo6G5o2Yyl3os1BdPeDW/Or52z/kk
+        xquoYjO8V4w1i5TGtT6PEPY=
+X-Google-Smtp-Source: ALg8bN5fmmG/i6ee5iIYRv5CfR39/S0owTb9pWxcvhluSuELBUplv/ObYVzojV8PXD4BXoPwFvEKAQ==
+X-Received: by 2002:a17:902:7296:: with SMTP id d22mr4955123pll.265.1545444764949;
+        Fri, 21 Dec 2018 18:12:44 -0800 (PST)
+Received: from localhost.localdomain ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id i62sm27587666pge.44.2018.12.21.18.12.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 18:12:44 -0800 (PST)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, adobriyan@gmail.com,
+        akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH] proc: sysctl: fix double drop_sysctl_table()
+Date:   Sat, 22 Dec 2018 10:12:21 +0800
+Message-Id: <1545444741-31694-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-15 at 23:26 +0530, Sabyasachi Gupta wrote:
-> On Mon, Nov 5, 2018 at 7:52 AM Sabyasachi Gupta
-> <sabyasachi.linux@gmail.com> wrote:
-> > 
-> > Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
-> > 
-> > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> 
-> Any comment on this patch?
+The callers of insert_header() will drop sysctl table whatever
+insert_header() successes or fails.
+So we can't call drop_sysctl_table() in insert_header().
 
-Just that FSL patches should be CCed to me, and the subject line is too broad
-(and duplicates another patch posted around the same time).
+The call sites of insert_header() are all in fs/proc/proc_sysctl.c.
 
-I'm applying with the subject changed to
-"arch/powerpc/fsl_rmu: Use dma_zalloc_coherent".
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ fs/proc/proc_sysctl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
--Scott
-
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 4d598a3..5eddca4 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -241,7 +241,6 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+ 	if (header->ctl_table == sysctl_mount_point)
+ 		clear_empty_dir(dir);
+ 	header->parent = NULL;
+-	drop_sysctl_table(&dir->header);
+ 	return err;
+ }
+ 
+-- 
+1.8.3.1
 
