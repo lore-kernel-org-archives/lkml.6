@@ -2,395 +2,219 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DD7C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFDCC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B034219FC
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:56:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rho7A4F+"
+	by mail.kernel.org (Postfix) with ESMTP id 8489C219FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392342AbeLVQ40 (ORCPT
+        id S2392357AbeLVQ4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 11:56:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40004 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388358AbeLVQ40 (ORCPT
+        Sat, 22 Dec 2018 11:56:35 -0500
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:39455 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726511AbeLVQ4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 11:56:26 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i12so4033197pfo.7
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 08:56:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qL2jEx/LSxJ8wEnr1hT8Lz39PGS/nM6GagE3hQLkSkw=;
-        b=Rho7A4F+3eN0Blr5Il0GwIj4zsHQz/OVoX9WV7Sak1FBomEJp1bpnAsm7K5O7GHKaN
-         HOTbuOi/HkwczD8mqMDBgPmra+vn8pYBwgw4rx+ULdjr81EBxVxkfUJRuy2xzjIkoAVh
-         nY76kHsAflbR0AOIQZWbJc5T8n6qao5H9/iu3yjxWAFyvI6+NI19W3DPjClPZFbBdf55
-         U4mgvOVswfLGC10GCiDDlmU4HHhHKMv9NQpgDyfbmnRi1mgnE1witJF9PtuGjk/nEOdt
-         hvQGkyLjA6rCQI1IdgI3kacywF9k7nXJ5ZkPTjWHxtCg6rirosopIcVVQr99u0EzTkS3
-         PTPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qL2jEx/LSxJ8wEnr1hT8Lz39PGS/nM6GagE3hQLkSkw=;
-        b=eu3AG4/lRWgVSdiXJMftXxr3wEZaLmdC84zUjnsjnnKm4gCgGJRWhfQDv+GtcPbP4i
-         WOXGmW3n4Omo7rjHIAujV0uz0OfMP34t3mWs9Xo0gP+sie6s5J+xTin7Z6o0TUJ+JAx6
-         TmBFKWqKU835RqE5QVisR35BRedAl56NjJAIvnI1ygQCqkIhBOR4tJ6hjIMXeBaw0bTi
-         4+mbGqRzIy8mf0zYGSUIvckgbHwsiFUPo2ksnhWJXp5bvGpJi7hS/jeyb9Ssz/ZIUiX8
-         qCAFswVWJduCINqYqBJTghQXm5vP0dMA6FcD6yf3ckpUuJgV6KUloG8JGpkNG3rTOIMD
-         04Ww==
-X-Gm-Message-State: AA+aEWYpvI8yaSCwuviSCUo8t/ksXy7B2VSm+SZ/iEe+4Ti9OO4Zkj4r
-        DP3BCWVY+3fKx3psnA36sOpHrhc3uLU=
-X-Google-Smtp-Source: AFSGD/VFLNucoqdPwwIx2xIeG2BjIyT5TTPLqRL03grqx98Xt8BcE8oKV39Bul022a34jjJNhKqpxA==
-X-Received: by 2002:a62:b24a:: with SMTP id x71mr6889006pfe.148.1545490337202;
-        Sat, 22 Dec 2018 06:52:17 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id f64sm77511194pfh.0.2018.12.22.06.52.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Dec 2018 06:52:16 -0800 (PST)
-Date:   Sat, 22 Dec 2018 20:22:09 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>
-Subject: [PATCH v4 3/4] staging: greybus: arche-apb-ctrl.c: Switch to the
- gpio descriptor interface
-Message-ID: <54ba56b6b071ba48ca06713a108ccfb542c5d2e5.1545488665.git.nishadkamdar@gmail.com>
-References: <cover.1545488665.git.nishadkamdar@gmail.com>
+        Sat, 22 Dec 2018 11:56:34 -0500
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id DEAFAB8A78
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 12:08:32 +0000 (GMT)
+Received: (qmail 16172 invoked from network); 22 Dec 2018 12:08:32 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Dec 2018 12:08:32 -0000
+Date:   Sat, 22 Dec 2018 12:08:31 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
+        s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Linux-MM layout <linux-mm@kvack.org>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+Message-ID: <20181222120831.GC31517@techsingularity.net>
+References: <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
+ <alpine.DEB.2.21.1812061505010.162675@chino.kir.corp.google.com>
+ <CAHk-=wjVuLjZ1Wr52W=hNqh=_8gbzuKA+YpsVb4NBHCJsE6cyA@mail.gmail.com>
+ <alpine.DEB.2.21.1812091538310.215735@chino.kir.corp.google.com>
+ <20181210044916.GC24097@redhat.com>
+ <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
+ <0bbf4202-6187-28fb-37b7-da6885b89cce@suse.cz>
+ <alpine.DEB.2.21.1812141244450.186427@chino.kir.corp.google.com>
+ <0700f5c3-66a8-338a-0ba0-2231cc3bb637@suse.cz>
+ <alpine.DEB.2.21.1812211416020.219499@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <cover.1545488665.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1812211416020.219499@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface.
+On Fri, Dec 21, 2018 at 02:18:45PM -0800, David Rientjes wrote:
+> On Fri, 14 Dec 2018, Vlastimil Babka wrote:
+> 
+> > > It would be interesting to know if anybody has tried using the per-zone 
+> > > free_area's to determine migration targets and set a bit if it should be 
+> > > considered a migration source or a migration target.  If all pages for a 
+> > > pageblock are not on free_areas, they are fully used.
+> > 
+> > Repurposing/adding a new pageblock bit was in my mind to help multiple
+> > compactors not undo each other's work in the scheme where there's no
+> > free page scanner, but I didn't implement it yet.
+> > 
+> 
+> It looks like Mel has a series posted that still is implemented with 
+> linear scans through memory, so I'm happy to move the discussion there; I 
+> think the goal for compaction with regard to this thread is determining 
+> whether reclaim in the page allocator would actually be useful and 
+> targeted reclaim to make memory available for isolate_freepages() could be 
+> expensive.  I'd hope that we could move in a direction where compaction 
+> doesn't care where the pageblock is and does the minimal amount of work 
+> possible to make a high-order page available, not sure if that's possible 
+> with a linear scan.  I'll take a look at Mel's series though.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v4:
- - Use gpiod_set_raw_value() for deassert_reset() and
-   assert_reset() as gpiod_set_value() will change the
-   sematics of these calls by taking any gpio flags
-   into account.
- - Remove some unnecesssary line breaks.
- - Restore 'spi_en' gpio check in fw_flashing_seq()
-   as it is currently optional.
-Changes in v3:
- - Add this patch in a patchset.
-Changes in v2:
- - Resolved compilation errors.
----
- drivers/staging/greybus/arche-apb-ctrl.c | 154 ++++++++++-------------
- 1 file changed, 63 insertions(+), 91 deletions(-)
+That series has evolved significantly because there was a lot of missing
+pieces. While it's somewhat ready other than badly written changelogs, I
+didn't post it because I'm going offline and wouldn't respond to feedback
+and I imagine others are offline too and unavailable for review. Besides,
+the merge window is about to open and I know there are patches in Andrews
+tree for mainline that should be taken into account.
 
-diff --git a/drivers/staging/greybus/arche-apb-ctrl.c b/drivers/staging/greybus/arche-apb-ctrl.c
-index be5ffed90bcf..57eecd0dd0a6 100644
---- a/drivers/staging/greybus/arche-apb-ctrl.c
-+++ b/drivers/staging/greybus/arche-apb-ctrl.c
-@@ -8,9 +8,8 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
--#include <linux/of_gpio.h>
- #include <linux/of_irq.h>
- #include <linux/module.h>
- #include <linux/pinctrl/consumer.h>
-@@ -24,12 +23,12 @@ static void apb_bootret_deassert(struct device *dev);
- 
- struct arche_apb_ctrl_drvdata {
- 	/* Control GPIO signals to and from AP <=> AP Bridges */
--	int resetn_gpio;
--	int boot_ret_gpio;
--	int pwroff_gpio;
--	int wake_in_gpio;
--	int wake_out_gpio;
--	int pwrdn_gpio;
-+	struct gpio_desc *resetn;
-+	struct gpio_desc *boot_ret;
-+	struct gpio_desc *pwroff;
-+	struct gpio_desc *wake_in;
-+	struct gpio_desc *wake_out;
-+	struct gpio_desc *pwrdn;
- 
- 	enum arche_platform_state state;
- 	bool init_disabled;
-@@ -37,28 +36,28 @@ struct arche_apb_ctrl_drvdata {
- 	struct regulator *vcore;
- 	struct regulator *vio;
- 
--	int clk_en_gpio;
-+	struct gpio_desc *clk_en;
- 	struct clk *clk;
- 
- 	struct pinctrl *pinctrl;
- 	struct pinctrl_state *pin_default;
- 
- 	/* V2: SPI Bus control  */
--	int spi_en_gpio;
-+	struct gpio_desc *spi_en;
- 	bool spi_en_polarity_high;
- };
- 
- /*
-  * Note that these low level api's are active high
-  */
--static inline void deassert_reset(unsigned int gpio)
-+static inline void deassert_reset(struct gpio_desc *gpio)
- {
--	gpio_set_value(gpio, 1);
-+	gpiod_set_raw_value(gpio, 1);
- }
- 
--static inline void assert_reset(unsigned int gpio)
-+static inline void assert_reset(struct gpio_desc *gpio)
- {
--	gpio_set_value(gpio, 0);
-+	gpiod_set_raw_value(gpio, 0);
- }
- 
- /*
-@@ -75,11 +74,10 @@ static int coldboot_seq(struct platform_device *pdev)
- 		return 0;
- 
- 	/* Hold APB in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 
--	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING && apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/* Enable power to APB */
- 	if (!IS_ERR(apb->vcore)) {
-@@ -101,13 +99,13 @@ static int coldboot_seq(struct platform_device *pdev)
- 	apb_bootret_deassert(dev);
- 
- 	/* On DB3 clock was not mandatory */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 1);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 1);
- 
- 	usleep_range(100, 200);
- 
- 	/* deassert reset to APB : Active-low signal */
--	deassert_reset(apb->resetn_gpio);
-+	deassert_reset(apb->resetn);
- 
- 	apb->state = ARCHE_PLATFORM_STATE_ACTIVE;
- 
-@@ -136,25 +134,25 @@ static int fw_flashing_seq(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (gpio_is_valid(apb->spi_en_gpio)) {
-+	if (apb->spi_en) {
- 		unsigned long flags;
- 
- 		if (apb->spi_en_polarity_high)
--			flags = GPIOF_OUT_INIT_HIGH;
-+			flags = GPIOD_OUT_HIGH;
- 		else
--			flags = GPIOF_OUT_INIT_LOW;
-+			flags = GPIOD_OUT_LOW;
- 
--		ret = devm_gpio_request_one(dev, apb->spi_en_gpio,
--					    flags, "apb_spi_en");
--		if (ret) {
--			dev_err(dev, "Failed requesting SPI bus en gpio %d\n",
--				apb->spi_en_gpio);
-+		apb->spi_en = devm_gpiod_get(dev, "gb,spi-en-gpio", flags);
-+		if (IS_ERR(apb->spi_en)) {
-+			ret = PTR_ERR(apb->spi_en);
-+			dev_err(dev, "Failed requesting SPI bus en GPIO: %d\n",
-+				ret);
- 			return ret;
- 		}
- 	}
- 
- 	/* for flashing device should be in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_FW_FLASHING;
- 
- 	return 0;
-@@ -176,9 +174,8 @@ static int standby_boot_seq(struct platform_device *pdev)
- 	    apb->state == ARCHE_PLATFORM_STATE_OFF)
- 		return 0;
- 
--	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING && apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/*
- 	 * As per WDM spec, do nothing
-@@ -201,13 +198,12 @@ static void poweroff_seq(struct platform_device *pdev)
- 	if (apb->init_disabled || apb->state == ARCHE_PLATFORM_STATE_OFF)
- 		return;
- 
--	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING && apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/* disable the clock */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 0);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 0);
- 
- 	if (!IS_ERR(apb->vcore) && regulator_is_enabled(apb->vcore) > 0)
- 		regulator_disable(apb->vcore);
-@@ -216,7 +212,7 @@ static void poweroff_seq(struct platform_device *pdev)
- 		regulator_disable(apb->vio);
- 
- 	/* As part of exit, put APB back in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_OFF;
- 
- 	/* TODO: May have to send an event to SVC about this exit */
-@@ -226,7 +222,7 @@ static void apb_bootret_deassert(struct device *dev)
- {
- 	struct arche_apb_ctrl_drvdata *apb = dev_get_drvdata(dev);
- 
--	gpio_set_value(apb->boot_ret_gpio, 0);
-+	gpiod_set_value(apb->boot_ret, 0);
- }
- 
- int apb_ctrl_coldboot(struct device *dev)
-@@ -322,66 +318,46 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 				     struct arche_apb_ctrl_drvdata *apb)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 	int ret;
- 
--	apb->resetn_gpio = of_get_named_gpio(np, "reset-gpios", 0);
--	if (apb->resetn_gpio < 0) {
--		dev_err(dev, "failed to get reset gpio\n");
--		return apb->resetn_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->resetn_gpio,
--				    GPIOF_OUT_INIT_LOW, "apb-reset");
--	if (ret) {
--		dev_err(dev, "Failed requesting reset gpio %d\n",
--			apb->resetn_gpio);
-+	apb->resetn = devm_gpiod_get(dev, "gb,reset-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->resetn)) {
-+		ret = PTR_ERR(apb->resetn);
-+		dev_err(dev, "Failed requesting reset GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
--	apb->boot_ret_gpio = of_get_named_gpio(np, "boot-ret-gpios", 0);
--	if (apb->boot_ret_gpio < 0) {
--		dev_err(dev, "failed to get boot retention gpio\n");
--		return apb->boot_ret_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->boot_ret_gpio,
--				    GPIOF_OUT_INIT_LOW, "boot retention");
--	if (ret) {
--		dev_err(dev, "Failed requesting bootret gpio %d\n",
--			apb->boot_ret_gpio);
-+	apb->boot_ret = devm_gpiod_get(dev, "gb,boot-ret-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->boot_ret)) {
-+		ret = PTR_ERR(apb->boot_ret);
-+		dev_err(dev, "Failed requesting bootret GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* It's not mandatory to support power management interface */
--	apb->pwroff_gpio = of_get_named_gpio(np, "pwr-off-gpios", 0);
--	if (apb->pwroff_gpio < 0) {
--		dev_err(dev, "failed to get power off gpio\n");
--		return apb->pwroff_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->pwroff_gpio,
--				    GPIOF_IN, "pwroff_n");
--	if (ret) {
--		dev_err(dev, "Failed requesting pwroff_n gpio %d\n",
--			apb->pwroff_gpio);
-+	apb->pwroff = devm_gpiod_get_optional(dev, "gb,pwr-off-gpios",
-+					      GPIOD_IN);
-+	if (IS_ERR(apb->pwroff)) {
-+		ret = PTR_ERR(apb->pwroff);
-+		dev_err(dev, "Failed requesting pwroff_n GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* Do not make clock mandatory as of now (for DB3) */
--	apb->clk_en_gpio = of_get_named_gpio(np, "clock-en-gpio", 0);
--	if (apb->clk_en_gpio < 0) {
--		dev_warn(dev, "failed to get clock en gpio\n");
--	} else if (gpio_is_valid(apb->clk_en_gpio)) {
--		ret = devm_gpio_request_one(dev, apb->clk_en_gpio,
--					    GPIOF_OUT_INIT_LOW, "apb_clk_en");
--		if (ret) {
--			dev_warn(dev, "Failed requesting APB clock en gpio %d\n",
--				 apb->clk_en_gpio);
--			return ret;
--		}
-+	apb->clk_en = devm_gpiod_get_optional(dev, "gb,clock-en-gpio",
-+					      GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->clk_en)) {
-+		ret = PTR_ERR(apb->clk_en);
-+		dev_err(dev, "Failed requesting APB clock en GPIO: %d\n", ret);
-+		return ret;
- 	}
- 
--	apb->pwrdn_gpio = of_get_named_gpio(np, "pwr-down-gpios", 0);
--	if (apb->pwrdn_gpio < 0)
--		dev_warn(dev, "failed to get power down gpio\n");
-+	apb->pwrdn = devm_gpiod_get(dev, "gb,pwr-down-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->pwrdn)) {
-+		ret = PTR_ERR(apb->pwrdn);
-+		dev_warn(dev, "Failed requesting power down GPIO: %d\n", ret);
-+		return ret;
-+	}
- 
- 	/* Regulators are optional, as we may have fixed supply coming in */
- 	apb->vcore = devm_regulator_get(dev, "vcore");
-@@ -404,12 +380,8 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 	}
- 
- 	/* Only applicable for platform >= V2 */
--	apb->spi_en_gpio = of_get_named_gpio(np, "spi-en-gpio", 0);
--	if (apb->spi_en_gpio >= 0) {
--		if (of_property_read_bool(pdev->dev.of_node,
--					  "spi-en-active-high"))
--			apb->spi_en_polarity_high = true;
--	}
-+	if (of_property_read_bool(pdev->dev.of_node, "gb,spi-en-active-high"))
-+		apb->spi_en_polarity_high = true;
- 
- 	return 0;
- }
+The series is now 25 patches long and covers a lot of pre-requisites that
+would be necessary before removing the linear scanner. What is critical
+for a purely free-list scanner is that the exit conditions are identified
+and the series provides a lot of the pieces. For example, a non-linear
+scanner must properly control skip bits and isolate pageblocks from
+multiple compaction instances which this series does.
+
+The main takeawy from the series is that it reduces system CPU usage by
+17%, reduces free scan rates by 99.5% and increases THP allocation success
+rates by 33% giving almost 99% allocation success rates. It also;
+
+o Isolates pageblocks for a single compaction instance
+o Synchronises async/sync scanners when appropriate to reduce rescanning
+o Identifies when a pageblock is being rescanned and is "sticky" and
+  makes forward progress instead of looping excessively
+o Smarter logic when clearing pageblock skip bits so reduce scanning
+o Various different methods for reducing unnecessary scanning
+o Better handling of contention
+o Avoids compaction of remote nodes in direct compaction context
+
+If you do not want to wait until the new year, it's at
+git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git mm-fast-compact-v2r15
+
+Preliminary results based on thpscale using MADV_HUGEPAGE to allocate
+huge pages on a fragmented system.
+
+thpscale Fault Latencies
+                                    4.20.0-rc6             4.20.0-rc6
+                                mmotm-20181210         noremote-v2r14
+Amean     fault-both-1       864.83 (   0.00%)     1006.88 * -16.43%*
+Amean     fault-both-3      3566.05 (   0.00%)     2460.97 *  30.99%*
+Amean     fault-both-5      5685.02 (   0.00%)     4052.92 *  28.71%*
+Amean     fault-both-7      7289.40 (   0.00%)     5929.65 (  18.65%)
+Amean     fault-both-12    10937.46 (   0.00%)     8870.53 (  18.90%)
+Amean     fault-both-18    15440.48 (   0.00%)    11464.86 *  25.75%*
+Amean     fault-both-24    15345.83 (   0.00%)    13040.01 *  15.03%*
+Amean     fault-both-30    20159.73 (   0.00%)    16618.73 *  17.56%*
+Amean     fault-both-32    20843.51 (   0.00%)    14401.25 *  30.91%*
+
+Fault latency (either huge or base) is mostly improved even when 32
+tasks are trying to allocate huge pages on an 8-CPU single socket
+machine where contention is a factor
+
+thpscale Percentage Faults Huge
+                               4.20.0-rc6             4.20.0-rc6
+                           mmotm-20181210         noremote-v2r14
+Percentage huge-1        96.03 (   0.00%)       96.94 (   0.95%)
+Percentage huge-3        71.43 (   0.00%)       95.43 (  33.60%)
+Percentage huge-5        70.44 (   0.00%)       96.85 (  37.48%)
+Percentage huge-7        70.39 (   0.00%)       94.77 (  34.63%)
+Percentage huge-12       71.53 (   0.00%)       98.07 (  37.11%)
+Percentage huge-18       70.61 (   0.00%)       98.42 (  39.38%)
+Percentage huge-24       71.84 (   0.00%)       97.85 (  36.20%)
+Percentage huge-30       69.94 (   0.00%)       98.13 (  40.31%)
+Percentage huge-32       66.92 (   0.00%)       97.79 (  46.13%)
+
+96-98% of THP requests get huge pages on request
+
+         4.20.0-rc6  4.20.0-rc6
+       mmotm-20181210noremote-v2r14
+User          27.30       27.86
+System       192.70      159.42
+Elapsed      580.13      571.98
+
+System CPU usage is reduced so we get more huge pages for less work and
+the workload completes slightly faster.
+
+                               4.20.0-rc6     4.20.0-rc6
+                           mmotm-20181210 noremote-v2r14
+Allocation stalls                19156.00        3627.00
+
+Fewer stalls which is always a plus.
+
+THP fault alloc                  77804.00       84618.00
+THP fault fallback                7628.00         816.00
+THP collapse alloc                  12.00           0.00
+THP collapse fail                    0.00           0.00
+THP split                        56921.00       56920.00
+THP split failed                  1982.00         116.00
+Compaction stalls                36350.00       25541.00
+Compaction success               17491.00       22651.00
+Compaction failures              18859.00        2890.00
+Compaction efficiency               48.12          88.68
+
+Compaction efficiency is increased a lot (efficiency is a basic measure
+of success vs failure). Previously almost half of the THP requests failed.
+
+Page migrate success          10200844.00     7802473.00
+Page migrate failure              3703.00         409.00
+Compaction pages isolated     23093029.00    16532642.00
+Compaction migrate scanned    28454655.00     8976143.00
+Compaction free scanned      717517120.00     3632762.00
+Compact scan efficiency              3.97         247.09
+
+Migration scanning is down 32%, free scanning is down 99.5%. Scan efficiency
+is interesting because it's a measure of how many pages the free scanner
+examines for one migration source. Before the series, we had to scan *way*
+more pages to find a free page where as now we scan *fewer* pages to find
+a migration target due to the use of free lists.
+
+Kcompactd wake                       1.00           9.00
+Kcompactd migrate scanned        14023.00       13318.00
+Kcompactd free scanned            6932.00        6643.00
+
+Minor improvements for kcompactd but for this workload, it was barely
+active.
+
+I'll rebase and repost in the new year and I think it should be considered
+a prerequisite before considering the removal of the linear scanning.
+It'll be impossible to remove completely due to memory isoluation. If
+built on this series I would imagine that it would take the following
+approach.
+
+o The migration scanner remains linear or mostly linear (series uses
+  free page lists to get hints on where suitable migration sources are)
+o The free scanner would be purely based on the free lists i.e.
+  fast_isolate_freepages would be the only scanner
+o The migration scanner would need to be strict about obeying the skip
+  bit to avoid picking a migration source that was previously a
+  migration target
+o The exit condition for compaction is not when scanners meet but when
+  fast_isolate_freepages cannot find any pageblock that is
+  MIGRATE_MOVABLE && !pageblock_skip
+
 -- 
-2.17.1
-
+Mel Gorman
+SUSE Labs
