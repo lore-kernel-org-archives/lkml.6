@@ -2,412 +2,234 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55961C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45367C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157E52192C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA86A2192C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:31:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mfOVyahx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391906AbeLVA1f (ORCPT
+        id S2404278AbeLVAbT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:27:35 -0500
-Received: from mga04.intel.com ([192.55.52.120]:48597 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404084AbeLVA1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:27:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 16:26:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="128134562"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Dec 2018 16:26:29 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Reinette Chatre" <reinette.chatre@intel.com>,
-        "Babu Moger" <babu.moger@amd.com>,
-        "James Morse" <james.morse@arm.com>,
-        "Xiaochen Shen" <xiaochen.shen@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
-        "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v4 04/10] selftests/resctrl: Add callback to start a benchmark
-Date:   Fri, 21 Dec 2018 16:20:32 -0800
-Message-Id: <1545438038-75107-5-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
-References: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
+        Fri, 21 Dec 2018 19:31:19 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37389 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390968AbeLVAbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:31:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y126so3309099pfb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 16:31:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p+1BizQ1dU0KK9WderA0aAUU6w8Amm/sQxiieLd0kDU=;
+        b=mfOVyahx1bQ48yACVmHVxy8RqHH4vHpi8VrXsmsFY70yRT0DBHkVy68hc+v7+LdLQc
+         YQxHiFqDk4J0jcQ2TmRafG6vzzueT0wNmzBn3ab07Df9xXjwaXRTFP2ZBtMs5AhRGnpT
+         CprNPDWDyzKl8ykA56x9+HMd3dl4YvqrT9zcM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p+1BizQ1dU0KK9WderA0aAUU6w8Amm/sQxiieLd0kDU=;
+        b=PxKMhb6MJKWTTiQ6+c3qlMLSWQZSfYVhA5N6pdJ9KPGFJXWJU88EbvMQYMeou85Imm
+         zba/GAzBYKaosgnCRK2C+5wWj6fKE5PNUh6UXEt0BJs6abZwIg2bGjVrN/qgQejHjlbc
+         w1LU+JOEG/lKu8ral89GUYCKwvujjVbYe8o0h9hUMxQkmf5KnWccBycweXNqixuUUJeQ
+         aSbmZVvxehnWR6WV53A1Xoh0vBuMMRSB0ux6VT8qJPzzuw9gK5gVK32rKHOsDD65kurc
+         qJcY/axFDyzHnITORBSq89ui3UvSUWuFEC8UfQwxWLvIesyGVmFIrIsfeoIXdrFEGSgg
+         gonA==
+X-Gm-Message-State: AJcUukc5GdrQod45RzLdyeGO1/yPnfrpOKXA+icRyomTpTS/tX5vrwsg
+        e1PMtzl78nbjTYA725hwRc3p7Q==
+X-Google-Smtp-Source: ALg8bN7jxNw2GkQh8FWeHh+29SIOu7Q13ngpszvssklwhNs7ulCc1uqkq3bjRzSlIGjgkp1SOC8gpA==
+X-Received: by 2002:a63:184a:: with SMTP id 10mr4346194pgy.81.1545438677396;
+        Fri, 21 Dec 2018 16:31:17 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id g11sm34089874pfo.139.2018.12.21.16.31.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 16:31:16 -0800 (PST)
+Date:   Fri, 21 Dec 2018 16:31:16 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+Message-ID: <20181222003116.GE261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-3-bgodavar@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181220144639.15928-3-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
+> This patch will help to stop frame reassembly errors while changing
+> the baudrate. This is because host send a change baudrate request
+> command to the chip with 115200 bps, Whereas chip will change their
+> UART clocks to the enable for new baudrate and sends the response
+> for the change request command with newer baudrate, On host side
+> we are still operating in 115200 bps which results of reading garbage
+> data. Here we are pulling RTS line, so that chip we will wait to send data
+> to host until host change its baudrate.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 5a07c2370289..1680ead6cc3d 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>  	struct qca_data *qca = hu->priv;
+>  	struct sk_buff *skb;
+> -	struct qca_serdev *qcadev;
+>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>  
+>  	if (baudrate > QCA_BAUDRATE_3200000)
+> @@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	/* Disabling hardware flow control is mandatory while
+> -	 * sending change baudrate request to wcn3990 SoC.
+> -	 */
+> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+> -	if (qcadev->btsoc_type == QCA_WCN3990)
+> -		hci_uart_set_flow_control(hu, true);
+> -
+>  	/* Assign commands to change baudrate and packet type. */
+>  	skb_put_data(skb, cmd, sizeof(cmd));
+>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> @@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>  	set_current_state(TASK_RUNNING);
+>  
+> -	if (qcadev->btsoc_type == QCA_WCN3990)
+> -		hci_uart_set_flow_control(hu, false);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  {
+>  	unsigned int speed, qca_baudrate;
+> +	struct qca_serdev *qcadev;
+>  	int ret;
+>  
+>  	if (speed_type == QCA_INIT_SPEED) {
+> @@ -1097,6 +1087,15 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  		if (!speed)
+>  			return 0;
+>  
+> +		/* Deassert RTS while changing the baudrate of chip and host.
+> +		 * This will prevent chip from transmitting its response with
+> +		 * the new baudrate while the host port is still operating at
+> +		 * the old speed.
+> +		 */
+> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+> +		if (qcadev->btsoc_type == QCA_WCN3990)
+> +			serdev_device_set_rts(hu->serdev, false);
+> +
+>  		qca_baudrate = qca_get_baudrate_value(speed);
+>  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+> @@ -1104,6 +1103,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  			return ret;
+>  
+>  		host_set_baudrate(hu, speed);
+> +
+> +		if (qcadev->btsoc_type == QCA_WCN3990)
+> +			serdev_device_set_rts(hu->serdev, true);
+>  	}
+>  
+>  	return 0;
 
-The callback starts a child process and puts the child pid in created
-resctrl group with specified memory bandwidth in schemata. The child
-starts running benchmark.
+I looked for ways to do without this change, but didn't find a good
+solution. There are several possible problems with baudrate changes:
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- tools/testing/selftests/resctrl/resctrl.h     |  27 ++
- tools/testing/selftests/resctrl/resctrl_val.c | 272 ++++++++++++++++++
- 2 files changed, 299 insertions(+)
+1) send request to BT controller to change the baudrate
 
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 01822f6258af..9820af253d4d 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -3,6 +3,7 @@
- #ifndef RESCTRL_H
- #define RESCTRL_H
- #include <stdio.h>
-+#include <stdarg.h>
- #include <errno.h>
- #include <sched.h>
- #include <stdlib.h>
-@@ -28,9 +29,34 @@
- 		exit(EXIT_FAILURE);		\
- 	} while (0)
- 
-+/*
-+ * resctrl_val_param:	resctrl test parameters
-+ * @resctrl_val:	Resctrl feature (Eg: mbm, mba.. etc)
-+ * @ctrlgrp:		Name of the control monitor group (con_mon grp)
-+ * @mongrp:		Name of the monitor group (mon grp)
-+ * @cpu_no:		CPU number to which the benchmark would be binded
-+ * @span:		Memory bytes accessed in each benchmark iteration
-+ * @mum_resctrlfs:	Should the resctrl FS be remounted?
-+ * @filename:		Name of file to which the o/p should be written
-+ * @bw_report:		Bandwidth report type (reads vs writes)
-+ * @setup:		Call back function to setup test environment
-+ */
-+struct resctrl_val_param {
-+	char	*resctrl_val;
-+	char	ctrlgrp[64];
-+	char	mongrp[64];
-+	int	cpu_no;
-+	int	span;
-+	int	mum_resctrlfs;
-+	char	filename[64];
-+	char	*bw_report;
-+	int	(*setup)(int num, ...);
-+};
-+
- pid_t bm_pid, ppid;
- 
- int remount_resctrlfs(bool mum_resctrlfs);
-+int umount_resctrlfs(void);
- char get_sock_num(int cpu_no);
- int validate_bw_report_request(char *bw_report);
- int validate_resctrl_feature_request(char *resctrl_val);
-@@ -43,5 +69,6 @@ int write_bm_pid_to_resctrl(pid_t bm_pid, char *ctrlgrp, char *mongrp,
- int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
- 		    int group_fd, unsigned long flags);
- int run_fill_buf(int span, int malloc_and_init_memory, int memflush, int op);
-+int membw_val(char **benchmark_cmd, struct resctrl_val_param *param);
- 
- #endif /* RESCTRL_H */
-diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
-index f381aafc0523..9a79bf669254 100644
---- a/tools/testing/selftests/resctrl/resctrl_val.c
-+++ b/tools/testing/selftests/resctrl/resctrl_val.c
-@@ -11,6 +11,7 @@
-  */
- #include "resctrl.h"
- 
-+#define MB			(1024 * 1024)
- #define UNCORE_IMC		"uncore_imc"
- #define READ_FILE_NAME		"events/cas_count_read"
- #define WRITE_FILE_NAME		"events/cas_count_write"
-@@ -429,3 +430,274 @@ static unsigned long get_mem_bw_resctrl(void)
- 
- 	return mbm_total;
- }
-+
-+pid_t bm_pid, ppid;
-+
-+static void ctrlc_handler(int signum, siginfo_t *info, void *ptr)
-+{
-+	kill(bm_pid, SIGKILL);
-+	printf("Ending\n\n");
-+
-+	exit(EXIT_SUCCESS);
-+}
-+
-+/*
-+ * print_results_bw:	the memory bandwidth results are stored in a file
-+ * @filename:		file that stores the results
-+ * @bm_pid:		child pid that runs benchmark
-+ * @bw_imc:		perf imc counter value
-+ * @bw_resc:		memory bandwidth value
-+ *
-+ * Return:		0 on success. non-zero on failure.
-+ */
-+static int print_results_bw(char *filename,  int bm_pid, float bw_imc,
-+			    unsigned long bw_resc)
-+{
-+	unsigned long diff = labs(bw_imc - bw_resc);
-+	FILE *fp;
-+
-+	if (strcmp(filename, "stdio") == 0 || strcmp(filename, "stderr") == 0) {
-+		printf("Pid: %d \t Mem_BW_iMC: %f \t ", bm_pid, bw_imc);
-+		printf("Mem_BW_resc: %lu \t Difference: %lu\n", bw_resc, diff);
-+	} else {
-+		fp = fopen(filename, "a");
-+		if (!fp) {
-+			perror("Cannot open results file");
-+
-+			return errno;
-+		}
-+		if (fprintf(fp, "Pid: %d \t Mem_BW_iMC: %f \t Mem_BW_resc: %lu \t Difference: %lu\n",
-+			    bm_pid, bw_imc, bw_resc, diff) <= 0) {
-+			fclose(fp);
-+			perror("Could not log results.");
-+
-+			return errno;
-+		}
-+		fclose(fp);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+measure_vals(struct resctrl_val_param *param, unsigned long *bw_resc_start)
-+{
-+	unsigned long bw_imc, bw_resc, bw_resc_end;
-+	int ret;
-+
-+	/*
-+	 * Measure memory bandwidth from resctrl and from
-+	 * another source which is perf imc value or could
-+	 * be something else if perf imc event is not available.
-+	 * Compare the two values to validate resctrl value.
-+	 * It takes 1sec to measure the data.
-+	 */
-+	bw_imc = get_mem_bw_imc(param->cpu_no, param->bw_report);
-+	if (bw_imc <= 0)
-+		return bw_imc;
-+
-+	bw_resc_end = get_mem_bw_resctrl();
-+	if (bw_resc_end <= 0)
-+		return bw_resc_end;
-+
-+	bw_resc = (bw_resc_end - *bw_resc_start) / MB;
-+	ret = print_results_bw(param->filename, bm_pid, bw_imc, bw_resc);
-+	if (ret)
-+		return ret;
-+
-+	*bw_resc_start = bw_resc_end;
-+
-+	return 0;
-+}
-+
-+/*
-+ * membw_val:		execute benchmark and measure memory bandwidth on
-+ *			the benchmark
-+ * @benchmark_cmd:	benchmark command and its arguments
-+ * @param:		parameters passed to membw_val()
-+ *
-+ * Return:		0 on success. non-zero on failure.
-+ */
-+int membw_val(char **benchmark_cmd, struct resctrl_val_param *param)
-+{
-+	int ret = 0, pipefd[2], pipe_message = 0;
-+	char *resctrl_val = param->resctrl_val;
-+	unsigned long bw_resc_start = 0;
-+	struct sigaction sigact;
-+	union sigval value;
-+	FILE *fp;
-+
-+	if (strcmp(param->filename, "") == 0)
-+		sprintf(param->filename, "stdio");
-+
-+	if (strcmp(param->bw_report, "") == 0)
-+		param->bw_report = "total";
-+
-+	ret = validate_resctrl_feature_request(resctrl_val);
-+	if (ret)
-+		return ret;
-+
-+	if ((strcmp(resctrl_val, "mba")) == 0 ||
-+	    (strcmp(resctrl_val, "mbm")) == 0) {
-+		ret = validate_bw_report_request(param->bw_report);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = remount_resctrlfs(param->mum_resctrlfs);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * If benchmark wasn't successfully started by child, then child should
-+	 * kill parent, so save parent's pid
-+	 */
-+	ppid = getpid();
-+
-+	/* File based synchronization between parent and child */
-+	fp = fopen("sig", "w");
-+	if (!fp) {
-+		perror("Failed to open sig file");
-+
-+		return -1;
-+	}
-+	if (fprintf(fp, "%d\n", 0) <= 0) {
-+		perror("Unable to establish sync bw parent & child");
-+		fclose(fp);
-+
-+		return -1;
-+	}
-+	fclose(fp);
-+
-+	if (pipe(pipefd)) {
-+		perror("Unable to create pipe");
-+
-+		return -1;
-+	}
-+
-+	/*
-+	 * Fork to start benchmark, save child's pid so that it can be killed
-+	 * when needed
-+	 */
-+	bm_pid = fork();
-+	if (bm_pid == -1) {
-+		perror("Unable to fork");
-+
-+		return -1;
-+	}
-+
-+	if (bm_pid == 0) {
-+		/*
-+		 * Mask all signals except SIGUSR1, parent uses SIGUSR1 to
-+		 * start benchmark
-+		 */
-+		sigfillset(&sigact.sa_mask);
-+		sigdelset(&sigact.sa_mask, SIGUSR1);
-+
-+		sigact.sa_sigaction = run_benchmark;
-+		sigact.sa_flags = SA_SIGINFO;
-+
-+		/* Register for "SIGUSR1" signal from parent */
-+		if (sigaction(SIGUSR1, &sigact, NULL))
-+			PARENT_EXIT("Can't register child for signal");
-+
-+		/* Tell parent that child is ready */
-+		close(pipefd[0]);
-+		pipe_message = 1;
-+		write(pipefd[1], &pipe_message, sizeof(pipe_message));
-+		close(pipefd[1]);
-+
-+		/* Suspend child until delivery of "SIGUSR1" from parent */
-+		sigsuspend(&sigact.sa_mask);
-+
-+		PARENT_EXIT("Child is done");
-+	}
-+
-+	printf("Benchmark PID: %d\n", bm_pid);
-+
-+	/*
-+	 * Register CTRL-C handler for parent, as it has to kill benchmark
-+	 * before exiting
-+	 */
-+	sigact.sa_sigaction = ctrlc_handler;
-+	sigemptyset(&sigact.sa_mask);
-+	sigact.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGINT, &sigact, NULL) ||
-+	    sigaction(SIGHUP, &sigact, NULL)) {
-+		perror("Can't register parent for CTRL-C handler");
-+		ret = errno;
-+		goto out;
-+	}
-+
-+	value.sival_ptr = benchmark_cmd;
-+
-+	/* Taskset benchmark to specified cpu */
-+	ret = taskset_benchmark(bm_pid, param->cpu_no);
-+	if (ret)
-+		goto out;
-+
-+	/* Write benchmark to specified control&monitoring grp in resctrl FS */
-+	ret = write_bm_pid_to_resctrl(bm_pid, param->ctrlgrp, param->mongrp,
-+				      resctrl_val);
-+	if (ret)
-+		goto out;
-+
-+	if ((strcmp(resctrl_val, "mbm") == 0) ||
-+	    (strcmp(resctrl_val, "mba") == 0)) {
-+		ret = initialize_mem_bw_imc();
-+		if (ret)
-+			goto out;
-+
-+		initialize_mem_bw_resctrl(param->ctrlgrp, param->mongrp,
-+					  param->cpu_no, resctrl_val);
-+	}
-+
-+	/* Parent waits for child to be ready. */
-+	close(pipefd[1]);
-+	while (pipe_message != 1)
-+		read(pipefd[0], &pipe_message, sizeof(pipe_message));
-+	close(pipefd[0]);
-+
-+	/* Signal child to start benchmark */
-+	if (sigqueue(bm_pid, SIGUSR1, value) == -1) {
-+		perror("Unable to signal child to start execution");
-+		ret = errno;
-+		goto out;
-+	}
-+
-+	/* Give benchmark enough time to fully run */
-+	sleep(1);
-+
-+	/* Test runs until the callback setup() tells the test to stop. */
-+	while (1) {
-+		if (strcmp(resctrl_val, "mbm") == 0) {
-+			ret = param->setup(1, param);
-+			if (ret) {
-+				ret = 0;
-+				break;
-+			}
-+
-+			ret = measure_vals(param, &bw_resc_start);
-+			if (ret)
-+				break;
-+		} else if ((strcmp(resctrl_val, "mba") == 0)) {
-+			ret = param->setup(1, param);
-+			if (ret) {
-+				ret = 0;
-+				break;
-+			}
-+
-+			ret = measure_vals(param, &bw_resc_start);
-+			if (ret)
-+				break;
-+		} else {
-+			break;
-+		}
-+	}
-+
-+out:
-+	kill(bm_pid, SIGKILL);
-+	umount_resctrlfs();
-+
-+	return ret;
-+}
--- 
-2.19.1
+  this is an asynchronous operation, the actual baudrate change can
+  be delayed for multiple reasons, e.g.:
 
+  - request sits in the BT driver's TX queue
+
+    this could be worked around by checking skb_queue_empty()
+
+  - request sits in the UART buffer
+
+    a workaround for this could be calling
+    serdev_device_wait_until_sent() (only available with serdev though)
+
+  - the request sits in the UART FIFO
+
+    will be sent out 'immediately'. no neat solution available AFAIK,
+    a short sleep could be an effective workaround
+
+  - the controller may have a short delay to apply the change
+
+    Also no neat solution here. A/the same short sleep could work
+    around this
+
+2) change baudrate of the host UART
+  - this must not happen before the baudrate change request has been
+    sent to the BT controller, otherwise things are messed up
+    seriously
+
+    Ideally set_termios would make sure all pending data is sent
+    before the change is applied, some UART drivers do this, others
+    don't, so we can't rely on this.
+
+3) BT controller sends data after baudrate change
+
+  a few ms after a baudrate change the BT controller sends data
+  (4, 255, 2, 146, 1, 4, 14, 4, 1, 0, 0, 0) with the new baudrate
+
+  - dunno what the data stands for, but the BT stack/driver appears to
+    be fine with it, as long as the host UART operates at the new
+    baudrate when the data is received.
+
+  - if the data is received before the baudrate of the host UART is
+    changes we see 'frame reassembly' errors
+
+
+In summary, I think it should be feasible to guarantee that the
+baudrate change of the host UART is always done after the controller
+changed it's baudrate, however we can't guarantee at the same time
+that the baudrate change of the host controller is completed before
+the BT controller sends its 'response'.
+
+Using the RTS signal seems a reasonable way to delay the controller
+data until the host is ready, the only thing I don't like too much
+is that in this patch set we currently have two mechanisms to
+suppress/delay unwanted data. Unfortunately the RTS method isn't
+effective at initialization time.
+
+Not the scope of this patch set, but I really dislike the 300 ms delay
+(BAUDRATE_SETTLE_TIMEOUT_MS) in qca_set_baudrate(), and wonder if it
+is actually needed (I seriously doubt that it takes the BT controller
+300 ms to change its baudrate). I guess it's more a combination of what I
+described above in 1), once we are done with this series I might try
+to improve this, unless somebody is really, really convinced that such
+a gigantic delay is actually needed.
+
+Cheers
+
+Matthias
