@@ -2,94 +2,114 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D4BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1372C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132662146E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:03:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ObbaId99"
+	by mail.kernel.org (Postfix) with ESMTP id 8F6C921917
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545498256;
+	bh=Vcl0nMfhHiQ8DYKu/IzgWLTukCq4YFYXgFMMOqhqMcE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=VmWzTsM6q0naYVQgHQ7T6PFMrFwWtPW7+CCaBCUGfEGHgohvQDxU+c5FnP2ebTVdf
+	 t+UjJmqxj/DCUtq86w9ilrXo1l76QiBF0tWQtPWCFgwVmqRHOWg3tj1JzjSVw9nUiA
+	 0x1Csib8IpsaFLfvwY47AMNyqXQDfd00EmP1nTic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404907AbeLVRCu (ORCPT
+        id S1732977AbeLVREP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:02:50 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40372 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731870AbeLVRCp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:02:45 -0500
-Received: by mail-io1-f65.google.com with SMTP id a11so3658614ioq.7;
-        Sat, 22 Dec 2018 09:02:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dmYO1463TLeixuheCGgpPDevsGlONa9PrJNb5gHcVyU=;
-        b=ObbaId997euv174p9Vbkk+ty/85lXUDGt25qjwyw/q1RVIYimuk/4q3SYM03gDo5cL
-         eQ6nDwM+ce+uYMSTzqQUwOtot+5xcBg9w5VsaGTKrhgYlfuyZ8aLh1oV/cRyt/2QeB/B
-         EXgjDrvBE2IKZ+MQjnBVBokM1eWB2U0XdPKkdEJcAYV+GGoeX4jFcfQbf/gTRPzPS5ma
-         ZZWMThpL6uFi9AyTK+2bwIxwdHZSs7qDeiZ59ErGwopC7z2wu/ZGRRLMDQ+tcB453C0q
-         2VVFdAcdU80SjVz6u9mbGkUwZqpNH2jEPP562RhhHuqKNa4dbh+ytdWVvTMbc1xwd/vj
-         RpHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dmYO1463TLeixuheCGgpPDevsGlONa9PrJNb5gHcVyU=;
-        b=HtmIoldL7ZyvbNpDtD44QLRlR44PD2aFRglX9xYeyvD189HsVpRFUzE7L7RcN7IGrs
-         xOUJuW6Gj0F+/afEDCN45qyQIOK0jZbE3nAXGOXT0+zXYn0Tj2Ov0xEDvua0dCgJCdnD
-         +VidKPHcaKf1XMHPvmLU3sgTwKUymbWaBWXocQesr4CnOW15KWlZXfDQJyvnsgS5bLgI
-         SSiVGL6HVJzWsc9cY37WfxxeRZWROkAGwFi1O0nO861PAYjRyenlBvwUHFThiR/ZiuWx
-         RMdKZl3XZSyKWPaSnBljPbRm7hkLza5mGOlW1secg3EIbNX+faKEqmY74sLfG9uhmbff
-         Gpew==
-X-Gm-Message-State: AJcUukdG7ZauEgZqYRD+7aFHL99eQEH3WgvzveosMCU+OExt5tJ4sxho
-        2BLUnDY3F1v2CIdSYu01FinC/OslTpU565xgDOw=
-X-Google-Smtp-Source: ALg8bN6m+gkkKxzQ+La2apYItzXVRsdSsGt5frMOceUstkL/ifbjiwUbq2hQ6xBvpb0QTfkIJOW4Je0W+11+VIgCGFM=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr5163857ioa.34.1545496506543;
- Sat, 22 Dec 2018 08:35:06 -0800 (PST)
+        Sat, 22 Dec 2018 12:04:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730712AbeLVREP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:04:15 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33F2E2146E;
+        Sat, 22 Dec 2018 17:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545498254;
+        bh=Vcl0nMfhHiQ8DYKu/IzgWLTukCq4YFYXgFMMOqhqMcE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MetwJoaFcLIqFQgwGJStJxt6Eq6bp4G5C/aNNOgRoe3K4+Nvabslj1emh80Cna/ab
+         cWmfwtXsq6p/WNIQcmOiCxgfpfhsMxeSY18hSTCuGRTY8ZZgAg1hFZ75byZUf2r36N
+         t/nR0NlSnwuNghq4AEPpslOIjleGpQRZko5LjK54=
+Date:   Sat, 22 Dec 2018 17:04:07 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Sergey Efimochkin <sergeyanton2007@gmail.com>
+Cc:     dan.carpenter@oracle.com,
+        Sergey Efimochkin <efimochkin.sv@phystech.edu>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: iio: adc: ad7280a: fix codestyle in
+ ad7280_event_handler
+Message-ID: <20181222170407.36530c12@archlinux>
+In-Reply-To: <20181217220602.89406-1-efimochkin.sv@phystech.edu>
+References: <20181217074540.GC15451@kadam>
+        <20181217220602.89406-1-efimochkin.sv@phystech.edu>
+X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181221202733.19627-1-deepa.kernel@gmail.com> <CAK8P3a3LivERgLTTmS0A35CoebS3n+cNWNXkoYKGam+fVR-Dxg@mail.gmail.com>
-In-Reply-To: <CAK8P3a3LivERgLTTmS0A35CoebS3n+cNWNXkoYKGam+fVR-Dxg@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sat, 22 Dec 2018 08:34:55 -0800
-Message-ID: <CABeXuvrdz2UwGBj1+gNhnwcy-uG_dKezM_fPqU99rKuQFsyHJw@mail.gmail.com>
-Subject: Re: [PATCH] sock: Make sock->sk_tstamp thread-safe
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Are we actually worried about concurrent writers here? I thought the
-> only problem was a race between writer and reader, which would mean
-> that we could solve it using only a seqcount_t which is cheaper to
-> update than a seqlock_t.
+On Tue, 18 Dec 2018 01:06:01 +0300
+Sergey Efimochkin <sergeyanton2007@gmail.com> wrote:
 
-I considered using just the seqcount_t. But, I think we do care about
-concurrent writers here.
-A couple of scenarios I can think of:
+> staging: iio: adc: ad7280a: fix codestyle in ad7280_event_handler
+> Signed-off-by: Sergey Efimochkin <efimochkin.sv@phystech.edu>
+Hi,
 
-1. When you have 2 concurrent recvmsg() calls on a socket, and they
-both try to update sk_tstamp.
-2. If a socket has don't have one of the SO_TIMESTAMP/NS options set
-and you have a first recvmsg and a concurrent ioctl call on the
-socket.
+I wouldn't say this is a real improvement on readability.
+If you are really determined to 'fix it', then I would suggest introducing
+local variables, and only having a single call to iio_push_event for all
+the deeply nested cases (well one per channel anyway).
 
-These are corner cases and if we don't care aout these then we can use
-just the sequence counters.
+Jonathan
 
-I have missed out tstamp update in the sunrcpc code. If everyone is ok
-with this approach, I will add it in when I post an update
+> ---
+> Changes in v2:
+> - changed patch prefix
+> - changed patch description
+> - removed incorrect fixes to codestyle
+>  drivers/staging/iio/adc/ad7280a.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+> index 58420dcb406d..f167ee1b2127 100644
+> --- a/drivers/staging/iio/adc/ad7280a.c
+> +++ b/drivers/staging/iio/adc/ad7280a.c
+> @@ -725,8 +725,7 @@ static irqreturn_t ad7280_event_handler(int irq, void *private)
+>  		} else {
+>  			if (((channels[i] >> 11) & 0xFFF) >= st->aux_threshhigh)
+>  				iio_push_event(indio_dev,
+> -					       IIO_UNMOD_EVENT_CODE(
+> -							IIO_TEMP,
+> +					       IIO_UNMOD_EVENT_CODE(IIO_TEMP,
+>  							0,
+>  							IIO_EV_TYPE_THRESH,
+>  							IIO_EV_DIR_RISING),
+> @@ -734,8 +733,7 @@ static irqreturn_t ad7280_event_handler(int irq, void *private)
+>  			else if (((channels[i] >> 11) & 0xFFF) <=
+>  				st->aux_threshlow)
+>  				iio_push_event(indio_dev,
+> -					       IIO_UNMOD_EVENT_CODE(
+> -							IIO_TEMP,
+> +					       IIO_UNMOD_EVENT_CODE(IIO_TEMP,
+>  							0,
+>  							IIO_EV_TYPE_THRESH,
+>  							IIO_EV_DIR_FALLING),
 
--Deepa
