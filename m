@@ -2,163 +2,202 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCEFC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE72C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BFB21934
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01FC92195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:58:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gk6zb+cg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNbh6UCx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733001AbeLVUgr (ORCPT
+        id S2389847AbeLVU6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:36:47 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37268 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbeLVUgr (ORCPT
+        Sat, 22 Dec 2018 15:58:12 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45657 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388396AbeLVU6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:36:47 -0500
-Received: by mail-io1-f68.google.com with SMTP id r7so1176405iog.4;
-        Sat, 22 Dec 2018 12:36:46 -0800 (PST)
+        Sat, 22 Dec 2018 15:58:11 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b20so6165041lfa.12
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 12:58:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Xa8t8ZE6d1wfwc95ofwTBS+BfsLbq4eXBVPERHKUjc=;
-        b=gk6zb+cgJ3EEJ6wg8PFtpL1/z8rUpznrY3d8Ynqq1FENCm4K/Fm8tHLAqR5YIGfChx
-         K2tZSJcUFdMSgdoy32+3cw4EnXYcOQdhPpgyumA6vH1o6Nk7Ju9qkDmXFUd1aDUjHZD5
-         wl0/rgyDdMCfguakTTktKxEphLa65+KhGC5iaCzeU3o80YATvjerX/gxysbHEH0Pjdci
-         agxsnOMHY+QHSdxNDPByc9+pHCzZngiBKvBSXamwir7piCqugHEQdk3XnRiml+eo4ZIF
-         Ckh0uwTeaQNDFltKClZVHtFwNs8AkbHSBOG3GCk9/5fyljvbWdUP3fMjuBv/YY2vuxOQ
-         sh9w==
+         :cc:content-transfer-encoding;
+        bh=H915YKffmipu2PzY2CpxH/kwDrQvisKAVYA+53xOKaQ=;
+        b=aNbh6UCxt6VTlKMKBclKpXydbHDRmOCh0sHUk+mMgl5hycjlxQHxqMgfDM+gjUoedv
+         cliM+lGIl3zzEBqY8DO//79WrlE52e29p30V6pwFM1X4JDA196Sasa0oFscJBvxI9A0k
+         +fQSUtHLegrkQXH2b8+ZL2R96o5thMspo81/LGPehTg332cu9wHn1wNxUzYT3dIVRxcU
+         FWms51AyFP+DZvS1RMckk7I6p7PiEyo/It3ERkZq0OZLeuhFIED5Za4amsD/mWXT5pbt
+         +nbPh47nes0KUyyMFQcb1M2Q0m6OXX6tby+rM4f9enrc32D8KNKKaZMkRgoDG17hYQlB
+         kNFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Xa8t8ZE6d1wfwc95ofwTBS+BfsLbq4eXBVPERHKUjc=;
-        b=Y7juHwB29noSdnxOVWl1W/DoqGfMQ2CDN3DDxZFVBwCpgUkLdi0Bum12uhT8PiEsbh
-         193rIkSkl91+u54eikMBd70t7tS9a6rz0m+0+IEp7HQ2snqwI/G1ZVa3+RJZAROduRO9
-         RkSgqP7kq4jPS0duWA0Inyy8U7/KphFe9/k/bj2tIVwgSV5HRsiRgYw6zU8s5A9BpVgr
-         d/ORcp4gpz2whLUSuZ8iAEBMR2naKDvFCoUTLUrf1Kg24kYzCYvgWv5+Bd60W2dhCgz5
-         5w2SEll9ZfsTyG6nAjYhp6VH3wmKoEj9Jyuv+5+b//WTpb3b2jFx4B6f/m5LIf6bswWM
-         aXqQ==
-X-Gm-Message-State: AJcUukfUEKrbiXiDRGcGeYw0nSPDbdpX9gLzMrrzprGJu3nJqQHGxQjK
-        +XTvH6Hx/lLustQjak5P+ow1xzsim5l8S38goyA=
-X-Google-Smtp-Source: ALg8bN7naKJl/KgXDs9c+1IcHtrcta1/IaSCwbB5tFmKwEI5gehgCZ6fSw0wq+D/ws+kr7SN8pWgTfwfjsKtsF2sKzs=
-X-Received: by 2002:a5e:a708:: with SMTP id b8mr5137270iod.126.1545511005513;
- Sat, 22 Dec 2018 12:36:45 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=H915YKffmipu2PzY2CpxH/kwDrQvisKAVYA+53xOKaQ=;
+        b=Hd8aG0nVZWs49sorEFLFjQrm2C3WHeUERN4aDsprWuvIIajwgHDj/np1SSLf4cyHHc
+         85u4dX2UiJC3TakDNtcG7y/xsDA94Ypv0JRyWbl1x6o4Ls/ob6K3P7hT374gmBM2Htct
+         QYmb9NnGRZWBkYVMn81Ku3upo29dKNN4zXtfclvLTjulA8a5NLJ72CbtrcdN6rEP18ph
+         m0SN2Jzk7YrIvC2ifCmMVs2ZQrGsmJacK63lg0k50PM5fJ0ZRYht7yePg2iaERj3BAro
+         u1N9+mJUFmHHckR6UU6R7xave1eEOfeP6xb+43FKAWD5jzg2JIs+1Ff5qWFQxZkpDcLW
+         Yn/A==
+X-Gm-Message-State: AA+aEWbttNTRotqG2k01MEltctB43aB9THwhGJKi4W2Iz7VXWeTFZ6AL
+        y3c//+gUM4fyzE8xwzOjadsvW9l29ipktf+f8A==
+X-Google-Smtp-Source: AFSGD/V6Vt7xtBLUDtmH7m1e+UVz/uxUa79Z5DdSZ1WaFfTl3RFi08h3rQjHwCWqvOwLf0u6Okog9q/HXuVYe1oXDcI=
+X-Received: by 2002:a19:c954:: with SMTP id z81mr3833422lff.150.1545512289138;
+ Sat, 22 Dec 2018 12:58:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20181221011752.25627-1-sre@kernel.org> <20181221180205.GH6707@atomide.com>
-In-Reply-To: <20181221180205.GH6707@atomide.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sat, 22 Dec 2018 14:36:34 -0600
-Message-ID: <CAHCN7xK-qnRp_s9MQ2-doGqPrfC_OOgciOKHYTC9L5eiTwzT9A@mail.gmail.com>
-Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
+In-Reply-To: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
+From:   Gabriel C <nix.or.die@gmail.com>
+Date:   Sat, 22 Dec 2018 21:57:42 +0100
+Message-ID: <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com>
+Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
+ userns mounts, breaking systemd-nspawn
+To:     Ellie Reeves <ellierevves@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Seth Forshee <seth.forshee@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 11:09 AM Tony Lindgren <tony@atomide.com> wrote:
->
-> * Sebastian Reichel <sre@kernel.org> [181221 01:18]:
-> > The new code has been tested on the Motorola Droid 4. For testing the audio
-> > should be configured to route Ext to Speaker or Headphone. Then you need to
-> > plug headphone, since its cable is used as antenna. For testing there is a
-> > 'radio' utility packages in Debian. When you start the utility you need to
-> > specify a frequency, since initial get_frequency returns an error:
->
-> Nice, good to see that ti-st kim stuff gone :) I gave this a quick
+Added some people to CC that might want to see this..
 
-Tony,
-
-As much as I'd like to see the ti-st kim stuff go, I am not able to
-load the Bluetooth on the Torpedo board (wl1283).  The hooks on a
-different, wl18xx and 127x board work fine.  I am not sure if there is
-anything different about the wl1283, but I don't have any other boards
-other than the Logic PD Torpedo kit.  Do you have any wl1283 boards to
-test?  I'd like to see this BT timeout stuff resolved before we dump
-the ti-st kim stuff, otherwise, I'll forever be porting drivers.  :-(
-
-adam
-
-> try using fmtools.git and fmscan works just fine. No luck yet with
-> fm though, it gives VIDIOC_G_CTRL: Not a tty error somehow so
-> maybe I'm missing some options, patch below for omap2plus_defconfig.
+Am Sa., 22. Dez. 2018 um 19:14 Uhr schrieb Ellie Reeves <ellierevves@gmail.=
+com>:
 >
-> Hmm so looks like nothing to configure for the clocks or
-> CPCAP_BIT_ST_L_TIMESLOT bits for cap for the EXT? So the
-> wl12xx audio is wired directly to cpcap EXT then and not a
-> TDM slot on the mcbsp huh?
+> Hi,
+> first off, allow me to express that this is my first time ever writing
+> on such a mailing list, and that if something is unclear or you would
+> need more information, just let me know.
+> I write to this list in hoping to see this change reverted. The linux
+> kernel always said it would avoid breaking user namespace as much as
+> possible, and yet this is what happens. I was hence very much surprised
+> when my perfectly working containers on systemd-nspawn which makes use
+> of userns by default, stopped working from one day to the next, till I
+> identified the problem as being kernel >=3D 4.18. This container is in
+> production, hence the annoyance it was. From one day to the next the
+> container started failing with stranges problems:
 >
-> > Merry Christmas!
+> * nginx, dovecot, postgresql, and postfix complained about getting
+> permission denied on /dev/null even though it appeared perfectly normal
+> to me, the correct permissions, all that
+> * /var was also acting very strangely, getting a lot of permission
+> denied or operation not supported messages.
+> * I could not delete a file that my user had the right to create, write
+> to and read in /var, I needed root
 >
-> Same to you!
+> Here is the pull request that was made to systemd, along with a small
+> amount of talk around the issue:
 >
-> Tony
+> https://github.com/systemd/systemd/pull/9483
 >
-> 8< --------------------------------
-> From tony Mon Sep 17 00:00:00 2001
-> From: Tony Lindgren <tony@atomide.com>
-> Date: Fri, 21 Dec 2018 07:57:09 -0800
-> Subject: [PATCH] ARM: omap2plus_defconfig: Add RADIO_WL128X as a loadable
->  module
+> It was ultimately decided among the systemd folks to bail out of the
+> issue, as shown in the news entry for systemd 240:
 >
-> This allows using the FM radio in the wl12xx chips after modprobe
-> fm_drv using radio from xawt, or fmtools.
+>          * KERNEL API BREAKAGE: Linux kernel 4.18 changed behaviour
+> regarding
+>            mknod() handling in user namespaces. Previously mknod() would
+> always
+>            fail with EPERM in user namespaces. Since 4.18 mknod() will
+> succeed
+>            but device nodes generated that way cannot be opened, and
+> attempts to
+>            open them result in EPERM. This breaks the "graceful
+> fallback" logic
+>            in systemd's PrivateDevices=3D sand-boxing option. This option=
+ is
+>            implemented defensively, so that when systemd detects it runs
+> in a
+>            restricted environment (such as a user namespace, or an
+> environment
+>            where mknod() is blocked through seccomp or absence of
+> CAP_SYS_MKNOD)
+>            where device nodes cannot be created the effect of
+> PrivateDevices=3D is
+>            bypassed (following the logic that 2nd-level sand-boxing is no=
+t
+>            essential if the system systemd runs in is itself already
+> sand-boxed
+>            as a whole). This logic breaks with 4.18 in container
+> managers where
+>            user namespacing is used: suddenly PrivateDevices=3D succeeds
+> setting
+>            up a private /dev/ file system containing devices nodes =E2=80=
+=94 but
+> when
+>            these are opened they don't work.
 >
-> Note that the firmware placed into /lib/firmware/ti-connectivity
-> directory:
+>            At this point is is recommended that container managers utiliz=
+ing
+>            user namespaces that intend to run systemd in the payload
+> explicitly
+>            block mknod() with seccomp or similar, so that the graceful
+> fallback
+>            logic works again.
 >
-> fm_rx_ch8_1283.2.bts
-> fmc_ch8_1283.2.bts
+>            We are very sorry for the breakage and the requirement to chan=
+ge
+>            container configurations for newer kernels. It's purely
+> caused by an
+>            incompatible kernel change. The relevant kernel developers
+> have been
+>            notified about this userspace breakage quickly, but they chose=
+ to
+>            ignore it.
 >
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  arch/arm/configs/omap2plus_defconfig | 3 +++
->  1 file changed, 3 insertions(+)
+> Here's an email that was sent to lkml about the subject:
 >
-> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-> --- a/arch/arm/configs/omap2plus_defconfig
-> +++ b/arch/arm/configs/omap2plus_defconfig
-> @@ -126,6 +126,7 @@ CONFIG_AF_RXRPC=m
->  CONFIG_RXKAD=y
->  CONFIG_CFG80211=m
->  CONFIG_MAC80211=m
-> +CONFIG_RFKILL=m
->  CONFIG_DEVTMPFS=y
->  CONFIG_DEVTMPFS_MOUNT=y
->  CONFIG_DMA_CMA=y
-> @@ -343,12 +344,14 @@ CONFIG_IR_GPIO_TX=m
->  CONFIG_IR_PWM_TX=m
->  CONFIG_MEDIA_SUPPORT=m
->  CONFIG_MEDIA_CAMERA_SUPPORT=y
-> +CONFIG_MEDIA_RADIO_SUPPORT=y
->  CONFIG_MEDIA_CEC_SUPPORT=y
->  CONFIG_MEDIA_CONTROLLER=y
->  CONFIG_VIDEO_V4L2_SUBDEV_API=y
->  CONFIG_V4L_PLATFORM_DRIVERS=y
->  CONFIG_VIDEO_OMAP3=m
->  CONFIG_CEC_PLATFORM_DRIVERS=y
-> +CONFIG_RADIO_WL128X=m
->  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
->  CONFIG_VIDEO_TVP5150=m
->  CONFIG_DRM=m
-> --
-> 2.19.2
+> https://lkml.org/lkml/2018/7/5/742
+>
+> I link also this, quoting the last of it:
+>
+> https://lkml.org/lkml/2018/7/5/701
+>
+> It has never been the case that mknod on a device node will guarantee
+> that you even can open the device node.  The applications that regress
+> are broken.  It doesn't mean we shouldn't be bug compatible, but we darn
+> well should document very clearly the bugs we are being bug compatible wi=
+th.
+>
+> I'm in the opinion that it is a kernel bug, and I quote someone from the
+> systemd irc channel:
+>
+> ewb said applications were broken. But the rule is, if userspace breaks,
+> its a bug. The kernel *has* to revert it. And honestly, this change
+> doesn't make much sense. You can set nodev yourself but then you know
+> mknod will not allow you to open the object. Here, the kernel does it
+> without your knowledge
+>
+> Also, it seems that if this change is reverted, things that were fixed
+> to work around the issue this breakage caused will not be broken again,
+> they should simply go back to their previous way of working. I
+> understand there may be security reason why this change was made in the
+> first place, but it is not so big a problem is it ? I can mknode
+> arbitrary devices in userns and open them as userns root. But my point
+> is, several things broke. My *working* stuff was broken from one day to
+> the next.
+>
+> I am not trying to pick a fight. I want to understand the reasoning
+> behind this change in the first place, and I'm simply making an attempt
+> at getting it reverted, because it is true that I don't much fancy
+> blocking the mknode() syscall in every template unit on every machine we
+> administer here, and that staying on kernel < 4.18 is not a good
+> sollution either.
+>
+> I would also like to be personally CC'ed the comments or answers posted
+> to this mailing list in response to this message.
+>
+> Thanks
