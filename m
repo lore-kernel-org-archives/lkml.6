@@ -7,55 +7,51 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2735BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E36C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40B521A48
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3146F21A48
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392417AbeLVRBD (ORCPT
+        id S2392514AbeLVRCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:01:03 -0500
-Received: from ozlabs.org ([203.11.71.1]:44985 "EHLO ozlabs.org"
+        Sat, 22 Dec 2018 12:02:08 -0500
+Received: from ozlabs.org ([203.11.71.1]:37977 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbeLVRBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:01:01 -0500
+        id S2392402AbeLVRBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:01:03 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43MLSR6WTrz9sDP; Sat, 22 Dec 2018 20:54:31 +1100 (AEDT)
+        id 43MLSf5Txrz9sPG; Sat, 22 Dec 2018 20:54:42 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 385e89d5b20f5a7c33fd7c1904da0e6a8e1b366f
+X-powerpc-patch-commit: 2fea82db113e4422ef5c8e6209908806e5fb6b63
 X-Patchwork-Hint: ignore
-In-Reply-To: <62fcfb8435c2f801d820eff469fd01e68c1b107d.1543425412.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+In-Reply-To: <20181210215203.1936171-1-arnd@arndb.de>
+To:     Arnd Bergmann <arnd@arndb.de>, Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3] powerpc/mm: add exec protection on powerpc 603
-Message-Id: <43MLSR6WTrz9sDP@ozlabs.org>
-Date:   Sat, 22 Dec 2018 20:54:31 +1100 (AEDT)
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: powerpc: eeh_event: convert semaphore to completion
+Message-Id: <43MLSf5Txrz9sPG@ozlabs.org>
+Date:   Sat, 22 Dec 2018 20:54:42 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-28 at 17:21:10 UTC, Christophe Leroy wrote:
-> The 603 doesn't have a HASH table, TLB misses are handled by
-> software. It is then possible to generate page fault when
-> _PAGE_EXEC is not set like in nohash/32.
+On Mon, 2018-12-10 at 21:51:57 UTC, Arnd Bergmann wrote:
+> For this use case, completions and semaphores are equivalent,
+> but semaphores are an awkward interface that should generally
+> be avoided, so use the completion instead.
 > 
-> There is one "reserved" PTE bit available, this patch uses
-> it for _PAGE_EXEC.
-> 
-> In order to support it, set_pte_filter() and
-> set_access_flags_filter() are made common, and the handling
-> is made dependent on MMU_FTR_HPTE_TABLE
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/385e89d5b20f5a7c33fd7c1904da0e
+https://git.kernel.org/powerpc/c/2fea82db113e4422ef5c8e62099088
 
 cheers
