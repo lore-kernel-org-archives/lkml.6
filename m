@@ -4,168 +4,221 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE75C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0007CC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD9E2173C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B950921773
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545501805;
-	bh=QTU7DbAMAk+C7LilXz27oiXjcUUysO0UUf2o21ePPXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Om2Dxml84gmOj+HwgBaKlahMHdIJwJI5/2OR9wASE7S5rLY56bcLP6++xxQkQNghq
-	 Ea2VuKmHtu5mMigbT/1DP0dFVmmXLUKOe25BarwTr3dZAcOdY+vmnJMi/pWQYQvpnB
-	 GlvUFGVQrjHfRRH+Pcc2ll1cIWtAeiHy2P7NTPSA=
+	s=default; t=1545501826;
+	bh=g3H3tshLXYkBtGbeyRZYyA8LQXghena3BBcFSibSwwE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=C9MW+9oogAmsE0F49j3Ys5rZIIwsiWC+BqW49/1wLHa47KsVzLLjimyUubmNtNERZ
+	 6rApaP2H1kaeZ3rCZDPtJKSQrBfp06PEXkjEv7Eah5JQhcw1F2O4caH7svuYYZd8mf
+	 Io4NfLQaLrLNx1Qb5BJH7JAoPQMxmhb/2bk4iw2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390527AbeLVSDY (ORCPT
+        id S2390583AbeLVSDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:03:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 13:03:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387990AbeLVSDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:03:24 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        id S1731337AbeLVSDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 13:03:45 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C67420874;
-        Sat, 22 Dec 2018 18:03:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 117B820874;
+        Sat, 22 Dec 2018 18:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545501802;
-        bh=QTU7DbAMAk+C7LilXz27oiXjcUUysO0UUf2o21ePPXA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LRbpFtncNfbFHbQ1nOC5H0bbu4RBMRcKuohxlsi3qYTbRLSOCY0EdHIgJokyiKppR
-         W0D+Cz0o2zrgPzUm6RnYPhvrm/DYmRmJzXEfYMjzTrmpdHFguMPqKgN9wloUs+KtbV
-         g1nDmwPy3NzYsyEkgKYnAmApG/985cofr3bgWook=
-Date:   Sat, 22 Dec 2018 18:03:16 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] staging: iio: adt7316: fix dac_bits assignment
-Message-ID: <20181222180310.4ad9a1c6@archlinux>
-In-Reply-To: <20181217213059.GA11856@r2700x.localdomain>
-References: <20181212005503.28054-1-jeremyfertic@gmail.com>
-        <20181212005503.28054-4-jeremyfertic@gmail.com>
-        <20181216113756.70d76d0a@archlinux>
-        <20181217213059.GA11856@r2700x.localdomain>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        s=default; t=1545501823;
+        bh=g3H3tshLXYkBtGbeyRZYyA8LQXghena3BBcFSibSwwE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=o7knIhlAbF67HNyEJrtAp6gCdUvgyb1FYm1Mx7ENmF183LdPaI5pmhbDO9bL9YQqX
+         g4yGhtW6e4PGTOyOINXCzqekbZo1M/QXFFEAJAwxCHAzXePznjkkJpv917SYtnJa41
+         EuXau7iz2n26tm5tjf1twTKN6eSMO74mck5sImQo=
+Message-ID: <1545501821.4383.2.camel@kernel.org>
+Subject: Re: [for-next][PATCH 2/5] tracing: Use str_has_prefix() helper for
+ histogram code
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+Date:   Sat, 22 Dec 2018 12:03:41 -0600
+In-Reply-To: <20181222130107.43aaac9c@gandalf.local.home>
+References: <20181222162007.697862256@goodmis.org>
+         <20181222162856.666843139@goodmis.org>
+         <20181222130107.43aaac9c@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 14:30:59 -0700
-Jeremy Fertic <jeremyfertic@gmail.com> wrote:
+Hi Steve,
 
-> On Sun, Dec 16, 2018 at 11:37:56AM +0000, Jonathan Cameron wrote:
-> > On Tue, 11 Dec 2018 17:54:55 -0700
-> > Jeremy Fertic <jeremyfertic@gmail.com> wrote:
-> >   
-> > > The only assignment to dac_bits is in adt7316_store_da_high_resolution().
-> > > This function enables or disables 10 bit dac resolution for the adt7316/7
-> > > and adt7516/7 when they're set to output voltage proportional to
-> > > temperature. Remove these assignments since they're unnecessary for the
-> > > dac high resolution functionality.
-> > > 
-> > > Instead, assign a value to dac_bits in adt7316_probe() since the number
-> > > of dac bits might be needed as soon as the device is registered and
-> > > available to userspace.
-> > > 
-> > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>  
-> > 
-> > I'm a little confused as it seems to me that in the orignal code
-> > if we were setting high resolution 'off' we would fall back to 8
-> > bits for either type of device.  Now you just have a check on the
-> > device type?
-> > 
-> > The result will be that we read more bytes than we want to
-> > in show_DAC.
-> > 
-> > I'd need a pretty strong argument to persuade me it is worth
-> > supporting the 8 bit mode at all btw on devices that will go
-> > higher.  It adds interface complexity and the number of usecases
-> > where the saving in bus traffic is worthwhile are probably fairly
-> > few!
-> > 
-> > Jonathan  
+On Sat, 2018-12-22 at 13:01 -0500, Steven Rostedt wrote:
+> On Sat, 22 Dec 2018 11:20:09 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Thanks for the feedback Jonathan, and sorry for the confusion on this one.
-> My commit message should have been clearer. This is not a general purpose
-> option to change the dac resolution. It is specific to an optional feature
-> where one or two of the four dacs can be set to output voltage proportional
-> to temperature. If the user chooses to set dac a and/or dac b to ouput
-> voltage proportional to temperature, this da_high_resolution attribute can
-> optionally be enabled to use 10 bit resolution rather than the default 8
-> bits. It is only available on the 10 and 12 bit dac devices. If the user
-> attempts to read or write dacs a or b under these settings, the driver's
-> current behaviour is to return an error. The dacs c and d continue to
-> operate normally under these conditions.
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > The tracing histogram code contains a lot of instances of the
+> > construct:
+> > 
+> >  strncmp(str, "const", sizeof("const") - 1)
+> > 
+> > This can be prone to bugs due to typos or bad cut and paste. Use
+> > the
+> > str_has_prefix() helper macro instead that removes the need for
+> > having two
+> > copies of the constant string.
+> > 
+> > Cc: Tom Zanussi <zanussi@linux.intel.com>
 > 
-> With the above in mind, dac_bits should have never been assigned to in this
-> da_high_resolution attribute. Before this patch, if the user didn't write
-> to this optional attribute, dac_bits would be 0 since it was never assigned
-> to anywhere else. This would result in incorrect calculations in show_DAC
-> and store_DAC.
+> I have no idea why I copied your intel email. The linux.intel.com
+> appears to be no longer active. I'm going to rebase to fix this email
+> address.
+
+linux.intel.com is active, but there's no zanussi there, just
+tom.zanussi ;-)
+
+So tom.zanussi@linux.intel.com should work fine.
+
+Tom
+
 > 
-Good explanation.  Send me a v2 with that in the description.
-
-Thanks,
-
-Jonathan
-
-> Jeremy
+> -- Steve
 > 
-> > > ---
-> > >  drivers/staging/iio/addac/adt7316.c | 18 +++++++++---------
-> > >  1 file changed, 9 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-> > > index e5e1f9d6357f..a9990e7f2a4d 100644
-> > > --- a/drivers/staging/iio/addac/adt7316.c
-> > > +++ b/drivers/staging/iio/addac/adt7316.c
-> > > @@ -651,17 +651,10 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
-> > >  	u8 config3;
-> > >  	int ret;
-> > >  
-> > > -	chip->dac_bits = 8;
-> > > -
-> > > -	if (buf[0] == '1') {
-> > > +	if (buf[0] == '1')
-> > >  		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
-> > > -		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
-> > > -			chip->dac_bits = 12;
-> > > -		else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
-> > > -			chip->dac_bits = 10;
-> > > -	} else {
-> > > +	else
-> > >  		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
-> > > -	}
-> > >  
-> > >  	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-> > >  	if (ret)
-> > > @@ -2123,6 +2116,13 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
-> > >  	else
-> > >  		return -ENODEV;
-> > >  
-> > > +	if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
-> > > +		chip->dac_bits = 12;
-> > > +	else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
-> > > +		chip->dac_bits = 10;
-> > > +	else
-> > > +		chip->dac_bits = 8;
-> > > +
-> > >  	chip->ldac_pin = devm_gpiod_get_optional(dev, "adi,ldac", GPIOD_OUT_LOW);
-> > >  	if (IS_ERR(chip->ldac_pin)) {
-> > >  		ret = PTR_ERR(chip->ldac_pin);  
-> >   
-
+> 
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  kernel/trace/trace_events_hist.c | 28 ++++++++++++++--------------
+> >  1 file changed, 14 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace_events_hist.c
+> > b/kernel/trace/trace_events_hist.c
+> > index c5448c103770..9d590138f870 100644
+> > --- a/kernel/trace/trace_events_hist.c
+> > +++ b/kernel/trace/trace_events_hist.c
+> > @@ -1881,8 +1881,8 @@ static int parse_action(char *str, struct
+> > hist_trigger_attrs *attrs)
+> >  	if (attrs->n_actions >= HIST_ACTIONS_MAX)
+> >  		return ret;
+> >  
+> > -	if ((strncmp(str, "onmatch(", sizeof("onmatch(") - 1) ==
+> > 0) ||
+> > -	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0)) {
+> > +	if ((str_has_prefix(str, "onmatch(")) ||
+> > +	    (str_has_prefix(str, "onmax("))) {
+> >  		attrs->action_str[attrs->n_actions] = kstrdup(str,
+> > GFP_KERNEL);
+> >  		if (!attrs->action_str[attrs->n_actions]) {
+> >  			ret = -ENOMEM;
+> > @@ -1899,34 +1899,34 @@ static int parse_assignment(char *str,
+> > struct hist_trigger_attrs *attrs)
+> >  {
+> >  	int ret = 0;
+> >  
+> > -	if ((strncmp(str, "key=", sizeof("key=") - 1) == 0) ||
+> > -	    (strncmp(str, "keys=", sizeof("keys=") - 1) == 0)) {
+> > +	if ((str_has_prefix(str, "key=")) ||
+> > +	    (str_has_prefix(str, "keys="))) {
+> >  		attrs->keys_str = kstrdup(str, GFP_KERNEL);
+> >  		if (!attrs->keys_str) {
+> >  			ret = -ENOMEM;
+> >  			goto out;
+> >  		}
+> > -	} else if ((strncmp(str, "val=", sizeof("val=") - 1) == 0)
+> > ||
+> > -		 (strncmp(str, "vals=", sizeof("vals=") - 1) == 0)
+> > ||
+> > -		 (strncmp(str, "values=", sizeof("values=") - 1)
+> > == 0)) {
+> > +	} else if ((str_has_prefix(str, "val=")) ||
+> > +		   (str_has_prefix(str, "vals=")) ||
+> > +		   (str_has_prefix(str, "values="))) {
+> >  		attrs->vals_str = kstrdup(str, GFP_KERNEL);
+> >  		if (!attrs->vals_str) {
+> >  			ret = -ENOMEM;
+> >  			goto out;
+> >  		}
+> > -	} else if (strncmp(str, "sort=", sizeof("sort=") - 1) ==
+> > 0) {
+> > +	} else if (str_has_prefix(str, "sort=")) {
+> >  		attrs->sort_key_str = kstrdup(str, GFP_KERNEL);
+> >  		if (!attrs->sort_key_str) {
+> >  			ret = -ENOMEM;
+> >  			goto out;
+> >  		}
+> > -	} else if (strncmp(str, "name=", sizeof("name=") - 1) ==
+> > 0) {
+> > +	} else if (str_has_prefix(str, "name=")) {
+> >  		attrs->name = kstrdup(str, GFP_KERNEL);
+> >  		if (!attrs->name) {
+> >  			ret = -ENOMEM;
+> >  			goto out;
+> >  		}
+> > -	} else if (strncmp(str, "clock=", sizeof("clock=") - 1) ==
+> > 0) {
+> > +	} else if (str_has_prefix(str, "clock=")) {
+> >  		strsep(&str, "=");
+> >  		if (!str) {
+> >  			ret = -EINVAL;
+> > @@ -1939,7 +1939,7 @@ static int parse_assignment(char *str, struct
+> > hist_trigger_attrs *attrs)
+> >  			ret = -ENOMEM;
+> >  			goto out;
+> >  		}
+> > -	} else if (strncmp(str, "size=", sizeof("size=") - 1) ==
+> > 0) {
+> > +	} else if (str_has_prefix(str, "size=")) {
+> >  		int map_bits = parse_map_size(str);
+> >  
+> >  		if (map_bits < 0) {
+> > @@ -3558,7 +3558,7 @@ static struct action_data *onmax_parse(char
+> > *str)
+> >  	if (!onmax_fn_name || !str)
+> >  		goto free;
+> >  
+> > -	if (strncmp(onmax_fn_name, "save", sizeof("save") - 1) ==
+> > 0) {
+> > +	if (str_has_prefix(onmax_fn_name, "save")) {
+> >  		char *params = strsep(&str, ")");
+> >  
+> >  		if (!params) {
+> > @@ -4346,7 +4346,7 @@ static int parse_actions(struct
+> > hist_trigger_data *hist_data)
+> >  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
+> >  		str = hist_data->attrs->action_str[i];
+> >  
+> > -		if (strncmp(str, "onmatch(", sizeof("onmatch(") -
+> > 1) == 0) {
+> > +		if (str_has_prefix(str, "onmatch(")) {
+> >  			char *action_str = str +
+> > sizeof("onmatch(") - 1;
+> >  
+> >  			data = onmatch_parse(tr, action_str);
+> > @@ -4355,7 +4355,7 @@ static int parse_actions(struct
+> > hist_trigger_data *hist_data)
+> >  				break;
+> >  			}
+> >  			data->fn = action_trace;
+> > -		} else if (strncmp(str, "onmax(", sizeof("onmax(")
+> > - 1) == 0) {
+> > +		} else if (str_has_prefix(str, "onmax(")) {
+> >  			char *action_str = str + sizeof("onmax(")
+> > - 1;
+> >  
+> >  			data = onmax_parse(action_str);
+> 
+> 
