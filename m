@@ -2,190 +2,175 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD18CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70D4C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983F12080D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:13:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe3Eye/j"
+	by mail.kernel.org (Postfix) with ESMTP id A3CB02080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545502472;
+	bh=3bm8Euy/SAhaNjmG5E1aNugGzLbj3K4H5FerKJ33SE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oEv/THp/r/Tpsck7b/tevOJFMqY5WBIZv5eJwwfe/3vlEOcKy6ccjOIdxCL+S2k5f
+	 LZgTmHH6rU8HUiVconLkGsDoU7y5VUH++0Y75Halym8fAdJBVRFg67mQix7Gdhwtx0
+	 VxncMdHj8SztlLVZW4Vyq0nJrmEfp0kxGKBJefaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390695AbeLVSNw (ORCPT
+        id S2390744AbeLVSOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:13:52 -0500
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:44193 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731181AbeLVSNw (ORCPT
+        Sat, 22 Dec 2018 13:14:31 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37780 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731181AbeLVSOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:13:52 -0500
-Received: by mail-qt1-f171.google.com with SMTP id n32so9418389qte.11
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 10:13:51 -0800 (PST)
+        Sat, 22 Dec 2018 13:14:30 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5so3946869plr.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 10:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:message-id:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=KimV+wviri6Y02rM4nvg8Iv/6jN5msr9mJi5XbL0wks=;
-        b=Pe3Eye/jh8I0IKqi2RfJ3xDxManECWmc20Z9J/kvg8QGT6ncOSyNig+cxK+NxB0crp
-         ZvbKAQCfW5iHG7h2gZpGsaAgvX4M8vyltdSQYzjKz/GtzfVqE2lj6RxUskBwrLasPNkM
-         UEFQWrgqdeeBstg48mf2zoqxUPdzLpRqj/GlioNmTGkvi/1wVFZg0MA7gBWLezZ2+OKz
-         yrj3Y6yMppzuR5Y/tl3fS7io2zE3PvGGGkm6UlAH/JISDtehWtbk+1NhIN7ju0mXC41y
-         jf1S9ICwXUrmm0J8QbMQDEX9IIvcngbCmf5Pyjl4EOZPtM3p6LUXB7nbP+/W7KqNfDz7
-         29Og==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p8wijyBRq2p+xnfMxdAbjzvJMsJ1ju2zFr2YZuH91HM=;
+        b=bFO4/c80T39m7A9SO3ZrxnYxidIuP4xdGzWpr3b3wWvRW3S8On3i6LcolxKl6hoKNv
+         7ibjqYkGnFd2hJq+kcbf54e6NEpkCfPRabSttzhuMxxtrizdLLK05RHtXiuZSsLYzpwh
+         N9S1O2eoJr9Uh4beihzZbAUp/fm22F5PTRCmeZCsDbHyzXpji4divqxXZSTpNwqCuv/K
+         XAPFxjY0QZlrxhlXtO+704TcnWoWQNWJB1vQc6UBSfuXeNZgqlN7Df05zvK38yp397i7
+         YRiqAtRPdt6wNRvNZ5lCmI+LeXTVqh44S+BZRznUUOnhGek2iIlURrNWcP2AHbMPtbKJ
+         u2VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:message-id:date:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=KimV+wviri6Y02rM4nvg8Iv/6jN5msr9mJi5XbL0wks=;
-        b=HcfqeR9IL/Oxh/m0rspdugb6B1WlxL25Nz7I0AhAx7AaXPiUEUxH5DmfJS8haHCKVg
-         v1onsx9Mvuy+OnRtB98LQmJDh44NpP2SEEZkhCYvHxtEqhaR7McN03ZVv/USR34jzGmV
-         8PRDmH/DoBxs8O+r7sp4Ykh28YdBCcxXc09lfrI4CZ5xCCB5oSaKS/sXZoiQ6V5c+mYu
-         R+wAoNd3Z0ut5xXjhF+50r4gsbzraVxnQu1JgIuEZXRTn/CMjTuDee7OmuvhH6XgaD7p
-         UWV9ciDV84KJXvVlWMLSdQ4tt+ssM/igQ5X6jA2YZAtbseymC4GK8W1ayWbOPEip52Vj
-         LlCQ==
-X-Gm-Message-State: AJcUukcEAwKtZ/n/A52dz4e+knH79F8jJd3Y+7AoU0/3KuPa2BSftzLh
-        A2D6r1oIwCJLjjRlZSYqGADDEeHi
-X-Google-Smtp-Source: AFSGD/X744VYg+17QtWcbu8G860xvzN6z9MCtnHCeuFFe8ZiBKFUkRc26CoWbU+sfz673XenrQRvoA==
-X-Received: by 2002:aed:2a1a:: with SMTP id c26mr5695332qtd.147.1545478762860;
-        Sat, 22 Dec 2018 03:39:22 -0800 (PST)
-Received: from ?IPv6:2001:470:1d:7b6::245? ([2001:470:1d:7b6::245])
-        by smtp.googlemail.com with ESMTPSA id n92sm5742291qtd.85.2018.12.22.03.39.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 03:39:22 -0800 (PST)
-From:   Ellie Reeves <ellierevves@gmail.com>
-Subject: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on userns
- mounts, breaking systemd-nspawn
-To:     linux-kernel@vger.kernel.org
-Message-ID: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
-Date:   Sat, 22 Dec 2018 06:39:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Firefox/52.0 SeaMonkey/2.49.4
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p8wijyBRq2p+xnfMxdAbjzvJMsJ1ju2zFr2YZuH91HM=;
+        b=tdkiFvrwlRkrnCa3Atq3TMRWgxpOe+40bxc65my6M9bY4nJxFAOYR9IhvMWqa0DJlV
+         URKHqDsbCF/rfyLEhESzzbOzTs96GW8hrTGURPHupzZkMcDWfb29pIuC9jOeM2Pebhbf
+         T87L2ztfTSTMcoBLU7G6/9oEg+DS/pKwyLzmZrhuEDa1PIkWQ61O+bY+Aiz2iUX0s/b3
+         N9oaUb+HUnYiDpZ1mAZIJHKn5D9iDbvn7HAPt6dC99Y+fbrfRjKXxIN5VEUcEO2Dcbkb
+         a/68D4eYJKqG3t9Dtk2jPDJkRxoSYLYNtWmhKYLcaL+pIuOUlBHGPQwhUNKZts7HT5rF
+         fyLQ==
+X-Gm-Message-State: AJcUukc4FgwtNZpx5lNi0KmwqQJbmXZrknt1lnnY1eqdlzRqXHpDIRqo
+        8lmgNVM5wqUXgY2LWoyFXfxGgz+5
+X-Google-Smtp-Source: ALg8bN7QISYwMn7Sd/rNKmnFK2z7LAZbtkjLT4GczUsp0vsfPehJ4JSKOFgw95fRHBKfhJGJH8k2gQ==
+X-Received: by 2002:a17:902:6bc9:: with SMTP id m9mr5747484plt.173.1545470905080;
+        Sat, 22 Dec 2018 01:28:25 -0800 (PST)
+Received: from danjae.aot.lge.com ([182.210.106.196])
+        by smtp.gmail.com with ESMTPSA id l70sm28901632pgd.20.2018.12.22.01.28.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Dec 2018 01:28:23 -0800 (PST)
+Date:   Sat, 22 Dec 2018 18:28:18 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>, kernel-team@lge.com
+Subject: Re: [PATCH v3] string.h: Add str_has_prefix() helper
+Message-ID: <20181222092818.GA7610@danjae.aot.lge.com>
+References: <20181221181316.6d32bdc8@gandalf.local.home>
+ <b77cd7378434bf8ea804f2fd0caa662b9b7d07f0.camel@perches.com>
+ <20181221182507.2fdc756f@gandalf.local.home>
+ <20181221183817.5b3eecdd@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181221183817.5b3eecdd@gandalf.local.home>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-first off, allow me to express that this is my first time ever writing 
-on such a mailing list, and that if something is unclear or you would 
-need more information, just let me know.
-I write to this list in hoping to see this change reverted. The linux 
-kernel always said it would avoid breaking user namespace as much as 
-possible, and yet this is what happens. I was hence very much surprised 
-when my perfectly working containers on systemd-nspawn which makes use 
-of userns by default, stopped working from one day to the next, till I 
-identified the problem as being kernel >= 4.18. This container is in 
-production, hence the annoyance it was. From one day to the next the 
-container started failing with stranges problems:
+Hi Steve,
 
-* nginx, dovecot, postgresql, and postfix complained about getting 
-permission denied on /dev/null even though it appeared perfectly normal 
-to me, the correct permissions, all that
-* /var was also acting very strangely, getting a lot of permission 
-denied or operation not supported messages.
-* I could not delete a file that my user had the right to create, write 
-to and read in /var, I needed root
+On Fri, Dec 21, 2018 at 06:38:17PM -0500, Steven Rostedt wrote:
+> On Fri, 21 Dec 2018 18:25:07 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Fri, 21 Dec 2018 15:19:33 -0800
+> > Joe Perches <joe@perches.com> wrote:
+> > 
+> > > I believe this should be bool.
+> > > 
+> > > I don't find a use for non-zero assigned len value in the kernel
+> > > for strncmp and I believe the function should simply be:
+> > > 
+> > > static inline bool str_has_prefix(const char *str, const char prefix[])
+> > > {
+> > > 	return !strncmp(str, prefix, strlen(prefix));
+> > > }  
+> > 
+> > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> > index 3bb2b3351e35..e4566b9c2553 100644
+> > --- a/drivers/scsi/sd.c
+> > +++ b/drivers/scsi/sd.c
+> > @@ -172,8 +172,8 @@ cache_type_store(struct device *dev, struct device_attribute *attr,
+> >  		 * it's not worth the risk */
+> >  		return -EINVAL;
+> >  
+> > -	if (strncmp(buf, temp, sizeof(temp) - 1) == 0) {
+> > -		buf += sizeof(temp) - 1;
+> > +	if ((len = str_has_prefix(buf, temp))) {
+> > +		buf += len;
+> >  		sdkp->cache_override = 1;
+> >  	} else {
+> >  		sdkp->cache_override = 0;
+> > 
+> > And there's more places like this.
+> >
+> 
+> Heck, even the tracing code would like this. From the code that started
+> this entire discussion:
+> 
+> -- Steve
+> 
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index 9d590138f870..632410c6e6c0 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -4342,12 +4342,13 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  	unsigned int i;
+>  	int ret = 0;
+>  	char *str;
+> +	int len;
+>  
+>  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
+>  		str = hist_data->attrs->action_str[i];
+>  
+> -		if (str_has_prefix(str, "onmatch(")) {
+> -			char *action_str = str + sizeof("onmatch(") - 1;
+> +		if ((len = str_has_prefix(str, "onmatch("))) {
+> +			char *action_str = str + len;
 
-Here is the pull request that was made to systemd, along with a small 
-amount of talk around the issue:
+IMHO, returning (match) length might confuse people that it might
+support partial match and returns the length actually matched rather
+than full match.  If I knew it always returns the length of prefix (or
+0) why it matters?  Using strlen() in the next line will have same
+effect of compiler optimization for the constant strings, no?
 
-https://github.com/systemd/systemd/pull/9483
+		if (str_has_prefix(str, "onmatch(")) {
+			char *action_str = str + strlen("onmatch(");
 
-It was ultimately decided among the systemd folks to bail out of the 
-issue, as shown in the news entry for systemd 240:
+Thanks,
+Namhyung
 
-         * KERNEL API BREAKAGE: Linux kernel 4.18 changed behaviour 
-regarding
-           mknod() handling in user namespaces. Previously mknod() would 
-always
-           fail with EPERM in user namespaces. Since 4.18 mknod() will 
-succeed
-           but device nodes generated that way cannot be opened, and 
-attempts to
-           open them result in EPERM. This breaks the "graceful 
-fallback" logic
-           in systemd's PrivateDevices= sand-boxing option. This option is
-           implemented defensively, so that when systemd detects it runs 
-in a
-           restricted environment (such as a user namespace, or an 
-environment
-           where mknod() is blocked through seccomp or absence of 
-CAP_SYS_MKNOD)
-           where device nodes cannot be created the effect of 
-PrivateDevices= is
-           bypassed (following the logic that 2nd-level sand-boxing is not
-           essential if the system systemd runs in is itself already 
-sand-boxed
-           as a whole). This logic breaks with 4.18 in container 
-managers where
-           user namespacing is used: suddenly PrivateDevices= succeeds 
-setting
-           up a private /dev/ file system containing devices nodes — but 
-when
-           these are opened they don't work.
 
-           At this point is is recommended that container managers utilizing
-           user namespaces that intend to run systemd in the payload 
-explicitly
-           block mknod() with seccomp or similar, so that the graceful 
-fallback
-           logic works again.
-
-           We are very sorry for the breakage and the requirement to change
-           container configurations for newer kernels. It's purely 
-caused by an
-           incompatible kernel change. The relevant kernel developers 
-have been
-           notified about this userspace breakage quickly, but they chose to
-           ignore it.
-
-Here's an email that was sent to lkml about the subject:
-
-https://lkml.org/lkml/2018/7/5/742
-
-I link also this, quoting the last of it:
-
-https://lkml.org/lkml/2018/7/5/701
-
-It has never been the case that mknod on a device node will guarantee 
-that you even can open the device node.  The applications that regress 
-are broken.  It doesn't mean we shouldn't be bug compatible, but we darn 
-well should document very clearly the bugs we are being bug compatible with.
-
-I'm in the opinion that it is a kernel bug, and I quote someone from the 
-systemd irc channel:
-
-ewb said applications were broken. But the rule is, if userspace breaks, 
-its a bug. The kernel *has* to revert it. And honestly, this change 
-doesn't make much sense. You can set nodev yourself but then you know 
-mknod will not allow you to open the object. Here, the kernel does it 
-without your knowledge
-
-Also, it seems that if this change is reverted, things that were fixed 
-to work around the issue this breakage caused will not be broken again, 
-they should simply go back to their previous way of working. I 
-understand there may be security reason why this change was made in the 
-first place, but it is not so big a problem is it ? I can mknode 
-arbitrary devices in userns and open them as userns root. But my point 
-is, several things broke. My *working* stuff was broken from one day to 
-the next.
-
-I am not trying to pick a fight. I want to understand the reasoning 
-behind this change in the first place, and I'm simply making an attempt 
-at getting it reverted, because it is true that I don't much fancy 
-blocking the mknode() syscall in every template unit on every machine we 
-administer here, and that staying on kernel < 4.18 is not a good 
-sollution either.
-
-I would also like to be personally CC'ed the comments or answers posted 
-to this mailing list in response to this message.
-
-Thanks
+>  
+>  			data = onmatch_parse(tr, action_str);
+>  			if (IS_ERR(data)) {
+> @@ -4355,8 +4356,8 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  				break;
+>  			}
+>  			data->fn = action_trace;
+> -		} else if (str_has_prefix(str, "onmax(")) {
+> -			char *action_str = str + sizeof("onmax(") - 1;
+> +		} else if ((len = str_has_prefix(str, "onmax("))) {
+> +			char *action_str = str + len;
+>  
+>  			data = onmax_parse(action_str);
+>  			if (IS_ERR(data)) {
