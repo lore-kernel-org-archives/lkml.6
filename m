@@ -2,153 +2,123 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F23C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA513C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B9921928
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B011021928
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404046AbeLVAAo (ORCPT
+        id S2404078AbeLVAB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41318 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 19:01:57 -0500
+Received: from mga05.intel.com ([192.55.52.43]:41421 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbeLVAAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:00:43 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C22321928;
-        Sat, 22 Dec 2018 00:00:41 +0000 (UTC)
-Date:   Fri, 21 Dec 2018 19:00:39 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Subject: Re: [PATCH v3] string.h: Add str_has_prefix() helper
-Message-ID: <20181221190039.73016323@gandalf.local.home>
-In-Reply-To: <75e15c5d66ecd6964231be0f5b3cf702ac242bc1.camel@perches.com>
-References: <20181221181316.6d32bdc8@gandalf.local.home>
-        <b77cd7378434bf8ea804f2fd0caa662b9b7d07f0.camel@perches.com>
-        <20181221182507.2fdc756f@gandalf.local.home>
-        <75e15c5d66ecd6964231be0f5b3cf702ac242bc1.camel@perches.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729993AbeLVAB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:01:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 16:01:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
+   d="scan'208";a="129875464"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Dec 2018 16:01:46 -0800
+Date:   Sat, 22 Dec 2018 02:01:45 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181222000145.GA8954@linux.intel.com>
+References: <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
+ <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
+ <20181218154417.GC28326@linux.intel.com>
+ <20181218185349.GC30082@linux.intel.com>
+ <20181219050047.GC14295@linux.intel.com>
+ <20181221182809.GB27371@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221182809.GB27371@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Dec 2018 15:44:41 -0800
-Joe Perches <joe@perches.com> wrote:
-
-> On Fri, 2018-12-21 at 18:25 -0500, Steven Rostedt wrote:
-> > On Fri, 21 Dec 2018 15:19:33 -0800
-> > Joe Perches <joe@perches.com> wrote:
-> >   
-> > > I believe this should be bool.
-> > > 
-> > > I don't find a use for non-zero assigned len value in the kernel
-> > > for strncmp and I believe the function should simply be:
-> > > 
-> > > static inline bool str_has_prefix(const char *str, const char prefix[])
-> > > {
-> > > 	return !strncmp(str, prefix, strlen(prefix));
-> > > }  
-> > 
-> > diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c  
-> []
-> > @@ -172,8 +172,8 @@ cache_type_store(struct device *dev, struct device_attribute *attr,
-> >  		 * it's not worth the risk */
-> >  		return -EINVAL;
-> >  
-> > -	if (strncmp(buf, temp, sizeof(temp) - 1) == 0) {
-> > -		buf += sizeof(temp) - 1;
-> > +	if ((len = str_has_prefix(buf, temp))) {
-> > +		buf += len;  
+On Fri, Dec 21, 2018 at 10:28:09AM -0800, Sean Christopherson wrote:
+> > Why would you want to pass EPC through user space to KVM rather than
+> > KVM allocating it through kernel interfaces?
 > 
-> That's not really a use of the non-zero strncmp return value.
+> Delegating EPC management to userspace fits better with KVM's existing
+> memory ABI.  KVM provides a single ioctl(), KVM_SET_USER_MEMORY_REGION[1],
+> that allows userspace to create, move, modify and delete memory regions.
 > 
-> You are attempting an optimization not already done.
-> I also wonder if it's actually an optimization as the
-> return value may not be precomputed.
-
-Note, temp is this:
-
-	static const char temp[] = "temporary ";
-
+> Skipping over a lot of details, there are essentially three options for
+> exposing EPC to a KVM guest:
 > 
-> Also the assignment in the test isn't preferred style.
-
-We could have two helper functions:
-
-static __always_inline bool
-str_has_prefix(const char *str, const char *prefix)
-{
-	return strncmp(str, prefix, strlen(prefix));
-}
-
-and a 
-
-static __always_inline bool
-str_has_prefix_len(const char *str, const char *prefix, unsigned int *len)
-{
-	*len = strlen(prefix);
-	return strncmp(str, prefix, *len);
-}
-
-This was my original thought with the first patches. But when Linus
-suggested changing the style from the strncmp() I thought it was a way
-to encapsulate the two.
-
-Either way, but yes, I do want a way to do the compare and calculate
-the length all in one function. That even makes checking options easier
-to get to:
-
-	if (str_has_prefix_len(cmdline, "param=", &len)) {
-		value = cmdline + len;
-
-
+>  1) Provide a dedicated KVM ioctl() to manage EPC without routing it
+>     through KVM_SET_USER_MEMORY_REGION.
 > 
-> > And there's more places like this.  
+>  2) Add a flag to 'struct kvm_userspace_memory_region' that denotes an
+>     EPC memory region and mmap() / allocate EPC in KVM.
 > 
-> Any where the non-zero return value is actually used?
+>  3) Provide an ABI to allocate raw EPC and let userspace manage it like
+>     any other memory region.
 > 
-> > > It's hard to believe __always_inline vs inline matters 
-> > > for any single line function.  
-> > 
-> > I've been burnt by gcc deciding to not inline single functions before.  
+> Option (1) requires duplicating all of KVM_SET_USER_MEMORY_REGION's
+> functionality unless the ioctl() is severly restricted.
 > 
-> Complex single functions sure, but single line inlines?
-> I haven't seen that externed anywhere.
+> Option (2) is an ugly abuse of KVM_SET_USER_MEMORY_REGION since the EPC
+> flag would have completely different semantics than all other usage of
+> KVM_SET_USER_MEMORY_REGION.
 > 
-> Today no inline function is marked __always_inline in
-> string.h
-> 
-> I don't doubt there should be some standardization
-> of inline vs __always_inline in the kernel, but this
-> right now seems different just for difference sake.
+> Thus, option (3).
 
-I got burnt by some crazy gcc config options making local_irq_save()
-become a out of line function, and that cause crazy crap to happen with
-the function tracer.
+OK, thank you for patience explaining this.
 
-Now inlining here is just for guaranteeing that strlen() gets turned
-into a constant for constant strings and wont do anything harmful if
-that doesn't happen (but slightly slow things down). But again, it
-doesn't hurt to have the __always_inline. Why are you so dead against
-it? You haven't stated your rational for that.
+> Probably a better question to answer is why provide the ABI through
+> /dev/sgx and not /dev/kvm.  IMO /dev/sgx is a more logical way to
+> advertise support to userspace, e.g. userspace can simply check if
+> /dev/sgx (or /dev/sgx/epc) exists vs. probing a KVM capability.
 
--- Steve
+You have to understand that for a KVM non-expert like me it was really
+important to get the context, which you kindly gave. I have never used
+KVM's memory management API but now that I know how it works all of this
+makes perfect sense. This is not a better question but it is definitely
+a good follow up question :-)
 
+I don't really understand you deduction here, however. If SGX was not
+supported, why couldn't the hypothetical /dev/kvm functionality just
+return an error?
+
+For me it sounds a bit messy that KVM functionality, which is a client
+to the SGX functionality, places some of its functionality to the SGX
+core.
+
+/Jarkko
