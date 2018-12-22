@@ -2,197 +2,242 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47108C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D56C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D7921939
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D082084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:12:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391125AbeLVVzn (ORCPT
+        id S2391147AbeLVWMO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 16:55:43 -0500
-Received: from dmz-mailsec-scanner-3.mit.edu ([18.9.25.14]:65486 "EHLO
-        dmz-mailsec-scanner-3.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390323AbeLVVzm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 16:55:42 -0500
-X-AuditID: 1209190e-2ffff700000054d4-05-5c1dbb79995e
-Received: from mailhub-auth-1.mit.edu ( [18.9.21.35])
-        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by dmz-mailsec-scanner-3.mit.edu (Symantec Messaging Gateway) with SMTP id F5.B9.21716.A7BBD1C5; Fri, 21 Dec 2018 23:20:10 -0500 (EST)
-Received: from outgoing.mit.edu (OUTGOING-AUTH-1.MIT.EDU [18.9.28.11])
-        by mailhub-auth-1.mit.edu (8.14.7/8.9.2) with ESMTP id wBM4HF1V021600;
-        Fri, 21 Dec 2018 23:17:34 -0500
-Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id wBM4HCmQ028383
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Dec 2018 23:17:13 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 6102A7A460A; Fri, 21 Dec 2018 23:17:12 -0500 (EST)
-Date:   Fri, 21 Dec 2018 23:17:12 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181222041712.GC26547@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-References: <20181219071420.GC2628@infradead.org>
- <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu>
- <20181219213552.GO6311@dastard>
- <20181220220158.GC2360@mit.edu>
- <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu>
- <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+        Sat, 22 Dec 2018 17:12:14 -0500
+Received: from mail-oln040092067059.outbound.protection.outlook.com ([40.92.67.59]:17472
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390220AbeLVWMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 17:12:14 -0500
+Received: from AM5EUR02FT060.eop-EUR02.prod.protection.outlook.com
+ (10.152.8.55) by AM5EUR02HT052.eop-EUR02.prod.protection.outlook.com
+ (10.152.9.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Sat, 22 Dec
+ 2018 22:12:08 +0000
+Received: from DB7PR03MB4681.eurprd03.prod.outlook.com (10.152.8.57) by
+ AM5EUR02FT060.mail.protection.outlook.com (10.152.9.179) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Sat, 22 Dec 2018 22:12:08 +0000
+Received: from DB7PR03MB4681.eurprd03.prod.outlook.com
+ ([fe80::4528:b917:99ee:4ae1]) by DB7PR03MB4681.eurprd03.prod.outlook.com
+ ([fe80::4528:b917:99ee:4ae1%3]) with mapi id 15.20.1446.022; Sat, 22 Dec 2018
+ 22:12:08 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     Chen-Yu Tsai <wens@csie.org>, Code Kipper <codekipper@gmail.com>
+CC:     Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Maxime Ripard" <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [alsa-devel] [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap
+ settings
+Thread-Topic: [alsa-devel] [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap
+ settings
+Thread-Index: AQHUmkNh+epgLTmWFES3de0wBo24uA==
+Date:   Sat, 22 Dec 2018 22:12:08 +0000
+Message-ID: <DB7PR03MB46813005FFDFC8609F67F111ACB90@DB7PR03MB4681.eurprd03.prod.outlook.com>
+References: <20181221152110.17982-1-codekipper@gmail.com>
+ <20181221152110.17982-2-codekipper@gmail.com>
+ <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
+In-Reply-To: <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR05CA0198.eurprd05.prod.outlook.com
+ (2603:10a6:3:f9::22) To DB7PR03MB4681.eurprd03.prod.outlook.com
+ (2603:10a6:10:1f::17)
+x-incomingtopheadermarker: OriginalChecksum:B20AFBB833656B7950C622BE4B6FE81E452DC09E684068F40DDCC5C8BFB58A6A;UpperCasedChecksum:95F054D451C2D971EED71C00CAC14553644FBEB30AA08BDAC6E49DEB9A6AEF57;SizeAsReceived:7964;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [oO45OK37Ek8DbjyVIuJoJ1pgZ26Jngcf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5EUR02HT052;6:Lks8qM1epIl9/ichi7OrHKJpoDzJ9Og40B3JIHPmXWlRS4JDrfO2OlCYDppxOQu9N49mUA4GdxSA0kg9hK/jSuEuAh15qIMTFs4TMLediHOh4vwvVKQvLFq6kyWM44HdipAxT4BwtFyXwsr5UJpVQDZQ6mBEjKXKhwO6AjH1yFSLxH1TL4iwokvXDGrT+9rPvlQ8BSrVRZ5CVdL79M9H9Fl+vS2ww2c/vS0tKP4UvA+66ky2zYHpiRuLvBDU4Uj46LrcWGF2I7kMRKYp4hGJ0P8pwGhVVd2kqeW184S4DbzkLlSPYHUxg1N95nr7TwrtFfV3QWRvEghuHSN796qlLP7gVkYYEmKRTamX6ipCqy7kuYmaksVLrOUM8RIHoeeVJFiu1bSCIyOFloTsQLKXPd+vYvdUDkv1QvpBOFBgg6dutqNT6TckrH/qLKPFnyu+Qh8qC3x8dgelDJ48DY5T+A==;5:EK36V7zRfnHmhd5ykvPo+DHNZxxUEAkNgIvQJ9ayrRfRcNvKIa8UWj2hAyWW6gmPjUERT6mkFqInl2GOHFQNne161MW+b4D/mYt83iIm9NhXWEBlRqy0HiqoNSoMV2qysIuO5e/wnZfdO6wOBeT6YxQGOZd8649pZAF1mWs/HAk=;7:jozZ66m0DYpemgaOywQo7+jlsdTqudwAC9P5BYwhPHcGpmRapFDlD066dMm+PxedOCDdcvwOyr4SjnbOWSVdpvDWF09q6uneEJd9lGIxCAaiqYjIGjnhHad/7DZXrVVljTc2OhhmP25XDxDCeFVyQg==
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:AM5EUR02HT052;
+x-ms-traffictypediagnostic: AM5EUR02HT052:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:AM5EUR02HT052;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR02HT052;
+x-microsoft-antispam-message-info: IIQwvVXR7Lm+xnV5kCw8n9Kg8Av9D9ReEFqbRkh9N/n1WrRsO9h4mQNRqdU2yC4Q
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <F307A1F0ECBB5B4EB50C38F5BE1EB0D6@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURTmzsxO4+LUbXTxalqwKZW1ZvbgFhUVQUNFGf0qhZzaq7u2O9rM
-        aikRUtnDHmwRlVIm2w+17OEamdpLMUt7EGoRpiW2hgmVtmlg9pjRyv6dc74Xh3M4WvhqCOPs
-        sososuQws0ZGCDBNtWTXRCTGHq2fgI+eqjXgjs+VBnyj4Q3AV24P0/ix20Nh37UCGucXtrO4
-        2bMK9xYOMvj2nUYGP3rWMA63VJ9j8du8PBp3Hf84DtdX1LPLJohNHiQWeTPEipJo0XvpMCs+
-        OvudETvrKhixpshPif3dbYy4/95LVvR7J8cbNxsXW4nDnkmU2UuTjLaByiqQ3jVt17OBfjoH
-        NE3JAwEcgvPQ19ojdB4wcgIso1Bx9SdmtCkH6HX+eXa06aPQmf5CSpcIUEEvh920XjMwCpW3
-        lbB6zcLpqKz7B6PXwTAO+XtaDbqYhq0M6n3cBHQgCC5HF7s+aUYcx8NZ6IFvic7h4Q8G+Q5+
-        +5P2lELX3p8YEfBwImrM94240jAavfr5YURMw0mo+CenjwPgBtR34blBH5tgJPIXQTcQCv4T
-        F/wnLhgTFwH6EoiwOrMtTsnuUMk2i7pNkmWiWObGOO2uGGLN8IKRg4aOvwVO5qypA5AD5kDe
-        PRieKBikTDXLWQdCOcps4iNPRyQK47emWbNskmrbomQ4iFoHEEebg/lDSzQ6b5WysomS9hea
-        xDHmEH4o+F2CAFMkF9lOSDpR/qLhHGdGfGeVZjpRISlkV7Ld4RqDKS5ANw/UzFOrNQ6vpktO
-        1Z4yijcBC/fq/q8ztMDIaTIJC+F57RsFqJNsGfI/H/1Zk8Tk0l4Qoq0VxNv1uEDtlf859Woh
-        lBZiXKFvoLqkMSgsB8yvjJSvXt6y3rY69uFQ7s2WmU8c1xcm34rOJXLugh5X66b8vlPHepp3
-        bpaudniM+wZnDq0VyxY1bjLFx8VXzfDP2nHhuXFleyr7ogEnfTkwPXXdxgU1wf49wyUDu/fi
-        4YXSjTulbWSwqtYXPsNrcjdePr4+pj8qMyj1dUKp597dFo+ZUW3SnGhaUaXfDRnL54cDAAA=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-Network-Message-Id: f88631fb-4d64-4f5e-436c-08d6685a8385
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Dec 2018 22:12:08.7241
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR02HT052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 11:13:07AM -0800, Linus Torvalds wrote:
-> 
-> I do agree that your particular model is pretty damn broken in lots of ways.
-> 
-> Why is it filesystem specific? If the whole point is that the file
-> itself has its own verification data (which I like), then I don't see
-> why this is then documented as some filesystem-specific layout model.
-> That's complete and utter garbage.
-> 
-> In other words: either the model is that the file *itself* contains
-> its own merkle tree that validates the file, or it isn't. You can't
-> have it two ways. No silly "layout changes when you apply the hash"
-> garbage. That's just crazy talk and invalidates the whole model.
+On 2018-12-21 17:44, Chen-Yu Tsai wrote:
+> On Fri, Dec 21, 2018 at 11:21 PM <codekipper@gmail.com> wrote:
+>> From: Marcus Cooper <codekipper@gmail.com>
+>>
+>> Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
+>> to reflect this.
+>>
+>> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+>> ---
+>>  sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
+>>  1 file changed, 9 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+>> index d5ec1a20499d..64d073cb2aee 100644
+>> --- a/sound/soc/sunxi/sun4i-i2s.c
+>> +++ b/sound/soc/sunxi/sun4i-i2s.c
+>> @@ -548,9 +548,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+>>  static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
+>>  {
+>>         /* Flush RX FIFO */
+>> +       regcache_cache_bypass(i2s->regmap, true);
+>>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
+>>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
+>>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
+>> +       regcache_cache_bypass(i2s->regmap, false);
+> IIRC the flush cache bit is self-clearing. So you likely want to mark
+> this register as volatile. If it is marked as volatile, then all access
+> to that register bypasses the cache, so the regcache_cache_bypass calls
+> are unneeded.
 
-Userspace applications which are reading the file aren't going to be
-expecting Merkle tree.  For example, one of the use cases is Android
-APK files, which are essentially ZIP files.  ZIP files can be parsed
-both from the front-end (streaming), or by looking for the complete
-directory of all of the files in the ZIP file by starting at the end
-of the file and moving backwards.  If the Merkle tree was visible to
-userspace programs that are opening and reading the file, it would
-confuse them mightily.
+I helped test this together with Marcus and when I tested with this
+register marked
+as volatile audio started to stutter, still unclear why audio starts to
+stutter.
 
-So what we do for ext4 and f2fs is make the Merkle tree invisible; if
-userspace stats the file, st_size will return size of the original
-"data" file, and reading beyond the st_size from userspace will behave
-like reading beyond EOF.  From the *file system's* perspective,
-though, the metadata blocks are part of the file.  There's just a
-difference between the userspace visible EOF and the file system's
-conception of EOF.  I don't consider this a "layout change", and I
-personally believe this should be just *fine* for all file systems.
-The XFS developers are convinced that this is horrific, and no one
-sane should do this.  OK, call me insane.  But it works, and I think
-it's elegant and clean.
+Without this cache bypass the flush TX/RX bits gets cached and flush
+happens unexpectedly
+resulting in multi channel audio getting mapped to wrong speaker.
+Other ASoC codecs and fsl_spdif.c seems to use similar cache bypass for
+reset/flush.
 
-So if *they* want to use some other layout, where the Merkle blocks
-are stored in some Alternate Data Stream, ala NTFS --- they are *free*
-to do that.  It will require more work, and at that point, it will
-require a layout change.  But it's Dave and Christoph who are
-insisting on doing that; not me!
+>
+> However, looking at the code, the write would seem to be ignored if the
+> regmap is in the cache_only state. We only set this when the bus clock
+> is disabled. Under such a condition, bypassing the cache and forcing a
+> write would be unwise, as the system either drops the write, or stalls
+> altogether.
+>
+>>         /* Clear RX counter */
+>>         regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
+>> @@ -569,9 +571,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
+>>  static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
+>>  {
+>>         /* Flush TX FIFO */
+>> +       regcache_cache_bypass(i2s->regmap, true);
+>>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
+>>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
+>>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
+>> +       regcache_cache_bypass(i2s->regmap, false);
+>>
+>>         /* Clear TX counter */
+>>         regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
+>> @@ -703,13 +707,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
+>>
+>>  static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
+>>  {
+>> -       switch (reg) {
+>> -       case SUN4I_I2S_FIFO_TX_REG:
+>> -               return false;
+>> -
+>> -       default:
+>> -               return true;
+>> -       }
+>> +       return true;
+> I don't understand why this is relevant. Do you need to read back from the TX
+> FIFO?
 
-> And honestly, I still think that it's very odd to add the merge data
-> to the end, when the filesystem already supports xattrs. It would have
-> made much more sense to just make one xattr contain the merkle tree
-> validation data.
+This change was inspired by c66234cfedfc "ASoC: rockchip: i2s: fix
+playback after runtime resume" [1]
+On resume a cached sample would be written to FIFO_TX_REG unless it is
+marked volatile,
+the rockchip commit indicated that read is needed for volatile regs.
 
-The problem is that xattrs are designed to be accessed via a set/get
-interface, are currently limited, IIRC at 32k.  The max size of an APK
-is 300 megabytes; and the Merkle tree for a file that size will be
-about 2.3 megabytes.  That's way too big to store as an xattr;
-certainly using the existing xattr interfaces.  And it's also bigger
-than most file systems can handle as xattrs today --- because they've
-been optimzied for relatively small sizes, for things like SELinux
-labels and ACL structures.
+[1]
+https://github.com/torvalds/linux/commit/c66234cfedfc3e6e3b62563a5f2c1562be09a35d
 
-> So why is this sold as some unholy mess of "filesystem-specific" and
-> "generic"? That part just annoys the hell out of me. Why isn't this
-> sold as an *actual* generic model, where you just say "append the
-> merkle tree to the file, then enable verity testing of the end result
-> and validate the top-level hash".
-
-That was the original way it was sold, but Cristoph and Dave have
-NACK'ed it in that form.  The common fsverity code which is generic to
-ext4 and f2fs does treat it that way, with the note that we "lie" to
-userspace about is the size of the file and where the EOF is.  Dave
-and Cristoph have declaimed strongly that this is this layout choice
-is horrible, and filesystem specific, and XFS could never do it that
-way.  I don't understand why, but they are the XFS experts.  So if
-they want to do something else, what I've been trying to point out is
-that they can do that, using the existing interface.
-
-> So what's the excuse for doing the crazy odd "let's just support one
-> single filesystem" model?
-
-Android devices use both ext4 and f2fs; it's the manufacturer's
-choice.  So we wanted fs-verity to support both.  And we didn't want
-to duplicate code across ext4 and f2fs; hence trying to put common
-code in fs/verity.  So we aren't supporting one file system out of the
-gate; we're supporting two.
-
-Whether XFS wants to implement fs-verity is purely XFS's choice.  XFS
-has chosen not to support fscrypt, which is currently used by ext4,
-f2fs, and ubifs, and both fscrypt's and fs-verity's initial use case
-has been for Android, which is not an area where XFS has proven to be
-a common choice.
-
-So I was not really expecting that they would have any interest in
-fs-verity.  But they seem to have very strong opinions about how they
-would want to implement it, and it's different from what we have in
-the current "generic code shared by ext4 and f2fs".  I was trying to
-show that even if they wanted to do things in this different way ---
-and I don't understand why it's so important to them --- it would be
-possible to do so.
-
-Cheers,
-
-					- Ted
+>
+> If so, just drop the call-back altogether. If no callback is provided and no
+> rd_table is provided either, it defaults to all registers under max_register
+> (if max_register < 0) are readable.
+>
+> However this seems like it deserves to be a separate patch (where you explain
+> in the commit log why it's needed).
+>
+> Regards
+> ChenYu
+>
+>>  }
+>>
+>>  static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
+>> @@ -728,6 +726,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+>>  {
+>>         switch (reg) {
+>>         case SUN4I_I2S_FIFO_RX_REG:
+>> +       case SUN4I_I2S_FIFO_TX_REG:
+>> +       case SUN4I_I2S_FIFO_STA_REG:
+>>         case SUN4I_I2S_INT_STA_REG:
+>>         case SUN4I_I2S_RX_CNT_REG:
+>>         case SUN4I_I2S_TX_CNT_REG:
+>> @@ -738,23 +738,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+>>         }
+>>  }
+>>
+>> -static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
+>> -{
+>> -       switch (reg) {
+>> -       case SUN8I_I2S_FIFO_TX_REG:
+>> -               return false;
+>> -
+>> -       default:
+>> -               return true;
+>> -       }
+>> -}
+>> -
+>>  static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
+>>  {
+>>         if (reg == SUN8I_I2S_INT_STA_REG)
+>>                 return true;
+>>         if (reg == SUN8I_I2S_FIFO_TX_REG)
+>> -               return false;
+>> +               return true;
+>>
+>>         return sun4i_i2s_volatile_reg(dev, reg);
+>>  }
+>> @@ -809,7 +798,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
+>>         .reg_defaults   = sun8i_i2s_reg_defaults,
+>>         .num_reg_defaults       = ARRAY_SIZE(sun8i_i2s_reg_defaults),
+>>         .writeable_reg  = sun4i_i2s_wr_reg,
+>> -       .readable_reg   = sun8i_i2s_rd_reg,
+>> +       .readable_reg   = sun4i_i2s_rd_reg,
+>>         .volatile_reg   = sun8i_i2s_volatile_reg,
+>>  };
+>>
+>> --
+>> 2.20.1
+>>
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+>
