@@ -2,164 +2,87 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAC8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CCFC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3CA20578
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59FC420578
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545500848;
-	bh=+y8DKVpaShJxLpAouXY8gjjoxuJIui3wt1YAbafvzHg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=IL+LT7Sp5/WjfGYXYfim6fOrjkOQQ7W8Y2Qefaj5fu6dFCYtsBkzgrJc6Gxork/sn
-	 RsNYkAUSFDQI4P4hcAvZxxiinGCrxRadjeVo8jIG4PJq1K/Ul44zK9NvdaH1mRUGdJ
-	 fagUZL+B6+mL2oTWhW4lNAYFCuiUzJocjEqPKm14=
+	s=default; t=1545500856;
+	bh=rHhuQRG+CPfH9o7bUDFs6weW/e2Z5xXMrhOOXqB/GJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1suAV6nOwt9iZy4fRsl7+XHO6YsZm6NwrWnCDnnLAqGPdsWHZXEnDPhIn/4l9nyw0
+	 nTmRQGLCFeHJLWUbn0cgLgAXJXVL9N02OyRmy5toZnqG5Mwea5vMNcVqemDSJsCVqh
+	 151PqxbXMnaDBsUXhTetffMsaSivdP6jc/QhZEx0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404418AbeLVRr1 (ORCPT
+        id S2391663AbeLVRrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:47:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34398 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 12:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389059AbeLVRr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:47:26 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        id S2387623AbeLVRrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:47:13 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 041992054F;
-        Sat, 22 Dec 2018 17:47:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9684C219FE;
+        Sat, 22 Dec 2018 11:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545500845;
-        bh=+y8DKVpaShJxLpAouXY8gjjoxuJIui3wt1YAbafvzHg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=L8sd5BtYLy3+7IZyHIRGwSNrGHU0qYFX4e5k+a6UMfD3nIdpnyZclrC3FjrepeNA3
-         uPRm1ODpCNUOABh5cvkDhCFNCEPCAma1ESoZ5ECTDR471NyAi6p6LhvMRuRuc7hHIl
-         smygyol+AJOUT4v5eLZmqDy9qwQ1ajD4wW+IHmaU=
-Date:   Sat, 22 Dec 2018 17:47:19 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>
-Subject: Re: [PATCH v2 2/6] staging: iio: adc: ad7606: Use SPDX identifier
-Message-ID: <20181222174719.424b8fc2@archlinux>
-In-Reply-To: <1545049420-16484-3-git-send-email-stefan.popa@analog.com>
-References: <1545049420-16484-1-git-send-email-stefan.popa@analog.com>
-        <1545049420-16484-3-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        s=default; t=1545477915;
+        bh=rHhuQRG+CPfH9o7bUDFs6weW/e2Z5xXMrhOOXqB/GJA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ryFveUidm95Mm1Ivmbt8jCZFwECvE+4RQxCjQMyY2mzlVoKtNZHZsmpbGUK17/NH7
+         BCXcrkZxp6U8OpzEwnEOi1UrpirwKJw7y4wGgS3vb7PcddRp20jOWuwkcWuSq3k+66
+         BLnIuTnvpsT3gCZHbMGpEMZ3C2Io4gVjs21tAU2U=
+Date:   Sat, 22 Dec 2018 12:25:12 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     yangerkun <yangerkun@huawei.com>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: remove inc_nlink in debugfs_create_automount
+Message-ID: <20181222112512.GA27683@kroah.com>
+References: <20181222084536.21305-1-yangerkun@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181222084536.21305-1-yangerkun@huawei.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 14:23:36 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
-
-> This patch replaces the license text at the top of ad7606 driver files
-> and instead adds SPDX GPL-2.0 license identifier.
+On Sat, Dec 22, 2018 at 04:45:36PM +0800, yangerkun wrote:
+> Remove inc_nlink in debugfs_create_automount, or this inode will never
+> be free.
 > 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
 > ---
->  drivers/staging/iio/adc/ad7606.c     | 5 ++---
->  drivers/staging/iio/adc/ad7606.h     | 3 +--
->  drivers/staging/iio/adc/ad7606_par.c | 5 ++---
->  drivers/staging/iio/adc/ad7606_spi.c | 5 ++---
->  4 files changed, 7 insertions(+), 11 deletions(-)
+>  fs/debugfs/inode.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
-> index e1d85b7..97b4a83 100644
-> --- a/drivers/staging/iio/adc/ad7606.c
-> +++ b/drivers/staging/iio/adc/ad7606.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * AD7606 SPI ADC driver
->   *
->   * Copyright 2011 Analog Devices Inc.
-> - *
-> - * Licensed under the GPL-2.
->   */
+> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> index 13b01351dd1c..9294238e364f 100644
+> --- a/fs/debugfs/inode.c
+> +++ b/fs/debugfs/inode.c
+> @@ -551,12 +551,11 @@ struct dentry *debugfs_create_automount(const char *name,
+>  	if (unlikely(!inode))
+>  		return failed_creating(dentry);
 >  
->  #include <linux/interrupt.h>
-> @@ -531,4 +530,4 @@ EXPORT_SYMBOL_GPL(ad7606_pm_ops);
->  
->  MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
-> -MODULE_LICENSE("GPL v2");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/staging/iio/adc/ad7606.h b/drivers/staging/iio/adc/ad7606.h
-> index 510a93d..3e12fff 100644
-> --- a/drivers/staging/iio/adc/ad7606.h
-> +++ b/drivers/staging/iio/adc/ad7606.h
-> @@ -1,9 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * AD7606 ADC driver
->   *
->   * Copyright 2011 Analog Devices Inc.
-> - *
-> - * Licensed under the GPL-2.
->   */
->  
->  #ifndef IIO_ADC_AD7606_H_
-> diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
-> index da26742..2d137b1 100644
-> --- a/drivers/staging/iio/adc/ad7606_par.c
-> +++ b/drivers/staging/iio/adc/ad7606_par.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * AD7606 Parallel Interface ADC driver
->   *
->   * Copyright 2011 Analog Devices Inc.
-> - *
-> - * Licensed under the GPL-2.
->   */
->  
->  #include <linux/module.h>
-> @@ -114,4 +113,4 @@ module_platform_driver(ad7606_driver);
->  
->  MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
-> -MODULE_LICENSE("GPL v2");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/staging/iio/adc/ad7606_spi.c b/drivers/staging/iio/adc/ad7606_spi.c
-> index e533917..f38f0d6 100644
-> --- a/drivers/staging/iio/adc/ad7606_spi.c
-> +++ b/drivers/staging/iio/adc/ad7606_spi.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * AD7606 SPI ADC driver
->   *
->   * Copyright 2011 Analog Devices Inc.
-> - *
-> - * Licensed under the GPL-2.
->   */
->  
->  #include <linux/module.h>
-> @@ -80,4 +79,4 @@ module_spi_driver(ad7606_driver);
->  
->  MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
-> -MODULE_LICENSE("GPL v2");
-> +MODULE_LICENSE("GPL");
-Err. Nope. That is "GPL v2 or later"  Guessing accidentally left behind.
+> +	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+>  	make_empty_dir_inode(inode);
+>  	inode->i_flags |= S_AUTOMOUNT;
+>  	inode->i_private = data;
+>  	dentry->d_fsdata = (void *)f;
+> -	/* directory inodes start off with i_nlink == 2 (for "." entry) */
+> -	inc_nlink(inode);
 
-I've cleaned up all 3 cases of this whilst applying.   Shout if that
-doesn't actually make sense.  Now we have consistent SPDX and MODULE_LICENSE
-with all being GPL v2 only.
+Again, have you tested this and how?  How did you find this issue?
 
-Thanks,
+thanks,
 
-Jonathan
-
-
+greg k-h
