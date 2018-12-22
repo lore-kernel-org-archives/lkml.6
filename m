@@ -2,134 +2,98 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C84C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC2BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F1F21B6A
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545497179;
-	bh=HJsPQFVo3Ou7SujUeK4Ifa6nLzFyjVlIaz97Wr+V1Xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TPgIyJPG6gwV5M1DGsPOLD0P/d4SupJ8mkEDr7SiKa5ZSkpY29rf4GdlKEIxhUowO
-	 PKO4Vi7lTVhvNieg21Wzi8LXxfJvb36cwq5W4Ahey50NsvPM3ZIS04e00xLy/RyQvd
-	 tESkLD6gVWOpah8w6gqXSzVwk17o7Dlxxcz60RAw=
+	by mail.kernel.org (Postfix) with ESMTP id 526322197D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbeLVQqR (ORCPT
+        id S1726511AbeLVQrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 11:46:17 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45106 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbeLVQqO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 11:46:14 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so4024306pfd.12
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 08:46:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NnO5rCR3Jil4VrqR8U/eJemrm9UuQVXJ89etNlg3q2g=;
-        b=EK7VXu/C6gWMjx63k971LB6YXm47eaEaTN9kba7Y8TyQ6TVRIHkWSC+wrShgZzvreP
-         n0MGNjLr1HcEHPaHJZL9isrcDTyK2iZe6FDAqF4D+Vc+qCtOBk7yeuZe6T8DEYhcV5fP
-         K+qqM4YAmB9+lWWvjT6qfTD6kMEOYpR70IGcMzLtIFoaFjWAXQ+YMcjoSN9mVAN2i80P
-         IOLUHRn7WNU9zPUfrCbMGdJqQecxDCL9ZKInmHIopCIJuEBn1Qj6L1PmCpoEW9DeNbeB
-         g8V2cuGm1nZssVEQJHJiQ64yYvdNYNx0/55jjEvhhHrMXZMxtWoscOZmvZrb2CI6dcUA
-         Oeog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NnO5rCR3Jil4VrqR8U/eJemrm9UuQVXJ89etNlg3q2g=;
-        b=QzivS1Np4+S/J3GrLQfLKMbtLKgYMvTKBflamH5wt+Z525rJdtloy9ETmiXevp6mWc
-         hNB4naefKWtsgvryiCwUb5khtJ5YoNjvhPGIiNBDf9FYaNHCDVc34utRGT93uhYV8gUe
-         hWzqMUlSbM5nsey4SLpiy9wvcNtkwWZU41j2HPdYRj0MgDT5LZEMYYOHhvljwFOrUkjt
-         woK4RDTb9IHr38at11XIo1w/lNpdVTXwLkFFsgjzRLtC4KVcsxh7Qkt1xGdLyYiqfhUt
-         jWFYSDETkzVYWHBoKIrjO3FgaglvUHA16Asu0G7z4zqq4tldfW7Q5VNyeR5WVbrYbXhG
-         Gh4g==
-X-Gm-Message-State: AJcUukf+CEPUgPhl0zrQy9blEC+En2WKb58Gcvkt75bYomQtPhW5NJTf
-        qLi1UXHV/jbjrwqpJuHswRM=
-X-Google-Smtp-Source: AFSGD/XhrfJLIj5lBZF0+1u6jUnzkvczLpv0cBwmCivqFH0wSUBQnIlF4276ucueUTzaBvRnlQhuhQ==
-X-Received: by 2002:a62:7892:: with SMTP id t140mr7034809pfc.237.1545497173763;
-        Sat, 22 Dec 2018 08:46:13 -0800 (PST)
-Received: from danjae.aot.lge.com ([182.210.106.196])
-        by smtp.gmail.com with ESMTPSA id n22sm50977820pfh.166.2018.12.22.08.46.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Dec 2018 08:46:13 -0800 (PST)
-Date:   Sun, 23 Dec 2018 01:46:05 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        Sat, 22 Dec 2018 11:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725886AbeLVQrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 11:47:13 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7054B21B6C;
+        Sat, 22 Dec 2018 16:28:57 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1gak92-0001Dz-EZ; Sat, 22 Dec 2018 11:28:56 -0500
+Message-Id: <20181222162007.697862256@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Sat, 22 Dec 2018 11:20:07 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joe Perches <joe@perches.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Andreas Schwab <schwab@linux-m68k.org>, kernel-team@lge.com
-Subject: Re: [PATCH v4] string.h: Add str_has_prefix() helper function
-Message-ID: <20181222164605.GA10792@danjae.aot.lge.com>
-References: <20181221231924.4583e90b@vmware.local.home>
- <20181222093346.GB7610@danjae.aot.lge.com>
- <20181222072404.27a7e9a3@vmware.local.home>
- <20181222142411.GA10058@danjae.aot.lge.com>
- <20181222101244.7da017c9@vmware.local.home>
- <20181222111630.24a4444a@vmware.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181222111630.24a4444a@vmware.local.home>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Namhyung Kim <namhyung@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+Subject: [for-next][PATCH 0/5] tracing: Add string_has_prefix() and usages
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 11:16:30AM -0500, Steven Rostedt wrote:
-> On Sat, 22 Dec 2018 10:12:44 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Sat, 22 Dec 2018 23:24:11 +0900
-> > Namhyung Kim <namhyung@kernel.org> wrote:
-> > 
-> > > > No, because we don't know the length of str.
-> > > > 
-> > > > 
-> > > > 	[ str = "h\0[bad memory]" ]
-> 
-> 
-> > > 
-> > > I don't know what's the bad memory causing memory fault but anyway
-> 
-> What I meant by that is if a string is allocated at a end of a page,
-> and the next page is marked as not present. A read into that page will
-> cause a page fault, and since memcmp() does not stop at the '\0' it
-> will read into that not-present memory and trigger a fault, and that
-> read wont be in the exception table, and it will then BUG.
+I hope everyone is OK with these changes. I pushed to linux-next but I'm
+willing to change them if there are still issues.
 
-Why it doesn't stop at the '\0' if one has it and the other doesn't?
-It's not because it's '\0', it's because they are different.  The '\0'
-should be in the prev page (otherwise it's already a BUG) so it should
-be detected and stopped before going to next page IMHO.
+They ran through all my tests, althought zero-day-bot had a weird build
+regression in sh, that looks totally unrelated:
+
+ Regressions in current branch:
+
+ arch/sh/kernel/dwarf.c:107:26: error: 'dwarf_frame_reg' defined but not used [-Werror=unused-function]
+ arch/sh/kernel/dwarf.c:1209:0: error: unterminated argument list invoking macro "WARN_ON"
+ arch/sh/kernel/dwarf.c:226:12: error: 'dwarf_read_encoded_value' defined but not used [-Werror=unused-function]
+ arch/sh/kernel/dwarf.c:306:26: error: 'dwarf_lookup_cie' defined but not used [-Werror=unused-function]
+ arch/sh/kernel/dwarf.c:38:27: error: 'dwarf_frame_cachep' defined but not used [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:399:12: error: 'dwarf_cfa_execute_insns' defined but not used [-Werror=unused-function]
+ arch/sh/kernel/dwarf.c:41:27: error: 'dwarf_reg_cachep' defined but not used [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:580:22: error: unused variable 'frame' [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:581:20: error: unused variable 'cie' [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:582:20: error: unused variable 'fde' [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:583:20: error: unused variable 'reg' [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:584:16: error: unused variable 'addr' [-Werror=unused-variable]
+ arch/sh/kernel/dwarf.c:622:3: error: expected ';' at end of input
+ arch/sh/kernel/dwarf.c:622:3: error: expected declaration or statement at end of input
+ arch/sh/kernel/dwarf.c:622:3: error: 'WARN_ON' undeclared (first use in this function); did you mean 'WMARK_LOW'?
+
+Pushing to my for-next branch should kick off another run. Let's see
+if it reports that again. Unless someone knows why that happened?
+
+-- Steve
 
 
-> 
-> > > memcpy() should stop at the NUL character first as it's different, no?  
-> > 
-> > No, that's the difference between memcpy() and strncpy(), memcpy()
-> > doesn't care about nul characters. It's copying memory not strings.
-> 
-> I think we both meant s/cpy/cmp/ ;-)
 
-Sure..  sorry about that.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+for-next
 
-I know the difference between memcpy() and strcpy().  But this is
-comparing so it should stop.
+Head SHA1: 92b9de3e574bd874188a4e27a8830bb901a08ef8
 
-Thanks,
-Namhyung
+
+Steven Rostedt (VMware) (5):
+      string.h: Add str_has_prefix() helper function
+      tracing: Use str_has_prefix() helper for histogram code
+      tracing: Use str_has_prefix() instead of using fixed sizes
+      tracing: Have the historgram use the result of str_has_prefix() for len of prefix
+      tracing: Use the return of str_has_prefix() to remove open coded numbers
+
+----
+ include/linux/string.h           | 20 ++++++++++++++++++++
+ kernel/trace/trace.c             |  8 +++++---
+ kernel/trace/trace_events.c      |  2 +-
+ kernel/trace/trace_events_hist.c | 35 ++++++++++++++++++-----------------
+ kernel/trace/trace_probe.c       | 17 +++++++++--------
+ kernel/trace/trace_stack.c       |  6 ++++--
+ 6 files changed, 57 insertions(+), 31 deletions(-)
