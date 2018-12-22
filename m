@@ -2,100 +2,133 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F78BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C070C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EDD221927
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:25:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LIj2hCrD"
+	by mail.kernel.org (Postfix) with ESMTP id 5138E2190A
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403842AbeLVAZg (ORCPT
+        id S2404065AbeLVA0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:25:36 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34011 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbeLVAZg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:25:36 -0500
-Received: by mail-it1-f196.google.com with SMTP id x124so16937564itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 16:25:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=iT/tXq7UPR5qw5hExf6QS7jdNfGxlfSoq52Q8RIOUNc=;
-        b=LIj2hCrDP6kJVThG+aUUG8nIEttg8iaRK54iuZHLStxdil5+ThTPyWUK6zK4MpONiZ
-         qd3Jr7NaR4mQYWezaLjOgOfWQgEJ8kyk4OfzZLoL/rPs9vKEAzeuxMkQeYx9VRdeuHU7
-         kkVxlE/Vo/KL/rHl2qTxKQLSstm9LK36wFPFCFcTlJlWbfRurlVMcQzxv01+k4EZQcJL
-         CbDgHg/oHS0YDHkiAqWgoqKYKOahIYm8z67omrRi40FaNQupEq0pVGftDD4G9RP4g4JL
-         QpZpTN32Lg4zmW/zG/DX4df5D++Co3ojIAfmD3Q77NPZ4Q6cppOdAItJHti5MuzB2J51
-         bgtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=iT/tXq7UPR5qw5hExf6QS7jdNfGxlfSoq52Q8RIOUNc=;
-        b=Ruu/a/bDYXoqYvHHmrO8zyGNw4qefR1akX3DmUMH2dKDIfdV06aZ615crmiY++Y6G7
-         8ZXB7uwCAIsW2IhvxIKKXCJ6EhK3MIRfzC5ruv8+fViJ0sOHm3YnXojfPWeAei+5YzqF
-         Wp+25TH70Yq5eMk0QRj0QFaxlgB/rlXeoprsyjOegXUV4kbFwBvBD4Grm/PGaCDYj1jU
-         KTbW7fX5lnTZTr0xYt8fXX5C9iQMHPMJXU2vG+Zn11tkzrozG41TOqnYFh5woJTMRNay
-         kC54ntHgjU2Xo6HpoXPIt5ndPa77KcugwmmQwPEr5o2zT6OSI7fXjTAbViQbpagODgyM
-         xprw==
-X-Gm-Message-State: AA+aEWYcRnohYjoHFoGCuwQLSt9K3MfiF+dan2SWf2PD/zuTagK5QcjI
-        2j8twKCQiBiPK2zwva6GDcQGEQ==
-X-Google-Smtp-Source: ALg8bN44kBLNctfTcjxe1uLUkXINSfWS223kl/nZPk2Xv+5Zq2grXUyU2Y1od0ZfnzMVEDjSf8TflQ==
-X-Received: by 2002:a24:7094:: with SMTP id f142mr3403994itc.90.1545438335644;
-        Fri, 21 Dec 2018 16:25:35 -0800 (PST)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id g21sm1107156itg.44.2018.12.21.16.25.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Dec 2018 16:25:34 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Fri, 21 Dec 2018 16:25:34 -0800 (PST)
-To:     Alistair Francis <Alistair.Francis@wdc.com>
-cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] RISC-V: defconfig: Enable Generic PCIE by default
-In-Reply-To: <20181221220555.13679-1-alistair.francis@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1812211620030.777@viisi.sifive.com>
-References: <20181221220555.13679-1-alistair.francis@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 21 Dec 2018 19:26:30 -0500
+Received: from mga04.intel.com ([192.55.52.120]:48590 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726757AbeLVA03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:26:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 16:26:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
+   d="scan'208";a="128134551"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga002.fm.intel.com with ESMTP; 21 Dec 2018 16:26:29 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Reinette Chatre" <reinette.chatre@intel.com>,
+        "Babu Moger" <babu.moger@amd.com>,
+        "James Morse" <james.morse@arm.com>,
+        "Xiaochen Shen" <xiaochen.shen@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
+        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
+        "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v4 00/10] selftests/resctrl: Add resctrl selftest
+Date:   Fri, 21 Dec 2018 16:20:28 -0800
+Message-Id: <1545438038-75107-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(fixed "Palmpalmer" again, might want to check your script for sending 
-patches)
+With more and more resctrl features are being added by Intel, AMD
+and ARM, a test tool is becoming more and more useful to validate
+that both hardware and software functionalities work as expected.
 
-On Fri, 21 Dec 2018, Alistair Francis wrote:
+We introduce resctrl selftest to cover resctrl features on both
+X86 and ARM architectures. It first implements MBM (Memory Bandwidth
+Monitoring) and MBA (Memory Bandwidth Allocation) tests. We can enhance
+the selftest tool to include more functionality tests in future.
 
-> Enable generic PCIe by default in the RISC-V defconfig, this allows us
-> to use QEMU's PCIe support out of the box.
-> 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+There is an existing resctrl test suite 'intel_cmt_cat'. But the major
+purpose of the tool is to test Intel(R) RDT hardware via writing and
+reading MSR registers. It does access resctrl file system; but the
+functionalities are very limited. And it doesn't support automatic test
+and a lot of manual verifications are involved.
 
-Thanks for updating this.  
+So the selftest tool we are introducing here provides a convenient
+tool which does automatic resctrl testing, is easily available in kernel
+tree, and will be extended to AMD QoS and ARM MPAM.
 
-I tried applying it against v4.20-rc7 and running "make savedefconfig", 
-and there is a delta.  It is better if there is no delta.  Is this patch 
-based on a different commit?  Or, is this patch not the product of "make 
-savedefconfig"?   If the latter, please do:
+The selftest tool is in tools/testing/selftests/resctrl in order to have
+generic test code for all architectures.
 
-make savedefconfig
-cp defconfig arch/riscv/configs/defconfig
+Changelog:
+v4: 
+- address comments from Balu and Randy
+- Add CAT and CQM tests
 
-to clean up the diff.
+v3:
+- Change code based on comments from Babu Moger
+- Remove some unnessary code and use pipe to communicate b/w processes
 
-thanks
+v2:
+- Change code based on comments from Babu Moger
+- Clean up other places.
 
-- Paul
+Arshiya Hayatkhan Pathan (4):
+  selftests/resctrl: Add MBM test
+  selftests/resctrl: Add MBA test
+  selftests/resctrl Add Cache QoS Monitoring (CQM) selftest
+  selftests/resctrl: Add Cache Allocation Technology (CAT) selftest
+
+Fenghua Yu (2):
+  selftests/resctrl: Add README for resctrl tests
+  selftests/resctrl: Add the test in MAINTAINERS
+
+Sai Praneeth Prakhya (4):
+  selftests/resctrl: Add basic resctrl file system operations and data
+  selftests/resctrl: Read memory bandwidth from perf IMC counter and
+    from resctrl file system
+  selftests/resctrl: Add callback to start a benchmark
+  selftests/resctrl: Add built in benchmark
+
+ MAINTAINERS                                   |   1 +
+ tools/testing/selftests/resctrl/Makefile      |  16 +
+ tools/testing/selftests/resctrl/README        |  53 ++
+ tools/testing/selftests/resctrl/cache.c       | 275 +++++++
+ tools/testing/selftests/resctrl/cat_test.c    | 243 ++++++
+ tools/testing/selftests/resctrl/cqm_test.c    | 169 ++++
+ tools/testing/selftests/resctrl/fill_buf.c    | 198 +++++
+ tools/testing/selftests/resctrl/mba_test.c    | 174 +++++
+ tools/testing/selftests/resctrl/mbm_test.c    | 146 ++++
+ tools/testing/selftests/resctrl/resctrl.h     | 104 +++
+ .../testing/selftests/resctrl/resctrl_tests.c | 175 +++++
+ tools/testing/selftests/resctrl/resctrl_val.c | 727 ++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrlfs.c   | 643 ++++++++++++++++
+ 13 files changed, 2924 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/Makefile
+ create mode 100644 tools/testing/selftests/resctrl/README
+ create mode 100644 tools/testing/selftests/resctrl/cache.c
+ create mode 100644 tools/testing/selftests/resctrl/cat_test.c
+ create mode 100644 tools/testing/selftests/resctrl/cqm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+ create mode 100644 tools/testing/selftests/resctrl/mba_test.c
+ create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl.h
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_val.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
+
+-- 
+2.19.1
+
