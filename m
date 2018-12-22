@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4EBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF63DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1104321B6A
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8F1021A48
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404684AbeLVRBF (ORCPT
+        id S2404799AbeLVRBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:01:05 -0500
+        Sat, 22 Dec 2018 12:01:06 -0500
 Received: from ozlabs.org ([203.11.71.1]:37977 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731707AbeLVRBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:01:02 -0500
+        id S2392419AbeLVRBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:01:04 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43MLSp49M5z9sPJ; Sat, 22 Dec 2018 20:54:50 +1100 (AEDT)
+        id 43MLT40b0qz9sPg; Sat, 22 Dec 2018 20:55:03 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 8dbdec0bcb416d0ef0bfd737620d08f5160ac290
+X-powerpc-patch-commit: 45090c26614fe991d9d5a2cd08e65c4d6680549a
 X-Patchwork-Hint: ignore
-In-Reply-To: <20181216172828.GA25359@altlinux.org>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Oleg Nesterov <oleg@redhat.com>
+In-Reply-To: <e63d9ac8ef6e83fc243d8910d7c789e111e48580.1541784640.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: powerpc/ptrace: cleanup do_syscall_trace_enter
-Message-Id: <43MLSp49M5z9sPJ@ozlabs.org>
-Date:   Sat, 22 Dec 2018 20:54:50 +1100 (AEDT)
+Subject: Re: [1/9] powerpc: simplify patch_instruction_site() and patch_branch_site()
+Message-Id: <43MLT40b0qz9sPg@ozlabs.org>
+Date:   Sat, 22 Dec 2018 20:55:03 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-12-16 at 17:28:28 UTC, "Dmitry V. Levin" wrote:
-> Invoke tracehook_report_syscall_entry once.
+On Fri, 2018-11-09 at 17:33:15 UTC, Christophe Leroy wrote:
+> Using patch_site_addr() helper, patch_instruction_site() and
+> patch_branch_site() can be simplified and inlined.
 > 
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/8dbdec0bcb416d0ef0bfd737620d08
+https://git.kernel.org/powerpc/c/45090c26614fe991d9d5a2cd08e65c
 
 cheers
