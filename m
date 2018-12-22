@@ -2,662 +2,281 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EA7C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB97C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC04B219D6
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A831C219D6
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:30:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9YfPaYj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUroZrHN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391422AbeLVR3g (ORCPT
+        id S2391453AbeLVRa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:29:36 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34730 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733256AbeLVR3g (ORCPT
+        Sat, 22 Dec 2018 12:30:27 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38092 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733256AbeLVRa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:29:36 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b3so7236445ede.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 09:29:32 -0800 (PST)
+        Sat, 22 Dec 2018 12:30:27 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so3925081plb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 09:30:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=HcTJq9S4pekiX261QyleJ3Opovebfy8X7OPB+LNbWNI=;
-        b=E9YfPaYj/eRUXvtG3GqS9T9fOBlsbHBRkcYk1Wum819hTSeN9q4yEldPFvezWJl2WH
-         a4Ijh0BsA2wteu8Y7TZYemAKhjYJy4R/oV1daafw/krlEis6kD02BmxwVPD0MkJcNvIE
-         GVhRF1yJkDNI9cpjSpH3K7fNVY8fMmy4S+hBQ=
+        bh=PUiUVAZX+o1L8tyb6nCCrphk9MHn36Ci/isp5wjlftk=;
+        b=HUroZrHNSkRF9fGX9met09H2aZDNyOYtpWvGpGEAGB2/CHmAETJAPvVnDK8jHUnTBF
+         uJ9H6NesPUzPsHhEDeSRIizUGxLkHwjeWvAIu+YhyhFQr7cv9N+ZipbQWUufPFufCp2/
+         AD0s78S7G0pe5ftKHgQGsgmz0Tfh+jG9N0yVT0Lsz90H0Re0j9M9JIQZNL4w0Vm8j5fo
+         3I8/AGE/eEw+CASV81KBeZRW1dyrG1CShJ43kqlOHjmuGn8jF9K+MzzzWlqEsD2iV8AM
+         j2JmxKWsGHj0VkQNgU87I5vOLnfOlAz5IK+STdLweWfBGv/kEOVb0yeAK89k69CaQuhe
+         VTIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HcTJq9S4pekiX261QyleJ3Opovebfy8X7OPB+LNbWNI=;
-        b=BrbGHDorqWBhuwiLqpvR6eQl6f3w0lLbpwgZjs7BS99pPUQG7zUKlZPBac4VRBOUbL
-         lScg/0AbOVnWizvoMeAN33YibID4lQ5Lc6rNjJuA9PR8kuK80wQo+2gPYtK4vnaXpovF
-         pwT+pz9y2rfcQo5clacAsJskfSQOl7uwa5IStVqX3cYgBFu3zSoZNa4Xs6zHK5/Mg1Gh
-         73nx2AZGs+yic5MzEhtMB9UQ9K5yzMNEV1s40gsSHnoviCPZv4isz7wbYXv0AWpav5NB
-         MOfj7CadTM47nHP3TN0jweW7twS1ZNmsDxjP4e3k8O8JPSYtg6XCAi0ErBjAzfR/7UQi
-         VH7A==
-X-Gm-Message-State: AA+aEWZevcJOQGg89QCDpIxF4sTLiwug47Dg6nCPgPNv6QEVO0BkyEN5
-        9YaOiD+XZaU1LPT77MpE6+ZoCQ==
-X-Google-Smtp-Source: AFSGD/XadCoQIT1rvY78sKakkC003b315+MCWIqfPgWfQwpxW3aHv4hVw7+5b+++N7duuqwSzSjJBw==
-X-Received: by 2002:a17:906:1001:: with SMTP id 1-v6mr4228223ejm.91.1545475611211;
-        Sat, 22 Dec 2018 02:46:51 -0800 (PST)
-Received: from leoy-ThinkPad-X240s ([95.179.158.15])
-        by smtp.gmail.com with ESMTPSA id k24-v6sm3883038eja.60.2018.12.22.02.46.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 02:46:50 -0800 (PST)
-Date:   Sat, 22 Dec 2018 18:46:42 +0800
-From:   leo.yan@linaro.org
-To:     Wanglai Shi <shiwanglai@hisilicon.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <xuwei5@hisilicon.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH] dts: arm64: add CoreSight trace support for hi3660
-Message-ID: <20181222104642.GB9950@leoy-ThinkPad-X240s>
-References: <1544522749-54071-1-git-send-email-shiwanglai@hisilicon.com>
+        bh=PUiUVAZX+o1L8tyb6nCCrphk9MHn36Ci/isp5wjlftk=;
+        b=m5M+74ILtsmSZ5UKCLNiZdi764VWrvQlE+IUvd11lnz+aFa81RRDwbIjKpA+cL9QEt
+         GIkNeqHPZYsnXqJ+oDp5Jbqy0BSPlkK/H3e5Fv0eGcxMIQ4HOtwv4QlA11OvpQed2QP2
+         IW/+nmwXheDeFQVoJKhb3nL1MrIENgpoUaFcas939F74hv/bF7yoyl7L3bV71wNq4Nny
+         JRJAbtJbPNlAv6+TT+W8jKkoP4OHfq6T5Bn5n++YFUhwT0DYYOm9yndpuOW93Ajy8jvI
+         SPmKABgO2fEfe8cxKJQpdTP2z4GyifDtcI8BPVd8oGsIDADkjwnESfAuNgpQuBqEkhKN
+         oAxA==
+X-Gm-Message-State: AJcUukeDLnnqePGNnvgS3Ti7puGz1TFj8dQ+OkR0YPGnHGUBj+VnV3++
+        X71q/siTIutLKa1wv2b1BS0eGfFrXJg=
+X-Google-Smtp-Source: ALg8bN7HE0IZ9EvXFhXp3JaXE4AS6L7DaHmXgGoYCzTGIwcMDTKB1CwfZzLCJ3rmaOFAcF15+3z+xg==
+X-Received: by 2002:a17:902:584:: with SMTP id f4mr6885799plf.28.1545489779976;
+        Sat, 22 Dec 2018 06:42:59 -0800 (PST)
+Received: from nishad ([106.51.25.107])
+        by smtp.gmail.com with ESMTPSA id p7sm52800993pfj.72.2018.12.22.06.42.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Dec 2018 06:42:59 -0800 (PST)
+Date:   Sat, 22 Dec 2018 20:12:52 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Elder <elder@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Nishad Kamdar <nishadkamdar@gmail.com>
+Subject: Re: [PATCH v3 3/3] staging: greybus: arche-platform: Switch to the
+ gpio descriptor interface
+Message-ID: <20181222144251.GC15439@nishad>
+References: <cover.1542898267.git.nishadkamdar@gmail.com>
+ <2200db633d8e723b881ef355527afaef0d5ccf24.1542898267.git.nishadkamdar@gmail.com>
+ <20181218115056.GO20658@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544522749-54071-1-git-send-email-shiwanglai@hisilicon.com>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+In-Reply-To: <20181218115056.GO20658@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wanglai,
-
-[ + CoreSight mailing list ]
-
-On Tue, Dec 11, 2018 at 06:05:49PM +0800, Wanglai Shi wrote:
-> This patch adds devicetree entries for the CoreSight trace
->  components on hi3660.
+On Tue, Dec 18, 2018 at 12:50:56PM +0100, Johan Hovold wrote:
+> On Thu, Nov 22, 2018 at 10:39:24PM +0530, Nishad Kamdar wrote:
+> > Use the gpiod interface instead of the deprecated
+> > old non-descriptor interface.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> > Changes in v2:
+> >  - Move comment to the same line as to what it applies to.
+> > ---
+> >  drivers/staging/greybus/arche-platform.c | 119 ++++++++---------------
+> >  1 file changed, 41 insertions(+), 78 deletions(-)
+> > 
+> > diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+> > index 4c36e88766e7..a5cea79d8e32 100644
+> > --- a/drivers/staging/greybus/arche-platform.c
+> > +++ b/drivers/staging/greybus/arche-platform.c
+> > @@ -8,10 +8,9 @@
+> >  
+> >  #include <linux/clk.h>
+> >  #include <linux/delay.h>
+> > -#include <linux/gpio.h>
+> > +#include <linux/gpio/consumer.h>
+> >  #include <linux/init.h>
+> >  #include <linux/module.h>
+> > -#include <linux/of_gpio.h>
+> >  #include <linux/of_platform.h>
+> >  #include <linux/pinctrl/consumer.h>
+> >  #include <linux/platform_device.h>
+> > @@ -45,14 +44,14 @@ enum svc_wakedetect_state {
+> >  
+> >  struct arche_platform_drvdata {
+> >  	/* Control GPIO signals to and from AP <=> SVC */
+> > -	int svc_reset_gpio;
+> > +	struct gpio_desc *svc_reset;
+> > +	struct gpio_desc *svc_sysboot;
 > 
-> Signed-off-by: Wanglai Shi <shiwanglai@hisilicon.com>
-> ---
->  .../arm64/boot/dts/hisilicon/hi3660-coresight.dtsi | 428 +++++++++++++++++++++
->  1 file changed, 428 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
-
-This patch doesn't work on Hikey960 due CoreSight related dt binding
-has not been really included by dts file.
-
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
-> new file mode 100644
-> index 0000000..95c79e4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660-coresight.dtsi
-> @@ -0,0 +1,428 @@
-> +/*
-> + * dtsi for Hisilicon Hi3660 Coresight
-> + *
-> + * Copyright (C) 2016-2017 Hisilicon Ltd.
-
-s/2017/2018
-
-> + *
-> + * Author: Wanglai Shi <shiwanglai@hisilicon.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * publishhed by the Free Software Foundation.
-> + */
-> +/ {
-> +	amba {
-
-s/amba/soc
-
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		compatible = "arm,amba-bus";
-> +		ranges;
-
-If under 'soc' node, because 'soc' has defined its address/size cells
-length, thus you don't need to define these properties repeatly.
-
-> +
-> +		/* A53 cluster internal coresight */
-> +		etm@0,ecc40000 {
-
-s/etm@0,ecc40000/etm@ecc40000
-
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-
-Add extra space between two compatible strings:
-                        compatible = "arm,coresight-etm4x", "arm,primecell";
-
-Please apply this rule for all below compatible string bindings.
-
-> +			reg = <0 0xecc40000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu0>;
-> +			port {
-> +				etm0_out_port: endpoint {
-> +					remote-endpoint = <&funnel0_in_port0>;
-> +				};
-> +			};
-
-Since Suzuki introduced CoreSight DT bindings for "out-ports" and
-"in-ports", so it's suggested to use more explict way to bind hardware
-port with specifying direction:
-
-			out-ports {
-			        port {
-					etm0_out: endpoint {
-			                        remote-endpoint =
-							<&funnel0_in_port0>;
-			                };
-			        };
-			};
-
-> +		};
-> +
-> +		etm@1,ecd40000 {
-
-Remove '1,'
-
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xecd40000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu1>;
-> +			port {
-
-Suggest for adding 'out-ports'.
-
-> +				etm1_out_port: endpoint {
-> +					remote-endpoint = <&funnel0_in_port1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		etm@2,ece40000 {
-
-Remove '2,'
-
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xece40000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu2>;
-> +			port {
-
-Suggest for adding 'out-ports'.
-
-> +				etm2_out_port: endpoint {
-> +					remote-endpoint = <&funnel0_in_port2>;
-> +				};
-> +			};
-> +		};
-> +
-> +		etm@3,ecf40000 {
-
-Remove '3,'
-
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xecf40000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu3>;
-> +			port {
-
-Suggest for adding 'out-ports'.
-
-> +				etm3_out_port: endpoint {
-> +					remote-endpoint = <&funnel0_in_port3>;
-> +				};
-> +			};
-> +		};
-> +
-> +		funnel0:funnel@0,ec801000 {
-
-funnel0: funnel@ec801000
-
-> +			compatible = "arm,coresight-funnel","arm,primecell";
-> +			reg = <0 0xec801000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				/* funnel output port */
-> +				port@0 {
-> +					reg = <0>;
-> +					funnel0_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&etf0_in_port>;
-> +					};
-> +				};
-
-Suggest for below format:
-
-			out-ports {
-				port {
-					reg = <0>;
-					clusster0_funnel_out_port: endpoint {
-						remote-endpoint =
-							<&etf0_in_port>;
-					};
-				};
-			};
-
-> +
-> +				/* funnel input ports */
-> +				port@1 {
-
-Suggest for adding 'in-ports'.
-
-BTW, please keep the consistence between node name and registers;
-e.g. port@0 should be consistent with 'reg = <0>;' and port@1 for
-'reg = <1>;' ...
-
-So this should be port@0
-
-> +					reg = <0>;
-> +					funnel0_in_port0: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm0_out_port>;
-> +					};
-> +				};
-> +
-> +				port@2 {
-
-s/port@2/port@1
-
-> +					reg = <1>;
-> +					funnel0_in_port1: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm1_out_port>;
-> +					};
-> +				};
-> +
-> +				port@3 {
-
-s/port@3/port@2
-
-> +					reg = <2>;
-> +					funnel0_in_port2: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm2_out_port>;
-> +					};
-> +				};
-> +
-> +				port@4 {
-
-s/port@4/port@3
-
-> +					reg = <3>;
-> +					funnel0_in_port3: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm3_out_port>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		etf0:etf@0,ec802000 {
-
-etf0: etf@ec802000
-
-> +			compatible = "arm,coresight-tmc","arm,primecell";
-> +			reg = <0 0xec802000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-
-Same with upper suggestions: add 'in-ports' and 'out-ports'.
-
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				/* input port */
-> +				port@0 {
-> +					reg = <0>;
-> +					etf0_in_port: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&funnel0_out_port>;
-> +					};
-> +				};
-> +
-> +				/* output port */
-> +				port@1 {
-
-s/port@1/port@0
-
-> +					reg = <0>;
-> +					etf0_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&funnel2_in_port0>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		/* A73 cluster internal coresight */
-> +		etm@4,ed440000 {
-
-Same suggestion with CA53 cluster bindings for etm.
-
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xed440000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu4>;
-> +			port {
-> +				etm4_out_port: endpoint {
-> +				remote-endpoint = <&funnel1_in_port0>;
-> +				};
-> +			};
-> +		};
-> +
-> +		etm@5,ed540000 {
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xed540000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu5>;
-> +			port {
-> +				etm5_out_port: endpoint {
-> +				remote-endpoint = <&funnel1_in_port1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		etm@6,ed640000 {
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xed640000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu6>;
-> +			port {
-> +				etm6_out_port: endpoint {
-> +					remote-endpoint = <&funnel1_in_port2>;
-> +				};
-> +			};
-> +		};
-> +
-> +		etm@7,ed740000 {
-> +			compatible = "arm,coresight-etm4x","arm,primecell";
-> +			reg = <0 0xed740000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			cpu = <&cpu7>;
-> +			port {
-> +				etm7_out_port: endpoint {
-> +					remote-endpoint = <&funnel1_in_port3>;
-> +				};
-> +			};
-> +		};
-> +
-> +		funnel1:funnel@1,ed001000 {
-
-Same suggestion for funnel0.
-
-> +			compatible = "arm,coresight-funnel","arm,primecell";
-> +			reg = <0 0xed001000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				/* funnel output port */
-> +				port@0 {
-> +					reg = <0>;
-> +					funnel1_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&etf1_in_port>;
-> +					};
-> +				};
-> +
-> +				/* funnel input ports */
-> +				port@1 {
-> +					reg = <0>;
-> +					funnel1_in_port0: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm4_out_port>;
-> +					};
-> +				};
-> +
-> +				port@2 {
-> +					reg = <1>;
-> +					funnel1_in_port1: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm5_out_port>;
-> +					};
-> +				};
-> +
-> +				port@3 {
-> +					reg = <2>;
-> +					funnel1_in_port2: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm6_out_port>;
-> +					};
-> +				};
-> +
-> +				port@4 {
-> +					reg = <3>;
-> +					funnel1_in_port3: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etm7_out_port>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		etf1:etf@1,ed002000 {
-
-Same suggestion for etf0.
-
-> +			compatible = "arm,coresight-tmc","arm,primecell";
-> +			reg = <0 0xed002000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				/* input port */
-> +				port@0 {
-> +					reg = <0>;
-> +					etf1_in_port: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&funnel1_out_port>;
-> +					};
-> +				};
-> +
-> +				/* output port */
-> +				port@1 {
-> +					reg = <0>;
-> +					etf1_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&funnel2_in_port0>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		/* Top coresight config */
-> +		funnel@2,ec031000 {
-
-
-> +			compatible = "arm,coresight-funnel","arm,primecell";
-> +			reg = <0 0xec031000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				/* funnel output port */
-> +				port@0 {
-> +					reg = <0>;
-> +					funnel2_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&etf2_in_port>;
-> +					};
-> +				};
-> +
-> +				/* funnel input ports */
-> +				port@1 {
-> +					reg = <0>;
-> +					funnel2_in_port0: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etf0_out_port>;
-> +					};
-> +				};
-
-I think this funnel should have two input ports: one is for etf0 and
-another is for connection etf1, but here it misses for etf1.
-
-Do I miss anything for this?
-
-> +			};
-> +		};
-> +
-> +		etf@2,ec036000 {
-
-Same suggestion for etf0/1.
-
-> +			compatible = "arm,coresight-tmc","arm,primecell";
-> +			reg = <0 0xec036000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				/* input port */
-> +				port@0 {
-> +					reg = <0>;
-> +					etf2_in_port: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&funnel2_out_port>;
-> +					};
-> +				};
-> +
-> +				/* output port */
-> +				port@1 {
-> +					reg = <0>;
-> +					etf2_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&replicator0_in_port>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		replicator {
-> +			compatible = "arm,coresight-replicator";
-
-Replicator doesn't have clock?
-
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				/* etr out port  */
-> +				port@0 {
-> +					reg = <0>;
-> +					replicator0_out_port0: endpoint {
-> +						remote-endpoint =
-> +							<&etr_in_port>;
-> +					};
-> +				};
-> +				/* TPIU out port  */
-> +				port@1 {
-> +					reg = <1>;
-> +					replicator0_out_port1: endpoint {
-> +						remote-endpoint =
-> +							<&tpiu_in_port>;
-> +					};
-> +				};
-> +				/* input port  */
-> +				port@2 {
-> +					reg = <0>;
-> +					replicator0_in_port: endpoint {
-> +						slave-mode;
-> +						remote-endpoint =
-> +							<&etf2_out_port>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		etr@0,ec033000 {
-> +			compatible = "arm,coresight-tmc","arm,primecell";
-> +			reg = <0 0xec033000 0 0x1000>;
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-
-Usually etr doesn't need to set address-cells and size-cell anymore.
-
-> +
-> +				/* etr input port  */
-> +				port@0 {
-> +					reg = <0>;
-
-
-> +					etr_in_port: endpoint {
-> +						slave-mode;
-
-From Documentation/devicetree/bindings/arm/coresight.txt, I cannot see
-there have 'slave-mode' property.
-
-> +						remote-endpoint =
-> +						<&replicator0_out_port0>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		tpiu@ec032000 {
-> +			compatible = "arm,coresight-tpiu", "arm,primecell";
-> +			reg = <0 0xec032000 0 0x1000>;
-> +
-> +			clocks = <&pclk>;
-> +			clock-names = "apb_pclk";
-> +			port {
-> +				tpiu_in_port: endpoint {
-> +					slave-mode;
-> +					remote-endpoint =
-> +						<&replicator0_out_port1>;
-> +				};
-> +			};
-> +		};
-> +	};
-
-I don't see CPU debug module DT binding, could you add them as well?
-You could use the single one patch to contain CPU debug module or use
-one dedicated patch, both will be okay for me.
-
-Thanks,
-Leo Yan
-
-> +};
-> -- 
-> 2.7.4
+> Why move sysboot? The flag below is about reset (but should eventually
+> go away).
 > 
+Ok, I'll restore its position.
+
+> >  	bool is_reset_act_hi;
+> > -	int svc_sysboot_gpio;
+> > -	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
+> > +	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
+> >  
+> >  	enum arche_platform_state state;
+> >  
+> > -	int svc_refclk_req;
+> > +	struct gpio_desc *svc_refclk_req;
+> >  	struct clk *svc_ref_clk;
+> >  
+> >  	struct pinctrl *pinctrl;
+> > @@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
+> >  	arche_pdata->wake_detect_state = state;
+> >  }
+> >  
+> > -static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
+> > +static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
+> >  {
+> > -	gpio_set_value(gpio, onoff);
+> > +	gpiod_set_value(gpio, onoff);
+> >  }
+> >  
+> >  static int apb_cold_boot(struct device *dev, void *data)
+> > @@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
+> >  static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
+> >  {
+> >  	/* Enable interrupt here, to read event back from SVC */
+> > -	gpio_direction_input(arche_pdata->wake_detect_gpio);
+> >  	enable_irq(arche_pdata->wake_detect_irq);
+> >  }
+> >  
+> > @@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
+> >  
+> >  	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
+> >  
+> > -	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
+> > +	if (gpiod_get_value(arche_pdata->wake_detect)) {
+> >  		/* wake/detect rising */
+> >  
+> >  		/*
+> > @@ -224,10 +222,10 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+> >  
+> >  	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
+> >  
+> > -	svc_reset_onoff(arche_pdata->svc_reset_gpio,
+> > +	svc_reset_onoff(arche_pdata->svc_reset,
+> 
+> No need to break line here.
+> 
+Ok.
+
+> >  			arche_pdata->is_reset_act_hi);
+> >  
+> > -	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
+> > +	gpiod_set_value(arche_pdata->svc_sysboot, 0);
+> >  	usleep_range(100, 200);
+> >  
+> >  	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
+> > @@ -238,7 +236,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+> >  	}
+> >  
+> >  	/* bring SVC out of reset */
+> > -	svc_reset_onoff(arche_pdata->svc_reset_gpio,
+> > +	svc_reset_onoff(arche_pdata->svc_reset,
+> 
+> Same here. Please check throughout.
+> 
+Yes.
+
+> >  			!arche_pdata->is_reset_act_hi);
+> >  
+> >  	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
+> > @@ -259,10 +257,10 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
+> >  
+> >  	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
+> >  
+> > -	svc_reset_onoff(arche_pdata->svc_reset_gpio,
+> > +	svc_reset_onoff(arche_pdata->svc_reset,
+> >  			arche_pdata->is_reset_act_hi);
+> >  
+> > -	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
+> > +	gpiod_set_value(arche_pdata->svc_sysboot, 1);
+> >  
+> >  	usleep_range(100, 200);
+> >  
+> > @@ -273,7 +271,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
+> >  		return ret;
+> >  	}
+> >  
+> > -	svc_reset_onoff(arche_pdata->svc_reset_gpio,
+> > +	svc_reset_onoff(arche_pdata->svc_reset,
+> >  			!arche_pdata->is_reset_act_hi);
+> >  
+> >  	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
+> > @@ -305,7 +303,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
+> >  	clk_disable_unprepare(arche_pdata->svc_ref_clk);
+> >  
+> >  	/* As part of exit, put APB back in reset state */
+> > -	svc_reset_onoff(arche_pdata->svc_reset_gpio,
+> > +	svc_reset_onoff(arche_pdata->svc_reset,
+> >  			arche_pdata->is_reset_act_hi);
+> >  
+> >  	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
+> > @@ -435,6 +433,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+> >  	struct device *dev = &pdev->dev;
+> >  	struct device_node *np = dev->of_node;
+> >  	int ret;
+> > +	unsigned int flags;
+> >  
+> >  	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
+> >  				   GFP_KERNEL);
+> > @@ -444,61 +443,33 @@ static int arche_platform_probe(struct platform_device *pdev)
+> >  	/* setup svc reset gpio */
+> >  	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
+> >  							     "svc,reset-active-high");
+> 
+> This should also go away eventually in favour of gpio flags in
+> devicetree. Fine to keep for now, though.
+>
+Ok.
+
+> > -	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
+> > -							"svc,reset-gpio",
+> > -							0);
+> > -	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
+> > -		dev_err(dev, "failed to get reset-gpio\n");
+> > -		return arche_pdata->svc_reset_gpio;
+> > -	}
+> > -	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
+> > -		return ret;
+> > -	}
+> > -	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
+> > -				    arche_pdata->is_reset_act_hi);
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
+> > +	if (arche_pdata->is_reset_act_hi)
+> > +		flags = GPIOD_OUT_HIGH;
+> > +	else
+> > +		flags = GPIOD_OUT_LOW;
+> > +
+> > +	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset-gpio", flags);
+> > +	if (IS_ERR(arche_pdata->svc_reset)) {
+> > +		ret = PTR_ERR(arche_pdata->svc_reset);
+> > +		dev_err(dev, "failed to request svc-reset GPIO:%d\n", ret);
+> >  		return ret;
+> >  	}
+> 
+> Thanks,
+> Johan
+
+Thanks for the review.
+
+Regards,
+Nishad
