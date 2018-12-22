@@ -2,92 +2,111 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F31EC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40B4C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57924205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545500986;
-	bh=uWpdUph26N2R3BgMWLopvVOqN+RIm7jqq5akbbBXXF0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T3mW9o4ahDaSd4IkTvLh+f+BpkmN9/aPPjS77gIeuAsnvPmTTG2wQp2pwv51JpNSS
-	 3WV0l1o0JfkwVqUa9gvbR5zKi6c27QPvRnSgmu5/+/Zcdv4zfs43PtoL162xY1tPLG
-	 rV2/72l/haq7WwBy4kdUniMGpm3ldJ0/pI7loHYk=
+	by mail.kernel.org (Postfix) with ESMTP id 0FC242054F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:50:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="nGycEEmK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392809AbeLVRtp (ORCPT
+        id S2390545AbeLVRuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34164 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 12:50:05 -0500
+Received: from cock.li ([185.100.85.212]:45112 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388219AbeLVRrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:47:14 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.76.9.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB23219FB;
-        Sat, 22 Dec 2018 09:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545469662;
-        bh=uWpdUph26N2R3BgMWLopvVOqN+RIm7jqq5akbbBXXF0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VUrdlxmAm92LR73/DSOaWaveOWMtwFiDunKfwVVRgd8vASadz/tt6oETmC7AMrFCG
-         XLe5cw9nTQWnzS6zoBPOM3CKdFbFLH387y0NVxlRitZGXFC+O9FgLirTMmo7RTxFUF
-         bNZ6lMEtx1da8URC0zD1QFEc5ePfDoyHiBo4KuC8=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
-        DIGITAL (SD) AND...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 09/11] mmc: add PCI dependency into IOSF_MBI
-Date:   Sat, 22 Dec 2018 09:07:18 +0000
-Message-Id: <20181222090720.19234-10-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181222090720.19234-1-okaya@kernel.org>
-References: <20181222090720.19234-1-okaya@kernel.org>
+        id S1730497AbeLVRuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:50:04 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1545487920; bh=LbBXAHl9MbXz5ay5w/q4/wafmsAMRPXdbDmAQaWG4Yo=;
+        h=Date:From:To:Subject:From;
+        b=nGycEEmKJxnYunJmJO/LaSlZQWJYJWxsBNeGimz5SagaSz4tMXVqNuOFeasEYb7NJ
+         PRfgkbEfF0HBblfJuoHfV3B8EE/0ik01FuhaERO7bNMVVuzJGf8aKfvonfUZy8wjhx
+         3rhjudGQ9OkA1/sA3duQUg0d2tod9MCf/PdUu5+uKzpNnCBarokt4aCXkumw2iNBkx
+         7skRM35l3yowWCzDXu8dSF+18Cv2h6j5K6zmceJGxvNv577ji9VGIDesCcmnuSb5v+
+         /kaAca4BdaGy0LfBGMHcJNkrDXMFD5qce4aYK3L6t6gOb9IVJEX3yWy3nmXe5Njpub
+         UJ0tfDQPysYkA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sat, 22 Dec 2018 14:11:59 +0000
+From:   visionsofalice@redchan.it
+To:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
+        gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com,
+        bkuhn@sfconservancy.org, editor@lwn.net, neil@brown.name,
+        labbott@redhat.com, torvalds@linux-foundation.org,
+        ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
+        olof@lixom.net, clm@fb.com, mishi@linux.com,
+        linux-kernel-owner@vger.kernel.org
+Subject: 2 months and no response from Eben Moglen - Yes you can rescind your
+ grant.
+Message-ID: <ba0a084f86b57d447fb77cde3805ac92@redchan.it>
+X-Sender: visionsofalice@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select IOSF_MBI only when PCI is set.
+It has been 2 months. Eben Moglen has published no research.
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/mmc/host/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Because there is nothing more to say: The GPLv2, as used by linux, is a 
+bare license. It can be rescinded at the will of the grantor.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index e26b8145efb3..4c5f037b246d 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -117,7 +117,7 @@ config MMC_RICOH_MMC
- config MMC_SDHCI_ACPI
- 	tristate "SDHCI support for ACPI enumerated SDHCI controllers"
- 	depends on MMC_SDHCI && ACPI
--	select IOSF_MBI if X86
-+	select IOSF_MBI if (X86 && PCI)
- 	help
- 	  This selects support for ACPI enumerated SDHCI controllers,
- 	  identified by ACPI Compatibility ID PNP0D40 or specific
--- 
-2.19.0
+The regime that the FSF used, vis-a-vis the GPLv2, is essential: 
+copyright transfers to a central repository entity that is sure not to 
+rescind.
 
+Linus chose not to adopt this regime.
+He benefited by greatly increased developer contribution.
+The price for that windfall was and is the retention of their 
+traditional property rights by the property holders.
+
+They can rescind at will.
+They made no promise nor utterance to the contrary that can be relied 
+upon.
+They were paid no consideration.
+There was no meeting of the minds.
+
+Additionally the CoC regime itself is a license terms violation, being 
+an additional restrictive term, as explained in the other analysis. 
+(Similar to the GRSecurity license violation)
+
+On 2018-10-26 18:31, Eben Moglen wrote:
+> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
+> 
+>   You are conflating case law dealing with commercial software and
+>   non-gratuitous licenses with the present situation, which would 
+> likely
+>   be a case of first-impression in nearly any jurisdiction.
+> 
+> I think the best procedure would be for me to publish my analysis and
+> for you then to tell me what is wrong with it.  What you say here
+> sounds like what a lawyer might say, but isn't.  I have been teaching
+> this stuff for about thirty years, so if I am conflating or confusing
+> anything I will be grateful for help in seeing my mistake.
+> 
+>   The rule for gratuitous licenses is that they are revocable at the 
+> will
+>   of the grantor.
+> 
+> That's not actually "the rule."  It sounds like it might be the rule,
+> but it so happens that it's not.  When I have given the explanation as
+> I have learned, taught and depended on it, you will be able to show me
+> what I am wrong about.
+> 
+>   Raymond Nimmer (God rest his soul) was in agreement on this point,
+>   vis-a-vis the GPL and similar licenses.
+> 
+> You have your Nimmers confused.  The primary author of the treatise
+> Nimmer on Copyright (a book about the law, not in itself an authority)
+> was Melville Nimmer.  The treatise is continued by his son, David, a
+> fine lawyer with whom I do from time to time politely disagree about
+> something.  Ray Nimmer is quite another person.
+> 
+> Eben
