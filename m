@@ -2,139 +2,177 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0270C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01D6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACA92192C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A44021934
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:47:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITYVEZ2O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392864AbeLVWkv (ORCPT
+        id S2392878AbeLVWro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 17:40:51 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43102 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388727AbeLVWkv (ORCPT
+        Sat, 22 Dec 2018 17:47:44 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39030 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388727AbeLVWrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 17:40:51 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 59E1080ACF; Sat, 22 Dec 2018 23:40:43 +0100 (CET)
-Date:   Sat, 22 Dec 2018 23:40:47 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
-Message-ID: <20181222224046.GA8789@amd>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181222200827.GC15237@amd>
+        Sat, 22 Dec 2018 17:47:43 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n18so6270782lfh.6
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:47:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=iEBfvz86kZnN5D1veZ6xPnnmLmS/phSyCWvqn7AGqEc=;
+        b=ITYVEZ2OZKdQ7vCcE+VbJ5MIZSZyFlelbu8fKUd1aUoNvd6GN9uYEQeJ0SjQ6ax1NF
+         NY7w/EuATBvBtiVL4Bc+x/hQJsuySGidcRIMi5XvagPj4t1O5n/aG6tQXLuTsi6IT6w0
+         2MRye7XBYcKDRnulcNsRlS5HH28wYILShWylI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=iEBfvz86kZnN5D1veZ6xPnnmLmS/phSyCWvqn7AGqEc=;
+        b=j5Pj89NdXNOnYmDxCeeUhfLEJOnoMOwU6gtxf/eiQS7B+2xk68ciw/VJYHJz0xqYaF
+         eqnY2t/T1knwSlpNQK69n3uC51TakkzHfo2s9HYknvUe/i0UjapTLMGcLQ8TWvFZy+8D
+         lvRwQ2/BeTexLqst622pS7yL0Jh3d/WaZcmV8wBxiCXmL2Pw8TGz4APqHD0SgGZ+us7v
+         5eXtyoLOGhmTLlaW19qBwprGGz2qJiPeCMydc1WbzSAdaRAcj8Z2XoJQ+NOmrOZsN9r5
+         8ktppXASCkLVQ5l3vOpjADKgNUzFDRtmzFsDEiZNr6Li8dYHWWQSIrFey9ZiJ9eMgmen
+         Rb4g==
+X-Gm-Message-State: AA+aEWb7qgXMDDOIFUC9QhQ8nBtdR7dqeyu0qGDJJkDtm7p5Qx/wao+Y
+        vmwau3mzq1+0iUZw5zH7oeI4K2y+oQ4=
+X-Google-Smtp-Source: AFSGD/Vz1KRPhNEM1hcI94+WNZEpfyJMerLvy9WriEliGKkh/8K9htmaG42u43s8Soj4andr4dVk8Q==
+X-Received: by 2002:a19:7d42:: with SMTP id y63mr3879593lfc.47.1545518860850;
+        Sat, 22 Dec 2018 14:47:40 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id a2-v6sm5575975lji.13.2018.12.22.14.47.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Dec 2018 14:47:39 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id f23so6254992lfc.13
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:47:39 -0800 (PST)
+X-Received: by 2002:a19:7013:: with SMTP id h19mr4334254lfc.147.1545518858888;
+ Sat, 22 Dec 2018 14:47:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
-Content-Disposition: inline
-In-Reply-To: <20181222200827.GC15237@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
+ <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+ <20181222041712.GC26547@mit.edu>
+In-Reply-To: <20181222041712.GC26547@mit.edu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 22 Dec 2018 14:47:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgPz4dfq4sPWxHwMR3g_R3xHhWjofXTu8rV0QU2DP0JhA@mail.gmail.com>
+Message-ID: <CAHk-=wgPz4dfq4sPWxHwMR3g_R3xHhWjofXTu8rV0QU2DP0JhA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 21, 2018 at 8:20 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Fri, Dec 21, 2018 at 11:13:07AM -0800, Linus Torvalds wrote:
+> >
+> > In other words: either the model is that the file *itself* contains
+> > its own merkle tree that validates the file, or it isn't. You can't
+> > have it two ways. No silly "layout changes when you apply the hash"
+> > garbage. That's just crazy talk and invalidates the whole model.
+>
+> Userspace applications which are reading the file aren't going to be
+> expecting Merkle tree.  For example, one of the use cases is Android
+> APK files, which are essentially ZIP files.  ZIP files can be parsed
+> both from the front-end (streaming), or by looking for the complete
+> directory of all of the files in the ZIP file by starting at the end
+> of the file and moving backwards.  If the Merkle tree was visible to
+> userspace programs that are opening and reading the file, it would
+> confuse them mightily.
+>
+> So what we do for ext4 and f2fs is make the Merkle tree invisible
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Again, this has nothing that is per-filesystem in it.
 
-Hi!
+If we were to decide to support the notion of "append merkle hashes to
+the file for validation" at the vfs layer, the same logic would apply:
+obviously the merkle data shouldn't be visible to user space.
 
-> > This moves all remaining users of the legacy TI_ST driver to hcill (pat=
-ches
-> > 1-3). Then patches 4-7 convert wl128x-radio driver to a standard platfo=
-rm
-> > device driver with support for multiple instances. Patch 7 will result =
-in
-> > (userless) TI_ST driver no longer supporting radio at runtime. Patch 8-=
-11 do
-> > some cleanups in the wl128x-radio driver. Finally patch 12 removes the =
-TI_ST
-> > specific parts from wl128x-radio and adds the required infrastructure t=
-o use it
-> > with the serdev hcill driver instead. The remaining patches 13 and 14 r=
-emove
-> > the old TI_ST code.
-> >=20
-> > The new code has been tested on the Motorola Droid 4. For testing the a=
-udio
-> > should be configured to route Ext to Speaker or Headphone. Then you nee=
-d to
-> > plug headphone, since its cable is used as antenna. For testing there i=
-s a
-> > 'radio' utility packages in Debian. When you start the utility you need=
- to
-> > specify a frequency, since initial get_frequency returns an error:
-> >=20
-> > $ radio -f 100.0
->=20
-> Ok, it seems  the driver does not work built-in, due to firmware issue:
->=20
-> root@devuan:/home/user# dmesg | grep wl12
-> [    1.018951] reg-fixed-voltage regulator-wl12xx: GPIO lookup for
-> consumer (null)
-> [    1.026550] reg-fixed-voltage regulator-wl12xx: using device tree
-> for GPIO lookup
-> [    1.034271] of_get_named_gpiod_flags: can't parse 'gpios' property
-> of node '/regulator-wl12xx[0]'
-> [    1.043487] of_get_named_gpiod_flags: parsed 'gpio' property of
-> node '/regulator-wl12xx[0]' - status (0)
-> [    4.151885] wl12xx_driver wl12xx.1.auto: Direct firmware load for
-> ti-connectivity/wl128x-nvs.bin failed with error -2
-> [   11.368286] vwl1271: disabling
-> root@devuan:/home/user# find /lib/firmware/ | grep wl128
-> /lib/firmware/ti-connectivity/wl128x-fw-5-plt.bin
-> /lib/firmware/ti-connectivity/wl128x-fw-5-mr.bin
-> /lib/firmware/ti-connectivity/wl128x-fw-5-sr.bin
-> /lib/firmware/ti-connectivity/wl128x-nvs.bin
-> root@devuan:/home/user#
->=20
-> Ideas welcome... ... ... am I supposed to compile wl128-nvs.bin into
-> the kernel using EXTRA_FIRMWARE?
+But that's not a reason to do it at a filesystem layer, quite the
+reverse: exactly like you say, as far as the *filesystem* is
+concerned, the data is there in the file. It's literally about the
+*view* of the file, ie the system call interface:
 
-EXTRA_FIRMWARE gets me further... some of it was not in debian.
+>    From the *file system's* perspective,
+> though, the metadata blocks are part of the file.
 
-"Speaker right" needs to be set to "Ext" in alsamixer, and then... it
-works! :-)
+To me that only argues that this all should be at the vfs layer, and
+that it shouldn't be the filesystem that hides it. Exactly because as
+far as the filesystem is concerned, the merkle data is there, it's
+just that we hide it at read (and stat) time.
 
-Quality does not seem to be great, but that may be mixer settings or
-something.
+Preferably some way where it's namespace-dependent or whatever, so
+that you could still access the original file data from user space if
+you want to (eg some backup purpose or other).
 
-Thanks!
-								Pavel
+What I'm missing is any kind of sane explanation for why it was done
+so badly, and why it should be upstreamed despite the apparent bad
+implementation.
 
-Tested-by: Pavel Machek <pavel@ucw.cz>
+It sounds like a complete hack.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Again, to me either the point is that it's a generic extension of the
+file data, _or_ it's some filesystem-specific hidden data. The way
+you've done it and written the documentation, it's clearly a generic
+extension of normal file data, and I don't see what's fs-specific to
+it.
 
---3V7upXqbjpZ4EhLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> The problem is that xattrs are designed to be accessed via a set/get
+> interface, are currently limited, IIRC at 32k.  The max size of an APK
+> is 300 megabytes; and the Merkle tree for a file that size will be
+> about 2.3 megabytes.  That's way too big to store as an xattr;
+> certainly using the existing xattr interfaces.  And it's also bigger
+> than most file systems can handle as xattrs today --- because they've
+> been optimzied for relatively small sizes, for things like SELinux
+> labels and ACL structures.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+So *this* kind of argument is what I'm looking for.
 
-iEYEARECAAYFAlwevW4ACgkQMOfwapXb+vJzsgCfZdE1qOGrkxu0udFUv/CnviXX
-YiEAoJTOSIjVZmOCWjdegi9E3mGfQqga
-=mus8
------END PGP SIGNATURE-----
+That at least explains why it's not an xattr. Ugly, but understandable.
 
---3V7upXqbjpZ4EhLz--
+> > So why is this sold as some unholy mess of "filesystem-specific" and
+> > "generic"? That part just annoys the hell out of me. Why isn't this
+> > sold as an *actual* generic model, where you just say "append the
+> > merkle tree to the file, then enable verity testing of the end result
+> > and validate the top-level hash".
+>
+> That was the original way it was sold, but Cristoph and Dave have
+> NACK'ed it in that form.
+
+That seems entirely irrelevant. What do Christoph and Dave have to do
+with it once it's generic? It would have _zero_ filesystem component
+if it's actually done in a generic manner. It would be a total no-op
+to XFS.
+
+Which makes me think "it wasn't actually sold as being
+filesystem-independent" at all.
+
+So I want to understand why this was made a filesystem operation in
+the first place. What's fs-specific about this implementation?
+
+                 Linus
