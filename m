@@ -2,116 +2,75 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6905AC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 414EAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F57C218E0
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179302192C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391068AbeLVXFJ (ORCPT
+        id S2392925AbeLVXHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 18:05:09 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44013 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLVXFJ (ORCPT
+        Sat, 22 Dec 2018 18:07:24 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40480 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731156AbeLVXHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 18:05:09 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3395A80B55; Sun, 23 Dec 2018 00:05:02 +0100 (CET)
-Date:   Sun, 23 Dec 2018 00:05:05 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
-Message-ID: <20181222230505.GD15237@amd>
-References: <20181217004450.GW6707@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
-Content-Disposition: inline
-In-Reply-To: <20181217004450.GW6707@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 22 Dec 2018 18:07:23 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E4DFA14A8F325;
+        Sat, 22 Dec 2018 15:07:22 -0800 (PST)
+Date:   Sat, 22 Dec 2018 15:07:22 -0800 (PST)
+Message-Id: <20181222.150722.1493687829239836271.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: core: Fix Spectre v1 vulnerability
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181221204901.GA30045@embeddedor>
+References: <20181221204901.GA30045@embeddedor>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 22 Dec 2018 15:07:23 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Fri, 21 Dec 2018 14:49:01 -0600
 
---ieNMXl1Fr3cevapt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> flen is indirectly controlled by user-space, hence leading to
+> a potential exploitation of the Spectre variant 1 vulnerability.
+> 
+> This issue was detected with the help of Smatch:
+> 
+> net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
+> 
+> Fix this by sanitizing flen before using it to index filter at line 1101:
+> 
+> 	switch (filter[flen - 1].code) {
+> 
+> and through pc at line 1040:
+> 	
+> 	const struct sock_filter *ftest = &filter[pc];
+> 
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Hi, little elves!
+BPF folks, I'll take this directly.
 
-> So the little elves have been slowly working to get voice calls
-> working on droid 4 with the mainline kernel. And just in time for the
-> upcoming holidays, it might be possible to call friends and relatives.
->=20
-> I've pushed out an experimental branch containing serdev ts 27.010
-> UART multiplexing support. That contains a serdev core driver for the
-> mdm6600 modem (that also now idles the modem for PM), support for Alsa
-> ASoC voice codec and mixer, and a GNSS driver for the GPS.
->=20
-> Where it does not make sense to do a kernel serdev driver, I've
-> exposed the rest of the available 27.010 channels as ten /dev/motmdm*
-> character devices. There's /dev/motmdm1 for AT commands to dial voice
-> calls, /dev/motmdm3 for SMS eventually, and I think there's also a SIM
-> card reader at /dev/motmdm10. Then /dev/motmdm7 seems to be just an
-> echo channel. The other channels are still a bit of a mystery.
-
-I tried to get access at motmdm, but no:
-
-root@devuan:/home/user# minicom -D /dev/motmdm1
-minicom: cannot open /dev/motmdm1: No such file or directory
-root@devuan:/home/user# ls -al /dev/motmdm1
-ls: cannot access '/dev/motmdm1': No such file or directory
-root@devuan:/home/user# dmesg | grep motmd
-root@devuan:/home/user# zcat /proc/config.gz | grep MDM
-CONFIG_MFD_MOTMDM=3Dy
-CONFIG_SND_SOC_MOTMDM=3Dy
-CONFIG_PHY_MAPPHONE_MDM6600=3Dy
-root@devuan:/home/user# uname -a
-Linux devuan 4.20.0-rc7-00304-gde109fe #19 SMP Sat Dec 22 20:16:19 CET
-2018 armv7l GNU/Linux
-root@devuan:/home/user#
-
-Let me try to enable CONFIG_GNSS_MOTMDM. N_GSM also seems enabled.
-=20
-Is there anything else I need to enable in .config?
-
-Scary Solstice!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ieNMXl1Fr3cevapt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwewyEACgkQMOfwapXb+vLs/wCffXaPd1U9e09MvHGaTdLG/HKQ
-t6oAoLCrYIULHPSTQJqejo6Vw1A2FQs7
-=Yu1V
------END PGP SIGNATURE-----
-
---ieNMXl1Fr3cevapt--
+Applied and queued up for -stable, thanks.
