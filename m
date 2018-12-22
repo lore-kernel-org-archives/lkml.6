@@ -2,106 +2,179 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824D2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E967BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61BB721974
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFA8221974
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:22:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKTb6uph"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392336AbeLVRWQ (ORCPT
+        id S2392427AbeLVRWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:22:16 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:25915 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbeLVRWQ (ORCPT
+        Sat, 22 Dec 2018 12:22:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33974 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391348AbeLVRWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Dec 2018 12:22:16 -0500
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBMGgt7q021255;
-        Sun, 23 Dec 2018 01:42:56 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Sun, 23 Dec 2018 01:42:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from localhost.localdomain (183.38.232.153.ap.dti.ne.jp [153.232.38.183])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBMGgqGI021248
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 23 Dec 2018 01:42:55 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH] clk: rockchip: fix frac settings of GPLL clock for rk3328
-Date:   Sun, 23 Dec 2018 01:42:49 +0900
-Message-Id: <20181222164249.25620-1-katsuhiro@katsuster.net>
-X-Mailer: git-send-email 2.19.2
+Received: by mail-pf1-f196.google.com with SMTP id h3so4066545pfg.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 09:22:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IoP9BZUUkX40ga4hEgLLURPEq+vTNeu97J4sJh8y7kY=;
+        b=dKTb6uphuQC8KSPX6Ew7qCLEW73g6ftbMNcgv6piP0YVwX1t79CbJaH9cSI2fqQhsj
+         gOULzzHGLgPIDH+0xB03aEe6/NJ2N40iSMoUCJ1XOrh/9KpbTZridhwlAxOtYgdnc9GW
+         Je8pH+7/WBy4LU6L9Prr5a5ULdU/ZpSHOEpJyRYpsXth4VaQsHR3rwAMFs2z0/+ZAkOh
+         gJItJytZoSas9atwaGcbHmSecUc7qaMNfr1zxnp0agUG5vslAZ0qYc+6qemrqMma7xCS
+         nEA701Pz6OYg5sAporr8V3ggSEgmIWUZe/cHxjoxv+qO9BNEwYVFWVcIhQ9ZJcwF4ryM
+         LlMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IoP9BZUUkX40ga4hEgLLURPEq+vTNeu97J4sJh8y7kY=;
+        b=baxnOJvwwfNVwkBXsYROaFuEmNgfA7P7BzUxXp/R+V/AlSxt+PDb1Jd4BKPbFzABSb
+         80/Zldi8ajlpCCAx3+b+EcLFJDASu2fsdAGm9IdEFeoLErkFH+M+CviYqVFExnW+r6xP
+         9BRNY9vEDAElEIE5G85Fd/QLs58RSKRcvbgASfOUiB/Qzyh49huiP84wDFQFB3JjBVRD
+         CZ0Zt+IKTNnvqOdH9YthuAXZORqYEAarXeDsy1Fj3KwEXTpJrRCDpgqTf2OSwjbTMlEQ
+         7BcH9fCBplROd9gpzOSjet5bhJD+RaV80a4OSOp6Hf7Xf5j8figf3yERHV1iIQbH7SO6
+         JEPQ==
+X-Gm-Message-State: AJcUukeXscT7cn0kNYY47kOsME84tuFYe2vBcXR4novJH2Et2JL8HdrH
+        Wr2KYIq7XZixzxjS+WWG6HRl0tQtjtM=
+X-Google-Smtp-Source: ALg8bN43biplRxGOdRtxEEPDK2ijYoJIrlQtZFX6rZ7tYazbOBXBZG7euXeaLnPNhesxb88+e7fi7Q==
+X-Received: by 2002:a65:584e:: with SMTP id s14mr6360864pgr.142.1545489564373;
+        Sat, 22 Dec 2018 06:39:24 -0800 (PST)
+Received: from nishad ([106.51.25.107])
+        by smtp.gmail.com with ESMTPSA id 202sm49692361pfy.87.2018.12.22.06.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Dec 2018 06:39:23 -0800 (PST)
+Date:   Sat, 22 Dec 2018 20:09:16 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Elder <elder@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Nishad Kamdar <nishadkamdar@gmail.com>
+Subject: Re: [PATCH v3 1/3] staging: greybus: gpio: switch GPIO portions to
+ use GPIOLIB_IRQCHIP
+Message-ID: <20181222143914.GA15439@nishad>
+References: <cover.1542898267.git.nishadkamdar@gmail.com>
+ <e12d2f21115c71820d4d68168181e5ebe4340f0f.1542898267.git.nishadkamdar@gmail.com>
+ <20181218111034.GM20658@localhost>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218111034.GM20658@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes settings of GPLL frequency in fractional mode for
-rk3328. In this mode, FOUTVCO is calcurated by following formula:
-  FOUTVCO = FREF * FBDIV / REFDIV + ((FREF * FRAC / REFDIV) >> 24)
+On Tue, Dec 18, 2018 at 12:10:34PM +0100, Johan Hovold wrote:
+> On Thu, Nov 22, 2018 at 10:37:16PM +0530, Nishad Kamdar wrote:
+> > Convert the GPIO driver to use the GPIO irqchip library
+> > GPIOLIB_IRQCHIP instead of reimplementing the same.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> > Changes in v2:
+> >  - Retained irq.h and irqdomain.h headers.
+> >  - Dropped function gb_gpio_irqchip_add() and
+> >    called gpiochip_irqchip_add() from probe().
+> >  - Referred https://lkml.kernel.org/r/1476054589-28422-1-git-send-email-linus.walleij@linaro.org.
+> 
+> Thanks for the update, and sorry about the late review. This looks
+> mostly good now, except for a couple minor things pointed out below.
+> 
+> You also included the conversion to gpiochip_get_data() (as Linus also
+> did in his patch) although that's really a separate change and should go
+> in its own patch. Please break that bit out in a follow-up patch.
+> 
+> Also note that someone did a bunch random white space changes to this
+> file in the staging tree, so it will not apply cleanly any more.
+> 
+> > ---
+> >  drivers/staging/greybus/Kconfig |   1 +
+> >  drivers/staging/greybus/gpio.c  | 184 ++++----------------------------
+> >  2 files changed, 24 insertions(+), 161 deletions(-)
+> > 
+> > diff --git a/drivers/staging/greybus/Kconfig b/drivers/staging/greybus/Kconfig
+> > index ab096bcef98c..b571e4e8060b 100644
+> > --- a/drivers/staging/greybus/Kconfig
+> > +++ b/drivers/staging/greybus/Kconfig
+> > @@ -148,6 +148,7 @@ if GREYBUS_BRIDGED_PHY
+> >  config GREYBUS_GPIO
+> >  	tristate "Greybus GPIO Bridged PHY driver"
+> >  	depends on GPIOLIB
+> > +	select GPIOLIB_IRQCHIP
+> >  	---help---
+> >  	  Select this option if you have a device that follows the
+> >  	  Greybus GPIO Bridged PHY Class specification.
+> > diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
+> > index b1d4698019a1..2ec54744171d 100644
+> > --- a/drivers/staging/greybus/gpio.c
+> > +++ b/drivers/staging/greybus/gpio.c
+> > @@ -9,9 +9,9 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/module.h>
+> >  #include <linux/slab.h>
+> > -#include <linux/gpio.h>
+> >  #include <linux/irq.h>
+> >  #include <linux/irqdomain.h>
+> > +#include <linux/gpio/driver.h>
+> >  #include <linux/mutex.h>
+> >  
+> >  #include "greybus.h"
+> > @@ -39,15 +39,8 @@ struct gb_gpio_controller {
+> >  
+> >  	struct gpio_chip	chip;
+> >  	struct irq_chip		irqc;
+> 
+> Turns out struct gpio_chip will have an irqchip whenever
+> CONFIG_GPIOLIB_IRQCHIP is selected so you can drop this one too.
+> 
+Ok, I'll do that.
+> > -	struct irq_chip		*irqchip;
+> > -	struct irq_domain	*irqdomain;
+> > -	unsigned int		irq_base;
+> > -	irq_flow_handler_t	irq_handler;
+> > -	unsigned int		irq_default_type;
+> >  	struct mutex		irq_lock;
+> >  };
+> > -#define gpio_chip_to_gb_gpio_controller(chip) \
+> > -	container_of(chip, struct gb_gpio_controller, chip)
+> >  #define irq_data_to_gpio_chip(d) (d->domain->host_data)
+> >  
+> >  static int gb_gpio_line_count_operation(struct gb_gpio_controller *ggc)
+> > @@ -276,7 +269,7 @@ static void _gb_gpio_irq_set_type(struct gb_gpio_controller *ggc,
+> >  static void gb_gpio_irq_mask(struct irq_data *d)
+> >  {
+> >  	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
+> > -	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
+> > +	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
+> 
+> So please split these changes into a separate patch as they are not
+> related to the irqchip changes.
+> 
+> Oh, and don't forget to update the TODO file now that the conversion is
+> done. :)
+> 
+Sure, I'll do that.
 
-The problem is in FREF * FRAC >> 24 term. This result always lacks
-one from target value is specified by rate member. For example first
-itme of rk3328_pll_frac_rate originally has
-  - rate  : 1016064000
-  - refdiv: 3
-  - fbdiv : 127
-  - frac  : 134217
-  - FREF * FBDIV / REFDIV        = 1016000000
-  - (FREF * FRAC / REFDIV) >> 24 = 63999
-Thus calculated rate is 1016063999. It seems wrong.
+Thanks for the review.
+regards,
+Nishad
 
-If frac has 134218 (it is increased 1 from original value), second
-term is 64000. All other items have same situation. So this patch
-adds 1 to frac member in all items of rk3328_pll_frac_rate.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
----
- drivers/clk/rockchip/clk-rk3328.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index faa94adb2a37..65ab5c2f48b0 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -78,17 +78,17 @@ static struct rockchip_pll_rate_table rk3328_pll_rates[] = {
- 
- static struct rockchip_pll_rate_table rk3328_pll_frac_rates[] = {
- 	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
--	RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134217),
-+	RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134218),
- 	/* vco = 1016064000 */
--	RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671088),
-+	RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671089),
- 	/* vco = 983040000 */
--	RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671088),
-+	RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671089),
- 	/* vco = 983040000 */
--	RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671088),
-+	RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671089),
- 	/* vco = 860156000 */
--	RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797894),
-+	RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797895),
- 	/* vco = 903168000 */
--	RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066329),
-+	RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066330),
- 	/* vco = 819200000 */
- 	{ /* sentinel */ },
- };
--- 
-2.19.2
-
+> Thanks,
+> Johan
