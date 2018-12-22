@@ -2,118 +2,175 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E84C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10F0C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C0421970
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 717E22192C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404308AbeLVTr6 (ORCPT
+        id S2392810AbeLVUIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 14:47:58 -0500
-Received: from gateway20.websitewelcome.com ([192.185.44.20]:27076 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733159AbeLVTr5 (ORCPT
+        Sat, 22 Dec 2018 15:08:32 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38956 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730988AbeLVUIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 14:47:57 -0500
-X-Greylist: delayed 1501 seconds by postgrey-1.27 at vger.kernel.org; Sat, 22 Dec 2018 14:47:57 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 314F4400C647B
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 13:01:29 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id amWfg1EcrdnCeamWfgAWRG; Sat, 22 Dec 2018 13:01:29 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=38056 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gamWM-003ck2-Qy; Sat, 22 Dec 2018 13:01:28 -0600
-Subject: Re: [PATCH] lightnvm: pblk: fix use-after-free bug
-To:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
-        Igor Konopko <igor.j.konopko@intel.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181222073952.GA11561@embeddedor>
- <1992ea52-cc13-c704-4653-7fbe667b1c5a@lightnvm.io>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <b25d175f-ec2d-5906-bd90-68c12c2c975d@embeddedor.com>
-Date:   Sat, 22 Dec 2018 13:01:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 22 Dec 2018 15:08:32 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6A042809CB; Sat, 22 Dec 2018 21:08:24 +0100 (CET)
+Date:   Sat, 22 Dec 2018 21:08:28 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
+Message-ID: <20181222200827.GC15237@amd>
+References: <20181221011752.25627-1-sre@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1992ea52-cc13-c704-4653-7fbe667b1c5a@lightnvm.io>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gamWM-003ck2-Qy
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:38056
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="CblX+4bnyfN0pR09"
+Content-Disposition: inline
+In-Reply-To: <20181221011752.25627-1-sre@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--CblX+4bnyfN0pR09
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/22/18 12:30 PM, Matias Bjørling wrote:
-> On 12/22/18 8:39 AM, Gustavo A. R. Silva wrote:
->> Remove one of the calls to function bio_put(), so *bio* is only
->> freed once.
->>
->> Notice that bio is being dereferenced in bio_put(), hence leading to
->> a use-after-free bug once *bio* has already been freed.
->>
->> Addresses-Coverity-ID: 1475952 ("Use after free")
->> Fixes: 55d8ec35398e ("lightnvm: pblk: support packed metadata")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/lightnvm/pblk-recovery.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/lightnvm/pblk-recovery.c 
->> b/drivers/lightnvm/pblk-recovery.c
->> index 3fcf062d752c..5ee20da7bdb3 100644
->> --- a/drivers/lightnvm/pblk-recovery.c
->> +++ b/drivers/lightnvm/pblk-recovery.c
->> @@ -418,7 +418,6 @@ static int pblk_recov_scan_oob(struct pblk *pblk, 
->> struct pblk_line *line,
->>       if (ret) {
->>           pblk_err(pblk, "I/O submission failed: %d\n", ret);
->>           bio_put(bio);
->> -        bio_put(bio);
->>           return ret;
->>       }
->>
-> 
-> Thanks Gustavo. I missed that one.
-> 
-> Jens, if possible could you please pick this up?
-> 
-> Happy holidays!
-> 
+Merry Christmas!
 
-Glad to help. :)
+> This moves all remaining users of the legacy TI_ST driver to hcill (patch=
+es
+> 1-3). Then patches 4-7 convert wl128x-radio driver to a standard platform
+> device driver with support for multiple instances. Patch 7 will result in
+> (userless) TI_ST driver no longer supporting radio at runtime. Patch 8-11=
+ do
+> some cleanups in the wl128x-radio driver. Finally patch 12 removes the TI=
+_ST
+> specific parts from wl128x-radio and adds the required infrastructure to =
+use it
+> with the serdev hcill driver instead. The remaining patches 13 and 14 rem=
+ove
+> the old TI_ST code.
+>=20
+> The new code has been tested on the Motorola Droid 4. For testing the aud=
+io
+> should be configured to route Ext to Speaker or Headphone. Then you need =
+to
+> plug headphone, since its cable is used as antenna. For testing there is a
+> 'radio' utility packages in Debian. When you start the utility you need to
+> specify a frequency, since initial get_frequency returns an error:
+>=20
+> $ radio -f 100.0
 
-Happy holidays everybody.
+Ok, it seems  the driver does not work built-in, due to firmware issue:
 
---
-Gustavo
+root@devuan:/home/user# dmesg | grep wl12
+[    1.018951] reg-fixed-voltage regulator-wl12xx: GPIO lookup for
+consumer (null)
+[    1.026550] reg-fixed-voltage regulator-wl12xx: using device tree
+for GPIO lookup
+[    1.034271] of_get_named_gpiod_flags: can't parse 'gpios' property
+of node '/regulator-wl12xx[0]'
+[    1.043487] of_get_named_gpiod_flags: parsed 'gpio' property of
+node '/regulator-wl12xx[0]' - status (0)
+[    4.151885] wl12xx_driver wl12xx.1.auto: Direct firmware load for
+ti-connectivity/wl128x-nvs.bin failed with error -2
+[   11.368286] vwl1271: disabling
+root@devuan:/home/user# find /lib/firmware/ | grep wl128
+/lib/firmware/ti-connectivity/wl128x-fw-5-plt.bin
+/lib/firmware/ti-connectivity/wl128x-fw-5-mr.bin
+/lib/firmware/ti-connectivity/wl128x-fw-5-sr.bin
+/lib/firmware/ti-connectivity/wl128x-nvs.bin
+root@devuan:/home/user#
+
+Ideas welcome... ... ... am I supposed to compile wl128-nvs.bin into
+the kernel using EXTRA_FIRMWARE?
+
+									Pavel
+
+
+> Merry Christmas!
+>=20
+> -- Sebastian
+>=20
+> Sebastian Reichel (14):
+>   ARM: dts: LogicPD Torpedo: Add WiLink UART node
+>   ARM: dts: IGEP: Add WiLink UART node
+>   ARM: OMAP2+: pdata-quirks: drop TI_ST/KIM support
+>   media: wl128x-radio: remove module version
+>   media: wl128x-radio: remove global radio_disconnected
+>   media: wl128x-radio: remove global radio_dev
+>   media: wl128x-radio: convert to platform device
+>   media: wl128x-radio: use device managed memory allocation
+>   media: wl128x-radio: load firmware from ti-connectivity/
+>   media: wl128x-radio: simplify fmc_prepare/fmc_release
+>   media: wl128x-radio: fix skb debug printing
+>   media: wl128x-radio: move from TI_ST to hci_ll driver
+>   Bluetooth: btwilink: drop superseded driver
+>   misc: ti-st: Drop superseded driver
+>=20
+>  .../boot/dts/logicpd-torpedo-37xx-devkit.dts  |   8 +
+>  arch/arm/boot/dts/omap3-igep0020-rev-f.dts    |   8 +
+>  arch/arm/boot/dts/omap3-igep0030-rev-g.dts    |   8 +
+>  arch/arm/mach-omap2/pdata-quirks.c            |  52 -
+>  drivers/bluetooth/Kconfig                     |  11 -
+>  drivers/bluetooth/Makefile                    |   1 -
+>  drivers/bluetooth/btwilink.c                  | 350 -------
+>  drivers/bluetooth/hci_ll.c                    | 115 ++-
+>  drivers/media/radio/wl128x/Kconfig            |   2 +-
+>  drivers/media/radio/wl128x/fmdrv.h            |   5 +-
+>  drivers/media/radio/wl128x/fmdrv_common.c     | 211 ++--
+>  drivers/media/radio/wl128x/fmdrv_common.h     |   4 +-
+>  drivers/media/radio/wl128x/fmdrv_v4l2.c       |  55 +-
+>  drivers/media/radio/wl128x/fmdrv_v4l2.h       |   2 +-
+>  drivers/misc/Kconfig                          |   1 -
+>  drivers/misc/Makefile                         |   1 -
+>  drivers/misc/ti-st/Kconfig                    |  18 -
+>  drivers/misc/ti-st/Makefile                   |   6 -
+>  drivers/misc/ti-st/st_core.c                  | 922 ------------------
+>  drivers/misc/ti-st/st_kim.c                   | 868 -----------------
+>  drivers/misc/ti-st/st_ll.c                    | 169 ----
+>  include/linux/ti_wilink_st.h                  | 337 +------
+>  22 files changed, 213 insertions(+), 2941 deletions(-)
+>  delete mode 100644 drivers/bluetooth/btwilink.c
+>  delete mode 100644 drivers/misc/ti-st/Kconfig
+>  delete mode 100644 drivers/misc/ti-st/Makefile
+>  delete mode 100644 drivers/misc/ti-st/st_core.c
+>  delete mode 100644 drivers/misc/ti-st/st_kim.c
+>  delete mode 100644 drivers/misc/ti-st/st_ll.c
+>=20
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--CblX+4bnyfN0pR09
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwembsACgkQMOfwapXb+vLWFgCgqP1OniIith3HQ17TAAe96j5P
+bWYAn0UPmACF1i3Jfwgxyd0emDZT5BdH
+=5eKF
+-----END PGP SIGNATURE-----
+
+--CblX+4bnyfN0pR09--
