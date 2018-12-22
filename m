@@ -2,135 +2,112 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09BBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67434C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB2B21934
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 401E921934
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392889AbeLVWtJ (ORCPT
+        id S2392890AbeLVWyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 17:49:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44570 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388512AbeLVWtJ (ORCPT
+        Sat, 22 Dec 2018 17:54:13 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33280 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731424AbeLVWyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 17:49:09 -0500
-Received: from mail-vs1-f69.google.com ([209.85.217.69])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1gaq4x-0000AX-LL
-        for linux-kernel@vger.kernel.org; Sat, 22 Dec 2018 22:49:07 +0000
-Received: by mail-vs1-f69.google.com with SMTP id b203so4361857vsd.20
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:49:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c95vZPoFKEFXbWX9ArGamlpKmf1j4Atr3/a94movQzg=;
-        b=KPP1Qk4+UYwGHrulYWjDZtypUwZALaQqhGFhLI48JevaJz3PT3s9jhBvd+DjjFP5+i
-         7RXVdTMYBeLmBIhQnP5MAZ1152kODkqzcGxel20+wi8nx7rMZVsYSPAHSJJIhCOBOd1X
-         Oka6gDNpMIxTBAQADOJ1SEFXLRuQM1wESmn8qFRRemHq9lGehNfqAQqHmBm7RTJ/Ym10
-         4IyptMgNlDG/3h0FoBV2be9c0FstScQcUvYjz6v8FWxyt0dJjgqUyikpTu618Udt3bDm
-         H9RKacQZJ1oJ+v5MpFRnf/TEpqTetlhUsiepy5SuNYNncryWV3Ul41nHBHwGpeiBIhzV
-         QrOg==
-X-Gm-Message-State: AJcUukdTLKn1pgaDxIaesRfasxJgng3cfC3jCdhD79tl/0vn4kd5k77P
-        +MuS0JupXMJqOHAr/uKl2tkqS3Vk6WAu67KpusG3puXQEUe5JQGfl4DnSjXjJO1LRhZvUIDDkzg
-        1zHk2Lvg7RvcE3gnqLP82O9Nd6WgLwkxCGyzXctYTl6dYjlLqfg/3lhnhhg==
-X-Received: by 2002:ab0:1425:: with SMTP id b34mr2883515uae.64.1545518946570;
-        Sat, 22 Dec 2018 14:49:06 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5+5X+PF7aBAWKd+DSCQ3eIwtOR45Ac9JyEmTrd4kN37BgodZV21ImAreuXPwvTDsSiH4tu8XZnloV7Ynb31OU=
-X-Received: by 2002:ab0:1425:: with SMTP id b34mr2883503uae.64.1545518946213;
- Sat, 22 Dec 2018 14:49:06 -0800 (PST)
-MIME-Version: 1.0
-References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
- <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com> <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
-From:   Christian Brauner <christian.brauner@canonical.com>
-Date:   Sat, 22 Dec 2018 23:48:54 +0100
-Message-ID: <CAPP7u0Vo6gB86S-hZcOW9Rmki8oKHd=Lyx3x-N9gjPC4JP_YxQ@mail.gmail.com>
-Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
- userns mounts, breaking systemd-nspawn
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     nix.or.die@gmail.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        ellierevves@gmail.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <seth.forshee@canonical.com>
+        Sat, 22 Dec 2018 17:54:12 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBMMmWs2024358
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 17:54:11 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2phgfswn8w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 17:54:11 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sat, 22 Dec 2018 22:54:09 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 22 Dec 2018 22:54:06 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBMMs5Bw60948554
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 22 Dec 2018 22:54:05 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5D1A4C046;
+        Sat, 22 Dec 2018 22:54:04 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 830CD4C040;
+        Sat, 22 Dec 2018 22:54:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.35])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat, 22 Dec 2018 22:54:03 +0000 (GMT)
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+Date:   Sat, 22 Dec 2018 17:53:52 -0500
+In-Reply-To: <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122222-4275-0000-0000-000002F46558
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122222-4276-0000-0000-0000380275FC
+Message-Id: <1545519232.3940.115.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-22_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=927 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812220207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 11:20 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Eric, this is entirely unacceptable.
+On Sat, 2018-12-22 at 14:47 +0100, Michael Niewöhner wrote:
 
-i would like to point out that I send a revert for this in *July*
-before any kernel with this change
-was released for the exact same reason. But I was ignored and no one
-came to argumentative aid:
-- https://lists.linuxfoundation.org/pipermail/containers/2018-July/039182.html
-- https://lists.linuxfoundation.org/pipermail/containers/2018-July/039183.html
+> When I remove the timeout and boot directly to the linux kernel, I get that
+> "2314 TPM-self test error" since it has not finished, yet. The TPM is detected
+> by IMA and works fine then.
+> 
+> Some more tests showed that any delay before booting the kernel causes the TPM
+> to not get detected. I tested, 10, 15, 20, 30, 60... seconds. Only in some very
+> rare cases the TPM got detected.
+> 
+> I wanted to know if the TPM is in an well initialized state at the time of that
+> error. Since I was not able to get some test/debug kernel patches working I
+> decided to try kexec. It turned out that the TPM is indeed correctly working and
+> will be detected just fine by linux after kexec!
 
-To be fair, no one apart from me was pointing out that it actually
-breaks people including systemd folks
-even though I was bringing it up with them. I even tried to fix all of
-userspace after this got NACKED
-( https://github.com/systemd/systemd/pull/9483 ).
+No surprise here.  kexec would be the equivalent of a soft reboot.
 
-Christian
+> 
+> Is there anyone having an idea what could be wrong here? I am willing to debug
+> this but I have really no idea where to start :-(
 
->
-> On Sat, Dec 22, 2018 at 12:58 PM Gabriel C <nix.or.die@gmail.com> wrote:
-> >
-> > Added some people to CC that might want to see this..
->
-> Thanks.
->
-> > > Here's an email that was sent to lkml about the subject:
-> > >
-> > > https://lkml.org/lkml/2018/7/5/742
-> > >
-> > > I link also this, quoting the last of it:
-> > >
-> > > https://lkml.org/lkml/2018/7/5/701
-> > >
-> > > It has never been the case that mknod on a device node will guarantee
-> > > that you even can open the device node.  The applications that regress
-> > > are broken.  It doesn't mean we shouldn't be bug compatible, but we darn
-> > > well should document very clearly the bugs we are being bug compatible with.
->
-> Yeah, this is complete garbage.
->
-> We have very clear rules in the kernel: if some change breaks existing
-> setups, it is ABSOLUTELY NEVER the application that is broken.
->
-> It is the kernel.
->
-> There is absolutely zero gray areas here. Eric, your behavior is
-> entirely out of line, and now we apparently have a regression that
-> goes back to June that I was not told about because of your incorrect
-> stance.
->
-> Eric, I want to make this 1000% clear: there are no user space bugs.
-> If it used to work, then user space was clearly doing the right thing.
-> The fact that you tried to several times claim it was buggy user space
-> is a serious breach of trust. You KNOW this is the case.
->
-> Seriously. There are no excuses.
->
-> That commit is now reverted in my tree, and furthermore I will not
-> take any pull requests from you until you have made it clear that you
-> comprehend this very fundamental issue.
->
-> Why did it take so long for this issue to be elevated to me?
->
->                    Linus
+A while ago, I was "playing" with a pi.  Commenting out
+tpm2_do_selftest() seemed to resolve a similar problem, but that was
+before James' patches.  I don't know if that would make a difference
+now.
+
+Mimi
+
