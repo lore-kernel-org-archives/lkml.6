@@ -2,85 +2,119 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062BAC43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B884C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C71312197D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 594E921983
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:49:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GoTBDeuV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388416AbeLVQsk (ORCPT
+        id S2388656AbeLVQtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 11:48:40 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:59057 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731648AbeLVQsj (ORCPT
+        Sat, 22 Dec 2018 11:49:00 -0500
+Received: from mail-it1-f182.google.com ([209.85.166.182]:38913 "EHLO
+        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388472AbeLVQs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 11:48:39 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 2658A3000088B;
-        Sat, 22 Dec 2018 17:40:14 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id DD0551D37BD; Sat, 22 Dec 2018 17:40:13 +0100 (CET)
-Date:   Sat, 22 Dec 2018 17:40:13 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     linux-pci@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-acpi@vger.kernel.org, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v2 03/11] vga-switcheroo: make PCI dependency explicit
-Message-ID: <20181222164013.2l7etklpxjrrobnm@wunner.de>
-References: <20181222090720.19234-1-okaya@kernel.org>
- <20181222090720.19234-4-okaya@kernel.org>
+        Sat, 22 Dec 2018 11:48:59 -0500
+Received: by mail-it1-f182.google.com with SMTP id a6so10786789itl.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 08:48:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8mYjANv7GVYCBDYsRw8rbQFm+hW45EYmp5yGocBUZsM=;
+        b=GoTBDeuVI1a4P6MdlH41YfI99X9KZas5XvmNoeWQXKJuSOClBc0QmM33k4KzomYxsp
+         etid5ZQIMhqyJU0+79W+McALe1MPrSUO+y+jXbosmv+1fGbr1EqpYHGCHxThBcn8nHwk
+         AaLqTxtXSXk0GHIz3MxunpNS8WAd5Yzpo1TIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8mYjANv7GVYCBDYsRw8rbQFm+hW45EYmp5yGocBUZsM=;
+        b=n+3RWUPkUfL9kJOtQtgoJaEwy4NwAIfijcS0UOzsBSO6/c8aKUkvd77kZvk+1BzIAA
+         Z4bma7zrGdmTrP16N3sRwaBwKkBtr12z0mgPzFKtrGi4sWE8/iTkMUkOBGKM8uUbtQJr
+         QhMpBvxmswNymDvRMA/YICzojH16YGfbnkf6GwtiN0vRQHwQ1wcIVODRHnm5zaRi4+l+
+         4pkHlHuZyznCOfnUrGXWCG+R1Y/aKIVicIEh9JBg3QYEczWo1uqNivM6qpwoYmE2HVP1
+         kyQ6EpG3R/go5yGYJqZZEHSCUrsg3QHKCyCpJoyHe4EirGTyvY+djtAEFbucxgCcz88Q
+         87qA==
+X-Gm-Message-State: AA+aEWYthX/oV9v7rN+5K6uzKuVUJ366mRDCHGLn1L7bcFb/9/FwNSKH
+        vpJV3YRSJ3p8v++Uu+uFmlQElSzAQTW7tRMQNRyt3Ebk
+X-Google-Smtp-Source: AFSGD/V8NdOkDhMnaHWsfB6t1PNkHHswEIQeLkFNRjzS9fquv5Wvns84XxO9bcM4RIDslxyoxSuDTFQYXb17C8U6Ehk=
+X-Received: by 2002:a24:edc4:: with SMTP id r187mr4707698ith.158.1545476878839;
+ Sat, 22 Dec 2018 03:07:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181222090720.19234-4-okaya@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+ <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
+ <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
+ <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
+ <FFF73D592F13FD46B8700F0A279B802F486046A9@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu99VdPero0yrXiaByURyp1idYE948Qi4j1eqY0ENCrF5A@mail.gmail.com>
+ <20181221171308.GJ1325@zn.tnic> <CAKv+Gu91YsuK2QmWStPe84v8L7XD9x4cduTYgUjj3TPRfQckfw@mail.gmail.com>
+ <20181221192928.GM1325@zn.tnic>
+In-Reply-To: <20181221192928.GM1325@zn.tnic>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 22 Dec 2018 12:07:48 +0100
+Message-ID: <CAKv+Gu-v+nBh2yK0uXbuwwnpEnpG8bk4ufSMXygMOdOd2XSTYw@mail.gmail.com>
+Subject: Re: [tip:efi/core] x86/efi: Unmap EFI boot services code/data regions
+ from efi_pgd
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Matt Fleming <matt@codeblueprint.co.uk>,
+        "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "bhsharma@redhat.com" <bhsharma@redhat.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
+        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 09:07:12AM +0000, Sinan Kaya wrote:
-> This driver depends on the PCI infrastructure but the dependency has not
-> been explicitly called out.
-> 
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+On Fri, 21 Dec 2018 at 20:29, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Fri, Dec 21, 2018 at 06:26:23PM +0100, Ard Biesheuvel wrote:
+> > On Fri, 21 Dec 2018 at 18:13, Borislav Petkov <bp@alien8.de> wrote:
+> > >
+> > > On Fri, Dec 21, 2018 at 06:02:29PM +0100, Ard Biesheuvel wrote:
+> > > > As far as I can tell, the SGI x86 UV platforms still rely on this, so
+> > > > we're stuck with it for the foreseeable future.
+> > >
+> > > What happened with the old apple laptops which couldn't handle high
+> > > virtual mappings and needed 1:1? We don't care anymore?
+> > >
+> >
+> > If that is the case (I wouldn't know) then yes, there is a second
+> > reason why we need to keep this code.
+>
+> Fleming knows details and he's on CC, lemme "pull" him up into To: :-)
+>
 
-This series doesn't have a cover letter so it's unclear to me through
-which tree it's supposed to go in?  Each patch through the individual
-subsystem tree or all through the same tree?  If the former I guess I
-could push this to drm-misc...
-
-Thanks,
-
-Lukas
-
-> ---
->  drivers/gpu/vga/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
-> index b677e5d524e6..d5f1d8e1c6f8 100644
-> --- a/drivers/gpu/vga/Kconfig
-> +++ b/drivers/gpu/vga/Kconfig
-> @@ -21,6 +21,7 @@ config VGA_SWITCHEROO
->  	bool "Laptop Hybrid Graphics - GPU switching support"
->  	depends on X86
->  	depends on ACPI
-> +	depends on PCI
->  	select VGA_ARB
->  	help
->  	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
-> -- 
-> 2.19.0
+IIUC the 1:1 mapping and the 'old' mapping are two different things,
+and the new mapping also contains a 1:1 mapping of the boot services
+regions, at least until SetVirtualAddressMap() returns.
