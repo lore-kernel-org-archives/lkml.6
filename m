@@ -2,143 +2,145 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E854DC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B547DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98AD82195D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545512363;
-	bh=eCe3/MTx1Qmv1TaNNletDnJqd6O0KcFqDF+4yAtCS58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ql8fTS4HOqMyYEVIiq+sGWgaq3KFdOwRMnP0RmEqM7rcDsuN7TPU6e4yn14Ge9KtT
-	 np5LE1UFe7TIkeaGdbRMIcOawg3TMAmz6ax3i3JWkO0JjwSI3HMzn0cQQYzJnypzbT
-	 VukELnIPQAU0BRsM4pM3FZ5Q5vq+MmrS970I6quM=
+	by mail.kernel.org (Postfix) with ESMTP id 857462195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390031AbeLVU7W (ORCPT
+        id S2390100AbeLVVFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:59:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37866 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732220AbeLVU7W (ORCPT
+        Sat, 22 Dec 2018 16:05:11 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51843 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387605AbeLVVFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:59:22 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so8813292wmd.2;
-        Sat, 22 Dec 2018 12:59:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tFlHYB0zI+dBZ58hLaDVEwWzC6NZU7woYYYkh5OAGRo=;
-        b=VPcERrn8UWXd2MK1LsRI7aw9Ri/uFLhDl3SeVCVGk4AzpyMxOdJR67EZ9CpuKr4D++
-         n8FUZQyRMeqtkaKX99ZaDIES01gCOTiN3VMx/udVI5FuEm2dyQHNXUXnCyA86uFyfkXl
-         +mf2wjH1e3Y3FEBsDbKz32qH1D6XNqSFTzZJtt85yX6wagpp4bng6U7rXvip/ngvIZac
-         d08o/Y9v9MWGPwFkDcletrcfueDC66FOf8K3+6APK7DgbZWQs5tHPmB+533mxXlXdBVK
-         lkH97njUTxHEj/EkEkqoyKSDIbUuo5pONKF4jD4uCUcynWUT9cVJ70FdgJVlTHD6LMS8
-         rL6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tFlHYB0zI+dBZ58hLaDVEwWzC6NZU7woYYYkh5OAGRo=;
-        b=RHF3YU8QnqNKbBqMBbbCsYIPOOSsvb2xeTGSO3w+QXUK2y/dMg1FUofo1NQczmSTOW
-         fP8dPh2CjusjuVgCkDldFW12AWmrYtYfBEe4zqlH52XOQxyj6JagjqcQ1DZYlUCbhkT3
-         18ghPt4V8qho+Z1KwcZH2elQK9J+TLbTI5aD/iinkgvxHvb7bEj3dwWPjfNGoyZIlhaP
-         64ZHzE8R9kgbwr6OFJ1EalCwAtrYS3gp3i2EeIW+BZ2LsantN2hkuNI69YtPEfZIuRIo
-         jNRwGrVPPDA8oRc4Z/5aFZiIabNwB5SYeXtzp97xgK9JU3pfOHX7RvuKfVaFX732/buG
-         h2XA==
-X-Gm-Message-State: AA+aEWay6hN3Mhottyyus+4rpiv7Y78PAo+1Pi5zZVPUxEzD8Wl2b4tl
-        7k80FG6B/ROtFFfU6K7RrrzfgPzP
-X-Google-Smtp-Source: ALg8bN6bpXemGQJHO+UJvTnX7PNhjDY9b28xNQB6Mc+h7jdV6w/+ckk/5GXR9EQ9n9+JQa3iLDXvKQ==
-X-Received: by 2002:a7b:cb86:: with SMTP id m6mr7357954wmi.61.1545512359952;
-        Sat, 22 Dec 2018 12:59:19 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y34sm42293826wrd.68.2018.12.22.12.59.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Dec 2018 12:59:19 -0800 (PST)
-Date:   Sat, 22 Dec 2018 21:59:16 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: Re: [GIT PULL] Last straggler for 4.20-rc8 or final
-Message-ID: <20181222205916.GA64950@gmail.com>
-References: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
- <20181221224040.GA25147@zn.tnic>
- <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
+        Sat, 22 Dec 2018 16:05:10 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBML41RJ283665
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 22 Dec 2018 13:04:01 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBML3w4C283662;
+        Sat, 22 Dec 2018 13:03:58 -0800
+Date:   Sat, 22 Dec 2018 13:03:58 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sai Praneeth Prakhya <tipbot@zytor.com>
+Message-ID: <tip-1debf0958fa27b7c469dbf22754929ec59a7c0e7@git.kernel.org>
+Cc:     dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, ard.biesheuvel@linaro.org,
+        luto@kernel.org, sai.praneeth.prakhya@intel.com, mingo@kernel.org,
+        peterz@infradead.org, bp@alien8.de, bhsharma@redhat.com,
+        dave.hansen@intel.com, torvalds@linux-foundation.org,
+        riel@surriel.com
+Reply-To: bhsharma@redhat.com, bp@alien8.de, riel@surriel.com,
+          torvalds@linux-foundation.org, dave.hansen@intel.com,
+          tglx@linutronix.de, ard.biesheuvel@linaro.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+          peterz@infradead.org, mingo@kernel.org,
+          sai.praneeth.prakhya@intel.com, luto@kernel.org
+In-Reply-To: <20181222022234.7573-1-sai.praneeth.prakhya@intel.com>
+References: <20181222022234.7573-1-sai.praneeth.prakhya@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] x86/efi: Don't unmap EFI boot services code/data
+ regions for EFI_OLD_MEMMAP and EFI_MIXED_MODE
+Git-Commit-ID: 1debf0958fa27b7c469dbf22754929ec59a7c0e7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  1debf0958fa27b7c469dbf22754929ec59a7c0e7
+Gitweb:     https://git.kernel.org/tip/1debf0958fa27b7c469dbf22754929ec59a7c0e7
+Author:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+AuthorDate: Fri, 21 Dec 2018 18:22:34 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 22 Dec 2018 20:58:30 +0100
 
-* Paolo Bonzini <pbonzini@redhat.com> wrote:
+x86/efi: Don't unmap EFI boot services code/data regions for EFI_OLD_MEMMAP and EFI_MIXED_MODE
 
-> On 21/12/18 23:40, Borislav Petkov wrote:
-> > + mingo.
-> > 
-> > On Fri, Dec 21, 2018 at 02:09:02PM +0100, Paolo Bonzini wrote:
-> >> Linus,
-> >>
-> >> The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
-> >>
-> >>   Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-> >>
-> >> for you to fetch changes up to 3cf85f9f6bd7b172122865432b4c6f0ec844e22a:
-> >>
-> >>   KVM: x86: nSVM: fix switch to guest mmu (2018-12-19 22:19:22 +0100)
-> >>
-> >> A simple patch for a pretty bad bug.  I haven't yet sent my 4.21 pull
-> >> request because currently I'm waiting for a patch to be removed from
-> >> tip (MPX removal breaks KVM live migration and was committed without
-> >> Cc or Ack from me) and until that happens I cannot finalize my
-> >> conflict resolution instructions.
-> > 
-> > Lemme make sure I understand it correctly: you'd like us to not send
-> > 
-> > https://git.kernel.org/tip/eb012ef3b4e331ae479dd7cd9378041d9b7f851c
-> > 
-> > up now and delay it for 4.22, right?
-> 
-> Right, and also I will have to provide you with a topic branch to base
-> that patch on.
+The following commit:
 
-Ok - x86/mpx delayed for v4.22 at least.
+  d5052a7130a6 ("x86/efi: Unmap EFI boot services code/data regions from efi_pgd")
 
-Can we turn off CONFIG_X86_INTEL_MPX configurability in the Kconfig, via 
-a patch like below?
+forgets to take two EFI modes into consideration, namely EFI_OLD_MEMMAP and
+EFI_MIXED_MODE:
 
-Thanks,
+- EFI_OLD_MEMMAP is a legacy way of mapping EFI regions into swapper_pg_dir
+  using ioremap() and init_memory_mapping(). This feature can be enabled by
+  passing "efi=old_map" as kernel command line argument. But,
+  efi_unmap_pages() unmaps EFI boot services code/data regions *only* from
+  efi_pgd and hence cannot be used for unmapping EFI boot services code/data
+  regions from swapper_pg_dir.
 
-	Ingo
+Introduce a temporary fix to not unmap EFI boot services code/data regions
+when EFI_OLD_MEMMAP is enabled while working on a real fix.
 
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+- EFI_MIXED_MODE is another feature where a 64-bit kernel runs on a
+  64-bit platform crippled by a 32-bit firmware. To support EFI_MIXED_MODE,
+  all RAM (i.e. namely EFI regions like EFI_CONVENTIONAL_MEMORY,
+  EFI_LOADER_<CODE/DATA>, EFI_BOOT_SERVICES_<CODE/DATA> and
+  EFI_RUNTIME_CODE/DATA regions) is mapped into efi_pgd all the time to
+  facilitate EFI runtime calls access it's arguments in 1:1 mode.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8689e794a43c..20fd5695f265 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1870,6 +1870,7 @@ config X86_INTEL_MPX
- 	def_bool n
- 	# Note: only available in 64-bit mode due to VMA flags shortage
- 	depends on CPU_SUP_INTEL && X86_64
-+	depends on DEPRECATED
- 	select ARCH_USES_HIGH_VMA_FLAGS
- 	---help---
- 	  MPX provides hardware features that can be used in
+Hence, don't unmap EFI boot services code/data regions when booted in mixed mode.
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181222022234.7573-1-sai.praneeth.prakhya@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/platform/efi/quirks.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 09e811b9da26..17456a1d3f04 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -380,6 +380,22 @@ static void __init efi_unmap_pages(efi_memory_desc_t *md)
+ 	u64 pa = md->phys_addr;
+ 	u64 va = md->virt_addr;
+ 
++	/*
++	 * To Do: Remove this check after adding functionality to unmap EFI boot
++	 * services code/data regions from direct mapping area because
++	 * "efi=old_map" maps EFI regions in swapper_pg_dir.
++	 */
++	if (efi_enabled(EFI_OLD_MEMMAP))
++		return;
++
++	/*
++	 * EFI mixed mode has all RAM mapped to access arguments while making
++	 * EFI runtime calls, hence don't unmap EFI boot services code/data
++	 * regions.
++	 */
++	if (!efi_is_native())
++		return;
++
+ 	if (kernel_unmap_pages_in_pgd(pgd, pa, md->num_pages))
+ 		pr_err("Failed to unmap 1:1 mapping for 0x%llx\n", pa);
+ 
