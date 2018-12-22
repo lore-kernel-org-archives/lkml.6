@@ -2,118 +2,55 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814A0C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AB8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CACD21939
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:45:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="1+v/Jwlt"
+	by mail.kernel.org (Postfix) with ESMTP id 65FB021939
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 21:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390142AbeLVVpW (ORCPT
+        id S2390308AbeLVVzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 16:45:22 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33785 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389549AbeLVVpV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 16:45:21 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so4082786plo.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 13:45:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KLMNWOQ40plTVNd2ahJsYnqWBM3pkzqAgp5g9Es2Xrk=;
-        b=1+v/JwltAndTiznvMM0g/rGwRcUrQqSelg9n9j91pTAG69+ohYNbBXdxp3POf13j2b
-         u72CEzVE27K+DAw38qQS0EXQU3A5msSEejHqWLB6Xklrax1OyYKPojmm+YxALUnmOfjT
-         RmPQidcIGJNDNTYALXUDQhvAXVv2vGmgh4O08AQ8lM7jHk9PxpLAkOab3h+PJIcRtkrK
-         lq/dQPWsEJioU1Gsf1sxhND1dtSwkJy+lfTiIGarxuuiB/3c6LPclKUVrsRyTQhEwpQE
-         wsV3sU4Btbx43hxJG9eeZTZRMFAZ7VBGAWD/SsIkwjbkrkomWVU3Ll+JOx+AWBO2JOd0
-         iviA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KLMNWOQ40plTVNd2ahJsYnqWBM3pkzqAgp5g9Es2Xrk=;
-        b=mTbFnbQvwLfjad0T/+RsTQWpOXxJEZ4SNgIL5IMed6aTkUKm1FodO3RrXe2KZ37WsX
-         lTNrcEr3e6T08JWGCoAqMjmKn3XPicy2CkFHiI2kZf+yPUJS7bAz0zsQgrTXsyTq2XBi
-         uULX0nXtEuyVY8J6aP70Ynyud2IXenuePdFxHPXQ68D3elM/VqlNzPa9gjylRh2C+Szb
-         OpaNHqvxUmmjxiJt7TPMh46LSriWEL6KdN3J953RYDgv26fDRUj0N92IQmm9DS3tFX/w
-         pPpOMVl9m+Pam0dErBxgXP5J/5tG1OrcEERDnjTmzPK4Dp1Cq40xNnomZL/sKOtDeBiD
-         OkYQ==
-X-Gm-Message-State: AJcUukfWKN9TDa+ed6NQeubmCXC61oGsIx5kH3KFcvSciAuzVkugxLq5
-        pnoxNd15Wz/xs9eMGystUzLZiNe5aCYrTg==
-X-Google-Smtp-Source: ALg8bN7iFwu0fUYL4DM++5oDsmWkdlt7pA3at1eB7neDOCAstqsf2vcXndYDYGkKkXaAFkMWFlVmzg==
-X-Received: by 2002:a17:902:1008:: with SMTP id b8mr7558255pla.252.1545515120614;
-        Sat, 22 Dec 2018 13:45:20 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id 196sm105308844pfc.77.2018.12.22.13.45.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 13:45:19 -0800 (PST)
-Subject: Re: [PATCH] lightnvm: pblk: fix use-after-free bug
-To:     =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Igor Konopko <igor.j.konopko@intel.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181222073952.GA11561@embeddedor>
- <1992ea52-cc13-c704-4653-7fbe667b1c5a@lightnvm.io>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <06e20d48-1029-6dad-6037-d88e13a1708e@kernel.dk>
-Date:   Sat, 22 Dec 2018 14:45:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1992ea52-cc13-c704-4653-7fbe667b1c5a@lightnvm.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Dec 2018 16:55:24 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:45882 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388468AbeLVVzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 16:55:24 -0500
+Received: from localhost.localdomain (109-252-60-93.nat.spd-mgts.ru [109.252.60.93])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 7F4AC540089;
+        Sun, 23 Dec 2018 00:55:21 +0300 (MSK)
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: net: hns: question regarding ae_node device node refcounting
+Date:   Sun, 23 Dec 2018 00:54:41 +0300
+Message-Id: <1545515681-29561-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/22/18 11:30 AM, Matias Bjørling wrote:
-> On 12/22/18 8:39 AM, Gustavo A. R. Silva wrote:
->> Remove one of the calls to function bio_put(), so *bio* is only
->> freed once.
->>
->> Notice that bio is being dereferenced in bio_put(), hence leading to
->> a use-after-free bug once *bio* has already been freed.
->>
->> Addresses-Coverity-ID: 1475952 ("Use after free")
->> Fixes: 55d8ec35398e ("lightnvm: pblk: support packed metadata")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/lightnvm/pblk-recovery.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
->> index 3fcf062d752c..5ee20da7bdb3 100644
->> --- a/drivers/lightnvm/pblk-recovery.c
->> +++ b/drivers/lightnvm/pblk-recovery.c
->> @@ -418,7 +418,6 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
->>   	if (ret) {
->>   		pblk_err(pblk, "I/O submission failed: %d\n", ret);
->>   		bio_put(bio);
->> -		bio_put(bio);
->>   		return ret;
->>   	}
->>   
->>
-> 
-> Thanks Gustavo. I missed that one.
-> 
-> Jens, if possible could you please pick this up?
+Hello,
 
-Yep, added for the later pull.
+hns_nic_dev_probe() increments refcount of ae_node device node:
+	ae_node = of_parse_phandle(dev->of_node, "ae-handle", 0);
 
--- 
-Jens Axboe
+But there is no of_node_put() for ae_node.
+What is the right place to decrement the ae_node refount?
+
+Should it be placed in hns_nic_dev_probe() or in hns_nic_dev_remove()?
+Or may be it is managed by fwnode somehow?
+
+--
+Alexey Khoroshilov
+Linux Verification Center, ISPRAS
+web: http://linuxtesting.org
 
