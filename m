@@ -7,68 +7,63 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 129FEC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9126C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF88321A48
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A329F21A48
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392451AbeLVRBK (ORCPT
+        id S2404897AbeLVRBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:01:10 -0500
-Received: from ozlabs.org ([203.11.71.1]:54661 "EHLO ozlabs.org"
+        Sat, 22 Dec 2018 12:01:09 -0500
+Received: from ozlabs.org ([203.11.71.1]:57379 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389168AbeLVRBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388911AbeLVRBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Dec 2018 12:01:04 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43MLSV0PQYz9sNJ; Sat, 22 Dec 2018 20:54:33 +1100 (AEDT)
+        id 43MLT217xxz9sPZ; Sat, 22 Dec 2018 20:55:01 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: ebd1d3b74f8542a8f3bb80b453692d6d18f84071
+X-powerpc-patch-commit: e213574a449f7a57d4202c1869bbc7680b6b5521
 X-Patchwork-Hint: ignore
-In-Reply-To: <20181205175355.14787-1-malat@debian.org>
-To:     Mathieu Malaterre <malat@debian.org>
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
+In-Reply-To: <20181102004455.10157-1-joel@jms.id.au>
+To:     Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: Re: [v2] powerpc/32: Move the old 6xx -mcpu logic before the TARGET_CPU logic
-Message-Id: <43MLSV0PQYz9sNJ@ozlabs.org>
-Date:   Sat, 22 Dec 2018 20:54:33 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     Jinsong Ji <jji@us.ibm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [v2] raid6/ppc: Fix build for clang
+Message-Id: <43MLT217xxz9sPZ@ozlabs.org>
+Date:   Sat, 22 Dec 2018 20:55:01 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-05 at 17:53:55 UTC, Mathieu Malaterre wrote:
-> The code:
+On Fri, 2018-11-02 at 00:44:55 UTC, Joel Stanley wrote:
+> We cannot build these files with clang as it does not allow altivec
+> instructions in assembly when -msoft-float is passed.
 > 
->   ifdef CONFIG_6xx
->   KBUILD_CFLAGS          += -mcpu=powerpc
->   endif
+> Jinsong Ji <jji@us.ibm.com> wrote:
+> > We currently disable Altivec/VSX support when enabling soft-float.  So
+> > any usage of vector builtins will break.
+> >
+> > Enable Altivec/VSX with soft-float may need quite some clean up work, so
+> > I guess this is currently a limitation.
+> >
+> > Removing -msoft-float will make it work (and we are lucky that no
+> > floating point instructions will be generated as well).
 > 
-> was added in 2006 in commit f48b8296b315 ("[PATCH] powerpc32: Set cpu
-> explicitly in kernel compiles"). This change was acceptable since the
-> TARGET_CPU logic was 64-bit only.
+> This is a workaround until the issue is resolved in clang.
 > 
-> Since commit 0e00a8c9fd92 ("powerpc: Allow CPU selection
-> also on PPC32") this logic is no longer acceptable after the TARGET_CPU
-> specific. It currently appends -mcpu=powerpc at the end of the command
-> line, after any TARGET_CPU specific:
-> 
->   gcc -Wp,-MD,init/.do_mounts.o.d ...
->     -mcpu=powerpc -mbig-endian -m32 ...
->     -mcpu=e300c2 ...
->     -mcpu=powerpc ...
->     ../init/do_mounts.c
-> 
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> Fixes: 0e00a8c9fd92 ("powerpc: Allow CPU selection also on PPC32")
-> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-> Link: https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg142315.html
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Link: https://bugs.llvm.org/show_bug.cgi?id=31177
+> Link: https://github.com/ClangBuiltLinux/linux/issues/239
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/ebd1d3b74f8542a8f3bb80b453692d
+https://git.kernel.org/powerpc/c/e213574a449f7a57d4202c1869bbc7
 
 cheers
