@@ -2,202 +2,143 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE72C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E854DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FC92195D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNbh6UCx"
+	by mail.kernel.org (Postfix) with ESMTP id 98AD82195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 20:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545512363;
+	bh=eCe3/MTx1Qmv1TaNNletDnJqd6O0KcFqDF+4yAtCS58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ql8fTS4HOqMyYEVIiq+sGWgaq3KFdOwRMnP0RmEqM7rcDsuN7TPU6e4yn14Ge9KtT
+	 np5LE1UFe7TIkeaGdbRMIcOawg3TMAmz6ax3i3JWkO0JjwSI3HMzn0cQQYzJnypzbT
+	 VukELnIPQAU0BRsM4pM3FZ5Q5vq+MmrS970I6quM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389847AbeLVU6M (ORCPT
+        id S2390031AbeLVU7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:58:12 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45657 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388396AbeLVU6L (ORCPT
+        Sat, 22 Dec 2018 15:59:22 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37866 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732220AbeLVU7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:58:11 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so6165041lfa.12
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 12:58:10 -0800 (PST)
+        Sat, 22 Dec 2018 15:59:22 -0500
+Received: by mail-wm1-f67.google.com with SMTP id g67so8813292wmd.2;
+        Sat, 22 Dec 2018 12:59:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=H915YKffmipu2PzY2CpxH/kwDrQvisKAVYA+53xOKaQ=;
-        b=aNbh6UCxt6VTlKMKBclKpXydbHDRmOCh0sHUk+mMgl5hycjlxQHxqMgfDM+gjUoedv
-         cliM+lGIl3zzEBqY8DO//79WrlE52e29p30V6pwFM1X4JDA196Sasa0oFscJBvxI9A0k
-         +fQSUtHLegrkQXH2b8+ZL2R96o5thMspo81/LGPehTg332cu9wHn1wNxUzYT3dIVRxcU
-         FWms51AyFP+DZvS1RMckk7I6p7PiEyo/It3ERkZq0OZLeuhFIED5Za4amsD/mWXT5pbt
-         +nbPh47nes0KUyyMFQcb1M2Q0m6OXX6tby+rM4f9enrc32D8KNKKaZMkRgoDG17hYQlB
-         kNFQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tFlHYB0zI+dBZ58hLaDVEwWzC6NZU7woYYYkh5OAGRo=;
+        b=VPcERrn8UWXd2MK1LsRI7aw9Ri/uFLhDl3SeVCVGk4AzpyMxOdJR67EZ9CpuKr4D++
+         n8FUZQyRMeqtkaKX99ZaDIES01gCOTiN3VMx/udVI5FuEm2dyQHNXUXnCyA86uFyfkXl
+         +mf2wjH1e3Y3FEBsDbKz32qH1D6XNqSFTzZJtt85yX6wagpp4bng6U7rXvip/ngvIZac
+         d08o/Y9v9MWGPwFkDcletrcfueDC66FOf8K3+6APK7DgbZWQs5tHPmB+533mxXlXdBVK
+         lkH97njUTxHEj/EkEkqoyKSDIbUuo5pONKF4jD4uCUcynWUT9cVJ70FdgJVlTHD6LMS8
+         rL6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=H915YKffmipu2PzY2CpxH/kwDrQvisKAVYA+53xOKaQ=;
-        b=Hd8aG0nVZWs49sorEFLFjQrm2C3WHeUERN4aDsprWuvIIajwgHDj/np1SSLf4cyHHc
-         85u4dX2UiJC3TakDNtcG7y/xsDA94Ypv0JRyWbl1x6o4Ls/ob6K3P7hT374gmBM2Htct
-         QYmb9NnGRZWBkYVMn81Ku3upo29dKNN4zXtfclvLTjulA8a5NLJ72CbtrcdN6rEP18ph
-         m0SN2Jzk7YrIvC2ifCmMVs2ZQrGsmJacK63lg0k50PM5fJ0ZRYht7yePg2iaERj3BAro
-         u1N9+mJUFmHHckR6UU6R7xave1eEOfeP6xb+43FKAWD5jzg2JIs+1Ff5qWFQxZkpDcLW
-         Yn/A==
-X-Gm-Message-State: AA+aEWbttNTRotqG2k01MEltctB43aB9THwhGJKi4W2Iz7VXWeTFZ6AL
-        y3c//+gUM4fyzE8xwzOjadsvW9l29ipktf+f8A==
-X-Google-Smtp-Source: AFSGD/V6Vt7xtBLUDtmH7m1e+UVz/uxUa79Z5DdSZ1WaFfTl3RFi08h3rQjHwCWqvOwLf0u6Okog9q/HXuVYe1oXDcI=
-X-Received: by 2002:a19:c954:: with SMTP id z81mr3833422lff.150.1545512289138;
- Sat, 22 Dec 2018 12:58:09 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tFlHYB0zI+dBZ58hLaDVEwWzC6NZU7woYYYkh5OAGRo=;
+        b=RHF3YU8QnqNKbBqMBbbCsYIPOOSsvb2xeTGSO3w+QXUK2y/dMg1FUofo1NQczmSTOW
+         fP8dPh2CjusjuVgCkDldFW12AWmrYtYfBEe4zqlH52XOQxyj6JagjqcQ1DZYlUCbhkT3
+         18ghPt4V8qho+Z1KwcZH2elQK9J+TLbTI5aD/iinkgvxHvb7bEj3dwWPjfNGoyZIlhaP
+         64ZHzE8R9kgbwr6OFJ1EalCwAtrYS3gp3i2EeIW+BZ2LsantN2hkuNI69YtPEfZIuRIo
+         jNRwGrVPPDA8oRc4Z/5aFZiIabNwB5SYeXtzp97xgK9JU3pfOHX7RvuKfVaFX732/buG
+         h2XA==
+X-Gm-Message-State: AA+aEWay6hN3Mhottyyus+4rpiv7Y78PAo+1Pi5zZVPUxEzD8Wl2b4tl
+        7k80FG6B/ROtFFfU6K7RrrzfgPzP
+X-Google-Smtp-Source: ALg8bN6bpXemGQJHO+UJvTnX7PNhjDY9b28xNQB6Mc+h7jdV6w/+ckk/5GXR9EQ9n9+JQa3iLDXvKQ==
+X-Received: by 2002:a7b:cb86:: with SMTP id m6mr7357954wmi.61.1545512359952;
+        Sat, 22 Dec 2018 12:59:19 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y34sm42293826wrd.68.2018.12.22.12.59.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Dec 2018 12:59:19 -0800 (PST)
+Date:   Sat, 22 Dec 2018 21:59:16 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: Re: [GIT PULL] Last straggler for 4.20-rc8 or final
+Message-ID: <20181222205916.GA64950@gmail.com>
+References: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
+ <20181221224040.GA25147@zn.tnic>
+ <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
 MIME-Version: 1.0
-References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
-In-Reply-To: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Sat, 22 Dec 2018 21:57:42 +0100
-Message-ID: <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com>
-Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
- userns mounts, breaking systemd-nspawn
-To:     Ellie Reeves <ellierevves@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added some people to CC that might want to see this..
 
-Am Sa., 22. Dez. 2018 um 19:14 Uhr schrieb Ellie Reeves <ellierevves@gmail.=
-com>:
->
-> Hi,
-> first off, allow me to express that this is my first time ever writing
-> on such a mailing list, and that if something is unclear or you would
-> need more information, just let me know.
-> I write to this list in hoping to see this change reverted. The linux
-> kernel always said it would avoid breaking user namespace as much as
-> possible, and yet this is what happens. I was hence very much surprised
-> when my perfectly working containers on systemd-nspawn which makes use
-> of userns by default, stopped working from one day to the next, till I
-> identified the problem as being kernel >=3D 4.18. This container is in
-> production, hence the annoyance it was. From one day to the next the
-> container started failing with stranges problems:
->
-> * nginx, dovecot, postgresql, and postfix complained about getting
-> permission denied on /dev/null even though it appeared perfectly normal
-> to me, the correct permissions, all that
-> * /var was also acting very strangely, getting a lot of permission
-> denied or operation not supported messages.
-> * I could not delete a file that my user had the right to create, write
-> to and read in /var, I needed root
->
-> Here is the pull request that was made to systemd, along with a small
-> amount of talk around the issue:
->
-> https://github.com/systemd/systemd/pull/9483
->
-> It was ultimately decided among the systemd folks to bail out of the
-> issue, as shown in the news entry for systemd 240:
->
->          * KERNEL API BREAKAGE: Linux kernel 4.18 changed behaviour
-> regarding
->            mknod() handling in user namespaces. Previously mknod() would
-> always
->            fail with EPERM in user namespaces. Since 4.18 mknod() will
-> succeed
->            but device nodes generated that way cannot be opened, and
-> attempts to
->            open them result in EPERM. This breaks the "graceful
-> fallback" logic
->            in systemd's PrivateDevices=3D sand-boxing option. This option=
- is
->            implemented defensively, so that when systemd detects it runs
-> in a
->            restricted environment (such as a user namespace, or an
-> environment
->            where mknod() is blocked through seccomp or absence of
-> CAP_SYS_MKNOD)
->            where device nodes cannot be created the effect of
-> PrivateDevices=3D is
->            bypassed (following the logic that 2nd-level sand-boxing is no=
-t
->            essential if the system systemd runs in is itself already
-> sand-boxed
->            as a whole). This logic breaks with 4.18 in container
-> managers where
->            user namespacing is used: suddenly PrivateDevices=3D succeeds
-> setting
->            up a private /dev/ file system containing devices nodes =E2=80=
-=94 but
-> when
->            these are opened they don't work.
->
->            At this point is is recommended that container managers utiliz=
-ing
->            user namespaces that intend to run systemd in the payload
-> explicitly
->            block mknod() with seccomp or similar, so that the graceful
-> fallback
->            logic works again.
->
->            We are very sorry for the breakage and the requirement to chan=
-ge
->            container configurations for newer kernels. It's purely
-> caused by an
->            incompatible kernel change. The relevant kernel developers
-> have been
->            notified about this userspace breakage quickly, but they chose=
- to
->            ignore it.
->
-> Here's an email that was sent to lkml about the subject:
->
-> https://lkml.org/lkml/2018/7/5/742
->
-> I link also this, quoting the last of it:
->
-> https://lkml.org/lkml/2018/7/5/701
->
-> It has never been the case that mknod on a device node will guarantee
-> that you even can open the device node.  The applications that regress
-> are broken.  It doesn't mean we shouldn't be bug compatible, but we darn
-> well should document very clearly the bugs we are being bug compatible wi=
-th.
->
-> I'm in the opinion that it is a kernel bug, and I quote someone from the
-> systemd irc channel:
->
-> ewb said applications were broken. But the rule is, if userspace breaks,
-> its a bug. The kernel *has* to revert it. And honestly, this change
-> doesn't make much sense. You can set nodev yourself but then you know
-> mknod will not allow you to open the object. Here, the kernel does it
-> without your knowledge
->
-> Also, it seems that if this change is reverted, things that were fixed
-> to work around the issue this breakage caused will not be broken again,
-> they should simply go back to their previous way of working. I
-> understand there may be security reason why this change was made in the
-> first place, but it is not so big a problem is it ? I can mknode
-> arbitrary devices in userns and open them as userns root. But my point
-> is, several things broke. My *working* stuff was broken from one day to
-> the next.
->
-> I am not trying to pick a fight. I want to understand the reasoning
-> behind this change in the first place, and I'm simply making an attempt
-> at getting it reverted, because it is true that I don't much fancy
-> blocking the mknode() syscall in every template unit on every machine we
-> administer here, and that staying on kernel < 4.18 is not a good
-> sollution either.
->
-> I would also like to be personally CC'ed the comments or answers posted
-> to this mailing list in response to this message.
->
-> Thanks
+* Paolo Bonzini <pbonzini@redhat.com> wrote:
+
+> On 21/12/18 23:40, Borislav Petkov wrote:
+> > + mingo.
+> > 
+> > On Fri, Dec 21, 2018 at 02:09:02PM +0100, Paolo Bonzini wrote:
+> >> Linus,
+> >>
+> >> The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
+> >>
+> >>   Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> >>
+> >> for you to fetch changes up to 3cf85f9f6bd7b172122865432b4c6f0ec844e22a:
+> >>
+> >>   KVM: x86: nSVM: fix switch to guest mmu (2018-12-19 22:19:22 +0100)
+> >>
+> >> A simple patch for a pretty bad bug.  I haven't yet sent my 4.21 pull
+> >> request because currently I'm waiting for a patch to be removed from
+> >> tip (MPX removal breaks KVM live migration and was committed without
+> >> Cc or Ack from me) and until that happens I cannot finalize my
+> >> conflict resolution instructions.
+> > 
+> > Lemme make sure I understand it correctly: you'd like us to not send
+> > 
+> > https://git.kernel.org/tip/eb012ef3b4e331ae479dd7cd9378041d9b7f851c
+> > 
+> > up now and delay it for 4.22, right?
+> 
+> Right, and also I will have to provide you with a topic branch to base
+> that patch on.
+
+Ok - x86/mpx delayed for v4.22 at least.
+
+Can we turn off CONFIG_X86_INTEL_MPX configurability in the Kconfig, via 
+a patch like below?
+
+Thanks,
+
+	Ingo
+
+ arch/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8689e794a43c..20fd5695f265 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1870,6 +1870,7 @@ config X86_INTEL_MPX
+ 	def_bool n
+ 	# Note: only available in 64-bit mode due to VMA flags shortage
+ 	depends on CPU_SUP_INTEL && X86_64
++	depends on DEPRECATED
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	---help---
+ 	  MPX provides hardware features that can be used in
