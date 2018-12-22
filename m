@@ -2,35 +2,38 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BAEC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15319C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06E021908
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E4821917
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391922AbeLVSbG (ORCPT
+        id S2392483AbeLVScP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:31:06 -0500
+        Sat, 22 Dec 2018 13:32:15 -0500
 Received: from youngberry.canonical.com ([91.189.89.112]:42517 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391661AbeLVSbB (ORCPT
+        with ESMTP id S2391852AbeLVSbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:31:01 -0500
+        Sat, 22 Dec 2018 13:31:06 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1gakbp-0004DI-Vu; Sat, 22 Dec 2018 16:58:42 +0000
+        id 1gai0w-0003yb-Hk; Sat, 22 Dec 2018 14:12:26 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To:     Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/net: appletalk/cops: remove redundant if statement and mask
-Date:   Sat, 22 Dec 2018 16:58:41 +0000
-Message-Id: <20181222165841.18288-1-colin.king@canonical.com>
+Subject: [PATCH][next] media: cxd2880-spi: fix two memory leaks of dvb_spi
+Date:   Sat, 22 Dec 2018 14:12:26 +0000
+Message-Id: <20181222141226.15775-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -42,35 +45,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The two different assignments for pkt_len are actually the same and
-so the if statement is redundant and can be removed.  Masking a u8
-return value from inb() with 0xFF is also redundant and can also be
-emoved.  Remove the redundant code.
+There are two return paths that do not kfree dvb_spi. Fix the memory
+leaks by returning via the exit label fail_adapter that will free
+dvi_spi.
 
-Detected by CoverityScan, CID#1475639 ("Identical code for different
-branches")
+Detected by CoverityScan, CID#1475991 ("Resource Leak")
 
+Fixes: cb496cd472af ("media: cxd2880-spi: Add optional vcc regulator")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/appletalk/cops.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/spi/cxd2880-spi.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
-index bb49f6e40a19..64c74002fe8b 100644
---- a/drivers/net/appletalk/cops.c
-+++ b/drivers/net/appletalk/cops.c
-@@ -777,10 +777,7 @@ static void cops_rx(struct net_device *dev)
-         }
+diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
+index d5c433e20d4a..3499c90dc695 100644
+--- a/drivers/media/spi/cxd2880-spi.c
++++ b/drivers/media/spi/cxd2880-spi.c
+@@ -522,13 +522,15 @@ cxd2880_spi_probe(struct spi_device *spi)
  
-         /* Get response length. */
--	if(lp->board==DAYNA)
--        	pkt_len = inb(ioaddr) & 0xFF;
--	else
--		pkt_len = inb(ioaddr) & 0x00FF;
-+	pkt_len = inb(ioaddr);
-         pkt_len |= (inb(ioaddr) << 8);
-         /* Input IO code. */
-         rsp_type=inb(ioaddr);
+ 	dvb_spi->vcc_supply = devm_regulator_get_optional(&spi->dev, "vcc");
+ 	if (IS_ERR(dvb_spi->vcc_supply)) {
+-		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(dvb_spi->vcc_supply) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto fail_adapter;
++		}
+ 		dvb_spi->vcc_supply = NULL;
+ 	} else {
+ 		ret = regulator_enable(dvb_spi->vcc_supply);
+-		if (ret)
+-			return ret;
++		if (ret)
++			goto fail_adapter;
+ 	}
+ 
+ 	dvb_spi->spi = spi;
 -- 
 2.19.1
 
