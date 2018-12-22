@@ -2,242 +2,115 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D56C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAEBC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D082084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DC82195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:14:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="U8KLfy8p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391147AbeLVWMO convert rfc822-to-8bit (ORCPT
+        id S2391257AbeLVWOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 17:12:14 -0500
-Received: from mail-oln040092067059.outbound.protection.outlook.com ([40.92.67.59]:17472
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390220AbeLVWMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 17:12:14 -0500
-Received: from AM5EUR02FT060.eop-EUR02.prod.protection.outlook.com
- (10.152.8.55) by AM5EUR02HT052.eop-EUR02.prod.protection.outlook.com
- (10.152.9.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Sat, 22 Dec
- 2018 22:12:08 +0000
-Received: from DB7PR03MB4681.eurprd03.prod.outlook.com (10.152.8.57) by
- AM5EUR02FT060.mail.protection.outlook.com (10.152.9.179) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.13 via Frontend Transport; Sat, 22 Dec 2018 22:12:08 +0000
-Received: from DB7PR03MB4681.eurprd03.prod.outlook.com
- ([fe80::4528:b917:99ee:4ae1]) by DB7PR03MB4681.eurprd03.prod.outlook.com
- ([fe80::4528:b917:99ee:4ae1%3]) with mapi id 15.20.1446.022; Sat, 22 Dec 2018
- 22:12:08 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Chen-Yu Tsai <wens@csie.org>, Code Kipper <codekipper@gmail.com>
-CC:     Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Maxime Ripard" <maxime.ripard@free-electrons.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [alsa-devel] [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap
- settings
-Thread-Topic: [alsa-devel] [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap
- settings
-Thread-Index: AQHUmkNh+epgLTmWFES3de0wBo24uA==
-Date:   Sat, 22 Dec 2018 22:12:08 +0000
-Message-ID: <DB7PR03MB46813005FFDFC8609F67F111ACB90@DB7PR03MB4681.eurprd03.prod.outlook.com>
-References: <20181221152110.17982-1-codekipper@gmail.com>
- <20181221152110.17982-2-codekipper@gmail.com>
- <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
-In-Reply-To: <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0198.eurprd05.prod.outlook.com
- (2603:10a6:3:f9::22) To DB7PR03MB4681.eurprd03.prod.outlook.com
- (2603:10a6:10:1f::17)
-x-incomingtopheadermarker: OriginalChecksum:B20AFBB833656B7950C622BE4B6FE81E452DC09E684068F40DDCC5C8BFB58A6A;UpperCasedChecksum:95F054D451C2D971EED71C00CAC14553644FBEB30AA08BDAC6E49DEB9A6AEF57;SizeAsReceived:7964;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [oO45OK37Ek8DbjyVIuJoJ1pgZ26Jngcf]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5EUR02HT052;6:Lks8qM1epIl9/ichi7OrHKJpoDzJ9Og40B3JIHPmXWlRS4JDrfO2OlCYDppxOQu9N49mUA4GdxSA0kg9hK/jSuEuAh15qIMTFs4TMLediHOh4vwvVKQvLFq6kyWM44HdipAxT4BwtFyXwsr5UJpVQDZQ6mBEjKXKhwO6AjH1yFSLxH1TL4iwokvXDGrT+9rPvlQ8BSrVRZ5CVdL79M9H9Fl+vS2ww2c/vS0tKP4UvA+66ky2zYHpiRuLvBDU4Uj46LrcWGF2I7kMRKYp4hGJ0P8pwGhVVd2kqeW184S4DbzkLlSPYHUxg1N95nr7TwrtFfV3QWRvEghuHSN796qlLP7gVkYYEmKRTamX6ipCqy7kuYmaksVLrOUM8RIHoeeVJFiu1bSCIyOFloTsQLKXPd+vYvdUDkv1QvpBOFBgg6dutqNT6TckrH/qLKPFnyu+Qh8qC3x8dgelDJ48DY5T+A==;5:EK36V7zRfnHmhd5ykvPo+DHNZxxUEAkNgIvQJ9ayrRfRcNvKIa8UWj2hAyWW6gmPjUERT6mkFqInl2GOHFQNne161MW+b4D/mYt83iIm9NhXWEBlRqy0HiqoNSoMV2qysIuO5e/wnZfdO6wOBeT6YxQGOZd8649pZAF1mWs/HAk=;7:jozZ66m0DYpemgaOywQo7+jlsdTqudwAC9P5BYwhPHcGpmRapFDlD066dMm+PxedOCDdcvwOyr4SjnbOWSVdpvDWF09q6uneEJd9lGIxCAaiqYjIGjnhHad/7DZXrVVljTc2OhhmP25XDxDCeFVyQg==
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:AM5EUR02HT052;
-x-ms-traffictypediagnostic: AM5EUR02HT052:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:AM5EUR02HT052;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR02HT052;
-x-microsoft-antispam-message-info: IIQwvVXR7Lm+xnV5kCw8n9Kg8Av9D9ReEFqbRkh9N/n1WrRsO9h4mQNRqdU2yC4Q
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <F307A1F0ECBB5B4EB50C38F5BE1EB0D6@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Sat, 22 Dec 2018 17:14:17 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42718 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeLVWOR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 17:14:17 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so7741711lja.9
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:14:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ncu1Cm23KvKzQIdOjPI4IN2RDVfRz4HN3W3I5484QLI=;
+        b=U8KLfy8pyDTEJDbEjZsHe+smXF8nJI6EkKolk9SunqqDRyM87IGMrVb9UgTTeetHE2
+         dSIKE0ccOHdytMmghW9JDyif/KbNY44fQUvIPwXu5p6c/VoVoE3Vtor7LG8YDFRD4YTh
+         OfBHBeDymgnwEX68qbMhk4wZL5/i0NUlcdYYl8MEut1FKdoLyHcLndYCdL8Gl9abMzWB
+         45U2smCsyX+60idZ0r8fz3SrTmDBFvmT6PsLysjVOMGj4TGGAs5VP0/mYcjlNTlw46NN
+         CrqDLJI1jYr9wRAj4BlkqeaG+LN2ugOY5QFyngpx7yCIshzdvEfYQmP8ouIS/kKDz2D+
+         tnsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ncu1Cm23KvKzQIdOjPI4IN2RDVfRz4HN3W3I5484QLI=;
+        b=Mx5XH2yfEog42h33QLMbdg8xw3dDEWCh7kzn4rmzN+jvYDPZdRevEsu1iBlmcdtfM2
+         woiwyWDGC0HNrmyVs+BNo2A6RupInfSaOXfFfAFBY6XpEQGdb09G7lzhcKMeWx38H03p
+         zjLq2R6dxP8PuhXz2yFc5qHDu6m3XhYDJvjtpRYlZdsue9f39oa2FZmxK8EIZVW5R2tu
+         QP5dppIRzEXVgIpQk8CvWL8IKKkEXEpfK7rdBoaYkMvIEQN+xKxdNrb1/7nzmHoEyNEa
+         kfE0WzWYZ8k4ZFSq+wPmvFWZDazNe4oOFbx342H1GwHl6KaZXKXHeL16GOAfEnbKUrI7
+         5aew==
+X-Gm-Message-State: AJcUukcoRtctyrFya4rgfWRLKgNplsXshS9zjNottQyuiAhDq7Risx/o
+        +vODxWa0At4UMaF6XSmOFJlxGQ==
+X-Google-Smtp-Source: ALg8bN7lMn7+xOHD+0sTBIyW6jrOcGZjDi+u3Fl+BwRJBLB1j2XbG+yElRmLuwdPyrFR+C19/xVtRw==
+X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr4556373ljb.176.1545516854759;
+        Sat, 22 Dec 2018 14:14:14 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (mm-127-199-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.199.127])
+        by smtp.gmail.com with ESMTPSA id 10sm5486741lff.62.2018.12.22.14.14.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Dec 2018 14:14:13 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 1DE02300816; Sun, 23 Dec 2018 01:14:12 +0300 (+03)
+Date:   Sun, 23 Dec 2018 01:14:12 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to fix page
+ fault/truncate race
+Message-ID: <20181222221411.ktm5qeebi43lvce5@kshutemo-mobl1>
+References: <20181218223557.5202-1-mike.kravetz@oracle.com>
+ <20181218223557.5202-3-mike.kravetz@oracle.com>
+ <20181221102824.5v36l6l5t2zthpgr@kshutemo-mobl1>
+ <849f5202-2200-265f-7769-8363053e8373@oracle.com>
+ <20181221202136.crrwojz3k7muvyrh@kshutemo-mobl1>
+ <732c0b7d-5a4e-97a8-9677-30f3520893cb@oracle.com>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 54485d23-c432-40fe-8436-6091d627118c
-X-MS-Exchange-CrossTenant-Network-Message-Id: f88631fb-4d64-4f5e-436c-08d6685a8385
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 54485d23-c432-40fe-8436-6091d627118c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Dec 2018 22:12:08.7241
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR02HT052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <732c0b7d-5a4e-97a8-9677-30f3520893cb@oracle.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-21 17:44, Chen-Yu Tsai wrote:
-> On Fri, Dec 21, 2018 at 11:21 PM <codekipper@gmail.com> wrote:
->> From: Marcus Cooper <codekipper@gmail.com>
->>
->> Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
->> to reflect this.
->>
->> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
->> ---
->>  sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
->>  1 file changed, 9 insertions(+), 20 deletions(-)
->>
->> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
->> index d5ec1a20499d..64d073cb2aee 100644
->> --- a/sound/soc/sunxi/sun4i-i2s.c
->> +++ b/sound/soc/sunxi/sun4i-i2s.c
->> @@ -548,9 +548,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
->>  static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
->>  {
->>         /* Flush RX FIFO */
->> +       regcache_cache_bypass(i2s->regmap, true);
->>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
->>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
->>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
->> +       regcache_cache_bypass(i2s->regmap, false);
-> IIRC the flush cache bit is self-clearing. So you likely want to mark
-> this register as volatile. If it is marked as volatile, then all access
-> to that register bypasses the cache, so the regcache_cache_bypass calls
-> are unneeded.
+On Fri, Dec 21, 2018 at 02:17:32PM -0800, Mike Kravetz wrote:
+> Am I misunderstanding your question/concern?
 
-I helped test this together with Marcus and when I tested with this
-register marked
-as volatile audio started to stutter, still unclear why audio starts to
-stutter.
+No. Thanks for the clarification.
 
-Without this cache bypass the flush TX/RX bits gets cached and flush
-happens unexpectedly
-resulting in multi channel audio getting mapped to wrong speaker.
-Other ASoC codecs and fsl_spdif.c seems to use similar cache bypass for
-reset/flush.
+> 
+> I have decided to add the locking (although unnecessary) with something like
+> this in hugetlbfs_evict_inode.
+> 
+> 	/*
+> 	 * The vfs layer guarantees that there are no other users of this
+> 	 * inode.  Therefore, it would be safe to call remove_inode_hugepages
+> 	 * without holding i_mmap_rwsem.  We acquire and hold here to be
+> 	 * consistent with other callers.  Since there will be no contention
+> 	 * on the semaphore, overhead is negligible.
+> 	 */
+> 	i_mmap_lock_write(mapping);
+> 	remove_inode_hugepages(inode, 0, LLONG_MAX);
+> 	i_mmap_unlock_write(mapping);
 
->
-> However, looking at the code, the write would seem to be ignored if the
-> regmap is in the cache_only state. We only set this when the bus clock
-> is disabled. Under such a condition, bypassing the cache and forcing a
-> write would be unwise, as the system either drops the write, or stalls
-> altogether.
->
->>         /* Clear RX counter */
->>         regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
->> @@ -569,9 +571,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
->>  static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
->>  {
->>         /* Flush TX FIFO */
->> +       regcache_cache_bypass(i2s->regmap, true);
->>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
->>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
->>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
->> +       regcache_cache_bypass(i2s->regmap, false);
->>
->>         /* Clear TX counter */
->>         regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
->> @@ -703,13 +707,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
->>
->>  static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
->>  {
->> -       switch (reg) {
->> -       case SUN4I_I2S_FIFO_TX_REG:
->> -               return false;
->> -
->> -       default:
->> -               return true;
->> -       }
->> +       return true;
-> I don't understand why this is relevant. Do you need to read back from the TX
-> FIFO?
+LGTM.
 
-This change was inspired by c66234cfedfc "ASoC: rockchip: i2s: fix
-playback after runtime resume" [1]
-On resume a cached sample would be written to FIFO_TX_REG unless it is
-marked volatile,
-the rockchip commit indicated that read is needed for volatile regs.
-
-[1]
-https://github.com/torvalds/linux/commit/c66234cfedfc3e6e3b62563a5f2c1562be09a35d
-
->
-> If so, just drop the call-back altogether. If no callback is provided and no
-> rd_table is provided either, it defaults to all registers under max_register
-> (if max_register < 0) are readable.
->
-> However this seems like it deserves to be a separate patch (where you explain
-> in the commit log why it's needed).
->
-> Regards
-> ChenYu
->
->>  }
->>
->>  static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
->> @@ -728,6 +726,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->>  {
->>         switch (reg) {
->>         case SUN4I_I2S_FIFO_RX_REG:
->> +       case SUN4I_I2S_FIFO_TX_REG:
->> +       case SUN4I_I2S_FIFO_STA_REG:
->>         case SUN4I_I2S_INT_STA_REG:
->>         case SUN4I_I2S_RX_CNT_REG:
->>         case SUN4I_I2S_TX_CNT_REG:
->> @@ -738,23 +738,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->>         }
->>  }
->>
->> -static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
->> -{
->> -       switch (reg) {
->> -       case SUN8I_I2S_FIFO_TX_REG:
->> -               return false;
->> -
->> -       default:
->> -               return true;
->> -       }
->> -}
->> -
->>  static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
->>  {
->>         if (reg == SUN8I_I2S_INT_STA_REG)
->>                 return true;
->>         if (reg == SUN8I_I2S_FIFO_TX_REG)
->> -               return false;
->> +               return true;
->>
->>         return sun4i_i2s_volatile_reg(dev, reg);
->>  }
->> @@ -809,7 +798,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
->>         .reg_defaults   = sun8i_i2s_reg_defaults,
->>         .num_reg_defaults       = ARRAY_SIZE(sun8i_i2s_reg_defaults),
->>         .writeable_reg  = sun4i_i2s_wr_reg,
->> -       .readable_reg   = sun8i_i2s_rd_reg,
->> +       .readable_reg   = sun4i_i2s_rd_reg,
->>         .volatile_reg   = sun8i_i2s_volatile_reg,
->>  };
->>
->> --
->> 2.20.1
->>
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
->
+-- 
+ Kirill A. Shutemov
