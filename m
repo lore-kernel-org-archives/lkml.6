@@ -2,91 +2,100 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE93CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F78BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B04C2195D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EDD221927
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:25:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LIj2hCrD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390573AbeLVAWZ (ORCPT
+        id S2403842AbeLVAZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:22:25 -0500
-Received: from smtprelay0240.hostedemail.com ([216.40.44.240]:57028 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726757AbeLVAWZ (ORCPT
+        Fri, 21 Dec 2018 19:25:36 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34011 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbeLVAZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:22:25 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 982C3180721AB;
-        Sat, 22 Dec 2018 00:22:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: stone52_14afdbe3a7a0a
-X-Filterd-Recvd-Size: 2099
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 22 Dec 2018 00:22:22 +0000 (UTC)
-Message-ID: <d984a6109e9f4a7df7d835850c00c449edf24dcc.camel@perches.com>
-Subject: Re: [PATCH v3] string.h: Add str_has_prefix() helper
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-Date:   Fri, 21 Dec 2018 16:22:20 -0800
-In-Reply-To: <20181221190629.6f7fdf74@gandalf.local.home>
-References: <20181221181316.6d32bdc8@gandalf.local.home>
-         <20181221190629.6f7fdf74@gandalf.local.home>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Dec 2018 19:25:36 -0500
+Received: by mail-it1-f196.google.com with SMTP id x124so16937564itd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Dec 2018 16:25:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=iT/tXq7UPR5qw5hExf6QS7jdNfGxlfSoq52Q8RIOUNc=;
+        b=LIj2hCrDP6kJVThG+aUUG8nIEttg8iaRK54iuZHLStxdil5+ThTPyWUK6zK4MpONiZ
+         qd3Jr7NaR4mQYWezaLjOgOfWQgEJ8kyk4OfzZLoL/rPs9vKEAzeuxMkQeYx9VRdeuHU7
+         kkVxlE/Vo/KL/rHl2qTxKQLSstm9LK36wFPFCFcTlJlWbfRurlVMcQzxv01+k4EZQcJL
+         CbDgHg/oHS0YDHkiAqWgoqKYKOahIYm8z67omrRi40FaNQupEq0pVGftDD4G9RP4g4JL
+         QpZpTN32Lg4zmW/zG/DX4df5D++Co3ojIAfmD3Q77NPZ4Q6cppOdAItJHti5MuzB2J51
+         bgtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=iT/tXq7UPR5qw5hExf6QS7jdNfGxlfSoq52Q8RIOUNc=;
+        b=Ruu/a/bDYXoqYvHHmrO8zyGNw4qefR1akX3DmUMH2dKDIfdV06aZ615crmiY++Y6G7
+         8ZXB7uwCAIsW2IhvxIKKXCJ6EhK3MIRfzC5ruv8+fViJ0sOHm3YnXojfPWeAei+5YzqF
+         Wp+25TH70Yq5eMk0QRj0QFaxlgB/rlXeoprsyjOegXUV4kbFwBvBD4Grm/PGaCDYj1jU
+         KTbW7fX5lnTZTr0xYt8fXX5C9iQMHPMJXU2vG+Zn11tkzrozG41TOqnYFh5woJTMRNay
+         kC54ntHgjU2Xo6HpoXPIt5ndPa77KcugwmmQwPEr5o2zT6OSI7fXjTAbViQbpagODgyM
+         xprw==
+X-Gm-Message-State: AA+aEWYcRnohYjoHFoGCuwQLSt9K3MfiF+dan2SWf2PD/zuTagK5QcjI
+        2j8twKCQiBiPK2zwva6GDcQGEQ==
+X-Google-Smtp-Source: ALg8bN44kBLNctfTcjxe1uLUkXINSfWS223kl/nZPk2Xv+5Zq2grXUyU2Y1od0ZfnzMVEDjSf8TflQ==
+X-Received: by 2002:a24:7094:: with SMTP id f142mr3403994itc.90.1545438335644;
+        Fri, 21 Dec 2018 16:25:35 -0800 (PST)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id g21sm1107156itg.44.2018.12.21.16.25.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 16:25:34 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
+Date:   Fri, 21 Dec 2018 16:25:34 -0800 (PST)
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+cc:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] RISC-V: defconfig: Enable Generic PCIE by default
+In-Reply-To: <20181221220555.13679-1-alistair.francis@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1812211620030.777@viisi.sifive.com>
+References: <20181221220555.13679-1-alistair.francis@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-21 at 19:06 -0500, Steven Rostedt wrote:
-> On Fri, 21 Dec 2018 18:13:16 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > +static __always_inline int str_has_prefix(const char *str, const char *prefix)
-> 
-> I'm thinking it is cleaner to have two helper functions and have them
-> both return bool.
-> 
-> static __always_inline bool str_has_prefix(const char *str, const char *prefix)
-> {
-> 	return !strncmp(str, prefix, strlen(prefix));
-> }
-> 
-> ( I still like to keep the __always_inline, it doesn't hurt )
-> 
-> And I'll make a separate patch that adds:
-> 
-> static __always_inline bool
-> str_has_prefix_len(const char *str, const char *prefix, unsigned int *len)
-> {
-> 	*len = strlen(prefix);
-> 	return !strncmp(str, prefix, *len) ? *len : 0;
-> }
-> 
-> Everyone OK with that? 
+(fixed "Palmpalmer" again, might want to check your script for sending 
+patches)
 
-I guess so as you're the one doing all the work.
+On Fri, 21 Dec 2018, Alistair Francis wrote:
 
-Trivia:
+> Enable generic PCIe by default in the RISC-V defconfig, this allows us
+> to use QEMU's PCIe support out of the box.
+> 
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 
-Shouldn't the latter function use __kernel_size_t
-as that's the actual return type of strlen?
+Thanks for updating this.  
 
-Thanks for keeping at it.
+I tried applying it against v4.20-rc7 and running "make savedefconfig", 
+and there is a delta.  It is better if there is no delta.  Is this patch 
+based on a different commit?  Or, is this patch not the product of "make 
+savedefconfig"?   If the latter, please do:
 
+make savedefconfig
+cp defconfig arch/riscv/configs/defconfig
+
+to clean up the diff.
+
+thanks
+
+- Paul
