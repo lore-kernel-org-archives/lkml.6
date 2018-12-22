@@ -2,56 +2,84 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E36C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5C7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3146F21A48
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1372075B
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392514AbeLVRCI (ORCPT
+        id S2392521AbeLVRCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:02:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:37977 "EHLO ozlabs.org"
+        Sat, 22 Dec 2018 12:02:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392402AbeLVRBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:01:03 -0500
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43MLSf5Txrz9sPG; Sat, 22 Dec 2018 20:54:42 +1100 (AEDT)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 2fea82db113e4422ef5c8e6209908806e5fb6b63
-X-Patchwork-Hint: ignore
-In-Reply-To: <20181210215203.1936171-1-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>, Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: powerpc: eeh_event: convert semaphore to completion
-Message-Id: <43MLSf5Txrz9sPG@ozlabs.org>
-Date:   Sat, 22 Dec 2018 20:54:42 +1100 (AEDT)
+        id S2389513AbeLVRCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:02:13 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EEA621A99;
+        Sat, 22 Dec 2018 16:16:32 +0000 (UTC)
+Date:   Sat, 22 Dec 2018 11:16:30 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Andreas Schwab <schwab@linux-m68k.org>, kernel-team@lge.com
+Subject: Re: [PATCH v4] string.h: Add str_has_prefix() helper function
+Message-ID: <20181222111630.24a4444a@vmware.local.home>
+In-Reply-To: <20181222101244.7da017c9@vmware.local.home>
+References: <20181221231924.4583e90b@vmware.local.home>
+        <20181222093346.GB7610@danjae.aot.lge.com>
+        <20181222072404.27a7e9a3@vmware.local.home>
+        <20181222142411.GA10058@danjae.aot.lge.com>
+        <20181222101244.7da017c9@vmware.local.home>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-10 at 21:51:57 UTC, Arnd Bergmann wrote:
-> For this use case, completions and semaphores are equivalent,
-> but semaphores are an awkward interface that should generally
-> be avoided, so use the completion instead.
+On Sat, 22 Dec 2018 10:12:44 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Sat, 22 Dec 2018 23:24:11 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > No, because we don't know the length of str.
+> > > 
+> > > 
+> > > 	[ str = "h\0[bad memory]" ]
 
-Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/2fea82db113e4422ef5c8e62099088
+> > 
+> > I don't know what's the bad memory causing memory fault but anyway
 
-cheers
+What I meant by that is if a string is allocated at a end of a page,
+and the next page is marked as not present. A read into that page will
+cause a page fault, and since memcmp() does not stop at the '\0' it
+will read into that not-present memory and trigger a fault, and that
+read wont be in the exception table, and it will then BUG.
+
+> > memcpy() should stop at the NUL character first as it's different, no?  
+> 
+> No, that's the difference between memcpy() and strncpy(), memcpy()
+> doesn't care about nul characters. It's copying memory not strings.
+
+I think we both meant s/cpy/cmp/ ;-)
+
+-- Steve
+
