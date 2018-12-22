@@ -2,423 +2,191 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAC1C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24DBC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55A0D21A4B
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545499225;
-	bh=M/C97+5ORIhTcbwNr4f1GIY4l7IPErbuC6CfHygf4jA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=s1u1KiZhzXML9xPUnPPqWDB0O/4YB8dobOX/rJIR0rjGouh2ganhgD/I1N5mR3Mwp
-	 4B3pCULecWWOIEmIPZRVP503F3bmUMdbF48rEAJw7HxwexDBi6pGF4ZcHhAedYvq+x
-	 r42cPMiRdUf3ybOJOYDIAtlzCUwihT+fB4Y/cfOk=
+	by mail.kernel.org (Postfix) with ESMTP id A569C21B8D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:20:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUJLBKmR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391198AbeLVRUY (ORCPT
+        id S2391230AbeLVRUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:20:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390141AbeLVRUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:20:23 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29D6E21A48;
-        Sat, 22 Dec 2018 17:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545499222;
-        bh=M/C97+5ORIhTcbwNr4f1GIY4l7IPErbuC6CfHygf4jA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RjqcZfmn2qqAHqaSMPLoFZzWd0MF0JsUgh+eMWiKOehIkPZFeLfjK8PkXG1Kcxwlt
-         rpD5bBXgms87ZUTydnofiqy6kjLV91WypsCVpw61NN8HcgAI4kAA9f5uliRbL4KsYZ
-         KJrTTTe7u96S5MLahx0JFpdRZfU1G62g17tsCcqQ=
-Date:   Sat, 22 Dec 2018 17:20:14 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "martink@posteo.de" <martink@posteo.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "preid@electromag.com.au" <preid@electromag.com.au>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V5 2/2] iio: accell: mma8452: add vdd/vddio regulator
- operation support
-Message-ID: <20181222172014.45196bd2@archlinux>
-In-Reply-To: <1545023805-31250-2-git-send-email-Anson.Huang@nxp.com>
-References: <1545023805-31250-1-git-send-email-Anson.Huang@nxp.com>
-        <1545023805-31250-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 22 Dec 2018 12:20:51 -0500
+Received: from mail-qk1-f169.google.com ([209.85.222.169]:41033 "EHLO
+        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390141AbeLVRUv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:20:51 -0500
+Received: by mail-qk1-f169.google.com with SMTP id 189so5038123qkj.8
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 09:20:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=KimV+wviri6Y02rM4nvg8Iv/6jN5msr9mJi5XbL0wks=;
+        b=SUJLBKmR50Ae9JXK5ODE4qFsaBczhK6a8DTCqctiw9+zL31i58d/aJ1US6XD+LxO7M
+         sxTAZ4b/OZKz5osOgycoNY58BO7li006q/6d46yiwSgcKoV+1teqU1akWdZeY8cf8MPu
+         eYdPjhz4fmVymFw/PxyqvfC0bT1f+vTdph8K3S5uVADhvxUjiJmCPczgtNuko4eVVCx6
+         BFeABi1M95OIZC/fuE1UJ96zT60tKGtLMtnlO+5g6muONcFEgtneEBxS2JtZEyqr1TKJ
+         YiG/Qu9gtpPdrhmNDpHZ4Uo2MkDYpFy9HdZXgsOuTfnQm/OJmM+aeRBZjh4BghHG+AKB
+         egaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=KimV+wviri6Y02rM4nvg8Iv/6jN5msr9mJi5XbL0wks=;
+        b=FsVlPsUpL6f+DL2RAODvVUCe4wJgn2v9sZtqL9lg6cJ6/xKv7ij2HQjP+K0i2g9ww/
+         h/g6WkWSBH9eJG52IIFoN+zap7UPA53kM5jf+R8pgaDdWJDM9xXKAkyEcFiMwSDu0Aot
+         XiHZexwnbmfHY2Jg6IP3xtMGEQ3yg6iUBWz91kEYO8SKR7Q2tj/3zcrwHnmpbPDENvZb
+         gG8dHo4IKiPwSqT/IHw2F7+UUnCRNxSrrjqn8jxkMnKcE31Ikr29bWzN78WIq7jWZFN4
+         TfMEkzzg5BPFTy2HCgAdd1PzIBSpujJP2YJEENAaA9kafsksqu/Q+gP0qSfLCQng6i8d
+         EPxA==
+X-Gm-Message-State: AJcUukfpUWUjLM1e2uejv13OJTtl8GJ00G+BIL4xuYRY9pzAHXJKPDHh
+        7wzohBsS1elJB7h6ijD9woTXm6bj
+X-Google-Smtp-Source: ALg8bN61KKOVKsfGaRF2Ox29EwnvYhRCuGZPHoxSeIS7mUz5FDr0ygDDqmQnx36Oc5SAOtSDhdkkMw==
+X-Received: by 2002:a37:1a20:: with SMTP id a32mr5546537qka.182.1545475460429;
+        Sat, 22 Dec 2018 02:44:20 -0800 (PST)
+Received: from ?IPv6:2001:470:1d:7b6::245? ([2001:470:1d:7b6::245])
+        by smtp.googlemail.com with ESMTPSA id m1sm9487547qkh.15.2018.12.22.02.44.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Dec 2018 02:44:19 -0800 (PST)
+Cc:     linux-kernel@vger.kernel.org
+From:   Ellie Revves <ellierevves@gmail.com>
+Subject: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on userns
+ mounts, breaking systemd-nspawn
+Message-ID: <87530985-672b-dc05-c9df-408e6ac12bd6@gmail.com>
+Date:   Sat, 22 Dec 2018 05:44:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 05:22:55 +0000
-Anson Huang <anson.huang@nxp.com> wrote:
+Hi,
+first off, allow me to express that this is my first time ever writing 
+on such a mailing list, and that if something is unclear or you would 
+need more information, just let me know.
+I write to this list in hoping to see this change reverted. The linux 
+kernel always said it would avoid breaking user namespace as much as 
+possible, and yet this is what happens. I was hence very much surprised 
+when my perfectly working containers on systemd-nspawn which makes use 
+of userns by default, stopped working from one day to the next, till I 
+identified the problem as being kernel >= 4.18. This container is in 
+production, hence the annoyance it was. From one day to the next the 
+container started failing with stranges problems:
 
-> The accelerometer's power supply could be controllable on some
-> platforms, such as i.MX6Q-SABRESD board, the mma8451's power supplies
-> are controlled by a GPIO fixed regulator, need to make sure the
-> regulators are enabled before any communication with mma8451, this
-> patch adds vdd/vddio regulator operation support.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Acked-by: Martin Kepplinger <martink@posteo.de>
+* nginx, dovecot, postgresql, and postfix complained about getting 
+permission denied on /dev/null even though it appeared perfectly normal 
+to me, the correct permissions, all that
+* /var was also acting very strangely, getting a lot of permission 
+denied or operation not supported messages.
+* I could not delete a file that my user had the right to create, write 
+to and read in /var, I needed root
 
-There is a lot of manual handling in the suspend and resume I would not expect
-to see.  That should be using the runtime pm calls to take control of pm rather
-than making assumptions about what runtime pm state we are in...
+Here is the pull request that was made to systemd, along with a small 
+amount of talk around the issue:
 
-Jonathan
+https://github.com/systemd/systemd/pull/9483
 
-> ---
-> ChangeLog since V4:
->     - using devm_regulator_get() instead of devm_regulator_get_optional() since the regulator is
->       there always, if dtb does NOT specify one, regulator framework will assign dummy regulator for it.
-> ---
->  drivers/iio/accel/mma8452.c | 183 +++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 172 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
-> index 421a0a8..9a52426 100644
-> --- a/drivers/iio/accel/mma8452.c
-> +++ b/drivers/iio/accel/mma8452.c
-> @@ -31,6 +31,7 @@
->  #include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #define MMA8452_STATUS				0x00
->  #define  MMA8452_STATUS_DRDY			(BIT(2) | BIT(1) | BIT(0))
-> @@ -107,6 +108,8 @@ struct mma8452_data {
->  	u8 data_cfg;
->  	const struct mma_chip_info *chip_info;
->  	int sleep_val;
-> +	struct regulator *vdd_reg;
-> +	struct regulator *vddio_reg;
->  };
->  
->   /**
-> @@ -1534,9 +1537,37 @@ static int mma8452_probe(struct i2c_client *client,
->  	mutex_init(&data->lock);
->  	data->chip_info = match->data;
->  
-> +	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
-> +	if (IS_ERR(data->vdd_reg)) {
-> +		ret = PTR_ERR(data->vdd_reg);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&client->dev, "failed to get VDD regulator!\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to enable VDD regulator!\n");
-> +		return ret;
-> +	}
+It was ultimately decided among the systemd folks to bail out of the 
+issue, as shown in the news entry for systemd 240:
 
-Please reorder so the unwind order in remove and devm cleanup is the
-opposite of setup order.  I suspect that is just a case of
-doing the two gets before enabling either regulator, but I haven't checked.
+         * KERNEL API BREAKAGE: Linux kernel 4.18 changed behaviour 
+regarding
+           mknod() handling in user namespaces. Previously mknod() would 
+always
+           fail with EPERM in user namespaces. Since 4.18 mknod() will 
+succeed
+           but device nodes generated that way cannot be opened, and 
+attempts to
+           open them result in EPERM. This breaks the "graceful 
+fallback" logic
+           in systemd's PrivateDevices= sand-boxing option. This option is
+           implemented defensively, so that when systemd detects it runs 
+in a
+           restricted environment (such as a user namespace, or an 
+environment
+           where mknod() is blocked through seccomp or absence of 
+CAP_SYS_MKNOD)
+           where device nodes cannot be created the effect of 
+PrivateDevices= is
+           bypassed (following the logic that 2nd-level sand-boxing is not
+           essential if the system systemd runs in is itself already 
+sand-boxed
+           as a whole). This logic breaks with 4.18 in container 
+managers where
+           user namespacing is used: suddenly PrivateDevices= succeeds 
+setting
+           up a private /dev/ file system containing devices nodes — but 
+when
+           these are opened they don't work.
 
-> +
-> +	data->vddio_reg = devm_regulator_get(&client->dev, "vddio");
-> +	if (IS_ERR(data->vddio_reg)) {
-> +		ret = PTR_ERR(data->vddio_reg);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&client->dev, "failed to get VDDIO regulator!\n");
-> +		goto disable_regulator_vdd;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to enable VDDIO regulator!\n");
-> +		goto disable_regulator_vdd;
-> +	}
-> +
->  	ret = i2c_smbus_read_byte_data(client, MMA8452_WHO_AM_I);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	switch (ret) {
->  	case MMA8451_DEVICE_ID:
-> @@ -1549,7 +1580,8 @@ static int mma8452_probe(struct i2c_client *client,
->  			break;
->  		/* else: fall through */
->  	default:
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto disable_regulators;
->  	}
->  
->  	dev_info(&client->dev, "registering %s accelerometer; ID 0x%x\n",
-> @@ -1566,13 +1598,13 @@ static int mma8452_probe(struct i2c_client *client,
->  
->  	ret = mma8452_reset(client);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	data->data_cfg = MMA8452_DATA_CFG_FS_2G;
->  	ret = i2c_smbus_write_byte_data(client, MMA8452_DATA_CFG,
->  					data->data_cfg);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	/*
->  	 * By default set transient threshold to max to avoid events if
-> @@ -1581,7 +1613,7 @@ static int mma8452_probe(struct i2c_client *client,
->  	ret = i2c_smbus_write_byte_data(client, MMA8452_TRANSIENT_THS,
->  					MMA8452_TRANSIENT_THS_MASK);
->  	if (ret < 0)
-> -		return ret;
-> +		goto disable_regulators;
->  
->  	if (client->irq) {
->  		int irq2;
-> @@ -1595,7 +1627,7 @@ static int mma8452_probe(struct i2c_client *client,
->  						MMA8452_CTRL_REG5,
->  						data->chip_info->all_events);
->  			if (ret < 0)
-> -				return ret;
-> +				goto disable_regulators;
->  
->  			dev_dbg(&client->dev, "using interrupt line INT1\n");
->  		}
-> @@ -1604,11 +1636,11 @@ static int mma8452_probe(struct i2c_client *client,
->  					MMA8452_CTRL_REG4,
->  					data->chip_info->enabled_events);
->  		if (ret < 0)
-> -			return ret;
-> +			goto disable_regulators;
->  
->  		ret = mma8452_trigger_setup(indio_dev);
->  		if (ret < 0)
-> -			return ret;
-> +			goto disable_regulators;
->  	}
->  
->  	data->ctrl_reg1 = MMA8452_CTRL_ACTIVE |
-> @@ -1661,12 +1693,20 @@ static int mma8452_probe(struct i2c_client *client,
->  trigger_cleanup:
->  	mma8452_trigger_cleanup(indio_dev);
->  
-> +disable_regulators:
-> +	regulator_disable(data->vddio_reg);
-> +
-> +disable_regulator_vdd:
-> +	regulator_disable(data->vdd_reg);
-> +
->  	return ret;
->  }
->  
->  static int mma8452_remove(struct i2c_client *client)
->  {
->  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> +	struct mma8452_data *data = iio_priv(indio_dev);
-> +	int ret;
->  
->  	iio_device_unregister(indio_dev);
->  
-> @@ -1678,6 +1718,18 @@ static int mma8452_remove(struct i2c_client *client)
->  	mma8452_trigger_cleanup(indio_dev);
->  	mma8452_standby(iio_priv(indio_dev));
->  
-> +	ret = regulator_disable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to disable VDDIO regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_disable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to disable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1696,6 +1748,18 @@ static int mma8452_runtime_suspend(struct device *dev)
->  		return -EAGAIN;
->  	}
->  
-> +	ret = regulator_disable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDDIO regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_disable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1705,9 +1769,22 @@ static int mma8452_runtime_resume(struct device *dev)
->  	struct mma8452_data *data = iio_priv(indio_dev);
->  	int ret, sleep_val;
->  
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDDIO regulator\n");
-> +		regulator_disable(data->vdd_reg);
-> +		return ret;
-> +	}
-> +
->  	ret = mma8452_active(data);
->  	if (ret < 0)
-> -		return ret;
-> +		goto runtime_resume_failed;
->  
->  	ret = mma8452_get_odr_index(data);
->  	sleep_val = 1000 / mma8452_samp_freq[ret][0];
-> @@ -1717,20 +1794,104 @@ static int mma8452_runtime_resume(struct device *dev)
->  		msleep_interruptible(sleep_val);
->  
->  	return 0;
-> +
-> +runtime_resume_failed:
-> +	regulator_disable(data->vddio_reg);
-> +	regulator_disable(data->vdd_reg);
-> +
-> +	return ret;
->  }
->  #endif
->  
->  #ifdef CONFIG_PM_SLEEP
->  static int mma8452_suspend(struct device *dev)
->  {
-> -	return mma8452_standby(iio_priv(i2c_get_clientdata(
-> +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
-> +	struct mma8452_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
+           At this point is is recommended that container managers utilizing
+           user namespaces that intend to run systemd in the payload 
+explicitly
+           block mknod() with seccomp or similar, so that the graceful 
+fallback
+           logic works again.
 
-I'd rather see the runtime pm calls done than doing this directly.
-So you should let the runtime pm know it needs to power the device on,
-then take over control (disable runtime pm) and power down.
+           We are very sorry for the breakage and the requirement to change
+           container configurations for newer kernels. It's purely 
+caused by an
+           incompatible kernel change. The relevant kernel developers 
+have been
+           notified about this userspace breakage quickly, but they chose to
+           ignore it.
 
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDDIO regulator\n");
-> +		regulator_disable(data->vdd_reg);
-> +		return ret;
-> +	}
-> +
-> +	ret = mma8452_standby(iio_priv(i2c_get_clientdata(
->  		to_i2c_client(dev))));
-> +	if (ret)
-> +		goto suspend_failed;
-> +
-> +	ret = regulator_disable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDDIO regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_disable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +
-> +suspend_failed:
-> +	regulator_disable(data->vddio_reg);
-> +	regulator_disable(data->vdd_reg);
-> +
-> +	return ret;
->  }
->  
->  static int mma8452_resume(struct device *dev)
->  {
-> -	return mma8452_active(iio_priv(i2c_get_clientdata(
-> +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
-> +	struct mma8452_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = regulator_enable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_enable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable VDDIO regulator\n");
-> +		regulator_disable(data->vdd_reg);
-> +		return ret;
-> +	}
-> +
-> +	ret = mma8452_active(iio_priv(i2c_get_clientdata(
->  		to_i2c_client(dev))));
-> +	if (ret)
-> +		goto resume_failed;
-> +
-> +	ret = regulator_disable(data->vddio_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDDIO regulator\n");
-> +		return ret;
+Here's an email that was sent to lkml about the subject:
 
-This is odd in a resume path to turn it off.  Normally you just hand
-off to the runtime pm again to autosuspend as necessary.
+https://lkml.org/lkml/2018/7/5/742
 
-> +	}
-> +
-> +	ret = regulator_disable(data->vdd_reg);
-> +	if (ret) {
-> +		dev_err(dev, "failed to disable VDD regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +
-> +resume_failed:
-> +	regulator_disable(data->vddio_reg);
-> +	regulator_disable(data->vdd_reg);
-> +
-> +	return ret;
->  }
->  #endif
->  
+I link also this, quoting the last of it:
 
+https://lkml.org/lkml/2018/7/5/701
+
+It has never been the case that mknod on a device node will guarantee 
+that you even can open the device node.  The applications that regress 
+are broken.  It doesn't mean we shouldn't be bug compatible, but we darn 
+well should document very clearly the bugs we are being bug compatible with.
+
+I'm in the opinion that it is a kernel bug, and I quote someone from the 
+systemd irc channel:
+
+ewb said applications were broken. But the rule is, if userspace breaks, 
+its a bug. The kernel *has* to revert it. And honestly, this change 
+doesn't make much sense. You can set nodev yourself but then you know 
+mknod will not allow you to open the object. Here, the kernel does it 
+without your knowledge
+
+Also, it seems that if this change is reverted, things that were fixed 
+to work around the issue this breakage caused will not be broken again, 
+they should simply go back to their previous way of working. I 
+understand there may be security reason why this change was made in the 
+first place, but it is not so big a problem is it ? I can mknode 
+arbitrary devices in userns and open them as userns root. But my point 
+is, several things broke. My *working* stuff was broken from one day to 
+the next.
+
+I am not trying to pick a fight. I want to understand the reasoning 
+behind this change in the first place, and I'm simply making an attempt 
+at getting it reverted, because it is true that I don't much fancy 
+blocking the mknode() syscall in every template unit on every machine we 
+administer here, and that staying on kernel < 4.18 is not a good 
+sollution either.
+
+I would also like to be personally CC'ed the comments or answers posted 
+to this mailing list in response to this message.
+
+Thanks
