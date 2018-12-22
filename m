@@ -2,123 +2,153 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA513C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F69EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B011021928
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F033A21928
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVhwF7dp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404078AbeLVAB5 (ORCPT
+        id S2404101AbeLVADL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:01:57 -0500
-Received: from mga05.intel.com ([192.55.52.43]:41421 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbeLVAB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:01:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2018 16:01:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,383,1539673200"; 
-   d="scan'208";a="129875464"
-Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.238])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Dec 2018 16:01:46 -0800
-Date:   Sat, 22 Dec 2018 02:01:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181222000145.GA8954@linux.intel.com>
-References: <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <20181217222047.GG12491@linux.intel.com>
- <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
- <20181218154417.GC28326@linux.intel.com>
- <20181218185349.GC30082@linux.intel.com>
- <20181219050047.GC14295@linux.intel.com>
- <20181221182809.GB27371@linux.intel.com>
+        Fri, 21 Dec 2018 19:03:11 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36432 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbeLVADK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:03:10 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so3175271pgm.3;
+        Fri, 21 Dec 2018 16:03:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sutVbmkRcHShCG3l/1vJqsHf/W2WwWTpZmygJ/DciHs=;
+        b=gVhwF7dpNHrrapRzS9yIMgz2IprGlO/0UIeyAA0yk45Hx5KkkRLlweg/bTaCjgrJ4/
+         lsSFqEK8Q56HZS/YhSukTOkAceSAn8gQ1F2ZMSViZ4sIYUIT38rA5/BVyi/sbY5O3ymB
+         hC3vHSvreLagRTCLKLfra/zqN6Nj8kt8yeArYqT97YqzyYZVXHyIkl9hkIVIYkR8I7I3
+         pAjdPuGXGG08yZnxwfAQymcLyjOmOkOZ3r+Yrc0Pma1y0s1ohhgkgXpKC9g8qKnbPjYF
+         Ped7fzyyKRb51NabBfQUd8gyL7ckRGCMIiXj1egALoHqw6Way4X1LYVa3BpYAWRWSCW6
+         KhJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sutVbmkRcHShCG3l/1vJqsHf/W2WwWTpZmygJ/DciHs=;
+        b=fQoSRZc5KOYVi/HIgT5JuPqHyyltjb3h9Otlo2rCmGsPfl+0h4DvkUnk4RXTUJhZQS
+         EXzjKK41ftjeEt6/WeMIrYcxJerprMtkXcManF/xL15AooTqo+wA3xXuuOES9rfmkBVA
+         Iq/ZdFszmcylND0SHZN2nOw0woHsMSwmYBa397wbyBl8MJ+MaEMBrwYq2CNogD0ktKkH
+         izvQ5dsnkxRmocNnV1pqEoYM++wluWa6vo9pgH/jsGSCc/gyO1dzZz3U51usWLJfeHiR
+         tssjh7BTM/wULMeDgMszWEyWAtbn8l8wgrDy1PCpEQ7bENrngh4clRnu9xmLh72FntMp
+         73xQ==
+X-Gm-Message-State: AJcUukctabfkF0p4ny6C2lCOCfZ+FXz3d+lRlIy7uo+d2v2GbjAXh0fd
+        6WUKaJv0/Pb9SI3S0nSz0soKeMDUb3k=
+X-Google-Smtp-Source: ALg8bN53+/AUSw6ZvxRzkSlg+TidOkTXY+0kYiemZ3Mbt0lu1Hq52J6+2JHWg5srnvXfFpuEtsTwmA==
+X-Received: by 2002:a65:55ca:: with SMTP id k10mr4289357pgs.448.1545436989693;
+        Fri, 21 Dec 2018 16:03:09 -0800 (PST)
+Received: from tower.thefacebook.com ([2620:10d:c090:200::7:608f])
+        by smtp.gmail.com with ESMTPSA id 83sm36659266pgf.57.2018.12.21.16.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 16:03:08 -0800 (PST)
+From:   Roman Gushchin <guroan@gmail.com>
+X-Google-Original-From: Roman Gushchin <guro@fb.com>
+To:     Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Cc:     kernel-team@fb.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>
+Subject: [PATCH v6 0/7] freezer for cgroup v2
+Date:   Fri, 21 Dec 2018 16:03:00 -0800
+Message-Id: <20181222000307.28231-1-guro@fb.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181221182809.GB27371@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:28:09AM -0800, Sean Christopherson wrote:
-> > Why would you want to pass EPC through user space to KVM rather than
-> > KVM allocating it through kernel interfaces?
-> 
-> Delegating EPC management to userspace fits better with KVM's existing
-> memory ABI.  KVM provides a single ioctl(), KVM_SET_USER_MEMORY_REGION[1],
-> that allows userspace to create, move, modify and delete memory regions.
-> 
-> Skipping over a lot of details, there are essentially three options for
-> exposing EPC to a KVM guest:
-> 
->  1) Provide a dedicated KVM ioctl() to manage EPC without routing it
->     through KVM_SET_USER_MEMORY_REGION.
-> 
->  2) Add a flag to 'struct kvm_userspace_memory_region' that denotes an
->     EPC memory region and mmap() / allocate EPC in KVM.
-> 
->  3) Provide an ABI to allocate raw EPC and let userspace manage it like
->     any other memory region.
-> 
-> Option (1) requires duplicating all of KVM_SET_USER_MEMORY_REGION's
-> functionality unless the ioctl() is severly restricted.
-> 
-> Option (2) is an ugly abuse of KVM_SET_USER_MEMORY_REGION since the EPC
-> flag would have completely different semantics than all other usage of
-> KVM_SET_USER_MEMORY_REGION.
-> 
-> Thus, option (3).
+This patchset implements freezer for cgroup v2.
 
-OK, thank you for patience explaining this.
+It provides similar functionality as v1 freezer, but the interface
+conforms to the cgroup v2 interface design principles, and it
+provides a better user experience: tasks can be killed, ptrace works,
+there is no separate controller, which has to be enabled, etc.
 
-> Probably a better question to answer is why provide the ABI through
-> /dev/sgx and not /dev/kvm.  IMO /dev/sgx is a more logical way to
-> advertise support to userspace, e.g. userspace can simply check if
-> /dev/sgx (or /dev/sgx/epc) exists vs. probing a KVM capability.
+Patches (1), (2) and (3) are some preparational work, patch (4) contains
+the implementation, patch (5) is a small cgroup kselftest fix,
+patch (6) covers freezer adds 6 new kselftests to cover the freezer
+functionality. Patch (7) adds corresponding docs.
 
-You have to understand that for a KVM non-expert like me it was really
-important to get the context, which you kindly gave. I have never used
-KVM's memory management API but now that I know how it works all of this
-makes perfect sense. This is not a better question but it is definitely
-a good follow up question :-)
+v6->v5:
+  - reverted to clear TIF_SIGPENDING with additional checks before schedule(),
+  as proposed by Oleg Nesterov
+  - made cgroup v2 freezer working with the system freezer (by using
+  freezable_schedule())
+  - make freezer working with SIGSTOPped and PTRACEd tasks
+  - added tests to cover freezing a cgroup with SIGSTOPped and PTRACEd tasks
 
-I don't really understand you deduction here, however. If SGX was not
-supported, why couldn't the hypothetical /dev/kvm functionality just
-return an error?
+v5->v4:
+  - rewored cgroup state transition code (suggested by Tejun Heo)
+  - look at JOBCTL_TRAP_FREEZE instead of task->frozen in
+    recalc_sigpending(), check for task->frozen and JOBCTL_TRAP_FREEZE
+    in signal_pending_state() (suggested by Oleg Nesterov)
+  - some cosmetic changes in signal.c (suggested by Oleg Nesterov)
+  - cleaned up comments
 
-For me it sounds a bit messy that KVM functionality, which is a client
-to the SGX functionality, places some of its functionality to the SGX
-core.
+v4->v3:
+  - reading nr_descendants doesn't require taking css_set_lock anymore
+  - fixed docs based on Mike Rapoport's feedback
+  - fixed double irq lock found by Dan Carpenter
 
-/Jarkko
+v3->v2:
+  - dropped TASK_FROZEN for now, frozen tasks are put into TASK_INTERRUPTIBLE
+  state; it's probably not the final version, but the API question can be
+  discussed separately
+  - don't clear TIF_SIGPENDING before going to sleep, instead add
+  task->frozen check in signal_pending_state() and recalc_sigpending()
+  - cgroup-level counter are now synchronized using css_set_lock,
+  which simplified the whole code (e.g. per-cgroup works were removed)
+  - the amount of comments increased significantly
+  - many other improvements incorporating feedback from Tejun and Oleg
+
+v2->v1:
+  - fixed locking aroung calling cgroup_freezer_leave()
+  - added docs
+
+Roman Gushchin (7):
+  cgroup: rename freezer.c into legacy_freezer.c
+  cgroup: implement __cgroup_task_count() helper
+  cgroup: protect cgroup->nr_(dying_)descendants by css_set_lock
+  cgroup: cgroup v2 freezer
+  kselftests: cgroup: don't fail on cg_kill_all() error in cg_destroy()
+  kselftests: cgroup: add freezer controller self-tests
+  cgroup: document cgroup v2 freezer interface
+
+ Documentation/admin-guide/cgroup-v2.rst       |  27 +
+ include/linux/cgroup-defs.h                   |  39 +
+ include/linux/cgroup.h                        |  46 +
+ include/linux/sched.h                         |   4 +
+ include/linux/sched/jobctl.h                  |   2 +
+ kernel/cgroup/Makefile                        |   4 +-
+ kernel/cgroup/cgroup-internal.h               |   1 +
+ kernel/cgroup/cgroup-v1.c                     |  16 -
+ kernel/cgroup/cgroup.c                        | 145 +++-
+ kernel/cgroup/freezer.c                       | 650 ++++++--------
+ kernel/cgroup/legacy_freezer.c                | 481 ++++++++++
+ kernel/signal.c                               |  93 +-
+ tools/testing/selftests/cgroup/.gitignore     |   1 +
+ tools/testing/selftests/cgroup/Makefile       |   2 +
+ tools/testing/selftests/cgroup/cgroup_util.c  |  85 +-
+ tools/testing/selftests/cgroup/cgroup_util.h  |   7 +
+ tools/testing/selftests/cgroup/test_freezer.c | 821 ++++++++++++++++++
+ 17 files changed, 1993 insertions(+), 431 deletions(-)
+ create mode 100644 kernel/cgroup/legacy_freezer.c
+ create mode 100644 tools/testing/selftests/cgroup/test_freezer.c
+
+-- 
+2.19.2
+
