@@ -2,82 +2,136 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F92C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B06C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6962054F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74C9820578
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545500838;
-	bh=8lgHAuHPTHwNDrSv9VHMLihBQU0og9heay5nyX/6j64=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k/m1EcIf1Vsb9V5x0mBP93qUgfi5BdHPHJV3aWkM+iZg25A8YYByxDIU5kC29iMiN
-	 FC1IiunBy/TPMzOgwc/XzwWtzWkBC1Bjq9W4+8Sx9VgBn1wAL1n6M+Sjem2Fgzv9qw
-	 /z/C4jVwCkBwb4Ga2i/ruOugthemjFvgGTgemwvw=
+	s=default; t=1545500839;
+	bh=cFY54z5gtflL2lN3u8LZOqTn0eShLB8Ka9p5zQ9+mc8=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=L2qWxZBEyb3tNgW9XnUH5TlbRT6QoTY5GzJQcwNfd2raQSqicLJTzlk2T0k6dDmR2
+	 nPJ7D6USQkMiWX8ZnzxLUqOTK029/Q9KOaG0wehR6QtfILcoUUrYxjPXPzPZTdMNQb
+	 h7oyLWLHLf43kr30gxJDik/aV0bDkavtsCoAdLjM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391731AbeLVRrR (ORCPT
+        id S2404284AbeLVRrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:47:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34164 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 12:47:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390204AbeLVRrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:47:15 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.76.9.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S2391572AbeLVRrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:47:16 -0500
+Received: from [192.168.43.85] (unknown [5.92.228.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BBAC21981;
-        Sat, 22 Dec 2018 09:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A912F21929;
+        Sat, 22 Dec 2018 08:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545469647;
-        bh=8lgHAuHPTHwNDrSv9VHMLihBQU0og9heay5nyX/6j64=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPR8NbX+Y35zLna2cz309QlWWySxLHpKdkRuwFUMZmE72aMXK4o6bppp5VzAAoK91
-         AcAmlWOqVmDB6sCybReuYkKXvsCeadgTYn3TYWAtmc0lCqw4svWIukroYQaRGr5ykI
-         wI6EzXRJHvGo0Q1547gQNeyWAWDciw1dJk+SdjGI=
+        s=default; t=1545467515;
+        bh=cFY54z5gtflL2lN3u8LZOqTn0eShLB8Ka9p5zQ9+mc8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WpqrNf7PE5stKXCg17cwvDo3X8cMKERhTxkLvaLxXhkooJSxnDT/vLGdyGIFcfRuU
+         N2VTfScT9dHiE/NTCmEmLxr3Wd6BuB1Rs0ij7UXrGj+S+YJ8KHwqLf+6gLXkCe2Tj7
+         JVvzLu/zJVakFXJQm4wRe0r3YHC/gx+1UUSa4zhY=
+Subject: Re: [PATCH v1 06/11] platform/x86: apple-gmux: hide PCI specific code
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181222001452.7474-1-okaya@kernel.org>
+ <20181222001452.7474-7-okaya@kernel.org>
+ <20181222080317.qicyihyauia6n63w@wunner.de>
 From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 02/11] ata: make PCI dependency explicit for PATA_ACPI
-Date:   Sat, 22 Dec 2018 09:07:11 +0000
-Message-Id: <20181222090720.19234-3-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181222090720.19234-1-okaya@kernel.org>
-References: <20181222090720.19234-1-okaya@kernel.org>
+Message-ID: <cd2719f6-9bf2-b3c0-dfef-0e28d43e73a1@kernel.org>
+Date:   Sat, 22 Dec 2018 09:31:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181222080317.qicyihyauia6n63w@wunner.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PATA_ACPI is a PCI device driver but the PCI dependency has not been
-explicitly called out.
+On 12/22/2018 9:03 AM, Lukas Wunner wrote:
+> On Sat, Dec 22, 2018 at 12:14:47AM +0000, Sinan Kaya wrote:
+>> Code is scanning PCI bus to find out if it is switchable or not. If
+>> CONFIG_PCI is not set, assume unswitchable.
+>>
+>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>> ---
+>>   drivers/platform/x86/apple-gmux.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
+>> index fd2ffebc868f..b552b54bf58b 100644
+>> --- a/drivers/platform/x86/apple-gmux.c
+>> +++ b/drivers/platform/x86/apple-gmux.c
+>> @@ -742,8 +742,12 @@ static int gmux_probe(struct pnp_dev *pnp, const struct pnp_device_id *id)
+>>   	 * If Thunderbolt is present, the external DP port is not fully
+>>   	 * switchable. Force its AUX channel to the discrete GPU.
+>>   	 */
+>> +#ifdef CONFIG_PCI
+>>   	gmux_data->external_switchable =
+>>   		!bus_for_each_dev(&pci_bus_type, NULL, NULL, is_thunderbolt);
+>> +#else
+>> +	gmux_data->external_switchable = false;
+>> +#endif
+>>   	if (!gmux_data->external_switchable)
+>>   		gmux_write8(gmux_data, GMUX_PORT_SWITCH_EXTERNAL, 3);
+> 
+> This driver is only used on 2008+ MacBook Pros and the 2013+ Mac Pro,
+> all of which have PCI and are pretty much unusable with CONFIG_PCI=n.
+> 
+> So it is okay to just add "depends on PCI" for this driver, as you did
+> with other drivers, and I think that's preferrable to an #ifdef.
+> 
+> You can also drop the "platform/x86: " prefix from the subject if you
+> like, all previous commits to this driver just use "apple-gmux: ".
+> 
+> If you are okay with these changes, feel free to add my Reviewed-by
+> when respinning.
+> 
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/ata/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is how I updated this patch:
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 4ca7a6b4eaae..8218db17ebdb 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
- 
- config PATA_ACPI
- 	tristate "ACPI firmware driver for PATA"
--	depends on ATA_ACPI && ATA_BMDMA
-+	depends on ATA_ACPI && ATA_BMDMA && PCI
- 	help
- 	  This option enables an ACPI method driver which drives
- 	  motherboard PATA controller interfaces through the ACPI
--- 
-2.19.0
+commit 867d96cb6b75124b7ce11014425b8c57a8350e61 (HEAD)
+Author: Sinan Kaya <okaya@kernel.org>
+Date:   Fri Dec 21 23:24:13 2018 +0000
+
+     apple-gmux: Make PCI dependency explicit
+
+     This driver depends on the PCI infrastructure but the dependency has not
+     been explicitly called out.
+
+     Signed-off-by: Sinan Kaya <okaya@kernel.org>
+     Reviewed-by: Lukas Wunner <lukas@wunner.de>
+
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b36ea14b41ad..86b75fa55dbc 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1136,6 +1136,7 @@ config SAMSUNG_Q10
+  config APPLE_GMUX
+         tristate "Apple Gmux Driver"
+         depends on ACPI
++       depends on PCI
+         depends on PNP
+         depends on BACKLIGHT_CLASS_DEVICE
+         depends on BACKLIGHT_APPLE=n || BACKLIGHT_APPLE
+
+
+> Thanks,
+> 
+> Lukas
+> 
 
