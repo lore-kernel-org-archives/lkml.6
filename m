@@ -2,175 +2,248 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A813C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C4BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6A8219FC
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88003219FC
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 16:54:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iB93f2Nt"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gnmed0EE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbeLVQyk (ORCPT
+        id S2392250AbeLVQy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 11:54:40 -0500
-Received: from condef-04.nifty.com ([202.248.20.69]:57919 "EHLO
-        condef-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbeLVQyk (ORCPT
+        Sat, 22 Dec 2018 11:54:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34723 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732861AbeLVQy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 11:54:40 -0500
-Received: from conuserg-09.nifty.com ([10.126.8.72])by condef-04.nifty.com with ESMTP id wBM9r7LC011548;
-        Sat, 22 Dec 2018 18:53:07 +0900
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id wBM9p7DN014613;
-        Sat, 22 Dec 2018 18:51:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wBM9p7DN014613
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545472268;
-        bh=ND+aJPnbi1isezN4iF7leDctF3P1l1D8eol/rcKWEro=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iB93f2Ntt2Ldni+uOl09oWDHfUuCCp8GwIHthpte7aG6vsEjP929ZCgsZQVLH08yw
-         yNkCMYGczG3pwShOdpZMYrwMVw7nnBVR5lSgSUVLk4BPQQ4YCovb7fNBCS2l3r5Jzq
-         cxUTpkz6QEVFRr2S8bVNLnKHYJ6DOR0GX6AhlqHsByGyAfqcjLJsy3WqpbQSBaiqHL
-         9oSTpkOQQWj0gc+GnvAUvicm6+KKcPjnfOWIFCV0ekvThcy5ambNgcOqTXvr2wlAZ7
-         p78w6cScbHkTADrNW7GT+jrPJL9CGR+4hL1hEnMKOIKGl7z8WA5wL7NnvMKvXbBkTD
-         UTPjiPANlaPAw==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-omap@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] treewide: remove explicit rules for *offsets.s
-Date:   Sat, 22 Dec 2018 18:50:33 +0900
-Message-Id: <1545472235-12782-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Sat, 22 Dec 2018 11:54:56 -0500
+Received: by mail-pl1-f193.google.com with SMTP id w4so3908324plz.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 08:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Am2wUODHH0JsEj7SXIZCLf5E3+sl55uz+ynr3m0M9Nw=;
+        b=gnmed0EEX62vcIGeZntu9yWGS9IcOPbrLKx2pElcsezpP9VBv9RlKrHI7LsRlewzkj
+         TioKp5ipzJvBiJICtlAFHtI3XjL+j9WVA/BRSLqvxmnWCq/ZeMFpa2pZB+pIjN4cH+Jc
+         m7TCbrbgFHnm6TtC+LqzMUPj9bD21l1hd4zx4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Am2wUODHH0JsEj7SXIZCLf5E3+sl55uz+ynr3m0M9Nw=;
+        b=jjey6xa1A2MEl2SCDsDLUHDDvtjUc3aA37jWF97n5tqk275b2eWt+UukzlHf8hAwJl
+         Wn/eQvciyxKjdo2LglO4qVxT9P8hhh1HAW0WiIhhn3CrF3w5LiE7uoBHTAht6/yAsyXs
+         Y6vysuUsODdbibibcsJMy4dpz3miB5fKQD/JlB8JqURu9ehw0+j7TEyZsESsEb3Ax7TC
+         Px6xivj+h9oQM5+PkV9b8Jw/M1OX8AP3vURLAgS05G7YLKtMRdv9WQ/sSFeO23IyfHoY
+         gVOBpL6UhltuqGjXOyHyKTvGEVTAfD+ByFn+xUgmE/ycUIB1ENcjLIeE37DhAMP99Yzi
+         cr1Q==
+X-Gm-Message-State: AJcUukcoSQr71q6qtmzju4l5bkCECnEbYBiNn21Bpq0hLRc86yStKtYd
+        pb9so/jCrkK+hKVz9MoJN0fDmf7n+wswZA==
+X-Google-Smtp-Source: ALg8bN4FuIBvdD6+z/okD6bFYs9tJf1Y1GhHqzXObzUinfzP3bwU67uQDiPmHbo6oLTZ7FDpWdxKEA==
+X-Received: by 2002:a17:902:161:: with SMTP id 88mr5694497plb.306.1545463494906;
+        Fri, 21 Dec 2018 23:24:54 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 186sm53825350pga.36.2018.12.21.23.24.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 23:24:54 -0800 (PST)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     robh@kernel.org
+Cc:     a.hajda@samsung.com, andy.shevchenko@gmail.com,
+        b.zolnierkie@samsung.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, javierm@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, m.szyprowski@samsung.com, rafael@kernel.org
+Subject: [PATCH] driver core: platform: Add an error message to platform_get_irq*()
+Date:   Fri, 21 Dec 2018 23:24:52 -0800
+Message-Id: <20181222072452.186726-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+In-Reply-To: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
+References: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These explicit rules are unneeded because scripts/Makefile.build
-provides a pattern rule to create %.s from %.c
+A grep of the kernel shows that many drivers print an error message if
+they fail to get the irq they're looking for. Furthermore, those drivers
+all decide to print the device name, or not, and the irq they were
+requesting, or not, etc. Let's consolidate all these error messages into
+the API itself, allowing us to get rid of the error messages in each
+driver.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
- Kbuild                              | 9 +--------
- arch/arm/mach-at91/Makefile         | 3 ---
- arch/arm/mach-omap2/Makefile        | 3 ---
- arch/ia64/kernel/Makefile           | 5 -----
- drivers/memory/Makefile.asm-offsets | 3 ---
- samples/bpf/Makefile                | 3 ---
- 6 files changed, 1 insertion(+), 25 deletions(-)
+Rob Herring wrote:
+> Shouldn't platform_get_irq (or what it calls) print the error message
+> (like we do for kmalloc), rather than every driver? We could get rid
+> of lots of error strings that way. I guess there are cases where no
+> irq is not an error and we wouldn't want to always print an error. In
+> some cases like that, we have 2 versions of the function.
 
-diff --git a/Kbuild b/Kbuild
-index 0053042..b24210c 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -16,10 +16,6 @@ bounds-file := include/generated/bounds.h
- always  := $(bounds-file)
- targets := kernel/bounds.s
+Yes it should. Just by coincidence, I got around to implementing this
+patch yesterday after I bemoaned this on the list a few months ago[1].
+
+> Not what you're addressing here exactly, but what I'd like to see is
+> the ability to print the exact locations generating errors in the
+> first place. That would require wrapping all the error code
+> assignments and returns (or at least the common sources). 
+
+That could be done with some macro magic to add __line__ and __FILE__
+into a definition of the "important" functions. In that sense nothing
+would really need to change besides the implementation, right?
+
+I also started working on a cocci script to fix up the call sites to
+drop the extra prints, but I'm really bad at writing semantic patches so
+please help improve the below. My simple grep shows that we can remove
+~500 error prints out of the 1500 places the platform_get_irq()
+functions are called.
+
+	@@
+	expression ret;
+	struct platform_device *E;
+	@@
+
+	ret =
+	(
+	platform_get_irq(E, ...)
+	|
+	platform_get_irq_byname(E, ...)
+	);
+
+	if ( \( ret < 0 \| ret <= 0 \) )
+	{
+	(
+	-if (ret != -EPROBE_DEFER)
+	-{ ...
+	-dev_err(...);
+	-... }
+	|
+	...
+	-dev_err(...);
+	)
+	...
+	}
+
+[1] https://lkml.kernel.org/r/153911433511.119890.17831207059115471972@swboyd.mtv.corp.google.com
+
+ drivers/base/platform.c | 52 +++++++++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 1c958eb33ef4..75ceda9f452a 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -79,23 +79,18 @@ struct resource *platform_get_resource(struct platform_device *dev,
+ }
+ EXPORT_SYMBOL_GPL(platform_get_resource);
  
--# We use internal kbuild rules to avoid the "is up to date" message from make
--kernel/bounds.s: kernel/bounds.c FORCE
--	$(call if_changed_dep,cc_s_c)
+-/**
+- * platform_get_irq - get an IRQ for a device
+- * @dev: platform device
+- * @num: IRQ number index
+- */
+-int platform_get_irq(struct platform_device *dev, unsigned int num)
++static int __platform_get_irq(struct platform_device *dev, unsigned int num, bool warn)
+ {
++	int ret = -ENXIO;
++
+ #ifdef CONFIG_SPARC
+ 	/* sparc does not have irqs represented as IORESOURCE_IRQ resources */
+ 	if (!dev || num >= dev->archdata.num_irqs)
+-		return -ENXIO;
++		goto error;
+ 	return dev->archdata.irqs[num];
+ #else
+ 	struct resource *r;
+ 	if (IS_ENABLED(CONFIG_OF_IRQ) && dev->dev.of_node) {
+-		int ret;
 -
- $(obj)/$(bounds-file): kernel/bounds.s FORCE
- 	$(call filechk,offsets,__LINUX_BOUNDS_H__)
- 
-@@ -50,10 +46,7 @@ offsets-file := include/generated/asm-offsets.h
- always  += $(offsets-file)
- targets += arch/$(SRCARCH)/kernel/asm-offsets.s
- 
--# We use internal kbuild rules to avoid the "is up to date" message from make
--arch/$(SRCARCH)/kernel/asm-offsets.s: arch/$(SRCARCH)/kernel/asm-offsets.c \
--                                      $(obj)/$(timeconst-file) $(obj)/$(bounds-file) FORCE
--	$(call if_changed_dep,cc_s_c)
-+arch/$(SRCARCH)/kernel/asm-offsets.s: $(obj)/$(timeconst-file) $(obj)/$(bounds-file)
- 
- $(obj)/$(offsets-file): arch/$(SRCARCH)/kernel/asm-offsets.s FORCE
- 	$(call filechk,offsets,__ASM_OFFSETS_H__)
-diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
-index 7415f18..f87066b 100644
---- a/arch/arm/mach-at91/Makefile
-+++ b/arch/arm/mach-at91/Makefile
-@@ -19,9 +19,6 @@ ifeq ($(CONFIG_PM_DEBUG),y)
- CFLAGS_pm.o += -DDEBUG
- endif
- 
--arch/arm/mach-at91/pm_data-offsets.s: arch/arm/mach-at91/pm_data-offsets.c
--	$(call if_changed_dep,cc_s_c)
+ 		ret = of_irq_get(dev->dev.of_node, num);
+ 		if (ret > 0 || ret == -EPROBE_DEFER)
+ 			return ret;
+@@ -104,11 +99,11 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ 	r = platform_get_resource(dev, IORESOURCE_IRQ, num);
+ 	if (has_acpi_companion(&dev->dev)) {
+ 		if (r && r->flags & IORESOURCE_DISABLED) {
+-			int ret;
 -
- include/generated/at91_pm_data-offsets.h: arch/arm/mach-at91/pm_data-offsets.s FORCE
- 	$(call filechk,offsets,__PM_DATA_OFFSETS_H__)
+ 			ret = acpi_irq_get(ACPI_HANDLE(&dev->dev), num, r);
+-			if (ret)
++			if (ret > 0 || ret == -EPROBE_DEFER)
+ 				return ret;
++			if (ret)
++				goto error;
+ 		}
+ 	}
  
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index 01377c2..55c482c 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -236,9 +236,6 @@ obj-y					+= omap_phy_internal.o
+@@ -122,13 +117,32 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ 		struct irq_data *irqd;
  
- obj-$(CONFIG_MACH_OMAP2_TUSB6010)	+= usb-tusb6010.o
+ 		irqd = irq_get_irq_data(r->start);
+-		if (!irqd)
+-			return -ENXIO;
++		if (!irqd) {
++			ret = -ENXIO;
++			goto error;
++		}
++
+ 		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+ 	}
  
--arch/arm/mach-omap2/pm-asm-offsets.s: arch/arm/mach-omap2/pm-asm-offsets.c
--	$(call if_changed_dep,cc_s_c)
--
- include/generated/ti-pm-asm-offsets.h: arch/arm/mach-omap2/pm-asm-offsets.s FORCE
- 	$(call filechk,offsets,__TI_PM_ASM_OFFSETS_H__)
+-	return r ? r->start : -ENXIO;
++	if (r)
++		return r->start;
+ #endif
++error:
++	if (warn)
++		dev_err(&dev->dev, "IRQ%d not found\n", num);
++
++	return ret;
++}
++
++/**
++ * platform_get_irq - get an IRQ for a device
++ * @dev: platform device
++ * @num: IRQ number index
++ */
++int platform_get_irq(struct platform_device *dev, unsigned int num)
++{
++	return __platform_get_irq(dev, num, true);
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq);
  
-diff --git a/arch/ia64/kernel/Makefile b/arch/ia64/kernel/Makefile
-index d0c0ccd..7372d99 100644
---- a/arch/ia64/kernel/Makefile
-+++ b/arch/ia64/kernel/Makefile
-@@ -50,10 +50,5 @@ CFLAGS_traps.o  += -mfixed-range=f2-f5,f16-f31
- # The gate DSO image is built using a special linker script.
- include $(src)/Makefile.gate
+@@ -142,7 +156,7 @@ int platform_irq_count(struct platform_device *dev)
+ {
+ 	int ret, nr = 0;
  
--# We use internal kbuild rules to avoid the "is up to date" message from make
--arch/$(SRCARCH)/kernel/nr-irqs.s: arch/$(SRCARCH)/kernel/nr-irqs.c
--	$(Q)mkdir -p $(dir $@)
--	$(call if_changed_dep,cc_s_c)
--
- include/generated/nr-irqs.h: arch/$(SRCARCH)/kernel/nr-irqs.s FORCE
- 	$(call filechk,offsets,__ASM_NR_IRQS_H__)
-diff --git a/drivers/memory/Makefile.asm-offsets b/drivers/memory/Makefile.asm-offsets
-index 843ff60..f968dfa 100644
---- a/drivers/memory/Makefile.asm-offsets
-+++ b/drivers/memory/Makefile.asm-offsets
-@@ -1,5 +1,2 @@
--drivers/memory/emif-asm-offsets.s: drivers/memory/emif-asm-offsets.c
--	$(call if_changed_dep,cc_s_c)
--
- include/generated/ti-emif-asm-offsets.h: drivers/memory/emif-asm-offsets.s FORCE
- 	$(call filechk,offsets,__TI_EMIF_ASM_OFFSETS_H__)
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index be0a961..100a49d 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -227,9 +227,6 @@ $(LIBBPF): FORCE
- # Fix up variables inherited from Kbuild that tools/ build system won't like
- 	$(MAKE) -C $(dir $@) RM='rm -rf' LDFLAGS= srctree=$(BPF_SAMPLES_PATH)/../../ O=
+-	while ((ret = platform_get_irq(dev, nr)) >= 0)
++	while ((ret = __platform_get_irq(dev, nr, false)) >= 0)
+ 		nr++;
  
--$(obj)/syscall_nrs.s:	$(src)/syscall_nrs.c
--	$(call if_changed_dep,cc_s_c)
--
- $(obj)/syscall_nrs.h:	$(obj)/syscall_nrs.s FORCE
- 	$(call filechk,offsets,__SYSCALL_NRS_H__)
+ 	if (ret == -EPROBE_DEFER)
+@@ -195,7 +209,11 @@ int platform_get_irq_byname(struct platform_device *dev, const char *name)
+ 	}
+ 
+ 	r = platform_get_resource_byname(dev, IORESOURCE_IRQ, name);
+-	return r ? r->start : -ENXIO;
++	if (r)
++		return r->start;
++
++	dev_err(&dev->dev, "IRQ %s not found\n", name);
++	return -ENXIO;
+ }
+ EXPORT_SYMBOL_GPL(platform_get_irq_byname);
  
 -- 
-2.7.4
+Sent by a computer through tubes
 
