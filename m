@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DE9C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAD8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8975F21927
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8CE021927
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 00:15:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545437725;
-	bh=DaAzHAai168wXP+15NGa1LCxICl+yYOaLMUe34V9F5o=;
+	s=default; t=1545437734;
+	bh=siwv04tjtdXgeL0jqAUW7KsgdPS12qH9eR/hz9p9Do8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KOK1E9krsmI4we5qapK/uhlt73GAg2UdIZdn1ShCF77/YTvdyUeOgJ6VwbrU2HKFJ
-	 f7TQTHcaR65WpM/DVXyu50PWJ8VjzbhvmR09GvuqPtHPActXWEshtsJhI/457ISqF5
-	 d47l1nVjaJKecFAhDvSIBdkZNcujo5T8QJCNDeog=
+	b=MVu9lQYKHiS2/IHwU6iJa0l7AhjUNzdWpX5dgnWTezk/3atLlQUArTaWUbuWZhClY
+	 Hc+d9a+lqMf7hZ8vtO6SZxxHz6G9zsTtgGdCFsxsvf0nqriIyhvxctyLiz5F3NaTgs
+	 Szu9Zv0P77h1w/zdToznNRWDQRMKEoJbDtKM9mSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404771AbeLVAPY (ORCPT
+        id S2404756AbeLVAPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 19:15:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45468 "EHLO mail.kernel.org"
+        Fri, 21 Dec 2018 19:15:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404751AbeLVAPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 19:15:19 -0500
+        id S2404708AbeLVAPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 19:15:05 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [13.82.132.90])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04FCE21970;
-        Sat, 22 Dec 2018 00:15:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 986E22192C;
+        Sat, 22 Dec 2018 00:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545437718;
-        bh=DaAzHAai168wXP+15NGa1LCxICl+yYOaLMUe34V9F5o=;
+        s=default; t=1545437705;
+        bh=siwv04tjtdXgeL0jqAUW7KsgdPS12qH9eR/hz9p9Do8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FEJrZddYkCMW7yMJa5iqTxb0AM9fjnKDFCwGPvoR6LoHBoEgB2jV2K78ooOBJwM9J
-         yBOE0XSmHFzLauS8yjWFvr3iMnNXpiNuqY39fPKUMUTp1K0Zz3jXuPhTd8SlihyIhZ
-         MQKnXFoCVJV7r041Ah/jLwYNmU1hhgx6O6OagjAs=
+        b=l/i+qiwg5K6yJXyURTdIqeptHypAxui//XGO8N6rE8/epZOsZdP3wz2IrbdowttXD
+         dKLrGcTVCCTkdg8HsQG1xjRHbM70y/lzFTNG3I4bMvwz5U7LJprICZOYQEd1jjD/Pt
+         re3p5av7X8whOviPO+Ur3bKqvxpOE4X7OD7Dpb58=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 11/11] drivers: thermal: Make PCI dependency explicit
-Date:   Sat, 22 Dec 2018 00:14:52 +0000
-Message-Id: <20181222001452.7474-12-okaya@kernel.org>
+Subject: [PATCH v1 06/11] platform/x86: apple-gmux: hide PCI specific code
+Date:   Sat, 22 Dec 2018 00:14:47 +0000
+Message-Id: <20181222001452.7474-7-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181222001452.7474-1-okaya@kernel.org>
 References: <20181222001452.7474-1-okaya@kernel.org>
@@ -60,26 +58,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOSF_CORE depends on PCI. This was never mentioned.
+Code is scanning PCI bus to find out if it is switchable or not. If
+CONFIG_PCI is not set, assume unswitchable.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/thermal/intel/int340x_thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/apple-gmux.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/thermal/intel/int340x_thermal/Kconfig b/drivers/thermal/intel/int340x_thermal/Kconfig
-index 0582bd12a239..0ca908d12750 100644
---- a/drivers/thermal/intel/int340x_thermal/Kconfig
-+++ b/drivers/thermal/intel/int340x_thermal/Kconfig
-@@ -4,7 +4,7 @@
+diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
+index fd2ffebc868f..b552b54bf58b 100644
+--- a/drivers/platform/x86/apple-gmux.c
++++ b/drivers/platform/x86/apple-gmux.c
+@@ -742,8 +742,12 @@ static int gmux_probe(struct pnp_dev *pnp, const struct pnp_device_id *id)
+ 	 * If Thunderbolt is present, the external DP port is not fully
+ 	 * switchable. Force its AUX channel to the discrete GPU.
+ 	 */
++#ifdef CONFIG_PCI
+ 	gmux_data->external_switchable =
+ 		!bus_for_each_dev(&pci_bus_type, NULL, NULL, is_thunderbolt);
++#else
++	gmux_data->external_switchable = false;
++#endif
+ 	if (!gmux_data->external_switchable)
+ 		gmux_write8(gmux_data, GMUX_PORT_SWITCH_EXTERNAL, 3);
  
- config INT340X_THERMAL
- 	tristate "ACPI INT340X thermal drivers"
--	depends on X86 && ACPI
-+	depends on X86 && ACPI && PCI
- 	select THERMAL_GOV_USER_SPACE
- 	select ACPI_THERMAL_REL
- 	select ACPI_FAN
 -- 
 2.19.0
 
