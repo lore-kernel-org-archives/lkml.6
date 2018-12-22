@@ -2,113 +2,115 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85913C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D648C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B59B2192C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:33:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuijNltV"
+	by mail.kernel.org (Postfix) with ESMTP id EA98F2192C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:36:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392971AbeLVXdK (ORCPT
+        id S2392987AbeLVXgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 18:33:10 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37404 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbeLVXdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 18:33:10 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t18-v6so7818485ljd.4
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 15:33:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uaXvQie81CfER90A1a3K1Frz9R+L5jm3ZU5ec+n1254=;
-        b=HuijNltVcbgUkCvvvJZcCmqk5vpYFPKam2shFkMC9BYmI1CjM1CM4QcbnY27YL3RIK
-         uQGVkcjLGI4rYMPYRjeTrdFoxsrLBYGAZAIPXXnTPjwPVsPmoA2bLnuc7Pbc+r7AfbFK
-         dEGZCSUBdKq52VkJuC+JdbFwy58IJ5AIQFEg67D8g+Sl4x1JYNEWZXa+P7xU0RZNGHpO
-         LFX3jao4U+aT+xalchH/Ibhod3imv7CU4MvFfD01uXHTdQlt5VlGLAyXKL4cp4Tl7Sjq
-         ZT4mDKroQYZVbLPpQfNb6GsC4SihiPRbbS1qa9n6+y40jRD6/5YFybbwPtCRYxJUqMpD
-         SIdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uaXvQie81CfER90A1a3K1Frz9R+L5jm3ZU5ec+n1254=;
-        b=SMFEJgehN1DjEGMzIquVi8iVTG5ZySvrRDYiHFz0iX54HVHXWvMO4x9a5tPdXGnDyg
-         v4Xs1Uglle87abDHXqcDxgvmbkBqB849Bvktp1jkWlTPriEMZgHr4ny0v9OlB9M49Lr1
-         r0NtAPICSSnXpISxKyYo/gxzC+o0z2WInMKNB6cuV6NaDXZs4JfW7Cye7kY5onc9PwV4
-         sTSERF87+vnqHMGbWKsxJNPN5akJjqUfpcQjv5n15H5jZ5RU50JJLvA22MSpP4oo/g0n
-         PhX8QdJLJRoUgUa5i+zabGAretbO0jcOQwPfcJroVFNX4v8ugntuUS0v39aA/4wgws1D
-         t5ZA==
-X-Gm-Message-State: AJcUukfSWoe52GK14sd1T5x18XQcg4VTYybt1i7hlgGCWLZWcYGZqvd3
-        fSYwoegUFp6FFubBj1Sc1+j9DG8tjo2DRy/Txw==
-X-Google-Smtp-Source: ALg8bN6LzSSmV4T5iUNw0yLhz7vFwVcFC5+bqbaUEhVfwKqmHM11wKZQv02Ueng7pY4JjfjrsHMZ9t0e1jbVu8Fluig=
-X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr4525484ljj.95.1545521587836;
- Sat, 22 Dec 2018 15:33:07 -0800 (PST)
+        Sat, 22 Dec 2018 18:36:05 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16654 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391187AbeLVXgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 18:36:05 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F2146D749A8CC;
+        Sat, 22 Dec 2018 15:50:50 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 22 Dec 2018 15:50:45 +0800
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [PATCH 1/4] Documentation: Add debugfs doc for hisi_zip
+Date:   Sat, 22 Dec 2018 15:51:42 +0800
+Message-ID: <1545465105-133138-2-git-send-email-wangzhou1@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1545465105-133138-1-git-send-email-wangzhou1@hisilicon.com>
+References: <1545465105-133138-1-git-send-email-wangzhou1@hisilicon.com>
 MIME-Version: 1.0
-References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
- <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com>
- <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
- <CAPP7u0Vo6gB86S-hZcOW9Rmki8oKHd=Lyx3x-N9gjPC4JP_YxQ@mail.gmail.com> <CAHk-=wg-6jYZ=bJWdyBR=n8QOfwHTZZdzSUUPgFW+NGCV-pe2g@mail.gmail.com>
-In-Reply-To: <CAHk-=wg-6jYZ=bJWdyBR=n8QOfwHTZZdzSUUPgFW+NGCV-pe2g@mail.gmail.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Sun, 23 Dec 2018 00:32:41 +0100
-Message-ID: <CAEJqkgjF7HBcvD=2QHTTipjv1kmpWwRATp1VLnu8KDe6cGMvhg@mail.gmail.com>
-Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
- userns mounts, breaking systemd-nspawn
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     christian.brauner@canonical.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <seth.forshee@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am So., 23. Dez. 2018 um 00:02 Uhr schrieb Linus Torvalds
-<torvalds@linux-foundation.org>:
->
-> On Sat, Dec 22, 2018 at 2:49 PM Christian Brauner
-> <christian.brauner@canonical.com> wrote:
-> >
-> > To be fair, no one apart from me was pointing out that it actually
-> > breaks people including systemd folks
-> > even though I was bringing it up with them. I even tried to fix all of
-> > userspace after this got NACKED
->
-> Seriously, the "we don't break user space" is the #1 rule in the
-> kernel, and people should _know_ it's the #1 rule.
->
-> If somebody ignores that rule, it needs to be escalated to me.
-> Immediately. Because I need to know.
->
+Add debugfs descriptions for HiSilicon ZIP and QM driver.
 
-I do that usually but I didn't saw Christian's revert the time and I
-never hit that issue.
-Just saw that now because the unusual  [BREAKAGE] prefix.
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+---
+ Documentation/ABI/testing/debugfs-hisi-zip | 50 ++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/ABI/testing/debugfs-hisi-zip
 
-> I need to know so that I can override the bogus NAK, and so that we
-> can fix the breakage ASAP. The absolute last thing we need is some
-> other user space then starting to rely on the new behavior, which just
-> compounds the problem and makes it a *much* bigger problem.
->
+diff --git a/Documentation/ABI/testing/debugfs-hisi-zip b/Documentation/ABI/testing/debugfs-hisi-zip
+new file mode 100644
+index 0000000..a7c63e6
+--- /dev/null
++++ b/Documentation/ABI/testing/debugfs-hisi-zip
+@@ -0,0 +1,50 @@
++What:           /sys/kernel/debug/hisi_zip/<bdf>/comp_core[01]/regs
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    Dump of compression cores related debug registers.
++		Only available for PF.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/decomp_core[0-5]/regs
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    Dump of decompression cores related debug registers.
++		Only available for PF.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/clear_enable
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    Compression/decompression core debug registers read clear
++		control. 1 means enable register read clear, otherwise 0.
++		Writing to this file has no functional effect, only enable or
++		disable counters clear after reading of these registers.
++		Only available for PF.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/current_qm
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    One ZIP controller has one PF and multiple VFs, each function
++		has a QM. Select the QM which below qm refers to.
++		Only available for PF.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/qm/qm_regs
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    Dump of QM related debug registers.
++		Available for PF and VF in host. VF in guest currently only
++		has one debug register.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/qm/current_q
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    One QM may contain multiple queues. Select specific queue to
++		show its debug registers in above qm_regs.
++		Only available for PF.
++
++What:           /sys/kernel/debug/hisi_zip/<bdf>/qm/clear_enable
++Date:           Nov 2018
++Contact:        linux-crypto@vger.kernel.org
++Description:    QM debug registers(qm_regs) read clear control. 1 means enable
++		register read clear, otherwise 0.
++		Writing to this file has no functional effect, only enable or
++		disable counters clear after reading of these registers.
++		Only available for PF.
+-- 
+2.8.1
 
-Yes and you are right ..
-https://github.com/lxc/lxc/pull/2438
-
-I've added an comment there about 4.20.0.
-
-BR,
-
-Gabriel
