@@ -4,94 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1132C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17700C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDEC21939
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:30:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22572196F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404345AbeLVTar (ORCPT
+        id S2392718AbeLVTel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 14:30:47 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37897 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730700AbeLVTaq (ORCPT
+        Sat, 22 Dec 2018 14:34:41 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59192 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730700AbeLVTek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 14:30:46 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0E92380A5F; Sat, 22 Dec 2018 20:30:39 +0100 (CET)
-Date:   Sat, 22 Dec 2018 20:30:43 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH 11/14] media: wl128x-radio: fix skb debug printing
-Message-ID: <20181222193043.GB15237@amd>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181221011752.25627-12-sre@kernel.org>
+        Sat, 22 Dec 2018 14:34:40 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gan2e-0006oK-Sw; Sat, 22 Dec 2018 19:34:32 +0000
+Date:   Sat, 22 Dec 2018 19:34:32 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] smack: fix two memory leaks in smack_add_opt
+Message-ID: <20181222193432.GC2217@ZenIV.linux.org.uk>
+References: <20181222122750.13075-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="K8nIJk4ghYZn606h"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181221011752.25627-12-sre@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181222122750.13075-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 22, 2018 at 12:27:50PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently if s is null or when returning via the error exit label
+> out_opt_err leaks of the allocated opts can occur. Fix the leak
+> on the null s case by checking s is null before the allocation. Fix
+> the leak on the exit path by checking if opts was allocated by
+> kfree'ing opts.
+> 
+> Detected by CoverityScan, CID#1475953 ("Resource leak")
+> 
+> Fixes: b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new helper")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
---K8nIJk4ghYZn606h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri 2018-12-21 02:17:49, Sebastian Reichel wrote:
-> From: Sebastian Reichel <sebastian.reichel@collabora.com>
->=20
-> This fixes incorrect code in the TX/RX skb debug print
-> function and add stubs in receive/transmit packet path.
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
-
-> @@ -228,7 +228,7 @@ inline void dump_rx_skb_data(struct sk_buff *skb)
-> =20
->  	evt_hdr =3D (struct fm_event_msg_hdr *)skb->data;
->  	printk(KERN_INFO ">> hdr:%02x len:%02x sts:%02x numhci:%02x opcode:%02x=
- type:%s dlen:%02x",
-> -	       evt_hdr->hdr, evt_hdr->len,
-> +	       evt_hdr->header, evt_hdr->len,
->  	       evt_hdr->status, evt_hdr->num_fm_hci_cmds, evt_hdr->op,
->  	       (evt_hdr->rd_wr) ? "RD" : "WR", evt_hdr->dlen);
-
-Would conversion to dev_info() make sense?
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---K8nIJk4ghYZn606h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwekOMACgkQMOfwapXb+vIKIwCgrEkbjy5t+tLiU373RR0newf3
-BH0An1W/Dah7XYAutH/TzzwChhwRkz44
-=xgD7
------END PGP SIGNATURE-----
-
---K8nIJk4ghYZn606h--
+There's a better fix in local tree, will go into -next tonight.
