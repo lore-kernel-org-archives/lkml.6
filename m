@@ -2,98 +2,120 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_PAST_03_06,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EB3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 023B6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51B721A48
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C821621A48
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:21:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRwgTR2a"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbOP7omV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391254AbeLVRVA (ORCPT
+        id S2391327AbeLVRVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:21:00 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46654 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390141AbeLVRVA (ORCPT
+        Sat, 22 Dec 2018 12:21:14 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44487 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731365AbeLVRVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:21:00 -0500
-Received: by mail-ed1-f68.google.com with SMTP id o10so7168317edt.13
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 09:20:58 -0800 (PST)
+        Sat, 22 Dec 2018 12:21:14 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n32so9313761qte.11;
+        Sat, 22 Dec 2018 09:21:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oAZc1TB5VIllL0LN1ysvCnLYLA4BeXi1PNyTKAVFtNc=;
-        b=nRwgTR2aEhUB9nLKbgAWZJ7SEDEJzvPB9ayf+i5kq9qDuafD3eqHIa2SrNkGbeSxHF
-         xbdVe0LJ5Sw2gsfUypYWOsM1IlKloODzwCkN2HP5Sj+A1hllyLEjk/DWta9m+E4H8fod
-         ahNaABKV+F83sq7D4QrHwuZhdGlge90MlOOR1EJhC8+Q4VSEXrbFY6oCsRQfQplEgUmr
-         NynNd5dDYaKgUYhJ795G2kO4hwwdfrF6NYeAUvgXSH+GCFCGFbB+m+df6gEczqiLuWHa
-         iXn1X2V4rII8/GCCONByK9j04QxgfCOEFWfFhWD56aHYJLJ2amSmnS2tuWaSpBgn51Xx
-         Xn5w==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=uKo4WKz8FDWRYGlShzLZwV2EQ+xC1QnDjYjG0fK+7qQ=;
+        b=AbOP7omVH3CmqhUyW4emvOdTJSTmfMPPToFxF/hbRr3pf575J7UO+/SIcQGYvsKk+2
+         s9JDhG+GCLnT+JMLEVxR4xxfd53bZSzlW4dAIZjkmnJ9INbOMutncDm4mqdlAjLG+Esw
+         MylIpqqU0T/a0AJL7tdywru6jnEme95Ot71wVRQ1rW6pXaWLIhAGBTB6QySQ0rxerUCC
+         zgagr0cyMTs9udZ6Q5NSV7AOfHoWvcAsa8kJBAk+1S/D2AAhQ917cTXQr9OMxYUk5423
+         YOmSrTLWUs9wu9GaQad/DlzuLDGPYu568XTFX3wko9c0XfTtS/WWADLGTwchD0E9Ka4w
+         Oing==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oAZc1TB5VIllL0LN1ysvCnLYLA4BeXi1PNyTKAVFtNc=;
-        b=XcdN4cznoAoo22KuCDA3kH8fX4/y52gVB1k+Luxo+g+hb4cjv2k+DbzzV3UR6DHpZK
-         w18E0zkbjNo2Y/GWVhvrViZNKsscwNJlb+YhszfPtRxUod1jlZmmJPQNzaa8oR3xBYrr
-         3gS+DO+eCgwL931W2uwy4W7PrazuRuaJ2cQl5/Td//pZQZpn4QkQUl82UNoxjbmKmLsZ
-         q1U2jgMLduqqwZjj/O+h8kUW+gl6DHlQBrXHnqgpuv9J6A7EL8rWTtH7Gcr1MXccQ1MP
-         1EaxpyKcn1S2+9e92IKrUHWCKetMjPJDcZbzAC/QfVTWhP4FINlx2s0rrcegOkSTZpR2
-         vuzw==
-X-Gm-Message-State: AA+aEWaykNeLTyQkLpuSlIp7eRY52sNCxiCwjVYrV6BdWylNthzHuvtj
-        YGnPJh5daAdsflsHtvINAY++3TGXWBI=
-X-Google-Smtp-Source: AFSGD/XDcCS2/A9R+5PYWzFtGyBz9AMK55Lj3Fhss5oHDPsz8ST+VqljKAGFIWdy31jrJqdHrE75AQ==
-X-Received: by 2002:a17:906:815a:: with SMTP id z26-v6mr4252597ejw.121.1545473019697;
-        Sat, 22 Dec 2018 02:03:39 -0800 (PST)
-Received: from bebop.suse.de (189.26.183.192.dynamic.adsl.gvt.net.br. [189.26.183.192])
-        by smtp.gmail.com with ESMTPSA id jo7-v6sm3986162ejb.12.2018.12.22.02.03.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 02:03:38 -0800 (PST)
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <jbacik@fb.com>, Mike Snitzer <snitzer@redhat.com>,
-        Michael Callahan <michaelcallahan@fb.com>,
-        Omar Sandoval <osandov@fb.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>
-Subject: [PATCH] blk_types.h: Use REQ_OP_WRITE in op_is_write
-Date:   Sat, 22 Dec 2018 08:03:54 -0200
-Message-Id: <20181222100356.559995-1-marcos.souza.org@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=uKo4WKz8FDWRYGlShzLZwV2EQ+xC1QnDjYjG0fK+7qQ=;
+        b=O96ztGGy7O9Y0qL0cR4m6f6QnMfnvXcDYi8gLqAbEmewTZZqT1KGBwHKrr1c2tKYaG
+         9Zbxip/LWz/UmCZxwhtSBLpv8LLq2iuyqO9twKbOkYfYWYOiQ+9neU+YLbCSzXYB6rkJ
+         SOwlsjKKR/NNwCx9S8oJ9iBgF19hDKvAEl9G26rPvMzOt0gr7DUsTQawctWXBiRe2wLT
+         G4D7wcLrmRooNIc3dHvbGjFhH7sSOdmKAnQ5xK2J9SBtIX3MpYN73rqEXR4X/Ap3HvLi
+         lPuGL4ROSFpW8QM5EEUE2yi0uU2L3fdBDVViNlL8G8Tj6oBy82/TejHoYUEBeA8gNvr1
+         jMiA==
+X-Gm-Message-State: AJcUukeMQtrnjwwJTGxbioEAKXHS3dx6U3vTOH960rcetbwJ/KPtn0lQ
+        PPhyPhwj9XOwT3b3wU9nuVw1Vtv5PG291HHBwwXdPfMA
+X-Google-Smtp-Source: AFSGD/XUAwszM9g0NQwvR5U0omzv1waIBcRNaGFjuHHR9MQ6JPUoA8Bf1/y2utwUNGhWYTBLDy6DhxQ+9kcMjFxfXcw=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr5973543qte.212.1545485364088;
+ Sat, 22 Dec 2018 05:29:24 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a0c:9881:0:0:0:0:0 with HTTP; Sat, 22 Dec 2018 05:29:22
+ -0800 (PST)
+In-Reply-To: <20181221202733.19627-1-deepa.kernel@gmail.com>
+References: <20181221202733.19627-1-deepa.kernel@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 22 Dec 2018 14:29:22 +0100
+X-Google-Sender-Auth: uBGBR7bKI-_UJz-QalqlpiancFs
+Message-ID: <CAK8P3a3LivERgLTTmS0A35CoebS3n+cNWNXkoYKGam+fVR-Dxg@mail.gmail.com>
+Subject: Re: [PATCH] sock: Make sock->sk_tstamp thread-safe
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        y2038@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of just using plain '1', as it improves readability.
+On 12/21/18, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index fe58aec00d09..2cb641606533 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -2311,8 +2313,11 @@ sock_recv_timestamp(struct msghdr *msg, struct sock
+> *sk, struct sk_buff *skb)
+>  	    (hwtstamps->hwtstamp &&
+>  	     (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE)))
+>  		__sock_recv_timestamp(msg, sk, skb);
+> -	else
+> +	else {
+> +		write_seqlock(&sk->sk_stamp_seq);
+>  		sk->sk_stamp = kt;
+> +		write_sequnlock(&sk->sk_stamp_seq);
+> +	}
+>
+>  	if (sock_flag(sk, SOCK_WIFI_STATUS) && skb->wifi_acked_valid)
+>  		__sock_recv_wifi_status(msg, sk, skb);
+> @@ -2332,10 +2337,15 @@ static inline void sock_recv_ts_and_drops(struct
+> msghdr *msg, struct sock *sk,
+>
+>  	if (sk->sk_flags & FLAGS_TS_OR_DROPS || sk->sk_tsflags & TSFLAGS_ANY)
+>  		__sock_recv_ts_and_drops(msg, sk, skb);
+> -	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP)))
+> +	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP))) {
+> +		write_seqlock(&sk->sk_stamp_seq);
+>  		sk->sk_stamp = skb->tstamp;
+> -	else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP))
+> +		write_sequnlock(&sk->sk_stamp_seq);
+> +	} else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP)) {
+> +		write_seqlock(&sk->sk_stamp_seq);
+>  		sk->sk_stamp = 0;
+> +		write_sequnlock(&sk->sk_stamp_seq);
+> +	}
+>  }
+>
 
-Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
----
- include/linux/blk_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Deepa,
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 1dcf652ba0aa..905c666a0101 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -377,7 +377,7 @@ static inline void bio_set_op_attrs(struct bio *bio, unsigned op,
- 
- static inline bool op_is_write(unsigned int op)
- {
--	return (op & 1);
-+	return (op & REQ_OP_WRITE);
- }
- 
- /*
--- 
-2.16.4
+Thanks a lot for the follow-up to our earlier discussion here!
 
+Are we actually worried about concurrent writers here? I thought the
+only problem was a race between writer and reader, which would mean
+that we could solve it using only a seqcount_t which is cheaper to
+update than a seqlock_t.
+
+       Arnd
