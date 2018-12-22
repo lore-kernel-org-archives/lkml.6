@@ -2,63 +2,83 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D69C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C33C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4D5218E0
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1ED218E0
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392940AbeLVXDX (ORCPT
+        id S2392958AbeLVXDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 18:03:23 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39560 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392911AbeLVXDW (ORCPT
+        Sat, 22 Dec 2018 18:03:37 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40438 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392911AbeLVXDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 18:03:22 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id BF7E927C55;
-        Sat, 22 Dec 2018 18:03:15 -0500 (EST)
-Date:   Sun, 23 Dec 2018 10:03:27 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Joshua Thompson <funaho@jurai.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] m68k/mac: Use '030 reset method on SE/30
-In-Reply-To: <CAMuHMdVtbnq6-6TqhnY6EKPWuupP+tCNwFj0_tJJek9qAqEoPQ@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1812230930430.160@nippy.intranet>
-References: <dc3abf702c1f54d536c94305c44de7182f5212b6.1545445081.git.fthain@telegraphics.com.au> <CAMuHMdVtbnq6-6TqhnY6EKPWuupP+tCNwFj0_tJJek9qAqEoPQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sat, 22 Dec 2018 18:03:37 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4637514A8F325;
+        Sat, 22 Dec 2018 15:03:36 -0800 (PST)
+Date:   Sat, 22 Dec 2018 15:03:33 -0800 (PST)
+Message-Id: <20181222.150333.1964216452010509730.davem@davemloft.net>
+To:     deepa.kernel@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, arnd@arndb.de, y2038@lists.linaro.org
+Subject: Re: [PATCH] sock: Make sock->sk_tstamp thread-safe
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181221202733.19627-1-deepa.kernel@gmail.com>
+References: <20181221202733.19627-1-deepa.kernel@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 22 Dec 2018 15:03:36 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Dec 2018, Geert Uytterhoeven wrote:
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Date: Fri, 21 Dec 2018 12:27:33 -0800
 
-> > -                       local_irq_save(flags);
-> > -
-> > -                       rom_reset();
-> > -
-> > -                       local_irq_restore(flags);
+> Al Viro mentioned that there is probably a race condition
+> lurking in accesses of sk_tstamp on 32-bit machines.
 > 
-> I guess you removed the call to local_irq_restore() because you never
-> get there anyway?
+> sock->sk_tstamp is of type ktime_t which is always an s64.
+> On a 32 bit architecture, we might run into situations of
+> unsafe access as the access to the field becomes non atomic.
 > 
+> Use seqlocks for synchronization.
+> This allows us to avoid using spinlocks for readers as
+> readers do not need mutual exclusion.
+> 
+> Another approach to solve this is to require sk_lock for all
+> modifications of the timestamps. The current approach allows
+> for timestamps to have their own lock: sk_tstamp_lock.
+> This allows for the patch to not compete with already
+> existing critical sections, and side effects are limited
+> to the paths in the patch.
+> 
+> The addition of the new field maintains the data locality
+> optimizations from
+> commit 9115e8cd2a0c ("net: reorganize struct sock for better data
+> locality")
+> 
+> Note that all the instances of the sk_tstamp accesses
+> are either through the ioctl or the syscall recvmsg.
+> 
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
-If a ROM call returns, we have a real problem, because we didn't call it 
-in an execution environment that it is designed to be called in. Anything 
-could happen.
+Since, regardless of whether this is the final approach we will
+take, it seems that sunrpc needs to be added to this patch.
 
-Moreover, local_irq_restore() is bogus either way, given that there's 
-nothing that our interrupt handlers can usefully do now.
+So I'm definitely waiting for a new version.
 
-See also commit 558d5ad276c9 ("m68k/mac: Avoid soft-lockup warning after 
-mach_power_off").
-
--- 
+Thanks.
