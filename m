@@ -2,192 +2,217 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388DCC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB64CC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38972192C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545446879;
-	bh=lwcA7o1P+a1aEXpzjCpEn3zFhAaXzTpfSDnhFNs1ryc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OFCpDvxgJVcy1oC0JQzYjVnibL2W6JCdyAtfaLSss1hEYm0If1Po+4czYpcC0jE65
-	 OWM8PWsdJnD4yGpEs3R8PjUt0FupZyNVfFmXsb/EBd4AbezBhwM3TVyqMgwFNZM+qE
-	 XihGu2nW23MZXtgAnwPYSJ5Pv7sUz0WT28naOhjQ=
+	by mail.kernel.org (Postfix) with ESMTP id A2A2320874
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 02:50:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TgreVyk/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391007AbeLVCr6 (ORCPT
+        id S2392168AbeLVCu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Dec 2018 21:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729161AbeLVCr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Dec 2018 21:47:57 -0500
-Received: from earth.universe (host-091-097-062-171.ewe-ip-backbone.de [91.97.62.171])
+        Fri, 21 Dec 2018 21:50:58 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51888 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726288AbeLVCu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Dec 2018 21:50:58 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A37018EE1CB;
+        Fri, 21 Dec 2018 18:50:57 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PWNTksN9TtUU; Fri, 21 Dec 2018 18:50:57 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA2C620874;
-        Sat, 22 Dec 2018 02:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545446876;
-        bh=lwcA7o1P+a1aEXpzjCpEn3zFhAaXzTpfSDnhFNs1ryc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WiD9TSdUwQhKlak2S2Nss29vdu6xIkLaO4HALSiZwCKbJe7ifXewQ4o5t4yj9vIIx
-         FLabbZc69Ew3T2cxHYbmapxy6sUfyX6TGTEr8lINQXILO/qnq/RT/HVCGlscK9aBSA
-         wUECHIYjbMtl/z0wYdXeGz6xIGbREs9kXKBLzQ5g=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 929303C08E5; Sat, 22 Dec 2018 03:47:53 +0100 (CET)
-Date:   Sat, 22 Dec 2018 03:47:53 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-bluetooth@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
-Message-ID: <20181222024753.d4mge5m3x3vqfrt6@earth.universe>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181221180205.GH6707@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3hrdbokkqizipcn6"
-Content-Disposition: inline
-In-Reply-To: <20181221180205.GH6707@atomide.com>
-User-Agent: NeoMutt/20180716
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2BDD38EE0CD;
+        Fri, 21 Dec 2018 18:50:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1545447057;
+        bh=YMiYVf9VkZ+PWH05zrT/gI9jGTBREJB49qYmPao7EcU=;
+        h=Subject:From:To:Cc:Date:From;
+        b=TgreVyk/rSViNFaHhJO1rcF4gLYq+ol4s/UFhMMHt4iqtWzLr9P1sbVPqXe0kOR+p
+         wfr6C3r8IuSSfYwbGuCEn/2HSNgVi3jPX04/ZjX99auGF/tCKNBCVCyx0ZmKY42Nde
+         VaTUmjP5JOHSumumbt/2kgPp5Kbxwbyu9jiF+J1s=
+Message-ID: <1545447056.2776.11.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.20-rc7
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 21 Dec 2018 18:50:56 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is two simple target fixes and one discard related I/O starvation
+problem in sd.  The discard problem occurs because the discard page
+doesn't have a mempool backing so if the allocation fails due to memory
+pressure, we then lose the forward progress we require if the writeout
+is on the same device.  The fix is to back it with a mempool.
 
---3hrdbokkqizipcn6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch is available here:
 
-Hi,
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-On Fri, Dec 21, 2018 at 10:02:05AM -0800, Tony Lindgren wrote:
-> * Sebastian Reichel <sre@kernel.org> [181221 01:18]:
-> > The new code has been tested on the Motorola Droid 4. For testing the a=
-udio
-> > should be configured to route Ext to Speaker or Headphone. Then you nee=
-d to
-> > plug headphone, since its cable is used as antenna. For testing there i=
-s a
-> > 'radio' utility packages in Debian. When you start the utility you need=
- to
-> > specify a frequency, since initial get_frequency returns an error:
->=20
-> Nice, good to see that ti-st kim stuff gone :) I gave this a quick
-> try using fmtools.git and fmscan works just fine. No luck yet with
-> fm though, it gives VIDIOC_G_CTRL: Not a tty error somehow so
-> maybe I'm missing some options, patch below for omap2plus_defconfig.
+The short changelog is:
 
-I only did a few quick tests with 'radio' utility. I could scan
-for stations and I could listen to some station. I suppose the
-wl128x-radio driver has some buggy code paths, but that are
-unrelated to this patchset.
+Jens Axboe (1):
+      scsi: sd: use mempool for discard special page
 
-> Hmm so looks like nothing to configure for the clocks or
-> CPCAP_BIT_ST_L_TIMESLOT bits for cap for the EXT? So the
-> wl12xx audio is wired directly to cpcap EXT then and not a
-> TDM slot on the mcbsp huh?
+Varun Prakash (2):
+      scsi: target: iscsi: cxgbit: add missing spin_lock_init()
+      scsi: target: iscsi: cxgbit: fix csk leak
 
-For FM radio it's directly wired to EXT with no DAI being required.
-I think that EXT is only used by FM radio and not by bluetooth. BT
-seems to use TDM.
+And the diffstat:
 
-> > Merry Christmas!
->=20
-> Same to you!
->=20
-> Tony
->=20
-> 8< --------------------------------
-> From tony Mon Sep 17 00:00:00 2001
-> From: Tony Lindgren <tony@atomide.com>
-> Date: Fri, 21 Dec 2018 07:57:09 -0800
-> Subject: [PATCH] ARM: omap2plus_defconfig: Add RADIO_WL128X as a loadable
->  module
->=20
-> This allows using the FM radio in the wl12xx chips after modprobe
-> fm_drv using radio from xawt, or fmtools.
+ drivers/scsi/sd.c                         | 23 +++++++++++++++++++----
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c   |  5 ++++-
+ drivers/target/iscsi/cxgbit/cxgbit_main.c |  1 +
+ 3 files changed, 24 insertions(+), 5 deletions(-)
 
-Mh. I suppose I forgot to add alias to support autoloading the
-FM module.
+With full diff below.
 
-> Note that the firmware placed into /lib/firmware/ti-connectivity
-> directory:
->=20
-> fm_rx_ch8_1283.2.bts
-> fmc_ch8_1283.2.bts
+James
 
-There is also a TX firmware. The Droid 4's chip should support this,
-but I don't know if there is audio routing for this feature.
+---
 
--- Sebastian
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 3bb2b3351e35..bd0a5c694a97 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -133,6 +133,7 @@ static DEFINE_MUTEX(sd_ref_mutex);
+ 
+ static struct kmem_cache *sd_cdb_cache;
+ static mempool_t *sd_cdb_pool;
++static mempool_t *sd_page_pool;
+ 
+ static const char *sd_cache_types[] = {
+ 	"write through", "none", "write back",
+@@ -759,9 +760,10 @@ static int sd_setup_unmap_cmnd(struct scsi_cmnd *cmd)
+ 	unsigned int data_len = 24;
+ 	char *buf;
+ 
+-	rq->special_vec.bv_page = alloc_page(GFP_ATOMIC | __GFP_ZERO);
++	rq->special_vec.bv_page = mempool_alloc(sd_page_pool, GFP_ATOMIC);
+ 	if (!rq->special_vec.bv_page)
+ 		return BLKPREP_DEFER;
++	clear_highpage(rq->special_vec.bv_page);
+ 	rq->special_vec.bv_offset = 0;
+ 	rq->special_vec.bv_len = data_len;
+ 	rq->rq_flags |= RQF_SPECIAL_PAYLOAD;
+@@ -792,9 +794,10 @@ static int sd_setup_write_same16_cmnd(struct scsi_cmnd *cmd, bool unmap)
+ 	u32 nr_sectors = blk_rq_sectors(rq) >> (ilog2(sdp->sector_size) - 9);
+ 	u32 data_len = sdp->sector_size;
+ 
+-	rq->special_vec.bv_page = alloc_page(GFP_ATOMIC | __GFP_ZERO);
++	rq->special_vec.bv_page = mempool_alloc(sd_page_pool, GFP_ATOMIC);
+ 	if (!rq->special_vec.bv_page)
+ 		return BLKPREP_DEFER;
++	clear_highpage(rq->special_vec.bv_page);
+ 	rq->special_vec.bv_offset = 0;
+ 	rq->special_vec.bv_len = data_len;
+ 	rq->rq_flags |= RQF_SPECIAL_PAYLOAD;
+@@ -822,9 +825,10 @@ static int sd_setup_write_same10_cmnd(struct scsi_cmnd *cmd, bool unmap)
+ 	u32 nr_sectors = blk_rq_sectors(rq) >> (ilog2(sdp->sector_size) - 9);
+ 	u32 data_len = sdp->sector_size;
+ 
+-	rq->special_vec.bv_page = alloc_page(GFP_ATOMIC | __GFP_ZERO);
++	rq->special_vec.bv_page = mempool_alloc(sd_page_pool, GFP_ATOMIC);
+ 	if (!rq->special_vec.bv_page)
+ 		return BLKPREP_DEFER;
++	clear_highpage(rq->special_vec.bv_page);
+ 	rq->special_vec.bv_offset = 0;
+ 	rq->special_vec.bv_len = data_len;
+ 	rq->rq_flags |= RQF_SPECIAL_PAYLOAD;
+@@ -1286,7 +1290,7 @@ static void sd_uninit_command(struct scsi_cmnd *SCpnt)
+ 	u8 *cmnd;
+ 
+ 	if (rq->rq_flags & RQF_SPECIAL_PAYLOAD)
+-		__free_page(rq->special_vec.bv_page);
++		mempool_free(rq->special_vec.bv_page, sd_page_pool);
+ 
+ 	if (SCpnt->cmnd != scsi_req(rq)->cmd) {
+ 		cmnd = SCpnt->cmnd;
+@@ -3623,6 +3627,13 @@ static int __init init_sd(void)
+ 		goto err_out_cache;
+ 	}
+ 
++	sd_page_pool = mempool_create_page_pool(SD_MEMPOOL_SIZE, 0);
++	if (!sd_page_pool) {
++		printk(KERN_ERR "sd: can't init discard page pool\n");
++		err = -ENOMEM;
++		goto err_out_ppool;
++	}
++
+ 	err = scsi_register_driver(&sd_template.gendrv);
+ 	if (err)
+ 		goto err_out_driver;
+@@ -3630,6 +3641,9 @@ static int __init init_sd(void)
+ 	return 0;
+ 
+ err_out_driver:
++	mempool_destroy(sd_page_pool);
++
++err_out_ppool:
+ 	mempool_destroy(sd_cdb_pool);
+ 
+ err_out_cache:
+@@ -3656,6 +3670,7 @@ static void __exit exit_sd(void)
+ 
+ 	scsi_unregister_driver(&sd_template.gendrv);
+ 	mempool_destroy(sd_cdb_pool);
++	mempool_destroy(sd_page_pool);
+ 	kmem_cache_destroy(sd_cdb_cache);
+ 
+ 	class_unregister(&sd_disk_class);
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index 71888b979ab5..b19c960d5490 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -641,8 +641,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
+ 
+ static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
+ {
++	struct cxgbit_sock *csk = handle;
++
+ 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
+ 	kfree_skb(skb);
++	cxgbit_put_csk(csk);
+ }
+ 
+ static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
+@@ -1206,7 +1209,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
+ 	rpl5->opt0 = cpu_to_be64(opt0);
+ 	rpl5->opt2 = cpu_to_be32(opt2);
+ 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
+-	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
++	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
+ 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
+ }
+ 
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_main.c b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+index f3f8856bfb68..c011c826fc26 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_main.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+@@ -58,6 +58,7 @@ static void *cxgbit_uld_add(const struct cxgb4_lld_info *lldi)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	kref_init(&cdev->kref);
++	spin_lock_init(&cdev->np_lock);
+ 
+ 	cdev->lldi = *lldi;
+ 
 
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  arch/arm/configs/omap2plus_defconfig | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap=
-2plus_defconfig
-> --- a/arch/arm/configs/omap2plus_defconfig
-> +++ b/arch/arm/configs/omap2plus_defconfig
-> @@ -126,6 +126,7 @@ CONFIG_AF_RXRPC=3Dm
->  CONFIG_RXKAD=3Dy
->  CONFIG_CFG80211=3Dm
->  CONFIG_MAC80211=3Dm
-> +CONFIG_RFKILL=3Dm
->  CONFIG_DEVTMPFS=3Dy
->  CONFIG_DEVTMPFS_MOUNT=3Dy
->  CONFIG_DMA_CMA=3Dy
-> @@ -343,12 +344,14 @@ CONFIG_IR_GPIO_TX=3Dm
->  CONFIG_IR_PWM_TX=3Dm
->  CONFIG_MEDIA_SUPPORT=3Dm
->  CONFIG_MEDIA_CAMERA_SUPPORT=3Dy
-> +CONFIG_MEDIA_RADIO_SUPPORT=3Dy
->  CONFIG_MEDIA_CEC_SUPPORT=3Dy
->  CONFIG_MEDIA_CONTROLLER=3Dy
->  CONFIG_VIDEO_V4L2_SUBDEV_API=3Dy
->  CONFIG_V4L_PLATFORM_DRIVERS=3Dy
->  CONFIG_VIDEO_OMAP3=3Dm
->  CONFIG_CEC_PLATFORM_DRIVERS=3Dy
-> +CONFIG_RADIO_WL128X=3Dm
->  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
->  CONFIG_VIDEO_TVP5150=3Dm
->  CONFIG_DRM=3Dm
-> --=20
-> 2.19.2
-
---3hrdbokkqizipcn6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwdpdIACgkQ2O7X88g7
-+pog9RAAicrkY0H2lCVIlUA9qSrLEkeVDH3Vt9v1L6ulOHpoHU1QHCoBFmUTkWCx
-QPYrdi4zPunE9eht+RwqiMUwIqiIz4x33GF+bgEXSMXFTqzIcgvKFjYBVGTIGZgz
-umyuN0qgrkYWaW1Jl/L0zHCG7FjrR8WQb6s5P62uayWRY6kT9tIbyHOQz8g1320j
-wOhJ3ChUlc9sLIy91wxU9zAInDq7CkonXJwJ+InNhuptr13G5QfPZGEg72805vkI
-Y8julEZNZvFbCh8OqY5K90aj7Jhn0qUFxorZ7WaA7+hcJZI9ThdiK9ZAAIjnulB1
-zA3SOyO7oazvDdHJhKhHw10b9kcJLwDjnPrHpWHlVYdwt+61AkKdivqjxYyA14JN
-Yk/2SxFvfss2lnXfvWjeGJXEnQ/ngSF6iZDPSLTNjhEg39o4TdvvMI5YTqNzkFFV
-H42M02AWxkxXM72UOaM1nUEpqQcD1r+e8MZWPeH0CbWoMso2OGVw2fYxvXQ/01kx
-2TK6jx7fZ7RNZQj1ID+fqvIegvj/8q5LFK0LZnEbGEK9kPiixLU9ZWuoK1IHbvLC
-Km35L0wnHcs3ovhA+T08iAhL1y4Ti/0sWJP+s21RIIxj+p/O8UZq0xe4Dusm+sjL
-nTUBKayxzha0ZVVz7qKMTGN2ekjDSCIahxrO4aCUMZx82GKnQGM=
-=C94d
------END PGP SIGNATURE-----
-
---3hrdbokkqizipcn6--
