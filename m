@@ -2,78 +2,72 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3A4C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242F1C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B46B2195D
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1CA62195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 19:12:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sizNv+dS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392047AbeLVTLk (ORCPT
+        id S2392130AbeLVTMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 14:11:40 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42857 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731157AbeLVTLj (ORCPT
+        Sat, 22 Dec 2018 14:12:01 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54755 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731157AbeLVTMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 14:11:39 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gamg9-0003eb-20; Sat, 22 Dec 2018 19:11:17 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] x86/fault: fix sign-extend of a unsigned that has been promoted to an int
-Date:   Sat, 22 Dec 2018 19:11:16 +0000
-Message-Id: <20181222191116.21831-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Sat, 22 Dec 2018 14:12:01 -0500
+Received: by mail-it1-f195.google.com with SMTP id i145so11568635ita.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 11:12:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc
+         :content-transfer-encoding;
+        bh=Uy3N7oD3HBFB69iKfiIHET7jVZnFJab1ngVgt7Ce8jM=;
+        b=sizNv+dSkLL1lnCM/yN4UdWmMg5oyb3CWst47CDtdPjicYMdihjIHVpHPJiTqc8htl
+         h7KuChlZfy6jzDf1zHiE+6xpSiLsqiMknhQrvB4yro87fLAWhcSwDaa8hzLcEqtLRFUl
+         qz2O/T2bgtIqI7fkdy6Ft3SFtbMrwkemJ1WOQnEzVfe9S+OZ4BW/yh+SBwpgocRqHPjQ
+         jcz0BNPNL1gv9JjsNodfxaMhI1jXK8xtaDYi0i6UgV5W0sgt2JL6ufDmTlBQ3RtaROoG
+         MrLJg06klnseX3Iuxl7CaWuOZ64Rz+4kmprH2xEkwvK0wLf8vQG2ROvkzV4DG6xYVwgs
+         +9jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc:content-transfer-encoding;
+        bh=Uy3N7oD3HBFB69iKfiIHET7jVZnFJab1ngVgt7Ce8jM=;
+        b=gKEQgEkegmokzi0Qc16LdygKVZ+2YkTFZ7Yn1d3/BcEVBpQ3usDFfadIXrU81ftNMA
+         dqubucvAUJmQa01zqY32woIpz++zWn0U/W9VMtcOkYFTSEc75N9+u2+AbvEf3ACn9IMT
+         6YTAK1mnTWf3xsjdC00UBMsA/ZCfQkRAclsmkQhdWq4Ahnq9fFENyazdkZhDtQy9VCtr
+         3SKbBgz6ISQeueBMi87u8izUXP+aJAqwfDhl8zsjcyL8d59QV+DhWVQuyCbZWCKV6vBY
+         XZOfOy2dvYdlt7cw9OU4mTuIBhsRQUjHdITQ+dHC1sqr0gq09rQbFyfoUiAnjKG7PBd/
+         8DMA==
+X-Gm-Message-State: AJcUukdoIYguxvCGFN1qM9aTHyVKHMvMFLVd9UCfXgCRdOGNLj3SrtnB
+        pORTQ4SYpu6r88arOFLLTSLgQzyhmZlb2tMN81/pLt452qw=
+X-Received: by 2002:a24:648f:: with SMTP id t137mt5436273itc.95.1545465288112;
+ Fri, 21 Dec 2018 23:54:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20181221154455.32430-1-tiny.windzz@gmail.com> <201812221451.iR66lSP3%fengguang.wu@intel.com>
+In-Reply-To: <201812221451.iR66lSP3%fengguang.wu@intel.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sat, 22 Dec 2018 15:54:37 +0800
+Message-ID: <CAEExFWsEXkAo8Max-R6Rn5W7bM4jbP1ViwaFqB=KNaeRR7W97g@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: rtlwifi: convert to DEFINE_SHOW_ATTRIBUTE
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        kernelpatch@126.com, devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-The shifting of desc.base2 by 24 bits will end up with a sign extension
-error if the bit 7 of desc.base2 is set.  This because desc.base2 is
-promoted to type int and then sign extended to an unsigned long, causing
-the upper bits 32 bits to be set on the sign extension.  Fix this by
-casting desc.base2 to unsigned long before the shift.
-
-Detected by CoverityScan, CID#1475635 ("Unintended sign extension")
-
-Fixes: a1a371c468f7 ("x86/fault: Decode page fault OOPSes better")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..9d5c75f02295 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -595,7 +595,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
- 		return;
- 	}
- 
--	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
-+	addr = desc.base0 | (desc.base1 << 16) | ((unsigned long)desc.base2 << 24);
- #ifdef CONFIG_X86_64
- 	addr |= ((u64)desc.base3 << 32);
- #endif
--- 
-2.19.1
-
+U29ycnnvvIHvvIHvvIFQbGVhc2UgaWdub3JlIHRoaXMuDQo=
