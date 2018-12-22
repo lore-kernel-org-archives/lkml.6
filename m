@@ -2,120 +2,121 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E358C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3385C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D81221934
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93AB52195D
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545504612;
+	bh=EXOANm6tkF2VD+tusHpxMKU/XXyEeaq1YvVk9+PsR00=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lljyTfo7gAyWUzbzENZ1+75CxAm3N9fDFrnbZbMWz0slvGMVvJdbxNHVRmHiqDLU5
+	 icOPl2r1XJnFZrIdYYBkdNplY5lbt6ADy3WZ/zVDWwgmKkzvN3wTvYEfYyfjCIVHS7
+	 YWWYhwfbLGWZ0Kp3dfmykQsWc+IYkE56cZPgc28Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732603AbeLVSsM (ORCPT
+        id S2388138AbeLVSuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:48:12 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:39187 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbeLVSsL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:48:11 -0500
-Received: from oxbsltgw67.schlund.de ([212.227.220.205]) by
- mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1M730b-1gSiQg2QiV-008XDz; Sat, 22 Dec 2018 13:19:37 +0100
-Date:   Sat, 22 Dec 2018 13:19:36 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Eric Anholt <eric@anholt.net>, linux-i2c@vger.kernel.org
-Message-ID: <1941132339.131316.1545481176339@email.ionos.de>
-In-Reply-To: <20181221121135.4847-1-paul.kocialkowski@bootlin.com>
-References: <20181221121135.4847-1-paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH] i2c: bcm2835: Clear current message and count after a
- transaction
+        Sat, 22 Dec 2018 13:50:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728086AbeLVSuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 13:50:11 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E6DE2196E;
+        Sat, 22 Dec 2018 18:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545504610;
+        bh=EXOANm6tkF2VD+tusHpxMKU/XXyEeaq1YvVk9+PsR00=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IjnT/BUShlBgikHhMQLg+sH3RlMO7frzPfTSNuVzGbVipnr7dpDk/V10vH0qch2PQ
+         MOiDwz3V2GQRoVnvrsAiKuxC4hT4V+2wKxKtWg+qe+zWNE+FeizauxJAeD5jaxQurk
+         yZz70wuj6FQKifDcloWEGLkGXzWmLz1lgO9n+Qhw=
+Received: by mail-wr1-f45.google.com with SMTP id t27so8307543wra.6;
+        Sat, 22 Dec 2018 10:50:10 -0800 (PST)
+X-Gm-Message-State: AJcUukcfrR2bOjqBnQPQVJ1+s/juQ8fa8VnKUglGmH/Z3fNu+7A8Dk4F
+        EP0AxltONd3InDV5c3jlMn0KtTOgiY0dWlTDxS8=
+X-Google-Smtp-Source: ALg8bN5lX4dZDF6anLCJlQsv8WTedtCVif7l7EUPUCJupBT0ZhY6oI2B03/yp2mobzDw6+eDiDQOys68duHtxfjBaZ0=
+X-Received: by 2002:a5d:66c1:: with SMTP id k1mr6691953wrw.132.1545504608825;
+ Sat, 22 Dec 2018 10:50:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:/SDxGrIlfO2kzF/9ruzF2NeN+DYef9XUmTuHb/adAT3+o5h5d7Z
- LYkX+PSUTYFMn/2HBo9hm0PGaCIcTzvAP/OdSIwXVUxYGTg5avFljhwGKGsOwGnIgx9R69z
- tINcSlGsg0gTbkzRHyi2M+/hJ9wjW3lIbw64llk8xvm/LXDJkQWXFgmgI8X+lNDoye8of4Q
- wkACQP3QgYJzjNFNd3Rzg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FXXYDhyADDQ=:/h07U+MJxMIT1lxug94kXS
- iFI3lKLIlaUE49AUDT7/tnTVAJ5O88CL0qYP8hEdRpdB7t87nPV8e1ZybtsbxLIm/vtpVCfQy
- tsrfao0FM8xp+yhhyASJyOJkWYocqBdJ6+MprCygNgLgwodVBRrwhOEWtOU1CMueUvD5h2/AH
- wknHXtZoAWlRKiO6GvasCQLfooscnhczgpJFBf/H6ld/yUREXc4dwcOxvrpgixXGHkWsrv44H
- xOwPyXtN1ri29NZzDw7iEy1fL44bf86ysSZmXdK0rgG1RllnlJCsbP8UnohoQTr8VYX8UkqVv
- N4bSr8OgFdU3bZh9qp8SHBCe2nbU5H/NV5SGMRRh7UOZMdJ3ZhVTt0g9SYiEzA8LH39I/p8rm
- JkFnasYEx4UCz2XTYYvOy6O3mutQIOqNuwzG2x+AUYmNcaB/tO2fdBeGaD9qj68oV6xumJIkd
- VogCqKsg66rNPpdhR656029Wy+SJt99GvJwTfloVKUkJzRj8hySMDDdPJypIkhqTxC4qjpWhL
- WuYaFNmgiiRV7i4Se9siDObVwNTz+9CVZeTgRgM98CtYBdnspklVyrWNzgqvsu7lshDj6OM2m
- uIJPKhzcxJUB0G7sdzNsh14p4aSkFh2BEUZZzn2EMAXucEVy/CKG3UT/fvRPhYBkd1GFKd7re
- hXLk+U2HRFTgv7munb9KqYwyCdyoUOA+yUeRwgWNzp2DKzmUj5KNf5R0qJ0L0YhFs5gTHyPVj
- CJjptMtK0A5KkhxpiT6RSXH2umRsPcBZey8CZeNYahYGMrVFRz+arDLBsCM=
+References: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
+In-Reply-To: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Sat, 22 Dec 2018 10:50:01 -0800
+X-Gmail-Original-Message-ID: <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
+Message-ID: <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl:mediatek:add judgment conditions
+To:     chuanjia.liu@mediatek.com
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zhiyong.tao@mediatek.com, eddie.huang@mediatek.com,
+        hailong.fan@mediatek.com, youlin.pei@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Mon, Dec 17, 2018 at 6:32 PM <chuanjia.liu@mediatek.com> wrote:
+>
 
-> Paul Kocialkowski <paul.kocialkowski@bootlin.com> hat am 21. Dezember 2018 um 13:11 geschrieben:
-> 
-> 
-> The driver's interrupt handler checks whether a message is currently
-> being handled with the curr_msg pointer. When it is NULL, the interrupt
-> is considered to be unexpected. Similarly, the i2c_start_transfer
-> routine checks for the remaining number of messages to handle in
-> num_msgs.
-> 
-> However, these values are never cleared and always keep the message and
-> number relevant to the latest transfer (which might be done already and
-> the underlying message memory might have been freed).
-> 
-> When an unexpected interrupt hits with the DONE bit set, the isr will
-> then try to access the flags field of the curr_msg structure, leading
-> to a fatal page fault.
-> 
-> Fix the issue by systematically clearing curr_msg and num_msgs in the
-> driver-wide device structure when a transfer is considered complete.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+I thought the subject still is much general, it should be further
+improved with something like "add EINT support to virtual GPIOs" and
+should say more about what virtual GPIOs means by MTKers in the patch
+description because "virtual" is a usual term used throughout the
+kernel and that would easily cause others to fail to interpret
+correctly.
+
+> From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+>
+> This patch avoid return err when virtual gpio set SMT.
+>
+> Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
 > ---
->  drivers/i2c/busses/i2c-bcm2835.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
-> index 44deae78913e..5486252f5f2f 100644
-> --- a/drivers/i2c/busses/i2c-bcm2835.c
-> +++ b/drivers/i2c/busses/i2c-bcm2835.c
-> @@ -298,6 +298,9 @@ static int bcm2835_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->  		return -ETIMEDOUT;
->  	}
->  
-> +	i2c_dev->curr_msg = NULL;
-> +	i2c_dev->num_msgs = 0;
-
-AFAIU this would reduce the chance of a use-after-free dramatically but not completely.
-
-Btw: Why did you leave of the i2c transfer timeout case?
-
-Thanks
-Stefan
-
+> change note:
+> v2 : 1. delete virtual gpio number
+>      2. add judgment conditions
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> index 4a9e0d4c2bbc..a576e417744a 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> @@ -290,7 +290,11 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+>                 return err;
+>
+>         err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
+> -       if (err)
 > +
->  	if (!i2c_dev->msg_err)
->  		return num;
->  
-> -- 
-> 2.20.1
+> +       /* SMT doesn't support virtual GPIO, add err != -ENOTSUPP is used for
+> +        * avoid return err when virtual gpio set SMT.
+> +        */
+
+I'd prefer to the comments as the below
+
+/*
+SMT is supposed to be supported by every real GPIO and doesn't support
+virtual GPIOs, so the extra condition err != -ENOTSUPP is just for
+adding EINT support to these virtual GPIOs. It should add an extra
+flag in the pin descriptor when more pins with distinctive
+characteristic come out.
+*/
+
+> +       if (err && err != -ENOTSUPP)
+>                 return err;
+>
+>         return 0;
+> --
+> 2.19.1
 >
