@@ -2,177 +2,135 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01D6C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09BBC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A44021934
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:47:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITYVEZ2O"
+	by mail.kernel.org (Postfix) with ESMTP id BDB2B21934
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 22:49:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392878AbeLVWro (ORCPT
+        id S2392889AbeLVWtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 17:47:44 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39030 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388727AbeLVWrn (ORCPT
+        Sat, 22 Dec 2018 17:49:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44570 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388512AbeLVWtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 17:47:43 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n18so6270782lfh.6
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:47:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=iEBfvz86kZnN5D1veZ6xPnnmLmS/phSyCWvqn7AGqEc=;
-        b=ITYVEZ2OZKdQ7vCcE+VbJ5MIZSZyFlelbu8fKUd1aUoNvd6GN9uYEQeJ0SjQ6ax1NF
-         NY7w/EuATBvBtiVL4Bc+x/hQJsuySGidcRIMi5XvagPj4t1O5n/aG6tQXLuTsi6IT6w0
-         2MRye7XBYcKDRnulcNsRlS5HH28wYILShWylI=
+        Sat, 22 Dec 2018 17:49:09 -0500
+Received: from mail-vs1-f69.google.com ([209.85.217.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@canonical.com>)
+        id 1gaq4x-0000AX-LL
+        for linux-kernel@vger.kernel.org; Sat, 22 Dec 2018 22:49:07 +0000
+Received: by mail-vs1-f69.google.com with SMTP id b203so4361857vsd.20
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:49:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=iEBfvz86kZnN5D1veZ6xPnnmLmS/phSyCWvqn7AGqEc=;
-        b=j5Pj89NdXNOnYmDxCeeUhfLEJOnoMOwU6gtxf/eiQS7B+2xk68ciw/VJYHJz0xqYaF
-         eqnY2t/T1knwSlpNQK69n3uC51TakkzHfo2s9HYknvUe/i0UjapTLMGcLQ8TWvFZy+8D
-         lvRwQ2/BeTexLqst622pS7yL0Jh3d/WaZcmV8wBxiCXmL2Pw8TGz4APqHD0SgGZ+us7v
-         5eXtyoLOGhmTLlaW19qBwprGGz2qJiPeCMydc1WbzSAdaRAcj8Z2XoJQ+NOmrOZsN9r5
-         8ktppXASCkLVQ5l3vOpjADKgNUzFDRtmzFsDEiZNr6Li8dYHWWQSIrFey9ZiJ9eMgmen
-         Rb4g==
-X-Gm-Message-State: AA+aEWb7qgXMDDOIFUC9QhQ8nBtdR7dqeyu0qGDJJkDtm7p5Qx/wao+Y
-        vmwau3mzq1+0iUZw5zH7oeI4K2y+oQ4=
-X-Google-Smtp-Source: AFSGD/Vz1KRPhNEM1hcI94+WNZEpfyJMerLvy9WriEliGKkh/8K9htmaG42u43s8Soj4andr4dVk8Q==
-X-Received: by 2002:a19:7d42:: with SMTP id y63mr3879593lfc.47.1545518860850;
-        Sat, 22 Dec 2018 14:47:40 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm5575975lji.13.2018.12.22.14.47.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 14:47:39 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id f23so6254992lfc.13
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 14:47:39 -0800 (PST)
-X-Received: by 2002:a19:7013:: with SMTP id h19mr4334254lfc.147.1545518858888;
- Sat, 22 Dec 2018 14:47:38 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=c95vZPoFKEFXbWX9ArGamlpKmf1j4Atr3/a94movQzg=;
+        b=KPP1Qk4+UYwGHrulYWjDZtypUwZALaQqhGFhLI48JevaJz3PT3s9jhBvd+DjjFP5+i
+         7RXVdTMYBeLmBIhQnP5MAZ1152kODkqzcGxel20+wi8nx7rMZVsYSPAHSJJIhCOBOd1X
+         Oka6gDNpMIxTBAQADOJ1SEFXLRuQM1wESmn8qFRRemHq9lGehNfqAQqHmBm7RTJ/Ym10
+         4IyptMgNlDG/3h0FoBV2be9c0FstScQcUvYjz6v8FWxyt0dJjgqUyikpTu618Udt3bDm
+         H9RKacQZJ1oJ+v5MpFRnf/TEpqTetlhUsiepy5SuNYNncryWV3Ul41nHBHwGpeiBIhzV
+         QrOg==
+X-Gm-Message-State: AJcUukdTLKn1pgaDxIaesRfasxJgng3cfC3jCdhD79tl/0vn4kd5k77P
+        +MuS0JupXMJqOHAr/uKl2tkqS3Vk6WAu67KpusG3puXQEUe5JQGfl4DnSjXjJO1LRhZvUIDDkzg
+        1zHk2Lvg7RvcE3gnqLP82O9Nd6WgLwkxCGyzXctYTl6dYjlLqfg/3lhnhhg==
+X-Received: by 2002:ab0:1425:: with SMTP id b34mr2883515uae.64.1545518946570;
+        Sat, 22 Dec 2018 14:49:06 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5+5X+PF7aBAWKd+DSCQ3eIwtOR45Ac9JyEmTrd4kN37BgodZV21ImAreuXPwvTDsSiH4tu8XZnloV7Ynb31OU=
+X-Received: by 2002:ab0:1425:: with SMTP id b34mr2883503uae.64.1545518946213;
+ Sat, 22 Dec 2018 14:49:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
- <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
- <20181222041712.GC26547@mit.edu>
-In-Reply-To: <20181222041712.GC26547@mit.edu>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 22 Dec 2018 14:47:22 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgPz4dfq4sPWxHwMR3g_R3xHhWjofXTu8rV0QU2DP0JhA@mail.gmail.com>
-Message-ID: <CAHk-=wgPz4dfq4sPWxHwMR3g_R3xHhWjofXTu8rV0QU2DP0JhA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org,
+References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
+ <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com> <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
+From:   Christian Brauner <christian.brauner@canonical.com>
+Date:   Sat, 22 Dec 2018 23:48:54 +0100
+Message-ID: <CAPP7u0Vo6gB86S-hZcOW9Rmki8oKHd=Lyx3x-N9gjPC4JP_YxQ@mail.gmail.com>
+Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
+ userns mounts, breaking systemd-nspawn
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     nix.or.die@gmail.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        ellierevves@gmail.com,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <seth.forshee@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 8:20 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+On Sat, Dec 22, 2018 at 11:20 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Fri, Dec 21, 2018 at 11:13:07AM -0800, Linus Torvalds wrote:
+> Eric, this is entirely unacceptable.
+
+i would like to point out that I send a revert for this in *July*
+before any kernel with this change
+was released for the exact same reason. But I was ignored and no one
+came to argumentative aid:
+- https://lists.linuxfoundation.org/pipermail/containers/2018-July/039182.html
+- https://lists.linuxfoundation.org/pipermail/containers/2018-July/039183.html
+
+To be fair, no one apart from me was pointing out that it actually
+breaks people including systemd folks
+even though I was bringing it up with them. I even tried to fix all of
+userspace after this got NACKED
+( https://github.com/systemd/systemd/pull/9483 ).
+
+Christian
+
+>
+> On Sat, Dec 22, 2018 at 12:58 PM Gabriel C <nix.or.die@gmail.com> wrote:
 > >
-> > In other words: either the model is that the file *itself* contains
-> > its own merkle tree that validates the file, or it isn't. You can't
-> > have it two ways. No silly "layout changes when you apply the hash"
-> > garbage. That's just crazy talk and invalidates the whole model.
+> > Added some people to CC that might want to see this..
 >
-> Userspace applications which are reading the file aren't going to be
-> expecting Merkle tree.  For example, one of the use cases is Android
-> APK files, which are essentially ZIP files.  ZIP files can be parsed
-> both from the front-end (streaming), or by looking for the complete
-> directory of all of the files in the ZIP file by starting at the end
-> of the file and moving backwards.  If the Merkle tree was visible to
-> userspace programs that are opening and reading the file, it would
-> confuse them mightily.
+> Thanks.
 >
-> So what we do for ext4 and f2fs is make the Merkle tree invisible
-
-Again, this has nothing that is per-filesystem in it.
-
-If we were to decide to support the notion of "append merkle hashes to
-the file for validation" at the vfs layer, the same logic would apply:
-obviously the merkle data shouldn't be visible to user space.
-
-But that's not a reason to do it at a filesystem layer, quite the
-reverse: exactly like you say, as far as the *filesystem* is
-concerned, the data is there in the file. It's literally about the
-*view* of the file, ie the system call interface:
-
->    From the *file system's* perspective,
-> though, the metadata blocks are part of the file.
-
-To me that only argues that this all should be at the vfs layer, and
-that it shouldn't be the filesystem that hides it. Exactly because as
-far as the filesystem is concerned, the merkle data is there, it's
-just that we hide it at read (and stat) time.
-
-Preferably some way where it's namespace-dependent or whatever, so
-that you could still access the original file data from user space if
-you want to (eg some backup purpose or other).
-
-What I'm missing is any kind of sane explanation for why it was done
-so badly, and why it should be upstreamed despite the apparent bad
-implementation.
-
-It sounds like a complete hack.
-
-Again, to me either the point is that it's a generic extension of the
-file data, _or_ it's some filesystem-specific hidden data. The way
-you've done it and written the documentation, it's clearly a generic
-extension of normal file data, and I don't see what's fs-specific to
-it.
-
-> The problem is that xattrs are designed to be accessed via a set/get
-> interface, are currently limited, IIRC at 32k.  The max size of an APK
-> is 300 megabytes; and the Merkle tree for a file that size will be
-> about 2.3 megabytes.  That's way too big to store as an xattr;
-> certainly using the existing xattr interfaces.  And it's also bigger
-> than most file systems can handle as xattrs today --- because they've
-> been optimzied for relatively small sizes, for things like SELinux
-> labels and ACL structures.
-
-So *this* kind of argument is what I'm looking for.
-
-That at least explains why it's not an xattr. Ugly, but understandable.
-
-> > So why is this sold as some unholy mess of "filesystem-specific" and
-> > "generic"? That part just annoys the hell out of me. Why isn't this
-> > sold as an *actual* generic model, where you just say "append the
-> > merkle tree to the file, then enable verity testing of the end result
-> > and validate the top-level hash".
+> > > Here's an email that was sent to lkml about the subject:
+> > >
+> > > https://lkml.org/lkml/2018/7/5/742
+> > >
+> > > I link also this, quoting the last of it:
+> > >
+> > > https://lkml.org/lkml/2018/7/5/701
+> > >
+> > > It has never been the case that mknod on a device node will guarantee
+> > > that you even can open the device node.  The applications that regress
+> > > are broken.  It doesn't mean we shouldn't be bug compatible, but we darn
+> > > well should document very clearly the bugs we are being bug compatible with.
 >
-> That was the original way it was sold, but Cristoph and Dave have
-> NACK'ed it in that form.
-
-That seems entirely irrelevant. What do Christoph and Dave have to do
-with it once it's generic? It would have _zero_ filesystem component
-if it's actually done in a generic manner. It would be a total no-op
-to XFS.
-
-Which makes me think "it wasn't actually sold as being
-filesystem-independent" at all.
-
-So I want to understand why this was made a filesystem operation in
-the first place. What's fs-specific about this implementation?
-
-                 Linus
+> Yeah, this is complete garbage.
+>
+> We have very clear rules in the kernel: if some change breaks existing
+> setups, it is ABSOLUTELY NEVER the application that is broken.
+>
+> It is the kernel.
+>
+> There is absolutely zero gray areas here. Eric, your behavior is
+> entirely out of line, and now we apparently have a regression that
+> goes back to June that I was not told about because of your incorrect
+> stance.
+>
+> Eric, I want to make this 1000% clear: there are no user space bugs.
+> If it used to work, then user space was clearly doing the right thing.
+> The fact that you tried to several times claim it was buggy user space
+> is a serious breach of trust. You KNOW this is the case.
+>
+> Seriously. There are no excuses.
+>
+> That commit is now reverted in my tree, and furthermore I will not
+> take any pull requests from you until you have made it clear that you
+> comprehend this very fundamental issue.
+>
+> Why did it take so long for this issue to be elevated to me?
+>
+>                    Linus
