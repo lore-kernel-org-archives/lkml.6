@@ -7,34 +7,32 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D912C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF51FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B9221908
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87E8C21908
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392287AbeLVSb2 (ORCPT
+        id S2392148AbeLVSb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:31:28 -0500
+        Sat, 22 Dec 2018 13:31:26 -0500
 Received: from youngberry.canonical.com ([91.189.89.112]:42517 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392020AbeLVSbR (ORCPT
+        with ESMTP id S2392002AbeLVSbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:31:17 -0500
+        Sat, 22 Dec 2018 13:31:16 -0500
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1gafmx-0004zr-Mu; Sat, 22 Dec 2018 11:49:51 +0000
+        id 1gaftl-0005Qd-IJ; Sat, 22 Dec 2018 11:56:53 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: staging: intel-ipu3: fix unsigned comparison with < 0
-Date:   Sat, 22 Dec 2018 11:49:51 +0000
-Message-Id: <20181222114951.31503-1-colin.king@canonical.com>
+Subject: [PATCH][next] phy: ti: ensure priv is not null before dereferencing it
+Date:   Sat, 22 Dec 2018 11:56:53 +0000
+Message-Id: <20181222115653.32648-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,47 +44,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The comparison css->pipes[pipe].bindex < 0 is always false because
-bindex is an unsigned int.  Fix this by using a signed integer for
-the comparison.
+Currently priv is being dereferenced before priv is being null checked.
+Fix this by moving the null check on priv before the dereference.
 
-Detected by CoverityScan, CID#1476023 ("Unsigned compared against 0")
+Detected by CoverityScan, CID#1476018 ("Dereference before null check")
 
-Fixes: f5f2e4273518 ("media: staging/intel-ipu3: Add css pipeline programming")
+Fixes: 92b58b34741f ("phy: ti: introduce phy-gmii-sel driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/staging/media/ipu3/ipu3-css.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/phy/ti/phy-gmii-sel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
-index 44c55639389a..b9354d2bb692 100644
---- a/drivers/staging/media/ipu3/ipu3-css.c
-+++ b/drivers/staging/media/ipu3/ipu3-css.c
-@@ -1751,7 +1751,7 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 					&q[IPU3_CSS_QUEUE_OUT].fmt.mpix;
- 	struct v4l2_pix_format_mplane *const vf =
- 					&q[IPU3_CSS_QUEUE_VF].fmt.mpix;
--	int i, s;
-+	int i, s, ret;
+diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.c
+index 77fdaa551977..a52c5bb35033 100644
+--- a/drivers/phy/ti/phy-gmii-sel.c
++++ b/drivers/phy/ti/phy-gmii-sel.c
+@@ -204,11 +204,11 @@ static struct phy *phy_gmii_sel_of_xlate(struct device *dev,
  
- 	/* Adjust all formats, get statistics buffer sizes and formats */
- 	for (i = 0; i < IPU3_CSS_QUEUES; i++) {
-@@ -1826,12 +1826,12 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 	s = (bds->height - gdc->height) / 2 - FILTER_SIZE;
- 	env->height = s < MIN_ENVELOPE ? MIN_ENVELOPE : s;
- 
--	css->pipes[pipe].bindex =
--		ipu3_css_find_binary(css, pipe, q, r);
--	if (css->pipes[pipe].bindex < 0) {
-+	ret = ipu3_css_find_binary(css, pipe, q, r);
-+	if (ret < 0) {
- 		dev_err(css->dev, "failed to find suitable binary\n");
- 		return -EINVAL;
- 	}
-+	css->pipes[pipe].bindex = ret;
- 
- 	dev_dbg(css->dev, "Binary index %d for pipe %d found.",
- 		css->pipes[pipe].bindex, pipe);
+ 	if (args->args_count < 1)
+ 		return ERR_PTR(-EINVAL);
++	if (!priv || !priv->if_phys)
++		return ERR_PTR(-ENODEV);
+ 	if (priv->soc_data->features & BIT(PHY_GMII_SEL_RMII_IO_CLK_EN) &&
+ 	    args->args_count < 2)
+ 		return ERR_PTR(-EINVAL);
+-	if (!priv || !priv->if_phys)
+-		return ERR_PTR(-ENODEV);
+ 	if (phy_id > priv->soc_data->num_ports)
+ 		return ERR_PTR(-EINVAL);
+ 	if (phy_id != priv->if_phys[phy_id - 1].id)
 -- 
 2.19.1
 
