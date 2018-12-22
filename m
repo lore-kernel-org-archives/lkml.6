@@ -1,140 +1,119 @@
-Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257E8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA1FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 00:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08DD206A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 23:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875F621903
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 00:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ru/7k8K1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391371AbeLVXqa (ORCPT
+        id S2393024AbeLVX76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 18:46:30 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:40794 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730685AbeLVXq3 (ORCPT
+        Sat, 22 Dec 2018 18:59:58 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33780 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389283AbeLVX76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 18:46:29 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id F304214A8F34B;
-        Sat, 22 Dec 2018 15:46:28 -0800 (PST)
-Date:   Sat, 22 Dec 2018 15:46:26 -0800 (PST)
-Message-Id: <20181222.154626.2057028219500846030.davem@davemloft.net>
-To:     torvalds@linux-foundation.org
-CC:     akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 22 Dec 2018 15:46:29 -0800 (PST)
+        Sat, 22 Dec 2018 18:59:58 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so4301424pfb.0;
+        Sat, 22 Dec 2018 15:59:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CzrEQumzCPoflqB+cpr3eZYEGbewZkL+R4oCy7Et6Po=;
+        b=ru/7k8K1mvqqDX/eeAR4dHlH8IR8I176bAm1XNrZ1Tm+9EdfBe21UQWP3JFIoEiM5R
+         mMG5SH8EELudYfYJQuzme2y7W3HBA0qQ+9FPL1iJq1A3Mh/ZJHs03aLXZFHIesvW3988
+         IT2tKUyGqNY94NHKiKJFcacA7r8dBNZGOmRsPwg0Iwg7jmZbzXn3sEcJRQ83yBoV66+d
+         r2c+jviw7vHinaU/uv9gyievCmJ1exBvMlUJG3rXDLdfUOvMO4cotCgCPAxncE11Zwyx
+         p1DDzQE32uwTioHw+nMM9+WDzfW1ctMzh1FjSN7P7ZILbSOlJAkow3G1dhgRAzVNcaN+
+         yOFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CzrEQumzCPoflqB+cpr3eZYEGbewZkL+R4oCy7Et6Po=;
+        b=a1PQawIPvHcui2LJdfoK1Byxk+VjHyM+tpVHPkwD28OhoDlf5fJZ8e43ts+Y5yBuJd
+         IJmJzPijIzY+oMFjl+/mxqC4ddhSjoJ2ft4VazOud5w0tmLswR5bwU6UaUDAw6YtO49x
+         roQrQsnH3K4FMRrEGk3+2egGZ8l4p0lDkx14uDRPQ0b/idvqMvAp5y+gH4E9FwdL1I7d
+         uiak9lBoRjCKFc3gCWJZ1lMMOYVLJEJ+BPz6Muz+CTfR+pZ/7Lo3JPWP9A+bbIkCjYWx
+         N5SEkQbgPWHRXJjfCRE9iqeAYFuPIJ/v3HWT+ttnEowsGboj96yNnjGihF2gFbF/Y90W
+         yFOQ==
+X-Gm-Message-State: AJcUukeW0t/iH+idjRjTWz7x0j4PPljik9GDOcGTnds1z18YQYt684EO
+        tBT/pT44V6VC/7wbM3/Pe2Q=
+X-Google-Smtp-Source: ALg8bN6nHWNPCUKxkmI6XONOnCv9UCFx9hSJpb/bs7bGQSVjnybMVtWsg7ysz5/LIQyWQgXw7HBQsQ==
+X-Received: by 2002:a65:6684:: with SMTP id b4mr7693572pgw.55.1545523197203;
+        Sat, 22 Dec 2018 15:59:57 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:5663])
+        by smtp.gmail.com with ESMTPSA id l64sm32448093pge.73.2018.12.22.15.59.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Dec 2018 15:59:56 -0800 (PST)
+Date:   Sat, 22 Dec 2018 15:59:54 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     gustavo@embeddedor.com, ast@kernel.org, daniel@iogearbox.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: core: Fix Spectre v1 vulnerability
+Message-ID: <20181222235952.keue7a336sg7jfim@ast-mbp.dhcp.thefacebook.com>
+References: <20181221204901.GA30045@embeddedor>
+ <20181222.150722.1493687829239836271.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181222.150722.1493687829239836271.davem@davemloft.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 22, 2018 at 03:07:22PM -0800, David Miller wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> Date: Fri, 21 Dec 2018 14:49:01 -0600
+> 
+> > flen is indirectly controlled by user-space, hence leading to
+> > a potential exploitation of the Spectre variant 1 vulnerability.
+> > 
+> > This issue was detected with the help of Smatch:
+> > 
+> > net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
+> > 
+> > Fix this by sanitizing flen before using it to index filter at line 1101:
+> > 
+> > 	switch (filter[flen - 1].code) {
+> > 
+> > and through pc at line 1040:
+> > 	
+> > 	const struct sock_filter *ftest = &filter[pc];
+> > 
+> > Notice that given that speculation windows are large, the policy is
+> > to kill the speculation on the first load and not worry if it can be
+> > completed with a dependent load/store [1].
+> > 
+> > [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> > 
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> BPF folks, I'll take this directly.
+> 
+> Applied and queued up for -stable, thanks.
 
-Here is an early pull request for the next merge window:
+hmm. what was the rush?
+I think it is unnecessary change.
+Though fp is passed initially from user space
+it's copied into kernel struct first.
+There is no way user space can force kernel to mispredict
+branch in for (pc = 0; pc < flen; pc++) loop.
+The change doesn't harm, but I don't think it's a good idea
+to sprinkle kernel with array_index_nospec() just because some tool
+produced a warning.
 
-1) Automatic system call table generation, from Firoz Khan.
-
-2) Clean up accesses to the OF device names by using
-   full_name instead of path_component_name.
-
-Please pull, thanks a lot!
-
-The following changes since commit 25e19c1fe421280a47f37c3571aa379e6e67966c:
-
-  Merge tag 'libnvdimm-fixes-4.20-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm (2018-11-18 12:21:09 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git 
-
-for you to fetch changes up to c23b8e7acea3dc034edeb902f0c843856e215938:
-
-  ALSA: sparc: Use of_node_name_eq for node name comparisons (2018-12-05 21:00:02 -0800)
-
-----------------------------------------------------------------
-David S. Miller (2):
-      Merge branch 'sparc-OF-name-and-device_type-rework'
-      Merge branch 'sparc-syscall-gen'
-
-Firoz Khan (4):
-      sparc: move __IGNORE* entries to non uapi header
-      sparc: add __NR_syscalls along with NR_syscalls
-      sparc: add system call table generation support
-      sparc: generate uapi header and system call table files
-
-Rob Herring (12):
-      fs/openpromfs: use full_name instead of path_component_name
-      fs/openpromfs: Use of_node_name_eq for node name comparisons
-      sparc: Convert to using %pOF instead of full_name
-      of: Drop full path from full_name for PDT systems
-      sparc: prom: use property "name" directly to construct node names
-      sparc: Convert to using %pOFn instead of device_node.name
-      sparc: Use of_node_name_eq for node name comparisons
-      sparc: Use device_type helpers to access the node type
-      sparc: Remove unused leon_trans_init
-      sparc: Use DT node full_name instead of name for resources
-      sbus: Use of_node_name_eq for node name comparisons
-      ALSA: sparc: Use of_node_name_eq for node name comparisons
-
- arch/sparc/Makefile                      |   3 +
- arch/sparc/include/asm/Kbuild            |   4 +-
- arch/sparc/include/asm/floppy_64.h       |   8 +-
- arch/sparc/include/asm/leon.h            |   1 -
- arch/sparc/include/asm/parport.h         |   2 +-
- arch/sparc/include/asm/unistd.h          |  18 +++++
- arch/sparc/include/uapi/asm/Kbuild       |   2 +
- arch/sparc/include/uapi/asm/unistd.h     | 426 +----------------------------------------------------------------------------------------------------------
- arch/sparc/kernel/auxio_64.c             |  11 ++-
- arch/sparc/kernel/central.c              |   2 +-
- arch/sparc/kernel/chmc.c                 |   8 +-
- arch/sparc/kernel/ioport.c               |   2 +-
- arch/sparc/kernel/irq_64.c               |   2 +-
- arch/sparc/kernel/leon_kernel.c          |  14 ----
- arch/sparc/kernel/of_device_32.c         |  21 +++---
- arch/sparc/kernel/of_device_64.c         |  58 +++++++--------
- arch/sparc/kernel/of_device_common.c     |   4 +-
- arch/sparc/kernel/pci.c                  |  44 +++++------
- arch/sparc/kernel/pci_sabre.c            |   2 +-
- arch/sparc/kernel/power.c                |   4 +-
- arch/sparc/kernel/process_32.c           |   2 +-
- arch/sparc/kernel/prom_32.c              |  44 +++++------
- arch/sparc/kernel/prom_64.c              |  75 ++++++++++---------
- arch/sparc/kernel/prom_irqtrans.c        |  20 ++---
- arch/sparc/kernel/reboot.c               |   3 +-
- arch/sparc/kernel/sbus.c                 |   4 +-
- arch/sparc/kernel/sun4d_irq.c            |  14 ++--
- arch/sparc/kernel/syscalls/Makefile      |  55 ++++++++++++++
- arch/sparc/kernel/syscalls/syscall.tbl   | 409 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/sparc/kernel/syscalls/syscallhdr.sh |  36 +++++++++
- arch/sparc/kernel/syscalls/syscalltbl.sh |  36 +++++++++
- arch/sparc/kernel/systbls_32.S           |  81 +--------------------
- arch/sparc/kernel/systbls_64.S           | 157 +---------------------------------------
- arch/sparc/kernel/time_64.c              |  16 ++--
- arch/sparc/kernel/vio.c                  |   9 +--
- drivers/of/pdt.c                         |  50 ++++---------
- drivers/sbus/char/bbc_envctrl.c          |   4 +-
- drivers/sbus/char/envctrl.c              |   6 +-
- drivers/sbus/char/flash.c                |   6 +-
- fs/openpromfs/inode.c                    |  11 +--
- include/linux/of.h                       |   1 -
- sound/sparc/cs4231.c                     |   6 +-
- 42 files changed, 777 insertions(+), 904 deletions(-)
- create mode 100644 arch/sparc/kernel/syscalls/Makefile
- create mode 100644 arch/sparc/kernel/syscalls/syscall.tbl
- create mode 100644 arch/sparc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/sparc/kernel/syscalls/syscalltbl.sh
