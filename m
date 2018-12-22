@@ -2,70 +2,54 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C33C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1943D21A7E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:40:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DL4psxFy"
+	by mail.kernel.org (Postfix) with ESMTP id C1A2021A4E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392641AbeLVRkr (ORCPT
+        id S2392698AbeLVRlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:40:47 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40068 "EHLO mail.skyhub.de"
+        Sat, 22 Dec 2018 12:41:01 -0500
+Received: from ozlabs.org ([203.11.71.1]:36957 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391670AbeLVRkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:40:47 -0500
-Received: from zn.tnic (p200300EC2BD1800084260E574037D059.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8000:8426:e57:4037:d059])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A4E371EC0958;
-        Sat, 22 Dec 2018 12:44:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545479090;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=KMd4LVsZ76H5MjJvkbm14bUfh7gaUd6nMYJZb0k5hFc=;
-        b=DL4psxFymz32qgGbVH1CRm+VFPXxJoupMTCurVus+oc7ebBFb6xrVC9nWf9tzyH5JJvwy6
-        xNGSl0KdwWQXY6iWfgThqadIa5Nm25hIFQVzJxIoXy7xn/hfStm2mc2O+eFNQESqQ00MRq
-        JRc4UEW1uoR7PVS902ul06EoLvkLml4=
-Date:   Sat, 22 Dec 2018 12:44:46 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [GIT PULL] Last straggler for 4.20-rc8 or final
-Message-ID: <20181222114446.GA9314@zn.tnic>
-References: <1545397742-48818-1-git-send-email-pbonzini@redhat.com>
- <20181221224040.GA25147@zn.tnic>
- <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b54245cb-d029-02a5-d854-129ea7734336@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2389743AbeLVRlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 12:41:00 -0500
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 43MLSS74Mqz9sNG; Sat, 22 Dec 2018 20:54:32 +1100 (AEDT)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: c62ce9ef97ba8af4120c766c32e230215dd4df04
+X-Patchwork-Hint: ignore
+In-Reply-To: <b5b092b3ed537d9d71e0f8763ccd045da05ef40e.1543912653.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        David Gibson <david@gibson.dropbear.id.au>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc: remove remaining bits from CONFIG_APUS
+Message-Id: <43MLSS74Mqz9sNG@ozlabs.org>
+Date:   Sat, 22 Dec 2018 20:54:32 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 08:47:43AM +0100, Paolo Bonzini wrote:
-> Right, and also I will have to provide you with a topic branch to base
-> that patch on.
+On Tue, 2018-12-04 at 17:59:15 UTC, Christophe Leroy wrote:
+> commit f21f49ea639a ("[POWERPC] Remove the dregs of APUS support from
+> arch/powerpc") removed CONFIG_APUS, but forgot to remove the logic
+> which adapts tophys() and tovirt() for it.
+> 
+> This patch removes the last stale pieces.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Ok, sure.
+Applied to powerpc next, thanks.
 
-Thx.
+https://git.kernel.org/powerpc/c/c62ce9ef97ba8af4120c766c32e230
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+cheers
