@@ -2,84 +2,74 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A34C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485E9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D419F205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545500958;
-	bh=DaAzHAai168wXP+15NGa1LCxICl+yYOaLMUe34V9F5o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=azWbGZ+XniYQHwoLk4y7ytdYqq6qVYAseRdaS/v3sGt5LqpOnGdHpiWeAN/xGyGBD
-	 VUHYnUUXjge6xmqlNOtO5um12vv7RXwOkUJdfyRY95zN8wjlOB6g0SISj6wVO9jMmf
-	 V342zm9cPFLKV3q74goGWyU83uE9BOEYwWVMrf5U=
+	by mail.kernel.org (Postfix) with ESMTP id 166432054F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:49:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392788AbeLVRtR (ORCPT
+        id S2392795AbeLVRtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:49:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34172 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 12:49:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389642AbeLVRrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389629AbeLVRrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Dec 2018 12:47:14 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.76.9.36])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B98F21A1A;
-        Sat, 22 Dec 2018 09:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545469666;
-        bh=DaAzHAai168wXP+15NGa1LCxICl+yYOaLMUe34V9F5o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=STE8fTsSzlSkHnwsZhRfEEzjyO0UsWc2v+fgLAtzOtSz0m6/qyPsHRMrZSlupgfHX
-         VFnwzeXNJsNz9yL1XWO6tnFlsdSeFTOgfPapqKA3wQcdkcE8sJwVL1zrRWUDVNVaLG
-         s5+oizqCmKtXnRujp4NVq8hV5nBDm3hMeShU3WhY=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 11/11] drivers: thermal: Make PCI dependency explicit
-Date:   Sat, 22 Dec 2018 09:07:20 +0000
-Message-Id: <20181222090720.19234-12-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181222090720.19234-1-okaya@kernel.org>
-References: <20181222090720.19234-1-okaya@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A86021A7B;
+        Sat, 22 Dec 2018 12:26:39 +0000 (UTC)
+Date:   Sat, 22 Dec 2018 07:26:37 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Malcolm Priestley <tvboxspy@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
+ macro
+Message-ID: <20181222072637.2aac3477@vmware.local.home>
+In-Reply-To: <e1b3abf2-e7cc-6bfe-f768-8277bb122c11@gmail.com>
+References: <20181221175618.968519903@goodmis.org>
+        <20181221175659.208858193@goodmis.org>
+        <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+        <e1b3abf2-e7cc-6bfe-f768-8277bb122c11@gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOSF_CORE depends on PCI. This was never mentioned.
+On Sat, 22 Dec 2018 10:20:02 +0000
+Malcolm Priestley <tvboxspy@gmail.com> wrote:
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
----
- drivers/thermal/intel/int340x_thermal/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > Calling it "strncmp_prefix()" when there is no "n" there makes no sense.
+> > 
+> > So drop the "n" from the name.
+> >   
+> Being British the 'n' implies 'and' and still being interpreted Boolean.
+> 
+> strncmp = string and compare
+> 
+> Like other of our words Fish'n'Chips, Salt'n'Shake.
+> 
+> I don't think these abbreviations exist in American English.
 
-diff --git a/drivers/thermal/intel/int340x_thermal/Kconfig b/drivers/thermal/intel/int340x_thermal/Kconfig
-index 0582bd12a239..0ca908d12750 100644
---- a/drivers/thermal/intel/int340x_thermal/Kconfig
-+++ b/drivers/thermal/intel/int340x_thermal/Kconfig
-@@ -4,7 +4,7 @@
- 
- config INT340X_THERMAL
- 	tristate "ACPI INT340X thermal drivers"
--	depends on X86 && ACPI
-+	depends on X86 && ACPI && PCI
- 	select THERMAL_GOV_USER_SPACE
- 	select ACPI_THERMAL_REL
- 	select ACPI_FAN
--- 
-2.19.0
+No, no, they actually do exist in American English.
 
+But when people ask me which language is my mother tongue, I simply
+reply "C". In which case, 'n' means number.
+
+-- Steve
