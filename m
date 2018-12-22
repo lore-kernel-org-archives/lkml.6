@@ -2,180 +2,172 @@ Return-Path: <SRS0=SmvU=O7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCA4C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2135C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12A820866
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 17:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545501541;
-	bh=lAAZCFw4DlnkOCCuYcVStPQclYyVqywrQNY1Kx+RIvY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=vYsJlPS3T51dyd77HSvuzW7q2pl4xSyzRj0qF7Cdqk5Q6dbduUn14dzZ1dNBbONMs
-	 udqPwRxpxo4wdlPEv5N+ES/NW2yyISqzsQF3AxkXJiLrAi6MB/kM+/Cq8gG+DSO24C
-	 GyWOmhQXclBhUxsQQpuZVTJmFS4L24XviRa090Rc=
+	by mail.kernel.org (Postfix) with ESMTP id BC38A218FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Dec 2018 18:01:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387590AbeLVR7B (ORCPT
+        id S2388336AbeLVSBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:59:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38518 "EHLO mail.kernel.org"
+        Sat, 22 Dec 2018 13:01:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeLVR7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 12:59:00 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        id S1732686AbeLVSBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Dec 2018 13:01:12 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ADCA2080D;
-        Sat, 22 Dec 2018 17:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545501539;
-        bh=lAAZCFw4DlnkOCCuYcVStPQclYyVqywrQNY1Kx+RIvY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fVSFDARWngKHtX3bGSqp89xTJMdyMYffYOoJw1AP8FDHo47OgeBBaNDi7PMTVysIe
-         GGxC9obf7YslJilYG25OZwJi6S+BMg8meB30Po1uhcmZ2uqYbVc4edlaPKjjr7wQ3A
-         2/KX8qJI3qPNmhYdvhI672eBjtyuq20pGTR4Bl68=
-Date:   Sat, 22 Dec 2018 17:58:52 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>
-Subject: Re: [PATCH v2 6/6] dt-bindings: iio: adc: Add docs for AD7606 ADC
-Message-ID: <20181222175852.52ff83f7@archlinux>
-In-Reply-To: <1545049420-16484-7-git-send-email-stefan.popa@analog.com>
-References: <1545049420-16484-1-git-send-email-stefan.popa@analog.com>
-        <1545049420-16484-7-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C892080D;
+        Sat, 22 Dec 2018 18:01:09 +0000 (UTC)
+Date:   Sat, 22 Dec 2018 13:01:07 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
+Subject: Re: [for-next][PATCH 2/5] tracing: Use str_has_prefix() helper for
+ histogram code
+Message-ID: <20181222130107.43aaac9c@gandalf.local.home>
+In-Reply-To: <20181222162856.666843139@goodmis.org>
+References: <20181222162007.697862256@goodmis.org>
+        <20181222162856.666843139@goodmis.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 14:23:40 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+On Sat, 22 Dec 2018 11:20:09 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> Document support for AD7606 Analog to Digital Converter.
->=20
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> The tracing histogram code contains a lot of instances of the construct:
+> 
+>  strncmp(str, "const", sizeof("const") - 1)
+> 
+> This can be prone to bugs due to typos or bad cut and paste. Use the
+> str_has_prefix() helper macro instead that removes the need for having two
+> copies of the constant string.
+> 
+> Cc: Tom Zanussi <zanussi@linux.intel.com>
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for this to be mostly ignored.  Thanks,
+I have no idea why I copied your intel email. The linux.intel.com
+appears to be no longer active. I'm going to rebase to fix this email
+address.
 
-Jonathan
+-- Steve
 
+
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.txt     | 65 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7606.=
-txt
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.txt b/D=
-ocumentation/devicetree/bindings/iio/adc/adi,ad7606.txt
-> new file mode 100644
-> index 0000000..d7b6241
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.txt
-> @@ -0,0 +1,65 @@
-> +Analog Devices AD7606 Simultaneous Sampling ADC
-> +
-> +Required properties for the AD7606:
-> +
-> +- compatible: Must be one of
-> +	* "adi,ad7605-4"
-> +	* "adi,ad7606-8"
-> +	* "adi,ad7606-6"
-> +	* "adi,ad7606-4"
-> +- reg: SPI chip select number for the device
-> +- spi-max-frequency: Max SPI frequency to use
-> +	see: Documentation/devicetree/bindings/spi/spi-bus.txt
-> +- spi-cpha: See Documentation/devicetree/bindings/spi/spi-bus.txt
-> +- avcc-supply: phandle to the Avcc power supply
-> +- interrupts: IRQ line for the ADC
-> +	see: Documentation/devicetree/bindings/interrupt-controller/interrupts.=
-txt
-> +- adi,conversion-start-gpios: must be the device tree identifier of the =
-CONVST pin.
-> +		  This logic input is used to initiate conversions on the analog
-> +		  input channels. As the line is active high, it should be marked
-> +		  GPIO_ACTIVE_HIGH.
-> +
-> +Optional properties:
-> +
-> +- reset-gpios: must be the device tree identifier of the RESET pin. If s=
-pecified,
-> +	       it will be asserted during driver probe. As the line is active h=
-igh,
-> +	       it should be marked GPIO_ACTIVE_HIGH.
-> +- standby-gpios: must be the device tree identifier of the STBY pin. Thi=
-s pin is used
-> +		to place the AD7606 into one of two power-down modes, Standby mode or
-> +		Shutdown mode. As the line is active low, it should be marked
-> +		GPIO_ACTIVE_LOW.
-> +- adi,first-data-gpios: must be the device tree identifier of the FRSTDA=
-TA pin.
-> +		    The FRSTDATA output indicates when the first channel, V1, is
-> +		    being read back on either the parallel, byte or serial interface.
-> +		    As the line is active high, it should be marked GPIO_ACTIVE_HIGH.
-> +- adi,range-gpios: must be the device tree identifier of the RANGE pin. =
-The polarity on
-> +	      this pin determines the input range of the analog input channels.=
- If
-> +	      this pin is tied to a logic high, the analog input range is =C2=
-=B110V for
-> +	      all channels. If this pin is tied to a logic low, the analog inpu=
-t range
-> +	      is =C2=B15V for all channels. As the line is active high, it shou=
-ld be marked
-> +	      GPIO_ACTIVE_HIGH.
-> +- adi,oversampling-ratio-gpios: must be the device tree identifier of th=
-e over-sampling
-> +				mode pins. As the line is active high, it should be marked
-> +				GPIO_ACTIVE_HIGH.
-> +
-> +Example:
-> +
-> +	adc@0 {
-> +		compatible =3D "adi,ad7606-8";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <1000000>;
-> +		spi-cpol;
-> +
-> +		avcc-supply =3D <&adc_vref>;
-> +
-> +		interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
-> +		interrupt-parent =3D <&gpio>;
-> +
-> +		adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>;
-> +		reset-gpios =3D <&gpio 27 GPIO_ACTIVE_HIGH>;
-> +		adi,first-data-gpios =3D <&gpio 22 GPIO_ACTIVE_HIGH>;
-> +		adi,oversampling-ratio-gpios =3D <&gpio 18 GPIO_ACTIVE_HIGH
-> +						&gpio 23 GPIO_ACTIVE_HIGH
-> +						&gpio 26 GPIO_ACTIVE_HIGH>;
-> +		standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bc9f816..d039f66 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -860,6 +860,7 @@ L:	linux-iio@vger.kernel.org
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	drivers/iio/adc/ad7606.c
-> +F:	Documentation/devicetree/bindings/iio/adc/ad7606.txt
-> =20
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
+>  kernel/trace/trace_events_hist.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index c5448c103770..9d590138f870 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -1881,8 +1881,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
+>  	if (attrs->n_actions >= HIST_ACTIONS_MAX)
+>  		return ret;
+>  
+> -	if ((strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) ||
+> -	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0)) {
+> +	if ((str_has_prefix(str, "onmatch(")) ||
+> +	    (str_has_prefix(str, "onmax("))) {
+>  		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
+>  		if (!attrs->action_str[attrs->n_actions]) {
+>  			ret = -ENOMEM;
+> @@ -1899,34 +1899,34 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
+>  {
+>  	int ret = 0;
+>  
+> -	if ((strncmp(str, "key=", sizeof("key=") - 1) == 0) ||
+> -	    (strncmp(str, "keys=", sizeof("keys=") - 1) == 0)) {
+> +	if ((str_has_prefix(str, "key=")) ||
+> +	    (str_has_prefix(str, "keys="))) {
+>  		attrs->keys_str = kstrdup(str, GFP_KERNEL);
+>  		if (!attrs->keys_str) {
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -	} else if ((strncmp(str, "val=", sizeof("val=") - 1) == 0) ||
+> -		 (strncmp(str, "vals=", sizeof("vals=") - 1) == 0) ||
+> -		 (strncmp(str, "values=", sizeof("values=") - 1) == 0)) {
+> +	} else if ((str_has_prefix(str, "val=")) ||
+> +		   (str_has_prefix(str, "vals=")) ||
+> +		   (str_has_prefix(str, "values="))) {
+>  		attrs->vals_str = kstrdup(str, GFP_KERNEL);
+>  		if (!attrs->vals_str) {
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -	} else if (strncmp(str, "sort=", sizeof("sort=") - 1) == 0) {
+> +	} else if (str_has_prefix(str, "sort=")) {
+>  		attrs->sort_key_str = kstrdup(str, GFP_KERNEL);
+>  		if (!attrs->sort_key_str) {
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -	} else if (strncmp(str, "name=", sizeof("name=") - 1) == 0) {
+> +	} else if (str_has_prefix(str, "name=")) {
+>  		attrs->name = kstrdup(str, GFP_KERNEL);
+>  		if (!attrs->name) {
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -	} else if (strncmp(str, "clock=", sizeof("clock=") - 1) == 0) {
+> +	} else if (str_has_prefix(str, "clock=")) {
+>  		strsep(&str, "=");
+>  		if (!str) {
+>  			ret = -EINVAL;
+> @@ -1939,7 +1939,7 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
+>  			ret = -ENOMEM;
+>  			goto out;
+>  		}
+> -	} else if (strncmp(str, "size=", sizeof("size=") - 1) == 0) {
+> +	} else if (str_has_prefix(str, "size=")) {
+>  		int map_bits = parse_map_size(str);
+>  
+>  		if (map_bits < 0) {
+> @@ -3558,7 +3558,7 @@ static struct action_data *onmax_parse(char *str)
+>  	if (!onmax_fn_name || !str)
+>  		goto free;
+>  
+> -	if (strncmp(onmax_fn_name, "save", sizeof("save") - 1) == 0) {
+> +	if (str_has_prefix(onmax_fn_name, "save")) {
+>  		char *params = strsep(&str, ")");
+>  
+>  		if (!params) {
+> @@ -4346,7 +4346,7 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
+>  		str = hist_data->attrs->action_str[i];
+>  
+> -		if (strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) {
+> +		if (str_has_prefix(str, "onmatch(")) {
+>  			char *action_str = str + sizeof("onmatch(") - 1;
+>  
+>  			data = onmatch_parse(tr, action_str);
+> @@ -4355,7 +4355,7 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+>  				break;
+>  			}
+>  			data->fn = action_trace;
+> -		} else if (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0) {
+> +		} else if (str_has_prefix(str, "onmax(")) {
+>  			char *action_str = str + sizeof("onmax(") - 1;
+>  
+>  			data = onmax_parse(action_str);
 
