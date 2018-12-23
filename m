@@ -2,134 +2,74 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD51BC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 17:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F8FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 17:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BD5217F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 17:19:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ljsMjeyC"
+	by mail.kernel.org (Postfix) with ESMTP id D9889217F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 17:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725817AbeLWRTp (ORCPT
+        id S1725845AbeLWRX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 12:19:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56178 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbeLWRTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 12:19:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BKMdZRzF2Gst15kdL0mdX/Y4isLsoiPx0spM1T0uI5M=; b=ljsMjeyCzSw/J7FfhyqvBdtiv
-        VGHCu52V2TFQq+V04WzP9I4EmoQoY95t54315HcA91gR28Wr4O3QZN9/zQBuUDJqDdIMVbxMYilPU
-        W2zpnvCnXEKc4Fd4+1oLYaDLEoAd7esxrTZbfG9T3d/eWcI+Z0cVzS9H2umayDQbkf95O3i07UMQ0
-        feLUC0D5SznJyTt+iC2AYnLul7FfkutOPibqOUrVxjqettJG35NxSluvw0gGwtN1Fph8ULBCv2iEm
-        P2399fSilvn0+vA/Jcrup2gXxfNk4+lxk1KLBXVACeTh+vwD6mLfuk5gpgGC0mp3YShgLO6+TvqlP
-        BKcQ6RthA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gb7Pf-0007qt-Pa; Sun, 23 Dec 2018 17:19:39 +0000
-Subject: Re: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-To:     Pawel Laszczak <pawell@cadence.com>, devicetree@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com,
-        linux-usb@vger.kernel.org, hdegoede@redhat.com,
-        heikki.krogerus@linux.intel.com, andy.shevchenko@gmail.com,
-        robh+dt@kernel.org, rogerq@ti.com, linux-kernel@vger.kernel.org,
-        adouglas@cadence.com, jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com,
-        sureshp@cadence.com, peter.chen@nxp.com, pjez@cadence.com,
-        kurahul@cadence.com
-References: <1545577992-4013-1-git-send-email-pawell@cadence.com>
- <1545577992-4013-6-git-send-email-pawell@cadence.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9b55eb76-70d8-a53a-b7d2-985dfe7d6fed@infradead.org>
-Date:   Sun, 23 Dec 2018 09:19:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 23 Dec 2018 12:23:59 -0500
+Received: from mga06.intel.com ([134.134.136.31]:19449 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbeLWRX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 12:23:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2018 09:23:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,388,1539673200"; 
+   d="scan'208";a="120572638"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by orsmga002.jf.intel.com with ESMTP; 23 Dec 2018 09:23:56 -0800
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc-next] mei: squash single_recv_buf into one bit in client properties
+Date:   Sun, 23 Dec 2018 20:17:51 +0200
+Message-Id: <20181223181751.8913-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1545577992-4013-6-git-send-email-pawell@cadence.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-Here are a few Kconfig text corrections.
+single_recv_buf member of struct mei_client_properties has a boolean
+value and can be represented in on bit, to free other 7 bits
+for another usage.
 
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/hw.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 12/23/18 7:13 AM, Pawel Laszczak wrote:
-> diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
-> new file mode 100644
-> index 000000000000..4adfd87811e8
-> --- /dev/null
-> +++ b/drivers/usb/cdns3/Kconfig
-> @@ -0,0 +1,44 @@
-> +config USB_CDNS3
-> +	tristate "Cadence USB3 Dual-Role Controller"
-> +	depends on USB_SUPPORT && (USB || USB_GADGET) && HAS_DMA
-> +	help
-> +	  Say Y here if your system has a cadence USB3 dual-role controller.
-> +	  It supports: dual-role switch, Host-only, and Peripheral-only.
-> +
-> +	  If you choose to build this driver is a dynamically linked
-
-	                                     as
-
-> +	  module, the module will be called cdns3.ko.
-> +
-> +if USB_CDNS3
-> +
-> +config USB_CDNS3_GADGET
-> +        bool "Cadence USB3 device controller"
-> +        depends on USB_GADGET
-> +        help
-> +          Say Y here to enable device controller functionality of the
-> +          cadence USBSS-DEV driver.
-> +
-> +          This controller supports FF, HS and SS mode. It doesn't support
-> +          LS and SSP mode
-
-	                mode.
-
-> +
-> +config USB_CDNS3_HOST
-> +        bool "Cadence USB3 host controller"
-> +        depends on USB_XHCI_HCD
-> +        help
-> +          Say Y here to enable host controller functionality of the
-> +          cadence driver.
-> +
-> +          Host controller is compliance with XHCI so it will use
-
-	                        compliant
-
-> +          standard XHCI driver.
-> +
-> +config USB_CDNS3_PCI_WRAP
-> +	tristate "Cadence USB3 support on PCIe-based platforms"
-> +	depends on USB_PCI && ACPI
-> +	default USB_CDNS3
-> +	help
-> +	  If you're using the USBSS Core IP with a PCIe, please say
-> +	  'Y' or 'M' here.
-> +
-> +	  If you choose to build this driver as module it will
-> +	  be dynamically linked and module will be called cdns3-pci.ko
-> +
-> +endif
-
-
-g'day.
+diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
+index 2b7f7677f8cc..b7d2487b8409 100644
+--- a/drivers/misc/mei/hw.h
++++ b/drivers/misc/mei/hw.h
+@@ -311,7 +311,8 @@ struct mei_client_properties {
+ 	u8 protocol_version;
+ 	u8 max_number_of_connections;
+ 	u8 fixed_address;
+-	u8 single_recv_buf;
++	u8 single_recv_buf:1;
++	u8 reserved:7;
+ 	u32 max_msg_length;
+ } __packed;
+ 
 -- 
-~Randy
+2.20.1
+
