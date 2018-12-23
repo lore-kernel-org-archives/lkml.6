@@ -2,95 +2,58 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2DEC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 02:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37212C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 02:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4C921927
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 02:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E8AA21929
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 02:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393068AbeLWCkz (ORCPT
+        id S2405097AbeLWCmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 21:40:55 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:42126 "EHLO
+        Sat, 22 Dec 2018 21:42:19 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:42136 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389000AbeLWCky (ORCPT
+        with ESMTP id S2404416AbeLWCmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 21:40:54 -0500
+        Sat, 22 Dec 2018 21:42:18 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DB1E314BF32B5;
-        Sat, 22 Dec 2018 18:40:53 -0800 (PST)
-Date:   Sat, 22 Dec 2018 18:40:51 -0800 (PST)
-Message-Id: <20181222.184051.718127928973898182.davem@davemloft.net>
-To:     alexei.starovoitov@gmail.com
-Cc:     gustavo@embeddedor.com, ast@kernel.org, daniel@iogearbox.net,
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DC2EA14BF32B5;
+        Sat, 22 Dec 2018 18:42:17 -0800 (PST)
+Date:   Sat, 22 Dec 2018 18:42:17 -0800 (PST)
+Message-Id: <20181222.184217.692941087610805245.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     sameo@linux.intel.com, linux-wireless@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: core: Fix Spectre v1 vulnerability
+Subject: Re: [PATCH] nfc: af_nfc: Fix Spectre v1 vulnerability
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181222235952.keue7a336sg7jfim@ast-mbp.dhcp.thefacebook.com>
-References: <20181221204901.GA30045@embeddedor>
-        <20181222.150722.1493687829239836271.davem@davemloft.net>
-        <20181222235952.keue7a336sg7jfim@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <db8937bf-3dd3-f498-d983-ee98582d9f75@embeddedor.com>
+References: <20181221214753.GA2799@embeddedor>
+        <20181222.150946.778308321544627589.davem@davemloft.net>
+        <db8937bf-3dd3-f498-d983-ee98582d9f75@embeddedor.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 22 Dec 2018 18:40:54 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 22 Dec 2018 18:42:18 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sat, 22 Dec 2018 15:59:54 -0800
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Sat, 22 Dec 2018 17:37:35 -0600
 
-> On Sat, Dec 22, 2018 at 03:07:22PM -0800, David Miller wrote:
->> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
->> Date: Fri, 21 Dec 2018 14:49:01 -0600
->> 
->> > flen is indirectly controlled by user-space, hence leading to
->> > a potential exploitation of the Spectre variant 1 vulnerability.
->> > 
->> > This issue was detected with the help of Smatch:
->> > 
->> > net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
->> > 
->> > Fix this by sanitizing flen before using it to index filter at line 1101:
->> > 
->> > 	switch (filter[flen - 1].code) {
->> > 
->> > and through pc at line 1040:
->> > 	
->> > 	const struct sock_filter *ftest = &filter[pc];
->> > 
->> > Notice that given that speculation windows are large, the policy is
->> > to kill the speculation on the first load and not worry if it can be
->> > completed with a dependent load/store [1].
->> > 
->> > [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
->> > 
->> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> 
->> BPF folks, I'll take this directly.
->> 
->> Applied and queued up for -stable, thanks.
+> I wonder if you can take this one too:
 > 
-> hmm. what was the rush?
-> I think it is unnecessary change.
-> Though fp is passed initially from user space
-> it's copied into kernel struct first.
-> There is no way user space can force kernel to mispredict
-> branch in for (pc = 0; pc < flen; pc++) loop.
-> The change doesn't harm, but I don't think it's a good idea
-> to sprinkle kernel with array_index_nospec() just because some tool
-> produced a warning.
+> https://lore.kernel.org/lkml/20181221212229.GA32635@embeddedor/
+> 
+> It's pretty similar to the af_nfc one.
 
-Ok, that makes sense, I can revert.
-
-Just let me know.
+Sure, done.
