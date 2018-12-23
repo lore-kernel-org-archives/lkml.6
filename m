@@ -2,111 +2,114 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC14EC43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6EEC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930FE2075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5026D2184E
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeLWMwb (ORCPT
+        id S1728441AbeLWMxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 07:52:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:22583 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeLWMwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 07:52:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2018 04:52:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,386,1539673200"; 
-   d="scan'208";a="112774162"
-Received: from dlu2-mobl4.ccr.corp.intel.com (HELO localhost) ([10.249.254.240])
-  by orsmga003.jf.intel.com with ESMTP; 23 Dec 2018 04:52:24 -0800
-Date:   Sun, 23 Dec 2018 14:52:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181223125114.GA7051@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181220103204.GB26410@linux.intel.com>
- <20181222081649.GB8895@linux.intel.com>
- <20181222082502.GA13275@linux.intel.com>
+        Sun, 23 Dec 2018 07:53:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57430 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725868AbeLWMxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 07:53:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36D93ACFA;
+        Sun, 23 Dec 2018 12:53:40 +0000 (UTC)
+Date:   Sun, 23 Dec 2018 13:53:39 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] RAS updates for 4.21
+Message-ID: <20181223125339.GC26860@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181222082502.GA13275@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 10:25:02AM +0200, Jarkko Sakkinen wrote:
-> On Sat, Dec 22, 2018 at 10:16:49AM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
-> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > > opening a new instance of /dev/sgx for each encalve?
-> > > 
-> > > I think that fits better to the SCM_RIGHTS scenario i.e. you could send
-> > > the enclav to a process that does not have necessarily have rights to
-> > > /dev/sgx. Gives more robust environment to configure SGX.
-> > 
-> > Sean, is this why you wanted enclave fd and anon inode and not just use
-> > the address space of /dev/sgx? Just taking notes of all observations.
-> > I'm not sure what your rationale was (maybe it was somewhere). This was
-> > something I made up, and this one is wrong deduction. You can easily
-> > get the same benefit with /dev/sgx associated fd representing the
-> > enclave.
-> > 
-> > This all means that for v19 I'm going without enclave fd involved with
-> > fd to /dev/sgx representing the enclave. No anon inodes will be
-> > involved.
-> 
-> Based on these observations I updated the uapi.
-> 
-> As far as I'm concerned there has to be a solution to do EPC mapping
-> with a sequence:
-> 
-> 1. Ping /dev/kvm to do something.
-> 2. KVM asks SGX core to do something.
-> 3. SGX core does something.
-> 
-> I don't care what the something is exactly is, but KVM is the only sane
-> place for KVM uapi. I would be surprised if KVM maintainers didn't agree
-> that they don't want to sprinkle KVM uapi to random places in other
-> subsystems.
+Hi Linus,
 
-The one option to consider to do would be to have a device driver for
-KVM if you really want this e.g. something like /dev/vsgx. With the
-current knowledge I'm not yet sure why all could not be done just
-through /dev/kvm.
+please pull the latest ras-core-for-linus tree from:
 
-/Jarkko
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+
+This time around we have a subsystem reorganization to offer, with the new
+directory being
+
+  arch/x86/kernel/cpu/mce/
+
+and all compilation units' names streamlined under it.
+
+Thanks,
+Boris.
+
+------------------>
+
+The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
+
+  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+
+for you to fetch changes up to 72a8f089c382c078f8c7c1c759cb726de80d4284:
+
+  x86/mce: Restore MCE injector's module name (2018-12-19 00:04:36 +0100)
+
+----------------------------------------------------------------
+Borislav Petkov (3):
+      x86/mce: Streamline MCE subsystem's naming
+      x86/mce: Unify pr_* prefix
+      x86/mce: Restore MCE injector's module name
+
+ arch/x86/kernel/cpu/Makefile                                  |  2 +-
+ arch/x86/kernel/cpu/{mcheck => mce}/Makefile                  | 10 ++++++----
+ arch/x86/kernel/cpu/{mcheck/mce_amd.c => mce/amd.c}           |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-apei.c => mce/apei.c}         |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce.c => mce/core.c}              |  4 +---
+ arch/x86/kernel/cpu/{mcheck => mce}/dev-mcelog.c              |  4 +---
+ arch/x86/kernel/cpu/{mcheck/mce-genpool.c => mce/genpool.c}   |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-inject.c => mce/inject.c}     |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce_intel.c => mce/intel.c}       |  2 +-
+ arch/x86/kernel/cpu/{mcheck/mce-internal.h => mce/internal.h} |  3 +++
+ arch/x86/kernel/cpu/{mcheck => mce}/p5.c                      |  2 ++
+ arch/x86/kernel/cpu/{mcheck/mce-severity.c => mce/severity.c} |  2 +-
+ arch/x86/kernel/cpu/{mcheck => mce}/therm_throt.c             |  2 ++
+ arch/x86/kernel/cpu/{mcheck => mce}/threshold.c               |  2 ++
+ arch/x86/kernel/cpu/{mcheck => mce}/winchip.c                 |  2 ++
+ 15 files changed, 26 insertions(+), 17 deletions(-)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/Makefile (61%)
+ rename arch/x86/kernel/cpu/{mcheck/mce_amd.c => mce/amd.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce-apei.c => mce/apei.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce.c => mce/core.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/dev-mcelog.c (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce-genpool.c => mce/genpool.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce-inject.c => mce/inject.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce_intel.c => mce/intel.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck/mce-internal.h => mce/internal.h} (98%)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/p5.c (98%)
+ rename arch/x86/kernel/cpu/{mcheck/mce-severity.c => mce/severity.c} (99%)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/therm_throt.c (99%)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/threshold.c (96%)
+ rename arch/x86/kernel/cpu/{mcheck => mce}/winchip.c (97%)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
