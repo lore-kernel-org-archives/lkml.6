@@ -2,111 +2,110 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BE8C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A07FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC4B21903
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:03:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fDhcKk9T"
+	by mail.kernel.org (Postfix) with ESMTP id 332DC21905
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545548779;
+	bh=/IRgEhh4S6jOmgBaHMpIRddXKjaSNutLCJ166j/V6wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mkXK72jU7AO9QOXPV0adzUyqn6nwLWTsyof/Z6x9HjGxIQEzCjf0h1EVcqh73Xe/F
+	 v1NFM8U1Dp/nWLUcNMYeSfm3mHs8h9ItK21o2EqN6v2vDG4g4lwcDT+s6JPPy8u9bp
+	 uvO35OwS2eJNmH8YJnMyMRPGdOdG+eH0us5CIcGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbeLWHDe (ORCPT
+        id S1726851AbeLWHGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 02:03:34 -0500
-Received: from mail-eopbgr20051.outbound.protection.outlook.com ([40.107.2.51]:30784
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726338AbeLWHDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 02:03:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1NAp17NNzhGayieLlIiR3z/p3asRkbUs4xjbeYbmkyY=;
- b=fDhcKk9T30MhKZU2xdkR0psdMs9/a7+/oM+a2vJRj5SmadF47DQ1Q5JEf9TGfCQp7NeELWLXd1T70XW5FGwm/RaMNw488z/8ennsxFu5jKRVdkd8FEPgIxs924dRTvlnO/GZxwFPrRM1G9NRlbXPB2T4269eTr6Id3NnyOXbQiQ=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3896.eurprd04.prod.outlook.com (52.133.29.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.25; Sun, 23 Dec 2018 07:03:30 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::f19b:c79a:43b4:b88d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::f19b:c79a:43b4:b88d%2]) with mapi id 15.20.1446.026; Sun, 23 Dec 2018
- 07:03:30 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>, Jun Li <jun.li@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] phy: freescale: Break dependency on SOC_IMX8MQ for USB PHY
-Thread-Topic: [PATCH] phy: freescale: Break dependency on SOC_IMX8MQ for USB
- PHY
-Thread-Index: AQHUmo2cgx2cbWzjsEWmInIs0QcVSQ==
-Date:   Sun, 23 Dec 2018 07:03:30 +0000
-Message-ID: <1545548599-20534-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P194CA0019.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:203:8f::29) To AM6PR0402MB3654.eurprd04.prod.outlook.com
- (2603:10a6:209:19::17)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3896;6:OHWTqQMwvq56WDdI97fsVjWKTOgkOEFpXWDUr6t53sL7avGkKJE10noWXF0s7m3ovGKgNkadLtrhvRALdsZDn+xmWe6pMW6XceNwy9FZSQmjFzRfZa6pU6CV/VfuUuTys9v8U0VrZeYt9m0gG+HbyD1ny95Sh1NjgGe0vzr97J5M7udkNCAkwvH++oihezHnNSJCNn7UveDAVmkRIKH3ZpDzxrUtxsygxiR2m7YpYWgKBZPlCA7agdSQnjC/A4BZRcCxgiskgN+10nbjMoooVjitgP9MhqvFmI81w0KrH4nrneppXTToj6hrXmYACn1EzaulHiYWWKCmfKMP7D8LK42z5wT2tJMHt97FiR/VBgntFyQYxlR69LmM1Ix8dh5RFSw6AgZfWBH/iExhqKBSzHjZ6mQ0oKq6k6WvnHWXXuiKdth5m457g9tPhNQ4Cl5o3GKwTUGSXNLiNQGCiureWQ==;5:F+hMY+e2J927feMitIhk1g1J5K35tKkMIrJkSZwOr+aWhWXu9ZXJrUltV2B/tpnPWdOSrEIyfZPxAUSL1n6NfzexoTn+Tl1T8hMG0oZRWVcLrwLLn8eETTHRtUU2sWChkv21pHLBL/V5Dl6rIZj6S5GlsVt5GcyRurjaiDvILno=;7:gvkyerRRTcDtnhjtgHINqLfEqd0Ue24R4cLUWxv7eRlDTb3sYX6UIJHHFnCfWBskENMvHpGAAf9fjlSA8RVJQsLCPiVJhbxgOSxqDL6XKhqb6C4UlHC309/jaPPLqQlbPW7NEWgUqvDr3ofgUjGlDg==
-x-ms-office365-filtering-correlation-id: ee230295-781e-46cc-75d0-08d668a4be7e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3896;
-x-ms-traffictypediagnostic: AM6PR0402MB3896:
-x-microsoft-antispam-prvs: <AM6PR0402MB38960B20384B1AD7A9768E26F6BA0@AM6PR0402MB3896.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3896;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3896;
-x-forefront-prvs: 0895DF8FFD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(376002)(396003)(39860400002)(199004)(189003)(3846002)(66066001)(6116002)(4326008)(486006)(102836004)(36756003)(106356001)(105586002)(44832011)(386003)(6506007)(25786009)(6512007)(5660300001)(86362001)(186003)(99286004)(54906003)(316002)(110136005)(26005)(256004)(53936002)(6436002)(14444005)(8936002)(97736004)(2906002)(68736007)(8676002)(478600001)(71190400001)(81156014)(476003)(2616005)(14454004)(52116002)(7736002)(81166006)(305945005)(71200400001)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3896;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RO2OO1TL4FgUA/lJaAuLgr7JbSqD1eRQ4XK5UK1D4qQg9E2wUWUiBoPrgEP2eUBh2ATwGCigy7b9kvOW2uWWDHyGAnMUHPwWwZv5F2rEOwWrXYoznb43XjbuAHbiDuB6UV6vSHU8/bOB4h9655KRZWB32iQ/9g5rR05g5Glu9EoLtCOs8PXNxOR5LnqkcSGGmecNgbNkogU3X7LYT3Kd0eg7NewDcVNrDw975GfTNCrZ3EAfob3OsRMTARAlztXw0bDOO91pnMx0mkJWL0cSAAvMV6g1RkJGauN4aiGr425+cweP93YTEjJKSFGwSojC
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 23 Dec 2018 02:06:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726338AbeLWHGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 02:06:17 -0500
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C093121903;
+        Sun, 23 Dec 2018 07:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545548776;
+        bh=/IRgEhh4S6jOmgBaHMpIRddXKjaSNutLCJ166j/V6wg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hWxxHQW1PpFb2dY/6lxbcg2V+RYgTYCk2KqLFfh9Wlkw5YOtJiZtr7pJRDoVsNK6N
+         RBfR5uJteZqk4mTP8FkLzV4CS/4GPaAbXght9ZNSqup/m+qnaNjmcqGkDQDyDGQX7J
+         g2KND/z/950dhW3olUWYQXlUtC5ZWLgdxUhZi3To=
+Date:   Sun, 23 Dec 2018 09:06:13 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     "David S. Miller" <davem@davemloft.net>,
+        kbuild test robot <fengguang.wu@intel.com>
+Cc:     Gavi Teitz <gavi@mellanox.com>, kbuild-all@01.org,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5e: fix semicolon.cocci warnings
+Message-ID: <20181223070613.GM3940@mtr-leonro.mtl.com>
+References: <201812222032.13tR4nHr%fengguang.wu@intel.com>
+ <20181222120216.GA74933@lkp-hsx03.lkp.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee230295-781e-46cc-75d0-08d668a4be7e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 07:03:30.2356
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3896
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="aIbcA3MSwnGacr4f"
+Content-Disposition: inline
+In-Reply-To: <20181222120216.GA74933@lkp-hsx03.lkp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since this is going to be used on more SoCs than just i.MX8MQ,
-make the dependency here more generic.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/phy/freescale/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--aIbcA3MSwnGacr4f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/phy/freescale/Kconfig b/drivers/phy/freescale/Kconfig
-index f050bd4..832670b 100644
---- a/drivers/phy/freescale/Kconfig
-+++ b/drivers/phy/freescale/Kconfig
-@@ -2,4 +2,4 @@ config PHY_FSL_IMX8MQ_USB
- 	tristate "Freescale i.MX8M USB3 PHY"
- 	depends on OF && HAS_IOMEM
- 	select GENERIC_PHY
--	default SOC_IMX8MQ
-+	default ARCH_MXC && ARM64
---=20
-2.7.4
+On Sat, Dec 22, 2018 at 08:02:16PM +0800, kbuild test robot wrote:
+> From: kbuild test robot <fengguang.wu@intel.com>
+>
+> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1339:57-58: Unneeded semicolon
+>
+>
+>  Remove unneeded semicolon.
+>
+> Generated by: scripts/coccinelle/misc/semicolon.cocci
+>
+> Fixes: 4c8fb2986d44 ("net/mlx5e: Increase VF representors' SQ size to 128")
+> CC: Gavi Teitz <gavi@mellanox.com>
+> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+> ---
 
+Dave,
+
+Can you please apply this small fix?
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+
+--aIbcA3MSwnGacr4f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcHzPlAAoJEORje4g2clinBzEP/2QAXXjfVxDslwyEJvspdgkZ
+hNet5DjCJYsXr5X2tlLsHi6wj2wh1keBEHmp0Wp9n8K8cjRc3cpCPax7n1OFodgm
+HLknerfo2zXIn1GLseyOmvK/LBIr41GWthfkUUMum8T5Jo2G4Z0hLvZu/OB7c4G1
+aKUiRXHKOpneCi9nJfUlnZXX2RMSULojEaSW8rlloadYVqdodfHjXH2CNPKI4cHP
+jEiiOExYJCE7p7mW0wSIm5kW6q+JTsOaGrwvBJEPQAf2veoCtlIsar5ECIrhx7wY
+CPnlNIwLKlbDIBK94Y8KwWNrkTmvKEDMNJx9qdRUgNGo7ZXD1DSM/U6O91MsxfLf
+6J3rbySFwmY9cwSvKTXE1Oij73cCE688XeaXjH+uc+lI84sTQ4JvSGDesNQjb8hD
+yQsmZQlXB38BQUmln4zfap3IUyE0iEcLJE2gkcrvuZDvs4/fYAeackYt9gP7Sebl
+co7mgEju/tTeC7mpIPGEvWkgM1yCIf35QajsZLFrwdn6gD+h11bcrUEWjR4Qe168
+2dCkfy6SdDRDT9iaBYe3SKbgYy6OKUcgP/RYsk2ev1rNVyoE6WEW63UgiEsYAa1m
+yty56Q4UwM8QwRElzYrqnZKTYl+ShngFEpjFa2MQFJITSJl4dCvR2LHFmQRs/f4X
+9/seDuuSv+eVxW7KREF6
+=zYCK
+-----END PGP SIGNATURE-----
+
+--aIbcA3MSwnGacr4f--
