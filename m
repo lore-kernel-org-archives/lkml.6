@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4288BC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F347AC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F189321905
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A89FF21905
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:45:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="MwG8cKUC";
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="YvyFJfyo"
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="nRsabKyR";
+	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="D62s0uGK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeLWJpS (ORCPT
+        id S1727798AbeLWJpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 04:45:18 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:37368 "EHLO
+        Sun, 23 Dec 2018 04:45:21 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:37370 "EHLO
         mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725830AbeLWJpR (ORCPT
+        by vger.kernel.org with ESMTP id S1725931AbeLWJpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Dec 2018 04:45:17 -0500
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBN9j2ux016024;
-        Sun, 23 Dec 2018 01:45:06 -0800
+        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBN9iwRn015919;
+        Sun, 23 Dec 2018 01:44:58 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
  subject : date : message-id : references : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=pfpt0818;
- bh=HQYBYJCepIzdg1mesor826ixUbyfrRQs8iOTQ0h7N0Q=;
- b=MwG8cKUCD5GDYvCJmIrMTkWyiMF5B90va3/lUd2Lc6AE03TESr40u8vmRIX6Z2WLXCs8
- 3m3oLOC1DAuuz2opfMFwiycuozNmGYM+/WDkG4B+bjRmyiqcdMaAiqVHuuZGIj7sGAB+
- J5awZVk9LF5lwlU8qApJ/VqLeHxVZZLEowA5BlFNDkssd8aEa9X3QiXU3uVt1K6Zu7Of
- KbjSgClHoDQM3n5d0IYF+S1Mkf2sS3bN5jW2XqrKdF+AiTMWnBaNA5Y0r0NcQGUXKLo2
- tQZmShB4cDNnz9B90QR1tNjCKmfOnBfuI/6AkCb+OjrG+lG2CAJHAkG4f2hH2HdpXEB6 MQ== 
+ bh=iGpUEpYr0rg8orp3gzwHQYhs1coSyJb1svf5lijvrrI=;
+ b=nRsabKyRjQXCo6ljIGS0VX2gqUL6rd+NhpCY3F1jLHRDml0st6Gb0he8vXs/ahmMAafo
+ e5OqlXiXAO9OLfkfDXYQnT6AuGdtAk5L5P2fEqAb7gtfcX1aww2xFT64dvKw+zVaNFO0
+ 6tGC7e7Mg9OHlvhYFwLkYJ+DLzCIOiH3rCt2dxJYKolmGT2YE4P0HS8nbgW2shwePIHn
+ Ih+j6nqxOJ/Alfsz4S3GKIL91NCb6f+UptCUDL18ZEoxiTsqpx8gF6DdwV/8hrG+ein2
+ a+Vko5oKjpSjYrAUaMNXhDIktRgJ8vlKgwenemgBuwnQq6BMU3O8eTjsHnjwFb+6bgVM 8Q== 
 Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2phnnqbewa-1
+        by mx0b-0016f401.pphosted.com with ESMTP id 2phnnqbevt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 23 Dec 2018 01:45:05 -0800
-Received: from SC-EXCH04.marvell.com (10.93.176.84) by SC-EXCH02.marvell.com
+        Sun, 23 Dec 2018 01:44:58 -0800
+Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH02.marvell.com
  (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Sun, 23 Dec
- 2018 01:45:04 -0800
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.55) by
- SC-EXCH04.marvell.com (10.93.176.84) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Sun, 23 Dec 2018 01:45:04 -0800
+ 2018 01:44:56 -0800
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.58) by
+ SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Sun, 23 Dec 2018 01:44:56 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=marvell.onmicrosoft.com; s=selector1-marvell-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HQYBYJCepIzdg1mesor826ixUbyfrRQs8iOTQ0h7N0Q=;
- b=YvyFJfyoNGHs2Y/P6V20C4+1Lg9zvA3nq8kBFXZ4nHVSf/zjDKvtRyQ1XOmUcy90M2n1KtQSatKmy4ji0yN22rWQAtqwJhbhlVbaRToNKLbv9GsfsROTgEaQB2p60tDEpAjmJkr7SMNZFhK0PYWVBE/HbrNJLHu2lECh490GbsU=
+ bh=iGpUEpYr0rg8orp3gzwHQYhs1coSyJb1svf5lijvrrI=;
+ b=D62s0uGKPgLhTIO2skCFdXnXFc8FB3o0oXp6rGfPCb6y8x7ZoxiSU5THerWiNiHwJ1RL9i3rethuEMdmA65LyDLQIsCINnG9KQcnStaajsDb6JyRuu0qm48oZRJd0S1U3P8WV+KGHBS91OiP4q+QpTA62GDifDebOKjEw+RogiM=
 Received: from BYAPR18MB2888.namprd18.prod.outlook.com (20.179.58.203) by
  BYAPR18MB2904.namprd18.prod.outlook.com (20.179.58.219) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.17; Sun, 23 Dec 2018 09:45:03 +0000
+ 15.20.1446.17; Sun, 23 Dec 2018 09:44:55 +0000
 Received: from BYAPR18MB2888.namprd18.prod.outlook.com
  ([fe80::c1de:fdbc:577e:ac65]) by BYAPR18MB2888.namprd18.prod.outlook.com
  ([fe80::c1de:fdbc:577e:ac65%3]) with mapi id 15.20.1446.026; Sun, 23 Dec 2018
- 09:45:03 +0000
+ 09:44:55 +0000
 From:   Yuri Norov <ynorov@marvell.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -69,42 +69,42 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 CC:     Yuri Norov <ynorov@marvell.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] test_bitmap: add testcases for bitmap_parselist
-Thread-Topic: [PATCH 4/4] test_bitmap: add testcases for bitmap_parselist
-Thread-Index: AQHUmqQt6Xc1p83q0UGkSXwFLRd0GA==
-Date:   Sun, 23 Dec 2018 09:45:02 +0000
-Message-ID: <20181223094422.4849-5-ynorov@marvell.com>
+Subject: [PATCH 3/4] bitmap_parselist: rework input string parser
+Thread-Topic: [PATCH 3/4] bitmap_parselist: rework input string parser
+Thread-Index: AQHUmqQomy8q9WbUgUSuS0hCS01WAg==
+Date:   Sun, 23 Dec 2018 09:44:55 +0000
+Message-ID: <20181223094422.4849-4-ynorov@marvell.com>
 References: <20181223094422.4849-1-ynorov@marvell.com>
 In-Reply-To: <20181223094422.4849-1-ynorov@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P189CA0028.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:802:2a::41) To BYAPR18MB2888.namprd18.prod.outlook.com
+x-clientproxiedby: VI1P189CA0011.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:802:2a::24) To BYAPR18MB2888.namprd18.prod.outlook.com
  (2603:10b6:a03:10d::11)
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [212.58.114.41]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR18MB2904;20:ahppkCHxrVhyQScV3ff84it2h0nDi1s1LX05UsbLPzk9orYLScAknOGK0nQjYfqkgm9cORs5UUbDKN2FDmUAPyWl0f6CL4AnxTyr3xk0wxhrb3F9FPNGjyBUigWOb1JmOJi3yuJOgcpJCo8N83kdZ7OA/sOeG/uBLKPe7T8IV9M=
-x-ms-office365-filtering-correlation-id: b9228a5c-1298-4159-1a44-08d668bb4fdb
+x-microsoft-exchange-diagnostics: 1;BYAPR18MB2904;20:DlW15yPP9rKcajqFblUvochkcVdfgCs38lLvgD2omV8a0WzZ2Ys5fg+e38ayQfhtA9r86fjej8BE7DhosTxtHajI5x5BLquIWf0X4sh9IDecaDRMYO8WvLKfmYOqCq94zafhs1D4Ya58Qp0mUubZu5UNs/cxTZVlOvvTDtDXx5o=
+x-ms-office365-filtering-correlation-id: 43566e06-46cb-4447-cb16-08d668bb4b2c
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR18MB2904;
 x-ms-traffictypediagnostic: BYAPR18MB2904:
-x-microsoft-antispam-prvs: <BYAPR18MB29048AB6EFCF811F65E44695CBBA0@BYAPR18MB2904.namprd18.prod.outlook.com>
+x-microsoft-antispam-prvs: <BYAPR18MB290482EFDB2289726801FFC5CBBA0@BYAPR18MB2904.namprd18.prod.outlook.com>
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(10201501046)(3231475)(944501520)(52105112)(3002001)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR18MB2904;BCL:0;PCL:0;RULEID:;SRVR:BYAPR18MB2904;
 x-forefront-prvs: 0895DF8FFD
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39850400004)(376002)(136003)(396003)(199004)(189003)(71200400001)(53936002)(99286004)(71190400001)(5660300001)(86362001)(478600001)(97736004)(476003)(2616005)(1076003)(316002)(68736007)(11346002)(2906002)(446003)(36756003)(256004)(14454004)(14444005)(66066001)(110136005)(305945005)(102836004)(8936002)(7736002)(386003)(6506007)(6486002)(186003)(105586002)(26005)(25786009)(6512007)(54906003)(8676002)(52116002)(106356001)(3846002)(6116002)(76176011)(81166006)(81156014)(486006)(6436002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR18MB2904;H:BYAPR18MB2888.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: marvell.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tJq6Qjb8AEqvlg2QebdNIwqy8KL8ObFAJ1tQTf/EnCdfiVdIPx1JvqQws11YEcQu/eNyfeYUdvYoh93J6drXH3S1sXAvqiTllGIgV5RwVe5EZ3bvHWARc9isdUqwJN6XMSbij2V1e6I+2PGR8qKyrg0UmyYyuHQL6KYp32ovVDnsPBNiqTMpwaC/qMFRVychEWv+bN8TBUI+6e6vrr0RLpLZF/Taqfft9JRkcA0KrkaX3eyWm2rrRul4jwiFW97LWQ8JjbEskLQgj1gqeiEHYhxaq3azi3rLvTo4u3faqcLHiapkBvlD2XAza6g0lo/W
+x-microsoft-antispam-message-info: SMrXqtQHZ43Egegmcbul4OJXC4x27bFSCOZXMJWi6n5owhonNcwEsMl37oQf3kD/lXEtBeQL9kPvhKhbzXMrc+MsefKnW4Bfb34F40BasyYt3Kn5Z/c0D/Bh8IZ4q1PjQEBPksVcD950j4+YzBSQsq4Bxo/9WdTAW6V/8NxZNjZ/2AUPmDM0J+WdZDsTIZugoyAhUexP8jz5nxtSmDa7V2W8c0+rV6cCUqm+1teNqZYajnI13p5SbObFn7ojdnzK4CkMwHCi24JwpIBWS3GSgZftnCB5l2trNCQk+H8VmR3ClsCinLyVIcKktdtfrPS/
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9228a5c-1298-4159-1a44-08d668bb4fdb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 09:45:02.9779
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43566e06-46cb-4447-cb16-08d668bb4b2c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 09:44:55.1091
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
@@ -122,63 +122,318 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tests for non-number character, empty regions, integer overflow.
+The requirement for this rework is to keep the __bitmap_parselist()
+copy-less and single-pass but make it more readable and maintainable by
+splitting into logical parts and removing explicit nested cycles and
+opaque local variables.
+
+__bitmap_parselist() can parse userspace inputs and therefore we cannot
+use simple_strtoul() to parse numbers.
 
 Signed-off-by: Yury Norov <ynorov@marvell.com>
 ---
- lib/test_bitmap.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ lib/bitmap.c | 247 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 148 insertions(+), 99 deletions(-)
 
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index 6cd7d0740005..7580dd6ac599 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -224,7 +224,8 @@ static const unsigned long exp[] __initconst =3D {
- 	BITMAP_FROM_U64(0xffffffff),
- 	BITMAP_FROM_U64(0xfffffffe),
- 	BITMAP_FROM_U64(0x3333333311111111ULL),
--	BITMAP_FROM_U64(0xffffffff77777777ULL)
-+	BITMAP_FROM_U64(0xffffffff77777777ULL),
-+	BITMAP_FROM_U64(0),
- };
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index a60fd9723677..edc7068c28a6 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -513,6 +513,140 @@ static int bitmap_check_region(const struct region *r=
+)
+ 	return 0;
+ }
 =20
- static const unsigned long exp2[] __initconst =3D {
-@@ -247,19 +248,34 @@ static const struct test_bitmap_parselist parselist_t=
-ests[] __initconst =3D {
- 	{0, "1-31:4/4",			&exp[9 * step], 32, 0},
- 	{0, "0-31:1/4,32-63:2/4",	&exp[10 * step], 64, 0},
- 	{0, "0-31:3/4,32-63:4/4",	&exp[11 * step], 64, 0},
-+	{0, "  ,,  0-31:3/4  ,, 32-63:4/4  ,,  ",	&exp[11 * step], 64, 0},
-=20
- 	{0, "0-31:1/4,32-63:2/4,64-95:3/4,96-127:4/4",	exp2, 128, 0},
-=20
- 	{0, "0-2047:128/256", NULL, 2048, PARSE_TIME},
-=20
-+	{0, "",				&exp[12], 8, 0},
-+	{0, "\n",			&exp[12], 8, 0},
-+	{0, ",,  ,,  , ,  ,",		&exp[12], 8, 0},
-+	{0, " ,  ,,  , ,   ",		&exp[12], 8, 0},
-+	{0, " ,  ,,  , ,   \n",		&exp[12], 8, 0},
++static long get_char(char *c, const char *str, int is_user)
++{
++	if (unlikely(is_user))
++		return __get_user(*c, str);
 +
- 	{-EINVAL, "-1",	NULL, 8, 0},
- 	{-EINVAL, "-0",	NULL, 8, 0},
- 	{-EINVAL, "10-1", NULL, 8, 0},
- 	{-EINVAL, "0-31:", NULL, 8, 0},
- 	{-EINVAL, "0-31:0", NULL, 8, 0},
-+	{-EINVAL, "0-31:0/", NULL, 8, 0},
- 	{-EINVAL, "0-31:0/0", NULL, 8, 0},
- 	{-EINVAL, "0-31:1/0", NULL, 8, 0},
- 	{-EINVAL, "0-31:10/1", NULL, 8, 0},
-+	{-EOVERFLOW, "0-98765432123456789:10/1", NULL, 8, 0},
++	*c =3D *str;
++	return 0;
++}
 +
-+	{-EINVAL, "a-31", NULL, 8, 0},
-+	{-EINVAL, "0-a1", NULL, 8, 0},
-+	{-EINVAL, "a-31:10/1", NULL, 8, 0},
-+	{-EINVAL, "0-31:a/1", NULL, 8, 0},
-+	{-EINVAL, "0-\n", NULL, 8, 0},
- };
++static const char *bitmap_getnum(unsigned int *num, const char *str,
++			    const char *const end, int is_user)
++{
++	unsigned int n =3D 0;
++	const char *_str;
++	long ret;
++	char c;
++
++	for (_str =3D str, *num =3D 0; _str <=3D end; _str++) {
++		ret =3D get_char(&c, _str, is_user);
++		if (ret)
++			return (char *)ret;
++
++		if (!isdigit(c)) {
++			if (_str =3D=3D str)
++				return (char *)-EINVAL;
++
++			goto out;
++		}
++
++		*num =3D *num * 10 + (c - '0');
++		if (*num < n)
++			return (char *)-EOVERFLOW;
++
++		n =3D *num;
++	}
++
++out:
++	return _str;
++}
++
++static const char *bitmap_find_region(const char *str,
++			const char *const end, int is_user)
++{
++	long ret;
++	char c;
++
++	for (; str < end; str++) {
++		ret =3D get_char(&c, str, is_user);
++		if (ret)
++			return (char *)ret;
++
++		/* Unexpected end of line. */
++		if (c =3D=3D 0 || c =3D=3D '\n')
++			return NULL;
++
++		/*
++		 * The format allows commas and whitespases
++		 * at the beginning of the region, so skip it.
++		 */
++		if (!isspace(c) && c !=3D ',')
++			break;
++	}
++
++	return str;
++}
++
++static const char *bitmap_parse_region(struct region *r, const char *str,
++				 const char *const end, int is_user)
++{
++	long ret;
++	char c;
++
++	str =3D bitmap_getnum(&r->start, str, end, is_user);
++	if (IS_ERR(str))
++		return str;
++
++	ret =3D get_char(&c, str, is_user);
++	if (ret)
++		return (char *)ret;
++
++	if (c =3D=3D 0 || c =3D=3D '\n') {
++		str =3D end + 1;
++		goto no_end;
++	}
++
++	if (isspace(c) || c =3D=3D ',')
++		goto no_end;
++
++	if (c !=3D '-')
++		return (char *)-EINVAL;
++
++	str =3D bitmap_getnum(&r->end, str + 1, end, is_user);
++	if (IS_ERR(str))
++		return str;
++
++	ret =3D get_char(&c, str, is_user);
++	if (ret)
++		return (char *)ret;
++
++	if (c =3D=3D 0 || c =3D=3D '\n') {
++		str =3D end + 1;
++		goto no_pattern;
++	}
++
++	if (isspace(c) || c =3D=3D ',')
++		goto no_pattern;
++
++	if (c !=3D ':')
++		return (char *)-EINVAL;
++
++	str =3D bitmap_getnum(&r->off, str + 1, end, is_user);
++	if (IS_ERR(str))
++		return str;
++
++	ret =3D get_char(&c, str, is_user);
++	if (ret)
++		return (char *)ret;
++
++	if (c !=3D '/')
++		return (char *)-EINVAL;
++
++	str =3D bitmap_getnum(&r->grlen, str + 1, end, is_user);
++
++	return str;
++
++no_end:
++	r->end =3D r->start;
++no_pattern:
++	r->off =3D r->end + 1;
++	r->grlen =3D r->end + 1;
++
++	return (char *)str;
++}
++
+ /**
+  * __bitmap_parselist - convert list format ASCII string to bitmap
+  * @buf: read nul-terminated user string from this buffer
+@@ -534,113 +668,28 @@ static int bitmap_check_region(const struct region *=
+r)
+  *
+  * Returns: 0 on success, -errno on invalid input strings. Error values:
+  *
+- *   - ``-EINVAL``: second number in range smaller than first
++ *   - ``-EINVAL``: wrong region format
+  *   - ``-EINVAL``: invalid character in string
+  *   - ``-ERANGE``: bit number specified too large for mask
++ *   - ``-EOVERFLOW``: integer overflow in the input parameters
+  */
+-static int __bitmap_parselist(const char *buf, unsigned int buflen,
++static int __bitmap_parselist(const char *buf, const char *const end,
+ 		int is_user, unsigned long *maskp,
+ 		int nmaskbits)
+ {
+-	unsigned int a, b, old_a, old_b;
+-	unsigned int group_size, used_size;
+-	int c, old_c, totaldigits, ndigits;
+-	const char __user __force *ubuf =3D (const char __user __force *)buf;
+-	int at_start, in_range, in_partial_range, ret;
+ 	struct region r;
++	long ret;
 =20
- static void __init test_bitmap_parselist(void)
+-	totaldigits =3D c =3D 0;
+-	old_a =3D old_b =3D 0;
+-	group_size =3D used_size =3D 0;
+ 	bitmap_zero(maskp, nmaskbits);
+-	do {
+-		at_start =3D 1;
+-		in_range =3D 0;
+-		in_partial_range =3D 0;
+-		a =3D b =3D 0;
+-		ndigits =3D totaldigits;
+-
+-		/* Get the next cpu# or a range of cpu#'s */
+-		while (buflen) {
+-			old_c =3D c;
+-			if (is_user) {
+-				if (__get_user(c, ubuf++))
+-					return -EFAULT;
+-			} else
+-				c =3D *buf++;
+-			buflen--;
+-			if (isspace(c))
+-				continue;
+-
+-			/* A '\0' or a ',' signal the end of a cpu# or range */
+-			if (c =3D=3D '\0' || c =3D=3D ',')
+-				break;
+-			/*
+-			* whitespaces between digits are not allowed,
+-			* but it's ok if whitespaces are on head or tail.
+-			* when old_c is whilespace,
+-			* if totaldigits =3D=3D ndigits, whitespace is on head.
+-			* if whitespace is on tail, it should not run here.
+-			* as c was ',' or '\0',
+-			* the last code line has broken the current loop.
+-			*/
+-			if ((totaldigits !=3D ndigits) && isspace(old_c))
+-				return -EINVAL;
+-
+-			if (c =3D=3D '/') {
+-				used_size =3D a;
+-				at_start =3D 1;
+-				in_range =3D 0;
+-				a =3D b =3D 0;
+-				continue;
+-			}
+-
+-			if (c =3D=3D ':') {
+-				old_a =3D a;
+-				old_b =3D b;
+-				at_start =3D 1;
+-				in_range =3D 0;
+-				in_partial_range =3D 1;
+-				a =3D b =3D 0;
+-				continue;
+-			}
+-
+-			if (c =3D=3D '-') {
+-				if (at_start || in_range)
+-					return -EINVAL;
+-				b =3D 0;
+-				in_range =3D 1;
+-				at_start =3D 1;
+-				continue;
+-			}
+=20
+-			if (!isdigit(c))
+-				return -EINVAL;
+-
+-			b =3D b * 10 + (c - '0');
+-			if (!in_range)
+-				a =3D b;
+-			at_start =3D 0;
+-			totaldigits++;
+-		}
+-		if (ndigits =3D=3D totaldigits)
+-			continue;
+-		if (in_partial_range) {
+-			group_size =3D a;
+-			a =3D old_a;
+-			b =3D old_b;
+-			old_a =3D old_b =3D 0;
+-		} else {
+-			used_size =3D group_size =3D b - a + 1;
+-		}
+-		/* if no digit is after '-', it's wrong*/
+-		if (at_start && in_range)
+-			return -EINVAL;
++	while (buf && buf < end) {
++		buf =3D bitmap_find_region(buf, end, is_user);
++		if (buf =3D=3D NULL)
++			return 0;
+=20
+-		r.start =3D a;
+-		r.off =3D used_size;
+-		r.grlen =3D group_size;
+-		r.end =3D b;
++		buf =3D bitmap_parse_region(&r, buf, end, is_user);
++		if (IS_ERR(buf))
++			return (long)buf;
+=20
+ 		ret =3D bitmap_check_region(&r);
+ 		if (ret)
+@@ -649,14 +698,14 @@ static int __bitmap_parselist(const char *buf, unsign=
+ed int buflen,
+ 		ret =3D bitmap_set_region(&r, maskp, nmaskbits);
+ 		if (ret)
+ 			return ret;
++	}
+=20
+-	} while (buflen && c =3D=3D ',');
+ 	return 0;
+ }
+=20
+ int bitmap_parselist(const char *bp, unsigned long *maskp, int nmaskbits)
+ {
+-	return __bitmap_parselist(bp, UINT_MAX, 0, maskp, nmaskbits);
++	return __bitmap_parselist(bp, (char *)SIZE_MAX, 0, maskp, nmaskbits);
+ }
+ EXPORT_SYMBOL(bitmap_parselist);
+=20
+@@ -683,7 +732,7 @@ int bitmap_parselist_user(const char __user *ubuf,
+ 	if (!access_ok(VERIFY_READ, ubuf, ulen))
+ 		return -EFAULT;
+ 	return __bitmap_parselist((const char __force *)ubuf,
+-					ulen, 1, maskp, nmaskbits);
++					ubuf + ulen - 1, 1, maskp, nmaskbits);
+ }
+ EXPORT_SYMBOL(bitmap_parselist_user);
+=20
 --=20
 2.17.1
 
