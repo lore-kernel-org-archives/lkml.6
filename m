@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E6CC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C056DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FF1218A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 837C0218D3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545607541;
-	bh=vXpaqdyP174RWeyppfkKxUr4B+YYB9hBUJMorbc8ThA=;
+	s=default; t=1545607547;
+	bh=6gWjlof5B9sduGHpbO8R2RraaChXnfwbIp6+FUVT6xk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W7wpaNuIXUQet0he/6lsGgyxgKjb343lszIQOgf7lAS1x2AZiB0BMCDa8oifLEnTV
-	 giuw8gsdH+BRF0mLBSN+8TZ/uBR52G4vy7k0/E2te/kBSDRVCanu+V1hrqYdedLYTE
-	 yTwassC78ulel/5NczkeOitgBULJIUPimk9HXC3Y=
+	b=vNVAttFYqVvhbMjO0X+1mo5BxtBIwsx4724/ZEnqedlQ5MYQwwE3y/YN0SzmyU3OQ
+	 7FSlav5AKWPcQgVRrf2b+kCMBUflAsnjCfT7NS1lSscxI/EiplLV6Wa2g3+UfXrd7L
+	 zg5gPl1gnSjnnZSOJQz60FHk1toc7mepJRZv6amA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeLWXZj (ORCPT
+        id S1726743AbeLWXZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 18:25:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35100 "EHLO mail.kernel.org"
+        Sun, 23 Dec 2018 18:25:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbeLWXZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 18:25:33 -0500
+        id S1726703AbeLWXZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 18:25:41 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.82.124])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91F282184D;
-        Sun, 23 Dec 2018 23:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BFF0218AD;
+        Sun, 23 Dec 2018 23:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545607533;
-        bh=vXpaqdyP174RWeyppfkKxUr4B+YYB9hBUJMorbc8ThA=;
+        s=default; t=1545607541;
+        bh=6gWjlof5B9sduGHpbO8R2RraaChXnfwbIp6+FUVT6xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7YsGMYNOYijPFobuswL98ETBwI5F/DeEHyW93a8E8cm0MNkGNFb60AKr2UAgMmc4
-         DkUn1kP8i3FioZEmYq6US/tGRd1mnwgvWB+8hdM5it1qiAb438fgrmS+q5yy9zyAXk
-         O8Kb1NOLLMiFsN1CxXBsMdK54Ixd2xk8DO5ULZJY=
+        b=iTdxEsreqfc9lGQRhT3ALrMOToxxMNAv/B5mwdwx6KY9D0fMSSpKdFlDMgTPuxFEc
+         cgtQALcsUWqvLAA9Z8ugtMILUFUj0YOeQaVUXxF66M2dlQb/Ewud3MYgQVcUOIwk8M
+         bepDqFVx3ErdrykKVZGE38Muq6EmgEyfkcX9ZSEs=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org (moderated list:INTEL ASoC DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 06/11] apple-gmux: Make PCI dependency explicit
-Date:   Sun, 23 Dec 2018 23:25:15 +0000
-Message-Id: <20181223232521.11320-7-okaya@kernel.org>
+Subject: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+Date:   Sun, 23 Dec 2018 23:25:17 +0000
+Message-Id: <20181223232521.11320-9-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181223232521.11320-1-okaya@kernel.org>
 References: <20181223232521.11320-1-okaya@kernel.org>
@@ -59,27 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver depends on the PCI infrastructure but the dependency has not
-been explicitly called out.
+Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
+CONFIG_PCI set but this is not specified anywhere.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 7afb96cb1cd6..89f4b86244a7 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1136,6 +1136,7 @@ config SAMSUNG_Q10
- config APPLE_GMUX
- 	tristate "Apple Gmux Driver"
- 	depends on ACPI
-+	depends on PCI
- 	depends on PNP
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	depends on BACKLIGHT_APPLE=n || BACKLIGHT_APPLE
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index 2fd1b61e8331..b0764b2fe001 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+ config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+ 	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+ 	default ACPI
+-	depends on X86 && ACPI
++	depends on X86 && ACPI && PCI
+ 	select SND_SST_IPC_ACPI
+ 	select SND_SST_ATOM_HIFI2_PLATFORM
+ 	select SND_SOC_ACPI_INTEL_MATCH
 -- 
 2.19.0
 
