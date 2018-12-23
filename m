@@ -2,257 +2,124 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94822C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FEFC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60CE52171F
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB1D121721
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545535418;
+	bh=yoYFtkPWqI9ro6gSClUotZ3H/P5iBx8+Qq1G5qW57gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xyd50zaaygAGtWFRZBEHFlMXYI6MN3QGPrLaiWqrBtC6Ig+fXN2rk6Cl7JV/7x9XE
+	 242DW38tXqs/YF2MhkN75Wj8DtBO1FsgpZSLHQ7liHxE1A2fT/ztkp6iW758dRGBEe
+	 elBzvdeXIiRTMjFQvNadBxRIvxeW41AnUEdHX0zs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405136AbeLWDQt (ORCPT
+        id S2405142AbeLWDXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 22:16:49 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40112 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732332AbeLWDQs (ORCPT
+        Sat, 22 Dec 2018 22:23:36 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37180 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731060AbeLWDXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 22:16:48 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g22so7773474edr.7
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 19:16:45 -0800 (PST)
+        Sat, 22 Dec 2018 22:23:35 -0500
+Received: by mail-pg1-f195.google.com with SMTP id c25so4266795pgb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 19:23:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y9AjmqrYNRfGQajveIDmHJ2nyoVN4IjbXkZ0NOTtg5A=;
+        b=lrmXRlmmxI8l/Dn/FbEX71BLt6ubBC2xR3sbRpQkN/1gks0ZhaeB6KQ8YhzVMVmfu8
+         cFZC58F51gFEfl4zAKdchrloxRTnb0uHxtW7CUjgGED3XyiKeMnz1oEGmv4ByoI9wasy
+         9KYHT+xwJiw8hZVbbtJVXp96ABSAyaMOuVUX0xSX0K4vc0ytcnAf9oStFjcCi4VvDfMn
+         al6yHRw1ocaaty5Qhbzd7niQ9QUgdaEQNaZ0gMAl5VXZASUJpCq7FgruEYFjyDVYLqEj
+         jWDCfPs7cLkQ+itNlAwuxwwsEBFnXIwZ585QntQL0moOuK2QiW2tO8iT9BU1sZFtE/k1
+         f36w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gJ1a/RovdMq+kGU6VszUmQBpA6rs5fOk8P6blwkOLPE=;
-        b=otojd9VryubReWMwXkgnjTC6pysN23xpiEl2XWaxuo0gpa3LpRW/OszLm8s0+vRvnT
-         gie+62/+sYIfsOXuXn9oyvtgrkTTUBjAA5HO6z9/eiYFqShyZYgs1R6UZq2D2BKs2ZsB
-         SOrgMLylTll6JIsBdp+K8zGO/LP/D/Ts3Glkvy1NE2OOnZdO6c0m4tga95oM1T9ZS+NK
-         lOQc+XNRISm4yxBEqlmKhepWgt1Ap5Cxrxx9/x0bsReJm1i2rnt2KOUgWXahc2NW0mDX
-         mTW+TJ1MIM3OT+h1ccC4rYDntcltSlSn4T5mg329Mk/neX61Nte+IhwS+T275N0PtsYT
-         aNNA==
-X-Gm-Message-State: AA+aEWYPMEZb1bYIHTGvChJDnWeybsHjW7XYQZP/oIwzlwjIhublOUhC
-        ibhis3vfy79CLxWb8OB5VGdAIHJhF4E=
-X-Google-Smtp-Source: AFSGD/VUvPf28hxY5nQFzbVLnPEw2LU+vbtlaabpn307Aeg9qlTtiWnThn21L2oZ4RXY3dZ1r3ZNXw==
-X-Received: by 2002:a50:87d9:: with SMTP id 25mr6516237edz.259.1545535004569;
-        Sat, 22 Dec 2018 19:16:44 -0800 (PST)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
-        by smtp.gmail.com with ESMTPSA id o37sm8073747edc.32.2018.12.22.19.16.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 19:16:43 -0800 (PST)
-Received: by mail-wr1-f43.google.com with SMTP id 96so8864852wrb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 19:16:43 -0800 (PST)
-X-Received: by 2002:adf:891a:: with SMTP id s26mr7510916wrs.44.1545535003147;
- Sat, 22 Dec 2018 19:16:43 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y9AjmqrYNRfGQajveIDmHJ2nyoVN4IjbXkZ0NOTtg5A=;
+        b=nXrfBUOxaidqBru7Ajk7AtfLyUFoSBhyzahzifpOn+ceOaIUqgM14ljFxqvDe+Z50Y
+         79pSsIPNXC1whik8Iw16gJu1vWB19bbieNM4LZ6jdproFmIfuvNdHs13fsd6Uv9LdJh2
+         gOxvejAibbJn7VEkCXBeg796a4uU/88HLGm24rD9N0j6Nn+wj2KMpYau7ZLM3865+GzY
+         drwx11jT0yrBFZ7aoJp3VMhA1v/TVxcEzkawKXNaRfRmr4DSXoY1QCfcZ145vyjcgoDC
+         zs+aGMe52syRvgTLIMrwvPpdO1vK7TXTGWdxV+cGQXxISlW9IctAgd9l+WsT0zHtYg1J
+         TWaQ==
+X-Gm-Message-State: AA+aEWb0+qSG3Wx+5q3et+CGuLOhUG9x+PPpqk3wqxmjAMelcJfQ4ZXt
+        E0/zj+LIktjxjeYERhkBQSw=
+X-Google-Smtp-Source: AFSGD/Xy9tZVdvJQW+vYfT5GlFVEh18znS84+OG4Xqbig4qxGp2UKzGCaNAH0CPQXG+HIatWi2kkNA==
+X-Received: by 2002:a62:c42:: with SMTP id u63mr8380777pfi.73.1545535414775;
+        Sat, 22 Dec 2018 19:23:34 -0800 (PST)
+Received: from danjae.aot.lge.com ([182.210.106.196])
+        by smtp.gmail.com with ESMTPSA id 64sm33576662pff.101.2018.12.22.19.23.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Dec 2018 19:23:33 -0800 (PST)
+Date:   Sun, 23 Dec 2018 12:23:28 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>, kernel-team@lge.com
+Subject: Re: [PATCH v3] string.h: Add str_has_prefix() helper
+Message-ID: <20181223032328.GC11421@danjae.aot.lge.com>
+References: <20181221181316.6d32bdc8@gandalf.local.home>
+ <b77cd7378434bf8ea804f2fd0caa662b9b7d07f0.camel@perches.com>
+ <20181221182507.2fdc756f@gandalf.local.home>
+ <20181221183817.5b3eecdd@gandalf.local.home>
+ <20181222092818.GA7610@danjae.aot.lge.com>
+ <20181222072207.1fe78930@vmware.local.home>
 MIME-Version: 1.0
-References: <20181221152110.17982-1-codekipper@gmail.com> <20181221152110.17982-2-codekipper@gmail.com>
- <CAGb2v66-JmONW9AYqoSmifrEj+nstREdsbkcy9ECwnJ47zxARA@mail.gmail.com> <DB7PR03MB46813005FFDFC8609F67F111ACB90@DB7PR03MB4681.eurprd03.prod.outlook.com>
-In-Reply-To: <DB7PR03MB46813005FFDFC8609F67F111ACB90@DB7PR03MB4681.eurprd03.prod.outlook.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 23 Dec 2018 11:16:31 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66q9NfgRGW=o-m2vYKyP=AJT9rx2A32iiwdGKuiGxWjYw@mail.gmail.com>
-Message-ID: <CAGb2v66q9NfgRGW=o-m2vYKyP=AJT9rx2A32iiwdGKuiGxWjYw@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v3 1/9] ASoC: sun4i-i2s: Adjust regmap settings
-To:     Jonas Karlman <jonas@kwiboo.se>
-Cc:     Code Kipper <codekipper@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181222072207.1fe78930@vmware.local.home>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 6:12 AM Jonas Karlman <jonas@kwiboo.se> wrote:
->
-> On 2018-12-21 17:44, Chen-Yu Tsai wrote:
-> > On Fri, Dec 21, 2018 at 11:21 PM <codekipper@gmail.com> wrote:
-> >> From: Marcus Cooper <codekipper@gmail.com>
-> >>
-> >> Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
-> >> to reflect this.
-> >>
-> >> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> >> ---
-> >>  sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
-> >>  1 file changed, 9 insertions(+), 20 deletions(-)
-> >>
-> >> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> >> index d5ec1a20499d..64d073cb2aee 100644
-> >> --- a/sound/soc/sunxi/sun4i-i2s.c
-> >> +++ b/sound/soc/sunxi/sun4i-i2s.c
-> >> @@ -548,9 +548,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-> >>  static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
-> >>  {
-> >>         /* Flush RX FIFO */
-> >> +       regcache_cache_bypass(i2s->regmap, true);
-> >>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
-> >>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
-> >>                            SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
-> >> +       regcache_cache_bypass(i2s->regmap, false);
-> > IIRC the flush cache bit is self-clearing. So you likely want to mark
-> > this register as volatile. If it is marked as volatile, then all access
-> > to that register bypasses the cache, so the regcache_cache_bypass calls
-> > are unneeded.
->
-> I helped test this together with Marcus and when I tested with this
-> register marked
-> as volatile audio started to stutter, still unclear why audio starts to
-> stutter.
+On Sat, Dec 22, 2018 at 07:22:07AM -0500, Steven Rostedt wrote:
+> On Sat, 22 Dec 2018 18:28:18 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
+> 
+> > >  
+> > >  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
+> > >  		str = hist_data->attrs->action_str[i];
+> > >  
+> > > -		if (str_has_prefix(str, "onmatch(")) {
+> > > -			char *action_str = str + sizeof("onmatch(") - 1;
+> > > +		if ((len = str_has_prefix(str, "onmatch("))) {
+> > > +			char *action_str = str + len;  
+> > 
+> > IMHO, returning (match) length might confuse people that it might
+> > support partial match and returns the length actually matched rather
+> > than full match.  If I knew it always returns the length of prefix (or
+> > 0) why it matters?  Using strlen() in the next line will have same
+> > effect of compiler optimization for the constant strings, no?
+> > 
+> > 		if (str_has_prefix(str, "onmatch(")) {
+> > 			char *action_str = str + strlen("onmatch(");
+> 
+> The reason to return the length was to get rid of the need for
+> duplicating the strlen("xxxx") because it's a burden to keep the two
+> the same. Not only that, a lot of places just do "str + 7" because it's
+> easier to type.
+> 
+> Yes, it has the same effect on the compiler, but that's not what we are
+> trying to solve. We are trying to get rid of the duplication, because
+> that requires humans to get it right, and humans are not good at that.
 
-Sounds like we're missing something. However the only other time we
-update this register is to set the FIFO mode.
+Then I'm ok with that. :)
 
-> Without this cache bypass the flush TX/RX bits gets cached and flush
-> happens unexpectedly
-> resulting in multi channel audio getting mapped to wrong speaker.
-
-This sounds like the flush is happening after DMA transfers and/or I2S
-operations have started, disrupting the order of the audio samples. I
-think that might be the case since the regcache is synced sequentially,
-and the FIFO control register is after the enable bits. That would imply
-that the device is taken out of runtime suspend after the .start_capture
-or .start_playback callbacks. Not sure if that's the case, but that would
-mean the bus clocks are still off at this point, and bypassing the cache
-and updating the bits is basically moot.
-
-I think there's something else happening here, but we need to figure it
-out instead of papering over it with something that "just works" but
-we don't know why it works.
-
-> Other ASoC codecs and fsl_spdif.c seems to use similar cache bypass for
-> reset/flush.
-
-fsl_spdif.c does it when forcing a soft reset, which would reset all the
-registers. It then does a cache sync, restoring any values set up. That's
-not what we're doing here.
-
-> >
-> > However, looking at the code, the write would seem to be ignored if the
-> > regmap is in the cache_only state. We only set this when the bus clock
-> > is disabled. Under such a condition, bypassing the cache and forcing a
-> > write would be unwise, as the system either drops the write, or stalls
-> > altogether.
-> >
-> >>         /* Clear RX counter */
-> >>         regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
-> >> @@ -569,9 +571,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
-> >>  static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
-> >>  {
-> >>         /* Flush TX FIFO */
-> >> +       regcache_cache_bypass(i2s->regmap, true);
-> >>         regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
-> >>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
-> >>                            SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
-> >> +       regcache_cache_bypass(i2s->regmap, false);
-> >>
-> >>         /* Clear TX counter */
-> >>         regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
-> >> @@ -703,13 +707,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
-> >>
-> >>  static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
-> >>  {
-> >> -       switch (reg) {
-> >> -       case SUN4I_I2S_FIFO_TX_REG:
-> >> -               return false;
-> >> -
-> >> -       default:
-> >> -               return true;
-> >> -       }
-> >> +       return true;
-> > I don't understand why this is relevant. Do you need to read back from the TX
-> > FIFO?
->
-> This change was inspired by c66234cfedfc "ASoC: rockchip: i2s: fix
-> playback after runtime resume" [1]
-> On resume a cached sample would be written to FIFO_TX_REG unless it is
-> marked volatile,
-> the rockchip commit indicated that read is needed for volatile regs.
->
-> [1]
-> https://github.com/torvalds/linux/commit/c66234cfedfc3e6e3b62563a5f2c1562be09a35d
-
-What about simply marking the FIFO registers as both unreadable and
-unwritable, thus excluding them from the regmap? That should get rid
-of any unwanted syncs. We are doing DMA transfers to/from them. Do we
-need regmap access?
-
-Either way this context should be provided in the commit log.
-
-Regards
-ChenYu
-
-> >
-> > If so, just drop the call-back altogether. If no callback is provided and no
-> > rd_table is provided either, it defaults to all registers under max_register
-> > (if max_register < 0) are readable.
-> >
-> > However this seems like it deserves to be a separate patch (where you explain
-> > in the commit log why it's needed).
-> >
-> > Regards
-> > ChenYu
-> >
-> >>  }
-> >>
-> >>  static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
-> >> @@ -728,6 +726,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
-> >>  {
-> >>         switch (reg) {
-> >>         case SUN4I_I2S_FIFO_RX_REG:
-> >> +       case SUN4I_I2S_FIFO_TX_REG:
-> >> +       case SUN4I_I2S_FIFO_STA_REG:
-> >>         case SUN4I_I2S_INT_STA_REG:
-> >>         case SUN4I_I2S_RX_CNT_REG:
-> >>         case SUN4I_I2S_TX_CNT_REG:
-> >> @@ -738,23 +738,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
-> >>         }
-> >>  }
-> >>
-> >> -static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
-> >> -{
-> >> -       switch (reg) {
-> >> -       case SUN8I_I2S_FIFO_TX_REG:
-> >> -               return false;
-> >> -
-> >> -       default:
-> >> -               return true;
-> >> -       }
-> >> -}
-> >> -
-> >>  static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
-> >>  {
-> >>         if (reg == SUN8I_I2S_INT_STA_REG)
-> >>                 return true;
-> >>         if (reg == SUN8I_I2S_FIFO_TX_REG)
-> >> -               return false;
-> >> +               return true;
-> >>
-> >>         return sun4i_i2s_volatile_reg(dev, reg);
-> >>  }
-> >> @@ -809,7 +798,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
-> >>         .reg_defaults   = sun8i_i2s_reg_defaults,
-> >>         .num_reg_defaults       = ARRAY_SIZE(sun8i_i2s_reg_defaults),
-> >>         .writeable_reg  = sun4i_i2s_wr_reg,
-> >> -       .readable_reg   = sun8i_i2s_rd_reg,
-> >> +       .readable_reg   = sun4i_i2s_rd_reg,
-> >>         .volatile_reg   = sun8i_i2s_volatile_reg,
-> >>  };
-> >>
-> >> --
-> >> 2.20.1
-> >>
-> > _______________________________________________
-> > Alsa-devel mailing list
-> > Alsa-devel@alsa-project.org
-> >
+Thanks,
+Namhyung
