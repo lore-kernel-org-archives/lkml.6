@@ -2,39 +2,43 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44641C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BCEC43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12535218FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 360A4218FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 09:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeLWJfE (ORCPT
+        id S1727326AbeLWJeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 04:35:04 -0500
+        Sun, 23 Dec 2018 04:34:03 -0500
 Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:44293
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727328AbeLWJeE (ORCPT
+        by vger.kernel.org with ESMTP id S1727117AbeLWJd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 04:34:04 -0500
+        Sun, 23 Dec 2018 04:33:58 -0500
 X-IronPort-AV: E=Sophos;i="5.56,386,1539640800"; 
-   d="scan'208";a="289991778"
+   d="scan'208";a="289991762"
 Received: from palace.lip6.fr ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 23 Dec 2018 10:33:54 +0100
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 23 Dec 2018 10:33:52 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-scsi@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org,
         Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/20] xenbus: drop useless LIST_HEAD
-Date:   Sun, 23 Dec 2018 09:57:08 +0100
-Message-Id: <1545555435-24576-14-git-send-email-Julia.Lawall@lip6.fr>
+        xen-devel@lists.xenproject.org, linux-wireless@vger.kernel.org
+Subject: [PATCH 00/20] drop useless LIST_HEAD
+Date:   Sun, 23 Dec 2018 09:56:55 +0100
+Message-Id: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -42,47 +46,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Drop LIST_HEAD where the variable it declares is never used.
 
-The declarations were introduced with the file, but the declared
-variables were not used.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier x;
-@@
-- LIST_HEAD(x);
-  ... when != x
-// </smpl>
-
-Fixes: 1107ba885e46 ("xen: add xenfs to allow usermode <-> Xen interaction")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
 ---
-Successfully 0-day tested on 151 configurations.
 
- drivers/xen/xenbus/xenbus_dev_frontend.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/xen/xenbus/xenbus_dev_frontend.c b/drivers/xen/xenbus/xenbus_dev_frontend.c
-index c3e201025ef0..25c53545ea01 100644
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -465,7 +465,6 @@ static int xenbus_write_watch(unsigned msg_type, struct xenbus_file_priv *u)
- 	struct watch_adapter *watch;
- 	char *path, *token;
- 	int err, rc;
--	LIST_HEAD(staging_q);
- 
- 	path = u->u.buffer + sizeof(u->u.msg);
- 	token = memchr(path, 0, u->u.msg.len);
-@@ -523,7 +522,6 @@ static ssize_t xenbus_file_write(struct file *filp,
- 	uint32_t msg_type;
- 	int rc = len;
- 	int ret;
--	LIST_HEAD(staging_q);
- 
- 	/*
- 	 * We're expecting usermode to be writing properly formed
-
+ drivers/dma/at_hdmac.c                                |    5 -----
+ drivers/dma/dw/core.c                                 |    1 -
+ drivers/dma/pl330.c                                   |    1 -
+ drivers/dma/sa11x0-dma.c                              |    2 --
+ drivers/dma/st_fdma.c                                 |    3 ---
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c               |    1 -
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    5 -----
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c       |    3 ---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c        |    1 -
+ drivers/net/wireless/st/cw1200/queue.c                |    1 -
+ drivers/scsi/lpfc/lpfc_nvme.c                         |    2 --
+ drivers/scsi/lpfc/lpfc_scsi.c                         |    2 --
+ drivers/scsi/lpfc/lpfc_sli.c                          |    1 -
+ drivers/scsi/qla2xxx/qla_init.c                       |    1 -
+ drivers/xen/xenbus/xenbus_dev_frontend.c              |    2 --
+ fs/btrfs/relocation.c                                 |    1 -
+ fs/nfs/nfs4client.c                                   |    1 -
+ fs/nfsd/nfs4layouts.c                                 |    1 -
+ fs/xfs/xfs_buf.c                                      |    1 -
+ fs/xfs/xfs_fsops.c                                    |    1 -
+ 20 files changed, 36 deletions(-)
