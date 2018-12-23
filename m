@@ -2,987 +2,156 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9899DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1655FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E6121773
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D940721773
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbeLWT1f (ORCPT
+        id S1725855AbeLWT3f convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 14:27:35 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47474 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeLWT1e (ORCPT
+        Sun, 23 Dec 2018 14:29:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725783AbeLWT3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 14:27:34 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0DBD68086F; Sun, 23 Dec 2018 20:27:15 +0100 (CET)
-Date:   Sun, 23 Dec 2018 20:27:19 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Trivial patch monkey <trivial@kernel.org>,
-        Andrew Morton <akpm@osdl.org>,
-        kernel list <linux-kernel@vger.kernel.org>, tony@atomide.com,
-        daniel.baluta@intel.com, lee.jones@linaro.org, andrew@lunn.ch,
-        baolin.wang@linaro.org, rteysseyre@gmail.com,
-        javier.martin@vista-silicon.com, sandeep_n@ti.com, dmurphy@ti.com,
-        juhosg@openwrt.org, andy.yan@rock-chips.com, robdclark@gmail.com,
-        srinivas.kandagatla@linaro.org, steven.eckhoff.opensource@gmail.com
-Subject: [PATCH][trivial] fix email address quoting in MODULE_AUTHOR()
-Message-ID: <20181223192719.GA31367@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+        Sun, 23 Dec 2018 14:29:35 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBNJSxiN048421
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 14:29:33 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pj3k200as-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 14:29:33 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Sun, 23 Dec 2018 19:29:32 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 23 Dec 2018 19:29:28 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBNJTRpA5112290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 23 Dec 2018 19:29:27 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCE6D42041;
+        Sun, 23 Dec 2018 19:29:27 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8414F4203F;
+        Sun, 23 Dec 2018 19:29:27 +0000 (GMT)
+Received: from osiris (unknown [9.145.43.33])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun, 23 Dec 2018 19:29:27 +0000 (GMT)
+Date:   Sun, 23 Dec 2018 20:29:26 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] timer fix
+References: <20181221123453.GA102366@gmail.com>
+In-Reply-To: <20181221123453.GA102366@gmail.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18122319-0028-0000-0000-0000032E945E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122319-0029-0000-0000-000023EB02EC
+Message-Id: <20181223192926.GA3728@osiris>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-23_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812230176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 21, 2018 at 01:34:53PM +0100, Ingo Molnar wrote:
+> Linus,
+> 
+> Please pull the latest timers-urgent-for-linus git tree from:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
+> 
+>    # HEAD: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94 posix-timers: Fix division by zero bug
+> 
+> Fix a division by zero crash in the posix-timers code.
+> 
+>  Thanks,
+> 
+> 	Ingo
+> 
+> ------------------>
+> Thomas Gleixner (1):
+>       posix-timers: Fix division by zero bug
+> 
+> 
+>  kernel/time/posix-timers.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+> index bd62b5eeb5a0..31f49ae80f43 100644
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -289,9 +289,6 @@ static void common_hrtimer_rearm(struct k_itimer *timr)
+>  {
+>  	struct hrtimer *timer = &timr->it.real.timer;
+>  
+> -	if (!timr->it_interval)
+> -		return;
+> -
+>  	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
+>  					    timr->it_interval);
+>  	hrtimer_restart(timer);
+> @@ -317,7 +314,7 @@ void posixtimer_rearm(struct kernel_siginfo *info)
+>  	if (!timr)
+>  		return;
+>  
+> -	if (timr->it_requeue_pending == info->si_sys_private) {
+> +	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
+>  		timr->kclock->timer_rearm(timr);
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FWIW, with this patch the vanilla glibc 2.28 self tests
+rt/tst-cputimer1, rt/tst-cputimer2, and rt/tst-cputimer3
+start to fail on s390:
 
-   =20
-Apparently it is quite easy to forget ">" in quoting of email
-address. This fixes it.
+rt/tst-cputimer1.out:
+clock_gettime returned timespec = { 0, 117181 }
+clock_getres returned timespec = { 0, 1 }
+Timed out: killed the child process
+rt/tst-cputimer1.test-result:
+FAIL: rt/tst-cputimer1
+original exit status 1
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-   =20
+rt/tst-cputimer2.out:
+clock_gettime returned timespec = { 0, 9686 }
+clock_getres returned timespec = { 0, 1 }
+Timed out: killed the child process
+rt/tst-cputimer2.test-result:
+FAIL: rt/tst-cputimer2
+original exit status 1
 
-diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
-index 7d1d242..a10a8e6 100644
---- a/arch/mips/crypto/crc32-mips.c
-+++ b/arch/mips/crypto/crc32-mips.c
-@@ -340,7 +340,7 @@ static void __exit crc32_mod_exit(void)
- 	crypto_unregister_shash(&crc32c_alg);
- }
-=20
--MODULE_AUTHOR("Marcin Nowakowski <marcin.nowakowski@mips.com");
-+MODULE_AUTHOR("Marcin Nowakowski <marcin.nowakowski@mips.com>");
- MODULE_DESCRIPTION("CRC32 and CRC32C using optional MIPS instructions");
- MODULE_LICENSE("GPL v2");
-=20
-diff --git a/drivers/bus/tegra-gmi.c b/drivers/bus/tegra-gmi.c
-index a657078..ca14f3e 100644
---- a/drivers/bus/tegra-gmi.c
-+++ b/drivers/bus/tegra-gmi.c
-@@ -279,6 +279,6 @@ static struct platform_driver tegra_gmi_driver =3D {
- };
- module_platform_driver(tegra_gmi_driver);
-=20
--MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
-+MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com>");
- MODULE_DESCRIPTION("NVIDIA Tegra GMI Bus Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 8bdf91b..242fc18 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1666,6 +1666,6 @@ static struct i2c_driver si5351_driver =3D {
- };
- module_i2c_driver(si5351_driver);
-=20
--MODULE_AUTHOR("Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com");
-+MODULE_AUTHOR("Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>");
- MODULE_DESCRIPTION("Silicon Labs Si5351A/B/C clock generator driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
-index 5a86cd8..3c8594d 100644
---- a/drivers/clk/ux500/abx500-clk.c
-+++ b/drivers/clk/ux500/abx500-clk.c
-@@ -122,6 +122,6 @@ static int __init abx500_clk_init(void)
- }
- arch_initcall(abx500_clk_init);
-=20
--MODULE_AUTHOR("Ulf Hansson <ulf.hansson@linaro.org");
-+MODULE_AUTHOR("Ulf Hansson <ulf.hansson@linaro.org>");
- MODULE_DESCRIPTION("ABX500 clk driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-=
-cpufreq.c
-index c2dd43f..26da4fc 100644
---- a/drivers/cpufreq/kirkwood-cpufreq.c
-+++ b/drivers/cpufreq/kirkwood-cpufreq.c
-@@ -202,6 +202,6 @@ static struct platform_driver kirkwood_cpufreq_platform=
-_driver =3D {
- module_platform_driver(kirkwood_cpufreq_platform_driver);
-=20
- MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch");
-+MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
- MODULE_DESCRIPTION("cpufreq driver for Marvell's kirkwood CPU");
- MODULE_ALIAS("platform:kirkwood-cpufreq");
-diff --git a/drivers/crypto/hisilicon/sec/sec_drv.c b/drivers/crypto/hisili=
-con/sec/sec_drv.c
-index c1ee4e7..2fc0ab6 100644
---- a/drivers/crypto/hisilicon/sec/sec_drv.c
-+++ b/drivers/crypto/hisilicon/sec/sec_drv.c
-@@ -1319,5 +1319,5 @@ module_platform_driver(sec_driver);
-=20
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Hisilicon Security Accelerators");
--MODULE_AUTHOR("Zaibo Xu <xuzaibo@huawei.com");
-+MODULE_AUTHOR("Zaibo Xu <xuzaibo@huawei.com>");
- MODULE_AUTHOR("Jonathan Cameron <jonathan.cameron@huawei.com>");
-diff --git a/drivers/firmware/efi/efibc.c b/drivers/firmware/efi/efibc.c
-index 503bbe2..11aafd7 100644
---- a/drivers/firmware/efi/efibc.c
-+++ b/drivers/firmware/efi/efibc.c
-@@ -108,6 +108,6 @@ static void __exit efibc_exit(void)
- module_exit(efibc_exit);
-=20
- MODULE_AUTHOR("Jeremy Compostella <jeremy.compostella@intel.com>");
--MODULE_AUTHOR("Matt Gumbel <matthew.k.gumbel@intel.com");
-+MODULE_AUTHOR("Matt Gumbel <matthew.k.gumbel@intel.com>");
- MODULE_DESCRIPTION("EFI Bootloader Control");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
-index c4e7953..7f8f738 100644
---- a/drivers/gpio/gpio-dln2.c
-+++ b/drivers/gpio/gpio-dln2.c
-@@ -519,7 +519,7 @@ static struct platform_driver dln2_gpio_driver =3D {
-=20
- module_platform_driver(dln2_gpio_driver);
-=20
--MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
-+MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com>");
- MODULE_DESCRIPTION("Driver for the Diolan DLN2 GPIO interface");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:dln2-gpio");
-diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
-index 6369527..726b448 100644
---- a/drivers/gpio/gpio-ge.c
-+++ b/drivers/gpio/gpio-ge.c
-@@ -105,5 +105,5 @@ static struct platform_driver gef_gpio_driver =3D {
- module_platform_driver_probe(gef_gpio_driver, gef_gpio_probe);
-=20
- MODULE_DESCRIPTION("GE I/O FPGA GPIO driver");
--MODULE_AUTHOR("Martyn Welch <martyn.welch@ge.com");
-+MODULE_AUTHOR("Martyn Welch <martyn.welch@ge.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpio/gpio-mpc5200.c b/drivers/gpio/gpio-mpc5200.c
-index fc10cf5..debe6fa 100644
---- a/drivers/gpio/gpio-mpc5200.c
-+++ b/drivers/gpio/gpio-mpc5200.c
-@@ -373,6 +373,6 @@ static void __exit mpc52xx_gpio_exit(void)
- module_exit(mpc52xx_gpio_exit);
-=20
- MODULE_DESCRIPTION("Freescale MPC52xx gpio driver");
--MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de");
-+MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
- MODULE_LICENSE("GPL v2");
-=20
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998=
-x_drv.c
-index a7c39f3..313acab 100644
---- a/drivers/gpu/drm/i2c/tda998x_drv.c
-+++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-@@ -1964,6 +1964,6 @@ static struct i2c_driver tda998x_driver =3D {
-=20
- module_i2c_driver(tda998x_driver);
-=20
--MODULE_AUTHOR("Rob Clark <robdclark@gmail.com");
-+MODULE_AUTHOR("Rob Clark <robdclark@gmail.com>");
- MODULE_DESCRIPTION("NXP Semiconductors TDA998X HDMI Encoder");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index dcff812..d90bd38 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -1372,6 +1372,6 @@ static void __exit msm_drm_unregister(void)
- module_init(msm_drm_register);
- module_exit(msm_drm_unregister);
-=20
--MODULE_AUTHOR("Rob Clark <robdclark@gmail.com");
-+MODULE_AUTHOR("Rob Clark <robdclark@gmail.com>");
- MODULE_DESCRIPTION("MSM DRM Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/=
-panel/panel-seiko-43wvf1g.c
-index 75f9253..838fa49 100644
---- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-+++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-@@ -366,6 +366,6 @@ static struct platform_driver seiko_panel_platform_driv=
-er =3D {
- };
- module_platform_driver(seiko_panel_platform_driver);
-=20
--MODULE_AUTHOR("Marco Franchi <marco.franchi@nxp.com");
-+MODULE_AUTHOR("Marco Franchi <marco.franchi@nxp.com>");
- MODULE_DESCRIPTION("Seiko 43WVF1G panel driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/t=
-ilcdc_drv.c
-index 33e5332..d12a3eb 100644
---- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
-@@ -675,6 +675,6 @@ static void __exit tilcdc_drm_fini(void)
- module_init(tilcdc_drm_init);
- module_exit(tilcdc_drm_fini);
-=20
--MODULE_AUTHOR("Rob Clark <robdclark@gmail.com");
-+MODULE_AUTHOR("Rob Clark <robdclark@gmail.com>");
- MODULE_DESCRIPTION("TI LCD Controller DRM Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/hid/hid-accutouch.c b/drivers/hid/hid-accutouch.c
-index 4e28716..77e7672 100644
---- a/drivers/hid/hid-accutouch.c
-+++ b/drivers/hid/hid-accutouch.c
-@@ -47,6 +47,6 @@ static struct hid_driver accutouch_driver =3D {
-=20
- module_hid_driver(accutouch_driver);
-=20
--MODULE_AUTHOR("Martyn Welch <martyn.welch@collabora.co.uk");
-+MODULE_AUTHOR("Martyn Welch <martyn.welch@collabora.co.uk>");
- MODULE_DESCRIPTION("Elo Accutouch HID TouchScreen driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
-index aaebeb7..490c20b 100644
---- a/drivers/hwmon/emc1403.c
-+++ b/drivers/hwmon/emc1403.c
-@@ -496,6 +496,6 @@ static struct i2c_driver sensor_emc1403 =3D {
-=20
- module_i2c_driver(sensor_emc1403);
-=20
--MODULE_AUTHOR("Kalhan Trisal <kalhan.trisal@intel.com");
-+MODULE_AUTHOR("Kalhan Trisal <kalhan.trisal@intel.com>");
- MODULE_DESCRIPTION("emc1403 Thermal Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/hwmon/pmbus/ir35221.c b/drivers/hwmon/pmbus/ir35221.c
-index 977315b..6b199a1 100644
---- a/drivers/hwmon/pmbus/ir35221.c
-+++ b/drivers/hwmon/pmbus/ir35221.c
-@@ -143,6 +143,6 @@ static struct i2c_driver ir35221_driver =3D {
-=20
- module_i2c_driver(ir35221_driver);
-=20
--MODULE_AUTHOR("Samuel Mendoza-Jonas <sam@mendozajonas.com");
-+MODULE_AUTHOR("Samuel Mendoza-Jonas <sam@mendozajonas.com>");
- MODULE_DESCRIPTION("PMBus driver for IR35221");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/iio/adc/cpcap-adc.c b/drivers/iio/adc/cpcap-adc.c
-index 9ad6042..ca487e4 100644
---- a/drivers/iio/adc/cpcap-adc.c
-+++ b/drivers/iio/adc/cpcap-adc.c
-@@ -1046,5 +1046,5 @@ module_platform_driver(cpcap_adc_driver);
-=20
- MODULE_ALIAS("platform:cpcap_adc");
- MODULE_DESCRIPTION("CPCAP ADC driver");
--MODULE_AUTHOR("Tony Lindgren <tony@atomide.com");
-+MODULE_AUTHOR("Tony Lindgren <tony@atomide.com>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/iio/adc/dln2-adc.c b/drivers/iio/adc/dln2-adc.c
-index c64c667..691b9f2 100644
---- a/drivers/iio/adc/dln2-adc.c
-+++ b/drivers/iio/adc/dln2-adc.c
-@@ -710,7 +710,7 @@ static struct platform_driver dln2_adc_driver =3D {
-=20
- module_platform_driver(dln2_adc_driver);
-=20
--MODULE_AUTHOR("Jack Andersen <jackoalan@gmail.com");
-+MODULE_AUTHOR("Jack Andersen <jackoalan@gmail.com>");
- MODULE_DESCRIPTION("Driver for the Diolan DLN2 ADC interface");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:dln2-adc");
-diff --git a/drivers/iio/adc/twl6030-gpadc.c b/drivers/iio/adc/twl6030-gpad=
-c.c
-index e470510..6b9d690 100644
---- a/drivers/iio/adc/twl6030-gpadc.c
-+++ b/drivers/iio/adc/twl6030-gpadc.c
-@@ -1005,6 +1005,6 @@ module_platform_driver(twl6030_gpadc_driver);
- MODULE_ALIAS("platform:" DRIVER_NAME);
- MODULE_AUTHOR("Balaji T K <balajitk@ti.com>");
- MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
--MODULE_AUTHOR("Oleksandr Kozaruk <oleksandr.kozaruk@ti.com");
-+MODULE_AUTHOR("Oleksandr Kozaruk <oleksandr.kozaruk@ti.com>");
- MODULE_DESCRIPTION("twl6030 ADC driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/iio/imu/bmi160/bmi160_core.c b/drivers/iio/imu/bmi160/=
-bmi160_core.c
-index c85659c..772a160 100644
---- a/drivers/iio/imu/bmi160/bmi160_core.c
-+++ b/drivers/iio/imu/bmi160/bmi160_core.c
-@@ -606,6 +606,6 @@ void bmi160_core_remove(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(bmi160_core_remove);
-=20
--MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
-+MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com>");
- MODULE_DESCRIPTION("Bosch BMI160 driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/iio/imu/bmi160/bmi160_spi.c b/drivers/iio/imu/bmi160/b=
-mi160_spi.c
-index d34dfdf..c28c36b 100644
---- a/drivers/iio/imu/bmi160/bmi160_spi.c
-+++ b/drivers/iio/imu/bmi160/bmi160_spi.c
-@@ -68,6 +68,6 @@ static struct spi_driver bmi160_spi_driver =3D {
- };
- module_spi_driver(bmi160_spi_driver);
-=20
--MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
-+MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com>");
- MODULE_DESCRIPTION("Bosch BMI160 SPI driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/iio/magnetometer/bmc150_magn_i2c.c b/drivers/iio/magne=
-tometer/bmc150_magn_i2c.c
-index 57e40dd..2f755c11 100644
---- a/drivers/iio/magnetometer/bmc150_magn_i2c.c
-+++ b/drivers/iio/magnetometer/bmc150_magn_i2c.c
-@@ -84,6 +84,6 @@ static struct i2c_driver bmc150_magn_driver =3D {
- };
- module_i2c_driver(bmc150_magn_driver);
-=20
--MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
-+MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com>");
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("BMC150 I2C magnetometer driver");
-diff --git a/drivers/iio/magnetometer/bmc150_magn_spi.c b/drivers/iio/magne=
-tometer/bmc150_magn_spi.c
-index 7d4152d..f613612 100644
---- a/drivers/iio/magnetometer/bmc150_magn_spi.c
-+++ b/drivers/iio/magnetometer/bmc150_magn_spi.c
-@@ -66,6 +66,6 @@ static struct spi_driver bmc150_magn_spi_driver =3D {
- };
- module_spi_driver(bmc150_magn_spi_driver);
-=20
--MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com");
-+MODULE_AUTHOR("Daniel Baluta <daniel.baluta@intel.com>");
- MODULE_DESCRIPTION("BMC150 magnetometer SPI driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/input/keyboard/maple_keyb.c b/drivers/input/keyboard/m=
-aple_keyb.c
-index 78e3567..4024b39 100644
---- a/drivers/input/keyboard/maple_keyb.c
-+++ b/drivers/input/keyboard/maple_keyb.c
-@@ -33,7 +33,7 @@ static DEFINE_MUTEX(maple_keyb_mutex);
-=20
- #define NR_SCANCODES 256
-=20
--MODULE_AUTHOR("Adrian McMenamin <adrian@mcmen.demon.co.uk");
-+MODULE_AUTHOR("Adrian McMenamin <adrian@mcmen.demon.co.uk>");
- MODULE_DESCRIPTION("SEGA Dreamcast keyboard driver");
- MODULE_LICENSE("GPL");
-=20
-diff --git a/drivers/input/misc/hisi_powerkey.c b/drivers/input/misc/hisi_p=
-owerkey.c
-index dee6245..84cd2fa 100644
---- a/drivers/input/misc/hisi_powerkey.c
-+++ b/drivers/input/misc/hisi_powerkey.c
-@@ -128,6 +128,6 @@ static struct platform_driver hi65xx_powerkey_driver =
-=3D {
- };
- module_platform_driver(hi65xx_powerkey_driver);
-=20
--MODULE_AUTHOR("Zhiliang Xue <xuezhiliang@huawei.com");
-+MODULE_AUTHOR("Zhiliang Xue <xuezhiliang@huawei.com>");
- MODULE_DESCRIPTION("Hisi PMIC Power key driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/input/rmi4/rmi_bus.c b/drivers/input/rmi4/rmi_bus.c
-index bd0d5ff..135f5e1 100644
---- a/drivers/input/rmi4/rmi_bus.c
-+++ b/drivers/input/rmi4/rmi_bus.c
-@@ -471,7 +471,7 @@ static void __exit rmi_bus_exit(void)
- }
- module_exit(rmi_bus_exit);
-=20
--MODULE_AUTHOR("Christopher Heiny <cheiny@synaptics.com");
--MODULE_AUTHOR("Andrew Duggan <aduggan@synaptics.com");
-+MODULE_AUTHOR("Christopher Heiny <cheiny@synaptics.com>");
-+MODULE_AUTHOR("Andrew Duggan <aduggan@synaptics.com>");
- MODULE_DESCRIPTION("RMI bus");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/input/serio/maceps2.c b/drivers/input/serio/maceps2.c
-index e365c5f..40cb986 100644
---- a/drivers/input/serio/maceps2.c
-+++ b/drivers/input/serio/maceps2.c
-@@ -24,7 +24,7 @@
- #include <asm/ip32/mace.h>
- #include <asm/ip32/ip32_ints.h>
-=20
--MODULE_AUTHOR("Vivien Chappelier <vivien.chappelier@linux-mips.org");
-+MODULE_AUTHOR("Vivien Chappelier <vivien.chappelier@linux-mips.org>");
- MODULE_DESCRIPTION("SGI O2 MACE PS2 controller driver");
- MODULE_LICENSE("GPL");
-=20
-diff --git a/drivers/input/touchscreen/lpc32xx_ts.c b/drivers/input/touchsc=
-reen/lpc32xx_ts.c
-index 4eb31ec..03d040e 100644
---- a/drivers/input/touchscreen/lpc32xx_ts.c
-+++ b/drivers/input/touchscreen/lpc32xx_ts.c
-@@ -404,7 +404,7 @@ static struct platform_driver lpc32xx_ts_driver =3D {
- };
- module_platform_driver(lpc32xx_ts_driver);
-=20
--MODULE_AUTHOR("Kevin Wells <kevin.wells@nxp.com");
-+MODULE_AUTHOR("Kevin Wells <kevin.wells@nxp.com>");
- MODULE_DESCRIPTION("LPC32XX TSC Driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:lpc32xx_ts");
-diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/=
-ledtrig-pattern.c
-index 2b78358..34db0ee 100644
---- a/drivers/leds/trigger/ledtrig-pattern.c
-+++ b/drivers/leds/trigger/ledtrig-pattern.c
-@@ -401,7 +401,7 @@ static void __exit pattern_trig_exit(void)
- module_init(pattern_trig_init);
- module_exit(pattern_trig_exit);
-=20
--MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com");
--MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org");
-+MODULE_AUTHOR("Raphael Teysseyre <rteysseyre@gmail.com>");
-+MODULE_AUTHOR("Baolin Wang <baolin.wang@linaro.org>");
- MODULE_DESCRIPTION("LED Pattern trigger");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.c
-index 779d412..ec81700 100644
---- a/drivers/mailbox/mailbox-sti.c
-+++ b/drivers/mailbox/mailbox-sti.c
-@@ -510,5 +510,5 @@ module_platform_driver(sti_mbox_driver);
-=20
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("STMicroelectronics Mailbox Controller");
--MODULE_AUTHOR("Lee Jones <lee.jones@linaro.org");
-+MODULE_AUTHOR("Lee Jones <lee.jones@linaro.org>");
- MODULE_ALIAS("platform:mailbox-sti");
-diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
-index 58bfafc..4ccf09a 100644
---- a/drivers/mailbox/mailbox-test.c
-+++ b/drivers/mailbox/mailbox-test.c
-@@ -443,5 +443,5 @@ static struct platform_driver mbox_test_driver =3D {
- module_platform_driver(mbox_test_driver);
-=20
- MODULE_DESCRIPTION("Generic Mailbox Testing Facility");
--MODULE_AUTHOR("Lee Jones <lee.jones@linaro.org");
-+MODULE_AUTHOR("Lee Jones <lee.jones@linaro.org>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/platform/m2m-deinterlace.c b/drivers/media/platf=
-orm/m2m-deinterlace.c
-index c62e598..921086b 100644
---- a/drivers/media/platform/m2m-deinterlace.c
-+++ b/drivers/media/platform/m2m-deinterlace.c
-@@ -24,7 +24,7 @@
- #define MEM2MEM_TEST_MODULE_NAME "mem2mem-deinterlace"
-=20
- MODULE_DESCRIPTION("mem2mem device which supports deinterlacing using dmae=
-ngine");
--MODULE_AUTHOR("Javier Martin <javier.martin@vista-silicon.com");
-+MODULE_AUTHOR("Javier Martin <javier.martin@vista-silicon.com>");
- MODULE_LICENSE("GPL");
- MODULE_VERSION("0.0.1");
-=20
-diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/=
-mx2_emmaprp.c
-index 27b078c..dd8c656 100644
---- a/drivers/media/platform/mx2_emmaprp.c
-+++ b/drivers/media/platform/mx2_emmaprp.c
-@@ -32,7 +32,7 @@
- #define EMMAPRP_MODULE_NAME "mem2mem-emmaprp"
-=20
- MODULE_DESCRIPTION("Mem-to-mem device which supports eMMa-PrP present in m=
-x2 SoCs");
--MODULE_AUTHOR("Javier Martin <javier.martin@vista-silicon.com");
-+MODULE_AUTHOR("Javier Martin <javier.martin@vista-silicon.com>");
- MODULE_LICENSE("GPL");
- MODULE_VERSION("0.0.1");
-=20
-diff --git a/drivers/mfd/max8925-core.c b/drivers/mfd/max8925-core.c
-index fd8b15c..e1a7052 100644
---- a/drivers/mfd/max8925-core.c
-+++ b/drivers/mfd/max8925-core.c
-@@ -922,5 +922,5 @@ void max8925_device_exit(struct max8925_chip *chip)
-=20
-=20
- MODULE_DESCRIPTION("PMIC Driver for Maxim MAX8925");
--MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com");
-+MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/mfd/mc13xxx-i2c.c b/drivers/mfd/mc13xxx-i2c.c
-index 67e4c9a..ffcbfcb 100644
---- a/drivers/mfd/mc13xxx-i2c.c
-+++ b/drivers/mfd/mc13xxx-i2c.c
-@@ -116,5 +116,5 @@ static void __exit mc13xxx_i2c_exit(void)
- module_exit(mc13xxx_i2c_exit);
-=20
- MODULE_DESCRIPTION("i2c driver for Freescale MC13XXX PMIC");
--MODULE_AUTHOR("Marc Reilly <marc@cpdesign.com.au");
-+MODULE_AUTHOR("Marc Reilly <marc@cpdesign.com.au>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/misc/apds9802als.c b/drivers/misc/apds9802als.c
-index d8ac036..0e2115a 100644
---- a/drivers/misc/apds9802als.c
-+++ b/drivers/misc/apds9802als.c
-@@ -317,6 +317,6 @@ static struct i2c_driver apds9802als_driver =3D {
-=20
- module_i2c_driver(apds9802als_driver);
-=20
--MODULE_AUTHOR("Anantha Narayanan <Anantha.Narayanan@intel.com");
-+MODULE_AUTHOR("Anantha Narayanan <Anantha.Narayanan@intel.com>");
- MODULE_DESCRIPTION("Avago apds9802als ALS Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/misc/hmc6352.c b/drivers/misc/hmc6352.c
-index 38f90e1..84eaf43 100644
---- a/drivers/misc/hmc6352.c
-+++ b/drivers/misc/hmc6352.c
-@@ -152,6 +152,6 @@ static struct i2c_driver hmc6352_driver =3D {
-=20
- module_i2c_driver(hmc6352_driver);
-=20
--MODULE_AUTHOR("Kalhan Trisal <kalhan.trisal@intel.com");
-+MODULE_AUTHOR("Kalhan Trisal <kalhan.trisal@intel.com>");
- MODULE_DESCRIPTION("hmc6352 Compass Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exy=
-nos.c
-index d46c343..2d18ca9 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -602,6 +602,6 @@ static struct platform_driver dw_mci_exynos_pltfm_drive=
-r =3D {
- module_platform_driver(dw_mci_exynos_pltfm_driver);
-=20
- MODULE_DESCRIPTION("Samsung Specific DW-MSHC Driver Extension");
--MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com");
-+MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:dwmmc_exynos");
-diff --git a/drivers/mtd/bcm63xxpart.c b/drivers/mtd/bcm63xxpart.c
-index 41d1d31..515ff6d 100644
---- a/drivers/mtd/bcm63xxpart.c
-+++ b/drivers/mtd/bcm63xxpart.c
-@@ -321,5 +321,5 @@ MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Daniel Dickinson <openwrt@cshore.neomailbox.net>");
- MODULE_AUTHOR("Florian Fainelli <florian@openwrt.org>");
- MODULE_AUTHOR("Mike Albon <malbon@openwrt.org>");
--MODULE_AUTHOR("Jonas Gorski <jonas.gorski@gmail.com");
-+MODULE_AUTHOR("Jonas Gorski <jonas.gorski@gmail.com>");
- MODULE_DESCRIPTION("MTD partitioning for BCM63XX CFE bootloaders");
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti=
-/netcp_core.c
-index 1f61226..ccb6545 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -2289,4 +2289,4 @@ module_platform_driver(netcp_driver);
-=20
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("TI NETCP driver for Keystone SOCs");
--MODULE_AUTHOR("Sandeep Nair <sandeep_n@ti.com");
-+MODULE_AUTHOR("Sandeep Nair <sandeep_n@ti.com>");
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/t=
-i/netcp_ethss.c
-index 0397ccb..2b15efa 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -3878,4 +3878,4 @@ module_exit(keystone_gbe_exit);
-=20
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("TI NETCP ETHSS driver for Keystone SOCs");
--MODULE_AUTHOR("Sandeep Nair <sandeep_n@ti.com");
-+MODULE_AUTHOR("Sandeep Nair <sandeep_n@ti.com>");
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 6e8a2a4..fdfbb9e 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -338,5 +338,5 @@ static struct mdio_device_id __maybe_unused dp83822_tbl=
-[] =3D {
- MODULE_DEVICE_TABLE(mdio, dp83822_tbl);
-=20
- MODULE_DESCRIPTION("Texas Instruments DP83822 PHY driver");
--MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index b393577..09dde8e 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -357,5 +357,5 @@ static struct mdio_device_id __maybe_unused dp83867_tbl=
-[] =3D {
- MODULE_DEVICE_TABLE(mdio, dp83867_tbl);
-=20
- MODULE_DESCRIPTION("Texas Instruments DP83867 PHY driver");
--MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
-index 78cad13..fc1083b 100644
---- a/drivers/net/phy/dp83tc811.c
-+++ b/drivers/net/phy/dp83tc811.c
-@@ -367,5 +367,5 @@ static struct mdio_device_id __maybe_unused dp83811_tbl=
-[] =3D {
- MODULE_DEVICE_TABLE(mdio, dp83811_tbl);
-=20
- MODULE_DESCRIPTION("Texas Instruments DP83TC811 PHY driver");
--MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/net/usb/sr9800.c b/drivers/net/usb/sr9800.c
-index 35f39f2..56d2c7d 100644
---- a/drivers/net/usb/sr9800.c
-+++ b/drivers/net/usb/sr9800.c
-@@ -869,7 +869,7 @@ static struct usb_driver sr_driver =3D {
-=20
- module_usb_driver(sr_driver);
-=20
--MODULE_AUTHOR("Liu Junliang <liujunliang_ljl@163.com");
-+MODULE_AUTHOR("Liu Junliang <liujunliang_ljl@163.com>");
- MODULE_VERSION(DRIVER_VERSION);
- MODULE_DESCRIPTION("SR9800 USB 2.0 USB2NET Dev : http://www.corechip-sz.co=
-m");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 27f67df..05bf08e 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1541,7 +1541,7 @@ static void __exit nvmem_exit(void)
- subsys_initcall(nvmem_init);
- module_exit(nvmem_exit);
-=20
--MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org");
--MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com");
-+MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org>");
-+MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
- MODULE_DESCRIPTION("nvmem Driver Core");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 14eb576..2d686dc 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1430,6 +1430,6 @@ static int __init rza1_pinctrl_init(void)
- }
- core_initcall(rza1_pinctrl_init);
-=20
--MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org");
-+MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
- MODULE_DESCRIPTION("Pin and gpio controller driver for Reneas RZ/A1 SoC");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/x86/gpd-pocket-fan.c b/drivers/platform/x86/g=
-pd-pocket-fan.c
-index be85ed9..ed57d4b 100644
---- a/drivers/platform/x86/gpd-pocket-fan.c
-+++ b/drivers/platform/x86/gpd-pocket-fan.c
-@@ -211,6 +211,6 @@ static struct platform_driver gpd_pocket_fan_driver =3D=
- {
- };
-=20
- module_platform_driver(gpd_pocket_fan_driver);
--MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com");
-+MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
- MODULE_DESCRIPTION("GPD pocket fan driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot=
--mode.c
-index 8f975ca..8b023e1 100644
---- a/drivers/power/reset/reboot-mode.c
-+++ b/drivers/power/reset/reboot-mode.c
-@@ -194,6 +194,6 @@ void devm_reboot_mode_unregister(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_reboot_mode_unregister);
-=20
--MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com");
-+MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com>");
- MODULE_DESCRIPTION("System reboot mode core library");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/power/reset/restart-poweroff.c b/drivers/power/reset/r=
-estart-poweroff.c
-index 41b22c4..a470d10 100644
---- a/drivers/power/reset/restart-poweroff.c
-+++ b/drivers/power/reset/restart-poweroff.c
-@@ -59,7 +59,7 @@ static struct platform_driver restart_poweroff_driver =3D=
- {
- };
- module_platform_driver(restart_poweroff_driver);
-=20
--MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch");
-+MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
- MODULE_DESCRIPTION("restart poweroff driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:poweroff-restart");
-diff --git a/drivers/power/reset/syscon-reboot-mode.c b/drivers/power/reset=
-/syscon-reboot-mode.c
-index 563a97d..decc9a7 100644
---- a/drivers/power/reset/syscon-reboot-mode.c
-+++ b/drivers/power/reset/syscon-reboot-mode.c
-@@ -85,6 +85,6 @@ static struct platform_driver syscon_reboot_mode_driver =
-=3D {
- };
- module_platform_driver(syscon_reboot_mode_driver);
-=20
--MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com");
-+MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com>");
- MODULE_DESCRIPTION("SYSCON reboot mode driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/rtc/rtc-lpc32xx.c b/drivers/rtc/rtc-lpc32xx.c
-index 910e600..d624b1a 100644
---- a/drivers/rtc/rtc-lpc32xx.c
-+++ b/drivers/rtc/rtc-lpc32xx.c
-@@ -382,7 +382,7 @@ static struct platform_driver lpc32xx_rtc_driver =3D {
-=20
- module_platform_driver(lpc32xx_rtc_driver);
-=20
--MODULE_AUTHOR("Kevin Wells <wellsk40@gmail.com");
-+MODULE_AUTHOR("Kevin Wells <wellsk40@gmail.com>");
- MODULE_DESCRIPTION("RTC driver for the LPC32xx SoC");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:rtc-lpc32xx");
-diff --git a/drivers/scsi/device_handler/scsi_dh_hp_sw.c b/drivers/scsi/dev=
-ice_handler/scsi_dh_hp_sw.c
-index e65a0eb..0f346b8 100644
---- a/drivers/scsi/device_handler/scsi_dh_hp_sw.c
-+++ b/drivers/scsi/device_handler/scsi_dh_hp_sw.c
-@@ -271,5 +271,5 @@ module_init(hp_sw_init);
- module_exit(hp_sw_exit);
-=20
- MODULE_DESCRIPTION("HP Active/Passive driver");
--MODULE_AUTHOR("Mike Christie <michaelc@cs.wisc.edu");
-+MODULE_AUTHOR("Mike Christie <michaelc@cs.wisc.edu>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c b/driv=
-ers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-index 15b7a82..962c0d5 100644
---- a/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-+++ b/drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
-@@ -331,5 +331,5 @@ static struct platform_driver clk_wzrd_driver =3D {
- module_platform_driver(clk_wzrd_driver);
-=20
- MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Soeren Brinkmann <soren.brinkmann@xilinx.com");
-+MODULE_AUTHOR("Soeren Brinkmann <soren.brinkmann@xilinx.com>");
- MODULE_DESCRIPTION("Driver for the Xilinx Clocking Wizard IP core");
-diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/d=
-evices/vme_user.c
-index 6a33aaa..70d0084 100644
---- a/drivers/staging/vme/devices/vme_user.c
-+++ b/drivers/staging/vme/devices/vme_user.c
-@@ -775,7 +775,7 @@ MODULE_PARM_DESC(bus, "Enumeration of VMEbus to which t=
-he driver is connected");
- module_param_array(bus, int, &bus_num, 0000);
-=20
- MODULE_DESCRIPTION("VME User Space Access Driver");
--MODULE_AUTHOR("Martyn Welch <martyn.welch@ge.com");
-+MODULE_AUTHOR("Martyn Welch <martyn.welch@ge.com>");
- MODULE_LICENSE("GPL");
-=20
- module_init(vme_user_init);
-diff --git a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c b/drivers/t=
-hermal/int340x_thermal/acpi_thermal_rel.c
-index 45e7e5c..62f6201 100644
---- a/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-+++ b/drivers/thermal/int340x_thermal/acpi_thermal_rel.c
-@@ -389,6 +389,6 @@ int acpi_thermal_rel_misc_device_remove(acpi_handle han=
-dle)
- EXPORT_SYMBOL(acpi_thermal_rel_misc_device_remove);
-=20
- MODULE_AUTHOR("Zhang Rui <rui.zhang@intel.com>");
--MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@intel.com");
-+MODULE_AUTHOR("Jacob Pan <jacob.jun.pan@intel.com>");
- MODULE_DESCRIPTION("Intel acpi thermal rel misc dev driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/82=
-50/8250_men_mcb.c
-index 127017c..ad0e851 100644
---- a/drivers/tty/serial/8250/8250_men_mcb.c
-+++ b/drivers/tty/serial/8250/8250_men_mcb.c
-@@ -169,7 +169,7 @@ module_mcb_driver(mcb_driver);
-=20
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("MEN 8250 UART driver");
--MODULE_AUTHOR("Michael Moese <michael.moese@men.de");
-+MODULE_AUTHOR("Michael Moese <michael.moese@men.de>");
- MODULE_ALIAS("mcb:16z125");
- MODULE_ALIAS("mcb:16z025");
- MODULE_ALIAS("mcb:16z057");
-diff --git a/drivers/video/backlight/as3711_bl.c b/drivers/video/backlight/=
-as3711_bl.c
-index 33f0f0f..26acaaf 100644
---- a/drivers/video/backlight/as3711_bl.c
-+++ b/drivers/video/backlight/as3711_bl.c
-@@ -484,6 +484,6 @@ static struct platform_driver as3711_backlight_driver =
-=3D {
- module_platform_driver(as3711_backlight_driver);
-=20
- MODULE_DESCRIPTION("Backlight Driver for AS3711 PMICs");
--MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de");
-+MODULE_AUTHOR("Guennadi Liakhovetski <g.liakhovetski@gmx.de>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:as3711-backlight");
-diff --git a/drivers/video/backlight/wm831x_bl.c b/drivers/video/backlight/=
-wm831x_bl.c
-index 6eab0d6..5730768 100644
---- a/drivers/video/backlight/wm831x_bl.c
-+++ b/drivers/video/backlight/wm831x_bl.c
-@@ -225,6 +225,6 @@ static struct platform_driver wm831x_backlight_driver =
-=3D {
- module_platform_driver(wm831x_backlight_driver);
-=20
- MODULE_DESCRIPTION("Backlight Driver for WM831x PMICs");
--MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com");
-+MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:wm831x-backlight");
-diff --git a/drivers/watchdog/ath79_wdt.c b/drivers/watchdog/ath79_wdt.c
-index e2209bf..fbac2f5 100644
---- a/drivers/watchdog/ath79_wdt.c
-+++ b/drivers/watchdog/ath79_wdt.c
-@@ -334,7 +334,7 @@ static struct platform_driver ath79_wdt_driver =3D {
- module_platform_driver(ath79_wdt_driver);
-=20
- MODULE_DESCRIPTION("Atheros AR71XX/AR724X/AR913X hardware watchdog driver"=
-);
--MODULE_AUTHOR("Gabor Juhos <juhosg@openwrt.org");
--MODULE_AUTHOR("Imre Kaloz <kaloz@openwrt.org");
-+MODULE_AUTHOR("Gabor Juhos <juhosg@openwrt.org>");
-+MODULE_AUTHOR("Imre Kaloz <kaloz@openwrt.org>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRIVER_NAME);
-diff --git a/drivers/watchdog/mt7621_wdt.c b/drivers/watchdog/mt7621_wdt.c
-index 5c4a764..70f652f 100644
---- a/drivers/watchdog/mt7621_wdt.c
-+++ b/drivers/watchdog/mt7621_wdt.c
-@@ -189,5 +189,5 @@ static struct platform_driver mt7621_wdt_driver =3D {
- module_platform_driver(mt7621_wdt_driver);
-=20
- MODULE_DESCRIPTION("MediaTek MT762x hardware watchdog driver");
--MODULE_AUTHOR("John Crispin <john@phrozen.org");
-+MODULE_AUTHOR("John Crispin <john@phrozen.org>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/watchdog/rt2880_wdt.c b/drivers/watchdog/rt2880_wdt.c
-index 98967f0..0549953 100644
---- a/drivers/watchdog/rt2880_wdt.c
-+++ b/drivers/watchdog/rt2880_wdt.c
-@@ -204,5 +204,5 @@ static struct platform_driver rt288x_wdt_driver =3D {
- module_platform_driver(rt288x_wdt_driver);
-=20
- MODULE_DESCRIPTION("MediaTek/Ralink RT288x/RT3xxx hardware watchdog driver=
-");
--MODULE_AUTHOR("Gabor Juhos <juhosg@openwrt.org");
-+MODULE_AUTHOR("Gabor Juhos <juhosg@openwrt.org>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/watchdog/ziirave_wdt.c b/drivers/watchdog/ziirave_wdt.c
-index d3594aa..9037c09 100644
---- a/drivers/watchdog/ziirave_wdt.c
-+++ b/drivers/watchdog/ziirave_wdt.c
-@@ -761,6 +761,6 @@ static struct i2c_driver ziirave_wdt_driver =3D {
-=20
- module_i2c_driver(ziirave_wdt_driver);
-=20
--MODULE_AUTHOR("Martyn Welch <martyn.welch@collabora.co.uk");
-+MODULE_AUTHOR("Martyn Welch <martyn.welch@collabora.co.uk>");
- MODULE_DESCRIPTION("Zodiac Aerospace RAVE Switch Watchdog Processor Driver=
-");
- MODULE_LICENSE("GPL");
-diff --git a/net/ipv4/netfilter/nft_masq_ipv4.c b/net/ipv4/netfilter/nft_ma=
-sq_ipv4.c
-index 6847de1..ec9b33d 100644
---- a/net/ipv4/netfilter/nft_masq_ipv4.c
-+++ b/net/ipv4/netfilter/nft_masq_ipv4.c
-@@ -86,5 +86,5 @@ module_init(nft_masq_ipv4_module_init);
- module_exit(nft_masq_ipv4_module_exit);
-=20
- MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Arturo Borrero Gonzalez <arturo@debian.org");
-+MODULE_AUTHOR("Arturo Borrero Gonzalez <arturo@debian.org>");
- MODULE_ALIAS_NFT_AF_EXPR(AF_INET, "masq");
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index 7396a6e..650b6c8 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -1511,6 +1511,6 @@ static struct i2c_driver tscs42xx_i2c_driver =3D {
-=20
- module_i2c_driver(tscs42xx_i2c_driver);
-=20
--MODULE_AUTHOR("Tempo Semiconductor <steven.eckhoff.opensource@gmail.com");
-+MODULE_AUTHOR("Tempo Semiconductor <steven.eckhoff.opensource@gmail.com>");
- MODULE_DESCRIPTION("ASoC TSCS42xx driver");
- MODULE_LICENSE("GPL");
-diff --git a/sound/soc/codecs/tscs454.c b/sound/soc/codecs/tscs454.c
-index 93d84e5..82775cd 100644
---- a/sound/soc/codecs/tscs454.c
-+++ b/sound/soc/codecs/tscs454.c
-@@ -3492,6 +3492,6 @@ static struct i2c_driver tscs454_i2c_driver =3D {
-=20
- module_i2c_driver(tscs454_i2c_driver);
-=20
--MODULE_AUTHOR("Tempo Semiconductor <steven.eckhoff.opensource@gmail.com");
-+MODULE_AUTHOR("Tempo Semiconductor <steven.eckhoff.opensource@gmail.com>");
- MODULE_DESCRIPTION("ASoC TSCS454 driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/fsl/imx-mc13783.c b/sound/soc/fsl/imx-mc13783.c
-index 9d19b80..a27d39c 100644
---- a/sound/soc/fsl/imx-mc13783.c
-+++ b/sound/soc/fsl/imx-mc13783.c
-@@ -162,7 +162,7 @@ static struct platform_driver imx_mc13783_audio_driver =
-=3D {
- module_platform_driver(imx_mc13783_audio_driver);
-=20
- MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
--MODULE_AUTHOR("Philippe Retornaz <philippe.retornaz@epfl.ch");
-+MODULE_AUTHOR("Philippe Retornaz <philippe.retornaz@epfl.ch>");
- MODULE_DESCRIPTION("imx with mc13783 codec ALSA SoC driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:imx_mc13783");
-diff --git a/sound/soc/intel/boards/skl_nau88l25_max98357a.c b/sound/soc/in=
-tel/boards/skl_nau88l25_max98357a.c
-index d31482b..33bfd54 100644
---- a/sound/soc/intel/boards/skl_nau88l25_max98357a.c
-+++ b/sound/soc/intel/boards/skl_nau88l25_max98357a.c
-@@ -679,7 +679,7 @@ module_platform_driver(skylake_audio)
-=20
- /* Module information */
- MODULE_DESCRIPTION("Audio Machine driver-NAU88L25 & MAX98357A in I2S mode"=
-);
--MODULE_AUTHOR("Rohit Ainapure <rohit.m.ainapure@intel.com");
-+MODULE_AUTHOR("Rohit Ainapure <rohit.m.ainapure@intel.com>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:skl_n88l25_m98357a");
- MODULE_ALIAS("platform:kbl_n88l25_m98357a");
-diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
-index 1dd23bb..ea11533 100644
---- a/sound/soc/qcom/apq8016_sbc.c
-+++ b/sound/soc/qcom/apq8016_sbc.c
-@@ -261,6 +261,6 @@ static struct platform_driver apq8016_sbc_platform_driv=
-er =3D {
- };
- module_platform_driver(apq8016_sbc_platform_driver);
-=20
--MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org");
-+MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org>");
- MODULE_DESCRIPTION("APQ8016 ASoC Machine Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index fb45f39..c3d2d3c 100644
---- a/sound/soc/qcom/apq8096.c
-+++ b/sound/soc/qcom/apq8096.c
-@@ -93,6 +93,6 @@ static struct platform_driver msm_snd_apq8096_driver =3D {
- 	},
- };
- module_platform_driver(msm_snd_apq8096_driver);
--MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org");
-+MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org>");
- MODULE_DESCRIPTION("APQ8096 ASoC Machine Driver");
- MODULE_LICENSE("GPL v2");
+rt/tst-cputimer3.out:
+clock_gettime returned timespec = { 0, 0 }
+clock_getres returned timespec = { 0, 1 }
+Timed out: killed the child process
+rt/tst-cputimer3.test-result:
+FAIL: rt/tst-cputimer3
+original exit status 1
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I haven't looked any further into this, just reporting.. otherwise the
+test systems seem to be healthy.
 
---HlL+5n6rz5pIUxbD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwf4ZcACgkQMOfwapXb+vKdhwCgnwnGzHdNlB12X02y1NKuMSVt
-EZQAnimTlR5fXAAbq1KcE8XVAbGL90mj
-=jnnB
------END PGP SIGNATURE-----
-
---HlL+5n6rz5pIUxbD--
