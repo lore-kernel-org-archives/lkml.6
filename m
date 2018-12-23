@@ -2,260 +2,165 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF9EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 20:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E661C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 20:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE1C217D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 20:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJTvojpA"
+	by mail.kernel.org (Postfix) with ESMTP id 4A8E6217FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 20:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545597726;
+	bh=fhT5Upcb0BchNqADsZC/UUWpgZhEkUrGArd6HV8u0Sw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Gz5OlPWNtpZSToQ0PhKIsz36vX3rQMBe1Ntl7nFFkCqrupUjrkUhwsu1ivwtTGBKS
+	 vFN8v2VDbYLFd8CFVL7DSMSz4F4/4EjbTFcM/MfIwp0ulEMygiwdPh1U1aDDNVgbrA
+	 fcrKqRX9NXb8a6BHcqHRge8oWdbVMnCB0C8dRNhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725868AbeLWULz (ORCPT
+        id S1725876AbeLWUmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 15:11:55 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40780 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeLWULz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 15:11:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18-v6so9022648lji.7;
-        Sun, 23 Dec 2018 12:11:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ALKclvEEQ2z4N2B5P1PZsuLcaqz4m7od/aY8t4+e9gM=;
-        b=KJTvojpArzOrXEIdei2W/WZIasZmpQjnaJAPCHiygs93VKnlHfKPp1wKRwgxBO1NkR
-         zKHWNF6GJhBJDsAV6K6x0hgnJq3FzKq+UWkghm0ba/3czV3kK6v2ONWY6qV5za0KeX7d
-         sCabclJTrwyMS45YC+DJ9cMmxdWgqBdojebSssTSvuSRgiM0LEqBqi7Ba8FJOX3pnOHv
-         QdSYgwokHdlQzJ7I49vhPW/EeHqW+cGLdQQo7FAAYG34nN4Qu4aOd9EZyrRJVDktBUTW
-         TAhIhjukCrnFqfIQSqUrtWDN3U2FhLom1/7FQ2STbHx/Es8itqOcMfAsMZ57vbaieQUP
-         LCQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ALKclvEEQ2z4N2B5P1PZsuLcaqz4m7od/aY8t4+e9gM=;
-        b=MKGiOVKeE+/qE538No7RIlgQ4rxozoE/XRqmlAd/R4gJeNipVfjlYQ5EOhQRjPNjhP
-         il/jRE+2CbEke/V9Gg69UihWYktHbQkICWox0nU0OrAfyb+uQHzeVqTAaotVQAwwG7yc
-         t1lLNvseEie/rqTRBEC0iuw3ymuHkUtbH2MPl4Rt/YOXMbXNkPdUsTfYyfLQ8xBIwgCa
-         65fxdPe2Frt9sRugqmC3QQxkfaEUR/NaLkTqJIREg+AD+1NLsYpWHYdD6eJwySJ2YjZ8
-         YnyrEphop3cvxHsx2mhXxSmLIaUMKFlToLRStGqQIKjCx63YRlFsIARzLEY5Fj8wVOX2
-         yd9A==
-X-Gm-Message-State: AJcUukckO34Zo+ZnWo2jV0js8q+uVxYwdjRlxEIpqzqrs2dAfGq/8Aq8
-        qKXbueLy51J8+JVhzdl0eAk=
-X-Google-Smtp-Source: ALg8bN6UkjHV1Wx//2QrDK2cJa25SAFiuvNFpbDugK+qCdOVho0rfJEN2QGbKt4SyR2fcMC76EEkTw==
-X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr6650121ljb.52.1545595911607;
-        Sun, 23 Dec 2018 12:11:51 -0800 (PST)
-Received: from [192.168.1.18] (dqd235.neoplus.adsl.tpnet.pl. [83.24.163.235])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm2536259lji.45.2018.12.23.12.11.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Dec 2018 12:11:50 -0800 (PST)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
- <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
- <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
- <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
- <20181212095929.GA13437@amd>
- <CAL_JsqJPMzwU9h2RSXeCfNTO5+zs7xTOb9jYcGivj+v_2RkG2A@mail.gmail.com>
- <20181212183253.GA16578@amd>
-Message-ID: <5084ad0d-8673-8151-d676-b5c60dd510ee@gmail.com>
-Date:   Sun, 23 Dec 2018 21:11:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 23 Dec 2018 15:42:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbeLWUmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 15:42:05 -0500
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32BCF218A1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 20:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545597723;
+        bh=fhT5Upcb0BchNqADsZC/UUWpgZhEkUrGArd6HV8u0Sw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qv9ixfO/XNd0CdOctpaSzFbMiMu0I23RSVVMo+7iGD9MWI39QQoGTXtKUVknLEmyM
+         RzJ9/aL4fI8Q8mXGX4Wn0rbMF7RdPpDVSmFAxDfV7GdyLnSZhwCV5/jUroncEP8Eln
+         psp8LWASDYU7CCbZWzLInBKc316d1F9IE6CKu8Pk=
+Received: by mail-wr1-f41.google.com with SMTP id x10so10074859wrs.8
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 12:42:03 -0800 (PST)
+X-Gm-Message-State: AJcUukei5h2q7bOh06AlfJkU0NlrA6VWtjwgHaptUSUoj8/K8aVky/P2
+        0GOMVvZZyI7FL7QYoRTfw6xlvhjl93K7rjvggcp5hQ==
+X-Google-Smtp-Source: ALg8bN4B8Wo7LvrUnx79wH9PcoE9dJ3nYs0VuMJQbc42lCSgQpMCjQsqMQs7iCnexW/I3X6ifZRMmx2DYUv95XN6VqI=
+X-Received: by 2002:adf:ea81:: with SMTP id s1mr9321804wrm.309.1545597721601;
+ Sun, 23 Dec 2018 12:42:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181212183253.GA16578@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com> <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com> <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com> <CALCETrX+KisMCbptrnPSO79-YF4E3nR1XHt+a7hCs1GXsxAbtw@mail.gmail.com>
+ <20181221182454.GA27371@linux.intel.com>
+In-Reply-To: <20181221182454.GA27371@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 23 Dec 2018 12:41:49 -0800
+X-Gmail-Original-Message-ID: <CALCETrVYJmutVEemMZRc=neFT4Ph+JUgapTWy5JS6KTH9eamHA@mail.gmail.com>
+Message-ID: <CALCETrVYJmutVEemMZRc=neFT4Ph+JUgapTWy5JS6KTH9eamHA@mail.gmail.com>
+Subject: Re: x86/sgx: uapi change proposal
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 7:32 PM, Pavel Machek wrote:
-> On Wed 2018-12-12 07:56:20, Rob Herring wrote:
->> On Wed, Dec 12, 2018 at 3:59 AM Pavel Machek <pavel@ucw.cz> wrote:
+> On Dec 21, 2018, at 11:24 AM, Sean Christopherson <sean.j.christopherson@=
+intel.com> wrote:
+>
+> On Fri, Dec 21, 2018 at 09:12:46AM -0800, Andy Lutomirski wrote:
+>>> On Dec 21, 2018, at 9:28 AM, Sean Christopherson <sean.j.christopherson=
+@intel.com> wrote:
 >>>
->>> Hi!
->>>
->>>>> We would also probably need different DT properties for different
->>>>> types of devices, since e.g. for network case the network interface
->>>>> name would fit better for the LED name, than the phy name,
->>>>> and we would need to know what type of device name we're going
->>>>> to look for.
+>>> On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+>>>>> On Dec 19, 2018, at 6:45 AM, Sean Christopherson <sean.j.christophers=
+on@intel.com> wrote:
 >>>>>
->>>>> Pavel gave following examples:
+>>>>>>> On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
 >>>>>
->>>>> eth0:green:link
->>>>> adsl0:green:link
->>>>> adsl0:red:error
+>>>>> I agree with Jethro, passing the enclave_fd as a param is obnoxious.
+>>>>> And it means the user needs to open /dev/sgx to do anything with an
+>>>>> enclave fd, e.g. the enclave fd might be passed to a builder thread,
+>>>>> it shouldn't also need the device fd.
 >>>>>
->>>>> So we would have e.g.:
+>>>>> E.g.:
 >>>>>
->>>>> associated-vl42-device = <&camera1>;
->>>>> associated-network-device = <&phy1>;
->>>>> associated-block-device = <&phy1>;
+>>>>>  sgx_fd =3D open("/dev/sgx", O_RDWR);
+>>>>>  BUG_ON(sgx_fd < 0);
+>>>>>
+>>>>>  enclave_fd =3D ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
+>>>>>  BUG_ON(enclave_fd < 0);
+>>>>>
+>>>>>  ret =3D ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
+>>>>>  BUG_ON(ret);
+>>>>>
+>>>>>  ...
+>>>>>
+>>>>>  ret =3D ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
+>>>>>  BUG_ON(ret);
+>>>>>
+>>>>>  ...
+>>>>>
+>>>>>  close(enclave_fd);
+>>>>>  close(sgx_fd);
+>>>>>
+>>>>>
+>>>>> Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
+>>>>> and ioctls for VMs and vCPUs.
 >>>>
->>>> Variable property names are kind of a pain to parse.
->>>>
->>>> Perhaps when LEDs are associated with a device, we shouldn't care
->>>> within the context of the LED subsystem what the name is. The
->>>> association is more important and if you have that exposed, then you
->>>> don't really need to care what the name is. You still have to deal
->>>> with a device with more than 1 LED, but that becomes a problem local
->>>> to that device.
->>>>
->>>> What I'm getting at is following a more standard binding pattern of
->>>> providers and consumers like we have for gpios, clocks, etc. So we'd
->>>> have something like this:
->>>>
->>>> ethernet {
->>>>    ...
->>>>    leds = <&green_led>, <&red_led>;
->>>>    led-names = "link", "err";
->>>> };
->>>>
->>>> We can still support defining LED names as we've done, but we don't
->>>> have to come up with some elaborate naming convention that covers
->>>> every single case.
+>>>> Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+>>>> opening a new instance of /dev/sgx for each encalve?
 >>>
->>> I see that it would be more consistent with how gpios work, but I'm
->>> afraid this does not fit LEDs properly.
->>>
->>> With power LED, you want to be able to say "this is just on". Some
->>> poeple like heartbeat, and have LED for that. There may be LED for
->>> "disk activity", meaning activity on any harddrive. And there may be
->>> activity LED for specific disk.
->>>
->>> Only in the last case it would be suitable to have LED reference as a
->>> child of an device...
+>>> Directly associating /dev/sgx with an enclave means /dev/sgx can't be
+>>> used to provide ioctl()'s for other SGX-related needs, e.g. to mmap()
+>>> raw EPC and expose it a VM.  Proposed layout in the link below.  I'll
+>>> also respond to Jarkko's question about exposing EPC through /dev/sgx
+>>> instead of having KVM allocate it on behalf of the VM.
 >>
->> Right. For all the other cases, why do you need any link with a
->> device? What we have today is sufficient and can continue to be
->> supported. A link to a device is only used if the led is associated
->> with a particular device.
-> 
-> Right, so the link is only needed in some cases. So unlike your
-> example, we would have:
-> 
-> led1 { led-meaning = "heartbeat"; }
-> led2 { led-meaning = "link"; }
-> led3 { led-meaning = "err"; }
-> led4 { led-meaning = "activity"; what-activity = "all_harddisks"; }
-> ethernet { leds = < &led2, &led3 >; }
-> 
-> Dunno. I'd expect all the LED description in the LED node, not part of
-> the description there and back link from the device
+>> Hmm. I guess this makes some sense.  My instinct would be to do it a
+>> little differently and have:
+>>
+>> /dev/sgx/enclave: Each instance is an enclave.
+>>
+>> /dev/sgx/epc: Used to get raw EPC for KVM. Might have different
+>> permissions, perhaps 0660 and group kvm.
+>>
+>> /dev/sgx/something_else: For when SGX v3 adds something else :)
+>
+> Mmmm, I like this approach a lot.  It would allow userspace to easily
+> manage permissions for each "feature", e.g. give all users access to
+> /dev/sgx/epc but restrict /dev/sgx/enclave.
+>
+> And we could add e.g. /dev/sgx/admin if we wanted to exposed ioctls()
+> that apply to all aspects of SGX.
+>
+> Do you know if /dev/sgx/epc could be dynamically created, e.g. by
+> KVM when the kvm_intel module is loaded?
 
-Driven by the feeling that it's all going in a wrong direction
-I've done a bit more analysis - please refer below to my conclusions.
+Presumably sgx would create a bus and enumerate the devices as needed.
+Or I suppose these things could be platform or system devices. I=E2=80=99m =
+not
+really a device model expert, and the one time I tried to implement a
+character device, I got so disgusted that I wrote a whole library for
+it.  It=E2=80=99s still in limbo somewhere.
 
-We already have a means for associating LEDs connected to standalone LED
-controllers with other devices - this is LED trigger mechanism.
-The association can be discovered by reading "trigger" sysfs file.
 
-Device drivers can even create their own custom triggers, comprising
-device node name or phy name in their names, which are known only during
-driver probing, which allows to better describe the association than the
-generic ones.
-
-When it comes to devices with built-in LEDs - let's check how network
-devices handle their LEDs. I've looked into ralink wireless driver:
-
-drivers/net/wireless/ralink/rt2x00/rt2x00leds.c
-
-It registers its LEDs in rt2x00leds_register(),
-and composes names according to the following pattern:
-
-    snprintf(name, sizeof(name), "%s-%s::assoc",
-             rt2x00dev->ops->name, phy_name);
-
-    snprintf(name, sizeof(name), "%s-%s::quality",
-             rt2x00dev->ops->name, phy_name);
-
-    snprintf(name, sizeof(name), "%s-%s::radio",
-             rt2x00dev->ops->name, phy_name);
-
-which results in the following LED names for wifi dongle:
-
-rt73usb-phy16::assoc -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/leds/rt73usb-phy16::assoc
-rt73usb-phy16::quality -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/leds/rt73usb-phy16::quality
-rt73usb-phy16::radio -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/leds/rt73usb-phy16::radio
-
-As it is shown, each entry under /sys/class/CLASS_NAME is a symbolic
-link to the class device sub-directory located in the parent device
-directory. In this case, even if we hadn't phy name in the LED name,
-we could retrieve it by traversing parent device directory in the
-sysfs:
-
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/ieee80211/phy16/
-
-We have also available additional device and driver specific info
-in the uevent file:
-
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:DEVTYPE=usb_interface
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:DRIVER=rt73usb
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:PRODUCT=148f/2573/1
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:TYPE=0/0/0
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:INTERFACE=255/255/255
-../../devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/uevent:MODALIAS=usb:v148Fp2573d0001dc00dsc00dp00icFFiscFFipFFin00
-
-In addition to that the driver registers also its own triggers,
-that associate the LEDs it exposes with the particular phy and the
-function: phy16rx phy16tx phy16assoc phy16radio.
-
-This is the pattern to be followed also in case user wants to
-associate standalone LEDs with the device. Driver of a device
-that lacks onboard LEDs would have to register suitable trigger
-and that's it.
-
-In case of keyboard LEDs we have similar symlinks:
-
-input0::capslock -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-3/2-3:1.0/0003:1C4F:0002.0001/input/input0/input0::capslock
-input0::numlock -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-3/2-3:1.0/0003:1C4F:0002.0001/input/input0/input0::numlock
-input0::scrolllock -> 
-../../devices/pci0000:00/0000:00:14.0/usb2/2-3/2-3:1.0/0003:1C4F:0002.0001/input/input0/input0::scrolllock
-
-#cat 
-/sys/devices/pci0000:00/0000:00:14.0/usb2/2-3/2-3:1.0/0003:1C4F:0002.0001/uevent 
-
-DRIVER=hid-generic
-HID_ID=0003:00001C4F:00000002
-HID_NAME=SIGMACHIP USB Keyboard
-HID_PHYS=usb-0000:00:14.0-3/input0
-HID_UNIQ=
-MODALIAS=hid:b0003g0001v00001C4Fp00000002
-
-Having all the above it seems that we can safely remove devicename
-section from LED class device naming pattern. Also no other links
-in DT will be needed if we will entirely rely on LED trigger mechanism.
-
--- 
-Best regards,
-Jacek Anaszewski
+>  That would seal the deal for
+> me as it'd keep open the option of having KVM handle oversubscription
+> of guest EPC while exposing EPC through /dev/sgx instead of /dev/kvm.
