@@ -2,176 +2,78 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251ACC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299E5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E766C2171F
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 03:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F29E2218E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393117AbeLWD7J (ORCPT
+        id S2393129AbeLWEBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 22:59:09 -0500
-Received: from gateway34.websitewelcome.com ([192.185.150.114]:13959 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731793AbeLWD7J (ORCPT
+        Sat, 22 Dec 2018 23:01:21 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:38938 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731793AbeLWEBU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 22:59:09 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id ED1C5197509
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 21:37:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id auZfg4iF3dnCeauZfgDvvn; Sat, 22 Dec 2018 21:37:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=48690 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gauZd-002kYV-AF; Sat, 22 Dec 2018 21:37:07 -0600
-Subject: Re: [PATCH] net: core: Fix Spectre v1 vulnerability
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     David Miller <davem@davemloft.net>, ast@kernel.org,
-        daniel@iogearbox.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181221204901.GA30045@embeddedor>
- <20181222.150722.1493687829239836271.davem@davemloft.net>
- <20181222235952.keue7a336sg7jfim@ast-mbp.dhcp.thefacebook.com>
- <20181222.184051.718127928973898182.davem@davemloft.net>
- <e1c8e69b-3417-6176-6b49-1b7a23febb21@embeddedor.com>
- <20181223030039.wrpytx7pwfcljdjm@ast-mbp.dhcp.thefacebook.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <37df17ba-7fcf-ab04-fe9a-d2a6fc5b6b9c@embeddedor.com>
-Date:   Sat, 22 Dec 2018 21:37:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 22 Dec 2018 23:01:20 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gaux4-0008HX-Tp; Sun, 23 Dec 2018 12:01:18 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gaux4-0004nI-QP; Sun, 23 Dec 2018 12:01:18 +0800
+Date:   Sun, 23 Dec 2018 12:01:18 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
+Message-ID: <20181223040118.qzk4flxswf5xvckp@gondor.apana.org.au>
+References: <20181210234929.5729-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181223030039.wrpytx7pwfcljdjm@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gauZd-002kYV-AF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:48690
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210234929.5729-1-natechancellor@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/22/18 9:00 PM, Alexei Starovoitov wrote:
-> On Sat, Dec 22, 2018 at 08:53:40PM -0600, Gustavo A. R. Silva wrote:
->> Hi,
->>
->> On 12/22/18 8:40 PM, David Miller wrote:
->>> From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
->>> Date: Sat, 22 Dec 2018 15:59:54 -0800
->>>
->>>> On Sat, Dec 22, 2018 at 03:07:22PM -0800, David Miller wrote:
->>>>> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
->>>>> Date: Fri, 21 Dec 2018 14:49:01 -0600
->>>>>
->>>>>> flen is indirectly controlled by user-space, hence leading to
->>>>>> a potential exploitation of the Spectre variant 1 vulnerability.
->>>>>>
->>>>>> This issue was detected with the help of Smatch:
->>>>>>
->>>>>> net/core/filter.c:1101 bpf_check_classic() warn: potential spectre issue 'filter' [w]
->>>>>>
->>>>>> Fix this by sanitizing flen before using it to index filter at line 1101:
->>>>>>
->>>>>> 	switch (filter[flen - 1].code) {
->>>>>>
->>>>>> and through pc at line 1040:
->>>>>> 	
->>>>>> 	const struct sock_filter *ftest = &filter[pc];
->>>>>>
->>>>>> Notice that given that speculation windows are large, the policy is
->>>>>> to kill the speculation on the first load and not worry if it can be
->>>>>> completed with a dependent load/store [1].
->>>>>>
->>>>>> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
->>>>>>
->>>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>>>
->>>>> BPF folks, I'll take this directly.
->>>>>
->>>>> Applied and queued up for -stable, thanks.
->>>>
->>>> hmm. what was the rush?
->>>> I think it is unnecessary change.
->>>> Though fp is passed initially from user space
->>>> it's copied into kernel struct first.
->>>> There is no way user space can force kernel to mispredict
->>>> branch in for (pc = 0; pc < flen; pc++) loop.
->> The following piece of code is the one that can be mispredicted, not the for
->> loop:
->>
->> 1013         if (flen == 0 || flen > BPF_MAXINSNS)
->> 1014                 return false;
->>
->> Instead of calling array_index_nospec() inside bpf_check_basics_ok(), I
->> decided to place the call close to the code that could be compromised. This
->> is when accessing filter[].
+On Mon, Dec 10, 2018 at 04:49:29PM -0700, Nathan Chancellor wrote:
+> Clang warns when one enumerated type is implicitly converted to another:
 > 
-> Why do you think it can be mispredicted?
->
-
-Beause fprog->len comes from user space:
-
-bpf_prog_create_from_user() -> bpf_check_basics_ok()
-
-> I've looked at your other patch for nfc_sock_create() where you're adding:
-> + proto = array_index_nospec(proto, NFC_SOCKPROTO_MAX);
+> drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
+> conversion from enumeration type 'enum dma_data_direction' to different
+> enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+>                                 direction, DMA_CTRL_ACK);
+>                                 ^~~~~~~~~
+> drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
+> conversion from enumeration type 'enum dma_data_direction' to different
+> enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+>                                 direction,
+>                                 ^~~~~~~~~
+> 2 warnings generated.
 > 
-> 'proto' is the value passed in _register_ into system call.
-> There is no need to wrap it with array_index_nospec().
-> It's not a load from memory and user space cannot make it slow.
-> Slow load is a necessary attribute to trigger speculative execution
-> into mispredicted branch.
+> dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
+> Because we know the value of the dma_data_direction enum from the
+> switch statement, we can just use the proper value from
+> dma_transfer_direction so there is no more conversion.
 > 
-
-We might be interpreting the information available about Spectre a bit 
-different, but when the Spectre paper talks about memory vs cpu speed it 
-seems to me that it's just an example to illustrate how the microcode 
-can come into the equation and speculate. So I'm genuinely curious about 
-your last statement: "Slow load is a necessary attribute..." Where did 
-you get that info from?
-
-Can't we have the case in which the code can be "trained" to read
-perfectly valid values for prog->len for quite a while, making the
-microcode come into place and speculate about:
-
-1013         if (flen == 0 || flen > BPF_MAXINSNS)
-1014                 return false;
-
-and then make flen to be greater than BPF_MAXINSNS?
-
-> What tool did you use to analyze this?
-> Did you analyze all warnings case by case or just trusted the tool
-> and generated these patches?
+> DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+> DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
 > 
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I read every case, but I sometimes might be wrong of course.
-
-Thanks
---
-Gustavo
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
