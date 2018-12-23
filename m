@@ -2,107 +2,111 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C275CC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC14EC43444
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D732184E
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:51:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930FE2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeLWMvk (ORCPT
+        id S1728415AbeLWMwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 07:51:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57212 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725868AbeLWMvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 07:51:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93580ACFA;
-        Sun, 23 Dec 2018 12:51:38 +0000 (UTC)
-Date:   Sun, 23 Dec 2018 13:51:38 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/microcode updates for 4.21
-Message-ID: <20181223125138.GB26860@zn.tnic>
+        Sun, 23 Dec 2018 07:52:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:22583 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeLWMwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 07:52:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2018 04:52:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,386,1539673200"; 
+   d="scan'208";a="112774162"
+Received: from dlu2-mobl4.ccr.corp.intel.com (HELO localhost) ([10.249.254.240])
+  by orsmga003.jf.intel.com with ESMTP; 23 Dec 2018 04:52:24 -0800
+Date:   Sun, 23 Dec 2018 14:52:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181223125114.GA7051@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181220103204.GB26410@linux.intel.com>
+ <20181222081649.GB8895@linux.intel.com>
+ <20181222082502.GA13275@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181222082502.GA13275@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sat, Dec 22, 2018 at 10:25:02AM +0200, Jarkko Sakkinen wrote:
+> On Sat, Dec 22, 2018 at 10:16:49AM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
+> > > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > > opening a new instance of /dev/sgx for each encalve?
+> > > 
+> > > I think that fits better to the SCM_RIGHTS scenario i.e. you could send
+> > > the enclav to a process that does not have necessarily have rights to
+> > > /dev/sgx. Gives more robust environment to configure SGX.
+> > 
+> > Sean, is this why you wanted enclave fd and anon inode and not just use
+> > the address space of /dev/sgx? Just taking notes of all observations.
+> > I'm not sure what your rationale was (maybe it was somewhere). This was
+> > something I made up, and this one is wrong deduction. You can easily
+> > get the same benefit with /dev/sgx associated fd representing the
+> > enclave.
+> > 
+> > This all means that for v19 I'm going without enclave fd involved with
+> > fd to /dev/sgx representing the enclave. No anon inodes will be
+> > involved.
+> 
+> Based on these observations I updated the uapi.
+> 
+> As far as I'm concerned there has to be a solution to do EPC mapping
+> with a sequence:
+> 
+> 1. Ping /dev/kvm to do something.
+> 2. KVM asks SGX core to do something.
+> 3. SGX core does something.
+> 
+> I don't care what the something is exactly is, but KVM is the only sane
+> place for KVM uapi. I would be surprised if KVM maintainers didn't agree
+> that they don't want to sprinkle KVM uapi to random places in other
+> subsystems.
 
-please pull the latest x86-microcode-for-linus tree from:
+The one option to consider to do would be to have a device driver for
+KVM if you really want this e.g. something like /dev/vsgx. With the
+current knowledge I'm not yet sure why all could not be done just
+through /dev/kvm.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-microcode-for-linus
-
-
-This update contains work started by Maciej to make the microcode
-container verification more robust against all kinds of corruption and
-also unify verification paths between early and late loading.
-
-The result is a set of verification routines which validate the
-microcode blobs before loading it on the CPU. In addition, the code is a
-lot more streamlined and unified.
-
-In the process, some of the aspects of patch handling and loading were
-simplified.
-
-All provided by Maciej S. Szmigiero and Borislav Petkov.
-
-Thanks,
-Boris.
-
------------------->
-
-The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
-
-  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-microcode-for-linus
-
-for you to fetch changes up to 2ffcbce39ea1e355eed8c6527308624f366f1c58:
-
-  x86/microcode/AMD: Update copyright (2018-11-19 10:55:12 +0100)
-
-----------------------------------------------------------------
-Borislav Petkov (11):
-      x86/microcode/AMD: Move verify_patch_size() up in the file
-      x86/microcode/AMD: Clean up per-family patch size checks
-      x86/microcode/AMD: Cleanup verify_patch_size() more
-      x86/microcode/AMD: Concentrate patch verification
-      x86/microcode/AMD: Simplify patch family detection
-      x86/microcode/AMD: Move patch family check to verify_patch()
-      x86/microcode/AMD: Move chipset-specific check into verify_patch()
-      x86/microcode/AMD: Change verify_patch()'s return value
-      x86/microcode/AMD: Convert early parser to the new verification routines
-      x86/microcode/AMD: Fix container size's type
-      x86/microcode/AMD: Update copyright
-
-Maciej S. Szmigiero (5):
-      x86/microcode/AMD: Subtract SECTION_HDR_SIZE from file leftover length
-      x86/microcode/AMD: Add microcode container verification
-      x86/microcode/AMD: Check microcode container data in the late loader
-      x86/microcode/AMD: Convert CPU equivalence table variable into a struct
-      x86/microcode/AMD: Check the equivalence table size when scanning it
-
- arch/x86/kernel/cpu/microcode/amd.c | 470 +++++++++++++++++++++++-------------
- 1 file changed, 308 insertions(+), 162 deletions(-)
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+/Jarkko
