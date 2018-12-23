@@ -2,81 +2,253 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A34C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 10:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F8CC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCDDD2176F
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 10:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92518218E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:00:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g+rSvyDv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeLWKyQ (ORCPT
+        id S1727995AbeLWLAU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 05:54:16 -0500
-Received: from mx1.yrkesakademin.fi ([85.134.45.194]:23978 "EHLO
-        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbeLWKyP (ORCPT
+        Sun, 23 Dec 2018 06:00:20 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45096 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbeLWLAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 05:54:15 -0500
-Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
- userns mounts, breaking systemd-nspawn
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        <christian.brauner@canonical.com>
-CC:     <nix.or.die@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        <ellierevves@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        <seth.forshee@canonical.com>, <stable@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>
-References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
- <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com>
- <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
- <CAPP7u0Vo6gB86S-hZcOW9Rmki8oKHd=Lyx3x-N9gjPC4JP_YxQ@mail.gmail.com>
- <CAHk-=wg-6jYZ=bJWdyBR=n8QOfwHTZZdzSUUPgFW+NGCV-pe2g@mail.gmail.com>
- <CAPP7u0UhPyC=eewx4dYu+AU5tK_URE8_5PW9cNkK6Ppp7vkqHg@mail.gmail.com>
- <CAHk-=wg8Qrh4nvFbWttz6zPMeRKO2Twv57vZfGaQ6odsjYFEnQ@mail.gmail.com>
-From:   Thomas Backlund <tmb@mageia.org>
-Message-ID: <828415b6-9fee-96bd-b6b0-fd4450df97a8@mageia.org>
-Date:   Sun, 23 Dec 2018 12:54:11 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wg8Qrh4nvFbWttz6zPMeRKO2Twv57vZfGaQ6odsjYFEnQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-WatchGuard-Spam-ID: str=0001.0A0C0201.5C1F6956.0051,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.194
-X-WatchGuard-Mail-From: tmb@mageia.org
+        Sun, 23 Dec 2018 06:00:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t6so9300695wrr.12
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 03:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=10iMMPsUhGxi5BB4NNji9cUzOGJJ+3Pvau/XUMZdrf4=;
+        b=g+rSvyDvIwFBvGRPEO4d0A1Nkw38aYgyNh0IKX7y5goWpNByfi1R/qLEW2sb6CdLA4
+         8RBA45qkIrA6wCxYc3kAjRzWTo2BdlFw2qHYMMnRyjyQ6/Ct0CR7ePd4PGGioW5j3J6B
+         zFOeV7q9JWnIu4yDCTczFstKPB2j8Q1MMKFH0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=10iMMPsUhGxi5BB4NNji9cUzOGJJ+3Pvau/XUMZdrf4=;
+        b=YoPctyUpa8O9LZ9HEztc5rTCDo6koKeFc7njL4nkSXSrNjyhXpmf8LDVXuV2HXCp1k
+         9WsosHmzFAgcSMjwbGSL+dfB19LGM7D8IASJ2RnmAeY4Tj8nlqs3PMAE8tpTZzH+xr6M
+         1lUEwr0A2wzAH9yI9w8pesMDE2hp0tj+rfchQmoP9/c2ZT7Df5r531N2l4HsuFRnik9m
+         RHvLYlnCao9LmXsvV+KcvY8sPIsxuoQVlQpNKWelYRZi094O98ctMCYB6EiQx9k3WoQB
+         w9oo1+CcbiyzLwgstalYRq7/+c01JnIplz797fLq2H3OPJcmgSrKjv3SOnlSCJyyviN4
+         n+hg==
+X-Gm-Message-State: AJcUukdjGBrfWHMIQJBvpux373/fGgbafRs5kRiH/1/f8usEiPa0pW68
+        qRMJo5r5XppNWJAl/UPLTPxuIQ==
+X-Google-Smtp-Source: ALg8bN5UK+W0ARavwLVIftExdqX7F6ayM2/WaJ8tk2dR9PwzPCFOixThdtVDWv7AsVpTVsw5TFlQFg==
+X-Received: by 2002:a5d:4b8b:: with SMTP id b11mr8595251wrt.180.1545562817667;
+        Sun, 23 Dec 2018 03:00:17 -0800 (PST)
+Received: from [192.168.0.100] (146-241-102-190.dyn.eolo.it. [146.241.102.190])
+        by smtp.gmail.com with ESMTPSA id g67sm20920008wmd.38.2018.12.23.03.00.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Dec 2018 03:00:16 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
+ policy in blkio/io
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
+Date:   Sun, 23 Dec 2018 12:00:14 +0100
+Cc:     Tejun Heo <tj@kernel.org>,
+        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
+References: <20181119103424.3853-1-paolo.valente@linaro.org>
+ <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
+ <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
+ <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
+ <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
+ <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
+ <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
+ <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
+ <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
+ <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
+To:     bfq-iosched@googlegroups.com
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Den 23-12-2018 kl. 01:28, skrev Linus Torvalds:
-> On Sat, Dec 22, 2018 at 3:07 PM Christian Brauner
-> <christian.brauner@canonical.com> wrote:
->>
->> However, for this case should I resend the revert?
-> 
-> Since I was pointed at the original email thread, I just picked it up
-> from there directly. It still applied cleanly, nothing had changed in
-> that area.
-> 
->                  Linus
-> 
 
-This should also be picked up for 4.19 lts
 
-Greg, it's now upstream as:
+> Il giorno 18 dic 2018, alle ore 18:22, Paolo Valente =
+<paolo.valente@linaro.org> ha scritto:
+>=20
+>=20
+>=20
+>> Il giorno 18 dic 2018, alle ore 17:41, Tejun Heo <tj@kernel.org> ha =
+scritto:
+>>=20
+>> Hello, Paolo.
+>>=20
+>> On Tue, Dec 18, 2018 at 08:48:10AM +0100, Paolo Valente wrote:
+>>> If Tejun cannot see any solution to his concern, then can we just
+>>> switch to this extension, considering that
+>>> - for non-shared names the interface is *identical* to the current
+>>> one;
+>>> - by using this new interface, and getting feedback we could
+>>> understand how to better handle Tejun's concern?
+>>> A lot of systems do use weights, and people don't even know that =
+these
+>>> systems don't work correctly in blk-mq.  And they won't work =
+correctly
+>>> in any available configuration from 4.21, if we don't fix this =
+problem.
+>>=20
+>> So, when seen from userland, how it should behave isn't vague or
+>> complicated.  For a given device and policy type, there can be only
+>> one implementation active.
+>=20
+> Yes, but the problem is the opposite. You may have
+> - two different policies, with the same interface parameter,=20
+> - one active on one device
+> - the other one active on another device
+>=20
+> In that case, statistics from one policy necessarily differ from
+> statistics from the other policy.
+>=20
+> In this respect, in a system with more than one drive it already
+> happens that the same policy is active on different devices.  When
+> printing a statistics interface file for the policy, the output will
+> be a list of separate statistics, with a bunch of statistics *for
+> each* drive (plus a grand total in some cases).
+>=20
+> So, our proposal simply extends this scheme in the most natural way:
+> if, now, also two or more policies share the same statistics file,
+> then the output will be a list of separate statistics, one for each
+> policy.  The statistics for each policy will be tagged with the policy
+> name, and will have the same identical form as above.  It seems the
+> most natural hierarchical extension of the same scheme.
+>=20
 
- From 94f82008ce30e2624537d240d64ce718255e0b80 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <christian@brauner.io>
-Date: Thu, 5 Jul 2018 17:51:20 +0200
-Subject: Revert "vfs: Allow userns root to call mknod on owned filesystems."
+Maybe my generic description didn't highlight how plain are.
 
---
-Thomas
+If you print, e.g., io_serviced with the current interface, you get
+
+--------------------------
+
+8:0 Read 4291168
+8:0 Write 2181577
+8:0 Sync 5897755
+8:0 Async 574990
+8:0 Total 6472745
+Total 6472745
+
+--------------------------
+
+With the new, interface, you get *the same output*, if only one policy
+is attached to this interface file.  In, instead
+- two policies share
+the the file, because one is active on a device and one on another
+device
+- these policies are named, e.g., bfq and pol2
+then you get (device number and statistics invented):
+
+--------------------------
+
+bfq:
+8:0 Read 4291168
+8:0 Write 2181577
+8:0 Sync 5897755
+8:0 Async 574990
+8:0 Total 6472745
+Total 6472745
+
+pol2:
+16:0 Read 238768
+16:0 Write 323123
+16:0 Sync 43243
+16:0 Async 432432
+16:0 Total 412435
+Total 4341244
+
+--------------------------
+
+So you see the per-device statistics as before, without the problem
+of inventing a new set of names for every new policy that has the same
+interface files of an existing policy.
+
+Tejun, let's try to converge, to whatever solution you prefer.
+
+
+4.21 is coming ...  and the legacy proportional share interface will
+be gone with cfq.  This will break legacy code using the
+proportional-share interface on top of bfq.  This code may just fail
+when trying to use interface files that don't exist any longer.
+
+Thanks,
+Paolo
+
+> At any rate, if you don't like it, just tell us how you prefer it
+> done.  Do you prefer the sharing of statistics file to be simply
+> forbidden?  (If this can be done.) I think such an incomplete solution
+> would preserve part of the current mess; but, if this allows us to
+> exit from this impasse, then it is ok for me.
+>=20
+> *Any* feasible option is ok for me. Just pick one.
+>=20
+>> It doesn't make sense to have two weight
+>> mechanisms active on one device, right?
+>=20
+> (Un)fortunately, the problem are not weights.  There won't be two
+> weights for two policies expiring a weight parameter.  The problems
+> concerns statistics.  See above.
+>=20
+>=20
+>> So, the interface should only
+>> present what makes sense to the user for both configuration knobs and
+>> statistics, and that'd be a hard requirement because we don't want to
+>> present confusing spurious information to userspace.
+>>=20
+>> There seemd to have been significant misunderstandings as to what the
+>> requirements are when this was discussed way back, so idk what the
+>> good path forward is at this point.  Just keep the current names?
+>>=20
+>=20
+> I don't clearly understand how "just picking the current names" is a
+> way forward, but if we do not make this extension, in a way or the
+> other, then two policies will simply not be allowed to share the same
+> interface files.  And we will be still at the starting point.
+>=20
+> Thanks,
+> Paolo
+>=20
+>> Thanks.
+>>=20
+>> --=20
+>> tejun
+>=20
+> --=20
+> You received this message because you are subscribed to the Google =
+Groups "bfq-iosched" group.
+> To unsubscribe from this group and stop receiving emails from it, send =
+an email to bfq-iosched+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
 
