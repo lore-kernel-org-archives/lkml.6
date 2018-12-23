@@ -2,121 +2,181 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA8CC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0038C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC9E21905
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:08:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ldOYBb+z"
+	by mail.kernel.org (Postfix) with ESMTP id 97B7521917
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeLWHIg (ORCPT
+        id S1726889AbeLWHLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 02:08:36 -0500
-Received: from mail-eopbgr40064.outbound.protection.outlook.com ([40.107.4.64]:43840
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726338AbeLWHIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 02:08:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YDbA1FKsvfGtaTsRiD4JMsGSE8p46EkotzD3HHGGC7w=;
- b=ldOYBb+zhL/NOAeiU72IbSbd6ydnvRBsiwAETpRu/1RJT5TTdrD5/zxjURneoVQtxVt3dcCVRxtNMJ0SKzUDRIo0mJVjpWT32xGmM3SPSPgI7UoJoyiIyZph7PacUpGXmSHt2JZBNqz8mvywMFNpbERc/9wlcZcFjtjdXs7UXL0=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3431.eurprd04.prod.outlook.com (52.133.19.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.25; Sun, 23 Dec 2018 07:08:31 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::f19b:c79a:43b4:b88d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::f19b:c79a:43b4:b88d%2]) with mapi id 15.20.1446.026; Sun, 23 Dec 2018
- 07:08:31 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stefan Agner <stefan.agner@toradex.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] pinctrl: freescale: Break dependency on SOC_IMX8MQ for
- i.MX8MQ
-Thread-Topic: [PATCH] pinctrl: freescale: Break dependency on SOC_IMX8MQ for
- i.MX8MQ
-Thread-Index: AQHUmo5PK/Tz1O1SH0SGzdYOjnerFw==
-Date:   Sun, 23 Dec 2018 07:08:31 +0000
-Message-ID: <1545548891-24671-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P194CA0023.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:203:8f::33) To AM6PR0402MB3654.eurprd04.prod.outlook.com
- (2603:10a6:209:19::17)
-x-originating-ip: [95.76.156.53]
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3431;6:cWQYHFnF00FiqRM7fPtFhUoO+gJioLoqoqIHVplfaYVBvx4pmi2XLo46BaQeLqC10tyRIM2MUiBeGkFJf4lvzWYDJIQNXnrZ0OMF/jvLAfbhi8hCpuyvgNdGPD+Y0DXKRLjZ7RZXklYbJdGq3MsGFDhOguPEOc/ujI5QE81k6lESN41x8vVxXO/7j1TmqMx8f++cLbm4IxDLutOv/eU4WS5aM4wrSleAeh8CNz5g82++f2sCVR0jcsitiSd9QYCzt2D0pw2vkXVLrR2lLAkhm/jmQmll6CtG4P/YSk5JB2KHQah7KFm4JKLUzjBxzUmIk6wyR8LseJUlVaZqsyVQ+kJ7Y+goRHg2Sy5rxM/JoleZRiy5wxlChsHkNctdFfVVBY545WwKxhWYhG/7oAbyPKwnbFJHt9RpawVcQhLayZGMNTCqbuvsRhv9M2MEqv+0d3/Tqj6cpuUmuxMjsPlsog==;5:12QYCyXUr7VUY8eoDzF6wlegQ+F3dkW7graYjvp1hP8FkqJX83Fprweqk8rKR61zFPi7BmWmPan+U/2YeZ05py2B7htrQ9MPfTgQPy0UlOdZQwt+LAMzkLZzE9utifnEAO79bH8Yi+Ed9tIZ2eZOLQ1gP+JnIl0WLvyHvOVbMjU=;7:+kohbjRsGrZCtrzrZzlP9On/SVhVkVOPbL2wULIgb4GUtYNXW4SEaNUXiOws8FZDoiohNOSmpkcdvQ7HlWmpJ957GRlUCdUEGl7O0JOpZ66zCUuBVQnP0f9zdCIL9bjVc+uzmlElXSlSDEH1en7fmQ==
-x-ms-office365-filtering-correlation-id: 51fa8012-a44a-41cf-f459-08d668a57211
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600098)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3431;
-x-ms-traffictypediagnostic: AM6PR0402MB3431:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <AM6PR0402MB343107AF511D34DE70E51123F6BA0@AM6PR0402MB3431.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220043)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3431;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3431;
-x-forefront-prvs: 0895DF8FFD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(136003)(376002)(396003)(346002)(39860400002)(189003)(199004)(66066001)(71190400001)(71200400001)(2906002)(6512007)(53936002)(97736004)(86362001)(5660300001)(105586002)(106356001)(25786009)(478600001)(99286004)(476003)(486006)(186003)(6346003)(102836004)(26005)(256004)(14444005)(2616005)(14454004)(6486002)(68736007)(44832011)(316002)(4326008)(6436002)(8676002)(6116002)(3846002)(36756003)(6506007)(54906003)(110136005)(81166006)(81156014)(7736002)(8936002)(52116002)(386003)(305945005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3431;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3rvyHGZwushESI3Qo/P8ORg2voHK1VxbDp4GDy5ObAk42a8SdLlMbjtiaRvAlWGSTdoCHFcR4QXe0m6E+x1lU7N4s1NU+eMGbmP53gbymV0jcKM5oDqaJ2tI2YML1a2zasCJ6t7GffEQobfKg7OO51Oib+QpmwKctQ7xrtq/rm8D8ZXLNPMYqSXkTZRDLUq50RoWD90UX/VHdaR9vtXZZyhM0+NvM4umzylRutHcouoj0qntSiD5t2TSgs6rex0MJYENzq/28MF4xDb/O3ivFTJclhGe91nGc1P9OALLJdniXiHOZahEdsyuiTiCk6oC
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 23 Dec 2018 02:11:05 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:58571 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeLWHLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 02:11:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id p21so10131057itb.8
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Dec 2018 23:11:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9T9yc5M2sOehkhDU1HEPeMBXv8F8JLy1OzvMNRT6SlQ=;
+        b=pSebhdfXb8XEyi1/YC/HEGJAGQrPZzAOSfof2OAf+KoVoGa3wWon9Ce5kmNemlh4NE
+         4TtiCpIhKDTfQ2bWgakZStASe9YUlLVl0jgkq8GxftPHhkz863FlKjPBCocwEUYMPyR1
+         6zgBsdU4D/GoVKEv1oH3DFahE5g6zoZKKuG79+ef5nHbhkCi1ostrYynhuWCrVa1g4e6
+         WXjDZHICY9lu6ozNP9dZ5nOrG3KCQcGLX7s+oV116WTE2OBSey++UmcNMGIaAS1YOW9C
+         Qthhrv9UqzqG5ggTkMNxCmhymKR/4qiA0K2PZtCAToky2wZDnOO1wehXKjGEPnE13PQ5
+         LiSw==
+X-Gm-Message-State: AA+aEWa0WVbMDCgnQeTaBwOnVv2/VauiSBmKRM5kGjgEA1XGDn0bQ5H/
+        FEzEo/P+zRcFTFe+CsIbcFD1i/7TxrLlXRhy4BM0QSvx8Oxu
+X-Google-Smtp-Source: ALg8bN7bjnqJp9yAkziNZnnUVRLWk9LymlqjKjnDE9vB0a8qUpVWW27e8Wfn5aQ2Xszvg0OT5aIaOIozhzbSnIkMzt5ILIToFzXw
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51fa8012-a44a-41cf-f459-08d668a57211
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 07:08:31.4988
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3431
+X-Received: by 2002:a24:5e90:: with SMTP id h138mr6952364itb.27.1545549063730;
+ Sat, 22 Dec 2018 23:11:03 -0800 (PST)
+Date:   Sat, 22 Dec 2018 23:11:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ed3d51057dab2ed4@google.com>
+Subject: KASAN: slab-out-of-bounds Write in fpstate_init
+From:   syzbot <syzbot+5ce1a620488e94bf2f15@syzkaller.appspotmail.com>
+To:     bigeasy@linutronix.de, bp@alien8.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, nstange@suse.de,
+        riel@surriel.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CONFIG_SOC_IMX8MQ will go away, so the dependency can be based on
-ARCH_MXC && ARM64.
+Hello,
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+syzbot found the following crash on:
+
+HEAD commit:    6648e120dd1a Add linux-next specific files for 20181217
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fddf97400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9e2825c86a37329f
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ce1a620488e94bf2f15
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107348c3400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=135f5b1b400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5ce1a620488e94bf2f15@syzkaller.appspotmail.com
+
+audit: type=1800 audit(1545532930.544:30): pid=6029 uid=0 auid=4294967295  
+ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
+comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
+sshd (6168) used greatest stack depth: 15728 bytes left
+L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and  
+https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html for details.
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memset include/linux/string.h:337 [inline]
+BUG: KASAN: slab-out-of-bounds in fpstate_init+0x50/0x160  
+arch/x86/kernel/fpu/core.c:178
+Write of size 832 at addr ffff8881bba4bbc0 by task syz-executor233/6184
+
+CPU: 1 PID: 6184 Comm: syz-executor233 Not tainted  
+4.20.0-rc6-next-20181217+ #172
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.4+0x9/0x1ff mm/kasan/report.c:187
+  kasan_report.cold.5+0x1b/0x39 mm/kasan/report.c:317
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/generic.c:191
+  memset+0x23/0x40 mm/kasan/common.c:113
+  memset include/linux/string.h:337 [inline]
+  fpstate_init+0x50/0x160 arch/x86/kernel/fpu/core.c:178
+  fx_init arch/x86/kvm/x86.c:8646 [inline]
+  kvm_arch_vcpu_init+0x3e9/0x870 arch/x86/kvm/x86.c:9006
+  kvm_vcpu_init+0x2fa/0x420 arch/x86/kvm/../../../virt/kvm/kvm_main.c:315
+  vmx_create_vcpu+0x1b7/0x2695 arch/x86/kvm/vmx/vmx.c:6375
+  kvm_arch_vcpu_create+0xe5/0x220 arch/x86/kvm/x86.c:8679
+  kvm_vm_ioctl_create_vcpu arch/x86/kvm/../../../virt/kvm/kvm_main.c:2555  
+[inline]
+  kvm_vm_ioctl+0x526/0x2030 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3084
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440039
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe478aae78 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440039
+RDX: 0000000000000000 RSI: 000000000000ae41 RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018c0
+R13: 0000000000401950 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 6184:
+  save_stack+0x43/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  kasan_kmalloc+0xcb/0xd0 mm/kasan/common.c:482
+  kasan_slab_alloc+0x12/0x20 mm/kasan/common.c:397
+  kmem_cache_alloc+0x130/0x730 mm/slab.c:3541
+  kmem_cache_zalloc include/linux/slab.h:730 [inline]
+  vmx_create_vcpu+0x110/0x2695 arch/x86/kvm/vmx/vmx.c:6366
+  kvm_arch_vcpu_create+0xe5/0x220 arch/x86/kvm/x86.c:8679
+  kvm_vm_ioctl_create_vcpu arch/x86/kvm/../../../virt/kvm/kvm_main.c:2555  
+[inline]
+  kvm_vm_ioctl+0x526/0x2030 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3084
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 0:
+(stack is not available)
+
+The buggy address belongs to the object at ffff8881bba4bb80
+  which belongs to the cache x86_fpu of size 832
+The buggy address is located 64 bytes inside of
+  832-byte region [ffff8881bba4bb80, ffff8881bba4bec0)
+The buggy address belongs to the page:
+page:ffffea0006ee92c0 count:1 mapcount:0 mapping:ffff8881d7a9d380 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffff8881d6780448 ffff8881d6780448 ffff8881d7a9d380
+raw: 0000000000000000 ffff8881bba4b040 0000000100000004 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881bba4bd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8881bba4be00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8881bba4be80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+                                            ^
+  ffff8881bba4bf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881bba4bf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/pinctrl/freescale/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/=
-Kconfig
-index 2d6db43..624902e 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -123,7 +123,7 @@ config PINCTRL_IMX7ULP
-=20
- config PINCTRL_IMX8MQ
- 	bool "IMX8MQ pinctrl driver"
--	depends on SOC_IMX8MQ
-+	depends on ARCH_MXC && ARM64
- 	select PINCTRL_IMX
- 	help
- 	  Say Y here to enable the imx8mq pinctrl driver
---=20
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
