@@ -6,47 +6,50 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9151AC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1917C43613
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E9E72184D
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0862218A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545607531;
-	bh=8lgHAuHPTHwNDrSv9VHMLihBQU0og9heay5nyX/6j64=;
+	s=default; t=1545607532;
+	bh=IC0QHOCuYBIkcJa5bve4qxPYzYe++Vwe8EFIT9D7JBU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NY99IbnHSp/Ajqs8MDOnPfCj6zwAzjUtzOPEKsy9jUL2gd5YMqhB6K/GjOx1zvJKv
-	 oX3h97yilBhop/tTjEBZif0aNaMrxeneaJI3NE8325NVgyVdu3S30YGGzSfY7N2ETY
-	 JRYiTFjkYURiJ8ollra5aH7dr4s5/3z1aWCgwPQU=
+	b=V70THceZ4xghKBW7dt15e0zK32krpgG2BoYL8o7PFu7tTNrMPFPoVmHvLnIEENblD
+	 beD8M7nNOMQ1x/pJvPoaVg9pq+b0q4MDal7/odOXZa8v2ZvovfMDZm5i1T7VLX/uvn
+	 u2bBCG/T+XLNyvAHk+Vw/4wT67mt6RfdnP7eGHi4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeLWXZa (ORCPT
+        id S1726594AbeLWXZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 18:25:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34944 "EHLO mail.kernel.org"
+        Sun, 23 Dec 2018 18:25:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbeLWXZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 18:25:29 -0500
+        id S1726456AbeLWXZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 18:25:30 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.82.124])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 066A821783;
-        Sun, 23 Dec 2018 23:25:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A4F218A5;
+        Sun, 23 Dec 2018 23:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545607528;
-        bh=8lgHAuHPTHwNDrSv9VHMLihBQU0og9heay5nyX/6j64=;
+        s=default; t=1545607529;
+        bh=IC0QHOCuYBIkcJa5bve4qxPYzYe++Vwe8EFIT9D7JBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KcKWVNOQ+zyoeL5NK0sMplY2WCqvKRJRezXQF1I+F7b+fHS4BdgWRgMeUQ4NIFqri
-         nVS5j26xI/bLRGrZscmOVRlPNYmwtz7ll5I44Ty96MySJyWzEGHM6P1278ZYwfRgYX
-         6flsS6RkM7i7Iz65tUB6qAIUAhX8vFwXXo2RjoXk=
+        b=Mb9KCeMNlj7B1bM36jGxsLgzDXBNEXrx9EwcF3m+003yMmHO52Gc9XJq2ucTLNvxP
+         oYhYFsKwWgiiAmCgGepH3pa3oDMhD9OFV5WjUs+jQub7kYF0neiL5MrzniyIDdSK/P
+         mpedjn+N3HPFhd50rrlUh4QeaF0r1ijI+uakKKR4=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
-        Parallel ATA drivers)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 02/11] ata: make PCI dependency explicit for PATA_ACPI
-Date:   Sun, 23 Dec 2018 23:25:11 +0000
-Message-Id: <20181223232521.11320-3-okaya@kernel.org>
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 03/11] vga-switcheroo: make PCI dependency explicit
+Date:   Sun, 23 Dec 2018 23:25:12 +0000
+Message-Id: <20181223232521.11320-4-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181223232521.11320-1-okaya@kernel.org>
 References: <20181223232521.11320-1-okaya@kernel.org>
@@ -57,27 +60,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PATA_ACPI is a PCI device driver but the PCI dependency has not been
-explicitly called out.
+This driver depends on the PCI infrastructure but the dependency has not
+been explicitly called out.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
 ---
- drivers/ata/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/vga/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 4ca7a6b4eaae..8218db17ebdb 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -1091,7 +1091,7 @@ comment "Generic fallback / legacy drivers"
- 
- config PATA_ACPI
- 	tristate "ACPI firmware driver for PATA"
--	depends on ATA_ACPI && ATA_BMDMA
-+	depends on ATA_ACPI && ATA_BMDMA && PCI
+diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
+index b677e5d524e6..d5f1d8e1c6f8 100644
+--- a/drivers/gpu/vga/Kconfig
++++ b/drivers/gpu/vga/Kconfig
+@@ -21,6 +21,7 @@ config VGA_SWITCHEROO
+ 	bool "Laptop Hybrid Graphics - GPU switching support"
+ 	depends on X86
+ 	depends on ACPI
++	depends on PCI
+ 	select VGA_ARB
  	help
- 	  This option enables an ACPI method driver which drives
- 	  motherboard PATA controller interfaces through the ACPI
+ 	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
 -- 
 2.19.0
 
