@@ -3,887 +3,332 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65BF5C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 995FBC43444
 	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 14:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1379B2184D
+	by mail.kernel.org (Postfix) with ESMTP id 5F16C21855
 	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 14:05:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkhpK2PL"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="FF0ghTrV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeLWOCd (ORCPT
+        id S1728941AbeLWOEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 09:02:33 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38466 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeLWOCc (ORCPT
+        Sun, 23 Dec 2018 09:04:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50877 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeLWOEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 09:02:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so4614507pgc.5;
-        Sun, 23 Dec 2018 06:02:31 -0800 (PST)
+        Sun, 23 Dec 2018 09:04:07 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n190so9363723wmd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 06:04:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=zogAHhvUbKiEDpquOX3FlF15uYondu6Hw6rJ1nTMsfU=;
-        b=VkhpK2PLUMlZLdqz8JYBgTcuJQLLpmqsZuDn4Wj0AgFPdySP+fp+Y525SG5B87rdlc
-         l0+g7RxCn4NY5n6twG/VqO2Ac+SnMbEdsQ5UmSYdHLZCcs9z/odAevTECwYZJapooYAI
-         al1QxHI0PHoJpm4RdO+R6Dy3l7DgjtoU2XNrOzili6Ld0ZDvuPFK/hEqPGAURXyWSsks
-         Te0v4vGQQvIs+b/fg9L1rIY66HI/cuV7BHQ5m1MA8cu12uz3byfs9PihGiv9xnBz4IAL
-         J874kDlyST4/sVM/1AuT+RdMKcDxwtH4FGQszuEeqDdpWTdJyBnpTV3aGXDnKuoBW/QU
-         82CQ==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=myDP5QPKg88xgD9tBBhOFVhtmIgKs6SI7mKn/Yy3ewM=;
+        b=FF0ghTrVahccLjplPUFfj4UbCVhMWX+3VDUxyjRpNraeuqDaV+4G9sky94hQvi8aFT
+         j8M0/Dt6moVPKifLfYPgjINTyK5Pp39TLgghMSHKeCVx4Cf2+LHhsVkFRPAVapamL4Fw
+         LrW6oOMP91Bvh6wnlq45qxAJWLo7cZueOPLzWvhLZlotLkW6Em3Jzq0D81RT3bOuLoW0
+         WeXjzfjIk8k+d0Y4rCfWUTvEBsWrsKSjxdCw4M6FJDXhRjqzSB/2CdP9sr7EESr5UtoH
+         gsiLEjRqCKiZQpY/7dTozk+ndYAot4DVK1d4mfG+UhdH13F+V+dnVTtj93XiRpbANHDq
+         lqvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=zogAHhvUbKiEDpquOX3FlF15uYondu6Hw6rJ1nTMsfU=;
-        b=T2uny9uIq79XLvVUZLi4B7Z4ron7dEZX6OYEcaiAX+iZAAkOqSlqZjHy78/77ent5K
-         XUNeVdaQe1WBBTxjVyl0UsZhUUa3ou3iWZGCUaXt0jkS6XJN8w8nznQjjBTboxZEvdGy
-         D1W4WxEFqZT3Rz8Ud5Ey5JQ1jRuU0dFIlzhDPTCFrAUkQUoGnDlNnPiOvqx6DoA/9ksF
-         I1Tb1pc+GSZi6C5rMRYf5/g+82aYDx9aqCkwBCXWc863t7biwjMquInWFPZZHugxNpud
-         XWFpamu5rNy9qsqlAaIQX72GgOV3b2wrdtTV+qWEB/YC88s/2dIMyHU1y9aER9tEyyyo
-         SGzQ==
-X-Gm-Message-State: AJcUukeNqm75/WZTfBeUkZFIKYgRR1n7Elc2olrY6vrOoEHDWqElcApU
-        7ZDadxvvJDY7P5JAs6rrQ68=
-X-Google-Smtp-Source: ALg8bN7CmHRQNBKkKct9h62jxxS6r3AqZhDB7ooiBSImMV+k+rcLrUQLUjqWvovmlZq31AIPY2wiQA==
-X-Received: by 2002:a65:49cd:: with SMTP id t13mr9328543pgs.376.1545573750816;
-        Sun, 23 Dec 2018 06:02:30 -0800 (PST)
-Received: from localhost.localdomain ([103.212.140.154])
-        by smtp.gmail.com with ESMTPSA id b5sm70849409pfc.150.2018.12.23.06.02.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Dec 2018 06:02:30 -0800 (PST)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, shreeya.patel23498@gmail.com
-Subject: [PATCH] Staging: iio: adt7316: Add regmap support
-Date:   Sun, 23 Dec 2018 19:32:24 +0530
-Message-Id: <20181223140224.10958-1-shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=myDP5QPKg88xgD9tBBhOFVhtmIgKs6SI7mKn/Yy3ewM=;
+        b=DWd/tT4VUbaZB7nV4cDGE7YADQ2S6aASfIhilc9gwdnaav0xHCmRdrm+Qk1DAVl05C
+         8ogvin5aAgdI8GQ3iNPWkryVUDXIH4Lq6LyUZWxxdzOnAFk7ZdBPXxRIs2WLJP+OGdQX
+         XbIQOizkp4Kz6nfJbEY7NelnaxEiTu0LHlZ+t0tPbu3Nz4b+zKnZhLt/eGmAgNDJFKCL
+         aP8JEOKWHe+TlqMNwLgbehjOfD8mJ17XdKBt5oUANYb9Z3/0LS9uw+RP5sm3trK6Ggir
+         wltXOyU4rI8aPNF49qVce40xCXg/X7jPXVCpO6fEBA4JN6Bh4EG6fkfR1vjw0EQEbtsv
+         gDEw==
+X-Gm-Message-State: AA+aEWZbOp3ncjVvYCdD5G9IVynQZ7wdqFYx6VeJmHo9MEXhTRjZnHiY
+        q/wgV/F7+DckarQWzw3SmV14JQ==
+X-Google-Smtp-Source: ALg8bN7U4csGwKvIGM9lLNwRu5LQkGHnty4V1P9sYyIJthoL1PmkoeSPxWu68ZZZOZ7lK4KNM1yXGQ==
+X-Received: by 2002:a1c:a895:: with SMTP id r143mr8945477wme.95.1545573479104;
+        Sun, 23 Dec 2018 05:57:59 -0800 (PST)
+Received: from brauner.io (p5B12DA88.dip0.t-ipconnect.de. [91.18.218.136])
+        by smtp.gmail.com with ESMTPSA id n5sm20127721wrr.94.2018.12.23.05.57.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Dec 2018 05:57:58 -0800 (PST)
+Date:   Sun, 23 Dec 2018 14:57:56 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     gregkh@linuxfoundation.org, tkjos@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] binderfs: implement "max" mount option
+Message-ID: <20181223135755.sqnv5ave62jtj4se@brauner.io>
+References: <20181222211806.1478-1-christian@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181222211806.1478-1-christian@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both i2c and spi drivers have functions for reading and writing
-to/from registers. Remove this redundant and common code by using
-regmap API.
-Also remove multi_read and multi_write functions from i2c
-and spi driver as they are not being used anywhere.
+On Sat, Dec 22, 2018 at 10:18:06PM +0100, Christian Brauner wrote:
+> Since binderfs can be mounted by userns root in non-initial user namespaces
+> some precautions are in order. First, a way to set a maximum on the number
+> of binder devices that can be allocated per binderfs instance and second, a
+> way to reserve a reasonable chunk of binderfs devices for the initial ipc
+> namespace.
+> A first approach as seen in [1] used sysctls similiar to devpts but was
+> shown to be flawed (cf. [2] and [3]) since some aspects were unneeded. This
+> is an alternative approach which avoids sysctls completely and instead
+> switches to a single mount option.
+> 
+> Starting with this commit binderfs instances can be mounted with a limit on
+> the number of binder devices that can be allocated. The max=<count> mount
+> option serves as a per-instance limit. If max=<count> is set then only
+> <count> number of binder devices can be allocated in this binderfs
+> instance.
+> Additionally, the binderfs instance in the initial ipc namespace will
+> always have a reserve of at least 1024 binder devices unless explicitly
+> capped via max=<count>.
+> 
+> This allows to safely bind-mount binderfs instances into unprivileged user
+> namespaces since userns root in a non-initial user namespace cannot change
+> the mount option as long as it does not own the mount namespace the
+> binderfs mount was created in and hence cannot drain the host of minor
+> device numbers
+> 
+> [1]: https://lore.kernel.org/lkml/20181221133909.18794-1-christian@brauner.io/
+> [2]; https://lore.kernel.org/lkml/20181221163316.GA8517@kroah.com/
+> [3]: https://lore.kernel.org/lkml/CAHRSSEx+gDVW4fKKK8oZNAir9G5icJLyodO8hykv3O0O1jt2FQ@mail.gmail.com/
+> [4]: https://lore.kernel.org/lkml/20181221192044.5yvfnuri7gdop4rs@brauner.io/
+> 
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  drivers/android/binderfs.c | 109 +++++++++++++++++++++++++++++++++++--
+>  1 file changed, 104 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> index 7496b10532aa..93aee00994d4 100644
+> --- a/drivers/android/binderfs.c
+> +++ b/drivers/android/binderfs.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/parser.h>
+>  #include <linux/radix-tree.h>
+>  #include <linux/sched.h>
+> +#include <linux/seq_file.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock_types.h>
+>  #include <linux/stddef.h>
+> @@ -39,6 +40,11 @@
+>  #define INODE_OFFSET 3
+>  #define INTSTRLEN 21
+>  #define BINDERFS_MAX_MINOR (1U << MINORBITS)
+> +/*
+> + * Ensure that the initial ipc namespace always has a good chunk of devices
+> + * available.
+> + */
+> +#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 1024)
+>  
+>  static struct vfsmount *binderfs_mnt;
+>  
+> @@ -46,6 +52,24 @@ static dev_t binderfs_dev;
+>  static DEFINE_MUTEX(binderfs_minors_mutex);
+>  static DEFINE_IDA(binderfs_minors);
+>  
+> +/**
+> + * binderfs_mount_opts - mount options for binderfs
+> + * @max: maximum number of allocatable binderfs binder devices
+> + */
+> +struct binderfs_mount_opts {
+> +	int max;
+> +};
+> +
+> +enum {
+> +	Opt_max,
+> +	Opt_err
+> +};
+> +
+> +static const match_table_t tokens = {
+> +	{ Opt_max, "max=%d" },
+> +	{ Opt_err, NULL     }
+> +};
+> +
+>  /**
+>   * binderfs_info - information about a binderfs mount
+>   * @ipc_ns:         The ipc namespace the binderfs mount belongs to.
+> @@ -55,13 +79,16 @@ static DEFINE_IDA(binderfs_minors);
+>   *                  created.
+>   * @root_gid:       gid that needs to be used when a new binder device is
+>   *                  created.
+> + * @mount_opts:     The mount options in use.
+> + * @device_count:   The current number of allocated binder devices.
+>   */
+>  struct binderfs_info {
+>  	struct ipc_namespace *ipc_ns;
+>  	struct dentry *control_dentry;
+>  	kuid_t root_uid;
+>  	kgid_t root_gid;
+> -
+> +	struct binderfs_mount_opts mount_opts;
+> +	atomic_t device_count;
+>  };
+>  
+>  static inline struct binderfs_info *BINDERFS_I(const struct inode *inode)
+> @@ -107,13 +134,22 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+>  	struct inode *inode = NULL;
+>  	struct super_block *sb = ref_inode->i_sb;
+>  	struct binderfs_info *info = sb->s_fs_info;
+> +	bool use_reserve = (info->ipc_ns == &init_ipc_ns);
+>  
+>  	/* Reserve new minor number for the new device. */
+>  	mutex_lock(&binderfs_minors_mutex);
+> -	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
+> +	if (atomic_inc_return(&info->device_count) < info->mount_opts.max)
+> +		minor = ida_alloc_max(&binderfs_minors,
+> +				      use_reserve ? BINDERFS_MAX_MINOR :
+> +						    BINDERFS_MAX_MINOR_CAPPED,
+> +				      GFP_KERNEL);
+> +	else
+> +		minor = -ENOSPC;
+>  	mutex_unlock(&binderfs_minors_mutex);
+> -	if (minor < 0)
+> +	if (minor < 0) {
+> +		atomic_dec(&info->device_count);
+>  		return minor;
+> +	}
+>  
+>  	ret = -ENOMEM;
+>  	device = kzalloc(sizeof(*device), GFP_KERNEL);
+> @@ -187,6 +223,7 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+>  	kfree(name);
+>  	kfree(device);
+>  	mutex_lock(&binderfs_minors_mutex);
+> +	atomic_dec(&info->device_count);
+>  	ida_free(&binderfs_minors, minor);
+>  	mutex_unlock(&binderfs_minors_mutex);
+>  	iput(inode);
+> @@ -232,6 +269,7 @@ static long binder_ctl_ioctl(struct file *file, unsigned int cmd,
+>  static void binderfs_evict_inode(struct inode *inode)
+>  {
+>  	struct binder_device *device = inode->i_private;
+> +	struct binderfs_info *info = BINDERFS_I(inode);
+>  
+>  	clear_inode(inode);
+>  
+> @@ -239,6 +277,7 @@ static void binderfs_evict_inode(struct inode *inode)
+>  		return;
+>  
+>  	mutex_lock(&binderfs_minors_mutex);
+> +	atomic_dec(&info->device_count);
+>  	ida_free(&binderfs_minors, device->miscdev.minor);
+>  	mutex_unlock(&binderfs_minors_mutex);
+>  
+> @@ -246,9 +285,64 @@ static void binderfs_evict_inode(struct inode *inode)
+>  	kfree(device);
+>  }
+>  
+> +/**
+> + * binderfs_parse_mount_opts - parse binderfs mount options
+> + * @data: options to set (can be NULL in which case defaults are used)
+> + */
+> +static int binderfs_parse_mount_opts(char *data,
+> +				     struct binderfs_mount_opts *opts)
+> +{
+> +	char *p;
+> +	opts->max = BINDERFS_MAX_MINOR;
+> +
+> +	while ((p = strsep(&data, ",")) != NULL) {
+> +		substring_t args[MAX_OPT_ARGS];
+> +		int token;
+> +		int max_devices;
+> +
+> +		if (!*p)
+> +			continue;
+> +
+> +		token = match_token(p, tokens, args);
+> +		switch (token) {
+> +		case Opt_max:
+> +			max_devices = match_int(&args[0], &max_devices);
+> +			if (max_devices < 0 || (max_devices > BINDERFS_MAX_MINOR))
+> +				return -EINVAL;
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
----
- drivers/staging/iio/addac/adt7316-i2c.c | 101 ++--------------
- drivers/staging/iio/addac/adt7316-spi.c |  94 +++------------
- drivers/staging/iio/addac/adt7316.c     | 147 ++++++++++++------------
- drivers/staging/iio/addac/adt7316.h     |  15 +--
- 4 files changed, 103 insertions(+), 254 deletions(-)
+One should always account for their own stupid mistakes and here's one
+I made: the ways match_int() is used here is nonsense since it
+overwrites the parsed max_devices value. This should be:
 
-diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-index ac91163656b5..435b65845174 100644
---- a/drivers/staging/iio/addac/adt7316-i2c.c
-+++ b/drivers/staging/iio/addac/adt7316-i2c.c
-@@ -12,105 +12,28 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- 
- #include "adt7316.h"
- 
--/*
-- * adt7316 register access by I2C
-- */
--static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
--{
--	struct i2c_client *cl = client;
--	int ret;
--
--	ret = i2c_smbus_write_byte(cl, reg);
--	if (ret < 0) {
--		dev_err(&cl->dev, "I2C fail to select reg\n");
--		return ret;
--	}
--
--	ret = i2c_smbus_read_byte(client);
--
--	if (!ret)
--		return -EIO;
--
--	if (ret < 0) {
--		dev_err(&cl->dev, "I2C read error\n");
--		return ret;
--	}
--
--	*data = ret;
--
--	return 0;
--}
--
--static int adt7316_i2c_write(void *client, u8 reg, u8 data)
--{
--	struct i2c_client *cl = client;
--	int ret = 0;
--
--	ret = i2c_smbus_write_byte_data(cl, reg, data);
--	if (ret < 0)
--		dev_err(&cl->dev, "I2C write error\n");
--
--	return ret;
--}
--
--static int adt7316_i2c_multi_read(void *client, u8 reg, u8 count, u8 *data)
--{
--	struct i2c_client *cl = client;
--	int i, ret = 0;
--
--	if (count > ADT7316_REG_MAX_ADDR)
--		count = ADT7316_REG_MAX_ADDR;
--
--	for (i = 0; i < count; i++) {
--		ret = adt7316_i2c_read(cl, reg, &data[i]);
--		if (ret < 0) {
--			dev_err(&cl->dev, "I2C multi read error\n");
--			return ret;
--		}
--	}
--
--	return 0;
--}
--
--static int adt7316_i2c_multi_write(void *client, u8 reg, u8 count, u8 *data)
--{
--	struct i2c_client *cl = client;
--	int i, ret = 0;
--
--	if (count > ADT7316_REG_MAX_ADDR)
--		count = ADT7316_REG_MAX_ADDR;
--
--	for (i = 0; i < count; i++) {
--		ret = adt7316_i2c_write(cl, reg, data[i]);
--		if (ret < 0) {
--			dev_err(&cl->dev, "I2C multi write error\n");
--			return ret;
--		}
--	}
--
--	return 0;
--}
--
- /*
-  * device probe and remove
-  */
--
- static int adt7316_i2c_probe(struct i2c_client *client,
- 			     const struct i2c_device_id *id)
- {
--	struct adt7316_bus bus = {
--		.client = client,
--		.irq = client->irq,
--		.read = adt7316_i2c_read,
--		.write = adt7316_i2c_write,
--		.multi_read = adt7316_i2c_multi_read,
--		.multi_write = adt7316_i2c_multi_write,
--	};
-+	struct regmap *regmap;
-+
-+	regmap = devm_regmap_init_i2c(client, &adt7316_regmap_config);
-+
-+	if (IS_ERR(regmap)) {
-+		dev_err(&client->dev, "Error initializing i2c regmap: %ld\n",
-+			PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
- 
--	return adt7316_probe(&client->dev, &bus, id->name);
-+	return adt7316_probe(&client->dev, regmap, id ? id->name : NULL,
-+			     client->irq);
- }
- 
- static const struct i2c_device_id adt7316_i2c_id[] = {
-diff --git a/drivers/staging/iio/addac/adt7316-spi.c b/drivers/staging/iio/addac/adt7316-spi.c
-index e75827e326a6..9e3decb5cb77 100644
---- a/drivers/staging/iio/addac/adt7316-spi.c
-+++ b/drivers/staging/iio/addac/adt7316-spi.c
-@@ -11,79 +11,12 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/interrupt.h>
-+#include <linux/regmap.h>
- #include <linux/spi/spi.h>
- 
- #include "adt7316.h"
- 
- #define ADT7316_SPI_MAX_FREQ_HZ		5000000
--#define ADT7316_SPI_CMD_READ		0x91
--#define ADT7316_SPI_CMD_WRITE		0x90
--
--/*
-- * adt7316 register access by SPI
-- */
--
--static int adt7316_spi_multi_read(void *client, u8 reg, u8 count, u8 *data)
--{
--	struct spi_device *spi_dev = client;
--	u8 cmd[2];
--	int ret = 0;
--
--	if (count > ADT7316_REG_MAX_ADDR)
--		count = ADT7316_REG_MAX_ADDR;
--
--	cmd[0] = ADT7316_SPI_CMD_WRITE;
--	cmd[1] = reg;
--
--	ret = spi_write(spi_dev, cmd, 2);
--	if (ret < 0) {
--		dev_err(&spi_dev->dev, "SPI fail to select reg\n");
--		return ret;
--	}
--
--	cmd[0] = ADT7316_SPI_CMD_READ;
--
--	ret = spi_write_then_read(spi_dev, cmd, 1, data, count);
--	if (ret < 0) {
--		dev_err(&spi_dev->dev, "SPI read data error\n");
--		return ret;
--	}
--
--	return 0;
--}
--
--static int adt7316_spi_multi_write(void *client, u8 reg, u8 count, u8 *data)
--{
--	struct spi_device *spi_dev = client;
--	u8 buf[ADT7316_REG_MAX_ADDR + 2];
--	int i, ret = 0;
--
--	if (count > ADT7316_REG_MAX_ADDR)
--		count = ADT7316_REG_MAX_ADDR;
--
--	buf[0] = ADT7316_SPI_CMD_WRITE;
--	buf[1] = reg;
--	for (i = 0; i < count; i++)
--		buf[i + 2] = data[i];
--
--	ret = spi_write(spi_dev, buf, count + 2);
--	if (ret < 0) {
--		dev_err(&spi_dev->dev, "SPI write error\n");
--		return ret;
--	}
--
--	return ret;
--}
--
--static int adt7316_spi_read(void *client, u8 reg, u8 *data)
--{
--	return adt7316_spi_multi_read(client, reg, 1, data);
--}
--
--static int adt7316_spi_write(void *client, u8 reg, u8 val)
--{
--	return adt7316_spi_multi_write(client, reg, 1, &val);
--}
- 
- /*
-  * device probe and remove
-@@ -91,14 +24,7 @@ static int adt7316_spi_write(void *client, u8 reg, u8 val)
- 
- static int adt7316_spi_probe(struct spi_device *spi_dev)
- {
--	struct adt7316_bus bus = {
--		.client = spi_dev,
--		.irq = spi_dev->irq,
--		.read = adt7316_spi_read,
--		.write = adt7316_spi_write,
--		.multi_read = adt7316_spi_multi_read,
--		.multi_write = adt7316_spi_multi_write,
--	};
-+	struct regmap *regmap;
- 
- 	/* don't exceed max specified SPI CLK frequency */
- 	if (spi_dev->max_speed_hz > ADT7316_SPI_MAX_FREQ_HZ) {
-@@ -107,12 +33,20 @@ static int adt7316_spi_probe(struct spi_device *spi_dev)
- 		return -EINVAL;
- 	}
- 
-+	regmap = devm_regmap_init_spi(spi_dev, &adt7316_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&spi_dev->dev, "Error initializing spi regmap: %ld\n",
-+			PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
- 	/* switch from default I2C protocol to SPI protocol */
--	adt7316_spi_write(spi_dev, 0, 0);
--	adt7316_spi_write(spi_dev, 0, 0);
--	adt7316_spi_write(spi_dev, 0, 0);
-+	regmap_write(regmap, 0, 0);
-+	regmap_write(regmap, 0, 0);
-+	regmap_write(regmap, 0, 0);
- 
--	return adt7316_probe(&spi_dev->dev, &bus, spi_dev->modalias);
-+	return adt7316_probe(&spi_dev->dev, regmap, spi_dev->modalias,
-+			     spi_dev->irq);
- }
- 
- static const struct spi_device_id adt7316_spi_id[] = {
-diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-index 1ca4ee0f30ee..be2330a42706 100644
---- a/drivers/staging/iio/addac/adt7316.c
-+++ b/drivers/staging/iio/addac/adt7316.c
-@@ -17,6 +17,7 @@
- #include <linux/list.h>
- #include <linux/i2c.h>
- #include <linux/rtc.h>
-+#include <linux/regmap.h>
- #include <linux/module.h>
- 
- #include <linux/iio/iio.h>
-@@ -176,7 +177,7 @@
-  */
- 
- struct adt7316_chip_info {
--	struct adt7316_bus	bus;
-+	struct regmap *regmap;
- 	struct gpio_desc	*ldac_pin;
- 	u16			int_mask;	/* 0x2f */
- 	u8			config1;
-@@ -237,7 +238,7 @@ static ssize_t _adt7316_store_enabled(struct adt7316_chip_info *chip,
- 	else
- 		config1 = chip->config1 & ~ADT7316_EN;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1, config1);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG1, config1);
- 	if (ret)
- 		return -EIO;
- 
-@@ -301,7 +302,7 @@ static ssize_t adt7316_store_select_ex_temp(struct device *dev,
- 	if (buf[0] == '1')
- 		config1 |= ADT7516_SEL_EX_TEMP;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1, config1);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG1, config1);
- 	if (ret)
- 		return -EIO;
- 
-@@ -342,7 +343,7 @@ static ssize_t adt7316_store_mode(struct device *dev,
- 	if (!memcmp(buf, "single_channel", 14))
- 		config2 |= ADT7316_AD_SINGLE_CH_MODE;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG2, config2);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG2, config2);
- 	if (ret)
- 		return -EIO;
- 
-@@ -435,7 +436,7 @@ static ssize_t adt7316_store_ad_channel(struct device *dev,
- 
- 	config2 |= data;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG2, config2);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG2, config2);
- 	if (ret)
- 		return -EIO;
- 
-@@ -495,7 +496,7 @@ static ssize_t adt7316_store_disable_averaging(struct device *dev,
- 	if (buf[0] == '1')
- 		config2 |= ADT7316_DISABLE_AVERAGING;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG2, config2);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG2, config2);
- 	if (ret)
- 		return -EIO;
- 
-@@ -534,7 +535,7 @@ static ssize_t adt7316_store_enable_smbus_timeout(struct device *dev,
- 	if (buf[0] == '1')
- 		config2 |= ADT7316_EN_SMBUS_TIMEOUT;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG2, config2);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG2, config2);
- 	if (ret)
- 		return -EIO;
- 
-@@ -572,7 +573,7 @@ static ssize_t adt7316_store_powerdown(struct device *dev,
- 	if (buf[0] == '1')
- 		config1 |= ADT7316_PD;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1, config1);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG1, config1);
- 	if (ret)
- 		return -EIO;
- 
-@@ -610,7 +611,7 @@ static ssize_t adt7316_store_fast_ad_clock(struct device *dev,
- 	if (buf[0] == '1')
- 		config3 |= ADT7316_ADCLK_22_5;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, config3);
- 	if (ret)
- 		return -EIO;
- 
-@@ -663,7 +664,7 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
- 		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
- 	}
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, config3);
- 	if (ret)
- 		return -EIO;
- 
-@@ -709,7 +710,7 @@ static ssize_t adt7316_store_AIN_internal_Vref(struct device *dev,
- 	else
- 		config3 = chip->config3 | ADT7516_AIN_IN_VREF;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, config3);
- 	if (ret)
- 		return -EIO;
- 
-@@ -748,7 +749,7 @@ static ssize_t adt7316_store_enable_prop_DACA(struct device *dev,
- 	if (buf[0] == '1')
- 		config3 |= ADT7316_EN_IN_TEMP_PROP_DACA;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, config3);
- 	if (ret)
- 		return -EIO;
- 
-@@ -787,7 +788,7 @@ static ssize_t adt7316_store_enable_prop_DACB(struct device *dev,
- 	if (buf[0] == '1')
- 		config3 |= ADT7316_EN_EX_TEMP_PROP_DACB;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, config3);
- 	if (ret)
- 		return -EIO;
- 
-@@ -830,7 +831,7 @@ static ssize_t adt7316_store_DAC_2Vref_ch_mask(struct device *dev,
- 	dac_config = chip->dac_config & (~ADT7316_DA_2VREF_CH_MASK);
- 	dac_config |= data;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_DAC_CONFIG, dac_config);
-+	ret = regmap_write(chip->regmap, ADT7316_DAC_CONFIG, dac_config);
- 	if (ret)
- 		return -EIO;
- 
-@@ -890,7 +891,7 @@ static ssize_t adt7316_store_DAC_update_mode(struct device *dev,
- 	dac_config = chip->dac_config & (~ADT7316_DA_EN_MODE_MASK);
- 	dac_config |= data;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_DAC_CONFIG, dac_config);
-+	ret = regmap_write(chip->regmap, ADT7316_DAC_CONFIG, dac_config);
- 	if (ret)
- 		return -EIO;
- 
-@@ -945,8 +946,8 @@ static ssize_t adt7316_store_update_DAC(struct device *dev,
- 		ldac_config = chip->ldac_config & (~ADT7316_LDAC_EN_DA_MASK);
- 		ldac_config |= data;
- 
--		ret = chip->bus.write(chip->bus.client, ADT7316_LDAC_CONFIG,
--			ldac_config);
-+		ret = regmap_write(chip->regmap, ADT7316_LDAC_CONFIG,
-+				   ldac_config);
- 		if (ret)
- 			return -EIO;
- 	} else {
-@@ -993,7 +994,7 @@ static ssize_t adt7316_store_DA_AB_Vref_bypass(struct device *dev,
- 	if (buf[0] == '1')
- 		dac_config |= ADT7316_VREF_BYPASS_DAC_AB;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_DAC_CONFIG, dac_config);
-+	ret = regmap_write(chip->regmap, ADT7316_DAC_CONFIG, dac_config);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1038,7 +1039,7 @@ static ssize_t adt7316_store_DA_CD_Vref_bypass(struct device *dev,
- 	if (buf[0] == '1')
- 		dac_config |= ADT7316_VREF_BYPASS_DAC_CD;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_DAC_CONFIG, dac_config);
-+	ret = regmap_write(chip->regmap, ADT7316_DAC_CONFIG, dac_config);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1098,8 +1099,7 @@ static ssize_t adt7316_store_DAC_internal_Vref(struct device *dev,
- 			ldac_config = chip->ldac_config | ADT7316_DAC_IN_VREF;
- 	}
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_LDAC_CONFIG,
--			ldac_config);
-+	ret = regmap_write(chip->regmap, ADT7316_LDAC_CONFIG, ldac_config);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1117,7 +1117,7 @@ static ssize_t adt7316_show_ad(struct adt7316_chip_info *chip,
- 		int channel, char *buf)
- {
- 	u16 data;
--	u8 msb, lsb;
-+	unsigned int msb, lsb;
- 	char sign = ' ';
- 	int ret;
- 
-@@ -1127,13 +1127,12 @@ static ssize_t adt7316_show_ad(struct adt7316_chip_info *chip,
- 
- 	switch (channel) {
- 	case ADT7316_AD_SINGLE_CH_IN:
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_LSB_IN_TEMP_VDD, &lsb);
-+		ret = regmap_read(chip->regmap, ADT7316_LSB_IN_TEMP_VDD, &lsb);
- 		if (ret)
- 			return -EIO;
- 
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_AD_MSB_DATA_BASE + channel, &msb);
-+		ret = regmap_read(chip->regmap,
-+				  ADT7316_AD_MSB_DATA_BASE + channel, &msb);
- 		if (ret)
- 			return -EIO;
- 
-@@ -1141,14 +1140,12 @@ static ssize_t adt7316_show_ad(struct adt7316_chip_info *chip,
- 		data |= lsb & ADT7316_LSB_IN_TEMP_MASK;
- 		break;
- 	case ADT7316_AD_SINGLE_CH_VDD:
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_LSB_IN_TEMP_VDD, &lsb);
-+		ret = regmap_read(chip->regmap, ADT7316_LSB_IN_TEMP_VDD, &lsb);
- 		if (ret)
- 			return -EIO;
- 
--		ret = chip->bus.read(chip->bus.client,
--
--			ADT7316_AD_MSB_DATA_BASE + channel, &msb);
-+		ret = regmap_read(chip->regmap,
-+				  ADT7316_AD_MSB_DATA_BASE + channel, &msb);
- 		if (ret)
- 			return -EIO;
- 
-@@ -1156,13 +1153,12 @@ static ssize_t adt7316_show_ad(struct adt7316_chip_info *chip,
- 		data |= (lsb & ADT7316_LSB_VDD_MASK) >> ADT7316_LSB_VDD_OFFSET;
- 		return sprintf(buf, "%d\n", data);
- 	default: /* ex_temp and ain */
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_LSB_EX_TEMP_AIN, &lsb);
-+		ret = regmap_read(chip->regmap, ADT7316_LSB_EX_TEMP_AIN, &lsb);
- 		if (ret)
- 			return -EIO;
- 
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_AD_MSB_DATA_BASE + channel, &msb);
-+		ret = regmap_read(chip->regmap,
-+				  ADT7316_AD_MSB_DATA_BASE + channel, &msb);
- 		if (ret)
- 			return -EIO;
- 
-@@ -1262,10 +1258,10 @@ static ssize_t adt7316_show_temp_offset(struct adt7316_chip_info *chip,
- 		int offset_addr, char *buf)
- {
- 	int data;
--	u8 val;
-+	unsigned int val;
- 	int ret;
- 
--	ret = chip->bus.read(chip->bus.client, offset_addr, &val);
-+	ret = regmap_read(chip->regmap, offset_addr, &val);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1292,7 +1288,7 @@ static ssize_t adt7316_store_temp_offset(struct adt7316_chip_info *chip,
- 
- 	val = (u8)data;
- 
--	ret = chip->bus.write(chip->bus.client, offset_addr, val);
-+	ret = regmap_write(chip->regmap, offset_addr, val);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1409,7 +1405,7 @@ static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
- 		int channel, char *buf)
- {
- 	u16 data;
--	u8 msb, lsb, offset;
-+	unsigned int msb, lsb, offset;
- 	int ret;
- 
- 	if (channel >= ADT7316_DA_MSB_DATA_REGS ||
-@@ -1422,14 +1418,14 @@ static ssize_t adt7316_show_DAC(struct adt7316_chip_info *chip,
- 	offset = chip->dac_bits - 8;
- 
- 	if (chip->dac_bits > 8) {
--		ret = chip->bus.read(chip->bus.client,
--			ADT7316_DA_DATA_BASE + channel * 2, &lsb);
-+		ret = regmap_read(chip->regmap,
-+				  ADT7316_DA_DATA_BASE + channel * 2, &lsb);
- 		if (ret)
- 			return -EIO;
- 	}
- 
--	ret = chip->bus.read(chip->bus.client,
--		ADT7316_DA_DATA_BASE + 1 + channel * 2, &msb);
-+	ret = regmap_read(chip->regmap, ADT7316_DA_DATA_BASE + 1 + channel * 2,
-+			  &msb);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1460,15 +1456,15 @@ static ssize_t adt7316_store_DAC(struct adt7316_chip_info *chip,
- 
- 	if (chip->dac_bits > 8) {
- 		lsb = data & (1 << offset);
--		ret = chip->bus.write(chip->bus.client,
--			ADT7316_DA_DATA_BASE + channel * 2, lsb);
-+		ret = regmap_write(chip->regmap,
-+				   ADT7316_DA_DATA_BASE + channel * 2, lsb);
- 		if (ret)
- 			return -EIO;
- 	}
- 
- 	msb = data >> offset;
--	ret = chip->bus.write(chip->bus.client,
--		ADT7316_DA_DATA_BASE + 1 + channel * 2, msb);
-+	ret = regmap_write(chip->regmap, ADT7316_DA_DATA_BASE + 1 + channel * 2,
-+			   msb);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1577,10 +1573,10 @@ static ssize_t adt7316_show_device_id(struct device *dev,
- {
- 	struct iio_dev *dev_info = dev_to_iio_dev(dev);
- 	struct adt7316_chip_info *chip = iio_priv(dev_info);
--	u8 id;
-+	unsigned int id;
- 	int ret;
- 
--	ret = chip->bus.read(chip->bus.client, ADT7316_DEVICE_ID, &id);
-+	ret = regmap_read(chip->regmap, ADT7316_DEVICE_ID, &id);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1595,10 +1591,10 @@ static ssize_t adt7316_show_manufactorer_id(struct device *dev,
- {
- 	struct iio_dev *dev_info = dev_to_iio_dev(dev);
- 	struct adt7316_chip_info *chip = iio_priv(dev_info);
--	u8 id;
-+	unsigned int id;
- 	int ret;
- 
--	ret = chip->bus.read(chip->bus.client, ADT7316_MANUFACTURE_ID, &id);
-+	ret = regmap_read(chip->regmap, ADT7316_MANUFACTURE_ID, &id);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1614,10 +1610,10 @@ static ssize_t adt7316_show_device_rev(struct device *dev,
- {
- 	struct iio_dev *dev_info = dev_to_iio_dev(dev);
- 	struct adt7316_chip_info *chip = iio_priv(dev_info);
--	u8 rev;
-+	unsigned int rev;
- 	int ret;
- 
--	ret = chip->bus.read(chip->bus.client, ADT7316_DEVICE_REV, &rev);
-+	ret = regmap_read(chip->regmap, ADT7316_DEVICE_REV, &rev);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1632,10 +1628,10 @@ static ssize_t adt7316_show_bus_type(struct device *dev,
- {
- 	struct iio_dev *dev_info = dev_to_iio_dev(dev);
- 	struct adt7316_chip_info *chip = iio_priv(dev_info);
--	u8 stat;
-+	unsigned int stat;
- 	int ret;
- 
--	ret = chip->bus.read(chip->bus.client, ADT7316_SPI_LOCK_STAT, &stat);
-+	ret = regmap_read(chip->regmap, ADT7316_SPI_LOCK_STAT, &stat);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1740,11 +1736,11 @@ static irqreturn_t adt7316_event_handler(int irq, void *private)
- {
- 	struct iio_dev *indio_dev = private;
- 	struct adt7316_chip_info *chip = iio_priv(indio_dev);
--	u8 stat1, stat2;
-+	unsigned int stat1, stat2;
- 	int ret;
- 	s64 time;
- 
--	ret = chip->bus.read(chip->bus.client, ADT7316_INT_STAT1, &stat1);
-+	ret = regmap_read(chip->regmap, ADT7316_INT_STAT1, &stat1);
- 	if (!ret) {
- 		if ((chip->id & ID_FAMILY_MASK) != ID_ADT75XX)
- 			stat1 &= 0x1F;
-@@ -1793,7 +1789,7 @@ static irqreturn_t adt7316_event_handler(int irq, void *private)
- 							    IIO_EV_DIR_EITHER),
- 				       time);
- 		}
--	ret = chip->bus.read(chip->bus.client, ADT7316_INT_STAT2, &stat2);
-+	ret = regmap_read(chip->regmap, ADT7316_INT_STAT2, &stat2);
- 	if (!ret) {
- 		if (stat2 & ADT7316_INT_MASK2_VDD)
- 			iio_push_event(indio_dev,
-@@ -1807,12 +1803,12 @@ static irqreturn_t adt7316_event_handler(int irq, void *private)
- 	return IRQ_HANDLED;
- }
- 
--static int adt7316_setup_irq(struct iio_dev *indio_dev)
-+static int adt7316_setup_irq(struct iio_dev *indio_dev, int irq)
- {
- 	struct adt7316_chip_info *chip = iio_priv(indio_dev);
- 	int irq_type, ret;
- 
--	irq_type = irqd_get_trigger_type(irq_get_irq_data(chip->bus.irq));
-+	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
- 
- 	switch (irq_type) {
- 	case IRQF_TRIGGER_HIGH:
-@@ -1828,13 +1824,12 @@ static int adt7316_setup_irq(struct iio_dev *indio_dev)
- 		break;
- 	}
- 
--	ret = devm_request_threaded_irq(&indio_dev->dev, chip->bus.irq,
-+	ret = devm_request_threaded_irq(&indio_dev->dev, irq,
- 					NULL, adt7316_event_handler,
- 					irq_type | IRQF_ONESHOT,
- 					indio_dev->name, indio_dev);
- 	if (ret) {
--		dev_err(&indio_dev->dev, "failed to request irq %d\n",
--			chip->bus.irq);
-+		dev_err(&indio_dev->dev, "failed to request irq %d\n", irq);
- 		return ret;
- 	}
- 
-@@ -1880,7 +1875,7 @@ static ssize_t adt7316_set_int_mask(struct device *dev,
- 	else
- 		mask = ADT7316_INT_MASK2_VDD;	/* disable vdd int */
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_INT_MASK2, mask);
-+	ret = regmap_write(chip->regmap, ADT7316_INT_MASK2, mask);
- 	if (!ret) {
- 		chip->int_mask &= ~ADT7316_VDD_INT_MASK;
- 		chip->int_mask |= data & ADT7316_VDD_INT_MASK;
-@@ -1894,7 +1889,7 @@ static ssize_t adt7316_set_int_mask(struct device *dev,
- 			/* mask in reg is opposite, set 1 to disable */
- 			mask = (~data) & ADT7316_TEMP_AIN_INT_MASK;
- 	}
--	ret = chip->bus.write(chip->bus.client, ADT7316_INT_MASK1, mask);
-+	ret = regmap_write(chip->regmap, ADT7316_INT_MASK1, mask);
- 
- 	chip->int_mask = mask;
- 
-@@ -1908,7 +1903,7 @@ static inline ssize_t adt7316_show_ad_bound(struct device *dev,
- 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
- 	struct iio_dev *dev_info = dev_to_iio_dev(dev);
- 	struct adt7316_chip_info *chip = iio_priv(dev_info);
--	u8 val;
-+	unsigned int val;
- 	int data;
- 	int ret;
- 
-@@ -1916,7 +1911,7 @@ static inline ssize_t adt7316_show_ad_bound(struct device *dev,
- 		this_attr->address > ADT7316_EX_TEMP_LOW)
- 		return -EPERM;
- 
--	ret = chip->bus.read(chip->bus.client, this_attr->address, &val);
-+	ret = regmap_read(chip->regmap, this_attr->address, &val);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1965,7 +1960,7 @@ static inline ssize_t adt7316_set_ad_bound(struct device *dev,
- 
- 	val = (u8)data;
- 
--	ret = chip->bus.write(chip->bus.client, this_attr->address, val);
-+	ret = regmap_write(chip->regmap, this_attr->address, val);
- 	if (ret)
- 		return -EIO;
- 
-@@ -1996,7 +1991,7 @@ static ssize_t adt7316_set_int_enabled(struct device *dev,
- 	if (buf[0] == '1')
- 		config1 |= ADT7316_INT_EN;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1, config1);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG1, config1);
- 	if (ret)
- 		return -EIO;
- 
-@@ -2133,8 +2128,8 @@ static const struct iio_info adt7516_info = {
- /*
-  * device probe and remove
-  */
--int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
--		const char *name)
-+int adt7316_probe(struct device *dev, struct regmap *regmap, const char *name,
-+		  int irq)
- {
- 	struct adt7316_chip_info *chip;
- 	struct iio_dev *indio_dev;
-@@ -2147,7 +2142,7 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
- 	/* this is only used for device removal purposes */
- 	dev_set_drvdata(dev, indio_dev);
- 
--	chip->bus = *bus;
-+	chip->regmap = regmap;
- 
- 	if (name[4] == '3')
- 		chip->id = ID_ADT7316 + (name[6] - '6');
-@@ -2180,17 +2175,17 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
- 	indio_dev->name = name;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 
--	if (chip->bus.irq > 0) {
--		ret = adt7316_setup_irq(indio_dev);
-+	if (irq > 0) {
-+		ret = adt7316_setup_irq(indio_dev, irq);
- 		if (ret)
- 			return ret;
- 	}
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG1, chip->config1);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG1, chip->config1);
- 	if (ret)
- 		return -EIO;
- 
--	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, chip->config3);
-+	ret = regmap_write(chip->regmap, ADT7316_CONFIG3, chip->config3);
- 	if (ret)
- 		return -EIO;
- 
-diff --git a/drivers/staging/iio/addac/adt7316.h b/drivers/staging/iio/addac/adt7316.h
-index fd7c5c92b599..2c72cf3f71cd 100644
---- a/drivers/staging/iio/addac/adt7316.h
-+++ b/drivers/staging/iio/addac/adt7316.h
-@@ -11,16 +11,13 @@
- 
- #include <linux/types.h>
- #include <linux/pm.h>
-+#include <linux/regmap.h>
- 
- #define ADT7316_REG_MAX_ADDR		0x3F
- 
--struct adt7316_bus {
--	void *client;
--	int irq;
--	int (*read)(void *client, u8 reg, u8 *data);
--	int (*write)(void *client, u8 reg, u8 val);
--	int (*multi_read)(void *client, u8 first_reg, u8 count, u8 *data);
--	int (*multi_write)(void *client, u8 first_reg, u8 count, u8 *data);
-+static const struct regmap_config adt7316_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 10,
- };
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -29,7 +26,7 @@ extern const struct dev_pm_ops adt7316_pm_ops;
- #else
- #define ADT7316_PM_OPS NULL
- #endif
--int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
--		   const char *name);
-+int adt7316_probe(struct device *dev, struct regmap *regmap, const char *name,
-+		  int irq);
- 
- #endif
--- 
-2.17.1
+if (match_int(&args[0], &max_devices) ||
+    (max_devices < 0 ||
+     (max_devices > BINDERFS_MAX_MINOR)))
+        return -EINVAL;
 
+Good that we have to have another version anyway. Sorry about that.
+
+Christian
+
+> +
+> +			opts->max = max_devices;
+> +			break;
+> +		default:
+> +			pr_err("Invalid mount options\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int binderfs_remount(struct super_block *sb, int *flags, char *data)
+> +{
+> +	struct binderfs_info *info = sb->s_fs_info;
+> +	return binderfs_parse_mount_opts(data, &info->mount_opts);
+> +}
+> +
+> +static int binderfs_show_mount_opts(struct seq_file *seq, struct dentry *root)
+> +{
+> +	struct binderfs_info *info;
+> +
+> +	info = root->d_sb->s_fs_info;
+> +	if (info->mount_opts.max < BINDERFS_MAX_MINOR)
+> +		seq_printf(seq, ",max=%d", info->mount_opts.max);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct super_operations binderfs_super_ops = {
+> -	.statfs = simple_statfs,
+> -	.evict_inode = binderfs_evict_inode,
+> +	.evict_inode    = binderfs_evict_inode,
+> +	.remount_fs	= binderfs_remount,
+> +	.show_options	= binderfs_show_mount_opts,
+> +	.statfs         = simple_statfs,
+>  };
+>  
+>  static int binderfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> @@ -409,6 +503,10 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+>  	if (!info)
+>  		goto err_without_dentry;
+>  
+> +	ret = binderfs_parse_mount_opts(data, &info->mount_opts);
+> +	if (ret)
+> +		goto err_without_dentry;
+> +
+>  	info->ipc_ns = ipc_ns;
+>  	info->root_gid = make_kgid(sb->s_user_ns, 0);
+>  	if (!gid_valid(info->root_gid))
+> @@ -416,6 +514,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+>  	info->root_uid = make_kuid(sb->s_user_ns, 0);
+>  	if (!uid_valid(info->root_uid))
+>  		info->root_uid = GLOBAL_ROOT_UID;
+> +	atomic_set(&info->device_count, 0);
+>  
+>  	sb->s_fs_info = info;
+>  
+> -- 
+> 2.19.1
+> 
