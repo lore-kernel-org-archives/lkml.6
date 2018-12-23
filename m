@@ -2,110 +2,121 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A07FC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA8CC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332DC21905
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545548779;
-	bh=/IRgEhh4S6jOmgBaHMpIRddXKjaSNutLCJ166j/V6wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mkXK72jU7AO9QOXPV0adzUyqn6nwLWTsyof/Z6x9HjGxIQEzCjf0h1EVcqh73Xe/F
-	 v1NFM8U1Dp/nWLUcNMYeSfm3mHs8h9ItK21o2EqN6v2vDG4g4lwcDT+s6JPPy8u9bp
-	 uvO35OwS2eJNmH8YJnMyMRPGdOdG+eH0us5CIcGY=
+	by mail.kernel.org (Postfix) with ESMTP id 8EC9E21905
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 07:08:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ldOYBb+z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbeLWHGR (ORCPT
+        id S1726865AbeLWHIg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 02:06:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726338AbeLWHGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 02:06:17 -0500
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C093121903;
-        Sun, 23 Dec 2018 07:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545548776;
-        bh=/IRgEhh4S6jOmgBaHMpIRddXKjaSNutLCJ166j/V6wg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hWxxHQW1PpFb2dY/6lxbcg2V+RYgTYCk2KqLFfh9Wlkw5YOtJiZtr7pJRDoVsNK6N
-         RBfR5uJteZqk4mTP8FkLzV4CS/4GPaAbXght9ZNSqup/m+qnaNjmcqGkDQDyDGQX7J
-         g2KND/z/950dhW3olUWYQXlUtC5ZWLgdxUhZi3To=
-Date:   Sun, 23 Dec 2018 09:06:13 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        kbuild test robot <fengguang.wu@intel.com>
-Cc:     Gavi Teitz <gavi@mellanox.com>, kbuild-all@01.org,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5e: fix semicolon.cocci warnings
-Message-ID: <20181223070613.GM3940@mtr-leonro.mtl.com>
-References: <201812222032.13tR4nHr%fengguang.wu@intel.com>
- <20181222120216.GA74933@lkp-hsx03.lkp.intel.com>
+        Sun, 23 Dec 2018 02:08:36 -0500
+Received: from mail-eopbgr40064.outbound.protection.outlook.com ([40.107.4.64]:43840
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726338AbeLWHIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 02:08:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YDbA1FKsvfGtaTsRiD4JMsGSE8p46EkotzD3HHGGC7w=;
+ b=ldOYBb+zhL/NOAeiU72IbSbd6ydnvRBsiwAETpRu/1RJT5TTdrD5/zxjURneoVQtxVt3dcCVRxtNMJ0SKzUDRIo0mJVjpWT32xGmM3SPSPgI7UoJoyiIyZph7PacUpGXmSHt2JZBNqz8mvywMFNpbERc/9wlcZcFjtjdXs7UXL0=
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
+ AM6PR0402MB3431.eurprd04.prod.outlook.com (52.133.19.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.25; Sun, 23 Dec 2018 07:08:31 +0000
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::f19b:c79a:43b4:b88d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::f19b:c79a:43b4:b88d%2]) with mapi id 15.20.1446.026; Sun, 23 Dec 2018
+ 07:08:31 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stefan Agner <stefan.agner@toradex.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] pinctrl: freescale: Break dependency on SOC_IMX8MQ for
+ i.MX8MQ
+Thread-Topic: [PATCH] pinctrl: freescale: Break dependency on SOC_IMX8MQ for
+ i.MX8MQ
+Thread-Index: AQHUmo5PK/Tz1O1SH0SGzdYOjnerFw==
+Date:   Sun, 23 Dec 2018 07:08:31 +0000
+Message-ID: <1545548891-24671-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5P194CA0023.EURP194.PROD.OUTLOOK.COM
+ (2603:10a6:203:8f::33) To AM6PR0402MB3654.eurprd04.prod.outlook.com
+ (2603:10a6:209:19::17)
+x-originating-ip: [95.76.156.53]
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3431;6:cWQYHFnF00FiqRM7fPtFhUoO+gJioLoqoqIHVplfaYVBvx4pmi2XLo46BaQeLqC10tyRIM2MUiBeGkFJf4lvzWYDJIQNXnrZ0OMF/jvLAfbhi8hCpuyvgNdGPD+Y0DXKRLjZ7RZXklYbJdGq3MsGFDhOguPEOc/ujI5QE81k6lESN41x8vVxXO/7j1TmqMx8f++cLbm4IxDLutOv/eU4WS5aM4wrSleAeh8CNz5g82++f2sCVR0jcsitiSd9QYCzt2D0pw2vkXVLrR2lLAkhm/jmQmll6CtG4P/YSk5JB2KHQah7KFm4JKLUzjBxzUmIk6wyR8LseJUlVaZqsyVQ+kJ7Y+goRHg2Sy5rxM/JoleZRiy5wxlChsHkNctdFfVVBY545WwKxhWYhG/7oAbyPKwnbFJHt9RpawVcQhLayZGMNTCqbuvsRhv9M2MEqv+0d3/Tqj6cpuUmuxMjsPlsog==;5:12QYCyXUr7VUY8eoDzF6wlegQ+F3dkW7graYjvp1hP8FkqJX83Fprweqk8rKR61zFPi7BmWmPan+U/2YeZ05py2B7htrQ9MPfTgQPy0UlOdZQwt+LAMzkLZzE9utifnEAO79bH8Yi+Ed9tIZ2eZOLQ1gP+JnIl0WLvyHvOVbMjU=;7:+kohbjRsGrZCtrzrZzlP9On/SVhVkVOPbL2wULIgb4GUtYNXW4SEaNUXiOws8FZDoiohNOSmpkcdvQ7HlWmpJ957GRlUCdUEGl7O0JOpZ66zCUuBVQnP0f9zdCIL9bjVc+uzmlElXSlSDEH1en7fmQ==
+x-ms-office365-filtering-correlation-id: 51fa8012-a44a-41cf-f459-08d668a57211
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600098)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3431;
+x-ms-traffictypediagnostic: AM6PR0402MB3431:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <AM6PR0402MB343107AF511D34DE70E51123F6BA0@AM6PR0402MB3431.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220043)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3431;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3431;
+x-forefront-prvs: 0895DF8FFD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(136003)(376002)(396003)(346002)(39860400002)(189003)(199004)(66066001)(71190400001)(71200400001)(2906002)(6512007)(53936002)(97736004)(86362001)(5660300001)(105586002)(106356001)(25786009)(478600001)(99286004)(476003)(486006)(186003)(6346003)(102836004)(26005)(256004)(14444005)(2616005)(14454004)(6486002)(68736007)(44832011)(316002)(4326008)(6436002)(8676002)(6116002)(3846002)(36756003)(6506007)(54906003)(110136005)(81166006)(81156014)(7736002)(8936002)(52116002)(386003)(305945005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3431;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 3rvyHGZwushESI3Qo/P8ORg2voHK1VxbDp4GDy5ObAk42a8SdLlMbjtiaRvAlWGSTdoCHFcR4QXe0m6E+x1lU7N4s1NU+eMGbmP53gbymV0jcKM5oDqaJ2tI2YML1a2zasCJ6t7GffEQobfKg7OO51Oib+QpmwKctQ7xrtq/rm8D8ZXLNPMYqSXkTZRDLUq50RoWD90UX/VHdaR9vtXZZyhM0+NvM4umzylRutHcouoj0qntSiD5t2TSgs6rex0MJYENzq/28MF4xDb/O3ivFTJclhGe91nGc1P9OALLJdniXiHOZahEdsyuiTiCk6oC
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="aIbcA3MSwnGacr4f"
-Content-Disposition: inline
-In-Reply-To: <20181222120216.GA74933@lkp-hsx03.lkp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51fa8012-a44a-41cf-f459-08d668a57211
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 07:08:31.4988
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3431
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The CONFIG_SOC_IMX8MQ will go away, so the dependency can be based on
+ARCH_MXC && ARM64.
 
---aIbcA3MSwnGacr4f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/pinctrl/freescale/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sat, Dec 22, 2018 at 08:02:16PM +0800, kbuild test robot wrote:
-> From: kbuild test robot <fengguang.wu@intel.com>
->
-> drivers/net/ethernet/mellanox/mlx5/core/en_rep.c:1339:57-58: Unneeded semicolon
->
->
->  Remove unneeded semicolon.
->
-> Generated by: scripts/coccinelle/misc/semicolon.cocci
->
-> Fixes: 4c8fb2986d44 ("net/mlx5e: Increase VF representors' SQ size to 128")
-> CC: Gavi Teitz <gavi@mellanox.com>
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-> ---
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/=
+Kconfig
+index 2d6db43..624902e 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -123,7 +123,7 @@ config PINCTRL_IMX7ULP
+=20
+ config PINCTRL_IMX8MQ
+ 	bool "IMX8MQ pinctrl driver"
+-	depends on SOC_IMX8MQ
++	depends on ARCH_MXC && ARM64
+ 	select PINCTRL_IMX
+ 	help
+ 	  Say Y here to enable the imx8mq pinctrl driver
+--=20
+2.7.4
 
-Dave,
-
-Can you please apply this small fix?
-
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-
---aIbcA3MSwnGacr4f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcHzPlAAoJEORje4g2clinBzEP/2QAXXjfVxDslwyEJvspdgkZ
-hNet5DjCJYsXr5X2tlLsHi6wj2wh1keBEHmp0Wp9n8K8cjRc3cpCPax7n1OFodgm
-HLknerfo2zXIn1GLseyOmvK/LBIr41GWthfkUUMum8T5Jo2G4Z0hLvZu/OB7c4G1
-aKUiRXHKOpneCi9nJfUlnZXX2RMSULojEaSW8rlloadYVqdodfHjXH2CNPKI4cHP
-jEiiOExYJCE7p7mW0wSIm5kW6q+JTsOaGrwvBJEPQAf2veoCtlIsar5ECIrhx7wY
-CPnlNIwLKlbDIBK94Y8KwWNrkTmvKEDMNJx9qdRUgNGo7ZXD1DSM/U6O91MsxfLf
-6J3rbySFwmY9cwSvKTXE1Oij73cCE688XeaXjH+uc+lI84sTQ4JvSGDesNQjb8hD
-yQsmZQlXB38BQUmln4zfap3IUyE0iEcLJE2gkcrvuZDvs4/fYAeackYt9gP7Sebl
-co7mgEju/tTeC7mpIPGEvWkgM1yCIf35QajsZLFrwdn6gD+h11bcrUEWjR4Qe168
-2dCkfy6SdDRDT9iaBYe3SKbgYy6OKUcgP/RYsk2ev1rNVyoE6WEW63UgiEsYAa1m
-yty56Q4UwM8QwRElzYrqnZKTYl+ShngFEpjFa2MQFJITSJl4dCvR2LHFmQRs/f4X
-9/seDuuSv+eVxW7KREF6
-=zYCK
------END PGP SIGNATURE-----
-
---aIbcA3MSwnGacr4f--
