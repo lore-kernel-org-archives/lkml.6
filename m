@@ -2,143 +2,129 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63234C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2675DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036EE217FA
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7CB4218AD
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 23:11:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lekensteyn.nl header.i=@lekensteyn.nl header.b="lBUUg8BK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le3OWjJo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726012AbeLWXKx (ORCPT
+        id S1726288AbeLWXL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 18:10:53 -0500
-Received: from lekensteyn.nl ([178.21.112.251]:35041 "EHLO lekensteyn.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbeLWXKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 18:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lekensteyn.nl; s=s2048-2015-q1;
-        h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=zzh48e8LmE8XrsMuk34ytHotWFQf48AnxhdPZOOTkao=;
-        b=lBUUg8BK+5rIgy71lh8C7Q39LR+KVvYfAYiiXSNcln4VuXuG5RAHw6zxCrxEsP6WlomYK713Q57kFY/S4ZLzT2t2Ttn40REDpNvgUgkGDrzWGZgCMXTgbIY5RkfEur/gyGv/lpmuuWZeOw/t9AlRh38xHfA8G9TxDjFlcWVvmUSbHRimKDN1k+xS4goU2a56F3qWWpwLKldKkep6HOKoj19roNZ2YHkndlkA7aoyeWWbr+j0IC9EISm7PA2cDRNkvLNnTIvyzBrHZXm5khP5MnexvdB8zQHmoEe1U/heZlwDFDqtg1b1CUn/UclZviYPWwmD8suL+MUdLtA2LdvVSQ==;
-Received: by lekensteyn.nl with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <peter@lekensteyn.nl>)
-        id 1gbCtI-00057c-Pj; Mon, 24 Dec 2018 00:10:37 +0100
-Date:   Mon, 24 Dec 2018 00:10:33 +0100
-From:   Peter Wu <peter@lekensteyn.nl>
-To:     Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
-Cc:     dri-devel@lists.freedesktop.org,
+        Sun, 23 Dec 2018 18:11:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38913 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeLWXLz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 18:11:55 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w6so4919560pgl.6;
+        Sun, 23 Dec 2018 15:11:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yo8mbqWnMHbde7X3yplhhkPZVj44wIEIKuxIr9Idckk=;
+        b=Le3OWjJo3WG6qelDo8/Yg7KeMfUhF8f5NQt9ARxNsm9R+bHPpuicf9LLXpSj/DPige
+         Srs45X0lqW7AI5/kJI7jFZ+m9S2wQkxaf+oBqA+5tqZE9DuVILL+1fh8KLWitTEk1MqT
+         T77atGhoLUUHeB0r/OcKIhRq1oaF5TW40EXsk1tFVOpF6tHksqC1O9+Q3tJCLmoIUO+N
+         NzOYxTz7EkHcOI8iLHZB4VWHEC4eRd6MgIdZJdQpaIlsP47bpLDuCbvyiwcgsW2NhLDg
+         5gm7C0qU8BAAx1E2AWH+ANEIpgPVO+ZBV0pIEllMszXs3Jb4qtb2dxxYfkUb6bDywdaP
+         IYNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yo8mbqWnMHbde7X3yplhhkPZVj44wIEIKuxIr9Idckk=;
+        b=FtWG/RISoXVW1wzDsCF7MYAyQnMFLHi4Gs8TPvntd540FQ8BnoGCVJtsutw8LU39HI
+         oCfMnpXupmkhDiisz2/1LzTt5RixD0xL6J8zIAg6XimsqPRTXyUlR3e928PmhQJV0G4F
+         2vfClsxcd0kOOUwsKRyeOv74CkffcTqRQIva0GITXmCedY6ZTqeS2qlkFeBbYCNEbq6V
+         LSLJU9VfhPOe9aCyBfZJxFG6we6O4cmTzLW1wmgLL6xirym2L5p/m2PTAbJ0vbxNGjFU
+         FG38ZqisMEOHe5ajAMgCwwPyu7Z5Si3TQ/DOlVmyILo/cV6KGKIgHen9wvOncLSS8dyF
+         N5lw==
+X-Gm-Message-State: AJcUukeysGs2y4bX9q8qJsiEyxy8IB3HO3ur4+vD1HOjk20/4buTJRa2
+        XzWUMRtJtQZwy/ZGImJQ6gU=
+X-Google-Smtp-Source: ALg8bN6sqXZX5vsYAR4igJY7aYJt5gBYb0UbhhGKm1hwWuq4fFbhM88iGQcFFe4lPUUG5NfKCRNJ4Q==
+X-Received: by 2002:a63:f444:: with SMTP id p4mr10374896pgk.124.1545606714766;
+        Sun, 23 Dec 2018 15:11:54 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:add8])
+        by smtp.gmail.com with ESMTPSA id i21sm47478980pgm.17.2018.12.23.15.11.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Dec 2018 15:11:53 -0800 (PST)
+Date:   Sun, 23 Dec 2018 15:11:51 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jikos@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com, kraxel@redhat.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [PATCH] drm/fb-helper: fix leaks in error path of
- drm_fb_helper_fbdev_setup
-Message-ID: <20181223231033.GA31596@al>
-References: <20181223004315.GA11455@al>
- <20181223005507.28328-1-peter@lekensteyn.nl>
- <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, stable@vger.kernel.org, daniel@iogearbox.net
+Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and
+ its mitigations
+Message-ID: <20181223231149.5yuenb53pavlvr3m@ast-mbp.dhcp.thefacebook.com>
+References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 02:55:52PM +0100, Noralf Trønnes wrote:
-> 
-> 
-> Den 23.12.2018 01.55, skrev Peter Wu:
-> > After drm_fb_helper_fbdev_setup calls drm_fb_helper_init,
-> > "dev->fb_helper" will be initialized (and thus drm_fb_helper_fini will
-> > have some effect). After that, drm_fb_helper_initial_config is called
-> > which may call the "fb_probe" driver callback.
-> > 
-> > This driver callback may call drm_fb_helper_defio_init (as is done by
-> > drm_fb_helper_generic_probe) or set a framebuffer (as is done by bochs)
-> > as documented. These are normally cleaned up on exit by
-> > drm_fb_helper_fbdev_teardown which also calls drm_fb_helper_fini.
-> > 
-> > If an error occurs after "fb_probe", but before setup is complete, then
-> > calling just drm_fb_helper_fini will leak resources. This was triggered
-> > by df2052cc922 ("bochs: convert to drm_fb_helper_fbdev_setup/teardown"):
-> > 
-> >      [   50.008030] bochsdrmfb: enable CONFIG_FB_LITTLE_ENDIAN to support this framebuffer
-> >      [   50.009436] bochs-drm 0000:00:02.0: [drm:drm_fb_helper_fbdev_setup] *ERROR* fbdev: Failed to set configuration (ret=-38)
-> >      [   50.011456] [drm] Initialized bochs-drm 1.0.0 20130925 for 0000:00:02.0 on minor 2
-> >      [   50.013604] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x280/0x2a0
-> >      [   50.016175] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G                T 4.20.0-rc7 #1
-> >      [   50.017732] EIP: drm_mode_config_cleanup+0x280/0x2a0
-> >      ...
-> >      [   50.023155] Call Trace:
-> >      [   50.023155]  ? bochs_kms_fini+0x1e/0x30
-> >      [   50.023155]  ? bochs_unload+0x18/0x40
-> > 
-> > This can be reproduced with QEMU and CONFIG_FB_LITTLE_ENDIAN=n.
-> > 
-> > Link: https://lkml.kernel.org/r/20181221083226.GI23332@shao2-debian
-> > Link: https://lkml.kernel.org/r/20181223004315.GA11455@al
-> > Fixes: 8741216396b2 ("drm/fb-helper: Add drm_fb_helper_fbdev_setup/teardown()")
-> > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > Cc: Noralf Trønnes <noralf@tronnes.org>
-> > Signed-off-by: Peter Wu <peter@lekensteyn.nl>
-> > ---
-> >   drivers/gpu/drm/drm_fb_helper.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > index 9d64f874f965..432e0f3b9267 100644
-> > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > @@ -2860,7 +2860,7 @@ int drm_fb_helper_fbdev_setup(struct drm_device *dev,
-> >   	return 0;
-> >   err_drm_fb_helper_fini:
-> > -	drm_fb_helper_fini(fb_helper);
-> > +	drm_fb_helper_fbdev_teardown(dev);
-> 
-> This change will break the error path for drm_fbdev_generic_setup()
-> because drm_fb_helper_generic_probe() cleans up on error but doesn't
-> clear drm_fb_helper->fb resulting in a double drm_framebuffer_remove().
+On Fri, Dec 21, 2018 at 09:44:44AM -0800, Tim Chen wrote:
+> +
+> +4. Kernel sandbox attacking kernel
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +
+> +The kernel has support for running user-supplied programs within the
+> +kernel.  Specific rules (such as bounds checking) are enforced on these
+> +programs by the kernel to ensure that they do not violate access controls.
+> +
+> +eBPF is a kernel sub-system that uses user-supplied program
+> +to execute JITed untrusted byte code inside the kernel. eBPF is used
+> +for manipulating and examining network packets, examining system call
+> +parameters for sand boxes and other uses.
+> +
+> +A malicious local process could upload and trigger an malicious
+> +eBPF script to the kernel, with the script attacking the kernel
+> +using variant 1 or 2 and reading memory.
 
-This should probably considered a bug of drm_fb_helper_generic_probe.
-Ownership of fb_helper should remain with the caller. The caller can
-detect an error and act accordingly.
+Above is not correct.
+The exploit for var2 does not load bpf progs into kernel.
+Instead the bpf interpreter is speculatively executing bpf prog
+that was never loaded.
+Hence CONFIG_BPF_JIT_ALWAYS_ON=y is necessary to make var2 harder
+to exploit.
+Same goes for other in kernel interpreters and state machines.
 
-> My assumption has been that the drm_fb_helper_funcs->fb_probe callback
-> cleans up its resources on error. Clearly this is not the case for bochs, so
-> my take on this is that bochsfb_create() needs to clean up on error.
+> +
+> +Necessary Prerequisites:
+> +1. Malicious local process
+> +2. eBPF JIT enabled for unprivileged users, attacking kernel with secrets
+> +on the same machine.
 
-That assumption still holds for bochs. The problem is this sequence:
-- drm_fb_helper_fbdev_setup is called.
-- fb_probe succeeds (this is crucial).
-- register_framebuffer fails.
-- error path of setup is triggered.
+This is not quite correct either.
+Var 1 could have been exploited with and without JIT.
+Also above sounds like that var1 is still exploitable through bpf
+which is not the case.
 
-As fb_helper is fully setup by drivers, the drm_fb_helper core should
-fully deallocate it again on the error path or else a leak occurs.
-
-> Gerd has a patchset that switches bochs over to the generic fbdev
-> emulation, but ofc that doesn't help with 4.20:
-> https://patchwork.freedesktop.org/series/54269/
-
-And that does not help with other users of the drm_fb_helper who use
-functions like drm_fb_helper_defio_init. They will likely run in the
-same problem.
-
-I don't have a way to test tinydrm or other drivers, but if you force
-register_framebuffer to fail, you should be able to reproduce the
-problem with drm_fb_helper_generic_probe.
--- 
-Kind regards,
-Peter Wu
-https://lekensteyn.nl
