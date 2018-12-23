@@ -2,108 +2,122 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08462C43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA915C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D18DD218D3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5ED4217F9
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:25:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="uIlJBqHp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbeLWMYa (ORCPT
+        id S1728228AbeLWMZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 07:24:30 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50882 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeLWMY3 (ORCPT
+        Sun, 23 Dec 2018 07:25:53 -0500
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:40326 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbeLWMZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 07:24:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so9239283wmd.0;
-        Sun, 23 Dec 2018 04:24:28 -0800 (PST)
+        Sun, 23 Dec 2018 07:25:53 -0500
+Received: by mail-wm1-f47.google.com with SMTP id f188so9755793wmf.5
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 04:25:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=07d2jrndARIrOVwmGE2dKzT5S6G+DO8LvvlFZ4WozsU=;
+        b=uIlJBqHpUYe05FvPLF2UGUqqTf2W4YNw1Nz6QqxO5lWevlSVczEtT759eIei8/WlVd
+         xaYMLT/dTJOq91yff/DEgHvEdOfNByALBP6MqsN+4zxLQliQtCzqRl2hzqINVf7f4uEJ
+         YzFddY7LdZdjHCkaMLSOOItBr/RUTSoo+0APbokrn/oKRnRAvWFx2tN8cB8XZjVZkzed
+         SUdKuoL8PVmac4lfajCNfJTt1DJcZ5ogmrlznSuoH5ufs9tAA9YiWCJLPn1nIfC/JZgS
+         e2xen4/F4CEQOcCeKw9S/NYEK/Hk4Ep0/mvkQk9wO+OVeDk7TYCrLZK1qWdtFT8ZbNEI
+         dsdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=IRVDC9MlYo+zGnerOqLUxppaH+DMuyi+9dgYiggvnjk=;
-        b=QMpchS5pZvidheC5OB8q4rbKWHTLZYTOw/neMJEGsG1YEBOlFZzbX/pmH8kjSmUfVP
-         uGvWLErPHfS2KkXmhDgYGahPXgVnwf149AAnTbflx67vbwAsVd91l6KQDLTKV1pzF9Rh
-         CITBjHB8E86EMMPJPxcKK8pjc1+eeA+0h66NYCgGiC5ZDtbeQtpNX6I+Q4gZgWleKrQv
-         60cK0JEuDJMdGodHE/rzFZMmHgFPojjxe0f53qLI4dtuLvskqAdmtsZMll5Kz39jDfth
-         JnqoOJXyxg2cbDvSdKZq8juPlQJWehruZeebQodrgROQBSWFsBpnuWeYtACiTuu6TrAp
-         E/xQ==
-X-Gm-Message-State: AA+aEWZD83zx0D5z3r0Bymc30hq7yWedAgdokKiutcjk1d4ELwmWJCqb
-        h3PdhqFY15wCdVJdMNpgjAPGBUkW
-X-Google-Smtp-Source: ALg8bN4FAT5pO8Jdo1DkP02fzPknXBrA26uA1ni2n7fLjNxtdcfDQXpxtv8qZlmMf5109vPSc6yZnA==
-X-Received: by 2002:a1c:16c5:: with SMTP id 188mr9500472wmw.69.1545567472204;
-        Sun, 23 Dec 2018 04:17:52 -0800 (PST)
-Received: from [10.0.0.5] ([207.232.55.62])
-        by smtp.gmail.com with ESMTPSA id k135sm28258413wmd.42.2018.12.23.04.17.50
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=07d2jrndARIrOVwmGE2dKzT5S6G+DO8LvvlFZ4WozsU=;
+        b=P2i2zcASRi+Dwtw/I/fkwFjhEBeQIbzBMEUYyKnFMd9zz7lCVT6+Li7GZVrAw8zQcl
+         1YjSeV+UYBsrXS4xbUWIrAKAHYr3vuvUdv+MBF7mZFtAckOMQXJNdTZbnbsV42R9uNT2
+         xSa0Ksom8+AMk5iAB8zIr3dheN9AKMCsYrXkUUVAWbHIvBPDNUIj13Y3/6AiQL+fl38I
+         tZMJRjICGS35sCzAs71XozqT/01waZjBBIi4WJco/CBrTpwc0nFLmucHJ28IxscHIm+A
+         Wc3EOW/4x+x2qx9psTmZ1qNVW0pNUamk0Sbkx8G4ZzaxvwIaH4q1fcaSXJKmbC7323D2
+         KAXQ==
+X-Gm-Message-State: AJcUuke5540A2iVs9rcrhp8JcSXo2QsWvxLZ5o44I676p1821esDBUk/
+        x9maMrDpyBTIEmMIybyOVEbjKw==
+X-Google-Smtp-Source: AFSGD/WUiWtPhPog5N75tlzKVy1gTwH3qpPzobZpmRePEukjSA+BUN5vzkqya2ZezyU1OAixVKPNFg==
+X-Received: by 2002:a1c:9183:: with SMTP id t125mr8878474wmd.79.1545567951148;
+        Sun, 23 Dec 2018 04:25:51 -0800 (PST)
+Received: from linux.fritz.box (p200300D993E1B70073C019066AB385FE.dip0.t-ipconnect.de. [2003:d9:93e1:b700:73c0:1906:6ab3:85fe])
+        by smtp.googlemail.com with ESMTPSA id s1sm24977939wro.9.2018.12.23.04.25.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Dec 2018 04:17:51 -0800 (PST)
-Subject: Re: remove exofs, the T10 OSD code and block/scsi bidi support V3
-To:     Christoph Hellwig <hch@lst.de>
-References: <20181111133211.13926-1-hch@lst.de>
- <4f4b6aff-6726-c500-e3e4-f8b73d641851@electrozaur.com>
- <20181219144347.GB23410@lst.de>
-Cc:     axboe@kernel.dk, martin.petersen@oracle.com,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Benjamin Block <bblock@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Boaz Harrosh <ooo@electrozaur.com>
-Message-ID: <fcba6f10-3cef-bc71-f198-e53e4a0e98e6@electrozaur.com>
-Date:   Sun, 23 Dec 2018 14:17:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Sun, 23 Dec 2018 04:25:50 -0800 (PST)
+Subject: Re: general protection fault in put_pid
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot+1145ec2e23165570c3ac@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        ktsanaktsidis@zendesk.com, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+References: <00000000000051ee78057cc4d98f@google.com>
+ <CACT4Y+YX3=OLqfmWwhHVCQz+HwE=53VH9c1E2M+rgbF=UVTV5A@mail.gmail.com>
+ <ab2fb696-8d3b-9720-a8a0-99c66a080605@colorfullife.com>
+ <CACT4Y+Y-c7FgSTKyHqpRZu3eKLo5QfXy10axTSwWkU4MUgjFgw@mail.gmail.com>
+ <87614226-e895-c3a3-3626-b0fbe7e191be@colorfullife.com>
+ <CACT4Y+bU4mLF1tEhw6mKf1m1W63OGvaFhAsTrpTW0M5MFXekRQ@mail.gmail.com>
+ <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+From:   Manfred Spraul <manfred@colorfullife.com>
+Message-ID: <cc088b05-7bc9-778e-30b9-4b8720314001@colorfullife.com>
+Date:   Sun, 23 Dec 2018 13:25:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181219144347.GB23410@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/18 16:43, Christoph Hellwig wrote:
-> On Mon, Nov 26, 2018 at 07:11:10PM +0200, Boaz Harrosh wrote:
->> On 11/11/18 15:32, Christoph Hellwig wrote:
->>> The only real user of the T10 OSD protocol, the pNFS object layout
->>> driver never went to the point of having shipping products, and we
->>> removed it 1.5 years ago.  Exofs is just a simple example without
->>> real life users.
->>>
->>
->> You have failed to say what is your motivation for this patchset? What
->> is it you are trying to fix/improve.
-> 
-> Drop basically unused support, which allows us to
-> 
->  1) reduce the size of every kernel with block layer support, and
->     even more for every kernel with scsi support
+Hello Dmitry,
 
-Do you have numbers? its mainly code-segment so I don't think you will see
-any real life measurable difference.
+On 12/23/18 10:57 AM, Dmitry Vyukov wrote:
+>
+> I can reproduce this infinite memory consumption with the C program:
+> https://gist.githubusercontent.com/dvyukov/03ec54b3429ade16fa07bf8b2379aff3/raw/ae4f654e279810de2505e8fa41b73dc1d77778e6/gistfile1.txt
+>
+> But this is working as intended, right? It just creates infinite
+> number of large semaphore sets, which reasonably consumes infinite
+> amount of memory.
+> Except that it also violates the memcg bound and a process can have
+> effectively unlimited amount of such "drum memory" in semaphores.
 
->  2) reduce the size of the critical struct request structure by
->     128 bits, thus reducing the memory used by every blk-mq driver
->     significantly, never mind the cache effects
+Yes, this is as intended:
 
-128 bits? I see the "struct request *next_rq;"
-is there another one?
+If you call semget(), then you can use memory, up to the limits in 
+/proc/sys/kernel/sem.
 
-It could share space with elv; && flush;
-Do you want a patch?
+Memcg is not taken into account, an admin must set /proc/sys/kernel/sem.
 
->  3) stop having the maintainance overhead for this code in the
->     block layer, which has been rather painful at times
-> 
+The default are "infinite amount of memory allowed", as this is the most 
+sane default: We had a logic that tried to autotune (i.e.: a new 
+namespace "inherits" a fraction of the parent namespaces memory limits), 
+but this we more or less always wrong.
 
-I hear you man. Life is pain. But is it really such an overhead?
-I mean it is already implemented. What else is there to do?
-Please please show me? (Sorry for being slow)
 
-Jai Maa
-Boaz
+--
+
+     Manfred
 
