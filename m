@@ -6,56 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A3EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE06C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5615321773
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A25962173B
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbeLWN2T (ORCPT
+        id S1728797AbeLWN2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 08:28:19 -0500
-Received: from ozlabs.org ([203.11.71.1]:56895 "EHLO ozlabs.org"
+        Sun, 23 Dec 2018 08:28:12 -0500
+Received: from ozlabs.org ([203.11.71.1]:51077 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728806AbeLWN2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 08:28:14 -0500
+        id S1728756AbeLWN2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 08:28:07 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43N38W5pqRz9sNr; Mon, 24 Dec 2018 00:28:11 +1100 (AEDT)
+        id 43N38Q0SKfz9sNw; Mon, 24 Dec 2018 00:28:05 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: ae6263cc33742d1c179510b6aadd31108fe89a89
+X-powerpc-patch-commit: 96d19d70e1012383365c68e271d99f833a2d85f3
 X-Patchwork-Hint: ignore
-In-Reply-To: <de85bbcd-36a8-7de5-8d18-96e1530a23c2@users.sourceforge.net>
-To:     SF Markus Elfring <elfring@users.sourceforge.net>,
-        linuxppc-dev@lists.ozlabs.org,
+In-Reply-To: <8b818f91a5dd1e33f4ffac11ad45d72a8caafb80.1545290681.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Rob Herring <robh@kernel.org>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [5/5] powerpc/4xx: Delete an unnecessary return statement in two functions
-Message-Id: <43N38W5pqRz9sNr@ozlabs.org>
-Date:   Mon, 24 Dec 2018 00:28:11 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/8xx: Allow pinning IMMR TLB when using early debug console
+Message-Id: <43N38Q0SKfz9sNw@ozlabs.org>
+Date:   Mon, 24 Dec 2018 00:28:05 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-01-11 at 18:04:54 UTC, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 11 Jan 2018 18:40:23 +0100
+On Thu, 2018-12-20 at 07:25:28 UTC, Christophe Leroy wrote:
+> CONFIG_EARLY_DEBUG_CPM requires IMMR area TLB to be pinned
+> otherwise it doesn't survive MMU_init, and the boot fails.
 > 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: void function return statements are not generally useful
-> 
-> Thus remove such a statement in the affected functions.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/ae6263cc33742d1c179510b6aadd31
+https://git.kernel.org/powerpc/c/96d19d70e1012383365c68e271d99f
 
 cheers
