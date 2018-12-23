@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599CAC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 15:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38EBC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 15:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B5E21908
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 15:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A72621928
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 15:15:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="jPUtE+K1";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="PEsoBfwM"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="nx30Vd2j";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="ZIgs2yKN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbeLWPOp (ORCPT
+        id S1729228AbeLWPPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 10:14:45 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:33968 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729074AbeLWPOi (ORCPT
+        Sun, 23 Dec 2018 10:15:02 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:34412 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729078AbeLWPOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Dec 2018 10:14:38 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBNFDvuP024403;
-        Sun, 23 Dec 2018 07:14:21 -0800
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBNFEG7x000375;
+        Sun, 23 Dec 2018 07:14:25 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=fnWfYpQoVtiDOS8SGfZJntB3AAugp/645tTIuzHmqZk=;
- b=jPUtE+K1PYUrzxEB/D/PoUg4w0Smtw7xWjeSe/NqveKgrfgSkGyHueWEn/LSgb4qWGlY
- y8EBV0iSp0McZacPnr6V/KRJ/coxwHbg0IVEfFRgkw9Fou9Y7MPMMa6YES/ORxFVYL2k
- N76sP9/5eutsww50U3qoB5WRpI/3fQs+seY9/3KrF/4UFKUNR/qhZQwcqswm+JYxQqXw
- YwVWIzCCY+/5qXcxXXP6WDdrW1iaNrBHB54xr418OmjexzB0PCwQ6ybn1d8DZsjRAId/
- yevJLGj7qhYutsr7FZLJF1QG6s708y3gl/FUxl6D8ztWBWZqojUoPn9V1Bw+n9LYTULC pw== 
+ bh=V7FIBn5+U46OV+GS1eHcIk35DIiRmFdDaz7ftT7o0BU=;
+ b=nx30Vd2jcplRzWW9mo8FmcrtonXXg7XzEzq3ozAGXFd28KYzCtPZnqKXfjBKzCyQQyVj
+ rIInKiuQw2h9Uf3yFeyfrXd02n0GT5KJ9ophANWv+MMwPnjdTZv7fsA6E/iAnps0i+6+
+ odBmFa5fhGoXugpRY9tcyU2T1ILN9V1O4l3IQvzh2H1zGQc9Ra+ELF3faPJwU7qoBHFH
+ 9JLR0LLqdRofn5mKtKpjjaAlDGfbHH4blIPt/AoBtyriuG3+FAOnZWLPhcI4chzexQPv
+ WuA98pgwcLTmc8eHBN/2kfOx/klDe55ju5IwpsSV7TcCCQdGHesPUEuZ8BHqfMJ9Me7R Dg== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2052.outbound.protection.outlook.com [104.47.36.52])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2phhr2dg19-1
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2058.outbound.protection.outlook.com [104.47.36.58])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2phjq1n5cw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 23 Dec 2018 07:14:21 -0800
+        Sun, 23 Dec 2018 07:14:24 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fnWfYpQoVtiDOS8SGfZJntB3AAugp/645tTIuzHmqZk=;
- b=PEsoBfwMSMjH6jdVaj8SEaerYlH6nXwOgDCvOxL1Oes2zMTi9deyJgcrgMWqBTDgioZ6pG/BBzY4LfPlC7c0BkzbiDNDeHMXISbGU8Mj5TnJO8xR0w+YVZ4alp4jS7VT5yJn8NHoxUADnOpTQnhjJ/rKsVEfxrA+4OPXtSCPIig=
-Received: from BYAPR07CA0031.namprd07.prod.outlook.com (2603:10b6:a02:bc::44)
- by SN4PR0701MB3726.namprd07.prod.outlook.com (2603:10b6:803:4d::32) with
+ bh=V7FIBn5+U46OV+GS1eHcIk35DIiRmFdDaz7ftT7o0BU=;
+ b=ZIgs2yKNBjliAiElD0aUcPC68a3KE0VUwZskPGh8/EQE3Bg/ncGfBDDz6Xgm3KdFMldjXb+V9heavqMhTK3kh5PqeSWOBY8GpyJ3YozOx0sOQdii06FshtVaOsOi07ZKfwhomojzubNdbNRSeuqDvtn+iEt/RPvYWyF5Mez1mRA=
+Received: from BYAPR07CA0026.namprd07.prod.outlook.com (2603:10b6:a02:bc::39)
+ by CY1PR07MB2165.namprd07.prod.outlook.com (2a01:111:e400:59d7::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1446.26; Sun, 23 Dec
- 2018 15:14:19 +0000
-Received: from DM3NAM05FT029.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::206) by BYAPR07CA0031.outlook.office365.com
- (2603:10b6:a02:bc::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1446.24; Sun, 23 Dec
+ 2018 15:14:20 +0000
+Received: from DM3NAM05FT015.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::205) by BYAPR07CA0026.outlook.office365.com
+ (2603:10b6:a02:bc::39) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1446.19 via Frontend
- Transport; Sun, 23 Dec 2018 15:14:18 +0000
+ Transport; Sun, 23 Dec 2018 15:14:20 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- DM3NAM05FT029.mail.protection.outlook.com (10.152.98.140) with Microsoft SMTP
+ DM3NAM05FT015.mail.protection.outlook.com (10.152.98.124) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.7 via Frontend Transport; Sun, 23 Dec 2018 15:14:13 +0000
+ 15.20.1471.7 via Frontend Transport; Sun, 23 Dec 2018 15:14:14 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBNFE6Hd004426
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBNFE6He004426
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Sun, 23 Dec 2018 10:14:11 -0500
+        Sun, 23 Dec 2018 10:14:12 -0500
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
@@ -75,10 +75,10 @@ Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
  15.0.1367.3 via Frontend Transport; Sun, 23 Dec 2018 16:14:07 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wBNFE5IT007146;
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wBNFE5bh007154;
         Sun, 23 Dec 2018 15:14:05 GMT
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wBNFE5NS007142;
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wBNFE5cF007150;
         Sun, 23 Dec 2018 15:14:05 GMT
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     <devicetree@vger.kernel.org>
@@ -90,9 +90,9 @@ CC:     <gregkh@linuxfoundation.org>, <mark.rutland@arm.com>,
         <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
         <sureshp@cadence.com>, <peter.chen@nxp.com>, <pjez@cadence.com>,
         <kurahul@cadence.com>, Pawel Laszczak <pawell@cadence.com>
-Subject: [PATCH v2 2/5] usb:common Separated decoding functions from dwc3 driver.
-Date:   Sun, 23 Dec 2018 15:13:09 +0000
-Message-ID: <1545577992-4013-3-git-send-email-pawell@cadence.com>
+Subject: [PATCH v2 3/5] usb:common Patch simplify usb_decode_set_clear_feature function.
+Date:   Sun, 23 Dec 2018 15:13:10 +0000
+Message-ID: <1545577992-4013-4-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1545577992-4013-1-git-send-email-pawell@cadence.com>
 References: <1545577992-4013-1-git-send-email-pawell@cadence.com>
@@ -100,55 +100,54 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39850400004)(376002)(2980300002)(36092001)(189003)(199004)(2906002)(50466002)(8936002)(48376002)(69596002)(50226002)(81156014)(8676002)(4326008)(76176011)(305945005)(53386004)(81166006)(51416003)(107886003)(39060400002)(53936002)(6306002)(86362001)(575784001)(36756003)(7416002)(5660300001)(4744004)(14444005)(54906003)(42186006)(16586007)(356004)(316002)(486006)(6916009)(97736004)(87636003)(478600001)(26826003)(966005)(476003)(2616005)(126002)(446003)(11346002)(426003)(4720700003)(2351001)(336012)(106466001)(105596002)(186003)(26005)(47776003)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0701MB3726;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT029;1:HOc0MsRHwFpJe5/72Qes4ruo4Pm2TbZTIPUwn0NIRiwIdSia7mxFf+y+DSDkIypP1YPtip6w1QT9+PaV26Sm30q67EQ4VbNXzivQpe1Ed3HFGD3PPA7W/TSGmUX7K1eJ
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(376002)(39840400004)(2980300002)(199004)(189003)(36092001)(4720700003)(2351001)(26826003)(69596002)(486006)(53936002)(26005)(186003)(305945005)(68736007)(48376002)(97736004)(2906002)(87636003)(105596002)(106466001)(50466002)(36756003)(6666004)(356004)(478600001)(39060400002)(5660300001)(16586007)(42186006)(54906003)(6916009)(47776003)(4326008)(107886003)(7416002)(81156014)(336012)(316002)(2616005)(126002)(86362001)(476003)(8676002)(51416003)(426003)(76176011)(8936002)(50226002)(11346002)(446003)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2165;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT015;1:1WAerBJckEuRIigVLhKQbT/l1Cr6PO0v0XVa+LU+alvYwogH8wdcHhI++hR/YdWlGqJFIGR+Ua0Zw0C+quQfO6kWtXkTwraAF4F9EG1uEaJbmn+M7DQ5CdZ2Eenn8TLh
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 567af24a-237e-403d-8961-08d668e94f06
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:SN4PR0701MB3726;
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0701MB3726;3:Gktg1B6HMAA4CjuXl0zbid7tpnmaopnRmUji+KnvX9FYzsRKYOXi/4VMyff2+2qnh3cb459rjqtg7Eb6M/c/PGualFcfZzXr/muE/sFS+oly7rlW7LPBKSqC0xygNDKPlKPwf/pX92uNX4J6bMSfzv1w/xehZnaqiY+LS68q5HMQrOttYs/VkSjeMcIEN7ltytGSCY+DgH+eww/7XIAztiYvbv3yfdwxH7wJgIFD1pUdnK3H9BpgfIwNtx/LISDh2U0v8KXLaTzpC+CXt97LaTVsuxKB1qXLV4redcako3o5MT3Gj9/tfdlZSHmUIAX+HpN5u+H0coPXTQLEbVac9A==;25:cNpyZuRMQexa0MV8HsEnlgKA6NPjdET8Z9B8TMNmnovwI0u6TRfwm4XilEG2Lxtg4IJTbCFmyMoeRjx7b7Y1TdiYTLrHRxlt2MqbVnHODohAAjfNGL3YqSft671wA/leUeD1u4yPNu5qTPJmUrrMFqAYazcQoYz6rEruA6uG81hVLn1bw3uVOCaCA9Ox/5V9QCKmZ2CgdalqA+GAc64m5wxDOqg39IpbQA8JAjaIJGks7bNUom0PuUSSRB+HUrYB4IUoMosBFRs1IpcnegpsvQy+8aUbtDVukYgnObbnTybH3Dw/2mw4MrTTUU9Qd/at4kHiXTnHA0Mgw+gnTchqsA==;31:v8LJRBmIKkVj4X+vOjCdqKdTgfogTcO9ONPK6tB0hgrng49JBzP0W1hrRVOkZLpF/qrXOq/ctqCefBb1j5fgQVbvQYa6jt3AMUBM0My3Mp/X7jmO5MfYl2EmHkNYrFKqnnMrUmo/vOCNlaolH9T8aHurhQ+EtEny4oBUdPJYWeHeB87aVTkHXEG1YxwkvbOO5t/tTFTcA66fksf2egtLxgpqM7fMCL+Dr5FWJqKrjhM=
-X-MS-TrafficTypeDiagnostic: SN4PR0701MB3726:
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0701MB3726;20:fdX8xJTbXNAChwi9Qv713NaGLZuLg2Pqj+Y2b4HAi6/SCY7ChMmsfMYuwMhAQ+1R0VOqiesuykb7vJ8n64tEziQOAd8gq3ETsRIP6RsukjIqHFidMlLyjF1aYSWO2E0vygEWymFGi7AxsyteI3y/2rtA2KRbGTF1KbjhcDJ+nikkzNRgE8ECoQdmWcjrfthRQZYu8kgiwRnjoUcZnlifNQIAU1dv2ysGEj/XKcwkPvvynGTjdbk22NnCZNqC1AmJTRb89pmklZb8KjhogwMt0Rkjn8goj+Hp1scmhuaMjIdHn223UEl9poYo7DAIOkIaEl9TogvzE/q5OnSIQjbSJVsaI9wKAE9xf3RxjiTPsQk6T1MmJOBnAt9T7kHNksWGjKmTZKJCaa5XPSVN0oSsxY3ZifQXQvDnJ6ErmGoHB3ezDn1+KWxwRhOjISVdEI8zwC5zu7PGehtyMBwrx5R3OiLkUbYTltx8galoWmRc46ri+YEbOG5hMvuSV2FZVPpV;4:o2F8MOXbwx12dbtGcjpsV8yiNy0Jd45QTmlBoMJmD2Mb25qmYKjhw7ABqVY/QHJVTXa3EgcESxGePvUhR6S8fSsGAK8dak84OoJEwddv9buV+3PXDuFIJDWPqHW+uHvrZ/WAz3wJVapU9PI8kZyOlZvO6+uF7pmZ5xefEJyX4eKbd0axk2g9kg37qwxWEBZDnnsK3nrm6NdzVOpSdpAYQ2hroGO+L4r3lmuQosaeXBaU03dJBEnXa9pr/7LmTbdaRlX5nUG+5kRjVMiU0kyUow==
-X-Microsoft-Antispam-PRVS: <SN4PR0701MB37268E00230252BDE026346CDDBA0@SN4PR0701MB3726.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(4982022)(52105112)(93006095)(93003095)(3002001)(10201501046)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN4PR0701MB3726;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0701MB3726;
+X-MS-Office365-Filtering-Correlation-Id: 087ebb61-4105-440a-63b2-08d668e94fd7
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:CY1PR07MB2165;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;3:oGn7Qu3pmaiW1IT8uddkZW5VACEYFOZhIxep97Ag9x77ZKQ92qKkXeHrEzgxw8Lubksg+XdxTWTwLjM0hnihNX9A9UQFkrUJiaPlMT6yPsnKq9elI9xXPLX+bfd7IHMJYU3VrS2JiZvfKGNrHDQw0/E8UibCy7AxBvMKbGDBBpYi2jHlO+PxpPkIpiWFzBNJnSk/KYFJPIF9MSnqOb6S0xsregP/BTXUF2ZsHb7SLgXyQqBkaBTqegNInb9IJr0JXoUyjHCMB6fDAoxcMrNBH5AFD1FJ48u274zBrDEr5TBQznLT1mc4Vk3t5m061NV8owKuXotI6OzkpR3wTzKqCw==;25:uneShWC/FzqxHCTguzoQoqe71vrisweFMUsPmSiesVZC77oaLl2mCmsWQwevcc9pln8G2b5kK2uxEC6p+7hY6rIG4+6iOrREJ6oq0PqfTz2A3Po7PVBXmuKPGW1e+xPqSx+KuYbXQ9zDPh7CxzvxoXqWOhEjoDfq/SZna+UqA6d49MacIeV/PpF/89Y2lhOYoN+syNxY6IicHkjdlGyAsxRjYgaTeKU/+jf7Oajw8lWJAVkqqza7NCstaILjCsEOVI9Rmtc+0i2QSpMozAFKsCGSBvY5ZtyzSDKMzTO6EN9RthBBcny7eKu0ANuGLHj+PgU5AClyNbs44C+vkINIoeeQnWfoGxR5R0V09zYfDOo=
+X-MS-TrafficTypeDiagnostic: CY1PR07MB2165:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;31:gVR66urrRRhbnVCEcS1TNP0ID8jyP4pPWHnX9rkugArHN2xIGsVBEVKrrwaHQt+qOLKh9Mwe909fOtx2udRjH1SsT9O8n7EmHGmh8zkteps3ScRjHupexX/1GodX/45P+fDDIuHx9WD0vm7QeugaJD9Wkv0WYpSsStfAVxgWw4BkmzS+UchSkFYAUSfoNCQXNJ7b3DZ9373A29On8pRTZHhVIqIdXGE8ZWteX7LtfpA=;20:Qn5YtvqMvicXXV+4jbPw/6VW6cr0uxAhDM8rWmonFKrk6TAJ0ERlbOpWbuDNgEEiurIUV1CtqadttpRhMaFjVj1GyoQItSPynJSFKlBrrW58cwx06V0Ic49pMEYmxY9Y95tIluyQFtz6FxD+9xYwAMSKiHDEKywXf6xpKqgmBBsF3jahlvBbFyiw4K6bL85rA/AEPobBG0LAkkJ9EJC7TuEBsjoEaqrENApAP+N2L3ya15ndgVLBRTv+2sOBOx7oC3x3RmC66qJgEvVGwyTk0C0rmCKcgjsQCsTUJjpMS7uHwGtcAbgqzdFJx5ileEtGLKqJg3AvzmKGNfmeSbM8+V2EzFRjJsV6F/PpoM37K4oQ8Ch9amongOJExmXB++ZBkSk/4i3o4hQ3HB6wjz3qzql2J64skGwQ2JtousyAHadZrEGpDleYrC4r8YwaVXZbXx4T4SLnkLAd0lTz10xm6PucuilBcjyyBRbqCeMd5li0rnEdP+HBJ3J7SDhGtAib
+X-Microsoft-Antispam-PRVS: <CY1PR07MB21656AB281EDAC871AD22A42DDBA0@CY1PR07MB2165.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93003095)(10201501046)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY1PR07MB2165;BCL:0;PCL:0;RULEID:;SRVR:CY1PR07MB2165;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;4:n5ct/WBa6Bo1fHtmSEKkPPUWSAwq4bvGz0cuD8l/9vpWoWT+WZlARrjCkV2P0yBG6mq8mKzLgrKybMU4k4AEeKZ9j1uJkFrizH6B21BW7LBgO7emrpc86+G2pdNYZ1jEfrzV55WN2LuMNvOxdSTMkcOWIplzAMhdTEv8Qgh7bSuJF4meO27V8AHOiiq/CJgaQOFxJzd+96nDPyGtHRQx5u4tu54Oj9JrQfTeTwzQdAHyNChmBVFLvGkfCpu2nVPlRzF6cmGr7rMmvKtHJbLn9g==
 X-Forefront-PRVS: 0895DF8FFD
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0701MB3726;23:5ClPCnkBMddmfuCduLcW2kbMN15ANKAOlzYj6Aa?=
- =?us-ascii?Q?04p3R1evLNppo/fOkgfeo/6JzcOmsL366r1D7Dn0XU87y6uSFAQpD/aXmIVz?=
- =?us-ascii?Q?Dl9qZezZ+4jyywHbfivi5BTNCoSe4nki+abFVuT75QZy4COyyiZ6gR0WJHWl?=
- =?us-ascii?Q?Fd88pYWMvtDDt/hBTmDtWsq2MW5j3CSa4NZ1JH8APG7vic97lIpm0O5QSbD7?=
- =?us-ascii?Q?hN+YN6y+MCVl9z0OrA3q2lAuDvRe+lpk39w0hxZBj1x3kshs+VltAAkC4DQ5?=
- =?us-ascii?Q?dcRq4HVniRFzD/krUc3Fa1l/PbrsiYIyWG7ZBU/FxeIRuUHrCuCgjjXhRULB?=
- =?us-ascii?Q?Che1SqSxi+7hMsUMHNXhH1tBapnU7VRdYBb+iqrQZsraTGwK+PkC6WQ4+vEt?=
- =?us-ascii?Q?xZixgJ6K/9hEjvKGYw+ynkC8rNDgqBerHFG19PiAbeAFlIp7W5qg858TNbhS?=
- =?us-ascii?Q?mYhJh+Fkan1t9n/eJvrkkW9npy1tKgF3SryuRiH7BP0nKzRGu8lKS7mQzFfw?=
- =?us-ascii?Q?5XUcIuTZihoApoxVc+x31JMKocQ0NlHeAFkVS3rMZxhefaZgU/Kkk2G5gklT?=
- =?us-ascii?Q?QXp22IGYol9yqE+esVmxmePfQzGl+GL1WEjfn2N0vzKHT0pPst9TzHOGhWxH?=
- =?us-ascii?Q?Srj3t2ydSdaLO7ZjnXzg4/79lworPtaXNliAlAy6fMxe0rz7WOOpOLzHn0S5?=
- =?us-ascii?Q?TMz9Q1IMcw3cCupYUeJlBw+BIN958ZmgKcKdTExmHlDgI+FcuQkcVPs8M2rW?=
- =?us-ascii?Q?Mf4JECCKbMv1qf/g95hfnpfnDzGMCapE0lftiFEkVyZstlQuuJEyr2NU99VP?=
- =?us-ascii?Q?UimqJqeZUTYJlWkUe+JXaEAxiB2ra7EIYltx3mCSJTc4RJZJrSHgrSdX8i4m?=
- =?us-ascii?Q?cfYs0bMo5Xumz0nUhWEOMTjBDrx62KaVbI85EZV0ycDZ/5TkJeM4MHVKPifi?=
- =?us-ascii?Q?rxlNIYafHuFMHtgMpqqikK4yrdShXwlqIVoMaqNPvWhmskVpoPWIG3RUMQLp?=
- =?us-ascii?Q?za0xC160TL8yUTnnFeVIgfIF0OYzoWbeDhYNVDKL+n9gbGLefwauUxBB4b//?=
- =?us-ascii?Q?0hWwUTP/R11tguVySvymppBtVS0nfvdwt+5IfjgPha25ruvznNstSGBqb1nJ?=
- =?us-ascii?Q?HIb2nKZHQg4Bhbl7phHXgYeFyEosz3cwyPNFm3Qg7j3Aimg79nTo0prNjU9s?=
- =?us-ascii?Q?2fh7q50/zCayV8AxcnePK5Ubww8BfQCZaBo1jQLiNO9a/JVd48/d5DWV4xy4?=
- =?us-ascii?Q?cH04fZQAxIvtkXyFuAs4n0Y0wDRI67LJsrQmPJuz5i7VK9a/PHNCkGfeGLK/?=
- =?us-ascii?Q?NwuupjIBlbE2WO5T1Jnh+eJK4rLXPVWWTr22hcll4UYVoM36AwYC+dZaA/WV?=
- =?us-ascii?Q?RnXsuTg=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR07MB2165;23:jNiBAJRaaRJC6jRHdKNjwaleYwMAiLJTDTa+eaPe9?=
+ =?us-ascii?Q?hdFH5KWLrQOderjTOdWblXunoi7hK6qcydVEKBAh5cu0Qwvc3SCzlHF1F93O?=
+ =?us-ascii?Q?lsx/s0za3lSAkSSZSlfMc4clVDmEMrUFjxeUagcIrb1qdV8ZGb2scrIrq6FA?=
+ =?us-ascii?Q?rLRBmB2qM1hbkDzpix0Ou01oV/pULBagOqDoOKybttG1XUnXrupEv+NwwJyk?=
+ =?us-ascii?Q?/0AIYkYsLFkrkA04HptKXNEpVbyvqydcrr4rk49eldGShMhI6XDBtcRWb6V0?=
+ =?us-ascii?Q?q3MMnvxY5QeICMyuZclqZlg5E8pU0WFUfpqiDClq24kNLXKbct+3S2sXIk/J?=
+ =?us-ascii?Q?x7hHwVeP3ZPT5Oid8wwRFtJXVDSUUwtI/IqZuMzx5GJWMTyBH0j3Gaw9nFtu?=
+ =?us-ascii?Q?mWiHtYrB5lSAmLHx8SJF0FRRbm5UmOC5uSbADWN6MNvAVoAQ13ShcTu0QV9k?=
+ =?us-ascii?Q?8Cn6ooNFa4yoEWwnRDcXyJ+hYyk8q/MLCcT9tJZNrWuO1KkUjVEMrUzfU72s?=
+ =?us-ascii?Q?V83vBwGXRR9f6mx2MXiHX+NFhOTzfVLqvYC2T/rJzcK6Q5YrW0HAXQ2z4C9X?=
+ =?us-ascii?Q?BjLMcvqrBcYntQW5wzgs9cxqOlfErsg6q4a3olN9/2KGjXfSoPiivMyhX3/p?=
+ =?us-ascii?Q?ZubV/nQ34e9v0/RwKFNdhzN7063lI2WDcB6xfjZngmaVu0cndvK8dRw4amwH?=
+ =?us-ascii?Q?GdUGg9iUKKOzK2imenmqxwKwUkSQ2C1iLc4AOE5bPxZXLyo+CDViPTCkxcg3?=
+ =?us-ascii?Q?aFttl0isrNspHgoSFyEu0xDezn2QLDKL+eEjzGDkX9rtxEnxEH5apzXmM31R?=
+ =?us-ascii?Q?RcRLCG7/tbwD6M094783CRgxMCHiI+AFCq+Sz4VVa4/MAroHK9AaBk5OWwO+?=
+ =?us-ascii?Q?+JCvEg0ifeWGMm/5KscBGrp0WFVkR99Hf1DU5gFbsENnu5e25Rp3EYbEi4Qs?=
+ =?us-ascii?Q?lRsW26FCpYZTWkhbc8eMPwgeHb5880pN2ENXWQeUNi1rsMoZSVl0QXAOsLyX?=
+ =?us-ascii?Q?qAouVGN3D9YOljf0vlJCPdrUpLgKp8NfaZqg/xYXEAP+v0q9i4Uea/VnpYqi?=
+ =?us-ascii?Q?pMLeE+CoG07sjJE7/GAQR49L4ZQ5dJrICestRksB+nzECLSqjhF1BD2Fg6pE?=
+ =?us-ascii?Q?UIB/6gmZG5tlwRJN9QSILG1bUNqGUcM0f/dxJdvDBiyR+lP7rMbFN2GtWd41?=
+ =?us-ascii?Q?OoBeVqx/z3rOyk/K0sDOTCCPWNbWpJ4FJgejMXCxGUWBHe06uSVDKeSUd7UB?=
+ =?us-ascii?Q?+P6uxeUa2pOzU2kyuE=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: zFM1H7voVbEF7EzX0s5HEoKi5dISDZTEM7ZOdNiRVb4TWXfUtZTbkFCwEcMUlCznztYAU68g0fjbPSjIChC/al9UbA1mfF0LXBoM9hnnToXNxtSTr4TwAEpGnJeweUUTXwwqmuakB1wmCiT2ohIcop4y+jmcpbklNr94MZdGihl33tD0e4C4digHW1C0AK6Cz0QSlzwe1f1NzWlNYoAVpc8YgGuOk0bIO02p773CQmDUsqSSd2fdXK0hkJQD1kj/M2skyJvsfC/8OhHwIVQnZ0F9hEtIFjdEG7TNkhtFdPVBi8SWZq2C7YIAQQhGjViA
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0701MB3726;6:pEiStlOoFE50ifXKfkKpv1A5MBLfXC4xGSoQK7nWT72txZ2Oi4j79nrTCx1ZzGxIxEnIo/IbuzvgbhOdNheC1eZlBoSG7+/4uNvNgTOFrz3AJ7oXIfc42TInmEyjUqOm767QCVbWteQ9G5wpkFRDxTTchSpMLuQ1KfRd25Vi70yrOzDw7T0VaelKhqT3jDdx6OQccyfH8MZs5dIDaPsY+GNo8ulCU2tlM1osDdeHtM3rjz7RpN6bjFycy33nK0kghwIJvj5kA70SkgjlhznY7XzY1d0x1ed67HUK0CoaOkcq8M5B3VP5Om2mQC2htVI9zlDQtPN9IN/DfuZKB75zKGZMlfqSlsJujgRN9+zlDNaboZ4SqiKx/3KnZrUHUyo/C4oa+ehFtwqz4sa9Q85JJEjAbtpLpT/hWDUnOiO/fRA1/nn7D1N8ijZrN2HJZeXzwnLjz1LSP9/42l9mHw3G6Q==;5:CXkid/AbeeLfkyUHLuRd1EIuG3ut4F//VE1LB906ty4iuk9Obw1bntDLy+UqGLPwwuozuSsn8KuSFYvh4AqPVp2kI+m5QgW614/0TSgheHmanQVTZxe4Yu6+EDVXVO54bRALb+mp55KBfgNhbFPuh02D85z1Ak00jhtxAp65vzA=;7:6fcyyWa9t+NILpZARVJJF6YfuuBpn5m3J4TaWbLpFMEqKxC+i5jgO2a5Cnb0Gc9Jvikh+wI9a7F7U8is+466DKvYpdC/qzSYvZ3j7Khei2HTkcZfEQ88KiU1Gp+5+qykKt2OID856IvkqkWh8UiHUA==
+X-Microsoft-Antispam-Message-Info: ZQv28ydKSOqY+QFOQC4IIIkbB0HS4ICnc8IPhJ3YmduxF9MrraeBJeZj6xZgn3M8nsY2F3VtbNuQil/MZkiMQteCmvmZv4tGiPpvo9DqJkHF3oTt1XPifjnsdU9uMrgKkM8CIa/wV71MjthopFJySngLYv/5ppv7Y1wY8bB8vahQeDtoxsW3ec6DAt0CXeyq1UVqOuq64T0dE9mzHpn+v9d2AB7Cp5OnIpmBtERE4YuOjEn+Xb6Xr8WKawTJihHgPglvBlPM9JDrphVVV+vUgnle11PnmLTvx8iomxEpSgXXVfKx6BnMIdI/zPZjdTbJ
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;6:kv791f4YmKytTkTB9DUvNBxxhYj0SUNygLxXST9dDNQcwxTyY2lFyxabfiky64O/ulew/Kaf3RWgPTLYwMLdtnYqRFuS1vjMoY1Ovc0ihR7ouRktdzGmbS0VYyg6n3jshrWDHHCJ1er2Y3Ohtg6+hF31PY+eg57w2i3uwTYLxJI4CiNU0whQRGiOpWRWzpPtrdp2nUZ7HBng9CkG2X2Z7o1fp8HB+HjSSZEvnL5cEFQb7s/i3FrsOnaFXRY1Zz0xBqpFWstVuEvMuOoEMvjVaarQYAbOzAO90ZC7UBIjIZLj3mtf317gCimIkfjZdCfOFBtqtu6PKi2Hiv7O6wz6wMwcPQaxqZpD86s0S2n2ggCYz2A4oto88Dp8pOGgPhHoxUsWAzmIFD9x8sYQOr+KihzNb5vwMTRmcme6nTo406WSdDVqtaEBab4YDZf74irh+TgPiU908vAC60CQtM9Wmw==;5:qgvccBnMNLHAkLpaWPFD9lByTPt5McBhFw0mbtfqkYOeH6cU+RzaYlqvowFOOrdXN/1VMMuaGj4i/bVF4GZLGAOrs9ipHqjh8mbyqnPiqwvhGjo4rQ9js9MFHAvUYmngfqy32ZfIFSAz1YAG6cU1QxidKDD0bYB1XzZisqVWt30=;7:CHo90OW1ubXJYodmDCbtfBSRDdRB6lFuH8S6RLCglSzc5Z4lCjoTXoIWSP8UIkP7IzVBJvIi3Jko0dwhdciO6d1Lyro3dg34J/ECMWEdgg/Ky6FXb/iF2fMPCyRldqLY4+vhCY375pPqIknT2Ysd4g==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0701MB3726;20:ZPOEzpUZyUnr/PtwSyMoHEiWGnQ/Jj2L9wdbv5pRK1YBVds2wyj84EC0PEO7GB/ZE9Q9qRNOgV/x5+SryDxAx0VGRbXw/jTBJnmxchh56xJiZKpllkMMwhfvJEp28OW9xSbTCeOVJtqGym+UQ3R1CwpkW9YEogBHiczOwQNUiprUk0zpWqS/xJhD5357CYkcwfeqW1Viu66SjbM7M+K49syA3IrjZoqcyVE0tCvJoeEX68l72nMwgIbkJKKMv9cM
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;20:K6002+NX+hUUr8A7WVLlp41IoygwrjcAZTO/f1bwlTzYjC37zTxrP6h5bsgiJB3SeaDgIw+R4YpOS3tQg+rVS5EkEhVILqx0FraMzJP4KBKDdgBCPZe9l1dkpPcSG5SBQ/T/SwOLowjw/uxUBbmBILYgKGZJqc1xEuaFQpWWgi/3dM6n5Qz0PY4luDifB9ezs3027TIV0BQJBTkNCimsqKFS17DYAkP3/k6yn0CjN35z0G2HrWCLB/TiV8IvHlOD
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Dec 2018 15:14:13.0281
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Dec 2018 15:14:14.3654
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 567af24a-237e-403d-8961-08d668e94f06
+X-MS-Exchange-CrossTenant-Network-Message-Id: 087ebb61-4105-440a-63b2-08d668e94fd7
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0701MB3726
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2165
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -158,364 +157,77 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=685 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1812230137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch moves some decoding functions from driver/usb/dwc3/debug.h driver
-to driver/usb/common/debug.c file. These moved functions include:
-    dwc3_decode_get_status
-    dwc3_decode_set_clear_feature
-    dwc3_decode_set_address
-    dwc3_decode_get_set_descriptor
-    dwc3_decode_get_configuration
-    dwc3_decode_set_configuration
-    dwc3_decode_get_intf
-    dwc3_decode_set_intf
-    dwc3_decode_synch_frame
-    dwc3_decode_set_sel
-    dwc3_decode_set_isoch_delay
-    dwc3_decode_ctrl
-
-These functions are used also in inroduced cdns3 driver.
-
-All functions prefixes were changed from dwc3 to usb.
-Also, function's parameters has been extended according to the name
-of fields in standard SETUP packet.
-Additionally, patch adds usb_decode_ctrl function to
-include/linux/usb/ch9.h file.
-
-mend
+Patch adds usb_decode_test_mode and usb_decode_device_feature functions,
+which allow to make more readable and simplify the
+usb_decode_set_clear_feature function.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/common/Makefile |   2 +-
- drivers/usb/common/debug.c  | 265 ++++++++++++++++++++++++++++++++++++
- drivers/usb/dwc3/debug.h    | 243 ---------------------------------
- drivers/usb/dwc3/trace.h    |   2 +-
- include/linux/usb/ch9.h     |  19 +++
- 5 files changed, 286 insertions(+), 245 deletions(-)
- create mode 100644 drivers/usb/common/debug.c
+ drivers/usb/common/debug.c | 83 ++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/usb/common/Makefile b/drivers/usb/common/Makefile
-index fb4d5ef4165c..3d3d2962ea4b 100644
---- a/drivers/usb/common/Makefile
-+++ b/drivers/usb/common/Makefile
-@@ -4,7 +4,7 @@
- #
- 
- obj-$(CONFIG_USB_COMMON)	  += usb-common.o
--usb-common-y			  += common.o
-+usb-common-y			  += common.o debug.o
- usb-common-$(CONFIG_USB_LED_TRIG) += led.o
- 
- obj-$(CONFIG_USB_OTG_FSM) += usb-otg-fsm.o
 diff --git a/drivers/usb/common/debug.c b/drivers/usb/common/debug.c
-new file mode 100644
-index 000000000000..374fb9e94f37
---- /dev/null
+index 374fb9e94f37..77e565a38f29 100644
+--- a/drivers/usb/common/debug.c
 +++ b/drivers/usb/common/debug.c
-@@ -0,0 +1,265 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/**
-+ * Common USB debugging functions
-+ *
-+ * Copyright (C) 2010-2011 Texas Instruments Incorporated - http://www.ti.com
-+ *
-+ * Authors: Felipe Balbi <balbi@ti.com>,
-+ *	    Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-+ */
-+
-+#ifndef __LINUX_USB_COMMON_DEBUG
-+#define __LINUX_USB_COMMON_DEBUG
-+
-+#include <linux/usb/ch9.h>
-+
-+static void usb_decode_get_status(__u8 bRequestType, __u16 wIndex,
-+				  __u16 wLength, char *str)
-+{
-+	switch (bRequestType & USB_RECIP_MASK) {
-+	case USB_RECIP_INTERFACE:
-+		sprintf(str, "Get Interface Status(Intf = %d, Length = %d)",
-+			wIndex, wLength);
-+		break;
-+	case USB_RECIP_ENDPOINT:
-+		sprintf(str, "Get Endpoint Status(ep%d%s)",
-+			wIndex & ~USB_DIR_IN,
-+			wIndex & USB_DIR_IN ? "in" : "out");
-+		break;
-+	}
-+}
-+
-+static void usb_decode_set_clear_feature(__u8 bRequestType,
-+					 __u8 bRequest, __u16 wValue,
-+					 __u16 wIndex, char *str)
-+{
-+	switch (bRequestType & USB_RECIP_MASK) {
-+	case USB_RECIP_DEVICE:
-+		sprintf(str, "%s Device Feature(%s%s)",
-+			bRequest == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-+			({char *s;
-+				switch (wValue) {
-+				case USB_DEVICE_SELF_POWERED:
-+					s = "Self Powered";
-+					break;
-+				case USB_DEVICE_REMOTE_WAKEUP:
-+					s = "Remote Wakeup";
-+					break;
-+				case USB_DEVICE_TEST_MODE:
-+					s = "Test Mode";
-+					break;
-+				case USB_DEVICE_U1_ENABLE:
-+					s = "U1 Enable";
-+					break;
-+				case USB_DEVICE_U2_ENABLE:
-+					s = "U2 Enable";
-+					break;
-+				case USB_DEVICE_LTM_ENABLE:
-+					s = "LTM Enable";
-+					break;
-+				default:
-+					s = "UNKNOWN";
-+				} s; }),
-+			wValue == USB_DEVICE_TEST_MODE ?
-+			({ char *s;
-+				switch (wIndex) {
-+				case TEST_J:
-+					s = ": TEST_J";
-+					break;
-+				case TEST_K:
-+					s = ": TEST_K";
-+					break;
-+				case TEST_SE0_NAK:
-+					s = ": TEST_SE0_NAK";
-+					break;
-+				case TEST_PACKET:
-+					s = ": TEST_PACKET";
-+					break;
-+				case TEST_FORCE_EN:
-+					s = ": TEST_FORCE_EN";
-+					break;
-+				default:
-+					s = ": UNKNOWN";
-+				} s; }) : "");
-+		break;
-+	case USB_RECIP_INTERFACE:
-+		sprintf(str, "%s Interface Feature(%s)",
-+			bRequest == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-+			wValue == USB_INTRF_FUNC_SUSPEND ?
-+			"Function Suspend" : "UNKNOWN");
-+		break;
-+	case USB_RECIP_ENDPOINT:
-+		sprintf(str, "%s Endpoint Feature(%s ep%d%s)",
-+			bRequest == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
-+			wValue == USB_ENDPOINT_HALT ? "Halt" : "UNKNOWN",
-+			wIndex & ~USB_DIR_IN,
-+			wIndex & USB_DIR_IN ? "in" : "out");
-+		break;
-+	}
-+}
-+
-+static void usb_decode_set_address(__u16 wValue, char *str)
-+{
-+	sprintf(str, "Set Address(Addr = %02x)", wValue);
-+}
-+
-+static void usb_decode_get_set_descriptor(__u8 bRequestType, __u8 bRequest,
-+					  __u16 wValue, __u16 wIndex,
-+					  __u16 wLength, char *str)
-+{
-+	sprintf(str, "%s %s Descriptor(Index = %d, Length = %d)",
-+		bRequest == USB_REQ_GET_DESCRIPTOR ? "Get" : "Set",
-+		({ char *s;
-+			switch (wValue >> 8) {
-+			case USB_DT_DEVICE:
-+				s = "Device";
-+				break;
-+			case USB_DT_CONFIG:
-+				s = "Configuration";
-+				break;
-+			case USB_DT_STRING:
-+				s = "String";
-+				break;
-+			case USB_DT_INTERFACE:
-+				s = "Interface";
-+				break;
-+			case USB_DT_ENDPOINT:
-+				s = "Endpoint";
-+				break;
-+			case USB_DT_DEVICE_QUALIFIER:
-+				s = "Device Qualifier";
-+				break;
-+			case USB_DT_OTHER_SPEED_CONFIG:
-+				s = "Other Speed Config";
-+				break;
-+			case USB_DT_INTERFACE_POWER:
-+				s = "Interface Power";
-+				break;
-+			case USB_DT_OTG:
-+				s = "OTG";
-+				break;
-+			case USB_DT_DEBUG:
-+				s = "Debug";
-+				break;
-+			case USB_DT_INTERFACE_ASSOCIATION:
-+				s = "Interface Association";
-+				break;
-+			case USB_DT_BOS:
-+				s = "BOS";
-+				break;
-+			case USB_DT_DEVICE_CAPABILITY:
-+				s = "Device Capability";
-+				break;
-+			case USB_DT_PIPE_USAGE:
-+				s = "Pipe Usage";
-+				break;
-+			case USB_DT_SS_ENDPOINT_COMP:
-+				s = "SS Endpoint Companion";
-+				break;
-+			case USB_DT_SSP_ISOC_ENDPOINT_COMP:
-+				s = "SSP Isochronous Endpoint Companion";
-+				break;
-+			default:
-+				s = "UNKNOWN";
-+				break;
-+			} s; }), wValue & 0xff, wLength);
-+}
-+
-+static void usb_decode_get_configuration(__u16 wLength, char *str)
-+{
-+	sprintf(str, "Get Configuration(Length = %d)", wLength);
-+}
-+
-+static inline void usb_decode_set_configuration(__u8 wValue, char *str)
-+{
-+	sprintf(str, "Set Configuration(Config = %d)", wValue);
-+}
-+
-+static void usb_decode_get_intf(__u16 wIndex, __u16 wLength, char *str)
-+{
-+	sprintf(str, "Get Interface(Intf = %d, Length = %d)", wIndex, wLength);
-+}
-+
-+static void usb_decode_set_intf(__u8 wValue, __u16 wIndex, char *str)
-+{
-+	sprintf(str, "Set Interface(Intf = %d, Alt.Setting = %d)",
-+		wIndex, wValue);
-+}
-+
-+static void usb_decode_synch_frame(__u16 wIndex, __u16 wLength,
-+				   char *str)
-+{
-+	sprintf(str, "Synch Frame(Endpoint = %d, Length = %d)",
-+		wIndex, wLength);
-+}
-+
-+static void usb_decode_set_sel(__u16 wLength, char *str)
-+{
-+	sprintf(str, "Set SEL(Length = %d)", wLength);
-+}
-+
-+static void usb_decode_set_isoch_delay(__u8 wValue, char *str)
-+{
-+	sprintf(str, "Set Isochronous Delay(Delay = %d ns)", wValue);
-+}
-+
-+/**
-+ * usb_decode_ctrl - returns a string representation of ctrl request
-+ */
-+const char *usb_decode_ctrl(char *str, __u8 bRequestType, __u8 bRequest,
-+			    __u16 wValue,  __u16 wIndex, __u16 wLength)
-+{
-+	switch (bRequest) {
-+	case USB_REQ_GET_STATUS:
-+		usb_decode_get_status(bRequestType, wIndex, wLength, str);
-+		break;
-+	case USB_REQ_CLEAR_FEATURE:
-+	case USB_REQ_SET_FEATURE:
-+		usb_decode_set_clear_feature(bRequestType, bRequest, wValue,
-+					     wIndex, str);
-+		break;
-+	case USB_REQ_SET_ADDRESS:
-+		usb_decode_set_address(wValue, str);
-+		break;
-+	case USB_REQ_GET_DESCRIPTOR:
-+	case USB_REQ_SET_DESCRIPTOR:
-+		usb_decode_get_set_descriptor(bRequestType, bRequest, wValue,
-+					      wIndex, wLength, str);
-+		break;
-+	case USB_REQ_GET_CONFIGURATION:
-+		usb_decode_get_configuration(wLength, str);
-+		break;
-+	case USB_REQ_SET_CONFIGURATION:
-+		usb_decode_set_configuration(wValue, str);
-+		break;
-+	case USB_REQ_GET_INTERFACE:
-+		usb_decode_get_intf(wIndex, wLength, str);
-+		break;
-+	case USB_REQ_SET_INTERFACE:
-+		usb_decode_set_intf(wValue, wIndex, str);
-+		break;
-+	case USB_REQ_SYNCH_FRAME:
-+		usb_decode_synch_frame(wIndex, wLength, str);
-+		break;
-+	case USB_REQ_SET_SEL:
-+		usb_decode_set_sel(wLength, str);
-+		break;
-+	case USB_REQ_SET_ISOCH_DELAY:
-+		usb_decode_set_isoch_delay(wValue, str);
-+		break;
-+	default:
-+		sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x",
-+			bRequestType, bRequest,
-+			cpu_to_le16(wValue) & 0xff,
-+			cpu_to_le16(wValue) >> 8,
-+			cpu_to_le16(wIndex) & 0xff,
-+			cpu_to_le16(wIndex) >> 8,
-+			cpu_to_le16(wLength) & 0xff,
-+			cpu_to_le16(wLength) >> 8);
-+	}
-+
-+	return str;
-+}
-+EXPORT_SYMBOL_GPL(usb_decode_ctrl);
-+
-+#endif /* __LINUX_USB_COMMON_DEBUG */
-diff --git a/drivers/usb/dwc3/debug.h b/drivers/usb/dwc3/debug.h
-index c66d216dcc30..9db2b0fb8f22 100644
---- a/drivers/usb/dwc3/debug.h
-+++ b/drivers/usb/dwc3/debug.h
-@@ -214,249 +214,6 @@ dwc3_gadget_event_string(char *str, const struct dwc3_event_devt *event)
- 	return str;
+@@ -29,6 +29,44 @@ static void usb_decode_get_status(__u8 bRequestType, __u16 wIndex,
+ 	}
  }
  
--static inline void dwc3_decode_get_status(__u8 t, __u16 i, __u16 l, char *str)
--{
--	switch (t & USB_RECIP_MASK) {
--	case USB_RECIP_INTERFACE:
--		sprintf(str, "Get Interface Status(Intf = %d, Length = %d)",
--			i, l);
--		break;
--	case USB_RECIP_ENDPOINT:
--		sprintf(str, "Get Endpoint Status(ep%d%s)",
--			i & ~USB_DIR_IN,
--			i & USB_DIR_IN ? "in" : "out");
--		break;
--	}
--}
--
--static inline void dwc3_decode_set_clear_feature(__u8 t, __u8 b, __u16 v,
--						 __u16 i, char *str)
--{
--	switch (t & USB_RECIP_MASK) {
--	case USB_RECIP_DEVICE:
--		sprintf(str, "%s Device Feature(%s%s)",
--			b == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
++static const char *usb_decode_device_feature(u16 wValue)
++{
++	switch (wValue) {
++	case USB_DEVICE_SELF_POWERED:
++		return "Self Powered";
++	case USB_DEVICE_REMOTE_WAKEUP:
++		return "Remote Wakeup";
++	case USB_DEVICE_TEST_MODE:
++		return "Test Mode";
++	case USB_DEVICE_U1_ENABLE:
++		return "U1 Enable";
++	case USB_DEVICE_U2_ENABLE:
++		return "U2 Enable";
++	case USB_DEVICE_LTM_ENABLE:
++		return "LTM Enable";
++	default:
++		return "UNKNOWN";
++	}
++}
++
++static const char *usb_decode_test_mode(u16 wIndex)
++{
++	switch (wIndex) {
++	case TEST_J:
++		return ": TEST_J";
++	case TEST_K:
++		return ": TEST_K";
++	case TEST_SE0_NAK:
++		return ": TEST_SE0_NAK";
++	case TEST_PACKET:
++		return ": TEST_PACKET";
++	case TEST_FORCE_EN:
++		return ": TEST_FORCE_EN";
++	default:
++		return ": UNKNOWN";
++	}
++}
++
+ static void usb_decode_set_clear_feature(__u8 bRequestType,
+ 					 __u8 bRequest, __u16 wValue,
+ 					 __u16 wIndex, char *str)
+@@ -37,50 +75,9 @@ static void usb_decode_set_clear_feature(__u8 bRequestType,
+ 	case USB_RECIP_DEVICE:
+ 		sprintf(str, "%s Device Feature(%s%s)",
+ 			bRequest == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
 -			({char *s;
--				switch (v) {
+-				switch (wValue) {
 -				case USB_DEVICE_SELF_POWERED:
 -					s = "Self Powered";
 -					break;
@@ -537,9 +249,10 @@ index c66d216dcc30..9db2b0fb8f22 100644
 -				default:
 -					s = "UNKNOWN";
 -				} s; }),
--			v == USB_DEVICE_TEST_MODE ?
++			usb_decode_device_feature(wValue),
+ 			wValue == USB_DEVICE_TEST_MODE ?
 -			({ char *s;
--				switch (i) {
+-				switch (wIndex) {
 -				case TEST_J:
 -					s = ": TEST_J";
 -					break;
@@ -558,227 +271,10 @@ index c66d216dcc30..9db2b0fb8f22 100644
 -				default:
 -					s = ": UNKNOWN";
 -				} s; }) : "");
--		break;
--	case USB_RECIP_INTERFACE:
--		sprintf(str, "%s Interface Feature(%s)",
--			b == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
--			v == USB_INTRF_FUNC_SUSPEND ?
--			"Function Suspend" : "UNKNOWN");
--		break;
--	case USB_RECIP_ENDPOINT:
--		sprintf(str, "%s Endpoint Feature(%s ep%d%s)",
--			b == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
--			v == USB_ENDPOINT_HALT ? "Halt" : "UNKNOWN",
--			i & ~USB_DIR_IN,
--			i & USB_DIR_IN ? "in" : "out");
--		break;
--	}
--}
--
--static inline void dwc3_decode_set_address(__u16 v, char *str)
--{
--	sprintf(str, "Set Address(Addr = %02x)", v);
--}
--
--static inline void dwc3_decode_get_set_descriptor(__u8 t, __u8 b, __u16 v,
--						  __u16 i, __u16 l, char *str)
--{
--	sprintf(str, "%s %s Descriptor(Index = %d, Length = %d)",
--		b == USB_REQ_GET_DESCRIPTOR ? "Get" : "Set",
--		({ char *s;
--			switch (v >> 8) {
--			case USB_DT_DEVICE:
--				s = "Device";
--				break;
--			case USB_DT_CONFIG:
--				s = "Configuration";
--				break;
--			case USB_DT_STRING:
--				s = "String";
--				break;
--			case USB_DT_INTERFACE:
--				s = "Interface";
--				break;
--			case USB_DT_ENDPOINT:
--				s = "Endpoint";
--				break;
--			case USB_DT_DEVICE_QUALIFIER:
--				s = "Device Qualifier";
--				break;
--			case USB_DT_OTHER_SPEED_CONFIG:
--				s = "Other Speed Config";
--				break;
--			case USB_DT_INTERFACE_POWER:
--				s = "Interface Power";
--				break;
--			case USB_DT_OTG:
--				s = "OTG";
--				break;
--			case USB_DT_DEBUG:
--				s = "Debug";
--				break;
--			case USB_DT_INTERFACE_ASSOCIATION:
--				s = "Interface Association";
--				break;
--			case USB_DT_BOS:
--				s = "BOS";
--				break;
--			case USB_DT_DEVICE_CAPABILITY:
--				s = "Device Capability";
--				break;
--			case USB_DT_PIPE_USAGE:
--				s = "Pipe Usage";
--				break;
--			case USB_DT_SS_ENDPOINT_COMP:
--				s = "SS Endpoint Companion";
--				break;
--			case USB_DT_SSP_ISOC_ENDPOINT_COMP:
--				s = "SSP Isochronous Endpoint Companion";
--				break;
--			default:
--				s = "UNKNOWN";
--				break;
--			} s; }), v & 0xff, l);
--}
--
--
--static inline void dwc3_decode_get_configuration(__u16 l, char *str)
--{
--	sprintf(str, "Get Configuration(Length = %d)", l);
--}
--
--static inline void dwc3_decode_set_configuration(__u8 v, char *str)
--{
--	sprintf(str, "Set Configuration(Config = %d)", v);
--}
--
--static inline void dwc3_decode_get_intf(__u16 i, __u16 l, char *str)
--{
--	sprintf(str, "Get Interface(Intf = %d, Length = %d)", i, l);
--}
--
--static inline void dwc3_decode_set_intf(__u8 v, __u16 i, char *str)
--{
--	sprintf(str, "Set Interface(Intf = %d, Alt.Setting = %d)", i, v);
--}
--
--static inline void dwc3_decode_synch_frame(__u16 i, __u16 l, char *str)
--{
--	sprintf(str, "Synch Frame(Endpoint = %d, Length = %d)", i, l);
--}
--
--static inline void dwc3_decode_set_sel(__u16 l, char *str)
--{
--	sprintf(str, "Set SEL(Length = %d)", l);
--}
--
--static inline void dwc3_decode_set_isoch_delay(__u8 v, char *str)
--{
--	sprintf(str, "Set Isochronous Delay(Delay = %d ns)", v);
--}
--
--/**
-- * dwc3_decode_ctrl - returns a string represetion of ctrl request
-- */
--static inline const char *dwc3_decode_ctrl(char *str, __u8 bRequestType,
--		__u8 bRequest, __u16 wValue, __u16 wIndex, __u16 wLength)
--{
--	switch (bRequest) {
--	case USB_REQ_GET_STATUS:
--		dwc3_decode_get_status(bRequestType, wIndex, wLength, str);
--		break;
--	case USB_REQ_CLEAR_FEATURE:
--	case USB_REQ_SET_FEATURE:
--		dwc3_decode_set_clear_feature(bRequestType, bRequest, wValue,
--					      wIndex, str);
--		break;
--	case USB_REQ_SET_ADDRESS:
--		dwc3_decode_set_address(wValue, str);
--		break;
--	case USB_REQ_GET_DESCRIPTOR:
--	case USB_REQ_SET_DESCRIPTOR:
--		dwc3_decode_get_set_descriptor(bRequestType, bRequest, wValue,
--					       wIndex, wLength, str);
--		break;
--	case USB_REQ_GET_CONFIGURATION:
--		dwc3_decode_get_configuration(wLength, str);
--		break;
--	case USB_REQ_SET_CONFIGURATION:
--		dwc3_decode_set_configuration(wValue, str);
--		break;
--	case USB_REQ_GET_INTERFACE:
--		dwc3_decode_get_intf(wIndex, wLength, str);
--		break;
--	case USB_REQ_SET_INTERFACE:
--		dwc3_decode_set_intf(wValue, wIndex, str);
--		break;
--	case USB_REQ_SYNCH_FRAME:
--		dwc3_decode_synch_frame(wIndex, wLength, str);
--		break;
--	case USB_REQ_SET_SEL:
--		dwc3_decode_set_sel(wLength, str);
--		break;
--	case USB_REQ_SET_ISOCH_DELAY:
--		dwc3_decode_set_isoch_delay(wValue, str);
--		break;
--	default:
--		sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x",
--			bRequestType, bRequest,
--			cpu_to_le16(wValue) & 0xff,
--			cpu_to_le16(wValue) >> 8,
--			cpu_to_le16(wIndex) & 0xff,
--			cpu_to_le16(wIndex) >> 8,
--			cpu_to_le16(wLength) & 0xff,
--			cpu_to_le16(wLength) >> 8);
--	}
--
--	return str;
--}
--
- /**
-  * dwc3_ep_event_string - returns event name
-  * @event: then event code
-diff --git a/drivers/usb/dwc3/trace.h b/drivers/usb/dwc3/trace.h
-index f22714cce070..6236f0657583 100644
---- a/drivers/usb/dwc3/trace.h
-+++ b/drivers/usb/dwc3/trace.h
-@@ -86,7 +86,7 @@ DECLARE_EVENT_CLASS(dwc3_log_ctrl,
- 		__entry->wIndex = le16_to_cpu(ctrl->wIndex);
- 		__entry->wLength = le16_to_cpu(ctrl->wLength);
- 	),
--	TP_printk("%s", dwc3_decode_ctrl(__get_str(str), __entry->bRequestType,
-+	TP_printk("%s", usb_decode_ctrl(__get_str(str), __entry->bRequestType,
- 					__entry->bRequest, __entry->wValue,
- 					__entry->wIndex, __entry->wLength)
- 	)
-diff --git a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
-index 523aa088f6ab..a33cd2b9fbba 100644
---- a/include/linux/usb/ch9.h
-+++ b/include/linux/usb/ch9.h
-@@ -62,4 +62,23 @@ extern enum usb_device_speed usb_get_maximum_speed(struct device *dev);
-  */
- extern const char *usb_state_string(enum usb_device_state state);
- 
-+/**
-+ * usb_decode_ctrl - Returns human readable representation of control request.
-+ * @str: buffer to return a human-readable representation of control request.
-+ *       This buffer should have about 200 bytes.
-+ * @bRequestType: matches the USB bmRequestType field
-+ * @bRequest: matches the USB bRequest field
-+ * @wValue: matches the USB wValue field (CPU byte order)
-+ * @wIndex: matches the USB wIndex field (CPU byte order)
-+ * @wLength: matches the USB wLength field (CPU byte order)
-+ *
-+ * Function returns decoded, formatted and human-readable description of
-+ * control request packet.
-+ *
-+ * Important: wValue, wIndex, wLength parameters before invoking this function
-+ * should be processed by le16_to_cpu macro.
-+ */
-+const char *usb_decode_ctrl(char *str, __u8 bRequestType, __u8 bRequest,
-+			    __u16 wValue,  __u16 wIndex, __u16 wLength);
-+
- #endif /* __LINUX_USB_CH9_H */
++			usb_decode_test_mode(wIndex) : "");
+ 		break;
+ 	case USB_RECIP_INTERFACE:
+ 		sprintf(str, "%s Interface Feature(%s)",
 -- 
 2.17.1
 
