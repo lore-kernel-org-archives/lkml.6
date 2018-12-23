@@ -2,134 +2,157 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D04C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B389EC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C21221903
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8280C21920
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 11:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545564588;
+	bh=fQLex0in71gJp9HJxLT2/8SGVAhgpAfTxshtDC8kU+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MVTnpEswDoQ+sKU4RpMfw5YnFjyBk33jUu+Y3XFO/fgPz1CN/oiSTBWkkE8EaIaXs
+	 liRfdbWoWV/jpm0SYd1ZAShCYNJeYFXTVQe+zcqzkaVHJFTiospD5y0JfwtbDdPbA3
+	 rWJ8PJA51ErBUdS/WiQY/eXQwatDhTCi5lTStxys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeLWLLD (ORCPT
+        id S1728123AbeLWL3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 06:11:03 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35255 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbeLWLLC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 06:11:02 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8A4C3807AC; Sun, 23 Dec 2018 12:10:55 +0100 (CET)
-Date:   Sun, 23 Dec 2018 12:10:59 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
-Message-ID: <20181223111059.GB1936@amd>
-References: <20181217004450.GW6707@atomide.com>
- <20181223103315.GA1936@amd>
+        Sun, 23 Dec 2018 06:29:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeLWL3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 06:29:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD5E82186A;
+        Sun, 23 Dec 2018 11:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545564586;
+        bh=fQLex0in71gJp9HJxLT2/8SGVAhgpAfTxshtDC8kU+0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ksd6RYPXrXB9/tvOdYyyLU36IOMdfjHucOXW68EZbdZL0uGhT7QyAZGpNKtoQ0zAk
+         P/0a4SBMTynpUNuCsXJVtedeXxfiIwyimCX4re4HJX/sFZWjJgUjd69EyIGliER6R7
+         kNjOHkjZgj7GeNLDNtfxCrfpWqae8GkuFaQ9fQts=
+Date:   Sun, 23 Dec 2018 12:29:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+        arve@android.com, maco@android.com, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] binderfs: implement "max" mount option
+Message-ID: <20181223112944.GC27818@kroah.com>
+References: <20181222211806.1478-1-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="K8nIJk4ghYZn606h"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181223103315.GA1936@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181222211806.1478-1-christian@brauner.io>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 22, 2018 at 10:18:06PM +0100, Christian Brauner wrote:
+> Since binderfs can be mounted by userns root in non-initial user namespaces
+> some precautions are in order. First, a way to set a maximum on the number
+> of binder devices that can be allocated per binderfs instance and second, a
+> way to reserve a reasonable chunk of binderfs devices for the initial ipc
+> namespace.
+> A first approach as seen in [1] used sysctls similiar to devpts but was
+> shown to be flawed (cf. [2] and [3]) since some aspects were unneeded. This
+> is an alternative approach which avoids sysctls completely and instead
+> switches to a single mount option.
+> 
+> Starting with this commit binderfs instances can be mounted with a limit on
+> the number of binder devices that can be allocated. The max=<count> mount
+> option serves as a per-instance limit. If max=<count> is set then only
+> <count> number of binder devices can be allocated in this binderfs
+> instance.
 
---K8nIJk4ghYZn606h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, this is fine, but why such a big default?  You only need 4 to run a
+modern android system, and anyone using binder outside of android is
+really too crazy to ever be using it in a container :)
 
-Hi!
+> Additionally, the binderfs instance in the initial ipc namespace will
+> always have a reserve of at least 1024 binder devices unless explicitly
+> capped via max=<count>.
 
-> > So the little elves have been slowly working to get voice calls
-> > working on droid 4 with the mainline kernel. And just in time for the
-> > upcoming holidays, it might be possible to call friends and relatives.
-> >=20
-> > I've pushed out an experimental branch containing serdev ts 27.010
-> > UART multiplexing support. That contains a serdev core driver for the
-> > mdm6600 modem (that also now idles the modem for PM), support for Alsa
-> > ASoC voice codec and mixer, and a GNSS driver for the GPS.
-> >=20
-> > Where it does not make sense to do a kernel serdev driver, I've
-> > exposed the rest of the available 27.010 channels as ten /dev/motmdm*
-> > character devices. There's /dev/motmdm1 for AT commands to dial voice
-> > calls, /dev/motmdm3 for SMS eventually, and I think there's also a SIM
-> > card reader at /dev/motmdm10. Then /dev/motmdm7 seems to be just an
-> > echo channel. The other channels are still a bit of a mystery.
->=20
-> I suspected it does not work in non-modular case, so I tried with
-> modules:
->=20
-> root@devuan:/my/ko# insmod gnss.ko
-> root@devuan:/my/ko# insmod gnss-motmdm.ko
-> insmod: ERROR: could not insert module gnss-motmdm.ko: Unknown symbol
-> in module
-> root@devuan:/my/ko# insmod n_gsm.ko
-> root@devuan:/my/ko# insmod snd-soc-motmdm.ko
-> insmod: ERROR: could not insert module snd-soc-motmdm.ko: Unknown
-> symbol in module
-> root@devuan:/my/ko# insmod motorola-mdm.ko
-> root@devuan:/my/ko# insmod snd-soc-motmdm.ko
-> root@devuan:/my/ko# insmod gnss-motmdm.ko
-> root@devuan:/my/ko#
-=2E..
-> ...do I need to make devices manually or some udev rules?
->=20
-> user@devuan:~$ cat /proc/devices | grep motmdm
-> user@devuan:~$ cat /proc/devices | grep gnss
-> 242 gnss
-> user@devuan:~$
->=20
-> Hmm, I suspect the driver just did not recognize the hw.
+Again, why so many?  And why wouldn't that initial ipc namespace already
+have their device nodes created _before_ anything else is mounted?
 
-I added some printks to motmdm_probe, and they don't appear to be
-called. I wonder if I'm missing something else in the config? I do
-have serial
+Some comments on the patch below:
 
-root@devuan:/my/ko# ls -al /dev/ttyS0
-crw-rw---- 1 root dialout 4, 64 Dec 23 11:52 /dev/ttyS0
+> +/*
+> + * Ensure that the initial ipc namespace always has a good chunk of devices
+> + * available.
+> + */
+> +#define BINDERFS_MAX_MINOR_CAPPED (BINDERFS_MAX_MINOR - 1024)
 
-but not gsm multiplex:
+Again that seems crazy big, how about splitting this into two different
+patches, one for the max= stuff, and one for this "reserve some minors"
+thing, so we can review them separately.
 
-root@devuan:/my/ko# ls -al /dev/gsm*
-ls: cannot access '/dev/gsm*': No such file or directory
+>  
+>  static struct vfsmount *binderfs_mnt;
+>  
+> @@ -46,6 +52,24 @@ static dev_t binderfs_dev;
+>  static DEFINE_MUTEX(binderfs_minors_mutex);
+>  static DEFINE_IDA(binderfs_minors);
+>  
+> +/**
+> + * binderfs_mount_opts - mount options for binderfs
+> + * @max: maximum number of allocatable binderfs binder devices
+> + */
+> +struct binderfs_mount_opts {
+> +	int max;
+> +};
+> +
+> +enum {
+> +	Opt_max,
+> +	Opt_err
+> +};
+> +
+> +static const match_table_t tokens = {
+> +	{ Opt_max, "max=%d" },
+> +	{ Opt_err, NULL     }
+> +};
+> +
+>  /**
+>   * binderfs_info - information about a binderfs mount
+>   * @ipc_ns:         The ipc namespace the binderfs mount belongs to.
+> @@ -55,13 +79,16 @@ static DEFINE_IDA(binderfs_minors);
+>   *                  created.
+>   * @root_gid:       gid that needs to be used when a new binder device is
+>   *                  created.
+> + * @mount_opts:     The mount options in use.
+> + * @device_count:   The current number of allocated binder devices.
+>   */
+>  struct binderfs_info {
+>  	struct ipc_namespace *ipc_ns;
+>  	struct dentry *control_dentry;
+>  	kuid_t root_uid;
+>  	kgid_t root_gid;
+> -
+> +	struct binderfs_mount_opts mount_opts;
+> +	atomic_t device_count;
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Why atomic?
 
---K8nIJk4ghYZn606h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+You should already have the lock held every time this is accessed,
+so no need to use an atomic value, just use an int.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>  	/* Reserve new minor number for the new device. */
+>  	mutex_lock(&binderfs_minors_mutex);
+> -	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
+> +	if (atomic_inc_return(&info->device_count) < info->mount_opts.max)
 
-iEYEARECAAYFAlwfbUMACgkQMOfwapXb+vKZHQCeNefJ1BfW14OTPUPbUGyrEQLp
-TiIAoMG6H8Rs+z5a5HC0j0/fkLwIp3Zc
-=g5Nn
------END PGP SIGNATURE-----
+No need for atomic, see, your lock is held :)
 
---K8nIJk4ghYZn606h--
+thanks,
+
+greg k-h
