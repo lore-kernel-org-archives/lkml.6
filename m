@@ -2,89 +2,108 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D27C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08462C43444
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EDA2171F
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:13:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ewbGKsJb"
+	by mail.kernel.org (Postfix) with ESMTP id D18DD218D3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 12:24:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeLWMN1 (ORCPT
+        id S1728204AbeLWMYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 07:13:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:40323 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeLWMN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 07:13:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43N1VC1cXTz9sCr;
-        Sun, 23 Dec 2018 23:13:23 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545567203;
-        bh=7jc8zWaFKK3yZvIAczGEsbl2Et9bffL5NFHSzjNqgxY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ewbGKsJbKvbRqUYM6bkTFQ7T0wC2VBpdC0fd9WdHkG+5+U3CM4YOaOgvGfoiGL+aD
-         zrc9c9+LRWgKea/MGLt3O8ZpBSBY1rKxfqpqit1JDTlELhKyza8ZoxcMthKWbn2ZON
-         CgymUOC3ZWqz5bLnjFOX0rciRocFo2HvSOXgwy42OuQ99tnoR8IcySqyQYt5fjc6yp
-         dcnotFfoqmhs3SlvgBh2hXiLNzOEjmxWMcSAqyuvigQRozpwuvdmMbg4KzsHR5oMHm
-         w/UUPGCxthOIuIVPoH6OTN6xMM7jArv2/MJOI33IlWYaZXBERM7rehNIEm7eGdat4+
-         1PSgyCKNIktNA==
-Date:   Sun, 23 Dec 2018 23:13:04 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Harsh Jain <harsh@chelsio.com>,
-        Atul Gupta <atul.gupta@chelsio.com>
-Subject: linux-next: Signed-off-by missing for commit in the crypto tree
-Message-ID: <20181223231304.1654cf1d@canb.auug.org.au>
+        Sun, 23 Dec 2018 07:24:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50882 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbeLWMY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 07:24:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so9239283wmd.0;
+        Sun, 23 Dec 2018 04:24:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=IRVDC9MlYo+zGnerOqLUxppaH+DMuyi+9dgYiggvnjk=;
+        b=QMpchS5pZvidheC5OB8q4rbKWHTLZYTOw/neMJEGsG1YEBOlFZzbX/pmH8kjSmUfVP
+         uGvWLErPHfS2KkXmhDgYGahPXgVnwf149AAnTbflx67vbwAsVd91l6KQDLTKV1pzF9Rh
+         CITBjHB8E86EMMPJPxcKK8pjc1+eeA+0h66NYCgGiC5ZDtbeQtpNX6I+Q4gZgWleKrQv
+         60cK0JEuDJMdGodHE/rzFZMmHgFPojjxe0f53qLI4dtuLvskqAdmtsZMll5Kz39jDfth
+         JnqoOJXyxg2cbDvSdKZq8juPlQJWehruZeebQodrgROQBSWFsBpnuWeYtACiTuu6TrAp
+         E/xQ==
+X-Gm-Message-State: AA+aEWZD83zx0D5z3r0Bymc30hq7yWedAgdokKiutcjk1d4ELwmWJCqb
+        h3PdhqFY15wCdVJdMNpgjAPGBUkW
+X-Google-Smtp-Source: ALg8bN4FAT5pO8Jdo1DkP02fzPknXBrA26uA1ni2n7fLjNxtdcfDQXpxtv8qZlmMf5109vPSc6yZnA==
+X-Received: by 2002:a1c:16c5:: with SMTP id 188mr9500472wmw.69.1545567472204;
+        Sun, 23 Dec 2018 04:17:52 -0800 (PST)
+Received: from [10.0.0.5] ([207.232.55.62])
+        by smtp.gmail.com with ESMTPSA id k135sm28258413wmd.42.2018.12.23.04.17.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Dec 2018 04:17:51 -0800 (PST)
+Subject: Re: remove exofs, the T10 OSD code and block/scsi bidi support V3
+To:     Christoph Hellwig <hch@lst.de>
+References: <20181111133211.13926-1-hch@lst.de>
+ <4f4b6aff-6726-c500-e3e4-f8b73d641851@electrozaur.com>
+ <20181219144347.GB23410@lst.de>
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Boaz Harrosh <ooo@electrozaur.com>
+Message-ID: <fcba6f10-3cef-bc71-f198-e53e4a0e98e6@electrozaur.com>
+Date:   Sun, 23 Dec 2018 14:17:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IYLvpdsFXFbjDrt=iMB+9T0"; protocol="application/pgp-signature"
+In-Reply-To: <20181219144347.GB23410@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IYLvpdsFXFbjDrt=iMB+9T0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 19/12/18 16:43, Christoph Hellwig wrote:
+> On Mon, Nov 26, 2018 at 07:11:10PM +0200, Boaz Harrosh wrote:
+>> On 11/11/18 15:32, Christoph Hellwig wrote:
+>>> The only real user of the T10 OSD protocol, the pNFS object layout
+>>> driver never went to the point of having shipping products, and we
+>>> removed it 1.5 years ago.  Exofs is just a simple example without
+>>> real life users.
+>>>
+>>
+>> You have failed to say what is your motivation for this patchset? What
+>> is it you are trying to fix/improve.
+> 
+> Drop basically unused support, which allows us to
+> 
+>  1) reduce the size of every kernel with block layer support, and
+>     even more for every kernel with scsi support
 
-Hi Herbert,
+Do you have numbers? its mainly code-segment so I don't think you will see
+any real life measurable difference.
 
-Commit
+>  2) reduce the size of the critical struct request structure by
+>     128 bits, thus reducing the memory used by every blk-mq driver
+>     significantly, never mind the cache effects
 
-  6501ab5ed4d9 ("crypto: chelsio - Reset counters on cxgb4 Detach")
+128 bits? I see the "struct request *next_rq;"
+is there another one?
 
-is missing a Signed-off-by from its author.
+It could share space with elv; && flush;
+Do you want a patch?
 
---=20
-Cheers,
-Stephen Rothwell
+>  3) stop having the maintainance overhead for this code in the
+>     block layer, which has been rather painful at times
+> 
 
---Sig_/IYLvpdsFXFbjDrt=iMB+9T0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I hear you man. Life is pain. But is it really such an overhead?
+I mean it is already implemented. What else is there to do?
+Please please show me? (Sorry for being slow)
 
------BEGIN PGP SIGNATURE-----
+Jai Maa
+Boaz
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwfe9AACgkQAVBC80lX
-0GxwUwf/fgGHy3RPcTHm5NmmrV2SurTIbAdVt5X70aRGxAMAJbDqWCSX9c3IRryg
-5jEgHOqOW3F8uwTOYX5sTJQipifysKAY65ICPH0r2U445yU42qLyuAXJgb6SHlpS
-IYiT5hkqQO3PIo6MauvJqUxLGIo5lURZOagoy9XP6Rkbbj+7whhWXBwTxL6Z2jQ8
-yASTo1f/4hjOkffRffOhO8jF6lleAifzLaEtdnYtspyvkmFzvaZ4C57Op27d8HP1
-S8gR9Cbg1Q5JZpqm5zjyGgkF5aDtbjqWad7HqTrNvYox2y6zm5JFwd1hClbPHCDt
-GlpNv0dDB86cTtI3zJ6hPzfOWxGjZQ==
-=KW5P
------END PGP SIGNATURE-----
-
---Sig_/IYLvpdsFXFbjDrt=iMB+9T0--
