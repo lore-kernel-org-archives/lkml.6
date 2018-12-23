@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BE0C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C1FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92675218D3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2852218D3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 04:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+eGxTGy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFs+FMUq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbeLWE6Y (ORCPT
+        id S1725850AbeLWE6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Dec 2018 23:58:24 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39436 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbeLWE6X (ORCPT
+        Sat, 22 Dec 2018 23:58:34 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34724 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbeLWE62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Dec 2018 23:58:23 -0500
-Received: by mail-it1-f196.google.com with SMTP id a6so11936428itl.4;
-        Sat, 22 Dec 2018 20:58:23 -0800 (PST)
+        Sat, 22 Dec 2018 23:58:28 -0500
+Received: by mail-io1-f67.google.com with SMTP id l22so38445ioh.1;
+        Sat, 22 Dec 2018 20:58:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BJl9JvtqFLFxHkxk96iUyl94VYQgxphAIRNyaBqFMK8=;
-        b=F+eGxTGyi9pFc+XPnyWe37XRKfKBjZ8DZcz/oQXbL+mvtW4LyywBn2nCjiU6wq+7cC
-         2Xz51Y1aW2H73+ey3lvrFX4CfEtuT4SJKmnWptxU0Xi0vtFVB0KFY/n9pqkqCpEAk4RY
-         lgC1iRYlIL+zjZShfMTvWR3br2h3coeO5orJ7zECSlLkySAkIlLgwvu7ANJWo0U9NLsO
-         veFTUwglelhIy+z1B2L0StgWJ2ePYcSG5VGyHuqBQyGRrEkgh4nYzcbmVd4ArOtRD7PK
-         1qw47i+l6Pj/80NzdbUc43Zu2BuPXDd4YlW+vZWGCQb6fW7bmBDmuYantkFxSoSg7eoL
-         5IaQ==
+        bh=8yZFL/zwD25f09AodsHo5P6etccInIazFV7uoFevqFM=;
+        b=mFs+FMUqu3q9ekZtjSITBt0goNkoTX8vuMp1uOHkd0Q6AIHs0UeMBB+NLdSQXOtWyc
+         kn9okEWP+2ksHpqyj4cVm9kfIVmIJioHZ9EVMLGS0uSO3WjXFw43tkwUASLe32OHpNxV
+         Dhj3Q1FySbdbcPCllvrfFdLEUfmm866Fp2pmuuXqhMlgRqrz3dKCWAyGKF0ig/kPpwDY
+         y0XP1UqxzJgij4b+Bnmckjj28yiWYXiYEPU9Zl7WAWVIXqa/fp8sXwjLcmxusEMLk0wo
+         +1ruNSbdCzR56CEJGMrKbaJiNNH7u92W9XOyZOnawrv8OLsqKnHGaGWK2sjuwQQWy/SP
+         8iOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BJl9JvtqFLFxHkxk96iUyl94VYQgxphAIRNyaBqFMK8=;
-        b=ZvqdxqEQW8N9TMXUi0IhcfH/sbxV24nVVITbrGKGXwo6pcJ0bw0Yb0yMa6rCKksku5
-         e6b4HCvMR+2jyr0pXHEkpEY315ZQqfVNNAqgIcMbbvuUDN3V9wSyxTYw71wIP/XCqxvZ
-         GZKt4ye5BhCEZyoDZiTXz23cTfjqD+pTtMAwaM1Y4XkDncfh5ZY7L9vTn8btggCqk14h
-         6vIbxfF5wcjh2grlpRJGTl8Vde0zOQG6FDyu+1DAaVzdsUyxVwcss+ss2iuBE4CQ+Yfe
-         dbkDLEkth7+hSmzDySpkuArPQxaymm99mIxSh7HHRRrrSEQMJj9+CKa8yZywxq/nNIPF
-         Vn7A==
-X-Gm-Message-State: AA+aEWYgGKEedhhQ0/m318Fqxg6MijqtCMuHjEStfW5astgcjysLUYKe
-        2kOK+Ov34FJxTVQ87pb3idU=
-X-Google-Smtp-Source: AFSGD/WhRN+X/4F1xgy3h+4+bGM8wDiZrVZpw06JUYMTAzTRB2kjeJHl2e6sTuhKhi23A+bmSj2Fnw==
-X-Received: by 2002:a02:8244:: with SMTP id q4mr5615297jag.43.1545541102709;
-        Sat, 22 Dec 2018 20:58:22 -0800 (PST)
+        bh=8yZFL/zwD25f09AodsHo5P6etccInIazFV7uoFevqFM=;
+        b=LLdoZ2OL1m8fRTAITYTyh02EWMIZtODxW7PQvdy9VtvsHY6GpOtw7RDcHRlRmjQP6E
+         ubo1fMKPc44B3lD96PITUZNT4Bpq/WZL96UV1YSQpbl8LMvBQwQsgxZhiWmItzluuOE2
+         JrK2cal9emHERdWwSVwB9G/42mrSOiSPbLEsR75bPY1tvFuxgzAv+maZorr5SvBbKu8a
+         UYT+fNEqUkDp5ITWayk1g9hCjeLa4eOW0lCSOgLUNm0ve2wyjJIjlFKzRV+8OaXhr9oL
+         u0EE89K9k3g+yks1fgI3OtkSoqVE7jZCVOJQdUxfJK6GxLF5H3EJnrhD50G23jODEb0n
+         VGZg==
+X-Gm-Message-State: AJcUukdC5w9bqDNxQpYETg39sajLufTvmJ1Zm57L6uWvgmdbMWOfBIhA
+        y31rUbE+lZhKH8KZGDRr4So=
+X-Google-Smtp-Source: ALg8bN6pundBV1jxOaEmM9wHtK7VuCT4zTimcFX5rEF0sVnMVdEb0Zl0z1/RUYrMcPk1S7fIG3T9BQ==
+X-Received: by 2002:a6b:e919:: with SMTP id u25mr6013502iof.132.1545541108043;
+        Sat, 22 Dec 2018 20:58:28 -0800 (PST)
 Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
-        by smtp.gmail.com with ESMTPSA id 15sm8435378itv.11.2018.12.22.20.58.21
+        by smtp.gmail.com with ESMTPSA id 15sm8435378itv.11.2018.12.22.20.58.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Dec 2018 20:58:22 -0800 (PST)
+        Sat, 22 Dec 2018 20:58:27 -0800 (PST)
 From:   Jeremy Fertic <jeremyfertic@gmail.com>
 To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
@@ -66,9 +66,9 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Jeremy Fertic <jeremyfertic@gmail.com>
-Subject: [PATCH v2 1/4] staging: iio: adt7316: fix dac_bits assignment
-Date:   Sat, 22 Dec 2018 21:57:40 -0700
-Message-Id: <20181223045743.10716-2-jeremyfertic@gmail.com>
+Subject: [PATCH v2 2/4] staging: iio: adt7316: fix handling of dac high resolution option
+Date:   Sat, 22 Dec 2018 21:57:41 -0700
+Message-Id: <20181223045743.10716-3-jeremyfertic@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181223045743.10716-1-jeremyfertic@gmail.com>
 References: <20181223045743.10716-1-jeremyfertic@gmail.com>
@@ -79,74 +79,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The value of dac_bits is used in adt7316_show_DAC() and adt7316_store_DAC(),
-and it should be either 8, 10, or 12 bits depending on the device in use. The
-driver currently only assigns a value to dac_bits in
-adt7316_store_da_high_resolution(). The purpose of the dac high resolution
-option is not to change dac resolution for normal operation. Instead, it
-is specific to an optional feature where one or two of the four dacs can
-be set to output voltage proportional to temperature. If the user chooses
-to set dac a and/or dac b to output voltage proportional to temperature,
-the da_high_resolution attribute can optionally be enabled to use 10 bit
-resolution rather than the default 8 bits. This is only available on the
-10 and 12 bit dac devices. If the user attempts to read or write dacs a
-or b under these settings, the driver's current behaviour is to return an
-error. Dacs c and d continue to operate normally under these conditions.
-With the above in mind, remove the dac_bits assignments from this function
-since the value of dac_bits as used in the driver is not dependent on this
-dac high resolution option.
+The adt7316/7 and adt7516/7 have the option to output voltage proportional
+to temperature on dac a and/or dac b. The default dac resolution in this
+mode is 8 bits with the dac high resolution option enabling 10 bits. None
+of these settings affect dacs c and d. Remove the "1 (12 bits)" output from
+the show function since that is not an option for this mode. Return
+"1 (10 bits)" if the device is one of the above mentioned chips and the dac
+high resolution mode is enabled.
 
-Since the dac_bits assignments discussed above are currently the only ones
-in this driver, the default value of dac_bits is 0. This results in incorrect
-calculations when the dacs are read or written in adt7316_show_DAC() and
-adt7316_store_DAC(). To correct this, assign a value to dac_bits in
-adt7316_probe() to ensure correct operation as soon as the device is
-registered and available to userspace.
+In the store function, the driver currently allows the user to write to the
+ADT7316_DA_HIGH_RESOLUTION bit regardless of the device in use. Add a check
+to return an error in the case of an adt7318 or adt7519. Remove the else
+statement that clears the ADT7316_DA_HIGH_RESOLUTION bit. Instead, clear it
+before conditionally enabling it, depending on user input. This matches the
+typical pattern in the driver when an attribute is a boolean.
 
 Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
 Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
 ---
- drivers/staging/iio/addac/adt7316.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/staging/iio/addac/adt7316.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-index 9db49aa186bb..e17c1cb12c94 100644
+index e17c1cb12c94..80cc3420036b 100644
 --- a/drivers/staging/iio/addac/adt7316.c
 +++ b/drivers/staging/iio/addac/adt7316.c
-@@ -652,17 +652,10 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
+@@ -633,9 +633,7 @@ static ssize_t adt7316_show_da_high_resolution(struct device *dev,
+ 	struct adt7316_chip_info *chip = iio_priv(dev_info);
+ 
+ 	if (chip->config3 & ADT7316_DA_HIGH_RESOLUTION) {
+-		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+-			return sprintf(buf, "1 (12 bits)\n");
+-		if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
++		if (chip->id != ID_ADT7318 && chip->id != ID_ADT7519)
+ 			return sprintf(buf, "1 (10 bits)\n");
+ 	}
+ 
+@@ -652,10 +650,12 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
  	u8 config3;
  	int ret;
  
--	chip->dac_bits = 8;
--
--	if (buf[0] == '1') {
-+	if (buf[0] == '1')
- 		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
--		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
--			chip->dac_bits = 12;
--		else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
--			chip->dac_bits = 10;
--	} else {
-+	else
- 		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
--	}
++	if (chip->id == ID_ADT7318 || chip->id == ID_ADT7519)
++		return -EPERM;
++
++	config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
+ 	if (buf[0] == '1')
+-		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
+-	else
+-		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
++		config3 |= ADT7316_DA_HIGH_RESOLUTION;
  
  	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
  	if (ret)
-@@ -2145,6 +2138,13 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
- 	else
- 		return -ENODEV;
- 
-+	if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
-+		chip->dac_bits = 12;
-+	else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
-+		chip->dac_bits = 10;
-+	else
-+		chip->dac_bits = 8;
-+
- 	chip->ldac_pin = devm_gpiod_get_optional(dev, "adi,ldac", GPIOD_OUT_LOW);
- 	if (IS_ERR(chip->ldac_pin)) {
- 		ret = PTR_ERR(chip->ldac_pin);
 -- 
 2.19.1
 
