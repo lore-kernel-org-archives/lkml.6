@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F702C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 16:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DDAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 16:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B6F222A0
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 16:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00BD2184D
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 16:05:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="al8IvKV/"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="kuoCFogP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbeLWQBj (ORCPT
+        id S1729498AbeLWQFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 11:01:39 -0500
-Received: from cock.li ([185.100.85.212]:51532 "EHLO cock.li"
+        Sun, 23 Dec 2018 11:05:14 -0500
+Received: from cock.li ([185.100.85.212]:55194 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729379AbeLWQBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 11:01:38 -0500
+        id S1729347AbeLWQFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 11:05:13 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1545580894; bh=t8Dba8FSnTQOsyVL0PSNlneqXJzWm0kvjqzVrwsXduc=;
+        t=1545581110; bh=LbBXAHl9MbXz5ay5w/q4/wafmsAMRPXdbDmAQaWG4Yo=;
         h=Date:From:To:Subject:From;
-        b=al8IvKV/TrrxD/viLg+kSCpgkh3HZlijYFFy3RcforiG/wmiaIBmqUDKbRPvx1Tba
-         NcyfI643dxxPxWkyXL/p8yOqEszJFOOJb80OkjKrAza0S2dhWHjthXlaQ2hAszSAVp
-         YyEN4Lf/nkOX3HeFxAAe3ZcYji2H9TZgBi7hlutzLOWjw9tXHBe21kriFeBm+46bXB
-         fyVH3m9zE+J61CNUHzOSsSvJKM39y34dzWcyoOAA3woumKCWJ8x+Zx6zV94oqSyrnB
-         igHkdp+x08uzQYWZ7BljP4w4B6P7gbvWTDgMiMkjCAZ9KoiINh6G9pcp5sbD1gIEtB
-         w/LdL7mjZ7SCw==
+        b=kuoCFogPYg+4yiZpIy7IxYJ0Uim/cUTgXMq2IRfLXt8wfQDhwvB8I8X++i+XdU4kE
+         KpfmoDlK0IeMATypG77m/ARu8tBiveRb+8gSi97+xxL3nimsdJlK//hM0kJwYHDrQB
+         PfikA0xE4mvufbJTiLzUOGJ2Z3k/53jKc9zXDqYBLTmuCV8ljpin9dEttl6NKf/twx
+         YcY8TU8wcWvNzLMW19k7Ya/nUCt7kBLfplrBTKulVKlGZZGbgSmOOP/scDlwfrZmXr
+         79BwS0gdp9j/FPy4KOxVYcyOEiyVyLplv58t6WSiTQLI9UnTWuJjHCq89OLVxc77xr
+         0ROJu6TtSJZ8A==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Sun, 23 Dec 2018 16:01:33 +0000
+Date:   Sun, 23 Dec 2018 16:05:10 +0000
 From:   visionsofalice@redchan.it
 To:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
         gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com,
@@ -43,9 +43,9 @@ To:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
         ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
         olof@lixom.net, clm@fb.com, mishi@linux.com,
         linux-kernel-owner@vger.kernel.org
-Subject: Reason for RedHat purchase 30 pct over market cap (and some thoughts
- on Bradly Kuhn's recent public denouncement of RMS)
-Message-ID: <21b1f9c4cd33320da680a6b5efc54837@redchan.it>
+Subject: 2 months and no response from Eben Moglen - Yes you can rescind your
+ grant.
+Message-ID: <94331fb8358bf39e4bd2483b7e6adb94@redchan.it>
 X-Sender: visionsofalice@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,47 +53,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Redhat has achieved "governance" over the Linux(TM), via systemd and the 
-Code of Conduct.
+It has been 2 months. Eben Moglen has published no research.
 
-You, contributors, are now treated as employees.
+Because there is nothing more to say: The GPLv2, as used by linux, is a 
+bare license. It can be rescinded at the will of the grantor.
 
-They are confident that you will not assert your property rights, since 
-you attack those who do (See: Netfiter saga), and take it as an honour 
-to sign documents pledging that you will not assert your property rights 
-(prepared for you by your now-masters).
+The regime that the FSF used, vis-a-vis the GPLv2, is essential: 
+copyright transfers to a central repository entity that is sure not to 
+rescind.
 
-They know that you are psychologically bound to behave as hirelings - 
-servants, and not as property owners.
+Linus chose not to adopt this regime.
+He benefited by greatly increased developer contribution.
+The price for that windfall was and is the retention of their 
+traditional property rights by the property holders.
 
-Thus they can rest easy knowing the ground is, though made of sand, not 
-in seeming danger of a tempest.
+They can rescind at will.
+They made no promise nor utterance to the contrary that can be relied 
+upon.
+They were paid no consideration.
+There was no meeting of the minds.
 
-Because of you.
-Because of your history of supplication.
-Your enuich-like nature.
+Additionally the CoC regime itself is a license terms violation, being 
+an additional restrictive term, as explained in the other analysis. 
+(Similar to the GRSecurity license violation)
 
-A nice example is Bradly Kuhn's recent blog posts 1) Excoriating RMS and 
-2) showing how he himself is submissive to a woman he hired.
-
-He's even angry that others still treat him with respect rather than 
-transferring all the good will to the female figurehead everyone is 
-supposed to now respect (for what reason? No, being an actual programmer 
-is not required: sufficent is being a member of the "better" species 
-that rules over the males under the anglo-american system that Bradly 
-Kuhn and his kind uphold )
-
-If I were them I would never donate another cent to the SFConservancy, 
-and I would seek a claw-back of the funds that I did donate for improper 
-use (yes this is possible under both California and New York law). 
-Especially since they seem to have no in-house lawyers what-so-ever (so 
-what is their purpose?).
-
-We are supposed to be proud that his mind is as innocent as his visage 
-(perhaps why he had to hire outside counsel to give him an incorrect and 
-abundantly couched opinion)
-
-
-[1] 
-http://ebb.org/bkuhn/blog/2018/11/22/gnu-kind-communication-guidelines.html
-[2] http://ebb.org/bkuhn/blog/2018/06/21/everyday-sexism.html
+On 2018-10-26 18:31, Eben Moglen wrote:
+> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
+> 
+>   You are conflating case law dealing with commercial software and
+>   non-gratuitous licenses with the present situation, which would 
+> likely
+>   be a case of first-impression in nearly any jurisdiction.
+> 
+> I think the best procedure would be for me to publish my analysis and
+> for you then to tell me what is wrong with it.  What you say here
+> sounds like what a lawyer might say, but isn't.  I have been teaching
+> this stuff for about thirty years, so if I am conflating or confusing
+> anything I will be grateful for help in seeing my mistake.
+> 
+>   The rule for gratuitous licenses is that they are revocable at the 
+> will
+>   of the grantor.
+> 
+> That's not actually "the rule."  It sounds like it might be the rule,
+> but it so happens that it's not.  When I have given the explanation as
+> I have learned, taught and depended on it, you will be able to show me
+> what I am wrong about.
+> 
+>   Raymond Nimmer (God rest his soul) was in agreement on this point,
+>   vis-a-vis the GPL and similar licenses.
+> 
+> You have your Nimmers confused.  The primary author of the treatise
+> Nimmer on Copyright (a book about the law, not in itself an authority)
+> was Melville Nimmer.  The treatise is continued by his son, David, a
+> fine lawyer with whom I do from time to time politely disagree about
+> something.  Ray Nimmer is quite another person.
+> 
+> Eben
