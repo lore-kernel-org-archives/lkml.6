@@ -2,120 +2,114 @@ Return-Path: <SRS0=rRkv=PA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF18C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 22:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C35C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 22:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C031217D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 22:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cjDxGj6t"
+	by mail.kernel.org (Postfix) with ESMTP id F26F3218A1
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 22:56:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbeLWWvl (ORCPT
+        id S1726102AbeLWW4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 17:51:41 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:41350 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeLWWvk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 17:51:40 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBNMnoEw103094;
-        Sun, 23 Dec 2018 22:51:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dB9WeypycoN9rS1T8JgGb9dZqtJ+SThQbCjNqY2v0zw=;
- b=cjDxGj6tZTCPfvp+Lw4JyUvANmJxziukaI7jYs4h38xTg+9u9QJfmX1eqfE6S1MbveJD
- 4BQy0VlVzq35OR+6ATDG/MLYaGFtmBV6pQRhz/djN4OSD1j6Q7bvE3J32tTVbxxcLq8F
- CE5WEKX4Tg5/XvSpv/4KR3bx47cO/ZBiqTm8b5wTK7Td3Dj3RnHRaUt3NpDcYXZCA4K9
- 4rHxfBLuYZI/1cVB1Ae3SX7FtlIA1QpoBGeC2zKDl83RW4vEW93RlNlYMNKARieAmNBc
- bJPSUTA4A8XavmaLdif6mNpvFVj6a7d7boEI2xkma7KueJ+Q73Jc/yM2fighsltcx2A/ JQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2phasdk2p3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 23 Dec 2018 22:51:36 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBNMpUSK017528
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 23 Dec 2018 22:51:30 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBNMpUAI013189;
-        Sun, 23 Dec 2018 22:51:30 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 23 Dec 2018 14:51:29 -0800
-Date:   Sun, 23 Dec 2018 14:51:28 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     kernel-janitors@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/20] xfs: xfs_fsops: drop useless LIST_HEAD
-Message-ID: <20181223225128.GI27208@magnolia>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-10-git-send-email-Julia.Lawall@lip6.fr>
+        Sun, 23 Dec 2018 17:56:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbeLWW4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 17:56:24 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62C65217D7;
+        Sun, 23 Dec 2018 22:56:23 +0000 (UTC)
+Date:   Sun, 23 Dec 2018 17:56:21 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Joe Perches <joe@perches.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
+ macro
+Message-ID: <20181223175621.4e4d958c@vmware.local.home>
+In-Reply-To: <098d7abf-5b62-6a01-a370-97d96bece299@rasmusvillemoes.dk>
+References: <20181221175618.968519903@goodmis.org>
+        <20181221175659.208858193@goodmis.org>
+        <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+        <20181221144054.20bdeb33@gandalf.local.home>
+        <CAHk-=wgSvRhj6KNRdn9gbK9RJVAswdtKSNjAxdf9O9vn04T5XQ@mail.gmail.com>
+        <20181221153526.5e6055ca@gandalf.local.home>
+        <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
+        <20181221155435.38a9a221@gandalf.local.home>
+        <871s6ad2br.fsf@igel.home>
+        <20181221160826.34c544e6@gandalf.local.home>
+        <84199633fd49db573c9ba71f1992936422e907d4.camel@perches.com>
+        <098d7abf-5b62-6a01-a370-97d96bece299@rasmusvillemoes.dk>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545555435-24576-10-git-send-email-Julia.Lawall@lip6.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9116 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812230207
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 09:57:04AM +0100, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
-> 
-> Commit 0410c3bb2b88 ("xfs: factor ag btree root block
-> initialisation") stopped using buffer_list and started using a
-> buffer list in an aghdr_init_data structure, but the declaration
-> of buffer_list was not removed.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-> 
-> Fixes: 0410c3bb2b88 ("xfs: factor ag btree root block initialisation")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, 23 Dec 2018 23:01:52 +0100
+Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> On 21/12/2018 23.20, Joe Perches wrote:
+> > On Fri, 2018-12-21 at 16:08 -0500, Steven Rostedt wrote:  
+> >> On Fri, 21 Dec 2018 21:58:32 +0100
+> >> Andreas Schwab <schwab@linux-m68k.org> wrote:
+> >>
+> >>  
+> >>>> Well, perhaps I can just remove the ending ones. I get paranoid with
+> >>>> macro variables, and tend to over do it so that there's no question.    
+> >>>
+> >>> Why not make it an inline function?  
+> >>
+> >> Matters if that removes the strlen(const) optimization. I could try it
+> >> and see what happens.  
+> > 
+> > Using
+> > 
+> > static inline bool str_has_prefix(const char *str, const char prefix[])
+> > {
+> > 	return !strncmp(str, prefix, strlen(prefix));
+> > }
+> >   
+> 
+> We already have exactly that function, it's called strstarts().
 
---D
+It's not exact.
 
 > 
-> ---
-> Successfully 0-day tested on 151 configurations.
+> commit 66f92cf9d415e96a5bdd6c64de8dd8418595d2fc
+> Author: Rusty Russell <rusty@rustcorp.com.au>
+> Date:   Tue Mar 31 13:05:36 2009 -0600
 > 
->  fs/xfs/xfs_fsops.c |    1 -
->  1 file changed, 1 deletion(-)
+>     strstarts: helper function for !strncmp(str, prefix, strlen(prefix))
 > 
-> diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-> index ec2e63a7963b..f3ef70c542e1 100644
-> --- a/fs/xfs/xfs_fsops.c
-> +++ b/fs/xfs/xfs_fsops.c
-> @@ -40,7 +40,6 @@ xfs_growfs_data_private(
->  	xfs_rfsblock_t		new;
->  	xfs_agnumber_t		oagcount;
->  	xfs_trans_t		*tp;
-> -	LIST_HEAD		(buffer_list);
->  	struct aghdr_init_data	id = {};
->  
->  	nb = in->newblocks;
+> Please don't add a copy under another name.
 > 
+> As for converting existing users, go for it. FWIW, I ran a cocci script
+> a few years ago to find suspicious strncmp() cases, and there were some
+> (e87c3f, ca957b6), but fewer than I expected. There are some
+> confused/confusing ones that apparently deliberately do strncmp(a, b,
+> sizeof(b)) instead of the equivalent to strcmp(a, b) (e.g. 'strncmp(str,
+> "hwc", 4) == 0')
+
+Well, one thing that str_has_prefix() does that strstarts() does not,
+is to return the prefix length which gets rid of the duplication.
+
+Would it be OK to convert strstarts() to return the length of prefix?
+
+-- Steve
