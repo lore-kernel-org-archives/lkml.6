@@ -6,67 +6,56 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A094C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 18:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3DAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA2B21738
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 18:59:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD223217D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 19:14:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K8Z1J5DS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xx7SNRCo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="pbGyShBE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725844AbeLWS7b (ORCPT
+        id S1725839AbeLWTOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 13:59:31 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52916 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbeLWS7b (ORCPT
+        Sun, 23 Dec 2018 14:14:33 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:18928 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbeLWTOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 13:59:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C3A166053B; Sun, 23 Dec 2018 18:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545591569;
-        bh=pl4ZE4417A+jYdHndbo0Jm6VnkbCRBDjEm55DOdzg+I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=K8Z1J5DSrJQ3lruXaeRvIUqdTKyOLG8KIhE+GFfZqihEwCYD2BftjgbxcoYopCL+s
-         q0iwAt080+JhdalWUINiGk9ixVKEuA2RZw9Z2Q5gC/cJgB+FuvBJ+DlJs+lJLZlH6E
-         UMosthAiBcMLYg7pyhskqydzCz8xCecBp59UzTLg=
-Received: from [192.168.225.247] (unknown [49.32.97.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ABA12602A7;
-        Sun, 23 Dec 2018 18:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545591568;
-        bh=pl4ZE4417A+jYdHndbo0Jm6VnkbCRBDjEm55DOdzg+I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Xx7SNRCoCPG7l+nesFRcG37tJzO8jVToqNg59fy1j/Kge8wyCQ3Di3J7hpmNoovvx
-         /2x1LU5HW7BIv6YhQGhkidG9B33qKmG5Qgz6kBK/+N1EJ3mBTYhOKjXi9U3+2xHpx8
-         WBAf/uNFI7QQayKNeo9e0xUPNnEfBpY58jtMyEg8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABA12602A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1] cpufreq: qcom: Read voltage LUT and populate OPP
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-References: <1545415608-15163-1-git-send-email-tdas@codeaurora.org>
- <20181221205752.GD261387@google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <2977f340-cd4e-86bc-da3a-8845676e39ed@codeaurora.org>
-Date:   Mon, 24 Dec 2018 00:29:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Sun, 23 Dec 2018 14:14:32 -0500
+X-Greylist: delayed 538 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Dec 2018 14:14:31 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1545592470;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=E8sMHdpZ56bdbaNqESoFKn20Q1s8hoTdAcM2MB+qsRo=;
+        b=pbGyShBEluBSCnavpXuHnB6h+XQhfX4k5LWb3gzzS/L9cgVvQmmatR0KJeHLWRQAZy
+        LJ4Xzn+1C0NKBIlh6xg58+zBisd02XgMynKrIrx8J+VZND6p3aTSTTi1BX7QKovirkM4
+        WoeKe6+zxtUhJLNahvI4lQCm+dLQKxdjvnVk+8gSuaMd//9eldJdQTyAjedNoor7OKY9
+        cbtUgENskSft7BFxOCDKeArITS7tG47O8tVBVRYvU/G+IzsyIX1jtpAhuNcrGayFckgX
+        hi5g9SOweBuCvh9/nw/zwSIS2EaPLoAcgsy9ne7Yam0f9f+z7giQ39lh6biRp71qeY9t
+        zEQg==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1q3DbdV+MXxxxQl9RzJU="
+X-RZG-CLASS-ID: mo00
+Received: from [172.20.10.3]
+        by smtp.strato.de (RZmta 44.8 DYNA|AUTH)
+        with ESMTPSA id L0b8b9uBNJ2PHSq
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 23 Dec 2018 20:02:25 +0100 (CET)
+Subject: Re: [PATCH] can: af_can: Fix Spectre v1 vulnerability
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181221212229.GA32635@embeddedor>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <f0c42e0b-7d10-be7e-4b52-82567cf747eb@hartkopp.net>
+Date:   Sun, 23 Dec 2018 20:02:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181221205752.GD261387@google.com>
+In-Reply-To: <20181221212229.GA32635@embeddedor>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,241 +64,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Matthias,
+After *trying* to follow the discussion on ...
 
-Thanks for your review comments.
+https://marc.info/?l=linux-kernel&m=154554485324143&w=2
+[PATCH] net: core: Fix Spectre v1 vulnerability
 
-On 12/22/2018 2:27 AM, Matthias Kaehlcke wrote:
-> Hi Taniya,
-> 
-> On Fri, Dec 21, 2018 at 11:36:48PM +0530, Taniya Das wrote:
->> Add support to read the voltage look up table and populate OPP for all
->> corresponding CPUS.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   drivers/cpufreq/qcom-cpufreq-hw.c | 32 ++++++++++++++++++++++++++++++--
->>   1 file changed, 30 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
->> index d83939a..7559b87 100644
->> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
->> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
->> @@ -10,18 +10,21 @@
->>   #include <linux/module.h>
->>   #include <linux/of_address.h>
->>   #include <linux/of_platform.h>
->> +#include <linux/pm_opp.h>
->>   #include <linux/slab.h>
->>
->>   #define LUT_MAX_ENTRIES			40U
->>   #define LUT_SRC				GENMASK(31, 30)
->>   #define LUT_L_VAL			GENMASK(7, 0)
->>   #define LUT_CORE_COUNT			GENMASK(18, 16)
->> +#define LUT_VOLT			GENMASK(11, 0)
->>   #define LUT_ROW_SIZE			32
->>   #define CLK_HW_DIV			2
->>
->>   /* Register offsets */
->>   #define REG_ENABLE			0x0
->> -#define REG_LUT_TABLE			0x110
->> +#define REG_FREQ_LUT_TABLE		0x110
->> +#define REG_VOLT_LUT_TABLE		0x114
-> 
-> The new names suggest that there is a LUT for frequencies and another
-> one for voltages. I don't have access to hardware documentation, but
-> from the code and offsets in this driver it seems there is a single
-> table at offset 0x110, with a 'row' of 32 bytes per OPP. Within this
-> row the frequency (and other values) is located at offset 0, the
-> voltage at offset 4.
-> 
-> I'd suggest to keep REG_LUT_TABLE, add a define LUT_OFFSET_VOLTAGE/MV
-> (or similar) and adjust the math in qcom_cpufreq_hw_read_lut() to use
-> REG_LUT_TABLE as base offset.
-> 
+... I'm still not sure whether af_can.c needs this enhancement or not.
 
-These names are as per HW documentation and the math is kept as per the 
-documentation for reading the voltage.
+Just waiting for the end of the discussion :-)
 
->>   #define REG_PERF_STATE			0x920
->>
->>   static unsigned long cpu_hw_rate, xo_rate;
->> @@ -75,19 +78,26 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
->>   				    void __iomem *base)
->>   {
->>   	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
->> +	u32 volt;
->>   	unsigned int max_cores = cpumask_weight(policy->cpus);
->>   	struct cpufreq_frequency_table	*table;
->> +	unsigned long cpu_r;
-> 
-> nit: why 'cpu_r' and not just 'cpu'?
-> 
-> (if it is needed at all, see my comment below)
-> 
->>
->>   	table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
->>   	if (!table)
->>   		return -ENOMEM;
->>
->>   	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
->> -		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
->> +		data = readl_relaxed(base + REG_FREQ_LUT_TABLE +
->> +				      i * LUT_ROW_SIZE);
->>   		src = FIELD_GET(LUT_SRC, data);
->>   		lval = FIELD_GET(LUT_L_VAL, data);
->>   		core_count = FIELD_GET(LUT_CORE_COUNT, data);
->>
->> +		data = readl_relaxed(base + REG_VOLT_LUT_TABLE +
->> +				      i * LUT_ROW_SIZE);
->> +		volt = FIELD_GET(LUT_VOLT, data) * 1000;
->> +
->>   		if (src)
->>   			freq = xo_rate * lval / 1000;
->>   		else
->> @@ -123,6 +133,10 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
->>
->>   		prev_cc = core_count;
->>   		prev_freq = freq;
->> +
->> +		freq *= 1000;
->> +		for_each_cpu(cpu_r, policy->cpus)
->> +			dev_pm_opp_add(get_cpu_device(cpu_r), freq, volt);
-> 
-> Are you sure we want to duplicate the OPP entries for all CPUs in the
-> cluster? IIUC the frequencies of the cores in a cluster can't be
-> changed individually, hence the cores should have a shared table. I
-> think dev_pm_opp_get_sharing_cpus() does what you need.
-> 
-> You currently also add OPPs for invalid frequencies. From my SDM845
-> device:
-> 
-> cat /sys/devices/system/cpu/cpufreq/policy4/scaling_available_freq
->    => 825600 902400 979200 1056000 1209600 1286400 1363200 1459200
->    1536000 1612800 1689600 1766400 1843200 1920000 1996800 2092800
->    2169600 2246400 2323200 2400000 2476800 2553600 2649600
-> 
-> cat /sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies
-> 2803200
-> 
-> ls /sys/kernel/debug/opp/cpu4/
-> opp:1056000000  opp:1612800000  opp:2092800000  opp:2553600000  opp:825600000
-> opp:1209600000  opp:1689600000  opp:2169600000  opp:2649600000  opp:902400000
-> opp:1286400000  opp:1766400000  opp:2246400000  opp:2707200000  opp:979200000
-> opp:1363200000  opp:1843200000  opp:2323200000  opp:2764800000
-> opp:1459200000  opp:1920000000  opp:2400000000  opp:2784000000
-> opp:1536000000  opp:1996800000  opp:2476800000  opp:2803200000
-> 
-> There are OPP entries for 2707200000, 2764800000 and 2784000000 Hz,
-> however these frequencies appear neither in available_frequencies nor
-> boost_frequencies.
-> 
->>   	}
->>
+Thanks to the experts!
 
-Could you help validating with the patch below?
+Oliver
 
->>   	table[i].frequency = CPUFREQ_TABLE_END;
->> @@ -159,10 +173,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->>   	struct device *dev = &global_pdev->dev;
->>   	struct of_phandle_args args;
->>   	struct device_node *cpu_np;
->> +	struct device *cpu_dev;
->>   	struct resource *res;
->>   	void __iomem *base;
->>   	int ret, index;
->>
->> +	cpu_dev = get_cpu_device(policy->cpu);
->> +	if (!cpu_dev) {
->> +		pr_err("%s: failed to get cpu%d device\n", __func__,
->> +		       policy->cpu);
->> +		return -ENODEV;
->> +	}
->> +
->>   	cpu_np = of_cpu_device_node_get(policy->cpu);
->>   	if (!cpu_np)
->>   		return -EINVAL;
->> @@ -205,6 +227,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->>   		goto error;
->>   	}
->>
->> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
->> +	if (ret <= 0) {
->> +		dev_err(cpu_dev, "OPP table is not ready\n");
->> +		goto error;
->> +	}
->> +
->>   	policy->fast_switch_possible = true;
->>
->>   	return 0;
+On 12/21/18 10:22 PM, Gustavo A. R. Silva wrote:
+> protocol is indirectly controlled by user-space, hence leading to
+> a potential exploitation of the Spectre variant 1 vulnerability.
 > 
-> I suppose we want to remove the OPPs when the cpufreq driver is
-> unloaded, looks like dev_pm_opp_cpumask_remove_table() should do the
-> trick.
+> This issue was detected with the help of Smatch:
 > 
-> Cheers
+> net/can/af_can.c:115 can_get_proto() warn: potential spectre issue 'proto_tab' [w]
 > 
-> Matthias
+> Fix this by sanitizing protocol before using it to index proto_tab.
 > 
-
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c 
-b/drivers/cpufreq/qcom-cpufreq-hw.c
-index 7559b87..23338b2 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -81,7 +81,6 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-         u32 volt;
-         unsigned int max_cores = cpumask_weight(policy->cpus);
-         struct cpufreq_frequency_table  *table;
--       unsigned long cpu_r;
-
-         table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
-         if (!table)
-@@ -110,6 +109,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-                         table[i].frequency = freq;
-                         dev_dbg(dev, "index=%d freq=%d, core_count 
-%d\n", i,
-                                 freq, core_count);
-+                       dev_pm_opp_add(get_cpu_device(policy->cpu),
-+                                       freq * 1000, volt);
-                 }
-
-                 /*
-@@ -126,6 +127,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-                         if (prev_cc != max_cores) {
-                                 prev->frequency = prev_freq;
-                                 prev->flags = CPUFREQ_BOOST_FREQ;
-+                               dev_pm_opp_add(get_cpu_device(policy->cpu),
-+                                               prev_freq * 1000, volt);
-                         }
-
-                         break;
-@@ -133,12 +136,9 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-
-                 prev_cc = core_count;
-                 prev_freq = freq;
--
--               freq *= 1000;
--               for_each_cpu(cpu_r, policy->cpus)
--                       dev_pm_opp_add(get_cpu_device(cpu_r), freq, volt);
-         }
-
-+       dev_pm_opp_set_sharing_cpus(get_cpu_device(policy->cpu), 
-policy->cpus);
-         table[i].frequency = CPUFREQ_TABLE_END;
-         policy->freq_table = table;
-
-@@ -245,6 +245,7 @@ static int qcom_cpufreq_hw_cpu_exit(struct 
-cpufreq_policy *policy)
-  {
-         void __iomem *base = policy->driver_data - REG_PERF_STATE;
-
-+       dev_pm_opp_cpumask_remove_table(policy->cpus);
-         kfree(policy->freq_table);
-         devm_iounmap(&global_pdev->dev, base);
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   net/can/af_can.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/can/af_can.c b/net/can/af_can.c
+> index 1684ba5b51eb..cade7250c6d4 100644
+> --- a/net/can/af_can.c
+> +++ b/net/can/af_can.c
+> @@ -59,6 +59,7 @@
+>   #include <linux/can/core.h>
+>   #include <linux/can/skb.h>
+>   #include <linux/ratelimit.h>
+> +#include <linux/nospec.h>
+>   #include <net/net_namespace.h>
+>   #include <net/sock.h>
+>   
+> @@ -136,6 +137,7 @@ static int can_create(struct net *net, struct socket *sock, int protocol,
+>   
+>   	if (protocol < 0 || protocol >= CAN_NPROTO)
+>   		return -EINVAL;
+> +	protocol = array_index_nospec(protocol, CAN_NPROTO);
+>   
+>   	cp = can_get_proto(protocol);
+>   
+> 
