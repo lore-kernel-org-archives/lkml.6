@@ -6,59 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A1DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00785C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D32E2173B
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC6F521773
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Dec 2018 13:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbeLWN2r (ORCPT
+        id S1728674AbeLWN2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 08:28:47 -0500
-Received: from ozlabs.org ([203.11.71.1]:36061 "EHLO ozlabs.org"
+        Sun, 23 Dec 2018 08:28:00 -0500
+Received: from ozlabs.org ([203.11.71.1]:36361 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbeLWN2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 08:28:01 -0500
+        id S1725807AbeLWN16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 08:27:58 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43N38G6V72z9sMM; Mon, 24 Dec 2018 00:27:58 +1100 (AEDT)
+        id 43N38F0xjMz9sNJ; Mon, 24 Dec 2018 00:27:56 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 2c8e65b595cf0bf7c1413404dff9b928a64d27cb
+X-powerpc-patch-commit: ffca395b11c4a5a6df6d6345f794b0e3d578e2d0
 X-Patchwork-Hint: ignore
-In-Reply-To: <20181205195050.4759-2-robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <76d777b36e54e7b8d4c196405decc712fc5eaf45.1543356926.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, ruscur@russell.cc
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Paul Mackerras <paulus@samba.org>,
-        Alistair Popple <alistair@popple.id.au>,
-        Anatolij Gustschin <agust@denx.de>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: powerpc: Use of_node_name_eq for node name comparisons
-Message-Id: <43N38G6V72z9sMM@ozlabs.org>
-Date:   Mon, 24 Dec 2018 00:27:58 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2, 01/11] powerpc/mm: Fix reporting of kernel execute faults on the 8xx
+Message-Id: <43N38F0xjMz9sNJ@ozlabs.org>
+Date:   Mon, 24 Dec 2018 00:27:56 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-05 at 19:50:18 UTC, Rob Herring wrote:
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
+On Wed, 2018-11-28 at 09:27:04 UTC, Christophe Leroy wrote:
+> On the 8xx, no-execute is set via PPP bits in the PTE. Therefore
+> a no-exec fault generates DSISR_PROTFAULT error bits,
+> not DSISR_NOEXEC_OR_G.
 > 
-> A couple of open coded iterating thru the child node names are converted
-> to use for_each_child_of_node() instead.
+> This patch adds DSISR_PROTFAULT in the test mask.
 > 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Alistair Popple <alistair@popple.id.au>
-> Cc: Matt Porter <mporter@kernel.crashing.org>
-> Cc: Anatolij Gustschin <agust@denx.de>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Fixes: d3ca587404b3 ("powerpc/mm: Fix reporting of kernel execute faults")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/2c8e65b595cf0bf7c1413404dff9b9
+https://git.kernel.org/powerpc/c/ffca395b11c4a5a6df6d6345f794b0
 
 cheers
