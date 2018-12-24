@@ -2,84 +2,69 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA44C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C12C0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BF921908
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88C2A20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:01:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FplkajAx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbeLXM7X (ORCPT
+        id S1725891AbeLXNBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 07:59:23 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:42844 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbeLXM7W (ORCPT
+        Mon, 24 Dec 2018 08:01:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58936 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbeLXNBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 07:59:22 -0500
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBOCwq86075783;
-        Mon, 24 Dec 2018 21:58:52 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Mon, 24 Dec 2018 21:58:52 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.2] (183.38.232.153.ap.dti.ne.jp [153.232.38.183])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBOCwpXv075780
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Mon, 24 Dec 2018 21:58:52 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH] arm64: dts: rockchip: enable analog audio node for rock64
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181223101026.12998-1-katsuhiro@katsuster.net>
- <16987084.rf60fZEaYD@phil>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <df1c3cb9-5661-724d-4443-5b19930f4348@katsuster.net>
-Date:   Mon, 24 Dec 2018 21:58:51 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 24 Dec 2018 08:01:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZsIB6qumN3KKrUmRj7fYSd3f1ILuZORklr37aD5h6og=; b=FplkajAxOwKBT5LFsRggEvEsV
+        Sa7T619x3Pof7uCe9Hlj/jJ/9EgYkRy+IXa0X+8ATLjE0u/Zcxs/f/w8GKJn+168aoPVrp0zLjek2
+        VbdIfgUP8p5o5ZHVPE5urYnSLAqDEnwXtZUR2SPJd4avbB6gtghl0K3YrgBGCpJcNR7Rh0HE6IgMY
+        OwoomWzmh1nVLY2g6tiGeg7MtJ2u9sIa+ngXrKxstVWv0KK3StYrgFwGIcjsPB9V7nF1K8NP6vpTa
+        lw4EaxgGu5QibZYJtxsk2GZET1YkoW+Fg0odgSJV2QYrV59IacxeUfGhRNMC2Fvrrv9otWxxmrJzG
+        mKVrLmuFw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gbPrO-00050o-MJ; Mon, 24 Dec 2018 13:01:30 +0000
+Date:   Mon, 24 Dec 2018 05:01:30 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
+Subject: Re: [xarray]  b803b42823: BUG:soft_lockup-CPU##stuck_for#s
+Message-ID: <20181224130130.GM10600@bombadil.infradead.org>
+References: <20181224125620.guph2apbk4snhirq@inn2.lkp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <16987084.rf60fZEaYD@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181224125620.guph2apbk4snhirq@inn2.lkp.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Heiko,
+On Mon, Dec 24, 2018 at 08:56:20PM +0800, kernel test robot wrote:
+> [   51.886077] Call Trace:
+> [   51.886077]  ? xas_find+0x11b/0x240
+> [   51.886077]  ? xa_find+0xc2/0xe0
+> [   51.886077]  ? check_find+0x11a/0x420
+> [   51.886077]  ? check_multi_store+0xa40/0xa40
+> [   51.886077]  ? xarray_checks+0x30/0x70
+> [   51.886077]  ? do_one_initcall+0x68/0x253
 
-I understand. Thanks a lot!
+Since you're running the selftests at 51 seconds in, I'm putting this
+in the same bucket as the others -- spurious report due to overloaded
+test machine.
 
-Best Regards,
-Katsuhiro Suzuki
-
-On 2018/12/24 16:16, Heiko Stuebner wrote:
-> Hi,
-> 
-> Am Sonntag, 23. Dezember 2018, 11:10:26 CET schrieb Katsuhiro Suzuki:
->> The Rock64 boards has analog audio jack on it. RK3328 can output
->> analog audio signal using I2S1 and ACODEC core.
->>
->> This patch adds sound node for analog audio for Rock64.
->>
->> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> 
-> I've put a patch collecting the sound-dai-cells in rk3328.dtsi
-> before this one, dropped the sound-dai-cells from here and
-> applied the patch for 4.22.
-> 
-> Thanks
-> Heiko
-> 
-> 
-> 
 
