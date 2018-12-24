@@ -2,199 +2,188 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B91C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 02:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B951C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 02:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D73D218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 02:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDA27218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 02:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbeLXCoG (ORCPT
+        id S1726664AbeLXCr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 21:44:06 -0500
-Received: from mx132-tc.baidu.com ([61.135.168.132]:23179 "EHLO
-        tc-sys-mailedm05.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726493AbeLXCoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 21:44:06 -0500
-Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
-        by tc-sys-mailedm05.tc.baidu.com (Postfix) with ESMTP id 3E5851EBA002;
-        Mon, 24 Dec 2018 10:43:52 +0800 (CST)
-From:   Li RongQing <lirongqing@baidu.com>
-To:     linux-kernel@vger.kernel.org, jslaby@suse.com,
-        gregkh@linuxfoundation.org, gkohli@codeaurora.org,
-        alan@linux.intel.com
-Subject: [PATCH][v2] tty: fix race between flush_to_ldisc and tty_open
-Date:   Mon, 24 Dec 2018 10:43:52 +0800
-Message-Id: <1545619432-8875-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        Sun, 23 Dec 2018 21:47:29 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6523 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726560AbeLXCr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 21:47:29 -0500
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 8542DF03905E3;
+        Mon, 24 Dec 2018 10:47:25 +0800 (CST)
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.137]) by
+ DGGEMM402-HUB.china.huawei.com ([10.3.20.210]) with mapi id 14.03.0415.000;
+ Mon, 24 Dec 2018 10:47:25 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Laura Abbott <labbott@redhat.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?utf-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] staging: android: ion: add buffer flag update ioctl
+Thread-Topic: [PATCH] staging: android: ion: add buffer flag update ioctl
+Thread-Index: AQHUl3t2yiOi+mE2D0GoXeOyj1fBg6WF1uUAgAJFc3iABRh8sA==
+Date:   Mon, 24 Dec 2018 02:47:25 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED24E2B495@dggemm526-mbx.china.huawei.com>
+References: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
+ <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
+ <678F3D1BB717D949B966B68EAEB446ED24E2926A@dggemm526-mbx.china.huawei.com>
+ <786ad55f-4651-56ce-cd5c-ca02f7ac4093@redhat.com>
+In-Reply-To: <786ad55f-4651-56ce-cd5c-ca02f7ac4093@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There still is a race window after the commit b027e2298bd588
-("tty: fix data race between tty_init_dev and flush of buf"),
-if receive_buf call comes before tty initialization completes
-in n_tty_open and tty->driver_data may be NULL.
-
-CPU0                             CPU1
-----                             ----
-                                 n_tty_open
-                                   tty_init_dev
-                                     tty_ldisc_unlock
-                                       schedule
-flush_to_ldisc
-  n_tty_receive_buf
-    uart_flush_chars
-      uart_start
-      /*tty->driver_data is NULL*/
-                                   tty->ops->open
-                                   /*init tty->driver_data*/
-
-Extending ldisc semaphore lock in tty_init_dev to driver_data
-initialized completely after tty->ops->open().
-
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- drivers/staging/speakup/spk_ttyio.c |  1 +
- drivers/tty/pty.c                   |  2 ++
- drivers/tty/serdev/serdev-ttyport.c |  2 ++
- drivers/tty/tty_io.c                | 14 +++++++++++---
- drivers/tty/tty_ldisc.c             |  1 +
- 5 files changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/speakup/spk_ttyio.c b/drivers/staging/speakup/spk_ttyio.c
-index 979e3ae249c1..c31f08c98383 100644
---- a/drivers/staging/speakup/spk_ttyio.c
-+++ b/drivers/staging/speakup/spk_ttyio.c
-@@ -155,6 +155,7 @@ static int spk_ttyio_initialise_ldisc(struct spk_synth *synth)
- 	else
- 		ret = -ENODEV;
- 
-+	tty_ldisc_unlock(tty);
- 	if (ret) {
- 		tty_unlock(tty);
- 		return ret;
-diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-index 00099a8439d2..1b9684d4f718 100644
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -873,9 +873,11 @@ static int ptmx_open(struct inode *inode, struct file *filp)
- 
- 	tty_debug_hangup(tty, "opening (count=%d)\n", tty->count);
- 
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	return 0;
- err_release:
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	// This will also put-ref the fsi
- 	tty_release(inode, filp);
-diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
-index fa1672993b4c..ce16cb303e28 100644
---- a/drivers/tty/serdev/serdev-ttyport.c
-+++ b/drivers/tty/serdev/serdev-ttyport.c
-@@ -123,6 +123,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
- 	if (ret)
- 		goto err_close;
- 
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(serport->tty);
- 
- 	/* Bring the UART into a known 8 bits no parity hw fc state */
-@@ -145,6 +146,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
- err_close:
- 	tty->ops->close(tty, NULL);
- err_unlock:
-+	tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	tty_release_struct(tty, serport->tty_idx);
- 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 687250ec8032..199f45e2e1b1 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1351,7 +1351,6 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
- 	retval = tty_ldisc_setup(tty, tty->link);
- 	if (retval)
- 		goto err_release_tty;
--	tty_ldisc_unlock(tty);
- 	/* Return the tty locked so that it cannot vanish under the caller */
- 	return tty;
- 
-@@ -1926,7 +1925,7 @@ EXPORT_SYMBOL_GPL(tty_kopen);
-  *	  - concurrent tty removal from driver table
-  */
- static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
--					     struct file *filp)
-+					     struct file *filp, bool *unlock)
- {
- 	struct tty_struct *tty;
- 	struct tty_driver *driver = NULL;
-@@ -1970,6 +1969,7 @@ static struct tty_struct *tty_open_by_driver(dev_t device, struct inode *inode,
- 		}
- 	} else { /* Returns with the tty_lock held for now */
- 		tty = tty_init_dev(driver, index);
-+		*unlock = true;
- 		mutex_unlock(&tty_mutex);
- 	}
- out:
-@@ -2007,6 +2007,7 @@ static int tty_open(struct inode *inode, struct file *filp)
- 	int noctty, retval;
- 	dev_t device = inode->i_rdev;
- 	unsigned saved_flags = filp->f_flags;
-+	bool unlock = false;
- 
- 	nonseekable_open(inode, filp);
- 
-@@ -2017,7 +2018,7 @@ static int tty_open(struct inode *inode, struct file *filp)
- 
- 	tty = tty_open_current_tty(device, filp);
- 	if (!tty)
--		tty = tty_open_by_driver(device, inode, filp);
-+		tty = tty_open_by_driver(device, inode, filp, &unlock);
- 
- 	if (IS_ERR(tty)) {
- 		tty_free_file(filp);
-@@ -2042,6 +2043,10 @@ static int tty_open(struct inode *inode, struct file *filp)
- 	if (retval) {
- 		tty_debug_hangup(tty, "open error %d, releasing\n", retval);
- 
-+		if (unlock) {
-+			unlock = false;
-+			tty_ldisc_unlock(tty);
-+		}
- 		tty_unlock(tty); /* need to call tty_release without BTM */
- 		tty_release(inode, filp);
- 		if (retval != -ERESTARTSYS)
-@@ -2067,6 +2072,9 @@ static int tty_open(struct inode *inode, struct file *filp)
- 		  tty->driver->subtype == PTY_TYPE_MASTER);
- 	if (!noctty)
- 		tty_open_proc_set_tty(filp, tty);
-+
-+	if (unlock)
-+		tty_ldisc_unlock(tty);
- 	tty_unlock(tty);
- 	return 0;
- }
-diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-index fc4c97cae01e..dd9b41f66c18 100644
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -339,6 +339,7 @@ void tty_ldisc_unlock(struct tty_struct *tty)
- 	clear_bit(TTY_LDISC_HALTED, &tty->flags);
- 	__tty_ldisc_unlock(tty);
- }
-+EXPORT_SYMBOL_GPL(tty_ldisc_unlock);
- 
- static int
- tty_ldisc_lock_pair_timeout(struct tty_struct *tty, struct tty_struct *tty2,
--- 
-2.16.2
-
+SGkgbGF1cmE6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IExhdXJhIEFi
+Ym90dCBbbWFpbHRvOmxhYmJvdHRAcmVkaGF0LmNvbV0NCj5TZW50OiBGcmlkYXksIERlY2VtYmVy
+IDIxLCAyMDE4IDQ6NTAgQU0NCj5UbzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29u
+LmNvbT47IHN1bWl0LnNlbXdhbEBsaW5hcm8ub3JnDQo+Q2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8
+Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBBcnZlIEhqw7hubmV2w6VnDQo+PGFydmVAYW5k
+cm9pZC5jb20+OyBUb2RkIEtqb3MgPHRram9zQGFuZHJvaWQuY29tPjsgTWFydGlqbiBDb2VuZW4N
+Cj48bWFjb0BhbmRyb2lkLmNvbT47IEpvZWwgRmVybmFuZGVzIDxqb2VsQGpvZWxmZXJuYW5kZXMu
+b3JnPjsNCj5kZXZlbEBkcml2ZXJkZXYub3N1b3NsLm9yZzsgZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZzsNCj5saW5hcm8tbW0tc2lnQGxpc3RzLmxpbmFyby5vcmc7IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmcNCj5TdWJqZWN0OiBSZTogW1BBVENIXSBzdGFnaW5nOiBhbmRyb2lk
+OiBpb246IGFkZCBidWZmZXIgZmxhZyB1cGRhdGUgaW9jdGwNCj4NCj5PbiAxMi8xOS8xOCA1OjM5
+IFBNLCBaZW5ndGFvIChCKSB3cm90ZToNCj4+IEhpIGxhdXJhOg0KPj4NCj4+PiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPj4+IEZyb206IExhdXJhIEFiYm90dCBbbWFpbHRvOmxhYmJvdHRA
+cmVkaGF0LmNvbV0NCj4+PiBTZW50OiBUaHVyc2RheSwgRGVjZW1iZXIgMjAsIDIwMTggMjoxMCBB
+TQ0KPj4+IFRvOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29tPjsNCj5zdW1p
+dC5zZW13YWxAbGluYXJvLm9yZw0KPj4+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBs
+aW51eGZvdW5kYXRpb24ub3JnPjsgQXJ2ZQ0KPkhqw7hubmV2w6VnDQo+Pj4gPGFydmVAYW5kcm9p
+ZC5jb20+OyBUb2RkIEtqb3MgPHRram9zQGFuZHJvaWQuY29tPjsgTWFydGlqbg0KPkNvZW5lbg0K
+Pj4+IDxtYWNvQGFuZHJvaWQuY29tPjsgSm9lbCBGZXJuYW5kZXMgPGpvZWxAam9lbGZlcm5hbmRl
+cy5vcmc+Ow0KPj4+IGRldmVsQGRyaXZlcmRldi5vc3Vvc2wub3JnOyBkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnOw0KPj4+IGxpbmFyby1tbS1zaWdAbGlzdHMubGluYXJvLm9yZzsgbGlu
+dXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPj4+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHN0YWdp
+bmc6IGFuZHJvaWQ6IGlvbjogYWRkIGJ1ZmZlciBmbGFnIHVwZGF0ZQ0KPj4+IGlvY3RsDQo+Pj4N
+Cj4+PiBPbiAxMi8xOS8xOCA5OjE5IEFNLCBaZW5nIFRhbyB3cm90ZToNCj4+Pj4gSW4gc29tZSB1
+c2VjYXNlcywgdGhlIGJ1ZmZlciBjYWNoZWQgYXR0cmlidXRlIGlzIG5vdCBkZXRlcm1pbmVkIGF0
+DQo+Pj4+IGFsbG9jYXRpb24gdGltZSwgaXQncyBkZXRlcm1pbmVkIGp1c3QgYmVmb3JlIHRoZSBy
+ZWFsIGNwdSBtYXBwaW5nLg0KPj4+PiBBbmQgZnJvbSB0aGUgbWVtb3J5IHZpZXcgb2YgcG9pbnQs
+IGEgYnVmZmVyIHNob3VsZCBub3QgaGF2ZSB0aGUNCj4+PiBjYWNoZWQNCj4+Pj4gYXR0cmlidXRl
+IHV0aWwgaXMgcmVhbGx5IG1hcHBlZCBieSB0aGUgY3B1LiBTbyBpbiB0aGlzIHBhdGNoLCB3ZQ0K
+Pj4+PiBpbnRyb2R1Y2VkIHRoZSBuZXcgaW9jdGwgY29tbWFuZCB0byB0YXJnZXQgdGhlIHJlcXVp
+cmVtZW50Lg0KPj4+Pg0KPj4+DQo+Pj4gVGhpcyBpcyByYWN5IGFuZCBlcnJvciBwcm9uZS4gQ2Fu
+IHlvdSBleHBsYWluIG1vcmUgd2hhdCBwcm9ibGVtIHlvdQ0KPj4+IGFyZSB0cnlpbmcgdG8gc29s
+dmU/DQo+Pg0KPj4gTXkgdXNlIGNhc2UgaXMgbGlrZSB0aGlzOg0KPj4gMS4gIFRoZXJlIGFyZSB0
+d28gcHJvY2VzcyBBIGFuZCBCLCBBIHRha2VzIGNhc2Ugb2YgaW9uIGJ1ZmZlciBhbGxvY2F0aW9u
+LA0KPmFuZA0KPj4gICBwYXNzIHRoZSBidWZmZXIgZmQgdG8gQiwgdGhlbiBCIG1hcHMgYW5kIHVz
+ZXMgaXQuDQo+PiAyLiAgUHJvY2VzcyBCIG5lZWQgdG8gbWFwIHRoZSBidWZmZXIgd2l0aCBkaWZm
+ZXJlbnQgY2FjaGVkIGF0dHJpYnV0ZQ0KPj4gZm9yIGRpZmZlcmVudCB1c2UgY2FzZSwgZm9yIGV4
+YW1wbGUsIGlmIHRoZSBidWZmZXIgaXMgdXNlZCBmb3IgcHVyZQ0KPj4gc29mdHdhcmUgYWxnb3Jp
+dGhtLCB0aGVuIHdlIG5lZWQgdG8gbWFwIGl0IGFzIGNhY2hlZCwgb3RoZXJ3aXNlDQo+PiBub24t
+Y2FjaGVkLCBhbmQgQiBuZWVkcyB0byBkZWFsIHdpdGggYm90aCBjYXNlcy4NCj4+IEFuZCB1bmZv
+cnR1bmF0ZWx5IHRoZSBtbWFwIHN5c2NhbGwgdGFrZXMgbm8gY2FjaGVkIGZsYWdzIGFuZCB3ZSBj
+YW4ndA0KPj4gZGVjaWRlIHRoZSBjYWNoZSBhdHRyaWJ1dGUgd2hlbiB3ZSBhcmUgZG9pbmcgdGhl
+IG1tYXAsIHNvIEkgaW50cm9kdWNlDQo+PiBuZXcgdGhlIGlvY3RsIGV2ZW4gdGhvdWdoIEkgdGhp
+bmsgdGhlIHNvbHV0aW9uIGlzIG5vdCBhcyBnb29kLg0KPj4NCj4+DQo+DQo+VGhhbmtzIGZvciB0
+aGUgZXhwbGFuYXRpb24sIHRoaXMgd2FzIGFib3V0IHRoZSB1c2UgY2FzZSBJIGV4cGVjdGVkLg0K
+PkknbSBwcmV0dHkgc3VyZSBJIGhhZCB0aGlzIGV4YWN0IHByb2JsZW0gb25jZSB1cG9uIGEgdGlt
+ZSBhbmQgd2UgZGlkbid0DQo+Y29tZSB1cCB3aXRoIGEgc29sdXRpb24uIEknZCBzdGlsbCBsaWtl
+IHRvIGdldCByaWQgb2YgdW5jYWNoZWQgYnVmZmVycyBpbg0KPmdlbmVyYWwgYW5kIGp1c3QgdXNl
+IGNhY2hlZCBidWZmZXJzIChzZWUNCj5odHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
+dC5vcmcvcGlwZXJtYWlsL2RyaXZlcmRldi1kZXZlbC8yMDE4LU4NCj5vdmVtYmVyLzEyODg0Mi5o
+dG1sKQ0KPldoYXQncyB5b3VyIHVzZWNhc2UgZm9yIHVuY2FjaGVkIGJ1ZmZlcnM/DQoNClNvbWUg
+YnVmZmVycyBhcmUgb25seSB1c2VkIGJ5IEhXLCBpbiB0aGlzIGNhc2UsIHdlIHRlbmQgdG8gdXNl
+IHVuY2FjaGVkIGJ1ZmZlcnMuDQpCdXQgc29tZXRpbWVzIHRoZSBTVyBuZWVkIHRvIHJlYWQgZmV3
+IGJ1ZmZlciBjb250ZW50cyBmb3IgZGVidWcgcHVycG9zZSBhbmQNCm5vIHN5bmNocm9uaXphdGlv
+biBpcyBuZWVkZWQuDQoNCj4NCj4+Pg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBaZW5nIFRhbyA8cHJp
+bWUuemVuZ0BoaXNpbGljb24uY29tPg0KPj4+PiAtLS0NCj4+Pj4gICAgZHJpdmVycy9zdGFnaW5n
+L2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jIHwgIDQgKysrKw0KPj4+PiAgICBkcml2ZXJzL3N0YWdp
+bmcvYW5kcm9pZC9pb24vaW9uLmMgICAgICAgfCAxNw0KPisrKysrKysrKysrKysrKysrDQo+Pj4+
+ICAgIGRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uaCAgICAgICB8ICAxICsNCj4+Pj4g
+ICAgZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdWFwaS9pb24uaCAgICAgIHwgMjINCj4+PiArKysr
+KysrKysrKysrKysrKysrKysrDQo+Pj4+ICAgIDQgZmlsZXMgY2hhbmdlZCwgNDQgaW5zZXJ0aW9u
+cygrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9u
+L2lvbi1pb2N0bC5jDQo+Pj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0
+bC5jDQo+Pj4+IGluZGV4IGE4ZDNjYzQuLjYwYmI3MDIgMTAwNjQ0DQo+Pj4+IC0tLSBhL2RyaXZl
+cnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24taW9jdGwuYw0KPj4+PiArKysgYi9kcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC9pb24vaW9uLWlvY3RsLmMNCj4+Pj4gQEAgLTEyLDYgKzEyLDcgQEANCj4+
+Pj4NCj4+Pj4gICAgdW5pb24gaW9uX2lvY3RsX2FyZyB7DQo+Pj4+ICAgIAlzdHJ1Y3QgaW9uX2Fs
+bG9jYXRpb25fZGF0YSBhbGxvY2F0aW9uOw0KPj4+PiArCXN0cnVjdCBpb25fYnVmZmVyX2ZsYWdf
+ZGF0YSB1cGRhdGU7DQo+Pj4+ICAgIAlzdHJ1Y3QgaW9uX2hlYXBfcXVlcnkgcXVlcnk7DQo+Pj4+
+ICAgIH07DQo+Pj4+DQo+Pj4+IEBAIC04Myw2ICs4NCw5IEBAIGxvbmcgaW9uX2lvY3RsKHN0cnVj
+dCBmaWxlICpmaWxwLCB1bnNpZ25lZCBpbnQNCj4+Pj4gY21kLCB1bnNpZ25lZCBsb25nIGFyZykN
+Cj4+Pj4NCj4+Pj4gICAgCQlicmVhazsNCj4+Pj4gICAgCX0NCj4+Pj4gKwljYXNlIElPTl9JT0Nf
+QlVGRkVSX1VQREFURToNCj4+Pj4gKwkJcmV0ID0gaW9uX2J1ZmZlcl91cGRhdGUoZGF0YS51cGRh
+dGUuZmQsIGRhdGEudXBkYXRlLmZsYWdzKTsNCj4+Pj4gKwkJYnJlYWs7DQo+Pj4+ICAgIAljYXNl
+IElPTl9JT0NfSEVBUF9RVUVSWToNCj4+Pj4gICAgCQlyZXQgPSBpb25fcXVlcnlfaGVhcHMoJmRh
+dGEucXVlcnkpOw0KPj4+PiAgICAJCWJyZWFrOw0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9z
+dGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jDQo+Pj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQv
+aW9uL2lvbi5jDQo+Pj4+IGluZGV4IDk5MDczMzIuLmYxNDA0ZGMgMTAwNjQ0DQo+Pj4+IC0tLSBh
+L2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPj4+PiArKysgYi9kcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC9pb24vaW9uLmMNCj4+Pj4gQEAgLTQzNiw2ICs0MzYsMjMgQEAgaW50IGlv
+bl9hbGxvYyhzaXplX3QgbGVuLCB1bnNpZ25lZCBpbnQNCj4+PiBoZWFwX2lkX21hc2ssIHVuc2ln
+bmVkIGludCBmbGFncykNCj4+Pj4gICAgCXJldHVybiBmZDsNCj4+Pj4gICAgfQ0KPj4+Pg0KPj4+
+PiAraW50IGlvbl9idWZmZXJfdXBkYXRlKHVuc2lnbmVkIGludCBmZCwgdW5zaWduZWQgaW50IGZs
+YWdzKSB7DQo+Pj4+ICsJc3RydWN0IGRtYV9idWYgKmRtYWJ1ZjsNCj4+Pj4gKwlzdHJ1Y3QgaW9u
+X2J1ZmZlciAqYnVmZmVyOw0KPj4+PiArDQo+Pj4+ICsJZG1hYnVmID0gZG1hX2J1Zl9nZXQoZmQp
+Ow0KPj4+PiArDQo+Pj4+ICsJaWYgKCFkbWFidWYpDQo+Pj4+ICsJCXJldHVybiAtRUlOVkFMOw0K
+Pj4+PiArDQo+Pj4+ICsJYnVmZmVyID0gZG1hYnVmLT5wcml2Ow0KPj4+PiArCWJ1ZmZlci0+Zmxh
+Z3MgPSBmbGFnczsNCj4+Pj4gKwlkbWFfYnVmX3B1dChkbWFidWYpOw0KPj4+PiArDQo+Pj4+ICsJ
+cmV0dXJuIDA7DQo+Pj4+ICt9DQo+Pj4+ICsNCj4+Pj4gICAgaW50IGlvbl9xdWVyeV9oZWFwcyhz
+dHJ1Y3QgaW9uX2hlYXBfcXVlcnkgKnF1ZXJ5KQ0KPj4+PiAgICB7DQo+Pj4+ICAgIAlzdHJ1Y3Qg
+aW9uX2RldmljZSAqZGV2ID0gaW50ZXJuYWxfZGV2OyBkaWZmIC0tZ2l0DQo+Pj4+IGEvZHJpdmVy
+cy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oDQo+Pj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJv
+aWQvaW9uL2lvbi5oDQo+Pj4+IGluZGV4IGMwMDZmYzEuLjk5YmY5YWIgMTAwNjQ0DQo+Pj4+IC0t
+LSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uaA0KPj4+PiArKysgYi9kcml2ZXJz
+L3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmgNCj4+Pj4gQEAgLTE5OSw2ICsxOTksNyBAQCBpbnQg
+aW9uX2hlYXBfcGFnZXNfemVybyhzdHJ1Y3QgcGFnZSAqcGFnZSwNCj4+PiBzaXplX3Qgc2l6ZSwg
+cGdwcm90X3QgcGdwcm90KTsNCj4+Pj4gICAgaW50IGlvbl9hbGxvYyhzaXplX3QgbGVuLA0KPj4+
+PiAgICAJICAgICAgdW5zaWduZWQgaW50IGhlYXBfaWRfbWFzaywNCj4+Pj4gICAgCSAgICAgIHVu
+c2lnbmVkIGludCBmbGFncyk7DQo+Pj4+ICtpbnQgaW9uX2J1ZmZlcl91cGRhdGUodW5zaWduZWQg
+aW50IGZkLCB1bnNpZ25lZCBpbnQgZmxhZ3MpOw0KPj4+Pg0KPj4+PiAgICAvKioNCj4+Pj4gICAg
+ICogaW9uX2hlYXBfaW5pdF9zaHJpbmtlcg0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFn
+aW5nL2FuZHJvaWQvdWFwaS9pb24uaA0KPj4+PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL3Vh
+cGkvaW9uLmgNCj4+Pj4gaW5kZXggNWQ3MDA5OC4uOTk3NTNmYyAxMDA2NDQNCj4+Pj4gLS0tIGEv
+ZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdWFwaS9pb24uaA0KPj4+PiArKysgYi9kcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC91YXBpL2lvbi5oDQo+Pj4+IEBAIC03NCw2ICs3NCwyMCBAQCBzdHJ1Y3Qg
+aW9uX2FsbG9jYXRpb25fZGF0YSB7DQo+Pj4+ICAgIAlfX3UzMiB1bnVzZWQ7DQo+Pj4+ICAgIH07
+DQo+Pj4+DQo+Pj4+ICsvKioNCj4+Pj4gKyAqIHN0cnVjdCBpb25fYnVmZmVyX2ZsYWdfZGF0YSAt
+IG1ldGFkYXRhIHBhc3NlZCBmcm9tIHVzZXJzcGFjZSBmb3INCj4+Pj4gK3VwZGF0ZQ0KPj4+PiAr
+ICogYnVmZmVyIGZsYWdzDQo+Pj4+ICsgKiBAZmQ6CQkJZmlsZSBkZXNjcmlwdG9yIG9mIHRoZSBi
+dWZmZXINCj4+Pj4gKyAqIEBmbGFnczoJCWZsYWdzIHBhc3NlZCB0byB0aGUgYnVmZmVyDQo+Pj4+
+ICsgKg0KPj4+PiArICogUHJvdmlkZWQgYnkgdXNlcnNwYWNlIGFzIGFuIGFyZ3VtZW50IHRvIHRo
+ZSBpb2N0bCAgKi8NCj4+Pj4gKw0KPj4+PiArc3RydWN0IGlvbl9idWZmZXJfZmxhZ19kYXRhIHsN
+Cj4+Pj4gKwlfX3UzMiBmZDsNCj4+Pj4gKwlfX3UzMiBmbGFnczsNCj4+Pj4gK30NCj4+Pj4gKw0K
+Pj4+PiAgICAjZGVmaW5lIE1BWF9IRUFQX05BTUUJCQkzMg0KPj4+Pg0KPj4+PiAgICAvKioNCj4+
+Pj4gQEAgLTExNiw2ICsxMzAsMTQgQEAgc3RydWN0IGlvbl9oZWFwX3F1ZXJ5IHsNCj4+Pj4gICAg
+CQkJCSAgICAgIHN0cnVjdCBpb25fYWxsb2NhdGlvbl9kYXRhKQ0KPj4+Pg0KPj4+PiAgICAvKioN
+Cj4+Pj4gKyAqIERPQzogSU9OX0lPQ19CVUZGRVJfVVBEQVRFIC0gdXBkYXRlIHRoZSBzcGVjaWZp
+ZWQgaW9uIGJ1ZmZlcg0KPj4+IGZsYWdzDQo+Pj4+ICsgKg0KPj4+PiArICogVGFrZXMgYW4gaW9u
+X2J1ZmZlcl9mbGFnX2RhdGEgc3RydWN0dXJlIGFuZCByZXR1cm5zIHRoZSByZXN1bHQNCj4+Pj4g
+K29mIHRoZQ0KPj4+PiArICogYnVmZmVyIGZsYWcgdXBkYXRlIG9wZXJhdGlvbi4NCj4+Pj4gKyAq
+Lw0KPj4+PiArI2RlZmluZSBJT05fSU9DX0JVRkZFUl9VUERBVEUJX0lPV1IoSU9OX0lPQ19NQUdJ
+QywgMSwgXA0KPj4+PiArCQkJCSAgICAgIHN0cnVjdCBpb25fYnVmZmVyX2ZsYWdfZGF0YSkNCj4+
+Pj4gKy8qKg0KPj4+PiAgICAgKiBET0M6IElPTl9JT0NfSEVBUF9RVUVSWSAtIGluZm9ybWF0aW9u
+IGFib3V0IGF2YWlsYWJsZQ0KPmhlYXBzDQo+Pj4+ICAgICAqDQo+Pj4+ICAgICAqIFRha2VzIGFu
+IGlvbl9oZWFwX3F1ZXJ5IHN0cnVjdHVyZSBhbmQgcG9wdWxhdGVzIGluZm9ybWF0aW9uDQo+Pj4g
+YWJvdXQNCj4+Pj4NCj4+DQoNCg==
