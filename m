@@ -2,99 +2,97 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B8DC64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741C8C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D287221850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3700D2173B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:54:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYVzxwR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbeLXQsy (ORCPT
+        id S1725814AbeLXQy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:48:54 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:56634 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725355AbeLXQsu (ORCPT
+        Mon, 24 Dec 2018 11:54:28 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42522 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXQy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:48:50 -0500
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id wBOGI0MB032448;
-        Mon, 24 Dec 2018 18:18:00 +0200
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 3BB5662DA6; Mon, 24 Dec 2018 18:47:58 +0200 (IST)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        yuenn@google.com, venture@google.com, brendanhiggins@google.com,
-        avifishman70@gmail.com, joel@jms.id.au
-Cc:     linux-iio@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 1/2] dt-binding: iio: add NPCM ADC documentation
-Date:   Mon, 24 Dec 2018 18:47:54 +0200
-Message-Id: <20181224164755.286932-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181224164755.286932-1-tmaimon77@gmail.com>
-References: <20181224164755.286932-1-tmaimon77@gmail.com>
+        Mon, 24 Dec 2018 11:54:27 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y1so5745277plp.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:54:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0oIDr7LJHmhL8x3TH2lkx0xdbV435W2V/4q3XUscdfE=;
+        b=PYVzxwR33i61xMu8hEuiHdba8B2ii/4cwKIt/vKwP+hsDA+W4k/OJ0P6WNuB+08yAr
+         52sqPGkHctcMUAnbg8bqKHRRxGU4ebIB6IRnlxKQkawRmXxeXv+IdeYOxIoSU5C8E/dx
+         9uOJ81kqJSM/BdiqV/xfyJp0aWkOKmRMvL9iJfRakjrxMKdCJtGn/ed0X0lY/h0fOCbD
+         Q9ArPe8ZQwdMLffGqMpoEqeHdy5aHjGrthfC8KYXmT9sfCAzNKMKk2Tl5mnmrs/ZOujd
+         5l2dn2CK0FlfuEJcw1YptWkWOCP76E0MsVwtKa7UBJr+YbgR1/ePzEMfBE37CRM86EaP
+         g4tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0oIDr7LJHmhL8x3TH2lkx0xdbV435W2V/4q3XUscdfE=;
+        b=n3pLGNVxEQy9Rp6rexLU2FkydxGiI7owp6qPlsHt5vMsYgyiHDGOPB3esXqccobear
+         FLTpawZiKZBCc6AyYRzrzqlrj8GCmsSpPty1+h2RGKGVHBFPJMUIFUE/FIp2OsLMle6p
+         09sqOc9nW0EzsggObPFYhkN0KInYBd7FSFQk3w7LvZFbL4jAaPM4qnjRsg1n1XFz6AgG
+         kM2OFz8eCHLxAOEj+Asak6ggGdKG2VevIWGQKzVwDTRLfK7fMYQXXGh0Ash899FOEFWb
+         JkRpiAOpfBIGK+WDEAR6ZQ/101QbyZR6ZywVpQ+mjqLj1Bd0LV3ceCdYn6amPjntauKp
+         jPpw==
+X-Gm-Message-State: AJcUukfQVbgKHd0Qp96017PFV7HwxjXl2/HRRLMp/DPA2PpoJTKKCDyn
+        Y+XlzeH4kpKINa5KgATSqTY=
+X-Google-Smtp-Source: ALg8bN4lmvSlA4CqOEeRxqKiXZAFWLqEhF8A+hm/bHG2Z7MsxD3L3GD3iN9Hn++gszP52gj4k1CJCA==
+X-Received: by 2002:a17:902:8541:: with SMTP id d1mr13802421plo.205.1545670466310;
+        Mon, 24 Dec 2018 08:54:26 -0800 (PST)
+Received: from localhost.localdomain.localdomain ([116.74.222.141])
+        by smtp.googlemail.com with ESMTPSA id f67sm62599156pff.29.2018.12.24.08.54.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 08:54:25 -0800 (PST)
+From:   Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
+To:     osdevtc@gmail.com, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        prathameshdeshpande7@gmail.com
+Subject: [PATCH v2] staging: wlan-ng: prism2fw.c: Fix "Possible unnecessary 'out of memory' message" checkpatch.pl warning"
+Date:   Mon, 24 Dec 2018 08:53:46 -0800
+Message-Id: <1545670426-39823-1-git-send-email-prathameshdeshpande7@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added device tree binding documentation for Nuvoton BMC
-NPCM Analog-to-Digital Converter(ADC).
+This patch removes unnecessary out of memory warning
+message from wlan-ng prism2fw.c file.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Signed-off-by: Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
 ---
- .../bindings/iio/adc/nuvoton,npcm-adc.txt          | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
+ drivers/staging/wlan-ng/prism2fw.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-new file mode 100644
-index 000000000000..6f0843d837cc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-@@ -0,0 +1,35 @@
-+Nuvoton NPCM Analog to Digital Converter (ADC)
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index bb572b7..94800c0 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -556,10 +556,9 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
+ 	/* Allocate buffer space for chunks */
+ 	for (i = 0; i < *ccnt; i++) {
+ 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
+-		if (!clist[i].data) {
+-			pr_err("failed to allocate image space, exiting.\n");
++		if (!clist[i].data)
+ 			return 1;
+-		}
 +
-+The NPCM ADC is a 10-bit converter for eight channel inputs.
-+
-+Required properties:
-+- compatible	: "nuvoton,npcm750-adc" for the NPCM7XX BMC.
-+- reg			: specifies physical base address and size of the registers.
-+- interrupts	: Contain the ADC interrupt with flags for falling edge.
-+
-+Optional properties:
-+- clocks		: phandle of ADC reference clock, in case the clock is not
-+				  added the ADC will use the default ADC sample rate.
-+- vref-supply	: The regulator supply ADC reference voltage, in case the
-+				  vref-supply is not added the ADC will use internal voltage
-+				  reference.
-+
-+Required Node in the NPCM7xx BMC:
-+An additional register is present in the NPCM7xx SOC which is
-+assumed to be in the same device tree, with and marked as
-+compatible with "nuvoton,npcm750-rst".
-+
-+Example:
-+
-+adc: adc@f000c000 {
-+	compatible = "nuvoton,npcm750-adc";
-+	reg = <0xf000c000 0x8>;
-+	interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&clk NPCM7XX_CLK_ADC>;
-+};
-+
-+rst: rst@f0801000 {
-+	compatible = "nuvoton,npcm750-rst", "syscon",
-+	"simple-mfd";
-+	reg = <0xf0801000 0x6C>;
-+};
+ 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
+ 			 i, clist[i].addr, clist[i].len);
+ 	}
 -- 
-2.14.1
+1.8.3.1
 
