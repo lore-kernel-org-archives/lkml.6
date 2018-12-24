@@ -2,91 +2,131 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9415C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B14C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D7E2184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E603D21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:22:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u/ZuC6cv"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="eAY6rGPC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725860AbeLXQLq (ORCPT
+        id S1725806AbeLXQWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:11:46 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42115 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbeLXQLp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:11:45 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so5714562pga.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:11:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/AG8WoIQSfApW11qcR7PzwG2jjuXJC01VnXaY8jYjig=;
-        b=u/ZuC6cvMSoSF0OSxB9q8n3/FKzqoK9TnUJeHU6j7Ly0oICMqVMiNLKOHhIUs7MdcZ
-         iVhL3guune1YIO6hTY9kT2S91QOpg+5JXzn24rdYZTrKTCRlIbBmwjPnFk2YBzkmCqQ5
-         T1mBBveBCPD6w4/Sk9Q8D92qHW7LF/B8fX6MPLyqte68yPfsSpXzDxCh1fKsFNuac3Zx
-         dAysdc4vsa5ifVdK4/wR6Yb+h8N91/6TVlSo6Ra2jpUrMJMaYw0utZTkJRUpSs5lhyqb
-         yjhsWX7G6UjhrCNvIjUmQ3YeKJqepVDyLOEz/lwQp0S7s2D9ZjJLbVnl5qXpXS7xs/f8
-         fxEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/AG8WoIQSfApW11qcR7PzwG2jjuXJC01VnXaY8jYjig=;
-        b=Pt9o33D9XD+tX8hqZxjmdvTR3UxidUc96pgRb8EZiCjwiMVENfxKlhcoWzc+tyB/1Y
-         VFMNoYu3+U7Eg3qXti7aZUixKLaZKJDIXpgDV2H8O8whdAoVdPdhJ9oIqmXtyx0x62sb
-         RH2SMoh97Nq5A4gJRwSs39k+tcGOLSD0SUE31DkDKwiDOQIWsDP5/yINrfLsSsauOluO
-         MjUBJ4COUVuZQJkYpqPo9a7RHMg2XrU05uzZwZUapbZ/SJRSuQcph7Oh2xUOBzzAUm3c
-         0ZGtilXcuyIKUdArAPkVkBBFttA5xxQVRwYZqms8M+U/UMkWVW3AaDM+eXYvLavVu4RW
-         uD7A==
-X-Gm-Message-State: AJcUukcGqo9FqOwX8D+FiySZr3nP9AbTJN2Xx0HmeHJaoid0hvgFV+Hp
-        r0zlQfqKp2ZxO/zStG7Sa4E=
-X-Google-Smtp-Source: ALg8bN5bthZ1gHTlnIEcshuGw4dhDquu8alAlpgQyLrX7bPu8uEJk0pBS7maNvNQ/+4TeFLjl2W0/Q==
-X-Received: by 2002:a63:9e19:: with SMTP id s25mr12840535pgd.203.1545667905236;
-        Mon, 24 Dec 2018 08:11:45 -0800 (PST)
-Received: from localhost.localdomain.localdomain ([116.74.222.141])
-        by smtp.googlemail.com with ESMTPSA id h129sm51519823pfb.110.2018.12.24.08.11.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 08:11:44 -0800 (PST)
-From:   Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
-To:     osdevtc@gmail.com, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        prathameshdeshpande7@gmail.com
-Subject: [PATCH] staging: wlan-ng: prism2fw.c: Fix "Possible unnecessary 'out of memory' message" checkpatch.pl warning"
-Date:   Mon, 24 Dec 2018 08:11:28 -0800
-Message-Id: <1545667888-38999-1-git-send-email-prathameshdeshpande7@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 24 Dec 2018 11:22:54 -0500
+Received: from cock.li ([185.100.85.212]:49174 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725355AbeLXQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 11:22:53 -0500
+MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1545668569; bh=Chgzr6OyDFUO1zcAU1tUkB6WaY/UuwOvkccObQi8HgM=;
+        h=Date:From:To:Subject:From;
+        b=eAY6rGPCyqvexl3siIfksJJOzHTQSn9OCk41U4U6oaHK45pLPiHwdyFBKpXrEmwTo
+         I3ZvGf4JxnlkQ+Eiw7WEsaMKC8aEp+NM7aXR0mz3fZ8ypp/ceG70slj7T/M2ju2hKl
+         QOmN0lAzKVmJIb0znpZD7k6AJ5oLUEybD8/ce5fgypsdK0ydtap0ENKgFiF20zQ/GY
+         +sEmPS3MKlPSgdghGd/Z+oZ5HxituJU6Fkuwyodb7GsPI8tPG9aI/kb0sbKdu+9yMe
+         EG++DQUfyhtSsD9HLIrtgxAqRrecBwYMNGgnKL2gMrgbNYs8dKHQr7/H6Muwz0Hv+K
+         AfCgI3CGzpZ5Q==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 24 Dec 2018 16:22:49 +0000
+From:   vnsndalce@memeware.net
+To:     dng@lists.dyne.org, linux-kernel@vger.kernel.org
+Subject: Re: [DNG] 2 months and no response from Eben Moglen - Yes you can
+ rescind your grant. -- The CoC regime is a License violation - Additional
+ restrictive terms
+Message-ID: <d346c097c905ec7b9bd1d887d5fc047a@memeware.net>
+X-Sender: vnsndalce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes unnecessary out of memory warning
-message from wlan-ng prism2fw.c file.
+Hendrik Boom, are you a lawyer?
+No? How about you shut your fucking mouth about things you have no clue 
+of?
 
-Signed-off-by: Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
----
- drivers/staging/wlan-ng/prism2fw.c | 1 -
- 1 file changed, 1 deletion(-)
+Sound like a plan, ignorant lay person?
 
-diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index bb572b7..c040066 100644
---- a/drivers/staging/wlan-ng/prism2fw.c
-+++ b/drivers/staging/wlan-ng/prism2fw.c
-@@ -557,7 +557,6 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
- 	for (i = 0; i < *ccnt; i++) {
- 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
- 		if (!clist[i].data) {
--			pr_err("failed to allocate image space, exiting.\n");
- 			return 1;
- 		}
- 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
--- 
-1.8.3.1
+Below is an explanation of just how it is a violation of the 
+rights-holder's grant. The courts are not fooled by "clever" verbiage 
+written up by laypersons such as yourself and such as the drafter of the 
+CoC. They see things for what they are.
+
+Hendrik Boom wrote:
+> 
+> Actually, no. It has no effect on what you can do with your copy of
+> the Linux kernel. It just restricts your ability to participate fully
+> in its development. But you can continue to use, modify, and
+> distribute your copies as much as before, as provided by the license.
+> 
+> -- hendrik
+
+
+Version 2 of the GPL forbids the incorporation of additional
+restrictive terms, relating to the distribution, modification, etc of
+the article licensed under the terms.
+
+Those that violate this section are declared, by operation of the
+terms, to have their grant automatically revoked.
+
+An additional term need-not be present in the same writing. Such terms
+simply need to be present to or made known to the taker(sub-licensee) by
+the distributor. They may be proffered in writing, orally, or
+implied in the course of doing business dealings. They simply must
+relate back or involve the article in question (the licensed code or
+product.)
+
+The proffering of additional restrictive terms is a violation of the
+text of the license grant in and of itself.
+
+Here we have a situation where an additional writing has been
+proffered. The additional writing promises both in it's own text and
+by implication consequences against those who violate the terms of
+this additional writing.
+
+The additional writing restricts those subject to it from expressing
+certain views publicly - promising retribution against those who do.
+
+No consideration is paid to those subject to the additional writing
+for their assent; it is simply imposed unilaterally against the
+subjects.
+
+The violators of the additional writing are promised:
+Additional, unwanted, public scrutiny (to which they were not subject
+to prior)
+Public ridicule.
+Loss of public standing.
+as-well as an implied loss of future income.
+
+These are the enforcement mechanisms of the additional writing to
+enforce its restrictions against those who publish derivative works of
+the kernel.
+
+The additional writing is activated when (with the prerequisite of
+being a derivative work of the linux kernel) the work of a rights-holder
+is incorporated into the kernel, when such a work is made known to the
+kernel-team to exist where any one person on this earth has seen fit
+to present it for inclusion, or by simple prior-inclusion into the
+kernel.
+
+Thus all current and past rights-holders who have code in, or have
+published for distribution, derivative works of the kernel are subject
+to the retributive promises made to them in the additional writing,
+drafted to restrict their actions and utterances.
+
+This is tantamount to an additional restrictive term regarding the
+modification and distribution of works under the linux kernel license
+grant.
+
+It is a violation of the license terms of the rights-holders past
+incorporated works in much the same way that GRSecurity's
+Contributor Access Agreement was and is.
+
 
