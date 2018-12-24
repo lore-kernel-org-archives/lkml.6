@@ -2,85 +2,115 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2778C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B24A0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C379021908
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B99222A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725648AbeLXMOx (ORCPT
+        id S1725913AbeLXMP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 07:14:53 -0500
-Received: from mail.parknet.co.jp ([210.171.160.6]:59388 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbeLXMOx (ORCPT
+        Mon, 24 Dec 2018 07:15:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40584 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725877AbeLXMPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 07:14:53 -0500
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 6588F12B609;
-        Mon, 24 Dec 2018 21:14:51 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wBOCEofE009655
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Mon, 24 Dec 2018 21:14:51 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wBOCEne6029174
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Mon, 24 Dec 2018 21:14:50 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id wBOCEn7w029173;
-        Mon, 24 Dec 2018 21:14:49 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Timothy Redaelli <tredaelli@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] vfat: don't read garbage after last dirent
-References: <20181216231510.26854-1-mcroce@redhat.com>
-Date:   Mon, 24 Dec 2018 21:14:49 +0900
-In-Reply-To: <20181216231510.26854-1-mcroce@redhat.com> (Matteo Croce's
-        message of "Mon, 17 Dec 2018 00:15:10 +0100")
-Message-ID: <87zhsvi0jq.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Mon, 24 Dec 2018 07:15:25 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBOCFKIt144016
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:15:24 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pjwg13vnt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:15:22 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 24 Dec 2018 12:14:26 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Dec 2018 12:14:22 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBOCEL0n8520050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Dec 2018 12:14:21 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59A59A4055;
+        Mon, 24 Dec 2018 12:14:21 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C018A404D;
+        Mon, 24 Dec 2018 12:14:20 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.156])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 24 Dec 2018 12:14:20 +0000 (GMT)
+Date:   Mon, 24 Dec 2018 14:14:18 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     "huang.zijiang" <huang.zijiang@zte.com.cn>
+Cc:     akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        mhocko@suse.com, sfr@canb.auug.org.au, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn
+Subject: Re: [PATCH] firmware/memmap:Modify memblock_alloc to
+ memblock_alloc_nopanic
+References: <1545640882-42009-1-git-send-email-huang.zijiang@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545640882-42009-1-git-send-email-huang.zijiang@zte.com.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18122412-0008-0000-0000-000002A59BC4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122412-0009-0000-0000-000022104583
+Message-Id: <20181224121417.GB2070@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=705 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812240109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matteo Croce <mcroce@redhat.com> writes:
+On Mon, Dec 24, 2018 at 04:41:22PM +0800, huang.zijiang wrote:
+> From: "huang.zijiang" <huang.zijiang@zte.com.cn>
+> 
+> memblock_alloc never returns NULL because panic never returns
+> 
+> Signed-off-by: huang.zijiang <huang.zijiang@zte.com.cn>
 
-> The FAT32 File System Specification[1] states that:
->
->     If DIR_Name[0] == 0x00, then the directory entry is free, and there
->     are no allocated directory entries after this one.
->
->     The special 0 value, indicates to FAT file system driver code that
->     the rest of the entries in this directory do not need to be examined
->     because they are all free.
->
-> This is not enforced by Linux, and is possible to read garbage if not
-> all dirents after the last one are filled with zeroes.
->
-> [1] http://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/fatgen103.doc
->
-> Reported-by: Timothy Redaelli <tredaelli@redhat.com>
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
 
-We have to handle all paths that is using fat_get_entry(), to make
-consistent behavior.
+> ---
+>  drivers/firmware/memmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/memmap.c b/drivers/firmware/memmap.c
+> index d168c87..ec4fd25 100644
+> --- a/drivers/firmware/memmap.c
+> +++ b/drivers/firmware/memmap.c
+> @@ -333,7 +333,7 @@ int __init firmware_map_add_early(u64 start, u64 end, const char *type)
+>  {
+>  	struct firmware_map_entry *entry;
+> 
+> -	entry = memblock_alloc(sizeof(struct firmware_map_entry),
+> +	entry = memblock_alloc_nopanic(sizeof(struct firmware_map_entry),
+>  			       SMP_CACHE_BYTES);
+>  	if (WARN_ON(!entry))
+>  		return -ENOMEM;
+> -- 
+> 1.8.3.1
+> 
 
-With quick check, there are still several issues remaining. Please check
-more. For example, looks like fat_parse_long()/fat_search_long() path is
-missing, and fat_get_dotdot_entry(), fat_subdirs() too.
-
-(while adding new entry, if we found zeroed entry, we would be better to
-warn about fsck.)
-
-Thanks.
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Sincerely yours,
+Mike.
+
