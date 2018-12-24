@@ -1,192 +1,276 @@
 Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C4C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13826C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63EB4218D2
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8241121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:30:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uXPzhB4q"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ToLEwnm4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbeLXA05 (ORCPT
+        id S1726556AbeLXAad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 19:26:57 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34736 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeLXA05 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 19:26:57 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBO0QqPL156118;
-        Mon, 24 Dec 2018 00:26:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=/E/ohEbDkq72XAfSYrTv/dYJbfOVeZL6LgtPOGsxclE=;
- b=uXPzhB4qT3wbNiYhghXsczTwEowDz0mWvizR1DxnVxCgb4Yr91vYau3WsfOo7tcdz4X4
- b4vIquezPiSFClPCwJm0Xi0nqGQgjgqE7NaYbTYpOHkfz1IhFFekvxN69CixHKbCySaJ
- WiJMI5WcHZ3jAjzp1UAwSNG7EHdjYO1rP3oqK3WZgbvh4IK6f9Jq/ubdMKxBzWdONEFn
- Gra6kRKxGyYdzX1jjt5djrQQCnjCx4dXzFZtxNJI5AotL7lcuorrjbnWJ8+BdVsqGCPo
- sTy/+QVA7K2gH0EInhZezZ6MLR+OYt+TCQpiW/27XzfwfzbLxtHsZETKf8Lx1rmU92zD Aw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2phasdk5nw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Dec 2018 00:26:52 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBO0Qp34012361
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Dec 2018 00:26:51 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBO0Qp5p009318;
-        Mon, 24 Dec 2018 00:26:51 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 23 Dec 2018 16:26:50 -0800
-Date:   Sun, 23 Dec 2018 16:26:49 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net
-Subject: [GIT PULL] xfs: updates for v4.21
-Message-ID: <20181224002649.GJ27208@magnolia>
+        Sun, 23 Dec 2018 19:30:33 -0500
+Received: from m12-12.163.com ([220.181.12.12]:43249 "EHLO m12-12.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbeLXAad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 19:30:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:MIME-Version:Message-Id; bh=U9T/e
+        UNZJyPcV7EQhFdjTbSa6s5Nqm5NbwdOV1SoO5g=; b=ToLEwnm4se2hSp2ZbFJmy
+        iNYLT16Yku5ouWJzXdbU0rDrLpIxA/X36APDbmZNz20oJ8XiV2DAqVzYkp2mcOb+
+        poCEf1B7jCheiODijK1rB+tr2FiCTfvBYSnMr+6fdrn571mFBW8FEqUkxWk2XnWx
+        ZfvxBpqB8kDlE0Wn6RfvIo=
+Received: from aglpvafl (unknown [115.204.123.204])
+        by smtp8 (Coremail) with SMTP id DMCowACHx0OjKCBc2i8QGw--.9047S2;
+        Mon, 24 Dec 2018 08:30:27 +0800 (CST)
+From:   =?GB2312?B?y7W2zLXAs6Q=?= <kunxue28577@163.com>
+To:     "majordomo" <majordomo@vger.kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: xiao jie ju xu liu
+Date:   Mon, 24 Dec 2018 08:28:11 +0800
+X-Mailer: AOL 7.0 for Windows US sub 118
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9116 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812240001
+Content-Type: multipart/mixed; boundary="----=zejo843_4975_216205305.755004"
+X-Priority: 3
+X-CM-TRANSID: DMCowACHx0OjKCBc2i8QGw--.9047S2
+Message-Id: <5C2028A3.02EA73.11220@m12-12.163.com>
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUvPr4UUUUU
+X-Originating-IP: [115.204.123.204]
+X-CM-SenderInfo: xnxq53zhsyklqx6rljoofrz/1tbiFQ4n6FWBj5BFEgAAsI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This is a multi-part message in MIME format.
 
-Here are a number of bug fixes for 4.21-rc1.  It has undergone the usual
-testing regimen and merges cleanly with 4.20 final.  Let me know if you
-encounter any problems with the merge.
+------=zejo843_4975_216205305.755004
+Content-Type: text/plain;
+	charset="GB2312"
+Content-Transfer-Encoding: base64
 
---D
+THRkLg==
 
-The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
+------=zejo843_4975_216205305.755004
+Content-Type: image/jpeg;
+	name="=?GB2312?B?stfW3crQLmpwZw==?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="=?GB2312?B?stfW3crQLmpwZw==?="
 
-  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
+/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAwJCQsJCAwLCgsODQwPEx8UExEREyYbHRcfLSgwLywo
+LCsyOEg9MjVENissPlU/REpMUFFQMDxYXldOXkhPUE3/2wBDAQ0ODhMQEyUUFCVNMywzTU1NTU1N
+TU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU3/wAARCABsAvYDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD0aiii
+tzyAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAKKKKACiiigAooooAKKKKACsm91qWwiuZpdIv2t7dWdpVaHBVcksB5mcYGemfatase/TUb51
+WKzjEEEyt5dxPsMxU7lYFQ+FBCkDgk9cAYcZUd9SnoXiK61DR7Wb+yr+4l8pBLIpgXL7QSdpkBAO
+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
+lLokQUWDBURAdqKBLwAWY+vzegAG7RRYrmdrGPNpM93Pd/aXjEN5+7m2klvIUYWMcD7xZ2LdRuKj
+PDLLqVheSXUF5pdzHb3Kfu5BLHujljJ6MBgkryV5HJI6MTWnRRYOZmJeaG+oLeSTSQrcyyx+WzR+
+YqRIeEIyuQwaTd04lZckDnOh8IS287zQPo0crTJMrLpIzGVC8L+84B2/XLEgg9OsoosNTaCiiigg
+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
+igAoppkQSrEXUSMpZUzyQMZIHoMj8xVe0vVvJLuMRSRNbTGFw+OTtVgRgnghgfX1AoHYtUUUUCCi
+qd7qAtJYoY7aa6uJVZ1ih2g7VwGbLMowCyjrnnp1xPbTfabWGfy5IvMQP5cq7XXIzhh2I7igdiWi
+iquo3q6bp9xevFJKkCGR1jxu2jqRkgcDJ69qA3LVFFFAgooooAKKKKACiiigAooooAKKaZEEqxF1
+EjKWVM8kDGSB6DI/MU6gAooooAKKq6jerpun3F68UkqQIZHWPG7aOpGSBwMnr2q1QMKKpjUB/av2
+B7aZGaJpUlO3Y4UqGxhs5BcdQO9XKAsFFVftv/Ez+w/Zrj/U+d5+z9197G3d/e749KtUAFFFVdRv
+V03T7i9eKSVIEMjrHjdtHUjJA4GT17UBuWqKq/bf+Jn9h+zXH+p87z9n7r72Nu7+93x6VaoAKKq/
+bf8AiZ/Yfs1x/qfO8/Z+6+9jbu/vd8elGo3q6bp9xevFJKkCGR1jxu2jqRkgcDJ69qAsWqKKq6je
+rpun3F68UkqQIZHWPG7aOpGSBwMnr2oDctUUVV+2/wDEz+w/Zrj/AFPnefs/dfext3f3u+PSgC1R
+RTTIglWIuokZSypnkgYyQPQZH5igQ6iiigAoppkQSrEXUSMpZUzyQMZIHoMj8xTqACiiigAooooA
+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA5/ULS2j8Uafd3E00SyRSIGN1
+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
 
-are available in the Git repository at:
+------=zejo843_4975_216205305.755004--
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.21-merge-2
-
-for you to fetch changes up to 65eed012d1f2d0f0bf0ffc036826d58147de77b8:
-
-  xfs: reallocate realtime summary cache on growfs (2018-12-21 18:45:18 -0800)
-
-----------------------------------------------------------------
-XFS changes for 4.21:
-- Fix CoW remapping of extremely fragmented file areas
-- Fix a zero-length symlink verifier error
-- Constify some of the rmap owner structures for per-AG metadata
-- Precalculate inode geometry for later use
-- Fix scrub counting problems
-- Don't crash when rtsummary inode is null
-- Fix x32 ioctl operation
-- Fix enum->string mappings for ftrace output
-- Cache realtime summary information in memory
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      xfs: clean up indentation issues, remove an unwanted space
-
-Darrick J. Wong (16):
-      xfs: split up the xfs_reflink_end_cow work into smaller transactions
-      xfs: idiotproof defer op type configuration
-      xfs: streamline defer op type handling
-      xfs: const-ify xfs_owner_info arguments
-      xfs: remove xfs_rmap_ag_owner and friends
-      xfs: add a block to inode count converter
-      xfs: precalculate inodes and blocks per inode cluster
-      xfs: precalculate cluster alignment in inodes and blocks
-      xfs: count inode blocks correctly in inobt scrub
-      xfs: require both realtime inodes to mount
-      xfs: fix function pointer type in ftrace format
-      xfs: fix symbolic enum printing in ftrace output
-      xfs: move XFS_AG_BTREE_CMP_FORMAT_STR mappings to libxfs
-      xfs: move XFS_INODE_FORMAT_STR mappings to libxfs
-      xfs: stringify btree cursor types in ftrace output
-      xfs: stringify scrub types in ftrace output
-
-Dave Chinner (1):
-      xfs: zero length symlinks are not valid
-
-Nick Bowler (3):
-      xfs: Align compat attrlist_by_handle with native implementation.
-      xfs: Fix bulkstat compat ioctls on x32 userspace.
-      xfs: Fix x32 ioctls when cmd numbers differ from ia32.
-
-Omar Sandoval (2):
-      xfs: cache minimum realtime summary level
-      xfs: reallocate realtime summary cache on growfs
-
-Pan Bian (1):
-      xfs: libxfs: move xfs_perag_put late
-
- fs/xfs/libxfs/xfs_ag.c             |   9 +-
- fs/xfs/libxfs/xfs_alloc.c          |  79 ++++++------
- fs/xfs/libxfs/xfs_alloc.h          |   4 +-
- fs/xfs/libxfs/xfs_bmap.c           |   6 +-
- fs/xfs/libxfs/xfs_bmap.h           |   4 +-
- fs/xfs/libxfs/xfs_defer.c          |  67 ++++++-----
- fs/xfs/libxfs/xfs_defer.h          |  37 +++---
- fs/xfs/libxfs/xfs_format.h         |  12 ++
- fs/xfs/libxfs/xfs_ialloc.c         |  54 ++++-----
- fs/xfs/libxfs/xfs_ialloc_btree.c   |   7 +-
- fs/xfs/libxfs/xfs_refcount_btree.c |   6 +-
- fs/xfs/libxfs/xfs_rmap.c           | 240 +++++++++++++++++++++----------------
- fs/xfs/libxfs/xfs_rmap.h           |  54 ++++-----
- fs/xfs/libxfs/xfs_rtbitmap.c       |   6 +
- fs/xfs/libxfs/xfs_symlink_remote.c |  14 ++-
- fs/xfs/libxfs/xfs_types.c          |   9 +-
- fs/xfs/libxfs/xfs_types.h          |  22 ++++
- fs/xfs/scrub/agheader.c            |  25 ++--
- fs/xfs/scrub/agheader_repair.c     |   5 +-
- fs/xfs/scrub/alloc.c               |   4 +-
- fs/xfs/scrub/btree.c               |  45 +++----
- fs/xfs/scrub/btree.h               |  22 ++--
- fs/xfs/scrub/common.c              |  14 +--
- fs/xfs/scrub/common.h              |   2 +-
- fs/xfs/scrub/ialloc.c              |  64 +++++-----
- fs/xfs/scrub/inode.c               |   4 +-
- fs/xfs/scrub/refcount.c            |  16 +--
- fs/xfs/scrub/repair.c              |  54 ++++-----
- fs/xfs/scrub/repair.h              |   7 +-
- fs/xfs/scrub/rmap.c                |  35 +++---
- fs/xfs/scrub/scrub.h               |   4 +-
- fs/xfs/scrub/trace.h               | 131 +++++++++++++++-----
- fs/xfs/xfs_aops.h                  |   3 +
- fs/xfs/xfs_extfree_item.c          |   5 +-
- fs/xfs/xfs_fsops.c                 |   2 +-
- fs/xfs/xfs_inode.c                 |  16 +--
- fs/xfs/xfs_ioctl32.c               |  58 +++++++--
- fs/xfs/xfs_itable.c                |  14 +--
- fs/xfs/xfs_log_recover.c           |   8 +-
- fs/xfs/xfs_mount.c                 |   4 +
- fs/xfs/xfs_mount.h                 |  11 ++
- fs/xfs/xfs_reflink.c               | 232 ++++++++++++++++++++---------------
- fs/xfs/xfs_rtalloc.c               |  57 +++++++--
- fs/xfs/xfs_super.c                 |  10 +-
- fs/xfs/xfs_symlink.c               |  33 ++---
- fs/xfs/xfs_trace.h                 |  51 +++++---
- fs/xfs/xfs_trans.h                 |   7 +-
- fs/xfs/xfs_trans_bmap.c            |  11 +-
- fs/xfs/xfs_trans_extfree.c         |  40 +++----
- fs/xfs/xfs_trans_refcount.c        |  11 +-
- fs/xfs/xfs_trans_rmap.c            |  11 +-
- 51 files changed, 932 insertions(+), 714 deletions(-)
