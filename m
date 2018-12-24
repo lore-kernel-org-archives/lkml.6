@@ -2,156 +2,99 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46967C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA53C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1445C20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8587221850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbeLXMYm (ORCPT
+        id S1725897AbeLXM0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 07:24:42 -0500
-Received: from mga03.intel.com ([134.134.136.65]:19243 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725308AbeLXMYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 07:24:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 04:24:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,392,1539673200"; 
-   d="scan'208";a="109678537"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Dec 2018 04:24:40 -0800
-Received: from [10.252.4.220] (abudanko-mobl.ccr.corp.intel.com [10.252.4.220])
-        by linux.intel.com (Postfix) with ESMTP id AD1D158044E;
-        Mon, 24 Dec 2018 04:24:37 -0800 (PST)
-Subject: [PATCH v2 2/4] perf record: bind the AIO user space buffers to nodes
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Organization: Intel Corp.
-Message-ID: <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
-Date:   Mon, 24 Dec 2018 15:24:36 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 24 Dec 2018 07:26:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33004 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725308AbeLXM0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 07:26:18 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBOCNmiF047341
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:26:16 -0500
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pjume8q3c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:26:16 -0500
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ricklind@linux.vnet.ibm.com>;
+        Mon, 24 Dec 2018 12:26:15 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Dec 2018 12:26:10 -0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBOCQ9qS20709612
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Dec 2018 12:26:09 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 10D016E053;
+        Mon, 24 Dec 2018 12:26:09 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45E596E04E;
+        Mon, 24 Dec 2018 12:25:41 +0000 (GMT)
+Received: from [9.85.137.124] (unknown [9.85.137.124])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Dec 2018 12:25:40 +0000 (GMT)
+Subject: Re: [PATCH v4 10/10] sched/fair: Provide idle search schedstats
+To:     Steve Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        quentin.perret@arm.com, linux-kernel@vger.kernel.org
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <1544131696-2888-11-git-send-email-steven.sistare@oracle.com>
+From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
+Date:   Mon, 24 Dec 2018 04:25:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1544131696-2888-11-git-send-email-steven.sistare@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122412-0016-0000-0000-000009689B5D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010278; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01136370; UDB=6.00590994; IPR=6.00916550;
+ MB=3.00024820; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-24 12:26:14
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122412-0017-0000-0000-000041844C83
+Message-Id: <6966a01e-8144-f268-ac9b-3e6fad3a5b2d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=616 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812240110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/06/2018 01:28 PM, Steve Sistare wrote:
+> Add schedstats to measure the effectiveness of searching for idle CPUs
+> and stealing tasks.  This is a temporary patch intended for use during
+> development only.  SCHEDSTAT_VERSION is bumped to 16, and the following
+> fields are added to the per-CPU statistics of /proc/schedstat:
 
-Allocate and bind AIO user space buffers to the memory nodes
-that mmap kernel buffers are bound to.
+Why only temporary?  It would seem that this might be useful information in the future too, for other developers with either new code or new use cases.
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
-  and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
----
- tools/perf/util/mmap.c | 49 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 47 insertions(+), 2 deletions(-)
+Rick
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index e68ba754a8e2..742fa9a8e498 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -10,6 +10,9 @@
- #include <sys/mman.h>
- #include <inttypes.h>
- #include <asm/bug.h>
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+#include <numaif.h>
-+#endif
- #include "debug.h"
- #include "event.h"
- #include "mmap.h"
-@@ -154,6 +157,46 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- }
- 
- #ifdef HAVE_AIO_SUPPORT
-+
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+static void perf_mmap__aio_alloc(void **data, size_t len)
-+{
-+	*data = mmap(NULL, len, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
-+}
-+
-+static void perf_mmap__aio_free(void **data, size_t len)
-+{
-+	munmap(*data, len);
-+	*data = NULL;
-+}
-+
-+static void perf_mmap__aio_bind(void *data, size_t len, int cpu, int affinity)
-+{
-+	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
-+		unsigned long node_mask = 1UL << cpu__get_node(cpu);
-+		if (mbind(data, len, MPOL_BIND, &node_mask, 1, 0)) {
-+			  pr_debug2("failed to bind [%p-%p] to node %d\n",
-+				    data, data + len, cpu__get_node(cpu));
-+		}
-+	}
-+}
-+#else
-+static void perf_mmap__aio_alloc(void **data, size_t len)
-+{
-+	*data = malloc(len);
-+}
-+
-+static void perf_mmap__aio_free(void **data, size_t len __maybe_unused)
-+{
-+	zfree(data);
-+}
-+
-+static void perf_mmap__aio_bind(void *data __maybe_unused, size_t len __maybe_unused,
-+                                int cpu __maybe_unused, int affinity __maybe_unused)
-+{
-+}
-+#endif
-+
- static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- {
- 	int delta_max, i, prio;
-@@ -177,11 +220,13 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- 		}
- 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
- 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
--			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
-+			size_t mmap_len = perf_mmap__mmap_len(map);
-+			perf_mmap__aio_alloc(&(map->aio.data[i]), mmap_len);
- 			if (!map->aio.data[i]) {
- 				pr_debug2("failed to allocate data buffer area, error %m");
- 				return -1;
- 			}
-+			perf_mmap__aio_bind(map->aio.data[i], mmap_len, map->cpu, mp->affinity);
- 			/*
- 			 * Use cblock.aio_fildes value different from -1
- 			 * to denote started aio write operation on the
-@@ -210,7 +255,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
- 	int i;
- 
- 	for (i = 0; i < map->aio.nr_cblocks; ++i)
--		zfree(&map->aio.data[i]);
-+		perf_mmap__aio_free(&(map->aio.data[i]), perf_mmap__mmap_len(map));
- 	if (map->aio.data)
- 		zfree(&map->aio.data);
- 	zfree(&map->aio.cblocks);
