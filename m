@@ -2,107 +2,218 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB5AC43613
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E10C43613
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2272021850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:24:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDuxmq/A"
+	by mail.kernel.org (Postfix) with ESMTP id C7A4D21773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:35:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbeLXNYk (ORCPT
+        id S1725901AbeLXNfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 08:24:40 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45347 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbeLXNYi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 08:24:38 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so5587967pgc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 05:24:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=5oYSW/GvpO5Jr2lAVUEKxgPmdiaC90t9yQ4KohCOQbY=;
-        b=GDuxmq/Aic15WMXOQMH4HrSFG0stmPhzQGi79maKq+afi8zw5IjbX4WO7EBtU4Y4Aa
-         es7qIcOpTYJ4MljVBfAKdeTApaICyrUwH9OHwTSRD29kMCYJUvUrqfFRTtWBCFSDVNaB
-         D+08WqR+rmVKV+OBhkdgasAMMBrRM3dftytU94MpNoljNyFWIQC5SLE3qv2rEmBJP1iY
-         PlWL494kqT4wHJc9k0khQ6jPK4JiFTqKXalJHhj9TcvGX63+U/1VnAEr5HTgPK+1/Old
-         8ZWRZQjCT44ajiLNhJX8FmB02uUMM09edQpVw7rX6LARSq6srEeuDlG8Z8hUmpKJre3P
-         rPuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=5oYSW/GvpO5Jr2lAVUEKxgPmdiaC90t9yQ4KohCOQbY=;
-        b=X4OCCOWQjRygZKF3st/eRU9KnaKNsG50p+H5e5bYMnZ5uDIgcL4oLt5CbMviB4AIVo
-         x5U47hXncct6WafHTgZcRP+oX/CXnTRdrNDz0F2ZG+RQBC2gesjo0gM1b8aEq00byB6E
-         7qY/raao7on2KjEA9zEbRbEm6vzEJ848DbOL7BA+wjomgqzk/94yJlcaHMG4p1SmbGos
-         xP3TAgWW8kolAD1mGM5r+JKQSJ36BudboHrRuPySzW7n9atLW57IxNzdSgg9ofOQDQZo
-         HB+g3NqF0FkvWKhrCA7jKAaum5aJc87zaTTNSSIP0lkO9mP/xOyg9nSDv97B6/wJCSDL
-         0EAQ==
-X-Gm-Message-State: AA+aEWZY8/q8gaUplyOD8IrkqvknKYQLW2TUtSBrTmT8knVF3IQkucIT
-        7f2nbTZsIMscydXR2DKrAUk=
-X-Google-Smtp-Source: ALg8bN7MqKdlBoEyyvA+3qDEze8cTZiGRFINTLDBE/Qm6sZIoDhaLCAuk2cAeM0YMez3riWsyZJJLA==
-X-Received: by 2002:a62:9111:: with SMTP id l17mr13092429pfe.200.1545657878185;
-        Mon, 24 Dec 2018 05:24:38 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([106.51.18.181])
-        by smtp.gmail.com with ESMTPSA id v9sm44373114pfe.49.2018.12.24.05.24.36
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 24 Dec 2018 05:24:37 -0800 (PST)
-Date:   Mon, 24 Dec 2018 18:58:34 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, linux@armlinux.org.uk,
-        robin.murphy@arm.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v5 9/9] xen/privcmd-buf.c: Convert to use vm_insert_range
-Message-ID: <20181224132834.GA22203@jordon-HP-15-Notebook-PC>
+        Mon, 24 Dec 2018 08:35:43 -0500
+Received: from mga02.intel.com ([134.134.136.20]:56104 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725601AbeLXNfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 08:35:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 05:35:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,392,1539673200"; 
+   d="scan'208";a="120814013"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 24 Dec 2018 05:35:42 -0800
+Received: from [10.252.4.220] (abudanko-mobl.ccr.corp.intel.com [10.252.4.220])
+        by linux.intel.com (Postfix) with ESMTP id 794B858048A;
+        Mon, 24 Dec 2018 05:35:39 -0800 (PST)
+Subject: [PATCH v1 1/4] feature: build libzstd feature check, LIBZSTD_DIR and
+ NO_LIBZSTD defines
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3506ee31-2974-27ef-065e-03aea02c91d0@linux.intel.com>
+Date:   Mon, 24 Dec 2018 16:35:38 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_insert_range() to map range of kernel
-memory to user vma.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Build feature check, LIBZSTD_DIR and NO_LIBZSTD defines to have capability
+of overriding ZStandard library source and disabling of the feature and from 
+the command line:
+
+  $ make -C tools/perf LIBZSTD_DIR=/root/abudanko/zstd-1.3.7 clean all
+  $ make -C tools/perf NO_LIBZSTD=1 clean all
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- drivers/xen/privcmd-buf.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ tools/build/Makefile.feature       |  6 ++++--
+ tools/build/feature/Makefile       |  6 +++++-
+ tools/build/feature/test-all.c     |  5 +++++
+ tools/build/feature/test-libzstd.c | 12 ++++++++++++
+ tools/perf/Makefile.config         | 20 ++++++++++++++++++++
+ tools/perf/Makefile.perf           |  3 +++
+ 6 files changed, 49 insertions(+), 3 deletions(-)
+ create mode 100644 tools/build/feature/test-libzstd.c
 
-diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
-index df1ed37..d31b837 100644
---- a/drivers/xen/privcmd-buf.c
-+++ b/drivers/xen/privcmd-buf.c
-@@ -180,12 +180,8 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (vma_priv->n_pages != count)
- 		ret = -ENOMEM;
- 	else
--		for (i = 0; i < vma_priv->n_pages; i++) {
--			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
--					     vma_priv->pages[i]);
--			if (ret)
--				break;
--		}
-+		ret = vm_insert_range(vma, vma->vm_start, vma_priv->pages,
-+					vma_priv->n_pages);
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 5467c6bf9ceb..25088c8f05b2 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -71,7 +71,8 @@ FEATURE_TESTS_BASIC :=                  \
+         sdt				\
+         setns				\
+         libopencsd			\
+-        libaio
++        libaio				\
++        libzstd
  
- 	if (ret)
- 		privcmd_buf_vmapriv_free(vma_priv);
--- 
-1.9.1
-
+ # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
+ # of all feature tests
+@@ -118,7 +119,8 @@ FEATURE_DISPLAY ?=              \
+          lzma                   \
+          get_cpuid              \
+          bpf			\
+-         libaio
++         libaio			\
++         libzstd
+ 
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 7ceb4441b627..4b8244ee65ce 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -62,7 +62,8 @@ FILES=                                          \
+          test-clang.bin				\
+          test-llvm.bin				\
+          test-llvm-version.bin			\
+-         test-libaio.bin
++         test-libaio.bin			\
++         test-libzstd.bin
+ 
+ FILES := $(addprefix $(OUTPUT),$(FILES))
+ 
+@@ -301,6 +302,9 @@ $(OUTPUT)test-clang.bin:
+ $(OUTPUT)test-libaio.bin:
+ 	$(BUILD) -lrt
+ 
++$(OUTPUT)test-libzstd.bin:
++	$(BUILD) -lzstd
++
+ ###############################
+ 
+ clean:
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 20cdaa4fc112..5af329b6ffef 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -178,6 +178,10 @@
+ # include "test-libaio.c"
+ #undef main
+ 
++#define main main_test_zstd
++# include "test-libzstd.c"
++#undef main
++
+ int main(int argc, char *argv[])
+ {
+ 	main_test_libpython();
+@@ -219,6 +223,7 @@ int main(int argc, char *argv[])
+ 	main_test_setns();
+ 	main_test_libopencsd();
+ 	main_test_libaio();
++	main_test_libzstd();
+ 
+ 	return 0;
+ }
+diff --git a/tools/build/feature/test-libzstd.c b/tools/build/feature/test-libzstd.c
+new file mode 100644
+index 000000000000..55268c01b84d
+--- /dev/null
++++ b/tools/build/feature/test-libzstd.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <zstd.h>
++
++int main(void)
++{
++	ZSTD_CStream	*cstream;
++
++	cstream = ZSTD_createCStream();
++	ZSTD_freeCStream(cstream);
++
++	return 0;
++}
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index b441c88cafa1..1dccd776a4aa 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -145,6 +145,13 @@ endif
+ FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
+ FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
+ 
++ifdef LIBZSTD_DIR
++  LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
++  LIBZSTD_LDFLAGS := -L$(LIBZSTD_DIR)/lib
++endif
++FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
++FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
++
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+ -include $(src-perf)/arch/$(SRCARCH)/Makefile
+@@ -770,6 +777,19 @@ ifndef NO_LZMA
+   endif
+ endif
+ 
++ifndef NO_LIBZSTD
++  ifeq ($(feature-libzstd), 1)
++    CFLAGS += -DHAVE_ZSTD_SUPPORT
++    CFLAGS += $(LIBZSTD_CFLAGS)
++    LDFLAGS += $(LIBZSTD_LDFLAGS)
++    EXTLIBS += -lzstd
++    $(call detected,CONFIG_ZSTD)
++  else
++    msg := $(warning No libzstd found, disables trace compression, please install libzstd-dev[el] and/or set LIBZSTD_DIR);
++    NO_LIBZSTD := 1
++  endif
++endif
++
+ ifndef NO_BACKTRACE
+   ifeq ($(feature-backtrace), 1)
+     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index bd23e3f30895..dcac562e1d00 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -108,6 +108,9 @@ include ../scripts/utilities.mak
+ # streaming for record mode. Currently Posix AIO trace streaming is
+ # supported only when linking with glibc.
+ #
++# Define NO_LIBZSTD if you do not want support of Zstandard based runtime
++# trace compression in record mode.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
