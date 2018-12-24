@@ -2,136 +2,200 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFB1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC39BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE9A12173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:39:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KLFweUxZ"
+	by mail.kernel.org (Postfix) with ESMTP id 9ACA52173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:40:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeLXIjr (ORCPT
+        id S1726910AbeLXIk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 03:39:47 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34120 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbeLXIjp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 03:39:45 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so5369357pga.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 00:39:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ilSlR+CLtzMBfDdXJ3oXdMqstsLzRCty6BU1tKZ3IUs=;
-        b=KLFweUxZqt1MAELm2KAl41xoiN166xLO8cYNoZMYTA4/Sakz/QO3KJRcpbIwAmIZQA
-         QJfBmOXEuQKgvqR7qONOyaBzHU4Vb8UeT6xTqLDs4oInIXS14he6pGy4G0cS0P+tjhAg
-         S7/KUYmQ0KOzkjXbTOfh3OyFq82kWmOBardF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ilSlR+CLtzMBfDdXJ3oXdMqstsLzRCty6BU1tKZ3IUs=;
-        b=Ym2lPV14RSrT3+XAZaAIfh7N/BH6iS4w12wWh/ZkNb8imMs+DWHNIvOrpn753PcCC3
-         9RnE/MjBLJ40STynb508wfQREmz0r9lAhinURx+P4CC9tPew8sL3RgJASg8FeDtq5gQk
-         2No/LCtyoAkYFs7cr/pkeyvQQ34CPpgjGYc7nTx2OO/wqsUzA1LkGDrao3WMl/rgquSu
-         hLMK/HS8uDpEtSssP6Aryr9OrucY4rnpc2Pi6ZNesMjy3Nypb+CftF6wUV3IauYOWICv
-         mx6tOmsIhZZ09PGSyY8fwFw8jBT0u95Q+SazP1brOLSMZD3o9VVUbbI/vpXaJGfP/meY
-         iX5g==
-X-Gm-Message-State: AA+aEWbO3+AlfiWrhjL1dhCIPs8cUrjJybJlhcexS3/3EK/DosbGEaRS
-        DDmblQ+CYhlG7ETEGMvIV3V5G9P6DsI=
-X-Google-Smtp-Source: AFSGD/VMgXLenR9XsVHoEFKNu/dbWlWMEnWnB7SiXuc4T15BvDP2GVXtsw3zAibKjfFdhyG3LDKGfg==
-X-Received: by 2002:a62:1043:: with SMTP id y64mr12552993pfi.78.1545640784859;
-        Mon, 24 Dec 2018 00:39:44 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id r130sm59078720pfr.48.2018.12.24.00.39.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 00:39:44 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH v2 2/3] ASoC: Documentation: Add google,cros-ec-codec
-Date:   Mon, 24 Dec 2018 16:37:24 +0800
-Message-Id: <20181224083724.75618-2-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-In-Reply-To: <20181224083724.75618-1-cychiang@chromium.org>
-References: <20181224083724.75618-1-cychiang@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Dec 2018 03:40:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58262 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726843AbeLXIk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 03:40:57 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F33F120A46; Mon, 24 Dec 2018 09:40:54 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AD6342070E;
+        Mon, 24 Dec 2018 09:40:54 +0100 (CET)
+Message-ID: <5aaf26b5efe051fcd6dd2c6514a13a9bbe545e3d.camel@bootlin.com>
+Subject: Re: [PATCH] media: sunxi: cedrus: Fix missing error message context
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     megous@megous.com, dev@linux-sunxi.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:ALLWINNER VPU DRIVER" <linux-media@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Mon, 24 Dec 2018 09:40:54 +0100
+In-Reply-To: <20181221165641.16207-1-megous@megous.com>
+References: <20181221165641.16207-1-megous@megous.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for Chrome EC codec driver.
+Hi,
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- Change in v2: Fixed name of driver in MAINTAINERS.
+On Fri, 2018-12-21 at 17:56 +0100, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
+> 
+> When cedrus_hw_probe is called, v4l2_dev is not yet initialized.
+> Use dev_err instead.
 
- .../bindings/sound/google,cros-ec-codec.txt   | 24 +++++++++++++++++++
- MAINTAINERS                                   |  5 ++++
- 2 files changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+Good catch and thanks for the patch!
 
-diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-new file mode 100644
-index 0000000000000..57718382b3a36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-@@ -0,0 +1,24 @@
-+* Audio codec controlled by ChromeOS EC
-+
-+Google's ChromeOS EC codec is a digital mic codec provided by the
-+Embedded Controller (EC) and is controlled via a host-command interface.
-+
-+An EC codec node should only be found as a sub-node of the EC node (see
-+Documentation/devicetree/bindings/mfd/cros-ec.txt).
-+
-+Required properties:
-+- compatible: Must contain "google,cros-ec-codec"
-+- #sound-dai-cells: Should be 1. The cell specifies number of DAIs.
-+
-+Example:
-+
-+cros-ec@0 {
-+	compatible = "google,cros-ec-spi";
-+
-+	...
-+
-+	cros_ec_codec: ec-codec {
-+		compatible = "google,cros-ec-codec";
-+		#sound-dai-cells = <1>;
-+	};
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b9c6af98283b..05e1922624e58 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3636,6 +3636,11 @@ S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
- F:	drivers/platform/chrome/
- 
-+CHROMEOS EC CODEC DRIVER
-+M:	Cheng-Yi Chiang <cychiang@chromium.org>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-+
- CIRRUS LOGIC AUDIO CODEC DRIVERS
- M:	Brian Austin <brian.austin@cirrus.com>
- M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
+Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Cheers,
+
+Paul
+
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> ---
+>  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 28 +++++++++----------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> index 300339fee1bc..0acf219a8c91 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+> @@ -157,14 +157,14 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	irq_dec = platform_get_irq(dev->pdev, 0);
+>  	if (irq_dec <= 0) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to get IRQ\n");
+> +		dev_err(dev->dev, "Failed to get IRQ\n");
+>  
+>  		return irq_dec;
+>  	}
+>  	ret = devm_request_irq(dev->dev, irq_dec, cedrus_irq,
+>  			       0, dev_name(dev->dev), dev);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to request IRQ\n");
+> +		dev_err(dev->dev, "Failed to request IRQ\n");
+>  
+>  		return ret;
+>  	}
+> @@ -182,21 +182,21 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	ret = of_reserved_mem_device_init(dev->dev);
+>  	if (ret && ret != -ENODEV) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to reserve memory\n");
+> +		dev_err(dev->dev, "Failed to reserve memory\n");
+>  
+>  		return ret;
+>  	}
+>  
+>  	ret = sunxi_sram_claim(dev->dev);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to claim SRAM\n");
+> +		dev_err(dev->dev, "Failed to claim SRAM\n");
+>  
+>  		goto err_mem;
+>  	}
+>  
+>  	dev->ahb_clk = devm_clk_get(dev->dev, "ahb");
+>  	if (IS_ERR(dev->ahb_clk)) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to get AHB clock\n");
+> +		dev_err(dev->dev, "Failed to get AHB clock\n");
+>  
+>  		ret = PTR_ERR(dev->ahb_clk);
+>  		goto err_sram;
+> @@ -204,7 +204,7 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	dev->mod_clk = devm_clk_get(dev->dev, "mod");
+>  	if (IS_ERR(dev->mod_clk)) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to get MOD clock\n");
+> +		dev_err(dev->dev, "Failed to get MOD clock\n");
+>  
+>  		ret = PTR_ERR(dev->mod_clk);
+>  		goto err_sram;
+> @@ -212,7 +212,7 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	dev->ram_clk = devm_clk_get(dev->dev, "ram");
+>  	if (IS_ERR(dev->ram_clk)) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to get RAM clock\n");
+> +		dev_err(dev->dev, "Failed to get RAM clock\n");
+>  
+>  		ret = PTR_ERR(dev->ram_clk);
+>  		goto err_sram;
+> @@ -220,7 +220,7 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	dev->rstc = devm_reset_control_get(dev->dev, NULL);
+>  	if (IS_ERR(dev->rstc)) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to get reset control\n");
+> +		dev_err(dev->dev, "Failed to get reset control\n");
+>  
+>  		ret = PTR_ERR(dev->rstc);
+>  		goto err_sram;
+> @@ -229,7 +229,7 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  	res = platform_get_resource(dev->pdev, IORESOURCE_MEM, 0);
+>  	dev->base = devm_ioremap_resource(dev->dev, res);
+>  	if (IS_ERR(dev->base)) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to map registers\n");
+> +		dev_err(dev->dev, "Failed to map registers\n");
+>  
+>  		ret = PTR_ERR(dev->base);
+>  		goto err_sram;
+> @@ -237,35 +237,35 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+>  
+>  	ret = clk_set_rate(dev->mod_clk, CEDRUS_CLOCK_RATE_DEFAULT);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to set clock rate\n");
+> +		dev_err(dev->dev, "Failed to set clock rate\n");
+>  
+>  		goto err_sram;
+>  	}
+>  
+>  	ret = clk_prepare_enable(dev->ahb_clk);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to enable AHB clock\n");
+> +		dev_err(dev->dev, "Failed to enable AHB clock\n");
+>  
+>  		goto err_sram;
+>  	}
+>  
+>  	ret = clk_prepare_enable(dev->mod_clk);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to enable MOD clock\n");
+> +		dev_err(dev->dev, "Failed to enable MOD clock\n");
+>  
+>  		goto err_ahb_clk;
+>  	}
+>  
+>  	ret = clk_prepare_enable(dev->ram_clk);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to enable RAM clock\n");
+> +		dev_err(dev->dev, "Failed to enable RAM clock\n");
+>  
+>  		goto err_mod_clk;
+>  	}
+>  
+>  	ret = reset_control_reset(dev->rstc);
+>  	if (ret) {
+> -		v4l2_err(&dev->v4l2_dev, "Failed to apply reset\n");
+> +		dev_err(dev->dev, "Failed to apply reset\n");
+>  
+>  		goto err_ram_clk;
+>  	}
 -- 
-2.20.1.415.g653613c723-goog
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
 
