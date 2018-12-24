@@ -2,201 +2,180 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467B9C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881E2C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00E5C21871
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA852184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:13:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lekensteyn.nl header.i=@lekensteyn.nl header.b="WX8iWyI9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzsRFqVY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725991AbeLXPDV (ORCPT
+        id S1725786AbeLXPNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:03:21 -0500
-Received: from lekensteyn.nl ([178.21.112.251]:40181 "EHLO lekensteyn.nl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbeLXPDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:03:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lekensteyn.nl; s=s2048-2015-q1;
-        h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=ohS3+PHUm3lehlZuXJw8J4yZcIA4GZafGJfx8hEq4NQ=;
-        b=WX8iWyI9IZ89I72r5Ogspbnj/wP4I5AbgeghQT00xGWGvu5R+H6X0JC/X2ZWLJJFh8MpvwYRM2LHSSO+IXrdWGQqAqolRf5S6vfQimPWTlCQ4DUpapef8nWHkNC0QzWdwz6+AOpNfDprpBbJH5HKwtKDrIXSQ8dazkDBlJQ3So3q1yJx947lDLJKuCjmQAt0f+oJVcxSYUbzDmunlzpTHcVgzaAlsSBmH2hchfefm+EVTdErcvweZqARtpHVuvkmj2adq4Sx9VHHdVwPMwRzt+aq8jCbTXC8HbSYftbj2rV4j4ARFadAriFVe+ArJpc79anQ6IubjCTDJblFBuZw8Q==;
-Received: by lekensteyn.nl with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <peter@lekensteyn.nl>)
-        id 1gbRl2-0003o9-Hh; Mon, 24 Dec 2018 16:03:05 +0100
-Date:   Mon, 24 Dec 2018 16:03:02 +0100
-From:   Peter Wu <peter@lekensteyn.nl>
-To:     Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com, kraxel@redhat.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-Subject: Re: [PATCH] drm/fb-helper: fix leaks in error path of
- drm_fb_helper_fbdev_setup
-Message-ID: <20181224150302.GA2259@al>
-References: <20181223004315.GA11455@al>
- <20181223005507.28328-1-peter@lekensteyn.nl>
- <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
- <20181223231033.GA31596@al>
- <80d98ab2-dbf8-8d77-e5ca-07995cef0f1b@tronnes.org>
+        Mon, 24 Dec 2018 10:13:34 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:32958 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXPNe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 10:13:34 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i26so8393582lfc.0;
+        Mon, 24 Dec 2018 07:13:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7UaWfd3O19XFkMzUDjx1zcfGAJ1JvDT4OOC5mghnfrY=;
+        b=tzsRFqVYP0X22Z6I1nmJRHa/6rtRPmda5yc9GU0f3NhcGnVUIkPWFMCxzFhozR3Z66
+         lGfDEMdzQhPdaYI+JauBOpuY5LLe7j1dXKPIdFOC8tCq9XAxeLCU1pT1+JMiP4Nqx73K
+         EZ+gNlkSObes9WfOsQKl1yLh4XqFc1jkbzBH2APM5nfNba0exqnP8Byj5NxXgq6G0TLd
+         pyzKQdaVqVWSYbSlsULWLssJP7BgachGEhai/f4dAqxQYuQSRW3gWnQboWDzHQr/YV3M
+         5RD3eyfwBhjFTn+8Qnqe0w/CqT15pwSrb3nFPcDlJIrXn9+ela1U3s9SkLxSXCWuC6je
+         FkCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7UaWfd3O19XFkMzUDjx1zcfGAJ1JvDT4OOC5mghnfrY=;
+        b=edj60YymMWNjw9ZAC2wd1WuS2JRBbapztqe+s8G8UR6pqNCp4HTeV0YwJRkezUiDLm
+         shuVLHJcy2KX2LjZFRnRsccYJgeLCIZADH7ItHIpF/Gg1XkROJv4thvn5or/b5zL5a11
+         7KEPAC3layXlH0f6f8a6deNJYI1nIbQXPwoxqy0t1Hb/E43Dto/SR+h62XNDyfmq7BBm
+         1fzLYUo616n0bJ70+rmAt351YjFkGH55NehNd0PdkF7CjbbJxFkHB9uM/UFRi39aafLF
+         C/y1Z9SbpafGc/UoHx0VZ7mWKf4XiVeBlqAHk7Ws0GXKg14hcyBp7FmXpc7ieujNNWMT
+         ATjQ==
+X-Gm-Message-State: AA+aEWaEo/kfq2s6WHQ9QnJeXFs4/ZZPdsWBgSxx86BVivTm1Ec+vp6d
+        YUH8t//Y5g8zAOyI9yK6h1E0cljIcGaC65oq
+X-Google-Smtp-Source: AFSGD/W+vjF2SCwvwnUn/xrX0qhRdISgV99Gi2qMilV6Y4Qr1RVo5BCO7RxA4jFIvofj1frEhPNOzw==
+X-Received: by 2002:a19:f89:: with SMTP id 9mr6530830lfp.10.1545664410434;
+        Mon, 24 Dec 2018 07:13:30 -0800 (PST)
+Received: from localhost.localdomain (pool-109-191-228-208.is74.ru. [109.191.228.208])
+        by smtp.gmail.com with ESMTPSA id r29-v6sm6324185ljd.44.2018.12.24.07.13.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Dec 2018 07:13:29 -0800 (PST)
+From:   Ivan Mironov <mironov.ivan@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Ariel Elior <ariel.elior@cavium.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@cavium.com>,
+        everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
+        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
+        Ivan Mironov <mironov.ivan@gmail.com>
+Subject: [PATCH v2] bnx2x: Fix NULL pointer dereference in bnx2x_del_all_vlans() on some hw
+Date:   Mon, 24 Dec 2018 20:13:05 +0500
+Message-Id: <20181224151305.31027-1-mironov.ivan@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <80d98ab2-dbf8-8d77-e5ca-07995cef0f1b@tronnes.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 03:52:55PM +0100, Noralf Trønnes wrote:
-> 
-> 
-> Den 24.12.2018 00.10, skrev Peter Wu:
-> > On Sun, Dec 23, 2018 at 02:55:52PM +0100, Noralf Trønnes wrote:
-> > > 
-> > > 
-> > > Den 23.12.2018 01.55, skrev Peter Wu:
-> > > > After drm_fb_helper_fbdev_setup calls drm_fb_helper_init,
-> > > > "dev->fb_helper" will be initialized (and thus drm_fb_helper_fini will
-> > > > have some effect). After that, drm_fb_helper_initial_config is called
-> > > > which may call the "fb_probe" driver callback.
-> > > > 
-> > > > This driver callback may call drm_fb_helper_defio_init (as is done by
-> > > > drm_fb_helper_generic_probe) or set a framebuffer (as is done by bochs)
-> > > > as documented. These are normally cleaned up on exit by
-> > > > drm_fb_helper_fbdev_teardown which also calls drm_fb_helper_fini.
-> > > > 
-> > > > If an error occurs after "fb_probe", but before setup is complete, then
-> > > > calling just drm_fb_helper_fini will leak resources. This was triggered
-> > > > by df2052cc922 ("bochs: convert to drm_fb_helper_fbdev_setup/teardown"):
-> > > > 
-> > > >       [   50.008030] bochsdrmfb: enable CONFIG_FB_LITTLE_ENDIAN to support this framebuffer
-> > > >       [   50.009436] bochs-drm 0000:00:02.0: [drm:drm_fb_helper_fbdev_setup] *ERROR* fbdev: Failed to set configuration (ret=-38)
-> > > >       [   50.011456] [drm] Initialized bochs-drm 1.0.0 20130925 for 0000:00:02.0 on minor 2
-> > > >       [   50.013604] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x280/0x2a0
-> > > >       [   50.016175] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G                T 4.20.0-rc7 #1
-> > > >       [   50.017732] EIP: drm_mode_config_cleanup+0x280/0x2a0
-> > > >       ...
-> > > >       [   50.023155] Call Trace:
-> > > >       [   50.023155]  ? bochs_kms_fini+0x1e/0x30
-> > > >       [   50.023155]  ? bochs_unload+0x18/0x40
-> > > > 
-> > > > This can be reproduced with QEMU and CONFIG_FB_LITTLE_ENDIAN=n.
-> > > > 
-> > > > Link: https://lkml.kernel.org/r/20181221083226.GI23332@shao2-debian
-> > > > Link: https://lkml.kernel.org/r/20181223004315.GA11455@al
-> > > > Fixes: 8741216396b2 ("drm/fb-helper: Add drm_fb_helper_fbdev_setup/teardown()")
-> > > > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > > > Cc: Noralf Trønnes <noralf@tronnes.org>
-> > > > Signed-off-by: Peter Wu <peter@lekensteyn.nl>
-> > > > ---
-> > > >    drivers/gpu/drm/drm_fb_helper.c | 2 +-
-> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> > > > index 9d64f874f965..432e0f3b9267 100644
-> > > > --- a/drivers/gpu/drm/drm_fb_helper.c
-> > > > +++ b/drivers/gpu/drm/drm_fb_helper.c
-> > > > @@ -2860,7 +2860,7 @@ int drm_fb_helper_fbdev_setup(struct drm_device *dev,
-> > > >    	return 0;
-> > > >    err_drm_fb_helper_fini:
-> > > > -	drm_fb_helper_fini(fb_helper);
-> > > > +	drm_fb_helper_fbdev_teardown(dev);
-> > > 
-> > > This change will break the error path for drm_fbdev_generic_setup()
-> > > because drm_fb_helper_generic_probe() cleans up on error but doesn't
-> > > clear drm_fb_helper->fb resulting in a double drm_framebuffer_remove().
-> > 
-> > This should probably considered a bug of drm_fb_helper_generic_probe.
-> > Ownership of fb_helper should remain with the caller. The caller can
-> > detect an error and act accordingly.
-> > 
-> > > My assumption has been that the drm_fb_helper_funcs->fb_probe callback
-> > > cleans up its resources on error. Clearly this is not the case for bochs, so
-> > > my take on this is that bochsfb_create() needs to clean up on error.
-> > 
-> > That assumption still holds for bochs. The problem is this sequence:
-> > - drm_fb_helper_fbdev_setup is called.
-> > - fb_probe succeeds (this is crucial).
-> > - register_framebuffer fails.
-> > - error path of setup is triggered.
-> > 
-> > As fb_helper is fully setup by drivers, the drm_fb_helper core should
-> > fully deallocate it again on the error path or else a leak occurs.
-> > 
-> > > Gerd has a patchset that switches bochs over to the generic fbdev
-> > > emulation, but ofc that doesn't help with 4.20:
-> > > https://patchwork.freedesktop.org/series/54269/
-> > 
-> > And that does not help with other users of the drm_fb_helper who use
-> > functions like drm_fb_helper_defio_init. They will likely run in the
-> > same problem.
-> > 
-> > I don't have a way to test tinydrm or other drivers, but if you force
-> > register_framebuffer to fail, you should be able to reproduce the
-> > problem with drm_fb_helper_generic_probe.
-> > 
-> 
-> Now I understand. I have looked at the drivers that use drm_fb_helper
-> and no one seem to handle the case where register_framebuffer() is
-> failing.
-> 
-> Here's what drivers do when drm_fb_helper_initial_config() fails:
-> 
-> Doesn't check:
-> amdgpu
-> virtio
-> 
-> Calls drm_fb_helper_fini():
-> armada
-> ast
-> exynos
-> gma500
-> hisilicon
-> mgag200
-> msm
-> nouveau
-> omap
-> radeon
-> rockchip
-> tegra
-> udl
-> bochs - Uses drm_fb_helper_fbdev_setup()
-> qxl - Uses drm_fb_helper_fbdev_setup()
-> vboxvideo - Uses drm_fb_helper_fbdev_setup()
-> 
-> Might clean up, not sure:
-> cirrus
-> 
-> Looks suspicious:
-> i915
-> 
-> I looked at bochs before it switched to drm_fb_helper_fbdev_setup() and
-> it also just called drm_fb_helper_fini().
-> 
-> It looks like you've uncovered something no one has though about (or
-> not implemented at least).
-> 
-> It's not just the framebuffer that's not destroyed, the buffer object
-> is also leaked. drm_mode_config_cleanup() yells about the framebuffer
-> (and frees it), but says nothing about the buffer object. It might be
-> that it can't even be made to detect that since some drivers do special
-> stuff for the fbdev buffer.
-> 
-> I'll pick up on this and do some testing after the Christmas holidays.
+This happened when I tried to boot normal Fedora 29 system with latest
+available kernel (from fedora rawhide, plus some unrelated custom
+patches):
 
-Thanks, the warning is bad for CI (which uses QEMU), but otherwise it
-should not have any effect on regular users so it can wait.
+	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+	PGD 0 P4D 0
+	Oops: 0010 [#1] SMP PTI
+	CPU: 6 PID: 1422 Comm: libvirtd Tainted: G          I       4.20.0-0.rc7.git3.hpsa2.1.fc29.x86_64 #1
+	Hardware name: HP ProLiant BL460c G6, BIOS I24 05/21/2018
+	RIP: 0010:          (null)
+	Code: Bad RIP value.
+	RSP: 0018:ffffa47ccdc9fbe0 EFLAGS: 00010246
+	RAX: 0000000000000000 RBX: 00000000000003e8 RCX: ffffa47ccdc9fbf8
+	RDX: ffffa47ccdc9fc00 RSI: ffff97d9ee7b01f8 RDI: ffff97d9f0150b80
+	RBP: ffff97d9f0150b80 R08: 0000000000000000 R09: 0000000000000000
+	R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000003
+	R13: ffff97d9ef1e53e8 R14: 0000000000000009 R15: ffff97d9f0ac6730
+	FS:  00007f4d224ef700(0000) GS:ffff97d9fa200000(0000) knlGS:0000000000000000
+	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+	CR2: ffffffffffffffd6 CR3: 00000011ece52006 CR4: 00000000000206e0
+	Call Trace:
+	 ? bnx2x_chip_cleanup+0x195/0x610 [bnx2x]
+	 ? bnx2x_nic_unload+0x1e2/0x8f0 [bnx2x]
+	 ? bnx2x_reload_if_running+0x24/0x40 [bnx2x]
+	 ? bnx2x_set_features+0x79/0xa0 [bnx2x]
+	 ? __netdev_update_features+0x244/0x9e0
+	 ? netlink_broadcast_filtered+0x136/0x4b0
+	 ? netdev_update_features+0x22/0x60
+	 ? dev_disable_lro+0x1c/0xe0
+	 ? devinet_sysctl_forward+0x1c6/0x211
+	 ? proc_sys_call_handler+0xab/0x100
+	 ? __vfs_write+0x36/0x1a0
+	 ? rcu_read_lock_sched_held+0x79/0x80
+	 ? rcu_sync_lockdep_assert+0x2e/0x60
+	 ? __sb_start_write+0x14c/0x1b0
+	 ? vfs_write+0x159/0x1c0
+	 ? vfs_write+0xba/0x1c0
+	 ? ksys_write+0x52/0xc0
+	 ? do_syscall_64+0x60/0x1f0
+	 ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+After some investigation I figured out that recently added cleanup code
+tries to call VLAN filtering de-initialization function which exist only
+for newer hardware. Corresponding function pointer is not
+set (== 0) for older hardware, namely these chips:
+
+	#define CHIP_NUM_57710			0x164e
+	#define CHIP_NUM_57711			0x164f
+	#define CHIP_NUM_57711E			0x1650
+
+And I have one of those in my test system:
+
+	Broadcom Inc. and subsidiaries NetXtreme II BCM57711E 10-Gigabit PCIe [14e4:1650]
+
+Function bnx2x_init_vlan_mac_fp_objs() from
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h decides whether to
+initialize relevant pointers in bnx2x_sp_objs.vlan_obj or not.
+
+This regression was introduced after v4.20-rc7, and still exists in v4.20
+release.
+
+Fixes: 04f05230c5c13 ("bnx2x: Remove configured vlans as part of unload sequence.")
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+---
+v2:
+- As suggested by Sudarsana Reddy Kalluru, do not call bnx2x_del_all_vlans() at
+  all if (!CHIP_IS_E1x(bp)).
+v1:
+- Check for chip num instead of (vlan_obj->delete_all != 0).
+v0:
+- Patch introduced.
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index b164f705709d..3b5b47e98c73 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -9360,10 +9360,16 @@ void bnx2x_chip_cleanup(struct bnx2x *bp, int unload_mode, bool keep_link)
+ 		BNX2X_ERR("Failed to schedule DEL commands for UC MACs list: %d\n",
+ 			  rc);
+ 
+-	/* Remove all currently configured VLANs */
+-	rc = bnx2x_del_all_vlans(bp);
+-	if (rc < 0)
+-		BNX2X_ERR("Failed to delete all VLANs\n");
++	/* The whole *vlan_obj structure may be not initialized if VLAN
++	 * filtering offload is not supported by hardware. Currently this is
++	 * true for all hardware covered by CHIP_IS_E1x().
++	 */
++	if (!CHIP_IS_E1x(bp)) {
++		/* Remove all currently configured VLANs */
++		rc = bnx2x_del_all_vlans(bp);
++		if (rc < 0)
++			BNX2X_ERR("Failed to delete all VLANs\n");
++	}
+ 
+ 	/* Disable LLH */
+ 	if (!CHIP_IS_E1(bp))
 -- 
-Kind regards,
-Peter Wu
-https://lekensteyn.nl
+2.20.1
+
