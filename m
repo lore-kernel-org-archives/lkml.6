@@ -2,219 +2,148 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9903EC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E86C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2672229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8133721850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:13:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="eQLUhoZc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725892AbeLXSMw (ORCPT
+        id S1725899AbeLXSNd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 13:12:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55240 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbeLXSMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 13:12:51 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2625C88E53;
-        Mon, 24 Dec 2018 18:12:51 +0000 (UTC)
-Received: from redhat.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 65EC46092E;
-        Mon, 24 Dec 2018 18:12:50 +0000 (UTC)
-Date:   Mon, 24 Dec 2018 13:12:49 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
- vmap()
-Message-ID: <20181224131040-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213102315-mutt-send-email-mst@kernel.org>
- <9459e227-a943-8553-732b-d7f5225a0f22@redhat.com>
- <20181214072334-mutt-send-email-mst@kernel.org>
- <b10c99a2-a9c3-595f-983e-2547325e64ad@redhat.com>
+        Mon, 24 Dec 2018 13:13:33 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45675 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbeLXSNd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 13:13:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so12155220wrr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:13:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3tJJaN+0nHjG6o3hT/fiL3K5Igl+3VTS4TCm9SH/w8M=;
+        b=eQLUhoZcwHlCJRuLr12+R2kvebMCYP/Yn74sw1Pe3060DXFy+U99Db6GhQULDK3ePH
+         0jkEKzDkRn4IewaqfRyU3obH/noRkdSb3cVjEumqXEahFmwKcI1LAsvGbAXuNAuAbzww
+         kEVoQWxnh4yNs1LqGUuPLBF96tmpm7bNVaQdVHb4WXOn40624rcFSTrvjO/82RplYfG3
+         90H9Daoi9lLLwvWlsyH1t28JKrhldggHWBXxvqZgvk8yqgFeVjYm1cqFWyoekmwQNhP0
+         jkFTHyRp3SHgk5YPK41JlPHXahGLqPmLcVeRn7am7FCR+ZwV27F39laXqYEPWcbI2STJ
+         TmtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3tJJaN+0nHjG6o3hT/fiL3K5Igl+3VTS4TCm9SH/w8M=;
+        b=Fu3u8efkzX7/Ef98ZRlYFuoc6oBzbmbE8velOsFlFBdWI1HIiWQwTy4JrOvyOco6qV
+         q0f6RK5p0cJNnfKvGy2+U9aJ126JuP96n5mnWPhkFVHSalcMA4vtrzxY5dvXbWEcmTMI
+         FXJ/ohWrY3umFVD5PyLHKXIUF/tdYABhxSt1fXF+nob3razUmoty3eQsAgiu/XVAafsb
+         tkMZCBcwXX0Q+EooYe3mTsC2JiO/8C2nsD3zGtcsUOG0ffphyekR0R/17yv62XGSYLER
+         TdJnjOi1T7rVUrQkBhCWfjIMZR5osOQD/BTWN1oUpmSH4NHk8y+UKkaL77tNjTXsf7zQ
+         O0Pg==
+X-Gm-Message-State: AJcUukdqJmwXBOsCyH9gKK/ay5MOYySACBNDMNZuAgMYJqBRaCyyFrHO
+        NfmBg+qMpFrIfwow/LiuvTcfBg==
+X-Google-Smtp-Source: ALg8bN5sq7Eu/060VJahDDuYpJpOg1xEQmfhtD5AisjRjJsr/N9JNson/kGVlXPaxbvkAS/q2b06Vw==
+X-Received: by 2002:a5d:480d:: with SMTP id l13mr13410981wrq.175.1545675210979;
+        Mon, 24 Dec 2018 10:13:30 -0800 (PST)
+Received: from brauner.io (p5B2A6FBE.dip0.t-ipconnect.de. [91.42.111.190])
+        by smtp.gmail.com with ESMTPSA id i186sm23515627wmd.19.2018.12.24.10.13.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Dec 2018 10:13:30 -0800 (PST)
+Date:   Mon, 24 Dec 2018 19:13:24 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Gabriel C <nix.or.die@gmail.com>,
+        Marcus Meissner <christian.brauner@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: FYI: Userland breakage caused by udev bind commit
+Message-ID: <20181224181322.n7n6d2y63gwnv7cb@brauner.io>
+References: <20181223164954.hib4lbchftspidsd@suse.de>
+ <20181223171703.s7jm6fkyosnsf33z@brauner.io>
+ <20181223180609.GA102606@dtor-ws>
+ <CAEJqkgjSX8PW-NXa8CoMzx=2P5LOiDz0MCHoZ03zE7wZ=n2dKg@mail.gmail.com>
+ <20181224091703.GB26796@kroah.com>
+ <CAEJqkgj2EjQq_aaspRs7uyTL4LxC9dRUTheN25H+QhjkLjjpjQ@mail.gmail.com>
+ <20181224105407.GA29719@kroah.com>
+ <20181224173427.GA254245@dtor-ws>
+ <CAHk-=wiTE+k8WkHoDLzxX2Qz8ko7W+BsXOhirS_j0FZaBMxDdA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b10c99a2-a9c3-595f-983e-2547325e64ad@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 24 Dec 2018 18:12:51 +0000 (UTC)
+In-Reply-To: <CAHk-=wiTE+k8WkHoDLzxX2Qz8ko7W+BsXOhirS_j0FZaBMxDdA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 04:32:39PM +0800, Jason Wang wrote:
+On Mon, Dec 24, 2018 at 10:06:54AM -0800, Linus Torvalds wrote:
+> On Mon, Dec 24, 2018 at 9:34 AM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >
+> > Well, it appears that we can no longer extend uevent interface with new
+> > types of uevents, at least not until we go and fix up all
+> > udev-derivatives and give some time for things to settle.
 > 
-> On 2018/12/14 下午8:33, Michael S. Tsirkin wrote:
-> > On Fri, Dec 14, 2018 at 11:42:18AM +0800, Jason Wang wrote:
-> > > On 2018/12/13 下午11:27, Michael S. Tsirkin wrote:
-> > > > On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
-> > > > > Hi:
-> > > > > 
-> > > > > This series tries to access virtqueue metadata through kernel virtual
-> > > > > address instead of copy_user() friends since they had too much
-> > > > > overheads like checks, spec barriers or even hardware feature
-> > > > > toggling.
-> > > > Userspace accesses through remapping tricks and next time there's a need
-> > > > for a new barrier we are left to figure it out by ourselves.
-> > > 
-> > > I don't get here, do you mean spec barriers?
-> > I mean the next barrier people decide to put into userspace
-> > memory accesses.
-> > 
-> > > It's completely unnecessary for
-> > > vhost which is kernel thread.
-> > It's defence in depth. Take a look at the commit that added them.
-> > And yes quite possibly in most cases we actually have a spec
-> > barrier in the validation phase. If we do let's use the
-> > unsafe variants so they can be found.
+> How about having the users "opt in" for new events some way?
 > 
-> 
-> unsafe variants can only work if you can batch userspace access. This is not
-> necessarily the case for light load.
+> Do all the legacy events by default, but then if some user wants a
+> "bind" event (or some other new event) add a model for the uevent
+> interface to actually enable it.
 
+So one possibility is to add a socket option for lib/kobject_uevent.c
+that can be set via setsockopt. We did something like this in netlink
+for strict property and header checking without breaking backwards
+compatibility. That might be an option:
 
-Do we care a lot about the light load? How would you benchmark it?
+commit cd7f7df6ca3366be4ac79e824fdaa8d482270015
+Merge: 272a66173bbc 8c6e137fbc7f
+Author: David S. Miller <davem@davemloft.net>
+Date:   Mon Oct 8 10:39:06 2018 -0700
 
+    Merge branch 'rtnetlink-Add-support-for-rigid-checking-of-data-in-dump-request'
 
-> 
-> > 
-> > > And even if you're right, vhost is not the
-> > > only place, there's lots of vmap() based accessing in kernel.
-> > For sure. But if one can get by without get user pages, one
-> > really should. Witness recently uncovered mess with file
-> > backed storage.
-> 
-> 
-> We only pin metadata pages, I don't believe they will be used by any DMA.
+    David Ahern says:
 
-It doesn't matter really, if you dirty pages behind the MM back
-the problem is there.
+    ====================
+    rtnetlink: Add support for rigid checking of data in dump request
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=cd7f7df6ca3366be4ac79e824fdaa8d482270015
+
+or adding a new flag that can be passed when opening a
+NETLINK_KOBJECT_UEVENT socket.
+
+Christian
 
 > 
-> > 
-> > > Think in
-> > > another direction, this means we won't suffer form unnecessary barriers for
-> > > kthread like vhost in the future, we will manually pick the one we really
-> > > need
-> > I personally think we should err on the side of caution not on the side of
-> > performance.
+> Not using kernel versioning (nothing should *ever* look at the kernel
+> version, since that makes things like backports a huge and
+> insurmountable pain), but simply using some specific control channel.
 > 
+> > I guess reverting is the right solution here. I wish folks would yell
+> > earlier though...
 > 
-> So what you suggest may lead unnecessary performance regression (10%-20%)
-> which is part of the goal of this series. We should audit and only use the
-> one we really need instead of depending on copy_user() friends().
+> So nobody is actually using the new "bind" event, I take it? It's
+> about a year and a half, and it's in 4.14 which is widely used, so
+> reverting it has a risk too.
 > 
-> If we do it our own, it could be slow for for security fix but it's no less
-> safe than before with performance kept.
+> Which is why I too would hope people would be much more vocal about
+> "that broke my setup".
 > 
+> But reverting does sound like the right thing to do if nobody is using
+> it. It sounds like systemd udev does not, and if eudev is actively
+> broken by this then how many other cases might there be?
 > 
-> > 
-> > > (but it should have little possibility).
-> > History seems to teach otherwise.
+> I assume any locally modified udev rules would still be ok with the
+> revert (since presumably any udev rule modification people did was to
+> just ignore the bind/unbind events that no longer would be sent).
 > 
-> 
-> What case did you mean here?
-> 
-> 
-> > 
-> > > Please notice we only access metdata through remapping not the data itself.
-> > > This idea has been used for high speed userspace backend for years, e.g
-> > > packet socket or recent AF_XDP.
-> > I think their justification for the higher risk is that they are mostly
-> > designed for priveledged userspace.
-> 
-> 
-> I think it's the same with TUN/TAP, privileged process can pass them to
-> unprivileged ones.
-> 
-> 
-> > 
-> > > The only difference is the page was remap to
-> > > from kernel to userspace.
-> > At least that avoids the g.u.p mess.
-> 
-> 
-> I'm still not very clear at the point. We only pin 2 or 4 pages, they're
-> several other cases that will pin much more.
-> 
-> 
-> > 
-> > > >     I don't
-> > > > like the idea I have to say.  As a first step, why don't we switch to
-> > > > unsafe_put_user/unsafe_get_user etc?
-> > > 
-> > > Several reasons:
-> > > 
-> > > - They only have x86 variant, it won't have any difference for the rest of
-> > > architecture.
-> > Is there an issue on other architectures? If yes they can be extended
-> > there.
-> 
-> 
-> Consider the unexpected amount of work and in the best case it can give the
-> same performance to vmap(). I'm not sure it's worth.
-> 
-> 
-> > 
-> > > - unsafe_put_user/unsafe_get_user is not sufficient for accessing structures
-> > > (e.g accessing descriptor) or arrays (batching).
-> > So you want unsafe_copy_xxx_user? I can do this. Hang on will post.
-> > 
-> > > - Unless we can batch at least the accessing of two places in three of
-> > > avail, used and descriptor in one run. There will be no difference. E.g we
-> > > can batch updating used ring, but it won't make any difference in this case.
-> > > 
-> > So let's batch them all?
-> 
-> 
-> Batching might not help for the case of light load. And we need to measure
-> the gain/cost of batching itself.
-> 
-> 
-> > 
-> > 
-> > > > That would be more of an apples to apples comparison, would it not?
-> > > 
-> > > Apples to apples comparison only help if we are the No.1. But the fact is we
-> > > are not. If we want to compete with e.g dpdk or AF_XDP, vmap() is the
-> > > fastest method AFAIK.
-> > > 
-> > > 
-> > > Thanks
-> > We need to speed up the packet access itself too though.
-> > You can't vmap all of guest memory.
-> 
-> 
-> This series only pin and vmap very few pages (metadata).
-> 
-> Thanks
-> 
-> 
-> > 
-> > 
-> > > > 
-> > > > > Test shows about 24% improvement on TX PPS. It should benefit other
-> > > > > cases as well.
-> > > > > 
-> > > > > Please review
-> > > > > 
-> > > > > Jason Wang (3):
-> > > > >     vhost: generalize adding used elem
-> > > > >     vhost: fine grain userspace memory accessors
-> > > > >     vhost: access vq metadata through kernel virtual address
-> > > > > 
-> > > > >    drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
-> > > > >    drivers/vhost/vhost.h |  11 ++
-> > > > >    2 files changed, 266 insertions(+), 26 deletions(-)
-> > > > > 
-> > > > > -- 
-> > > > > 2.17.1
+>                 Linus
