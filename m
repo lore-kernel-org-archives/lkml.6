@@ -2,213 +2,194 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D8FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C2DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D162173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 397B32173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:37:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PUuSTXPN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeLXIcr (ORCPT
+        id S1726850AbeLXIh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 03:32:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37724 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725984AbeLXIcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 03:32:47 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B1B581DEA;
-        Mon, 24 Dec 2018 08:32:46 +0000 (UTC)
-Received: from [10.72.12.206] (ovpn-12-206.pek2.redhat.com [10.72.12.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F273919743;
-        Mon, 24 Dec 2018 08:32:41 +0000 (UTC)
-Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
- vmap()
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213102315-mutt-send-email-mst@kernel.org>
- <9459e227-a943-8553-732b-d7f5225a0f22@redhat.com>
- <20181214072334-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <b10c99a2-a9c3-595f-983e-2547325e64ad@redhat.com>
-Date:   Mon, 24 Dec 2018 16:32:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 24 Dec 2018 03:37:56 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:47015 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbeLXIh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 03:37:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id w7so5341378pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 00:37:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jCd+hczgR1aJ/LYMR/UN9ryjdYIcfPKLHku5JEL6k74=;
+        b=PUuSTXPNEZ9RsiE0UUGp+8e7LJc3txPFJyg8m4bVvQNkBkju7Kmp52W95AY2dIc765
+         7kcQ2W86JkHa3lpk2SnfGnFTnnKRvvjMAZPqN5yC+asgL+WTMyaYRYd78zzHcPislej1
+         VkyZF+I9sR9GQQx+qAZPekyHjl03yXv4tYyrM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jCd+hczgR1aJ/LYMR/UN9ryjdYIcfPKLHku5JEL6k74=;
+        b=eTVyxw/b+/zCaZTsXiqBx+ya8O0v4Lwr3G4JHriRuIBFxxX00wWJBulItOwRF/AF0B
+         CYjJky55xO1lJyRNbS7zhE1Iok7hZhLYqEJyep4PKKbEoT9w1SSgqZCdgltgu7W1hn+L
+         cy9carrJOsZJa8vHC7zrWyT0pcYPBN9PHimqM5XEgjGEGsrY3N4eG43pVTVSKPTttQ5C
+         6Vk8LEQ8E2NpUHrqRFIuhgofzxZVtyH+MpOoIfMAh3YeiqFj758DZCqtE6YODOIRO3s+
+         /ZFqgEQVr4Za3sGoXhy52RyfpCK5WHW6NIdkO1YHZsM5VaUfJS0WV2AoKd7tvatfeMSM
+         JAug==
+X-Gm-Message-State: AA+aEWYLFOIXqiyfW2uB+TJ2SAMqLGdRqTSceJLkkJ8nJJ3+gGQ3UmUC
+        6TkyG47RXkblIXdJZmfD55jOMbebx9s=
+X-Google-Smtp-Source: AFSGD/WFccr78PT0BzLYCkAsKVW0Twte1sA/OtxmND/7/QrpMWa9sjmMrDNMk1ora+5z/RjB+nChjA==
+X-Received: by 2002:a62:130c:: with SMTP id b12mr12446240pfj.247.1545640674599;
+        Mon, 24 Dec 2018 00:37:54 -0800 (PST)
+Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
+        by smtp.gmail.com with ESMTPSA id r130sm59078720pfr.48.2018.12.24.00.37.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 00:37:53 -0800 (PST)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Subject: [PATCH v2 1/3] mfd: cros_ec: Add commands to control codec
+Date:   Mon, 24 Dec 2018 16:37:22 +0800
+Message-Id: <20181224083724.75618-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-In-Reply-To: <20181214072334-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 24 Dec 2018 08:32:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add EC host commands to control codec on EC.
 
-On 2018/12/14 下午8:33, Michael S. Tsirkin wrote:
-> On Fri, Dec 14, 2018 at 11:42:18AM +0800, Jason Wang wrote:
->> On 2018/12/13 下午11:27, Michael S. Tsirkin wrote:
->>> On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
->>>> Hi:
->>>>
->>>> This series tries to access virtqueue metadata through kernel virtual
->>>> address instead of copy_user() friends since they had too much
->>>> overheads like checks, spec barriers or even hardware feature
->>>> toggling.
->>> Userspace accesses through remapping tricks and next time there's a need
->>> for a new barrier we are left to figure it out by ourselves.
->>
->> I don't get here, do you mean spec barriers?
-> I mean the next barrier people decide to put into userspace
-> memory accesses.
->
->> It's completely unnecessary for
->> vhost which is kernel thread.
-> It's defence in depth. Take a look at the commit that added them.
-> And yes quite possibly in most cases we actually have a spec
-> barrier in the validation phase. If we do let's use the
-> unsafe variants so they can be found.
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ Note: This patch is merged to mfd tree for-mfd-next branch already.
+ But this is still needed on sound tree for-next branch in order to
+ compile codec driver.
 
+ include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-unsafe variants can only work if you can batch userspace access. This is 
-not necessarily the case for light load.
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index 9a9631f0559e2..fc91082d4c357 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -2790,6 +2790,100 @@ struct ec_response_battery_vendor_param {
+ 	uint32_t value;
+ } __packed;
+ 
++/*****************************************************************************/
++/* Commands for I2S recording on audio codec. */
++
++#define EC_CMD_CODEC_I2S 0x00BC
++
++enum ec_codec_i2s_subcmd {
++	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
++	EC_CODEC_SET_GAIN = 0x1,
++	EC_CODEC_GET_GAIN = 0x2,
++	EC_CODEC_I2S_ENABLE = 0x3,
++	EC_CODEC_I2S_SET_CONFIG = 0x4,
++	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
++	EC_CODEC_I2S_SET_BCLK = 0x6,
++};
++
++enum ec_sample_depth_value {
++	EC_CODEC_SAMPLE_DEPTH_16 = 0,
++	EC_CODEC_SAMPLE_DEPTH_24 = 1,
++};
++
++enum ec_i2s_config {
++	EC_DAI_FMT_I2S = 0,
++	EC_DAI_FMT_RIGHT_J = 1,
++	EC_DAI_FMT_LEFT_J = 2,
++	EC_DAI_FMT_PCM_A = 3,
++	EC_DAI_FMT_PCM_B = 4,
++	EC_DAI_FMT_PCM_TDM = 5,
++};
++
++struct ec_param_codec_i2s {
++	/*
++	 * enum ec_codec_i2s_subcmd
++	 */
++	uint8_t cmd;
++	union {
++		/*
++		 * EC_CODEC_SET_SAMPLE_DEPTH
++		 * Value should be one of ec_sample_depth_value.
++		 */
++		uint8_t depth;
++
++		/*
++		 * EC_CODEC_SET_GAIN
++		 * Value should be 0~43 for both channels.
++		 */
++		struct ec_param_codec_i2s_set_gain {
++			uint8_t left;
++			uint8_t right;
++		} __packed gain;
++
++		/*
++		 * EC_CODEC_I2S_ENABLE
++		 * 1 to enable, 0 to disable.
++		 */
++		uint8_t i2s_enable;
++
++		/*
++		 * EC_CODEC_I2S_SET_COFNIG
++		 * Value should be one of ec_i2s_config.
++		 */
++		uint8_t i2s_config;
++
++		/*
++		 * EC_CODEC_I2S_SET_TDM_CONFIG
++		 * Value should be one of ec_i2s_config.
++		 */
++		struct ec_param_codec_i2s_tdm {
++			/*
++			 * 0 to 496
++			 */
++			int16_t ch0_delay;
++			/*
++			 * -1 to 496
++			 */
++			int16_t ch1_delay;
++			uint8_t adjacent_to_ch0;
++			uint8_t adjacent_to_ch1;
++		} __packed tdm_param;
++
++		/*
++		 * EC_CODEC_I2S_SET_BCLK
++		 */
++		uint32_t bclk;
++	};
++} __packed;
++
++/*
++ * For subcommand EC_CODEC_GET_GAIN.
++ */
++struct ec_response_codec_gain {
++	uint8_t left;
++	uint8_t right;
++} __packed;
++
+ /*****************************************************************************/
+ /* System commands */
+ 
+-- 
+2.20.1.415.g653613c723-goog
 
-
->
->> And even if you're right, vhost is not the
->> only place, there's lots of vmap() based accessing in kernel.
-> For sure. But if one can get by without get user pages, one
-> really should. Witness recently uncovered mess with file
-> backed storage.
-
-
-We only pin metadata pages, I don't believe they will be used by any DMA.
-
-
->
->> Think in
->> another direction, this means we won't suffer form unnecessary barriers for
->> kthread like vhost in the future, we will manually pick the one we really
->> need
-> I personally think we should err on the side of caution not on the side of
-> performance.
-
-
-So what you suggest may lead unnecessary performance regression 
-(10%-20%) which is part of the goal of this series. We should audit and 
-only use the one we really need instead of depending on copy_user() 
-friends().
-
-If we do it our own, it could be slow for for security fix but it's no 
-less safe than before with performance kept.
-
-
->
->> (but it should have little possibility).
-> History seems to teach otherwise.
-
-
-What case did you mean here?
-
-
->
->> Please notice we only access metdata through remapping not the data itself.
->> This idea has been used for high speed userspace backend for years, e.g
->> packet socket or recent AF_XDP.
-> I think their justification for the higher risk is that they are mostly
-> designed for priveledged userspace.
-
-
-I think it's the same with TUN/TAP, privileged process can pass them to 
-unprivileged ones.
-
-
->
->> The only difference is the page was remap to
->> from kernel to userspace.
-> At least that avoids the g.u.p mess.
-
-
-I'm still not very clear at the point. We only pin 2 or 4 pages, they're 
-several other cases that will pin much more.
-
-
->
->>>     I don't
->>> like the idea I have to say.  As a first step, why don't we switch to
->>> unsafe_put_user/unsafe_get_user etc?
->>
->> Several reasons:
->>
->> - They only have x86 variant, it won't have any difference for the rest of
->> architecture.
-> Is there an issue on other architectures? If yes they can be extended
-> there.
-
-
-Consider the unexpected amount of work and in the best case it can give 
-the same performance to vmap(). I'm not sure it's worth.
-
-
->
->> - unsafe_put_user/unsafe_get_user is not sufficient for accessing structures
->> (e.g accessing descriptor) or arrays (batching).
-> So you want unsafe_copy_xxx_user? I can do this. Hang on will post.
->
->> - Unless we can batch at least the accessing of two places in three of
->> avail, used and descriptor in one run. There will be no difference. E.g we
->> can batch updating used ring, but it won't make any difference in this case.
->>
-> So let's batch them all?
-
-
-Batching might not help for the case of light load. And we need to 
-measure the gain/cost of batching itself.
-
-
->
->
->>> That would be more of an apples to apples comparison, would it not?
->>
->> Apples to apples comparison only help if we are the No.1. But the fact is we
->> are not. If we want to compete with e.g dpdk or AF_XDP, vmap() is the
->> fastest method AFAIK.
->>
->>
->> Thanks
-> We need to speed up the packet access itself too though.
-> You can't vmap all of guest memory.
-
-
-This series only pin and vmap very few pages (metadata).
-
-Thanks
-
-
->
->
->>>
->>>> Test shows about 24% improvement on TX PPS. It should benefit other
->>>> cases as well.
->>>>
->>>> Please review
->>>>
->>>> Jason Wang (3):
->>>>     vhost: generalize adding used elem
->>>>     vhost: fine grain userspace memory accessors
->>>>     vhost: access vq metadata through kernel virtual address
->>>>
->>>>    drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
->>>>    drivers/vhost/vhost.h |  11 ++
->>>>    2 files changed, 266 insertions(+), 26 deletions(-)
->>>>
->>>> -- 
->>>> 2.17.1
