@@ -2,126 +2,120 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F5FC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E97C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B5521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9798821848
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="BDytPErg"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="EhR60JPm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbeLXQ1A (ORCPT
+        id S1725825AbeLXQaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:27:00 -0500
-Received: from cock.li ([185.100.85.212]:53362 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbeLXQ07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:26:59 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545668816; bh=EHnhNQfdd3IE5IbzFeplj2eUdomn1c/MYomV9PYYF0A=;
-        h=Date:From:To:Subject:In-Reply-To:References:From;
-        b=BDytPErgWf/ZgOvfF7xoo+YH3BSDj+MdMtWvR0cRimsXhV5HFgaVVXvqLaV/csPzi
-         5/c8I3zZv0bZKo4gE8QdUIFMXd3DPPKx+V3sCExg4IZAo79/jfiOb+iac19Y08sZcx
-         xkCtwrKXqU2HrQxUan+PY7e55hw8jODJKRUkedzkkzge2cszZ0ABEnUtA+NI/fzdDF
-         UFiGU728BepK7f1XKKaGcu9CdL8cIxoc7JXk62KRZGfyI4tVZAQJHz2G/gjX9WqD/P
-         J/UO4SmY6Pw5MPHXQ6Do7APN1aRA94zFeFn9MsTTSHvcs18vXm9HRDEzr7QibiagVO
-         iUsJl6t/kjDJw==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Dec 2018 16:26:56 +0000
-From:   vnsndalce@memeware.net
-To:     linux-kernel@vger.kernel.org
-Subject: Fwd: Re: [DNG] 2 months and no response from Eben Moglen - Yes you
- can rescind your grant. -- The CoC regime is a License violation - Additional
- restrictive terms
-In-Reply-To: <b4a43367df247392937554a69157b57b@memeware.net>
-References: <b4a43367df247392937554a69157b57b@memeware.net>
-Message-ID: <3707ee8a658610c4c42cfbaf6014e677@memeware.net>
-X-Sender: vnsndalce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+        Mon, 24 Dec 2018 11:30:30 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:49088 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbeLXQa3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 11:30:29 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id C42BFC12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 16:30:27 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bqeyQb18e8w8 for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Dec 2018 10:30:27 -0600 (CST)
+Received: from mail-it1-f199.google.com (mail-it1-f199.google.com [209.85.166.199])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 93EE6B5E
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:30:27 -0600 (CST)
+Received: by mail-it1-f199.google.com with SMTP id i12so13797733ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=uNbUeFfSrqBQ2BTzg6nlG6ILKKMJrGz3o7ZvBgnL6lY=;
+        b=EhR60JPm2IfyisT4wiCVF8GrefK2eJSXYHKiHBRf867NxS4Ganu4u5uziCvYTOlw3U
+         QS+t1Z6gj7LTJSP9V5nIVpP2hQgizvzZdnLg3cg+FXLHa1ptSjam3BI64hy8irjlCFiI
+         jN7ScggyOmL+vLxrhh9uVIqy1bWAO/Bdp2ncDNCkdX5rL6fhyzIxh4pVmivYqWU95g+X
+         O+ryScBpBOQmZ5FYNqB1upRRZA/zoNtU1jUh0N5E5isqi9Tkeur+HPHr8jjThWuGVn0q
+         wYJjPzR6ux8yDyW2GuNGBLisj5ASu+uO+UsmGbASAMBLrQhP64mmFjwLBwqN/KNlClhP
+         ztdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uNbUeFfSrqBQ2BTzg6nlG6ILKKMJrGz3o7ZvBgnL6lY=;
+        b=gQof96jNH+Vr9y5xqP5SPdQ0Ukj4X9pgmRUDMhX2QcOJv37D4wE62ullc4gBql2Q/G
+         WaiTW62g0QlMhmIiDcn1QI6/VvUkIsIZF35MhQksREG2VGBkBXUM6p4dHtmVhPcmijCp
+         oqiN4yzMhcb91eiGVh+E1rVT0DsPg7hfHYxR1xzE/1oFyiKvXyICOefu2EC2qZhmIxYI
+         ueT6iOZBblyOrPQ0C2yI7jvFLZhqfxMWxPQoBiqw0kGObJxP/cPtElq+zVeTmc52bYN9
+         itpm0KkfmBC/lllUe+JGMgSDQdONmttTBev8U3Ij02m/qsGjV2Swk77P9yTE/WPbCCiM
+         xvmw==
+X-Gm-Message-State: AA+aEWZ15BHUdv4l6AVP1JDkhy5PYJXxCsA7DLL/nYv6iKbmnN2ciySX
+        NAOfIyITyUL5pW+VH+H3rAusJpm9lVxZFioAY98NYY2OJhlLqDeqts8LZvhJV0F9Yji7OrkIExX
+        5CO4E9E+BPmhintS+er3OyxkujmKU
+X-Received: by 2002:a24:af0a:: with SMTP id t10mr9738782ite.159.1545669027065;
+        Mon, 24 Dec 2018 08:30:27 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/Uok4bxt2k6hzQiz2a1qed/lGbzdAZKKkuDPuglmdMVUQC4NWkL3RlE8FT8J9qcczB/C74YuQ==
+X-Received: by 2002:a24:af0a:: with SMTP id t10mr9738772ite.159.1545669026814;
+        Mon, 24 Dec 2018 08:30:26 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id x99sm10493792ita.23.2018.12.24.08.30.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 08:30:26 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ipv6/route: Add a missing check on proc_dointvec
+Date:   Mon, 24 Dec 2018 10:30:17 -0600
+Message-Id: <20181224163017.17362-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+While flushing the cache via  ipv6_sysctl_rtcache_flush(), the call
+to proc_dointvec() may fail. The fix adds a check that returns the
+error, on failure.
 
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ net/ipv6/route.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
--------- Original Message --------
-Subject: Re: [DNG] 2 months and no response from Eben Moglen - Yes you 
-can rescind your grant. -- The CoC regime is a License violation - 
-Additional restrictive terms
-Date: 2018-12-24 16:24
- From: vnsndalce@memeware.net
-To: dng@lists.dyne.org
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 059f0531f7c1..5ccdaa27ec53 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -5053,12 +5053,16 @@ int ipv6_sysctl_rtcache_flush(struct ctl_table *ctl, int write,
+ {
+ 	struct net *net;
+ 	int delay;
++	int ret;
+ 	if (!write)
+ 		return -EINVAL;
+ 
+ 	net = (struct net *)ctl->extra1;
+ 	delay = net->ipv6.sysctl.flush_delay;
+-	proc_dointvec(ctl, write, buffer, lenp, ppos);
++	ret = proc_dointvec(ctl, write, buffer, lenp, ppos);
++	if (ret)
++		return ret;
++
+ 	fib6_run_gc(delay <= 0 ? 0 : (unsigned long)delay, net, delay > 0);
+ 	return 0;
+ }
+-- 
+2.17.1
 
-Version 2 of the GPL forbids the incorporation of additional
-restrictive terms, relating to the distribution, modification, etc of
-the article licensed under the terms.
-
-Those that violate this section are declared, by operation of the
-terms, to have their grant automatically revoked.
-
-An additional term need-not be present in the same writing. Such terms
-simply need to be present to or made known to the taker(sub-licensee) by
-the distributor. They may be proffered in writing, orally, or
-implied in the course of doing business dealings. They simply must
-relate back or involve  the article in question (the licensed code or
-product.)
-
-The proffering of additional restrictive terms is a violation of the
-text of the license grant  in and of itself.
-
-Here  we have a situation where an additional writing has been
-proffered. The additional  writing promises both in it's own text and
-by implication consequences against those who violate the terms of
-this additional writing.
-
-The  additional writing restricts those subject to it from expressing
-certain views publicly - promising retribution against those who do.
-
-No consideration  is paid to those subject to the additional writing
-for their assent; it is simply imposed unilaterally against the
-subjects.
-
-The violators  of the additional writing are promised:
-Additional, unwanted, public scrutiny (to which they were not subject
-to prior)
-Public ridicule.
-Loss of public standing.
-as-well as an implied loss of future income.
-
-These are the  enforcement mechanisms of the additional writing to
-enforce its restrictions against those who publish derivative works of
-the kernel.
-
-The additional  writing is activated when (with the prerequisite of
-being a derivative work of the linux kernel) the work of a rights-holder
-is incorporated into the kernel, when such a work is made known to the
-kernel-team to exist where any one person on this earth has seen fit
-to present it for inclusion, or by simple prior-inclusion into the
-kernel.
-
-Thus all  current and past rights-holders who have code in, or have
-published for distribution, derivative works of the kernel are subject
-to the retributive promises made to them in the additional writing,
-drafted to restrict their actions and utterances.
-
-This is  tantamount to an additional restrictive term regarding the
-modification and distribution of works under the linux kernel license
-grant.
-
-It is a violation of the license terms of the rights-holders past
-incorporated works in much the same way that GRSecurity's
-Contributor Access Agreement was and is.
-
-
-_______________________________________________
-Dng mailing list
-Dng@lists.dyne.org
-https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
