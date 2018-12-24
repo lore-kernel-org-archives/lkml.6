@@ -2,111 +2,135 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAF4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D25C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC822176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E3C21773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="X6+mPgO3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tlBY2iZF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725842AbeLXLJr (ORCPT
+        id S1725780AbeLXLPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 06:09:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50359 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbeLXLJq (ORCPT
+        Mon, 24 Dec 2018 06:15:13 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38203 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbeLXLPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 06:09:46 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n190so10948951wmd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 03:09:44 -0800 (PST)
+        Mon, 24 Dec 2018 06:15:13 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so11274880wrw.5;
+        Mon, 24 Dec 2018 03:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RdypUHtVpyrXKR65bVS28+3XoOEuCJBu3A4odbUwyMY=;
-        b=X6+mPgO38FcDxDSKvxTsDeK5mfP+qCl6zFTz5tJ5ih/4MJS9IzIX4dbbXRmccQLT+y
-         N3d1gDxPRXtC1mogj4m1GLOidk+RPCOAc4Gu4x82m+Jzstf0NOlh4pRcjYJQTIsLQvZn
-         8aYyW7PDELS5tw5omp0j7TftwPefKMg21wxDVxRnQkcOaryfM0CWGNOqjG7Nmc4K1nlV
-         YrC9/sUjM8xuUxWWZtY+6Y6CR773JqMqvB9dDa/ldRoROwM7KcT2bVYutpe67YzzLG6L
-         aTArFw3T4guIu5H57Aqr/y1NFpoZlPa+1soTqLL989SftVfe7WkA9bOQlHqfC5rV+fF7
-         u+jA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=phpCNWgTkaVvzzS3nmFNxgp4mzU8ec9l7jdZBnsDYzY=;
+        b=tlBY2iZFWJOBYvAmIdfFci7WlgH8Qi/emEjCslFz32qeGMgSoDYqE0Czh4pgi6c329
+         fhNPHaP8bhIjMd2MJ8Jcwrc9m5E842f8Ia6RsUu6r9S0FW6fFL6wFjvPDBC8KPYjkpkK
+         LBk39Kv1bwONOTieJ5pxkEQBvUsU4ZR2IO9ly59seDjeNz3EYObXKdb5XOwG3KEg2h0G
+         o0qnoYqhFG8NPCigTOA9JCu1IQRlmNJTcmkyvUjKV2dvpl5oB05Vuozcmwe9fHEQiOhD
+         GGrpIfR2NSoP/EkL8s8fPEVxZ8F0iMVZ9rWPxM5bxlQrwoHnUBS6KD4eXw00sFdRpA29
+         Bomg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RdypUHtVpyrXKR65bVS28+3XoOEuCJBu3A4odbUwyMY=;
-        b=WLY2qADoXeuSvXEKcQTrBUJnA6yluGMplOzZNNzY0NNKsIiYlZacKYLV+jDr8gIQAj
-         Ws5XVl3774gagB0vyh9ZwMS/fUrXqOTLxDRFctz+fxVgMWPohyHl51qLHpB4BfhExXFA
-         N5OCDyod+EwqoK+KnBy7ICL5pKOpMBRCq1JMlBlkwHOBJIOSkvnv1xIu6dgFce2XVmV/
-         PSeNnRZ//sorHMKfWjYor93NRU5yhBPCGVoXYlNnwVJKDDgxM5PqWCp8yNJ1rUvllqZl
-         lraelIqhbbZQxKeGVxkwd3MCQvYQ//5OkkUPpBKnVOOa3it75vALIwGHGLQS/6D/Pn2U
-         mczQ==
-X-Gm-Message-State: AJcUukeRf7pLb7BY45WTZhK+sCdeAkJYwPx5EqWxIEXXlPJ2bDthJs1D
-        ZX9NUvv2qaOEqrywKO1FPfSyCg==
-X-Google-Smtp-Source: ALg8bN4gGrTRwNOwGwrqICDcsFSrEAH68eRhY+NvGA2UFs8xjv265q7/0ZWk0urQdg2wUhAwHQwCPw==
-X-Received: by 2002:a1c:f319:: with SMTP id q25mr11999507wmq.151.1545649784083;
-        Mon, 24 Dec 2018 03:09:44 -0800 (PST)
-Received: from brauner.io (p5B2A6FBE.dip0.t-ipconnect.de. [91.42.111.190])
-        by smtp.gmail.com with ESMTPSA id f2sm15758811wru.14.2018.12.24.03.09.40
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=phpCNWgTkaVvzzS3nmFNxgp4mzU8ec9l7jdZBnsDYzY=;
+        b=Yt8048OF6FaFUbDerFH9D9Gr3L8TCwclzXDbQ7dJZuPjqw3N05vc1Boxo4AEZSEvm+
+         g7J2Wgjn5mBY4QwGlPUcRfwBcccyL8YSssfqMEGA28ou9b7jWPN60n8CWtjefCcIIDMF
+         jBqQGScad9zXlbOqBRdkibVGFZiBc9aEXhQ1l4XwRyyLrIDjgqXCst6USgejM2Q6tP2w
+         xdZCP04pTroHTOLP+OjZe7NM2yrAZh4A7FMcpTE6rMwjlNnuKnPtVoandtJ/k1bhgpUF
+         Wn/tR8279hcTFtt6et90PaTSHc6qf/GvDq5m1rBL/eNuNdDY5sntQggDar3z4EJm4kJ7
+         NWaA==
+X-Gm-Message-State: AJcUukcqOi6h3oOp0h0k0VSg1GG1Umrj1BgdLyOMYYml25cna9AD1X31
+        +zlqJSH0GrK56WT6oORs04Pj9ids
+X-Google-Smtp-Source: ALg8bN6usrpNtyjyQSY7VY3aAJT284EQna2I2eUZv7NS4BYeFN1Ug6D3lAT7wLHd2pSbntQcyRbxjg==
+X-Received: by 2002:adf:ea81:: with SMTP id s1mr11138330wrm.309.1545650110883;
+        Mon, 24 Dec 2018 03:15:10 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id d4sm22753221wrp.89.2018.12.24.03.15.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Dec 2018 03:09:43 -0800 (PST)
-Date:   Mon, 24 Dec 2018 12:09:37 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v1 1/2] binderfs: implement "max" mount option
-Message-ID: <20181224110935.cop4v5kfcdkemtwo@brauner.io>
-References: <20181223143550.10672-1-christian@brauner.io>
+        Mon, 24 Dec 2018 03:15:10 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: Changes for v4.21-rc1
+Date:   Mon, 24 Dec 2018 12:15:08 +0100
+Message-Id: <20181224111508.23847-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181223143550.10672-1-christian@brauner.io>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 03:35:49PM +0100, Christian Brauner wrote:
-> Since binderfs can be mounted by userns root in non-initial user namespaces
-> some precautions are in order. First, a way to set a maximum on the number
-> of binder devices that can be allocated per binderfs instance and second, a
-> way to reserve a reasonable chunk of binderfs devices for the initial ipc
-> namespace.
-> A first approach as seen in [1] used sysctls similiar to devpts but was
-> shown to be flawed (cf. [2] and [3]) since some aspects were unneeded. This
-> is an alternative approach which avoids sysctls completely and instead
-> switches to a single mount option.
-> 
-> Starting with this commit binderfs instances can be mounted with a limit on
-> the number of binder devices that can be allocated. The max=<count> mount
-> option serves as a per-instance limit. If max=<count> is set then only
-> <count> number of binder devices can be allocated in this binderfs
-> instance.
-> 
-> This allows to safely bind-mount binderfs instances into unprivileged user
-> namespaces since userns root in a non-initial user namespace cannot change
-> the mount option as long as it does not own the mount namespace the
-> binderfs mount was created in and hence cannot drain the host of minor
-> device numbers
-> 
-> [1]: https://lore.kernel.org/lkml/20181221133909.18794-1-christian@brauner.io/
-> [2]; https://lore.kernel.org/lkml/20181221163316.GA8517@kroah.com/
-> [3]: https://lore.kernel.org/lkml/CAHRSSEx+gDVW4fKKK8oZNAir9G5icJLyodO8hykv3O0O1jt2FQ@mail.gmail.com/
-> [4]: https://lore.kernel.org/lkml/20181221192044.5yvfnuri7gdop4rs@brauner.io/
-> 
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Hi Linus,
 
-Right, I forgot to ask. Do we still have time to land this alongside the
-other patches in 4.21? :)
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Christian
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-4.21-rc1
+
+for you to fetch changes up to e94b815524f83536415d7d59cc1833ad05934d97:
+
+  dt-bindings: pwm: rcar: Add r8a774c0 support (2018-12-24 12:06:56 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+pwm: Changes for v4.21-rc1
+
+Not a lot going on this cycle. There's some more cleanup going on and
+new driver support that was not quite ready in time for v4.21-rc1, but
+here are a few fixes and improvements that are good to go. The Kona PWM
+driver can now be built on the Cygnus architecture and the i.MX driver
+gained support for hardware readback. Some small fixes are provided for
+the clks711x and lpc18xx-sct drivers. Finally, to round things off some
+drivers are switched to SPDX license identifiers.
+
+----------------------------------------------------------------
+Alexander Shiyan (2):
+      pwm: clps711x: Fix period calculation
+      pwm: clps711x: Switch to SPDX identifier
+
+Anson Huang (1):
+      pwm: imx: Add ipg clock operation
+
+Clément Péron (1):
+      pwm: Enable Kona PWM to be built for the Cygnus architecture
+
+Fabrizio Castro (1):
+      dt-bindings: pwm: rcar: Add r8a774c0 support
+
+Michal Vokáč (3):
+      pwm: imx: Sort include files
+      pwm: imx: Use bitops and bitfield macros to define register values
+      pwm: imx: Implement get_state() function for hardware readout
+
+Stefan Wahren (1):
+      pwm: bcm2835: Switch to SPDX identifier
+
+Uwe Kleine-König (2):
+      pwm: lpc18xx-sct: Don't reconfigure PWM in .request and .free
+      pwm: Drop legacy wrapper for changing polarity
+
+ .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
+ drivers/pwm/Kconfig                                |   4 +-
+ drivers/pwm/pwm-bcm2835.c                          |   5 +-
+ drivers/pwm/pwm-clps711x.c                         |  13 +-
+ drivers/pwm/pwm-imx.c                              | 194 +++++++++++++++++----
+ drivers/pwm/pwm-lpc18xx-sct.c                      |   3 -
+ include/linux/pwm.h                                |  42 -----
+ 7 files changed, 173 insertions(+), 89 deletions(-)
