@@ -2,119 +2,143 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A57C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6C8C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA43C21850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C9AA21873
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:02:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="FZlEAO98"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="xWZp5GTa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725817AbeLXQ50 (ORCPT
+        id S1725837AbeLXRCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:57:26 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:34552 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbeLXQ5Z (ORCPT
+        Mon, 24 Dec 2018 12:02:39 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:38939 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbeLXRCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:57:25 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 0DC43957
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 16:57:24 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EDsd8Boxnk2F for <linux-kernel@vger.kernel.org>;
-        Mon, 24 Dec 2018 10:57:23 -0600 (CST)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id D08125F4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:57:23 -0600 (CST)
-Received: by mail-io1-f72.google.com with SMTP id s25so13813794ioc.14
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:57:23 -0800 (PST)
+        Mon, 24 Dec 2018 12:02:39 -0500
+Received: by mail-lf1-f53.google.com with SMTP id n18so8500245lfh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 09:02:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=eK4GXtGvYUyBJT87Mc4elwM9U41YctaNsQHEgSw94uk=;
-        b=FZlEAO98CDb5Uk7sVRRSJzY9mw9mAOrwAFIylS3IvX/Y8pnITXtBCQdmlVwxcggZp1
-         LPQbIdeDFxYcGpUIBama6JihqIAR6iXihl2bqpKmSQOwewfnIYYaPYZt8ztInfoqElML
-         oOfB3fgktbCT1gfCRpu8wwZQgrdu1xaGymod3l0/ASzXgw33uqBgZ4Zs43oR2w/zWtX4
-         FB6zci10FTjwDNfomp4wf9ornJWxVqSNSZzu6hVIK0G5TVJclgFyMuVu5kI9cM9pTwyW
-         jMuG8vLSMEV4a5fCxIDIuC4dNNzBGxFVTml5vmvv5lMIBhgTwQvyRQFDlobCCS362sM5
-         9bDQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=G8FzPBtb4yXXXaWuLZ7xMf+SnfKeOS2EHYk5qzdzX3I=;
+        b=xWZp5GTa95rq+nOQF+eA7nPDXNA4UPYNmSAkOLEuzWedAZVloHdPJnZh3/Xvd1nMZm
+         ikUQcUGrKSBz1PW979NnpJ1ekC9QMfT7litK+VD5jM3q2suaV7CwHVYL/u1MU/yEEI1P
+         Bti5Ybz56ZPqrTpDZNzhhBSp83pp9Ywrw66jZjhvQyeGuShDE2ON46qL09Z45bWAO28F
+         QyvOA5sNVfH86RSn8TiMmsInd+IOliPdbE+klMh4uiwRdfi2f4u0f/8i13sX9LxuVn2g
+         4u4FKH0HF/9n7KnxBNI5P1QCnoec5fgRkMpzWey4Uhb25aeQ6wtOl0+6zSMo2VM7SkJe
+         RGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eK4GXtGvYUyBJT87Mc4elwM9U41YctaNsQHEgSw94uk=;
-        b=qtslGIBKx5OH4TtEbvXbNnbe3I2l/FCEPZe0Cf4/ojr0v2BctsbVP92ms8NjMfsB5x
-         GfuIvPzzeMeMeL1KVunfH42eROM7xBbAyTmNL3xSe0fjRx/6r8ctHLd/76ZOiMgpvA4F
-         9eyo7jUG6yC41zByw7FQjPQIIjJD++vBTQ9UDRq67L810nOcjWpXdohFoEEviisp4UO1
-         trJl/mwzzD/L1T6iWlP3SyZ902m1iwbdLJe6nBZU6mr6JCYBO5fa3NU1sSEd57j3kjhX
-         Lh+P6IM4toFBVMoh2ys8R8xbXlA01CroGlZUaDFpKehPe8Not9AaWR1rizyXHKnuzNag
-         HglQ==
-X-Gm-Message-State: AJcUukePNO+5OcPRDz41+Td/Oz9LEzhq76ubBPnLYRarSAxmeuCeWZ5O
-        MZSisb6SppFPWUONhjiucWvgBqDBUMfTDVucUevbjwYl9iDjRRvFjKff+NKXtlMH5o9cK6nLtJp
-        Vb2z5W9LpeRwxFlGLPBIbFvf1uboL
-X-Received: by 2002:a5d:8e0d:: with SMTP id e13mr2141512iod.44.1545670643493;
-        Mon, 24 Dec 2018 08:57:23 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN4biTjbh+vN4nN7x+NVITN43Fp7qoJMefIoq4sJliSnLA4xkQErAywTQCmtt2BHGYHLiZWkpw==
-X-Received: by 2002:a5d:8e0d:: with SMTP id e13mr2141498iod.44.1545670643256;
-        Mon, 24 Dec 2018 08:57:23 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id p132sm8611156itb.35.2018.12.24.08.57.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 08:57:22 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] slimbus: Add a check on the return value of platform_device_add
-Date:   Mon, 24 Dec 2018 10:56:59 -0600
-Message-Id: <20181224165659.18448-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=G8FzPBtb4yXXXaWuLZ7xMf+SnfKeOS2EHYk5qzdzX3I=;
+        b=N5adPL7vf4ryDHRH6Hkfon8rRYRu2FWbJNnAf2349eiqIPiTkCdJx0ok+7SZVJZMUu
+         qOog5uENkYbSxYuV5L6OXxqLEKlVI9eBOH9hY/5TpnPruDouPyqWxSTFrsx1/QJ4ddNv
+         uLAmk/RMc+8em8Eonq1Vjr/RCPHTqgGrHh0AjV7tiNOsoEO+CwK87UvT5pzyl4Ltlnih
+         qekbUwcWBofwsq/6EAQXbk3IaLr8gOLJamY2G8c9F9wFuR4P77FVHgB6Y4U/Po6Z2rXx
+         EyR1ZiCAts8/LmRD8QbGIv2KPsnzy/VfA3RfUlWvZ2Xt/NZY+UdI14yeyHv7CNe7dvmH
+         63qw==
+X-Gm-Message-State: AA+aEWZDGjFxuqJyhOoWd+L1RD98+gwBW2K5OCfpPexZCydLDqCVH6KT
+        q4S+mMBQep4hONdGc4wxPa10okDuksWH9y4gGegFs7K3/Awl
+X-Google-Smtp-Source: AFSGD/VZjAGXZHyU0vNP+GgPDWr6fG1hlHaIPKvY97oYzXoeD7cPl4GdtsQLsPEV3HjeXOXsgJ02pMKv5NyM19aRZMs=
+X-Received: by 2002:a19:40cc:: with SMTP id n195mr6794802lfa.40.1545670956833;
+ Mon, 24 Dec 2018 09:02:36 -0800 (PST)
+MIME-Version: 1.0
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 Dec 2018 12:02:25 -0500
+Message-ID: <CAHC9VhSzkyh3Nj+25YX1y_gs9-Y+TEedo7hi-Qk7hd+qMERvyQ@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches v4.21
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In of_qcom_slim_ngd_register, the function platform_device_add() may fail.
-The fix returns the error value upstream in case of failure.
+Hi Linus,
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/slimbus/qcom-ngd-ctrl.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I already used my best holiday pull request lines in the audit pull
+request, so this one is going to be a bit more boring, sorry about
+that.  To make up for this, we do have a birthday of sorts to
+celebrate: SELinux turns 18 years old this December.  Perhaps not the
+most exciting thing in the world for most people, but I think it's
+safe to say that anyone reading this email doesn't exactly fall into
+the "most people" category.
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index 1382a8df6c75..a2dffb2b4c88 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -1329,6 +1329,7 @@ static int of_qcom_slim_ngd_register(struct device *parent,
- 	struct qcom_slim_ngd *ngd;
- 	struct device_node *node;
- 	u32 id;
-+	int ret;
- 
- 	data = of_match_node(qcom_slim_ngd_dt_match, parent->of_node)->data;
- 
-@@ -1348,7 +1349,10 @@ static int of_qcom_slim_ngd_register(struct device *parent,
- 		ctrl->ngd = ngd;
- 		platform_set_drvdata(ngd->pdev, ctrl);
- 
--		platform_device_add(ngd->pdev);
-+		ret = platform_device_add(ngd->pdev);
-+		if (ret)
-+			return ret;
-+
- 		ngd->base = ctrl->base + ngd->id * data->offset +
- 					(ngd->id - 1) * data->size;
- 		ctrl->ngd = ngd;
+Back to business and the pull request itself.  Ondrej has five patches
+in this pull request and I lump them into three categories: one patch
+to always allow submounts (using similar logic to elsewhere in the
+kernel), one to fix some issues with the SELinux policydb, and the
+others to cleanup and improve the SELinux sidtab.  The other patches
+from Alexey and Petr and trivial fixes that are adequately described
+in their respective subject lines.  This is generally a pretty
+standard set of patches, but there is one potential merge conflict
+with the mount rework in the vfs tree.  If needed, the fixup is pretty
+small and documented in the linux-next post below; if you have any
+questions about the merge let us know.
+
+* https://lore.kernel.org/lkml/20181218144858.58d8d1f8@canb.auug.org.au
+
+With this last pull request of the year, I want to thank everyone who
+has contributed patches, testing, and reviews to the SELinux project
+this year, and the past 18 years.  Like any good open source effort,
+SELinux is only as good as the community which supports it, and I'm
+very happy that we have the community we do - thank you all!
+
+-Paul
+--
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+ Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20181224
+
+for you to fetch changes up to ee1a84fdfeedfd7362e9a8a8f15fedc3482ade2d:
+
+ selinux: overhaul sidtab to fix bug and improve performance
+   (2018-12-05 16:12:32 -0500)
+
+----------------------------------------------------------------
+selinux/stable-4.21 PR 20181224
+
+----------------------------------------------------------------
+Alexey Dobriyan (1):
+     selinux: make "selinux_policycap_names[]" const char *
+
+Ondrej Mosnacek (5):
+     selinux: policydb - fix byte order and alignment issues
+     selinux: refactor sidtab conversion
+     selinux: always allow mounting submounts
+     selinux: use separate table for initial SID lookup
+     selinux: overhaul sidtab to fix bug and improve performance
+
+Petr Vorel (1):
+     Documentation: Update SELinux reference policy URL
+
+Documentation/admin-guide/LSM/SELinux.rst |   2 +-
+security/selinux/hooks.c                  |   2 +-
+security/selinux/include/security.h       |   2 +-
+security/selinux/ss/mls.c                 |  24 +-
+security/selinux/ss/mls.h                 |   3 +-
+security/selinux/ss/policydb.c            |  61 +++-
+security/selinux/ss/services.c            | 222 +++++------
+security/selinux/ss/services.h            |   2 +-
+security/selinux/ss/sidtab.c              | 609 ++++++++++++++++++---------
+security/selinux/ss/sidtab.h              |  96 +++--
+10 files changed, 626 insertions(+), 397 deletions(-)
+
 -- 
-2.17.1
-
+paul moore
+www.paul-moore.com
