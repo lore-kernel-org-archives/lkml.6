@@ -2,142 +2,115 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111C6C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62EC64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D028421871
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557062173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:29:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SkxsVMh2"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="eTYVuqPh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725816AbeLXP2B (ORCPT
+        id S1725820AbeLXP3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:28:01 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40649 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbeLXP2B (ORCPT
+        Mon, 24 Dec 2018 10:29:19 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45166 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbeLXP3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:28:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id h193so15561781ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:28:00 -0800 (PST)
+        Mon, 24 Dec 2018 10:29:19 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 0FE54938
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 15:29:17 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fC_BcMUfuZAI for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Dec 2018 09:29:16 -0600 (CST)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id D7A4A9A7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 09:29:16 -0600 (CST)
+Received: by mail-io1-f69.google.com with SMTP id l10so977827iok.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:29:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o8tFLUInbXHibbCYw7eDlsLhwmt/Wjuw9trTBiCH0us=;
-        b=SkxsVMh2n0xaPgUae+EG2EPNwW2ZaMW5ulQze3TDyehvL360dWxdg+NT2TVoZwSsqE
-         rNcKiRkKJZYeM3ymFzwgD5786lzl7ijniL3/NAl2W+7MmBSwMF4l85pHREdFfXhIc1vu
-         7RJ2Eb9kpBdce1ajD5iWzwsZoJ5WSTxIzfpyk=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Vc1r3nUkSsEHofy6wG/QWMwv6RdlZ4kscbXuxXJyNmQ=;
+        b=eTYVuqPhfCbGPo1Z2wiGJBuimJYPcbdjmnxsBaQZjLHUKA2pEOMXpZa/JVJXGYX9zM
+         3PdO8O6VkJwok0878aGxv46O6RDdhL/k3NDSM84qxeic1XUrA+XwQeASeRnuKV/hLTva
+         wT03cV9VJWDJnchfejV4/wwqxo4AAJIgueipld+Sbl1ZxXIgdNnt4cPFhhbxle/hpJ9T
+         m67jYWGXi5QtHnLewImx1Pdqkh2YzGUl9Bm5SPwH/iduiF7cNmMWSNucUdSBRZAPiMrE
+         KOdDT0ffNCOWAIYW+0bcvE9zd1eskVs7pMoZG+ZhWnTwQL0KHDT7/5wut3DLZZYAMOgy
+         oiMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o8tFLUInbXHibbCYw7eDlsLhwmt/Wjuw9trTBiCH0us=;
-        b=jptaZnbJOOk4M2hliHTJAswFFUIapmMv/Z5ybMXSm2efxio8wtJUCqosiDPO4l38Uw
-         Gy44XjcefycQuY+H6hyHYeyaPeDZXLQ7G8c4cX40N/4myaI3uKmlnjeZTy+5//JAVvag
-         eAgpcMBOutXVIdWag87EhrGGOCer7A3IjU2PW4gHIZ9BQkNUP1gaafPNwRVWJ14S9h+y
-         J4gR9DF3wWs0I71u3WqoLfKXb1vr5ploF4AIV19FJ3vUrZKEbkhuDCosEqZmpOzr2rcX
-         0kXPu+MWvvbeyMwbV+SdKOuStEs+F2aTrQUqdeXdi6PPx8bYUtINnS7CjMJhFIIOaG8n
-         y1MA==
-X-Gm-Message-State: AA+aEWYHxfnxMh+JwxB9ve4zftI5oSnwjB5ZMEvClBv2H//ZtgJwhFDm
-        if/g8GwvLf13xaxvXVHiMpsbvX8t8qyu0jkBrbO4Cg==
-X-Google-Smtp-Source: AFSGD/WO3CnPpXDVvviza+jO+lm2xfrOpdhPRJD2vY90UqIGUSBspwdwDs2S3DEvSVR9umJh3hGAo1J99AcemiDjly0=
-X-Received: by 2002:a02:104a:: with SMTP id 71mr8065981jay.103.1545665280114;
- Mon, 24 Dec 2018 07:28:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20181220125438.11700-1-jagan@amarulasolutions.com>
- <20181220125438.11700-3-jagan@amarulasolutions.com> <20181221130025.lbvw7yvy74brf3jn@flea>
-In-Reply-To: <20181221130025.lbvw7yvy74brf3jn@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 24 Dec 2018 20:57:48 +0530
-Message-ID: <CAMty3ZCG5cF3tP2mid5xyS=yhtxkY+TOcGkwRkv+vrZt1=0iQg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] media: sun6i: Add mod_rate quirk
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Vc1r3nUkSsEHofy6wG/QWMwv6RdlZ4kscbXuxXJyNmQ=;
+        b=Lk2V1pF0QBZ7B+rfXwCC3Ijwr90xtDmK1JFjRp6aSj2Bp49Zfjz78Sp4ZqsDIHXxnM
+         61rL7OTBnGLTtwLnSk736V9JNEdPns9ZRKU9/XXEtEBcnhe7CDTDrAp1X260BjcC6dDj
+         SLPrm6/qbfed9zeae9BjilmvlpZ0t1ROF5T+ynlEJ2XI6p1Sk+wNboLOrRRb6zmS1vNE
+         WE5vxttuEjw4Ef90V1HHUDAHEpOTyXZAZcgnxRK3RvhLj+vw//tpFY7lnO83mO7v7MPE
+         oIlBRg0NbYqour6Mr18m54nd14M2uxKriLanwP7IVSnWYImX+mKn7tUkmRX10P49mTYm
+         nBww==
+X-Gm-Message-State: AA+aEWYHw2oTYueP7/aG2JWC2XIpLdj8/km5AmAST2d9Wl7MG/QEFsl/
+        dJxdubJkWCuHAw+KsbPdvZ/VFApAvVS1j4HyEjXCbzZ/75Z2E2DL58gIxNbvje9OcH5UNgeULl0
+        t+EfyXv9D/F5zFDZry0WmMIJTMygE
+X-Received: by 2002:a24:a542:: with SMTP id w2mr7512828iti.64.1545665356433;
+        Mon, 24 Dec 2018 07:29:16 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/UJzzU7SLrf+tW7IQmgT/bXOQA0YM+mE0+S/OnAXYYmnCYHdL6kF8KTh486YrC8FtAeWTvAtw==
+X-Received: by 2002:a24:a542:: with SMTP id w2mr7512817iti.64.1545665356198;
+        Mon, 24 Dec 2018 07:29:16 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id k4sm13526267ion.61.2018.12.24.07.29.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 07:29:15 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Brad Love <brad@nextdimension.cc>,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media/lgdt3306a: Add a missing return value check.
+Date:   Mon, 24 Dec 2018 09:29:01 -0600
+Message-Id: <20181224152903.15828-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 6:30 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Dec 20, 2018 at 06:24:34PM +0530, Jagan Teki wrote:
-> > Unfortunately default CSI_SCLK rate cannot work properly to
-> > drive the connected sensor interface, particularly on few
-> > Allwinner SoC's like A64.
-> >
-> > So, add mod_rate quirk via driver data so-that the respective
-> > SoC's which require to alter the default mod clock rate can assign
-> > the operating clock rate.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 34 +++++++++++++++----
-> >  1 file changed, 28 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > index ee882b66a5ea..fe002beae09c 100644
-> > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/ioctl.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_device.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_runtime.h>
-> >  #include <linux/regmap.h>
-> > @@ -28,8 +29,13 @@
-> >
-> >  #define MODULE_NAME  "sun6i-csi"
-> >
-> > +struct sun6i_csi_variant {
-> > +     unsigned long                   mod_rate;
-> > +};
-> > +
-> >  struct sun6i_csi_dev {
-> >       struct sun6i_csi                csi;
-> > +     const struct sun6i_csi_variant  *variant;
-> >       struct device                   *dev;
-> >
-> >       struct regmap                   *regmap;
-> > @@ -822,33 +828,43 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
-> >               return PTR_ERR(sdev->clk_mod);
-> >       }
-> >
-> > +     if (sdev->variant->mod_rate)
-> > +             clk_set_rate_exclusive(sdev->clk_mod, sdev->variant->mod_rate);
-> > +
->
-> It still doesn't make any sense to do it in the probe function...
+In lgdt3306a.c, lgdt3306a_read_signal_strength() can fail while reading
+the registers via lgdt3306a_read_reg(). The function can return an error
+from i2c_transfer(). The fix checks the return value for this failure.
 
-I'm not sure we discussed about the context wrt probe, we discussed
-about exclusive put clock. Since clocks were enabling in set_power and
-clock rate can be set during probe in single time instead of setting
-it in set_power for every power enablement. anything wrong with that.
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/media/dvb-frontends/lgdt3306a.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->
-> We discussed this in the previous iteration already.
->
-> What we didn't discuss is the variant function that you introduce,
-> while the previous approach was enough.
+diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
+index 0e1f5daaf20c..b79f652d05e1 100644
+--- a/drivers/media/dvb-frontends/lgdt3306a.c
++++ b/drivers/media/dvb-frontends/lgdt3306a.c
+@@ -1685,7 +1685,10 @@ static int lgdt3306a_read_signal_strength(struct dvb_frontend *fe,
+ 	case QAM_256:
+ 	case QAM_AUTO:
+ 		/* need to know actual modulation to set proper SNR baseline */
+-		lgdt3306a_read_reg(state, 0x00a6, &val);
++		ret = lgdt3306a_read_reg(state, 0x00a6, &val);
++		if (lg_chkerr(ret))
++			goto fail;
++
+ 		if(val & 0x04)
+ 			ref_snr = 2800; /* QAM-256 28dB */
+ 		else
+-- 
+2.17.1
 
-We discussed about clk_rate_exclusive_put, and that even handle it in
-.remove right? so I have variant to handle it in sun6i_csi_remove.
