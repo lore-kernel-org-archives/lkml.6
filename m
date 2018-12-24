@@ -2,111 +2,100 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E73C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F777C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442422184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B02F2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 18:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="qrJXXl52"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IuZOc3bC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbeLXSZA (ORCPT
+        id S1725851AbeLXS2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 13:25:00 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:53432 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeLXSY7 (ORCPT
+        Mon, 24 Dec 2018 13:28:41 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34272 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeLXS2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 13:24:59 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 132B3A3D
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 18:24:58 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DsbeK_LQj1f2 for <linux-kernel@vger.kernel.org>;
-        Mon, 24 Dec 2018 12:24:57 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id D629D9FD
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 12:24:57 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id t133so13935495iof.20
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:24:57 -0800 (PST)
+        Mon, 24 Dec 2018 13:28:40 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so8626202lfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:28:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=z8jGH7OSy10Xmp7FOooJUxOZZUuJDengHhk/566HuLA=;
-        b=qrJXXl52/cpFpfAOhol/UGOVfoaW7qVYnL6f4GFaDXbnk59nEj+AmG/OEOgYnDC2JA
-         F846oy3gBXcIEFh7Sp0caTAwZjw2mZT5V2Eidt3R3kIfL9Ew6q79/qQzyAiGO9Svhf/8
-         mvXlUXw1QcnM4D+0mZ9IDBOEB6hw/D24dR8W/lnZkRsmMJXPkBBG9/yy8DHKbzcgrDpz
-         /KRcj8Ib7JntCZoiWuQJJqhwHX6J8zo/khXzEJ4MsPFFt9E0Yci5O1uMIQW0B6BTq4kX
-         68eTodR2nqNIqoWYEy74ZePlJo3Mr7jIWyagz/OuNeAJjEEFqBve022glA1uR78p0bi8
-         0bBA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xgmSfOK3OwL6/VE5gy4FID60SPzBz09Za/qtHP8bT/Q=;
+        b=IuZOc3bCvduvI7QBfSeSKfdDS6FTc71KAPOd4DGFhuoFtdn4chfNnVGErnorex4AfX
+         knivzRMHjpiT3g5gBqpY8JNZwf3HQyxo1SQZuEO9XFxEiKnXymC/LRYztQMo+IIt/hwa
+         jlkVMxO+Ad9RyEOQa8Vzu1LDC9VRDYQiX7epo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=z8jGH7OSy10Xmp7FOooJUxOZZUuJDengHhk/566HuLA=;
-        b=hGsx/H4flRiU1q9xTyq3RORJWMhF29VCayaH7wp8WTkTFrCBXn30TPEcpjj+2iW2vb
-         Xwg7sQO2sIU3yxveNWZ6EnAHvp8OgyqqRAxgbg1W9WQ5rkFOvFzG4WDqcJdzRubYiTdU
-         1QYpZ2ldxtpeE2AeM7KB+O0VDiSwe6+7XFKQj6VnqfoHRns2CkZ7I0trJGnK9LH8J9Bp
-         S7gjqzcUccaSoK3I3JzNkHwgqQhlXNtZPAY0tRl9O8OXbYNWhG41naZ7dPPeBavrMXQi
-         WXujapCeL5e5p2BhNiDP+e8SiLItEklXv/ejjR3/Z0Rh/eFqPBLqte/X30zuEhFhISo+
-         +y9Q==
-X-Gm-Message-State: AJcUukeq8Wd7/abZItXu0AO/ekisJ3q1ffSlkZmCHmffsE/yrb0hMY0l
-        JPa28SzX45EDBumMDbj8gds1di3S+6HJGaZ+lbesFY4AaaGVZa7ReU/ZfVU+7BDhtkikDBlfhum
-        PysYPEvCrxfu+cj43Pc49Og53SXw8
-X-Received: by 2002:a6b:3bc8:: with SMTP id i191mr10076693ioa.23.1545675897474;
-        Mon, 24 Dec 2018 10:24:57 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN4PQ88JqfkuhrMVAkrAprFOaq4pR5llOk/NYl6CC8cSSxQR8gwaDlazbETr0VLFf90Vm0LkGw==
-X-Received: by 2002:a6b:3bc8:: with SMTP id i191mr10076686ioa.23.1545675897246;
-        Mon, 24 Dec 2018 10:24:57 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id u25sm13894605iob.23.2018.12.24.10.24.56
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xgmSfOK3OwL6/VE5gy4FID60SPzBz09Za/qtHP8bT/Q=;
+        b=sh7t/UbIw181Z1AFuECFVstQ0MZpmtmdoUinIUbslyGOrSomRfPtzjTk4bSjZLu4zC
+         N1XQQCLU6RhGL63wO9FyQNK/OIqOtPEsMI943C/RaY7jkYc6iLKyjfBt24B6zujLwUsJ
+         TQezEpw38f6YY+CaJxDNVWFJVg1xYky3QM5n2HJpcsZLyNZrJMa2KqUOLTrKx70Zvzt0
+         reZM8fu/tEHHo4ylVReAGBRBY+R3XpGXUnr9JfE54CC1l/ncT1ynleXn6wJ3MRRO4ToV
+         ITQBHLnZWrq6fMyvSH1bYixqScQMLsdSh1UiErJgJP6UulS0rIioryjgecdqzd4xje2e
+         39jw==
+X-Gm-Message-State: AA+aEWaHytJanLu71U7UpTKaEymmPSX6LHCZ/rWP4Uao/m+2EmxYvZ2L
+        W2V2d+pcn0/iiE1bczmOY51F+GFtyUc=
+X-Google-Smtp-Source: AFSGD/V2FaKYyjDPUyzg0V95fhfof+wZdN7dlJeVLFv6mL3SBrgGW26lRcTbnY9+w7QTtiv5gdqf9Q==
+X-Received: by 2002:a19:5a05:: with SMTP id o5mr7361873lfb.140.1545676118154;
+        Mon, 24 Dec 2018 10:28:38 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm6632210ljg.19.2018.12.24.10.28.36
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 10:24:56 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] infiniband/qedr: Potential null ptr dereference of qp
-Date:   Mon, 24 Dec 2018 12:24:45 -0600
-Message-Id: <20181224182445.21256-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Mon, 24 Dec 2018 10:28:37 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id e26so8617428lfc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 10:28:36 -0800 (PST)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr6612218lfa.106.1545676116326;
+ Mon, 24 Dec 2018 10:28:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20181223164954.hib4lbchftspidsd@suse.de> <20181223171703.s7jm6fkyosnsf33z@brauner.io>
+ <20181223180609.GA102606@dtor-ws> <CAEJqkgjSX8PW-NXa8CoMzx=2P5LOiDz0MCHoZ03zE7wZ=n2dKg@mail.gmail.com>
+ <20181224091703.GB26796@kroah.com> <CAEJqkgj2EjQq_aaspRs7uyTL4LxC9dRUTheN25H+QhjkLjjpjQ@mail.gmail.com>
+ <20181224105407.GA29719@kroah.com> <20181224173427.GA254245@dtor-ws>
+ <CAHk-=wiTE+k8WkHoDLzxX2Qz8ko7W+BsXOhirS_j0FZaBMxDdA@mail.gmail.com> <20181224181322.n7n6d2y63gwnv7cb@brauner.io>
+In-Reply-To: <20181224181322.n7n6d2y63gwnv7cb@brauner.io>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Dec 2018 10:28:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh1mdr+zFK+-PW-inaky+sn-M63VKuUAaYrz+D5PxpjpQ@mail.gmail.com>
+Message-ID: <CAHk-=wh1mdr+zFK+-PW-inaky+sn-M63VKuUAaYrz+D5PxpjpQ@mail.gmail.com>
+Subject: Re: FYI: Userland breakage caused by udev bind commit
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Gabriel C <nix.or.die@gmail.com>,
+        Marcus Meissner <christian.brauner@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-idr_find() may fail and return a NULL pointer. The fix checks the
-return value of the function and returns an error in case of NULL.
+On Mon, Dec 24, 2018 at 10:13 AM Christian Brauner <christian@brauner.io> wrote:
+>
+> So one possibility is to add a socket option for lib/kobject_uevent.c
+> that can be set via setsockopt. We did something like this in netlink
+> for strict property and header checking without breaking backwards
+> compatibility.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/infiniband/hw/qedr/qedr_iw_cm.c | 2 ++
- 1 file changed, 2 insertions(+)
+I'd actually prefer for it to be some /sys interface or other. Maybe
+it could even be per-device or class, and you could do something like
 
-diff --git a/drivers/infiniband/hw/qedr/qedr_iw_cm.c b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-index 505fa3648762..93b16237b767 100644
---- a/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-+++ b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
-@@ -492,6 +492,8 @@ int qedr_iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
- 	int i;
- 
- 	qp = idr_find(&dev->qpidr.idr, conn_param->qpn);
-+	if (unlikely(!qp))
-+		return -EINVAL;
- 
- 	laddr = (struct sockaddr_in *)&cm_id->m_local_addr;
- 	raddr = (struct sockaddr_in *)&cm_id->m_remote_addr;
--- 
-2.17.1
+   echo "enable bind" > /sys/bus/serio/uevent
 
+the uevent code already supports a per-node "filter" function, maybe
+that notion could be extended to also have a filter for uevent types.
+
+But I'm just handwaving. Maybe it's better per uevent socket or something.
+
+              Linus
