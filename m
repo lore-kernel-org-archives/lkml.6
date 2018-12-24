@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6CBC43613
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E63C43613
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2531721783
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 13:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5672184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbeLXNqu (ORCPT
+        id S1725877AbeLXOAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 08:46:50 -0500
-Received: from mga06.intel.com ([134.134.136.31]:11612 "EHLO mga06.intel.com"
+        Mon, 24 Dec 2018 09:00:34 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26132 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbeLXNqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 08:46:50 -0500
+        id S1725355AbeLXOAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 09:00:34 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 05:46:50 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 06:00:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,392,1539673200"; 
-   d="scan'208";a="103053348"
+   d="scan'208";a="112982604"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 24 Dec 2018 05:46:50 -0800
+  by orsmga003.jf.intel.com with ESMTP; 24 Dec 2018 06:00:29 -0800
 Received: from [10.252.4.220] (abudanko-mobl.ccr.corp.intel.com [10.252.4.220])
-        by linux.intel.com (Postfix) with ESMTP id 55BDD58044E;
-        Mon, 24 Dec 2018 05:46:47 -0800 (PST)
-Subject: [PATCH v1 3/4] perf record: enable runtime trace compression
+        by linux.intel.com (Postfix) with ESMTP id 9C1C658044E;
+        Mon, 24 Dec 2018 06:00:26 -0800 (PST)
+Subject: [PATCH v1 4/4] perf report: support record trace file decompression
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -42,8 +42,8 @@ Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <767c2f35-48c8-1249-c8b7-974877561b8b@linux.intel.com>
-Date:   Mon, 24 Dec 2018 16:46:46 +0300
+Message-ID: <dca35458-ec72-e192-54ac-769e50c122f3@linux.intel.com>
+Date:   Mon, 24 Dec 2018 17:00:24 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
@@ -57,253 +57,403 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Compression is implemented using Zstandard API and employs AIO buffers
-as the memory to operate on so memcpy() is substituted by the API call.
-If the API call fails for some reason copying falls back to memcpy().
-Data chunks are split and packed into PERF_RECORD_COMPRESSED records by
-64KB at max. mmap-flush option value can be used to avoid compression of
-every single byte of data and increase compression ratio.
+PERF_RECORD_COMPRESSED records are decompressed from trace file into a 
+linked list of mmaped memory regions using Zstandard API. After that the 
+region is loaded fetching uncompressed events. When dumping raw trace 
+like perf report -D file offsets of events from compressed records are 
+set to zero.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- tools/perf/builtin-record.c | 122 ++++++++++++++++++++++++++++++++++--
- tools/perf/util/mmap.c      |  13 ++--
- tools/perf/util/mmap.h      |   2 +
- 3 files changed, 127 insertions(+), 10 deletions(-)
+ tools/perf/builtin-report.c | 151 +++++++++++++++++++++++++++++++++++-
+ tools/perf/util/machine.c   |   4 +
+ tools/perf/util/session.c   |  59 +++++++++++++-
+ tools/perf/util/session.h   |  16 ++++
+ tools/perf/util/tool.h      |   2 +
+ 5 files changed, 230 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index cb0b880281d7..0ef1878967f8 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -53,6 +53,9 @@
- #include <sys/mman.h>
- #include <sys/wait.h>
- #include <linux/time64.h>
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 4958095be4fc..1c45e674743d 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -52,7 +52,10 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+-#include <linux/mman.h>
++#include <sys/mman.h>
 +#ifdef HAVE_ZSTD_SUPPORT
 +#include <zstd.h>
 +#endif
  
- struct switch_output {
- 	bool		 enabled;
-@@ -83,6 +86,9 @@ struct record {
- 	unsigned long long	samples;
- 	u64			bytes_transferred;
- 	u64			bytes_compressed;
-+#ifdef HAVE_ZSTD_SUPPORT
-+	ZSTD_CStream		*zstd_cstream;
-+#endif
- };
- 
- static volatile int auxtrace_record__snapshot_started;
-@@ -358,6 +364,109 @@ static int record__mmap_flush_parse(const struct option *opt,
+ struct report {
+ 	struct perf_tool	tool;
+@@ -118,6 +121,94 @@ static int report__config(const char *var, const char *value, void *cb)
  	return 0;
  }
  
 +#ifdef HAVE_ZSTD_SUPPORT
-+static int record__zstd_init(struct record *rec)
++static int report__zstd_init(struct perf_session *session)
 +{
 +	size_t ret;
 +
-+	if (rec->opts.comp_level == 0)
++	session->zstd_dstream = ZSTD_createDStream();
++	if (session->zstd_dstream == NULL)
++	{
++		pr_err("Couldn't create decompression stream, disables trace compression\n");
++		return -1;
++	}
++
++	ret = ZSTD_initDStream(session->zstd_dstream);
++	if (ZSTD_isError(ret))
++	{
++		pr_err("Failed to initialize decompression stream: %s\n", ZSTD_getErrorName(ret));
++		return -1;
++	}
++
++	return 0;
++}
++
++static int report__zstd_fini(struct perf_session *session)
++{
++	struct decomp *next = session->decomp, *decomp;
++	size_t decomp_len = session->header.env.comp_mmap_len;
++
++	if (session->zstd_dstream) {
++		ZSTD_freeDStream(session->zstd_dstream);
++		session->zstd_dstream = NULL;
++	}
++
++	do {
++		decomp = next;
++		if (decomp == NULL)
++			break;
++		next = decomp->next;
++		munmap(decomp, decomp_len + sizeof(struct decomp));
++	} while (1);
++
++	return 0;
++}
++
++static size_t report__zstd_decompress(struct perf_session *session,
++		                      void *src, size_t src_size,
++		                      void *dst, size_t dst_size)
++{
++	size_t ret;
++	ZSTD_inBuffer input = { src, src_size, 0 };
++	ZSTD_outBuffer output = { dst, dst_size, 0 };
++
++	if (session->zstd_dstream == NULL)
 +		return 0;
 +
-+	rec->zstd_cstream = ZSTD_createCStream();
-+	if (rec->zstd_cstream == NULL) {
-+		pr_err("Couldn't create compression stream, disables trace compression\n");
-+		return -1;
-+	}
-+
-+	ret = ZSTD_initCStream(rec->zstd_cstream, rec->opts.comp_level);
-+	if (ZSTD_isError(ret)) {
-+		pr_err("Failed to initialize compression stream: %s\n", ZSTD_getErrorName(ret));
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int record__zstd_fini(struct record *rec)
-+{
-+	if (rec->zstd_cstream) {
-+		ZSTD_freeCStream(rec->zstd_cstream);
-+		rec->zstd_cstream = NULL;
-+	}
-+
-+	return 0;
-+}
-+
-+static size_t record__zstd_compress(void *to,  void *dst, size_t dst_size,
-+			            void *src, size_t src_size)
-+{
-+	void *dst_head = dst;
-+	struct record *rec = to;
-+	size_t ret, size, compressed = 0;
-+	struct compressed_event *event = NULL;
-+	/* maximum size of record data size (2^16 - 1 - header) */
-+	const size_t max_data_size = (1 << 8 * sizeof(event->header.size)) -
-+				      1 - sizeof(struct compressed_event);
-+	ZSTD_inBuffer input = { src, src_size, 0 };
-+	ZSTD_outBuffer output;
-+
-+	if (rec->opts.comp_level == 0) {
-+		memcpy(dst_head, src, src_size);
-+		return src_size;
-+	}
-+
 +	while (input.pos < input.size) {
-+		event = dst;
-+
-+		event->header.type = PERF_RECORD_COMPRESSED;
-+		event->header.size = size = sizeof(struct compressed_event);
-+		compressed += size;
-+		dst += size;
-+		dst_size -= size;
-+
-+		output = (ZSTD_outBuffer){ dst, (dst_size > max_data_size) ?
-+						max_data_size : dst_size, 0 };
-+		ret = ZSTD_compressStream(rec->zstd_cstream, &output, &input);
-+		ZSTD_flushStream(rec->zstd_cstream, &output);
-+		if (ZSTD_isError(ret)) {
-+			pr_err("failed to compress %ld bytes: %s\n",
-+				(long)src_size, ZSTD_getErrorName(ret));
-+			memcpy(dst_head, src, src_size);
-+			return src_size;
++		ret = ZSTD_decompressStream(session->zstd_dstream, &output, &input);
++		if (ZSTD_isError(ret))
++		{
++			pr_err("failed to decompress (B): %ld -> %ld : %s\n",
++				src_size, output.size, ZSTD_getErrorName(ret));
++			break;
 +		}
-+		size = output.pos;
-+
-+		event->header.size += size;
-+		compressed += size;
-+		dst += size;
-+		dst_size -= size;
++		output.dst  = dst + output.pos;
++		output.size = dst_size - output.pos;
 +	}
 +
-+	rec->bytes_transferred += src_size;
-+	rec->bytes_compressed += compressed;
-+
-+	return compressed;
++	return output.pos;
 +}
++
 +#else /* !HAVE_ZSTD_SUPPORT */
-+static int record__zstd_init(struct record *rec __maybe_unused)
++static int report__zstd_init(struct perf_session *session __maybe_unused)
 +{
 +	return -1;
 +}
 +
-+static int record__zstd_fini(struct record *rec __maybe_unused)
++static int report__zstd_fini(struct perf_session *session __maybe_unused)
 +{
 +	return 0;
 +}
 +
-+static size_t record__zstd_compress(void *to __maybe_unused,
-+			            void *dst, size_t dst_size __maybe_unused,
-+			            void *src, size_t src_size)
++static size_t report__zstd_decompress(struct perf_session *session __maybe_unused,
++				      void *src __maybe_unused, size_t src_size __maybe_unused,
++				      void *dst __maybe_unused, size_t dst_size __maybe_unused)
 +{
-+	memcpy(dst, src, src_size);
-+	return src_size;
++	return 0;
 +}
 +#endif
 +
- static int process_synthesized_event(struct perf_tool *tool,
- 				     union perf_event *event,
- 				     struct perf_sample *sample __maybe_unused,
-@@ -799,7 +908,8 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 				 * becomes available after previous aio write request.
- 				 */
- 				idx = record__aio_sync(map, false);
--				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
-+				if (perf_mmap__aio_push(map, rec, idx,
-+					record__zstd_compress, record__aio_pushfn, &off) != 0) {
- 					record__aio_set_pos(trace_fd, off);
- 					if (sync)
- 						map->flush = flush;
-@@ -1175,8 +1285,12 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 	fd = perf_data__fd(data);
- 	rec->session = session;
- 
--	session->header.env.comp_type = PERF_COMP_NONE;
--	rec->opts.comp_level = 0;
-+	if (record__zstd_init(rec) == 0) {
-+		session->header.env.comp_type = PERF_COMP_ZSTD;
-+	} else {
-+		session->header.env.comp_type = PERF_COMP_NONE;
-+		rec->opts.comp_level = 0;
-+	}
- 	session->header.env.comp_level = rec->opts.comp_level;
- 
- 	record__init_features(rec);
-@@ -1447,7 +1561,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- out_child:
- 	record__mmap_read_all(rec, true);
- 	record__aio_mmap_read_sync(rec);
--
-+	record__zstd_fini(rec);
- 	if (!quiet && rec->bytes_transferred && rec->bytes_compressed) {
- 		float ratio = (float)rec->bytes_transferred/(float)rec->bytes_compressed;
- 		session->header.env.comp_ratio = ratio + 0.5;
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 5e71b0183e33..58a71ca77df5 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -218,14 +218,16 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+ 				      struct addr_location *al, bool single,
+ 				      void *arg)
+@@ -225,6 +316,57 @@ static int process_feature_event(struct perf_session *session,
+ 	return 0;
  }
  
- int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
-+			size_t compress(void *to, void *dst, size_t dst_size, void *src, size_t src_size),
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off)
- {
- 	u64 head = perf_mmap__read_head(md);
- 	unsigned char *data = md->base + page_size;
--	unsigned long size, size0 = 0;
-+	size_t size, size0 = 0, size1 = 0;
- 	void *buf;
- 	int rc = 0;
-+	size_t mmap_len = perf_mmap__mmap_len(md);
++static int process_compressed_event(struct perf_session *session,
++		                    union perf_event *event, u64 file_offset)
++{
++	void *src;
++	size_t decomp_size, src_size;
++	u64 decomp_last_rem = 0;
++	size_t decomp_len = session->header.env.comp_mmap_len;
++	struct decomp *decomp, *decomp_last = session->decomp_last;
++
++	decomp = mmap(NULL, sizeof(struct decomp) + decomp_len, PROT_READ|PROT_WRITE,
++		      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
++	if (decomp == MAP_FAILED) {
++		pr_err("Couldn't allocate memory for decompression\n");
++		return -1;
++	}
++
++	decomp->file_pos = file_offset;
++	decomp->head = 0;
++
++	if (decomp_last) {
++		decomp_last_rem = decomp_last->size - decomp_last->head;
++		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
++		decomp->size = decomp_last_rem;
++	}
++
++	src = (void*)event + sizeof(struct compressed_event);
++	src_size = event->pack.header.size - sizeof(struct compressed_event);
++
++	decomp_size = report__zstd_decompress(session, src, src_size,
++				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
++	if (!decomp_size) {
++		munmap(decomp, sizeof(struct decomp) + decomp_len);
++		pr_err("Couldn't decompress data\n");
++		return -1;
++	}
++
++	decomp->size += decomp_size;
++
++	if (session->decomp == NULL) {
++		session->decomp = decomp;
++		session->decomp_last = decomp;
++	} else {
++		session->decomp_last->next = decomp;
++		session->decomp_last = decomp;
++	}
++
++	pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
++
++	return 0;
++}
++
+ static int process_sample_event(struct perf_tool *tool,
+ 				union perf_event *event,
+ 				struct perf_sample *sample,
+@@ -983,6 +1125,7 @@ int cmd_report(int argc, const char **argv)
+ 			.auxtrace	 = perf_event__process_auxtrace,
+ 			.event_update	 = perf_event__process_event_update,
+ 			.feature	 = process_feature_event,
++			.compressed	 = process_compressed_event,
+ 			.ordered_events	 = true,
+ 			.ordering_requires_timestamps = true,
+ 		},
+@@ -1205,6 +1348,10 @@ int cmd_report(int argc, const char **argv)
  
- 	rc = perf_mmap__read_init(md);
- 	if (rc < 0)
-@@ -254,14 +256,13 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 		buf = &data[md->start & md->mask];
- 		size = md->mask + 1 - (md->start & md->mask);
- 		md->start += size;
--		memcpy(md->aio.data[idx], buf, size);
--		size0 = size;
-+		size0 = compress(to, md->aio.data[idx], mmap_len, buf, size);
+ 	report.session = session;
+ 
++	if (session->header.env.comp_type == PERF_COMP_ZSTD &&
++	    session->header.env.comp_level)
++		report__zstd_init(session);
++
+ 	has_br_stack = perf_header__has_feat(&session->header,
+ 					     HEADER_BRANCH_STACK);
+ 
+@@ -1409,6 +1556,8 @@ int cmd_report(int argc, const char **argv)
+ error:
+ 	zfree(&report.ptime_range);
+ 
++	report__zstd_fini(session);
++
+ 	perf_session__delete(session);
+ 	return ret;
+ }
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 6fcb3bce0442..66d1ed7e7a80 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -972,6 +972,10 @@ int machine__map_x86_64_entry_trampolines(struct machine *machine,
+ 			continue;
+ 
+ 		dest_map = map_groups__find(kmaps, map->pgoff);
++		if (!dest_map) {
++			pr_debug("dest_map for %lx is NULL\n", map->pgoff);
++			continue;
++		}
+ 		if (dest_map != map)
+ 			map->pgoff = dest_map->map_ip(dest_map, map->pgoff);
+ 		found = true;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 78a067777144..be717ebcdb85 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -296,6 +296,13 @@ static int process_event_op2_stub(struct perf_session *session __maybe_unused,
+ 	return 0;
+ }
+ 
++static int process_event_op4_stub(struct perf_session *session __maybe_unused,
++				  union perf_event *event __maybe_unused,
++				  u64 data __maybe_unused)
++{
++	dump_printf(": unhandled!\n");
++	return 0;
++}
+ 
+ static
+ int process_event_thread_map_stub(struct perf_session *session __maybe_unused,
+@@ -418,6 +425,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
+ 		tool->time_conv = process_event_op2_stub;
+ 	if (tool->feature == NULL)
+ 		tool->feature = process_event_op2_stub;
++	if (tool->compressed == NULL)
++		tool->compressed = process_event_op4_stub;
+ }
+ 
+ static void swap_sample_id_all(union perf_event *event, void *data)
+@@ -1345,7 +1354,8 @@ static s64 perf_session__process_user_event(struct perf_session *session,
+ 	int fd = perf_data__fd(session->data);
+ 	int err;
+ 
+-	dump_event(session->evlist, event, file_offset, &sample);
++	if (event->header.type != PERF_RECORD_COMPRESSED)
++		dump_event(session->evlist, event, file_offset, &sample);
+ 
+ 	/* These events are processed right away */
+ 	switch (event->header.type) {
+@@ -1398,6 +1408,11 @@ static s64 perf_session__process_user_event(struct perf_session *session,
+ 		return tool->time_conv(session, event);
+ 	case PERF_RECORD_HEADER_FEATURE:
+ 		return tool->feature(session, event);
++	case PERF_RECORD_COMPRESSED:
++		err = tool->compressed(session, event, file_offset);
++		if (err)
++			dump_event(session->evlist, event, file_offset, &sample);
++		return 0;
+ 	default:
+ 		return -EINVAL;
  	}
+@@ -1673,6 +1688,8 @@ static int perf_session__flush_thread_stacks(struct perf_session *session)
  
- 	buf = &data[md->start & md->mask];
- 	size = md->end - md->start;
- 	md->start += size;
--	memcpy(md->aio.data[idx] + size0, buf, size);
-+	size1 = compress(to, md->aio.data[idx] + size0, mmap_len - size0, buf, size);
+ volatile int session_done;
  
- 	/*
- 	 * Increment md->refcount to guard md->data[idx] buffer
-@@ -277,9 +278,9 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
- 	md->prev = head;
- 	perf_mmap__consume(md);
- 
--	rc = push(to, &md->aio.cblocks[idx], md->aio.data[idx], size0 + size, *off);
-+	rc = push(to, &md->aio.cblocks[idx], md->aio.data[idx], size0 + size1, *off);
- 	if (!rc) {
--		*off += size0 + size;
-+		*off += size0 + size1;
- 	} else {
- 		/*
- 		 * Decrement md->refcount back if aio write
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index afbfb8b58d45..0b3b8b46410a 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -100,10 +100,12 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
- #ifdef HAVE_AIO_SUPPORT
- int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
-+			size_t compress(void *to, void *dst, size_t dst_size, void *src, size_t src_size),
- 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
- 			off_t *off);
- #else
- static inline int perf_mmap__aio_push(struct perf_mmap *md __maybe_unused, void *to __maybe_unused, int idx __maybe_unused,
-+	size_t compress(void *to, void *dst, size_t dst_size, void *src, size_t src_size) __maybe_unused,
- 	int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off) __maybe_unused,
- 	off_t *off __maybe_unused)
++static int __perf_session__process_decomp_events(struct perf_session *session);
++
+ static int __perf_session__process_pipe_events(struct perf_session *session)
  {
+ 	struct ordered_events *oe = &session->ordered_events;
+@@ -1753,6 +1770,10 @@ static int __perf_session__process_pipe_events(struct perf_session *session)
+ 	if (skip > 0)
+ 		head += skip;
+ 
++	err = __perf_session__process_decomp_events(session);
++	if (err)
++		goto out_err;
++
+ 	if (!session_done())
+ 		goto more;
+ done:
+@@ -1801,6 +1822,38 @@ fetch_mmaped_event(struct perf_session *session,
+ 	return event;
+ }
+ 
++static int __perf_session__process_decomp_events(struct perf_session *session)
++{
++	s64 skip;
++	u64 size, file_pos = 0;
++	union perf_event *event;
++	struct decomp *decomp = session->decomp_last;
++
++	if (!decomp)
++		return 0;
++
++	while (decomp->head < decomp->size && !session_done()) {
++		event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
++		if (!event)
++			break;
++
++		size = event->header.size;
++		if (size < sizeof(struct perf_event_header) ||
++		    (skip = perf_session__process_event(session, event, file_pos)) < 0) {
++			pr_err("%#" PRIx64 " [%#x]: failed to process type: %d\n",
++				decomp->file_pos + decomp->head, event->header.size, event->header.type);
++			return -EINVAL;
++		}
++
++		if (skip)
++			size += skip;
++
++		decomp->head += size;
++	}
++
++	return 0;
++}
++
+ /*
+  * On 64bit we can mmap the data file in one go. No need for tiny mmap
+  * slices. On 32bit we use 32MB.
+@@ -1904,6 +1957,10 @@ static int __perf_session__process_events(struct perf_session *session,
+ 	head += size;
+ 	file_pos += size;
+ 
++	err = __perf_session__process_decomp_events(session);
++	if (err)
++		goto out_err;
++
+ 	ui_progress__update(&prog, size);
+ 
+ 	if (session_done())
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index d96eccd7d27f..8ecda50efc6b 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -11,6 +11,9 @@
+ #include <linux/kernel.h>
+ #include <linux/rbtree.h>
+ #include <linux/perf_event.h>
++#ifdef HAVE_ZSTD_SUPPORT
++#include <zstd.h>
++#endif
+ 
+ struct ip_callchain;
+ struct symbol;
+@@ -35,6 +38,19 @@ struct perf_session {
+ 	struct ordered_events	ordered_events;
+ 	struct perf_data	*data;
+ 	struct perf_tool	*tool;
++	struct decomp		*decomp;
++	struct decomp		*decomp_last;
++#ifdef HAVE_ZSTD_SUPPORT
++	ZSTD_DStream		*zstd_dstream;
++#endif
++};
++
++struct decomp {
++	struct decomp *next;
++	u64 file_pos;
++	u64 head;
++	size_t size;
++	char data[];
+ };
+ 
+ struct perf_tool;
+diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
+index 56e4ca54020a..65ec84dfc5eb 100644
+--- a/tools/perf/util/tool.h
++++ b/tools/perf/util/tool.h
+@@ -28,6 +28,7 @@ typedef int (*event_attr_op)(struct perf_tool *tool,
+ 
+ typedef int (*event_op2)(struct perf_session *session, union perf_event *event);
+ typedef s64 (*event_op3)(struct perf_session *session, union perf_event *event);
++typedef int (*event_op4)(struct perf_session *session, union perf_event *event, u64 data);
+ 
+ typedef int (*event_oe)(struct perf_tool *tool, union perf_event *event,
+ 			struct ordered_events *oe);
+@@ -69,6 +70,7 @@ struct perf_tool {
+ 			stat,
+ 			stat_round,
+ 			feature;
++	event_op4	compressed;
+ 	event_op3	auxtrace;
+ 	bool		ordered_events;
+ 	bool		ordering_requires_timestamps;
