@@ -2,95 +2,114 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ED4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3808C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4737F21773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B1E821773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545638921;
-	bh=LjtegiaL9dYMAll2c7DYHsdKnnlLrqc785gwGqCTMm0=;
+	s=default; t=1545639062;
+	bh=QVEcA2s7JfYeT6OLCr/u4RPE+QCkbT2r5M5GPajtNQs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ATL+72QU0PqUD3poZ3oGdLzPm33P/Q1B7lliD/gaIW7mfRyVVvT3ZDBD9NHWg1du4
-	 gRAhux2V2nVnvRP5GeQjDQbC6JYaV3yjBjS8e3zLw0YKj85iIn8JHBSZoIMTHKCuXf
-	 TuhzrMk8HgQPeqNeab0410NOpdqLViguR6qqe/Oo=
+	b=oyYL7DzS9/o36922AC2EzlFNj3BXL2WTMgxg4gg1FQ1vu9UkUNU5W7g3dz7dyqC7i
+	 /mTFKxEFOLDQJRap9JwCZtXtS2N1nWJxaCGV6i5nKWT19MB5sX5s7RHDznZXfX0JaK
+	 Q4yTLWnqP9XsEKP7bqAPhvomtwB7ieujaOUCClJ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeLXIIj (ORCPT
+        id S1726828AbeLXILB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 03:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbeLXIIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 03:08:39 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BF572171F;
-        Mon, 24 Dec 2018 08:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545638918;
-        bh=LjtegiaL9dYMAll2c7DYHsdKnnlLrqc785gwGqCTMm0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RSEnUKXFvCE2jyUvjxqzHSqjbP6YqFhhtjCQXVRZMbIHdXyfM4nAgSWTja7ySNcHr
-         St4ClIFQLU/e1T/jxSHiP/RCg1KQOX/4DBMiiYhAqGMYgF3SWOcpNFOo5LIWyNt1K2
-         saeIE3YJFrMyKVE/hVMYW/BZ711C9ZCUe7m8j5iQ=
-Date:   Mon, 24 Dec 2018 09:08:36 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Thomas Backlund <tmb@mageia.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        christian.brauner@canonical.com, nix.or.die@gmail.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>, ellierevves@gmail.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, seth.forshee@canonical.com,
-        stable@vger.kernel.org
-Subject: Re: [BREAKAGE] Since 4.18, kernel sets SB_I_NODEV implicitly on
- userns mounts, breaking systemd-nspawn
-Message-ID: <20181224080836.GA12568@kroah.com>
-References: <e62d4c3a-b89b-2380-7b39-66733b389145@gmail.com>
- <CAEJqkggwbNP3Q+7AWr4i64CvAdCp15jVLOtUsnMo6rLk3ExTkA@mail.gmail.com>
- <CAHk-=wjd2VJDM+RXwg30MpW45F5EHZtLErzxQzYxi4+Dnm3sjw@mail.gmail.com>
- <CAPP7u0Vo6gB86S-hZcOW9Rmki8oKHd=Lyx3x-N9gjPC4JP_YxQ@mail.gmail.com>
- <CAHk-=wg-6jYZ=bJWdyBR=n8QOfwHTZZdzSUUPgFW+NGCV-pe2g@mail.gmail.com>
- <CAPP7u0UhPyC=eewx4dYu+AU5tK_URE8_5PW9cNkK6Ppp7vkqHg@mail.gmail.com>
- <CAHk-=wg8Qrh4nvFbWttz6zPMeRKO2Twv57vZfGaQ6odsjYFEnQ@mail.gmail.com>
- <828415b6-9fee-96bd-b6b0-fd4450df97a8@mageia.org>
+        Mon, 24 Dec 2018 03:11:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35358 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725984AbeLXILB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 03:11:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 355B0AD72;
+        Mon, 24 Dec 2018 08:10:59 +0000 (UTC)
+Date:   Mon, 24 Dec 2018 09:10:56 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Nicholas Mc Guire <der.herr@hofr.at>
+Cc:     David Rientjes <rientjes@google.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Arun KS <arunks@codeaurora.org>, Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] mm: vmalloc: do not allow kzalloc to fail
+Message-ID: <20181224081056.GD9063@dhcp22.suse.cz>
+References: <1545337437-673-1-git-send-email-hofrat@osadl.org>
+ <alpine.DEB.2.21.1812211356040.219499@chino.kir.corp.google.com>
+ <20181222080421.GB26155@osadl.at>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <828415b6-9fee-96bd-b6b0-fd4450df97a8@mageia.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181222080421.GB26155@osadl.at>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 12:54:11PM +0200, Thomas Backlund wrote:
-> Den 23-12-2018 kl. 01:28, skrev Linus Torvalds:
-> > On Sat, Dec 22, 2018 at 3:07 PM Christian Brauner
-> > <christian.brauner@canonical.com> wrote:
-> > > 
-> > > However, for this case should I resend the revert?
+On Sat 22-12-18 09:04:21, Nicholas Mc Guire wrote:
+> On Fri, Dec 21, 2018 at 01:58:39PM -0800, David Rientjes wrote:
+> > On Thu, 20 Dec 2018, Nicholas Mc Guire wrote:
 > > 
-> > Since I was pointed at the original email thread, I just picked it up
-> > from there directly. It still applied cleanly, nothing had changed in
-> > that area.
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index 871e41c..1c118d7 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -1258,7 +1258,7 @@ void __init vmalloc_init(void)
+> > >  
+> > >  	/* Import existing vmlist entries. */
+> > >  	for (tmp = vmlist; tmp; tmp = tmp->next) {
+> > > -		va = kzalloc(sizeof(struct vmap_area), GFP_NOWAIT);
+> > > +		va = kzalloc(sizeof(*va), GFP_NOWAIT | __GFP_NOFAIL);
+> > >  		va->flags = VM_VM_AREA;
+> > >  		va->va_start = (unsigned long)tmp->addr;
+> > >  		va->va_end = va->va_start + tmp->size;
 > > 
-> >                  Linus
+> > Hi Nicholas,
 > > 
-> 
-> This should also be picked up for 4.19 lts
-> 
-> Greg, it's now upstream as:
-> 
-> From 94f82008ce30e2624537d240d64ce718255e0b80 Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <christian@brauner.io>
-> Date: Thu, 5 Jul 2018 17:51:20 +0200
-> Subject: Revert "vfs: Allow userns root to call mknod on owned filesystems."
+> > You're right that this looks wrong because there's no guarantee that va is 
+> > actually non-NULL.  __GFP_NOFAIL won't help in init, unfortunately, since 
+> > we're not giving the page allocator a chance to reclaim so this would 
+> > likely just end up looping forever instead of crashing with a NULL pointer 
+> > dereference, which would actually be the better result.
+> >
+> tried tracing the __GFP_NOFAIL path and had concluded that it would
+> end in out_of_memory() -> panic("System is deadlocked on memory\n");
+> which also should point cleanly to the cause - but I´m actually not
+> that sure if that trace was correct in all cases.
 
-Now queued up, thanks.
+No, we do not trigger the memory reclaim path nor the oom killer when
+using GFP_NOWAIT. In fact the current implementation even ignores
+__GFP_NOFAIL AFAICS (so I was wrong about the endless loop but I suspect
+that we used to loop fpr __GFP_NOFAIL at some point in the past). The
+patch simply doesn't have any effect. But the primary objection is that
+the behavior might change in future and you certainly do not want to get
+stuck in the boot process without knowing what is going on. Crashing
+will tell you that quite obviously. Although I have hard time imagine
+how that could happen in a reasonably configured system.
 
-greg k-h
+> > You could do
+> > 
+> > 	BUG_ON(!va);
+> > 
+> > to make it obvious why we crashed, however.  It makes it obvious that the 
+> > crash is intentional rather than some error in the kernel code.
+> 
+> makes sense - that atleast makes it imediately clear from the code
+> that there is no way out from here.
+
+How does it differ from blowing up right there when dereferencing flags?
+It would be clear from the oops.
+-- 
+Michal Hocko
+SUSE Labs
