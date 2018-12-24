@@ -2,196 +2,144 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC1BC64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0000FC64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2422421850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B61A121871
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 14:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="r2kIItjh"
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="bCkxpo2i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbeLXOxD (ORCPT
+        id S1725953AbeLXO55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 09:53:03 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:43422 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbeLXOxC (ORCPT
+        Mon, 24 Dec 2018 09:57:57 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:46769 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXO55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 09:53:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=cbvsgE01GRArP8hO9aXLfHPwiNsSUv2KHI7XVVxeLWQ=;
-        b=r2kIItjhmNpI84EfvK4iSRxVT4bd2nTqpLW+H2KcTTMkLpultuJhBB2yu80sMqDiv8CWPMPMYNWpJb33GeKZHS33owntSeZk3LyA8TEmUEGVIQhsdQW/vlcP48sxxeu6TmypXiO/rrwCv3cSxmaOAruI+sGk9z1B7t5+y0HhkGIEkE5eHU0WQEEf1XdNB9eJBhqesDdLTyQpwjESZfqv949ddsN/hAKrut9nDyzRn1pM+oUXey1kDXc31KWq/Xyw9VxRRJUtBxuWXcKF0yTmHMy45jr85+/YWPUO1zsMBzqwUYbGdxM+z2QqpYyXoUtQq4RJZCRxqMh1JoNqgFRFSQ==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:56556 helo=[192.168.10.173])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gbRbH-0005hR-Lw; Mon, 24 Dec 2018 15:52:59 +0100
-Subject: Re: [PATCH] drm/fb-helper: fix leaks in error path of
- drm_fb_helper_fbdev_setup
-To:     Peter Wu <peter@lekensteyn.nl>
-Cc:     dri-devel@lists.freedesktop.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        rong.a.chen@intel.com, kraxel@redhat.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        lkp@01.org
-References: <20181223004315.GA11455@al>
- <20181223005507.28328-1-peter@lekensteyn.nl>
- <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
- <20181223231033.GA31596@al>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <80d98ab2-dbf8-8d77-e5ca-07995cef0f1b@tronnes.org>
-Date:   Mon, 24 Dec 2018 15:52:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 24 Dec 2018 09:57:57 -0500
+Received: by mail-ua1-f67.google.com with SMTP id v24so3898105uap.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 06:57:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=urADQiLgSF2VI5T7ctuf7Y7VNWHxgM6GsR/nEoGCKqk=;
+        b=bCkxpo2i8nDKX3lfeE9U3QgyyVfDPgp5jKS6MRE2biKoynNQG/9BTBaa/1X1PDdHwf
+         +MfJz1xS+irFadiOwsCdar08trJ8xGgt60k2Mrvb6ElQsZXunWWxsjIt9ds4Ss8CLUrH
+         02jYVpSx7miix8OKKQsmbeRbW/hSNhPEtfJDNUTru+oE0B0ypEoBMHvnVOGIQhRzuMNW
+         ShIdkWqCpcAlgjY5mEJ1sq1Y5u7QGtQn6AVzsIpG7WOe/ZEOalCeBPlc85jW7lkKgX6c
+         WlTefHfLcZomXrNaIBw0agr5lm/OS0/AlT0xJrT2+MC+aLJvHWuN2ijYNsNyQdNtUdCo
+         Gl0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=urADQiLgSF2VI5T7ctuf7Y7VNWHxgM6GsR/nEoGCKqk=;
+        b=icl5HK8BXT7/NLd6ZOr056zeQKrVe327W+BYRv4VInzyup7PDLmhZLPWgur6/L206G
+         gnt2g3hKa5kcfRCQLigfYYGEEq/5XQ0bJupoyqQC1bLbbMtM5WUZY21WfsQZFdGWS/al
+         a5vXjs2VevllTlrgM6VyhLVmtAIVcUmNo26NhGjQVIrnIpJ//1hei1GM0bD2F5gXMCqs
+         EUOpDS+XCyHTlctLI7boVJ+STOdNxveoJMYQpt521OvEFMAVw6B8wxDwWAEsGF16h4wm
+         vlk9IgMPf1d5jL8BUqDyaOQmCNsz0pyC57EqlVy/XUFBS8MYU7mT69kiBNTK9qjwZIYf
+         LM+w==
+X-Gm-Message-State: AJcUukfKGhZl0gsu6yGk+VzwgR1A8CqMXB7bBAk2Slt/k2KnMjR9vQ82
+        t1QQ+UvGEKfiOXsvi9ek+Uz3+5nN25lv14RVeXP5xA==
+X-Google-Smtp-Source: ALg8bN471E81KTk/vJM8KMAS3jVV9gOyieDvC8cRr1bMhJgZ6897RxTl5iaMxFrhzRT8qh9GDK9v++vVA502seQ99Fc=
+X-Received: by 2002:ab0:4121:: with SMTP id j30mr4864670uad.65.1545663475880;
+ Mon, 24 Dec 2018 06:57:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181223231033.GA31596@al>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com> <20181116125858.yujwx5xkpg2kgyxe@kamzik.brq.redhat.com>
+In-Reply-To: <20181116125858.yujwx5xkpg2kgyxe@kamzik.brq.redhat.com>
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Mon, 24 Dec 2018 16:56:50 +0200
+Message-ID: <CANBxJ=EeosO1EOfvQ6OFLps+D9ZQRBKTmByvcJ5r=h-4ahbekQ@mail.gmail.com>
+Subject: Re: [PATCH V2] SelfTest: KVM: Drop Asserts for madvise
+ MADV_NOHUGEPAGE failure
+To:     Shuah Khan <shuah@kernel.org>, Andrew Jones <drjones@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Kind reminder to merge my patch into next
+
+thanks.
+
+On Fri, Nov 16, 2018 at 2:59 PM Andrew Jones <drjones@redhat.com> wrote:
+>
+> On Fri, Nov 16, 2018 at 01:50:55PM +0200, Ahmed Abd El Mawgood wrote:
+> > From: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+> >
+> > madvise() returns -1 without CONFIG_TRANSPARENT_HUGEPAGE=y. That would
+> > trigger asserts when checking for return value of madvice. Following
+> > similar decision to [1]. I thought it is ok to assume that madvise()
+> > MADV_NOHUGEPAGE failures implies that THP is not supported by host kernel.
+> >
+> > Other options was to check for Transparent Huge Page support in
+> > /sys/kernel/mm/transparent_hugepage/enabled.
+> >
+> > -- links --
+> > [1] https://lists.gnu.org/archive/html/qemu-devel/2015-11/msg04514.html
+> >
+> > Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+> > ---
+> >  tools/testing/selftests/kvm/lib/kvm_util.c | 21 +++++++++++++++------
+> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> > index 1b41e71283d5..437c5bb48061 100644
+> > --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> > +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> > @@ -586,14 +586,23 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+> >                                src_type == VM_MEM_SRC_ANONYMOUS_THP ?  huge_page_size : 1);
+> >
+> >       /* As needed perform madvise */
+> > -     if (src_type == VM_MEM_SRC_ANONYMOUS || src_type == VM_MEM_SRC_ANONYMOUS_THP) {
+> > +     if (src_type == VM_MEM_SRC_ANONYMOUS) {
+> > +             /*
+> > +              * Neglect madvise error because it is ok to not have THP
+> > +              * support in this case.
+> > +              */
+> > +             madvise(region->host_mem, npages * vm->page_size,
+> > +                     MADV_NOHUGEPAGE);
+> > +     } else if (src_type == VM_MEM_SRC_ANONYMOUS_THP) {
+> >               ret = madvise(region->host_mem, npages * vm->page_size,
+> > -                          src_type == VM_MEM_SRC_ANONYMOUS ? MADV_NOHUGEPAGE : MADV_HUGEPAGE);
+> > +                     MADV_HUGEPAGE);
+> >               TEST_ASSERT(ret == 0, "madvise failed,\n"
+> > -                         "  addr: %p\n"
+> > -                         "  length: 0x%lx\n"
+> > -                         "  src_type: %x",
+> > -                         region->host_mem, npages * vm->page_size, src_type);
+> > +                     "Does the kernel have CONFIG_TRANSPARENT_HUGEPAGE=y\n"
+> > +                     "  addr: %p\n"
+> > +                     "  length: 0x%lx\n"
+> > +                     "  src_type: %x\n",
+> > +                     region->host_mem, npages * vm->page_size,
+> > +                     src_type);
+> >       }
+> >
+> >       region->unused_phy_pages = sparsebit_alloc();
+> > --
+> > 2.18.1
+> >
+>
+> Reviewed-by: Andrew Jones <drjones@redhat.com>
 
 
-Den 24.12.2018 00.10, skrev Peter Wu:
-> On Sun, Dec 23, 2018 at 02:55:52PM +0100, Noralf Trønnes wrote:
->>
->>
->> Den 23.12.2018 01.55, skrev Peter Wu:
->>> After drm_fb_helper_fbdev_setup calls drm_fb_helper_init,
->>> "dev->fb_helper" will be initialized (and thus drm_fb_helper_fini will
->>> have some effect). After that, drm_fb_helper_initial_config is called
->>> which may call the "fb_probe" driver callback.
->>>
->>> This driver callback may call drm_fb_helper_defio_init (as is done by
->>> drm_fb_helper_generic_probe) or set a framebuffer (as is done by bochs)
->>> as documented. These are normally cleaned up on exit by
->>> drm_fb_helper_fbdev_teardown which also calls drm_fb_helper_fini.
->>>
->>> If an error occurs after "fb_probe", but before setup is complete, then
->>> calling just drm_fb_helper_fini will leak resources. This was triggered
->>> by df2052cc922 ("bochs: convert to drm_fb_helper_fbdev_setup/teardown"):
->>>
->>>       [   50.008030] bochsdrmfb: enable CONFIG_FB_LITTLE_ENDIAN to support this framebuffer
->>>       [   50.009436] bochs-drm 0000:00:02.0: [drm:drm_fb_helper_fbdev_setup] *ERROR* fbdev: Failed to set configuration (ret=-38)
->>>       [   50.011456] [drm] Initialized bochs-drm 1.0.0 20130925 for 0000:00:02.0 on minor 2
->>>       [   50.013604] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x280/0x2a0
->>>       [   50.016175] CPU: 1 PID: 1 Comm: swapper/0 Tainted: G                T 4.20.0-rc7 #1
->>>       [   50.017732] EIP: drm_mode_config_cleanup+0x280/0x2a0
->>>       ...
->>>       [   50.023155] Call Trace:
->>>       [   50.023155]  ? bochs_kms_fini+0x1e/0x30
->>>       [   50.023155]  ? bochs_unload+0x18/0x40
->>>
->>> This can be reproduced with QEMU and CONFIG_FB_LITTLE_ENDIAN=n.
->>>
->>> Link: https://lkml.kernel.org/r/20181221083226.GI23332@shao2-debian
->>> Link: https://lkml.kernel.org/r/20181223004315.GA11455@al
->>> Fixes: 8741216396b2 ("drm/fb-helper: Add drm_fb_helper_fbdev_setup/teardown()")
->>> Reported-by: kernel test robot <rong.a.chen@intel.com>
->>> Cc: Noralf Trønnes <noralf@tronnes.org>
->>> Signed-off-by: Peter Wu <peter@lekensteyn.nl>
->>> ---
->>>    drivers/gpu/drm/drm_fb_helper.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
->>> index 9d64f874f965..432e0f3b9267 100644
->>> --- a/drivers/gpu/drm/drm_fb_helper.c
->>> +++ b/drivers/gpu/drm/drm_fb_helper.c
->>> @@ -2860,7 +2860,7 @@ int drm_fb_helper_fbdev_setup(struct drm_device *dev,
->>>    	return 0;
->>>    err_drm_fb_helper_fini:
->>> -	drm_fb_helper_fini(fb_helper);
->>> +	drm_fb_helper_fbdev_teardown(dev);
->>
->> This change will break the error path for drm_fbdev_generic_setup()
->> because drm_fb_helper_generic_probe() cleans up on error but doesn't
->> clear drm_fb_helper->fb resulting in a double drm_framebuffer_remove().
-> 
-> This should probably considered a bug of drm_fb_helper_generic_probe.
-> Ownership of fb_helper should remain with the caller. The caller can
-> detect an error and act accordingly.
-> 
->> My assumption has been that the drm_fb_helper_funcs->fb_probe callback
->> cleans up its resources on error. Clearly this is not the case for bochs, so
->> my take on this is that bochsfb_create() needs to clean up on error.
-> 
-> That assumption still holds for bochs. The problem is this sequence:
-> - drm_fb_helper_fbdev_setup is called.
-> - fb_probe succeeds (this is crucial).
-> - register_framebuffer fails.
-> - error path of setup is triggered.
-> 
-> As fb_helper is fully setup by drivers, the drm_fb_helper core should
-> fully deallocate it again on the error path or else a leak occurs.
-> 
->> Gerd has a patchset that switches bochs over to the generic fbdev
->> emulation, but ofc that doesn't help with 4.20:
->> https://patchwork.freedesktop.org/series/54269/
-> 
-> And that does not help with other users of the drm_fb_helper who use
-> functions like drm_fb_helper_defio_init. They will likely run in the
-> same problem.
-> 
-> I don't have a way to test tinydrm or other drivers, but if you force
-> register_framebuffer to fail, you should be able to reproduce the
-> problem with drm_fb_helper_generic_probe.
-> 
 
-Now I understand. I have looked at the drivers that use drm_fb_helper
-and no one seem to handle the case where register_framebuffer() is
-failing.
-
-Here's what drivers do when drm_fb_helper_initial_config() fails:
-
-Doesn't check:
-amdgpu
-virtio
-
-Calls drm_fb_helper_fini():
-armada
-ast
-exynos
-gma500
-hisilicon
-mgag200
-msm
-nouveau
-omap
-radeon
-rockchip
-tegra
-udl
-bochs - Uses drm_fb_helper_fbdev_setup()
-qxl - Uses drm_fb_helper_fbdev_setup()
-vboxvideo - Uses drm_fb_helper_fbdev_setup()
-
-Might clean up, not sure:
-cirrus
-
-Looks suspicious:
-i915
-
-I looked at bochs before it switched to drm_fb_helper_fbdev_setup() and
-it also just called drm_fb_helper_fini().
-
-It looks like you've uncovered something no one has though about (or
-not implemented at least).
-
-It's not just the framebuffer that's not destroyed, the buffer object
-is also leaked. drm_mode_config_cleanup() yells about the framebuffer
-(and frees it), but says nothing about the buffer object. It might be
-that it can't even be made to detect that since some drivers do special
-stuff for the fbdev buffer.
-
-I'll pick up on this and do some testing after the Christmas holidays.
-
-Noralf.
+-- 
+Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
+University, & CIS @  VMI
