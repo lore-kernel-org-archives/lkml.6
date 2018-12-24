@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FFEC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815B4C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9439021850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:01:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B41621850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s4Aactj3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZ23oMi6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbeLXWBw (ORCPT
+        id S1726594AbeLXWCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 17:01:52 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35984 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbeLXWBM (ORCPT
+        Mon, 24 Dec 2018 17:02:08 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34348 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbeLXWBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 17:01:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u4so12529933wrp.3;
-        Mon, 24 Dec 2018 14:01:09 -0800 (PST)
+        Mon, 24 Dec 2018 17:01:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so12577088wrw.1;
+        Mon, 24 Dec 2018 14:01:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z25qU1Gd2RNparvr3msaNkK+mb9KyV51aUQZgpnOltw=;
-        b=s4Aactj3pMwWVGPktsMfEhcBhBwyuKkrVkCv7wW3ZebzpNntT23v2JvQV2US8TgAlX
-         +2X47nr6Ajs+VtKMRKRGQkF8BI6Fwzy+8L+veQvBoFeRmNNT1JBFoVKIHXe+N5Xe7AfS
-         OQqmw5pU/wV2SPRRloQ7E/tme/ahkC9Jg/8GBnWKqF6W4GtsRVF5HMGtumZkdzQeDf4/
-         RIqo6CVJkKKdWktuyZ77j/Dfo5eCAHypOJu78d927JHyk1gfRXfm8hEulQNwCudgtaXo
-         6u2g2iMFZw4SvyKAMkszBWLKwxBO7Sk/Ela9L6yi6/E2qpeB6KFk3UKw8eQOup21Smhk
-         Znnw==
+        bh=GGnsImLEJas/NCseLAI8aIfWslIulfuhj1PcOtADAf8=;
+        b=CZ23oMi6wENbcxj7WbCjP5YgM+0Dd+MD748+cmAHihjwVZJh84iUpzLtoU3aGf2l/W
+         ZSY1mfxTel8ODCp/HT19RfKKwryTggajfhV9XAJWuL1pMFyAJrZhFkmdii83N9U8sZtk
+         /86wVqxuT2fmIWn/r/y37fN53hGVMhpLRzNXllxmfjXX38+K6W1dTWmnCcTvLhFJPCW7
+         oNfP8kL9zvptaBc5Xx6m3qVs/nZhKVzepQX47du4hq+H0JeVXDCkgMmeWavus44L3bk3
+         BkBOP5Y3/1zg7FTN84UwbpE3TrdanW+UOAygHR0NsJeBZKfiBCA23xy8sFof9BXK47+X
+         cZ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=z25qU1Gd2RNparvr3msaNkK+mb9KyV51aUQZgpnOltw=;
-        b=IbyXWC7OPt46zBhDPVmHoHzARhFUni6TSTEDu/5dA35fo+Dt50QCmsZSaItD5WkmMF
-         Iprg9s6P17J2Tftv86/D/vTaOHmU+gR8rkgpi4Oo9HFRl+iOw+JqtwPJejkCyxeiZ4f5
-         D1T5AMIYK+Z7pLLt/XNxd2rA8p3vi4UASSAt1XX6wU5oIa6eCD7F7z304MIOBVhOGRFA
-         giJJ/rPA1/T8ixv/Q9fHvDbOu1HBkPp6OiSfA/5CL3LqWconBJYqbGo314N2Us/t7w90
-         uP5QHHFYcBH3383oVwZOpRP1ddVwfkpm+1o8WbCRq4hv3nlGqj/5/46kBtmoIX+nOvxG
-         w7vA==
-X-Gm-Message-State: AJcUukemaNn9fjlVv1sFNVWT92X25kQcoc2n/+ElFApF4rVvuIzB41+X
-        FmZeVZqva3i0fyUv2J7tHE64eJqQ85I=
-X-Google-Smtp-Source: ALg8bN5sUn6t/qQVtpNnEhk7IBxihKXCFbWe6/aOi3aISToUdQPZvgpZcIx2N+DMLp4St6rVeZH17A==
-X-Received: by 2002:adf:f9cb:: with SMTP id w11mr12812261wrr.201.1545688869106;
-        Mon, 24 Dec 2018 14:01:09 -0800 (PST)
+        bh=GGnsImLEJas/NCseLAI8aIfWslIulfuhj1PcOtADAf8=;
+        b=Kp9Ara8B3nuYUzNBz5XF6ht2m2+ISuTxLQ2e1Jw1efkoxLWK16f/sc53SLiD88tHzl
+         kl8cp3rMHw4IDW02tB3Fqm2nlf0a5f8kjXQMhjG/iv+jEa6qUkx63M/y2FnnG77HG17T
+         HcCApQjy6arktj7r+jnDkmlpEkZCMk/crs+CX9AsbCVWpQYBBMhJ6ajLcwjrO4YcbqrV
+         gamXjKjAA9cWhHaoCd2VdZ0zTSUVF8Q/DE0QXnsSu2DDFhH2Iqik3e6pah8iBKIq6HtX
+         NJ5HN0kbf+K4nWD8dFwpcSVkUHMs2Pt/nBN4+i79nzbMA0emOWfAJkOOJg7PiT41PW7C
+         gaiw==
+X-Gm-Message-State: AJcUukeHkHSHiZ5F0Dh15czf8e0TaVAE8ZLMtCvp4/2FwazWC0RUzhES
+        8WXwWK692bBwwq488MDcOWo=
+X-Google-Smtp-Source: ALg8bN40hFS++7/EeyfQeA3w3xfLqb4EK61aM566f0n123LvqurVUABzjFeqmBv8CMt9u8EZnA2x3g==
+X-Received: by 2002:a5d:40c1:: with SMTP id b1mr13673585wrq.133.1545688862368;
+        Mon, 24 Dec 2018 14:01:02 -0800 (PST)
 Received: from gapa-Lenovo-IdeaPad-Y580.home (daw20.neoplus.adsl.tpnet.pl. [83.23.22.20])
-        by smtp.gmail.com with ESMTPSA id d4sm23970153wrp.89.2018.12.24.14.01.07
+        by smtp.gmail.com with ESMTPSA id d4sm23970153wrp.89.2018.12.24.14.01.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 24 Dec 2018 14:01:08 -0800 (PST)
+        Mon, 24 Dec 2018 14:01:01 -0800 (PST)
 From:   cezary.gapinski@gmail.com
 To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
@@ -65,9 +65,9 @@ Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Cezary Gapinski <cezary.gapinski@gmail.com>
-Subject: [PATCH v2 10/14] spi: stm32: add start dma transfer function
-Date:   Mon, 24 Dec 2018 23:00:36 +0100
-Message-Id: <1545688840-23992-11-git-send-email-cezary.gapinski@gmail.com>
+Subject: [PATCH v2 06/14] spi: stm32: remove SPI LOOP mode
+Date:   Mon, 24 Dec 2018 23:00:32 +0100
+Message-Id: <1545688840-23992-7-git-send-email-cezary.gapinski@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545688840-23992-1-git-send-email-cezary.gapinski@gmail.com>
 References: <1545688840-23992-1-git-send-email-cezary.gapinski@gmail.com>
@@ -78,66 +78,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cezary Gapinski <cezary.gapinski@gmail.com>
 
-Add transfer_one_dma_start function to be more generic for other
-stm32 SPI family drivers.
+This driver does not support SPI LOOP mode by configuration
+in registers.
 
 Signed-off-by: Cezary Gapinski <cezary.gapinski@gmail.com>
 ---
- drivers/spi/spi-stm32.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ drivers/spi/spi-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-index bc8513f..b19d02b 100644
+index f7056b7..b639be7 100644
 --- a/drivers/spi/spi-stm32.c
 +++ b/drivers/spi/spi-stm32.c
-@@ -748,6 +748,23 @@ static int stm32_spi_transfer_one_irq(struct stm32_spi *spi)
- }
- 
- /**
-+ * stm32_spi_transfer_one_dma_start - Set SPI driver registers to start transfer
-+ *				      using DMA
-+ */
-+static void stm32_spi_transfer_one_dma_start(struct stm32_spi *spi)
-+{
-+	/* Enable the interrupts relative to the end of transfer */
-+	stm32_spi_set_bits(spi, STM32H7_SPI_IER, STM32H7_SPI_IER_EOTIE |
-+						 STM32H7_SPI_IER_TXTFIE |
-+						 STM32H7_SPI_IER_OVRIE |
-+						 STM32H7_SPI_IER_MODFIE);
-+
-+	stm32_spi_enable(spi);
-+
-+	stm32_spi_set_bits(spi, STM32H7_SPI_CR1, STM32H7_SPI_CR1_CSTART);
-+}
-+
-+/**
-  * stm32_spi_transfer_one_dma - transfer a single spi_transfer using DMA
-  *
-  * It must returns 0 if the transfer is finished or 1 if the transfer is still
-@@ -759,7 +776,6 @@ static int stm32_spi_transfer_one_dma(struct stm32_spi *spi,
- 	struct dma_slave_config tx_dma_conf, rx_dma_conf;
- 	struct dma_async_tx_descriptor *tx_dma_desc, *rx_dma_desc;
- 	unsigned long flags;
--	u32 ier = 0;
- 
- 	spin_lock_irqsave(&spi->lock, flags);
- 
-@@ -829,14 +845,7 @@ static int stm32_spi_transfer_one_dma(struct stm32_spi *spi,
- 				   STM32H7_SPI_CFG1_TXDMAEN);
- 	}
- 
--	/* Enable the interrupts relative to the end of transfer */
--	ier |= STM32H7_SPI_IER_EOTIE | STM32H7_SPI_IER_TXTFIE |
--	       STM32H7_SPI_IER_OVRIE | STM32H7_SPI_IER_MODFIE;
--	writel_relaxed(ier, spi->base + STM32H7_SPI_IER);
--
--	stm32_spi_enable(spi);
--
--	stm32_spi_set_bits(spi, STM32H7_SPI_CR1, STM32H7_SPI_CR1_CSTART);
-+	stm32_spi_transfer_one_dma_start(spi);
- 
- 	spin_unlock_irqrestore(&spi->lock, flags);
- 
+@@ -1143,7 +1143,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
+ 	master->auto_runtime_pm = true;
+ 	master->bus_num = pdev->id;
+ 	master->mode_bits = SPI_CPHA | SPI_CPOL | SPI_CS_HIGH | SPI_LSB_FIRST |
+-			    SPI_3WIRE | SPI_LOOP;
++			    SPI_3WIRE;
+ 	master->bits_per_word_mask = stm32_spi_get_bpw_mask(spi);
+ 	master->max_speed_hz = spi->clk_rate / SPI_MBR_DIV_MIN;
+ 	master->min_speed_hz = spi->clk_rate / SPI_MBR_DIV_MAX;
 -- 
 2.7.4
 
