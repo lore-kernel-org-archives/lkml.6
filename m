@@ -2,120 +2,122 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8FAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C6EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5678D2176F
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:48:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="OQkt4utx"
+	by mail.kernel.org (Postfix) with ESMTP id 92E852176F
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbeLXLs3 (ORCPT
+        id S1725822AbeLXLwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 06:48:29 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40890 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbeLXLs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 06:48:28 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so11582042wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 03:48:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7gir0ddrSr/xERbPKX/yuRsDRKsdHI2Lx7hGfrWzEZE=;
-        b=OQkt4utx9EEMUw3h1sMv47HLcPhjRkDJms2MFPK/STRHkcrj7EwDPBjxBK+GL6O2Dg
-         iaRbAAiFZnBjOwT3fZbUtrC2Qe3vg+pJMN8ijKqkynt1692FIm1wsVkvxEGYFuRYQOeY
-         SjywQDgGJG9zCkWFlTzMHsxNS1kbShk1hwv9EbeVUlZlcu7vvkhXa6Bm56YqmG72rVx9
-         N1N5YQJxNR+/rUVKdI7/kP+pnhgHWgUC2KwNcRe1n+A3katScFDRgYX+ppo8jn7WUtuP
-         4w1RWwn1D33kTkjt/L+TIXBpWmOEId4m2QVB+NNRP5QUrhCKr7+1uPI/FlK9RTC1aiKx
-         T4nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7gir0ddrSr/xERbPKX/yuRsDRKsdHI2Lx7hGfrWzEZE=;
-        b=DTI7FDS+pbPWkuvNlQRZDAH7sQQe71dz5v8oMLEA5qTEhgMCNGE9zHujKejQm2KISV
-         RW2ZoUaxfHU4YkZ9iz7MGc9oz5O6hAusu0ZZsH26lzgKWz1/cslhF7vOVq1w4eGV/PyE
-         MK3LrWiU07nSj4BfkdpP+crcUCF6f3wZjzbfHrvwh/lrJmRyeNIfAo5OMhoduk7td0B9
-         YXVeASpyhLCTVfqzB6SPVftOaetVdZjKuiGvJ2MSvQD3ZPIL0/Ch4gbgtPn/NnyVdIr9
-         KHn0rbBPD8cyc8pDNqLLejIFVFompwuTaKwt/VKtRXiEQ3dW31ezid1pN/zojkvk2aMn
-         cBmg==
-X-Gm-Message-State: AJcUukfNkduixmmgrmY+AdIRhbN1HT3YbIXt+QdU7M1LXV3amQOCwlt2
-        8icZt5/ifR6X2miiHvv6HiBL9OZnAvqPQw==
-X-Google-Smtp-Source: ALg8bN4FmfiQgui/RTv8fK8odIALzwnN1xomJ266QUlBLejbmZVGCtebskM3MO8wyvTxhSbBZDT42g==
-X-Received: by 2002:a1c:e484:: with SMTP id b126mr11443783wmh.119.1545652107316;
-        Mon, 24 Dec 2018 03:48:27 -0800 (PST)
-Received: from brauner.io (p5B2A6FBE.dip0.t-ipconnect.de. [91.42.111.190])
-        by smtp.gmail.com with ESMTPSA id 1sm17432228wmx.48.2018.12.24.03.48.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Dec 2018 03:48:26 -0800 (PST)
-Date:   Mon, 24 Dec 2018 12:48:24 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, arve@android.com, maco@android.com,
-        joel@joelfernandes.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v1 1/2] binderfs: implement "max" mount option
-Message-ID: <20181224114822.quwdpa74gvhu6ybn@brauner.io>
-References: <20181223143550.10672-1-christian@brauner.io>
- <20181224110935.cop4v5kfcdkemtwo@brauner.io>
- <20181224114559.GA4124@kroah.com>
+        Mon, 24 Dec 2018 06:52:09 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37841 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbeLXLwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 06:52:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 03:52:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,392,1539673200"; 
+   d="scan'208";a="120734283"
+Received: from dlu2-mobl4.ccr.corp.intel.com (HELO localhost) ([10.249.254.240])
+  by orsmga002.jf.intel.com with ESMTP; 24 Dec 2018 03:52:02 -0800
+Date:   Mon, 24 Dec 2018 13:52:01 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181224115201.GA10971@linux.intel.com>
+References: <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181220103204.GB26410@linux.intel.com>
+ <20181222081649.GB8895@linux.intel.com>
+ <20181222082502.GA13275@linux.intel.com>
+ <20181223125114.GA7051@linux.intel.com>
+ <CALCETrXhuVx3oFUUr5KRGPXrEpcUPjFXapLdHYJZ8C+91woh_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181224114559.GA4124@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CALCETrXhuVx3oFUUr5KRGPXrEpcUPjFXapLdHYJZ8C+91woh_Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 12:45:59PM +0100, Greg KH wrote:
-> On Mon, Dec 24, 2018 at 12:09:37PM +0100, Christian Brauner wrote:
-> > On Sun, Dec 23, 2018 at 03:35:49PM +0100, Christian Brauner wrote:
-> > > Since binderfs can be mounted by userns root in non-initial user namespaces
-> > > some precautions are in order. First, a way to set a maximum on the number
-> > > of binder devices that can be allocated per binderfs instance and second, a
-> > > way to reserve a reasonable chunk of binderfs devices for the initial ipc
-> > > namespace.
-> > > A first approach as seen in [1] used sysctls similiar to devpts but was
-> > > shown to be flawed (cf. [2] and [3]) since some aspects were unneeded. This
-> > > is an alternative approach which avoids sysctls completely and instead
-> > > switches to a single mount option.
-> > > 
-> > > Starting with this commit binderfs instances can be mounted with a limit on
-> > > the number of binder devices that can be allocated. The max=<count> mount
-> > > option serves as a per-instance limit. If max=<count> is set then only
-> > > <count> number of binder devices can be allocated in this binderfs
-> > > instance.
-> > > 
-> > > This allows to safely bind-mount binderfs instances into unprivileged user
-> > > namespaces since userns root in a non-initial user namespace cannot change
-> > > the mount option as long as it does not own the mount namespace the
-> > > binderfs mount was created in and hence cannot drain the host of minor
-> > > device numbers
-> > > 
-> > > [1]: https://lore.kernel.org/lkml/20181221133909.18794-1-christian@brauner.io/
-> > > [2]; https://lore.kernel.org/lkml/20181221163316.GA8517@kroah.com/
-> > > [3]: https://lore.kernel.org/lkml/CAHRSSEx+gDVW4fKKK8oZNAir9G5icJLyodO8hykv3O0O1jt2FQ@mail.gmail.com/
-> > > [4]: https://lore.kernel.org/lkml/20181221192044.5yvfnuri7gdop4rs@brauner.io/
-> > > 
-> > > Cc: Todd Kjos <tkjos@google.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > 
-> > Right, I forgot to ask. Do we still have time to land this alongside the
-> > other patches in 4.21? :)
+On Sun, Dec 23, 2018 at 12:42:48PM -0800, Andy Lutomirski wrote:
+> On Sun, Dec 23, 2018 at 4:52 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Sat, Dec 22, 2018 at 10:25:02AM +0200, Jarkko Sakkinen wrote:
+> > > On Sat, Dec 22, 2018 at 10:16:49AM +0200, Jarkko Sakkinen wrote:
+> > > > On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
+> > > > > On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
+> > > > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > > > > opening a new instance of /dev/sgx for each encalve?
+> > > > >
+> > > > > I think that fits better to the SCM_RIGHTS scenario i.e. you could send
+> > > > > the enclav to a process that does not have necessarily have rights to
+> > > > > /dev/sgx. Gives more robust environment to configure SGX.
+> > > >
+> > > > Sean, is this why you wanted enclave fd and anon inode and not just use
+> > > > the address space of /dev/sgx? Just taking notes of all observations.
+> > > > I'm not sure what your rationale was (maybe it was somewhere). This was
+> > > > something I made up, and this one is wrong deduction. You can easily
+> > > > get the same benefit with /dev/sgx associated fd representing the
+> > > > enclave.
+> > > >
+> > > > This all means that for v19 I'm going without enclave fd involved with
+> > > > fd to /dev/sgx representing the enclave. No anon inodes will be
+> > > > involved.
+> > >
+> > > Based on these observations I updated the uapi.
+> > >
+> > > As far as I'm concerned there has to be a solution to do EPC mapping
+> > > with a sequence:
+> > >
+> > > 1. Ping /dev/kvm to do something.
+> > > 2. KVM asks SGX core to do something.
+> > > 3. SGX core does something.
+> > >
+> > > I don't care what the something is exactly is, but KVM is the only sane
+> > > place for KVM uapi. I would be surprised if KVM maintainers didn't agree
+> > > that they don't want to sprinkle KVM uapi to random places in other
+> > > subsystems.
+> >
+> > The one option to consider to do would be to have a device driver for
+> > KVM if you really want this e.g. something like /dev/vsgx. With the
+> > current knowledge I'm not yet sure why all could not be done just
+> > through /dev/kvm.
+> >
 > 
-> It's too late for 4.21-rc1, but let's see what happens after that :)
+> That seems reasonable too.  I don't really care about the path to the
+> device node, but it does seem reasonable to me to have it be a
+> separate node entirely from the normal enclave interface.
 
-Sweet! Much appreciated. :)
+What is the core reason anyway that /dev/kvm is out of the question?
 
-Christian
+/Jarkko
