@@ -4,188 +4,229 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D1AC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CC0C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0435A21850
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C41C2184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:19:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="V7qedW9R"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jxYBW8e2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbeLXPTB (ORCPT
+        id S1725824AbeLXPTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:19:01 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:28693 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbeLXPTB (ORCPT
+        Mon, 24 Dec 2018 10:19:40 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:40187 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXPTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:19:01 -0500
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wBOFIqTI029160;
-        Tue, 25 Dec 2018 00:18:52 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBOFIqTI029160
+        Mon, 24 Dec 2018 10:19:39 -0500
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id wBOFJTXk016901;
+        Tue, 25 Dec 2018 00:19:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wBOFJTXk016901
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545664733;
-        bh=UXjlcCjNBYREdXZVkdbV9tZVMZM+rHkD94gGjCVeWRU=;
+        s=dec2015msa; t=1545664770;
+        bh=Du9ckvFj2azBEJpy/e+Ld8zMxw7IgEkGjLN/fYgumDQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=V7qedW9REXOQ1L9cZ6RcS12Hrf8Ba9Q5WVW2jfUwcZ38eIvMBBOjmYNgNFYiLJMea
-         YIkVTYhm9PRpNB9JOBw4HIf0yEX3gstqDcPgPbRDsnrhFYaqGIM+qfYY6C0uIGrfBJ
-         B9ykGphR7tqYrKK/zZjF50cx1kNTxVxqYfk2b4q2OC9+4TY5plGp6HQA7VmqZcrWcN
-         MrEPlArP1org01GH8+UCPVt/UPS5lto2lxpeqhi/RWm3Sp8JcUsAmw+PZ/vA/nYLmW
-         Yijk7TMqd7f2WAbOJ55gft86LfoOzvlDHIG0oKFkH97WmokfNkxQh9xFu2gfLTkIP3
-         TQZxtCoMPPtyg==
-X-Nifty-SrcIP: [209.85.222.49]
-Received: by mail-ua1-f49.google.com with SMTP id j3so3922520uap.3;
-        Mon, 24 Dec 2018 07:18:52 -0800 (PST)
-X-Gm-Message-State: AJcUukf7rL3vxT00R3685vvR+G3fmzCdrcpUBBeRLsHMJo+CCSgpdjkZ
-        1aMWs9nUAO2OswmCHAgusnLA+wOvDMEtczVRAEw=
-X-Google-Smtp-Source: ALg8bN45VGA3r/fkHUvZIsAF2hDkVlHRcnJf9QXZM8gm2WW9D0I2gwTzu8R+fcjlGcmnhwxPzSU1VIXVFfB/fCHKisY=
-X-Received: by 2002:a9f:3f41:: with SMTP id i1mr4798362uaj.42.1545664731483;
- Mon, 24 Dec 2018 07:18:51 -0800 (PST)
+        b=jxYBW8e2RrBeSGT3Wi23NWrDP+76Y9Tv0WG+v30bzBH60qpPVt3GaDpLYZc9xS1ev
+         3I6KmiNHPBV598vek35p8A3XtFCBx8Pz1MnL6130vFogjBHu2eTZWKlrt17bOwvSzU
+         fMgy6RlQdSvcnYz/1uXIWT4XQXZCTlq0Z4gthAAJ6dU1mhrLexFx64LuoqL6D7DwO0
+         nycbUKk8rAgbjgOzrdftBgyZ/eKDGRlsxIsF2PNrHDN/1jwMaDFvFu7og8f0rM8qte
+         fHosqSs4fzxMLDYg6VgNNrA01JlkI+dDXENy9mf695W4/DveoPQlRWwLe56oLYKd2n
+         akr/1wMSGIWvA==
+X-Nifty-SrcIP: [209.85.221.175]
+Received: by mail-vk1-f175.google.com with SMTP id n126so2613046vke.12;
+        Mon, 24 Dec 2018 07:19:29 -0800 (PST)
+X-Gm-Message-State: AJcUukfzx7/qfvm23zEaj/v1QFkgLx00RyY+7nLb91fPli5Kw06OV/49
+        MyZl9l74FcCT3PpDYzQSfdzwpRYw4TvdPg3qnPw=
+X-Google-Smtp-Source: ALg8bN4UVomGoKBDrWC7U7LaRA/QZhdfUnnGKMY+TpmixQ3IN9zaBtB25LGkVky27TCVUeBjE5gV5GijMZmd4KVc8UQ=
+X-Received: by 2002:a1f:6bc8:: with SMTP id k69mr4842867vki.84.1545664768464;
+ Mon, 24 Dec 2018 07:19:28 -0800 (PST)
 MIME-Version: 1.0
-References: <1545472235-12782-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1545472235-12782-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1545381188-514-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1545381188-514-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 25 Dec 2018 00:18:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATVQY+w3o0j6sKp7ZiLMJX2SorddmsHbskqmMwimzPh7A@mail.gmail.com>
-Message-ID: <CAK7LNATVQY+w3o0j6sKp7ZiLMJX2SorddmsHbskqmMwimzPh7A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] treewide: remove explicit rules for *offsets.s
+Date:   Tue, 25 Dec 2018 00:18:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASNTmwJraW_Bbvc3s0-G__yYotR9rbXtLTkyf-kVHRuDQ@mail.gmail.com>
+Message-ID: <CAK7LNASNTmwJraW_Bbvc3s0-G__yYotR9rbXtLTkyf-kVHRuDQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] kconfig: split some C files out of zconf.y
 To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 7:32 PM Masahiro Yamada
+On Sat, Dec 22, 2018 at 12:24 AM Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 >
-> These explicit rules are unneeded because scripts/Makefile.build
-> provides a pattern rule to create %.s from %.c
+> I want to compile each C file independently instead of including all
+> of them from zconf.y.
+>
+> These 4 files are low hanging fruits.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
 
-Series, applied to linux-kbuild.
+Series, applied to linux-kbuild/kconfig.
 
 
->  Kbuild                              | 9 +--------
->  arch/arm/mach-at91/Makefile         | 3 ---
->  arch/arm/mach-omap2/Makefile        | 3 ---
->  arch/ia64/kernel/Makefile           | 5 -----
->  drivers/memory/Makefile.asm-offsets | 3 ---
->  samples/bpf/Makefile                | 3 ---
->  6 files changed, 1 insertion(+), 25 deletions(-)
+>  scripts/kconfig/Makefile     | 19 +++++++++----------
+>  scripts/kconfig/confdata.c   |  1 +
+>  scripts/kconfig/expr.c       |  2 ++
+>  scripts/kconfig/lkc.h        |  1 +
+>  scripts/kconfig/preprocess.c |  2 ++
+>  scripts/kconfig/symbol.c     |  2 +-
+>  scripts/kconfig/zconf.y      |  4 ----
+>  7 files changed, 16 insertions(+), 15 deletions(-)
 >
-> diff --git a/Kbuild b/Kbuild
-> index 0053042..b24210c 100644
-> --- a/Kbuild
-> +++ b/Kbuild
-> @@ -16,10 +16,6 @@ bounds-file := include/generated/bounds.h
->  always  := $(bounds-file)
->  targets := kernel/bounds.s
+> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> index 63b6092..d3bd687 100644
+> --- a/scripts/kconfig/Makefile
+> +++ b/scripts/kconfig/Makefile
+> @@ -142,13 +142,8 @@ help:
+>         @echo  '  testconfig      - Run Kconfig unit tests (requires python3 and pytest)'
 >
-> -# We use internal kbuild rules to avoid the "is up to date" message from make
-> -kernel/bounds.s: kernel/bounds.c FORCE
-> -       $(call if_changed_dep,cc_s_c)
+>  # ===========================================================================
+> -# Shared Makefile for the various kconfig executables:
+> -# conf:          Used for defconfig, oldconfig and related targets
+>  # object files used by all kconfig flavours
 > -
->  $(obj)/$(bounds-file): kernel/bounds.s FORCE
->         $(call filechk,offsets,__LINUX_BOUNDS_H__)
->
-> @@ -50,10 +46,7 @@ offsets-file := include/generated/asm-offsets.h
->  always  += $(offsets-file)
->  targets += arch/$(SRCARCH)/kernel/asm-offsets.s
->
-> -# We use internal kbuild rules to avoid the "is up to date" message from make
-> -arch/$(SRCARCH)/kernel/asm-offsets.s: arch/$(SRCARCH)/kernel/asm-offsets.c \
-> -                                      $(obj)/$(timeconst-file) $(obj)/$(bounds-file) FORCE
-> -       $(call if_changed_dep,cc_s_c)
-> +arch/$(SRCARCH)/kernel/asm-offsets.s: $(obj)/$(timeconst-file) $(obj)/$(bounds-file)
->
->  $(obj)/$(offsets-file): arch/$(SRCARCH)/kernel/asm-offsets.s FORCE
->         $(call filechk,offsets,__ASM_OFFSETS_H__)
-> diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
-> index 7415f18..f87066b 100644
-> --- a/arch/arm/mach-at91/Makefile
-> +++ b/arch/arm/mach-at91/Makefile
-> @@ -19,9 +19,6 @@ ifeq ($(CONFIG_PM_DEBUG),y)
->  CFLAGS_pm.o += -DDEBUG
->  endif
->
-> -arch/arm/mach-at91/pm_data-offsets.s: arch/arm/mach-at91/pm_data-offsets.c
-> -       $(call if_changed_dep,cc_s_c)
+> -conf-objs      := conf.o  zconf.tab.o
 > -
->  include/generated/at91_pm_data-offsets.h: arch/arm/mach-at91/pm_data-offsets.s FORCE
->         $(call filechk,offsets,__PM_DATA_OFFSETS_H__)
+> -hostprogs-y := conf
+> +common-objs    := confdata.o expr.o symbol.o preprocess.o zconf.tab.o
 >
-> diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-> index 01377c2..55c482c 100644
-> --- a/arch/arm/mach-omap2/Makefile
-> +++ b/arch/arm/mach-omap2/Makefile
-> @@ -236,9 +236,6 @@ obj-y                                       += omap_phy_internal.o
+>  targets                += zconf.lex.c
 >
->  obj-$(CONFIG_MACH_OMAP2_TUSB6010)      += usb-tusb6010.o
+> @@ -156,9 +151,13 @@ targets            += zconf.lex.c
+>  HOSTCFLAGS_zconf.lex.o := -I$(src)
+>  HOSTCFLAGS_zconf.tab.o := -I$(src)
 >
-> -arch/arm/mach-omap2/pm-asm-offsets.s: arch/arm/mach-omap2/pm-asm-offsets.c
-> -       $(call if_changed_dep,cc_s_c)
-> -
->  include/generated/ti-pm-asm-offsets.h: arch/arm/mach-omap2/pm-asm-offsets.s FORCE
->         $(call filechk,offsets,__TI_PM_ASM_OFFSETS_H__)
+> +# conf: Used for defconfig, oldconfig and related targets
+> +hostprogs-y    += conf
+> +conf-objs      := conf.o $(common-objs)
+> +
+>  # nconf: Used for the nconfig target based on ncurses
+>  hostprogs-y    += nconf
+> -nconf-objs     := nconf.o zconf.tab.o nconf.gui.o
+> +nconf-objs     := nconf.o nconf.gui.o $(common-objs)
 >
-> diff --git a/arch/ia64/kernel/Makefile b/arch/ia64/kernel/Makefile
-> index d0c0ccd..7372d99 100644
-> --- a/arch/ia64/kernel/Makefile
-> +++ b/arch/ia64/kernel/Makefile
-> @@ -50,10 +50,5 @@ CFLAGS_traps.o  += -mfixed-range=f2-f5,f16-f31
->  # The gate DSO image is built using a special linker script.
->  include $(src)/Makefile.gate
+>  HOSTLDLIBS_nconf       = $(shell . $(obj)/.nconf-cfg && echo $$libs)
+>  HOSTCFLAGS_nconf.o     = $(shell . $(obj)/.nconf-cfg && echo $$cflags)
+> @@ -169,7 +168,7 @@ $(obj)/nconf.o $(obj)/nconf.gui.o: $(obj)/.nconf-cfg
+>  # mconf: Used for the menuconfig target based on lxdialog
+>  hostprogs-y    += mconf
+>  lxdialog       := checklist.o inputbox.o menubox.o textbox.o util.o yesno.o
+> -mconf-objs     := mconf.o zconf.tab.o $(addprefix lxdialog/, $(lxdialog))
+> +mconf-objs     := mconf.o $(addprefix lxdialog/, $(lxdialog)) $(common-objs)
 >
-> -# We use internal kbuild rules to avoid the "is up to date" message from make
-> -arch/$(SRCARCH)/kernel/nr-irqs.s: arch/$(SRCARCH)/kernel/nr-irqs.c
-> -       $(Q)mkdir -p $(dir $@)
-> -       $(call if_changed_dep,cc_s_c)
-> -
->  include/generated/nr-irqs.h: arch/$(SRCARCH)/kernel/nr-irqs.s FORCE
->         $(call filechk,offsets,__ASM_NR_IRQS_H__)
-> diff --git a/drivers/memory/Makefile.asm-offsets b/drivers/memory/Makefile.asm-offsets
-> index 843ff60..f968dfa 100644
-> --- a/drivers/memory/Makefile.asm-offsets
-> +++ b/drivers/memory/Makefile.asm-offsets
-> @@ -1,5 +1,2 @@
-> -drivers/memory/emif-asm-offsets.s: drivers/memory/emif-asm-offsets.c
-> -       $(call if_changed_dep,cc_s_c)
-> -
->  include/generated/ti-emif-asm-offsets.h: drivers/memory/emif-asm-offsets.s FORCE
->         $(call filechk,offsets,__TI_EMIF_ASM_OFFSETS_H__)
-> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> index be0a961..100a49d 100644
-> --- a/samples/bpf/Makefile
-> +++ b/samples/bpf/Makefile
-> @@ -227,9 +227,6 @@ $(LIBBPF): FORCE
->  # Fix up variables inherited from Kbuild that tools/ build system won't like
->         $(MAKE) -C $(dir $@) RM='rm -rf' LDFLAGS= srctree=$(BPF_SAMPLES_PATH)/../../ O=
+>  HOSTLDLIBS_mconf = $(shell . $(obj)/.mconf-cfg && echo $$libs)
+>  $(foreach f, mconf.o $(lxdialog), \
+> @@ -181,7 +180,7 @@ $(addprefix $(obj)/lxdialog/, $(lxdialog)): $(obj)/.mconf-cfg
+>  # qconf: Used for the xconfig target based on Qt
+>  hostprogs-y    += qconf
+>  qconf-cxxobjs  := qconf.o
+> -qconf-objs     := zconf.tab.o
+> +qconf-objs     := $(common-objs)
 >
-> -$(obj)/syscall_nrs.s:  $(src)/syscall_nrs.c
-> -       $(call if_changed_dep,cc_s_c)
-> -
->  $(obj)/syscall_nrs.h:  $(obj)/syscall_nrs.s FORCE
->         $(call filechk,offsets,__SYSCALL_NRS_H__)
+>  HOSTLDLIBS_qconf       = $(shell . $(obj)/.qconf-cfg && echo $$libs)
+>  HOSTCXXFLAGS_qconf.o   = $(shell . $(obj)/.qconf-cfg && echo $$cflags)
+> @@ -196,7 +195,7 @@ $(obj)/%.moc: $(src)/%.h $(obj)/.qconf-cfg
 >
+>  # gconf: Used for the gconfig target based on GTK+
+>  hostprogs-y    += gconf
+> -gconf-objs     := gconf.o zconf.tab.o
+> +gconf-objs     := gconf.o $(common-objs)
+>
+>  HOSTLDLIBS_gconf    = $(shell . $(obj)/.gconf-cfg && echo $$libs)
+>  HOSTCFLAGS_gconf.o  = $(shell . $(obj)/.gconf-cfg && echo $$cflags)
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index e32ada9..ea88355 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -7,6 +7,7 @@
+>  #include <ctype.h>
+>  #include <errno.h>
+>  #include <fcntl.h>
+> +#include <limits.h>
+>  #include <stdarg.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+> index ddb9c86..265f2af 100644
+> --- a/scripts/kconfig/expr.c
+> +++ b/scripts/kconfig/expr.c
+> @@ -3,6 +3,8 @@
+>   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
+>   */
+>
+> +#include <ctype.h>
+> +#include <errno.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+> index 4ff33cd..160a931 100644
+> --- a/scripts/kconfig/lkc.h
+> +++ b/scripts/kconfig/lkc.h
+> @@ -108,6 +108,7 @@ const char *str_get(struct gstr *gs);
+>  /* symbol.c */
+>  void sym_clear_all_valid(void);
+>  struct symbol *sym_choice_default(struct symbol *sym);
+> +struct property *sym_get_range_prop(struct symbol *sym);
+>  const char *sym_get_string_default(struct symbol *sym);
+>  struct symbol *sym_check_deps(struct symbol *sym);
+>  struct property *prop_alloc(enum prop_type type, struct symbol *sym);
+> diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
+> index b028a48..592dfbfa 100644
+> --- a/scripts/kconfig/preprocess.c
+> +++ b/scripts/kconfig/preprocess.c
+> @@ -2,6 +2,7 @@
+>  //
+>  // Copyright (C) 2018 Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> +#include <ctype.h>
+>  #include <stdarg.h>
+>  #include <stdbool.h>
+>  #include <stdio.h>
+> @@ -9,6 +10,7 @@
+>  #include <string.h>
+>
+>  #include "list.h"
+> +#include "lkc.h"
+>
+>  #define ARRAY_SIZE(arr)                (sizeof(arr) / sizeof((arr)[0]))
+>
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index 364afa1..860414d 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -88,7 +88,7 @@ static struct property *sym_get_default_prop(struct symbol *sym)
+>         return NULL;
+>  }
+>
+> -static struct property *sym_get_range_prop(struct symbol *sym)
+> +struct property *sym_get_range_prop(struct symbol *sym)
+>  {
+>         struct property *prop;
+>
+> diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+> index 60ee8e7..32be913 100644
+> --- a/scripts/kconfig/zconf.y
+> +++ b/scripts/kconfig/zconf.y
+> @@ -730,8 +730,4 @@ void zconfdump(FILE *out)
+>
+>  #include "zconf.lex.c"
+>  #include "util.c"
+> -#include "confdata.c"
+> -#include "expr.c"
+> -#include "symbol.c"
+>  #include "menu.c"
+> -#include "preprocess.c"
 > --
 > 2.7.4
 >
