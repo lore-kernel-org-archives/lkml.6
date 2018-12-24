@@ -3,100 +3,186 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7DAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7179FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CDC218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41813218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 00:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeLXABi (ORCPT
+        id S1726379AbeLXAFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Dec 2018 19:01:38 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.189]:26084 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725954AbeLXABi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Dec 2018 19:01:38 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 487E436794
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 18:01:37 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bDgfgHYoA2PzObDgfg0dA4; Sun, 23 Dec 2018 18:01:37 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=60436 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gbDge-000gdN-LI; Sun, 23 Dec 2018 18:01:36 -0600
-Subject: Re: [PATCH] net: core: Fix Spectre v1 vulnerability
-To:     David Miller <davem@davemloft.net>, alexei.starovoitov@gmail.com
-Cc:     ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181223041253.bxqru567rs32mecg@ast-mbp.dhcp.thefacebook.com>
- <e8343bfd-7846-a23b-b6c0-4b82218efdc0@embeddedor.com>
- <20181223055959.jlzbyd5ec55thiz7@ast-mbp.dhcp.thefacebook.com>
- <20181223.155838.90910738750758535.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <31dc24bd-ef31-6db4-d1b7-10f9d6619843@embeddedor.com>
-Date:   Sun, 23 Dec 2018 18:01:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 23 Dec 2018 19:05:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbeLXAFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Dec 2018 19:05:48 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 806A5218A1;
+        Mon, 24 Dec 2018 00:05:46 +0000 (UTC)
+Date:   Sun, 23 Dec 2018 19:05:44 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Joe Perches <joe@perches.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [for-next][PATCH 23/24] string.h: Add strncmp_prefix() helper
+ macro
+Message-ID: <20181223190544.6112f598@gandalf.local.home>
+In-Reply-To: <4daf3688-ea36-627a-cd8a-8f9bc6cabc56@rasmusvillemoes.dk>
+References: <20181221175618.968519903@goodmis.org>
+        <20181221175659.208858193@goodmis.org>
+        <CAHk-=wg_sR-UEC1ggmkZpypOUYanL5CMX4R7ceuaV4QMf5jBtg@mail.gmail.com>
+        <20181221144054.20bdeb33@gandalf.local.home>
+        <CAHk-=wgSvRhj6KNRdn9gbK9RJVAswdtKSNjAxdf9O9vn04T5XQ@mail.gmail.com>
+        <20181221153526.5e6055ca@gandalf.local.home>
+        <077eeb8b09baebe78822819b5f15d671b738a2b2.camel@perches.com>
+        <20181221155435.38a9a221@gandalf.local.home>
+        <871s6ad2br.fsf@igel.home>
+        <20181221160826.34c544e6@gandalf.local.home>
+        <84199633fd49db573c9ba71f1992936422e907d4.camel@perches.com>
+        <098d7abf-5b62-6a01-a370-97d96bece299@rasmusvillemoes.dk>
+        <20181223175621.4e4d958c@vmware.local.home>
+        <4daf3688-ea36-627a-cd8a-8f9bc6cabc56@rasmusvillemoes.dk>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181223.155838.90910738750758535.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gbDge-000gdN-LI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:60436
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 24 Dec 2018 00:52:13 +0100
+Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+
+> On 23/12/2018 23.56, Steven Rostedt wrote:
+> > On Sun, 23 Dec 2018 23:01:52 +0100
+> > Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+> >   
+> >> On 21/12/2018 23.20, Joe Perches wrote:  
+> >>>
+> >>> Using
+> >>>
+> >>> static inline bool str_has_prefix(const char *str, const char prefix[])
+> >>> {
+> >>> 	return !strncmp(str, prefix, strlen(prefix));
+> >>> }
+> >>>     
+> >>
+> >> We already have exactly that function, it's called strstarts().  
+> > 
+> > It's not exact.  
+> 
+> Huh? The str_has_prefix() I quoted is exactly strstarts().
+
+The the implemented str_has_prefix() that you replied to is:
+
++/*
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use strncmp_prefix().
++ */
++#define strncmp_prefix(str, prefix)					\
++	({								\
++		int ____strcmp_prefix_ret____;				\
++		if (__builtin_constant_p(&prefix)) {			\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, prefix, sizeof(prefix) - 1); \
++		} else {						\
++			typeof(prefix) ____strcmp_prefix____ = prefix;	\
++			____strcmp_prefix_ret____ =			\
++				strncmp(str, ____strcmp_prefix____,	\
++					strlen(____strcmp_prefix____));	\
++		}							\
++		____strcmp_prefix_ret____;				\
++	})
++
+
+Note, this has turned into a nice function:
+
+ http://lkml.kernel.org/r/20181222162856.518489380@goodmis.org
+
++/**
++ * str_has_prefix - Test if a string has a given prefix
++ * @str: The string to test
++ * @prefix: The string to see if @str starts with
++ *
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use str_has_prefix().
++ *
++ * Returns: 0 if @str does not start with @prefix
++         strlen(@prefix) if @str does start with @prefix
++ */
++static __always_inline size_t str_has_prefix(const char *str, const char *prefix)
++{
++	size_t len = strlen(prefix);
++	return strncmp(str, prefix, len) == 0 ? len : 0;
++}
++
 
 
-On 12/23/18 5:58 PM, David Miller wrote:
-> From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> Date: Sat, 22 Dec 2018 22:00:00 -0800
 > 
->> On Sat, Dec 22, 2018 at 11:03:31PM -0600, Gustavo A. R. Silva wrote:
->>>> I took another look at the following patches:
->>>> "net: core: Fix Spectre v1 vulnerability"
->>>> "nfc: af_nfc: Fix Spectre v1 vulnerability"
->>>> "can: af_can: Fix Spectre v1 vulnerability"
->>>> and I have to say that none of them are necessary.
->>>> I'm not sure whether there were other patches that pretend to fix spectre1.
->   ...
->> in other words there is no bug and there is no vulnerability,
->> but there is a 'policy' set by ... ?
->> So hence Nack to the policy and Nack to the patches.
+> > 
+> > Well, one thing that str_has_prefix() does that strstarts() does not,
+> > is to return the prefix length which gets rid of the duplication.  
 > 
-> I have to agree with Alexei after looking at all of this stuff one more
-> time.
+> I hadn't seen the patches containing that version of str_has_prefix().
+> Anyway, I just wanted to point out that strstarts() exists, so that we
+> at least do not add a copy of that.
+
+That's because you didn't read the patch that you quoted, just the
+change log.
+
 > 
-> I'm reverting all of these changes.
+> > Would it be OK to convert strstarts() to return the length of prefix?  
+> 
+> Dunno. By far, most users of the strncmp() idiom only seem to be
+> interested in the boolean result. It's true that there are some that
+> then want to skip the prefix and do further parsing, and I can see how
+> avoiding duplicating the prefix length is useful. But the mathematician
+> in me can't help consider the corner case of 'the empty string is always
+> a prefix of any other string', and having str_has_prefix(str, "") be
+> false seems wrong - obviously, nobody would ever use a literal "" there,
+> but nothing in str_has_prefix() _requires_ the prefix to be a constant.
+
+Which would be a useless use case. And if you define that it returns
+the length of prefix on return, then it both matches and doesn't
+match ;-)
+
+> 
+> Maybe 'bool str_skip_prefix(const char *s, const char *p, const char
+> **out)' where *out is set to s+len on success, and set to s on failure
+> (just to allow passing &s and continue parsing in elseifs)? That would
+> make your 4/5 "tracing: Have the historgram use the result of
+> str_has_prefix() for len of prefix" do
+> 
+>   if (str_skip_prefix(str, "onmatch(", &action_str)) {
+> 
+> hoisting the action_str declaration to the top, replacing the len variable?
 > 
 
-Yeah. That's fine with me.
+The use cases I've used in the final patch series uses the len for
+indexing and other cases.
 
-Thanks
---
-Gustavo
+I think I'm keeping the str_has_prefix() and change the other users to
+use it in the kernel. Most of the git grep strstarts() is tools
+and scripts anyway.
+
+-- Steve
