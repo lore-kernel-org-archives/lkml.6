@@ -2,185 +2,70 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657F4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF79C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 240012171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C062173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:44:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hW9+/o51"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NOWHHIQH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbeLXKad (ORCPT
+        id S1725801AbeLXKor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 05:30:33 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32914 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbeLXKad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 05:30:33 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so10068380ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 02:30:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=omvQueclVbBSPEs+Ql9P/pz9M/zrssliLVwlGqm31QQ=;
-        b=hW9+/o51mRvJWnP8GngMxFVZ14re72dz2rIuGrh6k9f/eeJ7n1l4/gStfMNdRx6ww3
-         vmRxSIXXj0xvwVhq0263VwNhPLMybyJcxsqAPYS36CXn0cxIl6egzSD3Zeb9vJdEnZ1f
-         yARbUzUX5S3eSLE5Hzczr66jyB40zOlOZC2mCYBgD+qfjpwWx9hkmmyofehZXufE3nNc
-         IN3jwkNX6g+ZrRu0SYrPkvZShwUjuNPPWB3sJWm1av0v2/w9Zk/ioko56LP76WMXEAK9
-         OBRyYeAqPl8uGIoJxiiBO2K0kaqa2sLN1/eXUumcDPSHx676Uu613NakKeVWl/H+zWBY
-         /Dww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=omvQueclVbBSPEs+Ql9P/pz9M/zrssliLVwlGqm31QQ=;
-        b=iZMVQhU+nSzIdezEb3tWe/bUqW/bux1zVXWhTjG5VlkGo1Rfp9tRq1XXTHbRatD5bF
-         kxJT6b1aYe7yQi2wj8uZS7WlQ6wxhMISEGXCy9FGOAUtavrnGm1iesKxhHbkWvPrvGHq
-         ri4cKtewjkXnc3GK5o9n0upSySWjrpT9xzh0C/USWgXR9sCF1vBLLFk/HMbF1t+ZZbBI
-         /af6ZkrDAt4NBoNq1pvLS82460I0t+dTarQyWhz1j52DATn6P19BxUcIcPcNYXadTC0Z
-         vxA7AFcCr1AAfN/J9gokj2JSoH0c4zJ/zTcgAHSlCx2qRyq73Ep4hkKf4QPg8EyeXWLK
-         NEGg==
-X-Gm-Message-State: AJcUukcZlEJforoPT+UYy/F/R1sntJ2BY32UrtgzN7jUj56yHTdDJtqH
-        QxDyOUmI4YmGhrX+CAqUW7YrOTjBVF8jWOyHVA==
-X-Google-Smtp-Source: ALg8bN68RpaqbKK4edL7PbcSnHn4ryZgJh4xWEMnGIVb6Cm6gzvK86B2FQsDCqC+TkfhaHa3l10FZ/qifFTe1yBQ51c=
-X-Received: by 2002:a2e:2d4:: with SMTP id y81-v6mr7191015lje.62.1545647430414;
- Mon, 24 Dec 2018 02:30:30 -0800 (PST)
+        Mon, 24 Dec 2018 05:44:47 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:56468 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725355AbeLXKor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 05:44:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=rMpay41w6pvtZV6NuF6Lr9HZoycb9WEyKcZkJXEZxf8=;
+        b=NOWHHIQHMbEZxn7wUrs7h0VuJ/LZqzeA9RfVQyP1t6oAWbqOUuPXvJBFnHA6685s4r2dbnAOhWYmtfdnPAMX1EBnKX+CYho9kvV0+MEHcZDdIh7z288291QcI5frrqYifA5tRdHT+LCtNbeHTnhJ3GCVOek9JbjsFWyvBfUuBh4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gbNj2-0003p5-D6; Mon, 24 Dec 2018 11:44:44 +0100
+Date:   Mon, 24 Dec 2018 11:44:44 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: tqmx86: IO controller with i2c, wachdog and gpio
+Message-ID: <20181224104444.GA13866@lunn.ch>
+References: <1545152036-23239-1-git-send-email-andrew@lunn.ch>
+ <20181221143505.GQ13248@dell>
 MIME-Version: 1.0
-References: <20181223164954.hib4lbchftspidsd@suse.de> <20181223171703.s7jm6fkyosnsf33z@brauner.io>
- <20181223180609.GA102606@dtor-ws> <CAEJqkgjSX8PW-NXa8CoMzx=2P5LOiDz0MCHoZ03zE7wZ=n2dKg@mail.gmail.com>
- <20181224091744.GA122208@dtor-ws>
-In-Reply-To: <20181224091744.GA122208@dtor-ws>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Mon, 24 Dec 2018 11:30:04 +0100
-Message-ID: <CAEJqkgiqTBoPKXBJTQ0-_9WTJUdZqtRbJvKY5g5N81fMOLs92w@mail.gmail.com>
-Subject: Re: FYI: Userland breakage caused by udev bind commit
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Marcus Meissner <christian.brauner@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221143505.GQ13248@dell>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mo., 24. Dez. 2018 um 10:17 Uhr schrieb Dmitry Torokhov
-<dmitry.torokhov@gmail.com>:
->
-> On Mon, Dec 24, 2018 at 08:31:27AM +0100, Gabriel C wrote:
-> > Am So., 23. Dez. 2018 um 19:09 Uhr schrieb Dmitry Torokhov
-> > <dmitry.torokhov@gmail.com>:
-> >
-> > [ also added Linus to CC on that one too ]
-> > >
-> > > On Sun, Dec 23, 2018 at 06:17:04PM +0100, Christian Brauner wrote:
-> > > > On Sun, Dec 23, 2018 at 05:49:54PM +0100, Marcus Meissner wrote:
-> > > > > Hi,
-> > > > >
-> > > > > I am the maintainer of libmtp and libgphoto2
-> > > > >
-> > > > > Some months ago I was made aware of this bug:
-> > > > >     https://bugs.kde.org/show_bug.cgi?id=387454
-> > > > >
-> > > > > This was fallout identified to come from this kernel commit:
-> > > > >
-> > > > >     commit 1455cf8dbfd06aa7651dcfccbadb7a093944ca65
-> > > > >     Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > > >     Date:   Wed Jul 19 17:24:30 2017 -0700
-> > > >
-> > > > Fwiw, the addition of {un}bind events has caused issues for
-> > > > systemd-udevd as well and is tracked here:
-> > > > https://github.com/systemd/systemd/issues/7587
-> > > > I haven't been aware of this until yesterday and it seems that so far
-> > > > this hasn't been brought up on lkml until you did now.
-> > >
-> > > The fallout was caused by premature enabling of the new events in
-> > > systemd/udev by yours truly (even though the commit has Lennart's name
-> > > on it due to how it was merged):
-> > >
-> > > https://github.com/systemd/systemd/commit/9a39e1ce314d1a6f8a754f6dab040019239666a9
-> > >
-> > > "Add handling for bind/unbind actions (#6720)
-> > >
-> > > Newer kernels will emit uevents with "bind" and "unbind" actions. These
-> > > uevents will be issued when driver is bound to or unbound from a device.
-> > > "Bind" events are helpful when device requires a firmware to operate
-> > > properly, and driver is unable to create a child device before firmware
-> > > is properly loaded.
-> > >
-> > > For some reason systemd validates actions and drops the ones it does not
-> > > know, instead of passing them on through as old udev did, so we need to
-> > > explicitly teach it about them."
-> > >
-> > > Similarly it is now papered over in systemd/udev until we make it
-> > > properly handle new events:
-> > >
-> > > https://github.com/systemd/systemd/commit/56c886dc7ed5b2bb0882ba85136f4070545bfc1b
-> > >
-> > > "sd-device: ignore bind/unbind events for now
-> > >
-> > > Until systemd/udev are ready for the new events and do not flush entire
-> > > device state on each new event received, we should ignore them."
-> > >
-> >
-> > And how about peoples still uses systemd < 235 and newer kernels ?
->
-> Should work exactly as it was with older kernels as it ignores
-> bind/unbind attributes.
->
+On Fri, Dec 21, 2018 at 02:35:05PM +0000, Lee Jones wrote:
+> > +	if (ioeic_val) {
+> > +		tqmx86_writeb(pld, ioeic_val, TQMX86_IOEIC);
+> > +		if (tqmx86_readb(pld, TQMX86_IOEIC) != ioeic_val) {
+> > +			dev_warn(pld->dev,
+> > +				 "i2c/gpio interrupts not supported.\n");
+> > +			gpio_irq = 0;
+> > +		}
+> > +	}
+> > +
+> > +	if (pld->info.i2c_type == I2C_KIND_SOFT) {
+> > +		ocores_platfom_data.clock_khz = pld->pld_clock;
+> > +		devs[i++] = tqmx86_devs[TQMX86_I2C_SOFT];
+> > +	}
+> 
+> See other drivers to see how they handle optional cells.
 
-It does not .. you can reproduce with an systemd/udev< 235 , eudev etc
-just easy.
-Just follow this bug report.
+Hi Lee
 
-> >
-> > > > >
-> > > > > If distributions would be using libmtp and libgphoto2 udev rules
-> > > > > that just triggered on "add" events, and not the new "bind" events,
-> > > > > the missing "attribute tagging" of the "bind" events would confused the
-> > > > > KDE Solid device detection and make the devices no longer detected.
-> > > > >
-> > > > > This did not affect distributions that rely on the newer "hwdb"
-> > > > > device detection method.
-> > > > >
-> > > > > I have released fixed libmtp and libgphoto2 versions in November, so
-> > > > > this is under control, but wanted to bring this up as a "kernel caused
-> > > > > userland breakage".
-> > >
-> > > Given that we explicitly enabled these new events in systemd/udev code
-> > > this is actually "userspace caused userspace breakage" case.
-> >
-> > I really do not agree with you here .. Is kernel -> userspace breakage
-> > and while userspace is trying to workaround even much more breaks.
-> >
->
-> Not sure I follow your logic. We enabled handling new events in
-> systemd/udev. This thing broke systemd/udev. We now disabled this new
-> thing in systemd/udev.
+Could you give an example driver i can copy. My grep foo is not
+finding anything useful.
 
-You enabled in 235 and disabled in 240.
-That just means all versions but 240 are broken. No ?
-
-And like I've wrote in my other elmail fixing just udev in systemd is
-not enough.
-We have some other udev implementations flying around.
-
-Also we have whole setups depending on udev , expecting the rules to
-work right way.
->
-> Thanks.
->
-> --
-> Dmitry
-
-BR,
-Gabriel
+Thanks
+	Andrew
