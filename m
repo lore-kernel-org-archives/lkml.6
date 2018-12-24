@@ -2,680 +2,183 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8FCC64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E826C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 554D72184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:20:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00C32184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hgZFwCeq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TATbDOi3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbeLXPU4 (ORCPT
+        id S1725836AbeLXPWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:20:56 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:56201 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbeLXPUz (ORCPT
+        Mon, 24 Dec 2018 10:22:21 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:53106 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbeLXPWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:20:55 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wBOFKg5C006767;
-        Tue, 25 Dec 2018 00:20:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wBOFKg5C006767
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545664844;
-        bh=aJzklqj2LPDKcpHEPXS6l+IDlj2eNaNBqFEPlILPzaU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hgZFwCeqhhZMYXePQy73PBYn6EZHcS3j2FWOepxzeruPP3/st1ASgEOhEzJM1dOg4
-         +OUDxBvoS7yM3p+gXM7+U4fCxzp9zRbJDEw9sIJa2zhwYcDdCO7BearKnDJP/ZypjO
-         MZl/9T0YpOrDdQGnwby3Qz9Qv/2+K0drHAFByuPXq4O2Qz4Zi2/yeFvRWnuWCyIkIw
-         sJYTRAHxOiOBCoRnpoB/zSzbh3goZSDz4yeRbdR7trl3jtbFstlHqD01FKnJJV9ea9
-         1H6+X9H8DBLwd3kvInrUyfWrm3x31oyRt8wL5ymco56Iqb9CkbQYI46czoeDnqB9hX
-         yoGkvI9q5sdcg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id z3so7409922vsf.7;
-        Mon, 24 Dec 2018 07:20:43 -0800 (PST)
-X-Gm-Message-State: AJcUukdLNO6o2I7GU4pT8xFq8npN/aOYKXgyLVFmlCg2oLBgokx76fb2
-        GjIShLNHtw1gJDIPPBPzaZKLmQ/n57c+s6ubhxk=
-X-Google-Smtp-Source: ALg8bN7EVZ5ktF95qALcjfJcmE/nOvlWQAMGFkXqENqWPwg2YDNUv7BmGtklJxbkQhWUQyP0xFzR5jG6nOSbvod/fmw=
-X-Received: by 2002:a67:385a:: with SMTP id f87mr5522924vsa.179.1545664841981;
- Mon, 24 Dec 2018 07:20:41 -0800 (PST)
+        Mon, 24 Dec 2018 10:22:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MnCBPLk/TWveJ/PPLBS7RWz+axnrCYxLUyWpWEjxPy4=; b=TATbDOi3szvOxUTavPt0X/r70
+        vsZj5TZTSx89zhAQEl7pS0fasAu9W4Uive0aLhYKym8rlMr0h3b5qwCBM6UIqLJdkpMS98GpUMDFU
+        bc0TulCo/Wa0vECNHHWmPTUklO2uv6AO21/tGIxV+oMKw13XOlxLGMTtHjIrkIyQj253g=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:44267)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gbS2Y-0007zj-3i; Mon, 24 Dec 2018 15:21:10 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gbS2Q-00077T-Hm; Mon, 24 Dec 2018 15:21:02 +0000
+Date:   Mon, 24 Dec 2018 15:20:59 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
+        treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linux1394-devel@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v5 0/9] Use vm_insert_range
+Message-ID: <20181224152059.GA26090@n2100.armlinux.org.uk>
+References: <20181224131841.GA22017@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-References: <1545135215-18427-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1545135215-18427-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 25 Dec 2018 00:20:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR0UUpbDwNbXZY6J1myZ_iJY_tcL_1DW+t41Nor49=N=Q@mail.gmail.com>
-Message-ID: <CAK7LNAR0UUpbDwNbXZY6J1myZ_iJY_tcL_1DW+t41Nor49=N=Q@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: convert to SPDX License Identifier
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181224131841.GA22017@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:15 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> All files in lxdialog/ are licensed under GPL-2.0+, and the rest are
-> under GPL-2.0. I added GPL-2.0 tags to python test scripts in tests/.
->
-> Documentation/process/license-rules.rst does not suggest anything
-> about the flex/bison files. Because flex does not accept the C++
-> comment style at the very top of a file, I used the C style for
-> zconf.l, and so for zconf.y for consistency.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Having discussed with Matthew offlist, I think we've come to the
+following conclusion - there's a number of drivers that buggily
+ignore vm_pgoff.
 
-Applied to linux-kbuild/kconfig.
+So, what I proposed is:
 
+static int __vm_insert_range(struct vm_struct *vma, struct page *pages,
+			     size_t num, unsigned long offset)
+{
+	unsigned long count = vma_pages(vma);
+	unsigned long uaddr = vma->vm_start;
+	int ret;
 
->  scripts/kconfig/conf.c                                    |  2 +-
->  scripts/kconfig/confdata.c                                |  2 +-
->  scripts/kconfig/expr.c                                    |  2 +-
->  scripts/kconfig/expr.h                                    |  2 +-
->  scripts/kconfig/gconf.c                                   |  5 +----
->  scripts/kconfig/images.c                                  |  2 +-
->  scripts/kconfig/lkc.h                                     |  2 +-
->  scripts/kconfig/lxdialog/checklist.c                      | 15 +--------------
->  scripts/kconfig/lxdialog/dialog.h                         | 15 +--------------
->  scripts/kconfig/lxdialog/inputbox.c                       | 15 +--------------
->  scripts/kconfig/lxdialog/menubox.c                        | 15 +--------------
->  scripts/kconfig/lxdialog/textbox.c                        | 15 +--------------
->  scripts/kconfig/lxdialog/util.c                           | 15 +--------------
->  scripts/kconfig/lxdialog/yesno.c                          | 15 +--------------
->  scripts/kconfig/mconf.c                                   |  2 +-
->  scripts/kconfig/menu.c                                    |  2 +-
->  scripts/kconfig/merge_config.sh                           | 11 ++---------
->  scripts/kconfig/nconf.c                                   |  5 ++---
->  scripts/kconfig/nconf.gui.c                               |  5 ++---
->  scripts/kconfig/nconf.h                                   |  5 ++---
->  scripts/kconfig/qconf.cc                                  |  2 +-
->  scripts/kconfig/qconf.h                                   |  2 +-
->  scripts/kconfig/streamline_config.pl                      |  2 +-
->  scripts/kconfig/symbol.c                                  |  2 +-
->  scripts/kconfig/tests/auto_submenu/__init__.py            |  1 +
->  scripts/kconfig/tests/choice/__init__.py                  |  1 +
->  scripts/kconfig/tests/choice_value_with_m_dep/__init__.py |  1 +
->  scripts/kconfig/tests/err_recursive_inc/__init__.py       |  1 +
->  scripts/kconfig/tests/inter_choice/__init__.py            |  1 +
->  scripts/kconfig/tests/new_choice_with_dep/__init__.py     |  1 +
->  scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py   |  1 +
->  scripts/kconfig/tests/rand_nested_choice/__init__.py      |  1 +
->  scripts/kconfig/util.c                                    |  3 +--
->  scripts/kconfig/zconf.l                                   |  8 ++++----
->  scripts/kconfig/zconf.y                                   |  4 ++--
->  35 files changed, 43 insertions(+), 140 deletions(-)
->
-> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
-> index 98e0c7a..da89ef7 100644
-> --- a/scripts/kconfig/conf.c
-> +++ b/scripts/kconfig/conf.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <ctype.h>
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 91d0a5c..e32ada9 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <sys/stat.h>
-> diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-> index e1a39e9..ddb9c86 100644
-> --- a/scripts/kconfig/expr.c
-> +++ b/scripts/kconfig/expr.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <stdio.h>
-> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> index 7c329e1..8807fcf 100644
-> --- a/scripts/kconfig/expr.h
-> +++ b/scripts/kconfig/expr.h
-> @@ -1,6 +1,6 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #ifndef EXPR_H
-> diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
-> index 36f5784..14fc0fa 100644
-> --- a/scripts/kconfig/gconf.c
-> +++ b/scripts/kconfig/gconf.c
-> @@ -1,9 +1,6 @@
-> -/* Hey EMACS -*- linux-c -*- */
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
-> - *
->   * Copyright (C) 2002-2003 Romain Lievin <roms@tilp.info>
-> - * Released under the terms of the GNU GPL v2.0.
-> - *
->   */
->
->  #ifdef HAVE_CONFIG_H
-> diff --git a/scripts/kconfig/images.c b/scripts/kconfig/images.c
-> index d4f84bd..ef43b81 100644
-> --- a/scripts/kconfig/images.c
-> +++ b/scripts/kconfig/images.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  static const char *xpm_load[] = {
-> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
-> index ff6b3e4..4ff33cd 100644
-> --- a/scripts/kconfig/lkc.h
-> +++ b/scripts/kconfig/lkc.h
-> @@ -1,6 +1,6 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #ifndef LKC_H
-> diff --git a/scripts/kconfig/lxdialog/checklist.c b/scripts/kconfig/lxdialog/checklist.c
-> index 2e96323..fd161cf 100644
-> --- a/scripts/kconfig/lxdialog/checklist.c
-> +++ b/scripts/kconfig/lxdialog/checklist.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  checklist.c -- implements the checklist box
->   *
-> @@ -5,20 +6,6 @@
->   *     Stuart Herbert - S.Herbert@sheffield.ac.uk: radiolist extension
->   *     Alessandro Rubini - rubini@ipvvis.unipv.it: merged the two
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcap@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include "dialog.h"
-> diff --git a/scripts/kconfig/lxdialog/dialog.h b/scripts/kconfig/lxdialog/dialog.h
-> index 0b00be5..68b565e 100644
-> --- a/scripts/kconfig/lxdialog/dialog.h
-> +++ b/scripts/kconfig/lxdialog/dialog.h
-> @@ -1,21 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
->  /*
->   *  dialog.h -- common declarations for all dialog modules
->   *
->   *  AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include <sys/types.h>
-> diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
-> index fe82ff6..6119456 100644
-> --- a/scripts/kconfig/lxdialog/inputbox.c
-> +++ b/scripts/kconfig/lxdialog/inputbox.c
-> @@ -1,22 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  inputbox.c -- implements the input box
->   *
->   *  ORIGINAL AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcap@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include "dialog.h"
-> diff --git a/scripts/kconfig/lxdialog/menubox.c b/scripts/kconfig/lxdialog/menubox.c
-> index d70cab3..58c2f8a 100644
-> --- a/scripts/kconfig/lxdialog/menubox.c
-> +++ b/scripts/kconfig/lxdialog/menubox.c
-> @@ -1,22 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  menubox.c -- implements the menu box
->   *
->   *  ORIGINAL AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcapw@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  /*
-> diff --git a/scripts/kconfig/lxdialog/textbox.c b/scripts/kconfig/lxdialog/textbox.c
-> index 88d2818..4e339b1 100644
-> --- a/scripts/kconfig/lxdialog/textbox.c
-> +++ b/scripts/kconfig/lxdialog/textbox.c
-> @@ -1,22 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  textbox.c -- implements the text box
->   *
->   *  ORIGINAL AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcap@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include "dialog.h"
-> diff --git a/scripts/kconfig/lxdialog/util.c b/scripts/kconfig/lxdialog/util.c
-> index f7abdeb..1b490d4 100644
-> --- a/scripts/kconfig/lxdialog/util.c
-> +++ b/scripts/kconfig/lxdialog/util.c
-> @@ -1,22 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  util.c
->   *
->   *  ORIGINAL AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcap@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include <stdarg.h>
-> diff --git a/scripts/kconfig/lxdialog/yesno.c b/scripts/kconfig/lxdialog/yesno.c
-> index cd1223c..bcaac9b 100644
-> --- a/scripts/kconfig/lxdialog/yesno.c
-> +++ b/scripts/kconfig/lxdialog/yesno.c
-> @@ -1,22 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  yesno.c -- implements the yes/no box
->   *
->   *  ORIGINAL AUTHOR: Savio Lam (lam836@cs.cuhk.hk)
->   *  MODIFIED FOR LINUX KERNEL CONFIG BY: William Roadcap (roadcap@cfw.com)
-> - *
-> - *  This program is free software; you can redistribute it and/or
-> - *  modify it under the terms of the GNU General Public License
-> - *  as published by the Free Software Foundation; either version 2
-> - *  of the License, or (at your option) any later version.
-> - *
-> - *  This program is distributed in the hope that it will be useful,
-> - *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - *  GNU General Public License for more details.
-> - *
-> - *  You should have received a copy of the GNU General Public License
-> - *  along with this program; if not, write to the Free Software
-> - *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
->   */
->
->  #include "dialog.h"
-> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
-> index 143c05f..5f8c82a 100644
-> --- a/scripts/kconfig/mconf.c
-> +++ b/scripts/kconfig/mconf.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   *
->   * Introduced single menu mode (show all sub-menus in one large tree).
->   * 2002-11-06 Petr Baudis <pasky@ucw.cz>
-> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
-> index 7e2b2c9..d9d1646 100644
-> --- a/scripts/kconfig/menu.c
-> +++ b/scripts/kconfig/menu.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <ctype.h>
-> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-> index 0ef9064..743e387 100755
-> --- a/scripts/kconfig/merge_config.sh
-> +++ b/scripts/kconfig/merge_config.sh
-> @@ -1,4 +1,6 @@
->  #!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
->  #  merge_config.sh - Takes a list of config fragment values, and merges
->  #  them one by one. Provides warnings on overridden values, and specified
->  #  values that did not make it to the resulting .config file (due to missed
-> @@ -10,15 +12,6 @@
->  #
->  #  Copyright (c) 2009-2010 Wind River Systems, Inc.
->  #  Copyright 2011 Linaro
-> -#
-> -#  This program is free software; you can redistribute it and/or modify
-> -#  it under the terms of the GNU General Public License version 2 as
-> -#  published by the Free Software Foundation.
-> -#
-> -#  This program is distributed in the hope that it will be useful,
-> -#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-> -#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> -#  See the GNU General Public License for more details.
->
->  clean_up() {
->         rm -f $TMP_FILE
-> diff --git a/scripts/kconfig/nconf.c b/scripts/kconfig/nconf.c
-> index 1ef232a..a4670f4 100644
-> --- a/scripts/kconfig/nconf.c
-> +++ b/scripts/kconfig/nconf.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com?
-> - * Released under the terms of the GNU GPL v2.0.
-> + * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com>
->   *
->   * Derived from menuconfig.
-> - *
->   */
->  #ifndef _GNU_SOURCE
->  #define _GNU_SOURCE
-> diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
-> index 88874ac..7be620a 100644
-> --- a/scripts/kconfig/nconf.gui.c
-> +++ b/scripts/kconfig/nconf.gui.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com?
-> - * Released under the terms of the GNU GPL v2.0.
-> + * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com>
->   *
->   * Derived from menuconfig.
-> - *
->   */
->  #include "nconf.h"
->  #include "lkc.h"
-> diff --git a/scripts/kconfig/nconf.h b/scripts/kconfig/nconf.h
-> index 2b9e19f..fa5245e 100644
-> --- a/scripts/kconfig/nconf.h
-> +++ b/scripts/kconfig/nconf.h
-> @@ -1,9 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
-> - * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com?
-> - * Released under the terms of the GNU GPL v2.0.
-> + * Copyright (C) 2008 Nir Tzachar <nir.tzachar@gmail.com>
->   *
->   * Derived from menuconfig.
-> - *
->   */
->
->  #include <ctype.h>
-> diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-> index ef4310f..c897998 100644
-> --- a/scripts/kconfig/qconf.cc
-> +++ b/scripts/kconfig/qconf.cc
-> @@ -1,7 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
->   * Copyright (C) 2015 Boris Barbulovski <bbarbulovski@gmail.com>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <qglobal.h>
-> diff --git a/scripts/kconfig/qconf.h b/scripts/kconfig/qconf.h
-> index a40036d..41df466 100644
-> --- a/scripts/kconfig/qconf.h
-> +++ b/scripts/kconfig/qconf.h
-> @@ -1,6 +1,6 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <QTextBrowser>
-> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/streamline_config.pl
-> index 4686531..08d76d7 100755
-> --- a/scripts/kconfig/streamline_config.pl
-> +++ b/scripts/kconfig/streamline_config.pl
-> @@ -1,7 +1,7 @@
->  #!/usr/bin/env perl
-> +# SPDX-License-Identifier: GPL-2.0
->  #
->  # Copyright 2005-2009 - Steven Rostedt
-> -# Licensed under the terms of the GNU GPL License version 2
->  #
->  #  It's simple enough to figure out how this works.
->  #  If not, then you can ask me at stripconfig@goodmis.org
-> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-> index 703b9b8..364afa1 100644
-> --- a/scripts/kconfig/symbol.c
-> +++ b/scripts/kconfig/symbol.c
-> @@ -1,6 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <ctype.h>
-> diff --git a/scripts/kconfig/tests/auto_submenu/__init__.py b/scripts/kconfig/tests/auto_submenu/__init__.py
-> index 32e79b8..25abd92 100644
-> --- a/scripts/kconfig/tests/auto_submenu/__init__.py
-> +++ b/scripts/kconfig/tests/auto_submenu/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Create submenu for symbols that depend on the preceding one.
->
-> diff --git a/scripts/kconfig/tests/choice/__init__.py b/scripts/kconfig/tests/choice/__init__.py
-> index 9edcc52..4318fce 100644
-> --- a/scripts/kconfig/tests/choice/__init__.py
-> +++ b/scripts/kconfig/tests/choice/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Basic choice tests.
->
-> diff --git a/scripts/kconfig/tests/choice_value_with_m_dep/__init__.py b/scripts/kconfig/tests/choice_value_with_m_dep/__init__.py
-> index f8d728c..075b4e0 100644
-> --- a/scripts/kconfig/tests/choice_value_with_m_dep/__init__.py
-> +++ b/scripts/kconfig/tests/choice_value_with_m_dep/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Hide tristate choice values with mod dependency in y choice.
->
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/__init__.py b/scripts/kconfig/tests/err_recursive_inc/__init__.py
-> index 0e4c839..27aa189 100644
-> --- a/scripts/kconfig/tests/err_recursive_inc/__init__.py
-> +++ b/scripts/kconfig/tests/err_recursive_inc/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Detect recursive inclusion error.
->
-> diff --git a/scripts/kconfig/tests/inter_choice/__init__.py b/scripts/kconfig/tests/inter_choice/__init__.py
-> index 5c7fc36..ffea6b1 100644
-> --- a/scripts/kconfig/tests/inter_choice/__init__.py
-> +++ b/scripts/kconfig/tests/inter_choice/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Do not affect user-assigned choice value by another choice.
->
-> diff --git a/scripts/kconfig/tests/new_choice_with_dep/__init__.py b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
-> index f0e0ead..fe9d322 100644
-> --- a/scripts/kconfig/tests/new_choice_with_dep/__init__.py
-> +++ b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Ask new choice values when they become visible.
->
-> diff --git a/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py b/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
-> index 207261b..ffd469d 100644
-> --- a/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
-> +++ b/scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Do not write choice values to .config if the dependency is unmet.
->
-> diff --git a/scripts/kconfig/tests/rand_nested_choice/__init__.py b/scripts/kconfig/tests/rand_nested_choice/__init__.py
-> index e729a4e..9e4b2db 100644
-> --- a/scripts/kconfig/tests/rand_nested_choice/__init__.py
-> +++ b/scripts/kconfig/tests/rand_nested_choice/__init__.py
-> @@ -1,3 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
->  """
->  Set random values recursively in nested choices.
->
-> diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
-> index d999683..2958539 100644
-> --- a/scripts/kconfig/util.c
-> +++ b/scripts/kconfig/util.c
-> @@ -1,8 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (C) 2002-2005 Roman Zippel <zippel@linux-m68k.org>
->   * Copyright (C) 2002-2005 Sam Ravnborg <sam@ravnborg.org>
-> - *
-> - * Released under the terms of the GNU GPL v2.0.
->   */
->
->  #include <stdarg.h>
-> diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-> index 690108f..960e6c6 100644
-> --- a/scripts/kconfig/zconf.l
-> +++ b/scripts/kconfig/zconf.l
-> @@ -1,11 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> + */
->  %option nostdinit noyywrap never-interactive full ecs
->  %option 8bit nodefault yylineno
->  %x ASSIGN_VAL HELP STRING
->  %{
-> -/*
-> - * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
-> - */
->
->  #include <assert.h>
->  #include <limits.h>
-> diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
-> index 35c373d..8a4d029 100644
-> --- a/scripts/kconfig/zconf.y
-> +++ b/scripts/kconfig/zconf.y
-> @@ -1,8 +1,8 @@
-> -%{
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /*
->   * Copyright (C) 2002 Roman Zippel <zippel@linux-m68k.org>
-> - * Released under the terms of the GNU GPL v2.0.
->   */
-> +%{
->
->  #include <ctype.h>
->  #include <stdarg.h>
-> --
-> 2.7.4
->
+	/* Fail if the user requested offset is beyond the end of the object */
+	if (offset > num)
+		return -ENXIO;
 
+	/* Fail if the user requested size exceeds available object size */
+	if (count > num - offset)
+		return -ENXIO;
+
+	/* Never exceed the number of pages that the user requested */
+	for (i = 0; i < count; i++) {
+		ret = vm_insert_page(vma, uaddr, pages[offset + i]);
+		if (ret < 0)
+			return ret;
+		uaddr += PAGE_SIZE;
+	}
+
+	return 0;
+}
+
+/*
+ * Maps an object consisting of `num' `pages', catering for the user's
+ * requested vm_pgoff
+ */
+int vm_insert_range(struct vm_struct *vma, struct page *pages, size_t num)
+{
+	return __vm_insert_range(vma, pages, num, vma->vm_pgoff);
+}
+
+/*
+ * Maps a set of pages, always starting at page[0]
+ */
+int vm_insert_range_buggy(struct vm_struct *vma, struct page *pages, size_t num)
+{
+	return __vm_insert_range(vma, pages, num, 0);
+}
+
+With this, drivers such as iommu/dma-iommu.c can be converted thusly:
+
+ int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma+)
+ {
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	int ret = -ENXIO;
+-
+-	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+-		ret = vm_insert_page(vma, uaddr, pages[i]);
+-		if (ret)
+-			break;
+-		uaddr += PAGE_SIZE;
+-	}
+-	return ret;
++	return vm_insert_range(vma, pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
+}
+
+and drivers such as firewire/core-iso.c:
+
+ int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
+ 			  struct vm_area_struct *vma)
+ {
+-	unsigned long uaddr;
+-	int i, err;
+-
+-	uaddr = vma->vm_start;
+-	for (i = 0; i < buffer->page_count; i++) {
+-		err = vm_insert_page(vma, uaddr, buffer->pages[i]);
+-		if (err)
+-			return err;
+-
+-		uaddr += PAGE_SIZE;
+-	}
+-
+-	return 0;
++	return vm_insert_range_buggy(vma, buffer->pages, buffer->page_count);
+}
+
+and this gives us something to grep for to find these buggy drivers.
+
+Now, this may not look exactly equivalent, but if you look at
+fw_device_op_mmap(), buffer->page_count is basically vma_pages(vma)
+at this point, which means this should be equivalent.
+
+We _could_ then at a later date "fix" these drivers to behave according
+to the normal vm_pgoff offsetting simply by removing the _buggy suffix
+on the function name... and if that causes regressions, it gives us an
+easy way to revert (as long as vm_insert_range_buggy() remains
+available.)
+
+In the case of firewire/core-iso.c, it currently ignores the mmap offset
+entirely, so making the above suggested change would be tantamount to
+causing it to return -ENXIO for any non-zero mmap offset.
+
+IMHO, this approach is way simpler, and easier to get it correct at
+each call site, rather than the current approach which seems to be
+error-prone.
 
 -- 
-Best Regards
-Masahiro Yamada
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
