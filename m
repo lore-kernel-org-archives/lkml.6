@@ -2,194 +2,77 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C2DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02932C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 397B32173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:37:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PUuSTXPN"
+	by mail.kernel.org (Postfix) with ESMTP id CC6E52173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 08:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeLXIh4 (ORCPT
+        id S1726880AbeLXIiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 03:37:56 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:47015 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbeLXIh4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 03:37:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so5341378pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 00:37:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jCd+hczgR1aJ/LYMR/UN9ryjdYIcfPKLHku5JEL6k74=;
-        b=PUuSTXPNEZ9RsiE0UUGp+8e7LJc3txPFJyg8m4bVvQNkBkju7Kmp52W95AY2dIc765
-         7kcQ2W86JkHa3lpk2SnfGnFTnnKRvvjMAZPqN5yC+asgL+WTMyaYRYd78zzHcPislej1
-         VkyZF+I9sR9GQQx+qAZPekyHjl03yXv4tYyrM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jCd+hczgR1aJ/LYMR/UN9ryjdYIcfPKLHku5JEL6k74=;
-        b=eTVyxw/b+/zCaZTsXiqBx+ya8O0v4Lwr3G4JHriRuIBFxxX00wWJBulItOwRF/AF0B
-         CYjJky55xO1lJyRNbS7zhE1Iok7hZhLYqEJyep4PKKbEoT9w1SSgqZCdgltgu7W1hn+L
-         cy9carrJOsZJa8vHC7zrWyT0pcYPBN9PHimqM5XEgjGEGsrY3N4eG43pVTVSKPTttQ5C
-         6Vk8LEQ8E2NpUHrqRFIuhgofzxZVtyH+MpOoIfMAh3YeiqFj758DZCqtE6YODOIRO3s+
-         /ZFqgEQVr4Za3sGoXhy52RyfpCK5WHW6NIdkO1YHZsM5VaUfJS0WV2AoKd7tvatfeMSM
-         JAug==
-X-Gm-Message-State: AA+aEWYLFOIXqiyfW2uB+TJ2SAMqLGdRqTSceJLkkJ8nJJ3+gGQ3UmUC
-        6TkyG47RXkblIXdJZmfD55jOMbebx9s=
-X-Google-Smtp-Source: AFSGD/WFccr78PT0BzLYCkAsKVW0Twte1sA/OtxmND/7/QrpMWa9sjmMrDNMk1ora+5z/RjB+nChjA==
-X-Received: by 2002:a62:130c:: with SMTP id b12mr12446240pfj.247.1545640674599;
-        Mon, 24 Dec 2018 00:37:54 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id r130sm59078720pfr.48.2018.12.24.00.37.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 00:37:53 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH v2 1/3] mfd: cros_ec: Add commands to control codec
-Date:   Mon, 24 Dec 2018 16:37:22 +0800
-Message-Id: <20181224083724.75618-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Dec 2018 03:38:23 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:50510 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbeLXIiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 03:38:23 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 926116C62F04F176CF32;
+        Mon, 24 Dec 2018 16:38:18 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wBO8cAOr059116;
+        Mon, 24 Dec 2018 16:38:10 +0800 (GMT-8)
+        (envelope-from huang.zijiang@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018122416381705-18426314 ;
+          Mon, 24 Dec 2018 16:38:17 +0800 
+From:   "huang.zijiang" <huang.zijiang@zte.com.cn>
+To:     akpm@linux-foundation.org
+Cc:     rppt@linux.vnet.ibm.com, mhocko@suse.com, sfr@canb.auug.org.au,
+        mpe@ellerman.id.au, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        "huang.zijiang" <huang.zijiang@zte.com.cn>
+Subject: [PATCH] firmware/memmap:Modify memblock_alloc to memblock_alloc_nopanic
+Date:   Mon, 24 Dec 2018 16:41:22 +0800
+Message-Id: <1545640882-42009-1-git-send-email-huang.zijiang@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-24 16:38:17,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-24 16:38:10,
+        Serialize complete at 2018-12-24 16:38:10
+X-MAIL: mse01.zte.com.cn wBO8cAOr059116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add EC host commands to control codec on EC.
+From: "huang.zijiang" <huang.zijiang@zte.com.cn>
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+memblock_alloc never returns NULL because panic never returns
+
+Signed-off-by: huang.zijiang <huang.zijiang@zte.com.cn>
 ---
- Note: This patch is merged to mfd tree for-mfd-next branch already.
- But this is still needed on sound tree for-next branch in order to
- compile codec driver.
+ drivers/firmware/memmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
-
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 9a9631f0559e2..fc91082d4c357 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -2790,6 +2790,100 @@ struct ec_response_battery_vendor_param {
- 	uint32_t value;
- } __packed;
+diff --git a/drivers/firmware/memmap.c b/drivers/firmware/memmap.c
+index d168c87..ec4fd25 100644
+--- a/drivers/firmware/memmap.c
++++ b/drivers/firmware/memmap.c
+@@ -333,7 +333,7 @@ int __init firmware_map_add_early(u64 start, u64 end, const char *type)
+ {
+ 	struct firmware_map_entry *entry;
  
-+/*****************************************************************************/
-+/* Commands for I2S recording on audio codec. */
-+
-+#define EC_CMD_CODEC_I2S 0x00BC
-+
-+enum ec_codec_i2s_subcmd {
-+	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
-+	EC_CODEC_SET_GAIN = 0x1,
-+	EC_CODEC_GET_GAIN = 0x2,
-+	EC_CODEC_I2S_ENABLE = 0x3,
-+	EC_CODEC_I2S_SET_CONFIG = 0x4,
-+	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
-+	EC_CODEC_I2S_SET_BCLK = 0x6,
-+};
-+
-+enum ec_sample_depth_value {
-+	EC_CODEC_SAMPLE_DEPTH_16 = 0,
-+	EC_CODEC_SAMPLE_DEPTH_24 = 1,
-+};
-+
-+enum ec_i2s_config {
-+	EC_DAI_FMT_I2S = 0,
-+	EC_DAI_FMT_RIGHT_J = 1,
-+	EC_DAI_FMT_LEFT_J = 2,
-+	EC_DAI_FMT_PCM_A = 3,
-+	EC_DAI_FMT_PCM_B = 4,
-+	EC_DAI_FMT_PCM_TDM = 5,
-+};
-+
-+struct ec_param_codec_i2s {
-+	/*
-+	 * enum ec_codec_i2s_subcmd
-+	 */
-+	uint8_t cmd;
-+	union {
-+		/*
-+		 * EC_CODEC_SET_SAMPLE_DEPTH
-+		 * Value should be one of ec_sample_depth_value.
-+		 */
-+		uint8_t depth;
-+
-+		/*
-+		 * EC_CODEC_SET_GAIN
-+		 * Value should be 0~43 for both channels.
-+		 */
-+		struct ec_param_codec_i2s_set_gain {
-+			uint8_t left;
-+			uint8_t right;
-+		} __packed gain;
-+
-+		/*
-+		 * EC_CODEC_I2S_ENABLE
-+		 * 1 to enable, 0 to disable.
-+		 */
-+		uint8_t i2s_enable;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_COFNIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		uint8_t i2s_config;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_TDM_CONFIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		struct ec_param_codec_i2s_tdm {
-+			/*
-+			 * 0 to 496
-+			 */
-+			int16_t ch0_delay;
-+			/*
-+			 * -1 to 496
-+			 */
-+			int16_t ch1_delay;
-+			uint8_t adjacent_to_ch0;
-+			uint8_t adjacent_to_ch1;
-+		} __packed tdm_param;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_BCLK
-+		 */
-+		uint32_t bclk;
-+	};
-+} __packed;
-+
-+/*
-+ * For subcommand EC_CODEC_GET_GAIN.
-+ */
-+struct ec_response_codec_gain {
-+	uint8_t left;
-+	uint8_t right;
-+} __packed;
-+
- /*****************************************************************************/
- /* System commands */
- 
+-	entry = memblock_alloc(sizeof(struct firmware_map_entry),
++	entry = memblock_alloc_nopanic(sizeof(struct firmware_map_entry),
+ 			       SMP_CACHE_BYTES);
+ 	if (WARN_ON(!entry))
+ 		return -ENOMEM;
 -- 
-2.20.1.415.g653613c723-goog
+1.8.3.1
 
