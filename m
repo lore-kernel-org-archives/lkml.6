@@ -2,271 +2,154 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1DCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7BBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F45B2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 221622173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWhuKufD"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ieI+2V8f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbeLXLci (ORCPT
+        id S1725858AbeLXLfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 06:32:38 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37458 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbeLXLci (ORCPT
+        Mon, 24 Dec 2018 06:35:46 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49130 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbeLXLfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 06:32:38 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y11so8063591lfj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 03:32:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9jEDKMQUrxfJs9SwFRGDI/WgJiT8YtQ7BZ7ezY4zo28=;
-        b=nWhuKufDHWBNLzo+/NBk8/nZX4dLgSweJMB5rMOy6einZO/UZPm+/sGXutsYyU5P3V
-         qaxJaoghLXxApZJLUlmaQAfxWL6/D3mEmuJCpESCEOW6wYKttIZPb7lEWzqFjKolooeG
-         2X5rl22yDb8BEdIjBtP4ecGhv+9uLKof0xMraAlu9FzrptmhhYVvBpWFZtqW6uwdT8uW
-         g/UyHg2eDsTxSoK0mmpQRBEvCa20Q7tJ89O6AMOym16kfLqqaGP0de41AKtIhzdlCc4o
-         8nYhZCD2HqqqF6W4/UTcJKUANbih2/dipQN/9qPZIe+MkRctpyx73AleXIeQu+05f95B
-         5V/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9jEDKMQUrxfJs9SwFRGDI/WgJiT8YtQ7BZ7ezY4zo28=;
-        b=EapNTi1y+iZemBZpumob8Q0JSbV+hd98rVXnysfzL/X6wkjnhOYYbK201ClGA0PD6l
-         JkYgvcEH3zZVnHG5BGIdIc865+WImyXLuMeRhvVHo/ALaz+4ULFYgncN4UVuritk5hlQ
-         3bD1FeP7S46fPuIRw1kKhqxRGVaMQCF/awSGMlpZhmPkyZL1n+a3F4la1orwlAIGO4DC
-         YirHgD7AkjlJ/WZxkduck1Vm3USGXzoZ9t9yKV0K/RjQ7ncfqWRNL40v8dSvDF1LRpzB
-         M7DfCZ4sFeRdUeiQC+oATJqjzmEndWmuhxhnWjn9oeRMzwUGsSQgIFP3V4hWkNZr67yo
-         IB5g==
-X-Gm-Message-State: AA+aEWYfRnSvipiNBBlUGlzIM1xZ/RpXExvUoZErjEZcFaE3oa2z8Qow
-        D9nr0uHIbWlOClBzGD9SNw54XhkuWGVOQkdiGhMYjNY=
-X-Google-Smtp-Source: AFSGD/WTamQcNRfo9jfFbA5F2dhMmLqSuuddndRWh9/X6ZRyC3+xItcsTIO4ZIZCIffGFLnbXVkQOAEvHKSPSX8o5r8=
-X-Received: by 2002:a19:2906:: with SMTP id p6mr6093071lfp.17.1545651155077;
- Mon, 24 Dec 2018 03:32:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20181223164954.hib4lbchftspidsd@suse.de> <20181223171703.s7jm6fkyosnsf33z@brauner.io>
- <20181223180609.GA102606@dtor-ws> <CAEJqkgjSX8PW-NXa8CoMzx=2P5LOiDz0MCHoZ03zE7wZ=n2dKg@mail.gmail.com>
- <20181224091703.GB26796@kroah.com> <CAEJqkgj2EjQq_aaspRs7uyTL4LxC9dRUTheN25H+QhjkLjjpjQ@mail.gmail.com>
- <20181224105407.GA29719@kroah.com>
-In-Reply-To: <20181224105407.GA29719@kroah.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Mon, 24 Dec 2018 12:32:08 +0100
-Message-ID: <CAEJqkgjvOBagdSNhg04466vUXq7v55fE4vHvF66JjezDLu+wFg@mail.gmail.com>
-Subject: Re: FYI: Userland breakage caused by udev bind commit
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        Marcus Meissner <christian.brauner@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 24 Dec 2018 06:35:45 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBOBXl2c001189;
+        Mon, 24 Dec 2018 11:35:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=SjgmuKwbiqLkWLZ9/CSf03ose+Q5MfHQJIptqdfeUz0=;
+ b=ieI+2V8fVq642DYxxQS8bs/5e1W5gDSTc81TNQr+OctTmOPloIUQO6+v2GaJ7qBHrOmA
+ yKEFxk+ztpjjv95veC1+dVsF6x+BezcqG/kDFircu7S81GtugP7Q3YEfRaiY2CRrYnIj
+ qwGBuN66qRPoNZd7JG72DtDkXZXvob7tNc22a8waBa+AC6SwrRN91bEEV6QWiTQVKsIy
+ tV6L0C7Bc2UUFdydbrlwIh1hydaz+21G8sI2uJY1b1lkaJLc33aVmI4B5JCfa0Zoejt0
+ vQ9Zjs9uOqoXDpEfLPRQKUt/OkutsZPN2ETrSJfrm5xZewJhQTl+BEnmnjGKkXQqMElo iQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2phasdmqnw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Dec 2018 11:35:32 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBOBZUwP030778
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Dec 2018 11:35:31 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBOBZTOT025976;
+        Mon, 24 Dec 2018 11:35:29 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Dec 2018 03:35:29 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: Bug with report THP eligibility for each vma
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181224074916.GB9063@dhcp22.suse.cz>
+Date:   Mon, 24 Dec 2018 04:35:28 -0700
+Cc:     Paul Oppenheimer <bepvte@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <78624B4A-EA8B-4D51-B3E6-448132BB839B@oracle.com>
+References: <CALouPAi8KEuPw_Ly5W=MkYi8Yw3J6vr8mVezYaxxVyKCxH1x_g@mail.gmail.com>
+ <20181224074916.GB9063@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@suse.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9116 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=908
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812240104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mo., 24. Dez. 2018 um 11:54 Uhr schrieb Greg KH <gregkh@linuxfoundation.org>:
->
-> On Mon, Dec 24, 2018 at 11:15:34AM +0100, Gabriel C wrote:
-> > Am Mo., 24. Dez. 2018 um 10:17 Uhr schrieb Greg KH <gregkh@linuxfoundation.org>:
-> > >
-> > > On Mon, Dec 24, 2018 at 08:31:27AM +0100, Gabriel C wrote:
-> > > > Am So., 23. Dez. 2018 um 19:09 Uhr schrieb Dmitry Torokhov
-> > > > <dmitry.torokhov@gmail.com>:
-> > > >
-> > > > [ also added Linus to CC on that one too ]
-> > > > >
-> > > > > On Sun, Dec 23, 2018 at 06:17:04PM +0100, Christian Brauner wrote:
-> > > > > > On Sun, Dec 23, 2018 at 05:49:54PM +0100, Marcus Meissner wrote:
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > I am the maintainer of libmtp and libgphoto2
-> > > > > > >
-> > > > > > > Some months ago I was made aware of this bug:
-> > > > > > >     https://bugs.kde.org/show_bug.cgi?id=387454
-> > > > > > >
-> > > > > > > This was fallout identified to come from this kernel commit:
-> > > > > > >
-> > > > > > >     commit 1455cf8dbfd06aa7651dcfccbadb7a093944ca65
-> > > > > > >     Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > > > > >     Date:   Wed Jul 19 17:24:30 2017 -0700
-> > > > > >
-> > > > > > Fwiw, the addition of {un}bind events has caused issues for
-> > > > > > systemd-udevd as well and is tracked here:
-> > > > > > https://github.com/systemd/systemd/issues/7587
-> > > > > > I haven't been aware of this until yesterday and it seems that so far
-> > > > > > this hasn't been brought up on lkml until you did now.
-> > > > >
-> > > > > The fallout was caused by premature enabling of the new events in
-> > > > > systemd/udev by yours truly (even though the commit has Lennart's name
-> > > > > on it due to how it was merged):
-> > > > >
-> > > > > https://github.com/systemd/systemd/commit/9a39e1ce314d1a6f8a754f6dab040019239666a9
-> > > > >
-> > > > > "Add handling for bind/unbind actions (#6720)
-> > > > >
-> > > > > Newer kernels will emit uevents with "bind" and "unbind" actions. These
-> > > > > uevents will be issued when driver is bound to or unbound from a device.
-> > > > > "Bind" events are helpful when device requires a firmware to operate
-> > > > > properly, and driver is unable to create a child device before firmware
-> > > > > is properly loaded.
-> > > > >
-> > > > > For some reason systemd validates actions and drops the ones it does not
-> > > > > know, instead of passing them on through as old udev did, so we need to
-> > > > > explicitly teach it about them."
-> > > > >
-> > > > > Similarly it is now papered over in systemd/udev until we make it
-> > > > > properly handle new events:
-> > > > >
-> > > > > https://github.com/systemd/systemd/commit/56c886dc7ed5b2bb0882ba85136f4070545bfc1b
-> > > > >
-> > > > > "sd-device: ignore bind/unbind events for now
-> > > > >
-> > > > > Until systemd/udev are ready for the new events and do not flush entire
-> > > > > device state on each new event received, we should ignore them."
-> > > > >
-> > > >
-> > > > And how about peoples still uses systemd < 235 and newer kernels ?
-> > >
-> > > Is that an issue?  Who uses that, and does it cause problems on their
-> > > systems given that the events just do not do anything for those systems?
-> > >
-> > > We tested this out a lot back in the summer of 2017 and I thought all
-> > > was well.  What recently changed that caused breakages to suddenly show
-> > > up?  How have we not seen this until now?
-> > >
-> >
-> > Well people observed that , please click the bug link for that KDE bug.
-> > Reported '2017-11-30'..
-> >
-> > I can reproduce that on systemd 231 ( which we have here ) and
-> > kernels >= 4.14 just easy.
-> >
-> > Can't use any mtp devices all dropping :
-> >
-> > The file or folder udi=/org/kde/solid/udev/.......  does not exists'
-> >
-> > Why it got not reported here is probably because people are shy to
-> > report such things to LKML.
-> >
-> > > We can drop the "new" uevents now by reverting the patch, but what about
-> > > the userspace tools that now depend on them as we have had them in our
-> > > kernels for so long?  We can't now break them, right?  Should we add a
-> > > new kernel config option to not emit those for older userspaces that can
-> > > not handle this (of which I really still do not understand given that we
-> > > tested the heck out of this last year...)
-> >
-> > Peoples started to add workarounds to make it work somewhat again.
-> >
-> > Greg any such changes to udev are very fragile.
->
-> I am not changing udev.  Well, Dmitry changed udev, and then reverted
-> it, so all should be fine :)
->
-> > Also dropping some patch to systemd-udev won't solve anything on such moves.
->
-> If systemd-udev was broken, it should resolve the issue, right?
->
-> > Remember there exists other udev impelmentations too and not only that.
->
-> Ok, what other udev implementations are broken and why have we not heard
-> from them in the past 1 1/2 years?
 
-That because software maintainers started to change / workaround with
-some different set of
-udev rules :)
 
-Original report was on Gentoo and eudev also ..
+> On Dec 24, 2018, at 12:49 AM, Michal Hocko <mhocko@suse.com> wrote:
+>=20
+> [Cc-ing mailing list and people involved in the original patch]
+>=20
+> On Fri 21-12-18 13:42:24, Paul Oppenheimer wrote:
+>> Hello! I've never reported a kernel bug before, and since its on the
+>> "next" tree I was told to email the author of the relevant commit.
+>> Please redirect me to the correct place if I've made a mistake.
+>>=20
+>> When opening firefox or chrome, and using it for a good 7 seconds, it
+>> hangs in "uninterruptible sleep" and I recieve a "BUG" in dmesg. This
+>> doesn't occur when reverting this commit:
+>> =
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit=
+/?id=3D48cf516f8c.
+>> Ive attached the output of decode_stacktrace.sh and the relevant =
+dmesg
+>> log to this email.
+>>=20
+>> Thanks
+>=20
+>> BUG: unable to handle kernel NULL pointer dereference at =
+00000000000000e8
+>=20
+> Thanks for the bug report! This is offset 232 and that matches
+> file->f_mapping as per pahole
+> pahole -C file ./vmlinux | grep f_mapping
+>        struct address_space *     f_mapping;            /*   232     8 =
+*/
+>=20
+> I thought that each file really has to have a mapping. But the =
+following
+> should heal the issue and add an extra care.
+>=20
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f64733c23067..fc9d70a9fbd1 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct =
+vm_area_struct *vma)
+> {
+> 	if (vma_is_anonymous(vma))
+> 		return __transparent_hugepage_enabled(vma);
+> +	if (!vma->vm_file || !vma->vm_file->f_mapping)
+> +		return false;
+> 	if (shmem_mapping(vma->vm_file->f_mapping) && =
+shmem_huge_enabled(vma))
+> 		return __transparent_hugepage_enabled(vma);
 
-An now with systemd 240 it will break again probably =)
+=46rom what I see in code in mm/mmap.c, it seems if vma->vm_file is =
+non-zero
+vma->vm_file->f_mapping may be assumed to be non-NULL; see =
+unlink_file_vma()
+and __vma_link_file() for two examples, which both use the construct:
 
->
-> > See example below :
-> >
-> > app1- xxx - depending on some udev / kernel behaviour ( add rule in this case )
-> > kernel - xxx changes that ( adding bind which confuses add to usersapce )
->
-> No, another random uevent should never confuse userspace as userspace
-> always had to properly handle any uevent it got, no matter what it was
-> called.  Why would userspace get confused?
+	file =3D vma->vm_file;
+	if (file) {
+		struct address_space *mapping =3D file->f_mapping;
 
-See : https://bugs.kde.org/show_bug.cgi?id=387454#c29
+		[ ... ]
 
->
-> > - on update to that kernel app1 breaks..
-> > - udevd - drops an patch in to catch up
-> > - app1 trying to workaround now both ( which is that case here )
-> >    and now here the mess starts.
->
-> What application is working around what exactly?  Specific patches would
-> be good to point to.
->
+		[ code that dereferences "mapping" without further =
+checks ]
+	}
 
-In case of libmtp / gphoto2 , so far I can tell they changed the udev rules.
-However Marcus Meissner should know better than me :)
+I see nothing wrong with your second check but a few extra instructions
+performed, but depending upon how often transparent_hugepage_enabled() =
+is called
+there may be at least theoretical performance concerns.
 
-In case of solid .. is still broken ..
+William Kucharski
+william.kucharski@oracle.com
 
-> > Having app1-fixed for kernel who changed behaviour and using now
-> > and kernel does not have this makes app1 breaks again
-> >
-> > Using fixed udev and app1 without workarounds on kernel with bind breaks,
-> > using not fixed udev , app1 without workround breaks etc..
-> >
-> > >
-> > > still confused,
-> > >
-> >
-> > The problem I see here is 'bind' confuses 'add'.
-> >
-> > So is there a way to make bind event _not_ confusing add event ?
->
-> A bind event should not confuse any other events at all, it is as if
-> adding any other type of uevent would also confuse an add event?
->
-> Something is really wrong if that were to happen why is udev thinking
-> 'bind' is the same as 'add'?  Is it also thinking that 'unbind' is the
-> same as 'add'?
->
-
-I don't know why that is and cannot answer you that yet.
-I'm near 900KM away from my place and don't have the right hardware
-near me to debug/look
-why some software gets confused.
-
-> And see Dmitry's email, it seems that all of the combinations are now
-> handled properly.
->
-> If not, how to resolve this?
-
-I don't know how Dimitry's testing looks like on this however
-since I can reproduce that bug with systemd 231 and kernel >= 4.14
-I don't think that is resolved.
-
-Also he talks just about systemd's udev .. What about others ?
-
-I don't know for sure on how that can be solved , reverting this patch
-seems to be
-not a good idea.
-
-Maybe your idea adding a CONFIG about , enable it by default so software
-at least can have a sort check on the kernel configuration and based on that
-taking action on what rules to install and so on ?
-
->
-> thanks,
->
-> greg k-h
-
-BR,
-
-Gabriel
