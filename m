@@ -2,93 +2,91 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC75C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9415C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4539222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86D7E2184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYPlaWOE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u/ZuC6cv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbeLXQKy (ORCPT
+        id S1725860AbeLXQLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:10:54 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37439 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbeLXQKy (ORCPT
+        Mon, 24 Dec 2018 11:11:46 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42115 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbeLXQLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:10:54 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so5945135pfb.4;
-        Mon, 24 Dec 2018 08:10:53 -0800 (PST)
+        Mon, 24 Dec 2018 11:11:45 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so5714562pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:11:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H6NtWCE1jUb1Ui0xZ1ZBBTANDL9C7ONXqtCEAySMvnc=;
-        b=lYPlaWOESn5aD8yTf5ODkMFCwu0JPaaboNBMbAqZnILPPVKPuu9rHuuCfqo5pJD/0w
-         Xw9fWXN2egvGbfDM7pOfGtXQjfo+mAnueUnvj15mHuxa6yOpFeSwmmk5OfA468AwWmj9
-         VbwgFACFcdFJN+o12w9Wk74eqrRjavk0DRIjkjZZ+ny2UsWC7HdVyUKdQFoD1/lrfuab
-         TcMZHHnruDKmwAkKKmCu4uKyBVUr8aTx8KnGnoKn6a/F016eAWF6o++uxL5SUn6U7cPA
-         EwJRTJTrFMXggPXg+pip4lmKLFv5MDCyS9GjMm6rptNTz85LMCkfAS80FC3a8I7VRhkv
-         cfgg==
+        h=from:to:cc:subject:date:message-id;
+        bh=/AG8WoIQSfApW11qcR7PzwG2jjuXJC01VnXaY8jYjig=;
+        b=u/ZuC6cvMSoSF0OSxB9q8n3/FKzqoK9TnUJeHU6j7Ly0oICMqVMiNLKOHhIUs7MdcZ
+         iVhL3guune1YIO6hTY9kT2S91QOpg+5JXzn24rdYZTrKTCRlIbBmwjPnFk2YBzkmCqQ5
+         T1mBBveBCPD6w4/Sk9Q8D92qHW7LF/B8fX6MPLyqte68yPfsSpXzDxCh1fKsFNuac3Zx
+         dAysdc4vsa5ifVdK4/wR6Yb+h8N91/6TVlSo6Ra2jpUrMJMaYw0utZTkJRUpSs5lhyqb
+         yjhsWX7G6UjhrCNvIjUmQ3YeKJqepVDyLOEz/lwQp0S7s2D9ZjJLbVnl5qXpXS7xs/f8
+         fxEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H6NtWCE1jUb1Ui0xZ1ZBBTANDL9C7ONXqtCEAySMvnc=;
-        b=HGmXjU/VxHxiRw073/fE1djYywiPz402O5is7H4hw0g2Isrr0xijBNYzQRl2YYt9aq
-         iJOFlRgWGbtMpzpuAmaS3ltftzTZpx9yOwd9BJVshXeOlOyDnWP1JAFHcQFbbdW8Lkrb
-         IgAvwG6Utyt537age6l7CMdGKkLW6qWGPgKrz5m5OzvIb7mFxd9FWO69foo6RAihUUMo
-         MbfUTXXKG6IEmN3cAm1sruXuV5lroR6CmlwHE6w7lT/lNF5ow9gnzbOxPczwxv1cD+a9
-         BzQL1aszfig22cvQok75qs1vhu6teXWqp86lvmpFkqu7Ihd75xNclFjadpTTlGM72xaI
-         T1lA==
-X-Gm-Message-State: AJcUukek3V2ne2GlLrNaYVJalCwLQEXY7Dihc9LX3V+tpEt/qJeyXtDJ
-        tWEaSud2sOHNritrxGUlYmkq9A17MC9aQ9xnYQCBhg==
-X-Google-Smtp-Source: ALg8bN6vyz5mzhOzffXMO6mHaZUIKfIXB2vEgKbB/tNX78LQoVLQTG8cu/U/IJswmRGeLu6U/7T3CrhkrRImURZlPQk=
-X-Received: by 2002:a63:61c8:: with SMTP id v191mr12877684pgb.242.1545667852748;
- Mon, 24 Dec 2018 08:10:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20181224224542.375a5515@canb.auug.org.au>
-In-Reply-To: <20181224224542.375a5515@canb.auug.org.au>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 24 Dec 2018 10:10:41 -0600
-Message-ID: <CAH2r5muQq-3=iK_2j2WvG9dN-_ui_p2jHv4x6Fah+JcHFzo8VQ@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/AG8WoIQSfApW11qcR7PzwG2jjuXJC01VnXaY8jYjig=;
+        b=Pt9o33D9XD+tX8hqZxjmdvTR3UxidUc96pgRb8EZiCjwiMVENfxKlhcoWzc+tyB/1Y
+         VFMNoYu3+U7Eg3qXti7aZUixKLaZKJDIXpgDV2H8O8whdAoVdPdhJ9oIqmXtyx0x62sb
+         RH2SMoh97Nq5A4gJRwSs39k+tcGOLSD0SUE31DkDKwiDOQIWsDP5/yINrfLsSsauOluO
+         MjUBJ4COUVuZQJkYpqPo9a7RHMg2XrU05uzZwZUapbZ/SJRSuQcph7Oh2xUOBzzAUm3c
+         0ZGtilXcuyIKUdArAPkVkBBFttA5xxQVRwYZqms8M+U/UMkWVW3AaDM+eXYvLavVu4RW
+         uD7A==
+X-Gm-Message-State: AJcUukcGqo9FqOwX8D+FiySZr3nP9AbTJN2Xx0HmeHJaoid0hvgFV+Hp
+        r0zlQfqKp2ZxO/zStG7Sa4E=
+X-Google-Smtp-Source: ALg8bN5bthZ1gHTlnIEcshuGw4dhDquu8alAlpgQyLrX7bPu8uEJk0pBS7maNvNQ/+4TeFLjl2W0/Q==
+X-Received: by 2002:a63:9e19:: with SMTP id s25mr12840535pgd.203.1545667905236;
+        Mon, 24 Dec 2018 08:11:45 -0800 (PST)
+Received: from localhost.localdomain.localdomain ([116.74.222.141])
+        by smtp.googlemail.com with ESMTPSA id h129sm51519823pfb.110.2018.12.24.08.11.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 08:11:44 -0800 (PST)
+From:   Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
+To:     osdevtc@gmail.com, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        prathameshdeshpande7@gmail.com
+Subject: [PATCH] staging: wlan-ng: prism2fw.c: Fix "Possible unnecessary 'out of memory' message" checkpatch.pl warning"
+Date:   Mon, 24 Dec 2018 08:11:28 -0800
+Message-Id: <1545667888-38999-1-git-send-email-prathameshdeshpande7@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed and remerged to cifs-2.6.git for-next
+This patch removes unnecessary out of memory warning
+message from wlan-ng prism2fw.c file.
 
-On Mon, Dec 24, 2018 at 5:45 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   87410161a381 ("cifs: check kzalloc return")
->
-> is missing a Signed-off-by from its author.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Signed-off-by: Prathamesh Deshpande <prathameshdeshpande7@gmail.com>
+---
+ drivers/staging/wlan-ng/prism2fw.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-
+diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
+index bb572b7..c040066 100644
+--- a/drivers/staging/wlan-ng/prism2fw.c
++++ b/drivers/staging/wlan-ng/prism2fw.c
+@@ -557,7 +557,6 @@ static int mkimage(struct imgchunk *clist, unsigned int *ccnt)
+ 	for (i = 0; i < *ccnt; i++) {
+ 		clist[i].data = kzalloc(clist[i].len, GFP_KERNEL);
+ 		if (!clist[i].data) {
+-			pr_err("failed to allocate image space, exiting.\n");
+ 			return 1;
+ 		}
+ 		pr_debug("chunk[%d]: addr=0x%06x len=%d\n",
 -- 
-Thanks,
+1.8.3.1
 
-Steve
