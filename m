@@ -2,98 +2,114 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14A0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C475EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C245321783
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 933CF2173B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:32:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lsyv+T/b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeLXGcg (ORCPT
+        id S1726738AbeLXGcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 01:32:36 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:47060
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725849AbeLXGcf (ORCPT
+        Mon, 24 Dec 2018 01:32:46 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41347 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbeLXGcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 01:32:35 -0500
-X-IronPort-AV: E=Sophos;i="5.56,391,1539640800"; 
-   d="scan'208";a="290032572"
-Received: from abo-91-111-68.mrs.modulonet.fr (HELO hadrien) ([85.68.111.91])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 07:32:33 +0100
-Date:   Mon, 24 Dec 2018 07:32:33 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-cc:     kernel-janitors@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/20] xfs: xfs_buf: drop useless LIST_HEAD
-In-Reply-To: <20181223225118.GH27208@magnolia>
-Message-ID: <alpine.DEB.2.21.1812240732160.3054@hadrien>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr> <1545555435-24576-9-git-send-email-Julia.Lawall@lip6.fr> <20181223225118.GH27208@magnolia>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 24 Dec 2018 01:32:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so10689803wrs.8
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 22:32:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=pbk76CrSpTv3KWkqBKf0Ygegn10/ORWX8wSrlE2K1cw=;
+        b=Lsyv+T/bPAn/oR8rpgZ4w/Rm1zzOHX4Ifym0QmoBnZu9D7nVPVUeqCpCrh2t5yHMf0
+         fuPGiXuqFqQ/ZDDx1eYJMNNoNZcUQlJ5Wy4HNP8LZHnFffntMt+KIN7yHav0fwrBFogb
+         bDNK+3TnODRI8G4g21MYk7FstibOlqeJyxHU0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=pbk76CrSpTv3KWkqBKf0Ygegn10/ORWX8wSrlE2K1cw=;
+        b=FAE/DtI1w+0tYWIwfL955iV+23NDlZU33PInW4OVBeyK3cIcRJiYJL0isZ+kNs78Qp
+         l/uy11wiQzsyAlFMfKWT6idy3HUblOj72etUnaGSWTu6IyqnyU+N4QEsXhDtdDedGAo7
+         RVmBBUa16qkSG19I/cpOzNv+aS9pzWHiF73SjVUam9EIMuLWUs4SF1veUFo+LkGabzlA
+         bhXTSHejraWCiNl+hen8ZsBTaRH7417ge7VrnlbC6HikyHx+/fFbNOrojkUCY7olHb9n
+         D60DPEbNEwg/wi9F1p2NfGVrKcY4i8alVfOK1SZztxYXgFYf/MvgkmxrNglc6VMUhq5Q
+         OZIQ==
+X-Gm-Message-State: AJcUukfPd3Xwb1gjnNVnUpg0oXsttJ4h2B968RJT4K/LW8JlZ5X4A14W
+        FAR46dgPUycaN3+3Rv+9Y7CvHw==
+X-Google-Smtp-Source: ALg8bN7ww9dGy4DfNflHRckAgSExvBWwiFzDvoXCNizYb7jwAPWnQrkQ2qcxnXpG8e/dK1G1RviWsg==
+X-Received: by 2002:adf:fc51:: with SMTP id e17mr10372945wrs.268.1545633163166;
+        Sun, 23 Dec 2018 22:32:43 -0800 (PST)
+Received: from dell ([2a00:23c4:49ca:fc00:514b:a89a:f1e2:7949])
+        by smtp.gmail.com with ESMTPSA id a6sm15900711wmh.10.2018.12.23.22.32.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Dec 2018 22:32:42 -0800 (PST)
+Date:   Mon, 24 Dec 2018 06:32:41 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH 2/2] mfd: tps65218.c: Add input voltage options
+Message-ID: <20181224063241.GB4846@dell>
+References: <1545120356-7749-1-git-send-email-Christian.Hohnstaedt@wago.com>
+ <1545120356-7749-3-git-send-email-Christian.Hohnstaedt@wago.com>
+ <20181221110128.GO13248@dell>
+ <20181223164030.GQ6707@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181223164030.GQ6707@atomide.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 23 Dec 2018, Tony Lindgren wrote:
 
+> * Lee Jones <lee.jones@linaro.org> [181221 11:01]:
+> > On Tue, 18 Dec 2018, Christian Hohnstaedt wrote:
+> > 
+> > > These options apply to all regulators in this chip.
+> > > 
+> > > strict-supply-voltage:
+> > >   Set STRICT flag in CONFIG1
+> > > under-voltage-limit:
+> > >   Select 2.75, 2.95, 3.25 or 3.35 V UVLO in CONFIG1
+> > > under-voltage-hysteresis:
+> > >   Select 200mV or 400mV UVLOHYS in CONFIG2
+> > > 
+> > > Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+> > > ---
+> > >  drivers/mfd/tps65218.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 46 insertions(+)
+> > 
+> > This needs a close review by Tony and any of the other OMAP guys.
+> 
+> Adding Keerthy to Cc, he's probably the best person to review these
+> changes.
 
-On Sun, 23 Dec 2018, Darrick J. Wong wrote:
+But you've dropped the patch, so all he has it a commit log to review?
 
-> On Sun, Dec 23, 2018 at 09:57:03AM +0100, Julia Lawall wrote:
-> > Drop LIST_HEAD where the variable it declares has never
-> > been used.
-> >
-> > The semantic patch that fixes this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @@
-> > identifier x;
-> > @@
-> > - LIST_HEAD(x);
-> >   ... when != x
-> > // </smpl>
-> >
-> > Fixes: 26f1fe858f274 ("xfs: reduce lock hold times in buffer writeback")
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Looks ok; are you planning to push this whole series directly to Linus
-> or do you want me to take the two xfs patches through?
-
-Please take them.  Thanks.
-
-julia
-
->
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
->
-> --D
->
-> >
-> > ---
-> > Successfully 0-day tested on 151 configurations.
-> >
-> >  fs/xfs/xfs_buf.c |    1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > index b21ea2ba768d..eedc5e0156ff 100644
-> > --- a/fs/xfs/xfs_buf.c
-> > +++ b/fs/xfs/xfs_buf.c
-> > @@ -1992,7 +1992,6 @@ xfs_buf_delwri_submit_buffers(
-> >  	struct list_head	*wait_list)
-> >  {
-> >  	struct xfs_buf		*bp, *n;
-> > -	LIST_HEAD		(submit_list);
-> >  	int			pinned = 0;
-> >  	struct blk_plug		plug;
-> >
-> >
->
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
