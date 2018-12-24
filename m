@@ -2,131 +2,153 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B14C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145E0C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E603D21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D2F21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 16:26:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="eAY6rGPC"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="hTJ+ds8k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbeLXQWy (ORCPT
+        id S1725831AbeLXQ0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 11:22:54 -0500
-Received: from cock.li ([185.100.85.212]:49174 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbeLXQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 11:22:53 -0500
+        Mon, 24 Dec 2018 11:26:54 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:39373 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXQ0y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 11:26:54 -0500
+Received: by mail-lf1-f53.google.com with SMTP id n18so8457319lfh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 08:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=IYdaz0t6Pp5TSyj0Xbid44GL9kcPpmz5mHyD9H1JGXo=;
+        b=hTJ+ds8kXYMk+BleYtvJGfxJGYXTPMNWaQvurekbGnQxxKxsGjYWS1st9/AU9yY8FG
+         ziTaC7hmTEXHzuvg2HE8IcCb9Htzv5bgw2yheY4Xu6YxmEJQbrt3wwvoyRRnhHXqRzXn
+         wyEz6XeUJ/HJpG8p8hM+qiPOTIr+6hPY9+ZLAnG2ayrG/81ADDbskG0U4Q5WKa45ODij
+         AXw3holWEeaEb4YkCToKFM4eoJrl8kP9BK7va8M2XwtAl0wsmuLlNFqITjw9Pk0yDaAV
+         7K+3hN+pVL87qJhjT75sDM8HgOHJ0C2D4eVdQk8zSUhTO45KkvMKmAYz307wj7Earvl9
+         Eoyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=IYdaz0t6Pp5TSyj0Xbid44GL9kcPpmz5mHyD9H1JGXo=;
+        b=LGPxjJIgbA2BDK3AzwTQZ1pcvjZ8ewnl8my2KSX84j4xJgpqk31eecxiD3FsBgeBSn
+         0UvKY3LNYlPYiPnK+fx0p5woX9LXLRFwy1r2CuwG31T9/RESwejUci2FJbOJLYrwdA10
+         byqP2Y2Fm3Mm0BmOYQ+XShK6rHp2ofWEFNHPmmqXySiEGxKGiLcbra4TpY7LZuF8qgo2
+         oB7nL7BKh1FEsmb/tyzR2a5NZf8iYvKXaCN0ycSeo6c+yTQ8/2EuWgKOvoBlvCzXxMt7
+         XQNC41/t+zrbbNPz4Czh38R5khNZefsUDiRTDL13C/oDt1MkLgs4tvVhO+oa8ZWuXQP2
+         qxAA==
+X-Gm-Message-State: AA+aEWZ7RyL3KjPx/NMtNjG3OQvToKZDcVNgzKP6gyW/2LYZC3ztdqmh
+        hrGRP1sURN8mcbC55DWmKLBYh/bjfEwCMMoMZE+8/s+2dKzc
+X-Google-Smtp-Source: AFSGD/WDqIVy8qDjjqOPDh62r1S9TMA+cgMTMf+xtut+oGFvObJY1mpsrO8RCdXJQLaNrgB0GysX+otOq2y+jvhQCOw=
+X-Received: by 2002:a19:6719:: with SMTP id b25mr6352678lfc.38.1545668811673;
+ Mon, 24 Dec 2018 08:26:51 -0800 (PST)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545668569; bh=Chgzr6OyDFUO1zcAU1tUkB6WaY/UuwOvkccObQi8HgM=;
-        h=Date:From:To:Subject:From;
-        b=eAY6rGPCyqvexl3siIfksJJOzHTQSn9OCk41U4U6oaHK45pLPiHwdyFBKpXrEmwTo
-         I3ZvGf4JxnlkQ+Eiw7WEsaMKC8aEp+NM7aXR0mz3fZ8ypp/ceG70slj7T/M2ju2hKl
-         QOmN0lAzKVmJIb0znpZD7k6AJ5oLUEybD8/ce5fgypsdK0ydtap0ENKgFiF20zQ/GY
-         +sEmPS3MKlPSgdghGd/Z+oZ5HxituJU6Fkuwyodb7GsPI8tPG9aI/kb0sbKdu+9yMe
-         EG++DQUfyhtSsD9HLIrtgxAqRrecBwYMNGgnKL2gMrgbNYs8dKHQr7/H6Muwz0Hv+K
-         AfCgI3CGzpZ5Q==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Dec 2018 16:22:49 +0000
-From:   vnsndalce@memeware.net
-To:     dng@lists.dyne.org, linux-kernel@vger.kernel.org
-Subject: Re: [DNG] 2 months and no response from Eben Moglen - Yes you can
- rescind your grant. -- The CoC regime is a License violation - Additional
- restrictive terms
-Message-ID: <d346c097c905ec7b9bd1d887d5fc047a@memeware.net>
-X-Sender: vnsndalce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 Dec 2018 11:26:40 -0500
+Message-ID: <CAHC9VhTBp2XO4nDuJTe+tkALokHY+Ly-1fkD_Wubsci+vOp=Sg@mail.gmail.com>
+Subject: [GIT PULL] Audit patches for v4.21
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hendrik Boom, are you a lawyer?
-No? How about you shut your fucking mouth about things you have no clue 
-of?
+Hi Linus,
 
-Sound like a plan, ignorant lay person?
+In the finest of holiday of traditions, I have a number of gifts to
+share today.  While most of them are re-gifts from others, unlike the
+typical re-gift, these are things you will want in and around your
+tree; I promise.
 
-Below is an explanation of just how it is a violation of the 
-rights-holder's grant. The courts are not fooled by "clever" verbiage 
-written up by laypersons such as yourself and such as the drafter of the 
-CoC. They see things for what they are.
+This pull request is perhaps a bit larger than our typical PR, but
+most of it comes from Jan's rework of audit's fanotify code; a very
+welcome improvement.  We ran this through our normal regression tests,
+as well as some newly created stress tests and everything looks good.
+Richard added a few patches, mostly cleaning up a few things and and
+shortening some of the audit records that we send to userspace; a
+change the userspace folks are quite happy about.  Finally YueHaibing
+and I kick in a few patches to simplify things a bit and make the code
+less prone to errors.
 
-Hendrik Boom wrote:
-> 
-> Actually, no. It has no effect on what you can do with your copy of
-> the Linux kernel. It just restricts your ability to participate fully
-> in its development. But you can continue to use, modify, and
-> distribute your copies as much as before, as provided by the license.
-> 
-> -- hendrik
+Lastly, I want to say thanks one more time to everyone who has
+contributed patches, testing, and code reviews for the audit subsystem
+over the past year.  The project is what it is due to your help and
+contributions - thank you.
 
+Thanks,
+-Paul
 
-Version 2 of the GPL forbids the incorporation of additional
-restrictive terms, relating to the distribution, modification, etc of
-the article licensed under the terms.
+--
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Those that violate this section are declared, by operation of the
-terms, to have their grant automatically revoked.
+ Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-An additional term need-not be present in the same writing. Such terms
-simply need to be present to or made known to the taker(sub-licensee) by
-the distributor. They may be proffered in writing, orally, or
-implied in the course of doing business dealings. They simply must
-relate back or involve the article in question (the licensed code or
-product.)
+are available in the Git repository at:
 
-The proffering of additional restrictive terms is a violation of the
-text of the license grant in and of itself.
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+   tags/audit-pr-20181224
 
-Here we have a situation where an additional writing has been
-proffered. The additional writing promises both in it's own text and
-by implication consequences against those who violate the terms of
-this additional writing.
+for you to fetch changes up to d406db524c32ca35bd85cada28a547fff3115715:
 
-The additional writing restricts those subject to it from expressing
-certain views publicly - promising retribution against those who do.
+ audit: remove duplicated include from audit.c (2018-12-14 12:09:30 -0500)
 
-No consideration is paid to those subject to the additional writing
-for their assent; it is simply imposed unilaterally against the
-subjects.
+----------------------------------------------------------------
+audit/stable-4.21 PR 20181224
 
-The violators of the additional writing are promised:
-Additional, unwanted, public scrutiny (to which they were not subject
-to prior)
-Public ridicule.
-Loss of public standing.
-as-well as an implied loss of future income.
+----------------------------------------------------------------
+Jan Kara (14):
+     audit_tree: Remove mark->lock locking
+     audit: Fix possible spurious -ENOSPC error
+     audit: Fix possible tagging failures
+     audit: Embed key into chunk
+     audit: Make hash table insertion safe against concurrent lookups
+     audit: Factor out chunk replacement code
+     audit: Remove pointless check in insert_hash()
+     audit: Provide helper for dropping mark's chunk reference
+     audit: Allocate fsnotify mark independently of chunk
+     audit: Guarantee forward progress of chunk untagging
+     audit: Drop all unused chunk nodes during deletion
+     audit: Simplify locking around untag_chunk()
+     audit: Replace chunk attached to mark instead of replacing mark
+     audit: Use 'mark' name for fsnotify_mark variables
 
-These are the enforcement mechanisms of the additional writing to
-enforce its restrictions against those who publish derivative works of
-the kernel.
+Paul Moore (2):
+     audit: minimize our use of audit_log_format()
+     audit: use current whenever possible
 
-The additional writing is activated when (with the prerequisite of
-being a derivative work of the linux kernel) the work of a rights-holder
-is incorporated into the kernel, when such a work is made known to the
-kernel-team to exist where any one person on this earth has seen fit
-to present it for inclusion, or by simple prior-inclusion into the
-kernel.
+Richard Guy Briggs (5):
+     audit: print empty EXECVE args
+     audit: localize audit_log_session_info prototype
+     audit: use session_info helper
+     audit: remove WATCH and TREE config options
+     audit: shorten PATH cap values when zero
 
-Thus all current and past rights-holders who have code in, or have
-published for distribution, derivative works of the kernel are subject
-to the retributive promises made to them in the additional writing,
-drafted to restrict their actions and utterances.
+YueHaibing (1):
+     audit: remove duplicated include from audit.c
 
-This is tantamount to an additional restrictive term regarding the
-modification and distribution of works under the linux kernel license
-grant.
+drivers/tty/tty_audit.c          |  13 +-
+include/linux/audit.h            |   8 +-
+init/Kconfig                     |   9 -
+kernel/Makefile                  |   4 +-
+kernel/audit.c                   |  62 ++---
+kernel/audit.h                   |  10 +-
+kernel/audit_fsnotify.c          |   6 +-
+kernel/audit_tree.c              | 498 ++++++++++++++++++++----------------
+kernel/audit_watch.c             |   6 +-
+kernel/auditsc.c                 | 150 ++++++------
+security/integrity/ima/ima_api.c |   2 +-
+11 files changed, 395 insertions(+), 373 deletions(-)
 
-It is a violation of the license terms of the rights-holders past
-incorporated works in much the same way that GRSecurity's
-Contributor Access Agreement was and is.
-
-
+-- 
+paul moore
+www.paul-moore.com
