@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A24C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5C1C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45BD222A0
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0125C21850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="0PfYQgNA"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="zMxNkW6L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725803AbeLXPZC (ORCPT
+        id S1725788AbeLXP0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:25:02 -0500
-Received: from cock.li ([185.100.85.212]:33740 "EHLO cock.li"
+        Mon, 24 Dec 2018 10:26:55 -0500
+Received: from cock.li ([185.100.85.212]:35826 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbeLXPZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:25:02 -0500
+        id S1725355AbeLXP0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 10:26:55 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545665099; bh=LcdDQ9Sz3n3SFE735mMMEkFLwsX7CjZ2YGqZxW9m9nk=;
+        t=1545665213; bh=LbBXAHl9MbXz5ay5w/q4/wafmsAMRPXdbDmAQaWG4Yo=;
         h=Date:From:To:Subject:From;
-        b=0PfYQgNAWxNJxBkMktpQbL7QQa01zBGrgSZ1qb534erxwCkmJeW4chuBiU6mzOgzL
-         lXbsZEqz5YFzgOpg1mByLC0D5b96nMpisPJxnmbJHHXwZg8PF03QE69X0flS6uI1b9
-         wDYZlEoPZiwR8LocfRYU0xgkbcNH+rPTk4BOyD8OjWfa9oXOBWv7ak0CcKZBkO/yer
-         vi5qr03m5TxMeGhNsesljiJJjCTtO8Ox1H9CKpGO5vQvOBMuaiUXbxfUQOSoOegWCx
-         kByV08CZltQeYL9Q9F6soU4Nd+OVQ4RFy2K+/8DxOuB3ZZdOa8dhYmNsWO4qhvcgKP
-         eJHJ/MVQhtXnQ==
+        b=zMxNkW6L18Nma21acjEzSo9seF52qNCkCKIQ9jmuMY7ik19Pad66I4uF70EX/21ee
+         61SK/cKUfS2MgWa0/2xIhfAKLLW6i9zjY8b7qk/7LxUSHe6PCN8HVszgcSRr4NRn+8
+         JEJrCXhFLAjI2mkNThcdlGFTlCvhuROXIlaJ8vm4m1DTxXCjxply8wtZMge+48nkv5
+         4/kRHVJECLDWTn//6gdho2cEN8ImcVMBzQb3w5xElu6RIQaHgn4okzN4g4VkYLKGXr
+         TIcqbiI9Kym3J396ckEXpATReGEUiYMxXE83FVEBtq1XCeu3psFBLYUkK2fMtg9gCY
+         5ZBFWtHABvsuw==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Dec 2018 15:24:59 +0000
+Date:   Mon, 24 Dec 2018 15:26:52 +0000
 From:   vsnsdualce@memeware.net
-To:     linux-kernel@vger.kernel.org
-Subject: Reason for RedHat purchase 30 pct over market cap
-Message-ID: <00d7758a0690113986524bb5754b0a36@memeware.net>
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Subject: 2 months and no response from Eben Moglen - Yes you can rescind your
+ grant.
+Message-ID: <e7f56d389bc2ccea7db507b4913603ba@memeware.net>
 X-Sender: vsnsdualce@memeware.net
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,52 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Redhat has achieved "governance" over the Linux(TM), via systemd and the 
-Code of Conduct.
+It has been 2 months. Eben Moglen has published no research.
 
-You, contributors, are now treated as employees.
+Because there is nothing more to say: The GPLv2, as used by linux, is a 
+bare license. It can be rescinded at the will of the grantor.
 
-They are confident that you will not assert your property rights, since 
-you attack those who do (See: Netfiter saga), and take it as an honour 
-to sign documents pledging that you will not assert your property rights 
-(prepared for you by your now-masters).
+The regime that the FSF used, vis-a-vis the GPLv2, is essential: 
+copyright transfers to a central repository entity that is sure not to 
+rescind.
 
-They know that you are psychologically bound to behave as hirelings - 
-servants, and not as property owners.
+Linus chose not to adopt this regime.
+He benefited by greatly increased developer contribution.
+The price for that windfall was and is the retention of their 
+traditional property rights by the property holders.
 
-Thus they can rest easy knowing the ground is, though made of sand, not 
-in seeming danger of a tempest.
+They can rescind at will.
+They made no promise nor utterance to the contrary that can be relied 
+upon.
+They were paid no consideration.
+There was no meeting of the minds.
 
-Because of you.
-Because of your history of supplication.
-Your enuich-like nature.
+Additionally the CoC regime itself is a license terms violation, being 
+an additional restrictive term, as explained in the other analysis. 
+(Similar to the GRSecurity license violation)
 
-A nice example is Bradly Kuhn's recent blog posts 1) Excoriating RMS and 
-2) showing how he himself is submissive to a woman he hired.
-
-He's even angry that others still treat him with respect rather than 
-transferring all the good will to the female figurehead everyone is 
-supposed to now respect (for what reason? No, being an actual programmer 
-is not required: sufficent is being a member of the "better" species 
-that rules over the males under the anglo-american system that Bradly 
-Kuhn and his kind uphold )
-
-If I were them I would never donate another cent to the SFConservancy, 
-and I would seek a claw-back of the funds that I did donate for improper 
-use (yes this is possible under both California and New York law). 
-Especially since they seem to have no in-house lawyers what-so-ever (so 
-what is their purpose?).
-
-We are supposed to be proud that his mind is as innocent as his visage 
-(perhaps why he had to hire outside counsel to give him an incorrect and 
-abundantly couched opinion)
-
-[1] 
-http://ebb.org/bkuhn/blog/2018/11/22/gnu-kind-communication-guidelines.html
-[2] http://ebb.org/bkuhn/blog/2018/06/21/everyday-sexism.html
-
-
-
-
+On 2018-10-26 18:31, Eben Moglen wrote:
+> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
+> 
+>   You are conflating case law dealing with commercial software and
+>   non-gratuitous licenses with the present situation, which would 
+> likely
+>   be a case of first-impression in nearly any jurisdiction.
+> 
+> I think the best procedure would be for me to publish my analysis and
+> for you then to tell me what is wrong with it.  What you say here
+> sounds like what a lawyer might say, but isn't.  I have been teaching
+> this stuff for about thirty years, so if I am conflating or confusing
+> anything I will be grateful for help in seeing my mistake.
+> 
+>   The rule for gratuitous licenses is that they are revocable at the 
+> will
+>   of the grantor.
+> 
+> That's not actually "the rule."  It sounds like it might be the rule,
+> but it so happens that it's not.  When I have given the explanation as
+> I have learned, taught and depended on it, you will be able to show me
+> what I am wrong about.
+> 
+>   Raymond Nimmer (God rest his soul) was in agreement on this point,
+>   vis-a-vis the GPL and similar licenses.
+> 
+> You have your Nimmers confused.  The primary author of the treatise
+> Nimmer on Copyright (a book about the law, not in itself an authority)
+> was Melville Nimmer.  The treatise is continued by his son, David, a
+> fine lawyer with whom I do from time to time politely disagree about
+> something.  Ray Nimmer is quite another person.
+> 
+> Eben
 
 
