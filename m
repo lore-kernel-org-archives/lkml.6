@@ -2,142 +2,112 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFA6C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 21:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F49C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 21:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED1A217D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 21:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4EA9217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 21:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+06A+gX"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Kp+VCFKt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbeLXVLQ (ORCPT
+        id S1725830AbeLXVVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 16:11:16 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:34698 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbeLXVLP (ORCPT
+        Mon, 24 Dec 2018 16:21:32 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:47156 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeLXVVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 16:11:15 -0500
-Received: by mail-wr1-f49.google.com with SMTP id j2so12507033wrw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 13:11:14 -0800 (PST)
+        Mon, 24 Dec 2018 16:21:31 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 6449EC2F
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 21:21:30 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HzB_weQ176Jo for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Dec 2018 15:21:30 -0600 (CST)
+Received: from mail-it1-f199.google.com (mail-it1-f199.google.com [209.85.166.199])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 3845AC37
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 15:21:30 -0600 (CST)
+Received: by mail-it1-f199.google.com with SMTP id g7so15064877itg.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 13:21:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iLzFhcDitj7H4o30ARzCc6mWmBomakBjOI+RpH3RyaQ=;
-        b=X+06A+gXvgvUuny1xIAY4k7k5zGsy60cXhsxTP4sQLKCDvMuKWv/1TNj4GGb8J7sOw
-         oaJtAAd0KTHFCHvwfHVLrSacHFFrR4nCG+GMaZoMWKXmwOzNzX0roeHGMtKhTqjP26lN
-         oak8zv0jyBGg+WoAzMr7NXrcKDg8NN/yE+ZIVo3Sa6iGpE3+H/sPJpaiOOzGXETvYwgS
-         xEeYDFpCp4ystvzdv1divSfdpSe+yPuBRWJHTMQ55oEhqJtOturJe2jIJZaQ1rNTVYZo
-         9DEqnWthfwJQ/8iFBy5KPXalzParjI5FCPDyf5V3BfGugvf+JxG63RAf8IWYXLPf/VQ0
-         48bg==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=43gchWhnjuYleacimEGTo0K+ifmfHPKPUbsTzY3Migc=;
+        b=Kp+VCFKtAAXat8EfZJ+egoNYEX0Iuo1Bx4EBj0iZJ9DH2h7o1CkSC9UF4QYGvdQ7aJ
+         z5h3baUFHD90gJRSixMmsnNZgQ9EjtbpxWA6ZgV7My5GphHDONqKnaio7zSDKdNGS58+
+         emHHMoimeNMVKamllEjinpBvh2HGgl3mgkrOrsfD6BAQVWzhyLXmOgdNOQmwUNioOJIB
+         lOBghsVc/tksHVI3oJ1WML1J2+usX9r/wKnK5gByKYHVeGigHQo0M/rJ9YZwL/SwPtpa
+         hGnTVTuHHBrScmQabIq4rb5Y9TJCA5yIknr8AU5yLstFckamzTUAVUjjWpNuxeCdcGPc
+         pc2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iLzFhcDitj7H4o30ARzCc6mWmBomakBjOI+RpH3RyaQ=;
-        b=p3XRe+iRLe+URdDCtj9NgiMnkrogC3Kj6Y0YzKJpc68AMmCSfKmxMGc1T0IgFFg1gH
-         SgK9xQ1F+NzTzYTaLmiO3huPM+wQZmhHfSvFhNWgP4XgkkYhbQiN54QzI116WJJ3dZEQ
-         OLINi9wlohfAPsInwWPaNdEqObIFMtv5vXONvFGLy9tmpIflGnSgCu+hgsegpbXKfLGq
-         o95keUd4DSDJGOxMgtVqovv93Qh/FK7TY5u1me1je9U4HQSyc9DBJkQijFL6zKYx+68T
-         P1RHIwXosmv8yf92VL37t9/f2phthHDAz2thTSUqWjd3Ga4dFwkKRFPFgeFILn3xGUgm
-         HCBQ==
-X-Gm-Message-State: AJcUukfTU0GdKeNQah3KlVLsLNqkaUPYE033P0ciTdJ9P6+NuD3ztVvf
-        ehJokyD/WlT60dtslNm0SAo=
-X-Google-Smtp-Source: ALg8bN6/ZQHFv4YVWbylbWpLsW2mhhl026xmUT5fMjMpWLRoWY4NenaIh/bzmwVb5WAEv5Cyak7hzw==
-X-Received: by 2002:adf:b716:: with SMTP id l22mr13536171wre.186.1545685873408;
-        Mon, 24 Dec 2018 13:11:13 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:dcf1:6934:a532:a875? (p200300EA8BCFE300DCF16934A532A875.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:dcf1:6934:a532:a875])
-        by smtp.googlemail.com with ESMTPSA id v12sm656600wmd.27.2018.12.24.13.11.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=43gchWhnjuYleacimEGTo0K+ifmfHPKPUbsTzY3Migc=;
+        b=ALc/Kg2hwGcD7xGzd1paSibz6OHFPLkJSR3faylDI5OrBjL5hdv4wSpfhvor9bYf1u
+         RPql5h6u2Dy0DgdtqHWQ1NXW3XCAvNDoX4FPq9FpQqx4vyy27VLvl4hCxMaaZjK3w+eY
+         DSFECiJpaMIdAI1QjVBAUSacpGwKN8i1cOxLBMl1ONrkdNiZ3MsB3XnrvOA+lu+nhzgM
+         lR9qC20ojagGixAc0xvFEnfpLvEzSn8T0EPfXrNjJb8/bhZbrUuAmiNDOX9UxDhPT1DB
+         XQcvMRVy6G3bx4pZeFgONUNKPRGfIZ27y0bzC2vK6tn20yYCvBJPwvZQEXQTcUNlqNYR
+         i93A==
+X-Gm-Message-State: AA+aEWYBzupgys+KBTb7A6apJCeDBq08tUWN+8Fgv+uorBQi27TudY4f
+        o5ZIH86LXdub0OMWz7kHIip93dZJjuKwFyOpc7tzwDED4rWXrVGlATrErQ77zaaDxkRXE1x9hSj
+        8vEsiLrqxWx7lubxTeK9y79ZQMmQd
+X-Received: by 2002:a02:9d4b:: with SMTP id m11mr9645097jal.121.1545686489842;
+        Mon, 24 Dec 2018 13:21:29 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/V/JJk7MbNrGNVT1fPMQZjDNyT5BoqOOfGblM/MUd5wjcm3ZViiJFSxFUxtrkLoN/GVogiAFw==
+X-Received: by 2002:a02:9d4b:: with SMTP id m11mr9645085jal.121.1545686489600;
+        Mon, 24 Dec 2018 13:21:29 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id p132sm8878267itb.35.2018.12.24.13.21.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 13:11:12 -0800 (PST)
-Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()") may
- have revealed another problem
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-References: <8b93f213-fe67-f132-f3f5-5b17995ec63d@gmail.com>
- <20180824041245.GA2730@lerouge>
- <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
- <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
- <20180824143056.GC2730@lerouge>
- <d8fd3322-e982-2c9c-85e3-9b1770357520@gmail.com>
- <20180828022545.GA25943@lerouge>
- <alpine.DEB.2.21.1809271805190.8118@nanos.tec.linutronix.de>
- <20180928131855.GB8795@lerouge>
- <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
-Message-ID: <96aa7901-10a2-e0c3-d7d6-10e8b1a19354@gmail.com>
-Date:   Mon, 24 Dec 2018 22:11:09 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Dec 2018 13:21:28 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Arjun Vynipadath <arjun@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: chelsio: Add a missing check on cudg_get_buffer
+Date:   Mon, 24 Dec 2018 15:21:21 -0600
+Message-Id: <20181224212121.25596-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.10.2018 22:58, Heiner Kallweit wrote:
-> On 28.09.2018 15:18, Frederic Weisbecker wrote:
->> On Thu, Sep 27, 2018 at 06:05:46PM +0200, Thomas Gleixner wrote:
->>> On Tue, 28 Aug 2018, Frederic Weisbecker wrote:
->>>> On Fri, Aug 24, 2018 at 07:06:32PM +0200, Heiner Kallweit wrote:
->>>>> I tested it and Frederic is right, it doesn't help. Can it be somehow related to
->>>>> the cpu being brought down during suspend? Because I get the warning only during
->>>>> suspend when the cpu is inactive already (but still online).
->>>>
->>>> It's hard to tell, I haven't been able to reproduce on suspend to disk/mem.
->>>>
->>>> Does this script eventually trigger it after some time?
->>>
->>> Any update to this?
->>
->> Heiner? Can you please test the script I sent to you?
->>
->> Thanks.
->>
-> Sorry, took some time .. And yes, running your script triggers the message too.
-> 
-> [   25.646015] x86: Booting SMP configuration:
-> [   25.646044] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.664491] smpboot: CPU 1 is now offline
-> [   25.679299] x86: Booting SMP configuration:
-> [   25.679329] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.698449] smpboot: CPU 1 is now offline
-> [   25.711698] x86: Booting SMP configuration:
-> [   25.711727] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.729185] NOHZ: local_softirq_pending 202
-> [   25.729229] NOHZ: local_softirq_pending 202
-> [   25.730759] smpboot: CPU 1 is now offline
-> [   25.744053] x86: Booting SMP configuration:
-> [   25.744083] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.762520] smpboot: CPU 1 is now offline
-> [   25.776834] x86: Booting SMP configuration:
-> [   25.776863] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.794189] NOHZ: local_softirq_pending 202
-> [   25.796672] smpboot: CPU 1 is now offline
-> [   25.805970] x86: Booting SMP configuration:
-> [   25.805999] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.827360] smpboot: CPU 1 is now offline
-> [   25.839043] x86: Booting SMP configuration:
-> [   25.839073] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.858184] NOHZ: local_softirq_pending 202
-> [   25.862182] smpboot: CPU 1 is now offline
-> [   25.873759] x86: Booting SMP configuration:
-> [   25.873789] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [   25.893385] smpboot: CPU 1 is now offline
-> 
-Almost forgot about his topic, but the warning is still there.
-Has there been any progress in analysis?
+cudbg_collect_hw_sched() could fail when the function cudg_get_buffer()
+returns an error. The fix adds a check to the latter function returning
+error on failure
+
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+index 7c49681407ad..127b1f624413 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+@@ -1229,6 +1229,10 @@ int cudbg_collect_hw_sched(struct cudbg_init *pdbg_init,
+ 
+ 	rc = cudbg_get_buff(pdbg_init, dbg_buff, sizeof(struct cudbg_hw_sched),
+ 			    &temp_buff);
++
++	if (rc)
++		return rc;
++
+ 	hw_sched_buff = (struct cudbg_hw_sched *)temp_buff.data;
+ 	hw_sched_buff->map = t4_read_reg(padap, TP_TX_MOD_QUEUE_REQ_MAP_A);
+ 	hw_sched_buff->mode = TIMERMODE_G(t4_read_reg(padap, TP_MOD_CONFIG_A));
+-- 
+2.17.1
+
