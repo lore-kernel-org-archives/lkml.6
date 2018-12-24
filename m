@@ -2,135 +2,183 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB86C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26011C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B582173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545678936;
-	bh=ofk3ijuFXphn93CZikPNxcrK8cEFthsfhS6N4yUJomY=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=B7/tuVgaQpS+bACKRF+GgP37yTeG+p0UptFCJQ+JkM3ArFL19TkuljW9Z5fpVgDrA
-	 E+VBqdUfLSp2VxpvnfU9Bl5WOUCWRztjDO/FcBxX/5tkhgfK1QYZn3XY6Qr+h+h9NQ
-	 uvx/G6hZLt5s9Ac/QkCMKucRHQ792Klz2Mi+h7Uc=
+	by mail.kernel.org (Postfix) with ESMTP id E6BEF21773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:23:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sM1y8rhE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbeLXTPf (ORCPT
+        id S1725824AbeLXTXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 14:15:35 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49434 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbeLXTPf (ORCPT
+        Mon, 24 Dec 2018 14:23:41 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36455 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeLXTXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 14:15:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+4uhFlln5/mEmrpS5Zh9uYA+RaR8bxg3jzRCjI6DQoI=; b=YP3mMaI8zgx/3jZ6Kig223414
-        6qnMciuz7W5Dwcr7t0cHc5xhUctnO45rUiydNmufZM9hT7CwXWK7DAuwjog92zcUMNuDH0QjFJ8hZ
-        mEDKcskG/OiuYoDJ22eFZKdD999QogJfuuncOhOJKPybxxWuU2iXPQKmOy+US8sCnsH14=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gbVhM-00078M-Rn; Mon, 24 Dec 2018 19:15:32 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 4E574440080; Mon, 24 Dec 2018 19:15:32 +0000 (GMT)
-Date:   Mon, 24 Dec 2018 19:15:32 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] regmap updates for v4.21
-Message-ID: <20181224191532.GC1846@sirena.org.uk>
+        Mon, 24 Dec 2018 14:23:40 -0500
+Received: by mail-it1-f195.google.com with SMTP id c9so16145621itj.1;
+        Mon, 24 Dec 2018 11:23:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GvZQYngJWOhqnFbKOHjc9A1U0Jvf22KkxhhjLqRhtTk=;
+        b=sM1y8rhEXDVXMFY/YtFQitwJ5uZ0XNTGG12E/dKJNJs57H0VeaE0tE+LEDa1QpaYv/
+         NuzjK2obUgO3N5W//pP00s7opfPLHxl67JLdwyrsowNYpz1W6paAQmEW7SZn/GG5HyKU
+         1H9uh2MxIUM6+sHVaLFY5SaRekOnccDKr+8J8hHs0Utjum8pwQWVb2uzlNi46qlHkK1r
+         +r1cvq/JVpSZHR5viuB1wJH8DPcuxl/uVD8DFQDfjufM86m9F+PeAHW45PFKitlv8hD5
+         h+bEBpOtmP58CUmSZO4+3BsK9e5Vi+KxBVtSB63uhltGl69fXIzZgHSoyfvqurUbGZ/N
+         heQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GvZQYngJWOhqnFbKOHjc9A1U0Jvf22KkxhhjLqRhtTk=;
+        b=hhtH118kDdrngmcv76d4pV8km5OcxWnE5A2/FcQmonZvKIHYZ6pMchFoP3/UXY+Xw5
+         N7DQG2sBkYzEEXB9uCyzSBk6/7XJgdJTBzP8PzQyNulj3gO8OI2YDAlZ746l5GNot17C
+         NffQwpL68og6W2Fcmd/4J2RlPzvK1wRt035neXtAuJPFYoi6dzTvlQUelLYexRXT0Z88
+         UBn5NGCYszn37pRYdntG7uxPzQawMp+NhJIE+YrAyC8wJ9nwrKLqDx7MyoODkPwGJASR
+         qv/Jc6A9MZ2JO47F956GLbaIdWrlN+JpHWZhOaNKnCaOmH67h+9jn9S9VQF5hP/XCIwK
+         z33Q==
+X-Gm-Message-State: AA+aEWbtCIxP58veSU6wBhf5hL/Ieinpm893WkzwXxznZMjMcMU/7yBu
+        ASCU7yXOq3bgN+k6Fxdg0lPb6CDM
+X-Google-Smtp-Source: AFSGD/WpDZK4OSpkUcwwe4ZQdFJpOiNjgudn+VdXNPE2z/ri98vv3QiZe1MF/csti/BcFkHvJTSVeA==
+X-Received: by 2002:a24:54d0:: with SMTP id t199mr9631173ita.57.1545679419390;
+        Mon, 24 Dec 2018 11:23:39 -0800 (PST)
+Received: from ArchLaptop (h69-129-169-208.cntcnh.dsl.dynamic.tds.net. [69.129.169.208])
+        by smtp.gmail.com with ESMTPSA id j129sm11007704itb.41.2018.12.24.11.23.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Dec 2018 11:23:38 -0800 (PST)
+Date:   Mon, 24 Dec 2018 14:23:36 -0500
+From:   Aaron Hill <aa1ronham@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drivers: thermal: int340x_thermal: Fix sysfs race
+ condition
+Message-ID: <20181224192336.GA6057@ArchLaptop>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Cookie: knowledge, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes since V1:
+* Use dev_info instead of printk
+* Use dev_warn instead of BUG_ON
 
---pAwQNkOnpTn9IO2O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Previously, sysfs_create_group was called before all initialization had
+fully run - specifically, before pci_set_drvdata was called. Since the
+sysctl group is visible to userspace as soon as sysfs_create_group
+returns, a small window of time existed during which a process could read
+from an uninitialized/partially-initialized device.
 
-The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
+This commit moves the creation of the sysctl group to after all
+initialized is completed. This ensures that it's impossible for
+userspace to read from a sysctl file before initialization has fully
+completed.
 
-  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
+To catch any future regressions, I've added a check to ensure
+that proc_thermal_emum_mode is never PROC_THERMAL_NONE when a process
+tries to read from a sysctl file. Previously, the aforementioned race
+condition could result in the 'else' branch
+running while PROC_THERMAL_NONE was set,
+leading to a null pointer deference.
 
-are available in the Git repository at:
+Signed-off-by: Aaron Hill <aa1ronham@gmail.com>
+---
+ .../processor_thermal_device.c                | 28 ++++++++++---------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v4.21
+diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/int340x_thermal/processor_thermal_device.c
+index 284cf2c5a8fd..0a43dbf0131b 100644
+--- a/drivers/thermal/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/int340x_thermal/processor_thermal_device.c
+@@ -81,10 +81,15 @@ static ssize_t power_limit_##index##_##suffix##_show(struct device *dev, \
+ 					struct device_attribute *attr, \
+ 					char *buf) \
+ { \
++	if (proc_thermal_emum_mode == PROC_THERMAL_NONE) { \
++		dev_warn(dev, "Attempted to get power limit before device was initialized!\n"); \
++		return 0; \
++	} \
++	\
+ 	struct pci_dev *pci_dev; \
+ 	struct platform_device *pdev; \
+ 	struct proc_thermal_device *proc_dev; \
+-\
++	\
+ 	if (proc_thermal_emum_mode == PROC_THERMAL_PLATFORM_DEV) { \
+ 		pdev = to_platform_device(dev); \
+ 		proc_dev = platform_get_drvdata(pdev); \
+@@ -298,11 +303,6 @@ static int proc_thermal_add(struct device *dev,
+ 	*priv = proc_priv;
+ 
+ 	ret = proc_thermal_read_ppcc(proc_priv);
+-	if (!ret) {
+-		ret = sysfs_create_group(&dev->kobj,
+-					 &power_limit_attribute_group);
+-
+-	}
+ 	if (ret)
+ 		return ret;
+ 
+@@ -316,8 +316,7 @@ static int proc_thermal_add(struct device *dev,
+ 
+ 	proc_priv->int340x_zone = int340x_thermal_zone_add(adev, ops);
+ 	if (IS_ERR(proc_priv->int340x_zone)) {
+-		ret = PTR_ERR(proc_priv->int340x_zone);
+-		goto remove_group;
++		return PTR_ERR(proc_priv->int340x_zone);
+ 	} else
+ 		ret = 0;
+ 
+@@ -331,9 +330,6 @@ static int proc_thermal_add(struct device *dev,
+ 
+ remove_zone:
+ 	int340x_thermal_zone_remove(proc_priv->int340x_zone);
+-remove_group:
+-	sysfs_remove_group(&proc_priv->dev->kobj,
+-			   &power_limit_attribute_group);
+ 
+ 	return ret;
+ }
+@@ -364,7 +360,10 @@ static int int3401_add(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, proc_priv);
+ 	proc_thermal_emum_mode = PROC_THERMAL_PLATFORM_DEV;
+ 
+-	return 0;
++	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PLATFORM_DEV\n");
++
++	return sysfs_create_group(&pdev->dev.kobj,
++					 &power_limit_attribute_group);
+ }
+ 
+ static int int3401_remove(struct platform_device *pdev)
+@@ -441,7 +440,10 @@ static int  proc_thermal_pci_probe(struct pci_dev *pdev,
+ 			dev_err(&pdev->dev, "No auxiliary DTSs enabled\n");
+ 	}
+ 
+-	return 0;
++	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PCI\n");
++
++	return sysfs_create_group(&pdev->dev.kobj,
++					 &power_limit_attribute_group);
+ }
+ 
+ static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+-- 
+2.20.1
 
-for you to fetch changes up to 58331d618bd9ced88a21a9b68c7743b84c2f4803:
-
-  Merge remote-tracking branch 'regmap/topic/irq' into regmap-next (2018-12-19 18:38:33 +0000)
-
-----------------------------------------------------------------
-regmap: Updates for v4.21
-
-This has been a busy release for the regmap-irq code, there's several
-new features been added, including an API cleanup for how we specify
-types that affected one existing driver (gpio-max77620):
-
- - Support for hardware that flags rising and falling edges on separate
-   status bits from Bartosz Golaszewski.
- - Support for explicitly clearing interrupts before unmasking from
-   Bartosz Golaszewski.
- - Support for level triggered IRQs from Matti Vaittinen.
-
-----------------------------------------------------------------
-Bartosz Golaszewski (2):
-      regmap: irq: handle HW using separate rising/falling edge interrupts
-      regmap: irq: add an option to clear status registers on unmask
-
-Mark Brown (2):
-      Merge branch 'regmap-4.21' into regmap-next
-      Merge remote-tracking branch 'regmap/topic/irq' into regmap-next
-
-Matti Vaittinen (2):
-      regmap: regmap-irq: Remove default irq type setting from core
-      regmap: regmap-irq/gpio-max77620: add level-irq support
-
-Tony Xie (1):
-      regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id, _reg_bits)
-
-Yangtao Li (2):
-      regmap: rbtree: convert to DEFINE_SHOW_ATTRIBUTE
-      regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
-
- drivers/base/regmap/regcache-rbtree.c |  12 +--
- drivers/base/regmap/regmap-debugfs.c  |  12 +--
- drivers/base/regmap/regmap-irq.c      | 142 ++++++++++++++++++++++++----------
- drivers/gpio/gpio-max77620.c          |  96 +++++++++++++++--------
- include/linux/regmap.h                |  41 ++++++++--
- 5 files changed, 200 insertions(+), 103 deletions(-)
-
---pAwQNkOnpTn9IO2O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwhMFMACgkQJNaLcl1U
-h9Bcagf8DBrmm4WJ0RVhKGKd2zoawb7p+Sfahz29I2Qpe6jTd8T/DHMyeat9NrG8
-aRJJsuKnO2PQ03MPZ3VKUiLNwVJNU+jYC926kib9gL3u/DUW4vZPa989jzlf04xZ
-BA4DQV9nQfQxPL0nkiM31dEPl5BRiPeWQrpwUG++NIeXfu43TQzpIm5PCEGlH5Io
-/pduXLHedZhVKBFs49vQUHpl5QsZJw07P8llk+q+a8T1pYc4Vb9xLDuQ2IyoBFAY
-FUzqN8Iz5vd312OaHchTHvgoHcDIOJvusieOA44hm525kKwyGdsoWwtMhD9I9BlG
-mySvXgZQgoM2x5TMclWW+Xomgssbnw==
-=rhtL
------END PGP SIGNATURE-----
-
---pAwQNkOnpTn9IO2O--
