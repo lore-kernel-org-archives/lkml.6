@@ -2,143 +2,89 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6C8C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8480BC64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9AA21873
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="xWZp5GTa"
+	by mail.kernel.org (Postfix) with ESMTP id 2564921850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 17:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725837AbeLXRCj (ORCPT
+        id S1725820AbeLXRF2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 12:02:39 -0500
-Received: from mail-lf1-f53.google.com ([209.85.167.53]:38939 "EHLO
-        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbeLXRCj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 12:02:39 -0500
-Received: by mail-lf1-f53.google.com with SMTP id n18so8500245lfh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 09:02:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=G8FzPBtb4yXXXaWuLZ7xMf+SnfKeOS2EHYk5qzdzX3I=;
-        b=xWZp5GTa95rq+nOQF+eA7nPDXNA4UPYNmSAkOLEuzWedAZVloHdPJnZh3/Xvd1nMZm
-         ikUQcUGrKSBz1PW979NnpJ1ekC9QMfT7litK+VD5jM3q2suaV7CwHVYL/u1MU/yEEI1P
-         Bti5Ybz56ZPqrTpDZNzhhBSp83pp9Ywrw66jZjhvQyeGuShDE2ON46qL09Z45bWAO28F
-         QyvOA5sNVfH86RSn8TiMmsInd+IOliPdbE+klMh4uiwRdfi2f4u0f/8i13sX9LxuVn2g
-         4u4FKH0HF/9n7KnxBNI5P1QCnoec5fgRkMpzWey4Uhb25aeQ6wtOl0+6zSMo2VM7SkJe
-         RGxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=G8FzPBtb4yXXXaWuLZ7xMf+SnfKeOS2EHYk5qzdzX3I=;
-        b=N5adPL7vf4ryDHRH6Hkfon8rRYRu2FWbJNnAf2349eiqIPiTkCdJx0ok+7SZVJZMUu
-         qOog5uENkYbSxYuV5L6OXxqLEKlVI9eBOH9hY/5TpnPruDouPyqWxSTFrsx1/QJ4ddNv
-         uLAmk/RMc+8em8Eonq1Vjr/RCPHTqgGrHh0AjV7tiNOsoEO+CwK87UvT5pzyl4Ltlnih
-         qekbUwcWBofwsq/6EAQXbk3IaLr8gOLJamY2G8c9F9wFuR4P77FVHgB6Y4U/Po6Z2rXx
-         EyR1ZiCAts8/LmRD8QbGIv2KPsnzy/VfA3RfUlWvZ2Xt/NZY+UdI14yeyHv7CNe7dvmH
-         63qw==
-X-Gm-Message-State: AA+aEWZDGjFxuqJyhOoWd+L1RD98+gwBW2K5OCfpPexZCydLDqCVH6KT
-        q4S+mMBQep4hONdGc4wxPa10okDuksWH9y4gGegFs7K3/Awl
-X-Google-Smtp-Source: AFSGD/VZjAGXZHyU0vNP+GgPDWr6fG1hlHaIPKvY97oYzXoeD7cPl4GdtsQLsPEV3HjeXOXsgJ02pMKv5NyM19aRZMs=
-X-Received: by 2002:a19:40cc:: with SMTP id n195mr6794802lfa.40.1545670956833;
- Mon, 24 Dec 2018 09:02:36 -0800 (PST)
+        Mon, 24 Dec 2018 12:05:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34098 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725385AbeLXRF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 12:05:27 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7B76E20A46; Mon, 24 Dec 2018 18:05:25 +0100 (CET)
+Received: from localhost (alyon-652-1-163-36.w109-212.abo.wanadoo.fr [109.212.74.36])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 40DD62070E;
+        Mon, 24 Dec 2018 18:05:15 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Marek Behun <marek.behun@nic.cz>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH 1/3] pinctrl: armada-37xx: Correct mpp definitions
+References: <20181221173259.8372-1-gregory.clement@bootlin.com>
+        <20181221173259.8372-2-gregory.clement@bootlin.com>
+        <20181222033213.43642e0f@nic.cz>
+Date:   Mon, 24 Dec 2018 18:05:15 +0100
+In-Reply-To: <20181222033213.43642e0f@nic.cz> (Marek Behun's message of "Sat,
+        22 Dec 2018 03:32:13 +0100")
+Message-ID: <87efa6c0tw.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 24 Dec 2018 12:02:25 -0500
-Message-ID: <CAHC9VhSzkyh3Nj+25YX1y_gs9-Y+TEedo7hi-Qk7hd+qMERvyQ@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches v4.21
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Marek,
+ 
+ On sam., déc. 22 2018, Marek Behun <marek.behun@nic.cz> wrote:
 
-I already used my best holiday pull request lines in the audit pull
-request, so this one is going to be a bit more boring, sorry about
-that.  To make up for this, we do have a birthday of sorts to
-celebrate: SELinux turns 18 years old this December.  Perhaps not the
-most exciting thing in the world for most people, but I think it's
-safe to say that anyone reading this email doesn't exactly fall into
-the "most people" category.
+> On Fri, 21 Dec 2018 18:32:57 +0100
+> Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+>
+>> +	PIN_GRP_GPIO("pcie1", 3, 1, BIT(5), "pcie"),
+>> +	PIN_GRP_GPIO("pcie1_clkreq", 4, 1, BIT(9), "pcie"),
+>
+> If the pair is split to clkreq and reset, shouldn't the first be called
+> pcie1_reset?
 
-Back to business and the pull request itself.  Ondrej has five patches
-in this pull request and I lump them into three categories: one patch
-to always allow submounts (using similar logic to elsewhere in the
-kernel), one to fix some issues with the SELinux policydb, and the
-others to cleanup and improve the SELinux sidtab.  The other patches
-from Alexey and Petr and trivial fixes that are adequately described
-in their respective subject lines.  This is generally a pretty
-standard set of patches, but there is one potential merge conflict
-with the mount rework in the vfs tree.  If needed, the fixup is pretty
-small and documented in the linux-next post below; if you have any
-questions about the merge let us know.
+I considered this but chose to keep pcie1 in order to preserve backward
+compatibility.
 
-* https://lore.kernel.org/lkml/20181218144858.58d8d1f8@canb.auug.org.au
+I agree that it is debatable, because without the fix the old device
+tree can't work. However I find it better preserving the initial intent
+of an existing device tree.
 
-With this last pull request of the year, I want to thank everyone who
-has contributed patches, testing, and reviews to the SELinux project
-this year, and the past 18 years.  Like any good open source effort,
-SELinux is only as good as the community which supports it, and I'm
-very happy that we have the community we do - thank you all!
+By talking about it, I think about an other option, keeping pcie1 name
+to setup the pins 39 and 40 how it was documented. And introducing
+pcie1_reset and pcie1_clkreq for new binding. however I don't know how
+it could be handle by the pinctrl framework.
 
--Paul
---
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Gregory
 
- Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20181224
-
-for you to fetch changes up to ee1a84fdfeedfd7362e9a8a8f15fedc3482ade2d:
-
- selinux: overhaul sidtab to fix bug and improve performance
-   (2018-12-05 16:12:32 -0500)
-
-----------------------------------------------------------------
-selinux/stable-4.21 PR 20181224
-
-----------------------------------------------------------------
-Alexey Dobriyan (1):
-     selinux: make "selinux_policycap_names[]" const char *
-
-Ondrej Mosnacek (5):
-     selinux: policydb - fix byte order and alignment issues
-     selinux: refactor sidtab conversion
-     selinux: always allow mounting submounts
-     selinux: use separate table for initial SID lookup
-     selinux: overhaul sidtab to fix bug and improve performance
-
-Petr Vorel (1):
-     Documentation: Update SELinux reference policy URL
-
-Documentation/admin-guide/LSM/SELinux.rst |   2 +-
-security/selinux/hooks.c                  |   2 +-
-security/selinux/include/security.h       |   2 +-
-security/selinux/ss/mls.c                 |  24 +-
-security/selinux/ss/mls.h                 |   3 +-
-security/selinux/ss/policydb.c            |  61 +++-
-security/selinux/ss/services.c            | 222 +++++------
-security/selinux/ss/services.h            |   2 +-
-security/selinux/ss/sidtab.c              | 609 ++++++++++++++++++---------
-security/selinux/ss/sidtab.h              |  96 +++--
-10 files changed, 626 insertions(+), 397 deletions(-)
+> Marek
 
 -- 
-paul moore
-www.paul-moore.com
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
