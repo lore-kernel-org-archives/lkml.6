@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB1DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 05:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2148CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 05:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E118206A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 05:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1273206A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 05:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbeLXFlE (ORCPT
+        id S1726719AbeLXFmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 00:41:04 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:42212 "EHLO
+        Mon, 24 Dec 2018 00:42:04 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:44996 "EHLO
         mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeLXFlE (ORCPT
+        with ESMTP id S1726063AbeLXFmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 00:41:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id g7so12975023itg.7
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 21:41:03 -0800 (PST)
+        Mon, 24 Dec 2018 00:42:04 -0500
+Received: by mail-it1-f198.google.com with SMTP id x82so12957329ita.9
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Dec 2018 21:42:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=CZkd8ASqdnCqXIFS0GdDHFZSX/NqGi41UyLAYrH9SpA=;
-        b=gCuo3EzmPW5Srbyr1jzvT1s7jQZXbnfY04hLaiJC3CKVSEalBETpiEiE2FxdkF3Zve
-         3+djVQrTh6y7hQEUwEL7qS1FQ350tgSG/5HjE400f3pX+DiLqC6Ua8Xr5WE+/fErBA9d
-         tn6kkTgQn5uooRz6zQHX83hos8r6inpEruuQlra7W3pqgChAOjcHfC+teuG+ezMTuReR
-         XCkAGdtEf3VzEo3OV1ZAviuHSjXg7SmqyvWoYIBgorWv24avMmm8ElBXLh3roKa4npNG
-         iDrKG4KUlGNR89nV8nSKWrMxbS77dtslfOaIBkywsK1O6M1R5MxnJ47L89o7pjutZGBz
-         sUog==
-X-Gm-Message-State: AJcUukfLVA6ntmyTx6cwZXyrstDELf8HthCGH6t3e+8hBefgQNigK+SV
-        yMVih/nCSaBmpeitYtWpBi2Nv/EL4thtW5B/RtQg0u91iDpE
-X-Google-Smtp-Source: ALg8bN6fT0BlwI4NB0YzHx5P7e1Vvfycr3rpGb93f52XeDNqi2Uojk6cYomO+VkOb9OlWHlBF4xPstML/3zsJH9aMJhFKP6QLjSZ
+        bh=fRHhDPOFTpc5k0EEcRQaBnMgsKSIZOabS6U17bw39SU=;
+        b=rgM2k5NX5XqUFtbcqNUJRYgL+3E6eUcJhVbHCgFEqTUlMmVp7LYcnvFvPTvDqcL6oP
+         rTvrGsK6iX38GIz/959O4FwM5zKGLOAQxnluX3Fr/tPF99AqLB0rXt85RM6iZt2qvdw+
+         rTF8OhUEXti3gWCRieesLjUjIcNBVSkHsN7cCpsGZUlpN11XxxtSNYXF2N/BvIV5g8cW
+         jK+/Jik8xqbQy7QpZAjPK55C3v1Zn6XQL/3Rc/FosQpUVFx2V4uYJjs7gvQXwIzusQV4
+         U93Ts/qFvVD6aZ7CuAqva42Gl6kq+vLWQrDJ8MPOFUCxAtD4MojKUb1CYO0mdb4t5u9H
+         VeGA==
+X-Gm-Message-State: AJcUukeHkdwj+NVvOGXdmiTNGQXZJG7PRVSZpCEbY8hrueiHmoAumkVa
+        YVfT0itxjOJ8hBMrp/EEL0zJQU1yewV3/j7LCPbkoUDpgpmP
+X-Google-Smtp-Source: ALg8bN7inV9xaEzzD71vDAUNuDAcZ1HPszIrZ8Cj3knCvk9Uedc/1QV8uNYVScBHParEZ7R5Yu1uA+0I1KhQweQS1p5z5JPQV1SQ
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9746:: with SMTP id h6mr203589ioq.4.1545630062957;
- Sun, 23 Dec 2018 21:41:02 -0800 (PST)
-Date:   Sun, 23 Dec 2018 21:41:02 -0800
+X-Received: by 2002:a6b:cd8d:: with SMTP id d135mr11171448iog.19.1545630122961;
+ Sun, 23 Dec 2018 21:42:02 -0800 (PST)
+Date:   Sun, 23 Dec 2018 21:42:02 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000db5b24057dbe0ab9@google.com>
-Subject: INFO: rcu detected stall in netlink_sendmsg
-From:   syzbot <syzbot+a910a514846e27f15348@syzkaller.appspotmail.com>
+Message-ID: <0000000000006ef2f5057dbe0e7b@google.com>
+Subject: KASAN: use-after-free Read in __xfrm_policy_bysel_ctx
+From:   syzbot <syzbot+ae4bda7fbf4ae4fb57b6@syzkaller.appspotmail.com>
 To:     davem@davemloft.net, herbert@gondor.apana.org.au,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
@@ -59,72 +59,39 @@ syzbot found the following crash on:
 
 HEAD commit:    ce28bb445388 Merge git://git.kernel.org/pub/scm/linux/kern..
 git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12662e67400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=175b8d15400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=67a2081147a23142
-dashboard link: https://syzkaller.appspot.com/bug?extid=a910a514846e27f15348
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae4bda7fbf4ae4fb57b6
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a910a514846e27f15348@syzkaller.appspotmail.com
+Reported-by: syzbot+ae4bda7fbf4ae4fb57b6@syzkaller.appspotmail.com
 
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor5'.
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	1-...!: (10500 ticks this GP) idle=58a/1/0x4000000000000002  
-softirq=84145/84145 fqs=0
-rcu: 	 (t=10500 jiffies g=122913 q=1655)
-rcu: rcu_preempt kthread starved for 10500 jiffies! g122913 f0x0  
-RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=1
-rcu: RCU grace-period kthread stack dump:
-rcu_preempt     I22568    10      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2831 [inline]
-  __schedule+0x86c/0x1ed0 kernel/sched/core.c:3472
-  schedule+0xfe/0x460 kernel/sched/core.c:3516
-  schedule_timeout+0x140/0x260 kernel/time/timer.c:1804
-  rcu_gp_fqs_loop+0x762/0xa80 kernel/rcu/tree.c:1934
-  rcu_gp_kthread+0x341/0xc70 kernel/rcu/tree.c:2090
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-NMI backtrace for cpu 1
-CPU: 1 PID: 10942 Comm: syz-executor1 Not tainted 4.20.0-rc7+ #358
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+netlink: 104 bytes leftover after parsing attributes in process  
+`syz-executor0'.
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor1'.
+==================================================================
+BUG: KASAN: use-after-free in  
+__xfrm_policy_bysel_ctx.constprop.63+0x3d4/0x460 net/xfrm/xfrm_policy.c:1618
+Read of size 1 at addr ffff8881b697a699 by task syz-executor0/25289
+
+CPU: 0 PID: 25289 Comm: syz-executor0 Not tainted 4.20.0-rc7+ #358
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x63/0xa2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1c2/0x22c lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-  rcu_dump_cpu_stacks+0x16f/0x1bc kernel/rcu/tree.c:1195
-  print_cpu_stall.cold.65+0x1f3/0x3c6 kernel/rcu/tree.c:1334
-  check_cpu_stall kernel/rcu/tree.c:1408 [inline]
-  rcu_pending kernel/rcu/tree.c:2961 [inline]
-  rcu_check_callbacks+0xac1/0x1410 kernel/rcu/tree.c:2506
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x1/0x20 kernel/kcov.c:188
-Code: fe ff ff 5d c3 0f 1f 40 00 55 0f b7 d6 0f b7 f7 bf 03 00 00 00 48 89  
-e5 48 8b 4d 08 e8 88 fe ff ff 5d c3 66 0f 1f 44 00 00 55 <89> f2 89 fe bf  
-05 00 00 00 48 89 e5 48 8b 4d 08 e8 6a fe ff ff 5d
-RSP: 0018:ffff8881c195ef50 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000040000 RBX: 0000000000000004 RCX: ffffc90005f36000
-RDX: 0000000000040000 RSI: 0000000000000004 RDI: 000000000000000e
-RBP: ffff8881c195efc0 R08: ffff8881d7da2040 R09: 0000000000000000
-R10: 0000000000000000 R11: ffff8881d7da2040 R12: dffffc0000000000
-R13: ffff8881c2e07c18 R14: ffff8881b8142d20 R15: 0000000001000000
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  __xfrm_policy_bysel_ctx.constprop.63+0x3d4/0x460  
+net/xfrm/xfrm_policy.c:1618
   xfrm_policy_bysel_ctx+0x883/0x1050 net/xfrm/xfrm_policy.c:1664
   xfrm_get_policy+0x6a3/0x1140 net/xfrm/xfrm_user.c:1887
   xfrm_user_rcv_msg+0x44c/0x8e0 net/xfrm/xfrm_user.c:2663
@@ -146,12 +113,103 @@ RIP: 0033:0x457669
 Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc47e41ac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RSP: 002b:00007f0704710c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
 RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
 RDX: 0000000000000000 RSI: 000000002014f000 RDI: 0000000000000003
 RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc47e41b6d4
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f07047116d4
 R13: 00000000004c44d8 R14: 00000000004d74e8 R15: 00000000ffffffff
+
+Allocated by task 24751:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc_node mm/slab.c:3684 [inline]
+  __kmalloc_node_track_caller+0x50/0x70 mm/slab.c:3698
+  __kmalloc_reserve.isra.40+0x41/0xe0 net/core/skbuff.c:140
+  __alloc_skb+0x155/0x760 net/core/skbuff.c:208
+  alloc_skb include/linux/skbuff.h:1011 [inline]
+  sctp_packet_transmit+0x36b/0x3cd0 net/sctp/output.c:584
+  sctp_packet_transmit_chunk+0xa8/0x18b net/sctp/output.c:207
+  sctp_outq_flush_data net/sctp/outqueue.c:1106 [inline]
+  sctp_outq_flush+0x1546/0x34f0 net/sctp/outqueue.c:1205
+  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:772
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x5ff/0x7190 net/sctp/sm_sideeffect.c:1191
+  sctp_assoc_bh_rcv+0x346/0x670 net/sctp/associola.c:1074
+  sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
+  sctp_rcv+0x2e48/0x4150 net/sctp/input.c:271
+  sctp6_rcv+0x15/0x30 net/sctp/ipv6.c:1065
+  ip6_protocol_deliver_rcu+0x372/0x1940 net/ipv6/ip6_input.c:394
+  ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
+  dst_input include/net/dst.h:450 [inline]
+  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
+  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
+  process_backlog+0x217/0x760 net/core/dev.c:5923
+  napi_poll net/core/dev.c:6346 [inline]
+  net_rx_action+0x7c5/0x1950 net/core/dev.c:6412
+  __do_softirq+0x30c/0xb2e kernel/softirq.c:292
+
+Freed by task 24751:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  skb_free_head+0x93/0xb0 net/core/skbuff.c:553
+  skb_release_data+0x706/0x990 net/core/skbuff.c:573
+  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
+  __kfree_skb net/core/skbuff.c:641 [inline]
+  consume_skb+0x1ae/0x570 net/core/skbuff.c:701
+  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1462 [inline]
+  sctp_chunk_put+0x2d4/0x450 net/sctp/sm_make_chunk.c:1489
+  sctp_chunk_free+0x53/0x60 net/sctp/sm_make_chunk.c:1476
+  sctp_inq_pop+0x568/0x10a0 net/sctp/inqueue.c:150
+  sctp_assoc_bh_rcv+0xdb/0x670 net/sctp/associola.c:1020
+  sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
+  sctp_backlog_rcv+0x1a8/0xd50 net/sctp/input.c:354
+  sk_backlog_rcv include/net/sock.h:932 [inline]
+  __release_sock+0x12f/0x390 net/core/sock.c:2284
+  release_sock+0xad/0x2c0 net/core/sock.c:2797
+  sctp_sendmsg+0x13e6/0x1da0 net/sctp/socket.c:2118
+  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881b697a480
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 537 bytes inside of
+  1024-byte region [ffff8881b697a480, ffff8881b697a880)
+The buggy address belongs to the page:
+page:ffffea0006da5e80 count:1 mapcount:0 mapping:ffff8881da800ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea0006d6f008 ffffea00065b6a88 ffff8881da800ac0
+raw: 0000000000000000 ffff8881b697a000 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881b697a580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881b697a600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881b697a680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff8881b697a700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881b697a780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
