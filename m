@@ -2,336 +2,408 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF63C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B30DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A059E21928
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57ABC218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbeLXMPa (ORCPT
+        id S1725863AbeLXMSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 07:15:30 -0500
-Received: from foss.arm.com ([217.140.101.70]:58226 "EHLO foss.arm.com"
+        Mon, 24 Dec 2018 07:18:31 -0500
+Received: from mga02.intel.com ([134.134.136.20]:41117 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725766AbeLXMP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 07:15:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0083580D;
-        Mon, 24 Dec 2018 04:15:26 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E33B3F718;
-        Mon, 24 Dec 2018 04:15:25 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id E9AA568036B; Mon, 24 Dec 2018 12:15:23 +0000 (GMT)
-Date:   Mon, 24 Dec 2018 12:15:23 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Cc:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>, "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3 6/9] drm/komeda: Add komeda_framebuffer
-Message-ID: <20181224121523.GH22341@e110455-lin.cambridge.arm.com>
-References: <20181221095757.15510-1-james.qian.wang@arm.com>
- <20181221095757.15510-7-james.qian.wang@arm.com>
+        id S1725355AbeLXMSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 07:18:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 04:11:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,392,1539673200"; 
+   d="scan'208";a="304693109"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Dec 2018 04:11:27 -0800
+Received: from [10.252.4.220] (abudanko-mobl.ccr.corp.intel.com [10.252.4.220])
+        by linux.intel.com (Postfix) with ESMTP id 78B3A58044E;
+        Mon, 24 Dec 2018 04:11:24 -0800 (PST)
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2 0/4] Reduce NUMA related overhead in perf record profiling
+ on large server systems
+Organization: Intel Corp.
+Message-ID: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
+Date:   Mon, 24 Dec 2018 15:11:20 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181221095757.15510-7-james.qian.wang@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:00:17AM +0000, james qian wang (Arm Technology China) wrote:
-> komeda_framebuffer is for extending drm_framebuffer to add komeda own
-> attributes and komeda specific fb handling.
-> 
-> Changes in v3:
-> - Fixed style problem found by checkpatch.pl --strict.
-> 
-> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-> ---
->  drivers/gpu/drm/arm/display/komeda/Makefile   |   3 +-
->  .../arm/display/komeda/komeda_framebuffer.c   | 165 ++++++++++++++++++
->  .../arm/display/komeda/komeda_framebuffer.h   |  31 ++++
->  3 files changed, 198 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
->  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/arm/display/komeda/Makefile
-> index 394fc2aa434a..25beae900ed2 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/Makefile
-> +++ b/drivers/gpu/drm/arm/display/komeda/Makefile
-> @@ -8,7 +8,8 @@ komeda-y := \
->  	komeda_drv.o \
->  	komeda_dev.o \
->  	komeda_format_caps.o \
-> -	komeda_pipeline.o
-> +	komeda_pipeline.o \
-> +	komeda_framebuffer.o
->  
->  komeda-y += \
->  	d71/d71_dev.o
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-> new file mode 100644
-> index 000000000000..4ddd5314ca23
-> --- /dev/null
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-> @@ -0,0 +1,165 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> + *
-> + */
-> +#include <drm/drm_gem.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
-> +#include <drm/drm_fb_cma_helper.h>
-> +#include <drm/drm_gem_cma_helper.h>
-> +#include "komeda_framebuffer.h"
-> +#include "komeda_dev.h"
-> +
-> +static void komeda_fb_destroy(struct drm_framebuffer *fb)
-> +{
-> +	struct komeda_fb *kfb = to_kfb(fb);
-> +	u32 i;
-> +
-> +	for (i = 0; i < fb->format->num_planes; i++)
-> +		drm_gem_object_put_unlocked(fb->obj[i]);
-> +
-> +	drm_framebuffer_cleanup(fb);
-> +	kfree(kfb);
-> +}
-> +
-> +static int komeda_fb_create_handle(struct drm_framebuffer *fb,
-> +				   struct drm_file *file, u32 *handle)
-> +{
-> +	return drm_gem_handle_create(file, fb->obj[0], handle);
-> +}
-> +
-> +static const struct drm_framebuffer_funcs komeda_fb_funcs = {
-> +	.destroy	= komeda_fb_destroy,
-> +	.create_handle	= komeda_fb_create_handle,
-> +};
-> +
-> +static int
-> +komeda_fb_none_afbc_size_check(struct komeda_dev *mdev, struct komeda_fb *kfb,
-> +			       struct drm_file *file,
-> +			       const struct drm_mode_fb_cmd2 *mode_cmd)
 
-Not sure what _none stands for here, but otherwise:
+It has been observed that trace reading thread runs on the same hw thread
+most of the time during perf record sampling collection. This scheduling
+layout leads up to 30% profiling overhead in case when some cpu intensive
+workload fully utilizes a large server system with NUMA. Overhead usually
+arises from remote (cross node) HW and memory references that have much
+longer latencies than local ones [1].
 
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+This patch set implements --affinity option that lowers 30% overhead
+completely for serial trace streaming (--affinity=cpu) and from 30% to
+10% for AIO1 (--aio=1) trace streaming (--affinity=node|cpu).
+See OVERHEAD section below for more details.
 
-Best regards,
-Liviu
+Implemented extension provides users with capability to instruct Perf 
+tool to bounce trace reading thread's affinity mask between NUMA nodes 
+(--affinity=node) or assign the thread to the exact cpu (--affinity=cpu) 
+that trace buffer being processed belongs to.
 
-> +{
-> +	struct drm_framebuffer *fb = &kfb->base;
-> +	struct drm_gem_object *obj;
-> +	u32 min_size = 0;
-> +	u32 i;
-> +
-> +	for (i = 0; i < fb->format->num_planes; i++) {
-> +		obj = drm_gem_object_lookup(file, mode_cmd->handles[i]);
-> +		if (!obj) {
-> +			DRM_DEBUG_KMS("Failed to lookup GEM object\n");
-> +			fb->obj[i] = NULL;
-> +
-> +			return -ENOENT;
-> +		}
-> +
-> +		kfb->aligned_w = fb->width / (i ? fb->format->hsub : 1);
-> +		kfb->aligned_h = fb->height / (i ? fb->format->vsub : 1);
-> +
-> +		if (fb->pitches[i] % mdev->chip.bus_width) {
-> +			DRM_DEBUG_KMS("Pitch[%d]: 0x%x doesn't align to 0x%x\n",
-> +				      i, fb->pitches[i], mdev->chip.bus_width);
-> +			drm_gem_object_put_unlocked(obj);
-> +			fb->obj[i] = NULL;
-> +
-> +			return -EINVAL;
-> +		}
-> +
-> +		min_size = ((kfb->aligned_h / kfb->format_caps->tile_size - 1)
-> +			    * fb->pitches[i])
-> +			    + (kfb->aligned_w * fb->format->cpp[i]
-> +			       * kfb->format_caps->tile_size)
-> +			    + fb->offsets[i];
-> +
-> +		if (obj->size < min_size) {
-> +			DRM_DEBUG_KMS("Fail to check none afbc fb size.\n");
-> +			drm_gem_object_put_unlocked(obj);
-> +			fb->obj[i] = NULL;
-> +
-> +			return -EINVAL;
-> +		}
-> +
-> +		fb->obj[i] = obj;
-> +	}
-> +
-> +	if (fb->format->num_planes == 3) {
-> +		if (fb->pitches[1] != fb->pitches[2]) {
-> +			DRM_DEBUG_KMS("The pitch[1] and [2] are not same\n");
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +struct drm_framebuffer *
-> +komeda_fb_create(struct drm_device *dev, struct drm_file *file,
-> +		 const struct drm_mode_fb_cmd2 *mode_cmd)
-> +{
-> +	struct komeda_dev *mdev = dev->dev_private;
-> +	struct komeda_fb *kfb;
-> +	int ret = 0, i;
-> +
-> +	kfb = kzalloc(sizeof(*kfb), GFP_KERNEL);
-> +	if (!kfb)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	kfb->format_caps = komeda_get_format_caps(&mdev->fmt_tbl,
-> +						  mode_cmd->pixel_format,
-> +						  mode_cmd->modifier[0]);
-> +	if (!kfb->format_caps) {
-> +		DRM_DEBUG_KMS("FMT %x is not supported.\n",
-> +			      mode_cmd->pixel_format);
-> +		kfree(kfb);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	drm_helper_mode_fill_fb_struct(dev, &kfb->base, mode_cmd);
-> +
-> +	ret = komeda_fb_none_afbc_size_check(mdev, kfb, file, mode_cmd);
-> +	if (ret < 0)
-> +		goto err_cleanup;
-> +
-> +	ret = drm_framebuffer_init(dev, &kfb->base, &komeda_fb_funcs);
-> +	if (ret < 0) {
-> +		DRM_DEBUG_KMS("failed to initialize fb\n");
-> +
-> +		goto err_cleanup;
-> +	}
-> +
-> +	return &kfb->base;
-> +
-> +err_cleanup:
-> +	for (i = 0; i < kfb->base.format->num_planes; i++)
-> +		drm_gem_object_put_unlocked(kfb->base.obj[i]);
-> +
-> +	kfree(kfb);
-> +	return ERR_PTR(ret);
-> +}
-> +
-> +dma_addr_t
-> +komeda_fb_get_pixel_addr(struct komeda_fb *kfb, int x, int y, int plane)
-> +{
-> +	struct drm_framebuffer *fb = &kfb->base;
-> +	const struct drm_gem_cma_object *obj;
-> +	u32 plane_x, plane_y, cpp, pitch, offset;
-> +
-> +	if (plane > fb->format->num_planes) {
-> +		DRM_DEBUG_KMS("Out of max plane num.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	obj = drm_fb_cma_get_gem_obj(fb, plane);
-> +
-> +	offset = fb->offsets[plane];
-> +	if (!fb->modifier) {
-> +		plane_x = x / (plane ? fb->format->hsub : 1);
-> +		plane_y = y / (plane ? fb->format->vsub : 1);
-> +		cpp = fb->format->cpp[plane];
-> +		pitch = fb->pitches[plane];
-> +		offset += plane_x * cpp *  kfb->format_caps->tile_size +
-> +				(plane_y * pitch) / kfb->format_caps->tile_size;
-> +	}
-> +
-> +	return obj->paddr + offset;
-> +}
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> new file mode 100644
-> index 000000000000..383780013bb9
-> --- /dev/null
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> + *
-> + */
-> +#ifndef _KOMEDA_FRAMEBUFFER_H_
-> +#define _KOMEDA_FRAMEBUFFER_H_
-> +
-> +/** struct komeda_fb - entend drm_framebuffer with komeda attribute */
-> +struct komeda_fb {
-> +	/** @base: &drm_framebuffer */
-> +	struct drm_framebuffer base;
-> +	/* @format_caps: &komeda_format_caps */
-> +	const struct komeda_format_caps *format_caps;
-> +	/** @aligned_w: aligned frame buffer width */
-> +	u32 aligned_w;
-> +	/** @aligned_h: aligned frame buffer height */
-> +	u32 aligned_h;
-> +};
-> +
-> +#define to_kfb(dfb)	container_of(dfb, struct komeda_fb, base)
-> +
-> +struct drm_framebuffer *
-> +komeda_fb_create(struct drm_device *dev, struct drm_file *file,
-> +		 const struct drm_mode_fb_cmd2 *mode_cmd);
-> +dma_addr_t
-> +komeda_fb_get_pixel_addr(struct komeda_fb *kfb, int x, int y, int plane);
-> +bool komeda_fb_is_layer_supported(struct komeda_fb *kfb, u32 layer_type);
-> +
-> +#endif
-> -- 
-> 2.17.1
-> 
+The extension brings improvement in case of full system utilization when 
+Perf tool process contends with workload process on cpu cores. In case a 
+system has free cores to execute Perf tool process during profiling the 
+default system scheduling layout induces the lowest overhead.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+The patch set has been validated on BT benchmark from NAS Parallel 
+Benchmarks [2] running on dual socket, 44 cores, 88 hw threads Broadwell 
+system with kernels v4.4-21-generic (Ubuntu 16.04) and v4.20.0-rc5 
+(tip perf/core). 
+
+OVERHEAD:
+			       BENCH REPORT BASED   ELAPSED TIME BASED
+	  v4.20.0-rc5 
+          (tip perf/core):
+				
+(current) SERIAL-SYS  / BASE : 1.27x (14.37/11.31), 1.29x (15.19/11.69)
+	  SERIAL-NODE / BASE : 1.15x (13.04/11.31), 1.17x (13.79/11.69)
+	  SERIAL-CPU  / BASE : 1.00x (11.32/11.31), 1.01x (11.89/11.69)
+	
+	  AIO1-SYS    / BASE : 1.29x (14.58/11.31), 1.29x (15.26/11.69)
+	  AIO1-NODE   / BASE : 1.08x (12.23/11.31), 1,11x (13.01/11.69)
+	  AIO1-CPU    / BASE : 1.07x (12.14/11.31), 1.08x (12.83/11.69)
+
+	  v4.4.0-21-generic
+          (Ubuntu 16.04 LTS):
+
+(current) SERIAL-SYS  / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+	  SERIAL-NODE / BASE : 1.19x (13.02/10.87), 1.23x (14.03/11.32)
+	  SERIAL-CPU  / BASE : 1.03x (11.21/10.87), 1.07x (12.18/11.32)
+	
+	  AIO1-SYS    / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+	  AIO1-NODE   / BASE : 1.10x (12.04/10.87), 1.15x (13.03/11.32)
+	  AIO1-CPU    / BASE : 1.12x (12.20/10.87), 1.15x (13.09/11.32)
+
+The patch set is generated for acme perf/core repository.
+
+---
+Alexey Budankov (4):
+  perf record: allocate affinity masks
+  perf record: bind the AIO user space buffers to nodes
+  perf record: apply affinity masks when reading mmap buffers
+  perf record: implement --affinity=node|cpu option
+
+ tools/perf/Documentation/perf-record.txt |  5 ++
+ tools/perf/builtin-record.c              | 40 ++++++++++++++-
+ tools/perf/perf.h                        |  8 +++
+ tools/perf/util/evlist.c                 | 10 ++--
+ tools/perf/util/evlist.h                 |  2 +-
+ tools/perf/util/mmap.c                   | 63 +++++++++++++++++++++++-
+ tools/perf/util/mmap.h                   |  4 +-
+ 7 files changed, 124 insertions(+), 8 deletions(-)
+
+---
+Changes in v2:
+- made debug affinity mode message user friendly
+- converted affinity mode defines to enum values
+- implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+  and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+- separated AIO buffers binding to patch 2/4
+
+---
+[1] https://en.wikipedia.org/wiki/Non-uniform_memory_access
+[2] https://www.nas.nasa.gov/publications/npb.html
+[3] http://man7.org/linux/man-pages/man2/sched_setaffinity.2.html
+[4] http://man7.org/linux/man-pages/man2/mbind.2.html
+
+---
+ENVIRONMENT AND MEASUREMENTS:
+
+  MACHINE:
+
+	broadwell, dual socket, 44 core, 88 threads
+
+	/proc/cpuinfo
+
+	processor	: 87
+	vendor_id	: GenuineIntel
+	cpu family	: 6
+	model		: 79
+	model name	: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+	stepping	: 1
+	microcode	: 0xb000019
+	cpu MHz		: 1200.117
+	cache size	: 56320 KB
+	physical id	: 1
+	siblings	: 44
+	core id		: 28
+	cpu cores	: 22
+	apicid		: 121
+	initial apicid	: 121
+	fpu		: yes
+	fpu_exception	: yes
+	cpuid level	: 20
+	wp		: yes
+	flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdseed adx smap xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts
+	bugs		:
+	bogomips	: 4391.42
+	clflush size	: 64
+	cache_alignment	: 64
+	address sizes	: 46 bits physical, 48 bits virtual
+	power management:
+  		
+  BASE:
+
+	/usr/bin/time ./bt.B.x 
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+	
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+	
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    10.87
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 64608.74
+	Mop/s/thread    =                   734.19
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+	
+	956.25user 19.14system 0:11.32elapsed 8616%CPU (0avgtext+0avgdata 210496maxresident)k
+	0inputs+0outputs (0major+57939minor)pagefaults 0swaps
+
+  SERIAL-SYS:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 0
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    13.73
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 51136.52
+	Mop/s/thread    =                   581.10
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1661,120 MB perf.data ]
+
+	1184.84user 40.70system 0:14.69elapsed 8341%CPU (0avgtext+0avgdata 208612maxresident)k
+	0inputs+3402072outputs (0major+137077minor)pagefaults 0swaps
+
+  SERIAL-NODE:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=node -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 1
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    13.02
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 53924.69
+	Mop/s/thread    =                   612.78
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1557,152 MB perf.data ]
+
+	1120.42user 29.92system 0:14.03elapsed 8198%CPU (0avgtext+0avgdata 206388maxresident)k
+	0inputs+3189128outputs (0major+149207minor)pagefaults 0swaps
+
+  SERIAL-CPU:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=cpu -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 2
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    11.21
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 62642.24
+	Mop/s/thread    =                   711.84
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1365,043 MB perf.data ]
+
+	976.06user 31.35system 0:12.18elapsed 8264%CPU (0avgtext+0avgdata 208488maxresident)k
+	0inputs+2795704outputs (0major+126032minor)pagefaults 0swaps
+
+  AIO1-SYS:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 0
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    14.23
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 49338.27
+	Mop/s/thread    =                   560.66
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1720,590 MB perf.data ]
+
+	1229.19user 41.99system 0:15.22elapsed 8350%CPU (0avgtext+0avgdata 208604maxresident)k
+	0inputs+3523880outputs (0major+124670minor)pagefaults 0swaps
+
+  AIO1-NODE:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=node -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 1
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    12.04
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 58313.58
+	Mop/s/thread    =                   662.65
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1471,279 MB perf.data ]
+
+	1055.62user 30.43system 0:13.03elapsed 8333%CPU (0avgtext+0avgdata 208424maxresident)k
+	0inputs+3013288outputs (0major+79088minor)pagefaults 0swaps
+
+  AIO1-CPU:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=cpu -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 2
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    12.20
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 57538.84
+	Mop/s/thread    =                   653.85
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1486,859 MB perf.data ]
+
+	1051.97user 42.07system 0:13.09elapsed 8352%CPU (0avgtext+0avgdata 206388maxresident)k
+	0inputs+3045168outputs (0major+174612minor)pagefaults 0swaps
