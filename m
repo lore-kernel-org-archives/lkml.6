@@ -2,460 +2,350 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB53C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E233C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCE7218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43D7F21908
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 12:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbeLXMFX (ORCPT
+        id S1725808AbeLXMNF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 07:05:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58156 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbeLXMFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 07:05:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1D4480D;
-        Mon, 24 Dec 2018 04:05:21 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AFD93F718;
-        Mon, 24 Dec 2018 04:05:21 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id C49B568036B; Mon, 24 Dec 2018 12:05:19 +0000 (GMT)
-Date:   Mon, 24 Dec 2018 12:05:19 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Cc:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>, "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3 5/9] drm/komeda: Add komeda_format_caps for format
- handling
-Message-ID: <20181224120519.GG22341@e110455-lin.cambridge.arm.com>
-References: <20181221095757.15510-1-james.qian.wang@arm.com>
- <20181221095757.15510-6-james.qian.wang@arm.com>
+        Mon, 24 Dec 2018 07:13:05 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725298AbeLXMNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 07:13:04 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBOBwVjD040248
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:13:01 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pjx2gam9n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:13:01 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 24 Dec 2018 12:12:58 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Dec 2018 12:12:55 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBOCCsJl57016430
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Dec 2018 12:12:54 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3CD68A4062;
+        Mon, 24 Dec 2018 12:12:54 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D636A4054;
+        Mon, 24 Dec 2018 12:12:53 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.156])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 24 Dec 2018 12:12:53 +0000 (GMT)
+Date:   Mon, 24 Dec 2018 14:12:51 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Paul Oppenheimer <bepvte@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Bug with report THP eligibility for each vma
+References: <CALouPAi8KEuPw_Ly5W=MkYi8Yw3J6vr8mVezYaxxVyKCxH1x_g@mail.gmail.com>
+ <20181224074916.GB9063@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181221095757.15510-6-james.qian.wang@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181224074916.GB9063@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18122412-0028-0000-0000-0000032EC65E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122412-0029-0000-0000-000023EB387E
+Message-Id: <20181224121250.GA2070@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812240108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 10:00:01AM +0000, james qian wang (Arm Technology China) wrote:
-> komeda_format_caps is for describing ARM display specific features and
-> limitations of a specific format, and format_caps will be linked into
-> &komeda_framebuffer like a extension of &drm_format_info.
-> And komed_format_caps_table will be initialized before the enum_resources,
-> since the layer features description depend on this format_caps table, so
-> we'd better initialize the table first.
+On Mon, Dec 24, 2018 at 08:49:16AM +0100, Michal Hocko wrote:
+> [Cc-ing mailing list and people involved in the original patch]
 > 
-> Changes in v3:
-> - Fixed style problem found by checkpatch.pl --strict.
+> On Fri 21-12-18 13:42:24, Paul Oppenheimer wrote:
+> > Hello! I've never reported a kernel bug before, and since its on the
+> > "next" tree I was told to email the author of the relevant commit.
+> > Please redirect me to the correct place if I've made a mistake.
+> > 
+> > When opening firefox or chrome, and using it for a good 7 seconds, it
+> > hangs in "uninterruptible sleep" and I recieve a "BUG" in dmesg. This
+> > doesn't occur when reverting this commit:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=48cf516f8c.
+> > Ive attached the output of decode_stacktrace.sh and the relevant dmesg
+> > log to this email.
+> > 
+> > Thanks
 > 
-> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/arm/display/komeda/Makefile   |  1 +
->  .../gpu/drm/arm/display/komeda/d71/d71_dev.c  | 78 ++++++++++++++++
->  .../gpu/drm/arm/display/komeda/komeda_dev.c   |  2 +
->  .../gpu/drm/arm/display/komeda/komeda_dev.h   | 11 ++-
->  .../arm/display/komeda/komeda_format_caps.c   | 75 ++++++++++++++++
->  .../arm/display/komeda/komeda_format_caps.h   | 89 +++++++++++++++++++
->  .../drm/arm/display/komeda/komeda_pipeline.h  |  1 +
->  7 files changed, 256 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c
->  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h
+> > BUG: unable to handle kernel NULL pointer dereference at 00000000000000e8
 > 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/arm/display/komeda/Makefile
-> index c03d6876ef75..394fc2aa434a 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/Makefile
-> +++ b/drivers/gpu/drm/arm/display/komeda/Makefile
-> @@ -7,6 +7,7 @@ ccflags-y := \
->  komeda-y := \
->  	komeda_drv.o \
->  	komeda_dev.o \
-> +	komeda_format_caps.o \
->  	komeda_pipeline.o
+> Thanks for the bug report! This is offset 232 and that matches
+> file->f_mapping as per pahole
+> pahole -C file ./vmlinux | grep f_mapping
+>         struct address_space *     f_mapping;            /*   232     8 */
+> 
+> I thought that each file really has to have a mapping. But the following
+> should heal the issue and add an extra care.
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f64733c23067..fc9d70a9fbd1 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct vm_area_struct *vma)
+>  {
+>  	if (vma_is_anonymous(vma))
+>  		return __transparent_hugepage_enabled(vma);
+> +	if (!vma->vm_file || !vma->vm_file->f_mapping)
+> +		return false;
+>  	if (shmem_mapping(vma->vm_file->f_mapping) && shmem_huge_enabled(vma))
+>  		return __transparent_hugepage_enabled(vma);
+
+We have vma_is_shmem(), it can be used to replace shmem_mapping() without
+adding the check for !vma->vm_file
+
 >  
->  komeda-y += \
-> diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> index af3dabb499cd..edbf9daa1545 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
-> @@ -13,7 +13,85 @@ static int d71_enum_resources(struct komeda_dev *mdev)
->  	return -1;
->  }
->  
-> +#define __HW_ID(__group, __format) \
-> +	((((__group) & 0x7) << 3) | ((__format) & 0x7))
-> +
-> +#define RICH		KOMEDA_FMT_RICH_LAYER
-> +#define SIMPLE		KOMEDA_FMT_SIMPLE_LAYER
-> +#define RICH_SIMPLE	(KOMEDA_FMT_RICH_LAYER | KOMEDA_FMT_SIMPLE_LAYER)
-> +#define RICH_WB		(KOMEDA_FMT_RICH_LAYER | KOMEDA_FMT_WB_LAYER)
-> +#define RICH_SIMPLE_WB	(RICH_SIMPLE | KOMEDA_FMT_WB_LAYER)
-> +
-> +#define Rot_0		DRM_MODE_ROTATE_0
-> +#define Flip_H_V	(DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y | Rot_0)
-> +#define Rot_ALL_H_V	(DRM_MODE_ROTATE_MASK | Flip_H_V)
-> +
-> +#define LYT_NM		BIT(AFBC_FORMAT_MOD_BLOCK_SIZE_16x16)
-> +#define LYT_WB		BIT(AFBC_FORMAT_MOD_BLOCK_SIZE_32x8)
-> +#define LYT_NM_WB	(LYT_NM | LYT_WB)
-> +
-> +#define AFB_TH		AFBC(_TILED | _SPARSE)
-> +#define AFB_TH_SC_YTR	AFBC(_TILED | _SC | _SPARSE | _YTR)
-> +#define AFB_TH_SC_YTR_BS AFBC(_TILED | _SC | _SPARSE | _YTR | _SPLIT)
-> +
-> +static struct komeda_format_caps d71_format_caps_table[] = {
-> +	/*   HW_ID    |        fourcc        | tile_sz |   layer_types |   rots    | afbc_layouts | afbc_features */
-> +	/* ABGR_2101010*/
-> +	{__HW_ID(0, 0),	DRM_FORMAT_ARGB2101010,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(0, 1),	DRM_FORMAT_ABGR2101010,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(0, 1),	DRM_FORMAT_ABGR2101010,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB, AFB_TH_SC_YTR_BS}, /* afbc */
-> +	{__HW_ID(0, 2),	DRM_FORMAT_RGBA1010102,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(0, 3),	DRM_FORMAT_BGRA1010102,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	/* ABGR_8888*/
-> +	{__HW_ID(1, 0),	DRM_FORMAT_ARGB8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(1, 1),	DRM_FORMAT_ABGR8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(1, 1),	DRM_FORMAT_ABGR8888,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB, AFB_TH_SC_YTR_BS}, /* afbc */
-> +	{__HW_ID(1, 2),	DRM_FORMAT_RGBA8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(1, 3),	DRM_FORMAT_BGRA8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	/* XBGB_8888 */
-> +	{__HW_ID(2, 0),	DRM_FORMAT_XRGB8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(2, 1),	DRM_FORMAT_XBGR8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(2, 2),	DRM_FORMAT_RGBX8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	{__HW_ID(2, 3),	DRM_FORMAT_BGRX8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
-> +	/* BGR_888 */ /* none-afbc RGB888 doesn't support rotation and flip */
-> +	{__HW_ID(3, 0),	DRM_FORMAT_RGB888,	1,	RICH_SIMPLE_WB,	Rot_0,			0, 0},
-> +	{__HW_ID(3, 1),	DRM_FORMAT_BGR888,	1,	RICH_SIMPLE_WB,	Rot_0,			0, 0},
-> +	{__HW_ID(3, 1),	DRM_FORMAT_BGR888,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB, AFB_TH_SC_YTR_BS}, /* afbc */
-> +	/* BGR 16bpp */
-> +	{__HW_ID(4, 0),	DRM_FORMAT_RGBA5551,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
-> +	{__HW_ID(4, 1),	DRM_FORMAT_ABGR1555,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
-> +	{__HW_ID(4, 1),	DRM_FORMAT_ABGR1555,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB, AFB_TH_SC_YTR}, /* afbc */
-> +	{__HW_ID(4, 2),	DRM_FORMAT_RGB565,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
-> +	{__HW_ID(4, 3),	DRM_FORMAT_BGR565,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
-> +	{__HW_ID(4, 3),	DRM_FORMAT_BGR565,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB, AFB_TH_SC_YTR}, /* afbc */
-> +	{__HW_ID(4, 4), DRM_FORMAT_R8,		1,	SIMPLE,		Rot_0,			0, 0},
-> +	/* YUV 444/422/420 8bit  */
-> +	{__HW_ID(5, 0),	0 /*XYUV8888*/,		1,	0,		0,			0, 0},
-> +	/* XYUV unsupported*/
-> +	{__HW_ID(5, 1),	DRM_FORMAT_YUYV,	1,	RICH,		Rot_ALL_H_V,	LYT_NM, AFB_TH}, /* afbc */
-> +	{__HW_ID(5, 2),	DRM_FORMAT_YUYV,	1,	RICH,		Flip_H_V,		0, 0},
-> +	{__HW_ID(5, 3),	DRM_FORMAT_UYVY,	1,	RICH,		Flip_H_V,		0, 0},
-> +	{__HW_ID(5, 4),	0, /*X0L0 */		2,		0,			0, 0}, /* Y0L0 unsupported */
-> +	{__HW_ID(5, 6),	DRM_FORMAT_NV12,	1,	RICH,		Flip_H_V,		0, 0},
-> +	{__HW_ID(5, 6),	0/*DRM_FORMAT_YUV420_8BIT*/,	1,	RICH,	Rot_ALL_H_V,	LYT_NM, AFB_TH}, /* afbc */
-> +	{__HW_ID(5, 7),	DRM_FORMAT_YUV420,	1,	RICH,		Flip_H_V,		0, 0},
-> +	/* YUV 10bit*/
-> +	{__HW_ID(6, 0),	0,/*XVYU2101010*/	1,	0,		0,			0, 0},/* VYV30 unsupported */
-> +	{__HW_ID(6, 6),	0/*DRM_FORMAT_X0L2*/,	2,	RICH,		Flip_H_V,		0, 0},
-> +	{__HW_ID(6, 7),	0/*DRM_FORMAT_P010*/,	1,	RICH,		Flip_H_V,		0, 0},
-> +	{__HW_ID(6, 7),	0/*DRM_FORMAT_YUV420_10BIT*/, 1,	RICH,	Rot_ALL_H_V,	LYT_NM, AFB_TH},
-> +};
-> +
-> +static void d71_init_fmt_tbl(struct komeda_dev *mdev)
-> +{
-> +	struct komeda_format_caps_table *table = &mdev->fmt_tbl;
-> +
-> +	table->format_caps = d71_format_caps_table;
-> +	table->n_formats = ARRAY_SIZE(d71_format_caps_table);
-> +}
-> +
->  static struct komeda_dev_funcs d71_chip_funcs = {
-> +	.init_format_table = d71_init_fmt_tbl,
->  	.enum_resources	= d71_enum_resources,
->  	.cleanup	= NULL,
->  };
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> index d0cc4f758077..2f8f4685eb62 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-> @@ -138,6 +138,8 @@ struct komeda_dev *komeda_dev_create(struct device *dev)
->  		 MALIDP_CORE_ID_MAJOR(mdev->chip.core_id),
->  		 MALIDP_CORE_ID_MINOR(mdev->chip.core_id));
->  
-> +	mdev->funcs->init_format_table(mdev);
-> +
->  	err = mdev->funcs->enum_resources(mdev);
->  	if (err) {
->  		DRM_ERROR("enumerate display resource failed.\n");
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> index 4a27a44e2ec6..555510be66f1 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-> @@ -11,6 +11,7 @@
->  #include <linux/interrupt.h>
->  #include "komeda_pipeline.h"
->  #include "malidp_product.h"
-> +#include "komeda_format_caps.h"
->  
->  /* malidp device id */
->  enum {
-> @@ -44,6 +45,13 @@ struct komeda_dev;
->   * Supplied by chip level and returned by the chip entry function xxx_identify,
->   */
->  struct komeda_dev_funcs {
-> +	/**
-> +	 * @init_format_table:
-> +	 *
-> +	 * initialize &komeda_dev->format_table, this function should be called
-> +	 * before the &enum_resource
-> +	 */
-> +	void (*init_format_table)(struct komeda_dev *mdev);
->  	/**
->  	 * @enum_resources:
->  	 *
-> @@ -66,7 +74,8 @@ struct komeda_dev {
->  	u32 __iomem   *reg_base;
->  
->  	struct komeda_chip_info chip;
-> -
-> +	/** @fmt_tbl: initialized by &komeda_dev_funcs->init_format_table */
-> +	struct komeda_format_caps_table fmt_tbl;
->  	/** @pclk: APB clock for register access */
->  	struct clk *pclk;
->  	/** @mck: HW main engine clk */
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c
-> new file mode 100644
-> index 000000000000..1e17bd6107a4
-> --- /dev/null
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c
-> @@ -0,0 +1,75 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> + *
-> + */
-> +
-> +#include <linux/slab.h>
-> +#include "komeda_format_caps.h"
-> +#include "malidp_utils.h"
-> +
-> +const struct komeda_format_caps *
-> +komeda_get_format_caps(struct komeda_format_caps_table *table,
-> +		       u32 fourcc, u64 modifier)
-> +{
-> +	const struct komeda_format_caps *caps;
-> +	u64 afbc_features = modifier & ~(AFBC_FORMAT_MOD_BLOCK_SIZE_MASK);
-> +	u32 afbc_layout = modifier & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK;
-> +	int id;
-> +
-> +	for (id = 0; id < table->n_formats; id++) {
-> +		caps = &table->format_caps[id];
-> +
-> +		if (fourcc != caps->fourcc)
-> +			continue;
-> +
-> +		if ((modifier == 0ULL) && (caps->supported_afbc_layouts == 0))
-> +			return caps;
-> +
-> +		if (has_bits(afbc_features, caps->supported_afbc_features) &&
-> +		    has_bit(afbc_layout, caps->supported_afbc_layouts))
-> +			return caps;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +u32 *komeda_get_layer_fourcc_list(struct komeda_format_caps_table *table,
-> +				  u32 layer_type, u32 *n_fmts)
-> +{
-> +	const struct komeda_format_caps *cap;
-> +	u32 *fmts;
-> +	int i, j, n = 0;
-> +
-> +	fmts = kcalloc(table->n_formats, sizeof(u32), GFP_KERNEL);
-> +	if (!fmts)
-> +		return NULL;
-> +
-> +	for (i = 0; i < table->n_formats; i++) {
-> +		cap = &table->format_caps[i];
-> +		if (!(layer_type & cap->supported_layer_types) ||
-> +		    (cap->fourcc == 0))
-> +			continue;
-> +
-> +		/* one fourcc may has two caps items in table (afbc/none-afbc),
-> +		 * so check the existing list to avoid adding a duplicated one.
-> +		 */
-> +		for (j = n - 1; j >= 0; j--)
-> +			if (fmts[j] == cap->fourcc)
-> +				break;
-> +
-> +		if (j < 0)
-> +			fmts[n++] = cap->fourcc;
-> +	}
-> +
-> +	if (n_fmts)
-> +		*n_fmts = n;
-> +
-> +	return fmts;
-> +}
-> +
-> +void komeda_put_fourcc_list(u32 *fourcc_list)
-> +{
-> +	kfree(fourcc_list);
-> +}
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h
-> new file mode 100644
-> index 000000000000..60f39e77b098
-> --- /dev/null
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h
-> @@ -0,0 +1,89 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> + *
-> + */
-> +
-> +#ifndef _KOMEDA_FORMAT_CAPS_H_
-> +#define _KOMEDA_FORMAT_CAPS_H_
-> +
-> +#include <linux/types.h>
-> +#include <uapi/drm/drm_fourcc.h>
-> +#include <drm/drm_fourcc.h>
-> +
-> +#define AFBC(x)		DRM_FORMAT_MOD_ARM_AFBC(x)
-> +
-> +/* afbc layerout */
-> +#define AFBC_16x16(x)	AFBC(AFBC_FORMAT_MOD_BLOCK_SIZE_16x16 | (x))
-> +#define AFBC_32x8(x)	AFBC(AFBC_FORMAT_MOD_BLOCK_SIZE_32x8 | (x))
-> +
-> +/* afbc features */
-> +#define _YTR		AFBC_FORMAT_MOD_YTR
-> +#define _SPLIT		AFBC_FORMAT_MOD_SPLIT
-> +#define _SPARSE		AFBC_FORMAT_MOD_SPARSE
-> +#define _CBR		AFBC_FORMAT_MOD_CBR
-> +#define _TILED		AFBC_FORMAT_MOD_TILED
-> +#define _SC		AFBC_FORMAT_MOD_SC
-> +
-> +/* layer_type */
-> +#define KOMEDA_FMT_RICH_LAYER		BIT(0)
-> +#define KOMEDA_FMT_SIMPLE_LAYER		BIT(1)
-> +#define KOMEDA_FMT_WB_LAYER		BIT(2)
-> +
-> +#define AFBC_TH_LAYOUT_ALIGNMENT	8
-> +#define AFBC_HEADER_SIZE		16
-> +#define AFBC_SUPERBLK_ALIGNMENT		128
-> +#define AFBC_SUPERBLK_PIXELS		256
-> +#define AFBC_BODY_START_ALIGNMENT	1024
-> +#define AFBC_TH_BODY_START_ALIGNMENT	4096
-> +
-> +/**
-> + * struct komeda_format_caps
-> + *
-> + * komeda_format_caps is for describing ARM display specific features and
-> + * limitations for a specific format, and format_caps will be linked into
-> + * &komeda_framebuffer like a extension of &drm_format_info.
-> + *
-> + * NOTE: one fourcc may has two different format_caps items for fourcc and
-> + * fourcc+modifier
-> + *
-> + * @hw_id: hw format id, hw specific value.
-> + * @fourcc: drm fourcc format.
-> + * @tile_size: format tiled size, used by ARM format X0L0/X0L2
-> + * @supported_layer_types: indicate which layer supports this format
-> + * @supported_rots: allowed rotations for this format
-> + * @supported_afbc_layouts: supported afbc layerout
-> + * @supported_afbc_features: supported afbc features
-> + */
-> +struct komeda_format_caps {
-> +	u32 hw_id;
-> +	u32 fourcc;
-> +	u32 tile_size;
-> +	u32 supported_layer_types;
-> +	u32 supported_rots;
-> +	u32 supported_afbc_layouts;
-> +	u64 supported_afbc_features;
-> +};
-> +
-> +/**
-> + * struct komeda_format_caps_table - format_caps mananger
-> + *
-> + * @n_formats: the size of format_caps list.
-> + * @format_caps: format_caps list.
-> + */
-> +struct komeda_format_caps_table {
-> +	u32 n_formats;
-> +	const struct komeda_format_caps *format_caps;
-> +};
-> +
-> +const struct komeda_format_caps *
-> +komeda_get_format_caps(struct komeda_format_caps_table *table,
-> +		       u32 fourcc, u64 modifier);
-> +
-> +u32 *komeda_get_layer_fourcc_list(struct komeda_format_caps_table *table,
-> +				  u32 layer_type, u32 *n_fmts);
-> +
-> +void komeda_put_fourcc_list(u32 *fourcc_list);
-> +
-> +#endif
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> index d1e0c1140273..2d68ffeae25d 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> @@ -213,6 +213,7 @@ static inline u16 component_changed_inputs(struct komeda_component_state *st)
->  struct komeda_layer {
->  	struct komeda_component base;
->  	/* layer specific features and caps */
-> +	int layer_type; /* RICH, SIMPLE or WB */
->  };
->  
->  struct komeda_layer_state {
+> Andrew, could you fold it to the original patch please?
+> 
+> Keeping the rest for the reference.
+> 
+> > #PF error: [normal kernel read fault]
+> > PGD 0 P4D 0
+> > Oops: 0000 [#1] PREEMPT SMP PTI
+> > CPU: 7 PID: 2687 Comm: StreamTrans #56 Tainted: G     U            4.20.0-rc7-next-20181221-beppy+ #15
+> > Hardware name: Dell Inc. XPS 13 9360/0TPN17, BIOS 2.10.0 09/27/2018
+> > RIP: 0010:transparent_hugepage_enabled (??:?) 
+> > Code: 17 fd 00 e9 20 ff ff ff 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 89 fb 48 83 bf 90 00 00 00 00 74 27 48 8b 87 a0 00 00 00 <48> 8b b8 e8 00 00 00 e8 7a cc fa ff 84 c0 75 04 31 c0 5b c3 48 89
+> > All code
+> > ========
+> >    0:	17                   	(bad)  
+> >    1:	fd                   	std    
+> >    2:	00 e9                	add    %ch,%cl
+> >    4:	20 ff                	and    %bh,%bh
+> >    6:	ff                   	(bad)  
+> >    7:	ff 0f                	decl   (%rdi)
+> >    9:	1f                   	(bad)  
+> >    a:	84 00                	test   %al,(%rax)
+> >    c:	00 00                	add    %al,(%rax)
+> >    e:	00 00                	add    %al,(%rax)
+> >   10:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+> >   15:	53                   	push   %rbx
+> >   16:	48 89 fb             	mov    %rdi,%rbx
+> >   19:	48 83 bf 90 00 00 00 	cmpq   $0x0,0x90(%rdi)
+> >   20:	00 
+> >   21:	74 27                	je     0x4a
+> >   23:	48 8b 87 a0 00 00 00 	mov    0xa0(%rdi),%rax
+> >   2a:*	48 8b b8 e8 00 00 00 	mov    0xe8(%rax),%rdi		<-- trapping instruction
+> >   31:	e8 7a cc fa ff       	callq  0xfffffffffffaccb0
+> >   36:	84 c0                	test   %al,%al
+> >   38:	75 04                	jne    0x3e
+> >   3a:	31 c0                	xor    %eax,%eax
+> >   3c:	5b                   	pop    %rbx
+> >   3d:	c3                   	retq   
+> >   3e:	48                   	rex.W
+> >   3f:	89                   	.byte 0x89
+> > 
+> > Code starting with the faulting instruction
+> > ===========================================
+> >    0:	48 8b b8 e8 00 00 00 	mov    0xe8(%rax),%rdi
+> >    7:	e8 7a cc fa ff       	callq  0xfffffffffffacc86
+> >    c:	84 c0                	test   %al,%al
+> >    e:	75 04                	jne    0x14
+> >   10:	31 c0                	xor    %eax,%eax
+> >   12:	5b                   	pop    %rbx
+> >   13:	c3                   	retq   
+> >   14:	48                   	rex.W
+> >   15:	89                   	.byte 0x89
+> > RSP: 0018:ffffb79744f17d28 EFLAGS: 00010282
+> > RAX: 0000000000000000 RBX: ffff8948c17aff00 RCX: 0000000000000000
+> > RDX: 0000000000000004 RSI: ffffffffab1165ba RDI: ffff8948c17aff00
+> > RBP: ffff8948c17aff00 R08: 0000000000000007 R09: ffff894927e547b2
+> > R10: 0000000000000000 R11: ffff894927e549da R12: ffffb79744f17d38
+> > R13: ffff8948c17aff00 R14: ffff89489bef9400 R15: ffff89488b775a80
+> > FS:  00007fa54ad43700(0000) GS:ffff8949363c0000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000000000e8 CR3: 000000025c0ee003 CR4: 00000000003606e0
+> > Call Trace:
+> > show_smap (/home/bep/.opt/kernel/linux-e/fs/proc/task_mmu.c:805) 
+> > seq_read (/home/bep/.opt/kernel/linux-e/fs/seq_file.c:269) 
+> > __vfs_read (/home/bep/.opt/kernel/linux-e/fs/read_write.c:421) 
+> > vfs_read (/home/bep/.opt/kernel/linux-e/fs/read_write.c:452 /home/bep/.opt/kernel/linux-e/fs/read_write.c:437) 
+> > ksys_read (/home/bep/.opt/kernel/linux-e/fs/read_write.c:579) 
+> > do_syscall_64 (/home/bep/.opt/kernel/linux-e/arch/x86/entry/common.c:290) 
+> > entry_SYSCALL_64_after_hwframe (/home/bep/.opt/kernel/linux/arch/x86/entry/entry_64.S:184) 
+> > RIP: 0033:0x7fa585fb3184
+> > Code: c3 0f 1f 44 00 00 41 54 49 89 d4 55 48 89 f5 53 89 fb 48 83 ec 10 e8 5b fc ff ff 4c 89 e2 48 89 ee 89 df 41 89 c0 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 48 89 44 24 08 e8 97 fc ff ff 48
+> > All code
+> > ========
+> >    0:	c3                   	retq   
+> >    1:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+> >    6:	41 54                	push   %r12
+> >    8:	49 89 d4             	mov    %rdx,%r12
+> >    b:	55                   	push   %rbp
+> >    c:	48 89 f5             	mov    %rsi,%rbp
+> >    f:	53                   	push   %rbx
+> >   10:	89 fb                	mov    %edi,%ebx
+> >   12:	48 83 ec 10          	sub    $0x10,%rsp
+> >   16:	e8 5b fc ff ff       	callq  0xfffffffffffffc76
+> >   1b:	4c 89 e2             	mov    %r12,%rdx
+> >   1e:	48 89 ee             	mov    %rbp,%rsi
+> >   21:	89 df                	mov    %ebx,%edi
+> >   23:	41 89 c0             	mov    %eax,%r8d
+> >   26:	31 c0                	xor    %eax,%eax
+> >   28:	0f 05                	syscall 
+> >   2a:*	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax		<-- trapping instruction
+> >   30:	77 38                	ja     0x6a
+> >   32:	44 89 c7             	mov    %r8d,%edi
+> >   35:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+> >   3a:	e8 97 fc ff ff       	callq  0xfffffffffffffcd6
+> >   3f:	48                   	rex.W
+> > 
+> > Code starting with the faulting instruction
+> > ===========================================
+> >    0:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+> >    6:	77 38                	ja     0x40
+> >    8:	44 89 c7             	mov    %r8d,%edi
+> >    b:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+> >   10:	e8 97 fc ff ff       	callq  0xfffffffffffffcac
+> >   15:	48                   	rex.W
+> > RSP: 002b:00007fa54ad42060 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> > RAX: ffffffffffffffda RBX: 000000000000002c RCX: 00007fa585fb3184
+> > RDX: 0000000000001fff RSI: 00007fa54ffb2000 RDI: 000000000000002c
+> > RBP: 00007fa54ffb2000 R08: 0000000000000000 R09: 000000000000001e
+> > R10: 00007fa585c0dae0 R11: 0000000000000246 R12: 0000000000001fff
+> > R13: 00007fa54ad42510 R14: 00007fa54ffb2fc5 R15: 00007fa54ad42498
+> > Modules linked in: thunderbolt sch_cake rfcomm fuse arc4 iwlmvm mac80211 btusb btrtl btbcm btintel bnep bluetooth iwlwifi snd_hda_codec_hdmi ecdh_generic snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel cfg80211 snd_hda_codec nf_log_ipv6 ip6t_REJECT nf_reject_ipv6 snd_hwdep xt_hl snd_hda_core ip6t_rt nf_log_ipv4 nf_log_common joydev snd_pcm mousedev ipt_REJECT nf_reject_ipv4 hid_multitouch intel_rapl xt_LOG xt_comment nls_iso8859_1 intel_pmc_core nls_cp437 intel_powerclamp xt_limit kvm_intel xt_addrtype xt_tcpudp dell_laptop snd_timer xt_conntrack ledtrig_audio snd dell_wmi nf_conntrack efi_pstore dell_smbios mei_me dcdbas input_leds idma64 mei wmi_bmof intel_wmi_thunderbolt dell_wmi_descriptor efivars rfkill intel_pch_thermal intel_lpss_pci processor_thermal_device i2c_i801 soundcore intel_lpss intel_soc_dts_iosf i2c_hid evdev int3403_thermal int3400_thermal intel_vbtn rtc_cmos int340x_thermal_zone acpi_thermal_rel intel_hid mac_hid nf_defrag_ipv6 nf_defrag_ipv4
+> > ip6table_filter ip6_tables iptable_filter bpfilter coretemp msr dell_smm_hwmon crypto_user ip_tables x_tables algif_skcipher af_alg rtsx_pci_sdmmc mmc_core crct10dif_pclmul crc32_pclmul xhci_pci ghash_clmulni_intel serio_raw rtsx_pci xhci_hcd i915 kvmgt vfio_mdev mdev vfio_iommu_type1 vfio kvm irqbypass intel_gtt
+> > CR2: 00000000000000e8
+> > ---[ end trace 77d24d35c4e5213f ]---
+> > RIP: 0010:transparent_hugepage_enabled (??:?) 
+> > Code: 17 fd 00 e9 20 ff ff ff 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 89 fb 48 83 bf 90 00 00 00 00 74 27 48 8b 87 a0 00 00 00 <48> 8b b8 e8 00 00 00 e8 7a cc fa ff 84 c0 75 04 31 c0 5b c3 48 89
+> > All code
+> > ========
+> >    0:	17                   	(bad)  
+> >    1:	fd                   	std    
+> >    2:	00 e9                	add    %ch,%cl
+> >    4:	20 ff                	and    %bh,%bh
+> >    6:	ff                   	(bad)  
+> >    7:	ff 0f                	decl   (%rdi)
+> >    9:	1f                   	(bad)  
+> >    a:	84 00                	test   %al,(%rax)
+> >    c:	00 00                	add    %al,(%rax)
+> >    e:	00 00                	add    %al,(%rax)
+> >   10:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+> >   15:	53                   	push   %rbx
+> >   16:	48 89 fb             	mov    %rdi,%rbx
+> >   19:	48 83 bf 90 00 00 00 	cmpq   $0x0,0x90(%rdi)
+> >   20:	00 
+> >   21:	74 27                	je     0x4a
+> >   23:	48 8b 87 a0 00 00 00 	mov    0xa0(%rdi),%rax
+> >   2a:*	48 8b b8 e8 00 00 00 	mov    0xe8(%rax),%rdi		<-- trapping instruction
+> >   31:	e8 7a cc fa ff       	callq  0xfffffffffffaccb0
+> >   36:	84 c0                	test   %al,%al
+> >   38:	75 04                	jne    0x3e
+> >   3a:	31 c0                	xor    %eax,%eax
+> >   3c:	5b                   	pop    %rbx
+> >   3d:	c3                   	retq   
+> >   3e:	48                   	rex.W
+> >   3f:	89                   	.byte 0x89
+> > 
+> > Code starting with the faulting instruction
+> > ===========================================
+> >    0:	48 8b b8 e8 00 00 00 	mov    0xe8(%rax),%rdi
+> >    7:	e8 7a cc fa ff       	callq  0xfffffffffffacc86
+> >    c:	84 c0                	test   %al,%al
+> >    e:	75 04                	jne    0x14
+> >   10:	31 c0                	xor    %eax,%eax
+> >   12:	5b                   	pop    %rbx
+> >   13:	c3                   	retq   
+> >   14:	48                   	rex.W
+> >   15:	89                   	.byte 0x89
+> > RSP: 0018:ffffb79744f17d28 EFLAGS: 00010282
+> > RAX: 0000000000000000 RBX: ffff8948c17aff00 RCX: 0000000000000000
+> > RDX: 0000000000000004 RSI: ffffffffab1165ba RDI: ffff8948c17aff00
+> > RBP: ffff8948c17aff00 R08: 0000000000000007 R09: ffff894927e547b2
+> > R10: 0000000000000000 R11: ffff894927e549da R12: ffffb79744f17d38
+> > R13: ffff8948c17aff00 R14: ffff89489bef9400 R15: ffff89488b775a80
+> > FS:  00007fa54ad43700(0000) GS:ffff8949363c0000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > BUG: unable to handle kernel NULL pointer dereference at 00000000000000e8
+> > #PF error: [normal kernel read fault]
+> > PGD 0 P4D 0
+> > Oops: 0000 [#1] PREEMPT SMP PTI
+> > CPU: 7 PID: 2687 Comm: StreamTrans #56 Tainted: G     U            4.20.0-rc7-next-20181221-beppy+ #15
+> > Hardware name: Dell Inc. XPS 13 9360/0TPN17, BIOS 2.10.0 09/27/2018
+> > RIP: 0010:transparent_hugepage_enabled+0x1a/0xa0
+> > Code: 17 fd 00 e9 20 ff ff ff 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 89 fb 48 83 bf 90 00 00 00 00 74 27 48 8b 87 a0 00 00 00 <48> 8b b8 e8 00 00 00 e8 7a cc fa ff 84 c0 75 04 31 c0 5b c3 48 89
+> > RSP: 0018:ffffb79744f17d28 EFLAGS: 00010282
+> > RAX: 0000000000000000 RBX: ffff8948c17aff00 RCX: 0000000000000000
+> > RDX: 0000000000000004 RSI: ffffffffab1165ba RDI: ffff8948c17aff00
+> > RBP: ffff8948c17aff00 R08: 0000000000000007 R09: ffff894927e547b2
+> > R10: 0000000000000000 R11: ffff894927e549da R12: ffffb79744f17d38
+> > R13: ffff8948c17aff00 R14: ffff89489bef9400 R15: ffff89488b775a80
+> > FS:  00007fa54ad43700(0000) GS:ffff8949363c0000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000000000e8 CR3: 000000025c0ee003 CR4: 00000000003606e0
+> > Call Trace:
+> >  show_smap+0xd7/0x200
+> >  seq_read+0x2e8/0x410
+> >  __vfs_read+0x36/0x1a0
+> >  vfs_read+0x8a/0x140
+> >  ksys_read+0x52/0xc0
+> >  do_syscall_64+0x48/0xf0
+> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > RIP: 0033:0x7fa585fb3184
+> > Code: c3 0f 1f 44 00 00 41 54 49 89 d4 55 48 89 f5 53 89 fb 48 83 ec 10 e8 5b fc ff ff 4c 89 e2 48 89 ee 89 df 41 89 c0 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 48 89 44 24 08 e8 97 fc ff ff 48
+> > RSP: 002b:00007fa54ad42060 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> > RAX: ffffffffffffffda RBX: 000000000000002c RCX: 00007fa585fb3184
+> > RDX: 0000000000001fff RSI: 00007fa54ffb2000 RDI: 000000000000002c
+> > RBP: 00007fa54ffb2000 R08: 0000000000000000 R09: 000000000000001e
+> > R10: 00007fa585c0dae0 R11: 0000000000000246 R12: 0000000000001fff
+> > R13: 00007fa54ad42510 R14: 00007fa54ffb2fc5 R15: 00007fa54ad42498
+> > Modules linked in: thunderbolt sch_cake rfcomm fuse arc4 iwlmvm mac80211 btusb btrtl btbcm btintel bnep bluetooth iwlwifi snd_hda_codec_hdmi ecdh_generic snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel cfg80211 snd_hda_codec nf_log_ipv6 ip6t_REJECT nf_reject_ipv6 snd_hwdep xt_hl snd_hda_core ip6t_rt nf_log_ipv4 nf_log_common joydev snd_pcm mousedev ipt_REJECT nf_reject_ipv4 hid_multitouch intel_rapl xt_LOG xt_comment nls_iso8859_1 intel_pmc_core nls_cp437 intel_powerclamp xt_limit kvm_intel xt_addrtype xt_tcpudp dell_laptop snd_timer xt_conntrack ledtrig_audio snd dell_wmi nf_conntrack efi_pstore dell_smbios mei_me dcdbas input_leds idma64 mei wmi_bmof intel_wmi_thunderbolt dell_wmi_descriptor efivars rfkill intel_pch_thermal intel_lpss_pci processor_thermal_device i2c_i801 soundcore intel_lpss intel_soc_dts_iosf i2c_hid evdev int3403_thermal int3400_thermal intel_vbtn rtc_cmos int340x_thermal_zone acpi_thermal_rel intel_hid mac_hid nf_defrag_ipv6 nf_defrag_ipv4
+> >  ip6table_filter ip6_tables iptable_filter bpfilter coretemp msr dell_smm_hwmon crypto_user ip_tables x_tables algif_skcipher af_alg rtsx_pci_sdmmc mmc_core crct10dif_pclmul crc32_pclmul xhci_pci ghash_clmulni_intel serio_raw rtsx_pci xhci_hcd i915 kvmgt vfio_mdev mdev vfio_iommu_type1 vfio kvm irqbypass intel_gtt
+> > CR2: 00000000000000e8
+> > ---[ end trace 77d24d35c4e5213f ]---
+> > RIP: 0010:transparent_hugepage_enabled+0x1a/0xa0
+> > Code: 17 fd 00 e9 20 ff ff ff 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 89 fb 48 83 bf 90 00 00 00 00 74 27 48 8b 87 a0 00 00 00 <48> 8b b8 e8 00 00 00 e8 7a cc fa ff 84 c0 75 04 31 c0 5b c3 48 89
+> > RSP: 0018:ffffb79744f17d28 EFLAGS: 00010282
+> > RAX: 0000000000000000 RBX: ffff8948c17aff00 RCX: 0000000000000000
+> > RDX: 0000000000000004 RSI: ffffffffab1165ba RDI: ffff8948c17aff00
+> > RBP: ffff8948c17aff00 R08: 0000000000000007 R09: ffff894927e547b2
+> > R10: 0000000000000000 R11: ffff894927e549da R12: ffffb79744f17d38
+> > R13: ffff8948c17aff00 R14: ffff89489bef9400 R15: ffff89488b775a80
+> > FS:  00007fa54ad43700(0000) GS:ffff8949363c0000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000000000e8 CR3: 000000025c0ee003 CR4: 00000000003606e0
+> 
+> 
 > -- 
-> 2.17.1
+> Michal Hocko
+> SUSE Labs
 > 
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Sincerely yours,
+Mike.
+
