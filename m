@@ -2,183 +2,209 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E826C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E463C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00C32184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E1D21871
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:22:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TATbDOi3"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="fldnnUgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbeLXPWV (ORCPT
+        id S1725848AbeLXPW0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:22:21 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:53106 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbeLXPWV (ORCPT
+        Mon, 24 Dec 2018 10:22:26 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:62587 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbeLXPWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Dec 2018 10:22:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MnCBPLk/TWveJ/PPLBS7RWz+axnrCYxLUyWpWEjxPy4=; b=TATbDOi3szvOxUTavPt0X/r70
-        vsZj5TZTSx89zhAQEl7pS0fasAu9W4Uive0aLhYKym8rlMr0h3b5qwCBM6UIqLJdkpMS98GpUMDFU
-        bc0TulCo/Wa0vECNHHWmPTUklO2uv6AO21/tGIxV+oMKw13XOlxLGMTtHjIrkIyQj253g=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:44267)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gbS2Y-0007zj-3i; Mon, 24 Dec 2018 15:21:10 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gbS2Q-00077T-Hm; Mon, 24 Dec 2018 15:21:02 +0000
-Date:   Mon, 24 Dec 2018 15:20:59 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
-        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
-        peterz@infradead.org, robin.murphy@arm.com, iamjoonsoo.kim@lge.com,
-        treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
-        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        linux1394-devel@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] Use vm_insert_range
-Message-ID: <20181224152059.GA26090@n2100.armlinux.org.uk>
-References: <20181224131841.GA22017@jordon-HP-15-Notebook-PC>
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id wBOFLtYc019269;
+        Tue, 25 Dec 2018 00:21:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wBOFLtYc019269
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1545664916;
+        bh=hHXKkqg1qrPGiJ/CgXp0pIp6kb1OWkMCmAm9dQsUrOQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fldnnUgmpBotdIN/3KJTzHotWtQMOClu5r31aU3UsV2ENj/+38jeVNOb6wlztw3BV
+         IzguA6ce5CnprLYFZAz/UgU7s6AZh92QyLDCFlNy2PvSfsepGNazOgDQO0BTDODpL+
+         DbFntsTveGfVdDc0z3dS6b70xVvEJzL9Jv+279iQUZRTetBg72eder7tOZRD6vhZs4
+         mO2ytor3Gb5CbzSbzmZ2iGDJ1ARWPbAMyznafVWELElkdaPR3l7ZgrDx8MrrXrppjH
+         p9wdRRHUQMkJV7Td/RJLpcXE/40//wNxw1EvugK8zUZjeRBKAarebC7Ao8aR4Lbyzv
+         BAKicSeJNI9QA==
+X-Nifty-SrcIP: [209.85.221.172]
+Received: by mail-vk1-f172.google.com with SMTP id w72so2623519vkd.5;
+        Mon, 24 Dec 2018 07:21:56 -0800 (PST)
+X-Gm-Message-State: AJcUukdz2tPjtsWBS/i93YvBY3EaFZyfizF25KV2nwPzTqxGHTcJctL/
+        Qp/QVy+vb8iWMPtLEGaFPcPTpPLtYq15/3FWX+I=
+X-Google-Smtp-Source: ALg8bN6ULaZXB3qWu7VKzPIyr4ziCb808mtLkv1PTsD10t/0GRUy1qSIkq7qUV4dYB72FmakMKdFNrh6Pekv/sp9wr4=
+X-Received: by 2002:a1f:4d47:: with SMTP id a68mr4851763vkb.34.1545664915353;
+ Mon, 24 Dec 2018 07:21:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181224131841.GA22017@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1545361961-31990-1-git-send-email-yamada.masahiro@socionext.com> <1545361961-31990-3-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1545361961-31990-3-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 25 Dec 2018 00:21:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVfUvb=kiDjt7d90N1G3xcCNXQhQPz_bOhYKshW59tbQ@mail.gmail.com>
+Message-ID: <CAK7LNASVfUvb=kiDjt7d90N1G3xcCNXQhQPz_bOhYKshW59tbQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] firmware: rewrite Makefile
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having discussed with Matthew offlist, I think we've come to the
-following conclusion - there's a number of drivers that buggily
-ignore vm_pgoff.
+On Fri, Dec 21, 2018 at 5:43 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Clean up the Makefile. Equivalent *.gen.S files are produced.
+>
+>  - Use filechk to remove ugly wordsize_deps
+>
+>  - Get FWNAME, FWSTR, ASM_WORD, ASM_ALIGN, and PROGBITS out of the
+>    recipe for readability
+>
+>  - Move mkdir into the recipe
+>
+>  - Clean up generated directories by 'make clean'
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+> For this patch to work correctly,
+> the following prerequisite is necessary:
+>
+> https://patchwork.kernel.org/patch/10707461/
+>
+> So, I will queue this series to kbuild tree.
+>
+> BTW, my next plan is to move firmware/ to
+> more relevant place, for example,
+> drivers/base/firmware_loader/builtin.
+>
+>
+>  firmware/Makefile | 89 ++++++++++++++++++++++---------------------------------
+>  1 file changed, 35 insertions(+), 54 deletions(-)
+>
+> diff --git a/firmware/Makefile b/firmware/Makefile
+> index 2964138..18d1c84 100644
+> --- a/firmware/Makefile
+> +++ b/firmware/Makefile
+> @@ -1,61 +1,42 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -#
+> -# kbuild file for firmware/
+> -#
+>
+> -# Create $(fwabs) from $(CONFIG_EXTRA_FIRMWARE_DIR) -- if it doesn't have a
+> +# Create $(fwdir) from $(CONFIG_EXTRA_FIRMWARE_DIR) -- if it doesn't have a
+>  # leading /, it's relative to $(srctree).
+>  fwdir := $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE_DIR))
+> -fwabs := $(addprefix $(srctree)/,$(filter-out /%,$(fwdir)))$(filter /%,$(fwdir))
+> -
+> -fw-external-y := $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE))
+> -
+> -quiet_cmd_fwbin = MK_FW   $@
+> -      cmd_fwbin = FWNAME="$(patsubst firmware/%.gen.S,%,$@)";               \
+> -                 FWSTR="$(subst /,_,$(subst .,_,$(subst -,_,$(patsubst      \
+> -                               firmware/%.gen.S,%,$@))))";                  \
+> -                 ASM_WORD=$(if $(CONFIG_64BIT),.quad,.long);                \
+> -                 ASM_ALIGN=$(if $(CONFIG_64BIT),3,2);                       \
+> -                 PROGBITS=$(if $(CONFIG_ARM),%,@)progbits;                  \
+> -                 echo "/* Generated by firmware/Makefile */"           > $@;\
+> -                 echo "    .section .rodata"                           >>$@;\
+> -                 echo "    .p2align $${ASM_ALIGN}"                     >>$@;\
+> -                 echo "_fw_$${FWSTR}_bin:"                             >>$@;\
+> -                 echo "    .incbin \"$(2)\""                           >>$@;\
+> -                 echo "_fw_end:"                                       >>$@;\
+> -                 echo "   .section .rodata.str,\"aMS\",$${PROGBITS},1" >>$@;\
+> -                 echo "    .p2align $${ASM_ALIGN}"                     >>$@;\
+> -                 echo "_fw_$${FWSTR}_name:"                            >>$@;\
+> -                 echo "    .string \"$$FWNAME\""                       >>$@;\
+> -                 echo "    .section .builtin_fw,\"a\",$${PROGBITS}"    >>$@;\
+> -                 echo "    .p2align $${ASM_ALIGN}"                     >>$@;\
+> -                 echo "    $${ASM_WORD} _fw_$${FWSTR}_name"            >>$@;\
+> -                 echo "    $${ASM_WORD} _fw_$${FWSTR}_bin"             >>$@;\
+> -                 echo "    $${ASM_WORD} _fw_end - _fw_$${FWSTR}_bin"   >>$@;
+> -
+> -# One of these files will change, or come into existence, whenever
+> -# the configuration changes between 32-bit and 64-bit. The .S files
+> -# need to change when that happens.
+> -wordsize_deps := $(wildcard include/config/64bit.h include/config/32bit.h \
+> -               include/config/ppc32.h include/config/ppc64.h \
+> -               include/config/superh32.h include/config/superh64.h \
+> -               include/config/x86_32.h include/config/x86_64.h \
+> -               firmware/Makefile)
+> -
+> -$(patsubst %,$(obj)/%.gen.S, $(fw-external-y)): %: $(wordsize_deps) \
+> -               include/config/extra/firmware/dir.h
+> -       $(call cmd,fwbin,$(fwabs)/$(patsubst $(obj)/%.gen.S,%,$@))
+> +fwdir := $(addprefix $(srctree)/,$(filter-out /%,$(fwdir)))$(filter /%,$(fwdir))
+> +
+> +obj-y  := $(addsuffix .gen.o, $(subst $(quote),,$(CONFIG_EXTRA_FIRMWARE)))
+> +
+> +FWNAME    = $(patsubst $(obj)/%.gen.S,%,$@)
+> +FWSTR     = $(subst /,_,$(subst .,_,$(subst -,_,$(FWNAME))))
+> +ASM_WORD  = $(if $(CONFIG_64BIT),.quad,.long)
+> +ASM_ALIGN = $(if $(CONFIG_64BIT),3,2)
+> +PROGBITS  = $(if $(CONFIG_ARM),%,@)progbits
+> +
+> +filechk_fwbin = { \
+> +       echo "/* Generated by $(src)/Makefile */"               ;\
+> +       echo "    .section .rodata"                             ;\
+> +       echo "    .p2align $(ASM_ALIGN)"                        ;\
+> +       echo "_fw_$(FWSTR)_bin:"                                ;\
+> +       echo "    .incbin \"$(fwdir)/$(FWNAME)\""               ;\
+> +       echo "_fw_end:"                                         ;\
+> +       echo "    .section .rodata.str,\"aMS\",$(PROGBITS),1"   ;\
+> +       echo "    .p2align $(ASM_ALIGN)"                        ;\
+> +       echo "_fw_$(FWSTR)_name:"                               ;\
+> +       echo "    .string \"$(FWNAME)\""                        ;\
+> +       echo "    .section .builtin_fw,\"a\",$(PROGBITS)"       ;\
+> +       echo "    .p2align $(ASM_ALIGN)"                        ;\
+> +       echo "    $(ASM_WORD) _fw_$(FWSTR)_name"                ;\
+> +       echo "    $(ASM_WORD) _fw_$(FWSTR)_bin"                 ;\
+> +       echo "    $(ASM_WORD) _fw_end - _fw_$(FWSTR)_bin"       ;\
+> +}
+> +
+> +$(obj)/%.gen.S: FORCE
+> +       @mkdir -p $(dir $@)
 
-So, what I proposed is:
 
-static int __vm_insert_range(struct vm_struct *vma, struct page *pages,
-			     size_t num, unsigned long offset)
-{
-	unsigned long count = vma_pages(vma);
-	unsigned long uaddr = vma->vm_start;
-	int ret;
+Removed this line because filechk creates the directory automatically.
 
-	/* Fail if the user requested offset is beyond the end of the object */
-	if (offset > num)
-		return -ENXIO;
+Then, applied to linux-kbuild.
 
-	/* Fail if the user requested size exceeds available object size */
-	if (count > num - offset)
-		return -ENXIO;
 
-	/* Never exceed the number of pages that the user requested */
-	for (i = 0; i < count; i++) {
-		ret = vm_insert_page(vma, uaddr, pages[offset + i]);
-		if (ret < 0)
-			return ret;
-		uaddr += PAGE_SIZE;
-	}
+> +       $(call filechk,fwbin)
+>
+>  # The .o files depend on the binaries directly; the .S files don't.
+> -$(patsubst %,$(obj)/%.gen.o, $(fw-external-y)): $(obj)/%.gen.o: $(fwdir)/%
+> -
+> -obj-y                           += $(patsubst %,%.gen.o, $(fw-external-y))
+> -
+> -ifeq ($(KBUILD_SRC),)
+> -# Makefile.build only creates subdirectories for O= builds, but external
+> -# firmware might live outside the kernel source tree
+> -_dummy := $(foreach d,$(addprefix $(obj)/,$(dir $(fw-external-y))), $(shell [ -d $(d) ] || mkdir -p $(d)))
+> -endif
+> +$(addprefix $(obj)/, $(obj-y)): $(obj)/%.gen.o: $(fwdir)/%
+>
+> -targets := $(patsubst $(obj)/%,%, \
+> -                                $(shell find $(obj) -name \*.gen.S 2>/dev/null))
+> +targets := $(shell cd $(obj) && find * -name '*.gen.S')
+> +clean-dirs := $(shell cd $(obj) && find * -maxdepth 0 -type d)
+> --
+> 2.7.4
+>
 
-	return 0;
-}
-
-/*
- * Maps an object consisting of `num' `pages', catering for the user's
- * requested vm_pgoff
- */
-int vm_insert_range(struct vm_struct *vma, struct page *pages, size_t num)
-{
-	return __vm_insert_range(vma, pages, num, vma->vm_pgoff);
-}
-
-/*
- * Maps a set of pages, always starting at page[0]
- */
-int vm_insert_range_buggy(struct vm_struct *vma, struct page *pages, size_t num)
-{
-	return __vm_insert_range(vma, pages, num, 0);
-}
-
-With this, drivers such as iommu/dma-iommu.c can be converted thusly:
-
- int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma+)
- {
--	unsigned long uaddr = vma->vm_start;
--	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	int ret = -ENXIO;
--
--	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
--		ret = vm_insert_page(vma, uaddr, pages[i]);
--		if (ret)
--			break;
--		uaddr += PAGE_SIZE;
--	}
--	return ret;
-+	return vm_insert_range(vma, pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
-}
-
-and drivers such as firewire/core-iso.c:
-
- int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
- 			  struct vm_area_struct *vma)
- {
--	unsigned long uaddr;
--	int i, err;
--
--	uaddr = vma->vm_start;
--	for (i = 0; i < buffer->page_count; i++) {
--		err = vm_insert_page(vma, uaddr, buffer->pages[i]);
--		if (err)
--			return err;
--
--		uaddr += PAGE_SIZE;
--	}
--
--	return 0;
-+	return vm_insert_range_buggy(vma, buffer->pages, buffer->page_count);
-}
-
-and this gives us something to grep for to find these buggy drivers.
-
-Now, this may not look exactly equivalent, but if you look at
-fw_device_op_mmap(), buffer->page_count is basically vma_pages(vma)
-at this point, which means this should be equivalent.
-
-We _could_ then at a later date "fix" these drivers to behave according
-to the normal vm_pgoff offsetting simply by removing the _buggy suffix
-on the function name... and if that causes regressions, it gives us an
-easy way to revert (as long as vm_insert_range_buggy() remains
-available.)
-
-In the case of firewire/core-iso.c, it currently ignores the mmap offset
-entirely, so making the above suggested change would be tantamount to
-causing it to return -ENXIO for any non-zero mmap offset.
-
-IMHO, this approach is way simpler, and easier to get it correct at
-each call site, rather than the current approach which seems to be
-error-prone.
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Best Regards
+Masahiro Yamada
