@@ -2,96 +2,103 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EFAC64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D448CC64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8414F2184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5BA21850
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725840AbeLXTls (ORCPT
+        id S1725820AbeLXTzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 14:41:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45794 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbeLXTls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 14:41:48 -0500
-Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gbW6k-0007Yt-BQ; Mon, 24 Dec 2018 19:41:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] drivers/net: appletalk/cops: remove redundant if statement and mask
-Date:   Mon, 24 Dec 2018 19:41:46 +0000
-Message-Id: <20181224194146.11511-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Mon, 24 Dec 2018 14:55:02 -0500
+Received: from namei.org ([65.99.196.166]:53132 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbeLXTzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 14:55:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBOJt0u1002778;
+        Mon, 24 Dec 2018 19:55:00 GMT
+Date:   Tue, 25 Dec 2018 06:55:00 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] security: general updates for v4.21
+Message-ID: <alpine.LRH.2.21.1812250652420.2714@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Linus,
 
-The two different assignments for pkt_len are actually the same and
-so the if statement is redundant and can be removed.  Masking a u8
-return value from inb() with 0xFF is also redundant and can also be
-emoved.
+Please pull these general updates for the security subsystem for v4.21.
 
-Similarly, the two different outb calls are identical as the mask
-of 0xff on the second outb is redundant since a u8 is being written,
-so the if statement is also redundant and can be also removed.
+The main changes here are Paul Gortmaker's removal of unneccesary module.h 
+infrastructure.
 
-Detected by CoverityScan, CID#1475639 ("Identical code for different
-branches")
+The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
 
----
+  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
 
-V2: Remove the if statement for the outb calls, thanks to David
-Miller for spotting this.
+are available in the Git repository at:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/appletalk/cops.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
-diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
-index bb49f6e40a19..494663a18ce0 100644
---- a/drivers/net/appletalk/cops.c
-+++ b/drivers/net/appletalk/cops.c
-@@ -777,10 +777,7 @@ static void cops_rx(struct net_device *dev)
-         }
- 
-         /* Get response length. */
--	if(lp->board==DAYNA)
--        	pkt_len = inb(ioaddr) & 0xFF;
--	else
--		pkt_len = inb(ioaddr) & 0x00FF;
-+	pkt_len = inb(ioaddr);
-         pkt_len |= (inb(ioaddr) << 8);
-         /* Input IO code. */
-         rsp_type=inb(ioaddr);
-@@ -892,10 +889,7 @@ static netdev_tx_t cops_send_packet(struct sk_buff *skb,
- 
- 	/* Output IO length. */
- 	outb(skb->len, ioaddr);
--	if(lp->board == DAYNA)
--               	outb(skb->len >> 8, ioaddr);
--	else
--		outb((skb->len >> 8)&0x0FF, ioaddr);
-+	outb(skb->len >> 8, ioaddr);
- 
- 	/* Output IO code. */
- 	outb(LAP_WRITE, ioaddr);
--- 
-2.19.1
+for you to fetch changes up to b49d564344f773d8afee982153c8493e5f2eaf38:
 
+  security: integrity: partial revert of make ima_main explicitly non-modular (2018-12-20 09:59:12 -0800)
+
+----------------------------------------------------------------
+James Morris (2):
+      Merge tag 'v4.20-rc2' into next-general
+      Merge tag 'v4.20-rc7' into next-general
+
+Paul Gortmaker (6):
+      security: integrity: make ima_main explicitly non-modular
+      keys: remove needless modular infrastructure from ecryptfs_format
+      security: integrity: make evm_main explicitly non-modular
+      security: audit and remove any unnecessary uses of module.h
+      security: fs: make inode explicitly non-modular
+      security: integrity: partial revert of make ima_main explicitly non-modular
+
+Yangtao Li (1):
+      tomoyo: fix small typo
+
+ security/apparmor/apparmorfs.c                   | 2 +-
+ security/commoncap.c                             | 1 -
+ security/inode.c                                 | 6 ++----
+ security/integrity/evm/evm_crypto.c              | 2 +-
+ security/integrity/evm/evm_main.c                | 5 +----
+ security/integrity/evm/evm_posix_acl.c           | 1 -
+ security/integrity/evm/evm_secfs.c               | 2 +-
+ security/integrity/iint.c                        | 2 +-
+ security/integrity/ima/ima_api.c                 | 1 -
+ security/integrity/ima/ima_appraise.c            | 2 +-
+ security/integrity/ima/ima_fs.c                  | 2 +-
+ security/integrity/ima/ima_init.c                | 2 +-
+ security/integrity/ima/ima_main.c                | 5 ++---
+ security/integrity/ima/ima_policy.c              | 2 +-
+ security/integrity/ima/ima_queue.c               | 1 -
+ security/keys/encrypted-keys/ecryptfs_format.c   | 5 ++---
+ security/keys/encrypted-keys/masterkey_trusted.c | 1 -
+ security/keys/gc.c                               | 1 -
+ security/keys/key.c                              | 2 +-
+ security/keys/keyctl.c                           | 1 -
+ security/keys/keyring.c                          | 2 +-
+ security/keys/permission.c                       | 2 +-
+ security/keys/proc.c                             | 1 -
+ security/keys/process_keys.c                     | 1 -
+ security/keys/request_key.c                      | 2 +-
+ security/keys/request_key_auth.c                 | 1 -
+ security/keys/user_defined.c                     | 2 +-
+ security/security.c                              | 2 +-
+ security/tomoyo/util.c                           | 2 +-
+ 29 files changed, 22 insertions(+), 39 deletions(-)
