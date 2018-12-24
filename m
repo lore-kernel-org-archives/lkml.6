@@ -2,112 +2,153 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 943B4C64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FF3C64E79
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2C12184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:00:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="m13uDjHT"
+	by mail.kernel.org (Postfix) with ESMTP id A3C782184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 19:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725830AbeLXTAq (ORCPT
+        id S1725834AbeLXTJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 14:00:46 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:50130 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbeLXTAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 14:00:45 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 3077DBB7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 19:00:44 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id n16YtQDeZ_s4 for <linux-kernel@vger.kernel.org>;
-        Mon, 24 Dec 2018 13:00:44 -0600 (CST)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        Mon, 24 Dec 2018 14:09:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58516 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbeLXTJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 14:09:31 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 02D469C3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 13:00:44 -0600 (CST)
-Received: by mail-io1-f72.google.com with SMTP id q207so11833870iod.18
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 11:00:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=HRlJkk/B03cDNB5P9fcyd7Sz9trQYzpYEkvCb+TAWDQ=;
-        b=m13uDjHT9soBdyLr9yidUsoEgfcorq0PtBUYa3Nm4bGYmgMR1yJ2lazH57M9359WfL
-         UxYCA8CLe7PeFRs2PFU3hWtzUZiLTRfnu4KlzF5hCfYSD7RuAca97HbcEXZHLG4Ulw+g
-         1oPyieIGmiRvz6BlOoP+MLTNyF5XAXwlwvKi3F7KjGwbqR8+h6D+RNtbJbrbgouQYaj6
-         /XaKnIjWn+74DwoTTeBJlquDTaSgLiYjgdZlBAL0w20TYljLa548104bYmpdlnqmkgNE
-         Lqxutu0mlDKWpnraTmMoh5HbwePIgQb4zEcLhC5ZcISbC1BpYqEdQvil6g5FW5i/Lorw
-         9rUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HRlJkk/B03cDNB5P9fcyd7Sz9trQYzpYEkvCb+TAWDQ=;
-        b=V4EKoVjz3vRxolSo2qVPPkVG0vZ3Yh0oT9mvKI1/lEt1MaB5U+JqrLLhfMtpuLNp2U
-         h0qnIhH9x5T7I4LFljV41D+dvYBky9FLOvQAlRlVyQ4dK8TpqP824BAwia+R1IO5WLQX
-         vSZIrnigfx5ZNUzkZltqnVSVQKEx6LH393b2FqXoxKTArfU5SCKXgusjXPqNC/vAjq1I
-         kzB7PLYn8+KHvShUfY3fozNMLREVMcyI7StuXVQAYNXtQFm2GrumNjq6B7NAI38O+MCe
-         Y5WLyr7wD+MlNAqqA2fAZ/ijvqFzvhx4238+JtvRqAk9Of4+elRxYnDzg+pywEMFGzwJ
-         3hgQ==
-X-Gm-Message-State: AJcUukf4OZBFNV7hF2QLWQ7IcuP+Ftz6KDbKzQ316YCTqm83NbQxa7v+
-        n0aSBKHLXMUpXXtmZTYfpNgQQPCJAbwDM8BV3wa9a01UFa/xf2SdOxBZbNrb2fC4ZW42wlNDhql
-        I/EjvOxMPaHmAHiWqf4kxMxJujYVq
-X-Received: by 2002:a6b:3b4f:: with SMTP id i76mr10167028ioa.266.1545678043617;
-        Mon, 24 Dec 2018 11:00:43 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN66j9dLJeQu9EplGRbsnB95dn7ke5Vj66+x/TkGFOiUWJ49uE2MEAptrO07rcKAnhweAY/C6w==
-X-Received: by 2002:a6b:3b4f:: with SMTP id i76mr10167017ioa.266.1545678043399;
-        Mon, 24 Dec 2018 11:00:43 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id q14sm10000997itb.36.2018.12.24.11.00.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 11:00:42 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        by mx1.redhat.com (Postfix) with ESMTPS id DAAEF234;
+        Mon, 24 Dec 2018 19:09:30 +0000 (UTC)
+Received: from redhat.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E48475D9C9;
+        Mon, 24 Dec 2018 19:09:29 +0000 (UTC)
+Date:   Mon, 24 Dec 2018 14:09:29 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     David Miller <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: Fix a missing check on regmap_bulk_read
-Date:   Mon, 24 Dec 2018 13:00:32 -0600
-Message-Id: <20181224190032.23167-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
+ vmap()
+Message-ID: <20181224140420-mutt-send-email-mst@kernel.org>
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213144116-mutt-send-email-mst@kernel.org>
+ <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+ <20181215.114308.647436101869587689.davem@davemloft.net>
+ <20181216144200-mutt-send-email-mst@kernel.org>
+ <f6ce1fbb-b634-b17d-e9cf-36c662f49d75@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6ce1fbb-b634-b17d-e9cf-36c662f49d75@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 24 Dec 2018 19:09:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, vc5_pll_recalc_rate() may produce incorrect output when
-regmap_bulk_read() fails. The fix checks the return value of the
-latter function and returns 0 in case of failure.
+On Mon, Dec 24, 2018 at 04:44:14PM +0800, Jason Wang wrote:
+> 
+> On 2018/12/17 上午3:57, Michael S. Tsirkin wrote:
+> > On Sat, Dec 15, 2018 at 11:43:08AM -0800, David Miller wrote:
+> > > From: Jason Wang <jasowang@redhat.com>
+> > > Date: Fri, 14 Dec 2018 12:29:54 +0800
+> > > 
+> > > > On 2018/12/14 上午4:12, Michael S. Tsirkin wrote:
+> > > > > On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
+> > > > > > Hi:
+> > > > > > 
+> > > > > > This series tries to access virtqueue metadata through kernel virtual
+> > > > > > address instead of copy_user() friends since they had too much
+> > > > > > overheads like checks, spec barriers or even hardware feature
+> > > > > > toggling.
+> > > > > > 
+> > > > > > Test shows about 24% improvement on TX PPS. It should benefit other
+> > > > > > cases as well.
+> > > > > > 
+> > > > > > Please review
+> > > > > I think the idea of speeding up userspace access is a good one.
+> > > > > However I think that moving all checks to start is way too aggressive.
+> > > > 
+> > > > So did packet and AF_XDP. Anyway, sharing address space and access
+> > > > them directly is the fastest way. Performance is the major
+> > > > consideration for people to choose backend. Compare to userspace
+> > > > implementation, vhost does not have security advantages at any
+> > > > level. If vhost is still slow, people will start to develop backends
+> > > > based on e.g AF_XDP.
+> > > Exactly, this is precisely how this kind of problem should be solved.
+> > > 
+> > > Michael, I strongly support the approach Jason is taking here, and I
+> > > would like to ask you to seriously reconsider your objections.
+> > > 
+> > > Thank you.
+> > Okay. Won't be the first time I'm wrong.
+> > 
+> > Let's say we ignore security aspects, but we need to make sure the
+> > following all keep working (broken with this revision):
+> > - file backed memory (I didn't see where we mark memory dirty -
+> >    if we don't we get guest memory corruption on close, if we do
+> >    then host crash as https://lwn.net/Articles/774411/ seems to apply here?)
+> 
+> 
+> We only pin metadata pages, so I don't think they can be used for DMA. So it
+> was probably not an issue. The real issue is zerocopy codes, maybe it's time
+> to disable it by default?
+> 
+> 
+> > - THP
+> 
+> 
+> We will miss 2 or 4 pages for THP, I wonder whether or not it's measurable.
+> 
+> 
+> > - auto-NUMA
+> 
+> 
+> I'm not sure auto-NUMA will help for the case of IPC. It can damage the
+> performance in the worst case if vhost and userspace are running in two
+> different nodes. Anyway I can measure.
+> 
+> 
+> > 
+> > Because vhost isn't like AF_XDP where you can just tell people "use
+> > hugetlbfs" and "data is removed on close" - people are using it in lots
+> > of configurations with guest memory shared between rings and unrelated
+> > data.
+> 
+> 
+> This series doesn't share data, only metadata is shared.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/clk/clk-versaclock5.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Let me clarify - I mean that metadata is in same huge page with
+unrelated guest data. 
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index decffb3826ec..cd76a893c594 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -413,7 +413,8 @@ static unsigned long vc5_pll_recalc_rate(struct clk_hw *hw,
- 	u32 div_int, div_frc;
- 	u8 fb[5];
- 
--	regmap_bulk_read(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5);
-+	if (regmap_bulk_read(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5))
-+		return 0;
- 
- 	div_int = (fb[0] << 4) | (fb[1] >> 4);
- 	div_frc = (fb[2] << 16) | (fb[3] << 8) | fb[4];
+> 
+> > 
+> > Jason, thoughts on these?
+> > 
+> 
+> Based on the above, I can measure the impact of THP to see how it impacts.
+> 
+> For unsafe variants, it can only work for when we can batch the access and
+> it needs non trivial rework on the vhost codes with unexpected amount of
+> work for archs other than x86. I'm not sure it's worth to try.
+> 
+> Thanks
+
+Yes I think we need better APIs in vhost. Right now
+we have an API to get and translate a single buffer.
+We should have one that gets a batch of descriptors
+and stores it, then one that translates this batch.
+
+IMHO this will benefit everyone even if we do vmap due to
+better code locality.
+
 -- 
-2.17.1
-
+MST
