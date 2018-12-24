@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64262C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9393C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF39D206A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B78BB21783
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:22:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="nmhwRqzQ"
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="cd6RISGi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeLXHWM (ORCPT
+        id S1726808AbeLXHWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 02:22:12 -0500
+        Mon, 24 Dec 2018 02:22:15 -0500
 Received: from owa.iluvatar.ai ([103.91.158.24]:51353 "EHLO owa.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbeLXHWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 02:22:12 -0500
+        id S1726750AbeLXHWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 02:22:13 -0500
 X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Dec 2018 02:22:11 EST
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
         c=relaxed/relaxed; t=1545635207; h=from:subject:to:date:message-id;
-        bh=o0/BudkDeESOycxFk/umCyHG5IkeZqskpiWlXBC69Q4=;
-        b=nmhwRqzQ07gUiioaiKFdiBA+jxJ7wFj76CcLT+C+2QdxBTaXMuf3WPj9M/DqtlhUCneHtg4869h
-        Yy6FKRW8H20ohFcS//U0Mnqww4qEfSby57FxCkLVa0YJmHhPVpDG/vR45F3N8Cm3Rxkg6G8y+B+M3
-        +zV2+RIhxe3TVTnSvAU=
+        bh=8v4/KKk+X6FipG/m4pDYobn/nLuJH7Dwnes+wppRiWo=;
+        b=cd6RISGiQv+W7+xiA2NVXVuWt6fKcWcqyqzQYtcpi3goVoyenzL8HxI7DQzzkM5HuEADrlb0sM1
+        6HMaKBS7fsykPPalntFKoZXkmqrJCjNV0Ona0iSuMV0u5w3JGBUw+RLGPgoEfulDzDCSO+V7GC4Hr
+        GU0kBxsA0mbWiEB+Rd4=
 Received: from localhost.localdomain (10.101.1.99) by
  S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
@@ -39,10 +39,12 @@ To:     <akpm@linux-foundation.org>
 CC:     <sfr@canb.auug.org.au>, <alexey.skidanov@intel.com>,
         <linux-kernel@vger.kernel.org>, <shijie8@gmail.com>,
         Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH 1/2] lib/genalloc.c: Use the vzalloc_node to allocate the bitmap.
-Date:   Mon, 24 Dec 2018 15:06:21 +0800
-Message-ID: <20181224070622.22197-1-sjhuang@iluvatar.ai>
+Subject: [PATCH 2/2] lib/genalloc.c: export symbol addr_in_gen_pool
+Date:   Mon, 24 Dec 2018 15:06:22 +0800
+Message-ID: <20181224070622.22197-2-sjhuang@iluvatar.ai>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181224070622.22197-1-sjhuang@iluvatar.ai>
+References: <20181224070622.22197-1-sjhuang@iluvatar.ai>
 MIME-Version: 1.0
 X-Originating-IP: [10.101.1.99]
 X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
@@ -52,28 +54,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some devices may have over 1G memory on chip.
-In some cases, the nbytes may big then 4M which is the bounday of
-the memory buddy system. So use vzalloc_node() to allocate the bitmap.
+We may use the addr_in_gen_pool() in the driver module.
+So export the addr_in_gen_pool for the compiling.
 
 Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
 ---
- lib/genalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/genalloc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 5deb25c40a5a..0d0ff9f0483f 100644
+index 0d0ff9f0483f..9da91a16046f 100644
 --- a/lib/genalloc.c
 +++ b/lib/genalloc.c
-@@ -187,7 +187,7 @@ int gen_pool_add_virt(struct gen_pool *pool, unsigned long virt, phys_addr_t phy
- 	int nbytes = sizeof(struct gen_pool_chunk) +
- 				BITS_TO_LONGS(nbits) * sizeof(long);
+@@ -450,6 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
+ 	rcu_read_unlock();
+ 	return found;
+ }
++EXPORT_SYMBOL(addr_in_gen_pool);
  
--	chunk = kzalloc_node(nbytes, GFP_KERNEL, nid);
-+	chunk = vzalloc_node(nbytes, nid);
- 	if (unlikely(chunk == NULL))
- 		return -ENOMEM;
- 
+ /**
+  * gen_pool_avail - get available free space of the pool
 -- 
 2.17.1
 
