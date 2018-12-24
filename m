@@ -2,122 +2,194 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BACEC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85845C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 001A621773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4137A20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 10:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="jhkb2KLd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OotLLFnn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725770AbeLXKNy (ORCPT
+        id S1725847AbeLXKQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 05:13:54 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42578 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbeLXKNy (ORCPT
+        Mon, 24 Dec 2018 05:16:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39109 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbeLXKQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 05:13:54 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l10so7948626lfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 02:13:53 -0800 (PST)
+        Mon, 24 Dec 2018 05:16:03 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so10017098ljh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 02:16:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XzfSQjR+KWr96uLBUlSlUb2qVfRyzU7+DIpahz0rd/I=;
-        b=jhkb2KLdYco0ApRgWfPxnX0RwqFvnhCKgabM6VL3n0yX50DEodHw3w//z+c9vKJp+O
-         yy4tIBS9089Y+Zm+TBIs5pGvczF1suQoabY29ogw9BziXXM9I2M4xmjUI8Q1FCU9eV5W
-         II2Eh5ggMtVg65vxk59rIQECgnjnZspEytIFOrWCXaDNgQ9lcgVVB+v+bo6XvPdePFwy
-         iM8tv1qkYF/Uk12+FZ/eP5BNflHabfdZy26yVrOeGNEOoSvTxZmvd0P/rlR+Wv/vHeSO
-         tRSzLMYjWpemWA4GOX3c+7HHuqRGow2U+vvHacodMu/byRpl/RrGQV3+5/k7wUY0eg7b
-         PeTA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T/wT/eRr0yY/d9o4nfu5+BxKvacqpZ9gol/p1Mvo6YQ=;
+        b=OotLLFnnK4mKdPu1Vy2VVH7R8vAFNcCeU2NeapmyCkTY6/l/sH6QtwumELxcnbsFW4
+         VM3ZeMuQnhlqF254QPNqo3HamyBkxw0rySWtZ8Y2WWBFnGAQqOYNl0KvcNeJMFDIc6ka
+         hlTRVxk6KMr6Fe25brjkY3hMFi6APzQ94qq/6ANnXkz5Kcpv+LodA0vSSe+IHcbCveR4
+         FQkqwQmmXLv2YFqhs/GIgpsGHt4VG78FTfdwXUouWz+w03dH1IDTAqg0oTPe30mmHx7N
+         z/pQ9p3fScbWbiRVOpiZhEhpPJvMey59AKphuhA6UlSEM1ToqZZ7UFf+xs8is3ZBlBc7
+         T25A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XzfSQjR+KWr96uLBUlSlUb2qVfRyzU7+DIpahz0rd/I=;
-        b=T3EMRaPm7mQMuxXpZTRGwOQZj5JUbTyvLC3NB3xhWdO9aDdWmhwjqPbUNRyKyOFp6s
-         0u4FA0glXhHKIG6XPztzTuRT4+FcnrLJLvUmyphEe4hMFnOH0ob0L9UZA01kBe+eBVgD
-         MgXC5MAp8rcuktdDOLmMIo0Dsj/LSpYZlNWK36bGTJq2nbSNpOdbFBzoHtLpIjdoy84J
-         6/6h+QMROXwrkJpmT7OkFG5aoEL386Trd4NFwXNwl0ycHl+HBlHdXMzKRYVR+lLIyAC0
-         SgPtzh82EfzkKxXyoCYKxqJR2mmoS5/2BoQ4/VDuN6Z+SWqlNXHKLk+N4Ozzc5bUMdbD
-         m4FQ==
-X-Gm-Message-State: AA+aEWa7f/80UJWxaQOMPJt+vY7QwPOok8dazUaxGH8lafll+RYsPro2
-        7ysvuBxfeMsJH3M0YMzeuQ4dWQ==
-X-Google-Smtp-Source: AFSGD/WBSS8CLrp5vfe44/oIn5JKDuaAzW2R4SqBILdkLVGrUd2+IqYe2nM8Ar3hFa1dT/Coed8UdQ==
-X-Received: by 2002:a19:2d16:: with SMTP id k22mr5940091lfj.12.1545646432196;
-        Mon, 24 Dec 2018 02:13:52 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain (mm-127-199-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.199.127])
-        by smtp.gmail.com with ESMTPSA id 12-v6sm6392392ljs.29.2018.12.24.02.13.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 02:13:51 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 887B9300816; Mon, 24 Dec 2018 13:13:49 +0300 (+03)
-Date:   Mon, 24 Dec 2018 13:13:49 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 0/2] hugetlbfs: use i_mmap_rwsem for better
- synchronization
-Message-ID: <20181224101349.jjjmk2hzwah6g64h@kshutemo-mobl1>
-References: <20181222223013.22193-1-mike.kravetz@oracle.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T/wT/eRr0yY/d9o4nfu5+BxKvacqpZ9gol/p1Mvo6YQ=;
+        b=syQja250JOVaco1+EiD4teR0CdvrdgY/oA1oX27Yg1mlFidDz1wxhUaXNVWGspWuyn
+         n1XBA8udMPpZxFkt2ZiFAsXWWBQt/h9SlYTmrrfq3uOO9Gfadhd8qAAFhIYvunxIVt3a
+         NujryVWCc2BHVE7uEr2IddvqoZLvKsz44euUNif4aAlstFl56mi7g4kyh7tqWDr3Wsiy
+         1R9lBZmOh8BOlCyA2POCtxiCYdoi/SsgEs3dBSqNh0v/+5o2rzeIpdnQ2DDo9qffz0gB
+         Shaur994UFjsKcf7SB8NMoaLsK2DZIjZhyMISuYmkcecxZuOkHB5zFRTK0lc0r3whZAn
+         wThA==
+X-Gm-Message-State: AJcUukfFaURlOTqCI6ANdas4+QRMyGb5xXJsltSEo00KN8yJZwaJKqXl
+        1JCmcCRc5bITki4TJjigd+RPpmCFvNy9SszuPQ==
+X-Google-Smtp-Source: ALg8bN6yGcfeWR2kORfRaF0AYCmnJ72juMhoLZzWVDmLoaZgw6scmn3I8bkmU/3OYg5sr49bjGHgrAnVrOOT+OBMW4Y=
+X-Received: by 2002:a2e:2d4:: with SMTP id y81-v6mr7163486lje.62.1545646560350;
+ Mon, 24 Dec 2018 02:16:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181222223013.22193-1-mike.kravetz@oracle.com>
-User-Agent: NeoMutt/20180716
+References: <20181223164954.hib4lbchftspidsd@suse.de> <20181223171703.s7jm6fkyosnsf33z@brauner.io>
+ <20181223180609.GA102606@dtor-ws> <CAEJqkgjSX8PW-NXa8CoMzx=2P5LOiDz0MCHoZ03zE7wZ=n2dKg@mail.gmail.com>
+ <20181224091703.GB26796@kroah.com>
+In-Reply-To: <20181224091703.GB26796@kroah.com>
+From:   Gabriel C <nix.or.die@gmail.com>
+Date:   Mon, 24 Dec 2018 11:15:34 +0100
+Message-ID: <CAEJqkgj2EjQq_aaspRs7uyTL4LxC9dRUTheN25H+QhjkLjjpjQ@mail.gmail.com>
+Subject: Re: FYI: Userland breakage caused by udev bind commit
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Marcus Meissner <christian.brauner@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 02:30:11PM -0800, Mike Kravetz wrote:
-> There are two primary issues addressed here:
-> 1) For shared pmds, huge PTE pointers returned by huge_pte_alloc can become
->    invalid via a call to huge_pmd_unshare by another thread.
-> 2) hugetlbfs page faults can race with truncation causing invalid global
->    reserve counts and state.
-> Both issues are addressed by expanding the use of i_mmap_rwsem.
-> 
-> These issues have existed for a long time.  They can be recreated with a
-> test program that causes page fault/truncation races.  For simple mappings,
-> this results in a negative HugePages_Rsvd count.  If racing with mappings
-> that contain shared pmds, we can hit "BUG at fs/hugetlbfs/inode.c:444!" or
-> Oops! as the result of an invalid memory reference.
-> 
-> v2 -> v3
->   Incorporated suggestions from Kirill.  Code change to hold i_mmap_rwsem
->   for duration of copy in copy_hugetlb_page_range.  Took i_mmap_rwsem in
->   hugetlbfs_evict_inode to be consistent with other callers.  Other changes
->   were to documentation/comments.
-> v1 -> v2
->   Combined patches 2 and 3 of v1 series as suggested by Aneesh.  No other
->   changes were made.
-> Patches are a follow up to the RFC,
->   http://lkml.kernel.org/r/20181024045053.1467-1-mike.kravetz@oracle.com
->   Comments made by Naoya were addressed.
-> 
-> Mike Kravetz (2):
->   hugetlbfs: use i_mmap_rwsem for more pmd sharing synchronization
->   hugetlbfs: Use i_mmap_rwsem to fix page fault/truncate race
+Am Mo., 24. Dez. 2018 um 10:17 Uhr schrieb Greg KH <gregkh@linuxfoundation.org>:
+>
+> On Mon, Dec 24, 2018 at 08:31:27AM +0100, Gabriel C wrote:
+> > Am So., 23. Dez. 2018 um 19:09 Uhr schrieb Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com>:
+> >
+> > [ also added Linus to CC on that one too ]
+> > >
+> > > On Sun, Dec 23, 2018 at 06:17:04PM +0100, Christian Brauner wrote:
+> > > > On Sun, Dec 23, 2018 at 05:49:54PM +0100, Marcus Meissner wrote:
+> > > > > Hi,
+> > > > >
+> > > > > I am the maintainer of libmtp and libgphoto2
+> > > > >
+> > > > > Some months ago I was made aware of this bug:
+> > > > >     https://bugs.kde.org/show_bug.cgi?id=387454
+> > > > >
+> > > > > This was fallout identified to come from this kernel commit:
+> > > > >
+> > > > >     commit 1455cf8dbfd06aa7651dcfccbadb7a093944ca65
+> > > > >     Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > > >     Date:   Wed Jul 19 17:24:30 2017 -0700
+> > > >
+> > > > Fwiw, the addition of {un}bind events has caused issues for
+> > > > systemd-udevd as well and is tracked here:
+> > > > https://github.com/systemd/systemd/issues/7587
+> > > > I haven't been aware of this until yesterday and it seems that so far
+> > > > this hasn't been brought up on lkml until you did now.
+> > >
+> > > The fallout was caused by premature enabling of the new events in
+> > > systemd/udev by yours truly (even though the commit has Lennart's name
+> > > on it due to how it was merged):
+> > >
+> > > https://github.com/systemd/systemd/commit/9a39e1ce314d1a6f8a754f6dab040019239666a9
+> > >
+> > > "Add handling for bind/unbind actions (#6720)
+> > >
+> > > Newer kernels will emit uevents with "bind" and "unbind" actions. These
+> > > uevents will be issued when driver is bound to or unbound from a device.
+> > > "Bind" events are helpful when device requires a firmware to operate
+> > > properly, and driver is unable to create a child device before firmware
+> > > is properly loaded.
+> > >
+> > > For some reason systemd validates actions and drops the ones it does not
+> > > know, instead of passing them on through as old udev did, so we need to
+> > > explicitly teach it about them."
+> > >
+> > > Similarly it is now papered over in systemd/udev until we make it
+> > > properly handle new events:
+> > >
+> > > https://github.com/systemd/systemd/commit/56c886dc7ed5b2bb0882ba85136f4070545bfc1b
+> > >
+> > > "sd-device: ignore bind/unbind events for now
+> > >
+> > > Until systemd/udev are ready for the new events and do not flush entire
+> > > device state on each new event received, we should ignore them."
+> > >
+> >
+> > And how about peoples still uses systemd < 235 and newer kernels ?
+>
+> Is that an issue?  Who uses that, and does it cause problems on their
+> systems given that the events just do not do anything for those systems?
+>
+> We tested this out a lot back in the summer of 2017 and I thought all
+> was well.  What recently changed that caused breakages to suddenly show
+> up?  How have we not seen this until now?
+>
 
-Looks good to me.
+Well people observed that , please click the bug link for that KDE bug.
+Reported '2017-11-30'..
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+I can reproduce that on systemd 231 ( which we have here ) and
+kernels >= 4.14 just easy.
 
--- 
- Kirill A. Shutemov
+Can't use any mtp devices all dropping :
+
+The file or folder udi=/org/kde/solid/udev/.......  does not exists'
+
+Why it got not reported here is probably because people are shy to
+report such things to LKML.
+
+> We can drop the "new" uevents now by reverting the patch, but what about
+> the userspace tools that now depend on them as we have had them in our
+> kernels for so long?  We can't now break them, right?  Should we add a
+> new kernel config option to not emit those for older userspaces that can
+> not handle this (of which I really still do not understand given that we
+> tested the heck out of this last year...)
+
+Peoples started to add workarounds to make it work somewhat again.
+
+Greg any such changes to udev are very fragile.
+Also dropping some patch to systemd-udev won't solve anything on such moves.
+
+Remember there exists other udev impelmentations too and not only that.
+
+See example below :
+
+app1- xxx - depending on some udev / kernel behaviour ( add rule in this case )
+kernel - xxx changes that ( adding bind which confuses add to usersapce )
+
+- on update to that kernel app1 breaks..
+- udevd - drops an patch in to catch up
+- app1 trying to workaround now both ( which is that case here )
+   and now here the mess starts.
+
+Having app1-fixed for kernel who changed behaviour and using now
+and kernel does not have this makes app1 breaks again
+
+Using fixed udev and app1 without workarounds on kernel with bind breaks,
+using not fixed udev , app1 without workround breaks etc..
+
+>
+> still confused,
+>
+
+The problem I see here is 'bind' confuses 'add'.
+
+So is there a way to make bind event _not_ confusing add event ?
+
+> greg k-h
