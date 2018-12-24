@@ -3,189 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFE3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43CBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79E021773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B5C21773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbeLXHx0 (ORCPT
+        id S1726848AbeLXHyj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 02:53:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50434 "EHLO mx1.redhat.com"
+        Mon, 24 Dec 2018 02:54:39 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:38018 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726733AbeLXHxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 02:53:25 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0E6F88304;
-        Mon, 24 Dec 2018 07:53:24 +0000 (UTC)
-Received: from [10.72.12.206] (ovpn-12-206.pek2.redhat.com [10.72.12.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B84291001942;
-        Mon, 24 Dec 2018 07:53:20 +0000 (UTC)
-Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
- virtual address
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213101022.12475-4-jasowang@redhat.com>
- <20181213102713-mutt-send-email-mst@kernel.org>
- <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
- <20181214073332-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <2ea274df-a79a-250f-648f-12927529d78a@redhat.com>
-Date:   Mon, 24 Dec 2018 15:53:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726733AbeLXHyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 02:54:39 -0500
+Received: from [46.183.103.8] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gbL4K-0003Aj-4f; Mon, 24 Dec 2018 08:54:32 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     "zhangqing@rock-chips.com" <zhangqing@rock-chips.com>
+Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        linux-rockchip <linux-rockchip@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: rockchip: fix frac settings of GPLL clock for rk3328
+Date:   Mon, 24 Dec 2018 08:54:31 +0100
+Message-ID: <2107849.4rvOjsJc15@phil>
+In-Reply-To: <20181224154804602776216@rock-chips.com>
+References: <20181222164249.25620-1-katsuhiro@katsuster.net> <1587344.DIk9eYpvKM@phil> <20181224154804602776216@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20181214073332-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 24 Dec 2018 07:53:25 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Elaine,
 
-On 2018/12/14 下午8:36, Michael S. Tsirkin wrote:
-> On Fri, Dec 14, 2018 at 11:57:35AM +0800, Jason Wang wrote:
->> On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
->>> On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
->>>> It was noticed that the copy_user() friends that was used to access
->>>> virtqueue metdata tends to be very expensive for dataplane
->>>> implementation like vhost since it involves lots of software check,
->>>> speculation barrier, hardware feature toggling (e.g SMAP). The
->>>> extra cost will be more obvious when transferring small packets.
->>>>
->>>> This patch tries to eliminate those overhead by pin vq metadata pages
->>>> and access them through vmap(). During SET_VRING_ADDR, we will setup
->>>> those mappings and memory accessors are modified to use pointers to
->>>> access the metadata directly.
->>>>
->>>> Note, this was only done when device IOTLB is not enabled. We could
->>>> use similar method to optimize it in the future.
->>>>
->>>> Tests shows about ~24% improvement on TX PPS when using virtio-user +
->>>> vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
->>>>
->>>> Before: ~5.0Mpps
->>>> After:  ~6.1Mpps
->>>>
->>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
->>>> ---
->>>>    drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
->>>>    drivers/vhost/vhost.h |  11 +++
->>>>    2 files changed, 189 insertions(+)
->>>>
->>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->>>> index bafe39d2e637..1bd24203afb6 100644
->>>> --- a/drivers/vhost/vhost.c
->>>> +++ b/drivers/vhost/vhost.c
->>>> @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
->>>>    		vq->indirect = NULL;
->>>>    		vq->heads = NULL;
->>>>    		vq->dev = dev;
->>>> +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
->>>> +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
->>>> +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
->>>>    		mutex_init(&vq->mutex);
->>>>    		vhost_vq_reset(dev, vq);
->>>>    		if (vq->handle_kick)
->>>> @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
->>>>    	spin_unlock(&dev->iotlb_lock);
->>>>    }
->>>> +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
->>>> +			   size_t size, int write)
->>>> +{
->>>> +	struct page **pages;
->>>> +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
->>>> +	int npinned;
->>>> +	void *vaddr;
->>>> +
->>>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
->>>> +	if (!pages)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
->>>> +	if (npinned != npages)
->>>> +		goto err;
->>>> +
->>> As I said I have doubts about the whole approach, but this
->>> implementation in particular isn't a good idea
->>> as it keeps the page around forever.
+Am Montag, 24. Dezember 2018, 08:48:05 CET schrieb zhangqing@rock-chips.com:
+> Hi: Heiko:
+> 
+> This explanation and the change is OK. Thanks for Katsuhiro's correction.
+
+thanks for your quick confirmation. Can I make this an
+
+Acked-by: Elaine Zhang <zhangqing@rock-chips.com>
+
+when applying the patch?
+
+Thanks
+Heiko
 
 
-The pages wil be released during set features.
+> 张晴
+> 福州瑞芯微电子股份有限公司
+> Fuzhou Rockchip Electronics Co.,Ltd
+> 地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
+> Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
+> Tel:+86-0591-83991906-8601
+> 邮编：350003
+> E-mail:elaine.zhang@rock-chips.com
+>  
+> From: Heiko Stuebner
+> Date: 2018-12-24 15:34
+> To: Katsuhiro Suzuki; Finley Xiao; Elaine Zhang
+> CC: linux-rockchip; linux-arm-kernel; linux-kernel
+> Subject: Re: [PATCH] clk: rockchip: fix frac settings of GPLL clock for rk3328
+> Hi,
+>  
+> Am Samstag, 22. Dezember 2018, 17:42:49 CET schrieb Katsuhiro Suzuki:
+> > This patch fixes settings of GPLL frequency in fractional mode for
+> > rk3328. In this mode, FOUTVCO is calcurated by following formula:
+> >   FOUTVCO = FREF * FBDIV / REFDIV + ((FREF * FRAC / REFDIV) >> 24)
+> > 
+> > The problem is in FREF * FRAC >> 24 term. This result always lacks
+> > one from target value is specified by rate member. For example first
+> > itme of rk3328_pll_frac_rate originally has
+> >   - rate  : 1016064000
+> >   - refdiv: 3
+> >   - fbdiv : 127
+> >   - frac  : 134217
+> >   - FREF * FBDIV / REFDIV        = 1016000000
+> >   - (FREF * FRAC / REFDIV) >> 24 = 63999
+> > Thus calculated rate is 1016063999. It seems wrong.
+> > 
+> > If frac has 134218 (it is increased 1 from original value), second
+> > term is 64000. All other items have same situation. So this patch
+> > adds 1 to frac member in all items of rk3328_pll_frac_rate.
+> > 
+> > Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>  
+> so while this sounds all quite right to me, I've added some Rockchip
+> people that have clock experience to hopefully get an Ack on the
+> change :-)
+>  
+> @Elaine + Finley: does this explanation and the below change look right?
+>  
+>  
+> Thanks
+> Heiko
+>  
+> > ---
+> >  drivers/clk/rockchip/clk-rk3328.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+> > index faa94adb2a37..65ab5c2f48b0 100644
+> > --- a/drivers/clk/rockchip/clk-rk3328.c
+> > +++ b/drivers/clk/rockchip/clk-rk3328.c
+> > @@ -78,17 +78,17 @@ static struct rockchip_pll_rate_table rk3328_pll_rates[] = {
+> >  
+> >  static struct rockchip_pll_rate_table rk3328_pll_frac_rates[] = {
+> >  /* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
+> > - RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134217),
+> > + RK3036_PLL_RATE(1016064000, 3, 127, 1, 1, 0, 134218),
+> >  /* vco = 1016064000 */
+> > - RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671088),
+> > + RK3036_PLL_RATE(983040000, 24, 983, 1, 1, 0, 671089),
+> >  /* vco = 983040000 */
+> > - RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671088),
+> > + RK3036_PLL_RATE(491520000, 24, 983, 2, 1, 0, 671089),
+> >  /* vco = 983040000 */
+> > - RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671088),
+> > + RK3036_PLL_RATE(61440000, 6, 215, 7, 2, 0, 671089),
+> >  /* vco = 860156000 */
+> > - RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797894),
+> > + RK3036_PLL_RATE(56448000, 12, 451, 4, 4, 0, 9797895),
+> >  /* vco = 903168000 */
+> > - RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066329),
+> > + RK3036_PLL_RATE(40960000, 12, 409, 4, 5, 0, 10066330),
+> >  /* vco = 819200000 */
+> >  { /* sentinel */ },
+> >  };
+> > 
+>  
+>  
+>  
+>  
+>  
+> 
 
 
->>> So no THP, no NUMA rebalancing,
 
 
-For THP, we will probably miss 2 or 4 pages, but does this really matter 
-consider the gain we have? For NUMA rebalancing, I'm even not quite sure 
-if it can helps for the case of IPC (vhost). It looks to me the worst 
-case it may cause page to be thrash between nodes if vhost and userspace 
-are running in two nodes.
-
-
->>
->> This is the price of all GUP users not only vhost itself.
-> Yes. GUP is just not a great interface for vhost to use.
-
-
-Zerocopy codes (enabled by defualt) use them for years.
-
-
->
->> What's more
->> important, the goal is not to be left too much behind for other backends
->> like DPDK or AF_XDP (all of which are using GUP).
->
-> So these guys assume userspace knows what it's doing.
-> We can't assume that.
-
-
-What kind of assumption do you they have?
-
-
->
->>> userspace-controlled
->>> amount of memory locked up and not accounted for.
->>
->> It's pretty easy to add this since the slow path was still kept. If we
->> exceeds the limitation, we can switch back to slow path.
->>
->>> Don't get me wrong it's a great patch in an ideal world.
->>> But then in an ideal world no barriers smap etc are necessary at all.
->>
->> Again, this is only for metadata accessing not the data which has been used
->> for years for real use cases.
->>
->> For SMAP, it makes senses for the address that kernel can not forcast. But
->> it's not the case for the vhost metadata since we know the address will be
->> accessed very frequently. For speculation barrier, it helps nothing for the
->> data path of vhost which is a kthread.
-> I don't see how a kthread makes any difference. We do have a validation
-> step which makes some difference.
-
-
-The problem is not kthread but the address of userspace address. The 
-addresses of vq metadata tends to be consistent for a while, and vhost 
-knows they will be frequently. SMAP doesn't help too much in this case.
-
-Thanks.
-
-
->
->> Packet or AF_XDP benefit from
->> accessing metadata directly, we should do it as well.
->>
->> Thanks
