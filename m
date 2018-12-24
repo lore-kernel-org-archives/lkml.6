@@ -6,70 +6,70 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD75C64E79
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B130C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC6621773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23F83218B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 22:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545692276;
-	bh=LUql6knGzn7ff3iAj10k5Lay4S6LmBh3s3COv5O36TY=;
+	s=default; t=1545692319;
+	bh=8fmQdtF6LCJWlBCQmfCrygRNCFTG5RnzmkK+BlVh0u4=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=nRsiJMbppBCoIhNI+MmDb6ZMA5F6vYpZ4WvcM+Z+F3MAxdEw1H2ZAwnk/UvFEnj+P
-	 wML+WRTWGZRLuNLTyUKx/ONZ4EQFEpZgrZjyWfHj6pcqAncENUb3DBMNZsSyNIcSA5
-	 WfsvrgasDWd9iDvFphm0nYgvKwTbaVDCGxsfvkCA=
+	b=JLMb/DovGwrcBwORsvv2keTb+olpVcfQd1ZkXsIYZ2fyQIdEySKOHk1YEMhyUAS7v
+	 LpXK19SWfhzOmo1v6P6ihBD68ZPBKeWVCDU+d2P0OTGfawT8ZCMZHySvugBnxkVxyR
+	 qqbTRN+nUO7eRmyRgQvgspzaz24hlS9cTN9fwpTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725844AbeLXW5z (ORCPT
+        id S1725863AbeLXW6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 17:57:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46929 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeLXW5z (ORCPT
+        Mon, 24 Dec 2018 17:58:37 -0500
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:50298 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeLXW6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 17:57:55 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l9so12590245wrt.13
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 14:57:54 -0800 (PST)
+        Mon, 24 Dec 2018 17:58:37 -0500
+Received: by mail-wm1-f47.google.com with SMTP id n190so12068851wmd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 14:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=Uf8JVqcP6NEQrrj13e8e0EuEGoViOXOi+8gPXZdR4I4=;
-        b=R9kS3lC3rvh6RWPzaNDVcAOxoSPeRJfF2MfBkDxCm6cGVljwAgCy4gkEkvNdSY0nFg
-         7TWqYJetUvuxlykb4k6VB6EtsLPwyyWIhgNC31g3JGTKdUhHfcLoeCkdYg07OOyuyhil
-         pEWysviZaIxmmoJlHE81/pFum5lIymtivYsUPWzuA4j3Hf3T8TCOjuf6JKo/b59+UDaD
-         0VKTAylgwzVM+TgxDzzqVPhGTtvqg6fiXX8r5xY/A3r95OjdkB7fEt1VG1UbhGh8BmuT
-         xUmJT50q5BHS6NkzlWhbA8hebLgigog/pSIgGsMQEVzKuLdq2XYLY+DLN0BEmcIGbi1U
-         XL0A==
+        bh=2RLiR110ag0+6woys/nIxBkOIf4y7vt17rWq2+OAZDI=;
+        b=A9HRykOh4+1lI4pC/a64E2Zm+S0vffvblXSDt3rpV57VLe5ZHrT/rQP7khXVPHzVGj
+         W1krUYZ4k6hNpNnxhFSHFNW4/4MNJHsJq2anCcQFIpu+95jMbhiRuhPu12K4IsgSaz8/
+         2Uky9PUW6i8WBGguiiis05sdUOt5JDYhgZtJqTe6+pU5WygMQLvWCS6uW36wSmXseQh8
+         aoGg26KnzX8mkxOQrzQ3N6LX6Fe/AIW/eaQ1M8XZrGypgpWOI03H6XRCtTYx5XrWZ7LH
+         0Z1zxSIU5Jm2+oI1s4vmYCQ4LW5LU2eLRUq35a8jU02m+cPhWMPhSIkcQsQ8X/bi708l
+         k6Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mime-version:content-disposition:user-agent;
-        bh=Uf8JVqcP6NEQrrj13e8e0EuEGoViOXOi+8gPXZdR4I4=;
-        b=kUtTQxo6xzSDupD3G8j9AkSOPIRaBp0qLM0ABzV09oqZeBFTedW/p4qR1lHc60g7q/
-         Oh7vmHcd7XriursF0eLqyF8tkw5kqYGpMZxFiVelTsKtBh2OHu+EJe1+eL++81aRVsBH
-         kGQDkTmVySTrgX4vL3T2zbNfU2JVxS/ihvFwsUwltza7Zz76T643EnXjC61JlJDlwVo+
-         xwZ7rWmqSHrWlxufNHPrfRvMccSyN3faBU1QWskZ4HQkBgFMDC+H5dagNpy5s2LDphbu
-         vzN1nJy8R47TYocUER2jRnH8oDotBqujAvWRJtkpcrwA+HKE/DQI3NGi8w6pqsj4Chs8
-         wQOA==
-X-Gm-Message-State: AJcUukdBX3YwwkIltX64QgCVYZnX2F7uldwf7pSmQVZpFsZKQFd6HZcx
-        amcHfDjCSUtNXiglMPLSdP0=
-X-Google-Smtp-Source: ALg8bN40oKIYNG3+L/7sLO3mCm0xY+x5u8NUv4toJHXdfwMEIFOZqOsKU+FqweGOkAHqYyDy/NmS/Q==
-X-Received: by 2002:a5d:4652:: with SMTP id j18mr13481864wrs.279.1545691807725;
-        Mon, 24 Dec 2018 14:50:07 -0800 (PST)
+        bh=2RLiR110ag0+6woys/nIxBkOIf4y7vt17rWq2+OAZDI=;
+        b=J1NeTZJ1jkyjb6ECscypi7R2EfXNrRZ7yAOyWaz0uQwaYMlBY6gfg4v95qily0DVDL
+         Lh7WiGp1CSkFvfPAqM23+XMJA7Kjf7Cji7oYHiOHQmwz/Yze2lh/k/nCJFlrN4Euivg5
+         4jh8bGarFXCTegj1J6Q72bAxkAsedcAI/ZM4rC8coqZwzkWdVQ4Ex1wI7sAMYyr5v3S9
+         NFzPCH9HknJ6WW7yZ1TOhO+uiHQ6KEA4CGtHk1scVsLxP3wn9ORul9RyN12EeXp88dqF
+         XZBe7oLZ0uN0xIHF7y1TbY1Lw9XsuW2hx6v9S7xuiLgRfeegZIRIR2Kbex4Emix0721D
+         /5Fg==
+X-Gm-Message-State: AA+aEWYocjoXGWYfz1AN1PqpJyLN2duFkQKPCQ2R64RumOP8pPwbqGCJ
+        93S1hIjF38Fw/VzeTCFS2Q0=
+X-Google-Smtp-Source: ALg8bN4HPOLP1Kd4PRPhe3K0tZlyUN5CiYQIoSPgKZ7c3fWVN9y7rbQEG37riXqlIZG2hNCPOnNR7w==
+X-Received: by 2002:a1c:6e06:: with SMTP id j6mr13710732wmc.3.1545692314680;
+        Mon, 24 Dec 2018 14:58:34 -0800 (PST)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id o17sm48542385wmg.35.2018.12.24.14.50.06
+        by smtp.gmail.com with ESMTPSA id a62sm19153346wmf.47.2018.12.24.14.58.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Dec 2018 14:50:07 -0800 (PST)
-Date:   Mon, 24 Dec 2018 23:50:04 +0100
+        Mon, 24 Dec 2018 14:58:33 -0800 (PST)
+Date:   Mon, 24 Dec 2018 23:58:31 +0100
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [GIT PULL] x86/amd-nb changes for v4.21
-Message-ID: <20181224225004.GA96500@gmail.com>
+        Richard Weinberger <richard@nod.at>
+Subject: [GIT PULL] x86/build changes for v4.21
+Message-ID: <20181224225831.GA36544@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -81,44 +81,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest x86-amd-nb-for-linus git tree from:
+Please pull the latest x86-build-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-amd-nb-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-build-for-linus
 
-   # HEAD: 210ba1201ff950b3d05bfd8fa5d47540cea393c0 hwmon/k10temp: Add support for AMD family 17h, model 30h CPUs
+   # HEAD: e4f752dda0de351efd198f438b68e743029da68a x86/um/vdso: Drop implicit common-page-size linker flag
 
-Update DF/SMN access and k10temp for AMD F17h M30h, by Brian Woods:
+ - resolve LLVM build bug by removing redundant GNU specific flag
 
-  "Updates the data fabric/system management network code needed to get
-   k10temp working for M30h.  Since there are now processors which have
-   multiple roots per DF/SMN interface, there needs to some logic which
-   skips N-1 root complexes per DF/SMN interface.  This is because the root
-   complexes per interface are redundant (as far as DF/SMN goes).  These
-   changes shouldn't effect past processors and, for F17h M0Xh, the
-   mappings stay the same."
+ - remove obsolete -funit-at-a-time and -fno-unit-at-a-time use from x86 
+   PowerPC and UM.
 
-The hwmon changes were seen and acked by hwmon maintainer Guenter Roeck.
+The UML change was seen and acked by UML maintainer Richard Weinberger.
 
-  out-of-topic modifications in x86-amd-nb-for-linus:
-  -----------------------------------------------------
-  drivers/hwmon/k10temp.c            # 210ba1201ff9: hwmon/k10temp: Add support f
-                                   # dedf7dce4cec: hwmon/k10temp, x86/amd_nb: C
-  include/linux/pci_ids.h            # be3518a16ef2: x86/amd_nb: Add PCI device I
-                                   # dedf7dce4cec: hwmon/k10temp, x86/amd_nb: C
+  out-of-topic modifications in x86-build-for-linus:
+  ----------------------------------------------------
+  arch/powerpc/Makefile              # 63fea0af43af: x86, powerpc: Remove -funit-
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Woods, Brian (4):
-      hwmon/k10temp, x86/amd_nb: Consolidate shared device IDs
-      x86/amd_nb: Add support for newer PCI topologies
-      x86/amd_nb: Add PCI device IDs for family 17h, model 30h
-      hwmon/k10temp: Add support for AMD family 17h, model 30h CPUs
+Masahiro Yamada (2):
+      x86/um: Remove -fno-unit-at-a-time workaround for pre-4.0 GCC
+      x86, powerpc: Remove -funit-at-a-time compiler option entirely
+
+Nick Desaulniers (1):
+      x86/um/vdso: Drop implicit common-page-size linker flag
 
 
- arch/x86/kernel/amd_nb.c | 53 ++++++++++++++++++++++++++++++++++++++++--------
- drivers/hwmon/k10temp.c  | 10 ++-------
- include/linux/pci_ids.h  |  3 +++
- 3 files changed, 50 insertions(+), 16 deletions(-)
+ arch/powerpc/Makefile     | 4 ----
+ arch/x86/Makefile         | 4 ----
+ arch/x86/Makefile.um      | 9 ---------
+ arch/x86/um/vdso/Makefile | 2 +-
+ 4 files changed, 1 insertion(+), 18 deletions(-)
