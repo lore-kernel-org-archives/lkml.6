@@ -2,191 +2,132 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAAEC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 23:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB42C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 23:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64AE021773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 23:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545692441;
-	bh=p6lE/cenyn788coVwHeycyluK6PEVcc0tua5XLnlQmQ=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=uEhcTx4SRRqLIgaGnudwqW+5geNSllRh+WH2BZivRYnXruMdNpBy/pzyV4HokLqGA
-	 YM+VGXHLEbyjjMQcdMHEBHDI8pTV0secEKF8PmDp7jGaHsK9GWi/SodM/aGLzUALuB
-	 Bhx50mMfwKOC2J6VfT7LSEbSUxGkb9yRUh2Hil1s=
+	by mail.kernel.org (Postfix) with ESMTP id 2B04F21773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 23:01:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sb4HTdN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725834AbeLXXAj (ORCPT
+        id S1725861AbeLXXBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 18:00:39 -0500
-Received: from mail-wm1-f44.google.com ([209.85.128.44]:35063 "EHLO
-        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbeLXXAj (ORCPT
+        Mon, 24 Dec 2018 18:01:07 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44247 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725788AbeLXXBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 18:00:39 -0500
-Received: by mail-wm1-f44.google.com with SMTP id t200so651542wmt.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 15:00:36 -0800 (PST)
+        Mon, 24 Dec 2018 18:01:06 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e11so5970256plt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 15:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=lNqpWJTwoyR40WLk6yV6sbgTLviFeYqn5NRS3neQwWU=;
-        b=Ui4i1v0D/l1OYfBmZiHddOh1oVi81yQR1BHYIhmL2+hX28gpyCCSJEtzrAK2NCiVs1
-         zhOKHFEdYFViV4xy3i7NQI4K1J8si/nDVe0ykpsKrJyltvA0VAhY/oEpKYB63/BAZL6h
-         wunrrCULK2bM7HVB4T3xiUSH+etlQLWpVFHT9eT7ZxEstLVXUWa1nGqCOoZXkpTO5I1N
-         ZfxYRS7bUMQPgnXJTOYO+PS2Or8raF1wrLMTCJWkqar0GURzDwfjTTZzlwE3aSXoraEa
-         9TLrav7AUbeQ7U1APSS1IV1wAjYkkCffkb8x7FzTZ2D0wYVPpkajUG/z0pvkgLrsoshL
-         aGbw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AjwGFShSmwBpgIsOulFohDAx7qV0Yc6oE6h/b9t4lYk=;
+        b=sb4HTdN+DV7UssoM/+FO57CZpJd6CpmMuyiAPaN8YsOe/9JS3/Sm1d7iHYkGiq34KB
+         /hXPgzChzIJGkFYfg8/NkyUJcIo70w6+iwegWvcwRif1OSASh/r/UOdOmfOIHYEpDqYA
+         Dz1TbbjBe61UVnGvXwsvTAKpxqrMWsg2j47bsvgNHsmRIvEmRRAdJ9439aaPFadoPcWp
+         LhfynR7JoQa5E5fmFbl0lH5eSe6lOns8bA8l8X9N4Fq0wL/CTZRsqEYdgTQYrh5Tk9DN
+         ItjWsj81zzW+veV2BKOH7mRxSKW1WR58iY6Y/y+h0/irrVWbaF/ZyAVvpBb/N1Ts5rfv
+         ycIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=lNqpWJTwoyR40WLk6yV6sbgTLviFeYqn5NRS3neQwWU=;
-        b=QyZF2bnsvZ6QcNzkQQagexIKkAapi7s5/VZ69h+EasXt16MiodR3/b95F7ccuGwmbw
-         XiNRTH0ez0c1X4Rg8L2upapBmQjMoaili9QrCpywLPyCIzYHfAPfsTNU/3ZYeshj5kt6
-         TVLxEgoLNXYZjlJO0sqcGykuw4fTDC3hH78cUALpU8w42duCforaYcyLUM1QzlmVeVrt
-         AoJRd+lFs7J9yCTWx3ULzEAEC8PQjYVDdXQjxQPSFDGTN4vAixpviPhOdp6HJwIQ4dbX
-         oYUOewMfqSf47QppQfn8MoGBd8/rNNuuU4aidqhtS9QUr4uoUUQhSdSpeSPFzNBnoirC
-         zfrQ==
-X-Gm-Message-State: AJcUukcew/o0d9gq5iOJl/vgHe+es/4p4m/kWiN06miBYsr9LQ0CyyQE
-        ral+ywarLx1pBftRg1eQSDw=
-X-Google-Smtp-Source: AFSGD/Vdio7Tiiw9cHConYshQkr5fRgDWQTfazAeHElQe4ExVJNeL+GIBF9zf+1DYYXsRKBRrMi2Dw==
-X-Received: by 2002:a1c:1d8e:: with SMTP id d136mr13157048wmd.98.1545692435976;
-        Mon, 24 Dec 2018 15:00:35 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id r12sm30098096wrq.3.2018.12.24.15.00.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Dec 2018 15:00:35 -0800 (PST)
-Date:   Tue, 25 Dec 2018 00:00:33 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AjwGFShSmwBpgIsOulFohDAx7qV0Yc6oE6h/b9t4lYk=;
+        b=te+X4JzJHUPlCGTwB1luWchy6UbJg2SrUVa8AlanvlzC0tEWMZxSh80fzt+u6FADEm
+         PcDrbp38QCzhegIK6xkd9pTooA7UeS2lNbY25wiMe32XuXv3EGPfXFHcnRHHmJpymkeL
+         tL2bUN/Pfy4+k1RiFBpW2xHbmG8DnLqUjChlq47Cddy800mMomohBD2M9ETqx+t7h6bW
+         z0drn7jxS7zi2bSR+wf52f2ei11/6Bk6B8i8MzjFYIXb5epvS8iraSfW9YMSq1OjJKIQ
+         wUhmeiVrQJ7yV1B/ISX8ckrBtR+/dd+ZolAzafzdk1JCHvfHFK+TY+J1EIy0V8a9RsDD
+         PEzA==
+X-Gm-Message-State: AJcUuke2npWuMt6KpCq1JJ41eX5jgD8FjOp2jUzfgwYkD0ohsMZNFSkr
+        YhVgmzNGPyEVlg+CL9FnpW0=
+X-Google-Smtp-Source: ALg8bN4D8wkbZO6IqISKHaFTw/SGCW3O4bnM1ZnK85jWzwYwR+s03IIX3gmCQBVcOm9GxEfmf/rQvQ==
+X-Received: by 2002:a17:902:280b:: with SMTP id e11mr14531659plb.269.1545692465940;
+        Mon, 24 Dec 2018 15:01:05 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id v12sm47051806pgg.41.2018.12.24.15.01.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Dec 2018 15:01:04 -0800 (PST)
+Subject: Re: [GIT PULL] x86/amd-nb changes for v4.21
+To:     Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/cleanups for v4.21
-Message-ID: <20181224230033.GA65522@gmail.com>
+References: <20181224225004.GA96500@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <0308c977-2105-5d33-adb9-9e1f00b2a1e0@roeck-us.net>
+Date:   Mon, 24 Dec 2018 15:01:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181224225004.GA96500@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 12/24/18 2:50 PM, Ingo Molnar wrote:
+> Linus,
+> 
+> Please pull the latest x86-amd-nb-for-linus git tree from:
+> 
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-amd-nb-for-linus
+> 
+>     # HEAD: 210ba1201ff950b3d05bfd8fa5d47540cea393c0 hwmon/k10temp: Add support for AMD family 17h, model 30h CPUs
+> 
+> Update DF/SMN access and k10temp for AMD F17h M30h, by Brian Woods:
+> 
+>    "Updates the data fabric/system management network code needed to get
+>     k10temp working for M30h.  Since there are now processors which have
+>     multiple roots per DF/SMN interface, there needs to some logic which
+>     skips N-1 root complexes per DF/SMN interface.  This is because the root
+>     complexes per interface are redundant (as far as DF/SMN goes).  These
+>     changes shouldn't effect past processors and, for F17h M0Xh, the
+>     mappings stay the same."
+> 
+> The hwmon changes were seen and acked by hwmon maintainer Guenter Roeck.
+> 
+>    out-of-topic modifications in x86-amd-nb-for-linus:
+>    -----------------------------------------------------
+>    drivers/hwmon/k10temp.c            # 210ba1201ff9: hwmon/k10temp: Add support f
+>                                     # dedf7dce4cec: hwmon/k10temp, x86/amd_nb: C
 
-Please pull the latest x86-cleanups-for-linus git tree from:
+This will likely result in a minor conflict against the changes coming in
+from the hwmon tree (overlapping PCI IDs). Resolution is to accept both changes.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cleanups-for-linus
+Guenter
 
-   # HEAD: 4b1bacab61aa252d15dde99cd0440a965bd863e5 x86/kprobes: Remove trampoline_handler() prototype
+>    include/linux/pci_ids.h            # be3518a16ef2: x86/amd_nb: Add PCI device I
+>                                     # dedf7dce4cec: hwmon/k10temp, x86/amd_nb: C
+> 
+>   Thanks,
+> 
+> 	Ingo
+> 
+> ------------------>
+> Woods, Brian (4):
+>        hwmon/k10temp, x86/amd_nb: Consolidate shared device IDs
+>        x86/amd_nb: Add support for newer PCI topologies
+>        x86/amd_nb: Add PCI device IDs for family 17h, model 30h
+>        hwmon/k10temp: Add support for AMD family 17h, model 30h CPUs
+> 
+> 
+>   arch/x86/kernel/amd_nb.c | 53 ++++++++++++++++++++++++++++++++++++++++--------
+>   drivers/hwmon/k10temp.c  | 10 ++-------
+>   include/linux/pci_ids.h  |  3 +++
+>   3 files changed, 50 insertions(+), 16 deletions(-)
+> 
 
-Misc cleanups.
-
-  out-of-topic modifications in x86-cleanups-for-linus:
-  -------------------------------------------------------
-  include/acpi/cppc_acpi.h           # ad3bc25a3207: x86/kernel: Fix more -Wmissi
-  include/linux/ftrace.h             # 89f579ce99f7: x86/headers: Fix -Wmissing-p
-  include/linux/kexec.h              # 89f579ce99f7: x86/headers: Fix -Wmissing-p
-  include/linux/kprobes.h            # ad3bc25a3207: x86/kernel: Fix more -Wmissi
-  include/linux/of_fdt.h             # 89f579ce99f7: x86/headers: Fix -Wmissing-p
-  include/linux/ptrace.h             # 89f579ce99f7: x86/headers: Fix -Wmissing-p
-
- Thanks,
-
-	Ingo
-
------------------->
-Borislav Petkov (5):
-      x86/gart: Rewrite early_gart_iommu_check() comment
-      x86/mce: Fix -Wmissing-prototypes warnings
-      x86/traps: Complete prototype declarations
-      x86/kernel: Fix more -Wmissing-prototypes warnings
-      x86/kprobes: Remove trampoline_handler() prototype
-
-Ingo Molnar (1):
-      x86: Fix various typos in comments
-
-Yafang Shao (1):
-      x86/process: Avoid unnecessary NULL check in get_wchan()
-
-Yi Wang (1):
-      x86/headers: Fix -Wmissing-prototypes warning
-
-
- arch/x86/crypto/cast5_avx_glue.c                   |  2 +-
- arch/x86/crypto/cast6_avx_glue.c                   |  2 +-
- arch/x86/entry/common.c                            |  2 +-
- arch/x86/entry/vdso/vma.c                          |  2 +-
- arch/x86/events/intel/bts.c                        |  2 +-
- arch/x86/events/intel/core.c                       |  2 +-
- arch/x86/events/intel/ds.c                         |  2 +-
- arch/x86/events/intel/p4.c                         |  2 +-
- arch/x86/include/asm/alternative.h                 |  2 +-
- arch/x86/include/asm/cmpxchg.h                     |  2 +-
- arch/x86/include/asm/crash.h                       |  1 +
- arch/x86/include/asm/efi.h                         |  2 +-
- arch/x86/include/asm/irq.h                         |  7 +++
- arch/x86/include/asm/irq_work.h                    |  1 +
- arch/x86/include/asm/kvm_para.h                    |  1 +
- arch/x86/include/asm/paravirt.h                    |  5 ++
- arch/x86/include/asm/reboot.h                      |  1 +
- arch/x86/include/asm/setup.h                       |  3 ++
- arch/x86/include/asm/sighandling.h                 |  5 ++
- arch/x86/include/asm/smp.h                         |  6 +++
- arch/x86/include/asm/trace/exceptions.h            |  1 +
- arch/x86/include/asm/trace/irq_vectors.h           |  1 +
- arch/x86/include/asm/traps.h                       | 59 +++++++++++++---------
- arch/x86/include/asm/tsc.h                         |  1 +
- arch/x86/kernel/acpi/boot.c                        |  2 +-
- arch/x86/kernel/aperture_64.c                      | 25 +++++----
- arch/x86/kernel/apic/apic.c                        |  1 +
- arch/x86/kernel/apic/apic_flat_64.c                |  7 +--
- arch/x86/kernel/apic/vector.c                      |  1 +
- arch/x86/kernel/apic/x2apic_uv_x.c                 |  4 +-
- arch/x86/kernel/asm-offsets.c                      |  3 +-
- arch/x86/kernel/check.c                            |  3 +-
- arch/x86/kernel/cpu/amd.c                          |  1 +
- arch/x86/kernel/cpu/aperfmperf.c                   |  1 +
- arch/x86/kernel/cpu/bugs.c                         |  2 +
- arch/x86/kernel/cpu/cacheinfo.c                    |  1 +
- arch/x86/kernel/cpu/mcheck/mce.c                   |  2 +-
- arch/x86/kernel/cpu/mcheck/mce_amd.c               |  5 +-
- arch/x86/kernel/cpu/mcheck/therm_throt.c           |  3 +-
- arch/x86/kernel/cpu/mcheck/threshold.c             |  3 +-
- arch/x86/kernel/cpu/scattered.c                    |  3 +-
- arch/x86/kernel/cpu/topology.c                     |  2 +
- arch/x86/kernel/crash.c                            |  1 +
- arch/x86/kernel/crash_dump_64.c                    |  2 +-
- arch/x86/kernel/devicetree.c                       |  1 +
- arch/x86/kernel/fpu/xstate.c                       |  2 +-
- arch/x86/kernel/jailhouse.c                        |  1 +
- arch/x86/kernel/kprobes/core.c                     |  2 +-
- arch/x86/kernel/process.c                          |  5 +-
- arch/x86/kernel/process_64.c                       |  2 +-
- arch/x86/kernel/quirks.c                           |  1 +
- arch/x86/kernel/sysfb_efi.c                        |  3 ++
- arch/x86/kernel/tracepoint.c                       |  2 +
- arch/x86/kvm/vmx.c                                 |  4 +-
- arch/x86/kvm/x86.c                                 |  2 +-
- arch/x86/mm/pageattr.c                             |  2 +-
- arch/x86/platform/ce4100/ce4100.c                  |  4 +-
- .../intel-mid/device_libs/platform_bcm43xx.c       |  2 +-
- .../intel-mid/device_libs/platform_mrfld_spidev.c  |  2 +-
- .../intel-mid/device_libs/platform_pcal9555a.c     |  2 +-
- arch/x86/platform/intel/iosf_mbi.c                 |  2 +-
- arch/x86/platform/olpc/olpc-xo1-sci.c              |  2 +-
- arch/x86/platform/uv/uv_nmi.c                      |  2 +-
- arch/x86/xen/setup.c                               |  2 +-
- include/acpi/cppc_acpi.h                           |  3 ++
- include/linux/ftrace.h                             |  3 ++
- include/linux/kexec.h                              |  1 +
- include/linux/kprobes.h                            |  3 ++
- include/linux/of_fdt.h                             |  1 +
- include/linux/ptrace.h                             |  1 +
- 70 files changed, 165 insertions(+), 78 deletions(-)
