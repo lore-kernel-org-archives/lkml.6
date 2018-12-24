@@ -2,138 +2,210 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57FBC64E75
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7D8C64E75
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7393720866
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E814721736
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 15:32:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="Pz+zrBkN"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="C3T0Okwi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725801AbeLXPcM (ORCPT
+        id S1725827AbeLXPch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 10:32:12 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55005 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbeLXPcK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 10:32:10 -0500
-Received: by mail-it1-f195.google.com with SMTP id i145so16170699ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 07:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hcQc4njU3S+o4H6gOXq6XyYcomBr/RPp5eE5oN5qNlg=;
-        b=Pz+zrBkNiRIxetJud78i8fm8KjnPxodmWyIygYk2UWDjTLqOZ7Xa2cFJjbUp6H9hhC
-         YZld0bcfhsx7Yl/bDNGwbLSLdIojbLSjEif0bk2WylQ1fk2pRRgiOsLLcQMQEBTae2HZ
-         iVatpgpP6LXPcNr0fzfkc5uO9DWeWnPhv0TMuPnE6a/yoAuBu1rL6PkBsBWWajLoPwqT
-         TLBL8BGQKYnp7CSWumfmwLhj4ng9CrKhvItIDBTLVgnNvqJ1D07XTFsF1HEoY0lhr1K3
-         OmvZLM5+JuAGtpwiw2sDk6KnlAT0gsf199sHcS5kSsRqFSH+sXT5MdZ4VYXnQvU6bSpn
-         /X7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=hcQc4njU3S+o4H6gOXq6XyYcomBr/RPp5eE5oN5qNlg=;
-        b=UPKrPNrPE4hTESKuKvc5vhYYMg4HpB/3mBR7ltLS07ibjkaVumGlbEUA2zUn0vsD+X
-         DeHlXeMBZ09PWO64GnBi6tY1sJ6bpZhgO9BgW0xNkyYRw1TOD8ClQ6YrWnWNAg+R5102
-         FM1xdUlwG28h3UE2rRM9iSK7076z7wFvD5JpdEIdHXLVkDVOSgoquiih3WE6B3+72Rkx
-         ywHqnsCstflqXvio83O/m7NGYztoc3EGbS3G+gIrY+lctpQVa7VCRApjLKkzGqc/PZjB
-         YEqGm2qZV+Z0JvTk8M4seoGUMS6GAtIhQgO8T3enoLoqFZ09wcm84Z1Z+8XmR9f3XaCM
-         cNWA==
-X-Gm-Message-State: AA+aEWZqqA+X7wUT3QhjZZXbHsrW4JET0oeQrcTufKieectgee6+vtSF
-        s9qyy+bVFtq+1+cVl2KB2dAswA==
-X-Google-Smtp-Source: AFSGD/UJxNItKX+WMvijj4yYoHXYsp5ZHgB6W7TmS43iHP4K8IQ/Ek7Gfjl7V2oPs05PoKmFm/RugQ==
-X-Received: by 2002:a24:6fc4:: with SMTP id x187mr9931961itb.93.1545665528818;
-        Mon, 24 Dec 2018 07:32:08 -0800 (PST)
-Received: from x220t ([64.26.149.125])
-        by smtp.gmail.com with ESMTPSA id w129sm11502194ita.0.2018.12.24.07.32.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Dec 2018 07:32:08 -0800 (PST)
-Date:   Mon, 24 Dec 2018 10:32:05 -0500
-From:   Alexander Aring <aring@mojatatu.com>
-To:     Xue Liu <liuxuenetmail@gmail.com>
-Cc:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>
-Subject: Re: [PATCH v5 6/6] net: lorawan: List LORAWAN in menuconfig
-Message-ID: <20181224153205.ycr2zdrjbyklulfh@x220t>
-References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
- <20181216101858.9585-7-starnight@g.ncu.edu.tw>
- <CAJuUDwtS3c7NhcNqijyFNtZeupO2HLQ8ZuMA1a-azEQL5yHjng@mail.gmail.com>
- <8bfdccbf-fb47-daa5-fbd0-ed16a3d6d334@suse.de>
- <CAJuUDwsypFMEbTXZO+NwQ_FnD1wsO3ZRc3dthZphFGJ-u0n_=Q@mail.gmail.com>
+        Mon, 24 Dec 2018 10:32:37 -0500
+Received: from cock.li ([185.100.85.212]:42306 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725765AbeLXPch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 10:32:37 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuUDwsypFMEbTXZO+NwQ_FnD1wsO3ZRc3dthZphFGJ-u0n_=Q@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1545665553; bh=+ZUI+/bOtwof4ayG9O/TYOVk42OfwKlQEiWi3hQWsB8=;
+        h=Date:From:To:Subject:From;
+        b=C3T0OkwitP7JIOoiIIbL/Ggy3Bu+eTBy+I0z1qY8vkgS95EIve/zMJZudNf7frrwL
+         aL8sIb/hNfa7twg5s49calCZAKqHljD5uX5BZHEMVohp07yK/ulJZtfd4/GQCikDmu
+         sAVe8VwT7IosMNMydeGA6/HOdenog9rAm50I3LTNkG1k+6a3xGEgEn9xt3keKeOcAw
+         1xQlSFdBUV4wHdkGYhUMfza8EvqpfolP7afYmDf2RhReudmYJFcWO/pnT3j2kb4/yM
+         fKxXefUb8ELWVUhFKhWz/TL/J1qi+mkXFnpe3Ql0YFhq3flk2136fsn0tRcx4txn4h
+         k7EpiJUie/yyw==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 24 Dec 2018 15:32:33 +0000
+From:   vsnsdualce@memeware.net
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Subject: Yes: The linux devs can rescind their license grant. GPLv2 is a bare
+ license and is revocable by the grantor.
+Message-ID: <790004680279c7e871d8acb43b9a1caf@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Bradley M. Kuhn: The SFConservancy's new explanation was refuted 5 hours 
+after it was published:
 
-On Tue, Dec 18, 2018 at 02:50:58PM +0100, Xue Liu wrote:
-> Hello Andreas,
+
+
+
+Yes they can, greg.
+
+The GPL v2, is a bare license. It is not a contract. It lacks 
+consideration between the licensee and the grantor.
+
+(IE: They didn't pay you, Greg, a thing. YOU, Greg, simply have chosen 
+to bestow a benefit upon them where they suffer no detriment and you, in 
+fact, gain no bargained-for benefit)
+
+As a bare license, (read: property license), the standard rules 
+regarding the alienation of property apply.
+
+Therein: a gratuitous license is revocable at the will of the grantor.
+
+The licensee then may ATTEMPT, as an affirmative defense against your 
+as-of-right action to claim promissory estoppel in state court, and 
+"keep you to your word". However you made no such promise disclaiming 
+your right to rescind the license.
+
+Remeber: There is no utterance disclaiming this right within the GPL 
+version 2. Linus, furthermore, has chosen both to exclude the "or any 
+later version" codicil, to reject the GPL version 3, AND to publicly 
+savage GPL version 3 (he surely has his reasons, perhaps this is one of 
+them, left unstated). (GPLv3 which has such promises listed (not to say 
+that they would be effective against the grantor, but it is an attempt 
+at the least)).
+
+
+
+
+The Software Freedom Conservancy has attempted to mis-construe clause 4 
+of the GPL version 2 as a "no-revocation by grantor" clause.
+
+However, reading said clause, using plain construction, leads a 
+reasonable person to understand that said clause is speaking 
+specifically about the situation where an upstream licensee loses their 
+permission under the terms due to a violation of the terms; in that case 
+the down-stream licensee does not in-turn also lose their permission 
+under the terms.
+
+Additionally, clause 0 makes it crystal clear that "You" is defined as 
+the licensee, not the grantor. Another issue the SFConservancy's public 
+service announcement chooses to ignore.
+
+Thirdly, the SFConservancy banks on the ignorance of both the public and 
+the developers regarding property alienation. A license does not impinge 
+the rights of the party granting the license in a quid-pro-quo manner 
+vis a vis the licensee's taking. A license merely grants permission, 
+extended from the grantor, to the licensee, regarding the article of 
+property that is being impinged. A license is NOT a full nor is it a 
+permanent alienation of the article(property) in question. The impinged 
+property, being under a non bargained-for temporary grant, can be taken 
+back into the sole dominion of the owner - at his election to do so.
+
+
+
+Now as to the 9th circuit appellate court's decision in Jacobsen v. 
+Katzer . While the court waxes eloquently about opensource licenses, 
+even mentioning the word "consideration" in it's long dicta, when it 
+comes time to make the binding decision the court found that the lower 
+(district) court was in _ERROR_ regarding the application of 
+contract-law principals to the Artistic License, regarding the case, and 
+instructed the lower court to instead construe said license as a 
+Copyright License.
+
+The SFConservancy, and Bruce Perens have chosen to:
+1) Rely on the dicta. (non-binding - "some things could be contracts - 
+opensource is great")
+2) Ignore the actual ruling. (Binding - Copyright License - Not 
+Contract)
+3) Ignore that this case was about the AL, not the GPLv2
+4) Ignore the existence of different jurisdictions.
+(Why file in the roll-the-dice 9th district if you can file in a 
+district that has personal-juristicion over the defendant and is much 
+more consistent in it's rulings?)
+5) Ignore all established law regard property licensing, contract 
+formation, meeting of the minds, what consideration is etc.
+
+Which is not surprising considering the desire of people like Bruce 
+Perens is to rob MEN of EVERY benefit of their Labour and every speck of 
+happiness in life and to transfer those benefits to WOMEN and those who 
+support women.
+
+(This is why people who are like Bruce Perens, the SFConservancy 
+menbers, and the CoC supporters, banned men from taking female children 
+as brides: in contrivance to the law of YHWH (Devarim chapter 22 - - 
+verse 28 (na'ar (LXX: padia)), and continue to uphold that ban 
+world-wide, and seek to destroy ALL cultures that do no bend to their 
+will.... who are not idolators of Women)
+
+
+
+
+Look, you may love your users, you may love the people who edit your 
+code in their home or office; but the fact of the matter is...
+
+They have done nothing for you, they have promised nothing to you. They 
+CANNOT hold YOU.
+
+You have the right to rescind at any time, and remove your work from any 
+future versions of Linux. And you might consider doing so if YOU are 
+done harm.
+
+Don't let the insatiable, never-satisfied, public fool you into thinking 
+otherwise.
+
+And, yes, I am a lawyer.
+And, no, unlike the SFConservancy, I did not have to call upon outside 
+counsel to analyze the fact pattern. (And even then all they could come 
+up with was statements using weasel words "may" etc: not even wanting to 
+commit to their clearly-disingenuous publication)
+
+
+(Note: If you would like to read a nice discussion on the topic, here is 
+one http://illinoisjltp.com/journal/wp-content/uploads/2013/10/kumar.pdf 
+)
+
+On 2018-10-25 08:19, Greg Kroah-Hartman wrote:
+> On Thu, Oct 25, 2018 at 07:56:26AM +0000, visionsofalice@redchan.it 
+> wrote:
+>> The linux devs can rescind their license grant.
 > 
-> On Mon, 17 Dec 2018 at 15:19, Andreas Färber <afaerber@suse.de> wrote:
-> >
-> > Hello Xue Liu,
-> >
-> > Am 17.12.18 um 09:50 schrieb Xue Liu:
-> > > I have a question about the architecture of your module. AFAIK LoRaWAN
-> > > is already the MAC Layer above the LoRa technology. Why do you want to
-> > > make a new layer called "maclorawan" ?
-> >
-> > I had asked Jian-Hong to separate between his soft-MAC implementation
-> > and the common bits needed to drive hard-MAC implementations found on
-> > several of the hardware modules made available to me.
-> >
-> As a reference Linux 802.11 uses cfg80211 to talk with hard-MAC devices.
-> We may also use the name “cfglora” for hard-MAC implementation.
+> No they can not, please do not keep spreading false information.
 > 
+> greg k-h
 
-There exists also a cfg802154. :-)
 
-Note that cfg80211 is also for providing a backwardscompatibility to the
-wireless ioctl() interface.
 
-In theory it's simple:
+On 2018-10-29 22:31, Bradley M. Kuhn wrote:
+> On Thu, Oct 25, 2018 at 07:56:26AM +0000, visionsofalice@redchan.it 
+> wrote:
+>> The linux devs can rescind their license grant.
+> Greg KH responded on Thu, 25 Oct 2018 09:19:11 +0100:
+>>> No they can not, please do not keep spreading false information.
+> 
+> I was explicitly cc'ed on this thread by visionsofalice.  I've read the
+> whole thread, and the only useful thing I can contribute here is to 
+> agree
+> with Greg and additionally provide some backup research on the point:
+> https://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
+> 
+> Software Freedom Conservancy engaged our legal counsel to write a new
+> section for the Copyleft Guide that further explains the irrevocability 
+> of
+> GPLv2.  We published this when others raised these specious claims back 
+> in
+> September.  Direct link to new section:
+> https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+> 
+> 
+> HTH,
 
-netlink API -> SoftMAC (macFOOBAR layer) -> cfgFOOBAR implementation -> driver layer
-            \-> HardMAC (driver layer) -> cfgFOOBAR implementation
 
-The "difficult" part is providing one userspace interface for both
-either SoftMAC layer and all HardMAC drivers.
 
-There both maintainers need to be synchronized.
 
-As a side note I want to mention that the 802.15.4 subsystem supports
-currently a HardMAC transceiver in the SoftMAC layer. We don't have
-quite HardMAC support yet but are somehow prepared according the
-wireless architecture above.
-
-The people who did that didn't wanted to investigate time to implement a
-whole HardMAC layer, as I told them when we support more in the SoftMAC
-layer it will break their transceiver... so they was fine with that as
-warning it seems. :-)
-
-- Alex
