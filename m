@@ -2,109 +2,92 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C775FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45490C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA1221736
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ED2821773
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 06:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbeLXGwV (ORCPT
+        id S1726762AbeLXGxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 01:52:21 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.38]:22937 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725922AbeLXGwV (ORCPT
+        Mon, 24 Dec 2018 01:53:14 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:10572 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbeLXGxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 01:52:21 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 0194B400CD7BC
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 00:52:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bK67gtXyhYTGMbK67gi1OL; Mon, 24 Dec 2018 00:52:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=50146 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gbK67-000NqL-1s; Mon, 24 Dec 2018 00:52:19 -0600
-Date:   Mon, 24 Dec 2018 00:52:17 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dmaengine: dma-jz4780: Use struct_size() in devm_kzalloc()
-Message-ID: <20181224065217.GA10629@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gbK67-000NqL-1s
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:50146
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 19
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 24 Dec 2018 01:53:13 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id wBO6qemS051271;
+        Mon, 24 Dec 2018 14:52:40 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v4 0/2] spi: Add Renesas R-Car Gen3 RPC SPI driver 
+Date:   Mon, 24 Dec 2018 14:52:36 +0800
+Message-Id: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com wBO6qemS051271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Hi Mark,
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+This Renesas R-Car Gen3 RPC SPI driver is based on Boris's new
+spi-mem direct mapping read/write mode [1][2].
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match()
+2) Drop unused RPC registers
+3) Use ilog2() instead of fls()
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned()
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
 
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM, 
+3) add RPC module software reset, 
+4) add regmap,
+5) other coding style and so on.
 
-This issue was detected with the help of Coccinelle.
+thanks for your review.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/dma/dma-jz4780.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+best regards,
+Mason
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index a8b6225faa12..9ce0a386225b 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -838,9 +838,8 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	if (!soc_data)
- 		return -EINVAL;
- 
--	jzdma = devm_kzalloc(dev, sizeof(*jzdma)
--				+ sizeof(*jzdma->chan) * soc_data->nb_channels,
--				GFP_KERNEL);
-+	jzdma = devm_kzalloc(dev, struct_size(jzdma, chan,
-+			     soc_data->nb_channels), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
- 
+[1] https://patchwork.kernel.org/patch/10670753
+[2] https://patchwork.kernel.org/patch/10670747
+
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC controller bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  37 +
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 788 +++++++++++++++++++++
+ 4 files changed, 832 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
 -- 
-2.20.1
+1.9.1
 
