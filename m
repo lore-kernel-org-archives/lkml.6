@@ -2,116 +2,120 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550F7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 09:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86264C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 09:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E13D21726
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 09:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58FC821726
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 09:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbeLXJgB (ORCPT
+        id S1725784AbeLXJiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 04:36:01 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:36198 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbeLXJgB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 04:36:01 -0500
-X-IronPort-AV: E=Sophos;i="5.56,391,1539673200"; 
-   d="scan'208";a="21870182"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 24 Dec 2018 02:36:00 -0700
-Received: from localhost (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
- (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Mon, 24 Dec 2018
- 02:36:20 -0700
-Date:   Mon, 24 Dec 2018 10:36:00 +0100
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-CC:     <kernel-janitors@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/20] dmaengine: at_hdmac: drop useless LIST_HEAD
-Message-ID: <20181224093600.elloyxqa6lx7rw33@M43218.corp.atmel.com>
-Mail-Followup-To: Julia Lawall <Julia.Lawall@lip6.fr>,
-        kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        Mon, 24 Dec 2018 04:38:14 -0500
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:60359 "EHLO
+        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725308AbeLXJiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 04:38:13 -0500
+Received: by mail.osadl.at (Postfix, from userid 1001)
+        id 5A81A5C0F46; Mon, 24 Dec 2018 10:38:04 +0100 (CET)
+Date:   Mon, 24 Dec 2018 10:38:04 +0100
+From:   Nicholas Mc Guire <der.herr@hofr.at>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Arun KS <arunks@codeaurora.org>, Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <1545555435-24576-8-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH RFC] mm: vmalloc: do not allow kzalloc to fail
+Message-ID: <20181224093804.GA16933@osadl.at>
+References: <1545337437-673-1-git-send-email-hofrat@osadl.org>
+ <alpine.DEB.2.21.1812211356040.219499@chino.kir.corp.google.com>
+ <20181222080421.GB26155@osadl.at>
+ <20181224081056.GD9063@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1545555435-24576-8-git-send-email-Julia.Lawall@lip6.fr>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181224081056.GD9063@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 09:57:02AM +0100, Julia Lawall wrote:
-> Drop LIST_HEAD where the variable it declares is never used.
+On Mon, Dec 24, 2018 at 09:10:56AM +0100, Michal Hocko wrote:
+> On Sat 22-12-18 09:04:21, Nicholas Mc Guire wrote:
+> > On Fri, Dec 21, 2018 at 01:58:39PM -0800, David Rientjes wrote:
+> > > On Thu, 20 Dec 2018, Nicholas Mc Guire wrote:
+> > > 
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index 871e41c..1c118d7 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -1258,7 +1258,7 @@ void __init vmalloc_init(void)
+> > > >  
+> > > >  	/* Import existing vmlist entries. */
+> > > >  	for (tmp = vmlist; tmp; tmp = tmp->next) {
+> > > > -		va = kzalloc(sizeof(struct vmap_area), GFP_NOWAIT);
+> > > > +		va = kzalloc(sizeof(*va), GFP_NOWAIT | __GFP_NOFAIL);
+> > > >  		va->flags = VM_VM_AREA;
+> > > >  		va->va_start = (unsigned long)tmp->addr;
+> > > >  		va->va_end = va->va_start + tmp->size;
+> > > 
+> > > Hi Nicholas,
+> > > 
+> > > You're right that this looks wrong because there's no guarantee that va is 
+> > > actually non-NULL.  __GFP_NOFAIL won't help in init, unfortunately, since 
+> > > we're not giving the page allocator a chance to reclaim so this would 
+> > > likely just end up looping forever instead of crashing with a NULL pointer 
+> > > dereference, which would actually be the better result.
+> > >
+> > tried tracing the __GFP_NOFAIL path and had concluded that it would
+> > end in out_of_memory() -> panic("System is deadlocked on memory\n");
+> > which also should point cleanly to the cause - but I´m actually not
+> > that sure if that trace was correct in all cases.
 > 
-> tmp_list has been declared since the introduction of the driver
-> and has never been used.  The two declarations of list were
-> introduced with the containing functions but were also not used.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> @@
-> - LIST_HEAD(x);
->   ... when != x
-> // </smpl>
-> 
-> Fixes: dc78baa2b90b ("dmaengine: at_hdmac: new driver for the Atmel AHB DMA Controller")
-> Fixes: 4facfe7f09f2b ("dmaengine: hdmac: Split device_control")
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com> 
+> No, we do not trigger the memory reclaim path nor the oom killer when
+> using GFP_NOWAIT. In fact the current implementation even ignores
+> __GFP_NOFAIL AFAICS (so I was wrong about the endless loop but I suspect
+> that we used to loop fpr __GFP_NOFAIL at some point in the past). The
+> patch simply doesn't have any effect. But the primary objection is that
+> the behavior might change in future and you certainly do not want to get
+> stuck in the boot process without knowing what is going on. Crashing
+> will tell you that quite obviously. Although I have hard time imagine
+> how that could happen in a reasonably configured system.
 
-Thanks
+I think most of the defensive structures are covering rare to almost
+impossible cases - but those are precisely the hard ones to understand if
+they do happen.
+
 > 
-> ---
-> Successfully 0-day tested on 151 configurations.
+> > > You could do
+> > > 
+> > > 	BUG_ON(!va);
+> > > 
+> > > to make it obvious why we crashed, however.  It makes it obvious that the 
+> > > crash is intentional rather than some error in the kernel code.
+> > 
+> > makes sense - that atleast makes it imediately clear from the code
+> > that there is no way out from here.
 > 
->  drivers/dma/at_hdmac.c |    5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-> index 01d936c9fe89..a0a9cd76c1d4 100644
-> --- a/drivers/dma/at_hdmac.c
-> +++ b/drivers/dma/at_hdmac.c
-> @@ -134,7 +134,6 @@ static struct at_desc *atc_desc_get(struct at_dma_chan *atchan)
->  	struct at_desc *ret = NULL;
->  	unsigned long flags;
->  	unsigned int i = 0;
-> -	LIST_HEAD(tmp_list);
->  
->  	spin_lock_irqsave(&atchan->lock, flags);
->  	list_for_each_entry_safe(desc, _desc, &atchan->free_list, desc_node) {
-> @@ -1387,8 +1386,6 @@ static int atc_pause(struct dma_chan *chan)
->  	int			chan_id = atchan->chan_common.chan_id;
->  	unsigned long		flags;
->  
-> -	LIST_HEAD(list);
-> -
->  	dev_vdbg(chan2dev(chan), "%s\n", __func__);
->  
->  	spin_lock_irqsave(&atchan->lock, flags);
-> @@ -1408,8 +1405,6 @@ static int atc_resume(struct dma_chan *chan)
->  	int			chan_id = atchan->chan_common.chan_id;
->  	unsigned long		flags;
->  
-> -	LIST_HEAD(list);
-> -
->  	dev_vdbg(chan2dev(chan), "%s\n", __func__);
->  
->  	if (!atc_chan_is_paused(atchan))
-> 
+> How does it differ from blowing up right there when dereferencing flags?
+> It would be clear from the oops.
+
+The question is how soon does it blow-up if it were imediate then three is
+probably no real difference if there is some delay say due to the region
+affected by the NULL pointer not being imediately in use - it may be very
+hard to differenciate between an allocation failure and memory corruption
+so having a directly associated trace should be significantly simpler to
+understand - and you might actually not want a system to try booting if there
+are problems at this level.
+
+thx!
+hofrat
