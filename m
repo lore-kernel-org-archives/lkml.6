@@ -2,110 +2,113 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716FDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397BFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3429421773
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119DF20578
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 07:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeLXHrH (ORCPT
+        id S1726820AbeLXHrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 02:47:07 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:37068 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725984AbeLXHrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 02:47:06 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B58DF200353;
-        Mon, 24 Dec 2018 08:47:04 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D156620034E;
-        Mon, 24 Dec 2018 08:47:00 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B79B940296;
-        Mon, 24 Dec 2018 15:46:55 +0800 (SGT)
-From:   Alison Wang <alison.wang@nxp.com>
-To:     fabio.estevam@nxp.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        Mon, 24 Dec 2018 02:47:12 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.21]:17131 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725984AbeLXHrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 02:47:11 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 1C27A5C130
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 01:47:10 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bKxCgL68t2PzObKxCg45Eq; Mon, 24 Dec 2018 01:47:10 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=37996 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gbKwZ-000wzP-Gu; Mon, 24 Dec 2018 01:47:09 -0600
+Subject: Re: [PATCH] mlxsw: spectrum_acl_bloom_filter: use struct_size() in
+ kzalloc()
+To:     Ido Schimmel <idosch@idosch.org>
+Cc:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     alison.wang@nxp.com
-Subject: [PATCH] ASoC: sgtl5000: Allow SCLK pad drive strength to be changed
-Date:   Mon, 24 Dec 2018 15:42:04 +0800
-Message-Id: <20181224074204.3895-1-alison.wang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <20181224052741.GA22098@embeddedor.com>
+ <20181224073838.GA11051@splinter>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <6ab7cfc8-7fc0-523a-70f6-a6701ad691b3@embeddedor.com>
+Date:   Mon, 24 Dec 2018 01:46:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181224073838.GA11051@splinter>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gbKwZ-000wzP-Gu
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:37996
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces "sclk-strength" property to allow SCLK pad drive
-strength to be changed via device tree.
 
-When running playback test on LS1028ARDB, Tx Frame sync error interrupt
-will occur sometimes. Some noises also exist. After changing SCLK pad
-drive strength to the maximum value, the issues are gone.
 
-Signed-off-by: Alison Wang <alison.wang@nxp.com>
----
- sound/soc/codecs/sgtl5000.c |   19 ++++++++++++++++++-
- 1 files changed, 18 insertions(+), 1 deletions(-)
+On 12/24/18 1:38 AM, Ido Schimmel wrote:
+> On Sun, Dec 23, 2018 at 11:27:41PM -0600, Gustavo A. R. Silva wrote:
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>      int stuff;
+>>      void *entry[];
+>> };
+>>
+>> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+> 
+> But net-next is closed (http://vger.kernel.org/~davem/net-next.html) and
+> this isn't a bug fix. Can you please re-submit when net-next opens
+> again? Alternatively, I can apply the patch to my mlxsw queue and submit
+> in your stead. Let me know what you prefer.
+> 
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index add18d6..a6a4748 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -116,6 +116,13 @@ enum  {
- 	I2S_LRCLK_STRENGTH_HIGH,
- };
- 
-+enum  {
-+	I2S_SCLK_STRENGTH_DISABLE,
-+	I2S_SCLK_STRENGTH_LOW,
-+	I2S_SCLK_STRENGTH_MEDIUM,
-+	I2S_SCLK_STRENGTH_HIGH,
-+};
-+
- /* sgtl5000 private structure in codec */
- struct sgtl5000_priv {
- 	int sysclk;	/* sysclk rate */
-@@ -129,6 +136,7 @@ struct sgtl5000_priv {
- 	u8 micbias_resistor;
- 	u8 micbias_voltage;
- 	u8 lrclk_strength;
-+	u8 sclk_strength;
- };
- 
- /*
-@@ -1302,7 +1310,9 @@ static int sgtl5000_probe(struct snd_soc_component *component)
- 			SGTL5000_DAC_MUTE_RIGHT |
- 			SGTL5000_DAC_MUTE_LEFT);
- 
--	reg = ((sgtl5000->lrclk_strength) << SGTL5000_PAD_I2S_LRCLK_SHIFT | 0x5f);
-+	reg = ((sgtl5000->lrclk_strength) << SGTL5000_PAD_I2S_LRCLK_SHIFT |
-+	       (sgtl5000->sclk_strength) << SGTL5000_PAD_I2S_SCLK_SHIFT |
-+	       0x1f);
- 	snd_soc_component_write(component, SGTL5000_CHIP_PAD_STRENGTH, reg);
- 
- 	snd_soc_component_write(component, SGTL5000_CHIP_ANA_CTRL,
-@@ -1542,6 +1552,13 @@ static int sgtl5000_i2c_probe(struct i2c_client *client,
- 		sgtl5000->lrclk_strength = value;
- 	}
- 
-+	sgtl5000->sclk_strength = I2S_SCLK_STRENGTH_LOW;
-+	if (!of_property_read_u32(np, "sclk-strength", &value)) {
-+		if (value > I2S_SCLK_STRENGTH_HIGH)
-+			value = I2S_SCLK_STRENGTH_LOW;
-+		sgtl5000->sclk_strength = value;
-+	}
-+
- 	/* Ensure sgtl5000 will start with sane register values */
- 	sgtl5000_fill_defaults(client);
- 
--- 
-1.7.1
+Oh yeah. I forgot net close net-next during the merge window. I'll
+re-submit it in two weeks then. I'll add your Reviewed-by.
 
+Happy holiday.
+
+Thanks
+--
+Gustavo
