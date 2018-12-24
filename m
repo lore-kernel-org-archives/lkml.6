@@ -2,154 +2,114 @@ Return-Path: <SRS0=q0iV=PB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7BBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3EEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221622173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:35:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ieI+2V8f"
+	by mail.kernel.org (Postfix) with ESMTP id AB1292173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Dec 2018 11:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725858AbeLXLfq (ORCPT
+        id S1725825AbeLXLjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 06:35:46 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49130 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbeLXLfp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 06:35:45 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBOBXl2c001189;
-        Mon, 24 Dec 2018 11:35:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=SjgmuKwbiqLkWLZ9/CSf03ose+Q5MfHQJIptqdfeUz0=;
- b=ieI+2V8fVq642DYxxQS8bs/5e1W5gDSTc81TNQr+OctTmOPloIUQO6+v2GaJ7qBHrOmA
- yKEFxk+ztpjjv95veC1+dVsF6x+BezcqG/kDFircu7S81GtugP7Q3YEfRaiY2CRrYnIj
- qwGBuN66qRPoNZd7JG72DtDkXZXvob7tNc22a8waBa+AC6SwrRN91bEEV6QWiTQVKsIy
- tV6L0C7Bc2UUFdydbrlwIh1hydaz+21G8sI2uJY1b1lkaJLc33aVmI4B5JCfa0Zoejt0
- vQ9Zjs9uOqoXDpEfLPRQKUt/OkutsZPN2ETrSJfrm5xZewJhQTl+BEnmnjGKkXQqMElo iQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2phasdmqnw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Dec 2018 11:35:32 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBOBZUwP030778
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Dec 2018 11:35:31 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBOBZTOT025976;
-        Mon, 24 Dec 2018 11:35:29 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Dec 2018 03:35:29 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: Bug with report THP eligibility for each vma
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20181224074916.GB9063@dhcp22.suse.cz>
-Date:   Mon, 24 Dec 2018 04:35:28 -0700
-Cc:     Paul Oppenheimer <bepvte@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <78624B4A-EA8B-4D51-B3E6-448132BB839B@oracle.com>
-References: <CALouPAi8KEuPw_Ly5W=MkYi8Yw3J6vr8mVezYaxxVyKCxH1x_g@mail.gmail.com>
- <20181224074916.GB9063@dhcp22.suse.cz>
-To:     Michal Hocko <mhocko@suse.com>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9116 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=908
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812240104
+        Mon, 24 Dec 2018 06:39:32 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:42390 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbeLXLjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 06:39:32 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 829A269ED47C4FC05DA8;
+        Mon, 24 Dec 2018 19:39:29 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wBOBdP1i068235;
+        Mon, 24 Dec 2018 19:39:25 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018122419393333-18465267 ;
+          Mon, 24 Dec 2018 19:39:33 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [RESEND PATCH]  kvm/x86: propagate fetch fault into guest
+Date:   Mon, 24 Dec 2018 20:00:30 +0800
+Message-Id: <1545652830-65253-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-24 19:39:33,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-24 19:39:25,
+        Serialize complete at 2018-12-24 19:39:25
+X-MAIL: mse01.zte.com.cn wBOBdP1i068235
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When handling ept misconfig exit, it will call emulate instruction
+with insn_len = 0. The decode instruction function may return a fetch
+fault and should propagate to guest.
 
+The problem will result to emulation fail.
+KVM internal error. Suberror: 1
+emulation failure
+EAX=f81a0024 EBX=f6a07000 ECX=f6a0737c EDX=f8be0118
+ESI=f6a0737c EDI=00000021 EBP=f6929f98 ESP=f6929f98
+EIP=f8bdd141 EFL=00010086 [--S--P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00c09b00 DPL=0 CS32 [-RA]
+SS =0068 00000000 ffffffff 00c09300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+FS =00d8 2c044000 ffffffff 00809300 DPL=0 DS16 [-WA]
+GS =0033 081a44c8 01000fff 00d0f300 DPL=3 DS   [-WA]
+LDT=0000 00000000 ffffffff 00000000
+TR =0080 f6ea0c80 0000206b 00008b00 DPL=0 TSS32-busy
+GDT=     f6e99000 000000ff
+IDT=     fffbb000 000007ff
+CR0=80050033 CR2=b757d000 CR3=35d31000 CR4=001406d0
 
-> On Dec 24, 2018, at 12:49 AM, Michal Hocko <mhocko@suse.com> wrote:
->=20
-> [Cc-ing mailing list and people involved in the original patch]
->=20
-> On Fri 21-12-18 13:42:24, Paul Oppenheimer wrote:
->> Hello! I've never reported a kernel bug before, and since its on the
->> "next" tree I was told to email the author of the relevant commit.
->> Please redirect me to the correct place if I've made a mistake.
->>=20
->> When opening firefox or chrome, and using it for a good 7 seconds, it
->> hangs in "uninterruptible sleep" and I recieve a "BUG" in dmesg. This
->> doesn't occur when reverting this commit:
->> =
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit=
-/?id=3D48cf516f8c.
->> Ive attached the output of decode_stacktrace.sh and the relevant =
-dmesg
->> log to this email.
->>=20
->> Thanks
->=20
->> BUG: unable to handle kernel NULL pointer dereference at =
-00000000000000e8
->=20
-> Thanks for the bug report! This is offset 232 and that matches
-> file->f_mapping as per pahole
-> pahole -C file ./vmlinux | grep f_mapping
->        struct address_space *     f_mapping;            /*   232     8 =
-*/
->=20
-> I thought that each file really has to have a mapping. But the =
-following
-> should heal the issue and add an extra care.
->=20
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f64733c23067..fc9d70a9fbd1 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -66,6 +66,8 @@ bool transparent_hugepage_enabled(struct =
-vm_area_struct *vma)
-> {
-> 	if (vma_is_anonymous(vma))
-> 		return __transparent_hugepage_enabled(vma);
-> +	if (!vma->vm_file || !vma->vm_file->f_mapping)
-> +		return false;
-> 	if (shmem_mapping(vma->vm_file->f_mapping) && =
-shmem_huge_enabled(vma))
-> 		return __transparent_hugepage_enabled(vma);
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/x86/kvm/emulate.c | 5 ++++-
+ arch/x86/kvm/x86.c     | 4 +++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-=46rom what I see in code in mm/mmap.c, it seems if vma->vm_file is =
-non-zero
-vma->vm_file->f_mapping may be assumed to be non-NULL; see =
-unlink_file_vma()
-and __vma_link_file() for two examples, which both use the construct:
-
-	file =3D vma->vm_file;
-	if (file) {
-		struct address_space *mapping =3D file->f_mapping;
-
-		[ ... ]
-
-		[ code that dereferences "mapping" without further =
-checks ]
-	}
-
-I see nothing wrong with your second check but a few extra instructions
-performed, but depending upon how often transparent_hugepage_enabled() =
-is called
-there may be at least theoretical performance concerns.
-
-William Kucharski
-william.kucharski@oracle.com
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 78e430f..dd132cf 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5114,8 +5114,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
+ 		memcpy(ctxt->fetch.data, insn, insn_len);
+ 	else {
+ 		rc = __do_insn_fetch_bytes(ctxt, 1);
+-		if (rc != X86EMUL_CONTINUE)
++		if (rc != X86EMUL_CONTINUE) {
++			if (rc == X86EMUL_PROPAGATE_FAULT)
++				ctxt->have_exception = true;
+ 			return rc;
++		}
+ 	}
+ 
+ 	switch (mode) {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index f049ecf..137d384 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6333,8 +6333,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+ 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
+ 						emulation_type))
+ 				return EMULATE_DONE;
+-			if (ctxt->have_exception && inject_emulated_exception(vcpu))
++			if (ctxt->have_exception) {
++				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
++			}
+ 			if (emulation_type & EMULTYPE_SKIP)
+ 				return EMULATE_FAIL;
+ 			return handle_emulation_failure(vcpu, emulation_type);
+-- 
+1.8.3.1
 
