@@ -2,89 +2,115 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C0CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 21:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9753C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 21:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C835221726
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 21:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD3AC21726
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 21:21:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AYp9ximD"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="lQRt3g3c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbeLYVNV (ORCPT
+        id S1725906AbeLYVVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 16:13:21 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34274 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbeLYVNU (ORCPT
+        Tue, 25 Dec 2018 16:21:19 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:40928 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeLYVVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 16:13:20 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so9935887lfc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 13:13:17 -0800 (PST)
+        Tue, 25 Dec 2018 16:21:18 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id E9BEBB00
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:21:16 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id aMEuQgHoaXqb for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 15:21:16 -0600 (CST)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id B9873A84
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 15:21:16 -0600 (CST)
+Received: by mail-io1-f72.google.com with SMTP id s3so11774909iob.15
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 13:21:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LUf4H07VFsiXZjCkOwiy66KZvhPPi/utGiiZL50k84E=;
-        b=AYp9ximDGd35tTZQ8LCFAcjX2zHm6TuIJJ8rKbpVnGGWw+EiYLdL0rnqa8GGL1Uss4
-         I0OjgsSW99/To0egR5WMA41xoovIVTCMExm0WDwOI/b6Qx+9ePqCwNaqqtDFvDGwrdta
-         /0p535kClwEWK9BTtzxXu7ENxDiqPm3JOJq+M=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=lCkp6jRFzy9ncdV2SMZYnRpt0+yxeG0w4NzonuXqOII=;
+        b=lQRt3g3cmqqOu9kVGA57mR4QYjwsM4I7LCv2V5R5iBIhJrjc7Yo17Bcv95IyMY7ZRG
+         VcRGKNMXlg9bWuuXAAyaGyEgIFh4+1gHJPKX23tJb7mLrRLVZi/MXn5VGRup8c3flvWY
+         2yU1yTWyCALewuuIPz38G0gGwUIPWjr1irIt2eCpDNLpuMDR82wCiRc8QLr/JpTRXSaP
+         q7u9fVoEoXUty66CqvHBw0vETrhyjTvKGTkLHICSFQUZFi7bYE1TQEWw1EwuO324c5U3
+         L+4tYmBWftrnWS//E/WbOka43bqBQwBd9dJnZaeZtWs1mgXm6ZW8Tib/SmqluDd9vE8H
+         nOmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LUf4H07VFsiXZjCkOwiy66KZvhPPi/utGiiZL50k84E=;
-        b=LD/NZDfvjF0ayfcl6Fsks+Tg3IuTtU+UbiWeIh+g5sr4R+CwrWnxbUjajqpdjEQY76
-         lp+VKqUlHJ/5ComJ8W5jfGdLtsVQ9FiwDw0Cb+c4XNngdZq0xvchWRvcKvoX7vqgFgHk
-         zkaougBNEbeJBnYdPv5kvLdUlsLlxWPEJ5L3nqqt1XThlib+vZhGdmTY0lxzc9ODLQCw
-         H6AR6o/DcqVngNn27MWZZN7Hin8kb0PGbJc8VHzf3zfkqwyEoIfUu+NMZBCa1Eeosj8s
-         WRpFg415I+AG5WYdZiOVz+TJkUMoyIYZDoQKl/CkrQXPEQaWfJN188L59KH9/+DUpavm
-         5tAw==
-X-Gm-Message-State: AA+aEWaI9N2BPo4gRH6VpOYYRDy8QTJxcwAEEfN12njZDBCVBF3SqrzD
-        ZgOnkjnoN3AtCRQ6MXCk0dvm7bjo5iE=
-X-Google-Smtp-Source: AFSGD/UoMhLjB7sZ8TFhWxadsjIGbOdwOxQdOU2aRDn+OiU1hZt1p3s2faxW9Ws91Rc6M5dn+OTkhA==
-X-Received: by 2002:a19:690d:: with SMTP id e13mr8666619lfc.84.1545772396318;
-        Tue, 25 Dec 2018 13:13:16 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id t22sm7237073lfb.0.2018.12.25.13.13.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Dec 2018 13:13:15 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id v15-v6so12588288ljh.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 13:13:14 -0800 (PST)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr10058599ljs.118.1545772394436;
- Tue, 25 Dec 2018 13:13:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181220104544.72ee9203@coco.lan>
-In-Reply-To: <20181220104544.72ee9203@coco.lan>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 25 Dec 2018 13:12:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
-Message-ID: <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
-Subject: Re: [GIT PULL for v4.21] second set of media patches: ipu3 driver
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lCkp6jRFzy9ncdV2SMZYnRpt0+yxeG0w4NzonuXqOII=;
+        b=idypEYf4f+P3OhBeR5XYYWY2BqBHfxwga6ruzjk7ZsbSm+4jDUZdVFq5tq9H15f4Pb
+         Yd0zRJMYxk5stUePUPmPz5C4c85yX2nt7gLLp8DTLNmISmaWLcQ4AX+EhhNApY+PP9re
+         ztKDQL8NRY14RvAfIPosPM0Bfw2OdgvV9+kvS5/WpXcKmgOrmlj8Hw4DRqmSq6v+FU0F
+         /t/t4CY7OKGdBr54XvEjtMMo6oSEpdQlBMyBYYrY+frn8YFVqKlIkl8sUIS/iu4qal7k
+         mAsZvq9uh8VoHA88CkkMoJxjpYD2JMh/BThZOA+x+ZSxqlkTBI347pY7i7gn6PimS/yW
+         h11A==
+X-Gm-Message-State: AJcUukftmJe60MHdU14K3Cm3qgLzHY9g0erMLVBAGLbexfPEF+ZsUw4v
+        0D8ZKJryrnBD1WWIRPwivXcSmiw77QDCB6nRYIhVQ15AzlyjS5n2zx0SKzxVQMezgB7wfJpTjBD
+        uFb5md+R7/Zv7mdTSR0oPKoNFsY79
+X-Received: by 2002:a5e:a708:: with SMTP id b8mr11745292iod.126.1545772876394;
+        Tue, 25 Dec 2018 13:21:16 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5q8//ILtV+TPbWWdZ1v4w4J22JwSmUMhyRMtMG3zSjBC2tOldZO13wcjiWv21WQU0kfy9FnA==
+X-Received: by 2002:a5e:a708:: with SMTP id b8mr11745284iod.126.1545772876170;
+        Tue, 25 Dec 2018 13:21:16 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id m11sm15256673itb.24.2018.12.25.13.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Dec 2018 13:21:15 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: fix a double-fetch bug in adpt_i2o_passthru
+Date:   Tue, 25 Dec 2018 15:20:47 -0600
+Message-Id: <20181225212048.69782-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 4:45 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Also, it would be good if you merge first the docs-next pull request from
-> Jon, as otherwise, you'll see some warnings when building documentation,
-> due to an issue at scripts/kernel-doc, whose fix is at documentation tree.
+user_msg[0] is a size variable, which is copied in from user space and
+checked. It is copied in again from user space after the check, and used
+in the following execution. Malicious user programs can race to change
+user_msg[0] between the two copies, leading to incorrect size. The fix
+ensures to use the checked size.
 
-I don't seem to have that in my pile of pull requests, so docs
-creation will warn for a bit. Not a huge deal.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/scsi/dpt_i2o.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-                     Linus
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 37de8fb186d7..93bd1d1bd5b5 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -1733,6 +1733,9 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
+ 	if(copy_from_user(msg, user_msg, size)) {
+ 		return -EFAULT;
+ 	}
++	/* Ensure it is not changed in the second copy */
++	msg[0] = size;
++
+ 	get_user(reply_size, &user_reply[0]);
+ 	reply_size = reply_size>>16;
+ 	if(reply_size > REPLY_FRAME_SIZE){
+-- 
+2.17.2 (Apple Git-113)
+
