@@ -2,96 +2,204 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88359C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC803C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F97921773
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545729246;
-	bh=hSynMHtpDQG2Q7zvURE8q2PVW426y4TL+3C8eZ50y0I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=lKksmgakcYkCczSpllmRogtbvYXYqcJF44LhJlsaUd6z601wSxkTNf/iMkoW6pZ9w
-	 /1dDvIpRyyJ4tIXeEW8U0vsTZstvKtUG7To/sVxgOr+9J3lfEeRA/uwU6UD2ELv6ti
-	 G1rMRmMMR84UCxCOGilT5mFoNcs1Mb78foswxUj0=
+	by mail.kernel.org (Postfix) with ESMTP id 7DF8F2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:35:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HP9OpGl6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725894AbeLYJOD (ORCPT
+        id S1725892AbeLYJfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 04:14:03 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45269 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbeLYJOD (ORCPT
+        Tue, 25 Dec 2018 04:35:48 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33253 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbeLYJfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 04:14:03 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y1so11205151oie.12;
-        Tue, 25 Dec 2018 01:14:02 -0800 (PST)
+        Tue, 25 Dec 2018 04:35:48 -0500
+Received: by mail-it1-f195.google.com with SMTP id m8so23141434itk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 01:35:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Zu+IiiFJXRXaTWUnBhv9a0r6y0/sGRFLZRlf3oG7Ig=;
+        b=HP9OpGl6AzvlFmsT+vWD94FmDRKZQOhAkRPu3EpRVT7bZB06ananlvFa0xFzqPOli0
+         I+pwPgWJ3q1Vd+gR8LhxUmxkmKbSdm5/d9xOpLUxK6aXPZdm+oouUKi50OtcwYG7fk5p
+         IR6uNnp2YOYEmLlCyI79x0GsgBUAHwKBT7qFFZJyqAd/T2KhoFxFbNrbeZ9vM0V97a0c
+         KHi7fm/QzoB5ma1gi4PlIp0s8qDSkvu5xpRtZsaUS4yd6oUZvaqgbwOBUvkJLYyPSbwI
+         6QV/sP2fFDGjBbTE12CdovDQdK5ti6AD6DvTm5h2UxLtGqCTqlJNxq9CCIsED/vFj47u
+         POkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a/k4Xq6eNqUpeSx/AmWDFL+gX4X7eSI4DfqGto/llcA=;
-        b=jBrlrCldBRt5Igphwd97DbDCYfGP7gTAFWIXk+Bp85ScbolLoeFodi74yYrXSZgAfz
-         e2zENORMKfJDgCplu8ks43qp4J4GGnpm+bG0vJEo1q9hWqs2WbGAEBZB9s2CH+5CcjGx
-         PlO58CdmV3ETpAV3xzmGP04tejb8sB8f6pk0UTQEqiorAdIoW+gVk9HrBQbnAApzbpKM
-         gh47PFCZ1VSQcvmklXJN4BelRPgntJuxZD59XtA5GrpWqsG+hzHYn1OsTfWYvycn5PWt
-         0BZ0NaxgPqAlLfXtiKFR/kW4mXE4iT4fPxLpyt46CqRVYusKBtfXZKXRI02Jh5I0qiOR
-         6dCA==
-X-Gm-Message-State: AA+aEWY6s9bbY/7IDcTs5J+WPbMn0uRZF0n3xdhHUuc2dMuRrvauS5W9
-        8bcRDOzg2REJflcooIrM4dPuC77Sz84TNI79JRw=
-X-Google-Smtp-Source: AFSGD/Xe5/thS6Zjp9lAlqANYKSUluSP/lI6Sc3asDxu0tPifo8flVaPDER4uOvEd9AV1NTEbhB5loYwZ2Ti1eCl4UA=
-X-Received: by 2002:a54:4195:: with SMTP id 21mr10157358oiy.76.1545729242477;
- Tue, 25 Dec 2018 01:14:02 -0800 (PST)
+        bh=6Zu+IiiFJXRXaTWUnBhv9a0r6y0/sGRFLZRlf3oG7Ig=;
+        b=PDR4DYOP20WXZbJKgg9SMAVbz2mvkrD+npv6V0pz2q1wRzfWVdiSDfoW9eQjWwoh/9
+         v791kkrqXw7/V45uVfIykRdpMJVDq8P9K4eHtY8OQ3CRkmKSw8Lae+kQa7I7YhUU89BB
+         yygp6sQbN8SVKBnMGkOWTdo4tvcwghWJk1yN+A24qTBz0QsqX6xZ6imo+gt9jEiq4ahM
+         x/DQVtef3jzoyB1+3lPu/cyINhfdGWMrBx1LGUyfp7sOLSoTMj5Ce7WexFB7llebVaGa
+         Q9/fAiGteriStx8ZzQ+PHdAksDQWxNZ5WGBIAxMkGVex/RA3IQpiKbOZQ/QD/F3oPI1t
+         q15g==
+X-Gm-Message-State: AJcUukcUNU3T1ZRWVNSutmXw6WQ8Sf2qQu7ldo6hMrzaw70LD5/pCcCP
+        dd3E/scml4GRLajhnjfBGafH0S9OQGT5MKJOG2N8/Q==
+X-Google-Smtp-Source: ALg8bN7chsI8lfbKtn/LKYgv3PRNbAIUVKkLcNA5/rN51V6LDq1pX8v3/kPt6UegjcJD+sECrhJcz8GYlmYyIpnG0Dk=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr9607141iti.166.1545730546254;
+ Tue, 25 Dec 2018 01:35:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-11-okaya@kernel.org>
-In-Reply-To: <20181223232521.11320-11-okaya@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 25 Dec 2018 10:13:49 +0100
-Message-ID: <CAJZ5v0is-DSV15AxRyNG93vazzQsY_8vM6crzgZXeEmhTyQBVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 10/11] x86: select IOSF_MBI only when CONFIG_PCI is set
-To:     okaya@kernel.org
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <00000000000051ee78057cc4d98f@google.com> <CACT4Y+YX3=OLqfmWwhHVCQz+HwE=53VH9c1E2M+rgbF=UVTV5A@mail.gmail.com>
+ <ab2fb696-8d3b-9720-a8a0-99c66a080605@colorfullife.com> <CACT4Y+Y-c7FgSTKyHqpRZu3eKLo5QfXy10axTSwWkU4MUgjFgw@mail.gmail.com>
+ <87614226-e895-c3a3-3626-b0fbe7e191be@colorfullife.com> <CACT4Y+bU4mLF1tEhw6mKf1m1W63OGvaFhAsTrpTW0M5MFXekRQ@mail.gmail.com>
+ <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+ <CACT4Y+ZitcDg=OA8NbJJTWQyHHzmiZ7rFekFkgxmdOOnSKTfXg@mail.gmail.com>
+ <CACT4Y+bUYDEEdB-WrWc2gdzuQ-xOSoCZxzT7faNd3_ENnxFNnQ@mail.gmail.com> <f4eaca71-09f6-3c21-258c-336d1b56d38c@colorfullife.com>
+In-Reply-To: <f4eaca71-09f6-3c21-258c-336d1b56d38c@colorfullife.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 25 Dec 2018 10:35:35 +0100
+Message-ID: <CACT4Y+Z3GYkvL28BmyGWJHZmK=NgrJcMfhqyXPPMME_Rk8X_qw@mail.gmail.com>
+Subject: Re: general protection fault in put_pid
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     syzbot+1145ec2e23165570c3ac@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        ktsanaktsidis@zendesk.com, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 12:25 AM Sinan Kaya <okaya@kernel.org> wrote:
+On Sun, Dec 23, 2018 at 7:38 PM Manfred Spraul <manfred@colorfullife.com> wrote:
 >
-> Need CONFIG_PCI to be set in order to be able to use IOSF_MBI
-> functionality.
+> Hello Dmitry,
 >
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> On 12/23/18 11:42 AM, Dmitry Vyukov wrote:
+> > Actually was able to reproduce this with a syzkaller program:
+> > ./syz-execprog -repeat=0 -procs=10 prog
+> > ...
+> > kasan: CONFIG_KASAN_INLINE enabled
+> > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 1 PID: 8788 Comm: syz-executor8 Not tainted 4.20.0-rc7+ #6
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   __list_del_entry include/linux/list.h:117 [inline]
+> >   list_del include/linux/list.h:125 [inline]
+> >   unlink_queue ipc/sem.c:786 [inline]
+> >   freeary+0xddb/0x1c90 ipc/sem.c:1164
+> >   free_ipcs+0xf0/0x160 ipc/namespace.c:112
+> >   sem_exit_ns+0x20/0x40 ipc/sem.c:237
+> >   free_ipc_ns ipc/namespace.c:120 [inline]
+> >   put_ipc_ns+0x55/0x160 ipc/namespace.c:152
+> >   free_nsproxy+0xc0/0x1f0 kernel/nsproxy.c:180
+> >   switch_task_namespaces+0xa5/0xc0 kernel/nsproxy.c:229
+> >   exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
+> >   do_exit+0x19e5/0x27d0 kernel/exit.c:866
+> >   do_group_exit+0x151/0x410 kernel/exit.c:970
+> >   __do_sys_exit_group kernel/exit.c:981 [inline]
+> >   __se_sys_exit_group kernel/exit.c:979 [inline]
+> >   __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+> >   do_syscall_64+0x192/0x770 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x4570e9
+> > Code: 5d af fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
+> > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> > 01 f0 ff ff 0f 83 2b af fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007ffe35f12018 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00000000004570e9
+> > RDX: 0000000000410540 RSI: 0000000000a34c00 RDI: 0000000000000045
+> > RBP: 00000000004a43a4 R08: 000000000000000c R09: 0000000000000000
+> > R10: 0000000000d24940 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000008
+> > Modules linked in:
+> > Dumping ftrace buffer:
+> >     (ftrace buffer empty)
+> > ---[ end trace 17829b0f00569a59 ]---
+> > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >
+> >
+> > The prog is:
+> > unshare(0x8020000)
+> > semget$private(0x0, 0x4007, 0x0)
+> >
+> > kernel is on 9105b8aa50c182371533fc97db64fc8f26f051b3
+> >
+> > and again it involved lots of oom kills, the repro eats all memory, a
+> > process getting killed, frees some memory and the process repeats.
+>
+> I was too fast: I can't reproduce the memory leak.
+>
+> Can you send me the source for prog?
 
-The subject and changelog here don't match the changes below.  Please fix.
 
-> ---
->  arch/x86/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index cc4f0c6ee1ed..322a58ababb0 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -617,7 +617,7 @@ config X86_INTEL_QUARK
->
->  config X86_INTEL_LPSS
->         bool "Intel Low Power Subsystem Support"
-> -       depends on X86 && ACPI
-> +       depends on X86 && ACPI && PCI
->         select COMMON_CLK
->         select PINCTRL
->         select IOSF_MBI
-> --
-> 2.19.0
->
+Here is the program:
+https://gist.githubusercontent.com/dvyukov/03ec54b3429ade16fa07bf8b2379aff3/raw/ae4f654e279810de2505e8fa41b73dc1d77778e6/gistfile1.txt
+
+But we concluded this is not a leak, right?
+It just creates large semaphores tied to a persistent ipcns. Once the
+process is killed, all memory is released. When this program runs, it
+eats all memory, then one of the subprocesses is oom-killed, part of
+memory is released, then all memory is consumed again by a new
+subprocess and this repeats. If all processes are killed, all memory
+is released back. It seems to be working as intended.
+
+However, what you said about kernel.sem sysctl is useful and I think
+we need to use it for additional sandboxing of syzkaller test
+processes. I am thinking of applying:
+
+kernel.shmmax = 16777216
+kernel.shmall = 536870912
+kernel.shmmni = 1024
+kernel.msgmax = 8192
+kernel.msgmni = 1024
+kernel.msgmnb = 1024
+kernel.sem = 1024 1048576 500 1024
+
+It should be enough to trigger bugs of any complexity (oom's aside),
+but should prevent uncontrolled memory consumption.
+Looking at the code I figured that these sysctls are
+per-ipc-namespace, right? I.e. if I do sysctl from an ipcns, the
+limits will be set only only for that ns. I won't use this initially,
+but something to keep in mind if the global limits will fail in some
+way.
