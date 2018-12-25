@@ -7,108 +7,110 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A88C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 19:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E46CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 20:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD9C21726
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 19:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFCF82177B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 20:00:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="EsS8mAlN"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="csF9Jj/7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbeLYTgm (ORCPT
+        id S1725880AbeLYT5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 14:36:42 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:51914 "EHLO
+        Tue, 25 Dec 2018 14:57:10 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:57398 "EHLO
         mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeLYTgl (ORCPT
+        with ESMTP id S1725854AbeLYT5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 14:36:41 -0500
+        Tue, 25 Dec 2018 14:57:10 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 08608AFD
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:36:40 +0000 (UTC)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id D1CBBB1C
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:57:08 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
 Received: from mta-p8.oit.umn.edu ([127.0.0.1])
         by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ResIuuohpL4N for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 13:36:39 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        with ESMTP id ncfx8giN13IU for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 13:57:08 -0600 (CST)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id CF931A88
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 13:36:39 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id k25so1171489ios.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 11:36:39 -0800 (PST)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id A5A899EB
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 13:57:08 -0600 (CST)
+Received: by mail-it1-f200.google.com with SMTP id p21so16797322itb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 11:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=S3arjK9lymWq8Gis82Wib0NPZcJUj7BlMTvV8U54j6Q=;
-        b=EsS8mAlNOxCYt9VVvbIWFOGH/3dcNmKuCSagNF3GQc3PVT7Y8SN6diUHtuwuhQv+lv
-         v71qph7RKCnxhaeZu70r2mIFZ5iGDxTeK2WoDNntjgT0igTyFrzq0NUhspiZMT/DmBF2
-         cgB95ILdE3VDThX7M4F9qAiRW9LLcQJxcwq+Ak9+ol8C3VfqJmUfA2J6f52x4+h7UWji
-         7vR0ZarAlrXi/T/fkCYt+zpSkZdnEFQ7m8uxNLBlddj2YEBvMQuRfCDkE2iOzcbBQ9Jz
-         Fyvc4uIemF+mL6vvS2J8n4F2N7Vjz9hyeTK9oO8qutTHyhAZmi/dJIDqtX8tdBmPIl5q
-         XvUw==
+        bh=4j9+iKNJ8s8Atk43E6W22afZdFKgiCQCrarKCTLLx2U=;
+        b=csF9Jj/7OOUwV4hj5i7DaPXTnR2vtYi1mwCZIslMfU7d0KheTkWjLgEhopTmfF1M1K
+         y9dmwZqHn/xRuZ6ku4F7Ww0xTPgKl3bn1vRm91zmYSR1L1Rx7byYprwJfRGS1LsvQtp0
+         Y6O+c2I77j/FgQxcg8j/kgG4eI2cqurZQNj1kcfMhcQgqYsBQObiCKhzvmvHhpbqu9x9
+         jIGiriUBsCGHYWpt6/7GyspFQbLnDN+FVuJziPlGO6C0toNf2Yu9DjnkyZnOMnLyByGa
+         U5cTBN1Kh1jM0NHcuw2XCQ3hpZrJcGM6lGT7aEps4GK6bWoNXuQmXcuNYRxxRU+5EBbl
+         rcVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=S3arjK9lymWq8Gis82Wib0NPZcJUj7BlMTvV8U54j6Q=;
-        b=mLl6NsNpQKjc6CzbsBUu9mvSwngv2heOvB2s2mWUm4v5gmHoJXH24+XuehK2QTz1vE
-         N0ZLmZcJyKO3f+JANz7oyPCMtXVAw3IipqhDDqhCYMGCevjLiqkNP8fgW4N/5P+ysvlF
-         PABvnSAoq/k3HdFSeJqKMXm/H56I9oOdN3+pBrgZUhoIfSuhyuEcBa11QbNvUwIKNkrG
-         g//4JSK47ptyJMXIzzLQmaGUVvumfup0oiC/2nxIzzDdIO/A/REIrCFnO/TM1M7OOyH8
-         HwCYsK2jPkeEVbuu17oWXAQOgdkr43qEsfQ911EBv+Q3YF7gr55G2fAYlaC6eG2M5NsT
-         nkeA==
-X-Gm-Message-State: AA+aEWYae9jnBhUhiKAcoI7rA9FzPMk1aWfCvst++vjo5E+tNvbxsnMq
-        CM20Y4NBEdZgmPIZZyuZu+1F4DJaIRoj6OP7l556vkgXelVkfler4totjiznQJlmJKPypdtfXdM
-        gbbjAcVUG2UETzsMa/j0yEf+3YnfX
-X-Received: by 2002:a24:9144:: with SMTP id i65mr12074541ite.115.1545766599440;
-        Tue, 25 Dec 2018 11:36:39 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5D7gX5x7vwphZBHX40Ogmk+0/4kdN0iezQsISaM9OQebKiqXl+UDZnTJ4L9xSX3Up6mUZ95w==
-X-Received: by 2002:a24:9144:: with SMTP id i65mr12074533ite.115.1545766599192;
-        Tue, 25 Dec 2018 11:36:39 -0800 (PST)
+        bh=4j9+iKNJ8s8Atk43E6W22afZdFKgiCQCrarKCTLLx2U=;
+        b=GnfqsggPYXrhbP8ug9mUx+ffohEYY56vokpJXEFw2CeHkDU033h1TG97S1WuR1lGny
+         KTtEccZr8kGhvh86T3UWWvgzZ04w+x1E32nCIEB8IDGIuPT7CBzpXKmImgy9Uv2qLiW9
+         IaH7EqIMP11Wh/J34FHdu2EjG0nJJpjIm7B9DLqQ2FgXu0roI9uy1rk0HmwlbEiiI/9U
+         gaJn5n9a/1WTCR6W9U8PouS/Z/2oYRi7j2QR1WI0HOJT4NS3sPVov+pnXDvXXYTJEUkv
+         xq8/AQFjVCeVgReiviUDV1wVIFmcDsV9hKvsYfkJVGj7w0WlkRgR9E7yEz0hrKgqtwn+
+         Ylug==
+X-Gm-Message-State: AJcUukdJxcDuQx4O3He9qWyyhQk+p9rrX58AB5RK1yAWsgB6rRASDrHd
+        tv5+O4KppANkUmdKP/Ekw1s/BGBygG0nDMmuZ5URZL4cDeTBAZa9UTV2/B7NkYi7F7s0SzL7C48
+        Ibpo0MRJnsd04MZZAGZ4te4Lzgzsg
+X-Received: by 2002:a5e:8b05:: with SMTP id g5mr9776636iok.144.1545767827793;
+        Tue, 25 Dec 2018 11:57:07 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7vluLCp7C7vcRQxK+NcD0t1sWSsJOm8Qq1TE6IIG4dScS+etAMbNphm/TDaM+we8iSFRKXTA==
+X-Received: by 2002:a5e:8b05:: with SMTP id g5mr9776625iok.144.1545767827556;
+        Tue, 25 Dec 2018 11:57:07 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id u126sm12026361ita.1.2018.12.25.11.36.37
+        by smtp.gmail.com with ESMTPSA id d128sm16530360iof.37.2018.12.25.11.57.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 11:36:38 -0800 (PST)
+        Tue, 25 Dec 2018 11:57:06 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wmi: avoid a double-fetch issue in wmi_ioctl
-Date:   Tue, 25 Dec 2018 13:36:11 -0600
-Message-Id: <20181225193611.69216-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hwtracing: stm: avoid a double-fetch case when fetching policy id
+Date:   Tue, 25 Dec 2018 13:56:37 -0600
+Message-Id: <20181225195637.69304-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-buf->length is first copied in from user space and security-checked. The
-second copy issued by copy_from_user copies it again. The data in user
-space may have been modified by malicious users. filter_callback()
-further uses the potentially modified data. The fix avoids the
-double-fetch that overwrites buf->length.
+"size" is fetched from user space and security checked. The fix avoids
+fetching it again. Since "size" is no longer used after the second
+fetch in the current code, so let's just skip copying "size" in the
+second fetch.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/platform/x86/wmi.c | 3 ++-
+ drivers/hwtracing/stm/core.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index bea35be68706..93cab9a70ad7 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -850,7 +850,8 @@ static long wmi_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			buf->length, wblock->req_buf_size);
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index 93ce3aa740a9..55df1d374c57 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -752,7 +752,8 @@ static int stm_char_policy_set_ioctl(struct stm_file *stmf, void __user *arg)
+ 	if (!id)
+ 		return -ENOMEM;
  
- 	/* copy the structure from userspace */
--	if (copy_from_user(buf, input, wblock->req_buf_size)) {
-+	if (copy_from_user(buf->data, input->data,
-+				wblock->req_buf_size - sizeof(buf->length))) {
- 		dev_dbg(&wblock->dev.dev, "Copy %llu from user failed\n",
- 			wblock->req_buf_size);
+-	if (copy_from_user(id, arg, size)) {
++	if (copy_from_user(id + sizeof(size),
++				arg + sizeof(size), size - sizeof(size))) {
  		ret = -EFAULT;
+ 		goto err_free;
+ 	}
 -- 
 2.17.2 (Apple Git-113)
 
