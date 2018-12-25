@@ -2,125 +2,96 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53601C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88359C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D21B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F97921773
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 09:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545729246;
+	bh=hSynMHtpDQG2Q7zvURE8q2PVW426y4TL+3C8eZ50y0I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=lKksmgakcYkCczSpllmRogtbvYXYqcJF44LhJlsaUd6z601wSxkTNf/iMkoW6pZ9w
+	 /1dDvIpRyyJ4tIXeEW8U0vsTZstvKtUG7To/sVxgOr+9J3lfEeRA/uwU6UD2ELv6ti
+	 G1rMRmMMR84UCxCOGilT5mFoNcs1Mb78foswxUj0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbeLYJBd (ORCPT
+        id S1725894AbeLYJOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 04:01:33 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55774 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbeLYJBc (ORCPT
+        Tue, 25 Dec 2018 04:14:03 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45269 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbeLYJOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 04:01:32 -0500
-Received: from mail-pg1-f198.google.com ([209.85.215.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <po-hsu.lin@canonical.com>)
-        id 1gbiag-0003XF-GD
-        for linux-kernel@vger.kernel.org; Tue, 25 Dec 2018 09:01:30 +0000
-Received: by mail-pg1-f198.google.com with SMTP id s22so12623594pgv.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 01:01:30 -0800 (PST)
+        Tue, 25 Dec 2018 04:14:03 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y1so11205151oie.12;
+        Tue, 25 Dec 2018 01:14:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=Xo049x0xiIqeDYPyD0QhBX1kSGrXxCvtHAOi6WBWmm0=;
-        b=dqlvL+wO+pRd0YC9OhSKr9+TJLLlM8NVE9OeYJPg7U3aQ/2e74Le0zPfiCkZQeQGw4
-         jSC1QESTeM0mleHNCoYVusNBSHCKXseGlyUSoKRoTjoX5JzE2cdsAVTCI708scs0sOgZ
-         VNCy275TSF8E0K1dAf/qZJjttuXfdMGdXXSR0+vYnfsQf4/IE7uAepsuDtUidXY85H3v
-         p5O/yzK1dDVLISILhgbtiDDwGXBZwXohvhcXXWxoeiOu+I6TSoz4YFbISMm++oHENKQb
-         nTN7lzDL6PbAlM5Yk9AjDmWlxoi6Pw0IOU/rOEzW2jxos0ij6dE8kr+TjopgiMU38JES
-         O6Ug==
-X-Gm-Message-State: AJcUukeV6gXbYbHESZCE+6jkPuF9C+Z/xQscbJmoZQtaLrN6B5h7t4G2
-        8/eH+5gehenK42KseKt+UhPCVXVN+7DhIYxk/pM/2c24hPvOmw2jVbJCsHmOzSQXW2EYgvJieVH
-        rcRFGA6L1u4UtOhjjZIvlI1flCKIpYwf9b6kig5A3
-X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr15249412plb.251.1545728489094;
-        Tue, 25 Dec 2018 01:01:29 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5VVBgJ1D4NFF+WwtYwp6FGXHvu1j8sAJdo6ZELsV7nFTqvt9bTwdr6QjzPw758p+/fCqwSDw==
-X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr15249393plb.251.1545728488750;
-        Tue, 25 Dec 2018 01:01:28 -0800 (PST)
-Received: from Leggiero.taipei.internal (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
-        by smtp.gmail.com with ESMTPSA id s130sm70460103pgc.60.2018.12.25.01.01.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Dec 2018 01:01:27 -0800 (PST)
-From:   Po-Hsu Lin <po-hsu.lin@canonical.com>
-To:     shuah@kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/efivarfs: clean up test files from test_create*()
-Date:   Tue, 25 Dec 2018 16:59:45 +0800
-Message-Id: <20181225085945.13686-1-po-hsu.lin@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a/k4Xq6eNqUpeSx/AmWDFL+gX4X7eSI4DfqGto/llcA=;
+        b=jBrlrCldBRt5Igphwd97DbDCYfGP7gTAFWIXk+Bp85ScbolLoeFodi74yYrXSZgAfz
+         e2zENORMKfJDgCplu8ks43qp4J4GGnpm+bG0vJEo1q9hWqs2WbGAEBZB9s2CH+5CcjGx
+         PlO58CdmV3ETpAV3xzmGP04tejb8sB8f6pk0UTQEqiorAdIoW+gVk9HrBQbnAApzbpKM
+         gh47PFCZ1VSQcvmklXJN4BelRPgntJuxZD59XtA5GrpWqsG+hzHYn1OsTfWYvycn5PWt
+         0BZ0NaxgPqAlLfXtiKFR/kW4mXE4iT4fPxLpyt46CqRVYusKBtfXZKXRI02Jh5I0qiOR
+         6dCA==
+X-Gm-Message-State: AA+aEWY6s9bbY/7IDcTs5J+WPbMn0uRZF0n3xdhHUuc2dMuRrvauS5W9
+        8bcRDOzg2REJflcooIrM4dPuC77Sz84TNI79JRw=
+X-Google-Smtp-Source: AFSGD/Xe5/thS6Zjp9lAlqANYKSUluSP/lI6Sc3asDxu0tPifo8flVaPDER4uOvEd9AV1NTEbhB5loYwZ2Ti1eCl4UA=
+X-Received: by 2002:a54:4195:: with SMTP id 21mr10157358oiy.76.1545729242477;
+ Tue, 25 Dec 2018 01:14:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-11-okaya@kernel.org>
+In-Reply-To: <20181223232521.11320-11-okaya@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 25 Dec 2018 10:13:49 +0100
+Message-ID: <CAJZ5v0is-DSV15AxRyNG93vazzQsY_8vM6crzgZXeEmhTyQBVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/11] x86: select IOSF_MBI only when CONFIG_PCI is set
+To:     okaya@kernel.org
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test files created by test_create*() tests will stay in the $efivarfs_mount
-directory until next reboot.
+On Mon, Dec 24, 2018 at 12:25 AM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> Need CONFIG_PCI to be set in order to be able to use IOSF_MBI
+> functionality.
+>
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 
-When the tester tries to run this efivarfs test again on the same system, the
-immutable characteristics in that directory with those previously generated
-files will cause some "Permission denied" noises and a false-positive test
-result to the test_create_read() test.
+The subject and changelog here don't match the changes below.  Please fix.
 
-Remove those test files in the end of each test to solve this issue.
-
-Link: https://bugs.launchpad.net/bugs/1809704
-
-Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
----
- tools/testing/selftests/efivarfs/efivarfs.sh | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/tools/testing/selftests/efivarfs/efivarfs.sh b/tools/testing/selftests/efivarfs/efivarfs.sh
-index a47029a..ea2e2a0 100755
---- a/tools/testing/selftests/efivarfs/efivarfs.sh
-+++ b/tools/testing/selftests/efivarfs/efivarfs.sh
-@@ -60,6 +60,12 @@ test_create()
- 		echo "$file has invalid size" >&2
- 		exit 1
- 	fi
-+
-+        rm $file 2>/dev/null
-+        if [ $? -ne 0 ]; then
-+                chattr -i $file
-+                rm $file
-+        fi
- }
- 
- test_create_empty()
-@@ -72,12 +78,24 @@ test_create_empty()
- 		echo "$file can not be created without writing" >&2
- 		exit 1
- 	fi
-+
-+        rm $file 2>/dev/null
-+        if [ $? -ne 0 ]; then
-+                chattr -i $file
-+                rm $file
-+        fi
- }
- 
- test_create_read()
- {
- 	local file=$efivarfs_mount/$FUNCNAME-$test_guid
- 	./create-read $file
-+
-+        rm $file 2>/dev/null
-+        if [ $? -ne 0 ]; then
-+                chattr -i $file
-+                rm $file
-+        fi
- }
- 
- test_delete()
--- 
-2.7.4
-
+> ---
+>  arch/x86/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index cc4f0c6ee1ed..322a58ababb0 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -617,7 +617,7 @@ config X86_INTEL_QUARK
+>
+>  config X86_INTEL_LPSS
+>         bool "Intel Low Power Subsystem Support"
+> -       depends on X86 && ACPI
+> +       depends on X86 && ACPI && PCI
+>         select COMMON_CLK
+>         select PINCTRL
+>         select IOSF_MBI
+> --
+> 2.19.0
+>
