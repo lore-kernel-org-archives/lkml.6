@@ -3,103 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A681EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 07:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E76C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 07:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A67021738
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 07:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2098421773
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 07:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnGmxt51"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="a+C7Rqg3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbeLYHZh (ORCPT
+        id S1725867AbeLYHhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 02:25:37 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34312 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbeLYHZg (ORCPT
+        Tue, 25 Dec 2018 02:37:03 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:56156 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbeLYHhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 02:25:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j10so6327483pga.1;
-        Mon, 24 Dec 2018 23:25:35 -0800 (PST)
+        Tue, 25 Dec 2018 02:37:03 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 7074AC23
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 07:37:01 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id T-2KmsgOJVkr for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 01:37:01 -0600 (CST)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 497D8B15
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 01:37:01 -0600 (CST)
+Received: by mail-io1-f69.google.com with SMTP id o22so15940019iob.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 23:37:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fzNWOmT8sh5rGlWNYwljXN2T4O55ofuyfC4HLKotZUI=;
-        b=WnGmxt51/Np7PaZJSL6UFR9LOaPgCw8lvfg1wfN4TG2EBp18wlbhoB9Y6YLY39taol
-         vr8zvdcsj8Wobvp0u3GZi0PEmdyL9oHmY5uBVfmqIhMadwmU39xi9D9sTe0LZqodM6Qy
-         Qu8DU4KwFyRX51PapH0Sdlaarc7Lyu4rU4r4GxYMlOaGx5sQucuW/6PA0YCRqKVQ1A5J
-         0lmV/s4zdhLlhsCyN/yLFqeSRJz//aPwuwjuXLV38n3t4dju+QcBjJfxyXRWdBWW3nOX
-         zRJzsi/FJgzp51L0rmj97i2v7WboXBdL+KeLkTR+EMe5vwgNLf3AzprStvoZDt/51Htu
-         JkGA==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=JiJfleo6rJQmt0Cue6Ul+9uEjSUyPKKMsTea62cJlUo=;
+        b=a+C7Rqg3GiAT+TNUpDxEJszJe1HQwLCVSaa58VY0Bll4Gl9ShH5xpXPBsALV8AqDTn
+         SURyEZtKPlAHGEnQwH/NkjAywMQIPeG9OXECw4lUmY28BjLPUcbEWzPP0dGsHxsnZqz2
+         u8QmcTG5gwopXYN+bSrAo2LcfOgLcxW6QF9g07/zyyA2w1LZmugw2RAi+z6VdZFo3oxT
+         08IggZPH5i/Yk3FnLAe7g3cK30dKjKJ+aYnw1qINxWer7FB+gPsfIUFAJ2n2ozujvUPo
+         2FTGr86YU9EPfs8VvtuokX+5NMJTZMD4ie35r1WZhTC9ydnxg1iPtBqayanGEoccN4a4
+         11oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fzNWOmT8sh5rGlWNYwljXN2T4O55ofuyfC4HLKotZUI=;
-        b=TUsNkTPqSzFXUDL7jHOHTNb1JWHxHqI+Kafcj+Fz0UJ4JhUj5df8lXZkHSXtoPzu7Q
-         Wj9EISAm6jPoijhEzN0TH/rYjzOz5JEoSrya2urlxvtB0E0GsKef2ZNFR6aBloS3CtSK
-         3lZ8KGdSyGMpPTKEM3Z9KB7u1byGSnIbRjVFwD8mgeDTYjSuiaias3ZtAdC11M8R4cbs
-         zO7dNnStKxV8DmKx0BwBN6Pc14WVazd72EU0YLHPo6iMyw+Pu2axixDJ4KZbBpfCYD76
-         hjTg6XYse+sSCxQasEP9w5lBS30A9UA03Uoc40SAFsC4/ZnLSuQCvNopiG//7VqMKUQx
-         T/ZQ==
-X-Gm-Message-State: AJcUukfHrun0vpEThyQmF6Hy6KZN11e1K26mANDW9fFFtayOBsUXBNR4
-        tXLRvjSjxsg3KnJECvS/FmE=
-X-Google-Smtp-Source: AFSGD/UyqX0sqgDGFD+EIb6ljNwrWuRkAks+omjyk4Ra/ss5htXhgizAvbfgvjtZZ+OzlYDykUFupw==
-X-Received: by 2002:a62:1709:: with SMTP id 9mr15626592pfx.249.1545722735087;
-        Mon, 24 Dec 2018 23:25:35 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1:6b2b])
-        by smtp.gmail.com with ESMTPSA id r80sm50636171pfa.111.2018.12.24.23.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 23:25:34 -0800 (PST)
-Date:   Mon, 24 Dec 2018 23:25:31 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JiJfleo6rJQmt0Cue6Ul+9uEjSUyPKKMsTea62cJlUo=;
+        b=tJPkqCwqnxv7z/DsGpBAkKU66WjZw54IlBWGelUf5vOf2r+Y+nY1YpI8Wf2Dcfv48X
+         yoPgmY4a5r5N8BXGcX2c7SGQ6fLXslE6SEXBrpJYVZ9spUElbX9fUg7lDcY/ndrDvU8z
+         CrsUnQDQFvTX1L8sO+UuBYMAkEIfvCGor3vcOgz8bd1qlEkmtjxO20iHJaSBwH1qpcH5
+         CUGwj4skvAwIB0Cz71spC+MTYI6YzlA/fWjC2Dsj70cHdW0bxUUQiaWeadvYeBZvK+pR
+         Ni1iLOozv4O0nIe1pbzNyatwj0ONEFS5Q/uIPCYqR+MaWAJHPl6iy/cZHhQn9i4IA7YH
+         8sJQ==
+X-Gm-Message-State: AJcUukcoABu492pTwxqWnvIOZ7vr0GcSufH+PO2Nb3RalCuvc7zOaxTX
+        BIvDhsvFK6Io2IFMr1Ui3hTFfHkv9/j8Eqao1jVK3Eqbo7Y5+1ngkSm/F5bbrPL7NQj17uC/tCy
+        arfvFruK/87TU5tD5SdmSsVv5Fe1s
+X-Received: by 2002:a5e:d719:: with SMTP id v25mr10594308iom.244.1545723420749;
+        Mon, 24 Dec 2018 23:37:00 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN44LUEhPv0xHUS0SzhwIkocNM6VO2CfrtQzB0kzYqRwOHtSpEz87YtDexw6G250AZYSJxpnmQ==
+X-Received: by 2002:a5e:d719:: with SMTP id v25mr10594306iom.244.1545723420535;
+        Mon, 24 Dec 2018 23:37:00 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id r21sm11362166ita.27.2018.12.24.23.36.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Dec 2018 23:36:59 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bpf: fix missing checks of the return value of
- check_reg_arg
-Message-ID: <20181225072529.t53rszflr3apeexz@ast-mbp.dhcp.thefacebook.com>
-References: <20181225071710.67835-1-kjlu@umn.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181225071710.67835-1-kjlu@umn.edu>
-User-Agent: NeoMutt/20180223
+Subject: [PATCH] ethernet: (80003es2lan) fix missing checks for return value of reg write
+Date:   Tue, 25 Dec 2018 01:36:19 -0600
+Message-Id: <20181225073620.67962-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 25, 2018 at 01:17:10AM -0600, Kangjie Lu wrote:
-> check_reg_arg() may fail. This fix inserts checks for its return value.
-> If check_reg_arg() fails, issues an error message.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  kernel/bpf/verifier.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 51ba84d4d34a..fde91a5c0b5a 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -2619,7 +2619,10 @@ static int check_func_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
->  	/* after the call registers r0 - r5 were scratched */
->  	for (i = 0; i < CALLER_SAVED_REGS; i++) {
->  		mark_reg_not_init(env, caller->regs, caller_saved[i]);
-> -		check_reg_arg(env, caller_saved[i], DST_OP_NO_MARK);
-> +		err = check_reg_arg(env, caller_saved[i], DST_OP_NO_MARK);
-> +		if (err)
-> +			verbose(env,
-> +					"check_reg_arg() fails in setting caller saved regs\n");
+e1000_write_kmrn_reg_80003es2lan() may fail. The fix checks its return
+value and returns with its error code if it fails.
 
-Such patch was already posted.
-These calls cannot fail.
-I prefer to leave them as-is.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/net/ethernet/intel/e1000e/80003es2lan.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000e/80003es2lan.c b/drivers/net/ethernet/intel/e1000e/80003es2lan.c
+index 257bd59bc9c6..7e2d4b9839bb 100644
+--- a/drivers/net/ethernet/intel/e1000e/80003es2lan.c
++++ b/drivers/net/ethernet/intel/e1000e/80003es2lan.c
+@@ -699,8 +699,11 @@ static s32 e1000_reset_hw_80003es2lan(struct e1000_hw *hw)
+ 	if (ret_val)
+ 		return ret_val;
+ 	kum_reg_data |= E1000_KMRNCTRLSTA_IBIST_DISABLE;
+-	e1000_write_kmrn_reg_80003es2lan(hw, E1000_KMRNCTRLSTA_INBAND_PARAM,
+-					 kum_reg_data);
++	ret_val =
++		e1000_write_kmrn_reg_80003es2lan(hw,
++				E1000_KMRNCTRLSTA_INBAND_PARAM, kum_reg_data);
++	if (ret_val)
++		return ret_val;
+ 
+ 	ret_val = e1000e_get_auto_rd_done(hw);
+ 	if (ret_val)
+@@ -757,8 +760,11 @@ static s32 e1000_init_hw_80003es2lan(struct e1000_hw *hw)
+ 	e1000_read_kmrn_reg_80003es2lan(hw, E1000_KMRNCTRLSTA_INBAND_PARAM,
+ 					&kum_reg_data);
+ 	kum_reg_data |= E1000_KMRNCTRLSTA_IBIST_DISABLE;
+-	e1000_write_kmrn_reg_80003es2lan(hw, E1000_KMRNCTRLSTA_INBAND_PARAM,
+-					 kum_reg_data);
++	ret_val =
++		e1000_write_kmrn_reg_80003es2lan(hw,
++				E1000_KMRNCTRLSTA_INBAND_PARAM, kum_reg_data);
++	if (ret_val)
++		return ret_val;
+ 
+ 	/* Set the transmit descriptor write-back policy */
+ 	reg_data = er32(TXDCTL(0));
+-- 
+2.17.2 (Apple Git-113)
 
