@@ -2,467 +2,171 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A15C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 15:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231D6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 16:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED252177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 15:49:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="xTvsvrIN"
+	by mail.kernel.org (Postfix) with ESMTP id DFE3321736
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 16:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbeLYPt5 (ORCPT
+        id S1725866AbeLYQZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 10:49:57 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40513 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbeLYPt4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 10:49:56 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n18-v6so12280235lji.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 07:49:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rG215W49zHwcElAp6dZ9fE0IBh72Qk261pFsNwoGcwE=;
-        b=xTvsvrIN6baLbcL1SxpeC8ad5kx+zpGwyQ3d0ckUgrg417O8HOZVesFutNivqrSlYa
-         ep328uRJCboHeMMqaz/IgtiOalkGoMkRVG0rr2+WVyafcH6gUqLa1vg4akcX3+OuTqbY
-         qkJ+TEYD8ZRzwOCh5XcsbMjI7PKHJ1NbxhakZ3vSKWtN1JNmmX1FidmRDt8kAzmq5icy
-         UpSt2Pqo/mv02s1Rxb2cegQzNvH0ed4mjgVbcgTJeOeHdSQ136K2Vt7fGTJ2+NFzKqrL
-         4Wjn/7UHvHefAY+XNXJ6Ow7bFEZIgpuO/sJYVzyOG+5Pvq9PX7w84MXe+Xy0UvbgGUVs
-         CPeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=rG215W49zHwcElAp6dZ9fE0IBh72Qk261pFsNwoGcwE=;
-        b=DwyqNMhR5mPz8oTBNrOksvfdtDEPG0z4H5gtlCzXRUa6poJWZQeNN7htOJfYxPU9S1
-         mGROFhBh+JTJHd0TVgriQZhLW6Y0ADFAqG2knNg8EjL2SrmXvJPdIy/MoLFgaFZhoDiq
-         ONtIbR4xUNPNwooXVhT+sXBn+jDEBZagTjd0gmvzQftsRFQJzgnQzmDFWmlIMpUYcK5t
-         VGQWnq4wVQ1nXsPaDkceSJwV29jyjVqq0MnnEslRypxp8mrpHMK0OcWhBkSu01UycMtJ
-         SBjEkktM/CfR5t71tA/dG9muV8dCl6Q8gScu+s7bmsF3Nzt7jumpgE5CWJlkGhWTMZ/h
-         q7+Q==
-X-Gm-Message-State: AJcUukeGY5u8ihkJf561Lq1vGhQAOzEUEg8NGSZ76j8okT6v/V46C3Rj
-        JKmwGjfZjbfo+YfOpO64z5zKLg==
-X-Google-Smtp-Source: ALg8bN4cikb77oU4JKb2HomFXISKnw1zh421utq2dBVXvzyynpaLOIh3nelHWvlhXQBhRKpzjefgZA==
-X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr10677010ljj.18.1545752993024;
-        Tue, 25 Dec 2018 07:49:53 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.83.22])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm7061388ljg.56.2018.12.25.07.49.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Dec 2018 07:49:52 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v4 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
- <1545634358-17485-2-git-send-email-masonccyang@mxic.com.tw>
-Organization: Cogent Embedded
-Message-ID: <12cb2574-8ec9-d756-756a-d7fbbd5c7069@cogentembedded.com>
-Date:   Tue, 25 Dec 2018 18:49:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 25 Dec 2018 11:25:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:32940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbeLYQZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Dec 2018 11:25:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 15AF6CA1E7;
+        Tue, 25 Dec 2018 16:25:35 +0000 (UTC)
+Received: from redhat.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE90E5D9CB;
+        Tue, 25 Dec 2018 16:25:33 +0000 (UTC)
+Date:   Tue, 25 Dec 2018 11:25:32 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jintack Lim <jintack@cs.columbia.edu>
+Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
+Message-ID: <20181225111716-mutt-send-email-mst@kernel.org>
+References: <20181212100819.21295-1-jasowang@redhat.com>
+ <20181212100819.21295-5-jasowang@redhat.com>
+ <20181212092435-mutt-send-email-mst@kernel.org>
+ <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
+ <20181213092930-mutt-send-email-mst@kernel.org>
+ <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
+ <20181214081821-mutt-send-email-mst@kernel.org>
+ <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
+ <20181224123654-mutt-send-email-mst@kernel.org>
+ <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1545634358-17485-2-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 25 Dec 2018 16:25:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/24/2018 09:52 AM, Mason Yang wrote:
-
-> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
 > 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> ---
->  drivers/spi/Kconfig           |   6 +
->  drivers/spi/Makefile          |   1 +
->  drivers/spi/spi-renesas-rpc.c | 788 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 795 insertions(+)
->  create mode 100644 drivers/spi/spi-renesas-rpc.c
+> On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
+> > On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
+> > > On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
+> > > > On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
+> > > > > On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
+> > > > > > > Just to make sure I understand this. It looks to me we should:
+> > > > > > > 
+> > > > > > > - allow passing GIOVA->GPA through UAPI
+> > > > > > > 
+> > > > > > > - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
+> > > > > > > performance
+> > > > > > > 
+> > > > > > > Is this what you suggest?
+> > > > > > > 
+> > > > > > > Thanks
+> > > > > > Not really. We already have GPA->HVA, so I suggested a flag to pass
+> > > > > > GIOVA->GPA in the IOTLB.
+> > > > > > 
+> > > > > > This has advantages for security since a single table needs
+> > > > > > then to be validated to ensure guest does not corrupt
+> > > > > > QEMU memory.
+> > > > > > 
+> > > > > I wonder how much we can gain through this. Currently, qemu IOMMU gives
+> > > > > GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
+> > > > > GIOVA->HVA to vhost. It looks no difference to me.
+> > > > > 
+> > > > > Thanks
+> > > > The difference is in security not in performance.  Getting a bad HVA
+> > > > corrupts QEMU memory and it might be guest controlled. Very risky.
+> > > How can this be controlled by guest? HVA was generated from qemu ram blocks
+> > > which is totally under the control of qemu memory core instead of guest.
+> > > 
+> > > 
+> > > Thanks
+> > It is ultimately under guest influence as guest supplies IOVA->GPA
+> > translations.  qemu translates GPA->HVA and gives the translated result
+> > to the kernel.  If it's not buggy and kernel isn't buggy it's all
+> > fine.
 > 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 7d3a5c9..54b40f8 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -528,6 +528,12 @@ config SPI_RSPI
->  	help
->  	  SPI driver for Renesas RSPI and QSPI blocks.
->  
-> +config SPI_RENESAS_RPC
-> +	tristate "Renesas R-Car Gen3 RPC SPI controller"
+> 
+> If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
+> the point why we even want to try this. Buggy qemu code can crash itself in
+> many ways.
+> 
+> 
+> > 
+> > But that's the approach that was proven not to work in the 20th century.
+> > In the 21st century we are trying defence in depth approach.
+> > 
+> > My point is that a single code path that is responsible for
+> > the HVA translations is better than two.
+> > 
+> 
+> So the difference whether or not use memory table information:
+> 
+> Current:
+> 
+> 1) SET_MEM_TABLE: GPA->HVA
+> 
+> 2) Qemu GIOVA->GPA
+> 
+> 3) Qemu GPA->HVA
+> 
+> 4) IOTLB_UPDATE: GIOVA->HVA
+> 
+> If I understand correctly you want to drop step 3 consider it might be buggy
+> which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
+> will ends up:
+> 
+> 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
+> do it during device IOTLB lookup).
+> 
+> 2) Extra bits to enable this capability.
+> 
+> So this looks need more codes in kernel than what qemu did in userspace.  Is
+> this really worthwhile?
+> 
+> Thanks
 
-   Well, technically it's called RPC-IF in the manual, not just RPC...
+So there are several points I would like to make
 
-> +	depends on ARCH_RENESAS || COMPILE_TEST
-> +	help
-> +	  SPI driver for Renesas R-Car Gen3 RPC.
-> +
->  config SPI_QCOM_QSPI
->  	tristate "QTI QSPI controller"
->  	depends on ARCH_QCOM
-[...]
-> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-> new file mode 100644
-> index 0000000..6dd739a
-> --- /dev/null
-> +++ b/drivers/spi/spi-renesas-rpc.c
-> @@ -0,0 +1,788 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
-> +// Copyright (C) 2018 Macronix International Co., Ltd.
-> +//
-> +// R-Car Gen3 RPC SPI/QSPI/Octa driver
-> +//
-> +// Authors:
-> +//	Mason Yang <masonccyang@mxic.com.tw>
-> +//
-> +
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/log2.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/spi/spi-mem.h>
-> +
-> +#include <asm/unaligned.h>
-> +
-> +#define RPC_CMNCR		0x0000	/* R/W */
-> +#define RPC_CMNCR_MD		BIT(31)
-> +#define RPC_CMNCR_SFDE		BIT(24) /* undocumented bit but must be set */
-> +#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
-> +#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
-> +#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
-> +#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
-> +#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
-> +				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
-> +#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14)
-> +#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12)
+1. At the moment without an iommu it is possible to
+   change GPA-HVA mappings and everything keeps working
+   because a change in memory tables flushes the rings.
+   However I don't see the iotlb cache being invalidated
+   on that path - did I miss it? If it is not there it's
+   a related minor bug.
 
-   Like I said, the above 2 aren't documented in the manual v1.00...
+2. qemu already has a GPA. Discarding it and re-calculating
+   when logging is on just seems wrong.
+   However if you would like to *also* keep the HVA in the iotlb
+   to avoid doing extra translations, that sounds like a
+   reasonable optimization.
 
-> +#define RPC_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
+3. it also means that the hva->gpa translation only runs
+   when logging is enabled. That is a rarely excercised
+   path so any bugs there will not be caught.
 
-   Only this one is...
+So I really would like us long term to move away from
+hva->gpa translations, keep them for legacy userspace only
+but I don't really mind how we do it.
 
-[...]
-> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
-> +{
-> +	/*
-> +	 * NOTE: The 0x260 are undocumented bits, but they must be set.
-> +	 *	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
-> +	 *	0x0 : the delay is biggest,
-> +	 *	0x1 : the delay is 2nd biggest,
-> +	 *	On H3 ES1.x, the value should be 0, while on others,
-> +	 *	the value should be 6.
-> +	 */
-> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
-> +
-> +	/*
-> +	 * NOTE: The 0x31511144 are undocumented bits, but they must be set
-> +	 *       for RPC_PHYOFFSET1.
-> +	 *	 The 0x31 are undocumented bits, but they must be set
-> +	 *	 for RPC_PHYOFFSET2.
-> +	 */
-> +	regmap_write(rpc->regmap, RPC_PHYOFFSET1, 0x31511144);
+How about
+- a new flag to pass an iotlb with *both* a gpa and hva
+- for legacy userspace, calculate the gpa on iotlb update
+  so the device then uses a shared code path
 
-  0x30000000 is documented, missed that last time...
+what do you think?
 
-[...]
-> +static int rpc_spi_do_reset(struct rpc_spi *rpc)
-> +{
-> +	int ret;
-> +
-> +	ret = reset_control_reset(rpc->rstc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
 
-   Like I said, this function folds to a mere reset_control_reset() call...
-
-[...]
-> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
-> +			   const void *tx_buf, void *rx_buf)
-> +{
-> +	u32 smenr, smcr, data, pos = 0;
-> +	int ret = 0;
-
-   Looks like we don't need this variable...
-
-> +
-> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
-> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-> +				  RPC_CMNCR_BSZ(0));
-> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-> +	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
-> +	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
-[...]
-> +	} else if (rx_buf) {
-> +		smenr = rpc->smenr;
-
-   Could be done before the *if*...
-
-> +
-> +		while (pos < rpc->xferlen) {
-> +			u32 nbytes = rpc->xferlen - pos;
-> +
-> +			if (nbytes > 4)
-> +				nbytes = 4;
-> +
-> +			smcr = rpc->smcr | RPC_SMCR_SPIE;
-> +
-> +			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 0)
-> +				smcr |= RPC_SMCR_SSLKP;
-> +
-> +			regmap_write(rpc->regmap, RPC_SMENR, smenr);
-> +			regmap_write(rpc->regmap, RPC_SMCR, smcr);
-> +			ret = wait_msg_xfer_end(rpc);
-> +			if (ret)
-> +				goto out;
-> +
-> +			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
-> +			memcpy(rx_buf + pos, &data, nbytes);
-> +			pos += nbytes;
-> +
-> +			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 4) {
-
-   This looks hackish. What I think matters is whether the address bits are set or not.
-Anyway, maybe it works OK for you but not for me (on V3H), the 4th byte of the JEDEC ID
-is clobbered from 0 to 3... I've been working on a better workaround using Marek's
-approach (reading in extended memory mode) -- should port to v4 of your patch yet...
-
-> +				smenr = rpc->smenr & ~RPC_SMENR_CDE &
-> +					~RPC_SMENR_ADE(0xf);
-> +			} else {
-> +				regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-> +				regmap_write(rpc->regmap, RPC_SMDMCR,
-> +					     rpc->dummy);
-
-   Not sure why you rewrite these regs again. Where do they change?
-
-> +				regmap_write(rpc->regmap, RPC_SMADR,
-> +					     rpc->addr + pos);
-> +			}
-> +		}
-> +	} else {
-> +		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-> +		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-> +		ret = wait_msg_xfer_end(rpc);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	return ret;
-
-   Could be *return* 0, we never get here from an error path...
-
-> +
-> +out:
-> +	return rpc_spi_do_reset(rpc);
-> +}
-> +
-> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
-> +					const struct spi_mem_op *op,
-> +					u64 *offs, size_t *len)
-> +{
-> +	struct rpc_spi *rpc = spi_master_get_devdata(spi->master);
-> +
-> +	rpc->cmd = RPC_SMCMR_CMD(op->cmd.opcode);
-> +	rpc->smenr = RPC_SMENR_CDE |
-> +		     RPC_SMENR_CDB(ilog2(op->cmd.buswidth));
-> +	rpc->totalxferlen = 1;
-> +	rpc->xfer_dir = SPI_MEM_NO_DATA;
-> +	rpc->xferlen = 0;
-> +	rpc->addr = 0;
-> +
-> +	if (op->addr.nbytes) {
-> +		rpc->smenr |= RPC_SMENR_ADB(ilog2(op->addr.buswidth));
-> +		if (op->addr.nbytes == 4)
-> +			rpc->smenr |= RPC_SMENR_ADE(0xf);
-> +		else
-> +			rpc->smenr |= RPC_SMENR_ADE(0x7);
-> +
-> +		if (offs && len)
-> +			rpc->addr = *offs;
-> +		else
-> +			rpc->addr = op->addr.val;
-> +		rpc->totalxferlen += op->addr.nbytes;
-> +	}
-> +
-> +	if (op->dummy.nbytes) {
-> +		rpc->smenr |= RPC_SMENR_DME;
-> +		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
-> +		rpc->totalxferlen += op->dummy.nbytes;
-> +	}
-> +
-> +	if (op->data.nbytes || (offs && len)) {
-> +		if (op->data.dir == SPI_MEM_DATA_IN) {
-> +			rpc->smcr = RPC_SMCR_SPIRE;
-> +			rpc->xfer_dir = SPI_MEM_DATA_IN;
-> +		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
-> +			rpc->smcr = RPC_SMCR_SPIWE;
-> +			rpc->xfer_dir = SPI_MEM_DATA_OUT;
-> +		}
-
-   Use *switch* instead, please.
-
-[...]
-> +static bool rpc_spi_mem_supports_op(struct spi_mem *mem,
-> +				    const struct spi_mem_op *op)
-> +{
-> +	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
-> +	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4 ||
-> +	    op->addr.nbytes > 4)
-> +		return false;
-
-   So we support the dual mode, even though the manual doesn't say we do?
-
-> +
-> +	return true;
-> +}
-> +
-> +static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-> +				       u64 offs, size_t len, void *buf)
-> +{
-> +	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
-> +	int ret;
-> +
-> +	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
-> +		return -EINVAL;
-> +
-> +	if (WARN_ON(len > 0x4000000))
-> +		return -EIO;
-
-   Why not read what can still be read and return 0x4000000?
-
-> +
-> +	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-> +				    &desc->info.op_tmpl, &offs, &len);
-> +
-> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
-> +		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-> +		     RPC_CMNCR_BSZ(0));
-
-   Why not set this in the probing time and only set/clear the MD bit?
-
-[...]
-> +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
-> +					u64 offs, size_t len, const void *buf)
-> +{
-> +	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
-> +	int ret;
-> +
-> +	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
-> +		return -EINVAL;
-> +
-> +	if (WARN_ON(len > RPC_WBUF_SIZE))
-> +		len = RPC_WBUF_SIZE;
-> +
-> +	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-> +				    &desc->info.op_tmpl, &offs, &len);
-> +
-> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
-> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-> +				  RPC_CMNCR_BSZ(0));
-> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL | 0x260 |
-> +				  RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
-> +
-> +	memcpy_toio(rpc->base + RPC_WBUF, buf, len);
-> +
-> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-> +	regmap_write(rpc->regmap, RPC_SMADR, offs);
-> +	regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-> +	regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-> +	ret = wait_msg_xfer_end(rpc);
-> +	if (ret)
-> +		goto out;
-> +
-> +	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
-> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
-
-   Whe not do read-modify-write here and above?
-
-[...]
-> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
-> +				   struct spi_message *msg)
-> +{
-[...]
-> +	for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
-> +		if (xfer[i].rx_buf) {
-> +			rpc->smenr |=
-> +				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-> +				RPC_SMENR_SPIDB
-> +				(ilog2((unsigned int)xfer[i].rx_nbits));
-
-   Mhm, I would indent this contination line by 1 extra tab...
-
-> +		} else if (xfer[i].tx_buf) {
-> +			rpc->smenr |=
-> +				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-> +				RPC_SMENR_SPIDB
-> +				(ilog2((unsigned int)xfer[i].tx_nbits));
-
-   And this one...
-
-[...]
-> +#ifdef CONFIG_PM_SLEEP
-> +static int rpc_spi_suspend(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct spi_master *master = platform_get_drvdata(pdev);
-
-   Ugh... not sure how i missed it the last time. :-/ Please, just do this:
-
-	struct spi_master *master = dev_get_drvdata(dev);
-
-> +
-> +	return spi_master_suspend(master);
-> +}
-> +
-> +static int rpc_spi_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct spi_master *master = platform_get_drvdata(pdev);
-
-   Likewise...
-
-[...]
-
-MBR, Sergei
+-- 
+MST
