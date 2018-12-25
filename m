@@ -2,130 +2,171 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E577DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 05:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB6EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 05:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A412173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 05:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350692173B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 05:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="lr6y0AKH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD6Itty6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725857AbeLYFRs (ORCPT
+        id S1725876AbeLYFdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 00:17:48 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45394 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbeLYFRs (ORCPT
+        Tue, 25 Dec 2018 00:33:05 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44986 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbeLYFdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 00:17:48 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id EA053C37
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 05:17:46 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id BxFZop6db1Pc for <linux-kernel@vger.kernel.org>;
-        Mon, 24 Dec 2018 23:17:46 -0600 (CST)
-Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id B2948C18
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 23:17:46 -0600 (CST)
-Received: by mail-it1-f197.google.com with SMTP id x82so15977612ita.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 21:17:46 -0800 (PST)
+        Tue, 25 Dec 2018 00:33:04 -0500
+Received: by mail-io1-f65.google.com with SMTP id r200so10156026iod.11;
+        Mon, 24 Dec 2018 21:33:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=FdFrkmqprfCYQfxfSMzPTnrTdkT0taszbpGJk+aizVs=;
-        b=lr6y0AKHwEbrQNWpS4yyVrtbjsh5bUA2XnRjNEZh+yRrOUVrVqUMkO1U9ngxqzOH+m
-         KrUaLcX37Xg1B0Z3ni8i3bOMzR5Clc/bUmlfP7+RS5oNjE2h7mhb/mOJTlWqSTjCliiy
-         4V5r8xr2VupQi0jkY0Xyav4yqe+pv3rlUzInpIhb9v+llUXawj9QmiQqLP2IQVUZsc6X
-         uJP+BTOWF0FOo/8uGLjQG9tlPvDL8TdG25IJrerMlIQYSRMrFljMQ8074FqzHnVfEu3d
-         Fq5eJxya2qXSA6YAfUMqsBytz4C4R5ooOxp0kwfSe+oq+k+1PL2Fwmdw/3sUS4AZ9+Cy
-         /bHg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+A74NzcsU5jVuDJexZfDXwDFdTQppxIwyEi8thauB1U=;
+        b=LD6Itty65NVQOUp5+dFsoJDFfawIvngvgt+5luRb4ulzCCaVXWiPqHigY15fSLSp9a
+         L2NK+JFcdgPLhLEJMoVpMO/+PhMwMA0mQ2oa9UdsBFxmQnl5bBn+F4zs1Go0kjBQGLxp
+         2zPzuFgQje4HS64tiWW9NOL1ZNlvvPeeiQgxmJuRunzJbMZTU8gAhwJFFDcy72YyKGiX
+         gwtnqkEy8v0rnCaqZ5IjKmNL/MbGh91devGii1SGMgkZh0isP7cdheaMGZ8Pm+As3Elh
+         uHTYdWuMAHy6h+F3PYHIHBvOXEeijwQRz2OGJfR7Z5XfLniCPBtmEXLC08G3hMjaycId
+         +14w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FdFrkmqprfCYQfxfSMzPTnrTdkT0taszbpGJk+aizVs=;
-        b=KomKW4M1n/aqdH655p1x9MScVYxjG/KnCNmrG4zIrbAkJTOMczEY34LzyHVDNqkAcu
-         k92Aqs3NgL5QhS89fwisfjfZqDbNSOJDLN0yd/eayd3dw3jMKzjfgl9mqgI3t4Vwzfta
-         mHRGbc2pRnKc9RUOuYDmjFLAoR3MeESeMlMw9uY1sqLUvNCATPqpmVxLmjYwxu8tmjB0
-         A/TX76oPHhXxmiQdkqsqESjF+Ih8rah/e9yLBtqotoDsTb/l75XT1/ceMloVBf/6tC5v
-         x5XSlpizDthJpPdTk1E0P9ZuytqA4+TPYt/ojQVNwzl2WnjJmwnBT8qcnFL60r5Uh0+U
-         r4Jw==
-X-Gm-Message-State: AJcUukf3wy1Y1txviisVJ+rJq1knAiTybD/JF0Mv81ZbRkPW4bn05XS5
-        WjR1yMv18tF90lREJCpfXtn8JctBnccnQVz4y5a7A42/LZr9BLSn71DiI12yeIun9uSiaoZtDZv
-        Jq7yWsp723L7iYEKjUmB9wejk3dK5
-X-Received: by 2002:a6b:3b85:: with SMTP id i127mr10187796ioa.177.1545715066310;
-        Mon, 24 Dec 2018 21:17:46 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN7Tp/MTBMpXmifTRotIpuk2jIY1VhA1oHeJRDDT2VSLHS6nkXZcya7rJzN9QoUnwY2WjLaRjg==
-X-Received: by 2002:a6b:3b85:: with SMTP id i127mr10187790ioa.177.1545715066088;
-        Mon, 24 Dec 2018 21:17:46 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id w24sm3527596ioc.11.2018.12.24.21.17.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 24 Dec 2018 21:17:45 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] gpu: anx7808: fix a missing check in anx78xx_poweron
-Date:   Mon, 24 Dec 2018 23:17:20 -0600
-Message-Id: <20181225051720.66433-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+A74NzcsU5jVuDJexZfDXwDFdTQppxIwyEi8thauB1U=;
+        b=lTRpZHl2N7ztk2iZEyq81tZbGDArWzglvk7LDnich1wpecanFGDQeskV09yPuzb7l7
+         ho/ND8eL4/N+HJNBJ1NOtm3xd/9ZgBHFlOm2sOtrAoIQR1ZAR4LDEhrg9z/k+7XNu2Nd
+         oBLLdD+4mfqdLiJviImhSIz88xkR4KgjV9GEmljCTJrrBDzlhWJwlx76pal8+0vc7ntA
+         tr39CTwLq2ChINSaDwio+LbHNSh69wx+XoHcfkv4JbUGEGtz4plaIQu2XP3g7DCoULJK
+         10Fv5b4KsP8OR7y52o2DlVWFTLE89GFh6WaFnUTUeiBcAMYBDpTB19F4cSInklVIrC86
+         elKQ==
+X-Gm-Message-State: AJcUukePPdYFqxzG0kZjCIA4UqurEpbdZmGYThsPk53L2ytkmhNHGc8V
+        7QOh0hd+WKlzcqPBhXrnHfGWVy/Wx75YAg92cfM=
+X-Google-Smtp-Source: ALg8bN5nNYUU6yCI9Hk6/V529D2OTffFHX/ZStk3Dro4WYhwVvP/DO/uvIp2KdSPR3vnxUxxFGrpSUc59m1bTAE86yI=
+X-Received: by 2002:a6b:600b:: with SMTP id r11mr11206750iog.259.1545715983251;
+ Mon, 24 Dec 2018 21:33:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+ <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io> <20181202100304.labt63mzrlr5utdl@brauner.io>
+ <8736rebl9s.fsf@oldenburg.str.redhat.com> <20181203180224.fkvw4kajtbvru2ku@brauner.io>
+ <874lbtjvtd.fsf@oldenburg2.str.redhat.com> <CALCETrViXJ0gD34yVd8QpB-CSeKZzzncvkPHReycTiQin4r4WQ@mail.gmail.com>
+ <87y392h4b7.fsf@oldenburg2.str.redhat.com> <C5E71146-DE79-4145-B54B-E161E7372D95@brauner.io>
+In-Reply-To: <C5E71146-DE79-4145-B54B-E161E7372D95@brauner.io>
+From:   Lai Jiangshan <jiangshanlai+lkml@gmail.com>
+Date:   Tue, 25 Dec 2018 13:32:51 +0800
+Message-ID: <CAJhGHyC=Zc=iG+iL+Ny8GsMd-5xypxdk4Et_1ZViMao5aXreCw@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both anx78xx_set_bits() and anx78xx_clear_bits() in the poweron process
-may fail. The fix inserts checks for their return values.
+Is it possible to avoid adding any syscall?
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/gpu/drm/bridge/analogix-anx78xx.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Since holding /proc/pid/reg_file can also hold the pid.
+With this guarantee, /proc/pid/uuid (universally unique identifier ) can be
+introduced to identify tasks, the kernel generates
+a uuid for every task when created.
 
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-index f8433c93f463..3b0fe2b188db 100644
---- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-@@ -638,10 +638,22 @@ static void anx78xx_poweron(struct anx78xx *anx78xx)
- 	gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
- 
- 	/* Power on registers module */
--	anx78xx_set_bits(anx78xx->map[I2C_IDX_TX_P2], SP_POWERDOWN_CTRL_REG,
--			 SP_HDCP_PD | SP_AUDIO_PD | SP_VIDEO_PD | SP_LINK_PD);
--	anx78xx_clear_bits(anx78xx->map[I2C_IDX_TX_P2], SP_POWERDOWN_CTRL_REG,
--			   SP_REGISTER_PD | SP_TOTAL_PD);
-+	err = anx78xx_set_bits(anx78xx->map[I2C_IDX_TX_P2],
-+			SP_POWERDOWN_CTRL_REG,
-+			SP_HDCP_PD | SP_AUDIO_PD | SP_VIDEO_PD | SP_LINK_PD);
-+	if (err) {
-+		DRM_ERROR("Failed to set register bits: %d\n",
-+				err);
-+		return;
-+	}
-+	err = anx78xx_clear_bits(anx78xx->map[I2C_IDX_TX_P2],
-+			SP_POWERDOWN_CTRL_REG,
-+			SP_REGISTER_PD | SP_TOTAL_PD);
-+	if (err) {
-+		DRM_ERROR("Failed to clear register bits: %d\n",
-+				err);
-+		return;
-+	}
- 
- 	anx78xx->powered = true;
- }
--- 
-2.17.2 (Apple Git-113)
+save_pid_uuid_pair_for_later_kill(int pid) {
+  /* save via /proc/$pid/uuid */
+  /* don't need to keep any fd after save */
+}
 
+safe_kill(pid, uuid, sig) {
+    fd =3D open(/proc/$pid/uuid); /* also hold the pid until close() if
+open() successes */
+    if (open successes and read uuid from fd and if it equals to uuid)
+        kill(pid, sig)
+    close(fd)
+}
+
+All things needed to be done is to implement /proc/pid/uuid. And if pid can=
+'t
+be recycled within 1 ticket, or the user can ensure it. The user can use
+starttime(in /proc/pid/stat) instead.
+
+save_pid_starttime_pair_for_later_kill(int pid) {
+  /* save via /proc/$pid/stat */
+  /* don't need to keep any fd after save or keep it for 1 ticket at most *=
+/
+}
+
+safe_kill(pid, starttime, sig) {
+    fd =3D open(/proc/$pid/stat); /* also hold the pid until close() if
+open() successes */
+    if (open successes and read starttime from fd and if it equals to start=
+time)
+        kill(pid, sig)
+    close(fd)
+}
+
+In this case, zero LOC is added in the kernel. All of it depends on
+the guarantee that holding /proc/pid/reg_file also holds the pid,
+one of which I haven't checked carefully either.
+
+On Fri, Dec 7, 2018 at 3:05 AM Christian Brauner <christian@brauner.io> wro=
+te:
+>
+> On December 7, 2018 7:56:44 AM GMT+13:00, Florian Weimer <fweimer@redhat.=
+com> wrote:
+> >* Andy Lutomirski:
+> >
+> >>> I suppose that's fine.  Or alternatively, when thread group support
+> >is
+> >>> added, introduce a flag that applications have to use to enable it,
+> >so
+> >>> that they can probe for support by checking support for the flag.
+> >>>
+> >>> I wouldn't be opposed to a new system call like this either:
+> >>>
+> >>>  int procfd_open (pid_t thread_group, pid_t thread_id, unsigned
+> >flags);
+> >>>
+> >>> But I think this is frowned upon on the kernel side.
+> >>
+> >> I have no problem with it, except that I think it shouldn=E2=80=99t re=
+turn an
+> >> fd that can be used for proc filesystem access.
+> >
+> >Oh no, my intention was that it would just be used with  *_send_signal
+> >and related functions.
+>
+> Let's postpone that discussion a little.
+> I think we don't need a syscall to base this off of pids.
+> As I said I rather send my revived version of CLONE_NEWFD that would serv=
+e the same task.
+> The same way we could also just add a new open() flag that blocks fs acce=
+ss completely.
+> I just pitched that idea to Serge a few days back: O_NOCHDIR or similar.
+> That could even be part of Aleksa's path resolution patchset.
+>
+> >
+> >Thanks,
+> >Florian
+>
