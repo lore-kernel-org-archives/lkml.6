@@ -2,112 +2,105 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FBBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035BBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF8621773
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B279921773
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="LIjeBLsP"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="XqEvdOzU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbeLYIDl (ORCPT
+        id S1725891AbeLYIGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 03:03:41 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:37984 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeLYIDk (ORCPT
+        Tue, 25 Dec 2018 03:06:17 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43698 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbeLYIGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 03:03:40 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 45AE5CA4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 08:03:39 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fn1xjai3eDKL for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 02:03:39 -0600 (CST)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 1024B93D
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 02:03:39 -0600 (CST)
-Received: by mail-io1-f69.google.com with SMTP id t4so1386663iog.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 00:03:39 -0800 (PST)
+        Tue, 25 Dec 2018 03:06:16 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q2-v6so11698375lji.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 00:06:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=JcN3Rf30IuJKLJ4ezaJyg+AZGeSySBgxTmgFWUrU114=;
-        b=LIjeBLsPmwAWWn+71fCKNzqA8+DB/f3OFnE4OiaWTfrez1di1VA/MYdieYZyqp/Lm5
-         k/rB9JdCWyZ4EZfRC5Yv883MlUHBLD0POcA+Fn4YBa12Dv/kYmvde59Atw8gsAGkNyS3
-         YDZeB1dhIYUKofqQVX+lw/IinF2PIYNKQZFhMxICyek5LF5I+BpqfmZa0CmNhkabWiKa
-         bbIN0+fWBwroYyrUxYrjlE8SNPDzjU4BYX/OjqQ1TQZ39fBnEqBIZObZGmyhH8onqM5G
-         H6cCWKKW/AScxqPdw/BkdUittDjsoDvtg8HF0eoejImYF3lOHO7MXoHDqH8Dz42tL9/S
-         WGtw==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=apGgC/c4ytMUAHmzhLsFZ5LXi2BH/2rbt146q2vlWI4=;
+        b=XqEvdOzUKB8BzVO5XEV7lFh0/PpehUzo6rxZvWoRyCtYdpO2uPgVHnf08peEnoxWBP
+         ymnwIY+3Am0H3FI7EsFatx4LbaEXNknBkf9qqgmpzm6zQhHLYIgnQuBkGA/C5ib+lPwK
+         Zvoinykc7FQgv3yPZMza4yRKPlI1SWBQBoWQeB7L8o5s2xHXoUMnfPovywQNoTvNszx+
+         St9OGPL6lGvIVB05qn6vJYGIBuqA2URAXujKjSTvF2rS4KJiSfiYp9BWJPlU+xtB0VzC
+         QfbL6MEFPixSYBmAoOlfWjgJtEpKZKmC2yVZSx8Gw7nK2UvHxkDzAT6gYFb0PDjSa/ef
+         XlJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JcN3Rf30IuJKLJ4ezaJyg+AZGeSySBgxTmgFWUrU114=;
-        b=YtIKbCGJVt4a/EBJPmNgGG1kGzLSVK4iYbV1WKOB4np6LdsKtGiart7UrkOzloFd5e
-         b9HUlD/vCWJUIRxuoFgnI0aztKmOFvFLZbn8hZrcT6fljOQvuiGJH62A8qJXvUBGtbcT
-         9n+BR8HQwSpywtiVcfKSiEUbdWL1uOKcCiKzUnn41eCusMjTXIXnNCk2Yp4Hzi2ew9AI
-         FtcLh45eev1QqGXSDLLkyZkzXj0VQX5u5RB4gjwZ+O8NCi5IPBdAAZLjFYz4jca3FWhP
-         ZO5HJX1J7lCMhpG5M8xFRBfb4c0eFuhIZq2mkDi2dY42KqkZg1B5pcaGgo5FpVT1+gp1
-         ikqw==
-X-Gm-Message-State: AJcUukcEJ9ID/jncMIvWs2xBmHNIcDbl9WBrZHvH7j1oi6NTDtY0JVTi
-        kkNiQKp6ZxRigAM4JjbxpOqX2tOGDTkO71IoQ/gIif8HEpIyPziMg4uIbMQlQ+OuCXXlyEG3V+g
-        WKVrFauVs9OcNOWaSypQJeHApUTCg
-X-Received: by 2002:a6b:7207:: with SMTP id n7mr7521865ioc.85.1545725018687;
-        Tue, 25 Dec 2018 00:03:38 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN48UKF0grf5fy6j9qdAJIjgduCLRUggvwQL104DTkqlUIqNYou4KUWrwG69IDnWS4bskntXmA==
-X-Received: by 2002:a6b:7207:: with SMTP id n7mr7521855ioc.85.1545725018471;
-        Tue, 25 Dec 2018 00:03:38 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id k18sm8808iog.31.2018.12.25.00.03.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 00:03:37 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Peter Rosin <peda@axentia.se>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: drxk: add a missed check of the return value of write16
-Date:   Tue, 25 Dec 2018 02:03:07 -0600
-Message-Id: <20181225080308.68178-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=apGgC/c4ytMUAHmzhLsFZ5LXi2BH/2rbt146q2vlWI4=;
+        b=TA6zW4hIA0u0de9kryq9F00ZhyDaXQJGb/yMaACEXAj/VKxaZRMrRRLQWCYEB+UVDb
+         dIjrdqcrwLo3HWP4Y3Gx4rAYwFpF/sDi8DIfRJOUzLB+s57KRo3CJf3Hpy3A7cIP19rd
+         DxGfV536bcsOD1+8ufMtQtmaI5tiNxtGrsAVyydodmui3mTUEvXVITEB+8R5HeolBQAZ
+         wy1HfgIudzeq7vb3rJyfJQw1nRbQSjldVPyYi7AfkWBnxNuscwd0MVGY0HudeMmXO7dC
+         xITtX5hwXrmVN0gdzUxqCTCi8k1iS4S/TnU+cm+25C+opbxfjmODKS9tmNNkrUyXz5DQ
+         6aUA==
+X-Gm-Message-State: AJcUukc9VDVOBUMcCHeIvhB3pSmLdeI3MuKui5GQErOgb82jAzGF9MtU
+        KQu+v2MkjnGUMi1uWr37k6E6E4TGvug=
+X-Google-Smtp-Source: ALg8bN5ZkkQaIpXfpr/AVqbkK17JClsZRN/go1RaN2+NgtckoLUYQG0P19atZV2C9l0QnMwq74OFeA==
+X-Received: by 2002:a2e:45d:: with SMTP id 90-v6mr8997694lje.110.1545725174315;
+        Tue, 25 Dec 2018 00:06:14 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.83.170])
+        by smtp.gmail.com with ESMTPSA id q11sm6588140lfc.92.2018.12.25.00.06.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Dec 2018 00:06:13 -0800 (PST)
+Subject: Re: [PATCH][V2] drivers/net: appletalk/cops: remove redundant if
+ statement and mask
+To:     Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181224194146.11511-1-colin.king@canonical.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <322fb722-cf17-896a-cbf4-27ac796d0c7a@cogentembedded.com>
+Date:   Tue, 25 Dec 2018 11:06:08 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20181224194146.11511-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-write16() could fail. The fix inserts a check for its return value
-in case it fails.
+On 24.12.2018 22:41, Colin King wrote:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/media/dvb-frontends/drxk_hard.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The two different assignments for pkt_len are actually the same and
+> so the if statement is redundant and can be removed.  Masking a u8
+> return value from inb() with 0xFF is also redundant and can also be
+> emoved.
 
-diff --git a/drivers/media/dvb-frontends/drxk_hard.c b/drivers/media/dvb-frontends/drxk_hard.c
-index 84ac3f73f8fe..b7579ffae690 100644
---- a/drivers/media/dvb-frontends/drxk_hard.c
-+++ b/drivers/media/dvb-frontends/drxk_hard.c
-@@ -6610,7 +6610,9 @@ static int drxk_get_stats(struct dvb_frontend *fe)
- 	if (status < 0)
- 		goto error;
- 	pkt_error_count = reg16;
--	write16(state, SCU_RAM_FEC_ACCUM_PKT_FAILURES__A, 0);
-+	status = write16(state, SCU_RAM_FEC_ACCUM_PKT_FAILURES__A, 0);
-+	if (status < 0)
-+		goto error;
- 
- 	post_bit_err_count *= post_bit_error_scale;
- 
--- 
-2.17.2 (Apple Git-113)
+    Removed. :-)
 
+> Similarly, the two different outb calls are identical as the mask
+> of 0xff on the second outb is redundant since a u8 is being written,
+> so the if statement is also redundant and can be also removed.
+> 
+> Detected by CoverityScan, CID#1475639 ("Identical code for different
+> branches")
+> 
+> ---
+> 
+> V2: Remove the if statement for the outb calls, thanks to David
+> Miller for spotting this.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+[...]
+
+MBR, Sergei
