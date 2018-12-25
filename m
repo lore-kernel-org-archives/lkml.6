@@ -2,94 +2,118 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4305BC07520
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE2C07520
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B685218B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF18218CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545711975;
+	bh=FIRIC3YZtGEyVeu1VBESTCi++oPa4WDn+jsOu+vNyqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0/2j6d/TyUSF0/Tye69tACezAvUGp4myOCI2wGUzfu41PDdpkajh5rqF0+aGORYap
+	 iAeFNoJwcS4C8HzY/r0jm+zIMUmA4osIWB3P00ACdU/Hy68ltHmQ0TniKbvV0OUvhd
+	 2IfbEGVI1nYN+NVxptA5Fh2xwFepzRTgiu+pQ7nw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725868AbeLYEZZ (ORCPT
+        id S1725882AbeLYE0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 23:25:25 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44532 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725806AbeLYEZY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 23:25:24 -0500
-X-UUID: 8c966f9564934e5cad4f1eb6a4213bf5-20181225
-X-UUID: 8c966f9564934e5cad4f1eb6a4213bf5-20181225
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <chuanjia.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 679132772; Tue, 25 Dec 2018 12:25:18 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 25 Dec 2018 12:25:16 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 25 Dec 2018 12:25:16 +0800
-From:   <chuanjia.liu@mediatek.com>
-To:     <sean.wang@kernel.org>, <linus.walleij@linaro.org>,
-        <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <youlin.pei@mediatek.com>, <eddie.huang@mediatek.com>,
-        <zhiyong.tao@mediatek.com>, <hailong.fan@mediatek.com>,
-        Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-Subject: [PATCH v3] pinctrl:mediatek:add EINT support to virtual GPIOs
-Date:   Tue, 25 Dec 2018 12:23:58 +0800
-Message-ID: <1545711838-20444-1-git-send-email-chuanjia.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Mon, 24 Dec 2018 23:26:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbeLYE0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 23:26:14 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC871218B0;
+        Tue, 25 Dec 2018 04:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545711973;
+        bh=FIRIC3YZtGEyVeu1VBESTCi++oPa4WDn+jsOu+vNyqc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pD3yOKzy0nE+/Z892JEmswpG0SqrKF4SRuVNQrWIJB/TZsgZlz48c7noW4Rl/C5a+
+         y+FuDc4pEv1EUPHQYBxP6GhZbHPKMT8u7un1CwGqdkFZrylPVuRFvb2TK9BDyn+xsu
+         YjPZCXXavQLJpXc7KNYFXu4rVJp0Y66UzPTuIE74=
+Date:   Tue, 25 Dec 2018 06:26:10 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] infiniband/qedr: Potential null ptr dereference of qp
+Message-ID: <20181225042610.GC10329@mtr-leonro.mtl.com>
+References: <20181224182445.21256-1-pakki001@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 709753F672622637475F74091239B3160F9481542974F72D2853B8419EB951A42000:8
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
+Content-Disposition: inline
+In-Reply-To: <20181224182445.21256-1-pakki001@umn.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
 
-Virtual gpio only used inside SOC and not being exported to outside SOC.
-Some modules use virtual gpio as eint and doesn't nedd SMT.
-So this patch add EINT support to virtual GPIOs.
+--L6iaP+gRLNZHKoI4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
----
-change note:
-v3 : 1. modify subject and description
-      2. modify comments
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+On Mon, Dec 24, 2018 at 12:24:45PM -0600, Aditya Pakki wrote:
+> idr_find() may fail and return a NULL pointer. The fix checks the
+> return value of the function and returns an error in case of NULL.
+>
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>  drivers/infiniband/hw/qedr/qedr_iw_cm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/infiniband/hw/qedr/qedr_iw_cm.c b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
+> index 505fa3648762..93b16237b767 100644
+> --- a/drivers/infiniband/hw/qedr/qedr_iw_cm.c
+> +++ b/drivers/infiniband/hw/qedr/qedr_iw_cm.c
+> @@ -492,6 +492,8 @@ int qedr_iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
+>  	int i;
+>
+>  	qp = idr_find(&dev->qpidr.idr, conn_param->qpn);
+> +	if (unlikely(!qp))
+> +		return -EINVAL;
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4a9e0d4c2bbc..a0db145f798d 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -290,7 +290,15 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
- 		return err;
- 
- 	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
--	if (err)
-+	/*
-+	 *SMT is supposed to be supported by every real GPIO and doesn't
-+	 *support virtual GPIOs, so the extra condition err != -ENOTSUPP
-+	 *is just for adding EINT support to these virtual GPIOs. It should
-+	 *add an extra flag in the pin descriptor when more pins with
-+	 *distinctive characteristic come out.
-+	 */
-+
-+	if (err && err != -ENOTSUPP)
- 		return err;
- 
- 	return 0;
--- 
-2.19.1
+As was already pointed, qedr is racy in their accesses to idr_find() and
+NULL pointer is less worry about their IDR code.
 
+>
+>  	laddr = (struct sockaddr_in *)&cm_id->m_local_addr;
+>  	raddr = (struct sockaddr_in *)&cm_id->m_remote_addr;
+> --
+> 2.17.1
+>
+
+--L6iaP+gRLNZHKoI4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcIbFiAAoJEORje4g2clinIpQP/jIB2bXORjzOzylSYEO/qpXb
+byJfdtJmObMHWtEc7po5slq+CxFMcQm1sOtLjocJIpEdfDoZle1eSoyxgQGY0+dg
+rt67ROoMHdiNxXqB5yPJvDdQHBT9/BBBtat5smuVAUxWGXGkpEz9ELI1J8OfaX1B
+1GqkgZ10rIztXOc1xlkS9FyjThOtdScsXXKGz+JR6vKYMIybDlTLzOYnIwPtDw9o
+45tyn15vKyah5SRqrSFL/cKpABbOjR8IW3qWR5TvJ46zmPewdO0VPs0NO27Hx+mn
+I/kZ4xhR8MPYfYsruOAsOBRrlej25T9BPpc3SufZjfA7U3yqIdPnkJI5MznfDS/x
+yiWhd9kmQXBSoeu5Ro/gXxltoVSrby4aVtoRMPSKhBGPixE0MvT7kIhlVa8ig2Of
+BbAUsH6uhkmT6pFABS+xsPOt5xLEjEgHpJIjV1ceij165OfnBgRUUSz3nmDlZLaz
+QYywBmIl1pAhzDb7KXHMvMYFeaKZ4Y+c5FvAQxPhe2JutdeBrYmf9cr3B0rMaXw8
+nasvx0QvzUu4wmVIiAayYfGIk2IsqgnpXjGCIRiY2kBP6mh2t92v+rzl1TbjPe1b
+Dg571oyUPSU1TXGQt6Ao+sSb6aEbYO/b+fFNA/akpw5hTSKUFhSQAR8ttX5h8lHr
+rmAqYGwNqbHp3IF75vVc
+=XC4T
+-----END PGP SIGNATURE-----
+
+--L6iaP+gRLNZHKoI4--
