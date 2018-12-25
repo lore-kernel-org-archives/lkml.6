@@ -6,63 +6,67 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCB9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0660C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5502B218FF
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16302229E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545780004;
-	bh=G1doRWMZHE6B0jzOXZnOBrM2KkK27d95xRSnWOX5xks=;
+	s=default; t=1545780005;
+	bh=1UTODwk8mwaBVOKcrw+Yfeowtnu9yU1ImFDqKLPwrpo=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=cKGUaDDPnRmZz1WFYgRI+PPljrjyUqCBcJFiA9GgwA1L7pT3wMYq/nV3HZJfu8cnQ
-	 n/8M6t1iLHQBbEVBcKeULVZ1d+2OgaAVu8OWiUW8ZO8+/0Zrf44jILQwWlD5GVAiVX
-	 JUyPjDP4cUX15TdhQr7gbgkMo4XKooGePazcztKo=
+	b=TrjVOF4CBQzqTQheslr6dPjJOqOOH3cYtEQpXd3B529SrI5J7DABYQ69Sw/EGs6Fa
+	 wDoyYHeKJnb8VY27kMYttLNcU7L8BL1dIDKpFYXbQYvAhNVj/8325ZkyMhVpBOm4kl
+	 bHqGsriGk4+XEwAHbRQ3ipSTe8a4PJvqJKy6PdFs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeLYXUD (ORCPT
+        id S1726805AbeLYXUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 18:20:03 -0500
+        Tue, 25 Dec 2018 18:20:04 -0500
 Received: from mail.kernel.org ([198.145.29.99]:44344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeLYXUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 18:20:02 -0500
-Subject: Re: [GIT PULL] platform-drivers-x86 for 4.21-1
+        id S1726781AbeLYXUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Dec 2018 18:20:04 -0500
+Subject: Re: [GIT PULL] mtd: Changes for 4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545780002;
-        bh=G1doRWMZHE6B0jzOXZnOBrM2KkK27d95xRSnWOX5xks=;
+        s=default; t=1545780003;
+        bh=1UTODwk8mwaBVOKcrw+Yfeowtnu9yU1ImFDqKLPwrpo=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=n0avnwr6sxiK3sqDnKdF362IMOdnUQoJ1RL7unAEJuIbqWiTV4TEOin+yZJNyV+pq
-         kpf1Z4GPolLnpBujco8BpFEiCbuQouTRGZHC5HF2Ylno7y5II2w+rdv2UIzplM/P3w
-         JPDYY8fbiQ6UAEazEhRBtCUOgd4P6u4W0tolwtyc=
+        b=X3nWDdc/duK3zdbFP96Sh7Eq3h7Z/l0/WpcQytu8Q6ATcORCmt9AicyWvFQQMEnzO
+         TNjXObxpPj/A4w1QNpprgz5zFmtOERUEQNeZdqNL0YvAvh3/GOgA1KAdIEefVhSjwD
+         PJjykfyGmHHLDjL5I0knyIjbRyHQn14u9NNpxh/c=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181212140225.GA3138@smile.fi.intel.com>
-References: <20181212140225.GA3138@smile.fi.intel.com>
+In-Reply-To: <20181219170722.349d7b61@bbrezillon>
+References: <20181219170722.349d7b61@bbrezillon>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181212140225.GA3138@smile.fi.intel.com>
-X-PR-Tracked-Remote: git://git.infradead.org/linux-platform-drivers-x86.git
- tags/platform-drivers-x86-v4.21-1
-X-PR-Tracked-Commit-Id: fb7255a923115188ac134bb562d1c44f4f3a413b
+X-PR-Tracked-Message-Id: <20181219170722.349d7b61@bbrezillon>
+X-PR-Tracked-Remote: git://git.infradead.org/linux-mtd.git tags/mtd/for-4.21
+X-PR-Tracked-Commit-Id: f366d3854ec0fec0f9949dac46431598614a956b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c76cd634eb5bfd497617ea224a54a03b545c8c4d
-Message-Id: <20181225232002.23808.51717.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Tue, 25 Dec 2018 23:20:02 +0000
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-PR-Merge-Commit-Id: eaa76499711535fd64d747cc4ef0d78ab0fd41c6
+Message-Id: <20181225232003.23808.86276.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Tue, 25 Dec 2018 23:20:03 +0000
+To:     Boris Brezillon <bbrezillon@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marex@denx.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 12 Dec 2018 16:02:25 +0200:
+The pull request you sent on Wed, 19 Dec 2018 17:07:22 +0100:
 
-> git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.21-1
+> git://git.infradead.org/linux-mtd.git tags/mtd/for-4.21
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c76cd634eb5bfd497617ea224a54a03b545c8c4d
+https://git.kernel.org/torvalds/c/eaa76499711535fd64d747cc4ef0d78ab0fd41c6
 
 Thank you!
 
