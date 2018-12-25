@@ -3,110 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293FFC64E79
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ACAC64E79
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F2720449
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34B3021773
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725855AbeLYDGx (ORCPT
+        id S1725845AbeLYDkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 22:06:53 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16659 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725816AbeLYDGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 22:06:52 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 766518D1600D1;
-        Tue, 25 Dec 2018 11:06:49 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 25 Dec 2018
- 11:06:45 +0800
-Subject: Re: [PATCH] f2fs: fix use-after-free issue with sbi->stat_info
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1545656812-14695-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <0938f41e-53ed-6290-9b79-d221b1e64db6@huawei.com>
-Date:   Tue, 25 Dec 2018 11:06:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1545656812-14695-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Mon, 24 Dec 2018 22:40:45 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:31214 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725806AbeLYDkp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 22:40:45 -0500
+X-UUID: a667d26d997f4fc5a6d8be18d49074c8-20181225
+X-UUID: a667d26d997f4fc5a6d8be18d49074c8-20181225
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chuanjia.liu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1806135897; Tue, 25 Dec 2018 11:40:36 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Dec
+ 2018 11:40:35 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 25 Dec 2018 11:40:34 +0800
+Message-ID: <1545709234.17628.1.camel@mhfsdcap03>
+Subject: Re: [PATCH v2] pinctrl:mediatek:add judgment conditions
+From:   Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+To:     Sean Wang <sean.wang@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zhiyong Tao =?UTF-8?Q?=28=E9=99=B6=E5=BF=97=E5=8B=87=29?=" 
+        <Zhiyong.Tao@mediatek.com>,
+        "Eddie Huang =?UTF-8?Q?=28=E9=BB=83=E6=99=BA=E5=82=91=29?=" 
+        <eddie.huang@mediatek.com>,
+        "Hailong Fan =?UTF-8?Q?=28=E8=8C=83=E6=B5=B7=E9=BE=99=29?=" 
+        <Hailong.Fan@mediatek.com>,
+        "Youlin Pei =?UTF-8?Q?=28=E8=A3=B4=E5=8F=8B=E6=9E=97=29?=" 
+        <youlin.pei@mediatek.com>
+Date:   Tue, 25 Dec 2018 11:40:34 +0800
+In-Reply-To: <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
+References: <1545100282-15756-1-git-send-email-chuanjia.liu@mediatek.com>
+         <CAGp9Lzoo6bw-3Hr56rgbL6EhrRvXX2y5pajaOo13c5MV9FsO7Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/24 21:06, Sahitya Tummala wrote:
-> iput() on sbi->node_inode can update sbi->stat_info
-> in the below context, if the f2fs_write_checkpoint()
-> has failed with error.
+On Sun, 2018-12-23 at 02:50 +0800, Sean Wang wrote:
+> On Mon, Dec 17, 2018 at 6:32 PM <chuanjia.liu@mediatek.com> wrote:
+> >
 > 
-> f2fs_balance_fs_bg+0x1ac/0x1ec
-> f2fs_write_node_pages+0x4c/0x260
-> do_writepages+0x80/0xbc
-> __writeback_single_inode+0xdc/0x4ac
-> writeback_single_inode+0x9c/0x144
-> write_inode_now+0xc4/0xec
-> iput+0x194/0x22c
-> f2fs_put_super+0x11c/0x1e8
-> generic_shutdown_super+0x70/0xf4
-> kill_block_super+0x2c/0x5c
-> kill_f2fs_super+0x44/0x50
-> deactivate_locked_super+0x60/0x8c
-> deactivate_super+0x68/0x74
-> cleanup_mnt+0x40/0x78
+> I thought the subject still is much general, it should be further
+> improved with something like "add EINT support to virtual GPIOs" and
+> should say more about what virtual GPIOs means by MTKers in the patch
+> description because "virtual" is a usual term used throughout the
+> kernel and that would easily cause others to fail to interpret
+> correctly.
 > 
-> Fix this by moving f2fs_destroy_stats() further below iput().
+Thank you for your advice,I will modify subject and description.
+> > From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+> >
+> > This patch avoid return err when virtual gpio set SMT.
+> >
+> > Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+> > ---
+> > change note:
+> > v2 : 1. delete virtual gpio number
+> >      2. add judgment conditions
+> > ---
+> >  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > index 4a9e0d4c2bbc..a576e417744a 100644
+> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> > @@ -290,7 +290,11 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
+> >                 return err;
+> >
+> >         err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
+> > -       if (err)
+> > +
+> > +       /* SMT doesn't support virtual GPIO, add err != -ENOTSUPP is used for
+> > +        * avoid return err when virtual gpio set SMT.
+> > +        */
 > 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> ---
->  fs/f2fs/super.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> I'd prefer to the comments as the below
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index e184ad4e..df41a3a 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
->  		f2fs_write_checkpoint(sbi, &cpc);
->  	}
->  
-> -	/* f2fs_write_checkpoint can update stat informaion */
-> -	f2fs_destroy_stats(sbi);
+> /*
+> SMT is supposed to be supported by every real GPIO and doesn't support
+> virtual GPIOs, so the extra condition err != -ENOTSUPP is just for
+> adding EINT support to these virtual GPIOs. It should add an extra
+> flag in the pin descriptor when more pins with distinctive
+> characteristic come out.
+> */
+> 
+Thank you for your advice,I will modify comments.
+> > +       if (err && err != -ENOTSUPP)
+> >                 return err;
+> >
+> >         return 0;
+> > --
+> > 2.19.1
+> >
 
-The code order in error path of fill_super is almost the same as the one of
-put_super, could you please check that as well?
-
-Thanks,
-
-> -
->  	/*
->  	 * normally superblock is clean, so we need to release this.
->  	 * In addition, EIO will skip do checkpoint, we need this as well.
-> @@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
->  	iput(sbi->node_inode);
->  	iput(sbi->meta_inode);
->  
-> +	/*
-> +	 * iput() can update stat information, if f2fs_write_checkpoint()
-> +	 * above failed with error.
-> +	 */
-> +	f2fs_destroy_stats(sbi);
-> +
->  	/* destroy f2fs internal modules */
->  	f2fs_destroy_node_manager(sbi);
->  	f2fs_destroy_segment_manager(sbi);
-> 
 
