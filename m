@@ -2,127 +2,85 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD90C07520
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6677CC07520
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4011B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:36:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Mafaqh8r"
+	by mail.kernel.org (Postfix) with ESMTP id 37F6C2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbeLYEgq (ORCPT
+        id S1725863AbeLYEiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 23:36:46 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:60524 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbeLYEgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 23:36:45 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 0B9D1C2F
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 04:36:44 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rpOiMzXOkLHC for <linux-kernel@vger.kernel.org>;
-        Mon, 24 Dec 2018 22:36:43 -0600 (CST)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id D4FC67B3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 22:36:43 -0600 (CST)
-Received: by mail-io1-f69.google.com with SMTP id l10so2817111iok.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 20:36:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=MOuqoXvDQR6WaOPGYewfFnRK6hqDn95BYOfHQWaJgjA=;
-        b=Mafaqh8rSfeMEvhmZ/IyTFBmtjLSOWs9fSla/mTQlhJsjkCbCXFHXu0FM1u66PvTyq
-         yXkh8OspUzkFn9/te1r91ZOq27oFBuEcKOM+ieMUFqKt3z6Fzc2Y8q+QjdcjD9jsxZ32
-         H0RVccsosCevxPYeGplyxcDSPgfEFFfbZFBlBagxvcJUsAwoyDmylsc9/F7qmQwP0/cI
-         372F4TtcdpUJlCCBznJOZVWyuSTChWcbvzKwZSsNq9eTo2assBcK+5UxpTHDnsyzj1IT
-         K0TkqgNwxTbj36cGFp045OiG79/n5hOqbL5ec71dV9RSAVI4Qsedk0AWrM+vXG8BtR8C
-         FZZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MOuqoXvDQR6WaOPGYewfFnRK6hqDn95BYOfHQWaJgjA=;
-        b=psAvLLq2V412eLTH0sOMW7W2Jd+Nc+G+D75nV94cAXSd70ECP8XpFAH2mor129oVDP
-         fQ6gKVHwdI8WA2joUr2zLjrPrzerqdNk6jFeLGdWmxFtFD4reFBPZRnidEhq1Y+RpNcN
-         mASjGWb3rcJfFaCCGAOtdjWXO7PSZnqGeLDPOcexWTDgS3a+IeSLhXX16LpV8d0l6gyl
-         DTyyQsGyVIvozlHUN0wHb9qzoVlMc2+U+jtceKNPWzBmIpL+7uRRd9POwYOzwyM5xrmT
-         xNMaKSETSLeQWCP02mLjBI3zgS0G+PTZyBBAg4ewvkZCsr+4/uVhAhpZ+awZ5XvxuwSV
-         YAsg==
-X-Gm-Message-State: AA+aEWY+PvD6jetEaPqLHTaaXeYQdgNjlZSogsFYHQtOVmWoTDlMFbmd
-        t1yb7v0dlZRQ62ObHVt1y8dM/5qYunPcxskwAAcX40YmA+YHWBSYqAhYpJtpBEILMEpcC/2KsY5
-        T76ItPOfrfCzsTIc9r/HPxyTHR2BG
-X-Received: by 2002:a24:9144:: with SMTP id i65mr10706095ite.115.1545712603142;
-        Mon, 24 Dec 2018 20:36:43 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5ot7t3KNA2d43rlVfJCBsoawY68ASyDlAkmtWczhvWi8utQx8ZiYXJshYcx9UpiNmWZmlu+Q==
-X-Received: by 2002:a24:9144:: with SMTP id i65mr10706086ite.115.1545712602820;
-        Mon, 24 Dec 2018 20:36:42 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id d9sm5349192iom.72.2018.12.24.20.36.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 24 Dec 2018 20:36:41 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>, linux-input@vger.kernel.org,
+        Mon, 24 Dec 2018 23:38:51 -0500
+Received: from mga11.intel.com ([192.55.52.93]:57110 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbeLYEiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 23:38:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2018 20:38:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,395,1539673200"; 
+   d="scan'208";a="109795278"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Dec 2018 20:38:49 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gbeUS-0006vL-GM; Tue, 25 Dec 2018 12:38:48 +0800
+Date:   Tue, 25 Dec 2018 12:38:26 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     kbuild-all@01.org, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] touchscreen: elants: fix a missing check of return values
-Date:   Mon, 24 Dec 2018 22:36:13 -0600
-Message-Id: <20181225043616.66032-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+Subject: [PATCH] ASoC: rockchip: fix platform_no_drv_owner.cocci warnings
+Message-ID: <20181225043826.GA158508@lkp-ib04.lkp.intel.com>
+References: <201812251233.q6697gUW%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201812251233.q6697gUW%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-elants_i2c_send() may fail, let's check its return values. The fix does
-the check and reports an error message upon the failure.
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+sound/soc/codecs/rk3328_codec.c:508:6-11: No need to set .owner here. The core will do it.
+
+ Remove .owner field if calls are used which set it automatically
+
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
+
+Fixes: dc1b33660692 ("ASoC: rockchip: support ACODEC for rk3328")
+CC: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
- drivers/input/touchscreen/elants_i2c.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-index f2cb23121833..8ccba4ccee37 100644
---- a/drivers/input/touchscreen/elants_i2c.c
-+++ b/drivers/input/touchscreen/elants_i2c.c
-@@ -245,8 +245,22 @@ static int elants_i2c_calibrate(struct elants_data *ts)
- 	ts->state = ELAN_WAIT_RECALIBRATION;
- 	reinit_completion(&ts->cmd_done);
- 
--	elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
--	elants_i2c_send(client, rek, sizeof(rek));
-+	error = elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
-+	if (error) {
-+		dev_err(&client->dev,
-+				"error in sending the w_flashkey command for calibration: %d\n",
-+				error);
-+		enable_irq(client->irq);
-+		return error;
-+	}
-+  error = elants_i2c_send(client, rek, sizeof(rek));
-+	if (error) {
-+		dev_err(&client->dev,
-+				"error in sending the rek command for calibration: %d\n",
-+				error);
-+		enable_irq(client->irq);
-+		return error;
-+	}
- 
- 	enable_irq(client->irq);
- 
--- 
-2.17.2 (Apple Git-113)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   6a1d293238c1774cef23c25b5188b0c134c29a34
+commit: dc1b33660692441867a8ec5be147915dfa3bc8cb [11432/12209] ASoC: rockchip: support ACODEC for rk3328
 
+ rk3328_codec.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/sound/soc/codecs/rk3328_codec.c
++++ b/sound/soc/codecs/rk3328_codec.c
+@@ -505,7 +505,6 @@ MODULE_DEVICE_TABLE(of, rk3328_codec_of_
+ static struct platform_driver rk3328_codec_driver = {
+ 	.driver = {
+ 		   .name = "rk3328-codec",
+-		   .owner = THIS_MODULE,
+ 		   .of_match_table = of_match_ptr(rk3328_codec_of_match),
+ 	},
+ 	.probe = rk3328_platform_probe,
