@@ -2,91 +2,111 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D51C64E75
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293FFC64E79
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C04B218B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F2720449
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 03:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725842AbeLYC6S (ORCPT
+        id S1725855AbeLYDGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 21:58:18 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.144]:11949 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725813AbeLYC6R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 21:58:17 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id DCEF2430C
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 20:58:16 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id bcvAgsnQ54FKpbcvAgNAlQ; Mon, 24 Dec 2018 20:58:16 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=32914 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gbcvA-002R1O-6K; Mon, 24 Dec 2018 20:58:16 -0600
-Date:   Mon, 24 Dec 2018 20:58:15 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
-Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] perfmon: use ARRAY_SIZE() macro
-Message-ID: <20181225025815.GA25908@embeddedor>
+        Mon, 24 Dec 2018 22:06:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16659 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725816AbeLYDGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 22:06:52 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 766518D1600D1;
+        Tue, 25 Dec 2018 11:06:49 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 25 Dec 2018
+ 11:06:45 +0800
+Subject: Re: [PATCH] f2fs: fix use-after-free issue with sbi->stat_info
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-kernel@vger.kernel.org>
+References: <1545656812-14695-1-git-send-email-stummala@codeaurora.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <0938f41e-53ed-6290-9b79-d221b1e64db6@huawei.com>
+Date:   Tue, 25 Dec 2018 11:06:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gbcvA-002R1O-6K
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:32914
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1545656812-14695-1-git-send-email-stummala@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element
-or, as in this particular case, sizeof the structure name.
+On 2018/12/24 21:06, Sahitya Tummala wrote:
+> iput() on sbi->node_inode can update sbi->stat_info
+> in the below context, if the f2fs_write_checkpoint()
+> has failed with error.
+> 
+> f2fs_balance_fs_bg+0x1ac/0x1ec
+> f2fs_write_node_pages+0x4c/0x260
+> do_writepages+0x80/0xbc
+> __writeback_single_inode+0xdc/0x4ac
+> writeback_single_inode+0x9c/0x144
+> write_inode_now+0xc4/0xec
+> iput+0x194/0x22c
+> f2fs_put_super+0x11c/0x1e8
+> generic_shutdown_super+0x70/0xf4
+> kill_block_super+0x2c/0x5c
+> kill_f2fs_super+0x44/0x50
+> deactivate_locked_super+0x60/0x8c
+> deactivate_super+0x68/0x74
+> cleanup_mnt+0x40/0x78
+> 
+> Fix this by moving f2fs_destroy_stats() further below iput().
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fs/f2fs/super.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index e184ad4e..df41a3a 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
+>  		f2fs_write_checkpoint(sbi, &cpc);
+>  	}
+>  
+> -	/* f2fs_write_checkpoint can update stat informaion */
+> -	f2fs_destroy_stats(sbi);
 
-This issue was detected with the help of Coccinelle.
+The code order in error path of fill_super is almost the same as the one of
+put_super, could you please check that as well?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/ia64/kernel/perfmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
-index 46bff1661836..b39df5078e19 100644
---- a/arch/ia64/kernel/perfmon.c
-+++ b/arch/ia64/kernel/perfmon.c
-@@ -4644,7 +4644,7 @@ static pfm_cmd_desc_t pfm_cmd_tab[]={
- /* 32 */PFM_CMD(pfm_write_ibrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL),
- /* 33 */PFM_CMD(pfm_write_dbrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL)
- };
--#define PFM_CMD_COUNT	(sizeof(pfm_cmd_tab)/sizeof(pfm_cmd_desc_t))
-+#define PFM_CMD_COUNT	ARRAY_SIZE(pfm_cmd_tab)
- 
- static int
- pfm_check_task_state(pfm_context_t *ctx, int cmd, unsigned long flags)
--- 
-2.20.1
+> -
+>  	/*
+>  	 * normally superblock is clean, so we need to release this.
+>  	 * In addition, EIO will skip do checkpoint, we need this as well.
+> @@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
+>  	iput(sbi->node_inode);
+>  	iput(sbi->meta_inode);
+>  
+> +	/*
+> +	 * iput() can update stat information, if f2fs_write_checkpoint()
+> +	 * above failed with error.
+> +	 */
+> +	f2fs_destroy_stats(sbi);
+> +
+>  	/* destroy f2fs internal modules */
+>  	f2fs_destroy_node_manager(sbi);
+>  	f2fs_destroy_segment_manager(sbi);
+> 
 
