@@ -2,113 +2,128 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 198BBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65E7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD902173B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CD632173B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 08:41:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="UTb3Q001"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="F6vImGr/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbeLYIeG (ORCPT
+        id S1725894AbeLYIle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 03:34:06 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:45666 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeLYIeG (ORCPT
+        Tue, 25 Dec 2018 03:41:34 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:2120 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeLYIld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 03:34:06 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id CDDF7643
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 08:34:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zls59Jv4YSRi for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 02:34:04 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 9F724622
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 02:34:04 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id o22so16061010iob.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 00:34:04 -0800 (PST)
+        Tue, 25 Dec 2018 03:41:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=UbGeaRooo9Dx+m8Gey/ma2eXxbCOVIVyfMiBlwjCMno=;
-        b=UTb3Q001x11lYuzfkOlcGoiwO3iDi3XpV3xJg1+HWJ2g2Et8b9bz7l2B+8O55s6+5I
-         YNhid2EOQo2Pktk8C/40U1l3dDo7On2UtQwzMg9JObIXPfqhIa58lfmIAmHOpeNTkMgY
-         hcU8FbJD8O9WKZFWe+CfEUk2nmJW7vbRslEHmSX9xnBFAwL9cyjxcM7Ue0XMQyMkHH9L
-         dJ9jvsiNLRJxf6SwXh4LtgFxQ3+XLmSuNkKmZswNOZ/XCFRv0tlsnoxZxL2DFHR/WUWB
-         rss2qQ4wPDg2i1Duo8IhFG7DZ1owSt/CngPqHZh1cKaEJ0ZTTYcrCF/MGlE0f0NX8n/3
-         udKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UbGeaRooo9Dx+m8Gey/ma2eXxbCOVIVyfMiBlwjCMno=;
-        b=livUQFsM3bP3y8RR9kFcb4kI1TX/7XEP4rx7P5d69pWhmaWvkwh9u+bdWG42O1BPq4
-         iulTpPgV+JcD3QwIDUkN/PGm2Fxd29hoIDZD53xS+dqdwXiCsf7QwbilryF8lG17RUhs
-         b0UQbgQqZVyizdwN13lOgwBrZkD36U+sxPOqkexz5qJTOjyf5q/okWuzpjP24t1gpG7/
-         sH4uDp49uGb7h0GgA6yjcu5mpnEGJB+do94mweVGw0J343n/tUpMnpyMsikGLLzNt/iz
-         oEYs/uxQHKZt9lC9ELIADq30UY43lHrUIjAtaJryRFuKHweLd56Rtua4c05p9HSKpVhS
-         QHuA==
-X-Gm-Message-State: AA+aEWZOsjpiFjdgrS4r9Kbwgj7VLg6T8AaTGO/URFj8ctyHdbRdIeK3
-        NMfOEje3hW3PZQUSYb3/7oYkM7H0n29LL97myhYPls8YzujnDnNYA6yuQo7CCftRjoUELX3MBo2
-        ZRmfcN7c9uN9nkPN8pGKDdoUyOITk
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr11330775ith.158.1545726844190;
-        Tue, 25 Dec 2018 00:34:04 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/UJx4pxFpPmmuAiQP2jlYlCzxL0yw03lFNcpttm/FQuvdRwIjH/vWxzeEYekFDZwkri+i0l5Q==
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr11330762ith.158.1545726843959;
-        Tue, 25 Dec 2018 00:34:03 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id 196sm10890258itu.33.2018.12.25.00.34.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 00:34:03 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rts5208: fix a missing check of the status of sd_init_power
-Date:   Tue, 25 Dec 2018 02:33:32 -0600
-Message-Id: <20181225083334.68473-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1545727293; x=1577263293;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=kgR6sCBhd1myeGo4t4K1QN7QdbTtt8itH4GswjnTGiI=;
+  b=F6vImGr/aOQkEgooYQtYsDaL0NhHHGNHKWD3JP8oIlE0/3KGIFpdDmou
+   bqJ2/di/BSjWCvkamTlT0JfYo0ITkxlhKqi+gDY+mUzkPDqAcqzkvfoYO
+   yyZ3d2rO4WyeGlaPWiYcu324yXWggwjfW/dDGCjQjPSLHrzaGX0q3xzFc
+   M=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="778221812"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Dec 2018 08:41:30 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wBP8fS3V106122
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 25 Dec 2018 08:41:28 GMT
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 25 Dec 2018 08:41:28 +0000
+Received: from [10.218.62.26] (10.43.160.211) by EX13D19EUB003.ant.amazon.com
+ (10.43.166.69) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 25 Dec
+ 2018 08:41:21 +0000
+Subject: Re: rfc: bool structure members (was Re: [PATCH V3] net/mlx4: Get rid
+ of page operation after dma_alloc_coherent)
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Joe Perches <joe@perches.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Tariq Toukan <tariqt@mellanox.com>, <xavier.huwei@huawei.com>,
+        <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        "Stephen Warren" <swarren@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20181219182031.8675-1-swarren@wwwdotorg.org>
+ <20181220174318.GA21404@ziepe.ca> <20181220174448.GA21149@lst.de>
+ <1545328145.185366.500.camel@acm.org>
+ <072c2d9d187daf0672bf54ab035e47a05fd1cd1d.camel@perches.com>
+ <20181221033159.GF23877@ziepe.ca>
+ <b906bec0fd12d25474561263087a26b8b0519fe4.camel@perches.com>
+ <20181221235230.GC13168@ziepe.ca>
+ <dc6d4923-63bd-e133-310b-7b164b0c92f5@amazon.com>
+ <20181224231228.GB17036@ziepe.ca>
+From:   Gal Pressman <galpress@amazon.com>
+Message-ID: <71005ff2-e6b0-ca97-0d4b-6e6f7b491760@amazon.com>
+Date:   Tue, 25 Dec 2018 10:41:16 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20181224231228.GB17036@ziepe.ca>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.43.160.211]
+X-ClientProxiedBy: EX13D10UWB004.ant.amazon.com (10.43.161.121) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sd_init_power() could fail. The fix inserts a check of its status. If it
-fails, returns STATUS_FAIL.
+On 25-Dec-18 01:12, Jason Gunthorpe wrote:
+> On Sun, Dec 23, 2018 at 06:42:20PM +0200, Gal Pressman wrote:
+>> On 22-Dec-18 01:52, Jason Gunthorpe wrote:
+>>> On Thu, Dec 20, 2018 at 09:12:43PM -0800, Joe Perches wrote:
+>>>> Care to submit a coding_style.rst patch or
+>>>> improve the one below this?
+>>>
+>>> I took yours and revised it a little bit. I spent some time looking at
+>>> assembly and decided to drop the performance note, the number of cases
+>>> that run into overhead seems pretty small and probably already
+>>> requires !! to be correct. There is also an equally unlikely gain, ie
+>>> 'if (a & b)' optimizes a tiny bit better for bool types.
+>>>
+>>> I also added a small intro on bool, as I know some people are
+>>> unfamiliar with C11 _Bool and might think bool is just '#define bool
+>>> u8'
+>>>
+>>> (for those added to the cc) I'm looking at cases, like the patch that
+>>> spawned this, where the struct has a single bool and no performance
+>>> considerations. As CH said, seeing that get converted to int due to
+>>> checkpatch is worse than having used bool. Using u8 won't make this
+>>> struct smaller or faster.
+>>>
+>>
+>> Since a "Using bool" section is added, perhaps it's worth documenting the bool
+>> usage as a function parameter [1]?
+>>
+>> [1] https://www.spinics.net/lists/linux-rdma/msg72336.html
+> 
+> I'm not really sure how to express that as something concrete.. That
+> specific case clearly called out for a flags as it was a widely used
+> API - maybe less spread out cases like static functions or something
+> are OK??
+> 
+> Jason
+> 
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/staging/rts5208/sd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-index ff1a9aa152ce..8c3fd885a4f3 100644
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -2352,7 +2352,9 @@ static int reset_sd(struct rtsx_chip *chip)
- 				break;
- 			}
- 
--			sd_init_power(chip);
-+			retval = sd_init_power(chip);
-+			if (retval != STATUS_SUCCESS)
-+				goto status_fail;
- 
- 			sd_dummy_clock(chip);
- 		}
--- 
-2.17.2 (Apple Git-113)
-
+Sounds reasonable, sometimes adding flags and enum for a single bool function
+parameter is a bit too much IMO. For a widely used API it makes sense.
