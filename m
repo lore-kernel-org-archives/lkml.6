@@ -2,113 +2,208 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF75C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 18:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299CAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 18:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C60D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 18:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C787F21736
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 18:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="BOaupYho"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="WuIwWSLs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725866AbeLYSSM (ORCPT
+        id S1725868AbeLYS6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 13:18:12 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:33975 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeLYSSM (ORCPT
+        Tue, 25 Dec 2018 13:58:49 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:53422 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbeLYS6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 13:18:12 -0500
-Date:   Tue, 25 Dec 2018 18:18:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1545761887;
-        bh=FJUXCA+4TsqlP9MKgp+GtljHMqYffh6e63TJ+ASDjQ0=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=BOaupYhoar7WNE3iqzcn8ljvEu//XPPEH7GwYvSJZicbgAWb4mO9McaRYzqDlLL+v
-         cKSIQzKBRPpuqS/qjmBrH+DKaML7eY/j7cPgkKDo68wdYx5v97IX139f8lGrWSw46u
-         0iO157NFWis8aCyqua0DCQkDng7xgFvmJZjs/nIM=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: Racoh Computer (Fair Pay OS) Year End Summary (slight update/correction)
-Message-ID: <Y_Q4JA9HnLQH7N8_erx8n1gqa3UnaYv0FF-1xk_MPbYi5elxpW3jJfDD9aRuLXQQoC-GasidDbFMcOj8FW27yy_J5fRGcjDLfONgfqaiDzk=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Tue, 25 Dec 2018 13:58:49 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 0614CB23
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:58:48 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bkYyWi40A1aA for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 12:58:47 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id CA24D6A1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 12:58:47 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id n124so16721695itb.7
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 10:58:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XPnXcy7TnL4VBmeDBsDoZgntLGyaaI3u7ypY1sutQ68=;
+        b=WuIwWSLs87VliaLSGUJaxX+M4VIP2iidK2aA7cOB20/SoCKAnO8eezxEluzPWVajYX
+         SrGac/KyCqgwYtaZNiH4DnCza7tI5yjGIxPz6dDpKyuzlqWEo3LVHdPv0WwhNDe7EUNt
+         bVTl4Ev+TU/RPGmIbAwNe3j0GvtaiLYGNgk9K0xahRWCqljMnF3D5xjRI6suzsBhtYIz
+         xGDKtu24OcjLCvPKhVuwsLfAqAlzi6IFk7Jni7Z3N9kw9owfa/17EOw/TJelPdZq86BO
+         fdY/gkMh0OUm2f5YUqOVdu5qyYT+HAh6+gzLL509hQoM+2dAgJHHMmvb39GxGELFjEIZ
+         ujEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XPnXcy7TnL4VBmeDBsDoZgntLGyaaI3u7ypY1sutQ68=;
+        b=HPtlYYDqaGTWjKJu8+Hu7m7BKPNIsHKSke2njMISTwlyDEWyZXQsRAOXNIocQuupVM
+         ia8u3AUjf8IBLYmoO42XY3rehEUuSHYU+M7P0+quv/D63iwKdwJA0FWz+1m+K1c5sLni
+         qv+QB04Chiafad4dyODR2qNDd3epyQl/viK8Ux8TyBA9+u/q88WQwrXqzgCFSIdvTZDs
+         My/Jmo+v01j+GaeyDdRZNdXpgKfQfPS8SXP5XkZYipG7yG7w7f2eDRpC0I1zKj0ST4/U
+         DRIA+cWZEbHBHvG0nBqFJCEZVSMGE1GKJIHFV3nmt7C2FPolsKwfODgMvxmzgcNJaYPr
+         oaKg==
+X-Gm-Message-State: AA+aEWaBWHEY1i5tOcOF1BN+uWpuXf1wk37PmzHxk+nZP9yYF4APO7kn
+        DTRJXhJLPHsadGLgVb75LH8TocCOvsVyWDSCEQ+gxlbb3m80eVMqiHiUMx5CWHm7D1nfYWRsYzS
+        fkFYGZXr6CUD+GdqpbaqfRg1k6D/4
+X-Received: by 2002:a02:6:: with SMTP id 6mr10699221jaa.19.1545764327327;
+        Tue, 25 Dec 2018 10:58:47 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/Ub+Wo4ai7zfdywgV2vMe/tCwO2oXRdRXm2giCgT4bg//cQsi76Hfo59I12He8x5cxAUHITIQ==
+X-Received: by 2002:a02:6:: with SMTP id 6mr10699214jaa.19.1545764327011;
+        Tue, 25 Dec 2018 10:58:47 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id t69sm5436104itb.26.2018.12.25.10.58.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Dec 2018 10:58:45 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Jan Harkes <jaharkes@cs.cmu.edu>,
+        coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: coda: fix a double-fetch case in coda_psdev_write
+Date:   Tue, 25 Dec 2018 12:58:14 -0600
+Message-Id: <20181225185814.69047-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Racoh Computer design year end summary:
+"hdr" has been copied in from user space and "hdr.opcode" is checked.
+The code copies it again. User space data between the two copies is
+subject to modification if the user-space code is multithreaded and
+malicious. The modification may invalidate the check. In the original
+code, "hdr.opcode" is not used after the second copy, so it is actually
+safe with the current code. However, in case future code may use
+"hdr.opcode", let's avoid copying the header from user space again.
 
-I have been working with the philosophy behind Racoh Computer the last half=
- year and a bit more, an ultimate computer based on principles from my rese=
-arch on monotheism that has been top 1% on academia.edu, and present a summ=
-ary of it:
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ fs/coda/psdev.c | 41 ++++++++++++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 19 deletions(-)
 
-=09=09    Racoh Computer Design Specification
+diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+index c5234c21b539..fb4d1c654773 100644
+--- a/fs/coda/psdev.c
++++ b/fs/coda/psdev.c
+@@ -97,35 +97,38 @@ static long coda_psdev_ioctl(struct file * filp, unsigned int cmd, unsigned long
+ static ssize_t coda_psdev_write(struct file *file, const char __user *buf, 
+ 				size_t nbytes, loff_t *off)
+ {
+-        struct venus_comm *vcp = (struct venus_comm *) file->private_data;
+-        struct upc_req *req = NULL;
+-        struct upc_req *tmp;
++	struct venus_comm *vcp = (struct venus_comm *) file->private_data;
++	struct upc_req *req = NULL;
++	struct upc_req *tmp;
+ 	struct list_head *lh;
+ 	struct coda_in_hdr hdr;
+ 	ssize_t retval = 0, count = 0;
+ 	int error;
+ 
+-        /* Peek at the opcode, uniquefier */
++	/* Peek at the opcode, uniquefier */
+ 	if (copy_from_user(&hdr, buf, 2 * sizeof(u_long)))
+-	        return -EFAULT;
++		return -EFAULT;
+ 
+-        if (DOWNCALL(hdr.opcode)) {
++	if (DOWNCALL(hdr.opcode)) {
+ 		union outputArgs *dcbuf;
+ 		int size = sizeof(*dcbuf);
+ 
+ 		if  ( nbytes < sizeof(struct coda_out_hdr) ) {
+ 			pr_warn("coda_downcall opc %d uniq %d, not enough!\n",
+-				hdr.opcode, hdr.unique);
++					hdr.opcode, hdr.unique);
+ 			count = nbytes;
+ 			goto out;
+ 		}
+ 		if ( nbytes > size ) {
+ 			pr_warn("downcall opc %d, uniq %d, too much!",
+-				hdr.opcode, hdr.unique);
+-		        nbytes = size;
++					hdr.opcode, hdr.unique);
++			nbytes = size;
+ 		}
+ 		CODA_ALLOC(dcbuf, union outputArgs *, nbytes);
+-		if (copy_from_user(dcbuf, buf, nbytes)) {
++		*((struct coda_in_hdr *)dcbuf) = hdr;
++		if (copy_from_user(dcbuf + sizeof(hdr),
++					buf + sizeof(hdr),
++					nbytes - sizeof(hdr))) {
+ 			CODA_FREE(dcbuf, nbytes);
+ 			retval = -EFAULT;
+ 			goto out;
+@@ -137,14 +140,14 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 		CODA_FREE(dcbuf, nbytes);
+ 		if (error) {
+ 			pr_warn("%s: coda_downcall error: %d\n",
+-				__func__, error);
++					__func__, error);
+ 			retval = error;
+ 			goto out;
+ 		}
+ 		count = nbytes;
+ 		goto out;
+ 	}
+-        
++
+ 	/* Look for the message on the processing queue. */
+ 	mutex_lock(&vcp->vc_mutex);
+ 	list_for_each(lh, &vcp->vc_processing) {
+@@ -159,19 +162,19 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 
+ 	if (!req) {
+ 		pr_warn("%s: msg (%d, %d) not found\n",
+-			__func__, hdr.opcode, hdr.unique);
++				__func__, hdr.opcode, hdr.unique);
+ 		retval = -ESRCH;
+ 		goto out;
+ 	}
+ 
+-        /* move data into response buffer. */
++	/* move data into response buffer. */
+ 	if (req->uc_outSize < nbytes) {
+ 		pr_warn("%s: too much cnt: %d, cnt: %ld, opc: %d, uniq: %d.\n",
+-			__func__, req->uc_outSize, (long)nbytes,
+-			hdr.opcode, hdr.unique);
++				__func__, req->uc_outSize, (long)nbytes,
++				hdr.opcode, hdr.unique);
+ 		nbytes = req->uc_outSize; /* don't have more space! */
+ 	}
+-        if (copy_from_user(req->uc_data, buf, nbytes)) {
++	if (copy_from_user(req->uc_data, buf, nbytes)) {
+ 		req->uc_flags |= CODA_REQ_ABORT;
+ 		wake_up(&req->uc_sleep);
+ 		retval = -EFAULT;
+@@ -191,9 +194,9 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
+ 			outp->fh = fget(outp->fd);
+ 	}
+ 
+-        wake_up(&req->uc_sleep);
++	wake_up(&req->uc_sleep);
+ out:
+-        return(count ? count : retval);  
++	return(count ? count : retval);
+ }
+ 
+ /*
+-- 
+2.17.2 (Apple Git-113)
 
-Delyar: absolute, global online currency, decentralized and free from infla=
-tion.
-
-FPY Licence: intended for use in a system, where fair pay transactions are =
-done, for use, maintenance and support. Free for poor.
-
-Islam: Coherent philosophy, replacing The Bible, as background in earlier O=
-Ss (Unix), also with a z=C3=ABn-concept of The G=C3=B3dh, that works in our=
- culture, Yxxyn, that has decreed "deal justly", and is the background for =
-its Fair Pay OS reasoning and labour party politics that are similar, and w=
-ork union efforts, also using The Miriam Font, for script-like text accurac=
-y.
-
-Ultimate Iterations Of Tech:
-=09[1.] Screenmode: 4K (8k quadratic WR-GB subpixels) at 72.734 hz
-=09standard, for minimal psychovisual noise, approximating reality
-=09most.
-=09[2.] Sound Output: One Pole Diode Filter DA converter, for
- =09ultrahigh speed=09high-frequency 1-bit stream gibbsfree DA
-=09conversion, for a nice -110dB =09noisefloor.
-=09[3] O-S: Fair Pay oriented OS, with Low-jitter filesystem, with
-=09file attributes about re-use or not, published or not, and
-=09royalties, in a standardized directory structure,
-=09country/15.000 km2 region/author, with typical statistics.
-=09[4.] CPU: Instruction set, may combine several instructions in
-=09one clock, where it makes sense, for higher virtual frequency,
-=09and for closer to high-level paradigm thinking. For instance, a
-=094pole filter (one input, one output), can be combined into a
-=09one clock operation. JSR could take arguments. And
-=09similary used functions, that has just one input, and one
-=09output, can be done in one clock. And this could even be done
-=09in parallel. (Particulary what needs ofcourse to be optimized
-=09is the inner loop, beyond the HZ timer, which in our testing is
-=09best at 90).
-=09[5.]  Gaming Mode: Fast Fantasymode (Reduced Rendering Surface)
-=09For Games Gaming Mode: 1920x1080 rendering with 2x
-=09multisampling antialiasing only,transparency multisampling also
-=09on) for smoothing the edges just a bit, more gets blurry, and
-=092x anistotropic filtering, for round edges on zoomed textures
-=09and "game profile", and also -0.1250 lod bias, for "game
-=09profile". Negative lod bias allowed, high quality filtering,
-=09and no trilinear optimization. Upscaled 3x by NN, and followed
-=09by a median filter, for extrapolating a pseudo 3x res, and
-=09resampled to 4K, with a bicubic (a=3D75) filter.
-
-Beneficience: We also ofcourse fully support 3d-printed clothing, houses an=
-d tools, taking centralized efforts and technology, to decentralized growth=
- places.
-
-Technocracy: Supporting the development of a technocracy, where a L=C3=
-=A9ad manages specialists seleted by their workgroup. This is much how inte=
-rnet works already, and  part of information reduction to a managable level=
-, with a standard monotheistic language.
-
-Peace.
-Ywe C=C3=A6rlyn.
-
-Youtube version: https://www.youtube.com/watch?v=3DyeXNB-fjgs4
