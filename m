@@ -2,99 +2,127 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D5DC07520
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD90C07520
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2EC2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4011B2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 04:36:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Mafaqh8r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725857AbeLYEfm (ORCPT
+        id S1725879AbeLYEgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 23:35:42 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:49284 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725817AbeLYEfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 23:35:42 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 3C490B1CB244D08CF0E4;
-        Tue, 25 Dec 2018 12:35:40 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wBP4ZYcA091904;
-        Tue, 25 Dec 2018 12:35:34 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018122512354674-18598224 ;
-          Tue, 25 Dec 2018 12:35:46 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     christoffer.dall@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  kvm/arm : remove unnecessary local variable
-Date:   Tue, 25 Dec 2018 12:56:15 +0800
-Message-Id: <1545713775-69870-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-25 12:35:46,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-25 12:35:30,
-        Serialize complete at 2018-12-25 12:35:30
-X-MAIL: mse01.zte.com.cn wBP4ZYcA091904
+        Mon, 24 Dec 2018 23:36:46 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:60524 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbeLYEgp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 23:36:45 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 0B9D1C2F
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 04:36:44 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rpOiMzXOkLHC for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Dec 2018 22:36:43 -0600 (CST)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id D4FC67B3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 22:36:43 -0600 (CST)
+Received: by mail-io1-f69.google.com with SMTP id l10so2817111iok.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 20:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=MOuqoXvDQR6WaOPGYewfFnRK6hqDn95BYOfHQWaJgjA=;
+        b=Mafaqh8rSfeMEvhmZ/IyTFBmtjLSOWs9fSla/mTQlhJsjkCbCXFHXu0FM1u66PvTyq
+         yXkh8OspUzkFn9/te1r91ZOq27oFBuEcKOM+ieMUFqKt3z6Fzc2Y8q+QjdcjD9jsxZ32
+         H0RVccsosCevxPYeGplyxcDSPgfEFFfbZFBlBagxvcJUsAwoyDmylsc9/F7qmQwP0/cI
+         372F4TtcdpUJlCCBznJOZVWyuSTChWcbvzKwZSsNq9eTo2assBcK+5UxpTHDnsyzj1IT
+         K0TkqgNwxTbj36cGFp045OiG79/n5hOqbL5ec71dV9RSAVI4Qsedk0AWrM+vXG8BtR8C
+         FZZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MOuqoXvDQR6WaOPGYewfFnRK6hqDn95BYOfHQWaJgjA=;
+        b=psAvLLq2V412eLTH0sOMW7W2Jd+Nc+G+D75nV94cAXSd70ECP8XpFAH2mor129oVDP
+         fQ6gKVHwdI8WA2joUr2zLjrPrzerqdNk6jFeLGdWmxFtFD4reFBPZRnidEhq1Y+RpNcN
+         mASjGWb3rcJfFaCCGAOtdjWXO7PSZnqGeLDPOcexWTDgS3a+IeSLhXX16LpV8d0l6gyl
+         DTyyQsGyVIvozlHUN0wHb9qzoVlMc2+U+jtceKNPWzBmIpL+7uRRd9POwYOzwyM5xrmT
+         xNMaKSETSLeQWCP02mLjBI3zgS0G+PTZyBBAg4ewvkZCsr+4/uVhAhpZ+awZ5XvxuwSV
+         YAsg==
+X-Gm-Message-State: AA+aEWY+PvD6jetEaPqLHTaaXeYQdgNjlZSogsFYHQtOVmWoTDlMFbmd
+        t1yb7v0dlZRQ62ObHVt1y8dM/5qYunPcxskwAAcX40YmA+YHWBSYqAhYpJtpBEILMEpcC/2KsY5
+        T76ItPOfrfCzsTIc9r/HPxyTHR2BG
+X-Received: by 2002:a24:9144:: with SMTP id i65mr10706095ite.115.1545712603142;
+        Mon, 24 Dec 2018 20:36:43 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5ot7t3KNA2d43rlVfJCBsoawY68ASyDlAkmtWczhvWi8utQx8ZiYXJshYcx9UpiNmWZmlu+Q==
+X-Received: by 2002:a24:9144:: with SMTP id i65mr10706086ite.115.1545712602820;
+        Mon, 24 Dec 2018 20:36:42 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id d9sm5349192iom.72.2018.12.24.20.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Dec 2018 20:36:41 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Joe Perches <joe@perches.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] touchscreen: elants: fix a missing check of return values
+Date:   Mon, 24 Dec 2018 22:36:13 -0600
+Message-Id: <20181225043616.66032-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary local variable in vgic_set_common_attr
+elants_i2c_send() may fail, let's check its return values. The fix does
+the check and reports an error message upon the failure.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- virt/kvm/arm/vgic/vgic-kvm-device.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/input/touchscreen/elants_i2c.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-index 114dce9..53e5df7 100644
---- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-+++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-@@ -163,7 +163,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- static int vgic_set_common_attr(struct kvm_device *dev,
- 				struct kvm_device_attr *attr)
- {
--	int r;
-+	int r = 0;
+diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
+index f2cb23121833..8ccba4ccee37 100644
+--- a/drivers/input/touchscreen/elants_i2c.c
++++ b/drivers/input/touchscreen/elants_i2c.c
+@@ -245,8 +245,22 @@ static int elants_i2c_calibrate(struct elants_data *ts)
+ 	ts->state = ELAN_WAIT_RECALIBRATION;
+ 	reinit_completion(&ts->cmd_done);
  
- 	switch (attr->group) {
- 	case KVM_DEV_ARM_VGIC_GRP_ADDR: {
-@@ -180,7 +180,6 @@ static int vgic_set_common_attr(struct kvm_device *dev,
- 	case KVM_DEV_ARM_VGIC_GRP_NR_IRQS: {
- 		u32 __user *uaddr = (u32 __user *)(long)attr->addr;
- 		u32 val;
--		int ret = 0;
+-	elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
+-	elants_i2c_send(client, rek, sizeof(rek));
++	error = elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
++	if (error) {
++		dev_err(&client->dev,
++				"error in sending the w_flashkey command for calibration: %d\n",
++				error);
++		enable_irq(client->irq);
++		return error;
++	}
++  error = elants_i2c_send(client, rek, sizeof(rek));
++	if (error) {
++		dev_err(&client->dev,
++				"error in sending the rek command for calibration: %d\n",
++				error);
++		enable_irq(client->irq);
++		return error;
++	}
  
- 		if (get_user(val, uaddr))
- 			return -EFAULT;
-@@ -199,14 +198,14 @@ static int vgic_set_common_attr(struct kvm_device *dev,
- 		mutex_lock(&dev->kvm->lock);
+ 	enable_irq(client->irq);
  
- 		if (vgic_ready(dev->kvm) || dev->kvm->arch.vgic.nr_spis)
--			ret = -EBUSY;
-+			r = -EBUSY;
- 		else
- 			dev->kvm->arch.vgic.nr_spis =
- 				val - VGIC_NR_PRIVATE_IRQS;
- 
- 		mutex_unlock(&dev->kvm->lock);
- 
--		return ret;
-+		return r;
- 	}
- 	case KVM_DEV_ARM_VGIC_GRP_CTRL: {
- 		switch (attr->attr) {
 -- 
-1.8.3.1
+2.17.2 (Apple Git-113)
 
