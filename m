@@ -6,67 +6,63 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC11AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32E4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CBCF218FC
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92E68218D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 23:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545780094;
-	bh=4Bf0tFi+yqRTHPneajSSWAw5w6A5KqzTcOz0OHwKQWU=;
+	s=default; t=1545780098;
+	bh=cwiS4h+DEyiImbm6flGDfxLr9hepGnd48Mvp+CDziJE=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=zG4hs9rudtsPvyCYqG1BZTeUpaIROr+UEoDmaDUOgBxVNdYTOj9oCMqOB+twZyCQq
-	 T4GXz4KkBLN2c7eE57nO45DfdV83waKoqdtnnXIpDCRRyrdzIrANu9R6P4wKDm+25G
-	 DYdNo214zxulIC0IMGtTBGe96iT7ykT4GOE3A9QA=
+	b=IufV9kw1tkPF/gYn2Ytt8fciBMTbCGYw91LC08pzucpSvTrL1dFjcp66Wl90nbugK
+	 gmPdJPsFamz5Zkx7f6wTcGQ752mIwo1rW/8zMR6e03q85I9j/ZeWdbXfURcHB8RgOk
+	 ouqmocBEHPYoc6zKS8ZmJ7QrCHPL3GbvruvVvtLw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbeLYXUF (ORCPT
+        id S1727370AbeLYXVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 18:20:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44316 "EHLO mail.kernel.org"
+        Tue, 25 Dec 2018 18:21:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeLYXUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 18:20:03 -0500
-Subject: Re: [GIT PULL] i3c: Initial pull request
+        id S1726807AbeLYXUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Dec 2018 18:20:05 -0500
+Subject: Re: [GIT PULL] EDAC pile for 4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545780003;
-        bh=4Bf0tFi+yqRTHPneajSSWAw5w6A5KqzTcOz0OHwKQWU=;
+        s=default; t=1545780005;
+        bh=cwiS4h+DEyiImbm6flGDfxLr9hepGnd48Mvp+CDziJE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=GPz/6TqnlULhb6Nmw4zYtG6wmKXGWADD5KY+nMxM+cSBYhjvpF2h2bipjGThrd8YS
-         +hx8Vzlld22/fZ3WsuB1TymooanCv5NjyZpFSt3eCHrBvROjqdkzXEtn/cJgTS2pj3
-         P8agx07us3vlesZbFKS/nEHbSfFM2ebRHH+ZOykM=
+        b=uagSMQoTXYEWtgfh8vlfU8ZSFYG5JfrjTtoyAd6ZbNIor2TntplAB19gVDuvrLc7l
+         lFciSyYNj7B9y0i5jRrFsboXJXxxVkSMC2qB/cLrlJvUTh8aLLIUGMk6+nCT6CIggf
+         XWHczX5d+i9iu7KTVp5ePXeTpJFpuSbdCuaNR9XA=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181219165447.2db6a689@bbrezillon>
-References: <20181219165447.2db6a689@bbrezillon>
+In-Reply-To: <20181220201137.GD24975@zn.tnic>
+References: <20181220201137.GD24975@zn.tnic>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181219165447.2db6a689@bbrezillon>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/for-4.21
-X-PR-Tracked-Commit-Id: 25ac3da61ba144f8dbfe377eeec6b1da7ad0854a
+X-PR-Tracked-Message-Id: <20181220201137.GD24975@zn.tnic>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git
+ tags/edac_for_4.21
+X-PR-Tracked-Commit-Id: 75dfa87035f9a2659dd0c48af6b4d9899e79cdc9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3cc2bfe7244e848f5e8caa77bbdc72c04abd17c
-Message-Id: <20181225232003.23808.40308.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Tue, 25 Dec 2018 23:20:03 +0000
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
+X-PR-Merge-Commit-Id: b271b2127e6654a72dc1685f0825fe1cc2f36939
+Message-Id: <20181225232005.23808.6585.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Tue, 25 Dec 2018 23:20:05 +0000
+To:     Borislav Petkov <bp@suse.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i3c <linux-i3c@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Wolfram Sang <wsa@the-dreams.de>
+        Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 19 Dec 2018 16:54:47 +0100:
+The pull request you sent on Thu, 20 Dec 2018 21:11:45 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/for-4.21
+> git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_for_4.21
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3cc2bfe7244e848f5e8caa77bbdc72c04abd17c
+https://git.kernel.org/torvalds/c/b271b2127e6654a72dc1685f0825fe1cc2f36939
 
 Thank you!
 
