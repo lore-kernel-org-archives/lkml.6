@@ -2,90 +2,91 @@ Return-Path: <SRS0=Ytqw=PC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0429C64E75
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D51C64E75
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90DF4218CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C04B218B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Dec 2018 02:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725875AbeLYCpZ (ORCPT
+        id S1725842AbeLYC6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Dec 2018 21:45:25 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17057 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725806AbeLYCpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Dec 2018 21:45:25 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AB89C44D25E17;
-        Tue, 25 Dec 2018 10:45:21 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 25 Dec 2018
- 10:45:18 +0800
-Subject: Re: [PATCH -next] ACPI/IORT: fix build when CONFIG_IOMMU_API=n
-To:     Qian Cai <cai@lca.pw>, <sfr@canb.auug.org.au>,
-        <lorenzo.pieralisi@arm.com>, <hanjun.guo@linaro.org>,
-        <sudeep.holla@arm.com>
-CC:     <linux-acpi@vger.kernel.org>, <linux-next@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181224172058.56206-1-cai@lca.pw>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <31c013ad-1261-7ca4-2434-69911d5d2cb8@huawei.com>
-Date:   Tue, 25 Dec 2018 10:44:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 24 Dec 2018 21:58:18 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:11949 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725813AbeLYC6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Dec 2018 21:58:17 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id DCEF2430C
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Dec 2018 20:58:16 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id bcvAgsnQ54FKpbcvAgNAlQ; Mon, 24 Dec 2018 20:58:16 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=32914 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gbcvA-002R1O-6K; Mon, 24 Dec 2018 20:58:16 -0600
+Date:   Mon, 24 Dec 2018 20:58:15 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Cc:     linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] perfmon: use ARRAY_SIZE() macro
+Message-ID: <20181225025815.GA25908@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20181224172058.56206-1-cai@lca.pw>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gbcvA-002R1O-6K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.44]:32914
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qian,
+Use ARRAY_SIZE instead of dividing sizeof array with sizeof an element
+or, as in this particular case, sizeof the structure name.
 
-Good catch, minor comments below.
+This issue was detected with the help of Coccinelle.
 
-On 2018/12/25 1:20, Qian Cai wrote:
-> rivers/acpi/arm64/iort.c:880:1: error: expected identifier or '(' before '{' token
-  ^^
-  drivers
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/ia64/kernel/perfmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  { return NULL; }
->  ^
-> drivers/acpi/arm64/iort.c:879:39: warning: 'iort_fwspec_iommu_ops' used but never defined
->  static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev);
->                                        ^~~~~~~~~~~~~~~~~~~~~
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  drivers/acpi/arm64/iort.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-> index fdd90ffceb85..5d29783ee5bd 100644
-> --- a/drivers/acpi/arm64/iort.c
-> +++ b/drivers/acpi/arm64/iort.c
-> @@ -876,7 +876,7 @@ int iort_iommu_msi_get_resv_regions(struct device *dev, struct list_head *head)
->  	return (resv == its->its_count) ? resv : -ENODEV;
->  }
->  #else
-> -static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev);
-> +static inline const struct iommu_ops *iort_fwspec_iommu_ops(struct device *dev)
->  { return NULL; }
->  static inline int iort_add_device_replay(const struct iommu_ops *ops,
->  					 struct device *dev)
-
-Acked-by: Hanjun Guo <hanjun.guo@linaro.org>
-
-Lorenzo, I think this is 4.21-rc1 material if it's OK for you.
-
-Thanks
-Hanjun
+diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+index 46bff1661836..b39df5078e19 100644
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -4644,7 +4644,7 @@ static pfm_cmd_desc_t pfm_cmd_tab[]={
+ /* 32 */PFM_CMD(pfm_write_ibrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL),
+ /* 33 */PFM_CMD(pfm_write_dbrs, PFM_CMD_PCLRWS, PFM_CMD_ARG_MANY, pfarg_dbreg_t, NULL)
+ };
+-#define PFM_CMD_COUNT	(sizeof(pfm_cmd_tab)/sizeof(pfm_cmd_desc_t))
++#define PFM_CMD_COUNT	ARRAY_SIZE(pfm_cmd_tab)
+ 
+ static int
+ pfm_check_task_state(pfm_context_t *ctx, int cmd, unsigned long flags)
+-- 
+2.20.1
 
