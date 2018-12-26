@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534CEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D1DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02836214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040CA214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864556;
-	bh=XfTlED8XV3NWFGSadhI2vN4aQDXQp8gzzYtHBD/DhDY=;
+	s=default; t=1545864560;
+	bh=ajZhGLCOwFYcMduKx6/A6wcvKwELBEMJ0JBe+DbhiG0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vW78pkT3SRnqCoTbvTRJHNl4bFti4YfDCV2SGTsbeP7AyoruB+haoNP6FMCQxYFNe
-	 XdWAscu/QNP+5H/51ge3mn+tJmvgvhssrML09wunzjHu+s3AV2a1aMNnpgsC4oW0gu
-	 atRHVAcfXkJJdigoxnhGyowGiH0jMqSxaawxsgOY=
+	b=hJxOwHdpeKEI3tyv4asy1qax6x2Voo8NsvY5TdXYMbxPXOlSkVUIqIo57pGi2FMog
+	 EMbzt/fmcKIS0UbQ8tpQrTn/slpSZxtyoDrb4qu2uW6eCCZ2KDZoXW1o9oSuBa0Mvy
+	 MRYC8FP0DpmzcPaBDRTCieHdPWiPKMpVJzZR8J5c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeLZWhx (ORCPT
+        id S1729827AbeLZWtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:37:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37992 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:49:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbeLZWht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:37:49 -0500
+        id S1728558AbeLZWhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:37:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAEE820651;
-        Wed, 26 Dec 2018 22:37:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5877920651;
+        Wed, 26 Dec 2018 22:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863868;
-        bh=XfTlED8XV3NWFGSadhI2vN4aQDXQp8gzzYtHBD/DhDY=;
+        s=default; t=1545863873;
+        bh=ajZhGLCOwFYcMduKx6/A6wcvKwELBEMJ0JBe+DbhiG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wBpuQQ84MRYXevD373Lzct7VyfCJOPQDOCGSWVX6/0yISz1c2qP/U2hXfWa+EEtg4
-         3DsHcQTtODe/PNgRpjA7EH3EGDT/v+1Oj3mG7S042lkn1hVkW8TIqulQqxKbkZKJL7
-         sQaJnveMM1ALFTne3wqccIP5KkwZdBMFPXyAvAyc=
+        b=gveZWiJMKyXRyO9ws+Iuk8seo2wklxr1dKdrf1EyPChKNGDwh5ctTdSq3TFj2BHX/
+         HWee5OWEB0364vus1jNufN2uYasV/0qwyMi0sVMbQp14RPx6aZHRdB2R0xJRq0oImF
+         Ow7pl6X0w7RVIHb2xxWYERfuzUq4gU7s13xqb0bE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
+Cc:     Shalom Toledo <shalomt@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 63/97] net: hns: Fix ping failed when use net bridge and send multicast
-Date:   Wed, 26 Dec 2018 17:35:23 -0500
-Message-Id: <20181226223557.149329-63-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 67/97] mlxsw: core: Increase timeout during firmware flash process
+Date:   Wed, 26 Dec 2018 17:35:27 -0500
+Message-Id: <20181226223557.149329-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -59,325 +59,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Shalom Toledo <shalomt@mellanox.com>
 
-[ Upstream commit 6adafc356e20189193b38ee6b9af7743078bf6b4 ]
+[ Upstream commit cf0b70e71b32137ccf9c1f3dd9fb30cbf89b4322 ]
 
-Create a net bridge, add eth and vnet to the bridge. The vnet is used
-by a virtual machine. When ping the virtual machine from the outside
-host and the virtual machine send multicast at the same time, the ping
-package will lost.
+During the firmware flash process, some of the EMADs get timed out, which
+causes the driver to send them again with a limit of 5 retries. There are
+some situations in which 5 retries is not enough and the EMAD access fails.
+If the failed EMAD was related to the flashing process, the driver fails
+the flashing.
 
-The multicast package send to the eth, eth will send it to the bridge too,
-and the bridge learn the mac of eth. When outside host ping the virtual
-mechine, it will match the promisc entry of the eth which is not expected,
-and the bridge send it to eth not to vnet, cause ping lost.
+The reason for these timeouts during firmware flashing is cache misses in
+the CPU running the firmware. In case the CPU needs to fetch instructions
+from the flash when a firmware is flashed, it needs to wait for the
+flashing to complete. Since flashing takes time, it is possible for pending
+EMADs to timeout.
 
-So this patch change promisc tcam entry position to the END of 512 tcam
-entries, which indicate lower priority. And separate one promisc entry to
-two: mc & uc, to avoid package match the wrong tcam entry.
+Fix by increasing EMADs' timeout while flashing firmware.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Fixes: ce6ef68f433f ("mlxsw: spectrum: Implement the ethtool flash_device callback")
+Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 257 +++++++++++++++---
- 1 file changed, 216 insertions(+), 41 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/core.c    | 19 ++++++++++++++++++-
+ drivers/net/ethernet/mellanox/mlxsw/core.h    |  3 +++
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    |  7 ++++++-
+ 3 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index 97d62decba19..3b9e74be5fbd 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -934,6 +934,62 @@ static void hns_dsaf_tcam_mc_cfg(
- 	spin_unlock_bh(&dsaf_dev->tcam_lock);
- }
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
+index 30f751e69698..f7154f358f27 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -81,6 +81,7 @@ struct mlxsw_core {
+ 	struct mlxsw_core_port *ports;
+ 	unsigned int max_ports;
+ 	bool reload_fail;
++	bool fw_flash_in_progress;
+ 	unsigned long driver_priv[0];
+ 	/* driver_priv has to be always the last item */
+ };
+@@ -428,12 +429,16 @@ struct mlxsw_reg_trans {
+ 	struct rcu_head rcu;
+ };
  
-+/**
-+ * hns_dsaf_tcam_uc_cfg_vague - INT
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ * @address,
-+ * @ptbl_tcam_data,
-+ */
-+static void hns_dsaf_tcam_uc_cfg_vague(struct dsaf_device *dsaf_dev,
-+				       u32 address,
-+				       struct dsaf_tbl_tcam_data *tcam_data,
-+				       struct dsaf_tbl_tcam_data *tcam_mask,
-+				       struct dsaf_tbl_tcam_ucast_cfg *tcam_uc)
-+{
-+	spin_lock_bh(&dsaf_dev->tcam_lock);
-+	hns_dsaf_tbl_tcam_addr_cfg(dsaf_dev, address);
-+	hns_dsaf_tbl_tcam_data_cfg(dsaf_dev, tcam_data);
-+	hns_dsaf_tbl_tcam_ucast_cfg(dsaf_dev, tcam_uc);
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+	hns_dsaf_tbl_tcam_data_ucast_pul(dsaf_dev);
-+
-+	/*Restore Match Data*/
-+	tcam_mask->tbl_tcam_data_high = 0xffffffff;
-+	tcam_mask->tbl_tcam_data_low = 0xffffffff;
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+
-+	spin_unlock_bh(&dsaf_dev->tcam_lock);
-+}
-+
-+/**
-+ * hns_dsaf_tcam_mc_cfg_vague - INT
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ * @address,
-+ * @ptbl_tcam_data,
-+ * @ptbl_tcam_mask
-+ * @ptbl_tcam_mcast
-+ */
-+static void hns_dsaf_tcam_mc_cfg_vague(struct dsaf_device *dsaf_dev,
-+				       u32 address,
-+				       struct dsaf_tbl_tcam_data *tcam_data,
-+				       struct dsaf_tbl_tcam_data *tcam_mask,
-+				       struct dsaf_tbl_tcam_mcast_cfg *tcam_mc)
-+{
-+	spin_lock_bh(&dsaf_dev->tcam_lock);
-+	hns_dsaf_tbl_tcam_addr_cfg(dsaf_dev, address);
-+	hns_dsaf_tbl_tcam_data_cfg(dsaf_dev, tcam_data);
-+	hns_dsaf_tbl_tcam_mcast_cfg(dsaf_dev, tcam_mc);
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+	hns_dsaf_tbl_tcam_data_mcast_pul(dsaf_dev);
-+
-+	/*Restore Match Data*/
-+	tcam_mask->tbl_tcam_data_high = 0xffffffff;
-+	tcam_mask->tbl_tcam_data_low = 0xffffffff;
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+
-+	spin_unlock_bh(&dsaf_dev->tcam_lock);
-+}
-+
- /**
-  * hns_dsaf_tcam_mc_invld - INT
-  * @dsaf_id: dsa fabric id
-@@ -1492,6 +1548,27 @@ static u16 hns_dsaf_find_empty_mac_entry(struct dsaf_device *dsaf_dev)
- 	return DSAF_INVALID_ENTRY_IDX;
- }
+-#define MLXSW_EMAD_TIMEOUT_MS 200
++#define MLXSW_EMAD_TIMEOUT_DURING_FW_FLASH_MS	3000
++#define MLXSW_EMAD_TIMEOUT_MS			200
  
-+/**
-+ * hns_dsaf_find_empty_mac_entry_reverse
-+ * search dsa fabric soft empty-entry from the end
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ */
-+static u16 hns_dsaf_find_empty_mac_entry_reverse(struct dsaf_device *dsaf_dev)
-+{
-+	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	int i;
-+
-+	soft_mac_entry = priv->soft_mac_tbl + (DSAF_TCAM_SUM - 1);
-+	for (i = (DSAF_TCAM_SUM - 1); i > 0; i--) {
-+		/* search all entry from end to start.*/
-+		if (soft_mac_entry->index == DSAF_INVALID_ENTRY_IDX)
-+			return i;
-+		soft_mac_entry--;
-+	}
-+	return DSAF_INVALID_ENTRY_IDX;
-+}
-+
- /**
-  * hns_dsaf_set_mac_key - set mac key
-  * @dsaf_dev: dsa fabric device struct pointer
-@@ -2673,58 +2750,156 @@ int hns_dsaf_get_regs_count(void)
- 	return DSAF_DUMP_REGS_NUM;
- }
- 
--/* Reserve the last TCAM entry for promisc support */
--#define dsaf_promisc_tcam_entry(port) \
--	(DSAF_TCAM_SUM - DSAFV2_MAC_FUZZY_TCAM_NUM + (port))
--void hns_dsaf_set_promisc_tcam(struct dsaf_device *dsaf_dev,
--			       u32 port, bool enable)
-+static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
+ static void mlxsw_emad_trans_timeout_schedule(struct mlxsw_reg_trans *trans)
  {
-+	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 1, 0, 0, 0x80};
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_mc = {0x01000000, port};
-+	struct dsaf_tbl_tcam_data tbl_tcam_mask_uc = {0x01000000, 0xf};
-+	struct dsaf_tbl_tcam_mcast_cfg tbl_tcam_mcast = {0, 0, {0} };
- 	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
--	struct dsaf_drv_soft_mac_tbl *soft_mac_entry = priv->soft_mac_tbl;
--	u16 entry_index;
--	struct dsaf_drv_tbl_tcam_key tbl_tcam_data, tbl_tcam_mask;
--	struct dsaf_tbl_tcam_mcast_cfg mac_data = {0};
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_uc = {0, port};
-+	struct dsaf_drv_mac_single_dest_entry mask_entry;
-+	struct dsaf_drv_tbl_tcam_key temp_key, mask_key;
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	u16 entry_index = DSAF_INVALID_ENTRY_IDX;
-+	struct dsaf_drv_tbl_tcam_key mac_key;
-+	struct hns_mac_cb *mac_cb;
-+	u8 addr[ETH_ALEN] = {0};
-+	u8 port_num;
-+	u16 mskid;
+ 	unsigned long timeout = msecs_to_jiffies(MLXSW_EMAD_TIMEOUT_MS);
  
--	if ((AE_IS_VER1(dsaf_dev->dsaf_ver)) || HNS_DSAF_IS_DEBUG(dsaf_dev))
-+	/* promisc use vague table match with vlanid = 0 & macaddr = 0 */
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+	if (entry_index != DSAF_INVALID_ENTRY_IDX)
- 		return;
- 
--	/* find the tcam entry index for promisc */
--	entry_index = dsaf_promisc_tcam_entry(port);
--
--	memset(&tbl_tcam_data, 0, sizeof(tbl_tcam_data));
--	memset(&tbl_tcam_mask, 0, sizeof(tbl_tcam_mask));
--
--	/* config key mask */
--	if (enable) {
--		dsaf_set_field(tbl_tcam_data.low.bits.port_vlan,
--			       DSAF_TBL_TCAM_KEY_PORT_M,
--			       DSAF_TBL_TCAM_KEY_PORT_S, port);
--		dsaf_set_field(tbl_tcam_mask.low.bits.port_vlan,
--			       DSAF_TBL_TCAM_KEY_PORT_M,
--			       DSAF_TBL_TCAM_KEY_PORT_S, 0xf);
--
--		/* SUB_QID */
--		dsaf_set_bit(mac_data.tbl_mcast_port_msk[0],
--			     DSAF_SERVICE_NW_NUM, true);
--		mac_data.tbl_mcast_item_vld = true;	/* item_vld bit */
-+	/* put promisc tcam entry in the end. */
-+	/* 1. set promisc unicast vague tcam entry. */
-+	entry_index = hns_dsaf_find_empty_mac_entry_reverse(dsaf_dev);
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX) {
-+		dev_err(dsaf_dev->dev,
-+			"enable uc promisc failed (port:%#x)\n",
-+			port);
-+		return;
-+	}
++	if (trans->core->fw_flash_in_progress)
++		timeout = msecs_to_jiffies(MLXSW_EMAD_TIMEOUT_DURING_FW_FLASH_MS);
 +
-+	mac_cb = dsaf_dev->mac_cb[port];
-+	(void)hns_mac_get_inner_port_num(mac_cb, 0, &port_num);
-+	tbl_tcam_ucast.tbl_ucast_out_port = port_num;
-+
-+	/* config uc vague table */
-+	hns_dsaf_tcam_uc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_uc,
-+				   &tbl_tcam_mask_uc, &tbl_tcam_ucast);
-+
-+	/* update software entry */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = entry_index;
-+	soft_mac_entry->tcam_key.high.val = mac_key.high.val;
-+	soft_mac_entry->tcam_key.low.val = mac_key.low.val;
-+	/* step back to the START for mc. */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+
-+	/* 2. set promisc multicast vague tcam entry. */
-+	entry_index = hns_dsaf_find_empty_mac_entry_reverse(dsaf_dev);
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX) {
-+		dev_err(dsaf_dev->dev,
-+			"enable mc promisc failed (port:%#x)\n",
-+			port);
-+		return;
-+	}
-+
-+	memset(&mask_entry, 0x0, sizeof(mask_entry));
-+	memset(&mask_key, 0x0, sizeof(mask_key));
-+	memset(&temp_key, 0x0, sizeof(temp_key));
-+	mask_entry.addr[0] = 0x01;
-+	hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
-+			     port, mask_entry.addr);
-+	tbl_tcam_mcast.tbl_mcast_item_vld = 1;
-+	tbl_tcam_mcast.tbl_mcast_old_en = 0;
-+
-+	if (port < DSAF_SERVICE_NW_NUM) {
-+		mskid = port;
-+	} else if (port >= DSAF_BASE_INNER_PORT_NUM) {
-+		mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
- 	} else {
--		mac_data.tbl_mcast_item_vld = false;	/* item_vld bit */
-+		dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
-+			dsaf_dev->ae_dev.name, port,
-+			mask_key.high.val, mask_key.low.val);
-+		return;
- 	}
- 
--	dev_dbg(dsaf_dev->dev,
--		"set_promisc_entry, %s Mac key(%#x:%#x) entry_index%d\n",
--		dsaf_dev->ae_dev.name, tbl_tcam_data.high.val,
--		tbl_tcam_data.low.val, entry_index);
-+	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
-+		     mskid % 32, 1);
-+	memcpy(&temp_key, &mask_key, sizeof(mask_key));
-+	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
-+				   (struct dsaf_tbl_tcam_data *)(&mask_key),
-+				   &tbl_tcam_mcast);
- 
--	/* config promisc entry with mask */
--	hns_dsaf_tcam_mc_cfg(dsaf_dev, entry_index,
--			     (struct dsaf_tbl_tcam_data *)&tbl_tcam_data,
--			     (struct dsaf_tbl_tcam_data *)&tbl_tcam_mask,
--			     &mac_data);
-+	/* update software entry */
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = entry_index;
-+	soft_mac_entry->tcam_key.high.val = temp_key.high.val;
-+	soft_mac_entry->tcam_key.low.val = temp_key.low.val;
-+}
- 
--	/* config software entry */
-+static void set_promisc_tcam_disable(struct dsaf_device *dsaf_dev, u32 port)
-+{
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_mc = {0x01000000, port};
-+	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 0, 0, 0, 0};
-+	struct dsaf_tbl_tcam_mcast_cfg tbl_tcam_mcast = {0, 0, {0} };
-+	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_uc = {0, 0};
-+	struct dsaf_tbl_tcam_data tbl_tcam_mask = {0, 0};
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	u16 entry_index = DSAF_INVALID_ENTRY_IDX;
-+	struct dsaf_drv_tbl_tcam_key mac_key;
-+	u8 addr[ETH_ALEN] = {0};
-+
-+	/* 1. delete uc vague tcam entry. */
-+	/* promisc use vague table match with vlanid = 0 & macaddr = 0 */
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX)
-+		return;
-+
-+	/* config uc vague table */
-+	hns_dsaf_tcam_uc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_uc,
-+				   &tbl_tcam_mask, &tbl_tcam_ucast);
-+	/* update soft management table. */
-+	soft_mac_entry = priv->soft_mac_tbl;
- 	soft_mac_entry += entry_index;
--	soft_mac_entry->index = enable ? entry_index : DSAF_INVALID_ENTRY_IDX;
-+	soft_mac_entry->index = DSAF_INVALID_ENTRY_IDX;
-+	/* step back to the START for mc. */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+
-+	/* 2. delete mc vague tcam entry. */
-+	addr[0] = 0x01;
-+	memset(&mac_key, 0x0, sizeof(mac_key));
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX)
-+		return;
-+
-+	/* config mc vague table */
-+	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
-+				   &tbl_tcam_mask, &tbl_tcam_mcast);
-+	/* update soft management table. */
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = DSAF_INVALID_ENTRY_IDX;
-+}
-+
-+/* Reserve the last TCAM entry for promisc support */
-+void hns_dsaf_set_promisc_tcam(struct dsaf_device *dsaf_dev,
-+			       u32 port, bool enable)
-+{
-+	if (enable)
-+		set_promisc_tcam_enable(dsaf_dev, port);
-+	else
-+		set_promisc_tcam_disable(dsaf_dev, port);
+ 	queue_delayed_work(trans->core->emad_wq, &trans->timeout_dw, timeout);
  }
  
- int hns_dsaf_wait_pkt_clean(struct dsaf_device *dsaf_dev, int port)
+@@ -1854,6 +1859,18 @@ int mlxsw_core_kvd_sizes_get(struct mlxsw_core *mlxsw_core,
+ }
+ EXPORT_SYMBOL(mlxsw_core_kvd_sizes_get);
+ 
++void mlxsw_core_fw_flash_start(struct mlxsw_core *mlxsw_core)
++{
++	mlxsw_core->fw_flash_in_progress = true;
++}
++EXPORT_SYMBOL(mlxsw_core_fw_flash_start);
++
++void mlxsw_core_fw_flash_end(struct mlxsw_core *mlxsw_core)
++{
++	mlxsw_core->fw_flash_in_progress = false;
++}
++EXPORT_SYMBOL(mlxsw_core_fw_flash_end);
++
+ static int __init mlxsw_core_module_init(void)
+ {
+ 	int err;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.h b/drivers/net/ethernet/mellanox/mlxsw/core.h
+index c35be477856f..c4e4971764e5 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.h
+@@ -292,6 +292,9 @@ int mlxsw_core_kvd_sizes_get(struct mlxsw_core *mlxsw_core,
+ 			     u64 *p_single_size, u64 *p_double_size,
+ 			     u64 *p_linear_size);
+ 
++void mlxsw_core_fw_flash_start(struct mlxsw_core *mlxsw_core);
++void mlxsw_core_fw_flash_end(struct mlxsw_core *mlxsw_core);
++
+ bool mlxsw_core_res_valid(struct mlxsw_core *mlxsw_core,
+ 			  enum mlxsw_res_id res_id);
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index ada644d90029..3d1159f8a53f 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -308,8 +308,13 @@ static int mlxsw_sp_firmware_flash(struct mlxsw_sp *mlxsw_sp,
+ 		},
+ 		.mlxsw_sp = mlxsw_sp
+ 	};
++	int err;
++
++	mlxsw_core_fw_flash_start(mlxsw_sp->core);
++	err = mlxfw_firmware_flash(&mlxsw_sp_mlxfw_dev.mlxfw_dev, firmware);
++	mlxsw_core_fw_flash_end(mlxsw_sp->core);
+ 
+-	return mlxfw_firmware_flash(&mlxsw_sp_mlxfw_dev.mlxfw_dev, firmware);
++	return err;
+ }
+ 
+ static int mlxsw_sp_fw_rev_validate(struct mlxsw_sp *mlxsw_sp)
 -- 
 2.19.1
 
