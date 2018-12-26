@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6736C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E1AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8327D218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A253E218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeLZNhU (ORCPT
+        id S1726848AbeLZNhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:37:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:21293 "EHLO mga06.intel.com"
+        Wed, 26 Dec 2018 08:37:19 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21292 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbeLZNhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:37:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726990AbeLZNhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 08:37:07 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 05:37:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
-   d="scan'208";a="113358937"
+   d="scan'208";a="113358944"
 Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
   by orsmga003.jf.intel.com with ESMTP; 26 Dec 2018 05:37:02 -0800
 Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
         (envelope-from <fengguang.wu@intel.com>)
-        id 1gc9Mr-0005Oe-Dr; Wed, 26 Dec 2018 21:37:01 +0800
-Message-Id: <20181226133351.644607371@intel.com>
+        id 1gc9Mr-0005PX-NY; Wed, 26 Dec 2018 21:37:01 +0800
+Message-Id: <20181226133352.303666865@intel.com>
 User-Agent: quilt/0.65
-Date:   Wed, 26 Dec 2018 21:14:56 +0800
+Date:   Wed, 26 Dec 2018 21:15:07 +0800
 From:   Fengguang Wu <fengguang.wu@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Fan Du <fan.du@intel.com>,
         Fengguang Wu <fengguang.wu@intel.com>
 cc:     kvm@vger.kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>
+cc:     Fan Du <fan.du@intel.com>
 cc:     Yao Yuan <yuan.yao@intel.com>
 cc:     Peng Dong <dongx.peng@intel.com>
 cc:     Huang Ying <ying.huang@intel.com>
@@ -49,128 +49,47 @@ cc:     Dong Eddie <eddie.dong@intel.com>
 cc:     Dave Hansen <dave.hansen@intel.com>
 cc:     Zhang Yi <yi.z.zhang@linux.intel.com>
 cc:     Dan Williams <dan.j.williams@intel.com>
-Subject: [RFC][PATCH v2 10/21] mm: build separate zonelist for PMEM and DRAM node
+Subject: [RFC][PATCH v2 21/21] mm/vmscan.c: shrink anon list if can migrate to PMEM
 References: <20181226131446.330864849@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0016-page-alloc-Build-separate-zonelist-for-PMEM-and-RAM-.patch
+Content-Disposition: inline; filename=0013-vmscan-disable-0-swap-space-optimization.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fan Du <fan.du@intel.com>
+Fix OOM by making in-kernel DRAM=>PMEM migration reachable.
 
-When allocate page, DRAM and PMEM node should better not fall back to
-each other. This allows migration code to explicitly control which type
-of node to allocate pages from.
+Here we assume these 2 possible demotion paths:
+- DRAM migrate to PMEM
+- PMEM to swap device
 
-With this patch, PMEM NUMA node can only be used in 2 ways:
-- migrate in and out
-- numactl
-
-That guarantees PMEM NUMA node will only hold anon pages.
-We don't detect hotness for other types of pages for now.
-So need to prevent some PMEM page goes hot while not able to
-detect/move it to DRAM.
-
-Another implication is, new page allocations will by default goto
-DRAM nodes. Which is normally a good choice -- since DRAM writes
-are cheaper than PMEM, it's often benefitial to watch new pages in
-DRAM for some time and only move the likely cold pages to PMEM.
-
-However there can be exceptions. For example, if PMEM:DRAM ratio is
-very high, some page allocations may better go to PMEM nodes directly.
-In long term, we may create more kind of fallback zonelists and make
-them configurable by NUMA policy.
-
-Signed-off-by: Fan Du <fan.du@intel.com>
 Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- mm/mempolicy.c  |   14 ++++++++++++++
- mm/page_alloc.c |   42 +++++++++++++++++++++++++++++-------------
- 2 files changed, 43 insertions(+), 13 deletions(-)
+ mm/vmscan.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- linux.orig/mm/mempolicy.c	2018-12-26 20:03:49.821417489 +0800
-+++ linux/mm/mempolicy.c	2018-12-26 20:29:24.597884301 +0800
-@@ -1745,6 +1745,20 @@ static int policy_node(gfp_t gfp, struct
- 		WARN_ON_ONCE(policy->mode == MPOL_BIND && (gfp & __GFP_THISNODE));
+--- linux.orig/mm/vmscan.c	2018-12-23 20:38:44.310446223 +0800
++++ linux/mm/vmscan.c	2018-12-23 20:38:44.306446146 +0800
+@@ -2259,7 +2259,7 @@ static bool inactive_list_is_low(struct
+ 	 * If we don't have swap space, anonymous page deactivation
+ 	 * is pointless.
+ 	 */
+-	if (!file && !total_swap_pages)
++	if (!file && (is_node_pmem(pgdat->node_id) && !total_swap_pages))
+ 		return false;
+ 
+ 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
+@@ -2340,7 +2340,8 @@ static void get_scan_count(struct lruvec
+ 	enum lru_list lru;
+ 
+ 	/* If we have no swap space, do not bother scanning anon pages. */
+-	if (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0) {
++	if (is_node_pmem(pgdat->node_id) &&
++	    (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0)) {
+ 		scan_balance = SCAN_FILE;
+ 		goto out;
  	}
- 
-+	if (policy->mode == MPOL_BIND) {
-+		nodemask_t nodes = policy->v.nodes;
-+
-+		/*
-+		 * The rule is if we run on DRAM node and mbind to PMEM node,
-+		 * perferred node id is the peer node, vice versa.
-+		 * if we run on DRAM node and mbind to DRAM node, #PF node is
-+		 * the preferred node, vice versa, so just fall back.
-+		 */
-+		if ((is_node_dram(nd) && nodes_subset(nodes, numa_nodes_pmem)) ||
-+			(is_node_pmem(nd) && nodes_subset(nodes, numa_nodes_dram)))
-+			nd = NODE_DATA(nd)->peer_node;
-+	}
-+
- 	return nd;
- }
- 
---- linux.orig/mm/page_alloc.c	2018-12-26 20:03:49.821417489 +0800
-+++ linux/mm/page_alloc.c	2018-12-26 20:03:49.817417321 +0800
-@@ -5153,6 +5153,10 @@ static int find_next_best_node(int node,
- 		if (node_isset(n, *used_node_mask))
- 			continue;
- 
-+		/* DRAM node doesn't fallback to pmem node */
-+		if (is_node_pmem(n))
-+			continue;
-+
- 		/* Use the distance array to find the distance */
- 		val = node_distance(node, n);
- 
-@@ -5242,19 +5246,31 @@ static void build_zonelists(pg_data_t *p
- 	nodes_clear(used_mask);
- 
- 	memset(node_order, 0, sizeof(node_order));
--	while ((node = find_next_best_node(local_node, &used_mask)) >= 0) {
--		/*
--		 * We don't want to pressure a particular node.
--		 * So adding penalty to the first node in same
--		 * distance group to make it round-robin.
--		 */
--		if (node_distance(local_node, node) !=
--		    node_distance(local_node, prev_node))
--			node_load[node] = load;
--
--		node_order[nr_nodes++] = node;
--		prev_node = node;
--		load--;
-+	/* Pmem node doesn't fallback to DRAM node */
-+	if (is_node_pmem(local_node)) {
-+		int n;
-+
-+		/* Pmem nodes should fallback to each other */
-+		node_order[nr_nodes++] = local_node;
-+		for_each_node_state(n, N_MEMORY) {
-+			if ((n != local_node) && is_node_pmem(n))
-+				node_order[nr_nodes++] = n;
-+		}
-+	} else {
-+		while ((node = find_next_best_node(local_node, &used_mask)) >= 0) {
-+			/*
-+			 * We don't want to pressure a particular node.
-+			 * So adding penalty to the first node in same
-+			 * distance group to make it round-robin.
-+			 */
-+			if (node_distance(local_node, node) !=
-+			    node_distance(local_node, prev_node))
-+				node_load[node] = load;
-+
-+			node_order[nr_nodes++] = node;
-+			prev_node = node;
-+			load--;
-+		}
- 	}
- 
- 	build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
 
 
