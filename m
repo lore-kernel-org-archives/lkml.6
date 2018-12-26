@@ -7,114 +7,102 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3A1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6546FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 489E82171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E892171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:09:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoJn/rEW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWiyHEwl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbeLZSIl (ORCPT
+        id S1727523AbeLZSJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 13:08:41 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40094 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbeLZSIk (ORCPT
+        Wed, 26 Dec 2018 13:09:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55080 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbeLZSJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 13:08:40 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z3so10041787vsf.7;
-        Wed, 26 Dec 2018 10:08:39 -0800 (PST)
+        Wed, 26 Dec 2018 13:09:27 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so15063711wmh.4;
+        Wed, 26 Dec 2018 10:09:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dKTFa//wCjc7XatclXWOrhHW4XAoWiNw4tYt+0mr9n0=;
-        b=DoJn/rEW3VgSqYrhoi+8MYIlazeKlLrgrI4rAshUGSy9r5O82WO1Zl62wEwwVbUcgg
-         hxDx2AHQtPkYNKDl5/v++fahYXQC5M1Z8sDzudKl3n5vnR6LUT1b48pJ7QXirq//Ax72
-         C0mv5qCzlDouUm8wZuZi4utD0IcsYBdiJThrolKiJpPrOF2LVanHmcW4PmqpkSPhReBl
-         8YXVIRFMIW3KxoKUMFoGPSF7AzBI/avG/7BtNEK4HblSkVLik7gzudWefsBoObD4UrdQ
-         skkhW4ARGbPLl2sbHYSsqjWKx9PdFLRjrBHN/MqHwrldLs8ffaF49NOy35ich8i0qRFL
-         caLg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TdV2R8UgjUdDddm9RaGLRzcwrRIYU197K2hpHWkMBiE=;
+        b=jWiyHEwlrBusGagCKmn2oONJiARWTaH0pzXDclwI2+3/yUvrAotSmNPBT7dWwnLlzt
+         hXz/HrCkr9M7c+O54nHPjtZPKgDd/UsFNtqBtcw3SIuvGq6dU2aqrXpINockzNdqOVxv
+         Yvey4lmn2GIa1BvjAzNeveODHQ6fMykf2Xhc1uyqhyRM7coPg1D5BjInAiY5iN3qOK+Y
+         D64gbIyf1cAX4TwJJ9l2XrtBO+7B4HHB5g2FszBDWg7hdzfJqD5qalCzo3phQe6Vh1em
+         OQBCjtP8YkfSf/nrKIMYYx3X+g1m7V1GS00ngnj9m6HWkI5be8Wm5GA3cKR/QlKCuN5k
+         QInA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dKTFa//wCjc7XatclXWOrhHW4XAoWiNw4tYt+0mr9n0=;
-        b=nKX6kUQ/fPXObwCE7PgQMB94NziwUrphxD0O57+0tDbkZzaVaYqms3GO5hvWLrorEH
-         Dye/3pqiMoRrOdEJYRbRVWPyMY1U6zc4YDN/tY69dRircjlbb1/aIMVJMS+/KvbJfHgU
-         LzkM4h+SBIs+XCnHD/8SZXGW8QLPu736lcUOmFDLWMu6ZgO8LdP4kF8b2Zi4TZQHSuLW
-         bewMeKSkmt/EKIGJwlmIw3yaz8p0kK8FVvuSCevfFBu4kfcMfYxfukadHMsPTUhjONvU
-         7327viktV5d0NPusgCkuF2T+Pwfe4JL0haM6SXt/+fr/vP9KKGPttNrAzcxPNckUsOOL
-         N7kw==
-X-Gm-Message-State: AA+aEWaTV6mMb2hR0E1kJoOhIYMT4ZT5ebDPkAVSMPrW660fdmJO9YvE
-        RNrKUXqQ8cF+14e6e7ioVG2y1AbSL5xwS/bNX+0=
-X-Google-Smtp-Source: AFSGD/Veuu1ekuR5hYxfLWpDtLmQbfexGDj+MJz+e8SNcXo6PzYNIS0u0P+AofxBh9JsYLtg6Win9BFEel4wL43KoiA=
-X-Received: by 2002:a67:6346:: with SMTP id x67mr8136573vsb.114.1545847718974;
- Wed, 26 Dec 2018 10:08:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20181225075617.68058-1-kjlu@umn.edu>
-In-Reply-To: <20181225075617.68058-1-kjlu@umn.edu>
-From:   Shannon Nelson <shannon.lee.nelson@gmail.com>
-Date:   Wed, 26 Dec 2018 10:08:28 -0800
-Message-ID: <CAP-MU4NgXLbPZz3gqOUP--obi5Gfg2fJs3xn5CU6UMW1sJY8jw@mail.gmail.com>
-Subject: Re: [PATCH] ethernet: (niu) fix missing checks of niu_pci_eeprom_read
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TdV2R8UgjUdDddm9RaGLRzcwrRIYU197K2hpHWkMBiE=;
+        b=HBybao+FkcbNpaEOEm3nUl4ZwRqlQ3kNUik1WiVmaMNnhLQ/16o+IjOlWHR3mIELYo
+         phwPSmsf8+8GJA0pHlG1MyNy8u2FTcyJW1+xW5ffqR5e9A2HKJYe+tZasmOAQGtl0oD0
+         t8V0H50m03aTiwq52kKHbrjCX8LuoIaFMoAM6yMaHmx4zAMi6GY20Q1P7Ug0fDTfOcsh
+         lbPVxCMeordEngwgRdlRfcVsNbpKLjT5j8q2VZYCcBlgBNZmR4QunHaj+77KjRug0Tcf
+         DqMZr68VMUTw2AmM5DRv0lnQ+gsTIvBKiNexTH0D6x+L0S6hKXj7BL03ZSTwnKSh3zIk
+         i4iw==
+X-Gm-Message-State: AJcUukc9AzovMXCYjj4uwPdb4bxI86RMW1z4IEyIz6Uli1/ufgjqTrVi
+        +n4R/h6rAJtP2YpPR6U4jU19V/fO
+X-Google-Smtp-Source: ALg8bN7p8BpgAFHQogH34Q95nv5GvdiL3eWjvXD6beMRvSusK3Ev+mwQHpkMy2Hka6ZsORfG2oUw6g==
+X-Received: by 2002:a1c:9dc4:: with SMTP id g187mr9087721wme.152.1545847765026;
+        Wed, 26 Dec 2018 10:09:25 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:6194:598:7f5e:b2e? (p200300EA8BCFE300619405987F5E0B2E.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:6194:598:7f5e:b2e])
+        by smtp.googlemail.com with ESMTPSA id e18sm27643557wrv.88.2018.12.26.10.09.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 10:09:24 -0800 (PST)
+Subject: Re: [PATCH v2] net: dsa: bcm_sf2: Propagate error value from
+ mdio_write
 To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
-        Shannon Nelson <shannon.nelson@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Rob Taglang <rob@taglang.io>, Joe Perches <joe@perches.com>,
-        netdev@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     pakki001@umn.edu, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181226175001.76546-1-kjlu@umn.edu>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <e3d3b931-0d0d-af39-8b79-001ceb6942cf@gmail.com>
+Date:   Wed, 26 Dec 2018 19:09:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181226175001.76546-1-kjlu@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 11:58 PM Kangjie Lu <kjlu@umn.edu> wrote:
->
-> niu_pci_eeprom_read() may fail, so we should check its return value
-> before using the read data.
->
+On 26.12.2018 18:50, Kangjie Lu wrote:
+> Both bcm_sf2_sw_indir_rw and mdiobus_write_nested could fail, so let's
+> return their error codes upstream.
+> 
 > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 > ---
->  drivers/net/ethernet/sun/niu.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
-> index 9319d84bf49f..d84501441edd 100644
-> --- a/drivers/net/ethernet/sun/niu.c
-> +++ b/drivers/net/ethernet/sun/niu.c
-> @@ -8100,6 +8100,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
->                 start += 3;
->
->                 prop_len = niu_pci_eeprom_read(np, start + 4);
-> +               if (prop_len < 0)
-> +                       return prop_len;
->                 err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
->                 if (err < 0)
->                         return err;
-> @@ -8144,8 +8146,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
->                         netif_printk(np, probe, KERN_DEBUG, np->dev,
->                                      "VPD_SCAN: Reading in property [%s] len[%d]\n",
->                                      namebuf, prop_len);
-> -                       for (i = 0; i < prop_len; i++)
-> -                               *prop_buf++ = niu_pci_eeprom_read(np, off + i);
-> +                       for (i = 0; i < prop_len; i++) {
-> +                               err = niu_pci_eeprom_read(np, off + i);
-> +                               if (err >= 0)
-> +                                       *prop_buf = err;
-> +                               ++prop_buf;
-> +                       }
->                 }
->
->                 start += len;
-> --
-> 2.17.2 (Apple Git-113)
->
-
-Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
-
--- 
-==============================================
-Mr. Shannon Nelson         Parents can't afford to be squeamish.
+>  drivers/net/dsa/bcm_sf2.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+> index 2eb68769562c..73fbc16a1f86 100644
+> --- a/drivers/net/dsa/bcm_sf2.c
+> +++ b/drivers/net/dsa/bcm_sf2.c
+> @@ -305,9 +305,8 @@ static int bcm_sf2_sw_mdio_write(struct mii_bus *bus, int addr, int regnum,
+>  	if (addr == BRCM_PSEUDO_PHY_ADDR && priv->indir_phy_mask & BIT(addr))
+>  		bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
+>  	else
+> -		mdiobus_write_nested(priv->master_mii_bus, addr, regnum, val);
+> -
+> -	return 0;
+> +		return mdiobus_write_nested(priv->master_mii_bus,
+> +				addr, regnum, val);
+>  }
+Did you try to compile this? The first branch of the if clause has no return
+value any longer.
