@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CC8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE54C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE14218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1686218A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864857;
-	bh=h68OEzS+wvy8toy52AMUfkgaLpLJozqlNt0aGOTrAJ8=;
+	s=default; t=1545864861;
+	bh=CW/vq1jUcj73rMR0tDXo470He545QsLAgweLOejtNKg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qZ7l/Wcesll+3kYgBrUrHJ0GXx0ys8ea2yIICYZxLCEqs5FlL8JLP4v4mByIUJNu0
-	 Tise4oK0iOXIKQ8hXYZlW/2/j2B1pF29zPO26AgAU5dCu7iFbGIg0MqNDw98GmYzE8
-	 TXNlfc8gZotz1B1VZiDGK7crhySjnFQW5KvJotvE=
+	b=O+b66z7HzI/VfW3LTKZYMLJfGqnhin170qTuDEtVPgy9S+kbdBIIitpuZsgfZVMMn
+	 JQpAWKjfkmXWPiEjy+ACvrAhf/U5a9K1x38dO6jzsIrekSEoQ+to2yU+cPDnIXpHwR
+	 xeKw1pS8IdMHgDMXeMqukZ26PmPaW54QRKUDP0rw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730098AbeLZWyQ (ORCPT
+        id S1730130AbeLZWyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55508 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbeLZWyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:11 -0500
+        id S1730087AbeLZWyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4D4A218A5;
-        Wed, 26 Dec 2018 22:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8F0D21741;
+        Wed, 26 Dec 2018 22:54:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864850;
-        bh=h68OEzS+wvy8toy52AMUfkgaLpLJozqlNt0aGOTrAJ8=;
+        s=default; t=1545864854;
+        bh=CW/vq1jUcj73rMR0tDXo470He545QsLAgweLOejtNKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jdJHfQDmB60LKrCfh9uIQ1Ens/OYEOtkfUjcO5QNJ1lXwilrSMKT68ykg19hcZ4Eu
-         PRb5NAVETTSj3HeqibVjJDoZaeECuUoXBWAv5F2l5HNSSeljYgxCaa+QoLRzGLZus3
-         9r4ZXKWyIlIVHbaPHOtpFVNOJBT7EMRiGUbJY8LU=
+        b=fR67KdO5itXCEpOn/mw7iPN+bJW6mFCLLZoZRmwBE3NQH1I8hCbHhs4UhYPoXGU+h
+         YhGbw2uVqJKrKcwnMxLKeY0HLPzC9XnBjTaJ3IkA9to/2Y21y4ZZQM6Z+8gUxfaOUd
+         ptysmSxNFZI1hoXu6x4sV/odF/WooKC0i0OHVxIU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 14/35] bnx2x: Remove configured vlans as part of unload sequence.
-Date:   Wed, 26 Dec 2018 17:41:21 -0500
-Message-Id: <20181226224142.150866-14-sashal@kernel.org>
+Cc:     Varun Prakash <varun@chelsio.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 16/35] scsi: target: iscsi: cxgbit: fix csk leak
+Date:   Wed, 26 Dec 2018 17:41:23 -0500
+Message-Id: <20181226224142.150866-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -60,113 +59,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 04f05230c5c13b1384f66f5186a68d7499e34622 ]
+[ Upstream commit 801df68d617e3cb831f531c99fa6003620e6b343 ]
 
-Vlans are not getting removed when drivers are unloaded. The recent storm
-firmware versions had added safeguards against re-configuring an already
-configured vlan. As a result, PF inner reload flows (e.g., mtu change)
-might trigger an assertion.
-This change is going to remove vlans (same as we do for MACs) when doing
-a chip cleanup during unload.
+csk leak can happen if a new TCP connection gets established after
+cxgbit_accept_np() returns, to fix this leak free remaining csk in
+cxgbit_free_np().
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 34 +++++++++++++++----
- .../net/ethernet/broadcom/bnx2x/bnx2x_sp.h    |  4 ++-
- 2 files changed, 30 insertions(+), 8 deletions(-)
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 77f53e4122c3..4c412c52bcde 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -8462,6 +8462,7 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
- 	/* Fill a user request section if needed */
- 	if (!test_bit(RAMROD_CONT, ramrod_flags)) {
- 		ramrod_param.user_req.u.vlan.vlan = vlan;
-+		__set_bit(BNX2X_VLAN, &ramrod_param.user_req.vlan_mac_flags);
- 		/* Set the command: ADD or DEL */
- 		if (set)
- 			ramrod_param.user_req.cmd = BNX2X_VLAN_MAC_ADD;
-@@ -8482,6 +8483,27 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
- 	return rc;
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index 2fb1bf1a26c5..8652475e01d0 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -631,8 +631,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
+ 
+ static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
+ {
++	struct cxgbit_sock *csk = handle;
++
+ 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
+ 	kfree_skb(skb);
++	cxgbit_put_csk(csk);
  }
  
-+static int bnx2x_del_all_vlans(struct bnx2x *bp)
-+{
-+	struct bnx2x_vlan_mac_obj *vlan_obj = &bp->sp_objs[0].vlan_obj;
-+	unsigned long ramrod_flags = 0, vlan_flags = 0;
-+	struct bnx2x_vlan_entry *vlan;
-+	int rc;
-+
-+	__set_bit(RAMROD_COMP_WAIT, &ramrod_flags);
-+	__set_bit(BNX2X_VLAN, &vlan_flags);
-+	rc = vlan_obj->delete_all(bp, vlan_obj, &vlan_flags, &ramrod_flags);
-+	if (rc)
-+		return rc;
-+
-+	/* Mark that hw forgot all entries */
-+	list_for_each_entry(vlan, &bp->vlan_reg, link)
-+		vlan->hw = false;
-+	bp->vlan_cnt = 0;
-+
-+	return 0;
-+}
-+
- int bnx2x_del_all_macs(struct bnx2x *bp,
- 		       struct bnx2x_vlan_mac_obj *mac_obj,
- 		       int mac_type, bool wait_for_comp)
-@@ -9320,6 +9342,11 @@ void bnx2x_chip_cleanup(struct bnx2x *bp, int unload_mode, bool keep_link)
- 		BNX2X_ERR("Failed to schedule DEL commands for UC MACs list: %d\n",
- 			  rc);
- 
-+	/* Remove all currently configured VLANs */
-+	rc = bnx2x_del_all_vlans(bp);
-+	if (rc < 0)
-+		BNX2X_ERR("Failed to delete all VLANs\n");
-+
- 	/* Disable LLH */
- 	if (!CHIP_IS_E1(bp))
- 		REG_WR(bp, NIG_REG_LLH0_FUNC_EN + port*8, 0);
-@@ -13007,13 +13034,6 @@ static void bnx2x_vlan_configure(struct bnx2x *bp, bool set_rx_mode)
- 
- int bnx2x_vlan_reconfigure_vid(struct bnx2x *bp)
- {
--	struct bnx2x_vlan_entry *vlan;
--
--	/* The hw forgot all entries after reload */
--	list_for_each_entry(vlan, &bp->vlan_reg, link)
--		vlan->hw = false;
--	bp->vlan_cnt = 0;
--
- 	/* Don't set rx mode here. Our caller will do it. */
- 	bnx2x_vlan_configure(bp, false);
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-index 0bf2fd470819..7a6e82db4231 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-@@ -265,6 +265,7 @@ enum {
- 	BNX2X_ETH_MAC,
- 	BNX2X_ISCSI_ETH_MAC,
- 	BNX2X_NETQ_ETH_MAC,
-+	BNX2X_VLAN,
- 	BNX2X_DONT_CONSUME_CAM_CREDIT,
- 	BNX2X_DONT_CONSUME_CAM_CREDIT_DEST,
- };
-@@ -272,7 +273,8 @@ enum {
- #define BNX2X_VLAN_MAC_CMP_MASK	(1 << BNX2X_UC_LIST_MAC | \
- 				 1 << BNX2X_ETH_MAC | \
- 				 1 << BNX2X_ISCSI_ETH_MAC | \
--				 1 << BNX2X_NETQ_ETH_MAC)
-+				 1 << BNX2X_NETQ_ETH_MAC | \
-+				 1 << BNX2X_VLAN)
- #define BNX2X_VLAN_MAC_CMP_FLAGS(flags) \
- 	((flags) & BNX2X_VLAN_MAC_CMP_MASK)
+ static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
+@@ -1136,7 +1139,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
+ 	rpl5->opt0 = cpu_to_be64(opt0);
+ 	rpl5->opt2 = cpu_to_be32(opt2);
+ 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
+-	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
++	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
+ 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
+ }
  
 -- 
 2.19.1
