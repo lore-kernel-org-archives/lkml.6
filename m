@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FDEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD5BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D166218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3B021741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864022;
-	bh=cupGfI9Qh00fCYypiHlSN6dzqe6aXkUU2LvZZACQcmo=;
+	s=default; t=1545864027;
+	bh=Px6UZj563bikmHNcosTib3Ae5wEAb7cHeNaORZqfN6w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zJ4lgnJrPBK6a3JkHK0pyNW4QtM//FDZD+nDjY2t0G3y+XIqGlJzTtAiePdBWUCyC
-	 7YyvcMHHhWPPnnhnocEjy4AGfzvca8wVXGmjWhyoC/ADnHAHL1Ejy6Z2HXVDD+e2Jo
-	 eXck48OkYKy7mhid8HjqttU1ojo0A8cKdljJVPXI=
+	b=K27UHKw8j17DR492V9ZTqyV0X4DbdiMAuUNJ10dOJTo4sbJSOAcgn26w6oKye4fir
+	 ZALhnTJNWpuPKExdFcFeiKTDCNN9xQ3Ax5qZuZWZ3FTOuuQNp4JpWhbyFrpLLvvEkM
+	 JURx604QFQz4PDSMnLvb1CA7T9P2auirtyBH7OWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbeLZWkV (ORCPT
+        id S1729046AbeLZWk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:40:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728957AbeLZWkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:40:16 -0500
+        id S1729014AbeLZWkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B05821901;
-        Wed, 26 Dec 2018 22:40:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99E6320651;
+        Wed, 26 Dec 2018 22:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864013;
-        bh=cupGfI9Qh00fCYypiHlSN6dzqe6aXkUU2LvZZACQcmo=;
+        s=default; t=1545864020;
+        bh=Px6UZj563bikmHNcosTib3Ae5wEAb7cHeNaORZqfN6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSn7+lNLg1US84jbJJkqcfFWMlO/NuDfIALGVvj77IPejaf8nJykK3N9epoRah68g
-         A8y1cBQxT+aibTPe2k8z9QLAL+x0nVDnJ9XvKaZ/MWzL/SzyKsYO8NfLjA6m+Q+XaV
-         ixVxARVJ+9Qqtd8icd55y+WAB+lUW68K4V1ezVtA=
+        b=1sClDdKzU9XjI5b5F/4FavzuKcrBfVvbkYbhXC84fM2LjeMQ8LwCgLotNdrGWAJdo
+         kABmAMzQRyRZH0Im+0yLCTjUSeIw6ohumD2HPJ6pYdun9MHlU+T6ZAFC0xw1Q5fwDk
+         5IEswN/Y+8yGTEtvBQPeIu5Fo1ci5edspg4je9vk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 13/59] scsi: bnx2fc: Fix NULL dereference in error handling
-Date:   Wed, 26 Dec 2018 17:37:53 -0500
-Message-Id: <20181226223839.150262-13-sashal@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/59] ibmvnic: Fix non-atomic memory allocation in IRQ context
+Date:   Wed, 26 Dec 2018 17:37:56 -0500
+Message-Id: <20181226223839.150262-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -57,34 +59,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit 9ae4f8420ed7be4b13c96600e3568c144d101a23 ]
+[ Upstream commit 1d1bbc37f89b0559c9e913682f2489d89cfde6b8 ]
 
-If "interface" is NULL then we can't release it and trying to will only
-lead to an Oops.
+ibmvnic_reset allocated new reset work item objects in a non-atomic
+context. This can be called from a tasklet, generating the output below.
+Allocate work items with the GFP_ATOMIC flag instead.
 
-Fixes: aea71a024914 ("[SCSI] bnx2fc: Introduce interface structure for each vlan interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+BUG: sleeping function called from invalid context at mm/slab.h:421
+in_atomic(): 1, irqs_disabled(): 1, pid: 93, name: kworker/0:2
+INFO: lockdep is turned off.
+irq event stamp: 66049
+hardirqs last  enabled at (66048): [<c000000000122468>] tasklet_action_common.isra.12+0x78/0x1c0
+hardirqs last disabled at (66049): [<c000000000befce8>] _raw_spin_lock_irqsave+0x48/0xf0
+softirqs last  enabled at (66044): [<c000000000a8ac78>] dev_deactivate_queue.constprop.28+0xc8/0x160
+softirqs last disabled at (66045): [<c0000000000306e0>] call_do_softirq+0x14/0x24
+CPU: 0 PID: 93 Comm: kworker/0:2 Kdump: loaded Not tainted 4.20.0-rc6-00001-g1b50a8f03706 #7
+Workqueue: events linkwatch_event
+Call Trace:
+[c0000003fffe7ae0] [c000000000bc83e4] dump_stack+0xe8/0x164 (unreliable)
+[c0000003fffe7b30] [c00000000015ba0c] ___might_sleep+0x2dc/0x320
+[c0000003fffe7bb0] [c000000000391514] kmem_cache_alloc_trace+0x3e4/0x440
+[c0000003fffe7c30] [d000000005b2309c] ibmvnic_reset+0x16c/0x360 [ibmvnic]
+[c0000003fffe7cc0] [d000000005b29834] ibmvnic_tasklet+0x1054/0x2010 [ibmvnic]
+[c0000003fffe7e00] [c0000000001224c8] tasklet_action_common.isra.12+0xd8/0x1c0
+[c0000003fffe7e60] [c000000000bf1238] __do_softirq+0x1a8/0x64c
+[c0000003fffe7f90] [c0000000000306e0] call_do_softirq+0x14/0x24
+[c0000003f3967980] [c00000000001ba50] do_softirq_own_stack+0x60/0xb0
+[c0000003f39679c0] [c0000000001218a8] do_softirq+0xa8/0x100
+[c0000003f39679f0] [c000000000121a74] __local_bh_enable_ip+0x174/0x180
+[c0000003f3967a60] [c000000000bf003c] _raw_spin_unlock_bh+0x5c/0x80
+[c0000003f3967a90] [c000000000a8ac78] dev_deactivate_queue.constprop.28+0xc8/0x160
+[c0000003f3967ad0] [c000000000a8c8b0] dev_deactivate_many+0xd0/0x520
+[c0000003f3967b70] [c000000000a8cd40] dev_deactivate+0x40/0x60
+[c0000003f3967ba0] [c000000000a5e0c4] linkwatch_do_dev+0x74/0xd0
+[c0000003f3967bd0] [c000000000a5e694] __linkwatch_run_queue+0x1a4/0x1f0
+[c0000003f3967c30] [c000000000a5e728] linkwatch_event+0x48/0x60
+[c0000003f3967c50] [c0000000001444e8] process_one_work+0x238/0x710
+[c0000003f3967d20] [c000000000144a48] worker_thread+0x88/0x4e0
+[c0000003f3967db0] [c00000000014e3a8] kthread+0x178/0x1c0
+[c0000003f3967e20] [c00000000000bfd0] ret_from_kernel_thread+0x5c/0x6c
+
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index 6844ba361616..89f09b122135 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2372,7 +2372,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
- 		rc = -ENOMEM;
--		goto ifput_err;
-+		goto netdev_err;
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 14c53ed5cca6..c914b338691b 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1596,7 +1596,7 @@ static void ibmvnic_reset(struct ibmvnic_adapter *adapter,
+ 		}
  	}
  
- 	if (is_vlan_dev(netdev)) {
+-	rwi = kzalloc(sizeof(*rwi), GFP_KERNEL);
++	rwi = kzalloc(sizeof(*rwi), GFP_ATOMIC);
+ 	if (!rwi) {
+ 		mutex_unlock(&adapter->rwi_lock);
+ 		ibmvnic_close(netdev);
 -- 
 2.19.1
 
