@@ -6,49 +6,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD21FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3871C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89FD4214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 902F0214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864345;
-	bh=xHpUPkfqehI0wryWmy2Iqaf+OscGaJXfXJrjlrv+mGE=;
+	s=default; t=1545864349;
+	bh=nqvZrES9MOYce66waIA8O7MhUKQB0rVn0Ke+rYblvOY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q12qZxpM+ER/P8t4dFW07tEUoUunTEvr/EDeTZY00pevY2lq3TWcBm1imiB9S4DQB
-	 5fAcnXQ6bQsGkTuVt1LFgx80XItspZYOm3WkjbywCFnt3ZOpAkvZC/cBPOEM3NflNJ
-	 gRW6sT8jHd4wFlP72T1UAVRzRuo3t25A6Tpb7Ilg=
+	b=V5Le8dUmyXT4y5L69MBp+lKCfkFIXCohXGfXGhJ4OoFBXgT2jRJgsZAMVygPYrMGb
+	 0JpANgW8Ob+rltxxWDXu4aWliTsaWRJKzNt+yyEuO+OCJW6QaW3H4SlafBVroQVi37
+	 pYj2cQ8YSdBzzRFrGE0blgTLVdSSu+G9nO+Uba80=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbeLZWpo (ORCPT
+        id S1729311AbeLZWpn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40600 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:45:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729014AbeLZWk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:40:27 -0500
+        id S1729053AbeLZWk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2C9720651;
-        Wed, 26 Dec 2018 22:40:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9580F2054F;
+        Wed, 26 Dec 2018 22:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864026;
-        bh=xHpUPkfqehI0wryWmy2Iqaf+OscGaJXfXJrjlrv+mGE=;
+        s=default; t=1545864027;
+        bh=nqvZrES9MOYce66waIA8O7MhUKQB0rVn0Ke+rYblvOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nK7XBcdl0v9Lo9olHrZfpw74BQYwQkYjsz3E9h2Z8V5wBQEu5ROMeKWa8ZfC2br+2
-         4Wf0JdT8xcGkHeD5751EGbmBIQGK/eDqGx3+74loibsqOlZK4OaaN20XiEOYo+D4La
-         oas4PZfxiuMFV1jDXNl7V+LxxR7edM8KAnv8C4Qc=
+        b=Bcjsa6t6frrjHGv6XhVfksMowqr902SRIfbQ90qixuUaZ27Wy+groIBUfLFw6jsvv
+         4gojS77teK2ezM9fBncPo5mh6LmVPPyoVRGeoLK8l2R7Oj2VWivDHJe63nEHWmFtws
+         zZMswMNyeIFTBUs+CUJUVSz6zQ/HtpsG8+nKlTQc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
-        bhe@redhat.com, hans.van.kranenburg@mendix.com, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 19/59] x86/dump_pagetables: Fix LDT remap address marker
-Date:   Wed, 26 Dec 2018 17:37:59 -0500
-Message-Id: <20181226223839.150262-19-sashal@kernel.org>
+Cc:     Stefan Assmann <sassmann@kpanic.de>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 20/59] i40e: fix mac filter delete when setting mac address
+Date:   Wed, 26 Dec 2018 17:38:00 -0500
+Message-Id: <20181226223839.150262-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -60,62 +57,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Stefan Assmann <sassmann@kpanic.de>
 
-[ Upstream commit 254eb5505ca0ca749d3a491fc6668b6c16647a99 ]
+[ Upstream commit 158daed16efb1170694e420ae06ba8ba954d82e5 ]
 
-The LDT remap placement has been changed. It's now placed before the direct
-mapping in the kernel virtual address space for both paging modes.
+A previous commit moved the ether_addr_copy() in i40e_set_mac() before
+the mac filter del/add to avoid a race. However it wasn't taken into
+account that this alters the mac address being handed to
+i40e_del_mac_filter().
 
-Change address markers order accordingly.
+Also changed i40e_add_mac_filter() to operate on netdev->dev_addr,
+hopefully that makes the code easier to read.
 
-Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: hans.van.kranenburg@mendix.com
-Cc: linux-mm@kvack.org
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20181130202328.65359-3-kirill.shutemov@linux.intel.com
+Fixes: 458867b2ca0c ("i40e: don't remove netdev->dev_addr when syncing uc list")
+
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/dump_pagetables.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index cf403e057f3f..6bca45d06676 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -51,10 +51,10 @@ struct addr_marker {
- enum address_markers_idx {
- 	USER_SPACE_NR = 0,
- 	KERNEL_SPACE_NR,
--	LOW_KERNEL_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	LDT_NR,
- #endif
-+	LOW_KERNEL_NR,
- 	VMALLOC_START_NR,
- 	VMEMMAP_START_NR,
- #ifdef CONFIG_KASAN
-@@ -62,9 +62,6 @@ enum address_markers_idx {
- 	KASAN_SHADOW_END_NR,
- #endif
- 	CPU_ENTRY_AREA_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
--	LDT_NR,
--#endif
- #ifdef CONFIG_X86_ESPFIX64
- 	ESPFIX_START_NR,
- #endif
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 176c99b8251d..904b42becd45 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -1554,17 +1554,17 @@ static int i40e_set_mac(struct net_device *netdev, void *p)
+ 		netdev_info(netdev, "set new mac address %pM\n", addr->sa_data);
+ 
+ 	/* Copy the address first, so that we avoid a possible race with
+-	 * .set_rx_mode(). If we copy after changing the address in the filter
+-	 * list, we might open ourselves to a narrow race window where
+-	 * .set_rx_mode could delete our dev_addr filter and prevent traffic
+-	 * from passing.
++	 * .set_rx_mode().
++	 * - Remove old address from MAC filter
++	 * - Copy new address
++	 * - Add new address to MAC filter
+ 	 */
+-	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+-
+ 	spin_lock_bh(&vsi->mac_filter_hash_lock);
+ 	i40e_del_mac_filter(vsi, netdev->dev_addr);
+-	i40e_add_mac_filter(vsi, addr->sa_data);
++	ether_addr_copy(netdev->dev_addr, addr->sa_data);
++	i40e_add_mac_filter(vsi, netdev->dev_addr);
+ 	spin_unlock_bh(&vsi->mac_filter_hash_lock);
++
+ 	if (vsi->type == I40E_VSI_MAIN) {
+ 		i40e_status ret;
+ 
 -- 
 2.19.1
 
