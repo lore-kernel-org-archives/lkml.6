@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639CBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE47CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC092070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D7B7214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865182;
-	bh=6oY66oV9TJmf1YU7v0ZR/HCPPHNqrJySswwKZzdfeeI=;
+	s=default; t=1545865197;
+	bh=yfVSh56HZ4jBav5/maJoY5uyUIBeIPOGkM60ILBksOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C+XepEnY99I2OQB61NFTiBN53xAFvemHW9hYBhWPlWFP/F7vnFRxQcwyWTZTWGgBv
-	 acdpg5SovUk0QZGALUs7Xvnv39dE6vt9E7BIEb6wtIkc7K1Fi1o3QhnWIbCJi91gY6
-	 S5QR0+He/98qtrmuDg1lSLRcpKxc+jJvruCGUDBE=
+	b=iwF39PJyCh7BPINddCUfQ39FjMz86qwFuqnW1+LCJ+UvZoVm0KaSR7o59DUY3w/Y6
+	 581C6/fqegPV/7saNlr/YqZ3W/qWUqNqS5uCkRubXFuijA2BZD23jfe02lLUsvcHn/
+	 fH4yu8SGp/XRS8NheIczZe04bplLxw+Z53Yej1Lo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbeLZW7l (ORCPT
+        id S1730039AbeLZWyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:59:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730074AbeLZWyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:12 -0500
+        id S1727935AbeLZWyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5D321741;
-        Wed, 26 Dec 2018 22:54:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 852BA21741;
+        Wed, 26 Dec 2018 22:54:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864851;
-        bh=6oY66oV9TJmf1YU7v0ZR/HCPPHNqrJySswwKZzdfeeI=;
+        s=default; t=1545864845;
+        bh=yfVSh56HZ4jBav5/maJoY5uyUIBeIPOGkM60ILBksOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tjkwyPcixpOMk+XiiBVYwxovGbzBl+zGzDuXag7E1of1pZXXRQiFtqZQw3gJtGEny
-         ptTJvjJufN+AS5K4N2chE5N6/VP2q77P5IsZdN/jwdHsbtwbqeXXU4ESIZePmHgAjN
-         bOKFCE5QkUTcdHbMtonXuQu1J9Y4AtNJCmE4VpAk=
+        b=M6h4/S0W04J4abt3acAAbguL/pdRNhPXEIXOa0VUdYmtKZgoZm3Fo4dRH0FzeYf53
+         kdQgf/VC427XQF+TYNngM9mV7oZUVexMN30dbLw+lfc6zx9MGFg+GcwNsTsae0WA/j
+         h318rULs7+LTRHwsfP6/ZzToZhfdc0lvB5F3x8Bc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
+Cc:     Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 15/35] bnx2x: Send update-svid ramrod with retry/poll flags enabled
-Date:   Wed, 26 Dec 2018 17:41:22 -0500
-Message-Id: <20181226224142.150866-15-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 11/35] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+Date:   Wed, 26 Dec 2018 17:41:18 -0500
+Message-Id: <20181226224142.150866-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -60,72 +61,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Hui Peng <benquike@gmail.com>
 
-[ Upstream commit 9061193c4ee065d3240fde06767c2e06ec61decc ]
+[ Upstream commit 5146f95df782b0ac61abde36567e718692725c89 ]
 
-Driver sends update-SVID ramrod in the MFW notification path.
-If there is a pending ramrod, driver doesn't retry the command
-and storm firmware will never be updated with the SVID value.
-The patch adds changes to send update-svid ramrod in process context with
-retry/poll flags set.
+The function hso_probe reads if_num from the USB device (as an u8) and uses
+it without a length check to index an array, resulting in an OOB memory read
+in hso_probe or hso_get_config_data.
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Add a length check for both locations and updated hso_probe to bail on
+error.
+
+This issue has been assigned CVE-2018-19985.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |  1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/usb/hso.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-index d5e4c42662b6..162b809422f4 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -1278,6 +1278,7 @@ enum sp_rtnl_flag {
- 	BNX2X_SP_RTNL_TX_STOP,
- 	BNX2X_SP_RTNL_GET_DRV_VERSION,
- 	BNX2X_SP_RTNL_CHANGE_UDP_PORT,
-+	BNX2X_SP_RTNL_UPDATE_SVID,
- };
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index e7b516342678..66ae647b712e 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2808,6 +2808,12 @@ static int hso_get_config_data(struct usb_interface *interface)
+ 		return -EIO;
+ 	}
  
- enum bnx2x_iov_flag {
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 4c412c52bcde..0352089d0d98 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -2925,6 +2925,10 @@ static void bnx2x_handle_update_svid_cmd(struct bnx2x *bp)
- 	func_params.f_obj = &bp->func_obj;
- 	func_params.cmd = BNX2X_F_CMD_SWITCH_UPDATE;
- 
-+	/* Prepare parameters for function state transitions */
-+	__set_bit(RAMROD_COMP_WAIT, &func_params.ramrod_flags);
-+	__set_bit(RAMROD_RETRY, &func_params.ramrod_flags);
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
 +
- 	if (IS_MF_UFP(bp) || IS_MF_BD(bp)) {
- 		int func = BP_ABS_FUNC(bp);
- 		u32 val;
-@@ -4301,7 +4305,8 @@ static void bnx2x_attn_int_deasserted3(struct bnx2x *bp, u32 attn)
- 				bnx2x_handle_eee_event(bp);
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2878,10 +2884,18 @@ static int hso_probe(struct usb_interface *interface,
  
- 			if (val & DRV_STATUS_OEM_UPDATE_SVID)
--				bnx2x_handle_update_svid_cmd(bp);
-+				bnx2x_schedule_sp_rtnl(bp,
-+					BNX2X_SP_RTNL_UPDATE_SVID, 0);
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
  
- 			if (bp->link_vars.periodic_flags &
- 			    PERIODIC_FLAGS_LINK_EVENT) {
-@@ -10369,6 +10374,9 @@ static void bnx2x_sp_rtnl_task(struct work_struct *work)
- 			       &bp->sp_rtnl_state))
- 		bnx2x_update_mng_version(bp);
- 
-+	if (test_and_clear_bit(BNX2X_SP_RTNL_UPDATE_SVID, &bp->sp_rtnl_state))
-+		bnx2x_handle_update_svid_cmd(bp);
-+
- 	if (test_and_clear_bit(BNX2X_SP_RTNL_CHANGE_UDP_PORT,
- 			       &bp->sp_rtnl_state)) {
- 		if (bnx2x_udp_port_update(bp)) {
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
 -- 
 2.19.1
 
