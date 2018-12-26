@@ -2,43 +2,41 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7AAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0ADC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FCF218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:38:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00850218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbeLZNib (ORCPT
+        id S1727253AbeLZNia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:38:31 -0500
-Received: from mga12.intel.com ([192.55.52.136]:31975 "EHLO mga12.intel.com"
+        Wed, 26 Dec 2018 08:38:30 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21292 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726966AbeLZNhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726937AbeLZNhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Dec 2018 08:37:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 05:37:05 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 05:37:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
-   d="scan'208";a="113358933"
+   d="scan'208";a="113358939"
 Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
-  by orsmga003.jf.intel.com with ESMTP; 26 Dec 2018 05:37:02 -0800
+  by orsmga003.jf.intel.com with ESMTP; 26 Dec 2018 05:37:01 -0800
 Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
         (envelope-from <fengguang.wu@intel.com>)
-        id 1gc9Mr-0005OY-D7; Wed, 26 Dec 2018 21:37:01 +0800
-Message-Id: <20181226133351.579378360@intel.com>
+        id 1gc9Mr-0005Ns-5X; Wed, 26 Dec 2018 21:37:01 +0800
+Message-Id: <20181226131446.330864849@intel.com>
 User-Agent: quilt/0.65
-Date:   Wed, 26 Dec 2018 21:14:55 +0800
+Date:   Wed, 26 Dec 2018 21:14:46 +0800
 From:   Fengguang Wu <fengguang.wu@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Fengguang Wu <fengguang.wu@intel.com>
+cc:     Linux Memory Management List <linux-mm@kvack.org>
 cc:     kvm@vger.kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>
 cc:     Fan Du <fan.du@intel.com>
@@ -50,75 +48,117 @@ cc:     Dong Eddie <eddie.dong@intel.com>
 cc:     Dave Hansen <dave.hansen@intel.com>
 cc:     Zhang Yi <yi.z.zhang@linux.intel.com>
 cc:     Dan Williams <dan.j.williams@intel.com>
-Subject: [RFC][PATCH v2 09/21] mm: avoid duplicate peer target node
-References: <20181226131446.330864849@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0020-page_alloc-avoid-duplicate-peer-target-node.patch
+cc:     Fengguang Wu <fengguang.wu@intel.com>
+Subject: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness accounting/migration
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To ensure 1:1 peer node mapping on broken BIOS
+This is an attempt to use NVDIMM/PMEM as volatile NUMA memory that's
+transparent to normal applications and virtual machines.
 
-	node distances:
-	node   0   1   2   3
-	  0:  10  21  20  20
-	  1:  21  10  20  20
-	  2:  20  20  10  20
-	  3:  20  20  20  10
+The code is still in active development. It's provided for early design review.
 
-or with numa=fake=4U
+Key functionalities:
 
-	node distances:
-	node   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
-	  0:  10  10  10  10  21  21  21  21  17  17  17  17  28  28  28  28
-	  1:  10  10  10  10  21  21  21  21  17  17  17  17  28  28  28  28
-	  2:  10  10  10  10  21  21  21  21  17  17  17  17  28  28  28  28
-	  3:  10  10  10  10  21  21  21  21  17  17  17  17  28  28  28  28
-	  4:  21  21  21  21  10  10  10  10  28  28  28  28  17  17  17  17
-	  5:  21  21  21  21  10  10  10  10  28  28  28  28  17  17  17  17
-	  6:  21  21  21  21  10  10  10  10  28  28  28  28  17  17  17  17
-	  7:  21  21  21  21  10  10  10  10  28  28  28  28  17  17  17  17
-	  8:  17  17  17  17  28  28  28  28  10  10  10  10  28  28  28  28
-	  9:  17  17  17  17  28  28  28  28  10  10  10  10  28  28  28  28
-	 10:  17  17  17  17  28  28  28  28  10  10  10  10  28  28  28  28
-	 11:  17  17  17  17  28  28  28  28  10  10  10  10  28  28  28  28
-	 12:  28  28  28  28  17  17  17  17  28  28  28  28  10  10  10  10
-	 13:  28  28  28  28  17  17  17  17  28  28  28  28  10  10  10  10
-	 14:  28  28  28  28  17  17  17  17  28  28  28  28  10  10  10  10
-	 15:  28  28  28  28  17  17  17  17  28  28  28  28  10  10  10  10
+1) create and describe PMEM NUMA node for NVDIMM memory
+2) dumb /proc/PID/idle_pages interface, for user space driven hot page accounting
+3) passive kernel cold page migration in page reclaim path
+4) improved move_pages() for active user space hot/cold page migration
 
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- mm/page_alloc.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+(1) is foundation for transparent usage of NVDIMM for normal apps and virtual
+machines. (2-4) enable auto placing hot pages in DRAM for better performance.
+A user space migration daemon is being built based on this kernel patchset to
+make the full vertical solution.
 
---- linux.orig/mm/page_alloc.c	2018-12-23 19:48:27.366110325 +0800
-+++ linux/mm/page_alloc.c	2018-12-23 19:48:27.362110332 +0800
-@@ -6941,16 +6941,22 @@ static int find_best_peer_node(int nid)
- 	int n, val;
- 	int min_val = INT_MAX;
- 	int peer = NUMA_NO_NODE;
-+	static nodemask_t target_nodes = NODE_MASK_NONE;
- 
- 	for_each_online_node(n) {
- 		if (n == nid)
- 			continue;
- 		val = node_distance(nid, n);
-+		if (val == LOCAL_DISTANCE)
-+			continue;
-+		if (node_isset(n, target_nodes))
-+			continue;
- 		if (val < min_val) {
- 			min_val = val;
- 			peer = n;
- 		}
- 	}
-+	node_set(peer, target_nodes);
- 	return peer;
- }
- 
+Base kernel is v4.20 . The patches are not suitable for upstreaming in near
+future -- some are quick hacks, some others need more works. However they are
+complete enough to demo the necessary kernel changes for the proposed app&VM
+transparent NVDIMM volatile use model.
 
+The interfaces are far from finalized. They kind of illustrate what would be
+necessary for creating a user space driven solution. The exact forms will ask
+for more thoughts and inputs. We may adopt HMAT based solution for NUMA node
+related interface when they are ready. The /proc/PID/idle_pages interface is
+standalone but non-trivial. Before upstreaming some day, it's expected to take
+long time to collect various real use cases and feedbacks, so as to refine and
+stabilize the format.
+
+Create PMEM numa node
+
+	[PATCH 01/21] e820: cheat PMEM as DRAM
+
+Mark numa node as DRAM/PMEM
+
+	[PATCH 02/21] acpi/numa: memorize NUMA node type from SRAT table
+	[PATCH 03/21] x86/numa_emulation: fix fake NUMA in uniform case
+	[PATCH 04/21] x86/numa_emulation: pass numa node type to fake nodes
+	[PATCH 05/21] mmzone: new pgdat flags for DRAM and PMEM
+	[PATCH 06/21] x86,numa: update numa node type
+	[PATCH 07/21] mm: export node type {pmem|dram} under /sys/bus/node
+
+Point neighbor DRAM/PMEM to each other
+
+	[PATCH 08/21] mm: introduce and export pgdat peer_node
+	[PATCH 09/21] mm: avoid duplicate peer target node
+
+Standalone zonelist for DRAM and PMEM nodes
+
+	[PATCH 10/21] mm: build separate zonelist for PMEM and DRAM node
+
+Keep page table pages in DRAM
+
+	[PATCH 11/21] kvm: allocate page table pages from DRAM
+	[PATCH 12/21] x86/pgtable: allocate page table pages from DRAM
+
+/proc/PID/idle_pages interface for virtual machine and normal tasks
+
+	[PATCH 13/21] x86/pgtable: dont check PMD accessed bit
+	[PATCH 14/21] kvm: register in mm_struct
+	[PATCH 15/21] ept-idle: EPT walk for virtual machine
+	[PATCH 16/21] mm-idle: mm_walk for normal task
+	[PATCH 17/21] proc: introduce /proc/PID/idle_pages
+	[PATCH 18/21] kvm-ept-idle: enable module
+
+Mark hot pages
+
+	[PATCH 19/21] mm/migrate.c: add move_pages(MPOL_MF_SW_YOUNG) flag
+
+Kernel DRAM=>PMEM migration
+
+	[PATCH 20/21] mm/vmscan.c: migrate anon DRAM pages to PMEM node
+	[PATCH 21/21] mm/vmscan.c: shrink anon list if can migrate to PMEM
+
+ arch/x86/include/asm/numa.h    |    2 
+ arch/x86/include/asm/pgalloc.h |   10 
+ arch/x86/include/asm/pgtable.h |    3 
+ arch/x86/kernel/e820.c         |    3 
+ arch/x86/kvm/Kconfig           |   11 
+ arch/x86/kvm/Makefile          |    4 
+ arch/x86/kvm/ept_idle.c        |  841 +++++++++++++++++++++++++++++++
+ arch/x86/kvm/ept_idle.h        |  116 ++++
+ arch/x86/kvm/mmu.c             |   12 
+ arch/x86/mm/numa.c             |    3 
+ arch/x86/mm/numa_emulation.c   |   30 +
+ arch/x86/mm/pgtable.c          |   22 
+ drivers/acpi/numa.c            |    5 
+ drivers/base/node.c            |   21 
+ fs/proc/base.c                 |    2 
+ fs/proc/internal.h             |    1 
+ fs/proc/task_mmu.c             |   54 +
+ include/linux/mm_types.h       |   11 
+ include/linux/mmzone.h         |   38 +
+ mm/mempolicy.c                 |   14 
+ mm/migrate.c                   |   13 
+ mm/page_alloc.c                |   77 ++
+ mm/pagewalk.c                  |    1 
+ mm/vmscan.c                    |   38 +
+ virt/kvm/kvm_main.c            |    3 
+ 25 files changed, 1306 insertions(+), 29 deletions(-)
+
+V1 patches: https://lkml.org/lkml/2018/9/2/13
+
+Regards,
+Fengguang
 
