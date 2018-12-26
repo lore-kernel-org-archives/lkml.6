@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60DAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B048DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6F521902
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8145B2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863885;
-	bh=VTLAqJOaD43ZSkCeE5iDEgcm5jC13L+GSBaF6zPWC5s=;
+	s=default; t=1545863888;
+	bh=cZrBJNO9c7ZwxX+w3ZA09INHzeT0L2t/JO+juTIbCM0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CXqZ/TznrsVYY6n/Dbd1I3y+rJRmBhyf3Lo6J2H978pA/SiV6T/oMuQRD6eVbB6jA
-	 d2Mlx20D3QaiFXn2J8fBCdBzpDS8+hPhXxaw2Gaue6Jb1AC1yQNd71+iAXGMQ+1SHm
-	 fldZfxr1Owk3paKEJrTjCAvfT6ipMujzGFIIUxVw=
+	b=abLs8vZv6ZcnTB95kpvsU41Z9JXXLPXgatzPo71maHEhRqVgrGFEPp0uwqly0NlnS
+	 aPigYp4scpOh62vnBfKro2EFIbHvHAD7BGnBCe8I/pJAMhtwDXGaGONcsw+wKKWHyc
+	 xD3D365romJPmKzHxpkAP88tNniZO8l8QACbaTVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeLZWiF (ORCPT
+        id S1728667AbeLZWiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:38:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38210 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:38:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728610AbeLZWiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:02 -0500
+        id S1728627AbeLZWiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDEB8218EA;
-        Wed, 26 Dec 2018 22:38:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03B2C218E2;
+        Wed, 26 Dec 2018 22:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863881;
-        bh=VTLAqJOaD43ZSkCeE5iDEgcm5jC13L+GSBaF6zPWC5s=;
+        s=default; t=1545863883;
+        bh=cZrBJNO9c7ZwxX+w3ZA09INHzeT0L2t/JO+juTIbCM0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gUFRNykbIssc3q2a1J2S4Q+jIh4QDpETPQhQy0msRb0rYGxeTm2bEJrqyABcCrjLM
-         +4W5LsbgF4D3CuEhzCTkAMDrZuKWytfi/KFWszprfGcXiKVDTmd0Y8gYThlT+KdYU/
-         f4wCm5qHGtWSY0r9jhSp2lMGlC9KKtrO5u7kM6Gg=
+        b=sNa2sY0j7mxADERZ0N+nH/KgLXo7Oo2dA5iVGnekpihh2oXAHBQjhLlD4pmCTlUsU
+         2HQdVU1O+oujc/+sn0RxquL+UQzfuUzgVuDV0eR1ubvYtoqqzsushCQ88SH+OfDKA/
+         ZFRxzLXp8vug2/QxZnQpBNayjtRFxOfc545LCBc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+Cc:     Anssi Hannula <anssi.hannula@bitwise.fi>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michal Simek <michal.simek@xilinx.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 71/97] net: stmmac: Fix an error code in probe()
-Date:   Wed, 26 Dec 2018 17:35:31 -0500
-Message-Id: <20181226223557.149329-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 73/97] net: macb: fix random memory corruption on RX with 64-bit DMA
+Date:   Wed, 26 Dec 2018 17:35:33 -0500
+Message-Id: <20181226223557.149329-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,33 +60,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-[ Upstream commit b26322d2ac6c1c1087af73856531bb836f6963ca ]
+[ Upstream commit e100a897bf9b19089e57f236f2398c9e0538900e ]
 
-The function should return an error if create_singlethread_workqueue()
-fails.
+64-bit DMA addresses are split in upper and lower halves that are
+written in separate fields on GEM. For RX, bit 0 of the address is used
+as the ownership bit (RX_USED). When the RX_USED bit is unset the
+controller is allowed to write data to the buffer.
 
-Fixes: 34877a15f787 ("net: stmmac: Rework and fix TX Timeout code")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The driver does not guarantee that the controller already sees the upper
+half when the RX_USED bit is cleared, possibly resulting in the
+controller writing an incoming frame to an address with an incorrect
+upper half and therefore possibly corrupting unrelated system memory.
+
+Fix that by adding the necessary DMA memory barrier between the writes.
+
+This corruption was observed on a ZynqMP based system.
+
+Fixes: fff8019a08b6 ("net: macb: Add 64 bit addressing support for GEM")
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Acked-by: Harini Katakam <harini.katakam@xilinx.com>
+Tested-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/cadence/macb_main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 99ea5c4ce29c..2103b865726a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4247,6 +4247,7 @@ int stmmac_dvr_probe(struct device *device,
- 	priv->wq = create_singlethread_workqueue("stmmac_wq");
- 	if (!priv->wq) {
- 		dev_err(priv->device, "failed to create workqueue\n");
-+		ret = -ENOMEM;
- 		goto error_wq;
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 240fd36b5074..2de9197df074 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -682,6 +682,11 @@ static void macb_set_addr(struct macb *bp, struct macb_dma_desc *desc, dma_addr_
+ 	if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
+ 		desc_64 = macb_64b_desc(bp, desc);
+ 		desc_64->addrh = upper_32_bits(addr);
++		/* The low bits of RX address contain the RX_USED bit, clearing
++		 * of which allows packet RX. Make sure the high bits are also
++		 * visible to HW at that point.
++		 */
++		dma_wmb();
  	}
- 
+ #endif
+ 	desc->addr = lower_32_bits(addr);
 -- 
 2.19.1
 
