@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0267C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6403CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 961402070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2694A2070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865165;
-	bh=l9VfB7zPcUJYN/Qshbskyw3o+Sprs6HPyqg1ZlX+Q9w=;
+	s=default; t=1545865173;
+	bh=PMITHoI6OXQ5DvjALw0rW35qmXs5VmKQOAgQMQOYC2Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jn44kWRIAYJT4PfbFy6pv+2wTPScRDlJFCK7Hem21kKJPx5O4Uv97J8wNFyFfiQZw
-	 z/zbSD9G5oo38tGuwNviasK7vbSzGuHgOqfvs9QmnrYr1q8/FIzOogHe59HuY9fHQI
-	 hDXUvsoiHuPArXWvNOQCTJq/vyT/mJfy0xV9ha3w=
+	b=QO6BZ9KZzYcyYcXC7YoI/YfoQlP7w/puLd9ZqKILjYXjJMGAnTl6kbcs2UJN1ITb6
+	 shYWpOuAaM+l7A0AWTv7c6mFdxcs4+dRQdaFce+5a6uAuWn5xxM6qvGC/jef3rLWMP
+	 K5hAznMsJNSucWmquSgYtZF5deco9Jtf5Nnx0YmU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbeLZW7Y (ORCPT
+        id S1730545AbeLZW7c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:59:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57904 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:59:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbeLZW5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:01 -0500
+        id S1728358AbeLZW5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B7A521741;
-        Wed, 26 Dec 2018 22:57:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64B42214D8;
+        Wed, 26 Dec 2018 22:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865021;
-        bh=l9VfB7zPcUJYN/Qshbskyw3o+Sprs6HPyqg1ZlX+Q9w=;
+        s=default; t=1545865020;
+        bh=PMITHoI6OXQ5DvjALw0rW35qmXs5VmKQOAgQMQOYC2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZbfP/U2eG03FROB92OustO1fezq2DPYnuyqNlAWc5XAJ5VoOTjCI+myzVGT7dyZka
-         PVYSpUb4+iwvywoCgFScta9T7CoSibiiCJJQ14uMr/V/fFmoUvVV+BDwl8ZRIdM5QQ
-         lCdSrsxrgLS6MMT7JcbOq9NjiS2cdhiLdZvboeM4=
+        b=G0buXdnCR27eBekSNk/qOrwVWssKcUKJI9bpvNzJk5Kwf/shc/NE6WZOMtbGNQ/RS
+         0SHTH4MAi30S97EhPFbSCEHXhVzW6KrCVI0MCg5/tQQA7vnTc8oTZXDIROgVYpaL3f
+         Rq3lZh1JBnD5KTW8MvKZwok9F219VDje8j/Yh0fw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 03/21] Input: restore EV_ABS ABS_RESERVED
-Date:   Wed, 26 Dec 2018 17:54:41 -0500
-Message-Id: <20181226225501.151365-3-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 02/21] ARM: imx: update the cpu power up timing setting on i.mx6sx
+Date:   Wed, 26 Dec 2018 17:54:40 -0500
+Message-Id: <20181226225501.151365-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -58,43 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Hutterer <peter.hutterer@who-t.net>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
+[ Upstream commit 1e434b703248580b7aaaf8a115d93e682f57d29f ]
 
-ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
-ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
+The sw2iso count should cover ARM LDO ramp-up time,
+the MAX ARM LDO ramp-up time may be up to more than
+100us on some boards, this patch sets sw2iso to 0xf
+(~384us) which is the reset value, and it is much
+more safe to cover different boards, since we have
+observed that some customer boards failed with current
+setting of 0x2.
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/input-event-codes.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-imx/cpuidle-imx6sx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 87cf351bab03..9e07bf4259e1 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -708,6 +708,15 @@
+diff --git a/arch/arm/mach-imx/cpuidle-imx6sx.c b/arch/arm/mach-imx/cpuidle-imx6sx.c
+index 3c6672b3796b..7f5df8992008 100644
+--- a/arch/arm/mach-imx/cpuidle-imx6sx.c
++++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+@@ -97,7 +97,7 @@ int __init imx6sx_cpuidle_init(void)
+ 	 * except for power up sw2iso which need to be
+ 	 * larger than LDO ramp up time.
+ 	 */
+-	imx_gpc_set_arm_power_up_timing(2, 1);
++	imx_gpc_set_arm_power_up_timing(0xf, 1);
+ 	imx_gpc_set_arm_power_down_timing(1, 1);
  
- #define ABS_MISC		0x28
- 
-+/*
-+ * 0x2e is reserved and should not be used in input drivers.
-+ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
-+ * the next ABS_* event is correct or is just ABS_MISC + n.
-+ * We define here ABS_RESERVED so userspace can rely on it and detect
-+ * the situation described above.
-+ */
-+#define ABS_RESERVED		0x2e
-+
- #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
- #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
- #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
+ 	return cpuidle_register(&imx6sx_cpuidle_driver, NULL);
 -- 
 2.19.1
 
