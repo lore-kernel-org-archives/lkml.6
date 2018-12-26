@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6403CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639CBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2694A2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC092070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865173;
-	bh=PMITHoI6OXQ5DvjALw0rW35qmXs5VmKQOAgQMQOYC2Q=;
+	s=default; t=1545865182;
+	bh=6oY66oV9TJmf1YU7v0ZR/HCPPHNqrJySswwKZzdfeeI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QO6BZ9KZzYcyYcXC7YoI/YfoQlP7w/puLd9ZqKILjYXjJMGAnTl6kbcs2UJN1ITb6
-	 shYWpOuAaM+l7A0AWTv7c6mFdxcs4+dRQdaFce+5a6uAuWn5xxM6qvGC/jef3rLWMP
-	 K5hAznMsJNSucWmquSgYtZF5deco9Jtf5Nnx0YmU=
+	b=C+XepEnY99I2OQB61NFTiBN53xAFvemHW9hYBhWPlWFP/F7vnFRxQcwyWTZTWGgBv
+	 acdpg5SovUk0QZGALUs7Xvnv39dE6vt9E7BIEb6wtIkc7K1Fi1o3QhnWIbCJi91gY6
+	 S5QR0+He/98qtrmuDg1lSLRcpKxc+jJvruCGUDBE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbeLZW7c (ORCPT
+        id S1730553AbeLZW7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:59:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57864 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:59:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbeLZW5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:00 -0500
+        id S1730074AbeLZWyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64B42214D8;
-        Wed, 26 Dec 2018 22:56:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D5D321741;
+        Wed, 26 Dec 2018 22:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865020;
-        bh=PMITHoI6OXQ5DvjALw0rW35qmXs5VmKQOAgQMQOYC2Q=;
+        s=default; t=1545864851;
+        bh=6oY66oV9TJmf1YU7v0ZR/HCPPHNqrJySswwKZzdfeeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G0buXdnCR27eBekSNk/qOrwVWssKcUKJI9bpvNzJk5Kwf/shc/NE6WZOMtbGNQ/RS
-         0SHTH4MAi30S97EhPFbSCEHXhVzW6KrCVI0MCg5/tQQA7vnTc8oTZXDIROgVYpaL3f
-         Rq3lZh1JBnD5KTW8MvKZwok9F219VDje8j/Yh0fw=
+        b=tjkwyPcixpOMk+XiiBVYwxovGbzBl+zGzDuXag7E1of1pZXXRQiFtqZQw3gJtGEny
+         ptTJvjJufN+AS5K4N2chE5N6/VP2q77P5IsZdN/jwdHsbtwbqeXXU4ESIZePmHgAjN
+         bOKFCE5QkUTcdHbMtonXuQu1J9Y4AtNJCmE4VpAk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 02/21] ARM: imx: update the cpu power up timing setting on i.mx6sx
-Date:   Wed, 26 Dec 2018 17:54:40 -0500
-Message-Id: <20181226225501.151365-2-sashal@kernel.org>
+Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 15/35] bnx2x: Send update-svid ramrod with retry/poll flags enabled
+Date:   Wed, 26 Dec 2018 17:41:22 -0500
+Message-Id: <20181226224142.150866-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
-References: <20181226225501.151365-1-sashal@kernel.org>
+In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
+References: <20181226224142.150866-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,40 +60,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 1e434b703248580b7aaaf8a115d93e682f57d29f ]
+[ Upstream commit 9061193c4ee065d3240fde06767c2e06ec61decc ]
 
-The sw2iso count should cover ARM LDO ramp-up time,
-the MAX ARM LDO ramp-up time may be up to more than
-100us on some boards, this patch sets sw2iso to 0xf
-(~384us) which is the reset value, and it is much
-more safe to cover different boards, since we have
-observed that some customer boards failed with current
-setting of 0x2.
+Driver sends update-SVID ramrod in the MFW notification path.
+If there is a pending ramrod, driver doesn't retry the command
+and storm firmware will never be updated with the SVID value.
+The patch adds changes to send update-svid ramrod in process context with
+retry/poll flags set.
 
-Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-imx/cpuidle-imx6sx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |  1 +
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-imx/cpuidle-imx6sx.c b/arch/arm/mach-imx/cpuidle-imx6sx.c
-index 3c6672b3796b..7f5df8992008 100644
---- a/arch/arm/mach-imx/cpuidle-imx6sx.c
-+++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
-@@ -97,7 +97,7 @@ int __init imx6sx_cpuidle_init(void)
- 	 * except for power up sw2iso which need to be
- 	 * larger than LDO ramp up time.
- 	 */
--	imx_gpc_set_arm_power_up_timing(2, 1);
-+	imx_gpc_set_arm_power_up_timing(0xf, 1);
- 	imx_gpc_set_arm_power_down_timing(1, 1);
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+index d5e4c42662b6..162b809422f4 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+@@ -1278,6 +1278,7 @@ enum sp_rtnl_flag {
+ 	BNX2X_SP_RTNL_TX_STOP,
+ 	BNX2X_SP_RTNL_GET_DRV_VERSION,
+ 	BNX2X_SP_RTNL_CHANGE_UDP_PORT,
++	BNX2X_SP_RTNL_UPDATE_SVID,
+ };
  
- 	return cpuidle_register(&imx6sx_cpuidle_driver, NULL);
+ enum bnx2x_iov_flag {
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 4c412c52bcde..0352089d0d98 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -2925,6 +2925,10 @@ static void bnx2x_handle_update_svid_cmd(struct bnx2x *bp)
+ 	func_params.f_obj = &bp->func_obj;
+ 	func_params.cmd = BNX2X_F_CMD_SWITCH_UPDATE;
+ 
++	/* Prepare parameters for function state transitions */
++	__set_bit(RAMROD_COMP_WAIT, &func_params.ramrod_flags);
++	__set_bit(RAMROD_RETRY, &func_params.ramrod_flags);
++
+ 	if (IS_MF_UFP(bp) || IS_MF_BD(bp)) {
+ 		int func = BP_ABS_FUNC(bp);
+ 		u32 val;
+@@ -4301,7 +4305,8 @@ static void bnx2x_attn_int_deasserted3(struct bnx2x *bp, u32 attn)
+ 				bnx2x_handle_eee_event(bp);
+ 
+ 			if (val & DRV_STATUS_OEM_UPDATE_SVID)
+-				bnx2x_handle_update_svid_cmd(bp);
++				bnx2x_schedule_sp_rtnl(bp,
++					BNX2X_SP_RTNL_UPDATE_SVID, 0);
+ 
+ 			if (bp->link_vars.periodic_flags &
+ 			    PERIODIC_FLAGS_LINK_EVENT) {
+@@ -10369,6 +10374,9 @@ static void bnx2x_sp_rtnl_task(struct work_struct *work)
+ 			       &bp->sp_rtnl_state))
+ 		bnx2x_update_mng_version(bp);
+ 
++	if (test_and_clear_bit(BNX2X_SP_RTNL_UPDATE_SVID, &bp->sp_rtnl_state))
++		bnx2x_handle_update_svid_cmd(bp);
++
+ 	if (test_and_clear_bit(BNX2X_SP_RTNL_CHANGE_UDP_PORT,
+ 			       &bp->sp_rtnl_state)) {
+ 		if (bnx2x_udp_port_update(bp)) {
 -- 
 2.19.1
 
