@@ -7,106 +7,112 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BE7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B556CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 314E0214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79B8C20873
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:57:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="fo0U+hhI"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="p3C8VNFj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeLZSh0 (ORCPT
+        id S1727547AbeLZS4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 13:37:26 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:38178 "EHLO
+        Wed, 26 Dec 2018 13:56:37 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:57264 "EHLO
         mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbeLZShZ (ORCPT
+        with ESMTP id S1727258AbeLZS4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 13:37:25 -0500
+        Wed, 26 Dec 2018 13:56:37 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 56B3176
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:37:24 +0000 (UTC)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id EC95F983
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:56:35 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
 Received: from mta-p5.oit.umn.edu ([127.0.0.1])
         by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id sWOj0mrybHIZ for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Dec 2018 12:37:24 -0600 (CST)
-Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+        with ESMTP id xf85sRMS57Yh for <linux-kernel@vger.kernel.org>;
+        Wed, 26 Dec 2018 12:56:35 -0600 (CST)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 288D0239
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:37:24 -0600 (CST)
-Received: by mail-it1-f200.google.com with SMTP id 123so20478394itv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 10:37:24 -0800 (PST)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id BC3367B3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:56:35 -0600 (CST)
+Received: by mail-io1-f70.google.com with SMTP id f7so6628632ioo.8
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 10:56:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=RPQseQNPwNQ7VvbUJ24R0rEYhsQQrKhb/1O5ll63oVc=;
-        b=fo0U+hhIGalpABVj3V/7JMmfGRFwCWJbfd43HT1Ce95gHt1UnBaUNoCxOiRUGQH4dn
-         WYDQIfWq76XMU+7HcV+V8tJGf88iXmWsB1jriQVZOlaukmz4llJrihDKTNA59w0ByVrv
-         PGbHM62AEQbNO9LoGWCvwf1W/0ZJOFRrI/1WarmfIbmLbZB1j9fS33HjDyaNglSmoRTE
-         Q5R0MyP2D30YgTSjEpGbqXnB1PON5/fGrHuX2XKftPUNyoq0AU6CvfIX+ylHC5qMnZoM
-         sGBGcSFWuZjex71Yaph1fOdmy2nMw0/AOtbEAQlISSaRQuXLE273wLUMP8Cxfk4OyiNX
-         f4cg==
+        bh=+rYvvJW5xjF1LCAJPBFZMyotpDfuiyvU5uEtKBUkrn4=;
+        b=p3C8VNFjKZ2VcKFBagc6GsBDF4OPm1gxBF22AObx4P1aXItK2uAHYYWBd49cbmX79T
+         mqriBgw4a7LzIINa5W61UYR1dDF6XBy3dvMem/KIorNw1XAsBGQcRXl/nrZYi10DG8VL
+         +zLLlhBpUkzpF5KwBX0ICfo/jdH5x7vu7hVwZ7L/dXD/RpMnsKBeGwwaY12wbJ+dLa05
+         QtW1oFKar6EanzFOGVpTXb5aGwU0kyfHIJ4b5v1cbgCmmQoxS63oDR6F5il0Kx8sJQ+Q
+         jskvFZgJifnHpnLFaM5xgPEhaWEYQDLP4PlWViFqlNxJR15lE9KRSdKPKMR8y0sXkm5I
+         3eIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RPQseQNPwNQ7VvbUJ24R0rEYhsQQrKhb/1O5ll63oVc=;
-        b=XsXxnh85VjUtIiYSJaRM7ip2nb/4U+49p7M9rBV3bYbuVx8fpRTR41D8L/dUXKvo5U
-         j1eG6yjGsg40odElO7F/xhzhne5+GuFsP5/azuWZHvmSJVErTOSwX3UTSnuao3VXuOUB
-         0rC28bBDCyZR0A7N4SgEkA8sS3jhZhV1kPqXj0wAWjYmwxy48k1VcLyJ+rtHyfzPWPaD
-         fRa+W6MYO/Y65vHrH9s3x4kY+iiTkL68aIiUFjJSSjKWBgTX7gNd6ReAxmPWyO8sKbWM
-         fTZHaUhNz0gVHD3/M084e3Yt5vkWdIlnwktq032Y312FGSwNeciRCK/R5qN/hYLb52TF
-         2czQ==
-X-Gm-Message-State: AA+aEWaIRPO5E+XiQBbgm5URQ1BRn2yP7OeWyyzUJa62WR+xwkYwSU84
-        4dTaoBs6xpAtwT6Q5p9qOAlXTG9w3mxmf3vdGWGHmjZ/c89TwexELLki3MWGroFkBP5eySq2c2a
-        xd0MqdMxc0borgxfsRrinhKg1DIIh
-X-Received: by 2002:a02:734b:: with SMTP id a11mr12719695jae.62.1545849443722;
-        Wed, 26 Dec 2018 10:37:23 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/W/suF6Jy0rOEWzsl8pPdXLNxVk3ZUY3DVOdrjZBWHn2aab/5LLp+KZLNhjNY6HBZ4tlE9w8w==
-X-Received: by 2002:a02:734b:: with SMTP id a11mr12719685jae.62.1545849443496;
-        Wed, 26 Dec 2018 10:37:23 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id v202sm13032846ita.13.2018.12.26.10.37.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Dec 2018 10:37:22 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] usb: chipidea: add a check for the availability of next child
-Date:   Wed, 26 Dec 2018 12:36:43 -0600
-Message-Id: <20181226183643.76912-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        bh=+rYvvJW5xjF1LCAJPBFZMyotpDfuiyvU5uEtKBUkrn4=;
+        b=dcSkkOCtOGY3GctpAIyRVTDkZPW/m+XOO+Zwew67A/oVR5JJitvLLbsFTvenP4wyxP
+         1SLOTEbNTY2OX2ftBqBhD5WlE/ncB+x9nJeSP8h7d595ZGXBMtEN9xWno0OzHlPIPi+V
+         j2E+oJ9kVcefo7dK6Yyzr+runhnYtWRF0iMgop7gzUzHVw4WXxPEpT9V943sUSadcCrE
+         sGyWkwyvPIgiIp+eQZBe3WFAaPRCmMUn/Yj6iI8OtJf0x3BdzvvpdRkfBOtChowFs1AC
+         QzAppYTGoSXxEH3mjpbUooX6Am9DCnN3bhxpFSgskyIjUPwogGDfVH9JmGPpVBIheHCE
+         8ROw==
+X-Gm-Message-State: AA+aEWZKBz6X+n7OBiKQnpcoNjP9oVpDt41ahoyyOGJX1DDQv1XoO7Wp
+        /a4qkjGWMWpt85vx6fK4u9zUhXXd3OUTPVHcmPNsIp9xlqkzRq8LrSX2M1+8l4STxjRIQaAiGuT
+        dowaWPmmC6ExzESZT1c2OC0JeUoHE
+X-Received: by 2002:a02:970b:: with SMTP id x11mr13498369jai.67.1545850595339;
+        Wed, 26 Dec 2018 10:56:35 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/Ukq8fsvws5Mr5ELLn2bTwvruCF14tAvgjHKpOUI3Yly6MCIUZU3FsINNFsQrFjklDDufdgwA==
+X-Received: by 2002:a02:970b:: with SMTP id x11mr13498358jai.67.1545850595078;
+        Wed, 26 Dec 2018 10:56:35 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id 197sm13273065itx.21.2018.12.26.10.56.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 10:56:34 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] infiniband: bnxt_re: qplib: Check the return value of send_message
+Date:   Wed, 26 Dec 2018 12:56:22 -0600
+Message-Id: <20181226185623.9324-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_get_next_available_child returns NULL when no child nodes are found.
-The fix checks its return value instead of assuming a child is found.
+In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return
+an error value. The fix returns the error from the latter function
+upstream.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 ---
- drivers/usb/chipidea/ci_hdrc_msm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
-index 880009987460..b7f7acef72d4 100644
---- a/drivers/usb/chipidea/ci_hdrc_msm.c
-+++ b/drivers/usb/chipidea/ci_hdrc_msm.c
-@@ -250,6 +250,10 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
- 	ulpi_node = of_get_child_by_name(pdev->dev.of_node, "ulpi");
- 	if (ulpi_node) {
- 		phy_node = of_get_next_available_child(ulpi_node, NULL);
-+		if (!phy_node) {
-+			dev_err(&pdev->dev, "no child nodes found\n");
-+			return -ENODEV;
-+		}
- 		ci->hsic = of_device_is_compatible(phy_node, "qcom,usb-hsic-phy");
- 		of_node_put(phy_node);
- 	}
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+index 5216b5f844cc..adb8eae5193c 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -778,9 +778,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
+ 	req.cos0 = cpu_to_le16(cids[0]);
+ 	req.cos1 = cpu_to_le16(cids[1]);
+ 
+-	bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
+-				     0);
+-	return 0;
++	return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
++						NULL, 0);
+ }
+ 
+ int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
 -- 
-2.17.2 (Apple Git-113)
+2.17.1
 
