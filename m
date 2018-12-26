@@ -2,118 +2,110 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA1AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D77C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E6221720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:37:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0496521720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:38:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="F2wY5QHC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbeLZFhZ (ORCPT
+        id S1726042AbeLZFiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 00:37:25 -0500
-Received: from mga03.intel.com ([134.134.136.65]:39016 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeLZFhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 00:37:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Dec 2018 21:37:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,399,1539673200"; 
-   d="scan'208";a="109980284"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.10])
-  by fmsmga007.fm.intel.com with ESMTP; 25 Dec 2018 21:37:22 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Shaohua Li <shli@kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mm, swap: Fix swapoff with KSM pages
-References: <20181226051522.28442-1-ying.huang@intel.com>
-Date:   Wed, 26 Dec 2018 13:37:22 +0800
-In-Reply-To: <20181226051522.28442-1-ying.huang@intel.com> (Huang Ying's
-        message of "Wed, 26 Dec 2018 13:15:22 +0800")
-Message-ID: <8736qku9v1.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+        Wed, 26 Dec 2018 00:38:15 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:41318 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeLZFiO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 00:38:14 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id ED14CB05
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 05:38:12 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id buUu03DAXYYs for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 23:38:12 -0600 (CST)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id BDBC5B04
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:38:12 -0600 (CST)
+Received: by mail-it1-f200.google.com with SMTP id m128so18922033itd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:38:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=o+ZaauZY/rSwkfY3UC6i1AxUZHMBSL5wYx1f/vwR7b0=;
+        b=F2wY5QHCN4ULFbEj1ZZ/Pl+gL3+Z+pc0TtLmsXwjzvyToeyEREGgN2i1J9ce/UEc1G
+         449MVrRLcIMVBuaLkz7XkJOb5E/TRg9x6DOEPdF9DcM4sXfuubjxOy1Sa9JvtJaB6CC1
+         o558ugW1xa7Kgwh7yyR6wMzX85YTwaKfbid2J7/67RxJ1lnkToGqsb6OasMsiTUiNXPP
+         GQkXgnLRa/zlGYOnvKYRUnR6NNtWD5e5Io/IdNCraI324RfpMb04WpkIGyLwbe8pLeVL
+         VODxB+2jEpfm8sVCF1GpzPX3utcl7eWlVXonNsSksII4CvLq61gVTEgH/X0EwErjTeNa
+         ExCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=o+ZaauZY/rSwkfY3UC6i1AxUZHMBSL5wYx1f/vwR7b0=;
+        b=ebxzpmucb8fjBAOZVbbKLeKJ/UzYC8PC1Drfb+Eyo5MI9JxhrO9gkWXtnnjXj8NlSN
+         RdQ9uzDO1TqQjk5rLA1ANtf8PBp21UdEd6HYLYkgSg1zcOYx7jOneqOJ67/MbPpRRB06
+         xBxtptnJNgcvKgnBDvUJCPijIJu+n1EMSVvi0jyQ6hW8budinBq5CDjRRsQtVzuhUSxG
+         x7116ZZOP8v0QMLUgCd9ghoHiMFBKBGucz3DJPrZOP4MK6PlDCGKdOXcQdGcatcNJTWZ
+         N7mJqXrGVP6adAoozf0a8bTD+5UTja2zLf+2hQzPtYMx+79x4zFZVnewkfx6ytGQeK8V
+         9Fsw==
+X-Gm-Message-State: AA+aEWY77g4XP2xX9+ABgJLLbwBzXIN/nfxtMMezFyw9WDKaNI7WV68H
+        Qot0Ig2IvYzzhUw9I7Yp7A2louWw78UQnnrCulq5+tliHhgkcheEfydVcrSR2hfhxLeWjQ4mjSt
+        6gsDr4mYcdc+1oqnO+ksVdE4MXG2Y
+X-Received: by 2002:a24:248:: with SMTP id 69mr11780435itu.91.1545802692362;
+        Tue, 25 Dec 2018 21:38:12 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/WJTajMAXjiO3aG93CSqJjXBREYjR6yT4KMpN/BczApQT7kk+AEodbd4Aaq2vk647dmPv2dWw==
+X-Received: by 2002:a24:248:: with SMTP id 69mr11780428itu.91.1545802692124;
+        Tue, 25 Dec 2018 21:38:12 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id c194sm13767233itc.3.2018.12.25.21.38.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Dec 2018 21:38:11 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] btrfs: add a check for sysfs_create_group
+Date:   Tue, 25 Dec 2018 23:37:44 -0600
+Message-Id: <20181226053744.74740-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Andrew,
+In case sysfs_create_group fails, let's check its return value and
+issues an error message.
 
-This patch is based on linus' tree instead of the head of mmotm tree
-because it is to fix a bug there.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ fs/btrfs/sysfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The bug is introduced by commit e07098294adf ("mm, THP, swap: support to
-reclaim swap space for THP swapped out"), which is merged by v4.14-rc1.
-So I think we should backport the fix to from 4.14 on.  But Hugh thinks
-it may be rare for the KSM pages being in the swap device when swapoff,
-so nobody reports the bug so far.
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 3717c864ba23..24ef416e700b 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -889,6 +889,8 @@ void btrfs_sysfs_feature_update(struct btrfs_fs_info *fs_info,
+ 	 */
+ 	sysfs_remove_group(fsid_kobj, &btrfs_feature_attr_group);
+ 	ret = sysfs_create_group(fsid_kobj, &btrfs_feature_attr_group);
++	if (ret)
++		btrfs_err(fs_info, "failed to create btrfs_feature_attr_group.\n");
+ }
+ 
+ static int btrfs_init_debugfs(void)
+-- 
+2.17.2 (Apple Git-113)
 
-Best Regards,
-Huang, Ying
-
-Huang Ying <ying.huang@intel.com> writes:
-
-> KSM pages may be mapped to the multiple VMAs that cannot be reached
-> from one anon_vma.  So during swapin, a new copy of the page need to
-> be generated if a different anon_vma is needed, please refer to
-> comments of ksm_might_need_to_copy() for details.
->
-> During swapoff, unuse_vma() uses anon_vma (if available) to locate VMA
-> and virtual address mapped to the page, so not all mappings to a
-> swapped out KSM page could be found.  So in try_to_unuse(), even if
-> the swap count of a swap entry isn't zero, the page needs to be
-> deleted from swap cache, so that, in the next round a new page could
-> be allocated and swapin for the other mappings of the swapped out KSM
-> page.
->
-> But this contradicts with the THP swap support.  Where the THP could
-> be deleted from swap cache only after the swap count of every swap
-> entry in the huge swap cluster backing the THP has reach 0.  So
-> try_to_unuse() is changed in commit e07098294adf ("mm, THP, swap:
-> support to reclaim swap space for THP swapped out") to check that
-> before delete a page from swap cache, but this has broken KSM swapoff
-> too.
->
-> Fortunately, KSM is for the normal pages only, so the original
-> behavior for KSM pages could be restored easily via checking
-> PageTransCompound().  That is how this patch works.
->
-> Fixes: e07098294adf ("mm, THP, swap: support to reclaim swap space for THP swapped out")
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Reported-and-Tested-and-Acked-by: Hugh Dickins <hughd@google.com>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> ---
->  mm/swapfile.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 8688ae65ef58..20d3c0f47a5f 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2197,7 +2197,8 @@ int try_to_unuse(unsigned int type, bool frontswap,
->  		 */
->  		if (PageSwapCache(page) &&
->  		    likely(page_private(page) == entry.val) &&
-> -		    !page_swapped(page))
-> +		    (!PageTransCompound(page) ||
-> +		     !swap_page_trans_huge_swapped(si, entry)))
->  			delete_from_swap_cache(compound_head(page));
->  
->  		/*
