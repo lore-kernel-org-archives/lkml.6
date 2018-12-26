@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964CAC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F9EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D0DF218A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 433E2218A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864829;
-	bh=0D0pHnv5oRmunLo6xE42EFaSuUxellEFXE9yVR/kfH4=;
+	s=default; t=1545864835;
+	bh=3Czy2PjlnymjrRkOxlN2tJetQsILPFtz8qPZkKjnUH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uCVSX8PVwz2p/cKcub3f92prL+iadeG6cLHe4ViH4Lm+WWA+RNVlJKMS4bNmBr46e
-	 SjxFT6DfkL1pwW4469OzWxVU27tfX4M1iiIMUBe6GqUDVfuLH76sWVlcPJKPmSFxEJ
-	 +QibCQijlcMnvPvw1kO0lR3AS6gU6I802iWiUxII=
+	b=Po1zoBva8fi1fe7YVEwQOTBJniPB8KYJJeiz6+hQSQomqyH9LYC3TpeurbBNIT36P
+	 a5RmzQUBjBrueTn5j4DUb0kAe0kXe3SUvMqFSFW0nXwAfEvuEZsBWv2KGsY/rZTy3L
+	 d9eVIWvlxzna3d1xt+xPEhTHBpoEV6u71Bvyre/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbeLZWgi (ORCPT
+        id S1729930AbeLZWxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:36:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36512 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbeLZWgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:33 -0500
+        id S1728063AbeLZWxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:53:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D987218EA;
-        Wed, 26 Dec 2018 22:36:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D184C218A5;
+        Wed, 26 Dec 2018 22:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863792;
-        bh=0D0pHnv5oRmunLo6xE42EFaSuUxellEFXE9yVR/kfH4=;
+        s=default; t=1545864831;
+        bh=3Czy2PjlnymjrRkOxlN2tJetQsILPFtz8qPZkKjnUH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqQrRj3fgjI5yb1CIu7pn+9JF9BDh81+XWqiPMzO5tQzDbzLBBfSrvBwIyqrAdGrT
-         vgGtrUvBIOFlpdaSzf7n8jbNptYFvulf+0fnfIxZRMzjeZTpLHASwh14bIAZdWJR1Z
-         lWbjwdVskTN8BDburccle3ocv3wSK/7AzdXE7xvE=
+        b=r5Lk2v8n4KsYhiVI59YGewG8LtwCVSeEEvOAXPoFs8QTzr6/Bcd4J6LN4ALR7qNji
+         mCls/cIVwJ1mkWRkcxT2KGZobM29DxGCnfB+qeUXuJvVSKlRhv7ZOt6kDIxSl4LIFL
+         KioYgIPvy5SxXS6gUBxxsTc5yH85Angx0nfT+/G8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 23/97] scsi: bnx2fc: Fix NULL dereference in error handling
-Date:   Wed, 26 Dec 2018 17:34:43 -0500
-Message-Id: <20181226223557.149329-23-sashal@kernel.org>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.9 02/35] powerpc: Fix COFF zImage booting on old powermacs
+Date:   Wed, 26 Dec 2018 17:41:09 -0500
+Message-Id: <20181226224142.150866-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
-References: <20181226223557.149329-1-sashal@kernel.org>
+In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
+References: <20181226224142.150866-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,34 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 9ae4f8420ed7be4b13c96600e3568c144d101a23 ]
+[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
 
-If "interface" is NULL then we can't release it and trying to will only
-lead to an Oops.
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-Fixes: aea71a024914 ("[SCSI] bnx2fc: Introduce interface structure for each vlan interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
+
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index f00045813378..3f97ec4aac4b 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2371,7 +2371,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
- 		rc = -ENOMEM;
--		goto ifput_err;
-+		goto netdev_err;
- 	}
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 5c2199857aa8..a3550e8f1a77 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
- 	if (is_vlan_dev(netdev)) {
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
+ 
+ #ifdef __powerpc64__
+ .balign 8
 -- 
 2.19.1
 
