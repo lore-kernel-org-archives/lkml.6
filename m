@@ -7,107 +7,107 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DD6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758A6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E34E20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EB9B21726
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="qfKJGGYW"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="HbuW5l3S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeLZB0t (ORCPT
+        id S1726004AbeLZBbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 20:26:49 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:50962 "EHLO
+        Tue, 25 Dec 2018 20:31:11 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:52182 "EHLO
         mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbeLZB0s (ORCPT
+        with ESMTP id S1725892AbeLZBbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 20:26:48 -0500
+        Tue, 25 Dec 2018 20:31:11 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 2495AB9D
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 01:26:47 +0000 (UTC)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 09ACDBA9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 01:31:10 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
 Received: from mta-p6.oit.umn.edu ([127.0.0.1])
         by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hQBj7Dba6QJt for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 19:26:47 -0600 (CST)
-Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        with ESMTP id uTds0fPnNsXH for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 19:31:09 -0600 (CST)
+Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id E4B03BA4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:26:46 -0600 (CST)
-Received: by mail-it1-f198.google.com with SMTP id y86so18478864ita.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 17:26:46 -0800 (PST)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id CF387AEE
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:31:09 -0600 (CST)
+Received: by mail-it1-f197.google.com with SMTP id w15so18491491ita.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 17:31:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=pgj+QP+TpXcP5tfNrKzXW77NAWt+jEoTz0qxJwhv64I=;
-        b=qfKJGGYWJ8OuNvfG7qQ57ENTk9UUqtpsC1zJp4RzU/fUok5feQs605ifNNg4FGjYuz
-         HhG3sNo6n2IXz4eGqU+Pas2w4IUGXxXk7gt7cNZ99lnOPKwg7d60SuDjwIeIXqu3Cmgj
-         iuXTtrDPji8oTAhDEAOXrO5mMgrjEhbchYbXmd7npfsg+/8NkQ9xvJoeJEgM95XF7YR6
-         7qaFFuy+7RvDMrZvwWHgufa9G9SRlLluWgm4KLlwvNlVfHjQjW99NGUYLlPj4Shbagfn
-         aWXa0mO++Rdg9shVxGSsyXMWZJLAoZJY/nLnaAMFp/slLs4TOki5BgD87YQ4qtHFlf7G
-         +QUw==
+        bh=pXuBTsZptzSBlMIYSMguBVj8gxIKjWfbz2dlm++A67I=;
+        b=HbuW5l3S8l52PLzHWteV0sLfTkjtXC5QcuxIO6Mu3vyncEJ4rZklQC3ZICgaoU1kMT
+         lnf58hazD26tUc3xMk9bytZ3nIexS8Awsdob/LUE3ot+kaz5mmCJch1eJBoROhAvFmFI
+         wgu9V+puWmRsDu7iJijkrv7WpzH3EoiSn2aJAxes+Q2lLrN+mXCIc1HtD1xQb1T6kSzC
+         Zu/uSvmHEN7N0jnPBKzKuRybfJKDbc+45B9/qQR37iopLVBISy65qea5+UefMzan0WB8
+         If27ZsCWXiau24+GfK7fI/VVWFIultEkrjhtVNDXjRH6UzYYi3klZLjGADEA4HM9XKwx
+         YzdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pgj+QP+TpXcP5tfNrKzXW77NAWt+jEoTz0qxJwhv64I=;
-        b=mLdWUrFvb4KefeH3odxCm4mqqzXw9wDx1e8UdbGVhN/lffscgxNNSmHJekTWgslcVZ
-         Nvs+vcGMLAGqRAajOFOOXUCmUZRmv9I9Zy4zGzGFWBiGJotJqjqVKiPAVZKxgPe1bD8N
-         +ZvYYuk8IJwFFiFVjLxOUskDTUNIeNmSpv+yY1LOI9n0YblX9C/B9jnlEsTgbILEhole
-         FC5esPDhmUHr3+dQg3LbOwFOVVMzlU8HOEJD0rDXMjIri3g3LoWB+8a9w8XVC1fgWI2k
-         9/9ysdMmGH4WCqeTr5nDL8bluWsuPWuwmPjkyCwJd8Uqt1RBOyMJ8BcupblxVqo41RrK
-         iI5g==
-X-Gm-Message-State: AJcUukcYzmF9hX7f0rYwGoz1d7j1qkdf7vEBZ8X2nobHvF2icKmGSX8f
-        n6WEUadJVeykpBmkakbrRdGXH/PppEbG1ufQdWuHN4YlWUH0/OODUsnhLvFfD6e0aSQ+acrY18h
-        yFRZfrqZOG+J69wJRj/MJpN4b0W7o
-X-Received: by 2002:a6b:2b95:: with SMTP id r143mr12638814ior.217.1545787606551;
-        Tue, 25 Dec 2018 17:26:46 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6bHrbXZkaQUoorKvaX66QMmR/COt6XTeywS86o4diFv7ZBC/0/Eei/qyT03w4LtLj+NA2jaA==
-X-Received: by 2002:a6b:2b95:: with SMTP id r143mr12638808ior.217.1545787606337;
-        Tue, 25 Dec 2018 17:26:46 -0800 (PST)
+        bh=pXuBTsZptzSBlMIYSMguBVj8gxIKjWfbz2dlm++A67I=;
+        b=ZtRUuVBIpKqTwx+ba21f9e7PjVzUxb0pUkjEgfCBiyCFJfvjmvwjQgP05VultnDUET
+         fdnQzEanQmcv1vN4thKlOlpP9qKGXCHQSvFaHqCUyJKo2eC86jMA9KVaGWgUr9bptcP2
+         a9gQfjdhMbdk58grfbGTqgNbAlQbmhzn9Iw6pWPKqUawh4tXoCiAyvTOe9vruImVUyVU
+         h1J1/hy/G6o5ZFnPBB+WNRQv+fF3kIaJdOtwH/blOgWQKVFmeNXdmJEjFm1z4VzhHWms
+         nFjwsSKlu2AoXJb0hN/mi6wbMss6kFeRN3Hsd/CWtFQ1GxgylY0vWD1BcfMqkNo+ssyH
+         h6Dw==
+X-Gm-Message-State: AJcUukdg124AeQAoI/2f33J8tdc8NISmVsYTGHKnaSli9DWdYr60r5HH
+        ML2UMtXQyZFf6PI/DSBGZfRRZCMLG6u8mIHytCxMYhlPtShoSvDf28eakyAnDcUKi8Gxlhnva5o
+        EFR2NpNz7kAiY9aacB1jt0/Ve3SOg
+X-Received: by 2002:a05:660c:b12:: with SMTP id f18mr11636780itk.118.1545787869005;
+        Tue, 25 Dec 2018 17:31:09 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN53ON1JsxeLFKDzSFKQVK/TPwpISoKU8KdaHl7Hel2UcldG2/uDDgcUUVef1kAwoNttLazO5g==
+X-Received: by 2002:a05:660c:b12:: with SMTP id f18mr11636767itk.118.1545787868733;
+        Tue, 25 Dec 2018 17:31:08 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id p198sm13636399itb.30.2018.12.25.17.26.45
+        by smtp.gmail.com with ESMTPSA id y5sm3084816ioj.9.2018.12.25.17.31.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 17:26:45 -0800 (PST)
+        Tue, 25 Dec 2018 17:31:07 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: pass return value of spi_register_driver
-Date:   Tue, 25 Dec 2018 19:26:19 -0600
-Message-Id: <20181226012619.70607-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Andr=C3=A9=20Lehmann?= <lenneman@web.de>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtl8712: add a check for the status of register_netdev
+Date:   Tue, 25 Dec 2018 19:30:39 -0600
+Message-Id: <20181226013041.70740-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-spi_register_driver() may fail, so let's pass its return value upstream.
+register_netdev() may fail, so let's check its return value, and if it
+fails, issue an error message.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/tty/serial/max310x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8712/hal_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 3db48fcd6068..55e73646fcd2 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -1470,10 +1470,10 @@ static int __init max310x_uart_init(void)
- 		return ret;
- 
- #ifdef CONFIG_SPI_MASTER
--	spi_register_driver(&max310x_spi_driver);
-+	ret = spi_register_driver(&max310x_spi_driver);
- #endif
- 
--	return 0;
-+	return ret;
+diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/hal_init.c
+index 7cdd609cab6c..7e2f8e0185d5 100644
+--- a/drivers/staging/rtl8712/hal_init.c
++++ b/drivers/staging/rtl8712/hal_init.c
+@@ -45,7 +45,8 @@ static void rtl871x_load_fw_cb(const struct firmware *firmware, void *context)
+ 	}
+ 	padapter->fw = firmware;
+ 	/* firmware available - start netdev */
+-	register_netdev(padapter->pnetdev);
++	if (register_netdev(padapter->pnetdev))
++		dev_err(&udev->dev, "r8712u: Registering netdev failed\n");
  }
- module_init(max310x_uart_init);
  
+ static const char firmware_file[] = "rtlwifi/rtl8712u.bin";
 -- 
 2.17.2 (Apple Git-113)
 
