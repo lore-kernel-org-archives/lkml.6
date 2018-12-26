@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F9BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A9EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C44214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18B5920873
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865030;
-	bh=XxizODUI1F7/s8z+eQDlB3Yv+AUspEEwsNimYGeI5rQ=;
+	s=default; t=1545865034;
+	bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U6vibmiSHMPrRXDdGPxiSKlvA7PKGTs0B72wmuPF4AftbU6yDAaf2KUd4JlObYUrK
-	 2vu8myKyoiPBi4orjjgQFg19g07iWMpmUPa8wwHS7aN0Miy9YVEMEBlNc0rz0p19zx
-	 Q3mPupp3Ev+0kwT4BJQ/DVPX4BkRnipYNTveo9Zc=
+	b=mYT2KPZsF9W3IvtZC4PN1BW7OcyBU8ct3K/1WECCtiEAkmbstZ9eIIAQuQUCBYdtT
+	 nWnjDvRkct3iSVZ7sPVIxnZq16qO1BI5MhZ8zSHFoQ6Gss5vWdnlEIucN0KlprMxig
+	 FqwO7MhfL77Uw0fpWIBQ/G6Bc4a1CPCG+bijKw3E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbeLZW5I (ORCPT
+        id S1728697AbeLZW5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58008 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730364AbeLZW5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:06 -0500
+        id S1730388AbeLZW5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A810A20651;
-        Wed, 26 Dec 2018 22:57:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A98CC20651;
+        Wed, 26 Dec 2018 22:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865025;
-        bh=XxizODUI1F7/s8z+eQDlB3Yv+AUspEEwsNimYGeI5rQ=;
+        s=default; t=1545865028;
+        bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SotppU7AWz4Y48sgTsquz8ocZu0uS5H77frQzjUsavgxSwewVKzs2GGLC27wvbZy/
-         tUk9dX4MJ9lVF22rxxPWVOP6g/ASRTd7zhT9487wq11Td4QjXXRVSvWJ181qq/VWzB
-         0gm1JIgR75p496OVVoDSOaeqJ0JYzK5isy95usgE=
+        b=PZSB2FSL9wxHXqOvn6vvZO/rGSmzhm4ZnMCdWZl4n9zCZRula/DyiAYJC+gBQOpW3
+         JDRaSYiVmkBjYibH+pGIwqIccTfQodPvKSJkPIc3ap50pOkhgoeazniKQbJHgQBYQ6
+         mfDVZSWzKj89wn28IuWCLgbvQBCg5cxPWz8vVzYs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 06/21] scsi: bnx2fc: Fix NULL dereference in error handling
-Date:   Wed, 26 Dec 2018 17:54:44 -0500
-Message-Id: <20181226225501.151365-6-sashal@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 07/21] Input: omap-keypad - fix idle configuration to not block SoC idle states
+Date:   Wed, 26 Dec 2018 17:54:45 -0500
+Message-Id: <20181226225501.151365-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -57,34 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 9ae4f8420ed7be4b13c96600e3568c144d101a23 ]
+[ Upstream commit e2ca26ec4f01486661b55b03597c13e2b9c18b73 ]
 
-If "interface" is NULL then we can't release it and trying to will only
-lead to an Oops.
+With PM enabled, I noticed that pressing a key on the droid4 keyboard will
+block deeper idle states for the SoC. Let's fix this by using IRQF_ONESHOT
+and stop constantly toggling the device OMAP4_KBD_IRQENABLE register as
+suggested by Dmitry Torokhov <dmitry.torokhov@gmail.com>.
 
-Fixes: aea71a024914 ("[SCSI] bnx2fc: Introduce interface structure for each vlan interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+From the hardware point of view, looks like we need to manage the registers
+for OMAP4_KBD_IRQENABLE and OMAP4_KBD_WAKEUPENABLE together to avoid
+blocking deeper SoC idle states. And with toggling of OMAP4_KBD_IRQENABLE
+register now gone with IRQF_ONESHOT, also the SoC idle state problem is
+gone during runtime. We still also need to clear OMAP4_KBD_WAKEUPENABLE in
+omap4_keypad_close() though to pair it with omap4_keypad_open() to prevent
+blocking deeper SoC idle states after rmmod omap4-keypad.
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/keyboard/omap4-keypad.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index d0b227ffbd5f..573aeec7a02b 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2279,7 +2279,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
- 		rc = -ENOMEM;
--		goto ifput_err;
-+		goto netdev_err;
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index f78c464899db..3d2c60c8de83 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -126,12 +126,8 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
+ {
+ 	struct omap4_keypad *keypad_data = dev_id;
+ 
+-	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS)) {
+-		/* Disable interrupts */
+-		kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-				 OMAP4_VAL_IRQDISABLE);
++	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS))
+ 		return IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return IRQ_NONE;
+ }
+@@ -173,11 +169,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+ 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 
+-	/* enable interrupts */
+-	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-		OMAP4_DEF_IRQENABLE_EVENTEN |
+-				OMAP4_DEF_IRQENABLE_LONGKEY);
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -214,9 +205,10 @@ static void omap4_keypad_close(struct input_dev *input)
+ 
+ 	disable_irq(keypad_data->irq);
+ 
+-	/* Disable interrupts */
++	/* Disable interrupts and wake-up events */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+ 			 OMAP4_VAL_IRQDISABLE);
++	kbd_writel(keypad_data, OMAP4_KBD_WAKEUPENABLE, 0);
+ 
+ 	/* clear pending interrupts */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+@@ -364,7 +356,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
  	}
  
- 	if (netdev->priv_flags & IFF_802_1Q_VLAN) {
+ 	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
+-				     omap4_keypad_irq_thread_fn, 0,
++				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
+ 				     "omap4-keypad", keypad_data);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register interrupt\n");
 -- 
 2.19.1
 
