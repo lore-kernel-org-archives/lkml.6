@@ -2,117 +2,108 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B556CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2630C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B8C20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 18:57:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="p3C8VNFj"
+	by mail.kernel.org (Postfix) with ESMTP id 7B3D92171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545850879;
+	bh=ShHdJ013zxf+d5ecxKQ5vQR2sdjLAToz+CPOCNpiOeE=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=knyNy6cDxGOyAS0Ixu3eP74QuLQlI7mjatL9SKqcOlENRuTRIhK10g2I6lBsSkrQ/
+	 f4czcjN29wzOdTT+Abe2S35nNYHDA87hGX01UyS2a5mX+NGE6FKZGLH36KJ4isiRKc
+	 4Lzylw1u+87OJjo1rKzz1hzWh8/dHXOCBRsABchw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeLZS4h (ORCPT
+        id S1727444AbeLZTBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 13:56:37 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:57264 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeLZS4h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 13:56:37 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id EC95F983
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:56:35 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id xf85sRMS57Yh for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Dec 2018 12:56:35 -0600 (CST)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        Wed, 26 Dec 2018 14:01:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727368AbeLZTBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 14:01:18 -0500
+Received: from linux-8ccs (unknown [47.154.107.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id BC3367B3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:56:35 -0600 (CST)
-Received: by mail-io1-f70.google.com with SMTP id f7so6628632ioo.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 10:56:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+rYvvJW5xjF1LCAJPBFZMyotpDfuiyvU5uEtKBUkrn4=;
-        b=p3C8VNFjKZ2VcKFBagc6GsBDF4OPm1gxBF22AObx4P1aXItK2uAHYYWBd49cbmX79T
-         mqriBgw4a7LzIINa5W61UYR1dDF6XBy3dvMem/KIorNw1XAsBGQcRXl/nrZYi10DG8VL
-         +zLLlhBpUkzpF5KwBX0ICfo/jdH5x7vu7hVwZ7L/dXD/RpMnsKBeGwwaY12wbJ+dLa05
-         QtW1oFKar6EanzFOGVpTXb5aGwU0kyfHIJ4b5v1cbgCmmQoxS63oDR6F5il0Kx8sJQ+Q
-         jskvFZgJifnHpnLFaM5xgPEhaWEYQDLP4PlWViFqlNxJR15lE9KRSdKPKMR8y0sXkm5I
-         3eIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+rYvvJW5xjF1LCAJPBFZMyotpDfuiyvU5uEtKBUkrn4=;
-        b=dcSkkOCtOGY3GctpAIyRVTDkZPW/m+XOO+Zwew67A/oVR5JJitvLLbsFTvenP4wyxP
-         1SLOTEbNTY2OX2ftBqBhD5WlE/ncB+x9nJeSP8h7d595ZGXBMtEN9xWno0OzHlPIPi+V
-         j2E+oJ9kVcefo7dK6Yyzr+runhnYtWRF0iMgop7gzUzHVw4WXxPEpT9V943sUSadcCrE
-         sGyWkwyvPIgiIp+eQZBe3WFAaPRCmMUn/Yj6iI8OtJf0x3BdzvvpdRkfBOtChowFs1AC
-         QzAppYTGoSXxEH3mjpbUooX6Am9DCnN3bhxpFSgskyIjUPwogGDfVH9JmGPpVBIheHCE
-         8ROw==
-X-Gm-Message-State: AA+aEWZKBz6X+n7OBiKQnpcoNjP9oVpDt41ahoyyOGJX1DDQv1XoO7Wp
-        /a4qkjGWMWpt85vx6fK4u9zUhXXd3OUTPVHcmPNsIp9xlqkzRq8LrSX2M1+8l4STxjRIQaAiGuT
-        dowaWPmmC6ExzESZT1c2OC0JeUoHE
-X-Received: by 2002:a02:970b:: with SMTP id x11mr13498369jai.67.1545850595339;
-        Wed, 26 Dec 2018 10:56:35 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/Ukq8fsvws5Mr5ELLn2bTwvruCF14tAvgjHKpOUI3Yly6MCIUZU3FsINNFsQrFjklDDufdgwA==
-X-Received: by 2002:a02:970b:: with SMTP id x11mr13498358jai.67.1545850595078;
-        Wed, 26 Dec 2018 10:56:35 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id 197sm13273065itx.21.2018.12.26.10.56.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 10:56:34 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] infiniband: bnxt_re: qplib: Check the return value of send_message
-Date:   Wed, 26 Dec 2018 12:56:22 -0600
-Message-Id: <20181226185623.9324-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 663E82171F;
+        Wed, 26 Dec 2018 19:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545850877;
+        bh=ShHdJ013zxf+d5ecxKQ5vQR2sdjLAToz+CPOCNpiOeE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MZg182sSQ9m7V7Yz54g89zRHb5srBsSBNzzCpFMMNE9MX/MfKcNFCCiQmeH9Xsn27
+         ec5fYStvX1I1d/Nm0tNeGreqMX6jMHrHqT61OSK5/+1y/7myx1r49NAAphPhIRYpFC
+         WXo2/utXO84aWdUNbDaP9NCt0GjNuDQMcG4XUSVo=
+Date:   Wed, 26 Dec 2018 20:01:15 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Modules updates for v4.21
+Message-ID: <20181226190114.GA16407@linux-8ccs>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return
-an error value. The fix returns the error from the latter function
-upstream.
+Linus,
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Please pull below to receive modules updates for the 4.21 merge window.
+Details can be found in the signed tag.
+
+Thanks,
+
+Jessica
+
 ---
- drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-index 5216b5f844cc..adb8eae5193c 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-@@ -778,9 +778,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
- 	req.cos0 = cpu_to_le16(cids[0]);
- 	req.cos1 = cpu_to_le16(cids[1]);
- 
--	bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
--				     0);
--	return 0;
-+	return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
-+						NULL, 0);
- }
- 
- int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
--- 
-2.17.1
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v4.21
+
+for you to fetch changes up to 93d77e7f1410c366050d6035dcba1a5167c7cf0b:
+
+  ARM: module: Fix function kallsyms on Thumb-2 (2018-12-14 20:27:29 +0100)
+
+----------------------------------------------------------------
+Modules updates for v4.21
+
+Summary of modules changes for the 4.21 merge window:
+
+- Some modules-related kallsyms cleanups and a kallsyms fix for ARM.
+
+- Include keys from the secondary keyring in module signature
+  verification.
+
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+
+----------------------------------------------------------------
+Jessica Yu (1):
+      module: make it clearer when we're handling kallsyms symbols vs exported symbols
+
+Ke Wu (1):
+      modsign: use all trusted keys to verify module signature
+
+Vincent Whitchurch (2):
+      module: Overwrite st_size instead of st_info
+      ARM: module: Fix function kallsyms on Thumb-2
+
+ arch/arm/include/asm/module.h |  11 ++++
+ include/linux/module.h        |   7 +++
+ kernel/module.c               | 123 ++++++++++++++++++++++++------------------
+ kernel/module_signing.c       |   3 +-
+ 4 files changed, 92 insertions(+), 52 deletions(-)
 
