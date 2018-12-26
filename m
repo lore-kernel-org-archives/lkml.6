@@ -2,118 +2,111 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22331C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DBEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7BE21720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344A5218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tQPdgNGg"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="MvokJsnh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbeLZGq1 (ORCPT
+        id S1726148AbeLZGst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 01:46:27 -0500
-Received: from mail-eopbgr150082.outbound.protection.outlook.com ([40.107.15.82]:1636
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726001AbeLZGq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 01:46:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lDDSTqd9RsasrU+9lDaOgWFPaVm1NmfMMGkFfesU2LI=;
- b=tQPdgNGgculSJLmfednVB8IEGr1GEadWGrTfHWjSXxsJtNv6fq8/h819oIAX4cjC6KZAa2qE32pDll6FGstqnp7FeX9Si3TfYvQ4VP9RCV2h9NilG0oFpmzQvoOtAw4I/GQtI7I+dXL5lkCpXGxvDPzYGy5BWfwADVeXT8VDiuM=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB3167.eurprd04.prod.outlook.com (10.170.229.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Wed, 26 Dec 2018 06:46:23 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::c92b:a786:d2c5:fa1e]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::c92b:a786:d2c5:fa1e%4]) with mapi id 15.20.1471.019; Wed, 26 Dec 2018
- 06:46:23 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Kangjie Lu <kjlu@umn.edu>, Loic Poulain <loic.poulain@linaro.org>
-CC:     "pakki001@umn.edu" <pakki001@umn.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: chipidea: add a check for the availability of next
- child
-Thread-Topic: [PATCH] usb: chipidea: add a check for the availability of next
- child
-Thread-Index: AQHUnL8Mky0gvP1kaECxXh3aAHJ66KWQky1A
-Date:   Wed, 26 Dec 2018 06:46:23 +0000
-Message-ID: <VI1PR04MB5327E1080FF6010A2FD0807B8BB50@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20181226020134.71351-1-kjlu@umn.edu>
-In-Reply-To: <20181226020134.71351-1-kjlu@umn.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3167;6:g3NIqFPad6/tcmZ+EC1Vvng9WCDMk07Sf2KfOnZQNxwoSRimxjTZ3gEuVo/b2rbSBtYIOtpgnrYxCroQfbgWdXGD2EEXvQSEtv77ulQKKdGG9shBB44oYeFRUPXGqFDwvbyeddY0oz7OSd0LhRMQ85Dx4vPGiEKJ1muIDv50lRmyILu0mP+IVtrUUgPWDIsJwLDgpweS7QW7q74rM/Y9T8OJ4ma3uXtH71WfouwESV0E4gicgY5zyhruGg3H+PaOz8iDxLeOAIRPXnPdvkNhcdOgbX0aTF8hEGDqI0kBdhTJu8Biey+EgTjSM0NXSWFlbSAug6RZCiBGw8WTe6vLEp6h0JcUAZ38TDpFXF9gPlmxFx+2hQot85babBP13sUD48nZBXEapakWg4EbQqnQKRlcbngXwY1++zu0c8htQGVmkGi+54kg1lEjKO+BcO7iwDeMHL4yBMHBqyCefBJCzA==;5:/2ir4Ukb7O8qW7A3OlzJ6miMHEXFW1oUyNxXNtsJVgF9xx3f6y5PLTn8jVH/UAgRQGPJMxt001657t6WxuuzVwpurdIVCP8AW8yzCVbnbSu1SeJY7/f/nXgLHUpHJCAFXw3DQALVMnWyyKMJF/w4KlrQnfCtCuoy6VJxb2fB5Uo=;7:RsLaQOkfCvq8G7KLwKMkNAlqDiMfLMXDaqbmqZ25NT5+YSSehi14mRuNUQE4qJ4O3YqCntJCE5fMrK3c+/82aLhts7fbxYgGpzjlPN9JObL/0tWnJTDCJ/mU8za96bBmDDKiHhKqI3dcSiywLxqZRg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c834cddd-713d-4a13-7e99-08d66afdda01
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3167;
-x-ms-traffictypediagnostic: VI1PR04MB3167:
-x-microsoft-antispam-prvs: <VI1PR04MB316754961525EE4E7B1781B38BB50@VI1PR04MB3167.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231475)(944501520)(52105112)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3167;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3167;
-x-forefront-prvs: 0898A6E028
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(39860400002)(136003)(189003)(199004)(71200400001)(71190400001)(3846002)(6116002)(4326008)(81156014)(478600001)(81166006)(446003)(316002)(102836004)(8936002)(99286004)(5660300001)(6246003)(6506007)(11346002)(110136005)(54906003)(186003)(8676002)(2171002)(476003)(33656002)(66066001)(44832011)(305945005)(97736004)(256004)(14444005)(25786009)(2906002)(486006)(229853002)(9686003)(105586002)(55016002)(76176011)(6436002)(106356001)(26005)(53936002)(86362001)(14454004)(74316002)(68736007)(7736002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3167;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xkMPXjR094zWwt6IBWbzrs/maO0HPYFL/VpIzxunkta3R5zMtsD8ZKU4TOqrwJWX+CcCMxpb18d9dKAmM/VA5PFku+gygjN+c22KE3I/DuVMugXMWyrM8SDzf6BYyDN9rhFbnEFZ59xbThjIoZzDlUX4YD3P19GILU9Y5Sxsh8c5p7+W5dRCyMeJKDNUZhfsAc2KR/cUpaPsMKqU8ZPpkFaWy/bGaXDzxDnjFuzq2rKA6Ht4+9ENwlFRAle/n4l0y7R75QzHRIXzRZF7A3D4OOXVFAHoVE4gZnwD0eGWHvq7Mn6Prlfgxj03CdD9qafX
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c834cddd-713d-4a13-7e99-08d66afdda01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Dec 2018 06:46:23.5074
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3167
+        Wed, 26 Dec 2018 01:48:49 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:59310 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbeLZGss (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 01:48:48 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 1424A9B8
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 06:48:47 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id P9DhY42flqnO for <linux-kernel@vger.kernel.org>;
+        Wed, 26 Dec 2018 00:48:46 -0600 (CST)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id DA8BB9B2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 00:48:46 -0600 (CST)
+Received: by mail-io1-f71.google.com with SMTP id k4so18491762ioc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 22:48:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=/BUhnLS3W0iUtH++OCqlLSbIUCQXTYkZ1ohcju+tm+0=;
+        b=MvokJsnh+yViCOcjsXyGwcGZxOBb2nJ3DMfyi1GXq/5wTe67QtnHOJ7VTuBRiqeNNw
+         poI/Pf6kZa2SDaMF8s02vPA2t5ECpWTICx09IRC/XsDzgB0QwixgRFSVRKUY6tzrv8J6
+         YAu+qqoH4xmaZ0LIuf5R1i7hRRB02IF473lguDMYytvvo+4POKU6gptV37mKQYcl+Y/T
+         1Hx6UrX38y1ylPQcVVODHgcsEz3l0WHrQGkoYw53eu/Lfx+lSWRhzu62pcXYZ6ONWn51
+         ogNApftOaY+pmtji53mwF5c1+7a0N38lJYGfvSKJIYIQEQRchNX0uA9w2zt4kMKlHhRw
+         TFhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/BUhnLS3W0iUtH++OCqlLSbIUCQXTYkZ1ohcju+tm+0=;
+        b=cQjqHZqcmcFg3lB/CpzXjOBvt9ZtE3PTaUNRWFBKKZtgXGmfUHtiwE0MmVoCHFbRiO
+         Ng6pOcAgxKTJIk6feZpzeCWCGWhYk7tPBMbcbwrlh+IUGmbNbOZm8ou1Suw+0A5NZa4B
+         QSl4vHGNqBXssmhrpySPenDILAUR9Z3TtR5VFpZCtVwBZutftIG15t4xrLvcvmf28mHK
+         pe3aJbZi2SeYebrGZLJS/2mx47w8UilHQdhkMsF1P/FfPJLrDcEjH+p/h3eW1SOaNjup
+         AXOTjvbtfB3sLeRxcVhCOJWEkREE900rUO4VM1gVsIfhbs3W/aHb83MkuWUJpobOW7Ii
+         j+dQ==
+X-Gm-Message-State: AJcUukd/209wpWVN98yZvq4Zh/AM1TqqY/t/LS0JT8RTtIkWanmi6SIe
+        XH9Dx3QKy9vLwbM+LX1SUJL50ncaKEs2VGsvBz8CHN1NV93+sNSPWCi1aW4Q9HfRNCOmx7pUPW/
+        oN9VLUjljKSl3G1z1jBC7jTe4gGKn
+X-Received: by 2002:a6b:f404:: with SMTP id i4mr10399423iog.281.1545806926323;
+        Tue, 25 Dec 2018 22:48:46 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN6sy3Yrmle+GtjzzoO7/WyaKy9x59D7Itp05PTW2oCTiE1J/w8UYOTH8XqXhTOwQ2k1JK06jQ==
+X-Received: by 2002:a6b:f404:: with SMTP id i4mr10399414iog.281.1545806926110;
+        Tue, 25 Dec 2018 22:48:46 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id i78sm11948467itb.6.2018.12.25.22.48.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Dec 2018 22:48:45 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] target: fix a missing check for match_int
+Date:   Wed, 26 Dec 2018 00:48:18 -0600
+Message-Id: <20181226064818.75984-1-kjlu@umn.edu>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/usb/chipidea/ci_hdrc_msm.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c
-> b/drivers/usb/chipidea/ci_hdrc_msm.c
-> index 880009987460..7dc987b4036a 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_msm.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_msm.c
-> @@ -250,6 +250,8 @@ static int ci_hdrc_msm_probe(struct platform_device *=
-pdev)
->  	ulpi_node =3D of_get_child_by_name(pdev->dev.of_node, "ulpi");
->  	if (ulpi_node) {
->  		phy_node =3D of_get_next_available_child(ulpi_node, NULL);
-> +		if (!phy_node)
-> +			dev_err(&pdev->dev, "no child nodes found\n");
->  		ci->hsic =3D of_device_is_compatible(phy_node, "qcom,usb-hsic-phy");
->  		of_node_put(phy_node);
->  	}
+When match_int fails, "arg" is left uninitialized and may contain random
+value, thus should not be used.
+The fix checks if match_int fails, and if so, break.
 
-With "ulpi" node, but phy node is not found, I assume the controller can't =
-work properly, we may need to
-return error value.  Add loic to confirm.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+---
+ drivers/target/target_core_rd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Peter
+diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
+index a6e8106abd6f..3138123143e8 100644
+--- a/drivers/target/target_core_rd.c
++++ b/drivers/target/target_core_rd.c
+@@ -573,7 +573,8 @@ static ssize_t rd_set_configfs_dev_params(struct se_device *dev,
+ 		token = match_token(ptr, tokens, args);
+ 		switch (token) {
+ 		case Opt_rd_pages:
+-			match_int(args, &arg);
++			if (match_int(args, &arg))
++				break;
+ 			rd_dev->rd_page_count = arg;
+ 			pr_debug("RAMDISK: Referencing Page"
+ 				" Count: %u\n", rd_dev->rd_page_count);
+-- 
+2.17.2 (Apple Git-113)
 
