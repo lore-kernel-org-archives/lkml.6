@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A611FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CBAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66FBF214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D2121741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864477;
-	bh=TxwReZtWs8NJFyzYUWDbeGCB+0EjbtrSmOxeHT8RxXA=;
+	s=default; t=1545864487;
+	bh=EY3AyJE4X+/Q4wfAi56heq/DlPmVmt17gvV9DBoHOHE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B0HVQQc9QK8PLHtjIs1q32PAizhlP5rGDkz48rphOjIzRcbgy8oCakmeTU4j33n8i
-	 YRBSgsXHxQxFlWXYBvNxofVRJwxbNgKV5JbXdtSgC3Y0rlBb9x+jBBw0/pJvFCm0p3
-	 vAPoIG2H9XwutRSSreeNN4LJz8kcvrpL+8dzzsWs=
+	b=gH6HtWtZd14m7x4z9sZVduZpuT+2A3F6C/MxAUwCt8Zr3WOQMhfoxlUaDaVRZ1Ojs
+	 9Eb3ax4ohpCPFJ+ic3Rp0U1hbz4uQfnkbb5KBltHhahaRhBPP8/YNocMiVpUbwafDS
+	 JnKTrgkFAPqj6XVZg6jj3n+hx9h2Em5qQOr1X2o4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729855AbeLZWr4 (ORCPT
+        id S1729142AbeLZWsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:47:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38480 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:48:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728710AbeLZWiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:13 -0500
+        id S1728708AbeLZWiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B0DB21741;
-        Wed, 26 Dec 2018 22:38:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 186CC2054F;
+        Wed, 26 Dec 2018 22:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863892;
-        bh=TxwReZtWs8NJFyzYUWDbeGCB+0EjbtrSmOxeHT8RxXA=;
+        s=default; t=1545863891;
+        bh=EY3AyJE4X+/Q4wfAi56heq/DlPmVmt17gvV9DBoHOHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uJrJ8ovjpYelM3KjG7t7E6Hxdw8vdo8Am1lKjywygHY3ipDebELUnrtctXTAlbLbB
-         dyCd7Nf0t+GvrL3S+7iVFhLP9mIS2CMA7SOPu/DgagVvKEDFfZld7JBsH/0UET4POG
-         w8WSenFG3JSVb0mwtJWl4+1UVf6zAmyY5Qdr/0j4=
+        b=vbCMDdVZxBQ0bsyGLaeOHstfuvrJGeLxa1pvzPztv9aBN4ovB9C4crKuc/4mKrfCS
+         3NfjO+igTePSY4wTjAhArLCzQ7xo6C7t5jCGOmA8BxOb3R8DCPrRsN4KZUD4sreX/t
+         gbrMj4/7cR/Nd5SinHK43oJLlMYI5FH5BZi21jxM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 80/97] nl80211: fix memory leak if validate_pae_over_nl80211() fails
-Date:   Wed, 26 Dec 2018 17:35:40 -0500
-Message-Id: <20181226223557.149329-80-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 79/97] vxge: ensure data0 is initialized in when fetching firmware version information
+Date:   Wed, 26 Dec 2018 17:35:39 -0500
+Message-Id: <20181226223557.149329-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -57,36 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit d350a0f431189517b1af0dbbb605c273231a8966 ]
+[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
 
-If validate_pae_over_nl80211() were to fail in nl80211_crypto_settings(),
-we might leak the 'connkeys' allocation. Fix this.
+Currently variable data0 is not being initialized so a garbage value is
+being passed to vxge_hw_vpath_fw_api and this value is being written to
+the rts_access_steer_data0 register.  There are other occurrances where
+data0 is being initialized to zero (e.g. in function
+vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+is initialized likewise to 0.
 
-Fixes: 64bf3d4bc2b0 ("nl80211: Add CONTROL_PORT_OVER_NL80211 attribute")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+
+Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 176edfefcbaa..295cd8d5554f 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -8993,8 +8993,10 @@ static int nl80211_join_ibss(struct sk_buff *skb, struct genl_info *info)
- 	if (info->attrs[NL80211_ATTR_CONTROL_PORT_OVER_NL80211]) {
- 		int r = validate_pae_over_nl80211(rdev, info);
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 398011c87643..bf4302e45dcd 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -807,7 +807,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
+ 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
+ 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
+-	u64 data0, data1 = 0, steer_ctrl = 0;
++	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
+ 	enum vxge_hw_status status;
  
--		if (r < 0)
-+		if (r < 0) {
-+			kzfree(connkeys);
- 			return r;
-+		}
- 
- 		ibss.control_port_over_nl80211 = true;
- 	}
+ 	status = vxge_hw_vpath_fw_api(vpath,
 -- 
 2.19.1
 
