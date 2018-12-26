@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFCDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8019C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE08E214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BEFF2070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865228;
-	bh=gO2s7wweSAC6UEPBGmWBoNc7yRmP6whsoZIHB7b6zlQ=;
+	s=default; t=1545865237;
+	bh=ymXvTBGw6fJrAWdcqwE3+GO8+guEjMNJfaRL7OZHssk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1DkpSRrxXA4kjGsEejOIAA3K2SHGp3NsDk+9seCUGt4ZowCcdlDx1va4X1LQqtHk7
-	 lvCvMtmIz7G08h3EDWm16G6VJW4fPaYsyMo/E3oLbFtaXS3Io+B23krsM2/layfZWw
-	 5KLGiJ2A96MByeVeyRU1uesT3+gtyFJQaPkFoUMU=
+	b=Ic3QiL9vh7puoEnXS2Qsu5iypPrTMrGziz8uYNFsgnbeNmjgBFFcLyrYzSjG64flD
+	 rwindTBMaKn07jVmcXOuW2fVt9Yi9a6jbFz5C1cH/4YDnYd6rad5jdRRfSobr3hr6j
+	 NzJ4ly/5erpx9pGSBN+zQu4nYZn5XEQA2USgnp6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbeLZXA1 (ORCPT
+        id S1730460AbeLZXAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55316 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 18:00:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbeLZWx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:53:58 -0500
+        id S1729936AbeLZWxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:53:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35DF5218A5;
-        Wed, 26 Dec 2018 22:53:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDFFD218EA;
+        Wed, 26 Dec 2018 22:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864837;
-        bh=gO2s7wweSAC6UEPBGmWBoNc7yRmP6whsoZIHB7b6zlQ=;
+        s=default; t=1545864834;
+        bh=ymXvTBGw6fJrAWdcqwE3+GO8+guEjMNJfaRL7OZHssk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z1OofBc4KBZ+A4j2k/g9yw0WZ9VZqGuyHZqwpNf5fAD4tN7hk1kdpf46EhRcwVzZ6
-         mhmgDS0Asgb0ceC6oxaQf+vdDntwbgsWRwLqkFFLr4+8n9ukPoH20dNLTpDGqumsZd
-         Wz1kZdFF6RZ5uc6+EhqqSmMTBTIYI09n6ClU6A3s=
+        b=sV3T5U45223bDnX7Zw4RCrC3zb3vjX1TkiC1fvpdVGgMI0DXWOnJNEJylZPHYPT0K
+         rbIDi9kKzGl/pomauiVs0yjrvDCXeRVliFAviVtoJXWwZ+6x8w2YANG8f80xtrQhcK
+         778QtGAyug7fqYgi2GVRedaSwmCJsM71zUp0lmQY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Benjamin Poirier <bpoirier@suse.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 07/35] xfrm: Fix bucket count reported to userspace
-Date:   Wed, 26 Dec 2018 17:41:14 -0500
-Message-Id: <20181226224142.150866-7-sashal@kernel.org>
+Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 05/35] Input: restore EV_ABS ABS_RESERVED
+Date:   Wed, 26 Dec 2018 17:41:12 -0500
+Message-Id: <20181226224142.150866-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -57,34 +57,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Peter Hutterer <peter.hutterer@who-t.net>
 
-[ Upstream commit ca92e173ab34a4f7fc4128bd372bd96f1af6f507 ]
+[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
 
-sadhcnt is reported by `ip -s xfrm state count` as "buckets count", not the
-hash mask.
+ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
+ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
 
-Fixes: 28d8909bc790 ("[XFRM]: Export SAD info.")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/input-event-codes.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 71a94e549301..884f2136b34b 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -641,7 +641,7 @@ void xfrm_sad_getinfo(struct net *net, struct xfrmk_sadinfo *si)
- {
- 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
- 	si->sadcnt = net->xfrm.state_num;
--	si->sadhcnt = net->xfrm.state_hmask;
-+	si->sadhcnt = net->xfrm.state_hmask + 1;
- 	si->sadhmcnt = xfrm_state_hashmax;
- 	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- }
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index 3af60ee69053..b584868e1b26 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -739,6 +739,15 @@
+ 
+ #define ABS_MISC		0x28
+ 
++/*
++ * 0x2e is reserved and should not be used in input drivers.
++ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
++ * the next ABS_* event is correct or is just ABS_MISC + n.
++ * We define here ABS_RESERVED so userspace can rely on it and detect
++ * the situation described above.
++ */
++#define ABS_RESERVED		0x2e
++
+ #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
+ #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
+ #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
 -- 
 2.19.1
 
