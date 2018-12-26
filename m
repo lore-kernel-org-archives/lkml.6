@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7F7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A034DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1657021741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFDD218FC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863767;
-	bh=+UsXK8ncnqHvF5avdfkuyb3u1krBLvbmjzTngtqA4h4=;
+	s=default; t=1545863773;
+	bh=9887e4ZceVdhmA1B0di26ifOMecye3fDgR/AALFH/Cs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sl0Q0XT/sSemv2I0oHXPMWR5urLWDleEzfDDsynH0qjIR9RRpf1oEvmGkNoaOrPri
-	 hIm9WWhup5A1B2TIsVc45ylBIHv1gsSPNReaCYuJd2doubW0BNR6pvXJtROYRq06li
-	 sLfC//U7pusLFMfs965HfZ6UOYkoCrOVr9ba8uZg=
+	b=Ys2ad7V2xRIbuSDi1d0nGGQSHrlBuLTpGFQQuXDZ9mgzvnh3m9iWpny3YHO+mTSVY
+	 UVEZL2DUqxXnNzY4EFkJaj8aqJ2eKqsCiMUn2lvyHceFuacniug4BeWGavA/7HzSG6
+	 PqyoEpwhlN98EmKcfEnmq8+5mrY6qsIHvnsSKK5c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbeLZWgF (ORCPT
+        id S1726949AbeLZWgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35918 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeLZWgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:03 -0500
+        id S1726795AbeLZWgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E372218EA;
-        Wed, 26 Dec 2018 22:36:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A27B218E2;
+        Wed, 26 Dec 2018 22:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863762;
-        bh=+UsXK8ncnqHvF5avdfkuyb3u1krBLvbmjzTngtqA4h4=;
+        s=default; t=1545863763;
+        bh=9887e4ZceVdhmA1B0di26ifOMecye3fDgR/AALFH/Cs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lj8/h9Fug/1vjyMaN9jOnT0mcps+eedLSojmDSMBPR59uUQPYF2ymTIqz53TZRoC0
-         u2Z5uuGLUeJT7eJcQJ3cnbqGQsfLmgDS5+oD1RMUz0OoP7JkePsvaYWU+0/otfWfhm
-         GMwXe0+HKwt91kHMN8/oI3JHPrcDNzyPEolLRn10=
+        b=k4nrfE+yM8gs9aCZd8dEhHCQI9s2NotfBMSHY3pJu5vDzpGrQPpINhS+pboXBAxIM
+         JqFaXi5wUJNWm7NV40EvR8CaCdeE1Y/IFZPWSObS/LpuhkbENosVfL6+u1sjlImRwZ
+         4myFUb9rb3G5LO2ufr2SzoCP+ppAH+dUle9vAoZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 02/97] pinctrl: meson: fix pull enable register calculation
-Date:   Wed, 26 Dec 2018 17:34:22 -0500
-Message-Id: <20181226223557.149329-2-sashal@kernel.org>
+Cc:     Ryder Lee <ryder.lee@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 03/97] arm64: dts: mt7622: fix no more console output on rfb1
+Date:   Wed, 26 Dec 2018 17:34:23 -0500
+Message-Id: <20181226223557.149329-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -59,42 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Ryder Lee <ryder.lee@mediatek.com>
 
-[ Upstream commit 614b1868a125a0ba24be08f3a7fa832ddcde6bca ]
+[ Upstream commit 6c05946e349d92f527d98644fbc9c41f06312c00 ]
 
-We just changed the code so we apply bias disable on the correct
-register but forgot to align the register calculation. The result
-is that we apply the change on the correct register, but possibly
-at the incorrect offset/bit
+No default serial console on boot.
+Fix this by using a 'stdout-path' property that points to the device.
 
-This went undetected because offsets tends to be the same between
-REG_PULL and REG_PULLEN for a given pin the EE controller. This
-is not true for the AO controller.
-
-Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: c0d9f9ad4f76 ("arm64: dts: mt7622: add earlycon to mt7622-rfb1 board")
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+[mb: Fix commit message]
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 4f3ab18636a3..c8eff70fdb1c 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -191,7 +191,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+index a747b7bf132d..387be39d40cd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts
+@@ -17,8 +17,13 @@
+ 	model = "MediaTek MT7622 RFB1 board";
+ 	compatible = "mediatek,mt7622-rfb1", "mediatek,mt7622";
  
--			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-+			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
-+					       &bit);
- 			ret = regmap_update_bits(pc->reg_pullen, reg,
- 						 BIT(bit), 0);
- 			if (ret)
++	aliases {
++		serial0 = &uart0;
++	};
++
+ 	chosen {
+-		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n1 swiotlb=512";
++		stdout-path = "serial0:115200n8";
++		bootargs = "earlycon=uart8250,mmio32,0x11002000 swiotlb=512";
+ 	};
+ 
+ 	cpus {
 -- 
 2.19.1
 
