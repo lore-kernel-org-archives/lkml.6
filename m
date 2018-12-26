@@ -7,107 +7,106 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF0DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 03:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2F2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 03:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C48AF20449
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 03:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 422452070D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 03:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="dKXPlvXq"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="WJJGdwN7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeLZDHM (ORCPT
+        id S1726966AbeLZDJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 22:07:12 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45280 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726966AbeLZDHM (ORCPT
+        Tue, 25 Dec 2018 22:09:40 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:51406 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbeLZDJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 22:07:12 -0500
+        Tue, 25 Dec 2018 22:09:39 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 74967BC9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 03:07:10 +0000 (UTC)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 8577A9AB
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 03:09:38 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uaMSmBtoVnWx for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 21:07:10 -0600 (CST)
-Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id sG2cs-I3qNp3 for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 21:09:38 -0600 (CST)
+Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 43B03923
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:07:10 -0600 (CST)
-Received: by mail-it1-f198.google.com with SMTP id p66so17589424itc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:07:10 -0800 (PST)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 57AAD98C
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:09:38 -0600 (CST)
+Received: by mail-it1-f200.google.com with SMTP id t143so17551721itc.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 19:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=LhRU0wMug2gxITDlzmtL48zridTwZEWJxDKC9s+/s6k=;
-        b=dKXPlvXqsSqzvRsMggqukHpIsvS4rVWUFk4Ix2Un9GTeqBI0V8wNwzzG/73U0pglgb
-         YC3Pun4UJUERRq6rndM629HL414HdqYopLWjTF+uqPmKBupLOQquFqCkQFAwf0D7/mQ/
-         GSA2g4XG+dQww4eEpowFbAS/zzJgrin3Ja3C+x8eOEOuOMf9DAcPrFEfIFTdljabzeGb
-         TkkFvRIr7iDp/lADagn2YBXfZ/U9bxMfjbG8Ie0UeZv5N7+pdlwVSjfb7dcb8uIP6gZv
-         fA94Z5nadXJUuz6xsxKoTi3RTllznKcVcsimIEnHEBaebMcpH+dy+iab86qIIoR1SQW7
-         +qnQ==
+        bh=FIK1HRX1Wbbvae4jUifypk3LnHOa0FRphY/12zrKTeY=;
+        b=WJJGdwN7RUnbTSx38holh0g4cxqTxAPE3vAhaM+qv68Kcv00YiB1LsT+/6w2RCN2q+
+         S3vZrCwIE/KmZeTTuq4KtCW7jlhefrxbdYWkIRu66muo+jXVcZtqphTDqktt6cb1A6Ra
+         uMeKVs8hwKs7UXD0S+6eappb4sE2Ue0gcbZFM6D/y5pm3trmeYFEkSNc1ND5tM8l5uyh
+         RXC9ke2Qy/9rjS2tA2B8yfjESwQ0JGa2xCRJoLqoQT6Yc4byBdURi742yLLmveOQAmXo
+         mYgNqY4I3XwAABktlns6teNwqrYWu8kyzVEzIPeLbApqugItaQ90hLERid2yUXZGf99R
+         I9qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LhRU0wMug2gxITDlzmtL48zridTwZEWJxDKC9s+/s6k=;
-        b=ipaRycECtc+8HHbfj8KsFxTIDThRcG/QO8Gw554SAZiUtg9ep2Jqu3jg5oSP3X2mBI
-         IaPAG1FsYraJVGkc5+ArBMkyA1aIN285S7v9e+Hb7ftQ3qa/HE7t2fOmYur1lhVtxVrx
-         gbPVxwzntWssmxawdiJer+/uVuKxPm6RdmdWv1ZV+ZZ0s8KoYi9nQS51hXdA4SJDEV7n
-         oLt4l7qfW/lCD+gXBG8gXBDF8jc53PJ024E/ULYDHOlNTXU78Lxm4sMSceDK9cdPaPC5
-         Mz447QllkuUXJtlIq447OOzQkPgZwi2lq9IBQnxDpogCZAbJkxY4VhjY2BmwZC0FC4ph
-         vqJA==
-X-Gm-Message-State: AA+aEWbNCuFaV1WbyV54NLd8lDS+c7iHhOFJpN3eW/il0VasojowkB5M
-        KpR0uWHbBvx6jnoofSdawa1mtYIQxlhJ4vMTlHWt2p+62/5JUaYezBT/kpf6LFZ3UZxpTJO9gS7
-        EeyVt3oP6KuPh4zHpyzweCNOIAhCT
-X-Received: by 2002:a02:13c6:: with SMTP id 189mr11943110jaz.117.1545793629858;
-        Tue, 25 Dec 2018 19:07:09 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/VeH++B1DjGUaMFYkI1G8QzaRpqcTJ4lOjw6UImLKNlQ1R8Ugh3J/oSuM8UNPkIA4bH1IoGgA==
-X-Received: by 2002:a02:13c6:: with SMTP id 189mr11943101jaz.117.1545793629621;
-        Tue, 25 Dec 2018 19:07:09 -0800 (PST)
+        bh=FIK1HRX1Wbbvae4jUifypk3LnHOa0FRphY/12zrKTeY=;
+        b=RmUjRDvzjOjgspSGVhP0Ub384DQZWnSH6YbdAaMbAjTJR+zUjsoxG3BJac5NWEbPUV
+         1adO5S1/k15aMIaRV77mdohGFLXNfFtAKDaP2mUNq2gXa86LoAhT2AkZDpjbK4NBJHFu
+         uP7AntfUtu2nEs86oVymmEroGrnUccTBM7EWgKsMrKFUSzF2PHLxKKCyG5PXRJKzBWXr
+         +OjKK7IURZHuDeBY8rPK2IkjmWD5xpY1/3aRHLIkyHKHOEnD48dAKh4lna6vyaTWADFv
+         Zt8eyGBU5T95AsHXDto9zSoK++snRrDGG1ZipgBmRKj3946jdJRn31kE/BD+ss76cjbF
+         fPMA==
+X-Gm-Message-State: AJcUukcjtGLa3g7vyC1lrVxINLnEf+IaBNDX2FLhU1SfpNyehNyTu0Vk
+        Tpdto4ZHIrT2m/Em1FTJZ2TWVzI3u74PrE1rYxCW74ECoynQ2APdd9VJ9i2RaTbMn3ZgnmYRXRC
+        IMUMiInVMCh4suFlXO6yUttNXwfhK
+X-Received: by 2002:a05:660c:12c7:: with SMTP id k7mr11232044itd.148.1545793777964;
+        Tue, 25 Dec 2018 19:09:37 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN4mYu3kTm4tGXoTcQnnrPFFDtpGZQdhq9wEPM9CGCPg7ThKlzfTQ4AY2aXodq3+SAGuEecdgA==
+X-Received: by 2002:a05:660c:12c7:: with SMTP id k7mr11232033itd.148.1545793777712;
+        Tue, 25 Dec 2018 19:09:37 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id g21sm6325883itg.44.2018.12.25.19.07.08
+        by smtp.gmail.com with ESMTPSA id m37sm12233667iti.6.2018.12.25.19.09.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 19:07:08 -0800 (PST)
+        Tue, 25 Dec 2018 19:09:37 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        David Howells <dhowells@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: proc: check status of register_filesystem
-Date:   Tue, 25 Dec 2018 21:06:40 -0600
-Message-Id: <20181226030642.72757-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: fix a missing check of block data read
+Date:   Tue, 25 Dec 2018 21:09:11 -0600
+Message-Id: <20181226030911.72845-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-register_filesystem() could fail. The fix issues an error message if it
-fails.
+When i2c_smbus_read_i2c_block_data() fails, the read data in "buf" could
+be incorrect and should not be used. The fix checks if
+i2c_smbus_read_i2c_block_data fails, and if so, return its error code
+upstream.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- fs/proc/root.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-hym8563.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index f4b1a9d2eca6..7dcd947cba23 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -141,7 +141,8 @@ void __init proc_root_init(void)
- 	proc_mkdir("bus", NULL);
- 	proc_sys_init();
+diff --git a/drivers/rtc/rtc-hym8563.c b/drivers/rtc/rtc-hym8563.c
+index e5ad527cb75e..d03f5d212eea 100644
+--- a/drivers/rtc/rtc-hym8563.c
++++ b/drivers/rtc/rtc-hym8563.c
+@@ -109,6 +109,8 @@ static int hym8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	}
  
--	register_filesystem(&proc_fs_type);
-+	if (register_filesystem(&proc_fs_type))
-+		pr_err("failed to register the filesystem.\n");
- }
+ 	ret = i2c_smbus_read_i2c_block_data(client, HYM8563_SEC, 7, buf);
++	if (ret < 0)
++		return ret;
  
- static int proc_root_getattr(const struct path *path, struct kstat *stat,
+ 	tm->tm_sec = bcd2bin(buf[0] & HYM8563_SEC_MASK);
+ 	tm->tm_min = bcd2bin(buf[1] & HYM8563_MIN_MASK);
 -- 
 2.17.2 (Apple Git-113)
 
