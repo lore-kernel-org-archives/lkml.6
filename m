@@ -6,61 +6,64 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277DDC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3304BC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87C2218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 029A320C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545852006;
-	bh=3GKib+kiZ6Kg9/s7Fjj6yR0DGl5iruVTcaEE2mE5gj8=;
+	s=default; t=1545852050;
+	bh=ZtAhmonkLxb4lJQFHEIw/LlSSQs4adWMScCTrwpNNN0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=C24aiGtZpt282OliA5+xX5G03Hzm2ta0ewQIRgMHIXUsuXxI96A8c9FfXBYmfNo0n
-	 wdHCeByskKalKczwcW/2ox32ZD0s2jkjHExXosVdewHUdqrAxenZOv6A9DDRo9LVIE
-	 ZA0HvEc915bqVl1NcBzOX6W2gpkXxqf8hJz8eEdk=
+	b=crBACXKNwPtRbC9NVBCbY6p9UBgnmmJFPo9y5UD316CJy7ObhI1OJ3o+WqZ1pQMR/
+	 Mn7vx3BezBrH3MEdRZXX8km8I2vb/TG26Ia0xIi1sxxJGzWaWlqf4r9J3Yqn9cUu5g
+	 0vL14lh+ALPa2W02UphVJpcig9qe5oJOaUrUeyl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeLZTUF (ORCPT
+        id S1727606AbeLZTUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:20:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45696 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 14:20:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727799AbeLZTUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727725AbeLZTUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Dec 2018 14:20:04 -0500
-Subject: Re: [GIT PULL] Main MIPS pull for 4.21
+Subject: Re: [GIT PULL] parisc architecture updates for kernel v4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1545852003;
-        bh=3GKib+kiZ6Kg9/s7Fjj6yR0DGl5iruVTcaEE2mE5gj8=;
+        bh=ZtAhmonkLxb4lJQFHEIw/LlSSQs4adWMScCTrwpNNN0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iYEKAKtfxUQjPrwCKDpLy7Ry60jFiQR1tE7cg2yP9OHHCkKE49enpAy0l+MB0I2qF
-         ZHf+o/o+ImGLQNQbbYeM/kwukZmTScg25ueerJKEN/mEmbE8FtxMOvaiAMoh8N74N/
-         YtMSoquLeDxyY75fcKXDzcLA754ggLva08OiGGak=
+        b=QDZ3ZsUimGycHwBe5USBdEzbSC4pXKzZofL13K+3bshCmTGlDVqU6DTkzoHKmkVD+
+         cRK12tBwda1EPmQ1oCD6f42C/brgoapquOjAATRf2iDAGCdsE1BwTouhXr823CPEIh
+         BalPFv+VR9oaMeJj023FAZSmKP2aKyoYk1Td4e5Q=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181223162426.36uer6mzf2o3xkya@pburton-laptop>
-References: <20181223162426.36uer6mzf2o3xkya@pburton-laptop>
+In-Reply-To: <20181226164942.GA19410@ls3530.dellerweb.de>
+References: <20181226164942.GA19410@ls3530.dellerweb.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181223162426.36uer6mzf2o3xkya@pburton-laptop>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_4.21
-X-PR-Tracked-Commit-Id: adcc81f148d733b7e8e641300c5590a2cdc13bf3
+X-PR-Tracked-Message-Id: <20181226164942.GA19410@ls3530.dellerweb.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git
+ parisc-4.21-1
+X-PR-Tracked-Commit-Id: 930e12992ed32a71048e4bf7abc8939eabcad0d7
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 89261c57021352045c4af24522c6854c9ee90139
-Message-Id: <20181226192003.20075.32056.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: a5f2bd479f58f171a16a9a4f3b4e748ab3057c0f
+Message-Id: <20181226192003.20075.30435.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Wed, 26 Dec 2018 19:20:03 +0000
-To:     Paul Burton <paul.burton@mips.com>
+To:     Helge Deller <deller@gmx.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>,
+        Firoz Khan <firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 23 Dec 2018 16:24:37 +0000:
+The pull request you sent on Wed, 26 Dec 2018 17:49:42 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_4.21
+> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.21-1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/89261c57021352045c4af24522c6854c9ee90139
+https://git.kernel.org/torvalds/c/a5f2bd479f58f171a16a9a4f3b4e748ab3057c0f
 
 Thank you!
 
