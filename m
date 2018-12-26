@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90310C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E170C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF13214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4592214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864975;
-	bh=wDf4zjb9rEvdGiwp9Kgq9zafUn+YBESe08rWbKX+nBA=;
+	s=default; t=1545864995;
+	bh=6z+Vjnhf2bSbjqUW1lnebvwvEFpQMJg3tHCTsr9+1dI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wiLufudjSbeBbUMaGS8TTM2wsJRZCTY8wyOYNCszR4KBdfVEL+HOp64zhLueKwmOA
-	 Ip933RQLWw5JVOTvki+2gxL7OvOSOFZgLxpRzX5hzmFPGPNeAdYLI6rNPBWbl9Dbnj
-	 m6wkDRwh2Ug3a7NQbBLGrflpNwNGahMHRDsRNx38=
+	b=DW3LkX/oQihpVkhjM4WpiwjjW5yMWKwB1/s+JyHrrZKzqpfpaBfuAXyAKDmb6VKsB
+	 JWMwflUUG6wHeDwzwVUfXyst7Al2xs507a1e1dWZe5PKAjVUdLYW88ntRBQGD9H2op
+	 sk0MIpjQptxXDBmzvv+MvPxH9g3JPISS6NXvXzlw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbeLZW4O (ORCPT
+        id S1730186AbeLZW4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55984 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:56:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730191AbeLZWyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:39 -0500
+        id S1730137AbeLZWyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EAEF21741;
-        Wed, 26 Dec 2018 22:54:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 687FF21741;
+        Wed, 26 Dec 2018 22:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864879;
-        bh=wDf4zjb9rEvdGiwp9Kgq9zafUn+YBESe08rWbKX+nBA=;
+        s=default; t=1545864862;
+        bh=6z+Vjnhf2bSbjqUW1lnebvwvEFpQMJg3tHCTsr9+1dI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HI8VbBy6OP2VrBkWFGZREyK0xSs4jZ0f7FWPVcKC69lpjNhx4XEkZ8mjrWac81OIZ
-         N1uMCJV7SFxjz4YFl1ebuE9K6tmMM3qfEQ6zKoxqpq4haSCR6VEgj3vnBISVW42/ZE
-         Z+S/r+u19RHmqxCwKXtTBEGJWlwBXh00DTcf05d0=
+        b=fTrv0/JRoSd6KIX7F+VKi3w/VM5pjMxp4bm4GJK1Vl+AxirHmM+2xuj/U9/2vJzvu
+         /8DFLngWAPGnz370u30KDIFEyPLeOmMzgku5leBvcldzZgwL2qck5f2t4S2iu1tfFn
+         lkkmdbXGSsZd8mrD+W/wHJi7WXUaJ5c+hKq+2ibY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Yonglong Liu <liuyonglong@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 25/35] net: hns: Free irq when exit from abnormal branch
-Date:   Wed, 26 Dec 2018 17:41:32 -0500
-Message-Id: <20181226224142.150866-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 20/35] net: hns: Incorrect offset address used for some registers.
+Date:   Wed, 26 Dec 2018 17:41:27 -0500
+Message-Id: <20181226224142.150866-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -61,79 +61,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit c82bd077e1ba3dd586569c733dc6d3dd4b0e43cd ]
+[ Upstream commit 4e1d4be681b2c26fd874adbf584bf034573ac45d ]
 
-1.In "hns_nic_init_irq", if request irq fail at index i,
-  the function return directly without releasing irq resources
-  that already requested.
-
-2.In "hns_nic_net_up" after "hns_nic_init_irq",
-  if exceptional branch occurs, irqs that already requested
-  are not release.
+According to the hip06 Datasheet:
+1. The offset of INGRESS_SW_VLAN_TAG_DISC should be 0x1A00+4*all_chn_num
+2. The offset of INGRESS_IN_DATA_STP_DISC should be 0x1A50+4*all_chn_num
 
 Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 23 ++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index d96a64bc1db8..63a14edd6a19 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -1195,6 +1195,22 @@ static void hns_set_irq_affinity(struct hns_nic_priv *priv)
- 	}
- }
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index 8ea3d95fa483..e25206540fd7 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -2163,9 +2163,9 @@ void hns_dsaf_update_stats(struct dsaf_device *dsaf_dev, u32 node_num)
+ 		DSAF_INODE_LOCAL_ADDR_FALSE_NUM_0_REG + 0x80 * (u64)node_num);
  
-+static void hns_nic_free_irq(int q_num, struct hns_nic_priv *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < q_num * 2; i++) {
-+		if (priv->ring_data[i].ring->irq_init_flag == RCB_IRQ_INITED) {
-+			irq_set_affinity_hint(priv->ring_data[i].ring->irq,
-+					      NULL);
-+			free_irq(priv->ring_data[i].ring->irq,
-+				 &priv->ring_data[i]);
-+			priv->ring_data[i].ring->irq_init_flag =
-+				RCB_IRQ_NOT_INITED;
-+		}
-+	}
-+}
-+
- static int hns_nic_init_irq(struct hns_nic_priv *priv)
- {
- 	struct hnae_handle *h = priv->ae_handle;
-@@ -1219,7 +1235,7 @@ static int hns_nic_init_irq(struct hns_nic_priv *priv)
- 		if (ret) {
- 			netdev_err(priv->netdev, "request irq(%d) fail\n",
- 				   rd->ring->irq);
--			return ret;
-+			goto out_free_irq;
- 		}
- 		disable_irq(rd->ring->irq);
- 		rd->ring->irq_init_flag = RCB_IRQ_INITED;
-@@ -1229,6 +1245,10 @@ static int hns_nic_init_irq(struct hns_nic_priv *priv)
- 	hns_set_irq_affinity(priv);
+ 	hw_stats->vlan_drop += dsaf_read_dev(dsaf_dev,
+-		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 0x80 * (u64)node_num);
++		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 4 * (u64)node_num);
+ 	hw_stats->stp_drop += dsaf_read_dev(dsaf_dev,
+-		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 0x80 * (u64)node_num);
++		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 4 * (u64)node_num);
  
- 	return 0;
-+
-+out_free_irq:
-+	hns_nic_free_irq(h->q_num, priv);
-+	return ret;
- }
- 
- static int hns_nic_net_up(struct net_device *ndev)
-@@ -1276,6 +1296,7 @@ static int hns_nic_net_up(struct net_device *ndev)
- 	for (j = i - 1; j >= 0; j--)
- 		hns_nic_ring_close(ndev, j);
- 
-+	hns_nic_free_irq(h->q_num, priv);
- 	set_bit(NIC_STATE_DOWN, &priv->state);
- 
- 	return ret;
+ 	/* pfc pause frame statistics stored in dsaf inode*/
+ 	if ((node_num < DSAF_SERVICE_NW_NUM) && !is_ver1) {
 -- 
 2.19.1
 
