@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F196C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3312FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FA1214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADAA214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864165;
-	bh=F3wy1AOoPMSaCAUvW9E3C8Gt4taMW+j+J+f0Hg5jcZo=;
+	s=default; t=1545864177;
+	bh=ebVE/3Rsh19uCAPmSySiIETb4s/xm3EZZmUfBL0ZCfU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HJJxsR+0M8uO8pTEGasLSXwoC+ZHuOPgaMQC8MRTPoPSekJHX8MGow6gfSs0KVw41
-	 WFwcFF2gYcIYTDEkFAf2vWxfwrzfCQYTltxyOLUWW+/o9b4aZ4iLwb38VtkSS1IlKj
-	 6E/mWKPCzdcTiB8au1aPrl9eLXxT/AxkrCEvn8jk=
+	b=oIyXfmwOkUWWs96oXiREkp1ga9EQn8XMYx1z16y7HgzVuHzjSyw+YnrNr5kVeTXkk
+	 jtBNFrbbIY44AwdAGCzMqFtTIe417MfKTJXxZ6G8gBOBYaAnYoSKzE8BvyTrgd8uW4
+	 4MoxNEyB5oEk7jTvNXXpBtU0yBjh8rYOXfCQzwTk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbeLZWmn (ORCPT
+        id S1729672AbeLZWmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:42:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41844 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:42:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729446AbeLZWl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:41:26 -0500
+        id S1729429AbeLZWlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:41:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7AAE218E2;
-        Wed, 26 Dec 2018 22:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCCF521901;
+        Wed, 26 Dec 2018 22:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864085;
-        bh=F3wy1AOoPMSaCAUvW9E3C8Gt4taMW+j+J+f0Hg5jcZo=;
+        s=default; t=1545864084;
+        bh=ebVE/3Rsh19uCAPmSySiIETb4s/xm3EZZmUfBL0ZCfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gS5eIls1G68fWIGVFqHflyCHE3j+p/H5b5OPUz5VPZ+TBbndZpczyQajoellPlw9y
-         gHc4OEECrF3KfOl49Iw4QF3fgBPog8EzcCppsGoqzFlU9tdAJuH3kFFcmrhFAWzpW2
-         eDnpeSSKWsvHX//m7xCkI14rw3v+xmTpBNw4pXSY=
+        b=aV602Xx7kyrZhP6BwrWHa/RpAn093++lE9Xm4Ucp9gFDkst7i0MxQKVd/11sOWV3E
+         X3P6s4Ba62qU39HiT7GF3+drc6gD1IagtD8ZUOHskLDICgncfj8Q54Qa+y26o2QpdQ
+         UJ+rC+KR+6XXQnIR4oqiAlNsXsizaz0e95TO1s50=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Juergen Gross <jgross@suse.com>,
+Cc:     Jason Martinsen <jasonmartinsen@msn.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 49/59] xen/netfront: tolerate frags with no data
-Date:   Wed, 26 Dec 2018 17:38:29 -0500
-Message-Id: <20181226223839.150262-49-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 48/59] lan78xx: Resolve issue with changing MAC address
+Date:   Wed, 26 Dec 2018 17:38:28 -0500
+Message-Id: <20181226223839.150262-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -57,38 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juergen Gross <jgross@suse.com>
+From: Jason Martinsen <jasonmartinsen@msn.com>
 
-[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
+[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
 
-At least old Xen net backends seem to send frags with no real data
-sometimes. In case such a fragment happens to occur with the frag limit
-already reached the frontend will BUG currently even if this situation
-is easily recoverable.
+Current state for the lan78xx driver does not allow for changing the
+MAC address of the interface, without either removing the module (if
+you compiled it that way) or rebooting the machine.  If you attempt to
+change the MAC address, ifconfig will show the new address, however,
+the system/interface will not respond to any traffic using that
+configuration.  A few short-term options to work around this are to
+unload the module and reload it with the new MAC address, change the
+interface to "promisc", or reboot with the correct configuration to
+change the MAC.
 
-Modify the BUG_ON() condition accordingly.
+This patch enables the ability to change the MAC address via fairly normal means...
+ifdown <interface>
+modify entry in /etc/network/interfaces OR a similar method
+ifup <interface>
+Then test via any network communication, such as ICMP requests to gateway.
 
-Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+My only test platform for this patch has been a raspberry pi model 3b+.
+
+Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
+
+-----
+
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/xen-netfront.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 6ea95b316256..4af4e5c12d53 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -904,7 +904,7 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
- 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
- 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index e069b310d6a6..b62c41114e34 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2212,6 +2212,10 @@ static int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
+ 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
+ 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
  
--			BUG_ON(pull_to <= skb_headlen(skb));
-+			BUG_ON(pull_to < skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
++	/* Added to support MAC address changes */
++	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
++	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
