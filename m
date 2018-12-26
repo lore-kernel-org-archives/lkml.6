@@ -2,217 +2,359 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE2BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C16C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB6320882
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A19702148D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="K5bArdkv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fyoyanpS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeLZTcJ (ORCPT
+        id S1727657AbeLZTcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:32:09 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:40737 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbeLZTcJ (ORCPT
+        Wed, 26 Dec 2018 14:32:50 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45798 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727642AbeLZTct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:32:09 -0500
-Received: by mail-ed1-f46.google.com with SMTP id g22so13778406edr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:32:07 -0800 (PST)
+        Wed, 26 Dec 2018 14:32:49 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so7866950pgc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:32:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=2KTLNrXt84O4LQWmuO5gR81MvObkH110ktJvlB4rB5I=;
-        b=K5bArdkvmWRV5OtXLyBqd11haoXH6iEcMBPt0avAELANCSEeA4pKF7yYvKYNsQXC+x
-         fk0RmfIMP/A2RW31RnEPiCyhkCkIv980Mmy2vZc7L0rFu52PK2XfajCeC1ZDJ/sEyFWG
-         VKte6x5pCx05gKLyJUiUQSIhF0tXJS6v35kLQ=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rjgvH5Ee2jfD5Pf6WL7HCbyAesfJR/ciMJhYO5Wno+0=;
+        b=fyoyanpSIHV29gU+fARIsuk/VK1CDVZmv1+if0UDNFCgUzqDsmawlNJOXbrZkQ3uo7
+         iB2FfQKdFKLxp2aTFdM34FBLCRXAknLaHZkwnpxveeEYk0DmUphEmtquyC50UjIPehDp
+         3sqwDWFMebpZLNnPhfMQ2vFpUzosysW9uBWd0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=2KTLNrXt84O4LQWmuO5gR81MvObkH110ktJvlB4rB5I=;
-        b=bFx/0C4Lp5rdLwW4BG6ol3A8du6oJBnU/spV3zeiK/gT56KDXZXvpHawB6f9OYwX3U
-         RVehzjl8pKMlZEJzkUSFPBnopkeEiogn58J8N74jXivCKBmcIwnH5rykDegInO5P0ibX
-         CY4h8lCZUrbtlz3Jgg6BOkUg2/VoWCZ1UWmElueb3Pt1G7u9CE3W05T1M8PK9vB/slgO
-         QPqr9ZBaPUJowHFvBn7M+7qxIYvWxPoNYhTQDqfIT3FfNW1lXL96bPhw3WXKL3dra2Y9
-         qyk+Rfh30ii1FPU3KuSIQIdKSyay3zr+AWt2293NbuHIefiaEnJf9Qq0RcwSdNoDMdfE
-         Uf0Q==
-X-Gm-Message-State: AA+aEWZjfmiFYaIR4dJvuXD6gFklWK5nFTd6/l0YfLStZR1O+fyQlHV7
-        lYXR0Z4kQDTEZsArJibuXJ8PyxrjtWD+jpfCGxP/EdxLcag=
-X-Google-Smtp-Source: AFSGD/W9I2jyaLuTRsnn+EMq50RHQpAdZlxSeAhXF5Z9bWf1q7M6uFxqEGtww+yB0kZWAxlzpLtCNUaTNdKZgj8dvas=
-X-Received: by 2002:a50:8bb5:: with SMTP id m50mr16032859edm.211.1545852725992;
- Wed, 26 Dec 2018 11:32:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rjgvH5Ee2jfD5Pf6WL7HCbyAesfJR/ciMJhYO5Wno+0=;
+        b=WL9fqbCJ6WZapY5iBguYrSAou4+jr4hfTlTUrYVTf/AzV2a1k93AAJfsLhwXntv9Ts
+         YSc3/OJE6x+nqqc/rqFLRhrazj7D8fKXxpVwyXCuR/iQRwTQMYrCHpulHjCs5M6SzKeD
+         w1bW7/xMPtt3Ee4G1c+w8aergjbVZERQWFnHYz1XiAIwloCR8emWCLb/fhS5y6bqtSpS
+         SNi63aEHgb43iDnL4WA4fpQxDMpjepWKfsR3UJXtjws6hjqEs9UBbullkndz78d55OpV
+         izPJ97Q5OmWRiiDf21Jg7p40SvVCcQV23rZfUdgCp69qH2dOoU45PWnuno9uNAGJD4f4
+         mcMQ==
+X-Gm-Message-State: AA+aEWZlkNxd8mH1VuVpamxhmCstAVn0MOszHJ7r++Ddexo1S2oJ63LG
+        h21bR6fmXjSbXwYCgXPX1fq8GRVYVukvFw==
+X-Google-Smtp-Source: AFSGD/WocS8GmCfEhAOIQMsI3IgRHsfW0m+fFlyC73L494Oc9D4+FY1GVTVHwTYn6gyCJM0w+i2ubg==
+X-Received: by 2002:a62:6ec8:: with SMTP id j191mr21332666pfc.198.1545852768307;
+        Wed, 26 Dec 2018 11:32:48 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id b9sm51820916pfi.118.2018.12.26.11.32.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 11:32:47 -0800 (PST)
+Date:   Wed, 26 Dec 2018 11:32:46 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+Subject: Re: [PATCH v1] cpufreq: qcom: Read voltage LUT and populate OPP
+Message-ID: <20181226193246.GG261387@google.com>
+References: <1545415608-15163-1-git-send-email-tdas@codeaurora.org>
+ <20181221205752.GD261387@google.com>
+ <2977f340-cd4e-86bc-da3a-8845676e39ed@codeaurora.org>
 MIME-Version: 1.0
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Wed, 26 Dec 2018 14:31:30 -0500
-Message-ID: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
-Subject: CPUs blocking in update_blocked_averages -- 4.19.12
-To:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2977f340-cd4e-86bc-da3a-8845676e39ed@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We're seeing an issue introduced in 4.18, and that still persists in
-4.19.12 (we upgraded from 4.9), where update_blocked_averages is
-blocking. We're running a workload where a majority of our workloads
-are  confined by cgroups. This exhibits itself due to a softlockup on
-a CPU which is waiting on a lock that's held by
-update_blocked_averages. I don't have access to any bare metal
-hardware at the moment, and these are all systems running under KVM.
-This kernel has CONFIG_FAIR_GROUP_SCHED on.
+Hi Taniya,
 
-The Softlocked CPU:
-crash> bt
-PID: 29314  TASK: ffff99b5f0671f00  CPU: 0   COMMAND: "ag"
- #0 [ffff99b67b203d58] machine_kexec at ffffffff91a602f3
- #1 [ffff99b67b203db0] __crash_kexec at ffffffff91b49011
- #2 [ffff99b67b203e70] panic at ffffffff91a896d1
- #3 [ffff99b67b203ef8] watchdog_timer_fn at ffffffff91b816af
- #4 [ffff99b67b203f28] __hrtimer_run_queues at ffffffff91b26359
- #5 [ffff99b67b203f88] hrtimer_interrupt at ffffffff91b26de2
- #6 [ffff99b67b203fd8] smp_apic_timer_interrupt at ffffffff92402b06
- #7 [ffff99b67b203ff0] apic_timer_interrupt at ffffffff92401a9f
---- <IRQ stack> ---
- #8 [ffffa49fa1acbc08] apic_timer_interrupt at ffffffff92401a9f
-    [exception RIP: smp_call_function_many+543]
-    RIP: ffffffff91b3e84f  RSP: ffffa49fa1acbcb0  RFLAGS: 00000202
-    RAX: 0000000000000010  RBX: ffff99b67b224fc0  RCX: ffff99b67b6286a0
-    RDX: 0000000000000001  RSI: 0000000000000200  RDI: ffff99b67b224fc8
-    RBP: ffff99b67b224fc8   R8: 0000000000000001   R9: 0000000000000000
-    R10: 0000000000000000  R11: 0000000000000000  R12: 0000000000025080
-    R13: ffffa49fa1acbd00  R14: 0000000000000001  R15: 0000000000000200
-    ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
- #9 [ffffa49fa1acbcf8] flush_tlb_mm_range at ffffffff91a7853c
-#10 [ffffa49fa1acbd90] free_pgtables at ffffffff91c4ac3b
-#11 [ffffa49fa1acbdc8] unmap_region at ffffffff91c54439
-#12 [ffffa49fa1acbe90] do_munmap at ffffffff91c56355
-#13 [ffffa49fa1acbee0] vm_munmap at ffffffff91c56587
-#14 [ffffa49fa1acbf20] __x64_sys_munmap at ffffffff91c565e2
-#15 [ffffa49fa1acbf38] do_syscall_64 at ffffffff91a04590
-#16 [ffffa49fa1acbf50] entry_SYSCALL_64_after_hwframe at ffffffff9240008d
-    RIP: 00007f43e94de747  RSP: 00007f43e91d7e28  RFLAGS: 00000213
-    RAX: ffffffffffffffda  RBX: 00000000011a6f30  RCX: 00007f43e94de747
-    RDX: 0000000000000001  RSI: 0000000000000ade  RDI: 00007f43ea47d000
-    RBP: 0000000000000005   R8: 00007f43e00008c0   R9: 00007f43e91d7d00
-    R10: 00000000011a53b0  R11: 0000000000000213  R12: 00007f43ea47d000
-    R13: 0000000000000ade  R14: 00007f43e91d89c0  R15: 0000000000000060
-    ORIG_RAX: 000000000000000b  CS: 0033  SS: 002b
+On Mon, Dec 24, 2018 at 12:29:18AM +0530, Taniya Das wrote:
+> Hello Matthias,
+> 
+> Thanks for your review comments.
+> 
+> On 12/22/2018 2:27 AM, Matthias Kaehlcke wrote:
+> > Hi Taniya,
+> > 
+> > On Fri, Dec 21, 2018 at 11:36:48PM +0530, Taniya Das wrote:
+> > > Add support to read the voltage look up table and populate OPP for all
+> > > corresponding CPUS.
+> > > 
+> > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > > ---
+> > >   drivers/cpufreq/qcom-cpufreq-hw.c | 32 ++++++++++++++++++++++++++++++--
+> > >   1 file changed, 30 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> > > index d83939a..7559b87 100644
+> > > --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> > > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> > > @@ -10,18 +10,21 @@
+> > >   #include <linux/module.h>
+> > >   #include <linux/of_address.h>
+> > >   #include <linux/of_platform.h>
+> > > +#include <linux/pm_opp.h>
+> > >   #include <linux/slab.h>
+> > > 
+> > >   #define LUT_MAX_ENTRIES			40U
+> > >   #define LUT_SRC				GENMASK(31, 30)
+> > >   #define LUT_L_VAL			GENMASK(7, 0)
+> > >   #define LUT_CORE_COUNT			GENMASK(18, 16)
+> > > +#define LUT_VOLT			GENMASK(11, 0)
+> > >   #define LUT_ROW_SIZE			32
+> > >   #define CLK_HW_DIV			2
+> > > 
+> > >   /* Register offsets */
+> > >   #define REG_ENABLE			0x0
+> > > -#define REG_LUT_TABLE			0x110
+> > > +#define REG_FREQ_LUT_TABLE		0x110
+> > > +#define REG_VOLT_LUT_TABLE		0x114
+> > 
+> > The new names suggest that there is a LUT for frequencies and another
+> > one for voltages. I don't have access to hardware documentation, but
+> > from the code and offsets in this driver it seems there is a single
+> > table at offset 0x110, with a 'row' of 32 bytes per OPP. Within this
+> > row the frequency (and other values) is located at offset 0, the
+> > voltage at offset 4.
+> > 
+> > I'd suggest to keep REG_LUT_TABLE, add a define LUT_OFFSET_VOLTAGE/MV
+> > (or similar) and adjust the math in qcom_cpufreq_hw_read_lut() to use
+ > > REG_LUT_TABLE as base offset.
+> > 
+> 
+> These names are as per HW documentation and the math is kept as per the
+> documentation for reading the voltage.
 
-This is waiting on CPU 16:
-crash> bt
-PID: 29299  TASK: ffff99b5dffd1f00  CPU: 16  COMMAND: "ag"
- #0 [fffffe00002c8e38] crash_nmi_callback at ffffffff91a54202
- #1 [fffffe00002c8e50] nmi_handle at ffffffff91a32ee2
- #2 [fffffe00002c8ea0] default_do_nmi at ffffffff91a333ea
- #3 [fffffe00002c8ec0] do_nmi at ffffffff91a33553
- #4 [fffffe00002c8ef0] end_repeat_nmi at ffffffff924014e8
-    [exception RIP: native_queued_spin_lock_slowpath+33]
-    RIP: ffffffff91af2dc1  RSP: ffffa49fa1a93948  RFLAGS: 00000002
-    RAX: 0000000000000001  RBX: ffff99b67b763f40  RCX: 000000004f19a57a
-    RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b67b763f40
-    RBP: 0000000000000082   R8: 0000000000000001   R9: 0000000000000000
-    R10: ffffa49fa1a938f8  R11: ffffffff91aca4a7  R12: 0000000000000015
-    R13: ffff99b67b764940  R14: ffffa49fa1a93a60  R15: 0000000000000015
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
---- <NMI exception stack> ---
- #5 [ffffa49fa1a93948] native_queued_spin_lock_slowpath at ffffffff91af2dc1
- #6 [ffffa49fa1a93948] do_raw_spin_lock at ffffffff91af48dd
- #7 [ffffa49fa1a93958] _raw_spin_lock_irqsave at ffffffff923c1154
- #8 [ffffa49fa1a93978] update_blocked_averages at ffffffff91aca4a7
- #9 [ffffa49fa1a93a10] update_nohz_stats at ffffffff91acaa3d
-#10 [ffffa49fa1a93a20] find_busiest_group at ffffffff91ad2137
-#11 [ffffa49fa1a93bb8] load_balance at ffffffff91ad2be0
-#12 [ffffa49fa1a93cf0] pick_next_task_fair at ffffffff91ad41e6
-#13 [ffffa49fa1a93da0] mark_held_locks at ffffffff91aeebe4
-#14 [ffffa49fa1a93de8] schedule at ffffffff923b9ec2
-#15 [ffffa49fa1a93df8] rwsem_down_read_failed at ffffffff923be859
-#16 [ffffa49fa1a93e80] call_rwsem_down_read_failed at ffffffff923ae944
-#17 [ffffa49fa1a93ec8] down_read at ffffffff923bdf0b
-#18 [ffffa49fa1a93ee0] __do_page_fault at ffffffff91a71083
-#19 [ffffa49fa1a93f50] async_page_fault at ffffffff924010ee
-    RIP: 00007f43e945f786  RSP: 00007ffde2b50070  RFLAGS: 00010206
-    RAX: 0000000000015f41  RBX: 00007f43e97a1b20  RCX: 0000000000000111
-    RDX: 00000000011affb0  RSI: 00000000011b00c0  RDI: 0000000000000000
-    RBP: 0000000000000111   R8: 00007f43e97a1bd8   R9: 0000000000000000
-    R10: 00007f43e97a1b78  R11: 00007f43e97a1b78  R12: 00007f43e97a1b78
-    R13: 00007f43e97a1b78  R14: 0000000000002710  R15: 00007f43e97a1c78
-    ORIG_RAX: ffffffffffffffff  CS: 0033  SS: 002b
+The HW documentation is confusing then and I'm not convinced this
+should be carried over 1:1 to the driver. In any case this
+documentation is only available to a reduced audience, why make it
+harder for everyone else?
 
-Which is waiting on a lock held by CPU owned by CPU 9:
-crash> struct raw_spinlock_t ffff99b67b763f40
-struct raw_spinlock_t {
-  raw_lock = {
-    {
-      val = {
-        counter = 1
-      },
-      {
-        locked = 1 '\001',
-        pending = 0 '\000'
-      },
-      {
-        locked_pending = 1,
-        tail = 0
-      }
-    }
-  },
-  magic = 3735899821,
-  owner_cpu = 9,
-  owner = 0xffff99b66e7a8000,
-  dep_map = {
-    key = 0xffffffff9331d120,
-    class_cache = {0xffffffff93a13da0, 0x0},
-    name = 0xffffffff92a7d9ad "&rq->lock"
-  }
-}
+I think something like this would be preferable (removed _TABLE suffix,
+since that's already part of LUT):
 
-Which is hanging out in update_blocked_averages:
-crash> bt
-PID: 0      TASK: ffff99b66e7a8000  CPU: 9   COMMAND: "swapper/9"
- #0 [fffffe0000194e38] crash_nmi_callback at ffffffff91a54202
- #1 [fffffe0000194e50] nmi_handle at ffffffff91a32ee2
- #2 [fffffe0000194ea0] default_do_nmi at ffffffff91a33362
- #3 [fffffe0000194ec0] do_nmi at ffffffff91a33553
- #4 [fffffe0000194ef0] end_repeat_nmi at ffffffff924014e8
-    [exception RIP: lock_is_held_type+70]
-    RIP: ffffffff91aecec6  RSP: ffff99b67b443e20  RFLAGS: 00000046
-    RAX: 0000000000000001  RBX: ffff99b66e7a8000  RCX: 00000000000000a8
-    RDX: 0000000000000001  RSI: 00000000ffffffff  RDI: 0000000000000046
-    RBP: 0000000000000046   R8: 0000000000000004   R9: 0000000000000000
-    R10: ffff99b67b443e38  R11: ffffffff91aca4a7  R12: ffff99b67b763f40
-    R13: ffff99b67b764940  R14: 0000000000000000  R15: ffff99b6193d9200
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
---- <NMI exception stack> ---
- #5 [ffff99b67b443e20] lock_is_held_type at ffffffff91aecec6
- #6 [ffff99b67b443e30] update_blocked_averages at ffffffff91aca841
- #7 [ffff99b67b443ec8] update_nohz_stats at ffffffff91acaa3d
- #8 [ffff99b67b443ed8] _nohz_idle_balance at ffffffff91ad39f7
- #9 [ffff99b67b443f70] __softirqentry_text_start at ffffffff926000d1
-#10 [ffff99b67b443fd0] irq_exit at ffffffff91a911f5
-#11 [ffff99b67b443fd8] smp_apic_timer_interrupt at ffffffff92402b2c
-#12 [ffff99b67b443ff0] apic_timer_interrupt at ffffffff92401a9f
---- <IRQ stack> ---
-#13 [ffffa49f98993df8] apic_timer_interrupt at ffffffff92401a9f
-    [exception RIP: mwait_idle+108]
-    RIP: ffffffff923c02fc  RSP: ffffa49f98993ea8  RFLAGS: 00000246
-    RAX: 0000000000000000  RBX: 0000000000000009  RCX: 0000000000000000
-    RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b66e7a8000
-    RBP: 0000000000000009   R8: 0000000000000001   R9: 0000000000000000
-    R10: 0000000000000000  R11: 0000000000000000  R12: ffff99b66e7a8000
-    R13: 0000000000000000  R14: 0000000000000000  R15: ffff99b66e7a8000
-    ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
-#14 [ffffa49f98993ec0] do_idle at ffffffff91ac6ba3
-#15 [ffffa49f98993f10] cpu_startup_entry at ffffffff91ac6f4f
-#16 [ffffa49f98993f30] start_secondary at ffffffff91a55759
-#17 [ffffa49f98993f50] secondary_startup_64 at ffffffff91a000d4
+#define OFFSET_LUT		0x110
+#define REG_FREQ_LUT		0x00
+#define REG_VOLT_LUT		0x04
 
----
+freq = read(OFFSET_LUT + (LUT_ROW_SIZE * i) + REG_FREQ_LUT);
+volt = read(OFFSET_LUT + (LUT_ROW_SIZE * i) + REG_VOLT_LUT);
 
-Lockdep tells me nothing, which makes me think, somehow is the code in
-for_each_leaf_cfs_rq_safe looping forever?
+or probably better:
+
+row_addr = OFFSET_LUT + (LUT_ROW_SIZE * i);
+freq = read(row_addr + REG_FREQ_LUT);
+volt = read(row_addr + REG_VOLT_LUT);
+
+> > >   #define REG_PERF_STATE			0x920
+> > > 
+> > >   static unsigned long cpu_hw_rate, xo_rate;
+> > > @@ -75,19 +78,26 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+> > >   				    void __iomem *base)
+> > >   {
+> > >   	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
+> > > +	u32 volt;
+> > >   	unsigned int max_cores = cpumask_weight(policy->cpus);
+> > >   	struct cpufreq_frequency_table	*table;
+> > > +	unsigned long cpu_r;
+> > 
+> > nit: why 'cpu_r' and not just 'cpu'?
+> > 
+> > (if it is needed at all, see my comment below)
+> > 
+> > > 
+> > >   	table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
+> > >   	if (!table)
+> > >   		return -ENOMEM;
+> > > 
+> > >   	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+> > > -		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
+> > > +		data = readl_relaxed(base + REG_FREQ_LUT_TABLE +
+> > > +				      i * LUT_ROW_SIZE);
+> > >   		src = FIELD_GET(LUT_SRC, data);
+> > >   		lval = FIELD_GET(LUT_L_VAL, data);
+> > >   		core_count = FIELD_GET(LUT_CORE_COUNT, data);
+> > > 
+> > > +		data = readl_relaxed(base + REG_VOLT_LUT_TABLE +
+> > > +				      i * LUT_ROW_SIZE);
+> > > +		volt = FIELD_GET(LUT_VOLT, data) * 1000;
+> > > +
+> > >   		if (src)
+> > >   			freq = xo_rate * lval / 1000;
+> > >   		else
+> > > @@ -123,6 +133,10 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+> > > 
+> > >   		prev_cc = core_count;
+> > >   		prev_freq = freq;
+> > > +
+> > > +		freq *= 1000;
+> > > +		for_each_cpu(cpu_r, policy->cpus)
+> > > +			dev_pm_opp_add(get_cpu_device(cpu_r), freq, volt);
+> > 
+> > Are you sure we want to duplicate the OPP entries for all CPUs in the
+> > cluster? IIUC the frequencies of the cores in a cluster can't be
+> > changed individually, hence the cores should have a shared table. I
+> > think dev_pm_opp_get_sharing_cpus() does what you need.
+> > 
+> > You currently also add OPPs for invalid frequencies. From my SDM845
+> > device:
+> > 
+> > cat /sys/devices/system/cpu/cpufreq/policy4/scaling_available_freq
+> >    => 825600 902400 979200 1056000 1209600 1286400 1363200 1459200
+> >    1536000 1612800 1689600 1766400 1843200 1920000 1996800 2092800
+> >    2169600 2246400 2323200 2400000 2476800 2553600 2649600
+> > 
+> > cat /sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies
+> > 2803200
+> > 
+> > ls /sys/kernel/debug/opp/cpu4/
+> > opp:1056000000  opp:1612800000  opp:2092800000  opp:2553600000  opp:825600000
+> > opp:1209600000  opp:1689600000  opp:2169600000  opp:2649600000  opp:902400000
+> > opp:1286400000  opp:1766400000  opp:2246400000  opp:2707200000  opp:979200000
+> > opp:1363200000  opp:1843200000  opp:2323200000  opp:2764800000
+> > opp:1459200000  opp:1920000000  opp:2400000000  opp:2784000000
+> > opp:1536000000  opp:1996800000  opp:2476800000  opp:2803200000
+> > 
+> > There are OPP entries for 2707200000, 2764800000 and 2784000000 Hz,
+> > however these frequencies appear neither in available_frequencies nor
+> > boost_frequencies.
+> > 
+> > >   	}
+> > > 
+> 
+> Could you help validating with the patch below?
+> 
+> > >   	table[i].frequency = CPUFREQ_TABLE_END;
+> > > @@ -159,10 +173,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+> > >   	struct device *dev = &global_pdev->dev;
+> > >   	struct of_phandle_args args;
+> > >   	struct device_node *cpu_np;
+> > > +	struct device *cpu_dev;
+> > >   	struct resource *res;
+> > >   	void __iomem *base;
+> > >   	int ret, index;
+> > > 
+> > > +	cpu_dev = get_cpu_device(policy->cpu);
+> > > +	if (!cpu_dev) {
+> > > +		pr_err("%s: failed to get cpu%d device\n", __func__,
+> > > +		       policy->cpu);
+> > > +		return -ENODEV;
+> > > +	}
+> > > +
+> > >   	cpu_np = of_cpu_device_node_get(policy->cpu);
+> > >   	if (!cpu_np)
+> > >   		return -EINVAL;
+> > > @@ -205,6 +227,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+> > >   		goto error;
+> > >   	}
+> > > 
+> > > +	ret = dev_pm_opp_get_opp_count(cpu_dev);
+> > > +	if (ret <= 0) {
+> > > +		dev_err(cpu_dev, "OPP table is not ready\n");
+> > > +		goto error;
+> > > +	}
+> > > +
+> > >   	policy->fast_switch_possible = true;
+> > > 
+> > >   	return 0;
+> > 
+> > I suppose we want to remove the OPPs when the cpufreq driver is
+> > unloaded, looks like dev_pm_opp_cpumask_remove_table() should do the
+> > trick.
+> > 
+> > Cheers
+> > 
+> > Matthias
+> > 
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c
+> b/drivers/cpufreq/qcom-cpufreq-hw.c
+> index 7559b87..23338b2 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -81,7 +81,6 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>         u32 volt;
+>         unsigned int max_cores = cpumask_weight(policy->cpus);
+>         struct cpufreq_frequency_table  *table;
+> -       unsigned long cpu_r;
+> 
+>         table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
+>         if (!table)
+> @@ -110,6 +109,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>                         table[i].frequency = freq;
+>                         dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
+>                                 freq, core_count);
+> +                       dev_pm_opp_add(get_cpu_device(policy->cpu),
+> +                                       freq * 1000, volt);
+
+nit: I'd suggest to put this before dev_dbg() or assign the table
+after dev_dbg(), to keep the actual actions together instead of
+splitting them unnecessarily with a debug log.
+
+>                 }
+> 
+>                 /*
+> @@ -126,6 +127,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>                         if (prev_cc != max_cores) {
+>                                 prev->frequency = prev_freq;
+>                                 prev->flags = CPUFREQ_BOOST_FREQ;
+> +                               dev_pm_opp_add(get_cpu_device(policy->cpu),
+> +                                               prev_freq * 1000, volt);
+>                         }
+> 
+>                         break;
+> @@ -133,12 +136,9 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+> 
+>                 prev_cc = core_count;
+>                 prev_freq = freq;
+> -
+> -               freq *= 1000;
+> -               for_each_cpu(cpu_r, policy->cpus)
+> -                       dev_pm_opp_add(get_cpu_device(cpu_r), freq, volt);
+>         }
+> 
+> +       dev_pm_opp_set_sharing_cpus(get_cpu_device(policy->cpu),
+> policy->cpus);
+
+nit: since the loop above first initializes the table and then adds
+the OPP it would be slightly more consistent to also finish the
+table business first here and then handle the OPPs. Shouldn't make a
+functional difference though, just a suggestion.
+
+>         table[i].frequency = CPUFREQ_TABLE_END;
+>         policy->freq_table = table;
+> 
+> @@ -245,6 +245,7 @@ static int qcom_cpufreq_hw_cpu_exit(struct
+> cpufreq_policy *policy)
+>  {
+>         void __iomem *base = policy->driver_data - REG_PERF_STATE;
+> 
+> +       dev_pm_opp_cpumask_remove_table(policy->cpus);
+>         kfree(policy->freq_table);
+>         devm_iounmap(&global_pdev->dev, base);
+>
+
+Looks good to me except for the nits.
+
+Unbinding the device ("echo 17d43000.cpufreq > /sys/bus/platform/drivers/qcom-cpufreq-hw/unbind")
+results in a similar lockdep spat as the one reported earlier by
+Stephen (https://lore.kernel.org/patchwork/patch/1024546/#1209031),
+this time involving 'dev_pm_opp_cpumask_remove_table', however I don't
+think this an issue introduced by this patch.
+
+Thanks
+
+Matthias
