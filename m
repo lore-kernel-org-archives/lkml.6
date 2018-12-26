@@ -2,117 +2,121 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476FFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA99C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1371621741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C50C2171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:08:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="kwFxqb4I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsX2OGmd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeLZTIg (ORCPT
+        id S1727593AbeLZTIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:08:36 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:41154 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeLZTID (ORCPT
+        Wed, 26 Dec 2018 14:08:38 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52772 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeLZTHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:08:03 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 8A69DB18
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 19:08:01 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iZsIbp6kgY66 for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Dec 2018 13:08:01 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 594C91C3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 13:08:01 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id b8so4692181ion.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:08:01 -0800 (PST)
+        Wed, 26 Dec 2018 14:07:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so15154678wml.2;
+        Wed, 26 Dec 2018 11:07:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ochM5m1KMB+5vlcxy5xlYUPq9FxXr2ho76d6PIZxYqg=;
-        b=kwFxqb4I69HA5AqDxFsKEWBcg/NoeYcc/A8lJg2r9zy4NMy2L1FkP8j4BJvQe4Ffo3
-         e1l1vGEQwY1cpj1q2n7IRgxUhd2YpjW/yd6SQF4Joub9j2mACHS6z2exi8C/0K2IvF0P
-         D1ePRXAzam0egWKLvO/SmgIgImmc6Pe6K/5tPCyBvh+gAzJtcZsZ2rbAJj526M/Bnl+3
-         hv6x6fOlG5RWSYgfkdgyqjPI9aVSOykfSa7n7p09NHL/OUA30PUKmPV9a0UobSSsfbEr
-         GWEVaKl8Cu9wVsHpvMGDTE7wfpwPR05VfcuEpmwSe8zV6/Suyu1I3LoxdaP+sR7haCLw
-         tGNQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ALtQWJJu4IBpqbuXLkdpeeA6r1od8nvFyOKnNuiCE7M=;
+        b=bsX2OGmd1+gLCNhqg3UXcK4i/kU9XRfEw/CfS/+FHH09UEFL/n8t7sO+Zap+2iI+x0
+         3y93Esuzqvrf2x3GeYv1bDBv61WvQBYowQXhupBKWOtBJ4VEkAFmNWfBxuVwykjAaaEi
+         cpzJsxeSH+kelv7Fw/VzMFX/nSD4s5qdrQEVJjv2yRmyfUgxJst7msesqU5PvV6rpflz
+         4g9e+yX+TlB90bbSlz4eOh1/amSVK6VpzUa9pZTrfLAXLnpyozDVBn3RZPRyxxPzCCXz
+         xi1UTL3RNWtYVd5WT1rAfxF5VUYPRMmocslpR0R2IzB2SMyCbJeW3LiKcZ5A/kk0a0wF
+         rhwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ochM5m1KMB+5vlcxy5xlYUPq9FxXr2ho76d6PIZxYqg=;
-        b=skNzMrkVTT+X+WafNobNnTB22o7jGLgDz5klbKm/eoaruF96SSdmGAPFX0ed5ZDtwV
-         y+848aZIL7V/0DJjfAJGPSoPfcWAYFgRI8WD/n02YEWNDHQM19qgZYtpEG8WD1MeqN9B
-         fHtYNfm9yCvUZ08gnnQJ4vhnPTqwN/kaaHm5gVIu88BSemKFrYCBOtuqLlJJt72vGW5f
-         fZJBEDwtXrSB6nCFKOdcVWCbp1938wZPjtx+xmZ7E/sL245Zx64UWZ+ldI7MEBGwH9wZ
-         oLIATVtTkUzQkmw7QMLZhE9+X3ywqvX2GSUQRc08ZLGHn/ghuneylp74KxqWPjuCYugp
-         LNQg==
-X-Gm-Message-State: AJcUukemg6EWGzuuQMql1cNrUYTuIwg+7VkxQGq0hHvnLlq81IzInm3T
-        /efw7gCfPkGUTsiRPTyX/hJO6kH2jdXB7GXXCE0R31hCGkPfx/NI3BV8Q890x82cnnG9T6tipa1
-        /jJXql6FTxyEb/bzzfy5M227jV5/e
-X-Received: by 2002:a6b:ee16:: with SMTP id i22mr13755737ioh.124.1545851280952;
-        Wed, 26 Dec 2018 11:08:00 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6x56qoVTWhe77xBx3wll/eAhWeS3daRnVJV8e5+qAo6OrgbkXSMBwYVy+Hm8urOfxf0wuufg==
-X-Received: by 2002:a6b:ee16:: with SMTP id i22mr13755727ioh.124.1545851280735;
-        Wed, 26 Dec 2018 11:08:00 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id r21sm13145399ita.27.2018.12.26.11.07.59
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ALtQWJJu4IBpqbuXLkdpeeA6r1od8nvFyOKnNuiCE7M=;
+        b=rlLTOdPozc7mJQlWo2DoBzGHZ4aDgBJnPq2dbS2PSB+9Pk3LI5VU0Vz5T3nS2vtSYn
+         boyG+Sv2QaZEvoW1mLpmXHVoh430unq6fDqRuAQXELT0rSXchqPGce/tIoTyo+lAM09x
+         YLgAxgDbeBFAhnovTJKqnasQs32RdVzdIbAsJvM0GUTf7RMQDL6Ty00S/oEUMZLy1wTr
+         x0UmnUo5lw//G/ebSSbk0nYo+gPIcGrO9ZZ3apYCq+GMMfEJtjzrl3J5wOrCCXY5zj8L
+         58iJu0mZx3POE9QFMiMc/Q3qBYRPSVJDeDPCic4ZpPG6/vSiKY+AZ81boQyDyxfMIg2K
+         sW2Q==
+X-Gm-Message-State: AA+aEWbzjCUxWXfgr6PpQTln4rLPCehCQmLQ0+faDKBaD6wHzjG0txNB
+        DdBV4d3XH7FSjdanNEVFb1U=
+X-Google-Smtp-Source: ALg8bN7TY6RnBnIb/H4SPWRJQo4sgtvl5rDhUnCuw319+vhjW/cpESBdTN/6xcukLbpXVBa9I4CGpQ==
+X-Received: by 2002:a1c:cc19:: with SMTP id h25mr18785453wmb.80.1545851273430;
+        Wed, 26 Dec 2018 11:07:53 -0800 (PST)
+Received: from [192.168.42.184] (cst-prg-83-217.cust.vodafone.cz. [46.135.83.217])
+        by smtp.gmail.com with ESMTPSA id e9sm22044225wro.16.2018.12.26.11.07.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 11:08:00 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Joe Perches <joe@perches.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: compaction.c: Propagate return value upstream
-Date:   Wed, 26 Dec 2018 13:07:49 -0600
-Message-Id: <20181226190750.9820-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Wed, 26 Dec 2018 11:07:52 -0800 (PST)
+Subject: Re: [PATCH v4 2/2] dt-bindings: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+ <1545634358-17485-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <13e662c5-7476-191c-35bb-c451ab900473@gmail.com>
+Date:   Wed, 26 Dec 2018 20:07:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <1545634358-17485-3-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sysctl_extfrag_handler(), proc_dointvec_minmax() can return an
-error. The fix propagates the error upstream in case of failure.
+On 12/24/18 7:52 AM, Mason Yang wrote:
+> Document the bindings used by the Renesas R-Car Gen3 RPC controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> new file mode 100644
+> index 0000000..ba863d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,37 @@
+> +Renesas R-Car Gen3 RPC controller Device Tree Bindings
+> +------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,r8a77995-rpc"
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "regs" and "dirmap"
+> +- clock-names: should contain "rpc"
+> +- clocks: should contain 1 entries for the module's clock
+> +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
+> +			   	   "hyperflash" for rpc hyerflash mode.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- mm/compaction.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+We do not need special property to identify that the controller is in HF
+mode, just attach CFI NOR node or JEDEC SPI NOR underneath it.
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 7c607479de4a..5703b4051796 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1879,9 +1879,8 @@ int sysctl_compaction_handler(struct ctl_table *table, int write,
- int sysctl_extfrag_handler(struct ctl_table *table, int write,
- 			void __user *buffer, size_t *length, loff_t *ppos)
- {
-+	return
- 	proc_dointvec_minmax(table, write, buffer, length, ppos);
--
--	return 0;
- }
- 
- #if defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
 -- 
-2.17.1
-
+Best regards,
+Marek Vasut
