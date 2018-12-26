@@ -6,148 +6,144 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60786C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EAAC43612
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D9D2148E
+	by mail.kernel.org (Postfix) with ESMTP id 5A4B42173B
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbeLZAoH (ORCPT
+        id S1729658AbeLZAoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:44:07 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57356 "EHLO
+        Tue, 25 Dec 2018 19:44:09 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57326 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeLZAoA (ORCPT
+        with ESMTP id S1726017AbeLZAoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:44:00 -0500
+        Tue, 25 Dec 2018 19:44:01 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4F2A029522; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
+        id 9897229525; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linuxppc-dev@lists.ozlabs.org
-Message-Id: <9a2226a05c8b1e142ee060a40c30ed803607ae44.1545784679.git.fthain@telegraphics.com.au>
+Message-Id: <6db46da0ad072e50de32721e2dce9387aa58f4ab.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 12/25] m68k/mac: Fix PRAM accessors
+Subject: [PATCH v8 16/25] powerpc: Add missing ppc_md.nvram_size for CHRP and
+ PowerMac
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PMU-based m68k Macs pre-date PowerMac-style NVRAM. Use the appropriate
-PMU commands. Also implement the missing XPRAM accessors for VIA-based
-Macs.
+Add the nvram_size() function to those PowerPC platforms that don't already
+have one: CHRP and PowerMac. This means that the ppc_md.nvram_size()
+function can be used to implement arch_nvram_ops.get_size()
+
+Since we are addressing inconsistencies here, also rename chrp_nvram_read
+and chrp_nvram_write, which break the naming convention used across
+PowerPC platforms for NVRAM accessor functions.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
-Changed since v7:
- - Updated PMU response decoding due to via-pmu68k driver replacement.
----
- arch/m68k/mac/misc.c     | 43 ++++++++++++++++++++++++++++++----------
- include/uapi/linux/pmu.h |  2 ++
- 2 files changed, 35 insertions(+), 10 deletions(-)
+ arch/powerpc/platforms/chrp/nvram.c     | 14 ++++++++++----
+ arch/powerpc/platforms/powermac/nvram.c |  9 +++++++++
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index 475c93e4048c..0009efebb264 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -66,23 +66,22 @@ static unsigned char pmu_pram_read_byte(int offset)
- {
- 	struct adb_request req;
+diff --git a/arch/powerpc/platforms/chrp/nvram.c b/arch/powerpc/platforms/chrp/nvram.c
+index 791b86398e1d..6ec2901d2aa4 100644
+--- a/arch/powerpc/platforms/chrp/nvram.c
++++ b/arch/powerpc/platforms/chrp/nvram.c
+@@ -24,7 +24,7 @@ static unsigned int nvram_size;
+ static unsigned char nvram_buf[4];
+ static DEFINE_SPINLOCK(nvram_lock);
  
--	if (pmu_request(&req, NULL, 3, PMU_READ_NVRAM,
--			(offset >> 8) & 0xFF, offset & 0xFF) < 0)
-+	if (pmu_request(&req, NULL, 3, PMU_READ_XPRAM,
-+	                offset & 0xFF, 1) < 0)
- 		return 0;
--	while (!req.complete)
--		pmu_poll();
--	return req.reply[3];
-+	pmu_wait_complete(&req);
+-static unsigned char chrp_nvram_read(int addr)
++static unsigned char chrp_nvram_read_byte(int addr)
+ {
+ 	unsigned int done;
+ 	unsigned long flags;
+@@ -46,7 +46,7 @@ static unsigned char chrp_nvram_read(int addr)
+ 	return ret;
+ }
+ 
+-static void chrp_nvram_write(int addr, unsigned char val)
++static void chrp_nvram_write_byte(int addr, unsigned char val)
+ {
+ 	unsigned int done;
+ 	unsigned long flags;
+@@ -64,6 +64,11 @@ static void chrp_nvram_write(int addr, unsigned char val)
+ 	spin_unlock_irqrestore(&nvram_lock, flags);
+ }
+ 
++static ssize_t chrp_nvram_size(void)
++{
++	return nvram_size;
++}
 +
-+	return req.reply[0];
- }
- 
- static void pmu_pram_write_byte(unsigned char data, int offset)
+ void __init chrp_nvram_init(void)
  {
- 	struct adb_request req;
+ 	struct device_node *nvram;
+@@ -85,8 +90,9 @@ void __init chrp_nvram_init(void)
+ 	printk(KERN_INFO "CHRP nvram contains %u bytes\n", nvram_size);
+ 	of_node_put(nvram);
  
--	if (pmu_request(&req, NULL, 4, PMU_WRITE_NVRAM,
--			(offset >> 8) & 0xFF, offset & 0xFF, data) < 0)
-+	if (pmu_request(&req, NULL, 4, PMU_WRITE_XPRAM,
-+	                offset & 0xFF, 1, data) < 0)
- 		return;
--	while (!req.complete)
--		pmu_poll();
-+	pmu_wait_complete(&req);
+-	ppc_md.nvram_read_val = chrp_nvram_read;
+-	ppc_md.nvram_write_val = chrp_nvram_write;
++	ppc_md.nvram_read_val  = chrp_nvram_read_byte;
++	ppc_md.nvram_write_val = chrp_nvram_write_byte;
++	ppc_md.nvram_size      = chrp_nvram_size;
+ 
+ 	return;
  }
+diff --git a/arch/powerpc/platforms/powermac/nvram.c b/arch/powerpc/platforms/powermac/nvram.c
+index ae54d7fe68f3..9360cdc408c1 100644
+--- a/arch/powerpc/platforms/powermac/nvram.c
++++ b/arch/powerpc/platforms/powermac/nvram.c
+@@ -147,6 +147,11 @@ static ssize_t core99_nvram_size(void)
+ static volatile unsigned char __iomem *nvram_addr;
+ static int nvram_mult;
+ 
++static ssize_t ppc32_nvram_size(void)
++{
++	return NVRAM_SIZE;
++}
++
+ static unsigned char direct_nvram_read_byte(int addr)
+ {
+ 	return in_8(&nvram_data[(addr & (NVRAM_SIZE - 1)) * nvram_mult]);
+@@ -590,21 +595,25 @@ int __init pmac_nvram_init(void)
+ 		nvram_mult = 1;
+ 		ppc_md.nvram_read_val	= direct_nvram_read_byte;
+ 		ppc_md.nvram_write_val	= direct_nvram_write_byte;
++		ppc_md.nvram_size	= ppc32_nvram_size;
+ 	} else if (nvram_naddrs == 1) {
+ 		nvram_data = ioremap(r1.start, s1);
+ 		nvram_mult = (s1 + NVRAM_SIZE - 1) / NVRAM_SIZE;
+ 		ppc_md.nvram_read_val	= direct_nvram_read_byte;
+ 		ppc_md.nvram_write_val	= direct_nvram_write_byte;
++		ppc_md.nvram_size	= ppc32_nvram_size;
+ 	} else if (nvram_naddrs == 2) {
+ 		nvram_addr = ioremap(r1.start, s1);
+ 		nvram_data = ioremap(r2.start, s2);
+ 		ppc_md.nvram_read_val	= indirect_nvram_read_byte;
+ 		ppc_md.nvram_write_val	= indirect_nvram_write_byte;
++		ppc_md.nvram_size	= ppc32_nvram_size;
+ 	} else if (nvram_naddrs == 0 && sys_ctrler == SYS_CTRLER_PMU) {
+ #ifdef CONFIG_ADB_PMU
+ 		nvram_naddrs = -1;
+ 		ppc_md.nvram_read_val	= pmu_nvram_read_byte;
+ 		ppc_md.nvram_write_val	= pmu_nvram_write_byte;
++		ppc_md.nvram_size	= ppc32_nvram_size;
  #endif /* CONFIG_ADB_PMU */
- 
-@@ -151,6 +150,16 @@ static void via_rtc_send(__u8 data)
- #define RTC_REG_SECONDS_3       3
- #define RTC_REG_WRITE_PROTECT   13
- 
-+/*
-+ * Inside Mac has no information about two-byte RTC commands but
-+ * the MAME/MESS source code has the essentials.
-+ */
-+
-+#define RTC_REG_XPRAM           14
-+#define RTC_CMD_XPRAM_READ      (RTC_CMD_READ(RTC_REG_XPRAM) << 8)
-+#define RTC_CMD_XPRAM_WRITE     (RTC_CMD_WRITE(RTC_REG_XPRAM) << 8)
-+#define RTC_CMD_XPRAM_ARG(a)    (((a & 0xE0) << 3) | ((a & 0x1F) << 2))
-+
- /*
-  * Execute a VIA PRAM/RTC command. For read commands
-  * data should point to a one-byte buffer for the
-@@ -198,11 +207,25 @@ static void via_rtc_command(int command, __u8 *data)
- 
- static unsigned char via_pram_read_byte(int offset)
- {
--	return 0;
-+	unsigned char temp;
-+
-+	via_rtc_command(RTC_CMD_XPRAM_READ | RTC_CMD_XPRAM_ARG(offset), &temp);
-+
-+	return temp;
- }
- 
- static void via_pram_write_byte(unsigned char data, int offset)
- {
-+	unsigned char temp;
-+
-+	temp = 0x55;
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
-+
-+	temp = data;
-+	via_rtc_command(RTC_CMD_XPRAM_WRITE | RTC_CMD_XPRAM_ARG(offset), &temp);
-+
-+	temp = 0x55 | RTC_FLG_WRITE_PROTECT;
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
- }
- 
- /*
-diff --git a/include/uapi/linux/pmu.h b/include/uapi/linux/pmu.h
-index 97256f90e6df..f2fc1bd80017 100644
---- a/include/uapi/linux/pmu.h
-+++ b/include/uapi/linux/pmu.h
-@@ -19,7 +19,9 @@
- #define PMU_POWER_CTRL		0x11	/* control power of some devices */
- #define PMU_ADB_CMD		0x20	/* send ADB packet */
- #define PMU_ADB_POLL_OFF	0x21	/* disable ADB auto-poll */
-+#define PMU_WRITE_XPRAM		0x32	/* write eXtended Parameter RAM */
- #define PMU_WRITE_NVRAM		0x33	/* write non-volatile RAM */
-+#define PMU_READ_XPRAM		0x3a	/* read eXtended Parameter RAM */
- #define PMU_READ_NVRAM		0x3b	/* read non-volatile RAM */
- #define PMU_SET_RTC		0x30	/* set real-time clock */
- #define PMU_READ_RTC		0x38	/* read real-time clock */
+ 	} else {
+ 		printk(KERN_ERR "Incompatible type of NVRAM\n");
 -- 
 2.19.2
 
