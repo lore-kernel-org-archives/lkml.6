@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E170C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CE1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4592214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A47214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864995;
-	bh=6z+Vjnhf2bSbjqUW1lnebvwvEFpQMJg3tHCTsr9+1dI=;
+	s=default; t=1545865011;
+	bh=vvXH4R6dYzTpGyp1+Vp5R0R8S4GtWO4epVrosFLkRP8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DW3LkX/oQihpVkhjM4WpiwjjW5yMWKwB1/s+JyHrrZKzqpfpaBfuAXyAKDmb6VKsB
-	 JWMwflUUG6wHeDwzwVUfXyst7Al2xs507a1e1dWZe5PKAjVUdLYW88ntRBQGD9H2op
-	 sk0MIpjQptxXDBmzvv+MvPxH9g3JPISS6NXvXzlw=
+	b=G9fgYdN3ka90Su/+pcHJJNALVLPeLAzZuBM1UWPgcIrFEpX4bD4DmgIOFVHpAb90T
+	 xWzMNFURQ56+6z1vam/R6QXmdo3hEP2fmcBut8nrltqtQe3bUkLuy6NIR2pLtLBMco
+	 wZE+/J5iyWikKXFNkjnJ61h55RikFHdyKyp1BRtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbeLZW4e (ORCPT
+        id S1730358AbeLZW4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55722 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:56:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730137AbeLZWyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:23 -0500
+        id S1730114AbeLZWyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 687FF21741;
-        Wed, 26 Dec 2018 22:54:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C09A1214D8;
+        Wed, 26 Dec 2018 22:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864862;
-        bh=6z+Vjnhf2bSbjqUW1lnebvwvEFpQMJg3tHCTsr9+1dI=;
+        s=default; t=1545864859;
+        bh=vvXH4R6dYzTpGyp1+Vp5R0R8S4GtWO4epVrosFLkRP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fTrv0/JRoSd6KIX7F+VKi3w/VM5pjMxp4bm4GJK1Vl+AxirHmM+2xuj/U9/2vJzvu
-         /8DFLngWAPGnz370u30KDIFEyPLeOmMzgku5leBvcldzZgwL2qck5f2t4S2iu1tfFn
-         lkkmdbXGSsZd8mrD+W/wHJi7WXUaJ5c+hKq+2ibY=
+        b=UuNyfnbycTgMnRzd7wZBD7OSMXegveY/QNlgywLI4xHvD4Rnk/n9opS89BiFDQXgW
+         /RNRqkkK+plVPaiZdWrzJKZs0hMhDkzZ9GulPYZuTq/6hjyd6bMHrq9DNB6YIF3PR2
+         xIrX53i7+GfrhH2bE78qaer/TXJ5nKI1yXdq3jg4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 20/35] net: hns: Incorrect offset address used for some registers.
-Date:   Wed, 26 Dec 2018 17:41:27 -0500
-Message-Id: <20181226224142.150866-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 19/35] w90p910_ether: remove incorrect __init annotation
+Date:   Wed, 26 Dec 2018 17:41:26 -0500
+Message-Id: <20181226224142.150866-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -59,38 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 4e1d4be681b2c26fd874adbf584bf034573ac45d ]
+[ Upstream commit 51367e423c6501a26e67d91a655d2bc892303462 ]
 
-According to the hip06 Datasheet:
-1. The offset of INGRESS_SW_VLAN_TAG_DISC should be 0x1A00+4*all_chn_num
-2. The offset of INGRESS_IN_DATA_STP_DISC should be 0x1A50+4*all_chn_num
+The get_mac_address() function is normally inline, but when it is
+not, we get a warning that this configuration is broken:
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+WARNING: vmlinux.o(.text+0x4aff00): Section mismatch in reference from the function w90p910_ether_setup() to the function .init.text:get_mac_address()
+The function w90p910_ether_setup() references
+the function __init get_mac_address().
+This is often because w90p910_ether_setup lacks a __init
+
+Remove the __init to make it always do the right thing.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/nuvoton/w90p910_ether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index 8ea3d95fa483..e25206540fd7 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -2163,9 +2163,9 @@ void hns_dsaf_update_stats(struct dsaf_device *dsaf_dev, u32 node_num)
- 		DSAF_INODE_LOCAL_ADDR_FALSE_NUM_0_REG + 0x80 * (u64)node_num);
+diff --git a/drivers/net/ethernet/nuvoton/w90p910_ether.c b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+index 712d8bcb7d8c..a2960169a784 100644
+--- a/drivers/net/ethernet/nuvoton/w90p910_ether.c
++++ b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+@@ -918,7 +918,7 @@ static const struct net_device_ops w90p910_ether_netdev_ops = {
+ 	.ndo_change_mtu		= eth_change_mtu,
+ };
  
- 	hw_stats->vlan_drop += dsaf_read_dev(dsaf_dev,
--		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 0x80 * (u64)node_num);
-+		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 4 * (u64)node_num);
- 	hw_stats->stp_drop += dsaf_read_dev(dsaf_dev,
--		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 0x80 * (u64)node_num);
-+		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 4 * (u64)node_num);
- 
- 	/* pfc pause frame statistics stored in dsaf inode*/
- 	if ((node_num < DSAF_SERVICE_NW_NUM) && !is_ver1) {
+-static void __init get_mac_address(struct net_device *dev)
++static void get_mac_address(struct net_device *dev)
+ {
+ 	struct w90p910_ether *ether = netdev_priv(dev);
+ 	struct platform_device *pdev;
 -- 
 2.19.1
 
