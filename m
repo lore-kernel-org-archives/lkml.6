@@ -3,166 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BA0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F01C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4AF218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88F2421741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbeLZJN2 (ORCPT
+        id S1726565AbeLZJQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 04:13:28 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:39294 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726063AbeLZJN2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 04:13:28 -0500
-X-UUID: 8be6071c9e6a40d5a276a25421a8e802-20181226
-X-UUID: 8be6071c9e6a40d5a276a25421a8e802-20181226
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 550822703; Wed, 26 Dec 2018 17:13:22 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 26 Dec 2018 17:13:19 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 26 Dec 2018 17:13:19 +0800
-Message-ID: <1545815599.20265.3.camel@mtksdaap41>
-Subject: Re: [PATCH 09/18] drm/mediatek: add component DITHER
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Yongqiang Niu <yongqiang.niu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 26 Dec 2018 17:13:19 +0800
-In-Reply-To: <1545638931-24938-10-git-send-email-yongqiang.niu@mediatek.com>
-References: <1545638931-24938-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1545638931-24938-10-git-send-email-yongqiang.niu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 26 Dec 2018 04:16:38 -0500
+Received: from relay.sw.ru ([185.231.240.75]:56970 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726013AbeLZJQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 04:16:38 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gc5Ig-0003Jm-BO; Wed, 26 Dec 2018 12:16:26 +0300
+Subject: Re: [PATCH] ipset: fix a missing check of nla_parse
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181226035002.73614-1-kjlu@umn.edu>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <c462e7f4-6c41-78e8-26e9-8ce16ca26a5c@virtuozzo.com>
+Date:   Wed, 26 Dec 2018 12:16:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20181226035002.73614-1-kjlu@umn.edu>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yongqiang:
-
-On Mon, 2018-12-24 at 16:08 +0800, Yongqiang Niu wrote:
-> This patch add component DITHER
+On 26.12.2018 06:50, Kangjie Lu wrote:
+> When nla_parse fails, we should not use the results (the first
+> argument). The fix checks if it fails, and if so, returns its error code
+> upstream.
 > 
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 > ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 32 +++++++++++++++++++++++++++++
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  2 ++
->  2 files changed, 34 insertions(+)
+>  net/netfilter/ipset/ip_set_core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index 63f4b1e..a97e27b 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -47,6 +47,12 @@
->  #define CCORR_RELAY_MODE			BIT(0)
->  #define DISP_CCORR_SIZE				0x0030
+> diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+> index 1577f2f76060..4dc8057cff02 100644
+> --- a/net/netfilter/ipset/ip_set_core.c
+> +++ b/net/netfilter/ipset/ip_set_core.c
+> @@ -1531,8 +1531,10 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
+>  		memcpy(&errmsg->msg, nlh, nlh->nlmsg_len);
+>  		cmdattr = (void *)&errmsg->msg + min_len;
 >  
-> +#define DISP_DITHER_EN				0x0000
-> +#define DITHER_EN				BIT(0)
-> +#define DISP_DITHER_CFG                        0x0020
-> +#define DITHER_RELAY_MODE			BIT(0)
-> +#define DISP_DITHER_SIZE			0x0030
-> +
->  #define DISP_GAMMA_EN				0x0000
->  #define DISP_GAMMA_CFG				0x0020
->  #define DISP_GAMMA_SIZE				0x0030
-> @@ -155,6 +161,24 @@ static void mtk_ccorr_stop(struct mtk_ddp_comp *comp)
->  	writel_relaxed(0x0, comp->regs + DISP_CCORR_EN);
->  }
->  
-> +static void mtk_dither_config(struct mtk_ddp_comp *comp, unsigned int w,
-> +			      unsigned int h, unsigned int vrefresh,
-> +			      unsigned int bpc)
-> +{
-> +	writel(h << 16 | w, comp->regs + DISP_DITHER_SIZE);
-> +	writel(DITHER_RELAY_MODE, comp->regs + DISP_DITHER_CFG);
-> +}
-> +
-> +static void mtk_dither_start(struct mtk_ddp_comp *comp)
-> +{
-> +	writel(DITHER_EN, comp->regs + DISP_DITHER_EN);
-> +}
-> +
-> +static void mtk_dither_stop(struct mtk_ddp_comp *comp)
-> +{
-> +	writel_relaxed(0x0, comp->regs + DISP_DITHER_EN);
-> +}
-> +
->  static void mtk_gamma_config(struct mtk_ddp_comp *comp, unsigned int w,
->  			     unsigned int h, unsigned int vrefresh,
->  			     unsigned int bpc)
-> @@ -209,6 +233,12 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
->  	.stop = mtk_ccorr_stop,
->  };
->  
-> +static const struct mtk_ddp_comp_funcs ddp_dither = {
-> +	.config = mtk_dither_config,
-> +	.start = mtk_dither_start,
-> +	.stop = mtk_dither_stop,
-> +};
-> +
->  static const struct mtk_ddp_comp_funcs ddp_gamma = {
->  	.gamma_set = mtk_gamma_set,
->  	.config = mtk_gamma_config,
-> @@ -233,6 +263,7 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
->  	[MTK_DISP_CCORR] = "ccorr",
->  	[MTK_DISP_AAL] = "aal",
->  	[MTK_DISP_GAMMA] = "gamma",
-> +	[MTK_DISP_DITHER] = "dither",
->  	[MTK_DISP_UFOE] = "ufoe",
->  	[MTK_DSI] = "dsi",
->  	[MTK_DPI] = "dpi",
-> @@ -255,6 +286,7 @@ struct mtk_ddp_comp_match {
->  	[DDP_COMPONENT_CCORR]	= { MTK_DISP_CCORR,	0, &ddp_ccorr },
->  	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
->  	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
-> +	[DDP_COMPONENT_DITHER]	= { MTK_DISP_DITHER,	0, &ddp_dither },
->  	[DDP_COMPONENT_DPI0]	= { MTK_DPI,		0, NULL },
->  	[DDP_COMPONENT_DPI1]	= { MTK_DPI,		1, NULL },
->  	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> index 6905647..b0064c52 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> @@ -29,6 +29,7 @@ enum mtk_ddp_comp_type {
->  	MTK_DISP_WDMA,
->  	MTK_DISP_COLOR,
->  	MTK_DISP_CCORR,
-> +	MTK_DISP_DITHER,
->  	MTK_DISP_AAL,
->  	MTK_DISP_GAMMA,
->  	MTK_DISP_UFOE,
-> @@ -48,6 +49,7 @@ enum mtk_ddp_comp_id {
->  	DDP_COMPONENT_CCORR,
->  	DDP_COMPONENT_COLOR0,
->  	DDP_COMPONENT_COLOR1,
-> +	DDP_COMPONENT_DITHER,
->  	DDP_COMPONENT_DPI0,
->  	DDP_COMPONENT_DPI1,
->  	DDP_COMPONENT_DSI0,
+> -		nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
+> +		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
+>  			  nlh->nlmsg_len - min_len, ip_set_adt_policy, NULL);
+> +		if (ret)
+> +			return ret;
 
+In this function above nlmsg_new() allocates skb2, but I don't see, where you free it here.
 
+>  
+>  		errline = nla_data(cda[IPSET_ATTR_LINENO]);
+>  
+> 
