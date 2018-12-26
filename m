@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A76C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DC0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C49682070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3CAA21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865062;
-	bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
+	s=default; t=1545865069;
+	bh=i6dbMB1iYXq+VR0fN9yfHOL71TCgUHHDAkbdJOyoeGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gYqIgDVQQxe/rWwQXa7w3EdQ2r0WZjC4yePdw7+ruB8gAsjYEh/wN2c97rptKdkFb
-	 kNqkSzmcEEeHaDlKs8Saj2vgxoyRdKH07hZPcOzYLx/dS98Fwoq8cDy+6PVCkkOzrF
-	 F9zP5xI4x2RFUQleqlMT7WG++5f9ocoUcRscikDo=
+	b=HnPaYuvUXSS6VnuTHIlwKsPmKQmJYdNm8bWLBPyfSUWGmjGBAVeEDvNB/x8z1FkfS
+	 NCGxnWxgRQIMiz0qj+DWq6zS3So11CW4UqSWV7VGC6hRvIO+vPTR0ZJtQKHXYGfEPy
+	 Jb+VszCAN8kD3qxfzPUcOjrTNuC/A1P8tE4qGpfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbeLZW5m (ORCPT
+        id S1728885AbeLZW5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:57:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729451AbeLZW5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:37 -0500
+        id S1730506AbeLZW5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 508AE2070B;
-        Wed, 26 Dec 2018 22:57:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F2422070B;
+        Wed, 26 Dec 2018 22:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865057;
-        bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
+        s=default; t=1545865059;
+        bh=i6dbMB1iYXq+VR0fN9yfHOL71TCgUHHDAkbdJOyoeGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=naFySTcTZkn/VQ2Fw8cdGtfBs2rfy+14WSTaLOKO65Q763/EWiQu+0qTe3AtrEODl
-         fpaus8bSeUN8MSE2R4qGsrI5neGwD+tfxicVoyjh6pRrNQtepQZyf3i7A0r/lom2k+
-         OmA7DSVG4IX9HeiDIizddkct+fmURhmc7N8VWA2M=
+        b=VQo8BkipopyBna6s6DIugzY0EJDReVO//i2ARQ6N43i9eVTOOhsr44VWQ4sWhAa69
+         c68atPuAQcMHtzCPj+DME+1c49S15uOQi5E+3a8E9++cZa1ZK15Csyct8ndcPrMQIE
+         2mTC3UG0S33DaLQutBO9BX1EtuNL/3QXxZCgb0fI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 19/21] vxge: ensure data0 is initialized in when fetching firmware version information
-Date:   Wed, 26 Dec 2018 17:54:57 -0500
-Message-Id: <20181226225501.151365-19-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 21/21] serial/sunsu: fix refcount leak
+Date:   Wed, 26 Dec 2018 17:54:59 -0500
+Message-Id: <20181226225501.151365-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -58,40 +59,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
+[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+su_get_type() doesn't do that. The match node are used as an identifier
+to compare against the current node, so we can directly drop the refcount
+after getting the node from the path as it is not used as pointer.
 
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 6223930a8155..6f57b0b7d57a 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index e124d2e88996..d6c9d5b458a0 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1393,22 +1393,43 @@ static inline struct console *SUNSU_CONSOLE(void)
+ static enum su_type su_get_type(struct device_node *dp)
+ {
+ 	struct device_node *ap = of_find_node_by_path("/aliases");
++	enum su_type rc = SU_PORT_PORT;
  
- 	status = vxge_hw_vpath_fw_api(vpath,
+ 	if (ap) {
+ 		const char *keyb = of_get_property(ap, "keyboard", NULL);
+ 		const char *ms = of_get_property(ap, "mouse", NULL);
++		struct device_node *match;
+ 
+ 		if (keyb) {
+-			if (dp == of_find_node_by_path(keyb))
+-				return SU_PORT_KBD;
++			match = of_find_node_by_path(keyb);
++
++			/*
++			 * The pointer is used as an identifier not
++			 * as a pointer, we can drop the refcount on
++			 * the of__node immediately after getting it.
++			 */
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_KBD;
++				goto out;
++			}
+ 		}
+ 		if (ms) {
+-			if (dp == of_find_node_by_path(ms))
+-				return SU_PORT_MS;
++			match = of_find_node_by_path(ms);
++
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_MS;
++				goto out;
++			}
+ 		}
+ 	}
+ 
+-	return SU_PORT_PORT;
++out:
++	of_node_put(ap);
++	return rc;
+ }
+ 
+ static int su_probe(struct platform_device *op)
 -- 
 2.19.1
 
