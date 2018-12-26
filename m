@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9647C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BD4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BCA3218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECDE22054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864100;
-	bh=L+7eOiqursMqguTNpwTtrR6b/p06eiHJKDR7aV5Jo8E=;
+	s=default; t=1545864105;
+	bh=80XLYmJe0l1T1Jx0FYd63bixCJqGfN50NNkxgef93wY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i4ibUCgVzRmDCGxqQieUKJOhXT5qq+nsVg4a4Ajo7KiUfNhkk7hVrMqaLr7gIGbuC
-	 W4wZX5wTSAXXvy3oix9IvzTomhOypIU0akelJPkygb4GrzxJrMOE2vPDUXHTLTQmIG
-	 CKz2EcvWZh9z5O3pkTZ7jv6y8cFaSqPfcsYjvhMY=
+	b=b6VHzFKgPbTXAuEkpK2P9HHa3Y2WeeeWOUABi4otWy0+qeJ9334whi5boA7/pGWmn
+	 tm5eFhBzdS2+xV+hOmON7jVbN/EBOGjWKjtF3I7KJp7WNk0yxpRJcRqpscll6PIDRk
+	 p/gW3zrUFDgCdI48x91MF+HVcB/BYAKBZ9m9a89Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbeLZWlj (ORCPT
+        id S1729553AbeLZWln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:41:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42032 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:41:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbeLZWle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:41:34 -0500
+        id S1729531AbeLZWlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:41:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF14A2054F;
-        Wed, 26 Dec 2018 22:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59B3720651;
+        Wed, 26 Dec 2018 22:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864093;
-        bh=L+7eOiqursMqguTNpwTtrR6b/p06eiHJKDR7aV5Jo8E=;
+        s=default; t=1545864101;
+        bh=80XLYmJe0l1T1Jx0FYd63bixCJqGfN50NNkxgef93wY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I27QYWRIqpk8k+l7+cACM9IJqnaZIgob1FRIrxOmGmspLC4n6hKnKtUquM30IfZHb
-         v+1osK2Ghw9v4qqqPbYTqYINemF0sBU8P0RJjv+YtRK3nkM3D6IF+FVIShLB7bxDHJ
-         6arM4tS+D0Hl8/9tAiOJmV1Ohkv7S+kjStxzc/5U=
+        b=QO5BB4BfLjC/ujdH7rAlBrVARSOlKkIlbXwhvT64I4OUd5lluTQpouesAJN+0nwNH
+         sp4GpHpL4LtvyGE954Sbwzul+u7bZhfI4V+G3/k4eBBx3ERnfsUkloVgR3mtFYX1w8
+         mLCz3joB58BnyEmUcVVLtRRWXz+pSZzTpie31Dsc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.14 54/59] virtio: fix test build after uio.h change
-Date:   Wed, 26 Dec 2018 17:38:34 -0500
-Message-Id: <20181226223839.150262-54-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 59/59] serial/sunsu: fix refcount leak
+Date:   Wed, 26 Dec 2018 17:38:39 -0500
+Message-Id: <20181226223839.150262-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -57,32 +59,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit c5c08bed843c2b2c048c16d1296d7631d7c1620e ]
+[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
 
-Fixes: d38499530e5 ("fs: decouple READ and WRITE from the block layer ops")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+
+su_get_type() doesn't do that. The match node are used as an identifier
+to compare against the current node, so we can directly drop the refcount
+after getting the node from the path as it is not used as pointer.
+
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/virtio/linux/kernel.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
-index 395521a7a8d8..268ce239de65 100644
---- a/tools/virtio/linux/kernel.h
-+++ b/tools/virtio/linux/kernel.h
-@@ -23,6 +23,10 @@
- #define PAGE_MASK (~(PAGE_SIZE-1))
- #define PAGE_ALIGN(x) ((x + PAGE_SIZE - 1) & PAGE_MASK)
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 95d34d7565c9..1cf78cec7461 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1393,22 +1393,43 @@ static inline struct console *SUNSU_CONSOLE(void)
+ static enum su_type su_get_type(struct device_node *dp)
+ {
+ 	struct device_node *ap = of_find_node_by_path("/aliases");
++	enum su_type rc = SU_PORT_PORT;
  
-+/* generic data direction definitions */
-+#define READ                    0
-+#define WRITE                   1
+ 	if (ap) {
+ 		const char *keyb = of_get_property(ap, "keyboard", NULL);
+ 		const char *ms = of_get_property(ap, "mouse", NULL);
++		struct device_node *match;
+ 
+ 		if (keyb) {
+-			if (dp == of_find_node_by_path(keyb))
+-				return SU_PORT_KBD;
++			match = of_find_node_by_path(keyb);
 +
- typedef unsigned long long phys_addr_t;
- typedef unsigned long long dma_addr_t;
- typedef size_t __kernel_size_t;
++			/*
++			 * The pointer is used as an identifier not
++			 * as a pointer, we can drop the refcount on
++			 * the of__node immediately after getting it.
++			 */
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_KBD;
++				goto out;
++			}
+ 		}
+ 		if (ms) {
+-			if (dp == of_find_node_by_path(ms))
+-				return SU_PORT_MS;
++			match = of_find_node_by_path(ms);
++
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_MS;
++				goto out;
++			}
+ 		}
+ 	}
+ 
+-	return SU_PORT_PORT;
++out:
++	of_node_put(ap);
++	return rc;
+ }
+ 
+ static int su_probe(struct platform_device *op)
 -- 
 2.19.1
 
