@@ -7,70 +7,62 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A32C43613
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7469BC43614
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2131B217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34378217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YBSkpL6E"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QzVod8Y5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbeLZHyT (ORCPT
+        id S1726560AbeLZHyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 02:54:19 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38659 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbeLZHyS (ORCPT
+        Wed, 26 Dec 2018 02:54:24 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40963 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbeLZHyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 02:54:18 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e5so7278837plb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:54:17 -0800 (PST)
+        Wed, 26 Dec 2018 02:54:21 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so7574018pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:54:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VFE5Q/expx9u5OAcUoGYir738UVsOttn1xCRe3b7ESk=;
-        b=YBSkpL6ELxysiEDR1WlP0Jt/OWkV8QHrPo7e1QRsjZcA/yXiqhBE5uU0ePmN6uMMH/
-         7yaZsKV9VWLlx8S1ADViAYPe6/H1hHPvdtz7FU7KbTjeFw3dN4lZaAR7F316cMOqaYqR
-         eTGBw8j2i7V4/G+xCGXIMIlODu2P0XBYYjq1A=
+        bh=de9pAuJXTk+5HxjiuJcx0vVB6qsUL6K6wkIiqDXHsGw=;
+        b=QzVod8Y5UuvBBxz/V6pyf/J0pbQExBGxgUGLYEvaP1uldiTE1JqRz03gUPQjoDzWeF
+         h6NURpxGir3GlY5NKGosmmGmona05f8XqzdBMN0VBopNW51gAylLouW8ZnvBMz1NTrIO
+         t7dICKuFEhkYM0J+TU/H+AHH0DwCUdIEm+tSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VFE5Q/expx9u5OAcUoGYir738UVsOttn1xCRe3b7ESk=;
-        b=JRIwcg6d4SCxmM4WcjlrhpWiVappRMApioii3zplWXurUSfkllbBUDm0XLo37iWWNE
-         eC9YG6gZ/Uau08HBRUbpya7lVvpsb1rtC1aNmvSUEjqlLnTsm7FBpzEqhY0YAu83CUn4
-         1jCLkoG3NYWoAp5Blt/n3d3W4J9ZBcFBIzUmOf87azCFarMcl3N81OWKqT1JcQ86UTr5
-         WQR7OU1jFe1i52wnAjKjmQrkBNvFSgjDEsixWc4uxn7OmBB/rm/27eZIJZeCAH+Yv9Tz
-         Dfy9Eep7WlEhxABli3POW8EKNcyd+FBLoS3qpYO1QhG2mwxKWzkTYRSMiMGE9m0+kLou
-         +xtw==
-X-Gm-Message-State: AJcUukfKkMcbg+AiahEFuSXSSMM/GWh6QmlSag1mnmQX4az0JrcwjS3c
-        vHdBCBNU0BHUCFNna+ixG65L0A==
-X-Google-Smtp-Source: ALg8bN54MM/dDBhCsTLRoHdoOmRtFl0m6Y30ZyOKKPjc3nFyFdj70pxkjvEAKApaXOt7DhSsOjvojg==
-X-Received: by 2002:a17:902:9a8b:: with SMTP id w11mr18448017plp.121.1545810856986;
-        Tue, 25 Dec 2018 23:54:16 -0800 (PST)
+        bh=de9pAuJXTk+5HxjiuJcx0vVB6qsUL6K6wkIiqDXHsGw=;
+        b=HEtI5FBZSHr23bDzr01h+eKE0MKUbRdrU0hu1sdZzESBeaiazoZvWVQCkkEUKdNraw
+         ebQ4WmeSwb1+nYHUPk9ah2NAugFHbEJP/V0ITjXceGyiEajQ00GqUa6KofaiUF26xLMM
+         +Qg37Q6Ot7bK85ZA3/r04aa5H7BNtIvr07XVp3QjZFxlrIKt/q+H7nlx1nmAzIH8ZnmU
+         WSRG12+kdWT07a0uWcr4tsz7udUCqdDiH+ol6aXJTe6APODr325a9SSfAbLurQDqWkyc
+         misBbsAh+qddFmWe3iK4aJpwIZbFTXMXrGFauEllgdxwxqtvmloM/vCUfl9CjEXuF/Rp
+         q1/g==
+X-Gm-Message-State: AA+aEWZRrxkpYtH49Ae70nsiulLbl4d5WjtVvve2OLrYzxz5qvj140BU
+        /20BQSTBYGB7kU3+ohaSAuznvg==
+X-Google-Smtp-Source: AFSGD/VNPXhbUu04KKUHwpZ8aj566zxbdHHZcoEAhpeGbX+9DtJisk4Ht64Hm0bj1HqkH8hSzCAK8A==
+X-Received: by 2002:a62:5716:: with SMTP id l22mr19692830pfb.16.1545810860409;
+        Tue, 25 Dec 2018 23:54:20 -0800 (PST)
 Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id 84sm107392395pfa.115.2018.12.25.23.54.14
+        by smtp.googlemail.com with ESMTPSA id 84sm107392395pfa.115.2018.12.25.23.54.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Dec 2018 23:54:16 -0800 (PST)
+        Tue, 25 Dec 2018 23:54:19 -0800 (PST)
 From:   Pi-Hsun Shih <pihsun@chromium.org>
 Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Erin Lo <erin.lo@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
-        (REMOTEPROC) SUBSYSTEM),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support)
-Subject: [RFC,4/5] rpmsg: add rpmsg support for mt8183 SCP.
-Date:   Wed, 26 Dec 2018 15:53:12 +0800
-Message-Id: <20181226075330.82462-5-pihsun@chromium.org>
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [RFC,5/5] mfd: cros_ec: add EC host command support using rpmsg.
+Date:   Wed, 26 Dec 2018 15:53:13 +0800
+Message-Id: <20181226075330.82462-6-pihsun@chromium.org>
 X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 In-Reply-To: <20181226075330.82462-1-pihsun@chromium.org>
 References: <20181226075330.82462-1-pihsun@chromium.org>
@@ -82,554 +74,265 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a simple rpmsg support for mt8183 SCP, that use IPI / IPC directly.
+Add EC host command support through rpmsg.
 
 Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
-There are lots of TODO comments on things that are not done yet / I have
-doubt on whether it's the best way to do it.
+ drivers/mfd/cros_ec_dev.c               |   9 ++
+ drivers/platform/chrome/Kconfig         |   8 ++
+ drivers/platform/chrome/Makefile        |   1 +
+ drivers/platform/chrome/cros_ec_rpmsg.c | 164 ++++++++++++++++++++++++
+ include/linux/mfd/cros_ec.h             |   1 +
+ include/linux/mfd/cros_ec_commands.h    |   2 +
+ 6 files changed, 185 insertions(+)
+ create mode 100644 drivers/platform/chrome/cros_ec_rpmsg.c
 
- drivers/remoteproc/mtk_common.h       |   3 +
- drivers/remoteproc/mtk_scp.c          |  30 ++-
- drivers/remoteproc/mtk_scp_ipi.c      |   2 +-
- drivers/rpmsg/Kconfig                 |   5 +
- drivers/rpmsg/Makefile                |   1 +
- drivers/rpmsg/mtk_rpmsg.c             | 341 ++++++++++++++++++++++++++
- include/linux/platform_data/mtk_scp.h |   7 +
- include/linux/rpmsg/mtk_rpmsg.h       |  34 +++
- 8 files changed, 419 insertions(+), 4 deletions(-)
- create mode 100644 drivers/rpmsg/mtk_rpmsg.c
- create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index ae55fca2ce2d7..cdd4919a402a8 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -54,6 +54,9 @@ struct mtk_scp {
- 	void __iomem *cpu_addr;
- 	phys_addr_t phys_addr;
- 	size_t dram_size;
-+
-+	struct platform_device *pdev;
-+	struct rproc_subdev *rpmsg_subdev;
- };
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 2d0fee488c5aa8..67983853413d07 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -414,6 +414,15 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	device_initialize(&ec->class_dev);
+ 	cdev_init(&ec->cdev, &fops);
  
- /**
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index aaebe96bcfd66..0ed7904809dce 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_data/mtk_scp.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
- 
- #include "remoteproc_internal.h"
- #include "mtk_common.h"
-@@ -278,6 +279,24 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	return 0;
- }
- 
-+static void scp_add_rpmsg_subdev(struct mtk_scp *scp)
-+{
-+	scp->rpmsg_subdev =
-+		mtk_rpmsg_create_rproc_subdev(scp->pdev, scp->rproc);
-+	if (scp->rpmsg_subdev) {
-+		rproc_add_subdev(scp->rproc, scp->rpmsg_subdev);
++	if (cros_ec_check_features(ec, EC_FEATURE_SCP)) {
++		dev_info(dev, "SCP detected.\n");
++		/*
++		 * Help userspace differentiating ECs from SCP,
++		 * regardless of the probing order.
++		 */
++		ec_platform->ec_name = CROS_EC_DEV_SCP_NAME;
 +	}
-+}
 +
-+static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
-+{
-+	if (scp->rpmsg_subdev) {
-+		rproc_remove_subdev(scp->rproc, scp->rpmsg_subdev);
-+		mtk_rpmsg_destroy_rproc_subdev(scp->rpmsg_subdev);
-+		scp->rpmsg_subdev = NULL;
-+	}
-+}
+ 	/*
+ 	 * Add the class device
+ 	 * Link to the character device for creating the /dev entry
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 16b1615958aa2d..b03d68eb732177 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -72,6 +72,14 @@ config CROS_EC_SPI
+ 	  response time cannot be guaranteed, we support ignoring
+ 	  'pre-amble' bytes before the response actually starts.
+ 
++config CROS_EC_RPMSG
++	tristate "ChromeOS Embedded Controller (rpmsg)"
++	depends on MFD_CROS_EC && RPMSG
++	help
++	  If you say Y here, you get support for talking to the ChromeOS EC
++	  through rpmsg. This uses a simple byte-level protocol with a
++	  checksum.
 +
- static int mtk_scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -301,6 +320,7 @@ static int mtk_scp_probe(struct platform_device *pdev)
- 	scp = (struct mtk_scp *)rproc->priv;
- 	scp->rproc = rproc;
- 	scp->dev = dev;
-+	scp->pdev = pdev;
- 	platform_set_drvdata(pdev, scp);
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
-@@ -372,13 +392,16 @@ static int mtk_scp_probe(struct platform_device *pdev)
- 	init_waitqueue_head(&scp->run.wq);
- 	init_waitqueue_head(&scp->ack_wq);
- 
-+	scp_add_rpmsg_subdev(scp);
-+
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto destroy_mutex;
-+		goto remove_subdev;
- 
--	return ret;
-+	return 0;
- 
--destroy_mutex:
-+remove_subdev:
-+	scp_remove_rpmsg_subdev(scp);
- 	mutex_destroy(&scp->scp_mutex);
- free_rproc:
- 	rproc_free(rproc);
-@@ -390,6 +413,7 @@ static int mtk_scp_remove(struct platform_device *pdev)
- {
- 	struct mtk_scp *scp = platform_get_drvdata(pdev);
- 
-+	scp_remove_rpmsg_subdev(scp);
- 	rproc_del(scp->rproc);
- 	rproc_free(scp->rproc);
- 
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index 6923066869874..1b72c5cc72d36 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -50,7 +50,7 @@ int scp_ipi_send(struct platform_device *pdev,
- 	unsigned long timeout;
- 	int ret;
- 
--	if (WARN(id <= IPI_SCP_INIT || id >= IPI_MAX ||
-+	if (WARN(id <= IPI_NS_SERVICE || id >= IPI_MAX ||
- 	    len > sizeof(send_obj->share_buf) || !buf,
- 	    "failed to send ipi message\n"))
- 		return -EINVAL;
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d0322b41eca54..b8364a397bb60 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -55,4 +55,9 @@ config RPMSG_VIRTIO
- 	select RPMSG
- 	select VIRTIO
- 
-+config RPMSG_MTK_SCP
-+	tristate "MediaTek SCP"
-+	depends on MTK_SCP
-+	select RPMSG
-+
- endmenu
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 9aa859502d275..a0c1dcefa36ee 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
- obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
- obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
-+obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+ config CROS_EC_LPC
+         tristate "ChromeOS Embedded Controller (LPC)"
+         depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index cd591bf872bbe9..3e3190af2b50f4 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -8,6 +8,7 @@ cros_ec_ctl-objs			:= cros_ec_sysfs.o cros_ec_lightbar.o \
+ obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
+ obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+ obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
++obj-$(CONFIG_CROS_EC_RPMSG)		+= cros_ec_rpmsg.o
+ cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o
+ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+ obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
 new file mode 100644
-index 0000000000000..66b39eaae51f2
+index 00000000000000..f123ca6d1c029c
 --- /dev/null
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -0,0 +1,341 @@
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -0,0 +1,164 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
 +// Copyright 2018 Google LLC.
 +
++#include <linux/delay.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/mfd/cros_ec_commands.h>
 +#include <linux/of.h>
-+#include <linux/platform_data/mtk_scp.h>
 +#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
-+#include <linux/workqueue.h>
-+
-+#include "rpmsg_internal.h"
-+
-+// TODO: This is built on top of scp_ipi_register / scp_ipi_send in mtk_scp.h.
-+// It's probably better to move the implementation of register / send to here
-+// instead of in remoteproc/mtk_scp_ipi.c
-+// TODO: Do we need some sort of vring for performance? We may be able to get
-+// rid of this file if so, but that would require SCP firmware support too.
-+
-+struct mtk_rpmsg_device {
-+	struct rpmsg_device rpdev;
-+
-+	struct platform_device *scp_pdev;
-+};
-+
-+struct mtk_rpmsg_endpoint {
-+	struct rpmsg_endpoint ept;
-+	u32 ipi_id;
-+	struct platform_device *scp_pdev;
-+};
-+
-+// TODO: Naming is hard...
-+struct mtk_rpmsg_rproc_subdev {
-+	struct rproc *scp_rproc;
-+	struct platform_device *scp_pdev;
-+	struct rpmsg_endpoint *ns_ept;
-+	struct rproc_subdev subdev;
-+};
-+
-+#define to_mtk_subdev(d) container_of(d, struct mtk_rpmsg_rproc_subdev, subdev);
-+
-+struct mtk_register_device_work {
-+	struct work_struct register_work;
-+	struct platform_device *scp_pdev;
-+	char name[RPMSG_NAME_SIZE];
-+	u32 addr;
-+};
++#include <linux/rpmsg.h>
++#include <linux/slab.h>
 +
 +/**
-+ * TODO: This is copied from virtio_rpmsg_bus.
-+ * struct rpmsg_ns_msg - dynamic name service announcement message
-+ * @name: name of remote service that is published
-+ * @addr: address of remote service that is published
++ * cros_ec_cmd_xfer_rpmsg - Transfer a message over rpmsg and receive the reply
 + *
-+ * This message is sent across to publish a new service, or announce
-+ * about its removal. When we receive these messages, an appropriate
-+ * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
-+ * or ->remove() handler of the appropriate rpmsg driver will be invoked
-+ * (if/as-soon-as one is registered).
++ * This is only used for old EC proto version, and is not supported for this
++ * driver.
++ *
++ * @ec_dev: ChromeOS EC device
++ * @ec_msg: Message to transfer
 + */
-+struct rpmsg_ns_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	u32 addr;
-+} __packed;
-+
-+#define to_scp_device(r)	container_of(r, struct mtk_rpmsg_device, rpdev)
-+#define to_scp_endpoint(r)	container_of(r, struct mtk_rpmsg_endpoint, ept)
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops;
-+
-+static void __ept_release(struct kref *kref)
++static int cros_ec_cmd_xfer_rpmsg(struct cros_ec_device *ec_dev,
++				  struct cros_ec_command *ec_msg)
 +{
-+	struct rpmsg_endpoint *ept = container_of(kref, struct rpmsg_endpoint,
-+						  refcount);
-+	kfree(to_scp_endpoint(ept));
++	return -EINVAL;
 +}
 +
-+static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
++/**
++ * cros_ec_pkt_xfer_rpmsg - Transfer a packet over rpmsg and receive the reply
++ *
++ * @ec_dev: ChromeOS EC device
++ * @ec_msg: Message to transfer
++ */
++static int cros_ec_pkt_xfer_rpmsg(struct cros_ec_device *ec_dev,
++				  struct cros_ec_command *ec_msg)
 +{
-+	struct mtk_rpmsg_endpoint *mept = priv;
-+	struct rpmsg_endpoint *ept = &mept->ept;
-+
-+	// TODO: What if the cb() returns error?
-+	(*ept->cb)(ept->rpdev, data, len, ept->priv, mept->ipi_id);
-+}
-+
-+static struct rpmsg_endpoint *
-+__rpmsg_create_ept(struct platform_device *scp_pdev, struct rpmsg_device *rpdev,
-+		   rpmsg_rx_cb_t cb, void *priv,
-+		   u32 id, const char *name)
-+{
-+	struct mtk_rpmsg_endpoint *mept;
-+	struct rpmsg_endpoint *ept;
-+
++	struct ec_host_response *response;
++	struct rpmsg_device *rpdev = ec_dev->priv;
++	int len;
++	u8 sum;
 +	int ret;
++	int i;
 +
-+	mept = kzalloc(sizeof(*mept), GFP_KERNEL);
-+	if (!mept)
-+		return NULL;
-+	mept->ipi_id = id;
-+	mept->scp_pdev = scp_pdev;
++	ec_msg->result = 0;
++	len = cros_ec_prepare_tx(ec_dev, ec_msg);
++	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
 +
-+	ept = &mept->ept;
-+	kref_init(&ept->refcount);
-+
-+	ept->rpdev = rpdev;
-+	ept->cb = cb;
-+	ept->priv = priv;
-+	ept->ops = &mtk_rpmsg_endpoint_ops;
-+
-+	ret = scp_ipi_register(scp_pdev, id, mtk_rpmsg_ipi_handler, name, mept);
-+	if (ret) {
-+		dev_err(&scp_pdev->dev, "ipi register failed, id = %d", id);
-+		kref_put(&ept->refcount, __ept_release);
-+		return NULL;
-+	}
-+
-+	return ept;
-+}
-+
-+static struct rpmsg_endpoint *
-+mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
-+		     struct rpmsg_channel_info chinfo)
-+{
-+	struct platform_device *scp_pdev = to_scp_device(rpdev)->scp_pdev;
-+	// TODO: Is using src as IPI id "correct"?
-+	return __rpmsg_create_ept(scp_pdev, rpdev, cb, priv, chinfo.src,
-+				  chinfo.name);
-+}
-+
-+static const struct rpmsg_device_ops mtk_rpmsg_device_ops = {
-+	.create_ept = mtk_rpmsg_create_ept,
-+};
-+
-+static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
-+{
-+	kref_put(&ept->refcount, __ept_release);
-+}
-+
-+static int __mtk_rpmsg_send(struct mtk_rpmsg_endpoint *mept, void *data,
-+			    int len, bool wait)
-+{
-+	// TODO: The "wait" is not same as what scp_ipi_send's "wait" means, so
-+	// this is not correct.
-+	// (first wait for there's space of tx buffer, second wait for the ack
-+	// from scp.)
-+	return scp_ipi_send(mept->scp_pdev, mept->ipi_id, data, len,
-+			    wait ? 200 : 0);
-+}
-+
-+static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
-+
-+	return __mtk_rpmsg_send(mept, data, len, true);
-+}
-+
-+static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
-+
-+	return __mtk_rpmsg_send(mept, data, len, false);
-+}
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
-+	.destroy_ept = mtk_rpmsg_destroy_ept,
-+	.send = mtk_rpmsg_send,
-+	.trysend = mtk_rpmsg_trysend,
-+};
-+
-+static void mtk_rpmsg_release_device(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct mtk_rpmsg_device *mdev = to_scp_device(rpdev);
-+
-+	kfree(mdev);
-+}
-+
-+static void mtk_register_device_work_function(struct work_struct *register_work)
-+{
-+	struct mtk_rpmsg_device *mdev;
-+	struct rpmsg_device *rpdev;
-+
-+	struct mtk_register_device_work *work = container_of(
-+		register_work, struct mtk_register_device_work, register_work);
-+	struct platform_device *scp_pdev = work->scp_pdev;
-+
-+	int ret;
-+
-+	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-+	if (!mdev) {
-+		goto free_work;
-+	}
-+
-+	mdev->scp_pdev = scp_pdev;
-+
-+	rpdev = &mdev->rpdev;
-+	rpdev->ops = &mtk_rpmsg_device_ops;
-+	rpdev->src = work->addr;
-+	rpdev->dst = RPMSG_ADDR_ANY;
-+	strncpy(rpdev->id.name, work->name, RPMSG_NAME_SIZE);
-+
-+	rpdev->dev.parent = &scp_pdev->dev;
-+	rpdev->dev.release = mtk_rpmsg_release_device;
-+
-+	ret = rpmsg_register_device(rpdev);
++	// TODO: This currently relies on that mtk_rpmsg send actually blocks
++	// until ack. Should do the wait here instead.
++	ret = rpmsg_send(rpdev->ept, ec_dev->dout, len);
 +
 +	if (ret) {
-+		dev_err(&scp_pdev->dev, "rpmsg register device failed\n");
-+		goto free_work;
-+	}
-+	return;
-+
-+free_work:
-+	// TODO: Is it reasonable to free the work itself in the handler?
-+	kfree(register_work);
-+}
-+
-+static int mtk_rpmsg_create_device(struct platform_device *scp_pdev,
-+				    char *name, u32 addr)
-+{
-+	struct mtk_register_device_work *work;
-+
-+	// This is called in interrupt context from name service callback.
-+	work = kzalloc(sizeof(*work), GFP_ATOMIC);
-+	if (!work)
-+		return -ENOMEM;
-+
-+	INIT_WORK(&work->register_work, mtk_register_device_work_function);
-+	work->scp_pdev = scp_pdev;
-+	strncpy(work->name, name, RPMSG_NAME_SIZE);
-+	work->addr = addr;
-+	// rpmsg_register_device can't be called in interrupt context, so need
-+	// to schedule a work for it.
-+	// TODO: Or should we change mtk_scp to call the callback in
-+	// non-interrupt context?
-+	schedule_work(&work->register_work);
-+	return 0;
-+}
-+
-+static int mtk_rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-+			   void *priv, u32 src)
-+{
-+	struct rpmsg_ns_msg *msg = data;
-+	struct platform_device *scp_pdev = priv;
-+	struct device *dev = &scp_pdev->dev;
-+
-+	int ret;
-+
-+	if (len != sizeof(*msg)) {
-+		dev_err(dev, "malformed ns msg (%d)\n", len);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * the name service ept does _not_ belong to a real rpmsg channel,
-+	 * and is handled by the rpmsg bus itself.
-+	 * for sanity reasons, make sure a valid rpdev has _not_ sneaked
-+	 * in somehow.
-+	 */
-+	if (rpdev) {
-+		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
-+		return -EINVAL;
-+	}
-+
-+	/* don't trust the remote processor for null terminating the name */
-+	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
-+
-+	dev_info(dev, "creating channel %s addr 0x%x\n", msg->name, msg->addr);
-+
-+	ret = mtk_rpmsg_create_device(scp_pdev, msg->name, msg->addr);
-+	if (ret) {
-+		dev_err(dev, "create rpmsg device failed\n");
++		dev_err(ec_dev->dev, "rpmsg send failed\n");
 +		return ret;
 +	}
 +
++	/* check response error code */
++	response = (struct ec_host_response *)ec_dev->din;
++	ec_msg->result = response->result;
++
++	ret = cros_ec_check_result(ec_dev, ec_msg);
++	if (ret)
++		goto exit;
++
++	if (response->data_len > ec_msg->insize) {
++		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
++			response->data_len, ec_msg->insize);
++		ret = -EMSGSIZE;
++		goto exit;
++	}
++
++	/* copy response packet payload and compute checksum */
++	memcpy(ec_msg->data, ec_dev->din + sizeof(*response),
++	       response->data_len);
++
++	sum = 0;
++	for (i = 0; i < sizeof(*response) + response->data_len; i++)
++		sum += ec_dev->din[i];
++
++	if (sum) {
++		dev_err(ec_dev->dev, "bad packet checksum, calculated %x\n",
++			sum);
++		ret = -EBADMSG;
++		goto exit;
++	}
++
++	ret = response->data_len;
++exit:
++	if (ec_msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
++	return ret;
++}
++
++static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
++				  int len, void *priv, u32 src)
++{
++	struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
++
++	if (len > ec_dev->din_size) {
++		dev_warn(ec_dev->dev,
++			 "ipi received length %d > din_size, truncating", len);
++		len = ec_dev->din_size;
++	}
++
++	memcpy(ec_dev->din, data, len);
++
 +	return 0;
 +}
 +
-+int mtk_rpmsg_prepare(struct rproc_subdev *subdev)
++static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
 +{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+	struct platform_device *scp_pdev;
++	struct device *dev = &rpdev->dev;
 +
-+	mtk_subdev = to_mtk_subdev(subdev);
-+	scp_pdev = mtk_subdev->scp_pdev;
++	struct cros_ec_device *ec_dev;
++	int ret;
 +
-+	/* a dedicated endpoint handles the name service msgs */
-+	mtk_subdev->ns_ept =
-+		__rpmsg_create_ept(scp_pdev, NULL, mtk_rpmsg_ns_cb, scp_pdev,
-+				   IPI_NS_SERVICE, "name-service");
-+	if (!mtk_subdev->ns_ept) {
-+		dev_err(&scp_pdev->dev,
-+			"failed to create name service endpoint\n");
++	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
++	if (!ec_dev)
 +		return -ENOMEM;
-+	}
++
++	ec_dev->dev = dev;
++	ec_dev->priv = rpdev;
++	ec_dev->cmd_xfer = cros_ec_cmd_xfer_rpmsg;
++	ec_dev->pkt_xfer = cros_ec_pkt_xfer_rpmsg;
++	ec_dev->phys_name = dev_name(&rpdev->dev);
++	ec_dev->din_size = sizeof(struct ec_host_response) +
++			   sizeof(struct ec_response_get_protocol_info);
++	ec_dev->dout_size = sizeof(struct ec_host_request);
++	dev_set_drvdata(dev, ec_dev);
++
++	ret = cros_ec_register(ec_dev);
++	if (ret)
++		return ret;
 +
 +	return 0;
 +}
 +
-+void mtk_rpmsg_unprepare(struct rproc_subdev *subdev)
++static void cros_ec_rpmsg_remove(struct rpmsg_device *rpdev)
 +{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
++	struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
 +
-+	kref_put(&mtk_subdev->ns_ept->refcount, __ept_release);
-+	// TODO: unregister all rpmsg devices created by name service here.
++	cros_ec_remove(ec_dev);
 +}
 +
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+	struct device *dev = &scp_pdev->dev;
++static const struct rpmsg_device_id cros_ec_rpmsg_device_id[] = {
++	{ .name = "cros-ec-rpmsg", },
++	{ /* sentinel */ },
++};
 +
-+	mtk_subdev = kzalloc(sizeof(*mtk_subdev), GFP_KERNEL);
-+	if (!mtk_subdev) {
-+		dev_err(dev, "allocate rproc subdevice failed.\n");
-+		return NULL;
-+	}
-+	mtk_subdev->scp_pdev = scp_pdev;
-+	mtk_subdev->scp_rproc = scp_rproc;
-+	mtk_subdev->subdev.prepare = mtk_rpmsg_prepare;
-+	mtk_subdev->subdev.unprepare = mtk_rpmsg_unprepare;
++static struct rpmsg_driver cros_ec_driver_rpmsg = {
++	.drv.name       = KBUILD_MODNAME,
++	.id_table       = cros_ec_rpmsg_device_id,
++	.probe		= cros_ec_rpmsg_probe,
++	.remove		= cros_ec_rpmsg_remove,
++	.callback	= cros_ec_rpmsg_callback,
++};
 +
-+	return &mtk_subdev->subdev;
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_create_rproc_subdev);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+
-+	kfree(mtk_subdev);
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_destroy_rproc_subdev);
++module_rpmsg_driver(cros_ec_driver_rpmsg);
 +
 +MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp rpmsg driver");
-diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
-index 118838c91564f..4b3cf4f63fbe9 100644
---- a/include/linux/platform_data/mtk_scp.h
-+++ b/include/linux/platform_data/mtk_scp.h
-@@ -27,7 +27,14 @@ typedef void (*ipi_handler_t) (void *data,
++MODULE_DESCRIPTION("ChromeOS EC multi function device (rpmsg)");
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index de8b588c8776da..fd297cf8f97295 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -24,6 +24,7 @@
  
- enum ipi_id {
- 	IPI_SCP_INIT = 0,
-+	// TODO: Should this just be part of the response of IPI_SCP_INIT
-+	// instead? e.g. the initial IPI_SCP_INIT from SCP sends a list of
-+	// channels.
-+	IPI_NS_SERVICE,
- 	IPI_MDP,
-+	// TODO: Since we'll not be having all IPI numbers here after the name
-+	// service & rpmsg, this IPI_MAX need to be manually specified and sync
-+	// with the firmware.
- 	IPI_MAX,
+ #define CROS_EC_DEV_NAME "cros_ec"
+ #define CROS_EC_DEV_PD_NAME "cros_pd"
++#define CROS_EC_DEV_SCP_NAME "cros_scp"
+ 
+ /*
+  * The EC is unresponsive for a time after a reboot command.  Add a
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index fc91082d4c357b..3e5da6e93b2f42 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -856,6 +856,8 @@ enum ec_feature_code {
+ 	EC_FEATURE_RTC = 27,
+ 	/* EC supports CEC commands */
+ 	EC_FEATURE_CEC = 35,
++	/* The MCU exposes a SCP */
++	EC_FEATURE_SCP = 39,
  };
  
-diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_rpmsg.h
-new file mode 100644
-index 0000000000000..c55dbd658dde1
---- /dev/null
-+++ b/include/linux/rpmsg/mtk_rpmsg.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright 2018 Google LLC.
-+
-+#ifndef __LINUX_RPMSG_MTK_RPMSG_H
-+#define __LINUX_RPMSG_MTK_RPMSG_H
-+
-+#include <linux/device.h>
-+#include <linux/remoteproc.h>
-+
-+#if IS_ENABLED(CONFIG_RPMSG_MTK_SCP)
-+
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev);
-+
-+#else
-+
-+static inline struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc)
-+{
-+	return NULL;
-+}
-+
-+static inline void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
-+{
-+}
-+
-+#endif
-+
-+#endif
+ #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
 -- 
 2.20.1.415.g653613c723-goog
 
