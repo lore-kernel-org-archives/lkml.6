@@ -2,98 +2,103 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D73C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E48FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C42214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E7E220882
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeLZUlF (ORCPT
+        id S1728151AbeLZUqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 15:41:05 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.102]:11291 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727561AbeLZUlF (ORCPT
+        Wed, 26 Dec 2018 15:46:03 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42190 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbeLZUqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 15:41:05 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 7FF81E5CD
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 14:41:04 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id cFzEgsv4O2PzOcFzEgbAg9; Wed, 26 Dec 2018 14:41:04 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.78.104] (port=60394 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gcFzB-002qjw-B5; Wed, 26 Dec 2018 14:41:01 -0600
-Date:   Wed, 26 Dec 2018 14:40:59 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Luwei Kang <luwei.kang@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] KVM: x86: Fix bit shifting in update_intel_pt_cfg
-Message-ID: <20181226204059.GA11391@embeddedor>
+        Wed, 26 Dec 2018 15:46:02 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so14668089lja.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:46:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dwEJGMRqNGMT3lccYYP8q+ZfpQWlm3LN07XfR8UgqwI=;
+        b=A5RW3UKuXO1ChkVDGd9qx/gTo/I7LkBORF61WvFmVZX64qhpVH3vBo//XbCXGDzrGk
+         AX4/cPRzNzBZ89HaXHm/Q83IWesSFEf/6tT12z0YaBupFaMhq3rHk8kZ6yLqub9AmAWV
+         NcNJ9WpTQq9/kFNl8BCir5JoREbSBS0zpmgyejabBK03y9J1PgIoCD9rXNCIJ7Qpee3A
+         K4cyUX53oGBCIUXxT/2a02FJLMG+KP9MYPBSscS57U0uXiM3IRnKlCvldWMSFKL6V2JX
+         3F4gl1FNtToAso1rlbDIqXjvmPnBf0q6uoTCghUsRRJMf08wSl9w5YpjPQ/FanrNfJ7T
+         ZBzA==
+X-Gm-Message-State: AJcUukdb3V/Jz874Rqd1zsp8cdEwDrXC+jo6C6lPcGXXKGcFm9xZqPGR
+        VE9QegtbJPpzOYaxyquZy6qDMU5V7CamG2k2mWAxJYbTvLg=
+X-Google-Smtp-Source: ALg8bN4uSzD1CAJzoyEdmNard2/Ol8Vou2YSsp/QM4KueT7ckRiwd2ngRoHSS2HBdPkpd+TzYp4VYd33oATTHDtS+ok=
+X-Received: by 2002:a2e:2246:: with SMTP id i67-v6mr10342311lji.154.1545857160707;
+ Wed, 26 Dec 2018 12:46:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.78.104
-X-Source-L: No
-X-Exim-ID: 1gcFzB-002qjw-B5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.78.104]:60394
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20181216231510.26854-1-mcroce@redhat.com> <87zhsvi0jq.fsf@mail.parknet.co.jp>
+In-Reply-To: <87zhsvi0jq.fsf@mail.parknet.co.jp>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Wed, 26 Dec 2018 21:45:24 +0100
+Message-ID: <CAGnkfhz8pc9UO5Y3NHMFowcMAeNnF3QApvh0N0MhLgRP2Y95FA@mail.gmail.com>
+Subject: Re: [PATCH v2] vfat: don't read garbage after last dirent
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Timothy Redaelli <tredaelli@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ctl_bitmask in pt_desc is of type u64. When an integer like 0xf is
-being left shifted more than 32 bits, the behavior is undefined.
+On Mon, Dec 24, 2018 at 1:14 PM OGAWA Hirofumi
+<hirofumi@mail.parknet.co.jp> wrote:
+>
+> Matteo Croce <mcroce@redhat.com> writes:
+>
+> > The FAT32 File System Specification[1] states that:
+> >
+> >     If DIR_Name[0] == 0x00, then the directory entry is free, and there
+> >     are no allocated directory entries after this one.
+> >
+> >     The special 0 value, indicates to FAT file system driver code that
+> >     the rest of the entries in this directory do not need to be examined
+> >     because they are all free.
+> >
+> > This is not enforced by Linux, and is possible to read garbage if not
+> > all dirents after the last one are filled with zeroes.
+> >
+> > [1] http://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/fatgen103.doc
+> >
+> > Reported-by: Timothy Redaelli <tredaelli@redhat.com>
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+>
+> We have to handle all paths that is using fat_get_entry(), to make
+> consistent behavior.
+>
+> With quick check, there are still several issues remaining. Please check
+> more. For example, looks like fat_parse_long()/fat_search_long() path is
+> missing, and fat_get_dotdot_entry(), fat_subdirs() too.
+>
 
-Fix this by adding suffix ULL to integer 0xf.
+If I put the check in fat_get_short_entry(), then
+fat_get_dotdot_entry() and fat_subdirs() are covered too.
+Is there any drawback in doing this?
 
-Addresses-Coverity-ID: 1476095 ("Bad bit shift operation")
-Fixes: 6c0f0bba85a0 ("KVM: x86: Introduce a function to initialize the PT configuration")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/x86/kvm/vmx/vmx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> (while adding new entry, if we found zeroed entry, we would be better to
+> warn about fsck.)
+>
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index cbd55e7aeae5..251c68a74bbe 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7012,7 +7012,7 @@ static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
- 
- 	/* unmask address range configure area */
- 	for (i = 0; i < vmx->pt_desc.addr_range; i++)
--		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i * 4));
-+		vmx->pt_desc.ctl_bitmask &= ~(0xfULL << (32 + i * 4));
- }
- 
- static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+Ok
+
+> Thanks.
+> --
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
+Thanks,
 -- 
-2.20.1
-
+Matteo Croce
+per aspera ad upstream
