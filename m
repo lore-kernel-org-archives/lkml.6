@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F04EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A76C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBE1218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C49682070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865059;
-	bh=NTx8kubCzb/eaz+WlAwKMW8FPYdBUbDuShs2pQSPHUQ=;
+	s=default; t=1545865062;
+	bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qY1Fm0TqKHA1d4a5hXEQn0gEGght5VYS5TNSAdLJgBGAp5GRcoLfwnNQyGGOtnq6J
-	 h6Hm3sOdW3E8qUBFWK0KiHuzkTFhfyHAclwlnyPGlMmK9GTxeNQpZbOi+LvIUuSiMl
-	 p1GroaHBDMyhILRuJEFgwMkJlQM+dX44cniAKWqU=
+	b=gYqIgDVQQxe/rWwQXa7w3EdQ2r0WZjC4yePdw7+ruB8gAsjYEh/wN2c97rptKdkFb
+	 kNqkSzmcEEeHaDlKs8Saj2vgxoyRdKH07hZPcOzYLx/dS98Fwoq8cDy+6PVCkkOzrF
+	 F9zP5xI4x2RFUQleqlMT7WG++5f9ocoUcRscikDo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730497AbeLZW5h (ORCPT
+        id S1730508AbeLZW5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:57:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:57:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730479AbeLZW5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:34 -0500
+        id S1729451AbeLZW5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FBD42070B;
-        Wed, 26 Dec 2018 22:57:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 508AE2070B;
+        Wed, 26 Dec 2018 22:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865053;
-        bh=NTx8kubCzb/eaz+WlAwKMW8FPYdBUbDuShs2pQSPHUQ=;
+        s=default; t=1545865057;
+        bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RYXsl/H1kN3PKp8twxXnh2f7sE+8lAvvhVIt27xBcPgm3ErVtih/TBK5/NdoEAxNg
-         eNHnptdtEDCdEvaxSAZKDlHiU2dHY6RoqVmyd0ANV3FiCtyXrF+DTPWUu0CQDAmBlF
-         sq9dTp5/zCV9AaLDzNecmdsQjegK4VRr9O5ELDQc=
+        b=naFySTcTZkn/VQ2Fw8cdGtfBs2rfy+14WSTaLOKO65Q763/EWiQu+0qTe3AtrEODl
+         fpaus8bSeUN8MSE2R4qGsrI5neGwD+tfxicVoyjh6pRrNQtepQZyf3i7A0r/lom2k+
+         OmA7DSVG4IX9HeiDIizddkct+fmURhmc7N8VWA2M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jason Martinsen <jasonmartinsen@msn.com>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 17/21] lan78xx: Resolve issue with changing MAC address
-Date:   Wed, 26 Dec 2018 17:54:55 -0500
-Message-Id: <20181226225501.151365-17-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 19/21] vxge: ensure data0 is initialized in when fetching firmware version information
+Date:   Wed, 26 Dec 2018 17:54:57 -0500
+Message-Id: <20181226225501.151365-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -59,53 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Martinsen <jasonmartinsen@msn.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
+[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
 
-Current state for the lan78xx driver does not allow for changing the
-MAC address of the interface, without either removing the module (if
-you compiled it that way) or rebooting the machine.  If you attempt to
-change the MAC address, ifconfig will show the new address, however,
-the system/interface will not respond to any traffic using that
-configuration.  A few short-term options to work around this are to
-unload the module and reload it with the new MAC address, change the
-interface to "promisc", or reboot with the correct configuration to
-change the MAC.
+Currently variable data0 is not being initialized so a garbage value is
+being passed to vxge_hw_vpath_fw_api and this value is being written to
+the rts_access_steer_data0 register.  There are other occurrances where
+data0 is being initialized to zero (e.g. in function
+vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+is initialized likewise to 0.
 
-This patch enables the ability to change the MAC address via fairly normal means...
-ifdown <interface>
-modify entry in /etc/network/interfaces OR a similar method
-ifup <interface>
-Then test via any network communication, such as ICMP requests to gateway.
+Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
 
-My only test platform for this patch has been a raspberry pi model 3b+.
-
-Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
-
------
-
+Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 45a6a7cae4bf..59a7fa3420a6 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1679,6 +1679,10 @@ int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
- 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
- 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 6223930a8155..6f57b0b7d57a 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
+ 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
+ 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
+-	u64 data0, data1 = 0, steer_ctrl = 0;
++	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
+ 	enum vxge_hw_status status;
  
-+	/* Added to support MAC address changes */
-+	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
-+	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
-+
- 	return 0;
- }
- 
+ 	status = vxge_hw_vpath_fw_api(vpath,
 -- 
 2.19.1
 
