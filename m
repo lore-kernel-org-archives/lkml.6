@@ -4,94 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE39C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33F1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7978C2173B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2CA20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:06:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="DcChs5JS"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="DAZBWvl8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbeLZCGF (ORCPT
+        id S1726917AbeLZCGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 21:06:05 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45488 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeLZCGF (ORCPT
+        Tue, 25 Dec 2018 21:06:19 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:60858 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbeLZCGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 21:06:05 -0500
-Received: by mail-qk1-f193.google.com with SMTP id y78so8732327qka.12
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:06:04 -0800 (PST)
+        Tue, 25 Dec 2018 21:06:19 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id B5C20BC2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 02:06:17 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id S3Xio8TZQkX4 for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 20:06:17 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 816736D8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 20:06:17 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id c73so17488863itd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:06:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
+        d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=ikr3Ra5EuhOrNtxrNCXKUlSEBXE4b8Xs1IWA6lspR/I=;
-        b=DcChs5JSxuTLyStcDGQS4hxEQyUy0suQXId6oKYXSh9CZ+q40uAaJTCnAS2SwdU6+c
-         6rVqD/VnspRoUEDUQRnkPgGbdz8HazinPgZHPIkpGBRKnnoXlFos3CjiATPHZn33eUsv
-         XqYHBEgBzhavajRZzlVMp51DEAr0AUbZmaVxcodavg/7og/jym2TK+x94KDd5+TXR4kE
-         qZ0IHUGICzIT3ftbU/AjmFSeuOA6nm0qBTMYQxZffwB8R5NAtxW3hIwm8w3jqtjrzm/y
-         40VeZc9YtMdoO96L8wC8bwYAoxd+/BJ8ran2zuCmfH8O5Vek/pI1C4Hm49RE3rWz57Ws
-         Qpxg==
+        bh=/fpCi95qFg44joQlzuevxKAki1Vqp2cc45ZOsT4lpxw=;
+        b=DAZBWvl8um8Ri6NoqtWoTZsCX01x+rJNJhbFXKZHwWe2i1KiiErebnHTW7Y6ieFU6h
+         +tSmNHq7lp+sFOLb1/mO+bvP5E/hJLhkbj+HHQAK7uRNNZwvPZCgQeSgcyRetsbS2whj
+         +38nEnndpgD5EqmEj1soaLGvlPfr8f64pB1vot4hL/tw1wojIj8gBDF59tmUwDIkxeDw
+         u3/vI1sbffMpF2ksT6iCEg49tE6jWHv6U31mPYlJPmJSfw7rC1PavTIwZ7kyIXusWuOU
+         7xNGcslNB8DK5Ur3cSl9Y+RSZ0647XWYqlUQWb+XCm8z9jTKBmUnCMdWPHrRlvyLYr0r
+         GyGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ikr3Ra5EuhOrNtxrNCXKUlSEBXE4b8Xs1IWA6lspR/I=;
-        b=JdhdWk9vFSY+IA2K+frrMx+Z8SSh2LMOJfGO+Qc2puE4RlJv3NI3noBZmg3C5sLXPC
-         zrJYS5Rq5CbqwUZtMiNwhBRYmTIRsR/g4lhdk3dPAegFkdKfZ1upu8/dE97keTZM1NY6
-         2AfOTiDFJkH7lYJUbZyHanloDARLdtFYK0mpbES7r19Vgfsqq0qe5HB5NNjP4uG/SyAJ
-         APXDYTjH0zubBfe2ajzeHtZyxcy68u/r2CSuOavnp1zuuiz2Q8ffK4G++fl4Lpm5Ogs0
-         K6V6A/zGAkbLeH4iWVTlYQdEhNbpkdGD9aGOEp9f1X4OyMUhfPnrGFWHZRF2Z3Cy+463
-         i2Vw==
-X-Gm-Message-State: AJcUukevfNopllrr5Gn175fFVX9l/W0AiZmUiS2hGsm0kzlmJOyN/3bY
-        CJ8/hOsrKDp9vPVONybkYpKCLg==
-X-Google-Smtp-Source: ALg8bN4GquUtjdR5/5YXnS0aUfLrf7fPn9RuHDwgtdlxF3dHtmYPrLXed+Hi09h80vUtI8N5bkh8Aw==
-X-Received: by 2002:a37:af42:: with SMTP id y63mr15876085qke.251.1545789964113;
-        Tue, 25 Dec 2018 18:06:04 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id e4sm12499934qka.31.2018.12.25.18.06.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Dec 2018 18:06:03 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        andreyknvl@google.com, dvyukov@google.com, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH -mmotm] arm64: skip kmemleak for KASAN again
-Date:   Tue, 25 Dec 2018 21:05:50 -0500
-Message-Id: <20181226020550.63712-1-cai@lca.pw>
+        bh=/fpCi95qFg44joQlzuevxKAki1Vqp2cc45ZOsT4lpxw=;
+        b=rjsmr6OSxPZ1YBUhh+wCE4MVTI/HsV4yJ+myyKZh/oYkgwj3xOPNZSmagYVheM7KFZ
+         TVSxZHonJmsMXo456ZogfWxmuwkAI/zLBqg4rho5q+DP1VEXGX3oFYEryVnsuFiV9OX1
+         0MQODVURzdhGqmaIlTds1CEUQfCpE/EsLDT21Fh3xj+MVKWQ4fRBMGBBjxMmgVbQiNUv
+         RdMiL8jeYSQ4t0UymvMdGZEMpAGaJDY/snhwVnBveBKS5pGZByiuzqidUAK4yk/A1rXK
+         lY/LqKAjrBWgx1v9SX8lQ0N/JQ6382bKTRS3CqBVcWudwZb3Zie2j8//HdH7xq+LHUzg
+         XYTg==
+X-Gm-Message-State: AA+aEWZYkaBOC0BpiKMGQLsqla6tmTJspmdiRdvbxY5VQxPAdYGiFMDM
+        LS/wqkumm/K+qH+r8PUeK+ZDNHsAyufLegTPbZ4x1M/esOs+12j2i5O6u1QV5YSPiPjJ5FeaovP
+        oE0jhW/RrKtywVcE+aTCNMuA1CkZo
+X-Received: by 2002:a02:8a1c:: with SMTP id j28mr11989280jak.49.1545789977153;
+        Tue, 25 Dec 2018 18:06:17 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/UN6OYy5W5zE7a/kBbv9d7OnKjpjjV3cjkpOVGD7gwEAHs5gW1MwN43KHOvaaN8W00T0m9DUw==
+X-Received: by 2002:a02:8a1c:: with SMTP id j28mr11989270jak.49.1545789976918;
+        Tue, 25 Dec 2018 18:06:16 -0800 (PST)
+Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
+        by smtp.gmail.com with ESMTPSA id 137sm13116019itm.21.2018.12.25.18.06.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Dec 2018 18:06:16 -0800 (PST)
+From:   Kangjie Lu <kjlu@umn.edu>
+To:     kjlu@umn.edu
+Cc:     pakki001@umn.edu, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] infiniband: fix a missing check of nla_put
+Date:   Tue, 25 Dec 2018 20:05:48 -0600
+Message-Id: <20181226020549.71446-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to 871ac3d540f (kasan: initialize shadow to 0xff for tag-based
-mode), kmemleak is broken again with KASAN. It needs a similar fix
-from e55058c2983 (mm/memblock.c: skip kmemleak for kasan_init()).
+nla_put() may fail. The fix adds a check for its return value, and
+returns -EMSGSIZE if it fails.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- arch/arm64/mm/kasan_init.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/infiniband/core/addr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 48d8f2fa0d14..4b55b15707a3 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -47,8 +47,7 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
- {
- 	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
- 						__pa(MAX_DMA_ADDRESS),
--						MEMBLOCK_ALLOC_ACCESSIBLE,
--						node);
-+						MEMBLOCK_ALLOC_KASAN, node);
- 	return __pa(p);
- }
+diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+index 0dce94e3c495..32d033ebaa5b 100644
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -178,7 +178,8 @@ static int ib_nl_ip_send_msg(struct rdma_dev_addr *dev_addr,
+ 	/* Construct the family header first */
+ 	header = skb_put(skb, NLMSG_ALIGN(sizeof(*header)));
+ 	header->ifindex = dev_addr->bound_dev_if;
+-	nla_put(skb, attrtype, size, daddr);
++	if (nla_put(skb, attrtype, size, daddr))
++		return -EMSGSIZE;
  
+ 	/* Repair the nlmsg header length */
+ 	nlmsg_end(skb, nlh);
 -- 
 2.17.2 (Apple Git-113)
 
