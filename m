@@ -2,164 +2,186 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11952C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0540FC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD16F218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE90A2171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:19:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="SRbPBtkC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeLZPPP (ORCPT
+        id S1727129AbeLZPTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 10:15:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725784AbeLZPPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 10:15:15 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E63C081127;
-        Wed, 26 Dec 2018 15:15:14 +0000 (UTC)
-Received: from redhat.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4376F5C22C;
-        Wed, 26 Dec 2018 15:15:06 +0000 (UTC)
-Date:   Wed, 26 Dec 2018 10:15:05 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-Message-ID: <20181226101411-mutt-send-email-mst@kernel.org>
-References: <20181205225323.12555-1-mst@redhat.com>
- <20181205225323.12555-2-mst@redhat.com>
- <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
+        Wed, 26 Dec 2018 10:19:33 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:52092 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbeLZPTd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 10:19:33 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 71D3324E25BD;
+        Wed, 26 Dec 2018 07:19:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1545837572; bh=7bJtq6WlClTOgEY7fy1zvuHrsJ8CUhuisiP3TTvq/+M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=SRbPBtkC3Z3nS7TICXEHiLd85s6l+TDsSetXFfo1HiwCoUBTr2ezU8xiwch6Wivdu
+         62TZOte2PQH4GxI0nNxvrJF8Kum07PsBrylzbcfjZcNwW0Ug3LuBNUnNFhRfbPL3Y1
+         D7ahbBTJE12viywm5RbI0TIT7ZjLCelyCLV3D2r+rmL6MoSjWYp/djjJikwm4BU7/h
+         PLUgLh5y5E3FHfIerLGv8Ew/b6v1t6XGd5Zxeo0YnjAgqFS4WAQskAhllEglAfhfEK
+         JitZMQSwozkpvSem1TM4kOgkCvFn0ATGCXxCMh3RJV0IPCpGrxRiRg8GDICagtAUVE
+         Nuv1wHRPCeKlA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E67D53577;
+        Wed, 26 Dec 2018 07:19:31 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 26 Dec 2018 07:19:31 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 26 Dec 2018 16:19:29 +0100
+Received: from [10.225.2.19] (10.225.2.19) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 26 Dec
+ 2018 16:19:29 +0100
+Subject: Re: [PATCH 11/21] PCI: designware: Make use of BIT() in constant
+ definitions
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
+ <20181221072716.29017-12-andrew.smirnov@gmail.com>
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <86e8172d-d1dc-59d6-0b64-b11ce014b6a4@synopsys.com>
+Date:   Wed, 26 Dec 2018 15:14:58 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 26 Dec 2018 15:15:15 +0000 (UTC)
+In-Reply-To: <20181221072716.29017-12-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.225.2.19]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
-> 
-> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
-> > When use_napi is set, let's enable BQLs.  Note: some of the issues are
-> > similar to wifi.  It's worth considering whether something similar to
-> > commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
-> > benefitial.
-> 
-> 
-> I've played a similar patch several days before. The tricky part is the mode
-> switching between napi and no napi. We should make sure when the packet is
-> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
-> tracking it through skb->cb.  And deal with the freeze by reset the BQL
-> status. Patch attached.
-> 
-> But when testing with vhost-net, I don't very a stable performance, it was
-> probably because we batch the used ring updating so tx interrupt may come
-> randomly. We probably need to implement time bounded coalescing mechanism
-> which could be configured from userspace.
-> 
-> Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
-> regression on machine without APICv, (haven't found time to test APICv
-> machine). But consider it was for correctness, I think it's acceptable? Then
-> we can do optimization on top?
-> 
-> 
-> Thanks
+Hi,
 
-I don't see how it's for correctness to be frank.
-What if we just do the bulk free? Does that fix the regression?
-
-
+On 21/12/2018 07:27, Andrey Smirnov wrote:
+> Avoid using explicit left shifts and convert various definitions to
+> use BIT() instead. No functional change intended.
 > 
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> >   drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
-> >   1 file changed, 19 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index cecfd77c9f3c..b657bde6b94b 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
-> >   	return stats.packets;
-> >   }
-> > -static void free_old_xmit_skbs(struct send_queue *sq)
-> > +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
-> > +			       bool use_napi)
-> >   {
-> >   	struct sk_buff *skb;
-> >   	unsigned int len;
-> > @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
-> >   	if (!packets)
-> >   		return;
-> > +	if (use_napi)
-> > +		netdev_tx_completed_queue(txq, packets, bytes);
-> > +
-> >   	u64_stats_update_begin(&sq->stats.syncp);
-> >   	sq->stats.bytes += bytes;
-> >   	sq->stats.packets += packets;
-> > @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
-> >   		return;
-> >   	if (__netif_tx_trylock(txq)) {
-> > -		free_old_xmit_skbs(sq);
-> > +		free_old_xmit_skbs(sq, txq, true);
-> >   		__netif_tx_unlock(txq);
-> >   	}
-> > @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
-> >   	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
-> >   	__netif_tx_lock(txq, raw_smp_processor_id());
-> > -	free_old_xmit_skbs(sq);
-> > +	free_old_xmit_skbs(sq, txq, true);
-> >   	__netif_tx_unlock(txq);
-> >   	virtqueue_napi_complete(napi, sq->vq, 0);
-> > @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> >   	struct send_queue *sq = &vi->sq[qnum];
-> >   	int err;
-> >   	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
-> > -	bool kick = !skb->xmit_more;
-> > +	bool more = skb->xmit_more;
-> >   	bool use_napi = sq->napi.weight;
-> > +	unsigned int bytes = skb->len;
-> > +	bool kick;
-> >   	/* Free up any pending old buffers before queueing new ones. */
-> > -	free_old_xmit_skbs(sq);
-> > +	free_old_xmit_skbs(sq, txq, use_napi);
-> > -	if (use_napi && kick)
-> > +	if (use_napi && !more)
-> >   		virtqueue_enable_cb_delayed(sq->vq);
-> >   	/* timestamp packet in software */
-> > @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> >   		if (!use_napi &&
-> >   		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
-> >   			/* More just got used, free them then recheck. */
-> > -			free_old_xmit_skbs(sq);
-> > +			free_old_xmit_skbs(sq, txq, false);
-> >   			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
-> >   				netif_start_subqueue(dev, qnum);
-> >   				virtqueue_disable_cb(sq->vq);
-> > @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> >   		}
-> >   	}
-> > -	if (kick || netif_xmit_stopped(txq)) {
-> > +	if (use_napi)
-> > +		kick = __netdev_tx_sent_queue(txq, bytes, more);
-> > +	else
-> > +		kick = !more || netif_xmit_stopped(txq);
-> > +
-> > +	if (kick) {
-> >   		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
-> >   			u64_stats_update_begin(&sq->stats.syncp);
-> >   			sq->stats.kicks++;
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware.c |  2 +-
+>  drivers/pci/controller/dwc/pcie-designware.h | 18 +++++++++---------
+>  2 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index d123ac290b9e..086e87a40316 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -300,7 +300,7 @@ void dw_pcie_disable_atu(struct dw_pcie *pci, int index,
+>  	}
+>  
+>  	dw_pcie_writel_dbi(pci, PCIE_ATU_VIEWPORT, region | index);
+> -	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, ~PCIE_ATU_ENABLE);
+> +	dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, (u32)~PCIE_ATU_ENABLE);
+
+This is unrelated with the patch description purpose.
+
+>  }
+>  
+>  int dw_pcie_wait_for_link(struct dw_pcie *pci)
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 58735fd01668..348e91b6daa2 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -40,11 +40,11 @@
+>  #define PORT_LOGIC_LTSSM_STATE_MASK	0x1f
+>  #define PORT_LOGIC_LTSSM_STATE_L0	0x11
+>  #define PCIE_PORT_DEBUG1		0x72C
+> -#define PCIE_PORT_DEBUG1_LINK_UP		(0x1 << 4)
+> -#define PCIE_PORT_DEBUG1_LINK_IN_TRAINING	(0x1 << 29)
+> +#define PCIE_PORT_DEBUG1_LINK_UP		BIT(4)
+> +#define PCIE_PORT_DEBUG1_LINK_IN_TRAINING	BIT(29)
+>  
+>  #define PCIE_LINK_WIDTH_SPEED_CONTROL	0x80C
+> -#define PORT_LOGIC_SPEED_CHANGE		(0x1 << 17)
+> +#define PORT_LOGIC_SPEED_CHANGE		BIT(17)
+>  #define PORT_LOGIC_LINK_WIDTH_MASK	(0x1f << 8)
+>  #define PORT_LOGIC_LINK_WIDTH_1_LANES	(0x1 << 8)
+>  #define PORT_LOGIC_LINK_WIDTH_2_LANES	(0x2 << 8)
+> @@ -58,8 +58,8 @@
+>  #define PCIE_MSI_INTR0_STATUS		0x830
+>  
+>  #define PCIE_ATU_VIEWPORT		0x900
+> -#define PCIE_ATU_REGION_INBOUND		(0x1 << 31)
+> -#define PCIE_ATU_REGION_OUTBOUND	(0x0 << 31)
+> +#define PCIE_ATU_REGION_INBOUND		BIT(31)
+> +#define PCIE_ATU_REGION_OUTBOUND	0
+>  #define PCIE_ATU_REGION_INDEX2		(0x2 << 0)
+>  #define PCIE_ATU_REGION_INDEX1		(0x1 << 0)
+>  #define PCIE_ATU_REGION_INDEX0		(0x0 << 0)
+> @@ -69,8 +69,8 @@
+>  #define PCIE_ATU_TYPE_CFG0		(0x4 << 0)
+>  #define PCIE_ATU_TYPE_CFG1		(0x5 << 0)
+>  #define PCIE_ATU_CR2			0x908
+> -#define PCIE_ATU_ENABLE			(0x1 << 31)
+> -#define PCIE_ATU_BAR_MODE_ENABLE	(0x1 << 30)
+> +#define PCIE_ATU_ENABLE			BIT(31)
+> +#define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
+>  #define PCIE_ATU_LOWER_BASE		0x90C
+>  #define PCIE_ATU_UPPER_BASE		0x910
+>  #define PCIE_ATU_LIMIT			0x914
+> @@ -81,7 +81,7 @@
+>  #define PCIE_ATU_UPPER_TARGET		0x91C
+>  
+>  #define PCIE_MISC_CONTROL_1_OFF		0x8BC
+> -#define PCIE_DBI_RO_WR_EN		(0x1 << 0)
+> +#define PCIE_DBI_RO_WR_EN		BIT(0)
+>  
+>  /*
+>   * iATU Unroll-specific register definitions
+> @@ -108,7 +108,7 @@
+>  		((region) << 9)
+>  
+>  #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region) \
+> -		(((region) << 9) | (0x1 << 8))
+> +		(((region) << 9) | BIT(8))
+>  
+>  #define MAX_MSI_IRQS			256
+>  #define MAX_MSI_IRQS_PER_CTRL		32
+> 
+
+Regards,
+
+Gustavo
