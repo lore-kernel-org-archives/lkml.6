@@ -7,80 +7,80 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F049FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB93C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33062171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32F612171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:56:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="lPczBkvz"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="pF3+Uk/M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeLZCyf (ORCPT
+        id S1727027AbeLZC4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 21:54:35 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:42780 "EHLO
+        Tue, 25 Dec 2018 21:56:09 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:43072 "EHLO
         mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbeLZCyf (ORCPT
+        with ESMTP id S1726948AbeLZC4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 21:54:35 -0500
+        Tue, 25 Dec 2018 21:56:08 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id AE65EBC9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 02:54:33 +0000 (UTC)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 3F32BBC9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 02:56:07 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
 Received: from mta-p6.oit.umn.edu ([127.0.0.1])
         by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7Xvy4Oy4KWXz for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 20:54:33 -0600 (CST)
-Received: from mail-it1-f199.google.com (mail-it1-f199.google.com [209.85.166.199])
+        with ESMTP id CQq1faal7zm6 for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 20:56:07 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 807BEBCE
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 20:54:33 -0600 (CST)
-Received: by mail-it1-f199.google.com with SMTP id 135so18622551itk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:54:33 -0800 (PST)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 110D8BDC
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 20:56:07 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id i12so17565343ita.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:56:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=Hi1WaWFF9Q9te4wz4HnCZv6G1koFXgSyMoUWP6/BZHI=;
-        b=lPczBkvzZxTNOh8YfUDZWfoGmFi8WBuyPcbo87rzY7nU7lvTkvrymqY2LJdkv4E5OV
-         87egBKy7Xs+F1RKUnCywaj1Ft7yIHEsP1wE59I44dTKl78A8YtoS398aHsiFVGMQWKE5
-         IIGe1Hh7/COTrrz7NPFG/6ZwOExKT6oQMlVIwIi+escWUul12IAvWKJPVdCz7mbxwbFV
-         d1clGSE5t8NyvlB4aTE+ASDEpg7ns7zkGAWH6ygOmvEUQ/zJgAL0BWRqqWojlRuxPGGs
-         OqZCxnkNq2CNd07OjGKHPu+BjQkg2sRjVXYTEKqDSaolTXuDZazlD8BrcnZLHl2JDIZ7
-         Isaw==
+        bh=IpHCPony0Yw91k/Xth9ZNoao1j2soIv/Kezjj2ATXyQ=;
+        b=pF3+Uk/M71PHl2gDU3siqxEdeHXX+0D9yne5Z9UH6+Nmt+0JrDQ6lTITqKKevS4ivN
+         2HP+0siRbmJP6Tl6PiGcMpVr63mHIGvxeR6pN/uRGrfNuHLREgWMyjy1cwwwW4s5UTyX
+         NNn6JmTZk+AXQT88J01WobBGgH2gz7KVdXfDn4IEyK3nux521vskcRoGYh53GKZ4WqFW
+         wl4MvH679wIR6fsVHjEyCB1YRz0BjwF0l6vWPihxrCcUDWf9oj9a/4JpchpXN0FY3A2d
+         1Cy4aViE6vvwE4rdZcRI+O0ZvfFmI411pkuFMDtA7VmnCEFQEsPjmoTTwfg1oXndBNtB
+         cB5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Hi1WaWFF9Q9te4wz4HnCZv6G1koFXgSyMoUWP6/BZHI=;
-        b=n8z4ZsCTBB6e9PGgI9UB+zl0KG/u0l03Tf9w33Xs9tE4AvoX2ZHIg05j1haUG7TySO
-         r/W2Sjw2Cs7TyOJ88DeV2/pQUHu5JCLgpFncCbeqToYGt5MVk9Jsrugtqb7sEYy7WFAW
-         Z3JBLSIn2EnqIFErKZ9ljlr6iskIJIzdaCQcypTQmvayKGuPnPsd6LwMB7y34G9lqwaq
-         1kBOY8FzuHD/QgiwO1MXe8tphWGvyyLHP8qsb886DroCY2mFYMHpcN9Ujmf8qmpf1FIE
-         uWepUqbI6YUxbSC0gFk8PzinT5KCnKy2wxRancBvAWW3Gkabi7tAOSXTC+7d2lCbJ4F8
-         Dikw==
-X-Gm-Message-State: AA+aEWZELKM4e4aw4oKanTrm4Ne4ZBYSCXiM67jlB5jUMcXVs6YVtbaX
-        5QzAvkKS7qyUmkjFzDZl5AlCVkkWbmQNMSlvjLZAVy0LmYaQd5i0iGq41dNbXRxYBAYVvu8lcXK
-        Z5ymA7S+0rZeLaeykdGpC5Ys4x2AB
-X-Received: by 2002:a24:1fc7:: with SMTP id d190mr11074925itd.126.1545792872690;
-        Tue, 25 Dec 2018 18:54:32 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/VG4BDwEHGMkGYlMA0z8SX+L4UK20udAbjIt5b5fe1zIoYJ2ZbB5K/zP5FQMUhgrk/yB8R8Sg==
-X-Received: by 2002:a24:1fc7:: with SMTP id d190mr11074908itd.126.1545792872479;
-        Tue, 25 Dec 2018 18:54:32 -0800 (PST)
+        bh=IpHCPony0Yw91k/Xth9ZNoao1j2soIv/Kezjj2ATXyQ=;
+        b=H7P6uRfx7uOjVMoryKmtJ6yZFBAwjK1jrfIGL+L4m20le6wvannpNFY3EjoGORXz6h
+         DiGOO6tvS/dcEv4yUp0WWUQ+aCWUputpW8fu6GF/gaP8OPQ3RE9NKDNG4Z5rodfAyCf7
+         HjZtVoNWoQ2WzT1dOVAbQ1mbjtrXjnqNlb3h1rgVGgQ31B5HPeqsSXa9z2XSw5QJiyAh
+         01UC1DAZYMZqjp4LXuiWSe6fOUPoNUcTauZoKj5KMuKp8VQc/+1vsNBcck+IpFhmBZ6M
+         Y1Hg9WvjYBlXlyj9bm21dxKlBSB45lsjHMa9gpM+uAQg52w5TnPYbG74NHCN46zLA4hO
+         U+gA==
+X-Gm-Message-State: AJcUukd4CFq4aaXDNXxAXTn7K3Nth4+3OkqxYxqSugUr2O3DpDruZ6Bv
+        52FoB1O3YtnhgjMou8h+Ffa8PLi0UTO2JsKTc+sCetgmHv9Yf5B8sy3oox16gndM0qyYqsMnUN7
+        SLhmv9otlHqnJ4JQjTxvwSeyjGJCm
+X-Received: by 2002:a6b:7602:: with SMTP id g2mr11703699iom.135.1545792966683;
+        Tue, 25 Dec 2018 18:56:06 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN6UJP1xtIqVNabcTTcF4DvsB6ls+x/X5R6I9B1qxZu+OakChf7NUCPq6cPYuxkAs8/FKY4b9A==
+X-Received: by 2002:a6b:7602:: with SMTP id g2mr11703695iom.135.1545792966465;
+        Tue, 25 Dec 2018 18:56:06 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id 125sm14397722itk.28.2018.12.25.18.54.31
+        by smtp.gmail.com with ESMTPSA id x79sm11504816ita.34.2018.12.25.18.56.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 18:54:31 -0800 (PST)
+        Tue, 25 Dec 2018 18:56:05 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] atmel: fix a missing check of clk_prepare
-Date:   Tue, 25 Dec 2018 20:54:05 -0600
-Message-Id: <20181226025405.72480-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: (cpts) fix a missing check of clk_prepare
+Date:   Tue, 25 Dec 2018 20:55:37 -0600
+Message-Id: <20181226025539.72561-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,27 +88,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 clk_prepare() could fail, so let's check its status, and if it fails,
-issue an error message.
+return its error code upstream.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/misc/atmel-ssc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ti/cpts.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
-index d8e3cc2dc747..9e69d0585f49 100644
---- a/drivers/misc/atmel-ssc.c
-+++ b/drivers/misc/atmel-ssc.c
-@@ -60,7 +60,8 @@ struct ssc_device *ssc_request(unsigned int ssc_num)
- 	ssc->user++;
- 	spin_unlock(&user_lock);
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index b96b93c686bf..4f644ac314fe 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -572,7 +572,9 @@ struct cpts *cpts_create(struct device *dev, void __iomem *regs,
+ 		return ERR_CAST(cpts->refclk);
+ 	}
  
--	clk_prepare(ssc->clk);
-+	if (clk_prepare(ssc->clk))
-+		pr_err("ssc: failed to prepare clk.\n");
+-	clk_prepare(cpts->refclk);
++	ret = clk_prepare(cpts->refclk);
++	if (ret)
++		return ERR_PTR(ret);
  
- 	return ssc;
- }
+ 	cpts->cc.read = cpts_systim_read;
+ 	cpts->cc.mask = CLOCKSOURCE_MASK(32);
 -- 
 2.17.2 (Apple Git-113)
 
