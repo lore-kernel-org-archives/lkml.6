@@ -2,188 +2,94 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FC2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85620C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E6821720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:51:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545832314;
-	bh=s8mCX0ERyFXAEWP35xc/fHlxJiGL8cKmUJIWgssFGDQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nenjuhPm3csVk0FNfdiHEbcBceoH5J2EIPjlbcv7BfdwwYS8+8cl3mkVZz4/DWpPu
-	 CB/PrgnFhRwH0Gg+LEO/AM3u0GxStY1Y1zsHsGxc+RIm3TXN3J7eMH3W1HXeeVmiL6
-	 GgrWW43v4iL9F93xih65eMNJ+Di/nViM9faruKEs=
+	by mail.kernel.org (Postfix) with ESMTP id 554BF21720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:53:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYMxfrht"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbeLZNvx (ORCPT
+        id S1727245AbeLZNxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:51:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726935AbeLZNvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:51:51 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AD26981F0D;
-        Wed, 26 Dec 2018 13:51:50 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-92.brq.redhat.com [10.40.204.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9476419743;
-        Wed, 26 Dec 2018 13:51:48 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 5/5] perf session: Add reader__process_events function
-Date:   Wed, 26 Dec 2018 14:51:32 +0100
-Message-Id: <20181226135132.29330-6-jolsa@kernel.org>
-In-Reply-To: <20181226135132.29330-1-jolsa@kernel.org>
-References: <20181226135132.29330-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 26 Dec 2018 13:51:50 +0000 (UTC)
+        Wed, 26 Dec 2018 08:53:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39416 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbeLZNxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 08:53:03 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w6so7604006pgl.6;
+        Wed, 26 Dec 2018 05:53:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5FXaWZsMfVjfhjeSAU5ziKDkglFowmr6zU79UoVGuz0=;
+        b=KYMxfrhth6JXWBRUr61nVEdxdElVrV9/GJcC46ypIDX/w5earrx2pa5KGkN+LwkEEy
+         4psO0Hrhbl2zhLTbPlUovsduSe8BndtaX5w/8qj3UYTr6DcG6ezUDiTS4bPzEAgvnuqr
+         X4zR0fEXPgf+OmO8IjNr7cZ/wkqv1nEyarJWH3bzN08g1VetywlwfPAoT1qCLwORzU9A
+         fMtr09Q09SdqFGF6voJ1imyJiZqyqhkSQ05j+w/EMQJMGfKcc6DxOBIFf/4aNIxa5h2B
+         N3lIEGgIyChdZJa4DGMVilq4+ILzf9TOj5nZOfxRBtjp4+4HhrgGum3N+7AftURLLZRw
+         baBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5FXaWZsMfVjfhjeSAU5ziKDkglFowmr6zU79UoVGuz0=;
+        b=C5Vwr8FuuJ7AzpAcZ8VBeeF7V0mY5EHER1PEc5oGHruGp57Eb5HgSzr/Ua2OtzsyeC
+         DG4WfWEsZ108mDzWUmoSEgqqnd3sa+BaEE4emiIgCpC9ipvgLrG1E7dlM+mjFwl0Bhb4
+         qHrsz/Q+qWSWJDMJla+P6QcEwiONhUWvB7TR+9wewMeRyifO4kguPghkvpX7C0GEK2Z6
+         P7kcQcn3/8h/votbYNg5pjxe5oSz/sdz4ZuR+HYEyTDUrBPnYnlKqw5NWHngBdvBGXId
+         oBxgC7yGJoi8cU7oNmM9n4SjU3xpeiBtt6sIqFJ4xoZo5GBDwNwye4QFQy7/v+WpZqbx
+         4D2A==
+X-Gm-Message-State: AJcUukdv/ru3VoopHNsFT54o64aan4mUKBlAarz82naPZi50vxyYHKcT
+        rEQw8bhWBmWsmBW94Gaa6i8=
+X-Google-Smtp-Source: ALg8bN5Ou+0fMbc+6GCeji2jxLv41sAd5SmTkCV9oV0PXl3I8/BgHoiqTzdGml9gPxUkTXWaAZrRmQ==
+X-Received: by 2002:a63:d604:: with SMTP id q4mr18732008pgg.175.1545832382282;
+        Wed, 26 Dec 2018 05:53:02 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id b2sm51280777pgg.87.2018.12.26.05.53.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 05:53:01 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clk: imx6q: fix refcount leak in imx6q_clocks_init()
+Date:   Wed, 26 Dec 2018 08:53:00 -0500
+Message-Id: <20181226135300.5710-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding reader__process_events function to readers data.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-The reader object is defined by file's fd, data offset
-and data size.
-
-Now we can simply define reader object for arbitrary file
-data portion and pass it to reader__process_events function
-to process its data.
-
-Link: http://lkml.kernel.org/n/tip-sh3yfoavlzr2f45rf8g6145j@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- tools/perf/util/session.c | 62 ++++++++++++++++++++++++---------------
- 1 file changed, 38 insertions(+), 24 deletions(-)
+ drivers/clk/imx/clk-imx6q.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index bc2a4f80535c..6a9dc5f0675c 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1819,36 +1819,25 @@ struct reader {
- 	u64	data_offset;
- };
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index bbe0c60f4d09..53617e0632a9 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -424,6 +424,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
+ 	anatop_base = base = of_iomap(np, 0);
+ 	WARN_ON(!base);
++	of_node_put(np);
  
--static int __perf_session__process_events(struct perf_session *session)
-+static int
-+reader__process_events(struct reader *rd, struct perf_session *session,
-+		       struct ui_progress *prog)
- {
--	struct reader rd = {
--		.fd		= perf_data__fd(session->data),
--		.data_size	= session->header.data_size,
--		.data_offset	= session->header.data_offset,
--	};
--	struct ordered_events *oe = &session->ordered_events;
--	struct perf_tool *tool = session->tool;
--	u64 data_size = rd.data_size;
-+	u64 data_size = rd->data_size;
- 	u64 head, page_offset, file_offset, file_pos, size;
--	int err, mmap_prot, mmap_flags, map_idx = 0;
-+	int err = 0, mmap_prot, mmap_flags, map_idx = 0;
- 	size_t	mmap_size;
- 	char *buf, *mmaps[NUM_MMAPS];
- 	union perf_event *event;
--	struct ui_progress prog;
- 	s64 skip;
- 
--	perf_tool__fill_defaults(tool);
--
--	page_offset = page_size * (rd.data_offset / page_size);
-+	page_offset = page_size * (rd->data_offset / page_size);
- 	file_offset = page_offset;
--	head = rd.data_offset - page_offset;
-+	head = rd->data_offset - page_offset;
- 
--	if (data_size == 0)
--		goto out;
-+	ui_progress__init_size(prog, data_size, "Processing events...");
- 
--	ui_progress__init_size(&prog, data_size, "Processing events...");
--
--	data_size += rd.data_offset;
-+	data_size += rd->data_offset;
- 
- 	mmap_size = MMAP_SIZE;
- 	if (mmap_size > data_size) {
-@@ -1866,12 +1855,12 @@ static int __perf_session__process_events(struct perf_session *session)
- 		mmap_flags = MAP_PRIVATE;
- 	}
- remap:
--	buf = mmap(NULL, mmap_size, mmap_prot, mmap_flags, rd.fd,
-+	buf = mmap(NULL, mmap_size, mmap_prot, mmap_flags, rd->fd,
- 		   file_offset);
- 	if (buf == MAP_FAILED) {
- 		pr_err("failed to mmap file\n");
- 		err = -errno;
--		goto out_err;
-+		goto out;
- 	}
- 	mmaps[map_idx] = buf;
- 	map_idx = (map_idx + 1) & (ARRAY_SIZE(mmaps) - 1);
-@@ -1903,7 +1892,7 @@ static int __perf_session__process_events(struct perf_session *session)
- 		       file_offset + head, event->header.size,
- 		       event->header.type);
- 		err = -EINVAL;
--		goto out_err;
-+		goto out;
- 	}
- 
- 	if (skip)
-@@ -1912,7 +1901,7 @@ static int __perf_session__process_events(struct perf_session *session)
- 	head += size;
- 	file_pos += size;
- 
--	ui_progress__update(&prog, size);
-+	ui_progress__update(prog, size);
- 
- 	if (session_done())
- 		goto out;
-@@ -1921,6 +1910,31 @@ static int __perf_session__process_events(struct perf_session *session)
- 		goto more;
- 
- out:
-+	return err;
-+}
-+
-+static int __perf_session__process_events(struct perf_session *session)
-+{
-+	struct reader rd = {
-+		.fd		= perf_data__fd(session->data),
-+		.data_size	= session->header.data_size,
-+		.data_offset	= session->header.data_offset,
-+	};
-+	struct ordered_events *oe = &session->ordered_events;
-+	struct perf_tool *tool = session->tool;
-+	struct ui_progress prog;
-+	int err;
-+
-+	perf_tool__fill_defaults(tool);
-+
-+	if (rd.data_size == 0)
-+		return -1;
-+
-+	ui_progress__init_size(&prog, rd.data_size, "Processing events...");
-+
-+	err = reader__process_events(&rd, session, &prog);
-+	if (err)
-+		goto out_err;
- 	/* do the final flush for ordered samples */
- 	err = ordered_events__flush(oe, OE_FLUSH__FINAL);
- 	if (err)
+ 	/* Audio/video PLL post dividers do not work on i.MX6q revision 1.0 */
+ 	if (clk_on_imx6q() && imx_get_soc_revision() == IMX_CHIP_REVISION_1_0) {
 -- 
-2.17.2
+2.17.0
 
