@@ -2,117 +2,76 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B99C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EBCC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98760217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F06C12171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeLZKAm (ORCPT
+        id S1726734AbeLZKAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 05:00:42 -0500
+        Wed, 26 Dec 2018 05:00:44 -0500
 Received: from mga09.intel.com ([134.134.136.24]:3425 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbeLZKAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 05:00:42 -0500
+        id S1726115AbeLZKAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 05:00:43 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 02:00:41 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 02:00:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
-   d="scan'208";a="112107077"
+   d="scan'208";a="112107082"
 Received: from devel-ww.sh.intel.com ([10.239.48.119])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Dec 2018 02:00:38 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 26 Dec 2018 02:00:40 -0800
 From:   Wei Wang <wei.w.wang@intel.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
 Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
         like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
         arei.gonglei@huawei.com
-Subject: [PATCH v4 00/10] Guest LBR Enabling
-Date:   Wed, 26 Dec 2018 17:25:28 +0800
-Message-Id: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v4 01/10] perf/x86: fix the variable type of the LBR MSRs
+Date:   Wed, 26 Dec 2018 17:25:29 +0800
+Message-Id: <1545816338-1171-2-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
-on Intel CPUs that captures branch related info. This patch series enables
-this feature to KVM guests.
+The MSR variable type can be "unsigned int", which uses less memory than
+the longer unsigned long. The lbr nr won't be a negative number, so make
+it "unsigned int" as well.
 
-Here is a conclusion of the fundamental methods that we use:
-1) the LBR feature is enabled per guest via QEMU setting of
-   KVM_CAP_X86_GUEST_LBR;
-2) the LBR stack is passed through to the guest for direct accesses after
-   the guest's first access to any of the lbr related MSRs;
-3) When the guest uses the LBR feature with the user callstack mode, the
-   host will help save/resotre the LBR stack when the vCPU is scheduled
-   out/in.
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+---
+ arch/x86/events/perf_event.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-ChangeLog:
-v3->v4:
-    - perf/x86:
-        - Patch 1: change the lbr msr variable type to "unsigned int";
-        - Patch 6: add a "no_counter" boolean attr to let callers
-          explicitly tell the perf core to not allocate counters for the
-          event;
-        - Patch 7: change "cpuc->vcpu_lbr" from "boolean" to "u8", and add
-          the PF_VCPU and is_kernel_event checks befoer setting it;
-        - Patch 8: add the LBR_SELECT save/restore on vCPU switching;
-	- Patch 9: move lbr_select_user_callstack to .h, instead of
-          exporting it;
-
-    - KVM/x86:
-        - Patch 3: use "cap->args[0]" to enable/disable the lbr feature
-          from userspace;
-        - Patch 4: forbid the enabling the guest lbr when the host and
-          guest see different lbr stack entries;
-        - Patch 10: in guest_access_lbr_msr, pass through the lbr stack
-          only when it has been passed through (i.e. add the check
-          !vcpu->arch.lbr_used).
-previous:
-https://lkml.org/lkml/2018/9/20/507
-
-Like Xu (1):
-  KVM/x86/vPMU: Add APIs to support host save/restore the guest lbr
-    stack
-
-Wei Wang (9):
-  perf/x86: fix the variable type of the LBR MSRs
-  perf/x86: add a function to get the lbr stack
-  KVM/x86: KVM_CAP_X86_GUEST_LBR
-  KVM/x86: intel_pmu_lbr_enable
-  KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to the guest
-  perf/x86: no counter allocation support
-  perf/x86: save/restore LBR_SELECT on vCPU switching
-  perf/x86: function to check lbr user callstack mode
-  KVM/x86/lbr: lazy save the guest lbr stack
-
- arch/x86/events/core.c            |  12 +++
- arch/x86/events/intel/lbr.c       |  82 ++++++++---------
- arch/x86/events/perf_event.h      |   6 +-
- arch/x86/include/asm/kvm_host.h   |   7 ++
- arch/x86/include/asm/perf_event.h |  64 +++++++++++++
- arch/x86/kvm/cpuid.c              |   2 +-
- arch/x86/kvm/cpuid.h              |   8 ++
- arch/x86/kvm/pmu.c                |   8 ++
- arch/x86/kvm/pmu.h                |  10 +++
- arch/x86/kvm/pmu_intel.c          | 183 ++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/vmx.c                | 147 ++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.c                |  14 +++
- include/linux/perf_event.h        |  12 +++
- include/uapi/linux/kvm.h          |   1 +
- include/uapi/linux/perf_event.h   |   3 +-
- kernel/events/core.c              |   7 --
- 16 files changed, 514 insertions(+), 52 deletions(-)
-
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 78d7b70..1f78d85 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -619,8 +619,8 @@ struct x86_pmu {
+ 	/*
+ 	 * Intel LBR
+ 	 */
+-	unsigned long	lbr_tos, lbr_from, lbr_to; /* MSR base regs       */
+-	int		lbr_nr;			   /* hardware stack size */
++	unsigned int	lbr_tos, lbr_from, lbr_to,
++			lbr_nr;			   /* lbr stack and size */
+ 	u64		lbr_sel_mask;		   /* LBR_SELECT valid bits */
+ 	const int	*lbr_sel_map;		   /* lbr_select mappings */
+ 	bool		lbr_double_abort;	   /* duplicated lbr aborts */
 -- 
 2.7.4
 
