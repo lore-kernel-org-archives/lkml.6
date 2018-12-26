@@ -2,146 +2,219 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03400C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE37C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73122171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92063217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bNxxNJsG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fp1nheue"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbeLZIwu (ORCPT
+        id S1726363AbeLZJEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 03:52:50 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60606 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLZIwu (ORCPT
+        Wed, 26 Dec 2018 04:04:07 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:39309 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeLZJEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 03:52:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBQ8mvCu100393;
-        Wed, 26 Dec 2018 08:52:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=veyBVi6sHKmAnV6/gYzRk36+44e0qVjHOoyZROTRmSQ=;
- b=bNxxNJsGnxlB/s48NVxM2bP0eq9uDw+jV61zcL0a9wgxgNoxdaHcYIGgGRZaESPUkkOX
- Q0BZ71oQR9VHjqJGG+S0nvs1b4cD1/xVYIRmBcwlsB1EmGAG/sA7q6Gf1iIQ5ZOeybsg
- DSj36J9uLyQxR3G7/ZXgtd4UGxTzVGPrUmOp2xDdWqXB5AeCaIXbRr7bIUUe9xfca+Vz
- 6FivhJjeTMeskMxJsBd1l7K2Vl8h2iV+cgEQWmU8iG3kXBYx8CFrNrOQmWSE1en5KD4V
- EMFdZ26niefcs7miIQhIl0SS6obCYqWWY7hCQtKq/am+Vmq9Uk1BhEWhC5Lrj043yL/2 aA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2phcptrvm3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Dec 2018 08:52:45 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBQ8qi1X022901
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Dec 2018 08:52:44 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBQ8qhBb010146;
-        Wed, 26 Dec 2018 08:52:43 GMT
-Received: from [10.0.5.57] (/213.57.127.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Dec 2018 00:52:43 -0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
-Subject: Re: [PATCH v1 3/8] kvm:vmx  Enable loading CET state bit while guest
- CR4.CET is being set.
-From:   Liran Alon <liran.alon@oracle.com>
-In-Reply-To: <20181226081532.30698-4-weijiang.yang@intel.com>
-Date:   Wed, 26 Dec 2018 10:52:38 +0200
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
-        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9307C088-C8F8-4587-ABB4-3CADF2CC3117@oracle.com>
-References: <20181226081532.30698-1-weijiang.yang@intel.com>
- <20181226081532.30698-4-weijiang.yang@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-X-Mailer: Apple Mail (2.3445.4.7)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9117 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=938
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812260082
+        Wed, 26 Dec 2018 04:04:07 -0500
+Received: by mail-it1-f196.google.com with SMTP id a6so19618270itl.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 01:04:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AJQijU6bPu2LKRfpLFGCE6ncxl15xGWo9q10bSkfdog=;
+        b=Fp1nheueSg8LqyAXsBIzbVJAdIM5Oy8yBThjDdApJnyCIqgel8fQQVphu7gNyg6I4N
+         BQcegl9ahYRewE+AS+eexz53p47/Cvq4szIOfyTBAvNZUN+A4rrfam3pEamx9AvBjsHj
+         vsohZqyrbjJC7k+LynqmkfQK5V3i70mH1peRPK4gJg3iIsvmq44P6BGu1jzWQp+dp1uF
+         rC2iL2l+6FvLZHy2uvBvqpA+fLN+7K+WxKMF13l2obRuEZ9s60rBuit8ZUwOHfbQmUyT
+         bmf4ohGc99nzDQbEMwbIHZsqI9gyqmNjiQcq/ZCD9I/XL/o5KfVMLgOQlAuT4m2sJxnh
+         Umkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AJQijU6bPu2LKRfpLFGCE6ncxl15xGWo9q10bSkfdog=;
+        b=BdBl0J+3RQGrsVxEHZ1xpesdDhdzp0AZSVXh6jeQYQEaKsSvS+COUo7PCqbynJvKWM
+         kLSimhyOFglOE6R5KVsPgi0p1RbaU3UzKYd9dwZJZja1WmhWthoMmeuecjlWyb3PtNCf
+         cnNQyKTIxkTVEfcDDL5sm648Vj8z8/uleI005bxWU/aiQwQJtj/sSM82KyWGRu5ftQoM
+         dx/QSopBjMzFiw1UCmYgZKMpAfAQkaDSv0gLS1lTIqxN9zJ/l3txHbwbK0Km1+pU5QVu
+         BA2iBcVgQ9h1hfuIcUOIDnUcpTd1/ZE36MwAcz3bpKfYbzOyR86U03gS7JyWtivyhf5k
+         Cplw==
+X-Gm-Message-State: AJcUukdJLvxU95wHryWPpGQAP/x63Lqu+nnY+LmiffHgZjCozvmomIq2
+        0coufI6QLXpKW/yganriR+G8lmMKGmHuS8SLzU5T/OOq
+X-Google-Smtp-Source: ALg8bN5mkXe0/dOX5SPjfQv5eOKXJnNnRLfhL8FB6ipcegqjiB6hGzlsfw7Mu1/kyoITZUwkoeZiZ6ANfCJU5ibXYuk=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr11319463iti.166.1545815044696;
+ Wed, 26 Dec 2018 01:04:04 -0800 (PST)
+MIME-Version: 1.0
+References: <00000000000051ee78057cc4d98f@google.com> <CACT4Y+YX3=OLqfmWwhHVCQz+HwE=53VH9c1E2M+rgbF=UVTV5A@mail.gmail.com>
+ <ab2fb696-8d3b-9720-a8a0-99c66a080605@colorfullife.com> <CACT4Y+Y-c7FgSTKyHqpRZu3eKLo5QfXy10axTSwWkU4MUgjFgw@mail.gmail.com>
+ <87614226-e895-c3a3-3626-b0fbe7e191be@colorfullife.com> <CACT4Y+bU4mLF1tEhw6mKf1m1W63OGvaFhAsTrpTW0M5MFXekRQ@mail.gmail.com>
+ <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+ <CACT4Y+ZitcDg=OA8NbJJTWQyHHzmiZ7rFekFkgxmdOOnSKTfXg@mail.gmail.com>
+ <CACT4Y+bUYDEEdB-WrWc2gdzuQ-xOSoCZxzT7faNd3_ENnxFNnQ@mail.gmail.com>
+ <f4eaca71-09f6-3c21-258c-336d1b56d38c@colorfullife.com> <CACT4Y+Z3GYkvL28BmyGWJHZmK=NgrJcMfhqyXPPMME_Rk8X_qw@mail.gmail.com>
+In-Reply-To: <CACT4Y+Z3GYkvL28BmyGWJHZmK=NgrJcMfhqyXPPMME_Rk8X_qw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 26 Dec 2018 10:03:53 +0100
+Message-ID: <CACT4Y+Zg85KDMhq3BNtHH0gbO2hWQ6O05n8K9=MRO5htLovMgQ@mail.gmail.com>
+Subject: Re: general protection fault in put_pid
+To:     Manfred Spraul <manfred@colorfullife.com>,
+        Shakeel Butt <shakeelb@google.com>
+Cc:     syzbot+1145ec2e23165570c3ac@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        ktsanaktsidis@zendesk.com, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 25, 2018 at 10:35 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Sun, Dec 23, 2018 at 7:38 PM Manfred Spraul <manfred@colorfullife.com> wrote:
+> >
+> > Hello Dmitry,
+> >
+> > On 12/23/18 11:42 AM, Dmitry Vyukov wrote:
+> > > Actually was able to reproduce this with a syzkaller program:
+> > > ./syz-execprog -repeat=0 -procs=10 prog
+> > > ...
+> > > kasan: CONFIG_KASAN_INLINE enabled
+> > > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > > CPU: 1 PID: 8788 Comm: syz-executor8 Not tainted 4.20.0-rc7+ #6
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > Call Trace:
+> > >   __list_del_entry include/linux/list.h:117 [inline]
+> > >   list_del include/linux/list.h:125 [inline]
+> > >   unlink_queue ipc/sem.c:786 [inline]
+> > >   freeary+0xddb/0x1c90 ipc/sem.c:1164
+> > >   free_ipcs+0xf0/0x160 ipc/namespace.c:112
+> > >   sem_exit_ns+0x20/0x40 ipc/sem.c:237
+> > >   free_ipc_ns ipc/namespace.c:120 [inline]
+> > >   put_ipc_ns+0x55/0x160 ipc/namespace.c:152
+> > >   free_nsproxy+0xc0/0x1f0 kernel/nsproxy.c:180
+> > >   switch_task_namespaces+0xa5/0xc0 kernel/nsproxy.c:229
+> > >   exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
+> > >   do_exit+0x19e5/0x27d0 kernel/exit.c:866
+> > >   do_group_exit+0x151/0x410 kernel/exit.c:970
+> > >   __do_sys_exit_group kernel/exit.c:981 [inline]
+> > >   __se_sys_exit_group kernel/exit.c:979 [inline]
+> > >   __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+> > >   do_syscall_64+0x192/0x770 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x4570e9
+> > > Code: 5d af fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
+> > > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> > > 01 f0 ff ff 0f 83 2b af fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007ffe35f12018 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00000000004570e9
+> > > RDX: 0000000000410540 RSI: 0000000000a34c00 RDI: 0000000000000045
+> > > RBP: 00000000004a43a4 R08: 000000000000000c R09: 0000000000000000
+> > > R10: 0000000000d24940 R11: 0000000000000246 R12: 0000000000000000
+> > > R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000008
+> > > Modules linked in:
+> > > Dumping ftrace buffer:
+> > >     (ftrace buffer empty)
+> > > ---[ end trace 17829b0f00569a59 ]---
+> > > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > >
+> > >
+> > > The prog is:
+> > > unshare(0x8020000)
+> > > semget$private(0x0, 0x4007, 0x0)
+> > >
+> > > kernel is on 9105b8aa50c182371533fc97db64fc8f26f051b3
+> > >
+> > > and again it involved lots of oom kills, the repro eats all memory, a
+> > > process getting killed, frees some memory and the process repeats.
+> >
+> > I was too fast: I can't reproduce the memory leak.
+> >
+> > Can you send me the source for prog?
+>
+>
+> Here is the program:
+> https://gist.githubusercontent.com/dvyukov/03ec54b3429ade16fa07bf8b2379aff3/raw/ae4f654e279810de2505e8fa41b73dc1d77778e6/gistfile1.txt
+>
+> But we concluded this is not a leak, right?
+> It just creates large semaphores tied to a persistent ipcns. Once the
+> process is killed, all memory is released. When this program runs, it
+> eats all memory, then one of the subprocesses is oom-killed, part of
+> memory is released, then all memory is consumed again by a new
+> subprocess and this repeats. If all processes are killed, all memory
+> is released back. It seems to be working as intended.
+>
+> However, what you said about kernel.sem sysctl is useful and I think
+> we need to use it for additional sandboxing of syzkaller test
+> processes. I am thinking of applying:
+>
+> kernel.shmmax = 16777216
+> kernel.shmall = 536870912
+> kernel.shmmni = 1024
+> kernel.msgmax = 8192
+> kernel.msgmni = 1024
+> kernel.msgmnb = 1024
+> kernel.sem = 1024 1048576 500 1024
+>
+> It should be enough to trigger bugs of any complexity (oom's aside),
+> but should prevent uncontrolled memory consumption.
+> Looking at the code I figured that these sysctls are
+> per-ipc-namespace, right? I.e. if I do sysctl from an ipcns, the
+> limits will be set only only for that ns. I won't use this initially,
+> but something to keep in mind if the global limits will fail in some
+> way.
 
++Shakeel who was interested in memory isolation problems
 
-> On 26 Dec 2018, at 10:15, Yang Weijiang <weijiang.yang@intel.com> =
-wrote:
->=20
-> This bit controls whether guest CET states will be loaded on guest =
-entry.
->=20
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
-> arch/x86/kvm/vmx.c | 19 +++++++++++++++++++
-> 1 file changed, 19 insertions(+)
->=20
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 7bbb8b26e901..25fa6bd2fb95 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -1045,6 +1045,8 @@ struct vcpu_vmx {
->=20
-> 	bool req_immediate_exit;
->=20
-> +	bool vcpu_cet_on;
-> +
-> 	/* Support for PML */
-> #define PML_ENTITY_NUM		512
-> 	struct page *pml_pg;
-> @@ -5409,6 +5411,23 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, =
-unsigned long cr4)
-> 			return 1;
-> 	}
->=20
-> +	/*
-> +	 * When CET.CR4 is being set, it means we're enabling CET for
-
-You probably meant to write here CR4.CET.
-
-> +	 * the guest, then enable loading CET state bit in entry =
-control.
-> +	 * Otherwise, clear loading CET bit to disable guest CET.
-> +	 */
-> +	if (cr4 & X86_CR4_CET) {
-> +		if (!to_vmx(vcpu)->vcpu_cet_on) {
-> +			vmcs_set_bits(VM_ENTRY_CONTROLS,
-> +				      VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +			to_vmx(vcpu)->vcpu_cet_on =3D 1;
-> +		}
-> +	} else if (to_vmx(vcpu)->vcpu_cet_on) {
-> +		vmcs_clear_bits(VM_ENTRY_CONTROLS,
-> +				VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +		to_vmx(vcpu)->vcpu_cet_on =3D 0;
-> +	}
-> +
-> 	if (to_vmx(vcpu)->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
-> 		return 1;
->=20
-> --=20
-> 2.17.1
->=20
-
-I haven=E2=80=99t seen a patch in the series that modifies kvm_set_cr4() =
-to verify CR4.CET is not set when CET is not reported as supported by =
-CPUID.
-I think that is missing from the series.
-
--Liran
-
-
+Setting these sysctl's globally does not help, as they are reset for
+new ipc namespaces (?). Setting them for test process namespaces does
+not help either, as it's trivial to do unshare(NEWIPC) (which the
+repro in fact does). It seems to make things somewhat better for
+syzkaller because any namespaces that a test creates are short-lived.
+But this seems to be a general resource isolation issue for
+containers.
