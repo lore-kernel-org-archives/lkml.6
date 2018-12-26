@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60035C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB57C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC5821741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC11214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864581;
-	bh=7ZIPItXITmPQYVXlukkA3DSHCGg4Ob16j3JgVQjedjw=;
+	s=default; t=1545864597;
+	bh=g20Ik0CfThEKK+SzJR8QV/hN3D5k3bUzzK8IUXc/mg4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tvFx8DYQbtK5g9hNKJ9Rez3rf55384+VOKQQiFYAwe03ZhoMzT43UcVSIhF+VuClZ
-	 OCJW8tYY9RY+fqSZo4pixxwxknusPsfb42kRQvrXsAGlaQMab8FXjbcAOj/lmqVdkQ
-	 Ve30f46x2i2Dhzhd9nE0WFDRkq2swUQxqDNyaw5o=
+	b=GKCb/NSUpp37KO3KPAQbglJn25OlfJYNQxT6GW4yw69QGT0RZ+2QRH1f2p5Z6ZzRb
+	 OZNg5baXT4+FqOt6UoxbOOhhvMPhqOp/frBu0RP33yciD++Fpm3gSZxfhUPviUtJW5
+	 hRbLKFvrBCkCEt3w3tzV0fS5Li0biio5GQxnaMLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbeLZWtj (ORCPT
+        id S1729922AbeLZWt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:49:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38038 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:49:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728539AbeLZWhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:37:51 -0500
+        id S1728487AbeLZWhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:37:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1491E218E2;
-        Wed, 26 Dec 2018 22:37:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65BD52054F;
+        Wed, 26 Dec 2018 22:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863870;
-        bh=7ZIPItXITmPQYVXlukkA3DSHCGg4Ob16j3JgVQjedjw=;
+        s=default; t=1545863862;
+        bh=g20Ik0CfThEKK+SzJR8QV/hN3D5k3bUzzK8IUXc/mg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvBVI9W5+SBvnzGNx6xzOiP4iV56MU2hJxiyxA0y4t04R3YrtuaG2AxyOofe23ktP
-         VlnQvEC42IXcjXo/QhlWbSPhQ0gYI9L+0J8Lx6SYEmPm9FcM1dhH7vFZVBvHLZGyKh
-         LxS6TGItfMJLIbWGevdhd49QgL9LqirFBS1IdgqU=
+        b=VVXDOTuHz9ceZpKidwuCILPpGhsKdr/wET3EPdp2SeA/heWiWALZlZUDSUwQo0f5J
+         /eiP08m0w2SrwOOwR6Eze++Uj3OzSSP/Je9N5fCtsDFVuJdQpwt8eqOVYpcU3Ajv4R
+         0JCn8+GV+dK8lbR8R3ymR6SC6ms+wEAM/SilIHdM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 65/97] mac80211: fix a kernel panic when TXing after TXQ teardown
-Date:   Wed, 26 Dec 2018 17:35:25 -0500
-Message-Id: <20181226223557.149329-65-sashal@kernel.org>
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 61/97] net: hns: Fix ntuple-filters status error.
+Date:   Wed, 26 Dec 2018 17:35:21 -0500
+Message-Id: <20181226223557.149329-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -60,69 +59,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit a50e5fb8db83c5b57392204c21ea6c5c4ccefde6 ]
+[ Upstream commit 7e74a19ca522aec7c2be201a7ae1d1d57ded409b ]
 
-Recently TXQ teardown was moved earlier in ieee80211_unregister_hw(),
-to avoid a use-after-free of the netdev data. However, interfaces
-aren't fully removed at the point, and cfg80211_shutdown_all_interfaces
-can for example, TX a deauth frame. Move the TXQ teardown to the
-point between cfg80211_shutdown_all_interfaces and the free of
-netdev queues, so we can be sure they are torn down before netdev
-is freed, but after there is no ongoing TX.
+The ntuple-filters features is forced on by chip.
+But it shows "ntuple-filters: off [fixed]" when use ethtool.
+This patch make it correct with "ntuple-filters: on [fixed]".
 
-Fixes: 77cfaf52eca5 ("mac80211: Run TXQ teardown code before de-registering interfaces")
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/iface.c | 3 +++
- net/mac80211/main.c  | 2 --
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index 5f3c81e705c7..3a0171a65db3 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -7,6 +7,7 @@
-  * Copyright 2008, Johannes Berg <johannes@sipsolutions.net>
-  * Copyright 2013-2014  Intel Mobile Communications GmbH
-  * Copyright (c) 2016        Intel Deutschland GmbH
-+ * Copyright (C) 2018 Intel Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -1951,6 +1952,8 @@ void ieee80211_remove_interfaces(struct ieee80211_local *local)
- 	WARN(local->open_count, "%s: open count remains %d\n",
- 	     wiphy_name(local->hw.wiphy), local->open_count);
- 
-+	ieee80211_txq_teardown_flows(local);
-+
- 	mutex_lock(&local->iflist_mtx);
- 	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
- 		list_del(&sdata->list);
-diff --git a/net/mac80211/main.c b/net/mac80211/main.c
-index 513627896204..68db2a356443 100644
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -1198,7 +1198,6 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
- 	rtnl_unlock();
- 	ieee80211_led_exit(local);
- 	ieee80211_wep_free(local);
--	ieee80211_txq_teardown_flows(local);
-  fail_flows:
- 	destroy_workqueue(local->workqueue);
-  fail_workqueue:
-@@ -1224,7 +1223,6 @@ void ieee80211_unregister_hw(struct ieee80211_hw *hw)
- #if IS_ENABLED(CONFIG_IPV6)
- 	unregister_inet6addr_notifier(&local->ifa6_notifier);
- #endif
--	ieee80211_txq_teardown_flows(local);
- 
- 	rtnl_lock();
- 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index 8a53c82c72b4..6242249c9f4c 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -2374,7 +2374,7 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
+ 	ndev->min_mtu = MAC_MIN_MTU;
+ 	switch (priv->enet_ver) {
+ 	case AE_VERSION_2:
+-		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6;
++		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_NTUPLE;
+ 		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 			NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 			NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6;
 -- 
 2.19.1
 
