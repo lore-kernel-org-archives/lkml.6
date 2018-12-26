@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00920C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31939C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF952214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8218214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864147;
-	bh=UDGFIj+PsKt8EpufAl+8zNCHk3mhjPrvTUt5T2h0ZGs=;
+	s=default; t=1545864155;
+	bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R7By3b278j7X9Er0/A7xBziKtje/XkdszDzpGRz8WyZA9IpKvwsEYwvTLt2nByp7Q
-	 doiGPVAaLTZR1Bav/g5T+hr6U5hYRCqrYUIxCMmme/hY4dbljPJtHfulyWdi+rQs7j
-	 CXf9kWf81c0e1cVQ24DGG2vq9uujderOBp83ocEM=
+	b=I9r95U8W0d04x2B1LxlejY5J6hRmvQT2dBUpniKYZVgOTq5bfwAFh80D7KCE9jiLr
+	 Tm0Aa/gk4l5sN/Acdox9NBth+oVydXnNTzMqQldR2hV9Az8ZfMN8riJJVpNcrfk7m8
+	 9efqawov5x0zRJPATRQZRv9mwt+FVymvEicz3Rlc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbeLZWm1 (ORCPT
+        id S1729642AbeLZWme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:42:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41962 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:42:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729470AbeLZWlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:41:31 -0500
+        id S1729458AbeLZWl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:41:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B228921901;
-        Wed, 26 Dec 2018 22:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B14A20651;
+        Wed, 26 Dec 2018 22:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864090;
-        bh=UDGFIj+PsKt8EpufAl+8zNCHk3mhjPrvTUt5T2h0ZGs=;
+        s=default; t=1545864088;
+        bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E7hjKNpbdq1mjBP6PmSYov9OycAAY2WUVkDz+583Osyp377oQxSdqFMtXykPQ8sXp
-         y1gagwvZVhv9W9hXbOb976jIK0rH6ACrK6O0451aR7GiPYNabGSDjPFmdyRpifL93J
-         yiBADGW2h/OcSc7PjkzBdgqSHgB4qQegWboHdDdA=
+        b=SbNPOA07puB3FAv9sUhegyeYQRnZbKKPhxBrK21xtJSvotiJ4H3FBHAknBIQauFTy
+         iDJ643cfPEOXhprWvk7Z+eM4KcqMcZEIIMxZNkzXe+bRSnBC+Nmg4FkVnZjEHaOI7e
+         Lk1jAJ37lMvbUZmd1eM60FuQ5l5qzSo54qCGOoS8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 52/59] kbuild: fix false positive warning/error about missing libelf
-Date:   Wed, 26 Dec 2018 17:38:32 -0500
-Message-Id: <20181226223839.150262-52-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 50/59] vxge: ensure data0 is initialized in when fetching firmware version information
+Date:   Wed, 26 Dec 2018 17:38:30 -0500
+Message-Id: <20181226223839.150262-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -57,60 +57,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit ef7cfd00b2caf6edeb7f169682b64be2d0a798cf ]
+[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
 
-For the same reason as commit 25896d073d8a ("x86/build: Fix compiler
-support check for CONFIG_RETPOLINE"), you cannot put this $(error ...)
-into the parse stage of the top Makefile.
+Currently variable data0 is not being initialized so a garbage value is
+being passed to vxge_hw_vpath_fw_api and this value is being written to
+the rts_access_steer_data0 register.  There are other occurrances where
+data0 is being initialized to zero (e.g. in function
+vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+is initialized likewise to 0.
 
-Perhaps I'd propose a more sophisticated solution later, but this is
-the best I can do for now.
+Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
 
-Link: https://lkml.org/lkml/2017/12/25/211
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Reported-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Reported-by: Qian Cai <cai@lca.pw>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Qian Cai <cai@lca.pw>
+Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Makefile | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Makefile b/Makefile
-index 280c7193e246..f72fb4b403b7 100644
---- a/Makefile
-+++ b/Makefile
-@@ -954,11 +954,6 @@ ifdef CONFIG_STACK_VALIDATION
-   ifeq ($(has_libelf),1)
-     objtool_target := tools/objtool FORCE
-   else
--    ifdef CONFIG_UNWINDER_ORC
--      $(error "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
--    else
--      $(warning "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
--    endif
-     SKIP_STACK_VALIDATION := 1
-     export SKIP_STACK_VALIDATION
-   endif
-@@ -1102,6 +1097,14 @@ uapi-asm-generic:
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 6223930a8155..6f57b0b7d57a 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
+ 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
+ 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
+-	u64 data0, data1 = 0, steer_ctrl = 0;
++	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
+ 	enum vxge_hw_status status;
  
- PHONY += prepare-objtool
- prepare-objtool: $(objtool_target)
-+ifeq ($(SKIP_STACK_VALIDATION),1)
-+ifdef CONFIG_UNWINDER_ORC
-+	@echo "error: Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
-+	@false
-+else
-+	@echo "warning: Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
-+endif
-+endif
- 
- # Check for CONFIG flags that require compiler support. Abort the build
- # after .config has been processed, but before the kernel build starts.
+ 	status = vxge_hw_vpath_fw_api(vpath,
 -- 
 2.19.1
 
