@@ -2,198 +2,254 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE3AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96731C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D77621741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5355621741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:45:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g1q2+Q27";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C0VusyK2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLZFng (ORCPT
+        id S1725971AbeLZFpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 00:43:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeLZFnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 00:43:35 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 19245C0528AC;
-        Wed, 26 Dec 2018 05:43:35 +0000 (UTC)
-Received: from [10.72.12.31] (ovpn-12-31.pek2.redhat.com [10.72.12.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B33F620D8;
-        Wed, 26 Dec 2018 05:43:29 +0000 (UTC)
-Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-References: <20181212100819.21295-1-jasowang@redhat.com>
- <20181212100819.21295-5-jasowang@redhat.com>
- <20181212092435-mutt-send-email-mst@kernel.org>
- <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
- <20181213092930-mutt-send-email-mst@kernel.org>
- <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
- <20181214081821-mutt-send-email-mst@kernel.org>
- <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
- <20181224123654-mutt-send-email-mst@kernel.org>
- <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
- <20181225111716-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
-Date:   Wed, 26 Dec 2018 13:43:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 26 Dec 2018 00:45:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52408 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbeLZFpm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 00:45:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 726FC6022B; Wed, 26 Dec 2018 05:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545803140;
+        bh=kpD3eNBoqGvCMJ6Hoz8JZRHBTH3mTP6il4+Iv3QNsrk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=g1q2+Q27fRanGSzJr+B9R9/F7zGkqALhA2XJv1UNRnOrvNPuYbJilTtl1H4QsQAKu
+         FmNXd7kju5s+8GKjcuiNKjXcO9XMFCWTi7ia81Ie7wbORl90n75ODIiGWbXBAnKw7y
+         Ff+tGFvTpXRVyEjD6e4UgF8DRALX9E/keUB+DQNo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 06A846022B;
+        Wed, 26 Dec 2018 05:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545803131;
+        bh=kpD3eNBoqGvCMJ6Hoz8JZRHBTH3mTP6il4+Iv3QNsrk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=C0VusyK2R/qhLjOFjhRg41wtAN9IyapYb/sBZrfk2/EgUcLoPy4Q2zsq6hGHyLBwV
+         dEK8jsyn8oRq8WCHf8wQ3P7da/yrdqn5lR5ASHDcnIZU1gv6cI/frann72gH3vMn2N
+         FLK41iwkJmh8NUhkR+x7AUqlImB5zqD4DQRTjE8E=
 MIME-Version: 1.0
-In-Reply-To: <20181225111716-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 26 Dec 2018 05:43:35 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 26 Dec 2018 11:15:30 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+In-Reply-To: <20181222003116.GE261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-3-bgodavar@codeaurora.org>
+ <20181222003116.GE261387@google.com>
+Message-ID: <a8a0c1dc563faa62cf8a6d952295eee6@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Matthias,
 
-On 2018/12/26 上午12:25, Michael S. Tsirkin wrote:
-> On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
->> On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
->>> On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
->>>> On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
->>>>> On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
->>>>>> On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
->>>>>>>> Just to make sure I understand this. It looks to me we should:
->>>>>>>>
->>>>>>>> - allow passing GIOVA->GPA through UAPI
->>>>>>>>
->>>>>>>> - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
->>>>>>>> performance
->>>>>>>>
->>>>>>>> Is this what you suggest?
->>>>>>>>
->>>>>>>> Thanks
->>>>>>> Not really. We already have GPA->HVA, so I suggested a flag to pass
->>>>>>> GIOVA->GPA in the IOTLB.
->>>>>>>
->>>>>>> This has advantages for security since a single table needs
->>>>>>> then to be validated to ensure guest does not corrupt
->>>>>>> QEMU memory.
->>>>>>>
->>>>>> I wonder how much we can gain through this. Currently, qemu IOMMU gives
->>>>>> GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
->>>>>> GIOVA->HVA to vhost. It looks no difference to me.
->>>>>>
->>>>>> Thanks
->>>>> The difference is in security not in performance.  Getting a bad HVA
->>>>> corrupts QEMU memory and it might be guest controlled. Very risky.
->>>> How can this be controlled by guest? HVA was generated from qemu ram blocks
->>>> which is totally under the control of qemu memory core instead of guest.
->>>>
->>>>
->>>> Thanks
->>> It is ultimately under guest influence as guest supplies IOVA->GPA
->>> translations.  qemu translates GPA->HVA and gives the translated result
->>> to the kernel.  If it's not buggy and kernel isn't buggy it's all
->>> fine.
->>
->> If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
->> the point why we even want to try this. Buggy qemu code can crash itself in
->> many ways.
->>
->>
->>> But that's the approach that was proven not to work in the 20th century.
->>> In the 21st century we are trying defence in depth approach.
->>>
->>> My point is that a single code path that is responsible for
->>> the HVA translations is better than two.
->>>
->> So the difference whether or not use memory table information:
->>
->> Current:
->>
->> 1) SET_MEM_TABLE: GPA->HVA
->>
->> 2) Qemu GIOVA->GPA
->>
->> 3) Qemu GPA->HVA
->>
->> 4) IOTLB_UPDATE: GIOVA->HVA
->>
->> If I understand correctly you want to drop step 3 consider it might be buggy
->> which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
->> will ends up:
->>
->> 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
->> do it during device IOTLB lookup).
->>
->> 2) Extra bits to enable this capability.
->>
->> So this looks need more codes in kernel than what qemu did in userspace.  Is
->> this really worthwhile?
->>
->> Thanks
-> So there are several points I would like to make
->
-> 1. At the moment without an iommu it is possible to
->     change GPA-HVA mappings and everything keeps working
->     because a change in memory tables flushes the rings.
+On 2018-12-22 06:01, Matthias Kaehlcke wrote:
+> On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
+>> This patch will help to stop frame reassembly errors while changing
+>> the baudrate. This is because host send a change baudrate request
+>> command to the chip with 115200 bps, Whereas chip will change their
+>> UART clocks to the enable for new baudrate and sends the response
+>> for the change request command with newer baudrate, On host side
+>> we are still operating in 115200 bps which results of reading garbage
+>> data. Here we are pulling RTS line, so that chip we will wait to send 
+>> data
+>> to host until host change its baudrate.
+>> 
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+>> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>>  1 file changed, 13 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 5a07c2370289..1680ead6cc3d 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>  	struct qca_data *qca = hu->priv;
+>>  	struct sk_buff *skb;
+>> -	struct qca_serdev *qcadev;
+>>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>> 
+>>  	if (baudrate > QCA_BAUDRATE_3200000)
+>> @@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  		return -ENOMEM;
+>>  	}
+>> 
+>> -	/* Disabling hardware flow control is mandatory while
+>> -	 * sending change baudrate request to wcn3990 SoC.
+>> -	 */
+>> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, true);
+>> -
+>>  	/* Assign commands to change baudrate and packet type. */
+>>  	skb_put_data(skb, cmd, sizeof(cmd));
+>>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> @@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>>  	set_current_state(TASK_RUNNING);
+>> 
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, false);
+>> -
+>>  	return 0;
+>>  }
+>> 
+>> @@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type 
+>> speed_type)
+>>  {
+>>  	unsigned int speed, qca_baudrate;
+>> +	struct qca_serdev *qcadev;
+>>  	int ret;
+>> 
+>>  	if (speed_type == QCA_INIT_SPEED) {
+>> @@ -1097,6 +1087,15 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  		if (!speed)
+>>  			return 0;
+>> 
+>> +		/* Deassert RTS while changing the baudrate of chip and host.
+>> +		 * This will prevent chip from transmitting its response with
+>> +		 * the new baudrate while the host port is still operating at
+>> +		 * the old speed.
+>> +		 */
+>> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			serdev_device_set_rts(hu->serdev, false);
+>> +
+>>  		qca_baudrate = qca_get_baudrate_value(speed);
+>>  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+>> @@ -1104,6 +1103,9 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  			return ret;
+>> 
+>>  		host_set_baudrate(hu, speed);
+>> +
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			serdev_device_set_rts(hu->serdev, true);
+>>  	}
+>> 
+>>  	return 0;
+> 
+> I looked for ways to do without this change, but didn't find a good
+> solution. There are several possible problems with baudrate changes:
+> 
+> 1) send request to BT controller to change the baudrate
+> 
+>   this is an asynchronous operation, the actual baudrate change can
+>   be delayed for multiple reasons, e.g.:
+> 
+>   - request sits in the BT driver's TX queue
+> 
+>     this could be worked around by checking skb_queue_empty()
+> 
+>   - request sits in the UART buffer
+> 
+>     a workaround for this could be calling
+>     serdev_device_wait_until_sent() (only available with serdev though)
+> 
+>   - the request sits in the UART FIFO
+> 
+>     will be sent out 'immediately'. no neat solution available AFAIK,
+>     a short sleep could be an effective workaround
+> 
+>   - the controller may have a short delay to apply the change
+> 
+>     Also no neat solution here. A/the same short sleep could work
+>     around this
+> 
+> 2) change baudrate of the host UART
+>   - this must not happen before the baudrate change request has been
+>     sent to the BT controller, otherwise things are messed up
+>     seriously
+> 
+>     Ideally set_termios would make sure all pending data is sent
+>     before the change is applied, some UART drivers do this, others
+>     don't, so we can't rely on this.
+> 
+> 3) BT controller sends data after baudrate change
+> 
+>   a few ms after a baudrate change the BT controller sends data
+>   (4, 255, 2, 146, 1, 4, 14, 4, 1, 0, 0, 0) with the new baudrate
+> 
+>   - dunno what the data stands for, but the BT stack/driver appears to
+>     be fine with it, as long as the host UART operates at the new
+>     baudrate when the data is received.
+> 
+>   - if the data is received before the baudrate of the host UART is
+>     changes we see 'frame reassembly' errors
+> 
+> 
+[Bala]: the data is an vendor specific event and command complete event,
+          4, 255, 2, 146, 1, : vendor specific event
+          4, 14, 4, 1, 0, 0, 0: command complete event.
 
+> In summary, I think it should be feasible to guarantee that the
+> baudrate change of the host UART is always done after the controller
+> changed it's baudrate, however we can't guarantee at the same time
+> that the baudrate change of the host controller is completed before
+> the BT controller sends its 'response'.
+> 
+> Using the RTS signal seems a reasonable way to delay the controller
+> data until the host is ready, the only thing I don't like too much
+> is that in this patch set we currently have two mechanisms to
+> suppress/delay unwanted data. Unfortunately the RTS method isn't
+> effective at initialization time.
+> 
+> Not the scope of this patch set, but I really dislike the 300 ms delay
+> (BAUDRATE_SETTLE_TIMEOUT_MS) in qca_set_baudrate(), and wonder if it
+> is actually needed (I seriously doubt that it takes the BT controller
+> 300 ms to change its baudrate). I guess it's more a combination of what 
+> I
+> described above in 1), once we are done with this series I might try
+> to improve this, unless somebody is really, really convinced that such
+> a gigantic delay is actually needed.
+> 
+[Bala]:  Thanks for detail analysis.
+         even i feel the same whether is it really required to have an 
+delay of 300ms.
+         But during our testing we found the it depends on the controller 
+clock settling time.
+         all observations are less than 100 ms. will update this change 
+in separate patch series.
 
-Interesting, I don't know this before. But when can this happen?
+> Cheers
+> 
+> Matthias
 
-
->     However I don't see the iotlb cache being invalidated
->     on that path - did I miss it? If it is not there it's
->     a related minor bug.
-
-
-It might have a bug. But a question is consider the case without IOMMU. 
-We only update mem table (SET_MEM_TABLE), but not vring address. This 
-looks like a bug as well?
-
-
->
-> 2. qemu already has a GPA. Discarding it and re-calculating
->     when logging is on just seems wrong.
->     However if you would like to *also* keep the HVA in the iotlb
->     to avoid doing extra translations, that sounds like a
->     reasonable optimization.
-
-
-Yes, traverse GPA->HVA mapping seems unnecessary.
-
-
->
-> 3. it also means that the hva->gpa translation only runs
->     when logging is enabled. That is a rarely excercised
->     path so any bugs there will not be caught.
-
-
-I wonder maybe some kind of unit-test may help here.
-
-
->
-> So I really would like us long term to move away from
-> hva->gpa translations, keep them for legacy userspace only
-> but I don't really mind how we do it.
->
-> How about
-> - a new flag to pass an iotlb with *both* a gpa and hva
-> - for legacy userspace, calculate the gpa on iotlb update
->    so the device then uses a shared code path
->
-> what do you think?
->
->
-
-I don't object this idea so I can try, just want to figure out why it 
-was a must.
-
-Thanks
-
-
+-- 
+Regards
+Balakrishna.
