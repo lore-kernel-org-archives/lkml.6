@@ -2,106 +2,121 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CADFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5ACFC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6282821741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADCFF21902
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ez5PvD3i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeLZRfI (ORCPT
+        id S1727412AbeLZRfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 12:35:08 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18132 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727153AbeLZRfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 12:35:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 09:35:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,401,1539673200"; 
-   d="scan'208";a="130795853"
-Received: from amoreill-mobl1.amr.corp.intel.com (HELO [10.252.137.235]) ([10.252.137.235])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Dec 2018 09:35:06 -0800
-Subject: Re: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-To:     Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181223232521.11320-1-okaya@kernel.org>
- <20181223232521.11320-9-okaya@kernel.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
-Date:   Wed, 26 Dec 2018 11:35:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181223232521.11320-9-okaya@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 26 Dec 2018 12:35:36 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50342 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbeLZRfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 12:35:36 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBQHXuuM062120;
+        Wed, 26 Dec 2018 17:35:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=+Yh/1c4+gimEdGqDbkeMOUpmpBP4XGH97cPlMvlqIuM=;
+ b=ez5PvD3iQxjzU47pfeSDprwc9cYEVQUmrQXbiE/5zvu6W2mJvfEz30okAvXZSvqoZK7g
+ LQJNoTwzb0ryNDQ2xXYvSHNU2QYhXtyWZVayQja3t8bk4XX7hZjehs2jptfyETf87W6R
+ Oridm2AE4MT2rSyctRO/BNup+J2RCweUuku3A+eK0GwpCtSyoioRKI3alYSq27T8I2uD
+ keIZKFF6aj07iLTwvasvVkMTe0VmkQvsM0EDrqLBCC9m9msa9nMOWJ/MjrI2/zu5g6N4
+ x7ooQXbEKsG5GRlznm2i2NXeuSMlMzB3+58J7sSSoFT5eOahURYOg5KjNwIJ61/CXS73 JQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2phcptta84-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Dec 2018 17:35:27 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBQHZOGq004004
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Dec 2018 17:35:25 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBQHZML2025289;
+        Wed, 26 Dec 2018 17:35:22 GMT
+Received: from anon-dhcp-121.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Dec 2018 09:35:21 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH] sunrpc: fix a missing check of xdr_inline_decode
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20181226031823.72962-1-kjlu@umn.edu>
+Date:   Wed, 26 Dec 2018 12:35:20 -0500
+Cc:     pakki001@umn.edu, Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1C2E97C7-AA91-40E8-B42E-DA6A81CE4CAC@oracle.com>
+References: <20181226031823.72962-1-kjlu@umn.edu>
+To:     Kangjie Lu <kjlu@umn.edu>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9118 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=932
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812260158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 12/23/18 5:25 PM, Sinan Kaya wrote:
-> Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
-> CONFIG_PCI set but this is not specified anywhere.
 
-Can you please share the .config that exposes this problem? This hasn't 
-changed in a long time and I wonder why this pops up now. You have 
-similar cases elsewhere, e.g. arch/x86/Kconfig
+> On Dec 25, 2018, at 10:18 PM, Kangjie Lu <kjlu@umn.edu> wrote:
+>=20
+> xdr_inline_decode() could fail.
 
-config X86_INTEL_LPSS
-     bool "Intel Low Power Subsystem Support"
-     depends on X86 && ACPI
-     select COMMON_CLK
-     select PINCTRL
-     select IOSF_MBI
+NAK: xdr_inline_decode cannot fail if its second argument is zero.
 
-or for the MMC.
 
-config MMC_SDHCI_ACPI
-     tristate "SDHCI support for ACPI enumerated SDHCI controllers"
-     depends on MMC_SDHCI && ACPI
-     select IOSF_MBI if X86
-
-The use of IOSF_MBI is only for the Baytrail-CR detection and there are 
-already in-flight patches to change the code and move it to a helper.
-
-My understanding is that for compilation you only need CONFIG_x86 since 
-there are fall-back routines available in iosf_mbi.h
-
-Thanks!
-
->
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> When it fails, the return value is NULL
+> and should not be dereferenced.
+> The fix checks if xdr_inline_decode fails, and if so, returns.
+>=20
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 > ---
->   sound/soc/intel/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> index 2fd1b61e8331..b0764b2fe001 100644
-> --- a/sound/soc/intel/Kconfig
-> +++ b/sound/soc/intel/Kconfig
-> @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
->   config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
->   	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
->   	default ACPI
-> -	depends on X86 && ACPI
-> +	depends on X86 && ACPI && PCI
->   	select SND_SST_IPC_ACPI
->   	select SND_SST_ATOM_HIFI2_PLATFORM
->   	select SND_SOC_ACPI_INTEL_MATCH
+> net/sunrpc/xprtrdma/backchannel.c | 2 ++
+> 1 file changed, 2 insertions(+)
+>=20
+> diff --git a/net/sunrpc/xprtrdma/backchannel.c =
+b/net/sunrpc/xprtrdma/backchannel.c
+> index e5b367a3e517..bd9be5272ef4 100644
+> --- a/net/sunrpc/xprtrdma/backchannel.c
+> +++ b/net/sunrpc/xprtrdma/backchannel.c
+> @@ -285,6 +285,8 @@ void rpcrdma_bc_receive_call(struct rpcrdma_xprt =
+*r_xprt,
+> 	__be32 *p;
+>=20
+> 	p =3D xdr_inline_decode(&rep->rr_stream, 0);
+> +	if (unlikely(!p))
+> +		goto out_overflow;
+> 	size =3D xdr_stream_remaining(&rep->rr_stream);
+>=20
+> #ifdef RPCRDMA_BACKCHANNEL_DEBUG
+> --=20
+> 2.17.2 (Apple Git-113)
+>=20
+
+--
+Chuck Lever
+
+
+
