@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD45DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA467C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E002087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F55A2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865359;
-	bh=3P0egRuucuWuKCjzPiDODjGr+B5Qk8K4/LcAebMs+W4=;
+	s=default; t=1545865365;
+	bh=RRNvBnYpys4EAY+rpxxBRXnGKnbxB0RqhrmWp3JAn9A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0qZH1foC5AuM9DD9CE0mqH8VBTqCIl/7lculcs3XcKH5UETrIyc2on/Ez7QDnPYfi
-	 E3oYNqwTvhcsYjh21SOmtQK6QXRPpVHdqLa7efl4AMS0XmbDVE90rYmZ/zC+D9skBE
-	 63LyTAWiWwlSyH0Rl6ZKBmUvTCHdaFJX0XyKe2uE=
+	b=gPTutpLlPoqKYL+SBODMcYvYIbETkR/JQO3yCA5FcNkG5GXgN45Ox56NcwP7BmZaT
+	 xf/omFXz5Nvmc0A0q0gySw3pTvbjULuJeE2/Y5tvBxQuKNAewTralw5uV2BZMXuH1m
+	 qyIjEDMDRnd9vcNS2jc6utq4mZ59AquKl7AynEPU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbeLZXCi (ORCPT
+        id S1730589AbeLZXCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:02:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36046 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 18:02:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbeLZWgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:10 -0500
+        id S1726138AbeLZWgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB144218E2;
-        Wed, 26 Dec 2018 22:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7DEB218FC;
+        Wed, 26 Dec 2018 22:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863769;
-        bh=3P0egRuucuWuKCjzPiDODjGr+B5Qk8K4/LcAebMs+W4=;
+        s=default; t=1545863766;
+        bh=RRNvBnYpys4EAY+rpxxBRXnGKnbxB0RqhrmWp3JAn9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fc6f33I0659/50EZtgQh6BMWa06Y6ktL03pB74nB+RMtvtvWhVTRV4KaS850dc07O
-         jgsSFQ4Y4PLE7165+S9hYXNPhvsEC5nKr3YFT+ILKXRY8AlEtHCG6Kj+zE136LED5s
-         KVZbz6a3twWCxBToesTUM9sc6BRZv+t8RNXO9Xlc=
+        b=hvujN9gLIQRPaJPQqoaSNieYJwoC59xtAWyffXpi6Cy7LBOEMIj2iGQyeUXuJ4YmJ
+         qaotTxMEJ5zjCsJ2E5t05AlTlv55XP0iPMNEdHJNEzRclMP2GyRG4CKCmnAGmmtL4R
+         1Pwi1I92Jdgt+1O9T+E+Y0k9KxRn98MqgUkbFPGM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/97] HID: ite: Add USB id match for another ITE based keyboard rfkill key quirk
-Date:   Wed, 26 Dec 2018 17:34:26 -0500
-Message-Id: <20181226223557.149329-6-sashal@kernel.org>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 04/97] powerpc: Fix COFF zImage booting on old powermacs
+Date:   Wed, 26 Dec 2018 17:34:24 -0500
+Message-Id: <20181226223557.149329-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -57,58 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 4050207485e47e00353e87f2fe2166083e282688 ]
+[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
 
-The 258a:6a88 keyboard-dock shipped with the Prowise PT301 tablet is
-likely another ITE based design. The controller die is directly bonded
-to the PCB with a blob of black glue on top so there are no markings and
-the 258a vendor-id used is unknown anywhere. But the keyboard has the
-exact same hotkeys mapped to Fn+F1 - F10 as the other ITE8595 keyboard
-I have *and* it has the same quirky behavior wrt the rfkill hotkey.
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-Either way as said this keyboard has the same quirk for its rfkill /
-airplane mode hotkey as the ITE 8595 chip, it only sends a single release
-event when pressed and released, it never sends a press event.
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
 
-This commit adds the 258a:6a88 USB id to the hid-ite id-table, fixing
-the rfkill key not working on this keyboard.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h | 3 +++
- drivers/hid/hid-ite.c | 1 +
- 2 files changed, 4 insertions(+)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 46182d4dd1ce..b7870e7e41d4 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -17,6 +17,9 @@
- #ifndef HID_IDS_H_FILE
- #define HID_IDS_H_FILE
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 32dfe6d083f3..9b9d17437373 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
-+#define USB_VENDOR_ID_258A		0x258a
-+#define USB_DEVICE_ID_258A_6A88		0x6a88
-+
- #define USB_VENDOR_ID_3M		0x0596
- #define USB_DEVICE_ID_3M1968		0x0500
- #define USB_DEVICE_ID_3M2256		0x0502
-diff --git a/drivers/hid/hid-ite.c b/drivers/hid/hid-ite.c
-index 1882a4ab0f29..98b059d79bc8 100644
---- a/drivers/hid/hid-ite.c
-+++ b/drivers/hid/hid-ite.c
-@@ -42,6 +42,7 @@ static int ite_event(struct hid_device *hdev, struct hid_field *field,
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
  
- static const struct hid_device_id ite_devices[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ITE, USB_DEVICE_ID_ITE8595) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_258A, USB_DEVICE_ID_258A_6A88) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, ite_devices);
+ #ifdef __powerpc64__
+ .balign 8
 -- 
 2.19.1
 
