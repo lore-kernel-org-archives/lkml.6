@@ -2,117 +2,129 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D1CC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96131C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4E012171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="RofPxRvK"
+	by mail.kernel.org (Postfix) with ESMTP id 64AEF2171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545853428;
+	bh=P91yVx0HDx5C2WBO/pS4qL3kHc55TZ6fOvfJwK6+38I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SXHAIE0ZJN54PhWrOI/GmPTGxVfdY82d6RUpmMFlqPzLAMlRgBsb1lbrZDdB/Q+hg
+	 mBXuQVmm9lSkHLqz3OwfQWNj+GKAQ0I4lVFQF1vVPxxKCrQo6lamL0vQWkXteskkrQ
+	 V78NA2n1u3Q0MjKTBXKvFJmtR7ffIZyjWEwzUn2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeLZTnJ (ORCPT
+        id S1727679AbeLZTnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:43:09 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:50926 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeLZTnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:43:09 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id E6FADC16
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 19:43:07 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id puzT2C1vZQOS for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Dec 2018 13:43:07 -0600 (CST)
-Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        Wed, 26 Dec 2018 14:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbeLZTnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 14:43:46 -0500
+Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id B561EC37
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 13:43:07 -0600 (CST)
-Received: by mail-it1-f197.google.com with SMTP id n124so19304793itb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:43:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Yukg6b4y64c8KSBao2PH5s3zw4SW0jWagPInPwmkaHA=;
-        b=RofPxRvKoEh6WqNyov5/t7AACnJ3fsdmQTVMNY4Dk/Uo9/hJO3Dl6Ex731mLii54rf
-         1R6h3pFd767vc5CygWQXG9idF/gg12zZHqAH7kuMKvYar9dJoN1hXa0AzWmLlAzX9kfQ
-         fzT4V5k6qtS+c8GiZbTsImfbtPA4YgEF1ovRZZMEE+wmSOhN8ilFnbEV17lFXcmn7Ij2
-         w4MwibNTIaQxmQnT5P+6Br9dt42SP222WmmhHP+IQyIRn3bIiYOlHEC2gUW38uv1tZSQ
-         A/LjBnBxel49NVzpKpY5bKTlPdd2ZS7bBiPRQhsrpB25DU43X3giCa0RA3P9F/CLYPmm
-         X1AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Yukg6b4y64c8KSBao2PH5s3zw4SW0jWagPInPwmkaHA=;
-        b=qm7Wnw8IL4Xm3E8yffzG1Dt1tfAm/MmENP3C6BLy2H/ZkuvBhd/1QBelk241AGnmNG
-         DqI2VexXSY2x24SWx8g8Qis6AbQ2peGCh7E/5XpMRFXkyuT+6wyswcSzqNDMxUPgUjCQ
-         xNvsaEUaec1Q5Y6m+ET6PXJAjCMWc3a/BhyItvpZU6g4BXb2tjvChtljPAaWmHmdTNai
-         6wgGe6vDsauJyK66Us0TEf+LizdE2AiAyG9jXlXo9bP/QD258aLZMC9GmsXhXWfcLUVa
-         J7AvtptMK2yAf7tSZNrMQJDRGE4FxynKxp38sj0B2qTujObsqBdCshFIZZpKQlDQlq24
-         6LxQ==
-X-Gm-Message-State: AA+aEWYZ1G0Jdza/N36tvYkuQImob6/aOuQEnDVdo2smi+lWskpJw71w
-        BIKsC9+0a/Xrv7pSPjJtP2r0Q5vfHv2eyeq2Jmn7aBCgQR/867QVLAsNymY9+obPlEp+anAta5G
-        GDo5w/dRJtccZTXagms+oVmlfuTdq
-X-Received: by 2002:a24:76d0:: with SMTP id z199mr12624072itb.165.1545853387291;
-        Wed, 26 Dec 2018 11:43:07 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN7RLNHABeS4sylwXyw2vD+2670ol3IoMhrvfd5n61tTaGnrtPpPxF6L6ay7qnP9l60tg36zBg==
-X-Received: by 2002:a24:76d0:: with SMTP id z199mr12624056itb.165.1545853387054;
-        Wed, 26 Dec 2018 11:43:07 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id x128sm13391996itb.8.2018.12.26.11.43.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 11:43:06 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Joe Perches <joe@perches.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: compaction.c: Propagate return value upstream
-Date:   Wed, 26 Dec 2018 13:42:56 -0600
-Message-Id: <20181226194257.11038-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id E113E214D8;
+        Wed, 26 Dec 2018 19:43:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545853426;
+        bh=P91yVx0HDx5C2WBO/pS4qL3kHc55TZ6fOvfJwK6+38I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ia2bTaazUmbXbMcKa4g1jadBVRKlebyT4ANXR2wGRiFdcN08VX2b0YKajU4AQlreh
+         pmT8Y0Hu71cZ+UaWGTu8/Wa6T96rhO/bgsveKcYpmfMn+3nS4FCRywOnPzO1EgpOlg
+         UYA8uT/reEEuwI2rA77Rw4q+jg6fM4wXRdw2lpWs=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id B08CF403A8; Wed, 26 Dec 2018 16:43:42 -0300 (-03)
+Date:   Wed, 26 Dec 2018 16:43:42 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 1/5] perf session: Get rid of file_size variable
+Message-ID: <20181226194342.GA19471@kernel.org>
+References: <20181226135132.29330-1-jolsa@kernel.org>
+ <20181226135132.29330-2-jolsa@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181226135132.29330-2-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sysctl_extfrag_handler(), proc_dointvec_minmax() can return an
-error. The fix propagates the error upstream in case of failure.
+Em Wed, Dec 26, 2018 at 02:51:28PM +0100, Jiri Olsa escreveu:
+> It's not needed and removing it makes the code little
+> more simple for upcoming changes.
+> 
+> It's safe to replace file_size with data_size, because
+> perf_data__size value is never smaller than data_offset
+> + data_size.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- mm/compaction.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This is not applying to my perf/core branch, can you check?
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 7c607479de4a..d108974d0867 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1879,9 +1879,7 @@ int sysctl_compaction_handler(struct ctl_table *table, int write,
- int sysctl_extfrag_handler(struct ctl_table *table, int write,
- 			void __user *buffer, size_t *length, loff_t *ppos)
- {
--	proc_dointvec_minmax(table, write, buffer, length, ppos);
--
--	return 0;
-+	return proc_dointvec_minmax(table, write, buffer, length, ppos);
- }
+- Arnaldo
  
- #if defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
--- 
-2.17.1
+> Link: http://lkml.kernel.org/n/tip-ocz7zwwkkx11v0mkxrtcddih@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/session.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 3972f081a8f4..d6c1d3853f27 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -1818,7 +1818,6 @@ static int __perf_session__process_events(struct perf_session *session)
+>  	struct ordered_events *oe = &session->ordered_events;
+>  	struct perf_tool *tool = session->tool;
+>  	int fd = perf_data__fd(session->data);
+> -	u64 file_size = perf_data__size(session->data);
+>  	u64 data_offset = session->header.data_offset;
+>  	u64 data_size = session->header.data_size;
+>  	u64 head, page_offset, file_offset, file_pos, size;
+> @@ -1838,14 +1837,13 @@ static int __perf_session__process_events(struct perf_session *session)
+>  	if (data_size == 0)
+>  		goto out;
+>  
+> -	if (data_offset + data_size < file_size)
+> -		file_size = data_offset + data_size;
+> +	ui_progress__init_size(&prog, data_size, "Processing events...");
+>  
+> -	ui_progress__init_size(&prog, file_size, "Processing events...");
+> +	data_size += data_offset;
+>  
+>  	mmap_size = MMAP_SIZE;
+> -	if (mmap_size > file_size) {
+> -		mmap_size = file_size;
+> +	if (mmap_size > data_size) {
+> +		mmap_size = data_size;
+>  		session->one_mmap = true;
+>  	}
+>  
+> @@ -1910,7 +1908,7 @@ static int __perf_session__process_events(struct perf_session *session)
+>  	if (session_done())
+>  		goto out;
+>  
+> -	if (file_pos < file_size)
+> +	if (file_pos < data_size)
+>  		goto more;
+>  
+>  out:
+> -- 
+> 2.17.2
 
+-- 
+
+- Arnaldo
