@@ -2,135 +2,110 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E51C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCD3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5212D218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83F972054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:34:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dscSSnUP"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nm5ZwGWJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeLZPbD (ORCPT
+        id S1727169AbeLZPcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 10:31:03 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:52276 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbeLZPbC (ORCPT
+        Wed, 26 Dec 2018 10:32:12 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33022 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeLZPcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 10:31:02 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 153FB24E25B5;
-        Wed, 26 Dec 2018 07:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1545838262; bh=Te//KRYuxaqva0xlJVkZ+PV9LWlrJf8OLOsnwHq3sO8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=dscSSnUPhoDAP92rIMGL5ig/0glyo7OgdwBJbNiQH704pUhmpBe+u6pK67BQyQ8cL
-         7gxF718YxtdTl97fTsR7uMMarX9UOm3wxS3cBqeqewyDkMOv06gw5z+kfB2a7N0F4E
-         Um98ZH8rkwT45t+prDGgnPwTl7QlXlr3rXGD0Go0Ku+l78DoCCQ5b2drktMnR6jgcT
-         imOupR+yFm0UjbSgMhgGgOOhKi2H7OUhVFwToWxlJPJmQMZ+KvqhnyY20iIGKesq9z
-         M1vyL9feYcj4jvc7EN3LPRw6eHqHYmhEF7034ktkTQPbSy6/cyU4BuMu+zEhXD0fQU
-         d2oRoUHawhemg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id E44525F8E;
-        Wed, 26 Dec 2018 07:31:01 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 26 Dec 2018 07:31:01 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 26 Dec 2018 16:30:59 +0100
-Received: from [10.225.2.19] (10.225.2.19) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 26 Dec
- 2018 16:30:59 +0100
-Subject: Re: [PATCH 00/21] i.MX6, DesignWare PCI improvements
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <3b3a232c-4991-cdb4-59f3-29fba93dfefc@synopsys.com>
-Date:   Wed, 26 Dec 2018 15:26:29 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 26 Dec 2018 10:32:11 -0500
+Received: by mail-io1-f65.google.com with SMTP id t24so12529932ioi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 07:32:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VNidTVK9BknK48wMc2d/FhziRGCtZRNJAoalJxL7/b4=;
+        b=Nm5ZwGWJMdkqCjEVY+whgnyQ+MTEuI/TPc20xQ+nY6GSGgEmNZusZIG/7FYK4nXKrD
+         6rblYMPJpq13TXO9Fx/2aPiAYB5p5RaJVdbwBoJcQ6O53Q9+9yyHIhzSy2CC9BYQdLJF
+         nn/Uer+CS8PECw2iNj8l4XJ85zY3S4ounApvM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VNidTVK9BknK48wMc2d/FhziRGCtZRNJAoalJxL7/b4=;
+        b=n/qJdicz445RPCZDP16A0/+XWob7YXr0pO8i0Hf+HTJilRCqns0+CZZuGmgxCQGmaW
+         W9qy+rrLPbmefv8qaujTwuSQO3tbu7ONOe6d/GX97x4CgCG6WLNCzE0b6PXsQUl998lc
+         T12P9MyPgqJKcyvqluOM6aog8o2jkwZqp1DFWrPTcHeUdSJoQJMuMyxjDKyBy5uJEQRl
+         +waPYnYrTTKZTQP4FPfiL71ytGW+Nzs63RtoEEtuGL9XnuNtaZivNo3M2No2Suil5H2x
+         xzLeoFCIz23pKk+uFS2Zk95M+R/zfUWtCbr6zC6fQv6I8hcZvM2mzAF9lZDFWbzzeBb9
+         kCRw==
+X-Gm-Message-State: AJcUukeNrK74GRRv/eiAHRsG4mLuAK/XFVvKeS0dfuGUbfvU6ec53HGL
+        yGbE5iueSAjLALaTYww4UqqgFWWjPxvJRyhTUPBHNA==
+X-Google-Smtp-Source: ALg8bN71ryeAV+qhfPw9GFhJo3aKcTrOxuxSO1CaHSSYuptFZmyAyO2hjX80J2gNwnyQQiYLF4gdKSIOIFiZrCgVHME=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr13163263iob.170.1545838330629;
+ Wed, 26 Dec 2018 07:32:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181221072716.29017-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.225.2.19]
+References: <20181226023534.64048-1-cai@lca.pw> <CAKv+Gu_fiEDffKq_fONBYTOdSk-L7__+LgNEyVaNF3FGzBfAow@mail.gmail.com>
+ <403405f1-b702-2feb-4616-35fc3dc3133e@lca.pw>
+In-Reply-To: <403405f1-b702-2feb-4616-35fc3dc3133e@lca.pw>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Dec 2018 16:31:59 +0100
+Message-ID: <CAKv+Gu_e=NkKZ5C+KzBmgg2VMXNKPqXcPON8heRd0F_iW+aaEQ@mail.gmail.com>
+Subject: Re: [PATCH -mmotm] efi: drop kmemleak_ignore() for page allocator
+To:     Qian Cai <cai@lca.pw>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 26 Dec 2018 at 16:13, Qian Cai <cai@lca.pw> wrote:
+>
+> On 12/26/18 7:02 AM, Ard Biesheuvel wrote:
+> > On Wed, 26 Dec 2018 at 03:35, Qian Cai <cai@lca.pw> wrote:
+> >>
+> >> a0fc5578f1d (efi: Let kmemleak ignore false positives) is no longer
+> >> needed due to efi_mem_reserve_persistent() uses __get_free_page()
+> >> instead where kmemelak is not able to track regardless. Otherwise,
+> >> kernel reported "kmemleak: Trying to color unknown object at
+> >> 0xffff801060ef0000 as Black"
+> >>
+> >> Signed-off-by: Qian Cai <cai@lca.pw>
+> >
+> > Why are you sending this to -mmotm?
+> >
+> > Andrew, please disregard this patch. This is EFI/tip material.
+>
+> Well, I'd like to primarily develop on the -mmotm tree as it fits in a
+> sweet-spot where the mainline is too slow and linux-next is too chaotic.
+>
+> The bug was reproduced and the patch was tested on -mmotm. If for every bugs
+> people found in -mmtom, they have to check out the corresponding sub-system tree
+> and reproduce/verify the bug over there, that is quite a burden to bear.
+>
 
-On 21/12/2018 07:26, Andrey Smirnov wrote:
-> Everyone:
-> 
-> This is the series containing various small improvements that I made
-> while reading the code and researching commit history of pci-imx6.c
-> and pcie-designware*.c files. All changes are optional, so commits
-> that don't seem like an improvement can be easily dropped. Hopefully
-> each patch is self-explanatory.
-> 
-> I tested this series on i.MX6Q, i.MX7D and i.MX8MQ.
-> 
-> Feedback is welcome!
-> 
-> Thanks,
-> Andrey Smirnov
-> 
-> Andrey Smirnov (21):
->   PCI: imx6: Simplify imx7d_pcie_wait_for_phy_pll_lock()
->   PCI: imx6: Remove redundant debug tracing
->   PCI: imx6: Return -ETIMEOUT from imx6_pcie_wait_for_speed_change()
->   PCI: imx6: Remove duplicate macro definitions
->   PCI: imx6: Remove PCIE_PL_PFLR_* constants
->   PCI: imx6: Remove PCIE_PHY_RX_ASIC_OUT* constants
->   PCI: designware: Make use of IS_ALIGNED()
->   PCI: designware: Share code for dw_pcie_rd/wr_other_conf()
->   PCI: imx6: Drop imx6_pcie_link_up()
->   PCI: designware: imx6: Share PHY debug register definitions
->   PCI: designware: Make use of BIT() in constant definitions
->   PCI: imx6: Make use of BIT() in constant definitions
->   PCI: imx6: Simplify bit operations in PHY functions
->   PCI: imx6: Simplify pcie_phy_poll_ack()
->   PCI: imx6: Restrict PHY register data to 16-bit
->   PCI: imx6: Pass data to dw_pcie_writel_dbi() directly
->   PCI: imx6: Use common mask in imx6_pcie_reset_phy()
->   PCI: imx6: Simplify bit operations in imx6_setup_phy_mpll()
->   PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
->   PCI: designware: Make use of GENMASK/FIELD_PREP
->   PCI: designware: Remove superfluous shifting in definitions
+Yes. But you know what? We all have our burden to bear, and shifting
+this burden to someone else, in this case the subsystem maintainer who
+typically deals with a sizable workload already, is not a very nice
+thing to do.
 
+> That's why sub-system maintainers are copied on those patches, so they can
+> decide to fix directly in the sub-system tree instead of -mmotm, and then it
+> will propagate to -mmotm one way or another.
+>
 
-s/DesignWare/dwc in all patches, please.
+Please stop sending EFI patches if you can't be bothered to
+test/reproduce against the EFI tree.
 
-Regards,
-
-Gustavo
-
-> 
->  drivers/pci/controller/dwc/pci-imx6.c         | 151 +++++++-----------
->  .../pci/controller/dwc/pcie-designware-host.c |  61 +++----
->  drivers/pci/controller/dwc/pcie-designware.c  |  18 +--
->  drivers/pci/controller/dwc/pcie-designware.h  |  60 +++----
->  4 files changed, 116 insertions(+), 174 deletions(-)
-> 
-
+Thanks,
+Ard.
