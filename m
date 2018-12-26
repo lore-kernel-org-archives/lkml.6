@@ -6,144 +6,204 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EAAC43612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C18C43444
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4B42173B
+	by mail.kernel.org (Postfix) with ESMTP id 7BFC22148E
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbeLZAoJ (ORCPT
+        id S1729669AbeLZAoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:44:09 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57326 "EHLO
+        Tue, 25 Dec 2018 19:44:11 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57378 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeLZAoB (ORCPT
+        with ESMTP id S1726045AbeLZAoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:44:01 -0500
+        Tue, 25 Dec 2018 19:44:02 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 9897229525; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
+        id D1D6C29529; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <6db46da0ad072e50de32721e2dce9387aa58f4ab.1545784679.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Message-Id: <88b7f55b6b27aac143c364de12d01c73afce78e9.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 16/25] powerpc: Add missing ppc_md.nvram_size for CHRP and
- PowerMac
+Subject: [PATCH v8 19/25] powerpc, fbdev: Use NV_CMODE and NV_VMODE only when
+ CONFIG_PPC32 && CONFIG_PPC_PMAC && CONFIG_NVRAM
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the nvram_size() function to those PowerPC platforms that don't already
-have one: CHRP and PowerMac. This means that the ppc_md.nvram_size()
-function can be used to implement arch_nvram_ops.get_size()
+This patch addresses inconsistencies in Mac framebuffer drivers and their
+use of Kconfig symbols relating to NVRAM, so PPC64 can use CONFIG_NVRAM.
 
-Since we are addressing inconsistencies here, also rename chrp_nvram_read
-and chrp_nvram_write, which break the naming convention used across
-PowerPC platforms for NVRAM accessor functions.
+Macintosh framebuffer drivers use default settings for color mode and
+video mode that are found in NVRAM. On PCI Macs, MacOS stores display
+settings in the Name Registry (NR) partition in NVRAM*. On NuBus Macs,
+there is no NR partition and MacOS stores display mode settings in PRAM**.
+
+Early-model Macs are the ones most likely to benefit from these settings,
+since they are more likely to have a fixed-frequency monitor connected to
+the built-in framebuffer device. Moreover, a single NV_CMODE value and
+a single NV_VMODE value provide for only one display.
+
+The NV_CMODE and NV_VMODE constants are apparently offsets into the NR
+partition for Old World machines. This also suggests that these defaults
+are not useful on later models. The NR partition seems to be optional on
+New World machines. CONFIG_NVRAM cannot be enabled on PPC64 at present.
+
+It is safe to say that NVRAM support in PowerMac fbdev drivers is only
+applicable to CONFIG_PPC32 so make this condition explicit. This means
+matroxfb driver won't crash on PPC64 when CONFIG_NVRAM becomes available
+there.
+
+For imsttfb, add the missing CONFIG_NVRAM test to prevent a build failure,
+since PPC64 does not implement nvram_read_byte(). Also add a missing
+machine_is(powermac) check. Change the inconsistent dependency on
+CONFIG_PPC and the matching #ifdef tests to CONFIG_PPC_PMAC.
+
+For valkyriefb, to improve clarity and consistency with the other PowerMac
+fbdev drivers, test for CONFIG_PPC_PMAC instead of !CONFIG_MAC. Remove a
+bogus comment regarding PRAM.
+
+* See GetPreferredConfiguration and SavePreferredConfiguration in
+"Designing PCI Cards and Drivers for Power Macintosh Computers".
+
+** See SetDefaultMode and GetDefaultMode in "Designing Cards and Drivers
+for the Macintosh Family".
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
- arch/powerpc/platforms/chrp/nvram.c     | 14 ++++++++++----
- arch/powerpc/platforms/powermac/nvram.c |  9 +++++++++
- 2 files changed, 19 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/Kconfig                |  2 +-
+ drivers/video/fbdev/imsttfb.c              | 12 +++++-------
+ drivers/video/fbdev/matrox/matroxfb_base.c |  2 +-
+ drivers/video/fbdev/valkyriefb.c           | 14 ++++++--------
+ 4 files changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/arch/powerpc/platforms/chrp/nvram.c b/arch/powerpc/platforms/chrp/nvram.c
-index 791b86398e1d..6ec2901d2aa4 100644
---- a/arch/powerpc/platforms/chrp/nvram.c
-+++ b/arch/powerpc/platforms/chrp/nvram.c
-@@ -24,7 +24,7 @@ static unsigned int nvram_size;
- static unsigned char nvram_buf[4];
- static DEFINE_SPINLOCK(nvram_lock);
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index e413f54208f4..52453ce3040a 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -536,7 +536,7 @@ config FB_IMSTT
+ 	bool "IMS Twin Turbo display support"
+ 	depends on (FB = y) && PCI
+ 	select FB_CFB_IMAGEBLIT
+-	select FB_MACMODES if PPC
++	select FB_MACMODES if PPC_PMAC
+ 	help
+ 	  The IMS Twin Turbo is a PCI-based frame buffer card bundled with
+ 	  many Macintosh and compatible computers.
+diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
+index 901ca4ed10e9..8d231591ff0e 100644
+--- a/drivers/video/fbdev/imsttfb.c
++++ b/drivers/video/fbdev/imsttfb.c
+@@ -30,9 +30,8 @@
+ #include <asm/io.h>
+ #include <linux/uaccess.h>
  
--static unsigned char chrp_nvram_read(int addr)
-+static unsigned char chrp_nvram_read_byte(int addr)
- {
- 	unsigned int done;
- 	unsigned long flags;
-@@ -46,7 +46,7 @@ static unsigned char chrp_nvram_read(int addr)
- 	return ret;
- }
+-#if defined(CONFIG_PPC)
++#if defined(CONFIG_PPC_PMAC)
+ #include <linux/nvram.h>
+-#include <asm/prom.h>
+ #include "macmodes.h"
+ #endif
  
--static void chrp_nvram_write(int addr, unsigned char val)
-+static void chrp_nvram_write_byte(int addr, unsigned char val)
- {
- 	unsigned int done;
- 	unsigned long flags;
-@@ -64,6 +64,11 @@ static void chrp_nvram_write(int addr, unsigned char val)
- 	spin_unlock_irqrestore(&nvram_lock, flags);
- }
+@@ -327,14 +326,13 @@ enum {
+ 	TVP = 1
+ };
  
-+static ssize_t chrp_nvram_size(void)
-+{
-+	return nvram_size;
-+}
-+
- void __init chrp_nvram_init(void)
- {
- 	struct device_node *nvram;
-@@ -85,8 +90,9 @@ void __init chrp_nvram_init(void)
- 	printk(KERN_INFO "CHRP nvram contains %u bytes\n", nvram_size);
- 	of_node_put(nvram);
+-#define USE_NV_MODES		1
+ #define INIT_BPP		8
+ #define INIT_XRES		640
+ #define INIT_YRES		480
  
--	ppc_md.nvram_read_val = chrp_nvram_read;
--	ppc_md.nvram_write_val = chrp_nvram_write;
-+	ppc_md.nvram_read_val  = chrp_nvram_read_byte;
-+	ppc_md.nvram_write_val = chrp_nvram_write_byte;
-+	ppc_md.nvram_size      = chrp_nvram_size;
+ static int inverse = 0;
+ static char fontname[40] __initdata = { 0 };
+-#if defined(CONFIG_PPC)
++#if defined(CONFIG_PPC_PMAC)
+ static signed char init_vmode = -1, init_cmode = -1;
+ #endif
  
- 	return;
- }
-diff --git a/arch/powerpc/platforms/powermac/nvram.c b/arch/powerpc/platforms/powermac/nvram.c
-index ae54d7fe68f3..9360cdc408c1 100644
---- a/arch/powerpc/platforms/powermac/nvram.c
-+++ b/arch/powerpc/platforms/powermac/nvram.c
-@@ -147,6 +147,11 @@ static ssize_t core99_nvram_size(void)
- static volatile unsigned char __iomem *nvram_addr;
- static int nvram_mult;
+@@ -1390,8 +1388,8 @@ static void init_imstt(struct fb_info *info)
+ 		}
+ 	}
  
-+static ssize_t ppc32_nvram_size(void)
-+{
-+	return NVRAM_SIZE;
-+}
-+
- static unsigned char direct_nvram_read_byte(int addr)
- {
- 	return in_8(&nvram_data[(addr & (NVRAM_SIZE - 1)) * nvram_mult]);
-@@ -590,21 +595,25 @@ int __init pmac_nvram_init(void)
- 		nvram_mult = 1;
- 		ppc_md.nvram_read_val	= direct_nvram_read_byte;
- 		ppc_md.nvram_write_val	= direct_nvram_write_byte;
-+		ppc_md.nvram_size	= ppc32_nvram_size;
- 	} else if (nvram_naddrs == 1) {
- 		nvram_data = ioremap(r1.start, s1);
- 		nvram_mult = (s1 + NVRAM_SIZE - 1) / NVRAM_SIZE;
- 		ppc_md.nvram_read_val	= direct_nvram_read_byte;
- 		ppc_md.nvram_write_val	= direct_nvram_write_byte;
-+		ppc_md.nvram_size	= ppc32_nvram_size;
- 	} else if (nvram_naddrs == 2) {
- 		nvram_addr = ioremap(r1.start, s1);
- 		nvram_data = ioremap(r2.start, s2);
- 		ppc_md.nvram_read_val	= indirect_nvram_read_byte;
- 		ppc_md.nvram_write_val	= indirect_nvram_write_byte;
-+		ppc_md.nvram_size	= ppc32_nvram_size;
- 	} else if (nvram_naddrs == 0 && sys_ctrler == SYS_CTRLER_PMU) {
- #ifdef CONFIG_ADB_PMU
- 		nvram_naddrs = -1;
- 		ppc_md.nvram_read_val	= pmu_nvram_read_byte;
- 		ppc_md.nvram_write_val	= pmu_nvram_write_byte;
-+		ppc_md.nvram_size	= ppc32_nvram_size;
- #endif /* CONFIG_ADB_PMU */
- 	} else {
- 		printk(KERN_ERR "Incompatible type of NVRAM\n");
+-#if USE_NV_MODES && defined(CONFIG_PPC32)
+-	{
++#if defined(CONFIG_PPC_PMAC) && defined(CONFIG_PPC32) && defined(CONFIG_NVRAM)
++	if (machine_is(powermac)) {
+ 		int vmode = init_vmode, cmode = init_cmode;
+ 
+ 		if (vmode == -1) {
+@@ -1565,7 +1563,7 @@ imsttfb_setup(char *options)
+ 			inverse = 1;
+ 			fb_invert_cmaps();
+ 		}
+-#if defined(CONFIG_PPC)
++#if defined(CONFIG_PPC_PMAC)
+ 		else if (!strncmp(this_opt, "vmode:", 6)) {
+ 			int vmode = simple_strtoul(this_opt+6, NULL, 0);
+ 			if (vmode > 0 && vmode <= VMODE_MAX)
+diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
+index 0a4e5bad33f4..cac5865d461c 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_base.c
++++ b/drivers/video/fbdev/matrox/matroxfb_base.c
+@@ -1874,7 +1874,7 @@ static int initMatrox2(struct matrox_fb_info *minfo, struct board *b)
+ 		struct fb_var_screeninfo var;
+ 		if (default_vmode <= 0 || default_vmode > VMODE_MAX)
+ 			default_vmode = VMODE_640_480_60;
+-#ifdef CONFIG_NVRAM
++#if defined(CONFIG_PPC32) && defined(CONFIG_NVRAM)
+ 		if (default_cmode == CMODE_NVRAM)
+ 			default_cmode = nvram_read_byte(NV_CMODE);
+ #endif
+diff --git a/drivers/video/fbdev/valkyriefb.c b/drivers/video/fbdev/valkyriefb.c
+index d51c3a8009cb..8022316ee9c9 100644
+--- a/drivers/video/fbdev/valkyriefb.c
++++ b/drivers/video/fbdev/valkyriefb.c
+@@ -63,14 +63,12 @@
+ #include "macmodes.h"
+ #include "valkyriefb.h"
+ 
+-#ifdef CONFIG_MAC
+-/* We don't yet have functions to read the PRAM... perhaps we can
+-   adapt them from the PPC code? */
+-static int default_vmode = VMODE_CHOOSE;
+-static int default_cmode = CMODE_8;
+-#else
++#ifdef CONFIG_PPC_PMAC
+ static int default_vmode = VMODE_NVRAM;
+ static int default_cmode = CMODE_NVRAM;
++#else
++static int default_vmode = VMODE_CHOOSE;
++static int default_cmode = CMODE_8;
+ #endif
+ 
+ struct fb_par_valkyrie {
+@@ -283,7 +281,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
+ 	printk(KERN_INFO "Monitor sense value = 0x%x\n", p->sense);
+ 
+ 	/* Try to pick a video mode out of NVRAM if we have one. */
+-#if !defined(CONFIG_MAC) && defined(CONFIG_NVRAM)
++#if defined(CONFIG_PPC_PMAC) && defined(CONFIG_NVRAM)
+ 	if (default_vmode == VMODE_NVRAM) {
+ 		default_vmode = nvram_read_byte(NV_VMODE);
+ 		if (default_vmode <= 0
+@@ -296,7 +294,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
+ 		default_vmode = mac_map_monitor_sense(p->sense);
+ 	if (!valkyrie_reg_init[default_vmode - 1])
+ 		default_vmode = VMODE_640_480_67;
+-#if !defined(CONFIG_MAC) && defined(CONFIG_NVRAM)
++#if defined(CONFIG_PPC_PMAC) && defined(CONFIG_NVRAM)
+ 	if (default_cmode == CMODE_NVRAM)
+ 		default_cmode = nvram_read_byte(NV_CMODE);
+ #endif
 -- 
 2.19.2
 
