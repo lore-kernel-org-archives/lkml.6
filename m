@@ -4,111 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE9CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43602C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B63D21741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:05:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF51214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="FD2hRMDX"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="g4J/6rGA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725962AbeLZFFs (ORCPT
+        id S1726006AbeLZFMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 00:05:48 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:38308 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbeLZFFs (ORCPT
+        Wed, 26 Dec 2018 00:12:36 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:32988 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbeLZFMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 00:05:48 -0500
+        Wed, 26 Dec 2018 00:12:35 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 35381BC2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 05:05:47 +0000 (UTC)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 50AE2B00
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 05:12:34 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1a1UOB9HJHu2 for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 23:05:47 -0600 (CST)
-Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zyQ6zjg7ctQJ for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 23:12:34 -0600 (CST)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 079F6BCD
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:05:47 -0600 (CST)
-Received: by mail-it1-f200.google.com with SMTP id g7so18843252itg.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:05:47 -0800 (PST)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 1CD4671A
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:12:34 -0600 (CST)
+Received: by mail-io1-f72.google.com with SMTP id t13so12893263ioi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 21:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=C3cocMi+x63NbAfEzCRDGhWTk24D3gnrZUiQtTnLhXA=;
-        b=FD2hRMDXkLugVPWz6VUrfMbGbzNX/i5shYUMLTsSrR/dwwq6R+Ok8NHn5aea1z3YaT
-         HV3bqcvot13qTUQS7YGmnLv4s4kUi75KAe4julAqNd1VdjtS01jLvR3txbfy1cB75KjY
-         cA9AtzqdSGF95QpbEih6Exw91HwA8+yRgOv4orW6vqrSWaerHXKv0mrzyADJODe/649O
-         j/njIgnrIrFYI0h2Ifko+gkvoPjKMVA/hI8SzgKBm5gKdRoo/OnnrBQmH9pE1UHIgI0E
-         Bw2XTEUzM5P7OsHRflxksiNK92AEj39wvq68gvn1Sc8ja3+QogAN5OXTuA4n3ZKWGN++
-         2wpw==
+        bh=d5DmxqqpoSNk7vYOnf8JTcrxl8NKPjtTJeIvIQdbAsI=;
+        b=g4J/6rGAI5Z0yS/YasqEHdwczHlYxdoYYXIDrXJeVZEl3SPsogH3XG58hhDJ+XRbu3
+         ZoyyzCsZBK+gkuBSLmqLs8VT+shJrCy8cXfBNJ+nDs84UUa27r5HNTkAy/ZSy5iId+NZ
+         vk+1A4zesHLgtePL3awGcQ+5+qoYFMdUSgKBckhIADUDJOFROk05ouAi1TmYQOaEgVMv
+         mktVSuqx9GVLucq01OkdUn/izqMk7LkI2ldKRdizxGHMbNvFcPySLFkG5RLhJl7FQ60a
+         1qTy8qmx31suic4zna6Kq9g/Zvz6VRVAT1KRIVJIlgtrYU7RxG9VRBpZ3NFzgY42SyFe
+         /WUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=C3cocMi+x63NbAfEzCRDGhWTk24D3gnrZUiQtTnLhXA=;
-        b=DHRRWPv4UutK6PdhN/DwGPp+U6PZm09+9+SzndO6+t/9+0jG5q5RGdWv+N4pNCk+Zr
-         TOwgCCwniMHf63prqKhus5KRTJtMG32BHMf989pHKdKwIW+i49mgEFwAoyu7GBHzFHt/
-         r8FakC4aHQKqy2X7038NQLUyM7flMgHHzXFxegfCvSoPc+yJB4aidKBppeotwMUDwGwS
-         tMy3e7OofSPuC+9A+keSfmn2bYlPaDfO8wbTCPrqSiBTZ8vbhm3hRFG/P2H08luSxuXM
-         A6DlR9HiQFxqufJhMjjG66ojqURfCeCqcUqLiT2MGvT8y3/e8q3z6Vnq6u+J9XfljTa7
-         0+hQ==
-X-Gm-Message-State: AA+aEWZ3zqDnyu0bL7XVef90EB1u2tCzNeFRpul8+XqApEoYyzUJfyUu
-        PVB6Zu+pLAATqAzhdpwwS8qqsph2NXzNP2+o4HDkMx2bHXqWk21hsQsk7QN/jQq1Jb46D056Cn7
-        uMli8DmvuuFPVkNAMnlwBZ1bCVFO8
-X-Received: by 2002:a24:3e43:: with SMTP id s64mr12828837its.111.1545800746618;
-        Tue, 25 Dec 2018 21:05:46 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/UnxhXYno057KakaGHPtxkrhlqKxOrXjYlHfRfxrWDBF3GLN519htI7y+o94xp86D+5DQn0rw==
-X-Received: by 2002:a24:3e43:: with SMTP id s64mr12828830its.111.1545800746318;
-        Tue, 25 Dec 2018 21:05:46 -0800 (PST)
+        bh=d5DmxqqpoSNk7vYOnf8JTcrxl8NKPjtTJeIvIQdbAsI=;
+        b=mYPo0q/oy7VlP2Vi9PdPYTpqBPfr56+Zi9EgT6s0ughoyt6k1GdZgFEJE/AGz5Zxnb
+         nVq4QEhUogKK0Ep/fCGHfjxVrO1Bx19RIEjZ6Td3c9zDiUx2euqEPbZDyP80AIxprMrY
+         OGG8nkcGhkesQCuk0lGLN2AJR1WbSYrPcqqxKKOy0jISXzpCGi7mmKCFGzejyxTxiIXa
+         VQrAFkukMTpQU54t09VV9P2LHEJIOw+61PSqCY8BCACrhzWBlmMVXP7Llg7ZdKuUuIa7
+         o1sMNzx+tFVkOlRPT5SyH2SDMWQtP+wB82mlkdgPR/g4EcZc4klgg1fziuzcX/SIRPIY
+         G39Q==
+X-Gm-Message-State: AA+aEWa1M94VC5RCrtZGNI40wX3+DmBabPxFlVW7HnOxmX0Ns4X6GwSm
+        xLpCc6aVPqVo35CUqlOuMAttGb+jnk8WRl21/5tlAeMBfN1AlMEG95RRqNgYnLcZz7WIVqv//jd
+        xBlJFHJAmS0/ouF8N9+m+QCbpG12k
+X-Received: by 2002:a24:b003:: with SMTP id d3mr13117649itf.55.1545801153718;
+        Tue, 25 Dec 2018 21:12:33 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5bbyAmVbn2epV1eCiCCPISyvZMvoHyxlcLJ6rK7R+Kr1Exwp47uih+uDMXasjtnvg+e/bRwQ==
+X-Received: by 2002:a24:b003:: with SMTP id d3mr13117642itf.55.1545801153471;
+        Tue, 25 Dec 2018 21:12:33 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id u9sm15070984iol.77.2018.12.25.21.05.44
+        by smtp.gmail.com with ESMTPSA id w129sm13245021ita.0.2018.12.25.21.12.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 21:05:45 -0800 (PST)
+        Tue, 25 Dec 2018 21:12:32 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Bert Kenward <bkenward@solarflare.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+Cc:     pakki001@umn.edu, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] net: sfc: checks status of efx_mcdi_rpc
-Date:   Tue, 25 Dec 2018 23:05:17 -0600
-Message-Id: <20181226050517.74381-1-kjlu@umn.edu>
+Subject: [PATCH] pci: fix a missing check of snd_i2c_sendbytes
+Date:   Tue, 25 Dec 2018 23:12:04 -0600
+Message-Id: <20181226051206.74467-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-efx_mcdi_rpc() could fail. The fix checks its status and issues an error
-message if it fails.
+snd_i2c_sendbytes could fail. The fix checks its return value: if it
+fails, issues an error message and returns with its error code.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/net/ethernet/sfc/mcdi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/pci/ice1712/ews.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sfc/mcdi.c b/drivers/net/ethernet/sfc/mcdi.c
-index dfad93fca0a6..9486e6534dea 100644
---- a/drivers/net/ethernet/sfc/mcdi.c
-+++ b/drivers/net/ethernet/sfc/mcdi.c
-@@ -1819,6 +1819,9 @@ void efx_mcdi_set_id_led(struct efx_nic *efx, enum efx_led_mode mode)
+diff --git a/sound/pci/ice1712/ews.c b/sound/pci/ice1712/ews.c
+index b8af747ecb43..b978cdb0fc20 100644
+--- a/sound/pci/ice1712/ews.c
++++ b/sound/pci/ice1712/ews.c
+@@ -826,7 +826,10 @@ static int snd_ice1712_6fire_read_pca(struct snd_ice1712 *ice, unsigned char reg
  
- 	rc = efx_mcdi_rpc(efx, MC_CMD_SET_ID_LED, inbuf, sizeof(inbuf),
- 			  NULL, 0, NULL);
-+	if (rc)
-+		netif_err(efx, hw, efx->net_dev, "%s: failed rc=%d\n",
-+				__func__, rc);
- }
- 
- static int efx_mcdi_reset_func(struct efx_nic *efx)
+ 	snd_i2c_lock(ice->i2c);
+ 	byte = reg;
+-	snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1);
++	if (snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1)) {
++		dev_err(ice->card->dev, "cannot send pca\n");
++		return -EIO;
++	}
+ 	byte = 0;
+ 	if (snd_i2c_readbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1) != 1) {
+ 		snd_i2c_unlock(ice->i2c);
 -- 
 2.17.2 (Apple Git-113)
 
