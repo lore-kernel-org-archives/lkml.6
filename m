@@ -2,133 +2,135 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B35C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CD5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DE520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:01:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XeqTKkEd"
+	by mail.kernel.org (Postfix) with ESMTP id 1C1E02087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:07:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545854842;
+	bh=yW6ad6ny47KdrigTr7nNyf/sLYovA1FZVHtuqp6MCfI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=RRVe7VZ6nMYdCo9hxDtXB/TLUd0RnwUM2PfUUW8zxDkmHYJR5Am9LX1FIc813jFFy
+	 8NdEZFpOjLO3tknnQU2k/cCYY95MiDCBWOZnMR1c229u+GtEq/6zcgTVrmwR/cMERo
+	 47Zx8ld7jPZuF2NCZ51Efee1oFFeN59zmW9YipmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbeLZUBA (ORCPT
+        id S1727844AbeLZUHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 15:01:00 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41306 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727368AbeLZUBA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 15:01:00 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u6so7867720plm.8;
-        Wed, 26 Dec 2018 12:01:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HWtoAToLMcEYno0PZpxmdEQ9iMNDBE5TLoToRlPydgs=;
-        b=XeqTKkEd65SyOW8djkbHgg8ipRnpt4B2e+XrtcYUnc9/70CLwZ5JHW2i2x8AzVnrzv
-         YolEb1NNy6aDWVMwmuGGrQuBvnnDp53RzRkOlbsddoJ8NYLoOkAClK/Di1rVMGEPJyWA
-         xlsqP7OgKFIzublLo1Zxir5Ep4PWk/+5u6AVVBbHamrZid7UIzDIrYYUOfNmjHBOAXKD
-         S3v2BtwLYUpmjSx6t7uNW5zByGG5sMj0a8Gl+SGAEz88mjHxgI5sUapi9I9j5iCequAd
-         HNrS4cIUhcccAvaooftNUvABJp0fQnAYvFYnynVt+XvO/LZ71vnqUikhS061U/j30Azn
-         CNDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HWtoAToLMcEYno0PZpxmdEQ9iMNDBE5TLoToRlPydgs=;
-        b=LqJDvA6aar5oTRUNtAiHEDwXZ616xrMZ3r1L4IBke49gJ8gx9QB857SQ2P52Yhe386
-         v+hsG++M9u/o/9pd6Jn+50d6hEGHovaXTj/AREa+uXEkrer0Os6NWrXunEHWG9jk5NHh
-         Q8boheE6vIZjGPB2b2n8l+Ygjy7jRqGyKLLAxnUhmdWLlb00+8UmThxfwqUZCUnR9IwV
-         5sGMv6oDuTzXIKTViDvCEXzBiD0nJ2V/ONChmeNHJZk1WZuB4Kf7pKh8HD91VgGHPzoA
-         7FcXey+TT3xjAX6Y3g7bTY0xx9ofgwY6aXpj8Kly/r9cU3tdV862MNfx6fL1lw4jIeJS
-         xtPw==
-X-Gm-Message-State: AJcUukfa0Lm4CIcY9E8EwGKBJOncaId8hoPzIpCxJArG2PWrdUDWoBxb
-        MoLSMN1j/8xrPm3u/ScFCspFbTS+
-X-Google-Smtp-Source: ALg8bN4yR1VIBeJeQ+IR3nwdmg1OxJEWo6WqQS+KQcV+h1VNRyDxlk1+jjDWSRcUxtPE6RzT34QCnQ==
-X-Received: by 2002:a17:902:292b:: with SMTP id g40mr21216311plb.82.1545854459338;
-        Wed, 26 Dec 2018 12:00:59 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r4sm74169866pgn.54.2018.12.26.12.00.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 12:00:58 -0800 (PST)
-Date:   Wed, 26 Dec 2018 12:00:56 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] touchscreen: elants: fix a missing check of return
- values
-Message-ID: <20181226200056.GB5999@dtor-ws>
-References: <20181225043616.66032-1-kjlu@umn.edu>
+        Wed, 26 Dec 2018 15:07:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727806AbeLZUHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 15:07:17 -0500
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D4B2087F;
+        Wed, 26 Dec 2018 20:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545854836;
+        bh=yW6ad6ny47KdrigTr7nNyf/sLYovA1FZVHtuqp6MCfI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=N1XZBJOsQX4XBMZ43pcCTm8W/R7vO9exgSR/CczyddoOKq4lYdn3aM2t/iVXhJDJ+
+         shC+tpzIQCm9dSNe9RoHk7NH4wCCSCyy/IODRs21zfMKQy2h/NZskHIZbWyDKj6UBj
+         GBfQqV4m0AvcNmU0Ad44yIsso52T+upHh013RDZc=
+Received: by mail-ot1-f49.google.com with SMTP id 40so14778977oth.4;
+        Wed, 26 Dec 2018 12:07:16 -0800 (PST)
+X-Gm-Message-State: AJcUuketYSKc6aiI76HzrRD+zLLLqZvHx/jZto/27pkxaGsTiv0WBhfL
+        1OPtNIxQcJLwQfsCKgcgJkpMzNfEwDAqwIUeZHk=
+X-Google-Smtp-Source: ALg8bN4Zc4dwQ6O8K5Z67ibNimgZ5lHrORFDDnawKNAvvL06xWscZuxny53EQR6lyS8j/5C4bH9gdyhImIWlDMz/ebs=
+X-Received: by 2002:a9d:762:: with SMTP id 89mr13350242ote.89.1545854835486;
+ Wed, 26 Dec 2018 12:07:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181225043616.66032-1-kjlu@umn.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-9-okaya@kernel.org>
+ <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+In-Reply-To: <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Wed, 26 Dec 2018 23:07:04 +0300
+X-Gmail-Original-Message-ID: <CAK9iUCMG9YkiZC-yAe0vJ62cJ2tW--KqVtDr3SMLM3zJFpJHSw@mail.gmail.com>
+Message-ID: <CAK9iUCMG9YkiZC-yAe0vJ62cJ2tW--KqVtDr3SMLM3zJFpJHSw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Dec 26, 2018 at 8:35 PM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+> On 12/23/18 5:25 PM, Sinan Kaya wrote:
+> > Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
+> > CONFIG_PCI set but this is not specified anywhere.
+>
+> Can you please share the .config that exposes this problem? This hasn't
+> changed in a long time and I wonder why this pops up now. You have
+> similar cases elsewhere, e.g. arch/x86/Kconfig
+>
+Here is the background :
 
-On Mon, Dec 24, 2018 at 10:36:13PM -0600, Kangjie Lu wrote:
-> elants_i2c_send() may fail, let's check its return values. The fix does
-> the check and reports an error message upon the failure.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/input/touchscreen/elants_i2c.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/elants_i2c.c b/drivers/input/touchscreen/elants_i2c.c
-> index f2cb23121833..8ccba4ccee37 100644
-> --- a/drivers/input/touchscreen/elants_i2c.c
-> +++ b/drivers/input/touchscreen/elants_i2c.c
-> @@ -245,8 +245,22 @@ static int elants_i2c_calibrate(struct elants_data *ts)
->  	ts->state = ELAN_WAIT_RECALIBRATION;
->  	reinit_completion(&ts->cmd_done);
->  
-> -	elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
-> -	elants_i2c_send(client, rek, sizeof(rek));
-> +	error = elants_i2c_send(client, w_flashkey, sizeof(w_flashkey));
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +				"error in sending the w_flashkey command for calibration: %d\n",
-> +				error);
-> +		enable_irq(client->irq);
-> +		return error;
-> +	}
-> +  error = elants_i2c_send(client, rek, sizeof(rek));
+I have a changeset that was added to 4.21-rc1 that decouples  ACPI from
+PCI. PCI was automatically selected when ACPI was chosen before.
 
-Messed up formatting.
+This is no longer true.
 
-> +	if (error) {
-> +		dev_err(&client->dev,
-> +				"error in sending the rek command for calibration: %d\n",
-> +				error);
-> +		enable_irq(client->irq);
-> +		return error;
+If a code needs PCI support, it now needs to explicitly state that.
 
-This also leaves the touchscreen in ELAN_WAIT_RECALIBRATION state. I
-think all in all I'd rather leave the code as it was.
+This allows usecase for smaller kernels and component isolation.
 
-> +	}
->  
->  	enable_irq(client->irq);
->  
-> -- 
-> 2.17.2 (Apple Git-113)
-> 
-
-Thanks.
-
--- 
-Dmitry
+> config X86_INTEL_LPSS
+>      bool "Intel Low Power Subsystem Support"
+>      depends on X86 && ACPI
+>      select COMMON_CLK
+>      select PINCTRL
+>      select IOSF_MBI
+>
+> or for the MMC.
+>
+> config MMC_SDHCI_ACPI
+>      tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+>      depends on MMC_SDHCI && ACPI
+>      select IOSF_MBI if X86
+>
+> The use of IOSF_MBI is only for the Baytrail-CR detection and there are
+> already in-flight patches to change the code and move it to a helper.
+>
+> My understanding is that for compilation you only need CONFIG_x86 since
+> there are fall-back routines available in iosf_mbi.h
+>
+> Thanks!
+>
+> >
+> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> > ---
+> >   sound/soc/intel/Kconfig | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> > index 2fd1b61e8331..b0764b2fe001 100644
+> > --- a/sound/soc/intel/Kconfig
+> > +++ b/sound/soc/intel/Kconfig
+> > @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+> >   config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+> >       tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+> >       default ACPI
+> > -     depends on X86 && ACPI
+> > +     depends on X86 && ACPI && PCI
+> >       select SND_SST_IPC_ACPI
+> >       select SND_SST_ATOM_HIFI2_PLATFORM
+> >       select SND_SOC_ACPI_INTEL_MATCH
