@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E19C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91164C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4595C2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 485892070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865259;
-	bh=xLi4wlkCc1FhZI8gDVKJC+To9O77CIK5JfPSq6fDRpA=;
+	s=default; t=1545865277;
+	bh=ULYmeCSVB/oSC6uiSYaT+qxFwtilTcGF522JwCycSGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UqOqejJ/na8BSpcANu3V+SvKRlmKVxA31cGNJ2TiczB1qC7iWnole8RqUULtaSvLu
-	 hjwvw9ieSoaQoA/u6O3pcama56POMwfFlH5tsVHnJSJ3SRYm+b4A8PiS3/SAfVxlzx
-	 XoxFCVGQI9jQQugvUJVFmGPJHA5LijhcYaYHTHvE=
+	b=Lnl28PvxSdmmbWDAmeBkUKaTcqiK5l92DYswdlUY6kref/kBwLHAxcnN+7/u5LQHj
+	 2NV9yZ67KRdOMc7evEfDRZTL9sZqGyZtIu3cT/nTsXNk0aVRQLNeBhBawlNMlcrFK0
+	 xBap1uTaiYYX58JDwxGV1AuNPPEAZPLovQ/iFFag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeLZWgh (ORCPT
+        id S1729931AbeLZXBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:36:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36420 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 18:01:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727303AbeLZWgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:31 -0500
+        id S1727325AbeLZWgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A84EA218FE;
-        Wed, 26 Dec 2018 22:36:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18C46218E2;
+        Wed, 26 Dec 2018 22:36:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863789;
-        bh=xLi4wlkCc1FhZI8gDVKJC+To9O77CIK5JfPSq6fDRpA=;
+        s=default; t=1545863791;
+        bh=ULYmeCSVB/oSC6uiSYaT+qxFwtilTcGF522JwCycSGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l1Iw2/RZtGVXLujYqg/mlXuC0VWMTkv+DqDH5hllkZIZ4ZKqsdmNsZk/lSR8crXUC
-         1rl22RC2x5NW9BxuEhnCI5o0pGgJFMAHMDmjqEh3SRXNFwSvfufKq9IezH6GdoWAmi
-         yICQIdv+lMad2nnmf6q8n+2j8SY8mo4dAETsz/YA=
+        b=zNNFgMqvfv3kq62TtjuaevrnQ50FnLPYqpJfEiRFtpIjYrn2uO4lIT3G3yiMh1VVX
+         bGKGKHM1Uskdjxpc01/cTPiuwxBrFz6QX6yxntXy0bIEeEQufwOrjz+jebcZTxBOS3
+         76kl3o5jqerrZ+X/WZ1TSTYxTil37ZbERzbCX6B4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 20/97] netfilter: nf_tables: fix suspicious RCU usage in nft_chain_stats_replace()
-Date:   Wed, 26 Dec 2018 17:34:40 -0500
-Message-Id: <20181226223557.149329-20-sashal@kernel.org>
+Cc:     Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 22/97] Revert "scsi: qla2xxx: Fix NVMe Target discovery"
+Date:   Wed, 26 Dec 2018 17:34:42 -0500
+Message-Id: <20181226223557.149329-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -60,163 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Himanshu Madhani <hmadhani@marvell.com>
 
-[ Upstream commit 4c05ec47384ab3627b62814e8f886e90cc38ce15 ]
+[ Upstream commit c64a87f9518409d0a439895f09f6149ffdd427b8 ]
 
-basechain->stats is rcu protected data which is updated from
-nft_chain_stats_replace(). This function is executed from the commit
-phase which holds the pernet nf_tables commit mutex - not the global
-nfnetlink subsystem mutex.
+This reverts commit db186382af21e926e90df19499475f2552192b77.
 
-Test commands to reproduce the problem are:
-   %iptables-nft -I INPUT
-   %iptables-nft -Z
-   %iptables-nft -Z
+This commit introduced regression with FCP discovery so revert it to fix
+discovery for FCP luns.
 
-This patch uses RCU calls to handle basechain->stats updates to fix a
-splat that looks like:
-
-[89279.358755] =============================
-[89279.363656] WARNING: suspicious RCU usage
-[89279.368458] 4.20.0-rc2+ #44 Tainted: G        W    L
-[89279.374661] -----------------------------
-[89279.379542] net/netfilter/nf_tables_api.c:1404 suspicious rcu_dereference_protected() usage!
-[...]
-[89279.406556] 1 lock held by iptables-nft/5225:
-[89279.411728]  #0: 00000000bf45a000 (&net->nft.commit_mutex){+.+.}, at: nf_tables_valid_genid+0x1f/0x70 [nf_tables]
-[89279.424022] stack backtrace:
-[89279.429236] CPU: 0 PID: 5225 Comm: iptables-nft Tainted: G        W    L    4.20.0-rc2+ #44
-[89279.430135] Call Trace:
-[89279.430135]  dump_stack+0xc9/0x16b
-[89279.430135]  ? show_regs_print_info+0x5/0x5
-[89279.430135]  ? lockdep_rcu_suspicious+0x117/0x160
-[89279.430135]  nft_chain_commit_update+0x4ea/0x640 [nf_tables]
-[89279.430135]  ? sched_clock_local+0xd4/0x140
-[89279.430135]  ? check_flags.part.35+0x440/0x440
-[89279.430135]  ? __rhashtable_remove_fast.constprop.67+0xec0/0xec0 [nf_tables]
-[89279.430135]  ? sched_clock_cpu+0x126/0x170
-[89279.430135]  ? find_held_lock+0x39/0x1c0
-[89279.430135]  ? hlock_class+0x140/0x140
-[89279.430135]  ? is_bpf_text_address+0x5/0xf0
-[89279.430135]  ? check_flags.part.35+0x440/0x440
-[89279.430135]  ? __lock_is_held+0xb4/0x140
-[89279.430135]  nf_tables_commit+0x2555/0x39c0 [nf_tables]
-
-Fixes: f102d66b335a4 ("netfilter: nf_tables: use dedicated mutex to guard transactions")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter/nfnetlink.h | 12 ------------
- net/netfilter/nf_tables_api.c       | 21 +++++++++++++--------
- net/netfilter/nf_tables_core.c      |  2 +-
- 3 files changed, 14 insertions(+), 21 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/netfilter/nfnetlink.h b/include/linux/netfilter/nfnetlink.h
-index 4a520d3304a2..cf09ab37b45b 100644
---- a/include/linux/netfilter/nfnetlink.h
-+++ b/include/linux/netfilter/nfnetlink.h
-@@ -62,18 +62,6 @@ static inline bool lockdep_nfnl_is_held(__u8 subsys_id)
- }
- #endif /* CONFIG_PROVE_LOCKING */
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index ae9fd2d01004..42b8f0d3e580 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4808,10 +4808,10 @@ void qla24xx_create_new_sess(struct scsi_qla_host *vha, struct qla_work_evt *e)
+ 			fcport->d_id = e->u.new_sess.id;
+ 			fcport->flags |= FCF_FABRIC_DEVICE;
+ 			fcport->fw_login_state = DSC_LS_PLOGI_PEND;
+-			if (e->u.new_sess.fc4_type & FS_FC4TYPE_FCP)
++			if (e->u.new_sess.fc4_type == FS_FC4TYPE_FCP)
+ 				fcport->fc4_type = FC4_TYPE_FCP_SCSI;
  
--/*
-- * nfnl_dereference - fetch RCU pointer when updates are prevented by subsys mutex
-- *
-- * @p: The pointer to read, prior to dereferencing
-- * @ss: The nfnetlink subsystem ID
-- *
-- * Return the value of the specified RCU-protected pointer, but omit
-- * the READ_ONCE(), because caller holds the NFNL subsystem mutex.
-- */
--#define nfnl_dereference(p, ss)					\
--	rcu_dereference_protected(p, lockdep_nfnl_is_held(ss))
--
- #define MODULE_ALIAS_NFNL_SUBSYS(subsys) \
- 	MODULE_ALIAS("nfnetlink-subsys-" __stringify(subsys))
- 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index fe0558b15fd3..ed9af46720e1 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -1199,7 +1199,8 @@ static int nf_tables_fill_chain_info(struct sk_buff *skb, struct net *net,
- 		if (nla_put_string(skb, NFTA_CHAIN_TYPE, basechain->type->name))
- 			goto nla_put_failure;
- 
--		if (basechain->stats && nft_dump_stats(skb, basechain->stats))
-+		if (rcu_access_pointer(basechain->stats) &&
-+		    nft_dump_stats(skb, rcu_dereference(basechain->stats)))
- 			goto nla_put_failure;
- 	}
- 
-@@ -1375,7 +1376,8 @@ static struct nft_stats __percpu *nft_stats_alloc(const struct nlattr *attr)
- 	return newstats;
- }
- 
--static void nft_chain_stats_replace(struct nft_base_chain *chain,
-+static void nft_chain_stats_replace(struct net *net,
-+				    struct nft_base_chain *chain,
- 				    struct nft_stats __percpu *newstats)
- {
- 	struct nft_stats __percpu *oldstats;
-@@ -1383,8 +1385,9 @@ static void nft_chain_stats_replace(struct nft_base_chain *chain,
- 	if (newstats == NULL)
- 		return;
- 
--	if (chain->stats) {
--		oldstats = nfnl_dereference(chain->stats, NFNL_SUBSYS_NFTABLES);
-+	if (rcu_access_pointer(chain->stats)) {
-+		oldstats = rcu_dereference_protected(chain->stats,
-+					lockdep_commit_lock_is_held(net));
- 		rcu_assign_pointer(chain->stats, newstats);
- 		synchronize_rcu();
- 		free_percpu(oldstats);
-@@ -1421,9 +1424,10 @@ static void nf_tables_chain_destroy(struct nft_ctx *ctx)
- 		struct nft_base_chain *basechain = nft_base_chain(chain);
- 
- 		module_put(basechain->type->owner);
--		free_percpu(basechain->stats);
--		if (basechain->stats)
-+		if (rcu_access_pointer(basechain->stats)) {
- 			static_branch_dec(&nft_counters_enabled);
-+			free_percpu(rcu_dereference_raw(basechain->stats));
-+		}
- 		kfree(chain->name);
- 		kfree(basechain);
- 	} else {
-@@ -1572,7 +1576,7 @@ static int nf_tables_addchain(struct nft_ctx *ctx, u8 family, u8 genmask,
- 				kfree(basechain);
- 				return PTR_ERR(stats);
+-			if (e->u.new_sess.fc4_type & FS_FC4TYPE_NVME) {
++			if (e->u.new_sess.fc4_type == FS_FC4TYPE_NVME) {
+ 				fcport->fc4_type = FC4_TYPE_OTHER;
+ 				fcport->fc4f_nvme = FC4_TYPE_NVME;
  			}
--			basechain->stats = stats;
-+			rcu_assign_pointer(basechain->stats, stats);
- 			static_branch_inc(&nft_counters_enabled);
- 		}
- 
-@@ -6145,7 +6149,8 @@ static void nft_chain_commit_update(struct nft_trans *trans)
- 		return;
- 
- 	basechain = nft_base_chain(trans->ctx.chain);
--	nft_chain_stats_replace(basechain, nft_trans_chain_stats(trans));
-+	nft_chain_stats_replace(trans->ctx.net, basechain,
-+				nft_trans_chain_stats(trans));
- 
- 	switch (nft_trans_chain_policy(trans)) {
- 	case NF_DROP:
-diff --git a/net/netfilter/nf_tables_core.c b/net/netfilter/nf_tables_core.c
-index ffd5c0f9412b..60f258f2c707 100644
---- a/net/netfilter/nf_tables_core.c
-+++ b/net/netfilter/nf_tables_core.c
-@@ -101,7 +101,7 @@ static noinline void nft_update_chain_stats(const struct nft_chain *chain,
- 	struct nft_stats *stats;
- 
- 	base_chain = nft_base_chain(chain);
--	if (!base_chain->stats)
-+	if (!rcu_access_pointer(base_chain->stats))
- 		return;
- 
- 	local_bh_disable();
 -- 
 2.19.1
 
