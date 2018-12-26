@@ -2,112 +2,102 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAAAC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9C8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94B2218FC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E05F21900
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:52:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="F1VZ9JvA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbeLZQtz (ORCPT
+        id S1727349AbeLZQwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 11:49:55 -0500
-Received: from mout.gmx.net ([212.227.17.22]:41891 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbeLZQty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 11:49:54 -0500
-Received: from ls3530.dellerweb.de ([92.116.132.153]) by mail.gmx.com
- (mrgmx102 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 0LhCDT-1h75Xp122x-00oXUt; Wed, 26 Dec 2018 17:49:46 +0100
-Date:   Wed, 26 Dec 2018 17:49:42 +0100
-From:   Helge Deller <deller@gmx.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        John David Anglin <dave.anglin@bell.net>
-Cc:     Firoz Khan <firoz.khan@linaro.org>
-Subject: [GIT PULL] parisc architecture updates for kernel v4.21
-Message-ID: <20181226164942.GA19410@ls3530.dellerweb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:v6iT1c8edhl6dnTQZvwfGWHZZU0nbhBU8FSDNjFnBj/U+0g9Sg+
- eqKnEQdBJB0Slsfxlxby87+DbhWcFX/txgs1bA045klxPq9MKamQx06sa8c/w28lpgDxSXg
- EnpZ1oCWXrHS3EJNKF4ltJz1K9jXTpR6PmCT/+DnL3MCD0n0qZfoWqStH8/B6QKTu/VJqWX
- rXP3oAvVYjfn7bEIV8A8A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:AgdX/KSdjJk=:TaBYFVAeQw/3u/yZubSoIa
- bPolua/sAhN19+SQFRWvAXMJgK66tYGRlRNi4/+KuWccsTX4AjA3jZbWEC2++ARVd3UQYYL03
- 0SK4zmsaT4CqqcpgMpSt4/a3qsdfkOrmf/OBSdqdXByJp2ISFfra746N8Tlm2k8o8eri34kqj
- yMmflsMwLfdpuKJOtEWMiSuVeUVY6nF5RpEyYwn4zFORTVa/NdpzS8DLJzqEZ7REHjZ0Ya4Ha
- NLtT0pNMKZjHHlI7NtnplI0fN9a8yNLaKRpkWKRsipaJcszXTAE61esj6SykAN7yNphtNKEbR
- gHwx1LcJvWp4qJprhKTtYS11QRSj0JfNvC0TmK2NRRtPi2xqQjgnyTAb5nxlhzy2AQ+MOsznN
- 3ZSnG4QIQA+WWWbcIWVX3KGHkS1E1hC1NFYfPkM5YhxFb2r5OZsYDGbJvF3dW2CsGAn9SgqxN
- 58iN2P87jlYnXnbi7JoBs850W08RGN0A0nSzCy0u2Gt9jtU9mpUceUzaNckaZX+Ip4UU4EG5i
- 2G6YSaO1P6egzfRL0t5umWpxfLglsGsywUIXG+YEmtNE+gu5HmihB8+1CliSZjBonrpfmDQHx
- ywy3hqnkUt9kCJ3tDr3Nk2RLdTNe/LnxYA5PP30WwjLcz9swLwC0V8+x7IjeVL/HQXb/X3XKf
- yg87xc0YUrtYl2t+NsWe2SKBBWDngCn25jsojuWFhPLzlNHDfpHf1QlOuPkoIjkER4J6GYbJx
- fp7IjBdHjx9e3fA/Z1VnQVVy7Brcurp+goCM5JHeIniGv7MJAaCikH4Lr2VJ65joBWo57n//6
- 0OOJjcQTcdPj2GM9Sii8POdV9VTBo05pWKBsEdywJTrhVFRq6ek8Up9weGSyd+3lWujuAlj27
- zUKqX626czXb899V315z2kGZ3BnUj6Kuz+yzyJ7MY=
+        Wed, 26 Dec 2018 11:52:51 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42480 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbeLZQwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 11:52:51 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d19so17740561qtq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 08:52:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KwMLCwUPmTyjB5Pj1lp5mz4Va0BflBJ0qIj28Vl0AYs=;
+        b=F1VZ9JvABZHl0spaxH2eIKcRy2rGKk48H4bG+bpEEY8FbuHPaFkODM9Q4dOoi/eYi9
+         6dPfETCJ7pNBpZSMCofZIGKP8I8Mahx3jf/HDWUp2m0UlpBp6+PCWrQQyngSPiA/P8GO
+         1gYeVvFFg6TFfNEdrBC2NMm3wdT2BGVCBHvNVtt7Fp6HX4iReVMyrAyqC5wVvJorq180
+         foE6YeRZA51+vND9CEy8xgtW8pwVkRHwmiBokeGDUKJvnMcF1Nhf5ZXMpKWnJ6IaEyPW
+         cCRXiQeCGxJ0Y0CN0i5s9hP15DX0dYl/ntquyGGUN1xxG4OznOk+YToKSWoBNNtTzCzR
+         lX8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=KwMLCwUPmTyjB5Pj1lp5mz4Va0BflBJ0qIj28Vl0AYs=;
+        b=Zq+eDME29HddYAPCPTl25frABUzgq1LgS+D5EbyKrEP7WXvhw8jjiYI1DpM5iLycdr
+         RRW1HdmXdj7vlnRPL6+ouQezIGrpHUGPxkGXfbf0qOtRO9Hi3dpWhHrAXdqzQ/8ZvNHC
+         9WGk0qBIvNM2OYlqUyfZVotfgix/2Lg0VNLfQ7mnamLiBNTE9TP5Wg3BCylelvLrC2jo
+         3oOr28X2Oh7xaIVgOTFSUe2sG7GeGiS5n6Ag8okBOx6L0GfPnofaTmRD/YF2JuhPcRQg
+         ANVILY/4npI4EYFxNm3Cg2gyG102YpdjejDJyL5Tp15pTqjzrXP31EKSNjRT88IOo0+s
+         A9VA==
+X-Gm-Message-State: AJcUukepfyKZ30zWf6jj/LO2vZrEayCIf5FqgQjET5VbMwQZx3NiSTTy
+        mSGgK2SDwer7eolDwGmjd7ceZw==
+X-Google-Smtp-Source: ALg8bN67X9W5Wk0k3HufO7fWRbaVLwDavt0wOU/+w4ECRENWrtR3oRBfqYTX/5CnUad1duSCmNXPGA==
+X-Received: by 2002:a0c:b0db:: with SMTP id p27mr19603568qvc.73.1545843169671;
+        Wed, 26 Dec 2018 08:52:49 -0800 (PST)
+Received: from localhost ([2601:182:c980:96c:8dd:4488:90b1:59d1])
+        by smtp.gmail.com with ESMTPSA id v22sm13500839qkl.27.2018.12.26.08.52.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 08:52:48 -0800 (PST)
+Date:   Wed, 26 Dec 2018 08:52:48 -0800 (PST)
+X-Google-Original-Date: Wed, 26 Dec 2018 08:31:47 PST (-0800)
+Subject:     Re: [PATCH] RISC-V: defconfig: Enable Generic PCIE by default
+In-Reply-To: <alpine.DEB.2.21.9999.1812211124180.777@viisi.sifive.com>
+CC:     Alistair Francis <Alistair.Francis@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <mhng-ceba7c1a-7334-4869-a7d4-2326b59f82b5@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 21 Dec 2018 11:27:39 PST (-0800), Paul Walmsley wrote:
+>
+> On Fri, 21 Dec 2018, Alistair Francis wrote:
+>
+>> When the MicroSemi driver does eventually go upstream this will
+>> probably have to be discussed though as either the config or device
+>> tree will need to be edited to ensure only one PCIe device is present.
+>
+> The right way to do that is to have two separate DT files: one for the
+> HiFive-U board alone; the other for the HiFive-U plus the expansion board
+> combo.  There shouldn't be any problems with keeping both drivers enabled
+> in the defconfig.
 
-please pull the parisc architecture updates for 4.21-rc1 from:
+We actually need at least three:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.21-1
+* One for the HiFive Unleashed
+* One for the HiFive Unleashed, when attached to the Micro Semi expansion 
+  board.
+* One for the HiFive Unleashed, when attached to a VC707.
 
-The major change in this patchset is the new system call table
-generation support from Firoz Khan.
-    
-Thanks,
-Helge
+We may end up needing additional device trees for the newer Xilinx boards, 
+depending on if it's possible to probe for that 32-bit DMA limit on the VC707 
+or not.  Then, of course, we'll need an image-specific device tree whenever we 
+put an accelerator on the FPGA.
 
-----------------------------------------------------------------
-Firoz Khan (6):
-      parisc: move __IGNORE* entries to non uapi header
-      parisc: add __NR_syscalls along with __NR_Linux_syscalls
-      parisc: remove __NR_Linux from uapi header file.
-      parisc: add system call table generation support
-      parisc: generate uapi header and system call table files
-      parisc: syscalls: ignore nfsservctl for other architectures
-
-Helge Deller (3):
-      parisc: Split out alternative live patching code
-      parisc: Fix serio address output
-      parisc: Fix HP SDC hpa address output
-
- arch/parisc/Makefile                      |   3 +
- arch/parisc/include/asm/Kbuild            |   3 +
- arch/parisc/include/asm/alternative.h     |   4 +
- arch/parisc/include/asm/unistd.h          |   8 +
- arch/parisc/include/uapi/asm/Kbuild       |   2 +
- arch/parisc/include/uapi/asm/unistd.h     | 379 +-----------------------
- arch/parisc/kernel/Makefile               |   2 +-
- arch/parisc/kernel/alternative.c          |  98 +++++++
- arch/parisc/kernel/module.c               |  14 +
- arch/parisc/kernel/setup.c                |  80 ------
- arch/parisc/kernel/syscall.S              |  11 +-
- arch/parisc/kernel/syscall_table.S        | 459 ------------------------------
- arch/parisc/kernel/syscalls/Makefile      |  55 ++++
- arch/parisc/kernel/syscalls/syscall.tbl   | 369 ++++++++++++++++++++++++
- arch/parisc/kernel/syscalls/syscallhdr.sh |  36 +++
- arch/parisc/kernel/syscalls/syscalltbl.sh |  36 +++
- drivers/input/serio/gscps2.c              |   4 +-
- drivers/input/serio/hp_sdc.c              |   4 +-
- scripts/checksyscalls.sh                  |   1 +
- 19 files changed, 648 insertions(+), 920 deletions(-)
- create mode 100644 arch/parisc/kernel/alternative.c
- delete mode 100644 arch/parisc/kernel/syscall_table.S
- create mode 100644 arch/parisc/kernel/syscalls/Makefile
- create mode 100644 arch/parisc/kernel/syscalls/syscall.tbl
- create mode 100644 arch/parisc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/parisc/kernel/syscalls/syscalltbl.sh
+Ideally we'd have a discoverable bus, but that's going to be a bit of a way 
+out.  For now we'll have to get by with different device trees, but that should 
+get significantly easier when we get a proper bootloader working.
