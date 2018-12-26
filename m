@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	URIBL_RHS_DOB autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291E8C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9AEC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2782171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6D6214AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeLZPo7 convert rfc822-to-8bit (ORCPT
+        id S1727303AbeLZPpg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 10:44:59 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48707 "EHLO mail.bootlin.com"
+        Wed, 26 Dec 2018 10:45:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48719 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726848AbeLZPo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 10:44:59 -0500
+        id S1726848AbeLZPpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 10:45:35 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2B0B520A2E; Wed, 26 Dec 2018 16:44:57 +0100 (CET)
+        id 1ED45209ED; Wed, 26 Dec 2018 16:45:34 +0100 (CET)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 00658206A6;
-        Wed, 26 Dec 2018 16:44:46 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id E58E2206F9;
+        Wed, 26 Dec 2018 16:45:23 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Yangtao Li <tiny.windzz@gmail.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
-References: <20181226134019.5229-1-tiny.windzz@gmail.com>
-Date:   Wed, 26 Dec 2018 16:44:46 +0100
-In-Reply-To: <20181226134019.5229-1-tiny.windzz@gmail.com> (Yangtao Li's
-        message of "Wed, 26 Dec 2018 08:40:19 -0500")
-Message-ID: <87y38c9tsh.fsf@bootlin.com>
+Subject: Re: [PATCH] clk: armada-xp: fix refcount leak in axp_clk_init()
+References: <20181226134226.5338-1-tiny.windzz@gmail.com>
+Date:   Wed, 26 Dec 2018 16:45:23 +0100
+In-Reply-To: <20181226134226.5338-1-tiny.windzz@gmail.com> (Yangtao Li's
+        message of "Wed, 26 Dec 2018 08:42:26 -0500")
+Message-ID: <87tvj09trg.fsf@bootlin.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -60,22 +60,24 @@ Gregory
 >
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/clk/mvebu/kirkwood.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/mvebu/armada-xp.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-> index 6f784167bda4..35af3aa18f1c 100644
-> --- a/drivers/clk/mvebu/kirkwood.c
-> +++ b/drivers/clk/mvebu/kirkwood.c
-> @@ -331,6 +331,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
->  	if (cgnp) {
->  		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
->  		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
-> +
+> diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+> index e8f03293ec83..fa1568279c23 100644
+> --- a/drivers/clk/mvebu/armada-xp.c
+> +++ b/drivers/clk/mvebu/armada-xp.c
+> @@ -226,7 +226,9 @@ static void __init axp_clk_init(struct device_node *np)
+>  
+>  	mvebu_coreclk_setup(np, &axp_coreclks);
+>  
+> -	if (cgnp)
+> +	if (cgnp) {
+>  		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
 > +		of_node_put(cgnp);
->  	}
+> +	}
 >  }
->  CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
+>  CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
 > -- 
 > 2.17.0
 >
