@@ -2,147 +2,106 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3182C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CADFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B51821741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:31:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hioPoww2"
+	by mail.kernel.org (Postfix) with ESMTP id 6282821741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbeLZRbG (ORCPT
+        id S1727386AbeLZRfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 12:31:06 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35435 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbeLZRbG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 12:31:06 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 81so14493979otj.2;
-        Wed, 26 Dec 2018 09:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6iaSBYX5l1bk3DajjWYi1p0Z9EFk6zc3Vt+L1MwZiKc=;
-        b=hioPoww2N7Wa2Otch8wYCsBDSBv1h3lIDGRuZIWZ4bawYFKMbNR7Z0b6HKExB8Ok6z
-         6rvbkCruLPL+xvetDTmv0WlFhaoQjG1n1z8ZezeXnRr53D32ZInI8IeWbXKTw4T0f7x9
-         KqwGOCx9HGzif94FOxL03YHZ8MeVM3XulMxcc0bpQshtO1pY3rsSfHeprgawGB8QZTZP
-         ICpX4AuSveXcrebIwEeuP2t3AEKRQ25NJSUX+SOquU9QH+fbeX/Ttr5yJXwg2H+qU7oo
-         UmL90diiJkvs5XZzamAHYwT/VtOIe7NSnrMWas8VeUAqkcJ4IXj/kaqyIcf2X1jMrhlO
-         dI5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=6iaSBYX5l1bk3DajjWYi1p0Z9EFk6zc3Vt+L1MwZiKc=;
-        b=K3vPSl6wGmcP8WLyDsTGMIrOGU78Og2eOUsMhHuqLUiYD+1gNq3BiXJutlLe6Jjcbp
-         NZK9y6zVSCjfdUAEwJh55EKVEAxGqGvXklGMGo7F8V9SbY5ggQvG3O5w19W3Go2qVdR5
-         QcbBJGBPPALQHy3iK2ousamYTcThXE2qZtLGVcj6Qbhq8A8/t4BMtBqks06Uqtplo19v
-         5chx6Fi8KPjA+IzalXwAvJ+t+EfRREj/lTy3MofjEuve4CFxh1EQI9JFhZE/AHSPdtlR
-         Hx9ToOdpKkiZPfKsjOjmgNAcj4at5PCBv8YPQc4eqB0kLsZZCpz069wW3MSjead3dbJl
-         c2pA==
-X-Gm-Message-State: AJcUukecc+TSQ+CPLWu+cKy4KEcpkWS/v7vJQesNLZkIEGuq5IMZqTlj
-        OBvsv7w6y6vrv2rxxWWtKBJisEmN
-X-Google-Smtp-Source: ALg8bN7abADQHNHCCc17rqk37txau7kG5BndSCpjFEsFcttYwF20ztqgLPiIDQOhdQrHqnyknGXjmA==
-X-Received: by 2002:a9d:3d0:: with SMTP id f74mr13521237otf.52.1545845464274;
-        Wed, 26 Dec 2018 09:31:04 -0800 (PST)
-Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.googlemail.com with ESMTPSA id l9sm16784831otj.9.2018.12.26.09.31.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 09:31:03 -0800 (PST)
-Subject: Re: [PATCH] dsa: return error code upstream
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181226040818.73764-1-kjlu@umn.edu>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Message-ID: <b01ffe9c-590c-ef93-e9c0-6a2a3321979d@gmail.com>
-Date:   Wed, 26 Dec 2018 09:31:01 -0800
+        Wed, 26 Dec 2018 12:35:08 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18132 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727153AbeLZRfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 12:35:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 09:35:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,401,1539673200"; 
+   d="scan'208";a="130795853"
+Received: from amoreill-mobl1.amr.corp.intel.com (HELO [10.252.137.235]) ([10.252.137.235])
+  by fmsmga004.fm.intel.com with ESMTP; 26 Dec 2018 09:35:06 -0800
+Subject: Re: [PATCH v3 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+To:     Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
+Cc:     linux-acpi@vger.kernel.org,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181223232521.11320-1-okaya@kernel.org>
+ <20181223232521.11320-9-okaya@kernel.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <39200a36-6592-f010-8309-a249a8d514f4@linux.intel.com>
+Date:   Wed, 26 Dec 2018 11:35:05 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181226040818.73764-1-kjlu@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20181223232521.11320-9-okaya@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 12/25/18 à 8:08 PM, Kangjie Lu a écrit :
-> Both bcm_sf2_sw_indir_rw and mdiobus_write_nested could fail, so let's
-> return their error codes upstream.
 
-Thanks for your patch, the subject should be:
+On 12/23/18 5:25 PM, Sinan Kaya wrote:
+> Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
+> CONFIG_PCI set but this is not specified anywhere.
 
-net: dsa: bcm_sf2: Propagate error value from mdio_write
+Can you please share the .config that exposes this problem? This hasn't 
+changed in a long time and I wonder why this pops up now. You have 
+similar cases elsewhere, e.g. arch/x86/Kconfig
 
-to match existing commits done to that file. Thanks!
--- 
-Florian
+config X86_INTEL_LPSS
+     bool "Intel Low Power Subsystem Support"
+     depends on X86 && ACPI
+     select COMMON_CLK
+     select PINCTRL
+     select IOSF_MBI
+
+or for the MMC.
+
+config MMC_SDHCI_ACPI
+     tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+     depends on MMC_SDHCI && ACPI
+     select IOSF_MBI if X86
+
+The use of IOSF_MBI is only for the Baytrail-CR detection and there are 
+already in-flight patches to change the code and move it to a helper.
+
+My understanding is that for compilation you only need CONFIG_x86 since 
+there are fall-back routines available in iosf_mbi.h
+
+Thanks!
+
+>
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>   sound/soc/intel/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> index 2fd1b61e8331..b0764b2fe001 100644
+> --- a/sound/soc/intel/Kconfig
+> +++ b/sound/soc/intel/Kconfig
+> @@ -91,7 +91,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+>   config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>   	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
+>   	default ACPI
+> -	depends on X86 && ACPI
+> +	depends on X86 && ACPI && PCI
+>   	select SND_SST_IPC_ACPI
+>   	select SND_SST_ATOM_HIFI2_PLATFORM
+>   	select SND_SOC_ACPI_INTEL_MATCH
