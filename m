@@ -2,174 +2,108 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3953C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7EAC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812F1214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE6AA218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 15:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gBG+QYJY"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="EBzweb46"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeLZPLw (ORCPT
+        id S1727267AbeLZPN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 10:11:52 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:48864 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725792AbeLZPLw (ORCPT
+        Wed, 26 Dec 2018 10:13:28 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39540 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbeLZPN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 10:11:52 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C03AC10C1C2B;
-        Wed, 26 Dec 2018 07:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1545837111; bh=VonFTQBI7qyVRKUU+7Mzb4gN+SOefkbi+3FMWmwmJHo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=gBG+QYJYRCsU4TJPaqCb7INqcIg/H8elFWLfdQQxW6pxji63Nkan0YfpIg4H2ng1Y
-         CkhBMcRfZsx5RxpFiA+REXzlzDiMFRdhLsc9LOxzqVmjOq/+Su02N2qV9A/XOQ+m9D
-         BIW3OIh28Co4fyIHdlUy85+X2uGTALdZyv3A13UM9e5M8QSuZLwJuaWvVYXW3zJsDA
-         Csr4YlG6Z6Q18nrdj/pOfUWuUMoOFarMKQhAJHNdDrdD4/nY9Bb3zUp07Z/0kCCuza
-         24UIf58LL/AWQ6Dohq+/1i/HIJHhc4trq6AEecNrmlupdNhW0Ao6280P8Nro+gKRg1
-         in4ZHAKvYkqHw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 782A951B0;
-        Wed, 26 Dec 2018 07:11:51 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 26 Dec 2018 07:11:51 -0800
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 26 Dec 2018 16:11:48 +0100
-Received: from [10.225.2.45] (10.225.2.45) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 26 Dec
- 2018 16:11:48 +0100
-Subject: Re: [PATCH 20/21] PCI: designware: Make use of GENMASK/FIELD_PREP
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181221072716.29017-1-andrew.smirnov@gmail.com>
- <20181221072716.29017-21-andrew.smirnov@gmail.com>
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <bbd87777-2eaa-bc99-acb3-104ded96246d@synopsys.com>
-Date:   Wed, 26 Dec 2018 15:07:18 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 26 Dec 2018 10:13:28 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q70so9452669qkh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 07:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Zb0so+pcxIUl8OGx+WIK9Z4mk1eqnXZtUL3oIhSlR5E=;
+        b=EBzweb46wZPgV1VB4w++afg80R5Fdf5blM3B3K7uAmS/gjCvIv3ikyv8yYNK9yNMHA
+         vyLqRCxU+RamcitLdH9+2KL7DaRrNkOeO1tDxAMBPnMpKWzzuk9nU11UdPk1zOBJrZYT
+         w3+3VSXUPyRLRKWPQBFiJDTQvC1VUBMLAHhQY2kyE9gLVIVIBX17GTrtcFIe0SEQT2tJ
+         X0j5ATXejYzFnvecKgtWvgHfZBlPsTvnoxq4dfvVyk7LakAWudcUgU33VAJ0+cDLYiWE
+         OiX2yh5a2LrABlD45eWVH6g+x7j/Ke9jNnRyHl//Vez+57si4XtmGYXZMkWoYnUkSOJP
+         zPzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Zb0so+pcxIUl8OGx+WIK9Z4mk1eqnXZtUL3oIhSlR5E=;
+        b=et/8ZKf8mk6nSzf/hlHpBtAZmiOK4JeJrpkEybK0WN+T78GM3IthNwWV18AFQf9XQH
+         HaqHtoBGPlNE8sO3D84Jx1QGMLs/+Yoj1AmN6WjGGafQDuRQU8sg654Q19BZisE7aIbC
+         VcYYWMna/NUTAK+ak3TFCLaklJblibJbv17UBCiUNrXY4PIeSaDylko1Xd8gEWQ6qPUI
+         MzwzBhywsyAC2SIRYX8DnkA9RWRKWAX/JpOXnLqCAz4HALpbY5+OxfJGp8hKuaTVY6K+
+         HPososoOgy1TmzbA2yZfUZLuGfEkj9q5TyEjTADlSF4/3nknrqYSHa1JhpxEzryuhv0I
+         QFGw==
+X-Gm-Message-State: AJcUuked8xHNTA3K8n0Icf1L9Ga2DVB8t8l3hshYa97LxSWMinq9iblh
+        fXWsV/lOROsV3oUENn8UD/4RPTMUkgeQiw==
+X-Google-Smtp-Source: ALg8bN5BOc/ZsaIz732JffN8Lg7DUxLrONw/PTWplpqpvztX55qqhDAAoF+YMxKD7Ql/+8F4ftH+pQ==
+X-Received: by 2002:a37:8c04:: with SMTP id o4mr17456675qkd.165.1545837206561;
+        Wed, 26 Dec 2018 07:13:26 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u67sm13305924qki.22.2018.12.26.07.13.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 07:13:26 -0800 (PST)
+Subject: Re: [PATCH -mmotm] efi: drop kmemleak_ignore() for page allocator
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181226023534.64048-1-cai@lca.pw>
+ <CAKv+Gu_fiEDffKq_fONBYTOdSk-L7__+LgNEyVaNF3FGzBfAow@mail.gmail.com>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <403405f1-b702-2feb-4616-35fc3dc3133e@lca.pw>
+Date:   Wed, 26 Dec 2018 10:13:25 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181221072716.29017-21-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAKv+Gu_fiEDffKq_fONBYTOdSk-L7__+LgNEyVaNF3FGzBfAow@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.225.2.45]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 21/12/2018 07:27, Andrey Smirnov wrote:
-> Convert various mult-bit fields to be defined using
-> GENMASK/FIELD_PREP. This way bit field boundaries are defined in a
-> single place only as well as defined in a way that makes it easier to
-> verify them against reference manual. No functional change intended.
+On 12/26/18 7:02 AM, Ard Biesheuvel wrote:
+> On Wed, 26 Dec 2018 at 03:35, Qian Cai <cai@lca.pw> wrote:
+>>
+>> a0fc5578f1d (efi: Let kmemleak ignore false positives) is no longer
+>> needed due to efi_mem_reserve_persistent() uses __get_free_page()
+>> instead where kmemelak is not able to track regardless. Otherwise,
+>> kernel reported "kmemleak: Trying to color unknown object at
+>> 0xffff801060ef0000 as Black"
+>>
+>> Signed-off-by: Qian Cai <cai@lca.pw>
 > 
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.h | 29 +++++++++++---------
->  1 file changed, 16 insertions(+), 13 deletions(-)
+> Why are you sending this to -mmotm?
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 348e91b6daa2..0de653284fca 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -11,6 +11,7 @@
->  #ifndef _PCIE_DESIGNWARE_H
->  #define _PCIE_DESIGNWARE_H
->  
-> +#include <linux/bitfield.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/irq.h>
->  #include <linux/msi.h>
-> @@ -30,11 +31,12 @@
->  
->  /* Synopsys-specific PCIe configuration registers */
->  #define PCIE_PORT_LINK_CONTROL		0x710
-> -#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> -#define PORT_LINK_MODE_1_LANES		(0x1 << 16)
-> -#define PORT_LINK_MODE_2_LANES		(0x3 << 16)
-> -#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> -#define PORT_LINK_MODE_8_LANES		(0xf << 16)
-> +#define PORT_LINK_MODE_MASK		GENMASK(21, 16)
-> +#define PORT_LINK_MODE(n)		FIELD_PREP(PORT_LINK_MODE_MASK, n)
-> +#define PORT_LINK_MODE_1_LANES		PORT_LINK_MODE(0x1)
-> +#define PORT_LINK_MODE_2_LANES		PORT_LINK_MODE(0x3)
-> +#define PORT_LINK_MODE_4_LANES		PORT_LINK_MODE(0x7)
-> +#define PORT_LINK_MODE_8_LANES		PORT_LINK_MODE(0xf)
->  
->  #define PCIE_PORT_DEBUG0		0x728
->  #define PORT_LOGIC_LTSSM_STATE_MASK	0x1f
-> @@ -45,11 +47,12 @@
->  
->  #define PCIE_LINK_WIDTH_SPEED_CONTROL	0x80C
->  #define PORT_LOGIC_SPEED_CHANGE		BIT(17)
-> -#define PORT_LOGIC_LINK_WIDTH_MASK	(0x1f << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_1_LANES	(0x1 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_2_LANES	(0x2 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_4_LANES	(0x4 << 8)
-> -#define PORT_LOGIC_LINK_WIDTH_8_LANES	(0x8 << 8)
-> +#define PORT_LOGIC_LINK_WIDTH_MASK	GENMASK(12, 8)
-> +#define PORT_LOGIC_LINK_WIDTH(n)	FIELD_PREP(PORT_LOGIC_LINK_WIDTH_MASK, n)
-> +#define PORT_LOGIC_LINK_WIDTH_1_LANES	PORT_LOGIC_LINK_WIDTH(0x1)
-> +#define PORT_LOGIC_LINK_WIDTH_2_LANES	PORT_LOGIC_LINK_WIDTH(0x2)
-> +#define PORT_LOGIC_LINK_WIDTH_4_LANES	PORT_LOGIC_LINK_WIDTH(0x4)
-> +#define PORT_LOGIC_LINK_WIDTH_8_LANES	PORT_LOGIC_LINK_WIDTH(0x8)
->  
->  #define PCIE_MSI_ADDR_LO		0x820
->  #define PCIE_MSI_ADDR_HI		0x824
-> @@ -75,9 +78,9 @@
->  #define PCIE_ATU_UPPER_BASE		0x910
->  #define PCIE_ATU_LIMIT			0x914
->  #define PCIE_ATU_LOWER_TARGET		0x918
-> -#define PCIE_ATU_BUS(x)			(((x) & 0xff) << 24)
-> -#define PCIE_ATU_DEV(x)			(((x) & 0x1f) << 19)
-> -#define PCIE_ATU_FUNC(x)		(((x) & 0x7) << 16)
-> +#define PCIE_ATU_BUS(x)			FIELD_PREP(GENMASK(31, 24), x)
-> +#define PCIE_ATU_DEV(x)			FIELD_PREP(GENMASK(23, 19), x)
-> +#define PCIE_ATU_FUNC(x)		FIELD_PREP(GENMASK(18, 16), x)
->  #define PCIE_ATU_UPPER_TARGET		0x91C
->  
->  #define PCIE_MISC_CONTROL_1_OFF		0x8BC
-> 
+> Andrew, please disregard this patch. This is EFI/tip material.
 
-I wasn't aware of the existence of FIELD_PREP(), seems to be quite handy :)
+Well, I'd like to primarily develop on the -mmotm tree as it fits in a
+sweet-spot where the mainline is too slow and linux-next is too chaotic.
 
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+The bug was reproduced and the patch was tested on -mmotm. If for every bugs
+people found in -mmtom, they have to check out the corresponding sub-system tree
+and reproduce/verify the bug over there, that is quite a burden to bear.
 
-Thanks.
+That's why sub-system maintainers are copied on those patches, so they can
+decide to fix directly in the sub-system tree instead of -mmotm, and then it
+will propagate to -mmotm one way or another.
+
