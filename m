@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE47CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8D2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7B7214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A3592070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865197;
-	bh=yfVSh56HZ4jBav5/maJoY5uyUIBeIPOGkM60ILBksOc=;
+	s=default; t=1545865202;
+	bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iwF39PJyCh7BPINddCUfQ39FjMz86qwFuqnW1+LCJ+UvZoVm0KaSR7o59DUY3w/Y6
-	 581C6/fqegPV/7saNlr/YqZ3W/qWUqNqS5uCkRubXFuijA2BZD23jfe02lLUsvcHn/
-	 fH4yu8SGp/XRS8NheIczZe04bplLxw+Z53Yej1Lo=
+	b=yMyeELrM7cFJk1VReYkW0eRNqkGOysdow/AAiERzF46f6+cFI1si+Ypz7n56O6bHC
+	 3hOJ4io0PDXcipM9EBH19y4rw1v2p2AhblzW95UY3NCciSnSg4hWYcr/y4ob64J4/J
+	 84z9BYQ0xo9HnLSQCgo/gVVbyNG3gU+3d4PYzmqs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbeLZWyJ (ORCPT
+        id S1730027AbeLZWyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55460 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbeLZWyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:06 -0500
+        id S1730004AbeLZWyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 852BA21741;
-        Wed, 26 Dec 2018 22:54:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4363214D8;
+        Wed, 26 Dec 2018 22:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864845;
-        bh=yfVSh56HZ4jBav5/maJoY5uyUIBeIPOGkM60ILBksOc=;
+        s=default; t=1545864842;
+        bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M6h4/S0W04J4abt3acAAbguL/pdRNhPXEIXOa0VUdYmtKZgoZm3Fo4dRH0FzeYf53
-         kdQgf/VC427XQF+TYNngM9mV7oZUVexMN30dbLw+lfc6zx9MGFg+GcwNsTsae0WA/j
-         h318rULs7+LTRHwsfP6/ZzToZhfdc0lvB5F3x8Bc=
+        b=2rd7ul4uo4SEFBk//KAjn7J6bwEetZeUZXeYvTPhJetW664HQBkPqdqipAs89hKfA
+         qRfy8F8mwFP1zvFxhCSo/y2Zl6lrRQcsEsVppT55G9Q4tHxLrwL+2YV7Lnt1VbobNF
+         wsRZHwqcEe02hopA/ad8ZJaogl2gtAtC/nVKuWnA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 11/35] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
-Date:   Wed, 26 Dec 2018 17:41:18 -0500
-Message-Id: <20181226224142.150866-11-sashal@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 10/35] Input: omap-keypad - fix idle configuration to not block SoC idle states
+Date:   Wed, 26 Dec 2018 17:41:17 -0500
+Message-Id: <20181226224142.150866-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -61,69 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Peng <benquike@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 5146f95df782b0ac61abde36567e718692725c89 ]
+[ Upstream commit e2ca26ec4f01486661b55b03597c13e2b9c18b73 ]
 
-The function hso_probe reads if_num from the USB device (as an u8) and uses
-it without a length check to index an array, resulting in an OOB memory read
-in hso_probe or hso_get_config_data.
+With PM enabled, I noticed that pressing a key on the droid4 keyboard will
+block deeper idle states for the SoC. Let's fix this by using IRQF_ONESHOT
+and stop constantly toggling the device OMAP4_KBD_IRQENABLE register as
+suggested by Dmitry Torokhov <dmitry.torokhov@gmail.com>.
 
-Add a length check for both locations and updated hso_probe to bail on
-error.
+From the hardware point of view, looks like we need to manage the registers
+for OMAP4_KBD_IRQENABLE and OMAP4_KBD_WAKEUPENABLE together to avoid
+blocking deeper SoC idle states. And with toggling of OMAP4_KBD_IRQENABLE
+register now gone with IRQF_ONESHOT, also the SoC idle state problem is
+gone during runtime. We still also need to clear OMAP4_KBD_WAKEUPENABLE in
+omap4_keypad_close() though to pair it with omap4_keypad_open() to prevent
+blocking deeper SoC idle states after rmmod omap4-keypad.
 
-This issue has been assigned CVE-2018-19985.
-
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/hso.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/input/keyboard/omap4-keypad.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-index e7b516342678..66ae647b712e 100644
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2808,6 +2808,12 @@ static int hso_get_config_data(struct usb_interface *interface)
- 		return -EIO;
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index f78c464899db..3d2c60c8de83 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -126,12 +126,8 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
+ {
+ 	struct omap4_keypad *keypad_data = dev_id;
+ 
+-	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS)) {
+-		/* Disable interrupts */
+-		kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-				 OMAP4_VAL_IRQDISABLE);
++	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS))
+ 		return IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return IRQ_NONE;
+ }
+@@ -173,11 +169,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+ 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 
+-	/* enable interrupts */
+-	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-		OMAP4_DEF_IRQENABLE_EVENTEN |
+-				OMAP4_DEF_IRQENABLE_LONGKEY);
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -214,9 +205,10 @@ static void omap4_keypad_close(struct input_dev *input)
+ 
+ 	disable_irq(keypad_data->irq);
+ 
+-	/* Disable interrupts */
++	/* Disable interrupts and wake-up events */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+ 			 OMAP4_VAL_IRQDISABLE);
++	kbd_writel(keypad_data, OMAP4_KBD_WAKEUPENABLE, 0);
+ 
+ 	/* clear pending interrupts */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+@@ -364,7 +356,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
  	}
  
-+	/* check if we have a valid interface */
-+	if (if_num > 16) {
-+		kfree(config_data);
-+		return -EINVAL;
-+	}
-+
- 	switch (config_data[if_num]) {
- 	case 0x0:
- 		result = 0;
-@@ -2878,10 +2884,18 @@ static int hso_probe(struct usb_interface *interface,
- 
- 	/* Get the interface/port specification from either driver_info or from
- 	 * the device itself */
--	if (id->driver_info)
-+	if (id->driver_info) {
-+		/* if_num is controlled by the device, driver_info is a 0 terminated
-+		 * array. Make sure, the access is in bounds! */
-+		for (i = 0; i <= if_num; ++i)
-+			if (((u32 *)(id->driver_info))[i] == 0)
-+				goto exit;
- 		port_spec = ((u32 *)(id->driver_info))[if_num];
--	else
-+	} else {
- 		port_spec = hso_get_config_data(interface);
-+		if (port_spec < 0)
-+			goto exit;
-+	}
- 
- 	/* Check if we need to switch to alt interfaces prior to port
- 	 * configuration */
+ 	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
+-				     omap4_keypad_irq_thread_fn, 0,
++				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
+ 				     "omap4-keypad", keypad_data);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register interrupt\n");
 -- 
 2.19.1
 
