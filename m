@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB27AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A1AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C37F21741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A76921741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864753;
-	bh=PUjI5Uku66uBCKDm6TyROCWeAXxbktFSb0wGojmIHnQ=;
+	s=default; t=1545864763;
+	bh=UUqEN3ZI1DKqLdLSVkecVmrDa1pIds4SABON0avPxIE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SKzwahmqmK1AveQR/HezOfKSS5j1HJgzwoebHpoyfgpCCCe5iPrOgmAlmwhjTpvng
-	 n1IvWZx2FBKzivsKvcNOIM7qbsLIcwzCPVWn7o1j14JiVm78QfGfK3VF5fXn9qQJ/Y
-	 iDvUm6AGT2EoaQ1f+UNENfmxiVrOkfZHyFKiSNYc=
+	b=nKb2uVuAfN2+rCHCKOgz1RL97Ku68hRcd8GQ+Ev3O0NFlCNZYlKhbcI7ukQrZ/ztI
+	 QTAh+eXplrcf+ZzYgYy9L7ULbUVlqt4hjmDZL6bO/fmN2usD3cxHt1ul/IP9JwkRFy
+	 5gPD8FScfu4jtFrpignfV7DziTl8yBZsVrcif4k4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeLZWwc (ORCPT
+        id S1727963AbeLZWg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727975AbeLZWg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:59 -0500
+        id S1727918AbeLZWgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 824B3218FC;
-        Wed, 26 Dec 2018 22:36:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C8F5218FE;
+        Wed, 26 Dec 2018 22:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863818;
-        bh=PUjI5Uku66uBCKDm6TyROCWeAXxbktFSb0wGojmIHnQ=;
+        s=default; t=1545863812;
+        bh=UUqEN3ZI1DKqLdLSVkecVmrDa1pIds4SABON0avPxIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RO0ZFJ9ZYUoKVAchIs9xtmoqlHGKXp8g0cMwpd9mKd/xNcb+jzmwvo+OFjALcYSpe
-         od5T7ZSR362c6nxAjMwMiLXWL+z2giBFFMN4wevnfkRCsqfod/yCjCnusN7eLeK5ss
-         ekXDDKDh32DgU+1TduCAgbcqOpKhce8t2FdLwS6Y=
+        b=rsbjYLj69pjqjNaswhmKsgweQkr7OoEesvWJomoVDUJ41Im0gV3PB30yrQcqwTY0K
+         3fZQcTw92cF/+tzxW0tFAbwRzlp0sEcfEwFdls+xiPVujTCIUeYgpnZIvq3mesPM4k
+         XMttLNktfc/GXHoV4PeK83M7K7NdlZ+knzL8+B34=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+Cc:     Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 37/97] netfilter: nf_conncount: use rb_link_node_rcu() instead of rb_link_node()
-Date:   Wed, 26 Dec 2018 17:34:57 -0500
-Message-Id: <20181226223557.149329-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 33/97] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+Date:   Wed, 26 Dec 2018 17:34:53 -0500
+Message-Id: <20181226223557.149329-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -60,35 +61,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Hui Peng <benquike@gmail.com>
 
-[ Upstream commit d4e7df16567b80836a78d31b42f1a9355a636d67 ]
+[ Upstream commit 5146f95df782b0ac61abde36567e718692725c89 ]
 
-rbnode in insert_tree() is rcu protected pointer.
-So, in order to handle this pointer, _rcu function should be used.
-rb_link_node_rcu() is a rcu version of rb_link_node().
+The function hso_probe reads if_num from the USB device (as an u8) and uses
+it without a length check to index an array, resulting in an OOB memory read
+in hso_probe or hso_get_config_data.
 
-Fixes: 34848d5c896e ("netfilter: nf_conncount: Split insert and traversal")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Add a length check for both locations and updated hso_probe to bail on
+error.
+
+This issue has been assigned CVE-2018-19985.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conncount.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/hso.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_conncount.c b/net/netfilter/nf_conncount.c
-index b6d0f6deea86..9cd180bda092 100644
---- a/net/netfilter/nf_conncount.c
-+++ b/net/netfilter/nf_conncount.c
-@@ -427,7 +427,7 @@ insert_tree(struct net *net,
- 	count = 1;
- 	rbconn->list.count = count;
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index 184c24baca15..d6916f787fce 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2807,6 +2807,12 @@ static int hso_get_config_data(struct usb_interface *interface)
+ 		return -EIO;
+ 	}
  
--	rb_link_node(&rbconn->node, parent, rbnode);
-+	rb_link_node_rcu(&rbconn->node, parent, rbnode);
- 	rb_insert_color(&rbconn->node, root);
- out_unlock:
- 	spin_unlock_bh(&nf_conncount_locks[hash % CONNCOUNT_LOCK_SLOTS]);
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
++
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2877,10 +2883,18 @@ static int hso_probe(struct usb_interface *interface,
+ 
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
+ 
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
 -- 
 2.19.1
 
