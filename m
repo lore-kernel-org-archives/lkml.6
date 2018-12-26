@@ -6,216 +6,209 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55310C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49791C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236E32148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23EC52148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbeLZAos (ORCPT
+        id S1729703AbeLZAov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:44:48 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57380 "EHLO
+        Tue, 25 Dec 2018 19:44:51 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57368 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLZAoC (ORCPT
+        with ESMTP id S1726031AbeLZAoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Dec 2018 19:44:02 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id E9A532952B; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
+        id CA04629527; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+        Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Message-Id: <7e8eb87ea829c03941c895c968df2ebd0f80512f.1545784679.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org
+Message-Id: <3ba1dd965c1097e00463eafe7c7d5fd93bbed836.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 20/25] powerpc, fbdev: Use arch_nvram_ops methods instead
- of nvram_read_byte() and nvram_write_byte()
+Subject: [PATCH v8 18/25] powerpc: Implement nvram sync ioctl
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of arch_nvram_ops in device drivers so that the nvram_* function
-exports can be removed.
-
-Since they are no longer global symbols, rename the PPC32 nvram_* functions
-appropriately.
+Add the powerpc-specific sync() method to struct nvram_ops and implement
+the corresponding ioctl in the nvram module. This allows the nvram module
+to replace the generic_nvram module.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
- arch/powerpc/kernel/setup_32.c             | 8 ++++----
- drivers/char/generic_nvram.c               | 4 ++--
- drivers/video/fbdev/controlfb.c            | 4 ++--
- drivers/video/fbdev/imsttfb.c              | 4 ++--
- drivers/video/fbdev/matrox/matroxfb_base.c | 2 +-
- drivers/video/fbdev/platinumfb.c           | 4 ++--
- drivers/video/fbdev/valkyriefb.c           | 4 ++--
- 7 files changed, 15 insertions(+), 15 deletions(-)
+On PPC32, the IOC_NVRAM_SYNC ioctl call always returns 0, even for those
+platforms that don't implement ppc_md.nvram_sync. This patch retains
+that quirk. It might be better to return -EINVAL (which is what PPC64 does).
+---
+ arch/powerpc/include/asm/nvram.h |  3 ---
+ arch/powerpc/kernel/setup_32.c   |  6 ++---
+ drivers/char/generic_nvram.c     |  2 +-
+ drivers/char/nvram.c             | 38 ++++++++++++++++++++++++++++++++
+ include/linux/nvram.h            |  4 ++++
+ 5 files changed, 46 insertions(+), 7 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/nvram.h b/arch/powerpc/include/asm/nvram.h
+index 56a388da9c4f..629a5cdcc865 100644
+--- a/arch/powerpc/include/asm/nvram.h
++++ b/arch/powerpc/include/asm/nvram.h
+@@ -78,9 +78,6 @@ extern int	pmac_get_partition(int partition);
+ extern u8	pmac_xpram_read(int xpaddr);
+ extern void	pmac_xpram_write(int xpaddr, u8 data);
+ 
+-/* Synchronize NVRAM */
+-extern void	nvram_sync(void);
+-
+ /* Initialize NVRAM OS partition */
+ extern int __init nvram_init_os_partition(struct nvram_os_partition *part);
+ 
 diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index e0d045677472..bdbe6acbef11 100644
+index ee91bba0805d..e0d045677472 100644
 --- a/arch/powerpc/kernel/setup_32.c
 +++ b/arch/powerpc/kernel/setup_32.c
-@@ -152,20 +152,18 @@ __setup("l3cr=", ppc_setup_l3cr);
+@@ -152,7 +152,6 @@ __setup("l3cr=", ppc_setup_l3cr);
  
  #ifdef CONFIG_GENERIC_NVRAM
  
--unsigned char nvram_read_byte(int addr)
-+static unsigned char ppc_nvram_read_byte(int addr)
+-/* Generic nvram hooks used by drivers/char/gen_nvram.c */
+ unsigned char nvram_read_byte(int addr)
  {
  	if (ppc_md.nvram_read_val)
- 		return ppc_md.nvram_read_val(addr);
- 	return 0xff;
+@@ -175,15 +174,16 @@ static ssize_t ppc_nvram_get_size(void)
+ 	return -ENODEV;
  }
--EXPORT_SYMBOL(nvram_read_byte);
  
--void nvram_write_byte(unsigned char val, int addr)
-+static void ppc_nvram_write_byte(unsigned char val, int addr)
+-void nvram_sync(void)
++static long ppc_nvram_sync(void)
  {
- 	if (ppc_md.nvram_write_val)
- 		ppc_md.nvram_write_val(addr, val);
+ 	if (ppc_md.nvram_sync)
+ 		ppc_md.nvram_sync();
++	return 0;
  }
--EXPORT_SYMBOL(nvram_write_byte);
- 
- static ssize_t ppc_nvram_get_size(void)
- {
-@@ -182,6 +180,8 @@ static long ppc_nvram_sync(void)
- }
+-EXPORT_SYMBOL(nvram_sync);
  
  const struct nvram_ops arch_nvram_ops = {
-+	.read_byte      = ppc_nvram_read_byte,
-+	.write_byte     = ppc_nvram_write_byte,
  	.get_size       = ppc_nvram_get_size,
- 	.sync           = ppc_nvram_sync,
++	.sync           = ppc_nvram_sync,
  };
+ EXPORT_SYMBOL(arch_nvram_ops);
+ 
 diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
-index f32d5663de95..41b76bf9614e 100644
+index a7dfde734897..f32d5663de95 100644
 --- a/drivers/char/generic_nvram.c
 +++ b/drivers/char/generic_nvram.c
-@@ -48,7 +48,7 @@ static ssize_t read_nvram(struct file *file, char __user *buf,
- 	if (*ppos >= nvram_len)
- 		return 0;
- 	for (i = *ppos; count > 0 && i < nvram_len; ++i, ++p, --count)
--		if (__put_user(nvram_read_byte(i), p))
-+		if (__put_user(arch_nvram_ops.read_byte(i), p))
- 			return -EFAULT;
- 	*ppos = i;
- 	return p - buf;
-@@ -68,7 +68,7 @@ static ssize_t write_nvram(struct file *file, const char __user *buf,
- 	for (i = *ppos; count > 0 && i < nvram_len; ++i, ++p, --count) {
- 		if (__get_user(c, p))
- 			return -EFAULT;
--		nvram_write_byte(c, i);
-+		arch_nvram_ops.write_byte(c, i);
+@@ -96,7 +96,7 @@ static int nvram_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  	}
- 	*ppos = i;
- 	return p - buf;
-diff --git a/drivers/video/fbdev/controlfb.c b/drivers/video/fbdev/controlfb.c
-index 9cb0ef7ac29e..27ff33ccafcb 100644
---- a/drivers/video/fbdev/controlfb.c
-+++ b/drivers/video/fbdev/controlfb.c
-@@ -413,7 +413,7 @@ static int __init init_control(struct fb_info_control *p)
- 	/* Try to pick a video mode out of NVRAM if we have one. */
- #ifdef CONFIG_NVRAM
- 	if (default_cmode == CMODE_NVRAM) {
--		cmode = nvram_read_byte(NV_CMODE);
-+		cmode = arch_nvram_ops.read_byte(NV_CMODE);
- 		if(cmode < CMODE_8 || cmode > CMODE_32)
- 			cmode = CMODE_8;
- 	} else
-@@ -421,7 +421,7 @@ static int __init init_control(struct fb_info_control *p)
- 		cmode=default_cmode;
- #ifdef CONFIG_NVRAM
- 	if (default_vmode == VMODE_NVRAM) {
--		vmode = nvram_read_byte(NV_VMODE);
-+		vmode = arch_nvram_ops.read_byte(NV_VMODE);
- 		if (vmode < 1 || vmode > VMODE_MAX ||
- 		    control_mac_modes[vmode - 1].m[full] < cmode) {
- 			sense = read_control_sense(p);
-diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
-index 8d231591ff0e..e9f3b8914145 100644
---- a/drivers/video/fbdev/imsttfb.c
-+++ b/drivers/video/fbdev/imsttfb.c
-@@ -1393,12 +1393,12 @@ static void init_imstt(struct fb_info *info)
- 		int vmode = init_vmode, cmode = init_cmode;
+ #endif /* CONFIG_PPC_PMAC */
+ 	case IOC_NVRAM_SYNC:
+-		nvram_sync();
++		arch_nvram_ops.sync();
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
+index b77c27d68762..466e1fb02052 100644
+--- a/drivers/char/nvram.c
++++ b/drivers/char/nvram.c
+@@ -48,6 +48,10 @@
+ #include <linux/mutex.h>
+ #include <linux/pagemap.h>
  
- 		if (vmode == -1) {
--			vmode = nvram_read_byte(NV_VMODE);
-+			vmode = arch_nvram_ops.read_byte(NV_VMODE);
- 			if (vmode <= 0 || vmode > VMODE_MAX)
- 				vmode = VMODE_640_480_67;
- 		}
- 		if (cmode == -1) {
--			cmode = nvram_read_byte(NV_CMODE);
-+			cmode = arch_nvram_ops.read_byte(NV_CMODE);
- 			if (cmode < CMODE_8 || cmode > CMODE_32)
- 				cmode = CMODE_8;
- 		}
-diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
-index cac5865d461c..3fecc628752c 100644
---- a/drivers/video/fbdev/matrox/matroxfb_base.c
-+++ b/drivers/video/fbdev/matrox/matroxfb_base.c
-@@ -1876,7 +1876,7 @@ static int initMatrox2(struct matrox_fb_info *minfo, struct board *b)
- 			default_vmode = VMODE_640_480_60;
- #if defined(CONFIG_PPC32) && defined(CONFIG_NVRAM)
- 		if (default_cmode == CMODE_NVRAM)
--			default_cmode = nvram_read_byte(NV_CMODE);
-+			default_cmode = arch_nvram_ops.read_byte(NV_CMODE);
- #endif
- 		if (default_cmode < CMODE_8 || default_cmode > CMODE_32)
- 			default_cmode = CMODE_8;
-diff --git a/drivers/video/fbdev/platinumfb.c b/drivers/video/fbdev/platinumfb.c
-index bf6b7fb83cf4..3efceaf38f98 100644
---- a/drivers/video/fbdev/platinumfb.c
-+++ b/drivers/video/fbdev/platinumfb.c
-@@ -347,7 +347,7 @@ static int platinum_init_fb(struct fb_info *info)
- 	printk(KERN_INFO "platinumfb: Monitor sense value = 0x%x, ", sense);
- 	if (default_vmode == VMODE_NVRAM) {
- #ifdef CONFIG_NVRAM
--		default_vmode = nvram_read_byte(NV_VMODE);
-+		default_vmode = arch_nvram_ops.read_byte(NV_VMODE);
- 		if (default_vmode <= 0 || default_vmode > VMODE_MAX ||
- 		    !platinum_reg_init[default_vmode-1])
- #endif
-@@ -360,7 +360,7 @@ static int platinum_init_fb(struct fb_info *info)
- 		default_vmode = VMODE_640_480_60;
- #ifdef CONFIG_NVRAM
- 	if (default_cmode == CMODE_NVRAM)
--		default_cmode = nvram_read_byte(NV_CMODE);
-+		default_cmode = arch_nvram_ops.read_byte(NV_CMODE);
- #endif
- 	if (default_cmode < CMODE_8 || default_cmode > CMODE_32)
- 		default_cmode = CMODE_8;
-diff --git a/drivers/video/fbdev/valkyriefb.c b/drivers/video/fbdev/valkyriefb.c
-index 8022316ee9c9..81f66d69d9dd 100644
---- a/drivers/video/fbdev/valkyriefb.c
-+++ b/drivers/video/fbdev/valkyriefb.c
-@@ -283,7 +283,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
- 	/* Try to pick a video mode out of NVRAM if we have one. */
- #if defined(CONFIG_PPC_PMAC) && defined(CONFIG_NVRAM)
- 	if (default_vmode == VMODE_NVRAM) {
--		default_vmode = nvram_read_byte(NV_VMODE);
-+		default_vmode = arch_nvram_ops.read_byte(NV_VMODE);
- 		if (default_vmode <= 0
- 		 || default_vmode > VMODE_MAX
- 		 || !valkyrie_reg_init[default_vmode - 1])
-@@ -296,7 +296,7 @@ static void __init valkyrie_choose_mode(struct fb_info_valkyrie *p)
- 		default_vmode = VMODE_640_480_67;
- #if defined(CONFIG_PPC_PMAC) && defined(CONFIG_NVRAM)
- 	if (default_cmode == CMODE_NVRAM)
--		default_cmode = nvram_read_byte(NV_CMODE);
-+		default_cmode = arch_nvram_ops.read_byte(NV_CMODE);
- #endif
++#ifdef CONFIG_PPC
++#include <asm/nvram.h>
++#include <asm/machdep.h>
++#endif
  
- 	/*
+ static DEFINE_MUTEX(nvram_mutex);
+ static DEFINE_SPINLOCK(nvram_state_lock);
+@@ -331,6 +335,37 @@ static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
+ 	long ret = -ENOTTY;
+ 
+ 	switch (cmd) {
++#ifdef CONFIG_PPC
++	case OBSOLETE_PMAC_NVRAM_GET_OFFSET:
++		pr_warn("nvram: Using obsolete PMAC_NVRAM_GET_OFFSET ioctl\n");
++		/* fall through */
++	case IOC_NVRAM_GET_OFFSET:
++		ret = -EINVAL;
++#ifdef CONFIG_PPC_PMAC
++		if (machine_is(powermac)) {
++			int part, offset;
++
++			if (copy_from_user(&part, (void __user *)arg,
++					   sizeof(part)) != 0)
++				return -EFAULT;
++			if (part < pmac_nvram_OF || part > pmac_nvram_NR)
++				return -EINVAL;
++			offset = pmac_get_partition(part);
++			if (copy_to_user((void __user *)arg,
++					 &offset, sizeof(offset)) != 0)
++				return -EFAULT;
++			ret = 0;
++		}
++#endif
++		break;
++	case IOC_NVRAM_SYNC:
++		if (arch_nvram_ops.sync != NULL) {
++			mutex_lock(&nvram_mutex);
++			ret = arch_nvram_ops.sync();
++			mutex_unlock(&nvram_mutex);
++		}
++		break;
++#else /* !CONFIG_PPC */
+ 	case NVRAM_INIT:
+ 		/* initialize NVRAM contents and checksum */
+ 		if (!capable(CAP_SYS_ADMIN))
+@@ -354,6 +389,7 @@ static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
+ 			mutex_unlock(&nvram_mutex);
+ 		}
+ 		break;
++#endif /* CONFIG_PPC */
+ 	}
+ 	return ret;
+ }
+@@ -369,12 +405,14 @@ static int nvram_misc_open(struct inode *inode, struct file *file)
+ 		return -EBUSY;
+ 	}
+ 
++#ifndef CONFIG_PPC
+ 	/* Prevent multiple writers if the set_checksum ioctl is implemented. */
+ 	if ((arch_nvram_ops.set_checksum != NULL) &&
+ 	    (file->f_mode & FMODE_WRITE) && (nvram_open_mode & NVRAM_WRITE)) {
+ 		spin_unlock(&nvram_state_lock);
+ 		return -EBUSY;
+ 	}
++#endif
+ 
+ 	if (file->f_flags & O_EXCL)
+ 		nvram_open_mode |= NVRAM_EXCL;
+diff --git a/include/linux/nvram.h b/include/linux/nvram.h
+index b7bfaec60a43..24a57675dba1 100644
+--- a/include/linux/nvram.h
++++ b/include/linux/nvram.h
+@@ -18,8 +18,12 @@ struct nvram_ops {
+ 	unsigned char   (*read_byte)(int);
+ 	void            (*write_byte)(unsigned char, int);
+ 	ssize_t         (*get_size)(void);
++#ifdef CONFIG_PPC
++	long            (*sync)(void);
++#else
+ 	long            (*set_checksum)(void);
+ 	long            (*initialize)(void);
++#endif
+ };
+ 
+ extern const struct nvram_ops arch_nvram_ops;
 -- 
 2.19.2
 
