@@ -2,121 +2,121 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DA9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC0DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BEE218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04EE421720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jqpnXoNu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qEwmGe0l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbeLZMCv (ORCPT
+        id S1726745AbeLZMLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 07:02:51 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36288 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbeLZMCv (ORCPT
+        Wed, 26 Dec 2018 07:11:39 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44463 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeLZMLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 07:02:51 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so20042956itj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 04:02:50 -0800 (PST)
+        Wed, 26 Dec 2018 07:11:38 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z13so10732229lfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 04:11:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JVjRXbgxFYGFk9y6ELrr8A6OdFVvdGFRoOhZs8VKPx8=;
-        b=jqpnXoNuQH4Y6npYm3Y2uFXpd55m5SqzzyO6HphWz08wfUy/4IgmJP2r1s4+bvxJ/x
-         s2wgXo6W4YwVrVx3bgJCH34vyuVLurXj32RtgKEQb4HiADWuz/6Ifu8HnvY+9BAM1exs
-         xFkjyd5FCR5s4hhcvNLE85A55c+emVzKGD3mo=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yjMTMhJ41Jz5DlBO6zfblje/wD77JI0VsFIRBsesqY0=;
+        b=qEwmGe0ldYzazj7gyCeG9546HbvVLqxrYdNcN7JoimFMrCxKwVEkpM1uVfnvJ/EDUr
+         gFqjwoc7hCClygXkjI9QQpsDvCGwGKVPIVQ47+A62Slb+oWmyjuaxI94CpJgU542Bipt
+         0LfbOJaNJFqPxDlynlu8bmlu6Ci3RmFgrXh0T9i3mkpQUeLJLCYPaggl+3R7phNeIfxL
+         Q9J3KuySMLQPBkvHk5G0LWbMqA1tvJLmVSPoe74JU30ZX0mXOMaTNhBrnwCzn77rvtNu
+         g9cWmgLU/eUNeHoqtzyHGv9i55Uzpwpdmc5EV9yYgSmmViX29OygTSNTGmH2yj/GQEqX
+         IFEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JVjRXbgxFYGFk9y6ELrr8A6OdFVvdGFRoOhZs8VKPx8=;
-        b=qVBmHM4+Zx6PR1SMoJxw6xZAqmmd5BdKAOZpEYNbJnnXbrZZzEmYy3+p9xX+1jtMf8
-         1VhY5ORsolXUqfKd3gPpOTqURnNiiTsNFXLnvIFkhcQfWAr6B3MIOlxSWW95DVQF8ere
-         1hXQ+qy5tFsL2ijRqDgwgV7dnPJbUvgs9mrE39uF8mdpljspS2O5zU4U/X2lMN3WSG60
-         1QzGunClPLsNHDmxps5sy19/LTc2wAtxF61Dr/8f6kMOmlrTDB4+2h7zPi+MJskgiJB0
-         wtj3n4OjwM0rrg8Impo17vLodDERd8x5dUrnqp8OIcURdD3VqM7ioO5cIFZnWbqk8mqG
-         vetA==
-X-Gm-Message-State: AA+aEWZmKpwqEhz9Ol3R3GWCaYVM+Z7g4jgco5fmZ1U/9l2MAEwEHekI
-        LBj/u8PYcNcFMhTkltTzVK8SkaNPXY95NoODB2MPbA==
-X-Google-Smtp-Source: AFSGD/UACFsUr9ithLjnKHB92iRq6d/4awgjLXCysK99G3+FhGWesdRdkf89Pq2E7DiJOn2IJegyRCmr7cRZK+om/30=
-X-Received: by 2002:a24:710:: with SMTP id f16mr10914024itf.121.1545825769997;
- Wed, 26 Dec 2018 04:02:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yjMTMhJ41Jz5DlBO6zfblje/wD77JI0VsFIRBsesqY0=;
+        b=T3q6ebrCGuoC0FE5kSmotbmGZ1Lcq9DAX/YE+SCu5+bGfffEq01CGYZ8fT17cGs5E9
+         SO4A80ARSyOVwcz9825610sRmRwDGo7it9H+kQEf7ohTwaQCDcTxw8+/HKt0hR26ghA6
+         PsSZoNwgNNpFmhJTiYxdec8N4p1fx1CKMxxTWPVniDVa+tDoMp5LzbVRPFHyqO0rnRUB
+         KR4CuuZ6+REgTJ1XDxlHiN9woB7JQiOAvL66vGsPCgFqogFJdDEkX8c5EJHl31opmkx0
+         tK8LQnudSPwlvoURhX+k551Y/7Rh609Os0bu2I4XYZ5SnzppH/gs0mZUsOWz14X+taqB
+         uCcw==
+X-Gm-Message-State: AA+aEWbAcHK/P0zweTpF4dMwmVwAQw5bA2r9+RvPAnQDZvslFL+HJRpl
+        WrQ5EkOBqeQH2XANHEbF4yLrm+dYC69R/Q==
+X-Google-Smtp-Source: AFSGD/U0WnvyrAaWqoRHO/+Kgd7Fnk4sbGiPGVIdPwt8Bw+FheIau5FElcfA6MTgkjDJ3L/M3oSL6g==
+X-Received: by 2002:a19:c203:: with SMTP id l3mr9494987lfc.113.1545826296430;
+        Wed, 26 Dec 2018 04:11:36 -0800 (PST)
+Received: from localhost.localdomain (pool-109-191-228-208.is74.ru. [109.191.228.208])
+        by smtp.gmail.com with ESMTPSA id q6sm7037684lfh.52.2018.12.26.04.11.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 04:11:35 -0800 (PST)
+From:   Ivan Mironov <mironov.ivan@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        saahriktu <mail@saahriktu.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Ivan Mironov <mironov.ivan@gmail.com>
+Subject: [RFC PATCH 0/2] Fix SDL 1.2 on emulated fbdev devices (broken in kernels >=4.19)
+Date:   Wed, 26 Dec 2018 17:11:22 +0500
+Message-Id: <20181226121124.1632-1-mironov.ivan@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20181226023534.64048-1-cai@lca.pw>
-In-Reply-To: <20181226023534.64048-1-cai@lca.pw>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 26 Dec 2018 13:02:38 +0100
-Message-ID: <CAKv+Gu_fiEDffKq_fONBYTOdSk-L7__+LgNEyVaNF3FGzBfAow@mail.gmail.com>
-Subject: Re: [PATCH -mmotm] efi: drop kmemleak_ignore() for page allocator
-To:     Qian Cai <cai@lca.pw>, Ingo Molnar <mingo@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Dec 2018 at 03:35, Qian Cai <cai@lca.pw> wrote:
->
-> a0fc5578f1d (efi: Let kmemleak ignore false positives) is no longer
-> needed due to efi_mem_reserve_persistent() uses __get_free_page()
-> instead where kmemelak is not able to track regardless. Otherwise,
-> kernel reported "kmemleak: Trying to color unknown object at
-> 0xffff801060ef0000 as Black"
->
-> Signed-off-by: Qian Cai <cai@lca.pw>
+Hi,
 
-Why are you sending this to -mmotm?
+Originally this issue was brought up on linux.org.ru forum by user
+saahriktu, he is on Cc. He discovered that commit db05c48197759
+("drm: fb-helper: Reject all pixel format changing requests") breaks
+support of SDL1 programs, like various old games and emulators of old
+game consoles. First patch contains fix for that commit.
 
-Andrew, please disregard this patch. This is EFI/tip material.
+I tried to reproduce the same issue in a VM under qemu, and found yet
+another part of kernel code which prevents SDL1 apps from running
+normally. Second patch in this series fixes this problem.
 
-> ---
->  drivers/firmware/efi/efi.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 7ac09dd8f268..4c46ff6f2242 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -31,7 +31,6 @@
->  #include <linux/acpi.h>
->  #include <linux/ucs2_string.h>
->  #include <linux/memblock.h>
-> -#include <linux/kmemleak.h>
->
->  #include <asm/early_ioremap.h>
->
-> @@ -1027,8 +1026,6 @@ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
->         if (!rsv)
->                 return -ENOMEM;
->
-> -       kmemleak_ignore(rsv);
-> -
->         rsv->size = EFI_MEMRESERVE_COUNT(PAGE_SIZE);
->         atomic_set(&rsv->count, 1);
->         rsv->entry[0].base = addr;
+However, I still have few unresolved questions regarding this patches:
+* Why simple revert of commit db05c48197759 fixes SDL1 support for
+  saahriktu? I do not understand how this could work when SDL1 has
+  hardcoded non-zero pixclock values, for which current code always
+  returns EINVAL.
+* How this worked before? How this is working for non-DRM fbdev drivers?
+  fbdev support code in SDL1 is also very old by the way.
 
-The patch that adds the kmemleak_ignore() call here is queued in
-efi/urgent branch in the tip tree, but did not make it into v4.20.
+Also, it seems that at least in some cases both problems could be
+circumvented by adding appropriate modes into /etc/fb.modes. But without
+examining the kernel code it is not clear which values are correct. I am
+not sure that such circumvention covers all possible cases, and it is
+definitely far from any user-frienliness.
 
-efi/urgent does not apply cleanly to efi/core, since the kmalloc()
-call [which requires the kmemleak_ignore() call] has been replaced
-with alloc_pages() [which doesn't], necessitating this patch to remove
-the kmemleak_ignore() call again.
+Ah, almost forgot this: the easiest way to reproduce both problems is to
+install sdl-sopwith[1] and try to run it from console without X. At
+least in Fedora 29, sopwith may be simply installed from standard
+repositories.
 
-So what I would like to suggest is that Ingo resolves this conflict by
-simply dropping the call to kmemleak_ignore(). That way, we don't need
-this patch, and we can still backport the efi/urgent change to
-v4.20-stable.
+[1] http://sdl-sopwith.sourceforge.net/
+
+Ivan Mironov (2):
+  drm/fb-helper: Bring back workaround for bugs of SDL 1.2
+  drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
+
+ drivers/gpu/drm/drm_fb_helper.c | 153 +++++++++++++++++++++-----------
+ 1 file changed, 99 insertions(+), 54 deletions(-)
+
+-- 
+2.20.1
+
