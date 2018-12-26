@@ -2,138 +2,102 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FE2C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4FCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A730F214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB3921720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545823300;
+	bh=Tq8Dmchn4XrhEAHiZbWsz78SoEGRt8OCfCORqu4P0X8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=xYtqpWvzuqxb3dvAyJabnHPbZAHZVHEjYBpIt2poyyDyqdWF7m2sebhZ1pqL2mjnV
+	 etDtBKpzGVXpLsRS4faOFJkFGEhByAi+mx2d8Xq5Ktlx+LAvi9fJuXUKSuRyNNYl0i
+	 GSxHD5al97DV4MeA80YwZiROdxsCynljrbHRt94E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeLZLCF (ORCPT
+        id S1726757AbeLZLV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:02:05 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37447 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeLZLCE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:02:04 -0500
-Received: by mail-ua1-f67.google.com with SMTP id u19so4994077uae.4;
-        Wed, 26 Dec 2018 03:02:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9djZcI5bEEy+IbSNFLtmKFWQfpa25K2OdZiC9sF4BpY=;
-        b=AT7pyyGpBVQSXW3la34bf8dV9nAdA/LQG/SXkILO9j007Y8YhnSvvpnDWPHwzqOx+Z
-         2tmK5fiywrOs5/2U8ow3YRyvN5fo4pIHksp0DnRUlicqhzlpbaqm8/6u7Sjz0fzChE3Q
-         BY/SyIcqdwuWNAdBlLDv1SbjLRcsZ+PX55ro0kLLIuXUyxVHoAGZyLS8t7cgsjsaiBUS
-         GSCg/91hgfhDa2EaC35rgVi18cSHTUgiI0ZBGUw+eHMr/cSPMSrHPbS0SduCwd9W3RkL
-         hQvraWpbWehAHRz0X+EXvhu09AapLpCCpiWz5KGtBttH7I9Z6gM1Kmi9R1C1n8YH7xcB
-         u/eg==
-X-Gm-Message-State: AJcUuke0O1eEWsUz9/PLnMD5Tj0yqu1Ss+SkycGD7+jTnbG2tsftZBvj
-        nI5T5zwgf43oy3tPdB0wVWkNHIe1VZCgehRan+Q=
-X-Google-Smtp-Source: ALg8bN4dY3RFRB0xxPZNhEK1cKXLjg9YhmGjgKsCFIeRNeLcG1BR6FmDe5G9GqqBSPQKHOqMzvjjAG09qXfvZQINvDQ=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr7021867uae.75.1545822121736;
- Wed, 26 Dec 2018 03:02:01 -0800 (PST)
+        Wed, 26 Dec 2018 06:21:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47220 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726650AbeLZLV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 06:21:27 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4AD8811DE;
+        Wed, 26 Dec 2018 11:21:26 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-204-92.brq.redhat.com [10.40.204.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E3EC01001925;
+        Wed, 26 Dec 2018 11:21:22 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>
+Subject: [PATCH] perf python: Do not force closing original perf descriptor in evlist.get_pollfd
+Date:   Wed, 26 Dec 2018 12:21:21 +0100
+Message-Id: <20181226112121.5285-1-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Dec 2018 12:01:49 +0100
-Message-ID: <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] i2c: move handling of suspended adapters to the core
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 26 Dec 2018 11:21:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Ondřej reported that when compiled with python3, the python
+extension regress in evlist.get_pollfd function behaviour.
 
-On Sat, Dec 22, 2018 at 9:26 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Here is the new version without specific I2C helpers but using the
-> 'is_suspended' flag from the PM core. I didn't like messing with the
-> flag directly, so I did a helper in patch 1. So far, I like the
-> approach. The diffstat looks nice, and i2c-rcar.c and i2c-sh_mobile.c
-> rejected rightfully too later transfers without further modifications.
-> Tested on a Renesas Lager board (R-Car H2).
->
-> I dropped a few Tested-by tags because I think this approach is too
-> different from V1 to keep them. I hope you guys can have a look again.
-> Thanks for all the testing, so far!
->
-> A branch can be found here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/reject-when-suspended
->
-> If this series is acceptable, I'd suggest to take it via my i2c tree
-> after rc1. And then I'll provide an immutable branch for the PM tree to
-> pick. Let me know if this works for you.
+The evlist.get_pollfd creates file objects from evlist's fds
+and returns them in the list. The python3 version also sets
+them to 'close the original descriptor' when the object die
+(is closed), by passing True via 'closefd' arg in PyFile_FromFd
+call.
 
-This breaks resume of the CS2000 clock driver on Salvator-X(S) (and
-presumable ULCB, too):
+The python's closefd doc says:
+  If closefd is False, the underlying file descriptor will be kept open
+  when the file is closed.
 
-    Accessing already suspended I2C/SMBus adapter
-    WARNING: CPU: 1 PID: 1186 at drivers/i2c/i2c-core-smbus.c:551
-__i2c_smbus_xfer+0x38/0x66c
-    Modules linked in:
-    CPU: 1 PID: 1186 Comm: s2idle Not tainted
-4.20.0-salvator-x-08442-ge5992c41ac706409 #264
-    Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
-    pstate: 60400005 (nZCv daif +PAN -UAO)
-    pc : __i2c_smbus_xfer+0x38/0x66c
-    lr : __i2c_smbus_xfer+0x38/0x66c
-    sp : ffffff8013413880
-    x29: ffffff8013413880 x28: ffffffc6f78b4820
-    x27: 0000000000000010 x26: ffffff8010cf6178
-    x25: ffffff8013413976 x24: 0000000000000002
-    x23: 0000000000000016 x22: ffffffc6f7872088
-    x21: 0000000000000000 x20: 000000000000004f
-    x19: ffffffc6f7872088 x18: 000000000000000a
-    x17: 0000000000000000 x16: 0000000000000000
-    x15: 0000000000029c80 x14: 0720072007200720
-    x13: 0720072007200720 x12: 0720072007200720
-    x11: 0720072007200720 x10: 0720072007200720
-    x9 : ffffff801100e6d0 x8 : 6461207375424d53
-    x7 : ffffff8011c825c8 x6 : ffffff8011c82000
-    x5 : 0000000000000000 x4 : ffffff8013414000
-    x3 : ffffff80134136e0 x2 : 00000046ee875000
-    x1 : 82c6d7c720d64000 x0 : 0000000000000000
-    Call trace:
-     __i2c_smbus_xfer+0x38/0x66c
-     i2c_smbus_xfer+0x64/0x98
-     i2c_smbus_read_byte_data+0x40/0x6c
-     cs2000_bset.isra.1+0x2c/0x58
-     __cs2000_set_rate.constprop.7+0x8c/0x134
-     cs2000_resume+0x14/0x1c
-     dpm_run_callback+0x15c/0x2d8
-     device_resume_early+0x98/0xec
-     dpm_resume_early+0x3b0/0x454
-     suspend_devices_and_enter+0x7bc/0xbb0
+That's why following line in python3 closes all evlist fds:
+  evlist.get_pollfd()
 
-The CS2000 driver uses SET_LATE_SYSTEM_SLEEP_PM_OPS().
+the returned list is immediately destroyed and that takes
+down the original events fds.
 
-Suspend/resume of the BD9571 driver works fine, as that one uses
-SET_SYSTEM_SLEEP_PM_OPS().
+Passing closefd as False to PyFile_FromFd to fix this.
 
-Gr{oetje,eeting}s,
+Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
+Link: http://lkml.kernel.org/n/tip-ru9hmsaliew8p01kr0050mvg@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/python.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-                        Geert
-
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 47628e85c5eb..dda0ac978b1e 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
+ 
+ 		file = PyFile_FromFile(fp, "perf", "r", NULL);
+ #else
+-		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
++		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
++				     NULL, NULL, NULL, 0);
+ #endif
+ 		if (file == NULL)
+ 			goto free_list;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
