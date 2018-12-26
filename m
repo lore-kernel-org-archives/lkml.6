@@ -2,147 +2,109 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FC3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD02C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFC89218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43EB221720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:29:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="EVycJ9GE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbeLZKTF (ORCPT
+        id S1726702AbeLZK3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 05:19:05 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61831 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726172AbeLZKTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 05:19:05 -0500
-X-UUID: 15faf0724f9f490aae9a4cd03de26b4b-20181226
-X-UUID: 15faf0724f9f490aae9a4cd03de26b4b-20181226
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 454183028; Wed, 26 Dec 2018 18:18:57 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs03n1.mediatek.inc
- (172.21.101.181) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 26 Dec
- 2018 18:18:56 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 26 Dec 2018 18:18:54 +0800
-Message-ID: <1545819534.28871.93.camel@mhfsdcap03>
-Subject: Re: [PATCH v7 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
- support
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-CC:     Vinod Koul <vkoul@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
+        Wed, 26 Dec 2018 05:29:40 -0500
+Received: from vps.xff.cz ([195.181.215.36]:51448 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbeLZK3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 05:29:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1545820176; bh=7jlh9sob4kpgPWzz20asCkW9HTckjcCtJKHZxR1+jJ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EVycJ9GEMR7Axwr+gNniLH/dLHWVCqG5Z3ioCUTHBZlBxsDqlNDz13wuVbl2KAjJE
+         MCzhfnuUS8RH1CuZzdrCT8xk+pJaPUp4lwVv1eRoluILz85yilvDgZ+926AF/1atYs
+         SsT4dbFxZHrtz/K4LlbMM1pna+sVulhBqCMyfiTU=
+Date:   Wed, 26 Dec 2018 11:29:36 +0100
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Yong Deng <yong.deng@magewell.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "Ryder Lee" <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Zhenbao Liu <zhenbao.liu@mediatek.com>
-Date:   Wed, 26 Dec 2018 18:18:54 +0800
-In-Reply-To: <CANMq1KDKqtKwSw1mJyR0TgBwY1YRfvY52vWyogqWweF3xAgiKA@mail.gmail.com>
-References: <1545701209-6884-1-git-send-email-long.cheng@mediatek.com>
-         <1545701209-6884-2-git-send-email-long.cheng@mediatek.com>
-         <CANMq1KA1ywLnQDzXRbLcuu-afXuj_yrprRBC4kejF4-20ztXyA@mail.gmail.com>
-         <1545739611.28871.77.camel@mhfsdcap03>
-         <CANMq1KDtUgOUFRy-TyQK0EmbpXGtLEVo9Mqg1Hvs0JoL9NrFyQ@mail.gmail.com>
-         <1545806121.28871.88.camel@mhfsdcap03>
-         <CANMq1KDKqtKwSw1mJyR0TgBwY1YRfvY52vWyogqWweF3xAgiKA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [linux-sunxi] [PATCH v12 0/2] Initial Allwinner V3s CSI Support
+Message-ID: <20181226102936.2xxu7lii4kcg7656@core.my.home>
+Mail-Followup-To: Yong Deng <yong.deng@magewell.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-26 at 17:28 +0800, Nicolas Boichat wrote:
+Hello,
 
-......
-
-> > > > > > +static int mtk_uart_apdma_device_pause(struct dma_chan *chan)
-> > > > > > +{
-> > > > > > +       /* just for check caps pass */
-> > > > > > +       return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static int mtk_uart_apdma_device_resume(struct dma_chan *chan)
-> > > > > > +{
-> > > > > > +       /* just for check caps pass */
-> > > > > > +       return 0;
-> > > > > > +}
-> > >
-> > > Why do you need these? Seems wrong to advertise device_pause/resume
-> > > (and the caps) if we don't actually support that?
-> > >
-> >
-> > in serial 8250_dma.c file, when request DMA, will calll
-> > 'dma_get_slave_caps' to get the caps. and the will check caps.cmd_pause.
-> > the pause is device_pause.  our device can't support the functions. but
-> > to check pass, need add the fake function. or you can give better
-> > comments. thanks.
+On Tue, Oct 30, 2018 at 04:09:48PM +0800, Yong Deng wrote:
+> I can't make v4l2-compliance always happy.
+> The V3s CSI support many pixformats. But they are not always available.
+> It's dependent on the input bus format (MEDIA_BUS_FMT_*). 
+> Example:
+> V4L2_PIX_FMT_SBGGR8: MEDIA_BUS_FMT_SBGGR8_1X8
+> V4L2_PIX_FMT_YUYV: MEDIA_BUS_FMT_YUYV8_2X8
+> But I can't get the subdev's format code before starting stream as the
+> subdev may change it. So I can't know which pixformats are available.
+> So I exports all the pixformats supported by SoC.
+> The result is the app (v4l2-compliance) is likely to fail on streamon.
 > 
-> Well, then I guess this is a hack... I'm not too familiar with
-> 8250_dma.c, but I guess that if it requires pause/resume to be
-> implemented, then we should implement them, not just stub them out...
-> 
-> Is this something that can be implemented with 8250_mtk DMA?
-> 
+> This patchset add initial support for Allwinner V3s CSI.
 
-the HW can't support it.
+I've tested your patches on A83T and CSI works on that SoC too. I'll send
+DTS patches later.
 
-> Also, I don't see where you need resume, so maybe implementing pause is enough?
-> 
-
-yes. pause is enough. for symmetry, add resume function.
-anyway, the pause function need to keep.
-
-> > > > > > +
-> > > > > > +static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
-> > > > > > +{
-> > > > > > +       while (list_empty(&mtkd->ddev.channels) == 0) {
-> > > > > > +               struct mtk_chan *c = list_first_entry(&mtkd->ddev.channels,
-> > > > > > +                       struct mtk_chan, vc.chan.device_node);
-> > > > > > +
-> > > > > > +               list_del(&c->vc.chan.device_node);
-> > > > > > +               tasklet_kill(&c->vc.task);
-> > > > > > +       }
-> > > > > > +}
-> > > > > > +
-> > > > > > +static const struct of_device_id mtk_uart_apdma_match[] = {
-> > > > > > +       { .compatible = "mediatek,mt6577-uart-dma", },
-> > > > > > +       { /* sentinel */ },
-> > > > > > +};
-> > > > > > +MODULE_DEVICE_TABLE(of, mtk_uart_apdma_match);
-> > > > > > +
-> > > > > > +static int mtk_uart_apdma_probe(struct platform_device *pdev)
-> > > > > > +{
-> > > > > > +       struct mtk_uart_apdmadev *mtkd;
-> > > > > > +       struct resource *res;
-> > > > > > +       struct mtk_chan *c;
-> > > > > > +       unsigned int i;
-> > > > > > +       int rc;
-> > > > > > +
-
-......
+One thing I noticed is that, when you cat the regmap registers file in debugfs
+while streaming, the kernel locks up hard. I was not able to extract any logs.
 
 
+regards,
+  Ondrej
