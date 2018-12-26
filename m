@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11ADC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DE5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA317214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F9D21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864273;
-	bh=Sg1iBYZtDcjdQC3hW8acxEPqpkVOymZLaR0ZUHbzK5M=;
+	s=default; t=1545864283;
+	bh=eqrYzAGXlaXo1px8Ydgl0fzkGWeyn5JPBf9lXLcIOU4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jMQUB43XfLgWxFIllbUO63txGihDqc1c+VjN0rYrrO3dJDV+FLxEs3/9yH5WTSd+x
-	 EpEYSfayuDTsFFSWyTV6EeDxb/DSgBQE3L7pMY/yviYx+Ls+Y0OiwfIkiqE3SIZedm
-	 8z1rcJBwaMwMzmZuiOQn+XE8KbGU+MGEANg5Cg7I=
+	b=IpBSh2uPTFgqe80BvStJC7BuGtd1DwLfbg6guBY7PKhsGs5LNG4f3M81eZNmM5LXx
+	 UXs2iqyx/rqxanOD3nFPF13iA94HadkRUXyIkHK8L5Vah3fWknT0pMpgT5greeyODG
+	 kjyix8BXczYrew3k2Ax0VhvWKHCH08dSKK7lRPhU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbeLZWoc (ORCPT
+        id S1729712AbeLZWol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:44:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:44:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729203AbeLZWkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:40:46 -0500
+        id S1729197AbeLZWko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 708BF20651;
-        Wed, 26 Dec 2018 22:40:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B16B21741;
+        Wed, 26 Dec 2018 22:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864045;
-        bh=Sg1iBYZtDcjdQC3hW8acxEPqpkVOymZLaR0ZUHbzK5M=;
+        s=default; t=1545864044;
+        bh=eqrYzAGXlaXo1px8Ydgl0fzkGWeyn5JPBf9lXLcIOU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JEy5lbdJZj34yPSav4LmR7GHoVhCNIN7lw71reFHrrMkmIvm6qoeXeprJVMddPq6l
-         uCOM57YI+5cKqvXwE4pIzi0Xln+or9FuNAdtDcXFidggDe18rhBCgophgUNXezDypz
-         aGPBQcUn2a7L7iu1sI0JvYPdz2qZH4/IXuDbRfDI=
+        b=IE7EVdxFsyh03AoGgwtqtTjcha1MFESYu1m06ytX5ZWWA8tdMcD8FaW8L5J74gO+5
+         w+p2iP+PYNPR/Fzo6iF62RAF4vBd05JSb+UD34V6+xT8TcP9dQJEMFdxssCqKg4oXZ
+         kvrY+kdXKlpVr9c86sj6lZifruYKMcGrQGKfg7JM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 31/59] w90p910_ether: remove incorrect __init annotation
-Date:   Wed, 26 Dec 2018 17:38:11 -0500
-Message-Id: <20181226223839.150262-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 30/59] drivers: net: xgene: Remove unnecessary forward declarations
+Date:   Wed, 26 Dec 2018 17:38:10 -0500
+Message-Id: <20181226223839.150262-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -58,40 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 51367e423c6501a26e67d91a655d2bc892303462 ]
+[ Upstream commit 2ab4c3426c0cf711d7147e3f559638e4ab88960e ]
 
-The get_mac_address() function is normally inline, but when it is
-not, we get a warning that this configuration is broken:
+Clang warns:
 
-WARNING: vmlinux.o(.text+0x4aff00): Section mismatch in reference from the function w90p910_ether_setup() to the function .init.text:get_mac_address()
-The function w90p910_ether_setup() references
-the function __init get_mac_address().
-This is often because w90p910_ether_setup lacks a __init
+drivers/net/ethernet/apm/xgene/xgene_enet_main.c:33:36: warning:
+tentative array definition assumed to have one element
+static const struct acpi_device_id xgene_enet_acpi_match[];
+                                   ^
+1 warning generated.
 
-Remove the __init to make it always do the right thing.
+Both xgene_enet_acpi_match and xgene_enet_of_match are defined before
+their uses at the bottom of the file so this is unnecessary. When
+CONFIG_ACPI is disabled, ACPI_PTR becomes NULL so xgene_enet_acpi_match
+doesn't need to be defined.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/nuvoton/w90p910_ether.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/apm/xgene/xgene_enet_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/nuvoton/w90p910_ether.c b/drivers/net/ethernet/nuvoton/w90p910_ether.c
-index 4a67c55aa9f1..11a9add81849 100644
---- a/drivers/net/ethernet/nuvoton/w90p910_ether.c
-+++ b/drivers/net/ethernet/nuvoton/w90p910_ether.c
-@@ -912,7 +912,7 @@ static const struct net_device_ops w90p910_ether_netdev_ops = {
- 	.ndo_validate_addr	= eth_validate_addr,
- };
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+index 3b889efddf78..50dd6bf176d0 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -29,9 +29,6 @@
+ #define RES_RING_CSR	1
+ #define RES_RING_CMD	2
  
--static void __init get_mac_address(struct net_device *dev)
-+static void get_mac_address(struct net_device *dev)
+-static const struct of_device_id xgene_enet_of_match[];
+-static const struct acpi_device_id xgene_enet_acpi_match[];
+-
+ static void xgene_enet_init_bufpool(struct xgene_enet_desc_ring *buf_pool)
  {
- 	struct w90p910_ether *ether = netdev_priv(dev);
- 	struct platform_device *pdev;
+ 	struct xgene_enet_raw_desc16 *raw_desc;
 -- 
 2.19.1
 
