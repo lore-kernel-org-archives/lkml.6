@@ -2,349 +2,217 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121F4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE2BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C573220882
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BB6320882
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGfA1c4G"
+	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="K5bArdkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeLZTbF (ORCPT
+        id S1727599AbeLZTcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:31:05 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46075 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeLZTbF (ORCPT
+        Wed, 26 Dec 2018 14:32:09 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:40737 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbeLZTcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:31:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s5-v6so14529529ljd.12;
-        Wed, 26 Dec 2018 11:31:03 -0800 (PST)
+        Wed, 26 Dec 2018 14:32:09 -0500
+Received: by mail-ed1-f46.google.com with SMTP id g22so13778406edr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:32:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CojuasIwDrAB3CvS+E6S9WithTfIsPwfoAXvkLeIxUE=;
-        b=XGfA1c4GlY3JbN1FQfQ+lvAh033diteaDHVUB7k2BIwoczs3zia4RuPq2GBn1hCt3Z
-         M9Frf2mUDxGuPMK0jW5xJox7j+AA2+gw8eA/yuWYVMAj8cv0faHL2dFCprpjIeyx3Ijq
-         glJI0/pcAYFzR7WvoZcpBWPL7iNKQik5u2vJ8GM0Wf8AtaZ73SbkcfYzD5KL4isEV8UK
-         bR8qLu11qogXn4uJX21KZZ8b0Cbxz3P2R7t0PPmTpLSCXrskDiNIoZEaK1V3W0ajaaYb
-         aNH66zp+A/FbGDgLwCyjdHtiAItaQf5mqOcwuDbM1kvMG+vMdD3t4jE6z6RPN5Nb9RFc
-         Tuxw==
+        d=sargun.me; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=2KTLNrXt84O4LQWmuO5gR81MvObkH110ktJvlB4rB5I=;
+        b=K5bArdkvmWRV5OtXLyBqd11haoXH6iEcMBPt0avAELANCSEeA4pKF7yYvKYNsQXC+x
+         fk0RmfIMP/A2RW31RnEPiCyhkCkIv980Mmy2vZc7L0rFu52PK2XfajCeC1ZDJ/sEyFWG
+         VKte6x5pCx05gKLyJUiUQSIhF0tXJS6v35kLQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CojuasIwDrAB3CvS+E6S9WithTfIsPwfoAXvkLeIxUE=;
-        b=jpTXMR7nrSqWgxgWuA0vt/rz4pHs6tIdMGuWStj6zcnlTSsR2n58VntOzattDCwhRe
-         YqpSQdXptlVQoIdZ7w9eA/OQ3BT9y8m0pt4qyUSl6SdWTSbDLjHAA1HYA9WeOn4F0Ew1
-         D8aJC91E7m/+tc0843yH6OwaOaeNYoia3PzV8nAFXB7qW0h5lWm+fa5Mxb4MhFfNxpwl
-         OIqB9kxJZPQS+LOMV8ppkqdhT3xGsY1BYsTxMjvyqPMJPjg3X7nlNTuBRwRomNYJ0vww
-         Br8dv7Psu+jVHaqGacyW0Ht5yCwVXCQ/YN5bR/brTyp+Fvt19t5FM9vKeUjvhrpMKHRD
-         1b+g==
-X-Gm-Message-State: AJcUukd1mUdB3bs4uK5hD9Tewo3Xoh/LirY8sihA+9D2kIV1JDNtImP3
-        pUAPz3X93BQcqiT7CkbcVHta23Xr
-X-Google-Smtp-Source: ALg8bN7uxBQkLEsLmkOp/DfALZAhwgz8dKItBPNL6eAX9XEEUpwymuqjDhjGqwsk0GfC2HvYvE1UQw==
-X-Received: by 2002:a2e:93d7:: with SMTP id p23-v6mr12148784ljh.22.1545852662164;
-        Wed, 26 Dec 2018 11:31:02 -0800 (PST)
-Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id x29-v6sm7638299ljb.97.2018.12.26.11.31.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 11:31:01 -0800 (PST)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
-Subject: [PATCH] iio: chemical: sps30: allow changing self cleaning period
-Date:   Wed, 26 Dec 2018 20:30:35 +0100
-Message-Id: <20181226193035.3144-1-tduszyns@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=2KTLNrXt84O4LQWmuO5gR81MvObkH110ktJvlB4rB5I=;
+        b=bFx/0C4Lp5rdLwW4BG6ol3A8du6oJBnU/spV3zeiK/gT56KDXZXvpHawB6f9OYwX3U
+         RVehzjl8pKMlZEJzkUSFPBnopkeEiogn58J8N74jXivCKBmcIwnH5rykDegInO5P0ibX
+         CY4h8lCZUrbtlz3Jgg6BOkUg2/VoWCZ1UWmElueb3Pt1G7u9CE3W05T1M8PK9vB/slgO
+         QPqr9ZBaPUJowHFvBn7M+7qxIYvWxPoNYhTQDqfIT3FfNW1lXL96bPhw3WXKL3dra2Y9
+         qyk+Rfh30ii1FPU3KuSIQIdKSyay3zr+AWt2293NbuHIefiaEnJf9Qq0RcwSdNoDMdfE
+         Uf0Q==
+X-Gm-Message-State: AA+aEWZjfmiFYaIR4dJvuXD6gFklWK5nFTd6/l0YfLStZR1O+fyQlHV7
+        lYXR0Z4kQDTEZsArJibuXJ8PyxrjtWD+jpfCGxP/EdxLcag=
+X-Google-Smtp-Source: AFSGD/W9I2jyaLuTRsnn+EMq50RHQpAdZlxSeAhXF5Z9bWf1q7M6uFxqEGtww+yB0kZWAxlzpLtCNUaTNdKZgj8dvas=
+X-Received: by 2002:a50:8bb5:: with SMTP id m50mr16032859edm.211.1545852725992;
+ Wed, 26 Dec 2018 11:32:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Wed, 26 Dec 2018 14:31:30 -0500
+Message-ID: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
+Subject: CPUs blocking in update_blocked_averages -- 4.19.12
+To:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sensor can periodically trigger self cleaning. Period can be changed by
-writing a new value to a dedicated attribute. Upon attribute read
-triplet representing respectively current, minimum and maximum period is
-returned.
+We're seeing an issue introduced in 4.18, and that still persists in
+4.19.12 (we upgraded from 4.9), where update_blocked_averages is
+blocking. We're running a workload where a majority of our workloads
+are  confined by cgroups. This exhibits itself due to a softlockup on
+a CPU which is waiting on a lock that's held by
+update_blocked_averages. I don't have access to any bare metal
+hardware at the moment, and these are all systems running under KVM.
+This kernel has CONFIG_FAIR_GROUP_SCHED on.
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+The Softlocked CPU:
+crash> bt
+PID: 29314  TASK: ffff99b5f0671f00  CPU: 0   COMMAND: "ag"
+ #0 [ffff99b67b203d58] machine_kexec at ffffffff91a602f3
+ #1 [ffff99b67b203db0] __crash_kexec at ffffffff91b49011
+ #2 [ffff99b67b203e70] panic at ffffffff91a896d1
+ #3 [ffff99b67b203ef8] watchdog_timer_fn at ffffffff91b816af
+ #4 [ffff99b67b203f28] __hrtimer_run_queues at ffffffff91b26359
+ #5 [ffff99b67b203f88] hrtimer_interrupt at ffffffff91b26de2
+ #6 [ffff99b67b203fd8] smp_apic_timer_interrupt at ffffffff92402b06
+ #7 [ffff99b67b203ff0] apic_timer_interrupt at ffffffff92401a9f
+--- <IRQ stack> ---
+ #8 [ffffa49fa1acbc08] apic_timer_interrupt at ffffffff92401a9f
+    [exception RIP: smp_call_function_many+543]
+    RIP: ffffffff91b3e84f  RSP: ffffa49fa1acbcb0  RFLAGS: 00000202
+    RAX: 0000000000000010  RBX: ffff99b67b224fc0  RCX: ffff99b67b6286a0
+    RDX: 0000000000000001  RSI: 0000000000000200  RDI: ffff99b67b224fc8
+    RBP: ffff99b67b224fc8   R8: 0000000000000001   R9: 0000000000000000
+    R10: 0000000000000000  R11: 0000000000000000  R12: 0000000000025080
+    R13: ffffa49fa1acbd00  R14: 0000000000000001  R15: 0000000000000200
+    ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
+ #9 [ffffa49fa1acbcf8] flush_tlb_mm_range at ffffffff91a7853c
+#10 [ffffa49fa1acbd90] free_pgtables at ffffffff91c4ac3b
+#11 [ffffa49fa1acbdc8] unmap_region at ffffffff91c54439
+#12 [ffffa49fa1acbe90] do_munmap at ffffffff91c56355
+#13 [ffffa49fa1acbee0] vm_munmap at ffffffff91c56587
+#14 [ffffa49fa1acbf20] __x64_sys_munmap at ffffffff91c565e2
+#15 [ffffa49fa1acbf38] do_syscall_64 at ffffffff91a04590
+#16 [ffffa49fa1acbf50] entry_SYSCALL_64_after_hwframe at ffffffff9240008d
+    RIP: 00007f43e94de747  RSP: 00007f43e91d7e28  RFLAGS: 00000213
+    RAX: ffffffffffffffda  RBX: 00000000011a6f30  RCX: 00007f43e94de747
+    RDX: 0000000000000001  RSI: 0000000000000ade  RDI: 00007f43ea47d000
+    RBP: 0000000000000005   R8: 00007f43e00008c0   R9: 00007f43e91d7d00
+    R10: 00000000011a53b0  R11: 0000000000000213  R12: 00007f43ea47d000
+    R13: 0000000000000ade  R14: 00007f43e91d89c0  R15: 0000000000000060
+    ORIG_RAX: 000000000000000b  CS: 0033  SS: 002b
+
+This is waiting on CPU 16:
+crash> bt
+PID: 29299  TASK: ffff99b5dffd1f00  CPU: 16  COMMAND: "ag"
+ #0 [fffffe00002c8e38] crash_nmi_callback at ffffffff91a54202
+ #1 [fffffe00002c8e50] nmi_handle at ffffffff91a32ee2
+ #2 [fffffe00002c8ea0] default_do_nmi at ffffffff91a333ea
+ #3 [fffffe00002c8ec0] do_nmi at ffffffff91a33553
+ #4 [fffffe00002c8ef0] end_repeat_nmi at ffffffff924014e8
+    [exception RIP: native_queued_spin_lock_slowpath+33]
+    RIP: ffffffff91af2dc1  RSP: ffffa49fa1a93948  RFLAGS: 00000002
+    RAX: 0000000000000001  RBX: ffff99b67b763f40  RCX: 000000004f19a57a
+    RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b67b763f40
+    RBP: 0000000000000082   R8: 0000000000000001   R9: 0000000000000000
+    R10: ffffa49fa1a938f8  R11: ffffffff91aca4a7  R12: 0000000000000015
+    R13: ffff99b67b764940  R14: ffffa49fa1a93a60  R15: 0000000000000015
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+--- <NMI exception stack> ---
+ #5 [ffffa49fa1a93948] native_queued_spin_lock_slowpath at ffffffff91af2dc1
+ #6 [ffffa49fa1a93948] do_raw_spin_lock at ffffffff91af48dd
+ #7 [ffffa49fa1a93958] _raw_spin_lock_irqsave at ffffffff923c1154
+ #8 [ffffa49fa1a93978] update_blocked_averages at ffffffff91aca4a7
+ #9 [ffffa49fa1a93a10] update_nohz_stats at ffffffff91acaa3d
+#10 [ffffa49fa1a93a20] find_busiest_group at ffffffff91ad2137
+#11 [ffffa49fa1a93bb8] load_balance at ffffffff91ad2be0
+#12 [ffffa49fa1a93cf0] pick_next_task_fair at ffffffff91ad41e6
+#13 [ffffa49fa1a93da0] mark_held_locks at ffffffff91aeebe4
+#14 [ffffa49fa1a93de8] schedule at ffffffff923b9ec2
+#15 [ffffa49fa1a93df8] rwsem_down_read_failed at ffffffff923be859
+#16 [ffffa49fa1a93e80] call_rwsem_down_read_failed at ffffffff923ae944
+#17 [ffffa49fa1a93ec8] down_read at ffffffff923bdf0b
+#18 [ffffa49fa1a93ee0] __do_page_fault at ffffffff91a71083
+#19 [ffffa49fa1a93f50] async_page_fault at ffffffff924010ee
+    RIP: 00007f43e945f786  RSP: 00007ffde2b50070  RFLAGS: 00010206
+    RAX: 0000000000015f41  RBX: 00007f43e97a1b20  RCX: 0000000000000111
+    RDX: 00000000011affb0  RSI: 00000000011b00c0  RDI: 0000000000000000
+    RBP: 0000000000000111   R8: 00007f43e97a1bd8   R9: 0000000000000000
+    R10: 00007f43e97a1b78  R11: 00007f43e97a1b78  R12: 00007f43e97a1b78
+    R13: 00007f43e97a1b78  R14: 0000000000002710  R15: 00007f43e97a1c78
+    ORIG_RAX: ffffffffffffffff  CS: 0033  SS: 002b
+
+Which is waiting on a lock held by CPU owned by CPU 9:
+crash> struct raw_spinlock_t ffff99b67b763f40
+struct raw_spinlock_t {
+  raw_lock = {
+    {
+      val = {
+        counter = 1
+      },
+      {
+        locked = 1 '\001',
+        pending = 0 '\000'
+      },
+      {
+        locked_pending = 1,
+        tail = 0
+      }
+    }
+  },
+  magic = 3735899821,
+  owner_cpu = 9,
+  owner = 0xffff99b66e7a8000,
+  dep_map = {
+    key = 0xffffffff9331d120,
+    class_cache = {0xffffffff93a13da0, 0x0},
+    name = 0xffffffff92a7d9ad "&rq->lock"
+  }
+}
+
+Which is hanging out in update_blocked_averages:
+crash> bt
+PID: 0      TASK: ffff99b66e7a8000  CPU: 9   COMMAND: "swapper/9"
+ #0 [fffffe0000194e38] crash_nmi_callback at ffffffff91a54202
+ #1 [fffffe0000194e50] nmi_handle at ffffffff91a32ee2
+ #2 [fffffe0000194ea0] default_do_nmi at ffffffff91a33362
+ #3 [fffffe0000194ec0] do_nmi at ffffffff91a33553
+ #4 [fffffe0000194ef0] end_repeat_nmi at ffffffff924014e8
+    [exception RIP: lock_is_held_type+70]
+    RIP: ffffffff91aecec6  RSP: ffff99b67b443e20  RFLAGS: 00000046
+    RAX: 0000000000000001  RBX: ffff99b66e7a8000  RCX: 00000000000000a8
+    RDX: 0000000000000001  RSI: 00000000ffffffff  RDI: 0000000000000046
+    RBP: 0000000000000046   R8: 0000000000000004   R9: 0000000000000000
+    R10: ffff99b67b443e38  R11: ffffffff91aca4a7  R12: ffff99b67b763f40
+    R13: ffff99b67b764940  R14: 0000000000000000  R15: ffff99b6193d9200
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+--- <NMI exception stack> ---
+ #5 [ffff99b67b443e20] lock_is_held_type at ffffffff91aecec6
+ #6 [ffff99b67b443e30] update_blocked_averages at ffffffff91aca841
+ #7 [ffff99b67b443ec8] update_nohz_stats at ffffffff91acaa3d
+ #8 [ffff99b67b443ed8] _nohz_idle_balance at ffffffff91ad39f7
+ #9 [ffff99b67b443f70] __softirqentry_text_start at ffffffff926000d1
+#10 [ffff99b67b443fd0] irq_exit at ffffffff91a911f5
+#11 [ffff99b67b443fd8] smp_apic_timer_interrupt at ffffffff92402b2c
+#12 [ffff99b67b443ff0] apic_timer_interrupt at ffffffff92401a9f
+--- <IRQ stack> ---
+#13 [ffffa49f98993df8] apic_timer_interrupt at ffffffff92401a9f
+    [exception RIP: mwait_idle+108]
+    RIP: ffffffff923c02fc  RSP: ffffa49f98993ea8  RFLAGS: 00000246
+    RAX: 0000000000000000  RBX: 0000000000000009  RCX: 0000000000000000
+    RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b66e7a8000
+    RBP: 0000000000000009   R8: 0000000000000001   R9: 0000000000000000
+    R10: 0000000000000000  R11: 0000000000000000  R12: ffff99b66e7a8000
+    R13: 0000000000000000  R14: 0000000000000000  R15: ffff99b66e7a8000
+    ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
+#14 [ffffa49f98993ec0] do_idle at ffffffff91ac6ba3
+#15 [ffffa49f98993f10] cpu_startup_entry at ffffffff91ac6f4f
+#16 [ffffa49f98993f30] start_secondary at ffffffff91a55759
+#17 [ffffa49f98993f50] secondary_startup_64 at ffffffff91a000d4
+
 ---
- Documentation/ABI/testing/sysfs-bus-iio-sps30 |  11 ++
- drivers/iio/chemical/sps30.c                  | 134 +++++++++++++++---
- 2 files changed, 127 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-index e7ce2c57635e..d83d9192a3e0 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-@@ -6,3 +6,14 @@ Description:
- 		Writing 1 starts sensor self cleaning. Internal fan accelerates
- 		to its maximum speed and keeps spinning for about 10 seconds in
- 		order to blow out accumulated dust.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/cleaning_interval
-+Date:		December 2018
-+KernelVersion:	4.22
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Sensor is capable of triggering self cleaning periodically.
-+		Period can be changed by writing a new value here. Upon reading
-+		three values are returned representing respectively current,
-+		minimum and maximum period. All values are in seconds.
-+		Writing 0 here disables periodical self cleaning entirely.
-diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-index f3b4390c8f5c..c219fda08cba 100644
---- a/drivers/iio/chemical/sps30.c
-+++ b/drivers/iio/chemical/sps30.c
-@@ -5,9 +5,6 @@
-  * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
-  *
-  * I2C slave address: 0x69
-- *
-- * TODO:
-- *  - support for reading/setting auto cleaning interval
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -21,6 +18,7 @@
- #include <linux/iio/sysfs.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
- 
- #define SPS30_CRC8_POLYNOMIAL 0x31
-@@ -28,6 +26,9 @@
- #define SPS30_MAX_READ_SIZE 48
- /* sensor measures reliably up to 3000 ug / m3 */
- #define SPS30_MAX_PM 3000
-+/* minimum and maximum self cleaning intervals in seconds */
-+#define SPS30_AUTO_CLEANING_INTERVAL_MIN 0
-+#define SPS30_AUTO_CLEANING_INTERVAL_MAX 604800
- 
- /* SPS30 commands */
- #define SPS30_START_MEAS 0x0010
-@@ -37,6 +38,9 @@
- #define SPS30_READ_DATA 0x0300
- #define SPS30_READ_SERIAL 0xd033
- #define SPS30_START_FAN_CLEANING 0x5607
-+#define SPS30_AUTO_CLEANING_INTERVAL 0x8004
-+/* not a sensor command per se, used only to distinguish write from read */
-+#define SPS30_READ_AUTO_CLEANING_INTERVAL 0x8005
- 
- enum {
- 	PM1,
-@@ -45,6 +49,11 @@ enum {
- 	PM10,
- };
- 
-+enum {
-+	RESET,
-+	MEASURING,
-+};
-+
- struct sps30_state {
- 	struct i2c_client *client;
- 	/*
-@@ -52,6 +61,7 @@ struct sps30_state {
- 	 * Must be held whenever sequence of commands is to be executed.
- 	 */
- 	struct mutex lock;
-+	int state;
- };
- 
- DECLARE_CRC8_TABLE(sps30_crc8_table);
-@@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 	case SPS30_START_FAN_CLEANING:
- 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
- 		break;
-+	case SPS30_READ_AUTO_CLEANING_INTERVAL:
-+		buf[0] = SPS30_AUTO_CLEANING_INTERVAL >> 8;
-+		buf[1] = (u8)SPS30_AUTO_CLEANING_INTERVAL;
- 	case SPS30_READ_DATA_READY_FLAG:
- 	case SPS30_READ_DATA:
- 	case SPS30_READ_SERIAL:
-@@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 		size += size / 2;
- 		ret = sps30_write_then_read(state, buf, 2, buf, size);
- 		break;
-+	case SPS30_AUTO_CLEANING_INTERVAL:
-+		buf[2] = data[0];
-+		buf[3] = data[1];
-+		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
-+		buf[5] = data[2];
-+		buf[6] = data[3];
-+		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
-+		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
-+		break;
- 	}
- 
- 	if (ret)
-@@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
- 	int i, ret, tries = 5;
- 	u8 tmp[16];
- 
-+	if (state->state == RESET) {
-+		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-+		if (ret)
-+			return ret;
-+
-+		state->state = MEASURING;
-+	}
-+
- 	while (tries--) {
- 		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
- 		if (ret)
-@@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
- 	return -EINVAL;
- }
- 
-+static int sps30_do_cmd_reset(struct sps30_state *state)
-+{
-+	int ret;
-+
-+	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	msleep(300);
-+	/*
-+	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-+	 * some controllers end up in error state. Recover simply by placing
-+	 * some data on the bus, for example STOP_MEAS command, which
-+	 * is NOP in this case.
-+	 */
-+	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-+	state->state = RESET;
-+
-+	return ret;
-+}
-+
- static ssize_t start_cleaning_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t len)
-@@ -296,10 +344,73 @@ static ssize_t start_cleaning_store(struct device *dev,
- 	return len;
- }
- 
-+static ssize_t cleaning_interval_show(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	u8 tmp[4];
-+	int ret;
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_INTERVAL, tmp, 4);
-+	mutex_unlock(&state->lock);
-+	if (ret)
-+		return ret;
-+
-+	return sprintf(buf, "%d %d %d\n", get_unaligned_be32(tmp),
-+		       SPS30_AUTO_CLEANING_INTERVAL_MIN,
-+		       SPS30_AUTO_CLEANING_INTERVAL_MAX);
-+}
-+
-+static ssize_t cleaning_interval_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	int val, ret;
-+	u8 tmp[4];
-+
-+	if (kstrtoint(buf, 0, &val))
-+		return -EINVAL;
-+
-+	if ((val < SPS30_AUTO_CLEANING_INTERVAL_MIN) &&
-+	    (val > SPS30_AUTO_CLEANING_INTERVAL_MAX))
-+		return -EINVAL;
-+
-+	put_unaligned_be32(val, tmp);
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_INTERVAL, tmp, 0);
-+	if (ret) {
-+		mutex_unlock(&state->lock);
-+		return ret;
-+	}
-+
-+	msleep(20);
-+
-+	/*
-+	 * sensor requires reset in order to return up to date self cleaning
-+	 * period
-+	 */
-+	ret = sps30_do_cmd_reset(state);
-+	if (ret)
-+		dev_warn(dev,
-+			 "interval changed but reads will return the old value\n");
-+
-+	mutex_unlock(&state->lock);
-+
-+	return len;
-+}
-+
- static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
-+static IIO_DEVICE_ATTR_RW(cleaning_interval, 0);
- 
- static struct attribute *sps30_attrs[] = {
- 	&iio_dev_attr_start_cleaning.dev_attr.attr,
-+	&iio_dev_attr_cleaning_interval.dev_attr.attr,
- 	NULL
- };
- 
-@@ -362,6 +473,7 @@ static int sps30_probe(struct i2c_client *client)
- 	state = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
- 	state->client = client;
-+	state->state = RESET;
- 	indio_dev->dev.parent = &client->dev;
- 	indio_dev->info = &sps30_info;
- 	indio_dev->name = client->name;
-@@ -373,19 +485,11 @@ static int sps30_probe(struct i2c_client *client)
- 	mutex_init(&state->lock);
- 	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
- 
--	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	ret = sps30_do_cmd_reset(state);
- 	if (ret) {
- 		dev_err(&client->dev, "failed to reset device\n");
- 		return ret;
- 	}
--	msleep(300);
--	/*
--	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
--	 * some controllers end up in error state. Recover simply by placing
--	 * some data on the bus, for example STOP_MEAS command, which
--	 * is NOP in this case.
--	 */
--	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
- 
- 	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
- 	if (ret) {
-@@ -395,12 +499,6 @@ static int sps30_probe(struct i2c_client *client)
- 	/* returned serial number is already NUL terminated */
- 	dev_info(&client->dev, "serial number: %s\n", buf);
- 
--	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
--	if (ret) {
--		dev_err(&client->dev, "failed to start measurement\n");
--		return ret;
--	}
--
- 	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
- 	if (ret)
- 		return ret;
--- 
-2.20.1
-
+Lockdep tells me nothing, which makes me think, somehow is the code in
+for_each_leaf_cfs_rq_safe looping forever?
