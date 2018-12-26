@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0E9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19032C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A106218A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEAAE218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864844;
-	bh=fP/fDD7nwyxppWA5KHMWf+vLqAm+sDnyMOlqNj0tOYc=;
+	s=default; t=1545864851;
+	bh=8QmOgPpEvQqxk+kImlDBvVFtSfDyqm5jtXProb5ZLIA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QWHZTvstDL5I63uu8i/43NF4caCYAXX/QMOigf4999YB94EWXIPA3Dm5UmqH6cCDY
-	 tWP4i9fjQHBjqcVhstcNCLhEREb3lso4mIZNbGyCz2q7kEB/K1b9spOPvq4nshdpJn
-	 qbV5cV96Mv2K/kYH+ziGPwJLz8DZopvBBIRmhzHQ=
+	b=IrXx1V2t3kehTSEBkzf1VdAEhRfvWVkNpVhjFXfKsXNomIVNQteSeaK+FiYj84C2m
+	 IzQCG/SgxBIcP7+7ppTKql0jY5zFkv4pIfkNboK5DmNebBPASwdt0LQHTJ7p1rt/Cr
+	 ybFvx5JM8p5KK/VqR3ZpUSE2GP8cSg4t726j/VLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeLZWyD (ORCPT
+        id S1730069AbeLZWyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55376 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728006AbeLZWyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:00 -0500
+        id S1730035AbeLZWyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71008218EA;
-        Wed, 26 Dec 2018 22:53:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FA3E214D8;
+        Wed, 26 Dec 2018 22:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864840;
-        bh=fP/fDD7nwyxppWA5KHMWf+vLqAm+sDnyMOlqNj0tOYc=;
+        s=default; t=1545864848;
+        bh=8QmOgPpEvQqxk+kImlDBvVFtSfDyqm5jtXProb5ZLIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8mpWoDPlaz8KoINOcyUEO3+/eGsD6d5J5wpSczNn57XdcmwkV7JZ4wyfg7shqHh0
-         RtdIvXnxACeIusaNXFCcF3cyjZy6YZxGIJewd9JVE4AUO3+SIyaaFmQsBPfS/EPLwM
-         8kj+rC4DHneOSZbqaIAONsVhe3n7o/9MjKe/lzM8=
+        b=EKoYEVMxkNcSdoNhfljq05Y+W7wHipMAmua9pO5aQjqwPRLWftePG/La5IL0+D74D
+         0naUshytjDCDFAaSOe5i21uuEec/NvClv767UjnIVqtumgVubpY3Vwz66Lu///OzCo
+         G3+04PFLnSnBYEPggE998Yc3lmrlNb7cb8cQBakk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 09/35] scsi: bnx2fc: Fix NULL dereference in error handling
-Date:   Wed, 26 Dec 2018 17:41:16 -0500
-Message-Id: <20181226224142.150866-9-sashal@kernel.org>
+Cc:     Pan Bian <bianpan2016@163.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 12/35] netfilter: ipset: do not call ipset_nest_end after nla_nest_cancel
+Date:   Wed, 26 Dec 2018 17:41:19 -0500
+Message-Id: <20181226224142.150866-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -57,34 +61,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 9ae4f8420ed7be4b13c96600e3568c144d101a23 ]
+[ Upstream commit 708abf74dd87f8640871b814faa195fb5970b0e3 ]
 
-If "interface" is NULL then we can't release it and trying to will only
-lead to an Oops.
+In the error handling block, nla_nest_cancel(skb, atd) is called to
+cancel the nest operation. But then, ipset_nest_end(skb, atd) is
+unexpected called to end the nest operation. This patch calls the
+ipset_nest_end only on the branch that nla_nest_cancel is not called.
 
-Fixes: aea71a024914 ("[SCSI] bnx2fc: Introduce interface structure for each vlan interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c | 2 +-
+ net/netfilter/ipset/ip_set_list_set.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index bee7d37367ca..68cc332bd6cb 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2331,7 +2331,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
- 		rc = -ENOMEM;
--		goto ifput_err;
-+		goto netdev_err;
+diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
+index a2a89e4e0a14..e82157285d34 100644
+--- a/net/netfilter/ipset/ip_set_list_set.c
++++ b/net/netfilter/ipset/ip_set_list_set.c
+@@ -518,8 +518,8 @@ list_set_list(const struct ip_set *set,
+ 		ret = -EMSGSIZE;
+ 	} else {
+ 		cb->args[IPSET_CB_ARG0] = i;
++		ipset_nest_end(skb, atd);
  	}
- 
- 	if (netdev->priv_flags & IFF_802_1Q_VLAN) {
+-	ipset_nest_end(skb, atd);
+ out:
+ 	rcu_read_unlock();
+ 	return ret;
 -- 
 2.19.1
 
