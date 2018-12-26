@@ -2,148 +2,136 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E2DC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A6BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F265218A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F36B217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 07:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CqY03vAf"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BHhxaS6T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbeLZHRj (ORCPT
+        id S1726144AbeLZHxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 02:17:39 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43693 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbeLZHRi (ORCPT
+        Wed, 26 Dec 2018 02:53:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39777 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeLZHxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 02:17:38 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z11so4874865uaa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:17:37 -0800 (PST)
+        Wed, 26 Dec 2018 02:53:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id 101so7271089pld.6
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 23:53:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sStBFDNBDUZRn9wWqTM8W3lcGvwpMuwsZGejygCvw4w=;
-        b=CqY03vAftC/ACUr6WenWPXq4+zUzfVZihj99mCbvqjitkbzxximsMsAsL7uSc3Lc6N
-         FCWXzKh6CjXX7zwKLL1cHs7Of8nRT1JkqTCr6yk5QNUr+v5kherIz+Z6PgFf4UIeopmd
-         nIiZXanec2P54UsQvoqTeHPlABVVDkU30BYt0=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P6KcVI3cNP/m+Pzq7VPTxDfr/tNVCCBYar/ZL8sY5nY=;
+        b=BHhxaS6ToMPmSSUplC5HwpdloMho11QilVm013+jJP2dh7iJGFRyDfG/L++5HApmdK
+         AOueomkkX2Vrgjbst6+biH3dVyWE1HcL0bJeR0ac4YKqnswidbLFOOIohXy8vK/Sq3f5
+         IElNA8RK87/SKz8wCiB6xCuVyfJtKQOHFUVSA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sStBFDNBDUZRn9wWqTM8W3lcGvwpMuwsZGejygCvw4w=;
-        b=gDTXDAAEt/7OCykRz3YCO+YUKmlPDoRbzsze6c6lCk0YQ1+LtpNNasrHNBGF9D1Mu3
-         s7eS0ISnnl91suNse4tPmwv76zo/deFQWhKNgOdMw1QXFIgZ2kLEAEz+jlj27uh8ldq6
-         pQCWaTpKwNMI5/+BAx+rZS7S85IIIslHX8pxKkZ2lOojwm2nIBrNYHJXAIWePEreiZJZ
-         CzlmrGTV4vSmzgyOi7GylHeiQvSVcwLmlEyjkWRqFYBOP+UpekAVidjFhNXTIa/IOqTK
-         QxfvEW1dBh1DaczGZZKYSZiaPpQ+e4IQjOYCMwPtkkd5Zg8WcvHkzs72EfnixLBwMKEv
-         NXNQ==
-X-Gm-Message-State: AJcUukd72zbWVmbgeaUgBldacAmR6Abn6G/ZMxZfBPM3zDox79fIaDeC
-        i0D7N1vyXRXK5+9jBy5dSg/3lII7aXdwVAp+QiJJ1Jlm6t0=
-X-Google-Smtp-Source: ALg8bN5pSVGirgzA3yT8x8KSuN1zxE9sy0dqi1F+mNzpaXqakACNf9DZHkCIuukSgs2r9nRPcUfugmWipnxwtwWzxHk=
-X-Received: by 2002:ab0:225a:: with SMTP id z26mr2233607uan.100.1545808656994;
- Tue, 25 Dec 2018 23:17:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P6KcVI3cNP/m+Pzq7VPTxDfr/tNVCCBYar/ZL8sY5nY=;
+        b=CREHvkI9RJArW4+ywP8k811PbY/1eYtT1B8jgrczCnYgnxQNeBxOTZk1VvXIUXVxlu
+         pQy9t29Oggvqw4wxt+zG0fR5NE0r3lJ2VRBHS9bj4/m24HK3U6y6FMx3/6HFA+qMdOg6
+         QlFs7YRMahQraKz9jqc71YMNHYEOvlkpLTXrK0CEEiA+wVRrWDxgoBhnPkYhcPSWCeb4
+         X8lWBptBS+2EhbxAqfDoLvweMRp76lCnHplpqmuFNKGTOuQgf7SEthlm46PdcKEyREQF
+         BWy5xMUveqYj7+PDdS39RkwT0PHj6zTf27gPHlz8Q/49lHclJ9mgzJwlFk2uUdDqa8PZ
+         qCsg==
+X-Gm-Message-State: AJcUukcZg6re+Ga0NOkWuKFS3AMrxsHuXfkufD9WQewvKNuWSqLMVYFG
+        6xbUTsluG0K+QxmX2qyR4IYKRA==
+X-Google-Smtp-Source: ALg8bN54QEPfkuxduBY8t3+Ak8DMbpajQxNGG951kjbvOLaqYyatrf2rpWAr5huxlCP+e4gCbZKlig==
+X-Received: by 2002:a17:902:a70b:: with SMTP id w11mr18770971plq.84.1545810830966;
+        Tue, 25 Dec 2018 23:53:50 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id 84sm107392395pfa.115.2018.12.25.23.53.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Dec 2018 23:53:50 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), Eddie Huang <eddie.huang@mediatek.com>,
+        Erin Lo <erin.lo@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM)
+Subject: [RFC,0/5] Add support for mt8183 SCP.
+Date:   Wed, 26 Dec 2018 15:53:08 +0800
+Message-Id: <20181226075330.82462-1-pihsun@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-References: <20181224083724.75618-1-cychiang@chromium.org> <20181224083724.75618-2-cychiang@chromium.org>
- <CABXOdTdoz-sG3t0n3kKUd0ydJmnmMsoaOJ=yQzWOtT0A8Qp2kw@mail.gmail.com>
-In-Reply-To: <CABXOdTdoz-sG3t0n3kKUd0ydJmnmMsoaOJ=yQzWOtT0A8Qp2kw@mail.gmail.com>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Wed, 26 Dec 2018 15:17:10 +0800
-Message-ID: <CAFv8NwLRDzJcSWyB444XwDqXAX-PknrV7N4V9KcT0NCVgiAXag@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] ASoC: Documentation: Add google,cros-ec-codec
-To:     Guenter Roeck <groeck@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 10:38 PM Guenter Roeck <groeck@google.com> wrote:
->
-> On Mon, Dec 24, 2018 at 12:39 AM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
-> >
-> > Add documentation for Chrome EC codec driver.
-> >
-> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > ---
-> >  Change in v2: Fixed name of driver in MAINTAINERS.
-> >
-> >  .../bindings/sound/google,cros-ec-codec.txt   | 24 +++++++++++++++++++
->
-> Since this is a devicetree binding, it will require an Ack from a DT
-> maintainer. You might want to check the output of
-> scripts/get_maintainer.pl to make sure you don't miss anyone
-> important.
->
-> Guenter
->
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-Thanks for the suggestion.
-cc'ed Rob Herring in v3.
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2, 3).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 4).
+* platform/chrome/cros_ec_rpmsg.c: Communicates with the SCP over the
+  rpmsg framework (like what platform/chrome/cros_ec_{i2c,spi}.c does)
+  (Patch 5).
 
-> >  MAINTAINERS                                   |  5 ++++
-> >  2 files changed, 29 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-> > new file mode 100644
-> > index 0000000000000..57718382b3a36
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-> > @@ -0,0 +1,24 @@
-> > +* Audio codec controlled by ChromeOS EC
-> > +
-> > +Google's ChromeOS EC codec is a digital mic codec provided by the
-> > +Embedded Controller (EC) and is controlled via a host-command interface.
-> > +
-> > +An EC codec node should only be found as a sub-node of the EC node (see
-> > +Documentation/devicetree/bindings/mfd/cros-ec.txt).
-> > +
-> > +Required properties:
-> > +- compatible: Must contain "google,cros-ec-codec"
-> > +- #sound-dai-cells: Should be 1. The cell specifies number of DAIs.
-> > +
-> > +Example:
-> > +
-> > +cros-ec@0 {
-> > +       compatible = "google,cros-ec-spi";
-> > +
-> > +       ...
-> > +
-> > +       cros_ec_codec: ec-codec {
-> > +               compatible = "google,cros-ec-codec";
-> > +               #sound-dai-cells = <1>;
-> > +       };
-> > +};
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 5b9c6af98283b..05e1922624e58 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -3636,6 +3636,11 @@ S:       Maintained
-> >  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
-> >  F:     drivers/platform/chrome/
-> >
-> > +CHROMEOS EC CODEC DRIVER
-> > +M:     Cheng-Yi Chiang <cychiang@chromium.org>
-> > +S:     Maintained
-> > +F:     Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
-> > +
-> >  CIRRUS LOGIC AUDIO CODEC DRIVERS
-> >  M:     Brian Austin <brian.austin@cirrus.com>
-> >  M:     Paul Handrigan <Paul.Handrigan@cirrus.com>
-> > --
-> > 2.20.1.415.g653613c723-goog
-> >
+Since I'm not familiar with the remoteproc / rpmsg framework, and there
+are not much other custom rpmsg driver for reference, would like some
+review / comments on the overall structure of the driver.
+
+
+Erin Lo (2):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+
+Pi-Hsun Shih (3):
+  remoteproc: move IPI interface into separate file.
+  rpmsg: add rpmsg support for mt8183 SCP.
+  mfd: cros_ec: add EC host command support using rpmsg.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  10 +
+ drivers/mfd/cros_ec_dev.c                     |  10 +
+ drivers/platform/chrome/Kconfig               |   8 +
+ drivers/platform/chrome/Makefile              |   1 +
+ drivers/platform/chrome/cros_ec_rpmsg.c       | 164 +++++++
+ drivers/remoteproc/Kconfig                    |   9 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  76 +++
+ drivers/remoteproc/mtk_scp.c                  | 441 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 109 +++++
+ drivers/rpmsg/Kconfig                         |   5 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 341 ++++++++++++++
+ include/linux/mfd/cros_ec.h                   |   1 +
+ include/linux/mfd/cros_ec_commands.h          |   2 +
+ include/linux/platform_data/mtk_scp.h         | 143 ++++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  34 ++
+ 17 files changed, 1356 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/platform/chrome/cros_ec_rpmsg.c
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/platform_data/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
+-- 
+2.20.1.415.g653613c723-goog
+
