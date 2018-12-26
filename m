@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C25C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF8FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121D221720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BCA21720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 08:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeLZIVJ (ORCPT
+        id S1726434AbeLZIVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 03:21:09 -0500
+        Wed, 26 Dec 2018 03:21:13 -0500
 Received: from mga01.intel.com ([192.55.52.88]:19494 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLZIVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 03:21:07 -0500
+        id S1726047AbeLZIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 03:21:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 00:21:07 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 00:21:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
-   d="scan'208";a="103379568"
+   d="scan'208";a="103379577"
 Received: from unknown (HELO localhost.localdomain.sh.intel.com) ([10.239.13.104])
-  by orsmga006.jf.intel.com with ESMTP; 26 Dec 2018 00:21:05 -0800
+  by orsmga006.jf.intel.com with ESMTP; 26 Dec 2018 00:21:07 -0800
 From:   Yang Weijiang <weijiang.yang@intel.com>
 To:     qemu-devel@nongnu.org, pbonzini@redhat.com, rkrcmar@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
         yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com
 Cc:     Yang Weijiang <weijiang.yang@intel.com>,
         Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: [Qemu-devel][PATCH 1/4] Add CET xsaves/xrstors related macros and structures.
-Date:   Wed, 26 Dec 2018 16:25:17 +0800
-Message-Id: <bfb9a32529b3d3374649e2eae48ada85d3f4b793.1545806972.git.weijiang.yang@intel.com>
+Subject: [Qemu-devel][PATCH 2/4] Add CET SHSTK and IBT CPUID feature-word definitions.
+Date:   Wed, 26 Dec 2018 16:25:18 +0800
+Message-Id: <30d79c2d6fa0658cd2818c21da852fd4dfeeae1c.1545806972.git.weijiang.yang@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1545806972.git.weijiang.yang@intel.com>
 References: <cover.1545806972.git.weijiang.yang@intel.com>
@@ -48,98 +48,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CET protection in user mode and kernel mode relies on
-specific MSRs, these MSRs' contents are automatically
-saved/restored by xsaves/xrstors instructions.
+XSS[bit 11] and XSS[bit 12] correspond to CET
+user mode area and supervisor mode area respectively.
 
 Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
 Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
 ---
- target/i386/cpu.h | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ target/i386/cpu.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/target/i386/cpu.h b/target/i386/cpu.h
-index 9c52d0cbeb..f3f724d8e6 100644
---- a/target/i386/cpu.h
-+++ b/target/i386/cpu.h
-@@ -469,6 +469,9 @@ typedef enum X86Seg {
- #define XSTATE_ZMM_Hi256_BIT            6
- #define XSTATE_Hi16_ZMM_BIT             7
- #define XSTATE_PKRU_BIT                 9
-+#define XSTATE_RESERVED_BIT             10
-+#define XSTATE_CET_U_BIT                11
-+#define XSTATE_CET_S_BIT                12
+diff --git a/target/i386/cpu.c b/target/i386/cpu.c
+index f81d35e1f9..3630c688d6 100644
+--- a/target/i386/cpu.c
++++ b/target/i386/cpu.c
+@@ -1018,7 +1018,7 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+         .type = CPUID_FEATURE_WORD,
+         .feat_names = {
+             NULL, "avx512vbmi", "umip", "pku",
+-            NULL /* ospke */, NULL, "avx512vbmi2", NULL,
++            NULL /* ospke */, NULL, "avx512vbmi2", "shstk",
+             "gfni", "vaes", "vpclmulqdq", "avx512vnni",
+             "avx512bitalg", NULL, "avx512-vpopcntdq", NULL,
+             "la57", NULL, NULL, NULL,
+@@ -1041,7 +1041,7 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+             NULL, NULL, NULL, NULL,
+             NULL, NULL, NULL, NULL,
+             NULL, NULL, "pconfig", NULL,
+-            NULL, NULL, NULL, NULL,
++            "ibt", NULL, NULL, NULL,
+             NULL, NULL, "spec-ctrl", NULL,
+             NULL, "arch-capabilities", NULL, "ssbd",
+         },
+@@ -1162,6 +1162,25 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+             }
+         },
+     },
++    /* Below are CET supervisor xsave features */
++    [FEAT_XSAVE_SV_LO] = {
++        .type = CPUID_FEATURE_WORD,
++        .cpuid = {
++            .eax = 0xD,
++            .needs_ecx = true,
++            .ecx = 1,
++            .reg = R_ECX,
++        },
++    },
++    [FEAT_XSAVE_SV_HI] = {
++        .type = CPUID_FEATURE_WORD,
++        .cpuid = {
++            .eax = 0xD,
++            .needs_ecx = true,
++            .ecx = 1,
++            .reg = R_EDX
++        },
++    }
+ };
  
- #define XSTATE_FP_MASK                  (1ULL << XSTATE_FP_BIT)
- #define XSTATE_SSE_MASK                 (1ULL << XSTATE_SSE_BIT)
-@@ -479,6 +482,19 @@ typedef enum X86Seg {
- #define XSTATE_ZMM_Hi256_MASK           (1ULL << XSTATE_ZMM_Hi256_BIT)
- #define XSTATE_Hi16_ZMM_MASK            (1ULL << XSTATE_Hi16_ZMM_BIT)
- #define XSTATE_PKRU_MASK                (1ULL << XSTATE_PKRU_BIT)
-+#define XSTATE_RESERVED_MASK            (1ULL << XSTATE_RESERVED_BIT)
-+#define XSTATE_CET_U_MASK               (1ULL << XSTATE_CET_U_BIT)
-+#define XSTATE_CET_S_MASK               (1ULL << XSTATE_CET_S_BIT)
-+
-+/* CPUID feature bits available in XCR0 */
-+#define CPUID_XSTATE_USER_MASK  (XSTATE_FP_MASK | XSTATE_SSE_MASK \
-+                                | XSTATE_YMM_MASK | XSTATE_BNDREGS_MASK \
-+                                | XSTATE_BNDCSR_MASK | XSTATE_OPMASK_MASK \
-+                                | XSTATE_ZMM_Hi256_MASK \
-+                                | XSTATE_Hi16_ZMM_MASK | XSTATE_PKRU_MASK)
-+
-+/* CPUID feature bits available in XSS */
-+#define CPUID_XSTATE_KERNEL_MASK    (XSTATE_CET_U_MASK | XSTATE_CET_S_MASK)
+ typedef struct X86RegisterInfo32 {
+@@ -1233,6 +1252,14 @@ static const ExtSaveArea x86_ext_save_areas[] = {
+           { .feature = FEAT_7_0_ECX, .bits = CPUID_7_0_ECX_PKU,
+             .offset = offsetof(X86XSaveArea, pkru_state),
+             .size = sizeof(XSavePKRU) },
++    [XSTATE_CET_U_BIT] = {
++            .feature = FEAT_7_0_ECX, .bits = CPUID_7_0_ECX_CET_SHSTK,
++            .offset = offsetof(X86XSaveArea, cet_u),
++            .size = sizeof(XSaveCETU) },
++    [XSTATE_CET_S_BIT] = {
++            .feature = FEAT_7_0_ECX, .bits = CPUID_7_0_ECX_CET_SHSTK,
++            .offset = offsetof(X86XSaveArea, cet_s),
++            .size = sizeof(XSaveCETS) },
+ };
  
- /* CPUID feature words */
- typedef enum FeatureWord {
-@@ -503,6 +519,8 @@ typedef enum FeatureWord {
-     FEAT_XSAVE_COMP_LO, /* CPUID[EAX=0xd,ECX=0].EAX */
-     FEAT_XSAVE_COMP_HI, /* CPUID[EAX=0xd,ECX=0].EDX */
-     FEAT_ARCH_CAPABILITIES,
-+    FEAT_XSAVE_SV_LO,   /* CPUID[EAX=0xd,ECX=1].ECX */
-+    FEAT_XSAVE_SV_HI,   /* CPUID[EAX=0xd,ECX=1].EDX */
-     FEATURE_WORDS,
- } FeatureWord;
- 
-@@ -687,7 +705,7 @@ typedef uint32_t FeatureWordArray[FEATURE_WORDS];
- #define CPUID_7_0_ECX_LA57     (1U << 16)
- #define CPUID_7_0_ECX_RDPID    (1U << 22)
- #define CPUID_7_0_ECX_CLDEMOTE (1U << 25)  /* CLDEMOTE Instruction */
--
-+#define CPUID_7_0_ECX_CET_SHSTK     (1U << 7)  /* CET SHSTK feature bit */
- #define CPUID_7_0_EDX_AVX512_4VNNIW (1U << 2) /* AVX512 Neural Network Instructions */
- #define CPUID_7_0_EDX_AVX512_4FMAPS (1U << 3) /* AVX512 Multiply Accumulation Single Precision */
- #define CPUID_7_0_EDX_PCONFIG (1U << 18)       /* Platform Configuration */
-@@ -1021,6 +1039,19 @@ typedef struct XSavePKRU {
-     uint32_t padding;
- } XSavePKRU;
- 
-+/* Ext. save area 11: User mode CET state */
-+typedef struct XSaveCETU {
-+    uint64_t u_cet;
-+    uint64_t user_ssp;
-+} XSaveCETU;
-+
-+/* Ext. save area 12: Supervisor mode CET state */
-+typedef struct XSaveCETS {
-+    uint64_t kernel_ssp;
-+    uint64_t pl1_ssp;
-+    uint64_t pl2_ssp;
-+} XSaveCETS;
-+
- typedef struct X86XSaveArea {
-     X86LegacyXSaveArea legacy;
-     X86XSaveHeader header;
-@@ -1039,6 +1070,9 @@ typedef struct X86XSaveArea {
-     XSaveHi16_ZMM hi16_zmm_state;
-     /* PKRU State: */
-     XSavePKRU pkru_state;
-+    /* CET State: */
-+    XSaveCETU cet_u;
-+    XSaveCETS cet_s;
- } X86XSaveArea;
- 
- QEMU_BUILD_BUG_ON(offsetof(X86XSaveArea, avx_state) != 0x240);
+ static uint32_t xsave_area_size(uint64_t mask)
 -- 
 2.17.1
 
