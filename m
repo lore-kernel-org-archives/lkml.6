@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE28C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6051AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB3B22087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 255772087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865333;
-	bh=Qngf2Hh7lIc4YqkBtCoIHgxChlKS1+msWiB8ZiEA9c0=;
+	s=default; t=1545865339;
+	bh=jNIR5DhCmFvWuaOLeArnByYKeYdHSv56Pl0InoEVKiM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f3i1tFZfhwgR2cL+TxHcrnJ16H2Ih6fRCl+T5ZayNWsGNCDbBGb2sHKLWiIOMRpgh
-	 XhuZ9RGw06pyWPwuYi/WMOf4u4kLY/EFpoTySKJj4/VgPjSuKnE2ZzYl9FVe6D8Xqz
-	 cUZLI2PbgEuj0ByovNovQqPQ2umKk2i2mA/spVNc=
+	b=VR3rJ1dTBSVUk31tXR3cXxcnAlfbz/rYEFl/sKI23tcQw/IJcCut/Sw4LJSn02sBF
+	 B03Tw5BLL51grS64YAPd7E2QUJehTraPI6BrMBivz5vxwB1Y5R+mHDvuCTQPbME5a6
+	 csLTawAqYEhf7jKG1L+CDYcqX9RkYrwMPoPaZJEY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730578AbeLZXCM (ORCPT
+        id S1727011AbeLZWgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:02:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbeLZWgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:15 -0500
+        id S1726853AbeLZWgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB5A21902;
-        Wed, 26 Dec 2018 22:36:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD19F21741;
+        Wed, 26 Dec 2018 22:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863774;
-        bh=Qngf2Hh7lIc4YqkBtCoIHgxChlKS1+msWiB8ZiEA9c0=;
+        s=default; t=1545863768;
+        bh=jNIR5DhCmFvWuaOLeArnByYKeYdHSv56Pl0InoEVKiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xbCQhRFgW3hdED7KolQb3OfJzBc3Ni+7xxSERlTDIsceldfNcfbUh4sXd/zXY72EI
-         nKNzpAAtgW3dzBxPfNN+aIdB7w4+1uC0L6glEfe7jJsHKmaNrQyTzqlng1esnePYRK
-         h/R+aIA/ImQTnBsw42PY6ea+NLYeseyxzkxzCgN4=
+        b=bJ8AaaytxWSMc21bQrL3Dh1m5eITR3NFImkpFzGIBJGF/h02Jpqb9tcagSIStLhti
+         LEJyigVip8gpeXj1a36KL34x1uzyTuySL5DR9YOaJ8QdwBYrfi//ggyemog5WjP1H8
+         rwtX1aYIgnzW2eLrLPfNSpSIQwnc9TplOsIRJMPw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 11/97] Input: restore EV_ABS ABS_RESERVED
-Date:   Wed, 26 Dec 2018 17:34:31 -0500
-Message-Id: <20181226223557.149329-11-sashal@kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 05/97] powerpc/mm: Fix linux page tables build with some configs
+Date:   Wed, 26 Dec 2018 17:34:25 -0500
+Message-Id: <20181226223557.149329-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,43 +56,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Hutterer <peter.hutterer@who-t.net>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
+[ Upstream commit 462951cd32e1496dc64b00051dfb777efc8ae5d8 ]
 
-ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
-ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
+For some configs the build fails with:
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+  arch/powerpc/mm/dump_linuxpagetables.c: In function 'populate_markers':
+  arch/powerpc/mm/dump_linuxpagetables.c:306:39: error: 'PKMAP_BASE' undeclared (first use in this function)
+  arch/powerpc/mm/dump_linuxpagetables.c:314:50: error: 'LAST_PKMAP' undeclared (first use in this function)
+
+These come from highmem.h, including that fixes the build.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/input-event-codes.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/powerpc/mm/dump_linuxpagetables.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 53fbae27b280..61a5799b440b 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -744,6 +744,15 @@
- 
- #define ABS_MISC		0x28
- 
-+/*
-+ * 0x2e is reserved and should not be used in input drivers.
-+ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
-+ * the next ABS_* event is correct or is just ABS_MISC + n.
-+ * We define here ABS_RESERVED so userspace can rely on it and detect
-+ * the situation described above.
-+ */
-+#define ABS_RESERVED		0x2e
-+
- #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
- #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
- #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
+diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
+index bdf33b989f98..8464c2c01c0c 100644
+--- a/arch/powerpc/mm/dump_linuxpagetables.c
++++ b/arch/powerpc/mm/dump_linuxpagetables.c
+@@ -19,6 +19,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/io.h>
+ #include <linux/mm.h>
++#include <linux/highmem.h>
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+ #include <asm/fixmap.h>
 -- 
 2.19.1
 
