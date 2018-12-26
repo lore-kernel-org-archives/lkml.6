@@ -6,172 +6,352 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BC9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253DAC43613
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5CD52148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D722148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbeLZApJ (ORCPT
+        id S1729754AbeLZApK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:45:09 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57334 "EHLO
+        Tue, 25 Dec 2018 19:45:10 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57338 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbeLZAoB (ORCPT
+        with ESMTP id S1725919AbeLZAoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Dec 2018 19:44:01 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 0B5692952C; Tue, 25 Dec 2018 19:43:57 -0500 (EST)
+        id 5A9EB29523; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linuxppc-dev@lists.ozlabs.org
-Message-Id: <22b3299016531a7a05c9c45b36d43565c794e67d.1545784679.git.fthain@telegraphics.com.au>
+Message-Id: <505240b144f1666acf26a3c1e93c8e6868fe1408.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 22/25] powerpc: Remove CONFIG_GENERIC_NVRAM and adopt
- CONFIG_HAVE_ARCH_NVRAM_OPS
+Subject: [PATCH v8 13/25] m68k: Dispatch nvram_ops calls to Atari or Mac
+ functions
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch PPC32 kernels from the generic_nvram module to the nvram module.
+A multi-platform kernel binary has to decide at run-time how to dispatch
+the arch_nvram_ops calls. Add a platform-independent arch_nvram_ops
+struct for this, to replace the atari-specific one.
 
-Also fix a theoretical bug where CHRP omits the chrp_nvram_init()
-call when CONFIG_NVRAM_MODULE=m.
+Enable CONFIG_HAVE_ARCH_NVRAM_OPS for Macs.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Laurent Vivier <lvivier@redhat.com>
+Tested-by: Christian T. Steigies <cts@debian.org>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
-The change in the name of the module is visible to userspace. The module
-that implements /dev/nvram on PowerPC now has suitable aliases, i.e.
-MODULE_ALIAS_MISCDEV(NVRAM_MINOR);
-MODULE_ALIAS("devname:nvram");
-so that the device special file can be automatically created and the
-module automatically loaded when needed. Previously this was not the case.
+ arch/m68k/Kconfig.machine         |   1 +
+ arch/m68k/atari/nvram.c           |  21 ++-----
+ arch/m68k/include/asm/atarihw.h   |   6 ++
+ arch/m68k/include/asm/macintosh.h |   4 ++
+ arch/m68k/kernel/setup_mm.c       | 100 +++++++++++++++++++++++++++++-
+ arch/m68k/mac/misc.c              |  11 ++++
+ 6 files changed, 126 insertions(+), 17 deletions(-)
 
-Changed since v7:
- - Improved Kconfig help text for CONFIG_NVRAM.
- - Changed the default for CONFIG_NVRAM, which used to be "n". This is to
-reduce the risk that CONFIG_GENERIC_NVRAM=y accidentally gets changed to
-CONFIG_NVRAM=n.
----
- arch/powerpc/Kconfig                    |  2 +-
- arch/powerpc/kernel/setup_32.c          |  2 +-
- arch/powerpc/platforms/chrp/Makefile    |  2 +-
- arch/powerpc/platforms/chrp/setup.c     |  2 +-
- arch/powerpc/platforms/powermac/setup.c |  3 +--
- drivers/char/Kconfig                    | 19 +++++++++----------
- 6 files changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8be31261aec8..5b859b7f6599 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -272,7 +272,7 @@ config SYSVIPC_COMPAT
- 	default y
- 
- # All PPC32s use generic nvram driver through ppc_md
--config GENERIC_NVRAM
-+config HAVE_ARCH_NVRAM_OPS
- 	bool
- 	default y if PPC32
- 
-diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-index bdbe6acbef11..96782abb0c41 100644
---- a/arch/powerpc/kernel/setup_32.c
-+++ b/arch/powerpc/kernel/setup_32.c
-@@ -150,7 +150,7 @@ static int __init ppc_setup_l3cr(char *str)
+diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
+index 0c8c4c7982c1..da21783136c7 100644
+--- a/arch/m68k/Kconfig.machine
++++ b/arch/m68k/Kconfig.machine
+@@ -27,6 +27,7 @@ config MAC
+ 	bool "Macintosh support"
+ 	depends on MMU
+ 	select MMU_MOTOROLA if MMU
++	select HAVE_ARCH_NVRAM_OPS
+ 	help
+ 	  This option enables support for the Apple Macintosh series of
+ 	  computers (yes, there is experimental support now, at least for part
+diff --git a/arch/m68k/atari/nvram.c b/arch/m68k/atari/nvram.c
+index 4b27f1683a37..0a6fe59c95e8 100644
+--- a/arch/m68k/atari/nvram.c
++++ b/arch/m68k/atari/nvram.c
+@@ -74,7 +74,7 @@ static void __nvram_set_checksum(void)
+ 	__nvram_write_byte(sum, ATARI_CKS_LOC + 1);
  }
- __setup("l3cr=", ppc_setup_l3cr);
  
--#ifdef CONFIG_GENERIC_NVRAM
-+#if IS_ENABLED(CONFIG_NVRAM)
- 
- static unsigned char ppc_nvram_read_byte(int addr)
+-static long nvram_set_checksum(void)
++long atari_nvram_set_checksum(void)
  {
-diff --git a/arch/powerpc/platforms/chrp/Makefile b/arch/powerpc/platforms/chrp/Makefile
-index 4b3bfadc70fa..dc3465cc8bc6 100644
---- a/arch/powerpc/platforms/chrp/Makefile
-+++ b/arch/powerpc/platforms/chrp/Makefile
-@@ -1,3 +1,3 @@
- obj-y				+= setup.o time.o pegasos_eth.o pci.o
- obj-$(CONFIG_SMP)		+= smp.o
--obj-$(CONFIG_NVRAM)		+= nvram.o
-+obj-$(CONFIG_NVRAM:m=y)		+= nvram.o
-diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
-index d6d8ffc0271e..ba216aef964a 100644
---- a/arch/powerpc/platforms/chrp/setup.c
-+++ b/arch/powerpc/platforms/chrp/setup.c
-@@ -556,7 +556,7 @@ static void __init chrp_init_IRQ(void)
- static void __init
- chrp_init2(void)
+ 	spin_lock_irq(&rtc_lock);
+ 	__nvram_set_checksum();
+@@ -82,7 +82,7 @@ static long nvram_set_checksum(void)
+ 	return 0;
+ }
+ 
+-static long nvram_initialize(void)
++long atari_nvram_initialize(void)
  {
--#ifdef CONFIG_NVRAM
-+#if IS_ENABLED(CONFIG_NVRAM)
- 	chrp_nvram_init();
- #endif
+ 	loff_t i;
  
-diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
-index 2f00e3daafb0..ce340ae4ee38 100644
---- a/arch/powerpc/platforms/powermac/setup.c
-+++ b/arch/powerpc/platforms/powermac/setup.c
-@@ -316,8 +316,7 @@ static void __init pmac_setup_arch(void)
- 	find_via_pmu();
- 	smu_init();
+@@ -94,7 +94,7 @@ static long nvram_initialize(void)
+ 	return 0;
+ }
  
--#if defined(CONFIG_NVRAM) || defined(CONFIG_NVRAM_MODULE) || \
--    defined(CONFIG_PPC64)
-+#if IS_ENABLED(CONFIG_NVRAM) || defined(CONFIG_PPC64)
- 	pmac_nvram_init();
- #endif
- #ifdef CONFIG_PPC32
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index f9960bd65481..2a193b298d27 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -236,25 +236,24 @@ source "drivers/char/hw_random/Kconfig"
+-static ssize_t nvram_read(char *buf, size_t count, loff_t *ppos)
++ssize_t atari_nvram_read(char *buf, size_t count, loff_t *ppos)
+ {
+ 	char *p = buf;
+ 	loff_t i;
+@@ -115,7 +115,7 @@ static ssize_t nvram_read(char *buf, size_t count, loff_t *ppos)
+ 	return p - buf;
+ }
  
- config NVRAM
- 	tristate "/dev/nvram support"
--	depends on X86 || GENERIC_NVRAM || HAVE_ARCH_NVRAM_OPS
--	default M68K
-+	depends on X86 || HAVE_ARCH_NVRAM_OPS
-+	default M68K || PPC
- 	---help---
- 	  If you say Y here and create a character special file /dev/nvram
- 	  with major number 10 and minor number 144 using mknod ("man mknod"),
--	  you get read and write access to the extra bytes of non-volatile
--	  memory in the real time clock (RTC), which is contained in every PC
--	  and most Ataris.  The actual number of bytes varies, depending on the
--	  nvram in the system, but is usually 114 (128-14 for the RTC).
+-static ssize_t nvram_write(char *buf, size_t count, loff_t *ppos)
++ssize_t atari_nvram_write(char *buf, size_t count, loff_t *ppos)
+ {
+ 	char *p = buf;
+ 	loff_t i;
+@@ -138,22 +138,11 @@ static ssize_t nvram_write(char *buf, size_t count, loff_t *ppos)
+ 	return p - buf;
+ }
+ 
+-static ssize_t nvram_get_size(void)
++ssize_t atari_nvram_get_size(void)
+ {
+-	if (!MACH_IS_ATARI)
+-		return -ENODEV;
+ 	return NVRAM_BYTES;
+ }
+ 
+-const struct nvram_ops arch_nvram_ops = {
+-	.read           = nvram_read,
+-	.write          = nvram_write,
+-	.get_size       = nvram_get_size,
+-	.set_checksum   = nvram_set_checksum,
+-	.initialize     = nvram_initialize,
+-};
+-EXPORT_SYMBOL(arch_nvram_ops);
 -
--	  This memory is conventionally called "CMOS RAM" on PCs and "NVRAM"
--	  on Ataris. /dev/nvram may be used to view settings there, or to
--	  change them (with some utility). It could also be used to frequently
-+	  you get read and write access to the non-volatile memory.
-+
-+	  /dev/nvram may be used to view settings in NVRAM or to change them
-+	  (with some utility). It could also be used to frequently
- 	  save a few bits of very important data that may not be lost over
- 	  power-off and for which writing to disk is too insecure. Note
- 	  however that most NVRAM space in a PC belongs to the BIOS and you
- 	  should NEVER idly tamper with it. See Ralf Brown's interrupt list
- 	  for a guide to the use of CMOS bytes by your BIOS.
+ #ifdef CONFIG_PROC_FS
+ static struct {
+ 	unsigned char val;
+diff --git a/arch/m68k/include/asm/atarihw.h b/arch/m68k/include/asm/atarihw.h
+index 9000b249d225..533008262b69 100644
+--- a/arch/m68k/include/asm/atarihw.h
++++ b/arch/m68k/include/asm/atarihw.h
+@@ -33,6 +33,12 @@ extern int atari_dont_touch_floppy_select;
  
-+	  This memory is conventionally called "NVRAM" on PowerPC machines,
-+	  "CMOS RAM" on PCs, "NVRAM" on Ataris and "PRAM" on Macintoshes.
-+
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called nvram.
+ extern int atari_SCC_reset_done;
  
++extern ssize_t atari_nvram_read(char *, size_t, loff_t *);
++extern ssize_t atari_nvram_write(char *, size_t, loff_t *);
++extern ssize_t atari_nvram_get_size(void);
++extern long atari_nvram_set_checksum(void);
++extern long atari_nvram_initialize(void);
++
+ /* convenience macros for testing machine type */
+ #define MACH_IS_ST	((atari_mch_cookie >> 16) == ATARI_MCH_ST)
+ #define MACH_IS_STE	((atari_mch_cookie >> 16) == ATARI_MCH_STE && \
+diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
+index 08cee11180e6..d9a08bed4b12 100644
+--- a/arch/m68k/include/asm/macintosh.h
++++ b/arch/m68k/include/asm/macintosh.h
+@@ -19,6 +19,10 @@ extern void mac_init_IRQ(void);
+ extern void mac_irq_enable(struct irq_data *data);
+ extern void mac_irq_disable(struct irq_data *data);
+ 
++extern unsigned char mac_pram_read_byte(int);
++extern void mac_pram_write_byte(unsigned char, int);
++extern ssize_t mac_pram_get_size(void);
++
+ /*
+  *	Macintosh Table
+  */
+diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+index ad0195cbe042..4dd80bb8a283 100644
+--- a/arch/m68k/kernel/setup_mm.c
++++ b/arch/m68k/kernel/setup_mm.c
+@@ -24,6 +24,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/module.h>
++#include <linux/nvram.h>
+ #include <linux/initrd.h>
+ 
+ #include <asm/bootinfo.h>
+@@ -37,13 +38,14 @@
+ #ifdef CONFIG_AMIGA
+ #include <asm/amigahw.h>
+ #endif
+-#ifdef CONFIG_ATARI
+ #include <asm/atarihw.h>
++#ifdef CONFIG_ATARI
+ #include <asm/atari_stram.h>
+ #endif
+ #ifdef CONFIG_SUN3X
+ #include <asm/dvma.h>
+ #endif
++#include <asm/macintosh.h>
+ #include <asm/natfeat.h>
+ 
+ #if !FPSTATESIZE || !NR_IRQS
+@@ -547,3 +549,99 @@ static int __init adb_probe_sync_enable (char *str) {
+ 
+ __setup("adb_sync", adb_probe_sync_enable);
+ #endif /* CONFIG_ADB */
++
++#if IS_ENABLED(CONFIG_NVRAM)
++#ifdef CONFIG_MAC
++static unsigned char m68k_nvram_read_byte(int addr)
++{
++	if (MACH_IS_MAC)
++		return mac_pram_read_byte(addr);
++	return 0xff;
++}
++
++static void m68k_nvram_write_byte(unsigned char val, int addr)
++{
++	if (MACH_IS_MAC)
++		mac_pram_write_byte(val, addr);
++}
++#endif /* CONFIG_MAC */
++
++#ifdef CONFIG_ATARI
++static ssize_t m68k_nvram_read(char *buf, size_t count, loff_t *ppos)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_read(buf, count, ppos);
++	else if (MACH_IS_MAC) {
++		ssize_t size = mac_pram_get_size();
++		char *p = buf;
++		loff_t i;
++
++		for (i = *ppos; count > 0 && i < size; --count, ++i, ++p)
++			*p = mac_pram_read_byte(i);
++
++		*ppos = i;
++		return p - buf;
++	}
++	return -EINVAL;
++}
++
++static ssize_t m68k_nvram_write(char *buf, size_t count, loff_t *ppos)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_write(buf, count, ppos);
++	else if (MACH_IS_MAC) {
++		ssize_t size = mac_pram_get_size();
++		char *p = buf;
++		loff_t i;
++
++		for (i = *ppos; count > 0 && i < size; --count, ++i, ++p)
++			mac_pram_write_byte(*p, i);
++
++		*ppos = i;
++		return p - buf;
++	}
++	return -EINVAL;
++}
++
++static long m68k_nvram_set_checksum(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_set_checksum();
++	return -EINVAL;
++}
++
++static long m68k_nvram_initialize(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_initialize();
++	return -EINVAL;
++}
++#endif /* CONFIG_ATARI */
++
++static ssize_t m68k_nvram_get_size(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_get_size();
++	else if (MACH_IS_MAC)
++		return mac_pram_get_size();
++	return -ENODEV;
++}
++
++/* Atari device drivers call .read (to get checksum validation) whereas
++ * Mac and PowerMac device drivers just use .read_byte.
++ */
++const struct nvram_ops arch_nvram_ops = {
++#ifdef CONFIG_MAC
++	.read_byte      = m68k_nvram_read_byte,
++	.write_byte     = m68k_nvram_write_byte,
++#endif
++#ifdef CONFIG_ATARI
++	.read           = m68k_nvram_read,
++	.write          = m68k_nvram_write,
++	.set_checksum   = m68k_nvram_set_checksum,
++	.initialize     = m68k_nvram_initialize,
++#endif
++	.get_size       = m68k_nvram_get_size,
++};
++EXPORT_SYMBOL(arch_nvram_ops);
++#endif /* CONFIG_NVRAM */
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 0009efebb264..b7e6bc037fc4 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -36,6 +36,7 @@
+ 
+ static void (*rom_reset)(void);
+ 
++#if IS_ENABLED(CONFIG_NVRAM)
+ #ifdef CONFIG_ADB_CUDA
+ static unsigned char cuda_pram_read_byte(int offset)
+ {
+@@ -84,6 +85,7 @@ static void pmu_pram_write_byte(unsigned char data, int offset)
+ 	pmu_wait_complete(&req);
+ }
+ #endif /* CONFIG_ADB_PMU */
++#endif /* CONFIG_NVRAM */
+ 
+ /*
+  * VIA PRAM/RTC access routines
+@@ -205,6 +207,7 @@ static void via_rtc_command(int command, __u8 *data)
+ 	local_irq_restore(flags);
+ }
+ 
++#if IS_ENABLED(CONFIG_NVRAM)
+ static unsigned char via_pram_read_byte(int offset)
+ {
+ 	unsigned char temp;
+@@ -227,6 +230,7 @@ static void via_pram_write_byte(unsigned char data, int offset)
+ 	temp = 0x55 | RTC_FLG_WRITE_PROTECT;
+ 	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
+ }
++#endif /* CONFIG_NVRAM */
+ 
+ /*
+  * Return the current time in seconds since January 1, 1904.
+@@ -372,6 +376,7 @@ static void cuda_shutdown(void)
+  *-------------------------------------------------------------------
+  */
+ 
++#if IS_ENABLED(CONFIG_NVRAM)
+ unsigned char mac_pram_read_byte(int addr)
+ {
+ 	switch (macintosh_config->adb_type) {
+@@ -417,6 +422,12 @@ void mac_pram_write_byte(unsigned char val, int addr)
+ 	}
+ }
+ 
++ssize_t mac_pram_get_size(void)
++{
++	return 256;
++}
++#endif /* CONFIG_NVRAM */
++
+ void mac_poweroff(void)
+ {
+ 	if (oss_present) {
 -- 
 2.19.2
 
