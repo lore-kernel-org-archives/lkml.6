@@ -2,138 +2,150 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1813C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E7EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9482A214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545824647;
-	bh=utkn1HW2Qr9QiYu8jfVXpKJDGr53KWTF4eFVRCLLa7U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ywh1ITf/eyTdD1n96PiNz6+ve5KXzYgPX4X843FfMSBZTwNWhV4TBNcjqM43jF8Hh
-	 ITTqDIs3MM4SCiigd8DyO0YVTjgtDdflxKwnWZ+pRJN5+MHiTspouXAB+E/sxpj+SW
-	 91ePuOzqOFCbXsAfauC9FHIPPQMrbghjDgAVhyfk=
+	by mail.kernel.org (Postfix) with ESMTP id 5D832214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbeLZLoG (ORCPT
+        id S1726765AbeLZLqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:44:06 -0500
-Received: from casper.infradead.org ([85.118.1.10]:44848 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbeLZLoG (ORCPT
+        Wed, 26 Dec 2018 06:46:44 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34164 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeLZLqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:44:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EooV2cAZ15bFoWJtG+86LBUlp1H6fg8CN4reh6/6GJE=; b=kbNjwIWoBUg0dEnH7kW0eb3vz8
-        7Ev07m6xosB65ke+6pQwIip+piqiXGWdQZUdtKhNlmCwORii+lbM3tRFS2vsG8ooyQhs4ZBZbuAVX
-        nugVfZjJTaExLWAQHykhBfyX0CPehKZcUapTe1dCmoDG9Z4vRmdIdr1dowmrZfqpKGwVjnjfo2N3S
-        eCU1XpouPrW2wUTQDxckWZEVhyB/4FOhSHzhAQnhLD2CFKwmIMze8m1N2ofDO6JGE0DVhLTbJl384
-        Vrhzqg9C35FO0M805hzOFOce9/CDxshnHTlA7OBNuS2MJj2ubcG4dVR8GV4NDGyyGOxP+KILg+nOr
-        q15fvb+g==;
-Received: from [179.179.34.18] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gc7bX-00084F-3c; Wed, 26 Dec 2018 11:44:03 +0000
-Date:   Wed, 26 Dec 2018 09:43:57 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Wed, 26 Dec 2018 06:46:44 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b3so13077616ede.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 03:46:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CGQn+i9wfBjYhMCNCjDuvQ8HTY47jfkrcjRlmkBqHcs=;
+        b=VdPbvnk+s5Q0Yqr6p9CNK0OLUz8/mYZfrd2Gv3YZpRV6biBrdAu0gKvgGyuPnAQi/s
+         qo3RAFH1YY9m30GmnQjSGtptfGWOiCV5Pi1U5zEk2etV2KzvaxGl2dk8GfBUsz1tawdZ
+         8klWtyw40UeYUk8OUlr7SE6pN3cO6allvLJhRtikSKCOvHz51iDVK2khxGF+nytyvDGM
+         E7Sd7yZGlXiNFy6JqjAtwuRGds5BdUNfqhrdoOvh7BDlK11u0kxfCjvQq6sF6ewTWYzq
+         4hKCkkVM8rTMzRhukM63mCIf/ApTGigXhr5yi32i9MzOBRrBvfT49du+A2DBQwurslZI
+         EtqA==
+X-Gm-Message-State: AA+aEWb092IOlfsQ9pxGCjMyCpnHeUkTlhbhrhpXb7GdvFJouPDNNyLl
+        JPCdTqtiXZ5nYok737kfJqhTZjGtHDY=
+X-Google-Smtp-Source: AFSGD/V9I3akP55ATp5Uxhi9MTaWNlJ4HmEfw7iND17e9HiViGSQAsL45gz9RbLYkLcDDAnykZNmwQ==
+X-Received: by 2002:a50:9feb:: with SMTP id c98mr15416662edf.253.1545824802407;
+        Wed, 26 Dec 2018 03:46:42 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id d5sm10414455edb.48.2018.12.26.03.46.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 03:46:41 -0800 (PST)
+Subject: Re: [PATCH v2 0/9] i2c: move handling of suspended adapters to the
+ core
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [GIT PULL for v4.21] second set of media patches: ipu3 driver
-Message-ID: <20181226094357.293fdd97@coco.lan>
-In-Reply-To: <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
-References: <20181220104544.72ee9203@coco.lan>
-        <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <5ffe2d98-696e-4cc2-51d0-9cc7dc936d7e@redhat.com>
+Date:   Wed, 26 Dec 2018 12:46:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 25 Dec 2018 13:12:58 -0800
-Linus Torvalds <torvalds@linux-foundation.org> escreveu:
+Hi,
 
-> On Thu, Dec 20, 2018 at 4:45 AM Mauro Carvalho Chehab
-> <mchehab+samsung@kernel.org> wrote:
-> >
-> > Also, it would be good if you merge first the docs-next pull request from
-> > Jon, as otherwise, you'll see some warnings when building documentation,
-> > due to an issue at scripts/kernel-doc, whose fix is at documentation tree.  
+On 26-12-18 12:01, Geert Uytterhoeven wrote:
+> Hi Wolfram,
 > 
-> I don't seem to have that in my pile of pull requests, so docs
-> creation will warn for a bit. Not a huge deal.
+> On Sat, Dec 22, 2018 at 9:26 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>> Here is the new version without specific I2C helpers but using the
+>> 'is_suspended' flag from the PM core. I didn't like messing with the
+>> flag directly, so I did a helper in patch 1. So far, I like the
+>> approach. The diffstat looks nice, and i2c-rcar.c and i2c-sh_mobile.c
+>> rejected rightfully too later transfers without further modifications.
+>> Tested on a Renesas Lager board (R-Car H2).
+>>
+>> I dropped a few Tested-by tags because I think this approach is too
+>> different from V1 to keep them. I hope you guys can have a look again.
+>> Thanks for all the testing, so far!
+>>
+>> A branch can be found here:
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/reject-when-suspended
+>>
+>> If this series is acceptable, I'd suggest to take it via my i2c tree
+>> after rc1. And then I'll provide an immutable branch for the PM tree to
+>> pick. Let me know if this works for you.
+> 
+> This breaks resume of the CS2000 clock driver on Salvator-X(S) (and
+> presumable ULCB, too):
+> 
+>      Accessing already suspended I2C/SMBus adapter
+>      WARNING: CPU: 1 PID: 1186 at drivers/i2c/i2c-core-smbus.c:551
+> __i2c_smbus_xfer+0x38/0x66c
+>      Modules linked in:
+>      CPU: 1 PID: 1186 Comm: s2idle Not tainted
+> 4.20.0-salvator-x-08442-ge5992c41ac706409 #264
+>      Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
+>      pstate: 60400005 (nZCv daif +PAN -UAO)
+>      pc : __i2c_smbus_xfer+0x38/0x66c
+>      lr : __i2c_smbus_xfer+0x38/0x66c
+>      sp : ffffff8013413880
+>      x29: ffffff8013413880 x28: ffffffc6f78b4820
+>      x27: 0000000000000010 x26: ffffff8010cf6178
+>      x25: ffffff8013413976 x24: 0000000000000002
+>      x23: 0000000000000016 x22: ffffffc6f7872088
+>      x21: 0000000000000000 x20: 000000000000004f
+>      x19: ffffffc6f7872088 x18: 000000000000000a
+>      x17: 0000000000000000 x16: 0000000000000000
+>      x15: 0000000000029c80 x14: 0720072007200720
+>      x13: 0720072007200720 x12: 0720072007200720
+>      x11: 0720072007200720 x10: 0720072007200720
+>      x9 : ffffff801100e6d0 x8 : 6461207375424d53
+>      x7 : ffffff8011c825c8 x6 : ffffff8011c82000
+>      x5 : 0000000000000000 x4 : ffffff8013414000
+>      x3 : ffffff80134136e0 x2 : 00000046ee875000
+>      x1 : 82c6d7c720d64000 x0 : 0000000000000000
+>      Call trace:
+>       __i2c_smbus_xfer+0x38/0x66c
+>       i2c_smbus_xfer+0x64/0x98
+>       i2c_smbus_read_byte_data+0x40/0x6c
+>       cs2000_bset.isra.1+0x2c/0x58
+>       __cs2000_set_rate.constprop.7+0x8c/0x134
+>       cs2000_resume+0x14/0x1c
+>       dpm_run_callback+0x15c/0x2d8
+>       device_resume_early+0x98/0xec
+>       dpm_resume_early+0x3b0/0x454
+>       suspend_devices_and_enter+0x7bc/0xbb0
+> 
+> The CS2000 driver uses SET_LATE_SYSTEM_SLEEP_PM_OPS().
+> 
+> Suspend/resume of the BD9571 driver works fine, as that one uses
+> SET_SYSTEM_SLEEP_PM_OPS().
 
-Yeah, we can live without that for a while. In any case, the patch that
-fixes it is this one:
+Ok, so this is the same thing I noticed, the approach using
+the pm-core is_suspend flag only works for adapters which
+suspend during the regular suspend phase and as such that
+approach cannot work everywhere.
 
-	3d9bfb19bd70 ("scripts/kernel-doc: Fix struct and struct field attribute processing")
+Regards,
 
-I'm enclosing it as a reference (as seen at Jon's docs-next tree). It is
-probably worth to just wait for Jon's pull request.
-
-Thanks,
-Mauro
-
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 22 Nov 2018 13:06:04 +0200
-Subject: [PATCH] scripts/kernel-doc: Fix struct and struct field attribute
- processing
-
-The kernel-doc attempts to clear the struct and struct member attributes
-from the API documentation it produces. It falls short of the job in the
-following respects:
-
-- extra whitespaces are left where __attribute__((...)) was removed,
-
-- only a single attribute is removed per struct,
-
-- attributes (such as aligned) containing numbers were not removed,
-
-- attributes are only cleared from struct fields, not structs themselves.
-
-This patch addresses these issues by removing the attributes.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-
-diff --git a/scripts/kernel-doc b/scripts/kernel-doc
-index f9f143145c4b..c5333d251985 100755
---- a/scripts/kernel-doc
-+++ b/scripts/kernel-doc
-@@ -1062,7 +1062,7 @@ sub dump_struct($$) {
-     my $x = shift;
-     my $file = shift;
- 
--    if ($x =~ /(struct|union)\s+(\w+)\s*\{(.*)\}/) {
-+    if ($x =~ /(struct|union)\s+(\w+)\s*\{(.*)\}(\s*(__packed|__aligned|__attribute__\s*\(\([a-z0-9,_\s\(\)]*\)\)))*/) {
- 	my $decl_type = $1;
- 	$declaration_name = $2;
- 	my $members = $3;
-@@ -1073,8 +1073,9 @@ sub dump_struct($$) {
- 	# strip comments:
- 	$members =~ s/\/\*.*?\*\///gos;
- 	# strip attributes
--	$members =~ s/__attribute__\s*\(\([a-z,_\*\s\(\)]*\)\)//i;
--	$members =~ s/__aligned\s*\([^;]*\)//gos;
-+	$members =~ s/\s*__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)//gi;
-+	$members =~ s/\s*__aligned\s*\([^;]*\)//gos;
-+	$members =~ s/\s*__packed\s*//gos;
- 	$members =~ s/\s*CRYPTO_MINALIGN_ATTR//gos;
- 	# replace DECLARE_BITMAP
- 	$members =~ s/DECLARE_BITMAP\s*\(([^,)]+),\s*([^,)]+)\)/unsigned long $1\[BITS_TO_LONGS($2)\]/gos;
-
+Hans
