@@ -2,58 +2,55 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE91BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD0FC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B476E214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E3F214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864131;
-	bh=Zp4Shgj6on+KbZN0SyQh1esyiCHNRpx9ClKA9GzO5qo=;
+	s=default; t=1545864139;
+	bh=MOkqx+88FayCENhO7Ujff2lHaw09/FfOpMZHnje1fLA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yoGAUZkFodfRY9bYifkrB3pq/8IKs8ixpfDqjB7C7jVYOwxhsUyRiDzpQZxzvgLFl
-	 vv0cRLH/1wzMROILifliHyyoiOhfq0mVoMsHhtGUuGg7Vgr4orZEOGqxLzKAAuhn9W
-	 gmAzMktwmwtyfhhZn2w+sbvx1YEee9w4srAZdEvc=
+	b=p3wM5GD6dOSlcrzss2vxelr1ey52j41qGwiSdsNZjSgboVk7wOJLUBriG6ARezptw
+	 3GAWqMuKsaquZx5m6AUuyGJA/Kyhwlzmkf0SxoAR+UYy5tR/tn7QolH/hEi3LuoJNS
+	 ZT5znCZsyp27hC+QV0sxwSzLqYTegl39owqVA8L8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729508AbeLZWli (ORCPT
+        id S1729607AbeLZWmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:41:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:42:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbeLZWlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:41:35 -0500
+        id S1729475AbeLZWlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:41:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D304B20651;
-        Wed, 26 Dec 2018 22:41:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B761D21924;
+        Wed, 26 Dec 2018 22:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864094;
-        bh=Zp4Shgj6on+KbZN0SyQh1esyiCHNRpx9ClKA9GzO5qo=;
+        s=default; t=1545864091;
+        bh=MOkqx+88FayCENhO7Ujff2lHaw09/FfOpMZHnje1fLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S0ADXtORY1pDteuPz3QOxQWE08GjX+U/iwikssWAxHtOJ56BzJJGFbN33sfYDotdT
-         +Hrga9sOsN90Apguf/xVn+p9Bwcfs9ONuWObRPrcVEkT/FW4IBcVxedHR9PCj25h4k
-         TwRNNLTwwUD7bIVxWzMyY/U6FyoAkC5aX1XUGdw8=
+        b=Yah9DAciTad5feyHkk7m71Dta1kXz4Y8iCCHJrdlFzmDBEHPX+TgJ0yNPOaxK9/oH
+         kBJ4xRtWMSEPpCMb3uywcxYO0p8v3JdDzOJxxMHiMsEMvi6tyTBh1eU4k3T/3ZtETD
+         IZrXLRzvXpQktVK36TbFj9TxyvzAPV5+ZaGl7YqI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 55/59] gpio: mvebu: only fail on missing clk if pwm is actually to be used
-Date:   Wed, 26 Dec 2018 17:38:35 -0500
-Message-Id: <20181226223839.150262-55-sashal@kernel.org>
+Cc:     Yuval Avnery <yuvalav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 53/59] net/mlx5: Typo fix in del_sw_hw_rule
+Date:   Wed, 26 Dec 2018 17:38:33 -0500
+Message-Id: <20181226223839.150262-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,48 +58,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-[ Upstream commit c8da642d41a6811c21177c9994aa7dc35be67d46 ]
+[ Upstream commit f0337889147c956721696553ffcc97212b0948fe ]
 
-The gpio IP on Armada 370 at offset 0x18180 has neither a clk nor pwm
-registers. So there is no need for a clk as the pwm isn't used anyhow.
-So only check for the clk in the presence of the pwm registers. This fixes
-a failure to probe the gpio driver for the above mentioned gpio device.
+Expression terminated with "," instead of ";", resulted in
+set_fte getting bad value for modify_enable_mask field.
 
-Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: bd5251dbf156 ("net/mlx5_core: Introduce flow steering destination of type counter")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mvebu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 45c65f805fd6..be85d4b39e99 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -777,9 +777,6 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 				     "marvell,armada-370-gpio"))
- 		return 0;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+index dd05cf148845..6538b7b943f0 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -425,7 +425,7 @@ static void del_rule(struct fs_node *node)
  
--	if (IS_ERR(mvchip->clk))
--		return PTR_ERR(mvchip->clk);
--
- 	/*
- 	 * There are only two sets of PWM configuration registers for
- 	 * all the GPIO lines on those SoCs which this driver reserves
-@@ -790,6 +787,9 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 	if (!res)
- 		return 0;
- 
-+	if (IS_ERR(mvchip->clk))
-+		return PTR_ERR(mvchip->clk);
-+
- 	/*
- 	 * Use set A for lines of GPIO chip with id 0, B for GPIO chip
- 	 * with id 1. Don't allow further GPIO chips to be used for PWM.
+ 	if ((fte->action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) &&
+ 	    --fte->dests_size) {
+-		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST),
++		modify_mask = BIT(MLX5_SET_FTE_MODIFY_ENABLE_MASK_DESTINATION_LIST);
+ 		update_fte = true;
+ 	}
+ out:
 -- 
 2.19.1
 
