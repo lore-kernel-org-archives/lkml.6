@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD098C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE62EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC832070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EB862070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865323;
-	bh=XbytHSzGyTLSqEJykfWhYWEYXJzKkuXJBvdY2ueRJlI=;
+	s=default; t=1545865329;
+	bh=EYK7mi8qqtdPUhIo+BK/iu4R2l6ptpNTXxKsPhvIttg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fqz6SoDz8AFsA7ikV9AU7mGKX8NV4l2hPCoXZC5BtdwDBzf5sQ6o9lCJSOLvO/wVc
-	 BcnQHyWJhkmHhoCPAcT2XpL8HtYTt+ioBZDZCPv8yeojQAkkbe99oJbpHu0+nyYmU1
-	 teVNWgfZiDAWqyZJPkXETHJyTVq6ldctH6a0TIm0=
+	b=MfYouupSfkCZfkiW40aA3zm0m9+NCex0FJ43dQZ8c945M1DD7hJx6OSyzmwl/AePO
+	 fMiPMxiWWe+CvBjR46PFlpko38upQd3wC58NOG8qfO2gyDSfnv321Bl0Pr9xEgoPYI
+	 LIy1VzFUUOV/hxNcspff/icUxPj+PYRv7S1Jwmtk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeLZXCC (ORCPT
+        id S1727070AbeLZWgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:02:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36226 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbeLZWgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:20 -0500
+        id S1726921AbeLZWgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C39F7218E2;
-        Wed, 26 Dec 2018 22:36:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA05921901;
+        Wed, 26 Dec 2018 22:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863779;
-        bh=XbytHSzGyTLSqEJykfWhYWEYXJzKkuXJBvdY2ueRJlI=;
+        s=default; t=1545863771;
+        bh=EYK7mi8qqtdPUhIo+BK/iu4R2l6ptpNTXxKsPhvIttg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k09saUeCmV0HWTP63Yh/SCcY4IhT5f5zCyIb2Cq+0vnl8OsNyPhnGM1KCtkw4UiGC
-         Ohp5rnboApC7GgsGweKa5ztCrrRRmsL05AnYhQiCHtgJjN4DeVlGrdNPjS3knM2110
-         9i/IddGaSjIBYTKlQA3kaByqcVtn0Bb/EHy6z3ok=
+        b=Bt/xbZ4la+705aWEsgO7yi/+T8WiNpvCproPwijruzCUrIRqJDl2ZHTSFsKn48PFr
+         AT2SHFbaUjiVXPiLagFRB8dr1vT3jYcOfh/pC/N6jD/hDVOeRlE9wCxnSbmjgUKlCl
+         jERPb8L/5nzp8k6ao/Yf+s6stgceMwqF/ZZtx6v8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 13/97] drm/amdgpu: Fix DEBUG_LOCKS_WARN_ON(depth <= 0) in amdgpu_ctx.lock
-Date:   Wed, 26 Dec 2018 17:34:33 -0500
-Message-Id: <20181226223557.149329-13-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/97] ARM: imx: update the cpu power up timing setting on i.mx6sx
+Date:   Wed, 26 Dec 2018 17:34:28 -0500
+Message-Id: <20181226223557.149329-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,43 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit c554206077428af56cc2e0314b86b41cd030458c ]
+[ Upstream commit 1e434b703248580b7aaaf8a115d93e682f57d29f ]
 
-If CS is submitted using guilty ctx, we terminate amdgpu_cs_parser_init
-before locking ctx->lock, latter in amdgpu_cs_parser_fini we still are
-trying to release the lock just becase parser->ctx != NULL.
+The sw2iso count should cover ARM LDO ramp-up time,
+the MAX ARM LDO ramp-up time may be up to more than
+100us on some boards, this patch sets sw2iso to 0xf
+(~384us) which is the reset value, and it is much
+more safe to cover different boards, since we have
+observed that some customer boards failed with current
+setting of 0x2.
 
-Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-imx/cpuidle-imx6sx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-index b31d121a876b..81001d879322 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -122,14 +122,14 @@ static int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, union drm_amdgpu_cs
- 		goto free_chunk;
- 	}
+diff --git a/arch/arm/mach-imx/cpuidle-imx6sx.c b/arch/arm/mach-imx/cpuidle-imx6sx.c
+index 243a108a940b..fd0053e47a15 100644
+--- a/arch/arm/mach-imx/cpuidle-imx6sx.c
++++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
+@@ -110,7 +110,7 @@ int __init imx6sx_cpuidle_init(void)
+ 	 * except for power up sw2iso which need to be
+ 	 * larger than LDO ramp up time.
+ 	 */
+-	imx_gpc_set_arm_power_up_timing(2, 1);
++	imx_gpc_set_arm_power_up_timing(0xf, 1);
+ 	imx_gpc_set_arm_power_down_timing(1, 1);
  
-+	mutex_lock(&p->ctx->lock);
-+
- 	/* skip guilty context job */
- 	if (atomic_read(&p->ctx->guilty) == 1) {
- 		ret = -ECANCELED;
- 		goto free_chunk;
- 	}
- 
--	mutex_lock(&p->ctx->lock);
--
- 	/* get chunks */
- 	chunk_array_user = u64_to_user_ptr(cs->in.chunks);
- 	if (copy_from_user(chunk_array, chunk_array_user,
+ 	return cpuidle_register(&imx6sx_cpuidle_driver, NULL);
 -- 
 2.19.1
 
