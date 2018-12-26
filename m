@@ -7,64 +7,70 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EA5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 21:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E17DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 21:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC81218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 21:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8B3218A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 21:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNW2pxx1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csrbOzkk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbeLZVEj (ORCPT
+        id S1728295AbeLZVFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 16:04:39 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42116 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbeLZVEj (ORCPT
+        Wed, 26 Dec 2018 16:05:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44441 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbeLZVEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 16:04:39 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so14696680lja.9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 13:04:37 -0800 (PST)
+        Wed, 26 Dec 2018 16:04:41 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k19-v6so14690639lji.11
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 13:04:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EuxKM+L8goMIZAgnpg5Zp++orBI8BY79job/7famgVo=;
-        b=FNW2pxx1bbJN8Bo+34FgP+oMR1Jzq/t3asfRVrPXCBHpIJr29AKQVC3tbgQy9YyHgZ
-         5gX3x/xzhOMo1a2JhP/H+nnTEmpHO+CnCr+GNdbanLAppmwqfXj4RUqdlzT2vnYWh7y0
-         ppcOFu7wUhmxcZv0A0AS8Vhi6mPAV8T+fNzoqMFG6oaTm51CdwP4xrMZ5HJAC1Tig01Y
-         KXpceG8xeaF12C9PLIiLEn00me2xo1LgPKR7sNGDz2cwjCqAcaZQ7+B1hN6iiU8jY1of
-         350SZaTh9J17BBDsQtXB7D6PMxW+AP3N+GI3Gl5y4zCpHdWXH4LTKBWEa+cfjsWaReeA
-         9EDA==
+        bh=NRozyeLiWHpg/hx5SA4kgSLG5KuwqMNqVkRPL1Epp5c=;
+        b=csrbOzkkAmJGLZwpYSApshe3oqsnut4F0JBShmOg+21FyjihWJOtoQ5DS/Nmk9N9jb
+         J8lXNGu5u1qSMvYGugoXpLEwT2inM+fz5/3vKDt4/OlnxwM+Ho0wEFr6vFp+thCJwNIy
+         f7DZowLmNitXVt3330athP67glRUVztHmHFmOjWeXAQJ4lq+hsq811L+rd+Ukj5Cw00C
+         zcWvabWOLpEB9E/mVhOLeu7fQvONORJWtCEMdOC+hyeYST/KKKs37wLcdCx3rDpxTkcs
+         vY/+bTg8rI4LAHJAK4scD+QZBNoEreIWNYB7QSUM5EHGHKXH/biOF/DF4r9g/KobNras
+         1KTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=EuxKM+L8goMIZAgnpg5Zp++orBI8BY79job/7famgVo=;
-        b=gB+toIBEnwarmd1xOQHKytjHAmg7s5QRmNXYt/hfXkrcauXJbtKb++dPtEsaLl+wTr
-         nqSFPC8s/4mE3KbRVZjDsy5mNQkHaLIJKn1PzbWwiNSmxQQH7lYfdDds3Dw/m4+BllBA
-         fDsAjhibAQoEz/WFXwFyt4R/263H1pUuvaxZWGBN8c2teDER0+xtNrCMA3kED/MZkA9Z
-         X9O1m24jK7cEeLEhJcV59DVhL1mORVKxqVaK01Wg9ZYoWH3UxWmZeLvoyw54kaFcxn2Z
-         wvSvwhS0Ml/FL0Bel/ClbvSIsDzFZhktEYdp9DfXG3pZJIY41maGHTXB+wC9regIw611
-         fKYg==
-X-Gm-Message-State: AJcUukc3jMlwDl6ip5Wk+jRQzWP6M5uUFr4cBpzuD36LdYY2n91JKGJ8
-        rffaI++J3f3JkvSQctpzvKs=
-X-Google-Smtp-Source: ALg8bN5U/nD1KODcHS70RxFtPxfi8p68K1oKZu6P6glo57RbTqYBkg3hY67OVbYARBWdX6iqAutT3w==
-X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr11827020ljj.95.1545858277083;
-        Wed, 26 Dec 2018 13:04:37 -0800 (PST)
+        bh=NRozyeLiWHpg/hx5SA4kgSLG5KuwqMNqVkRPL1Epp5c=;
+        b=R+c56SFJgxI9NyK+WCq5b/8mcRbklCzv4k0OEJLHYBEwLy0xwkpasQgyY8jBmcMWDc
+         +CtsZDYlPrqeptZdf+UcQFkYA4hALLdY+ZRbhfm8Kp2e9J0BpkpJWckStzArkO5WK4g7
+         Ujtdg7/1jJzIBEdFhq63fM4eElmtm60GsIX3rGJwv8y4xdJBSbkojVfQxkfXaXfvtdSb
+         7i2qh8MSsyWgSMO9h7hhKQ36xNiYOYsXAW0opcxRDqQY8laRHVGluXYNE2omu5Q+n11r
+         Y+BhGkLGMYtp/3h0ffFQsdRroM9HJsrae5wTt1rEuq0nIJWimGPzDuVjx78Ogog9SXHD
+         2afg==
+X-Gm-Message-State: AA+aEWaNxy5Bql2FQ6uCWtjomu7d41LHiXMDAqRuWGIr9xaU4/DZKLb8
+        ONdtm1d6klJgIZjEi/e7d6k=
+X-Google-Smtp-Source: AFSGD/VC69C34X3ccV1MIOiiBWM+M3UK4GmcJ62tGLrx20s9n+6vx3QTUbFMrCyLGxnhMUHrSb8rlw==
+X-Received: by 2002:a2e:5654:: with SMTP id k81-v6mr11762622ljb.48.1545858279261;
+        Wed, 26 Dec 2018 13:04:39 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm7768124ljg.92.2018.12.26.13.04.36
+        by smtp.gmail.com with ESMTPSA id g70-v6sm7768124ljg.92.2018.12.26.13.04.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 13:04:36 -0800 (PST)
+        Wed, 26 Dec 2018 13:04:38 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 2/7] drm: move DRM_SWITCH_POWER defines to drm_device.h
-Date:   Wed, 26 Dec 2018 22:03:48 +0100
-Message-Id: <20181226210353.13993-2-sam@ravnborg.org>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v1 4/7] drm: remove include of drmP.h from bridge/dw_hdmi.h
+Date:   Wed, 26 Dec 2018 22:03:50 +0100
+Message-Id: <20181226210353.13993-4-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20181226210215.GA27610@ravnborg.org>
 References: <20181226210215.GA27610@ravnborg.org>
@@ -73,69 +79,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move DRM_SWITCH_POWER out of drmP.h to allow users
-to get rid of the drmP include.
-
-DRM_SWITCH_POWER defines are used in combination
-with drm_device.switch_power_state.
-
-Move the DRM_SWITCH_POWER defines to the file where
-drm_device.switch_power_state is defined.
+Add missing includes in dw_hdmi.h and
+fix fallout in drivers.
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sean Paul <sean@poorly.run>
+Cc: Archit Taneja <architt@codeaurora.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/drm/drmP.h       | 5 -----
- include/drm/drm_device.h | 9 +++++++++
- 2 files changed, 9 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 4 ++++
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c              | 1 +
+ include/drm/bridge/dw_hdmi.h                        | 5 ++++-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-index b6b8436b5123..2ba786820052 100644
---- a/include/drm/drmP.h
-+++ b/include/drm/drmP.h
-@@ -95,11 +95,6 @@ struct dma_buf_attachment;
- struct pci_dev;
- struct pci_controller;
- 
--#define DRM_SWITCH_POWER_ON 0
--#define DRM_SWITCH_POWER_OFF 1
--#define DRM_SWITCH_POWER_CHANGING 2
--#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
--
- /* returns true if currently okay to sleep */
- static inline bool drm_can_sleep(void)
- {
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index 42411b3ea0c8..c3da194d25f9 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -24,6 +24,13 @@ struct inode;
- struct pci_dev;
- struct pci_controller;
- 
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+index 8f9c8a6b46de..c61ec4caaa84 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+@@ -8,6 +8,10 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
 +
-+/* Used by drm_device.switch_power_state */
-+#define DRM_SWITCH_POWER_ON 0
-+#define DRM_SWITCH_POWER_OFF 1
-+#define DRM_SWITCH_POWER_CHANGING 2
-+#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
++#include <linux/dma-mapping.h>
++#include <linux/module.h>
 +
- /**
-  * DRM device structure. This structure represent a complete card that
-  * may contain multiple heads.
-@@ -222,6 +229,8 @@ struct drm_device {
- 	struct idr object_name_idr;
- 	struct drm_vma_offset_manager *vma_offset_manager;
- 	/*@} */
-+
-+	/* See DRM_SWITCH_POWER defines */
- 	int switch_power_state;
+ #include <drm/bridge/dw_hdmi.h>
  
- 	/**
+ #include <sound/hdmi-codec.h>
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 75490a3e0a2a..f5b07a2e3f59 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ 
+ #include <drm/bridge/dw_hdmi.h>
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index ccb5aa8468e0..b0218ee75a65 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -10,7 +10,10 @@
+ #ifndef __DW_HDMI__
+ #define __DW_HDMI__
+ 
+-#include <drm/drmP.h>
++#include <linux/platform_device.h>
++
++#include <drm/drm_connector.h>
++#include <drm/drm_modes.h>
+ 
+ struct dw_hdmi;
+ 
 -- 
 2.12.0
 
