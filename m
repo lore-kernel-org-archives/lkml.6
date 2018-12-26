@@ -2,100 +2,145 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A40C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C248C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6EC3214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4D821741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 20:28:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lt/SGW9X"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAjSoCts"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeLZU0c (ORCPT
+        id S1728081AbeLZU2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 15:26:32 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36897 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeLZU0c (ORCPT
+        Wed, 26 Dec 2018 15:28:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35326 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727842AbeLZU2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 15:26:32 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y11so11460034lfj.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:26:31 -0800 (PST)
+        Wed, 26 Dec 2018 15:28:34 -0500
+Received: by mail-pf1-f195.google.com with SMTP id z9so8228451pfi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:28:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lQVR8xAnz72mawBwUw6fBxhrCEuSz9N0EBAAc/L+6aU=;
-        b=Lt/SGW9XD8RsjHozyzZ70dqlDecMu4L8GVuZ+PYb96rOX9QxkiUf+oTp4xSwDJ03Uh
-         bdmK7l15TF8i5jliyHmKbAxFoLS1aDgm4xA96L0H5MdFAS6UxUmpYmoDpXOtTpL/4jo4
-         wxQlzq0RjDaETOFvZB6f2RgYUmTiO5DmTiUmE=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KhirqufjEAKM5oH8ZTyukCbgwkV6FFyPZD8bGeSML24=;
+        b=CAjSoCtsEBEMhbX+rpcbvaBDg0ZarjdOLhgnuWklQqwVw1XfEHw3nu9tYePgBowsWz
+         UGQ7Il42en7LcAVd49cFQbwwmZ+Js4iILVBujMumYltW7e5CLXsJijLNeF1jGnDK6l+j
+         4MYYdCnefotmODedzmNDKcIc8JbUrCjgQCEWk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lQVR8xAnz72mawBwUw6fBxhrCEuSz9N0EBAAc/L+6aU=;
-        b=CiM5B3FXNh0P3w2Gn0jC5xkO5hT6MiwHFxpOukY2bBd1EfgQRCjYrG925lKuk6X82z
-         UdcoCr+JmnqWT/Cv8+st7v68q7wK9UUKq5iYnY+6T3MwXfPxyEY4sUlH2CDaaC0yjJn8
-         vzEwrbEOt5Dx6MqoKcgOajj82kF6VbcruNtIoedY0GbnDqJvf6/q55NbvrA3Yi+32wKf
-         YREu5hZgZMPvA2WnbB40zyFZnxvtMg2IlbfsvDGx3/zhrS1dInzIl0G3No3TekGkaeOo
-         MLmTdRg/R8sQt3Ap1ovEGbUXKVSV2SmbCosPSZpZb3STLxStXiwk80JXLHqig/yH+3ZT
-         aXKw==
-X-Gm-Message-State: AA+aEWYru2y7bJ5gstS4GzXFihCSz4MelmXZehp9QBLWsEWZFl5HVG1G
-        gxz+aPMnT/O9/1rVzPJHLeywjlR+bck=
-X-Google-Smtp-Source: AFSGD/UCz8UmbiaLAykJAUVe8KLrA+D3O0TXotS5c1x2BdUoPCOGdT68xvp+SRG8iWXhvYqDWVbA+w==
-X-Received: by 2002:a19:8fce:: with SMTP id s75mr10156465lfk.151.1545855989875;
-        Wed, 26 Dec 2018 12:26:29 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id a127sm7299956lfe.73.2018.12.26.12.26.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 12:26:28 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id k19-v6so14631096lji.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 12:26:28 -0800 (PST)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr13068815lji.133.1545855988346;
- Wed, 26 Dec 2018 12:26:28 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KhirqufjEAKM5oH8ZTyukCbgwkV6FFyPZD8bGeSML24=;
+        b=UNjcqSi8SGdr6kbyfa0GUDZi8PE+cPa/wkVBxmxZEmIJCs1IURvYuBDh/6nUezgvj6
+         CnB6Uib/cVZFRMWXlTNpnNNzk8SbcTfb7KOe2XpljPc+cfg22LIuSpCSKQezSeP30cXM
+         4yniTAGAuO3BwSIFE/UjnSNFzr85kAZg005hyLnKsERoUpQJuge0UK34HY2hduD3Jd63
+         Q4f6PPjaP5N9d0sqBrmiUIZDzUDebnckdSmR11RyvvPoa7CRODcIV1D00sBa2YhJiYl3
+         7IFPFlnbV9sQjKyEOoGhIUJ0PVW/BQqvRHftnxlTb0AwOYx5+0aPniD8Y6NAaokfHjzd
+         1JWQ==
+X-Gm-Message-State: AJcUukeqY9xr3cwJ0b3DeM2BuaWE4KvvcCKdN/0ONUUQEFHekh8AsAL6
+        WZ6j8JtqfpLPnuKbLS+XR3WNQb8IxN8=
+X-Google-Smtp-Source: ALg8bN4KLTWbvLD06MTk5aueksHt1ABYy6Ly983prjyGXqWp7TxJdkO0MpU4foql+UhW41W4rLhRLw==
+X-Received: by 2002:a63:4c4e:: with SMTP id m14mr20339753pgl.173.1545856113565;
+        Wed, 26 Dec 2018 12:28:33 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m9sm41818013pgd.32.2018.12.26.12.28.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 12:28:32 -0800 (PST)
+Date:   Wed, 26 Dec 2018 12:28:30 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Arun Kumar Neelakantam <aneela@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] soc: qcom: Add AOSS QMP communication driver
+Message-ID: <20181226202830.GE9704@minitux>
+References: <20181112080557.22698-1-bjorn.andersson@linaro.org>
+ <20181112080557.22698-3-bjorn.andersson@linaro.org>
+ <ce0d4d55-464c-1502-9dc1-b3a495c86aee@codeaurora.org>
 MIME-Version: 1.0
-References: <20181223124859.GA26860@zn.tnic>
-In-Reply-To: <20181223124859.GA26860@zn.tnic>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 26 Dec 2018 12:26:12 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiX_6f+7DUaG-x2cQHctjtSHdMrtAeixitOQkbswq2scA@mail.gmail.com>
-Message-ID: <CAHk-=wiX_6f+7DUaG-x2cQHctjtSHdMrtAeixitOQkbswq2scA@mail.gmail.com>
-Subject: Re: [GIT PULL] x86/cache updates for 4.21
-To:     Borislav Petkov <bp@suse.de>
-Cc:     x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce0d4d55-464c-1502-9dc1-b3a495c86aee@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 4:49 AM Borislav Petkov <bp@suse.de> wrote:
->
->  - The generalization of the RDT code to accommodate the addition of AMD's
->    very similar implementation of the cache monitoring feature.
+On Tue 20 Nov 04:22 PST 2018, Arun Kumar Neelakantam wrote:
 
-I've pulled this, but I think the new config option name is bad.
+Thanks for the review Arun.
 
-I think it should probably have been called "X86_RESCTRL" instead of
-just "RESCTRL". That's way too generic a name for something that is
-(at least currently) very much an x86 feature.
+> On 11/12/2018 1:35 PM, Bjorn Andersson wrote:
+[..]
+> > +int qmp_send(struct qmp *qmp, const void *data, size_t len)
+> > +{
+> > +	int ret;
+> > +
+> > +	if (WARN_ON(len + sizeof(u32) > qmp->size)) {
+> > +		dev_err(qmp->dev, "message too long\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (WARN_ON(len % sizeof(u32))) {
+> > +		dev_err(qmp->dev, "message not 32-bit aligned\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	mutex_lock(&qmp->tx_lock);
+> > +
+> > +	if (!qmp_message_empty(qmp)) {
+> > +		dev_err(qmp->dev, "mailbox left busy\n");
+> > +		ret = -EINVAL;
+> should it be -EBUSY ?
 
-It not only is x86-specific right now, it's specific to very few
-resources. It's not like this is some generic resource control, it's
-very much about low-level CPU resources. That should show in the name.
+That makes more sense.
 
-I've left it alone, and maybe it might even be cross-architecture some
-day (there's already a hack in the scheduler), but I think it's a bit
-misleading to have so a common name for such a specialized thing.
+> And qmp_messge_empty will be done either by remote if it process the data
+> else by this driver in TIMEOUT case, so does we need this check for every TX
+> ? I think we can just reset to Zero once in open time.
 
-Even if it some day gets to be cross-architecture and isn't limited to
-x86, at that point it _still_ wouldn't be "RESCTRL", it would be
-"CPU_RESCTRL" or something.
+Didn't think about that, should we really make the QMP link ready again
+when we get a timeout? Can we expect that the firmware of the remote
+side is ready to serve future messages?
 
-No?
 
-                Linus
+Should we keep this check and remove the writel() below?
+
+> > +		goto out_unlock;
+> > +	}
+> > +
+> > +	/* The message RAM only implements 32-bit accesses */
+> > +	__iowrite32_copy(qmp->msgram + qmp->offset + sizeof(u32),
+> > +			 data, len / sizeof(u32));
+> > +	writel(len, qmp->msgram + qmp->offset);
+> > +	qmp_kick(qmp);
+> > +
+> > +	ret = wait_event_interruptible_timeout(qmp->event,
+> > +					       qmp_message_empty(qmp), HZ);
+> > +	if (!ret) {
+> > +		dev_err(qmp->dev, "ucore did not ack channel\n");
+> > +		ret = -ETIMEDOUT;
+> > +
+> > +		writel(0, qmp->msgram + qmp->offset);
+> > +	} else {
+> > +		ret = 0;
+> > +	}
+> > +
+> > +out_unlock:
+> > +	mutex_unlock(&qmp->tx_lock);
+> > +
+> > +	return ret;
+> > +}
+
+Regards,
+Bjorn
