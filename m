@@ -2,146 +2,330 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442BEC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 026F5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F11218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="F7wd+7JA"
+	by mail.kernel.org (Postfix) with ESMTP id AF97E21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545865770;
+	bh=t+E0QX/7+Gn/jraZZBIlKNd440gXqXte5fOn14BC2yY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vUT8iXox4Yed3ySwHUsymIaIqMGCOIBqB6tlFlB/vyygIIDYZrPqGhAih8JACN+IS
+	 5Nqkdn76e8u0ePj8Bzxuf20z9tHMyNWcbnjU2sddjUGHXI86o7SZfOlYDEXI/o1Yle
+	 VPyizPCG8pGnsemGlQru+E5/EI05js/xkJxyF7RQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeLZXJZ (ORCPT
+        id S1728359AbeLZXJ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 26 Dec 2018 18:09:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728407AbeLZXJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Dec 2018 18:09:25 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:20034 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbeLZXJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 18:09:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1545865762; x=1577401762;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=meu8IE2Cb35XRAORiR9qLyyfGNjZhzm1rUp8PRNo5pE=;
-  b=F7wd+7JAp93SOLAthSRi23ujC4mGscwvU8IccENO9xkEp85PLe6i0J0y
-   0YCNlB/S3YxUQZwsAm7r2ZkRZU9yVmVQc3EfyYgK+nLlJb+Z+kCV0G6AP
-   7FUvS5bp09ciu5MpJQ6Vc7ktqfgY2Mu9sgw25A4JIGAZgufYf5K9HPTnu
-   Q52qjlU3ovglu7DJfRx1gfo1gU+aw4TFyGYKkdPrzcRpoyr7ZObj40dHE
-   ojj1iPlle8Pw4zZInBaXJqRSn0MfbqRnVouI77z53MftDazSqZt5mPHir
-   VB+sfMMjLeR8z+whlzW+5NwWCMRQCxZ/QEaLZqZYgRna5JzL1I7LFh6//
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,401,1539619200"; 
-   d="scan'208";a="98702979"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Dec 2018 07:09:07 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 26 Dec 2018 14:49:51 -0800
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 26 Dec 2018 15:09:07 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-riscv@lists.infradead.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Clark <michaeljclark@mac.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        =?UTF-8?q?Patrick=20St=C3=A4hlin?= <me@packi.ch>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: [PATCH 2/3] RISC-V: Move cpuid to hartid mapping to SMP.
-Date:   Wed, 26 Dec 2018 15:09:00 -0800
-Message-Id: <1545865741-22795-3-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545865741-22795-1-git-send-email-atish.patra@wdc.com>
-References: <1545865741-22795-1-git-send-email-atish.patra@wdc.com>
+Received: from localhost (unknown [104.132.0.73])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DBCD20882;
+        Wed, 26 Dec 2018 23:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545865765;
+        bh=t+E0QX/7+Gn/jraZZBIlKNd440gXqXte5fOn14BC2yY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BIltg1olM9sVOKcU0DSGmrL2Slp2cU681escwasUSo2HcxpSdOD/cAm+lUX5SixNb
+         2UFoZ5BhRjGKAfCSe0niAMQ/+mOzjeubulryjmURkpKLHkRwN2yzqZUFgldNvO/+NE
+         SzYlT/Nv9y8ZOEs9F3FU6/b57Ur6cJNA1tODR8iU=
+Date:   Wed, 26 Dec 2018 15:09:24 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH v3] f2fs: add bio cache for IPU
+Message-ID: <20181226230924.GA54766@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181219092956.8257-1-yuchao0@huawei.com>
+ <dcdaecd0-035b-83c7-76e3-6ca305a049cc@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dcdaecd0-035b-83c7-76e3-6ca305a049cc@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, logical CPU id to physical hartid mapping is
-defined for both smp and non-smp configurations. This
-is not required as we need this only for smp configuration.
-The mapping function can define directly boot_cpu_hartid
-for non-smp usecase.
+On 12/24, Chao Yu wrote:
+> Jaegeuk,
+> 
+> Will kernel still hang with this v3?
 
-The reverse mapping function i.e. hartid to cpuid can be called
-for any valid but not booted harts. So it should return default
-cpu 0 only if it is a boot hartid
+I'll consider this later, since it blocked local tests before.
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/include/asm/smp.h | 13 +++++++++++--
- arch/riscv/kernel/setup.c    |  2 ++
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
-index 41aa73b4..8f30300f 100644
---- a/arch/riscv/include/asm/smp.h
-+++ b/arch/riscv/include/asm/smp.h
-@@ -22,12 +22,13 @@
- /*
-  * Mapping between linux logical cpu index and hartid.
-  */
--extern unsigned long __cpuid_to_hartid_map[NR_CPUS];
--#define cpuid_to_hartid_map(cpu)    __cpuid_to_hartid_map[cpu]
- 
-+extern unsigned long boot_cpu_hartid;
- struct seq_file;
- 
- #ifdef CONFIG_SMP
-+extern unsigned long __cpuid_to_hartid_map[NR_CPUS];
-+#define cpuid_to_hartid_map(cpu)    __cpuid_to_hartid_map[cpu]
- 
- /* print IPI stats */
- void show_ipi_stats(struct seq_file *p, int prec);
-@@ -58,7 +59,15 @@ static inline void show_ipi_stats(struct seq_file *p, int prec)
- 
- static inline int riscv_hartid_to_cpuid(int hartid)
- {
-+	if (hartid == boot_cpu_hartid)
- 		return 0;
-+	else
-+		return -1;
-+}
-+static inline unsigned long cpuid_to_hartid_map(int cpu)
-+{
-+
-+	return boot_cpu_hartid;
- }
- 
- static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 2c290e6a..bd4d7b85 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -83,6 +83,7 @@ EXPORT_SYMBOL(empty_zero_page);
- atomic_t hart_lottery;
- unsigned long boot_cpu_hartid;
- 
-+#ifdef CONFIG_SMP
- unsigned long __cpuid_to_hartid_map[NR_CPUS] = {
- 	[0 ... NR_CPUS-1] = INVALID_HARTID
- };
-@@ -91,6 +92,7 @@ void __init smp_setup_processor_id(void)
- {
- 	cpuid_to_hartid_map(0) = boot_cpu_hartid;
- }
-+#endif
- 
- #ifdef CONFIG_BLK_DEV_INITRD
- static void __init setup_initrd(void)
--- 
-2.7.4
-
+> 
+> Thanks,
+> 
+> On 2018/12/19 17:29, Chao Yu wrote:
+> > SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
+> > commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
+> > lost the chance of merging page in inner managed bio cache, result in
+> > submitting more small-sized IO.
+> > 
+> > So let's add temporary bio in writepages() to cache mergeable write IO as
+> > much as possible.
+> > 
+> > Test case:
+> > 1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+> > 2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+> > 
+> > Before:
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
+> > 
+> > After:
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
+> > 
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > ---
+> > v3:
+> > - introduce f2fs_submit_ipu_bio() to check page Writeback status.
+> >  fs/f2fs/data.c    | 85 ++++++++++++++++++++++++++++++++++++++++++-----
+> >  fs/f2fs/f2fs.h    |  3 ++
+> >  fs/f2fs/segment.c |  5 ++-
+> >  3 files changed, 84 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index cdfe9a7b856e..e5cd3fd9e215 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -341,20 +341,20 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+> >  	io->bio = NULL;
+> >  }
+> >  
+> > -static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
+> > +static bool __has_merged_page(struct bio *bio, struct inode *inode,
+> >  						struct page *page, nid_t ino)
+> >  {
+> >  	struct bio_vec *bvec;
+> >  	struct page *target;
+> >  	int i;
+> >  
+> > -	if (!io->bio)
+> > +	if (!bio)
+> >  		return false;
+> >  
+> >  	if (!inode && !page && !ino)
+> >  		return true;
+> >  
+> > -	bio_for_each_segment_all(bvec, io->bio, i) {
+> > +	bio_for_each_segment_all(bvec, bio, i) {
+> >  
+> >  		if (bvec->bv_page->mapping)
+> >  			target = bvec->bv_page;
+> > @@ -405,7 +405,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> >  			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
+> >  
+> >  			down_read(&io->io_rwsem);
+> > -			ret = __has_merged_page(io, inode, page, ino);
+> > +			ret = __has_merged_page(io->bio, inode, page, ino);
+> >  			up_read(&io->io_rwsem);
+> >  		}
+> >  		if (ret)
+> > @@ -474,6 +474,59 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+> >  	return 0;
+> >  }
+> >  
+> > +int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+> > +{
+> > +	struct bio *bio = *fio->bio;
+> > +	struct page *page = fio->encrypted_page ?
+> > +			fio->encrypted_page : fio->page;
+> > +
+> > +	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+> > +			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
+> > +		return -EFAULT;
+> > +
+> > +	trace_f2fs_submit_page_bio(page, fio);
+> > +	f2fs_trace_ios(fio, 0);
+> > +
+> > +	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
+> > +			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
+> > +		__submit_bio(fio->sbi, bio, fio->type);
+> > +		bio = NULL;
+> > +	}
+> > +alloc_new:
+> > +	if (!bio) {
+> > +		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+> > +				BIO_MAX_PAGES, false, fio->type, fio->temp);
+> > +		*fio->last_block = fio->new_blkaddr;
+> > +		bio_set_op_attrs(bio, fio->op, fio->op_flags);
+> > +	}
+> > +
+> > +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+> > +		__submit_bio(fio->sbi, bio, fio->type);
+> > +		bio = NULL;
+> > +		goto alloc_new;
+> > +	}
+> > +
+> > +	if (fio->io_wbc)
+> > +		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
+> > +
+> > +	*fio->last_block = fio->new_blkaddr;
+> > +
+> > +	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
+> > +
+> > +	*fio->bio = bio;
+> > +	return 0;
+> > +}
+> > +
+> > +void f2fs_submit_ipu_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+> > +							struct page *page)
+> > +{
+> > +	if (!__has_merged_page(bio, NULL, page, 0))
+> > +		return;
+> > +
+> > +	if (bio)
+> > +		__submit_bio(sbi, bio, DATA);
+> > +}
+> > +
+> >  void f2fs_submit_page_write(struct f2fs_io_info *fio)
+> >  {
+> >  	struct f2fs_sb_info *sbi = fio->sbi;
+> > @@ -1903,6 +1956,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+> >  }
+> >  
+> >  static int __write_data_page(struct page *page, bool *submitted,
+> > +				struct bio **bio,
+> > +				sector_t *last_block,
+> >  				struct writeback_control *wbc,
+> >  				enum iostat_type io_type)
+> >  {
+> > @@ -1928,6 +1983,8 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  		.need_lock = LOCK_RETRY,
+> >  		.io_type = io_type,
+> >  		.io_wbc = wbc,
+> > +		.bio = bio,
+> > +		.last_block = last_block,
+> >  	};
+> >  
+> >  	trace_f2fs_writepage(page, DATA);
+> > @@ -2029,6 +2086,10 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  		f2fs_balance_fs(sbi, need_balance_fs);
+> >  
+> >  	if (unlikely(f2fs_cp_error(sbi))) {
+> > +		if (bio && *bio) {
+> > +			__submit_bio(sbi, *bio, DATA);
+> > +			*bio = NULL;
+> > +		}
+> >  		f2fs_submit_merged_write(sbi, DATA);
+> >  		submitted = NULL;
+> >  	}
+> > @@ -2055,7 +2116,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  static int f2fs_write_data_page(struct page *page,
+> >  					struct writeback_control *wbc)
+> >  {
+> > -	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
+> > +	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
+> >  }
+> >  
+> >  /*
+> > @@ -2071,6 +2132,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  	int done = 0;
+> >  	struct pagevec pvec;
+> >  	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
+> > +	struct bio *bio = NULL;
+> > +	sector_t last_block;
+> >  	int nr_pages;
+> >  	pgoff_t uninitialized_var(writeback_index);
+> >  	pgoff_t index;
+> > @@ -2147,17 +2210,20 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  			}
+> >  
+> >  			if (PageWriteback(page)) {
+> > -				if (wbc->sync_mode != WB_SYNC_NONE)
+> > +				if (wbc->sync_mode != WB_SYNC_NONE) {
+> >  					f2fs_wait_on_page_writeback(page,
+> >  								DATA, true);
+> > -				else
+> > +					f2fs_submit_ipu_bio(sbi, bio, page);
+> > +				} else {
+> >  					goto continue_unlock;
+> > +				}
+> >  			}
+> >  
+> >  			if (!clear_page_dirty_for_io(page))
+> >  				goto continue_unlock;
+> >  
+> > -			ret = __write_data_page(page, &submitted, wbc, io_type);
+> > +			ret = __write_data_page(page, &submitted, &bio,
+> > +						&last_block, wbc, io_type);
+> >  			if (unlikely(ret)) {
+> >  				/*
+> >  				 * keep nr_to_write, since vfs uses this to
+> > @@ -2206,6 +2272,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  	if (nwritten)
+> >  		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+> >  								NULL, 0, DATA);
+> > +	/* submit cached bio of IPU write */
+> > +	if (bio)
+> > +		__submit_bio(sbi, bio, DATA);
+> >  
+> >  	return ret;
+> >  }
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 9e56c78fe519..eeede26339a8 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1044,6 +1044,8 @@ struct f2fs_io_info {
+> >  	bool retry;		/* need to reallocate block address */
+> >  	enum iostat_type io_type;	/* io type */
+> >  	struct writeback_control *io_wbc; /* writeback control */
+> > +	struct bio **bio;		/* bio for ipu */
+> > +	sector_t *last_block;		/* last block number in bio */
+> >  	unsigned char version;		/* version of the node */
+> >  };
+> >  
+> > @@ -3105,6 +3107,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> >  				nid_t ino, enum page_type type);
+> >  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+> >  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+> > +int f2fs_merge_page_bio(struct f2fs_io_info *fio);
+> >  void f2fs_submit_page_write(struct f2fs_io_info *fio);
+> >  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+> >  			block_t blk_addr, struct bio *bio);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 3241e0619275..a361d61b005e 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -3163,7 +3163,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+> >  
+> >  	stat_inc_inplace_blocks(fio->sbi);
+> >  
+> > -	err = f2fs_submit_page_bio(fio);
+> > +	if (fio->bio)
+> > +		err = f2fs_merge_page_bio(fio);
+> > +	else
+> > +		err = f2fs_submit_page_bio(fio);
+> >  	if (!err)
+> >  		update_device_state(fio);
+> >  
+> > 
