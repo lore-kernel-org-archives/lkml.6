@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BEBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C1DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6ED214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C415214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864531;
-	bh=9wJcwZOgGWHIzjkkOYJ6ggxYG5xTFbP67WOtfd9/fUs=;
+	s=default; t=1545864540;
+	bh=QQu/iPJ7+ROvuKy5dayjKDeMpBpcnT0R7E4P2euW8L4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nea52LcSWkHLJ6afmGhrKtMch34elpS4U0masKLTOBFI49xWhjhHYZi1GK7NjNDg4
-	 qTmf7c7/wFN/IPaa8MuIXZDq5IsU0SRL7hE+p9aqX4cSoPuw/5/5F5d1sXs/Lt4893
-	 iInQeBlaHPMPRZKUW3WJ0HJtgOUdt1wDiYnu1i7E=
+	b=zGPVm2eQOHJw5zKuGE1xBg5c7W5Le8iofOuF2V/PtTl/4HvXNknQGnxCWmPxJKXs7
+	 tOVQdS5oVDAoLibuZs563fkuF9c83EeyVF2GCjfiOdbo0D0GawxGaQEAbjDaanx4Sv
+	 vkPQLKc3SHRh5FiNencQmKpR8rRdzLBSBlHNClq8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbeLZWsu (ORCPT
+        id S1729892AbeLZWs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:48:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38260 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:48:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728613AbeLZWiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:03 -0500
+        id S1728596AbeLZWiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 002752054F;
-        Wed, 26 Dec 2018 22:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E79D3218E2;
+        Wed, 26 Dec 2018 22:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863882;
-        bh=9wJcwZOgGWHIzjkkOYJ6ggxYG5xTFbP67WOtfd9/fUs=;
+        s=default; t=1545863880;
+        bh=QQu/iPJ7+ROvuKy5dayjKDeMpBpcnT0R7E4P2euW8L4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eh9sErOoKNZDsk3JefpjRw0r5gvlS1jTqMpTcYaLt0PWhvizFavnY9ZvrYL/3I9RK
-         FA/3yoosUXpumxh2ST8yVN+zmi9/fG/0HNLA+SyiWXotH5/8Usr1umGqnr5tconPVK
-         6pAgrKtRf+dJe6XQyUkvbZ0Dldacg8XKYAQ0MLBQ=
+        b=p8eGE3lz4zz8RsgRvUydYoijc6IjZ9iDA3rAlOjKKZG8M+JVB2ECwFVsJvFQstHv7
+         cxCQFaK2a14uxKBF2c7rVoy2t3B3uAu/I3/5ljfmbxFGg/6wM3rvVp/5NyNCRM7wyF
+         DfQR7zGitWea1suSYFal/Isia8hAO4dro6GO35N4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 72/97] net: macb: restart tx after tx used bit read
-Date:   Wed, 26 Dec 2018 17:35:32 -0500
-Message-Id: <20181226223557.149329-72-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 70/97] qed: Fix an error code qed_ll2_start_xmit()
+Date:   Wed, 26 Dec 2018 17:35:30 -0500
+Message-Id: <20181226223557.149329-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -57,74 +58,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 4298388574dae6168fa8940b3edc7ba965e8a7ab ]
+[ Upstream commit f07d4276892d97671e880190ff195a288b2d8d92 ]
 
-On some platforms (currently detected only on SAMA5D4) TX might stuck
-even the pachets are still present in DMA memories and TX start was
-issued for them. This happens due to race condition between MACB driver
-updating next TX buffer descriptor to be used and IP reading the same
-descriptor. In such a case, the "TX USED BIT READ" interrupt is asserted.
-GEM/MACB user guide specifies that if a "TX USED BIT READ" interrupt
-is asserted TX must be restarted. Restart TX if used bit is read and
-packets are present in software TX queue. Packets are removed from software
-TX queue if TX was successful for them (see macb_tx_interrupt()).
+We accidentally deleted the code to set "rc = -ENOMEM;" and this patch
+adds it back.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Fixes: d2201a21598a ("qed: No need for LL2 frags indication")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 58b9744c4058..240fd36b5074 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -61,7 +61,8 @@
- #define MACB_TX_ERR_FLAGS	(MACB_BIT(ISR_TUND)			\
- 					| MACB_BIT(ISR_RLE)		\
- 					| MACB_BIT(TXERR))
--#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP))
-+#define MACB_TX_INT_FLAGS	(MACB_TX_ERR_FLAGS | MACB_BIT(TCOMP)	\
-+					| MACB_BIT(TXUBR))
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index 14ac9cab2653..2fa1c050a14b 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -2485,6 +2485,7 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb,
+ 		if (unlikely(dma_mapping_error(&cdev->pdev->dev, mapping))) {
+ 			DP_NOTICE(cdev,
+ 				  "Unable to map frag - dropping packet\n");
++			rc = -ENOMEM;
+ 			goto err;
+ 		}
  
- /* Max length of transmit frame must be a multiple of 8 bytes */
- #define MACB_TX_LEN_ALIGN	8
-@@ -1313,6 +1314,21 @@ static void macb_hresp_error_task(unsigned long data)
- 	netif_tx_start_all_queues(dev);
- }
- 
-+static void macb_tx_restart(struct macb_queue *queue)
-+{
-+	unsigned int head = queue->tx_head;
-+	unsigned int tail = queue->tx_tail;
-+	struct macb *bp = queue->bp;
-+
-+	if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
-+		queue_writel(queue, ISR, MACB_BIT(TXUBR));
-+
-+	if (head == tail)
-+		return;
-+
-+	macb_writel(bp, NCR, macb_readl(bp, NCR) | MACB_BIT(TSTART));
-+}
-+
- static irqreturn_t macb_interrupt(int irq, void *dev_id)
- {
- 	struct macb_queue *queue = dev_id;
-@@ -1370,6 +1386,9 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
- 		if (status & MACB_BIT(TCOMP))
- 			macb_tx_interrupt(queue);
- 
-+		if (status & MACB_BIT(TXUBR))
-+			macb_tx_restart(queue);
-+
- 		/* Link change detection isn't possible with RMII, so we'll
- 		 * add that if/when we get our hands on a full-blown MII PHY.
- 		 */
 -- 
 2.19.1
 
