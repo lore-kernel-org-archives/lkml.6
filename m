@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B018C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9C5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE8912054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA9B20651
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863931;
-	bh=9huvG3I/8nqB4FWklBwFSnPuSCgrHu0HbfFAv1vHFPQ=;
+	s=default; t=1545863933;
+	bh=sRTSOC36zQ8yQw8m5DvqJHGo7ksjDmnIfA7uaypIxQg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d10488nazvix5nnplO7FjW2RdN2xTS4PvLJA6mY/cQrZ32l8GB0om0cGrLfiwBssD
-	 VSfdPwIrYCHIivNQdK2xyOo2LgdhRxDv68SuJ0pnjC7V2UWo+ZnD3eVLru1QwFnNXR
-	 oLoGL5F9GzBAp0K5xM0GOtJpDP9Vf9LX++scIXPM=
+	b=dRWWel1BdHArVDsxnafts1HztOzUIi5vfkGvUP+18IscwB5aQOl2J1x1hWAqYXet5
+	 IJ7K6ifOnq3xBBgg7/aqAoGwVuPkbcPyuDYTM/b/lOeC68Kkywk3PdnEzl7oYaWXsB
+	 ayljSH12c+0tVRtwpua01gLkFWep6K5dWJXysW7k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeLZWit (ORCPT
+        id S1728912AbeLZWiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:38:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38894 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:38:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728839AbeLZWih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:37 -0500
+        id S1728850AbeLZWij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3387C21741;
-        Wed, 26 Dec 2018 22:38:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 515FD2054F;
+        Wed, 26 Dec 2018 22:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863916;
-        bh=9huvG3I/8nqB4FWklBwFSnPuSCgrHu0HbfFAv1vHFPQ=;
+        s=default; t=1545863918;
+        bh=sRTSOC36zQ8yQw8m5DvqJHGo7ksjDmnIfA7uaypIxQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cejivx8K9xPWnDEt2i7y95uVVURX67DCf5i4FmrY0V5VP+W8Y9cJC2PuON5clhstL
-         Pa0GfipbF09lFz9XFRgHriWp6EYokQDwgWB78z28NIz0LRcOF3fGRBgAo5hl2aQ44E
-         mqKwVRdyrnLIbiaim7SwzBCFXyOPEkHNDj3p3Hsc=
+        b=ftnH2L9tsxm06fq4F9TUV6b59eS/U3hTe8rzrMKMZKUZd1Vg8noomjzTDKWzGxib9
+         Rm/eSSJyDXjFh4+F/HADmtAIJ75+MMzMDqbenvC8exO7sLDM1d2ExjbLOVgk0rPerK
+         61Beocqe4sEhDB2YW62qdvvbjdFWKX+ghW4Mq0XI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniele Palmas <dnlplm@gmail.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 95/97] qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup
-Date:   Wed, 26 Dec 2018 17:35:55 -0500
-Message-Id: <20181226223557.149329-95-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 96/97] serial/sunsu: fix refcount leak
+Date:   Wed, 26 Dec 2018 17:35:56 -0500
+Message-Id: <20181226223557.149329-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -59,71 +58,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit d667044f49513d55fcfefe4fa8f8d96091782901 ]
+[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
 
-This patch fixes qmap header retrieval when modem is configured for
-dl data aggregation.
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+su_get_type() doesn't do that. The match node are used as an identifier
+to compare against the current node, so we can directly drop the refcount
+after getting the node from the path as it is not used as pointer.
+
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index f5bac5075386..774e1ff01c9a 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -151,17 +151,18 @@ static bool qmimux_has_slaves(struct usbnet *dev)
- 
- static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 6cf3e9b0728f..3e77475668c0 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1394,22 +1394,43 @@ static inline struct console *SUNSU_CONSOLE(void)
+ static enum su_type su_get_type(struct device_node *dp)
  {
--	unsigned int len, offset = sizeof(struct qmimux_hdr);
-+	unsigned int len, offset = 0;
- 	struct qmimux_hdr *hdr;
- 	struct net_device *net;
- 	struct sk_buff *skbn;
-+	u8 qmimux_hdr_sz = sizeof(*hdr);
+ 	struct device_node *ap = of_find_node_by_path("/aliases");
++	enum su_type rc = SU_PORT_PORT;
  
--	while (offset < skb->len) {
--		hdr = (struct qmimux_hdr *)skb->data;
-+	while (offset + qmimux_hdr_sz < skb->len) {
-+		hdr = (struct qmimux_hdr *)(skb->data + offset);
- 		len = be16_to_cpu(hdr->pkt_len);
+ 	if (ap) {
+ 		const char *keyb = of_get_property(ap, "keyboard", NULL);
+ 		const char *ms = of_get_property(ap, "mouse", NULL);
++		struct device_node *match;
  
- 		/* drop the packet, bogus length */
--		if (offset + len > skb->len)
-+		if (offset + len + qmimux_hdr_sz > skb->len)
- 			return 0;
- 
- 		/* control packet, we do not know what to do */
-@@ -176,7 +177,7 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			return 0;
- 		skbn->dev = net;
- 
--		switch (skb->data[offset] & 0xf0) {
-+		switch (skb->data[offset + qmimux_hdr_sz] & 0xf0) {
- 		case 0x40:
- 			skbn->protocol = htons(ETH_P_IP);
- 			break;
-@@ -188,12 +189,12 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			goto skip;
+ 		if (keyb) {
+-			if (dp == of_find_node_by_path(keyb))
+-				return SU_PORT_KBD;
++			match = of_find_node_by_path(keyb);
++
++			/*
++			 * The pointer is used as an identifier not
++			 * as a pointer, we can drop the refcount on
++			 * the of__node immediately after getting it.
++			 */
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_KBD;
++				goto out;
++			}
  		}
- 
--		skb_put_data(skbn, skb->data + offset, len);
-+		skb_put_data(skbn, skb->data + offset + qmimux_hdr_sz, len);
- 		if (netif_rx(skbn) != NET_RX_SUCCESS)
- 			return 0;
- 
- skip:
--		offset += len + sizeof(struct qmimux_hdr);
-+		offset += len + qmimux_hdr_sz;
+ 		if (ms) {
+-			if (dp == of_find_node_by_path(ms))
+-				return SU_PORT_MS;
++			match = of_find_node_by_path(ms);
++
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_MS;
++				goto out;
++			}
+ 		}
  	}
- 	return 1;
+ 
+-	return SU_PORT_PORT;
++out:
++	of_node_put(ap);
++	return rc;
  }
+ 
+ static int su_probe(struct platform_device *op)
 -- 
 2.19.1
 
