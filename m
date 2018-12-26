@@ -2,145 +2,117 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A86C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D1CC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE44214AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4E012171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 19:43:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQjDg9CJ"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="RofPxRvK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbeLZTl5 (ORCPT
+        id S1727665AbeLZTnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:41:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35934 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbeLZTl4 (ORCPT
+        Wed, 26 Dec 2018 14:43:09 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:50926 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbeLZTnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:41:56 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u4so16443564wrp.3;
-        Wed, 26 Dec 2018 11:41:55 -0800 (PST)
+        Wed, 26 Dec 2018 14:43:09 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id E6FADC16
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 19:43:07 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id puzT2C1vZQOS for <linux-kernel@vger.kernel.org>;
+        Wed, 26 Dec 2018 13:43:07 -0600 (CST)
+Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id B561EC37
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 13:43:07 -0600 (CST)
+Received: by mail-it1-f197.google.com with SMTP id n124so19304793itb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:43:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=36pEah6QZLjkR5d3CgHwBrLC0xsY+3u5513RC5sgjtk=;
-        b=qQjDg9CJbIbqmA163j6hfoNNjahm83bNUCQu8bmJQeHYao4sNFu50A9bLYBRAFMWeg
-         +5xxsUWTbDxcwJZ6NBN+TRd51jXgXXBUO1xv2o7HchALGnjr1DZQXT0doyZWGIjEooOu
-         MKetmaQDrA/Uq/6Bb/UmzyirEg0yv33f3G9YwYGAnXyIqVs9uN0/fR/fxsrnmqWkzjmd
-         Yu+09AeCytwiv13UTe7H1nqpp2ZILQGz7axEvNukOCDaucJGHPRxylA49lDStnzuv6QH
-         SIZtLh83PXOR6VQKDjfG1RDOPOWGbjuyGeu68hAkT+lyx77MDGBKPjoanKAen+wAP7ux
-         E6YQ==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Yukg6b4y64c8KSBao2PH5s3zw4SW0jWagPInPwmkaHA=;
+        b=RofPxRvKoEh6WqNyov5/t7AACnJ3fsdmQTVMNY4Dk/Uo9/hJO3Dl6Ex731mLii54rf
+         1R6h3pFd767vc5CygWQXG9idF/gg12zZHqAH7kuMKvYar9dJoN1hXa0AzWmLlAzX9kfQ
+         fzT4V5k6qtS+c8GiZbTsImfbtPA4YgEF1ovRZZMEE+wmSOhN8ilFnbEV17lFXcmn7Ij2
+         w4MwibNTIaQxmQnT5P+6Br9dt42SP222WmmhHP+IQyIRn3bIiYOlHEC2gUW38uv1tZSQ
+         A/LjBnBxel49NVzpKpY5bKTlPdd2ZS7bBiPRQhsrpB25DU43X3giCa0RA3P9F/CLYPmm
+         X1AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=36pEah6QZLjkR5d3CgHwBrLC0xsY+3u5513RC5sgjtk=;
-        b=enKEOGGYY98jBMuQ+5ENHuydKw9TfmIriCXXgs+QgTs35sq/kHaobNs18R2OIpXust
-         EhwqV25ntK4DnLdlOfc7pj+HoqR2w18nAbOA1/u6g1Jm29WZyPA3juJ1TLetMnS2afzn
-         lzORKNpfn7EYYykaDmrnsDzS4H2MzzWMVe4wS0DS+ca/kO5wnBWNOfjuvBRmcT/CakSJ
-         16sunKDCWdHobq66CqlElnjtNf5HYpJu+9oPTFaSks/hJg8CU0lD+qR19x2fCayq52I3
-         VeJ4AeDGOIqIPCWJqGmVdGSFWaCf0hYKLa5h1/RZt3+s+ZxyJJV2Z4r0KHOL6lcwJJbj
-         ee+w==
-X-Gm-Message-State: AJcUukdwaVyxAU5BBjW6rzlPBoCkYtPAOFhwerLvI5I0ZkKlcRfIQn2n
-        CLKlkeAwP1HKOEh3Ro6m/rfVLawD
-X-Google-Smtp-Source: ALg8bN55ZQ+eoKsktA80Qr5rAd5gW53HkUyuRTBIE7DtI0cZheZgBlQLpMQuusgi6EydPkm1GK1Z6Q==
-X-Received: by 2002:adf:f848:: with SMTP id d8mr20800779wrq.178.1545853314017;
-        Wed, 26 Dec 2018 11:41:54 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:6194:598:7f5e:b2e? (p200300EA8BCFE300619405987F5E0B2E.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:6194:598:7f5e:b2e])
-        by smtp.googlemail.com with ESMTPSA id l14sm68234853wrp.55.2018.12.26.11.41.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Yukg6b4y64c8KSBao2PH5s3zw4SW0jWagPInPwmkaHA=;
+        b=qm7Wnw8IL4Xm3E8yffzG1Dt1tfAm/MmENP3C6BLy2H/ZkuvBhd/1QBelk241AGnmNG
+         DqI2VexXSY2x24SWx8g8Qis6AbQ2peGCh7E/5XpMRFXkyuT+6wyswcSzqNDMxUPgUjCQ
+         xNvsaEUaec1Q5Y6m+ET6PXJAjCMWc3a/BhyItvpZU6g4BXb2tjvChtljPAaWmHmdTNai
+         6wgGe6vDsauJyK66Us0TEf+LizdE2AiAyG9jXlXo9bP/QD258aLZMC9GmsXhXWfcLUVa
+         J7AvtptMK2yAf7tSZNrMQJDRGE4FxynKxp38sj0B2qTujObsqBdCshFIZZpKQlDQlq24
+         6LxQ==
+X-Gm-Message-State: AA+aEWYZ1G0Jdza/N36tvYkuQImob6/aOuQEnDVdo2smi+lWskpJw71w
+        BIKsC9+0a/Xrv7pSPjJtP2r0Q5vfHv2eyeq2Jmn7aBCgQR/867QVLAsNymY9+obPlEp+anAta5G
+        GDo5w/dRJtccZTXagms+oVmlfuTdq
+X-Received: by 2002:a24:76d0:: with SMTP id z199mr12624072itb.165.1545853387291;
+        Wed, 26 Dec 2018 11:43:07 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7RLNHABeS4sylwXyw2vD+2670ol3IoMhrvfd5n61tTaGnrtPpPxF6L6ay7qnP9l60tg36zBg==
+X-Received: by 2002:a24:76d0:: with SMTP id z199mr12624056itb.165.1545853387054;
+        Wed, 26 Dec 2018 11:43:07 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id x128sm13391996itb.8.2018.12.26.11.43.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 11:41:53 -0800 (PST)
-Subject: Re: [PATCH] net: dsa: bcm_sf2: Propagate error value from mdio_write
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Aditya Pakki <pakki001@umn.edu>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181226182132.76798-1-kjlu@umn.edu>
- <4f6199de-51c4-4446-3ad3-6b036a09a63c@gmail.com>
- <CAK8KejrSvuFF546cSTwN_XWD6N8FxbSCjxCUsqaQ_N6S8nTA5A@mail.gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <9d5f9506-fc2f-cf17-1fe5-3b1977e2fdf9@gmail.com>
-Date:   Wed, 26 Dec 2018 20:41:50 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8KejrSvuFF546cSTwN_XWD6N8FxbSCjxCUsqaQ_N6S8nTA5A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 26 Dec 2018 11:43:06 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        David Rientjes <rientjes@google.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Joe Perches <joe@perches.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: compaction.c: Propagate return value upstream
+Date:   Wed, 26 Dec 2018 13:42:56 -0600
+Message-Id: <20181226194257.11038-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.12.2018 20:32, Kangjie Lu wrote:
-> 
-> 
-> On Wed, Dec 26, 2018 at 1:13 PM Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
-> 
->     On 26.12.2018 19:21, Kangjie Lu wrote:
->     > Both bcm_sf2_sw_indir_rw and mdiobus_write_nested could fail, so let's
->     > return their error codes upstream.
->     >
->     > Signed-off-by: Kangjie Lu <kjlu@umn.edu <mailto:kjlu@umn.edu>>
->     > ---
->     >  drivers/net/dsa/bcm_sf2.c | 7 +++----
->     >  1 file changed, 3 insertions(+), 4 deletions(-)
->     >
->     > diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
->     > index 2eb68769562c..236815700fba 100644
->     > --- a/drivers/net/dsa/bcm_sf2.c
->     > +++ b/drivers/net/dsa/bcm_sf2.c
->     > @@ -303,11 +303,10 @@ static int bcm_sf2_sw_mdio_write(struct mii_bus *bus, int addr, int regnum,
->     >        * send them to our master MDIO bus controller
->     >        */
->     >       if (addr == BRCM_PSEUDO_PHY_ADDR && priv->indir_phy_mask & BIT(addr))
->     > -             bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
->     > +             return bcm_sf2_sw_indir_rw(priv, 0, addr, regnum, val);
->     This is wrong. Please get familiar with what the function does.
->     And test changes before submitting them!
-> 
->  
-> bcm_sf2_sw_indir_rw() doesn't return an error code, so we don't propagate its return value but return 0 after it.
-> 
-> For mdiobus_write_nested(), since it does return an error code, we propagate its error code upstream. 
-> 
-> Does this sound right to you?
->  
-Better. You should test a change before submitting (and better not only compile-test).
-And please no HTML mails. Get familiar with the basics of kernel development
-before submitting. Read document "SubmittingPatches" and the following for netdev:
-https://www.kernel.org/doc/Documentation/networking/netdev-FAQ.txt
-By the way: net-next is closed currently.
+In sysctl_extfrag_handler(), proc_dointvec_minmax() can return an
+error. The fix propagates the error upstream in case of failure.
 
-> 
-> 
->     >       else
->     > -             mdiobus_write_nested(priv->master_mii_bus, addr, regnum, val);
->     > -
->     > -     return 0;
->     > +             return mdiobus_write_nested(priv->master_mii_bus,
->     > +                             addr, regnum, val);
->     >  }
->     > 
->     >  static irqreturn_t bcm_sf2_switch_0_isr(int irq, void *dev_id)
->     >
-> 
-> 
-> 
-> -- 
-> Kangjie Lu
-> Assistant Professor
-> Department of Computer Science and Engineering
-> University of Minnesota
-> Personal homepage <https://www-users.cs.umn.edu/~kjlu>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ mm/compaction.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 7c607479de4a..d108974d0867 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1879,9 +1879,7 @@ int sysctl_compaction_handler(struct ctl_table *table, int write,
+ int sysctl_extfrag_handler(struct ctl_table *table, int write,
+ 			void __user *buffer, size_t *length, loff_t *ppos)
+ {
+-	proc_dointvec_minmax(table, write, buffer, length, ppos);
+-
+-	return 0;
++	return proc_dointvec_minmax(table, write, buffer, length, ppos);
+ }
+ 
+ #if defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
+-- 
+2.17.1
 
