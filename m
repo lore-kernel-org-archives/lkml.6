@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E897C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD83C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15B36218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B425320651
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864044;
-	bh=zQBnGdIZKVh6Bxtc3XZ/F3JNsuzA2RJRWr5ghRnaVq4=;
+	s=default; t=1545864049;
+	bh=hiiPDHYAWattjPWQW07dh2SvPsTRqE6Clsqdbf0aK0M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YP8cwJsFY48A2BVCMLWcZyZoUl34t3mP3cZ1AvevW8Qa4yR+pL7/7lrDouuULCG2F
-	 MBZNh3USRzFcDy1NPRRFDkinaGc/+tF6W97xHn9d7lMkxm5uhzEIngcwNFX37A2feU
-	 3FFNU9ag9rM6Y5FwAJcQzbi0jPHtrljLmYyeMaik=
+	b=zqvQSizoGZfTAFhHmy2GFYKovFa/przKYzV+tHCGktL5Hi4tk9NsQbKmp7YEXNkIy
+	 npKdNC0wCt2IEHr3l8/FmsmyNrCjgWsE1pyYFUl3Jb/2KtZr83XIDO01F9vU8PpaPm
+	 IoYH6+7PYKFNAdnmRCPH1sz5VkosV8VU9GFRUInM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbeLZWkm (ORCPT
+        id S1729227AbeLZWks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:40:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40952 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:40:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729145AbeLZWkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:40:40 -0500
+        id S1729178AbeLZWkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3BF521741;
-        Wed, 26 Dec 2018 22:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6258C2054F;
+        Wed, 26 Dec 2018 22:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864039;
-        bh=zQBnGdIZKVh6Bxtc3XZ/F3JNsuzA2RJRWr5ghRnaVq4=;
+        s=default; t=1545864042;
+        bh=hiiPDHYAWattjPWQW07dh2SvPsTRqE6Clsqdbf0aK0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGJeoxiEq/tXCYuWemhuaiCc/O9ULxVmWihB0cV7NxAe4Uq/UTdvN01vgx9Cr2huO
-         M999t0BEfNXMu8BIxuIPL/0UuH0MaybZc0BFjoRnBCoxt6DzxWztXH8HqXDA5DPNO+
-         yXtC2SRymxE2TN9PW0gajGPv36NQjnPis0WPTWjs=
+        b=N+LDQk0eOiBB7Qn8TGsEuNCjoPUe6qwQhYmnBM6yvbpGB2hGt0cTwXzhO1TdZ0o8P
+         4E1j9/XaUMCMqdKK94bBIT5v1/JJ8AFd7e2TrSbRZUmLnCaHZ4YZLOeLILmBaDZnAi
+         evF1hpnqS1GzWyfoILa0rfFmG/zcpkNnYMtnSyK8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Varun Prakash <varun@chelsio.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
         target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 27/59] scsi: target: iscsi: cxgbit: fix csk leak
-Date:   Wed, 26 Dec 2018 17:38:07 -0500
-Message-Id: <20181226223839.150262-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/59] scsi: target: iscsi: cxgbit: add missing spin_lock_init()
+Date:   Wed, 26 Dec 2018 17:38:08 -0500
+Message-Id: <20181226223839.150262-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -61,43 +61,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 801df68d617e3cb831f531c99fa6003620e6b343 ]
+[ Upstream commit 9e6371d3c6913ff1707fb2c0274c9925f7aaef80 ]
 
-csk leak can happen if a new TCP connection gets established after
-cxgbit_accept_np() returns, to fix this leak free remaining csk in
-cxgbit_free_np().
+Add missing spin_lock_init() for cdev->np_lock.
 
 Signed-off-by: Varun Prakash <varun@chelsio.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/target/iscsi/cxgbit/cxgbit_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-index d4fa41be80f9..0c00bb27c9c5 100644
---- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-+++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-@@ -631,8 +631,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_main.c b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+index 4fd775ace541..6340e2e7ffbe 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_main.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+@@ -58,6 +58,7 @@ static void *cxgbit_uld_add(const struct cxgb4_lld_info *lldi)
+ 		return ERR_PTR(-ENOMEM);
  
- static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
- {
-+	struct cxgbit_sock *csk = handle;
-+
- 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
- 	kfree_skb(skb);
-+	cxgbit_put_csk(csk);
- }
+ 	kref_init(&cdev->kref);
++	spin_lock_init(&cdev->np_lock);
  
- static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
-@@ -1147,7 +1150,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
- 	rpl5->opt0 = cpu_to_be64(opt0);
- 	rpl5->opt2 = cpu_to_be32(opt2);
- 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
--	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
-+	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
- 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
- }
+ 	cdev->lldi = *lldi;
  
 -- 
 2.19.1
