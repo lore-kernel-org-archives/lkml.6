@@ -2,117 +2,162 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6548EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441E4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 298852171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:23:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C8832171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="DICXpjMB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxaoYZfo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbeLZRXu (ORCPT
+        id S1727378AbeLZRYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 12:23:50 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:42640 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeLZRXt (ORCPT
+        Wed, 26 Dec 2018 12:24:35 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:37650 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727102AbeLZRYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 12:23:49 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 3C2FB627
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 17:23:48 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FzZPmXaU6q4L for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Dec 2018 11:23:48 -0600 (CST)
-Received: from mail-it1-f199.google.com (mail-it1-f199.google.com [209.85.166.199])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 18358622
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 11:23:48 -0600 (CST)
-Received: by mail-it1-f199.google.com with SMTP id p66so19061804itc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 09:23:48 -0800 (PST)
+        Wed, 26 Dec 2018 12:24:34 -0500
+Received: by mail-it1-f194.google.com with SMTP id b5so20891066iti.2;
+        Wed, 26 Dec 2018 09:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=cKuAwCrMopKiPtBT4AB68pUeNWF03+YxAieToGNYJZk=;
-        b=DICXpjMBv3HKQg5aiON1l1RELc/lBwgH0RnesIgqLh3yw44EA/E5oWoV/RzJvhcOhj
-         gGI9ARjluDmy7scC/laPUctGI9QxHjUp6czJ/q+guFmyDnpO0ArB+QnSPqgJAihI+k3s
-         y853nXjH0LjKBWdJ7+jIa0YoyQ7VzEGiPR9LEUI5d+5nuO4jmNyrvBggPoFJgmx/xbkc
-         ZjaAARYljax6BgNZALE9nrJFwrSE7OHfagnqvRZZmlBTf0NaECo+M2v2Qr+Qdup8k/ct
-         lauj6RGOUkzeNkokzY9zkWiLJoYUOPeXgxzAx6EHs4N2OOvTqmwc6LvkVw4rVez5FUUh
-         /LYg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vDoe0h9uhd83kOri/WUN/6c7QD7cprUiK4aSXchZQo0=;
+        b=hxaoYZfodDjQzT8IDOhHSRCeWk4osq4qYKjWUuzgOxN8ybPslCNPo4rPpGFIRqjHfF
+         1pQQxLbz3FhGZBL/p8G/4PJ6efpi6BFKHtUqZaR2JXkCumPtwxxmzWgGyQCFCW5c/eQl
+         UN4AwGFBwsfi2PcRQMnkNxJpI7FJ0QUdu9jR7qmhLQrGiDTxyD2pD4J40mPpoTpZ27oF
+         vVkvilrGOqHTWNNsdei8LzMSJrbF6i11L/Y10Tsu79lBCaNtDZod/IHZ8EZf3wTV8HLo
+         oDGBMYgnJGonAIe7+bIsTrTbe/VBEpQp+L2KXABzS7nJWZxkbapcrC0Af9qhYLkVsSdJ
+         ggRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cKuAwCrMopKiPtBT4AB68pUeNWF03+YxAieToGNYJZk=;
-        b=T271dDUS0l1LpH5nLofUSo7wJdAGmE+1NJvWSl0V/iv87AlCj1m5TkRtdQyCZuMWrQ
-         22KwcWPmPBYoJYvKHkupngJJpbaNW9zTk3nP1TMGwbXnyAb3omCBfi2RC0icrSyX/sIq
-         tFtoRXK7W4tfYB4r2h24wADR4gI+8wGM2kUP8ttVT34w9Y7AgAYs6Xh43ljg9CCJtB2Y
-         7W6/vgMzne4niXxG4cwOAr2MxPWj870sKsZI5PhreOQFJ31/ePudsWd6wgTbTAErs0Hf
-         BEBFa2uMxq1ES8Uu4TYDJO9SF62tLS9YYt1rHOgsAat5Ac5e/jRarOFEmTYlynImcjKm
-         Rj6Q==
-X-Gm-Message-State: AA+aEWZEvLS/CowjHp4/cbD/mxRm37aQhD4XHP/RfrNDKia5Uthv/OGs
-        kqlOLxirkm8ovh78wWXktPikblFX4AtKO/fZyBQUYJgAK1NIOAIuyHBceYA6NP537l2whQVUy9V
-        QhAZU30QHh6YrENPyPXna3BozdN8/
-X-Received: by 2002:a05:660c:11c6:: with SMTP id p6mr12940019itm.75.1545845027518;
-        Wed, 26 Dec 2018 09:23:47 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/XEbFjjsUrxKczDxl6AkwFTbnbTTr7i6HuQ2UVkidJH7qTh+REk4kD8kWyeWQyo/pCYOq5a7g==
-X-Received: by 2002:a05:660c:11c6:: with SMTP id p6mr12940007itm.75.1545845027284;
-        Wed, 26 Dec 2018 09:23:47 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id w7sm8501958ita.29.2018.12.26.09.23.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 09:23:46 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Buesch <m@bues.ch>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] char: hw_random: Fix missing check during driver release
-Date:   Wed, 26 Dec 2018 11:23:31 -0600
-Message-Id: <20181226172332.6365-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vDoe0h9uhd83kOri/WUN/6c7QD7cprUiK4aSXchZQo0=;
+        b=fo9C5h0awDyBrAe6RNkvbp+KwbQ0Yi9JGUGrkybBFbQMCWJHFev3LIdiZlEm5m0KWB
+         rfBP7pwtFkKPdgWo7xeiU3giMMlAGXI/r/b7eVs1e9fk94f9o5/yXrSop+uUrwaNqRU5
+         fzzAY3J1HU9bLXrUXrIVtWJWmsqQ5tg5rSfDxyLRfgAoccfT6Z7jVQkMjWwz952Ske3i
+         bxfAdmZ8zbgXDGlNCP+XEUMHAmQBQGrgspKftmyxJKaqgHnkrhjarfsiq32T2sE1QtdT
+         jJFmS7fQtJlhGuQyMiPofn4EvF9Ki4Ev0d+YwsXQ1/zOl6qka3MXQJHhfLtMFrOzQ+vl
+         Nl/A==
+X-Gm-Message-State: AA+aEWahKq0zjRDL1PRK1dCRkFFqLavd/PWACKTNtnLa4AwvPCqXQku6
+        DGahplEeSU2I6aVpZyWOpddicptF8BNS3VXrPVQ=
+X-Google-Smtp-Source: AFSGD/Vn5D2EX532L9ciOLTTS1oQNGR3iRdiDmFZHJ+LJDlDQ0Rxhh1Owthvyuzdwe0o9MNnE6g+pZC/C5ASx0mLfCo=
+X-Received: by 2002:a24:1aca:: with SMTP id 193mr13346521iti.150.1545845073271;
+ Wed, 26 Dec 2018 09:24:33 -0800 (PST)
+MIME-Version: 1.0
+References: <1545150569-14897-1-git-send-email-viorel.suman@nxp.com>
+In-Reply-To: <1545150569-14897-1-git-send-email-viorel.suman@nxp.com>
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+Date:   Thu, 27 Dec 2018 01:24:22 +0800
+Message-ID: <CAGoOwPQvc5w05NOVsp6Qw-Ee3CJJCcaU2Dtzwbf+7bUe_kFEbA@mail.gmail.com>
+Subject: Re: [RFC PATCH] ASoC: fsl: Add Audio Mixer CPU DAI driver
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devres_release can return -ENOENT if the device is not freed. The fix
-throws a warning consistent with other invocations.
+Hi Viorel,
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/char/hw_random/core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Sorry for the late response, having been on a long vacation.
 
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 95be7228f327..582d983fa93f 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -578,7 +578,11 @@ EXPORT_SYMBOL_GPL(devm_hwrng_register);
- 
- void devm_hwrng_unregister(struct device *dev, struct hwrng *rng)
- {
--	devres_release(dev, devm_hwrng_release, devm_hwrng_match, rng);
-+	int rc;
-+
-+	rc = devres_release(dev, devm_hwrng_release, devm_hwrng_match, rng);
-+	if (rc)
-+		WARN_ON(rc);
- }
- EXPORT_SYMBOL_GPL(devm_hwrng_unregister);
- 
--- 
-2.17.1
+The code looks pretty clean. Just some small concerns/questions below.
 
+On Wed, Dec 19, 2018 at 12:30 AM Viorel Suman <viorel.suman@nxp.com> wrote:
+>
+> This patch implements Audio Mixer CPU DAI driver for NXP iMX8 SOCs.
+> The Audio Mixer is a on-chip functional module that allows mixing of
+> two audio streams into a single audio stream.
+>
+> Audio Mixer datasheet is available here:
+> https://www.nxp.com/docs/en/reference-manual/IMX8DQXPRM.pdf
+>
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> ---
+>  .../devicetree/bindings/sound/fsl,amix.txt         |  45 ++
+>  sound/soc/fsl/Kconfig                              |   7 +
+>  sound/soc/fsl/Makefile                             |   3 +
+>  sound/soc/fsl/fsl_amix.c                           | 554 +++++++++++++++++++++
+>  sound/soc/fsl/fsl_amix.h                           | 101 ++++
+
+I aimn't against the naming here, but it seems to be AUDMIX in RM?
+
+Would it be better to align with that? It's your decision though.
+
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,amix.txt b/Documentation/devicetree/bindings/sound/fsl,amix.txt
+> +=================================
+> +  - compatible         : Compatible list, contains "fsl,imx8qm-amix"
+> +
+> +  - reg                        : Offset and length of the register set for the device.
+> +
+> +  - clocks             : Must contain an entry for each entry in clock-names.
+> +
+> +  - clock-names                : Must include the "ipg" for register access.
+> +
+> +  - power-domains      : Must contain the phandle to the AMIX power domain node
+> +
+> +Device driver configuration example:
+> +======================================
+> +  amix: amix@59840000 {
+> +    compatible = "fsl,imx8qm-amix";
+> +    reg = <0x0 0x59840000 0x0 0x10000>;
+> +    clocks = <&clk IMX8QXP_AUD_AMIX_IPG>;
+> +    clock-names = "ipg";
+> +    power-domains = <&pd_amix>;
+> +  };
+
+From the description of DT and RM, I don't see how it connects to SAIs.
+
+Are they fixed to SAI0 and SAI1 in imx8qm? Wondering if it'd be better
+to have such information in the doc.
+
+> diff --git a/sound/soc/fsl/fsl_amix.c b/sound/soc/fsl/fsl_amix.c
+
++static const char
++ *width_sel[] = { "16b", "18b", "20b", "24b", "32b", },
++ *pol_sel[] = { "Positive edge", "Negative edge", },
+[...]
++static const struct soc_enum fsl_amix_enum[] = {
++/* FSL_AMIX_CTR enums */
+[...]
++SOC_ENUM_SINGLE_S(FSL_AMIX_CTR, FSL_AMIX_CTR_OUTWIDTH_SHIFT, width_sel),
++SOC_ENUM_SINGLE_S(FSL_AMIX_CTR, FSL_AMIX_CTR_OUTCKPOL_SHIFT, pol_sel),
+
+Should we handle the width in hw_param()?
+
+Why do we change pol here? It feels like against set_fmt().
+
+> +static int fsl_amix_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+> +{
+> +       /* For playback the AMIX is slave, and for record is master */
+> +       switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+> +       case SND_SOC_DAIFMT_CBM_CFM:
+> +       case SND_SOC_DAIFMT_CBS_CFS:
+
+So it's used either for playback or capture only, not both at same time?
+
+Thanks
+Nicolin
