@@ -6,145 +6,135 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C227FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF48C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB502148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6F0D2148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729864AbeLZAqG (ORCPT
+        id S1729879AbeLZAqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:46:06 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57338 "EHLO
+        Tue, 25 Dec 2018 19:46:11 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57140 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeLZAn7 (ORCPT
+        with ESMTP id S1725971AbeLZAn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Dec 2018 19:43:59 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 19C3A2951F; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
+        id 9772829510; Tue, 25 Dec 2018 19:43:55 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Schmitz <schmitzmic@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <f94994916e3899b2c41e067105877ead8fdc91b1.1545784679.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org
+Message-Id: <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 09/25] m68k/atari: Implement arch_nvram_ops methods and
- enable CONFIG_HAVE_ARCH_NVRAM_OPS
+Subject: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Atari RTC NVRAM has a checksum so implement the remaining arch_nvram_ops
-methods for the set_checksum and initialize ioctls. Enable
-CONFIG_HAVE_ARCH_NVRAM_OPS.
+On powerpc, setting CONFIG_NVRAM=n builds a kernel with no NVRAM support.
+Setting CONFIG_NVRAM=m enables the /dev/nvram misc device module without
+enabling NVRAM support in drivers. Setting CONFIG_NVRAM=y enables the
+misc device (built-in) and also enables NVRAM support in drivers.
+
+m68k shares the valkyriefb driver with powerpc, and since that driver uses
+NVRAM, it is affected by CONFIG_ATARI_SCSI, because of the use of
+"select NVRAM".
+
+Adopt the powerpc convention on m68k to avoid surprises.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Tested-by: Christian T. Steigies <cts@debian.org>
 ---
-Changed since v7:
- - Changed the default for CONFIG_NVRAM, because "select NVRAM" was
-removed from ATARI_SCSI in patch 1.
+This patch temporarily disables CONFIG_NVRAM on Atari, to prevent build
+failures when bisecting the rest of this patch series. It gets enabled
+again with the introduction of CONFIG_HAVE_ARCH_NVRAM_OPS, once the
+nvram_* global functions have been moved to an ops struct.
 ---
- arch/m68k/Kconfig         |  3 +++
- arch/m68k/Kconfig.machine |  1 +
- arch/m68k/atari/nvram.c   | 24 ++++++++++++++++++++++++
- drivers/char/Kconfig      |  3 ++-
- 4 files changed, 30 insertions(+), 1 deletion(-)
+ drivers/char/Kconfig      | 5 +----
+ drivers/scsi/Kconfig      | 6 +++---
+ drivers/scsi/atari_scsi.c | 7 ++++---
+ 3 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 1bc9f1ba759a..79e545f2520a 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -70,6 +70,9 @@ config ZONE_DMA
- 	bool
- 	default y
- 
-+config HAVE_ARCH_NVRAM_OPS
-+	bool
-+
- config HZ
- 	int
- 	default 1000 if CLEOPATRA
-diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
-index 64a641467736..0c8c4c7982c1 100644
---- a/arch/m68k/Kconfig.machine
-+++ b/arch/m68k/Kconfig.machine
-@@ -16,6 +16,7 @@ config ATARI
- 	bool "Atari support"
- 	depends on MMU
- 	select MMU_MOTOROLA if MMU
-+	select HAVE_ARCH_NVRAM_OPS
- 	help
- 	  This option enables support for the 68000-based Atari series of
- 	  computers (including the TT, Falcon and Medusa). If you plan to use
-diff --git a/arch/m68k/atari/nvram.c b/arch/m68k/atari/nvram.c
-index bafc9dc32830..4b27f1683a37 100644
---- a/arch/m68k/atari/nvram.c
-+++ b/arch/m68k/atari/nvram.c
-@@ -74,6 +74,26 @@ static void __nvram_set_checksum(void)
- 	__nvram_write_byte(sum, ATARI_CKS_LOC + 1);
- }
- 
-+static long nvram_set_checksum(void)
-+{
-+	spin_lock_irq(&rtc_lock);
-+	__nvram_set_checksum();
-+	spin_unlock_irq(&rtc_lock);
-+	return 0;
-+}
-+
-+static long nvram_initialize(void)
-+{
-+	loff_t i;
-+
-+	spin_lock_irq(&rtc_lock);
-+	for (i = 0; i < NVRAM_BYTES; ++i)
-+		__nvram_write_byte(0, i);
-+	__nvram_set_checksum();
-+	spin_unlock_irq(&rtc_lock);
-+	return 0;
-+}
-+
- static ssize_t nvram_read(char *buf, size_t count, loff_t *ppos)
- {
- 	char *p = buf;
-@@ -120,6 +140,8 @@ static ssize_t nvram_write(char *buf, size_t count, loff_t *ppos)
- 
- static ssize_t nvram_get_size(void)
- {
-+	if (!MACH_IS_ATARI)
-+		return -ENODEV;
- 	return NVRAM_BYTES;
- }
- 
-@@ -127,6 +149,8 @@ const struct nvram_ops arch_nvram_ops = {
- 	.read           = nvram_read,
- 	.write          = nvram_write,
- 	.get_size       = nvram_get_size,
-+	.set_checksum   = nvram_set_checksum,
-+	.initialize     = nvram_initialize,
- };
- EXPORT_SYMBOL(arch_nvram_ops);
- 
 diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index 5b54595dfe30..f9960bd65481 100644
+index 9d03b2ff5df6..5b54595dfe30 100644
 --- a/drivers/char/Kconfig
 +++ b/drivers/char/Kconfig
-@@ -236,7 +236,8 @@ source "drivers/char/hw_random/Kconfig"
+@@ -236,7 +236,7 @@ source "drivers/char/hw_random/Kconfig"
  
  config NVRAM
  	tristate "/dev/nvram support"
--	depends on X86 || GENERIC_NVRAM
-+	depends on X86 || GENERIC_NVRAM || HAVE_ARCH_NVRAM_OPS
-+	default M68K
+-	depends on ATARI || X86 || GENERIC_NVRAM
++	depends on X86 || GENERIC_NVRAM
  	---help---
  	  If you say Y here and create a character special file /dev/nvram
  	  with major number 10 and minor number 144 using mknod ("man mknod"),
+@@ -254,9 +254,6 @@ config NVRAM
+ 	  should NEVER idly tamper with it. See Ralf Brown's interrupt list
+ 	  for a guide to the use of CMOS bytes by your BIOS.
+ 
+-	  On Atari machines, /dev/nvram is always configured and does not need
+-	  to be selected.
+-
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called nvram.
+ 
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 640cd1b31a18..924eb69e7fc4 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -1381,14 +1381,14 @@ config ATARI_SCSI
+ 	tristate "Atari native SCSI support"
+ 	depends on ATARI && SCSI
+ 	select SCSI_SPI_ATTRS
+-	select NVRAM
+ 	---help---
+ 	  If you have an Atari with built-in NCR5380 SCSI controller (TT,
+ 	  Falcon, ...) say Y to get it supported. Of course also, if you have
+ 	  a compatible SCSI controller (e.g. for Medusa).
+ 
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called atari_scsi.
++	  To compile this driver as a module, choose M here: the module will
++	  be called atari_scsi. If you also enable NVRAM support, the SCSI
++	  host's ID is taken from the setting in TT RTC NVRAM.
+ 
+ 	  This driver supports both styles of NCR integration into the
+ 	  system: the TT style (separate DMA), and the Falcon style (via
+diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
+index 89f5154c40b6..99e5729d910d 100644
+--- a/drivers/scsi/atari_scsi.c
++++ b/drivers/scsi/atari_scsi.c
+@@ -755,9 +755,10 @@ static int __init atari_scsi_probe(struct platform_device *pdev)
+ 	if (ATARIHW_PRESENT(TT_SCSI) && setup_sg_tablesize >= 0)
+ 		atari_scsi_template.sg_tablesize = setup_sg_tablesize;
+ 
+-	if (setup_hostid >= 0) {
++	if (setup_hostid >= 0)
+ 		atari_scsi_template.this_id = setup_hostid & 7;
+-	} else {
++#ifdef CONFIG_NVRAM
++	else
+ 		/* Test if a host id is set in the NVRam */
+ 		if (ATARIHW_PRESENT(TT_CLK) && nvram_check_checksum()) {
+ 			unsigned char b = nvram_read_byte(16);
+@@ -768,7 +769,7 @@ static int __init atari_scsi_probe(struct platform_device *pdev)
+ 			if (b & 0x80)
+ 				atari_scsi_template.this_id = b & 7;
+ 		}
+-	}
++#endif
+ 
+ 	/* If running on a Falcon and if there's TT-Ram (i.e., more than one
+ 	 * memory block, since there's always ST-Ram in a Falcon), then
 -- 
 2.19.2
 
