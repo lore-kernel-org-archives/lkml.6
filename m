@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A6CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C1CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382A32054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4152054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864113;
-	bh=K5++NhvGdVRO1uIMfwUU/ZZS1GYjsAhJKQj6Pz9Lh6Y=;
+	s=default; t=1545864122;
+	bh=jkmQI3b/nDhhWCKLiWe9MhmNuQHHy10Qp1TmoliNIfI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VkVwpBiS3UAyrp1vIcwuD4ItZ15RQ55/BCL4cJm1NEI4J0hEU1eHiAi9Ck0K14g7Q
-	 Rn9HV58/8GyA6gIsh2Eh9s1CRAiyC1A99jzgPzfSkwYQguQDkTC7nTLoKmqWCWLWwm
-	 TTp7EQIZ6ev0kz7Z+cPzUyKgQfhYSKvqzo9OJ/6g=
+	b=fK/28J/KP3Lv6uBBkWutPdKNnKQRgbsy0UpSEOXkeDoYnYi5zbaJMeKJm8AEkcd13
+	 em/0mVhnyETX//GvrNb5TmK1tj5QMJnDapijwPJqhkmZ485FLIHCfEVYXvCHKZpJUk
+	 xbbajoT2P4UHsoKBdB+N/80Kd3iz3qrp4irsM3qs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729571AbeLZWlw (ORCPT
+        id S1729587AbeLZWmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42192 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:42:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbeLZWlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:41:40 -0500
+        id S1729516AbeLZWlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:41:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B0A12054F;
-        Wed, 26 Dec 2018 22:41:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5DB20651;
+        Wed, 26 Dec 2018 22:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864099;
-        bh=K5++NhvGdVRO1uIMfwUU/ZZS1GYjsAhJKQj6Pz9Lh6Y=;
+        s=default; t=1545864098;
+        bh=jkmQI3b/nDhhWCKLiWe9MhmNuQHHy10Qp1TmoliNIfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atq1YkgMx6c/MohDjXq0pzsnwBhP7xsQhbdHckZIWoqpLJoqMFsSX7FP7facV0rMC
-         7EA2oybB4cO+AWLwqYfwra06xiOCZUuyq+uH2adMATkoSNp6k1ECb12Ltx5Ro8GWkj
-         XjKtBygSNYxjBVWl16TyQzkwz5EJo3/UHqB3Wfg8=
+        b=kup0y7E/pJ9DZZagIBVQ9QPteEDQUoSL4VHXh+gmzLcPdQ2SJtZBZYDp+9Y3mBTJj
+         4BxwNKOrTGkLgGaW243uXBC0TB5W01xkM6XB016uX75j6OusZIqse1uyi96COn7sZb
+         gTBU5foXV7rZvRCCHN8gLaVr5Wt/e6lQaGWtbK9U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniele Palmas <dnlplm@gmail.com>,
+Cc:     Kangjie Lu <kjlu@umn.edu>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 58/59] qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup
-Date:   Wed, 26 Dec 2018 17:38:38 -0500
-Message-Id: <20181226223839.150262-58-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 57/59] net: netxen: fix a missing check and an uninitialized use
+Date:   Wed, 26 Dec 2018 17:38:37 -0500
+Message-Id: <20181226223839.150262-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -59,71 +58,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit d667044f49513d55fcfefe4fa8f8d96091782901 ]
+[ Upstream commit d134e486e831defd26130770181f01dfc6195f7d ]
 
-This patch fixes qmap header retrieval when modem is configured for
-dl data aggregation.
+When netxen_rom_fast_read() fails, "bios" is left uninitialized and may
+contain random value, thus should not be used.
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+The fix ensures that if netxen_rom_fast_read() fails, we return "-EIO".
+
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index d88e6a15022b..429d08a68a63 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -151,17 +151,18 @@ static bool qmimux_has_slaves(struct usbnet *dev)
- 
- static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- {
--	unsigned int len, offset = sizeof(struct qmimux_hdr);
-+	unsigned int len, offset = 0;
- 	struct qmimux_hdr *hdr;
- 	struct net_device *net;
- 	struct sk_buff *skbn;
-+	u8 qmimux_hdr_sz = sizeof(*hdr);
- 
--	while (offset < skb->len) {
--		hdr = (struct qmimux_hdr *)skb->data;
-+	while (offset + qmimux_hdr_sz < skb->len) {
-+		hdr = (struct qmimux_hdr *)(skb->data + offset);
- 		len = be16_to_cpu(hdr->pkt_len);
- 
- 		/* drop the packet, bogus length */
--		if (offset + len > skb->len)
-+		if (offset + len + qmimux_hdr_sz > skb->len)
- 			return 0;
- 
- 		/* control packet, we do not know what to do */
-@@ -176,7 +177,7 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			return 0;
- 		skbn->dev = net;
- 
--		switch (skb->data[offset] & 0xf0) {
-+		switch (skb->data[offset + qmimux_hdr_sz] & 0xf0) {
- 		case 0x40:
- 			skbn->protocol = htons(ETH_P_IP);
- 			break;
-@@ -188,12 +189,12 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			goto skip;
- 		}
- 
--		skb_put_data(skbn, skb->data + offset, len);
-+		skb_put_data(skbn, skb->data + offset + qmimux_hdr_sz, len);
- 		if (netif_rx(skbn) != NET_RX_SUCCESS)
- 			return 0;
- 
- skip:
--		offset += len + sizeof(struct qmimux_hdr);
-+		offset += len + qmimux_hdr_sz;
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+index 3dd973475125..4b444351ab7d 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+@@ -1125,7 +1125,8 @@ netxen_validate_firmware(struct netxen_adapter *adapter)
+ 		return -EINVAL;
  	}
- 	return 1;
- }
+ 	val = nx_get_bios_version(adapter);
+-	netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios);
++	if (netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios))
++		return -EIO;
+ 	if ((__force u32)val != bios) {
+ 		dev_err(&pdev->dev, "%s: firmware bios is incompatible\n",
+ 				fw_name[fw_type]);
 -- 
 2.19.1
 
