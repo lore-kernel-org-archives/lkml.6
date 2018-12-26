@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0727FC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9A3C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF453218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E47221902
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863999;
-	bh=pP6hb9A13E/UpzViz3OCPKObvmNPMcAEWslKKvarim8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=UlIH8LaufNScjE9ORRX9lMpUtK2F+Px35pZN1QuL4FL6g5bbLWnxM+wlpxknGYgjF
-	 IG3BnRQX5hKtXJv35jX50eaVGwyvwIfOgEZDFBbnNMp/XV2eJDfNqhhvzvzW6RDNOQ
-	 53nnxfGLpyZ16RzfiyiQtwKfc3Aj93n3cHXpdn9Q=
+	s=default; t=1545864004;
+	bh=RRNvBnYpys4EAY+rpxxBRXnGKnbxB0RqhrmWp3JAn9A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=z83BV4LGNT+Lem1MgVLFPQMpQzXSEKDek9434H7zBO1E4H1VC9Q67lnfd7aZLVrad
+	 V5p0KzM5bAYZtogGkdOmdopuwzmnltYCTyVzc6y0JmOvSqok8blNeELsZm6JQm6jKb
+	 YgPMC0aI7rp41ESJNUzzUqfESNGnI0MqEFuJmsA8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728948AbeLZWj7 (ORCPT
+        id S1727136AbeLZWkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:40:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728029AbeLZWj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:39:58 -0500
+        id S1728293AbeLZWkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADD812054F;
-        Wed, 26 Dec 2018 22:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0C8320651;
+        Wed, 26 Dec 2018 22:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863997;
-        bh=pP6hb9A13E/UpzViz3OCPKObvmNPMcAEWslKKvarim8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VV+YmzOf7j/RA7SE9/aEnyiPnzeWMf3v1ggHZ5nCB5A0e0VXQdDhrYqSSw1EDNs3y
-         u/9K1BwbTWL0k9Y7swK7k4xGCig5yn8TYPHuANhgr0BeBW1Hgd6rG+h6VWomc/p0L6
-         bp3bPbyQXwoGbME9bcQelvyQoocek9sK+tOkogV8=
+        s=default; t=1545863999;
+        bh=RRNvBnYpys4EAY+rpxxBRXnGKnbxB0RqhrmWp3JAn9A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1js63LF4pv9FHJGZWCX7SZKlvZYOB18x7DlgFkqWdNBCx8Vr8scOXmkTE989EQ5eq
+         bHlJEKwFWO0CAwHwHT4RQm7GFGaTXyz/tGcFgVH9s5zCQSTl46u05IQami5SGZCrn3
+         Oo2w8y9TGP7mnCrRZEKxZ/nKVn3AmSZVa3bZQUIY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 01/59] pinctrl: meson: fix pull enable register calculation
-Date:   Wed, 26 Dec 2018 17:37:41 -0500
-Message-Id: <20181226223839.150262-1-sashal@kernel.org>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 02/59] powerpc: Fix COFF zImage booting on old powermacs
+Date:   Wed, 26 Dec 2018 17:37:42 -0500
+Message-Id: <20181226223839.150262-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
+References: <20181226223839.150262-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,42 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 614b1868a125a0ba24be08f3a7fa832ddcde6bca ]
+[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
 
-We just changed the code so we apply bias disable on the correct
-register but forgot to align the register calculation. The result
-is that we apply the change on the correct register, but possibly
-at the incorrect offset/bit
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-This went undetected because offsets tends to be the same between
-REG_PULL and REG_PULLEN for a given pin the EE controller. This
-is not true for the AO controller.
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
 
-Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 6c43322dbb97..2998941fdeca 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -272,7 +272,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 32dfe6d083f3..9b9d17437373 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
--			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
-+			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
-+					       &bit);
- 			ret = regmap_update_bits(pc->reg_pullen, reg,
- 						 BIT(bit), 0);
- 			if (ret)
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
+ 
+ #ifdef __powerpc64__
+ .balign 8
 -- 
 2.19.1
 
