@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19032C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36092C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEAAE218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC648218A5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864851;
-	bh=8QmOgPpEvQqxk+kImlDBvVFtSfDyqm5jtXProb5ZLIA=;
+	s=default; t=1545864855;
+	bh=dIXcbOTSnnn60WUJW+t1D74SXkb5A0pNyWBAs4TXI+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IrXx1V2t3kehTSEBkzf1VdAEhRfvWVkNpVhjFXfKsXNomIVNQteSeaK+FiYj84C2m
-	 IzQCG/SgxBIcP7+7ppTKql0jY5zFkv4pIfkNboK5DmNebBPASwdt0LQHTJ7p1rt/Cr
-	 ybFvx5JM8p5KK/VqR3ZpUSE2GP8cSg4t726j/VLk=
+	b=sngHX+7O/X3wA4FNmTN27HhnNGZwOJ4kFt1HLHIKgb6CiCNMrhMP4VwjN2Aa/REPi
+	 IdjWj3SOZmUXfwJn1NY2jPiZTnM+KKNI7HX3jVFYEYzg8UflZ0CNkEzrs61/npnTa8
+	 P07ZDii1Ki7HfxCa1z6nZmJFQh9vg5JN5IZUY01o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730069AbeLZWyL (ORCPT
+        id S1728594AbeLZWyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730035AbeLZWyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:08 -0500
+        id S1730040AbeLZWyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FA3E214D8;
-        Wed, 26 Dec 2018 22:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8672021741;
+        Wed, 26 Dec 2018 22:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864848;
-        bh=8QmOgPpEvQqxk+kImlDBvVFtSfDyqm5jtXProb5ZLIA=;
+        s=default; t=1545864849;
+        bh=dIXcbOTSnnn60WUJW+t1D74SXkb5A0pNyWBAs4TXI+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKoYEVMxkNcSdoNhfljq05Y+W7wHipMAmua9pO5aQjqwPRLWftePG/La5IL0+D74D
-         0naUshytjDCDFAaSOe5i21uuEec/NvClv767UjnIVqtumgVubpY3Vwz66Lu///OzCo
-         G3+04PFLnSnBYEPggE998Yc3lmrlNb7cb8cQBakk=
+        b=ho2NFlkKR5buoq4xDjKYVu8kyRuDayQqWp+Ahk+hPsf3pjuFMHE19jEf9mu+BzuTr
+         f5vNW7Bmhf7mwL0/UJLD1ClZ1k+xRmK6P+6WRzNrlRX77WS1n023ZN6GsnKll/kuYS
+         kyP6dwNaZ7pYmnEPE04gYNv0N88DCzjG8ocl9K3Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/35] netfilter: ipset: do not call ipset_nest_end after nla_nest_cancel
-Date:   Wed, 26 Dec 2018 17:41:19 -0500
-Message-Id: <20181226224142.150866-12-sashal@kernel.org>
+Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 13/35] bnx2x: Clear fip MAC when fcoe offload support is disabled
+Date:   Wed, 26 Dec 2018 17:41:20 -0500
+Message-Id: <20181226224142.150866-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -61,38 +60,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 708abf74dd87f8640871b814faa195fb5970b0e3 ]
+[ Upstream commit bbf666c1af916ed74795493c564df6fad462cc80 ]
 
-In the error handling block, nla_nest_cancel(skb, atd) is called to
-cancel the nest operation. But then, ipset_nest_end(skb, atd) is
-unexpected called to end the nest operation. This patch calls the
-ipset_nest_end only on the branch that nla_nest_cancel is not called.
+On some customer setups it was observed that shmem contains a non-zero fip
+MAC for 57711 which would lead to enabling of SW FCoE.
+Add a software workaround to clear the bad fip mac address if no FCoE
+connections are supported.
 
-Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_list_set.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
-index a2a89e4e0a14..e82157285d34 100644
---- a/net/netfilter/ipset/ip_set_list_set.c
-+++ b/net/netfilter/ipset/ip_set_list_set.c
-@@ -518,8 +518,8 @@ list_set_list(const struct ip_set *set,
- 		ret = -EMSGSIZE;
- 	} else {
- 		cb->args[IPSET_CB_ARG0] = i;
-+		ipset_nest_end(skb, atd);
- 	}
--	ipset_nest_end(skb, atd);
- out:
- 	rcu_read_unlock();
- 	return ret;
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 54dab4eac804..77f53e4122c3 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -11733,8 +11733,10 @@ static void bnx2x_get_fcoe_info(struct bnx2x *bp)
+ 	 * If maximum allowed number of connections is zero -
+ 	 * disable the feature.
+ 	 */
+-	if (!bp->cnic_eth_dev.max_fcoe_conn)
++	if (!bp->cnic_eth_dev.max_fcoe_conn) {
+ 		bp->flags |= NO_FCOE_FLAG;
++		eth_zero_addr(bp->fip_mac);
++	}
+ }
+ 
+ static void bnx2x_get_cnic_info(struct bnx2x *bp)
 -- 
 2.19.1
 
