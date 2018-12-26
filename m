@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2EEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442BEC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8542521741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F11218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:09:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="S/NxjHhn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="F7wd+7JA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbeLZXJW (ORCPT
+        id S1728431AbeLZXJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:09:22 -0500
+        Wed, 26 Dec 2018 18:09:25 -0500
 Received: from esa5.hgst.iphmx.com ([216.71.153.144]:20034 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727737AbeLZXJV (ORCPT
+        with ESMTP id S1727770AbeLZXJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Dec 2018 18:09:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1545865761; x=1577401761;
+  t=1545865762; x=1577401762;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=8S/RrFDjuKHkFUQKssSKhJVyNonR+n8bd5mR5vPrqWA=;
-  b=S/NxjHhncpLTxXWaDk3JNW8xHBFZ1F7O+qQX0B2yQD7QwrLan8SQwIgT
-   ng0fm6o62GkCpAl4Y43MczNW+DrMMGwzDl3kYcEU9HiXWmK8lUcZ7IEvM
-   k1QXT9zITTcabildKp5kLtEETPjaE6s0/Sz0tu6dMMowSaHcvgw5jJUrC
-   NgWQup0hwfKMLNTJDg8Kqh4PLbh5Zfc7BV5VhxtukajcJcOJ536+ogjKt
-   Y9+KH7y0UBYTJWe0K0MmLBDv3uH8JJwPVcmOmGyG2+fRm5YZOeQiFEU8I
-   oMni4mDZYqjTAq1ALKDQebEJE+4wKq2eKVGVKvr/h4V6003TNQHlnkO1P
-   A==;
+  bh=meu8IE2Cb35XRAORiR9qLyyfGNjZhzm1rUp8PRNo5pE=;
+  b=F7wd+7JAp93SOLAthSRi23ujC4mGscwvU8IccENO9xkEp85PLe6i0J0y
+   0YCNlB/S3YxUQZwsAm7r2ZkRZU9yVmVQc3EfyYgK+nLlJb+Z+kCV0G6AP
+   7FUvS5bp09ciu5MpJQ6Vc7ktqfgY2Mu9sgw25A4JIGAZgufYf5K9HPTnu
+   Q52qjlU3ovglu7DJfRx1gfo1gU+aw4TFyGYKkdPrzcRpoyr7ZObj40dHE
+   ojj1iPlle8Pw4zZInBaXJqRSn0MfbqRnVouI77z53MftDazSqZt5mPHir
+   VB+sfMMjLeR8z+whlzW+5NwWCMRQCxZ/QEaLZqZYgRna5JzL1I7LFh6//
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.56,401,1539619200"; 
-   d="scan'208";a="98702974"
+   d="scan'208";a="98702979"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
   by ob1.hgst.iphmx.com with ESMTP; 27 Dec 2018 07:09:07 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
@@ -59,9 +59,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Rob Herring <robh@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: [PATCH 1/3] RISC-V: Do not wait indefinitely in __cpu_up
-Date:   Wed, 26 Dec 2018 15:08:59 -0800
-Message-Id: <1545865741-22795-2-git-send-email-atish.patra@wdc.com>
+Subject: [PATCH 2/3] RISC-V: Move cpuid to hartid mapping to SMP.
+Date:   Wed, 26 Dec 2018 15:09:00 -0800
+Message-Id: <1545865741-22795-3-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545865741-22795-1-git-send-email-atish.patra@wdc.com>
 References: <1545865741-22795-1-git-send-email-atish.patra@wdc.com>
@@ -70,65 +70,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In SMP path, __cpu_up waits for other CPU to come online
-indefinitely. This is wrong as other CPU might be disabled
-in machine mode and possible CPU is set to the cpus present
-in DT.
+Currently, logical CPU id to physical hartid mapping is
+defined for both smp and non-smp configurations. This
+is not required as we need this only for smp configuration.
+The mapping function can define directly boot_cpu_hartid
+for non-smp usecase.
 
-Introduce a completion variable and waits only for a second.
+The reverse mapping function i.e. hartid to cpuid can be called
+for any valid but not booted harts. So it should return default
+cpu 0 only if it is a boot hartid
 
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- arch/riscv/kernel/smpboot.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/riscv/include/asm/smp.h | 13 +++++++++++--
+ arch/riscv/kernel/setup.c    |  2 ++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 18cda0e8..bb8cd242 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -39,6 +39,7 @@
+diff --git a/arch/riscv/include/asm/smp.h b/arch/riscv/include/asm/smp.h
+index 41aa73b4..8f30300f 100644
+--- a/arch/riscv/include/asm/smp.h
++++ b/arch/riscv/include/asm/smp.h
+@@ -22,12 +22,13 @@
+ /*
+  * Mapping between linux logical cpu index and hartid.
+  */
+-extern unsigned long __cpuid_to_hartid_map[NR_CPUS];
+-#define cpuid_to_hartid_map(cpu)    __cpuid_to_hartid_map[cpu]
  
- void *__cpu_up_stack_pointer[NR_CPUS];
- void *__cpu_up_task_pointer[NR_CPUS];
-+static DECLARE_COMPLETION(cpu_running);
++extern unsigned long boot_cpu_hartid;
+ struct seq_file;
  
- void __init smp_prepare_boot_cpu(void)
+ #ifdef CONFIG_SMP
++extern unsigned long __cpuid_to_hartid_map[NR_CPUS];
++#define cpuid_to_hartid_map(cpu)    __cpuid_to_hartid_map[cpu]
+ 
+ /* print IPI stats */
+ void show_ipi_stats(struct seq_file *p, int prec);
+@@ -58,7 +59,15 @@ static inline void show_ipi_stats(struct seq_file *p, int prec)
+ 
+ static inline int riscv_hartid_to_cpuid(int hartid)
  {
-@@ -77,6 +78,7 @@ void __init setup_smp(void)
- 
- int __cpu_up(unsigned int cpu, struct task_struct *tidle)
- {
-+	int ret = 0;
- 	int hartid = cpuid_to_hartid_map(cpu);
- 	tidle->thread_info.cpu = cpu;
- 
-@@ -92,10 +94,15 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
- 		  task_stack_page(tidle) + THREAD_SIZE);
- 	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
- 
--	while (!cpu_online(cpu))
--		cpu_relax();
-+	wait_for_completion_timeout(&cpu_running,
-+					    msecs_to_jiffies(1000));
- 
--	return 0;
-+	if (!cpu_online(cpu)) {
-+		pr_crit("CPU%u: failed to come online\n", cpu);
-+		ret = -EIO;
-+	}
++	if (hartid == boot_cpu_hartid)
+ 		return 0;
++	else
++		return -1;
++}
++static inline unsigned long cpuid_to_hartid_map(int cpu)
++{
 +
-+	return ret;
++	return boot_cpu_hartid;
  }
  
- void __init smp_cpus_done(unsigned int max_cpus)
-@@ -121,6 +128,7 @@ asmlinkage void __init smp_callin(void)
- 	 * a local TLB flush right now just in case.
- 	 */
- 	local_flush_tlb_all();
-+	complete(&cpu_running);
- 	/*
- 	 * Disable preemption before enabling interrupts, so we don't try to
- 	 * schedule a CPU that hasn't actually started yet.
+ static inline void riscv_cpuid_to_hartid_mask(const struct cpumask *in,
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 2c290e6a..bd4d7b85 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -83,6 +83,7 @@ EXPORT_SYMBOL(empty_zero_page);
+ atomic_t hart_lottery;
+ unsigned long boot_cpu_hartid;
+ 
++#ifdef CONFIG_SMP
+ unsigned long __cpuid_to_hartid_map[NR_CPUS] = {
+ 	[0 ... NR_CPUS-1] = INVALID_HARTID
+ };
+@@ -91,6 +92,7 @@ void __init smp_setup_processor_id(void)
+ {
+ 	cpuid_to_hartid_map(0) = boot_cpu_hartid;
+ }
++#endif
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ static void __init setup_initrd(void)
 -- 
 2.7.4
 
