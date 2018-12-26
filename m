@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E64C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ACFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271C42190B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8865A21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864914;
-	bh=FxPu5bDpcqLY3VoyhCwSTAuRVZ/2sR+WDC1ILZl6ztk=;
+	s=default; t=1545864918;
+	bh=lvy3Tp7WTDgJksiH2lWtQCNM0gHW3RFgYjlxYeoxlQg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CLFp3Q0T2tOeqAuxjHBP5tOwuy1l1Y14N1dzQgA/AOgExqE2arMUXajK1roJyh1ym
-	 +v/FJPKjhj9W/LOmncTUkOALdsOuse6BMVRgEqPVroOT9LlQMRBQpYmjtAzF5eBA/N
-	 pBJUUHxJ/2pDmiLaZiDm8ZS1WXBNNmKBq1QphI0k=
+	b=ITfUUqoJ8RfSbWuAmbbYKRFZH5SENl6DEEwc8Psq11v/hIKiGHx3bCnapkiDQ55m6
+	 xjwCim1YdX5Kl9in43gcJbFkIXiIRlRgLWUxttt7lv3xqavrNgy7fcpo8RyWiTZU4X
+	 LUjfytTwClA5Rlt9Yv51PEc51qvqUwDSZsMqWNOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730311AbeLZWy7 (ORCPT
+        id S1730294AbeLZWy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56272 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730271AbeLZWyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:53 -0500
+        id S1730266AbeLZWyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98B5A21741;
-        Wed, 26 Dec 2018 22:54:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90BD9218A5;
+        Wed, 26 Dec 2018 22:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864893;
-        bh=FxPu5bDpcqLY3VoyhCwSTAuRVZ/2sR+WDC1ILZl6ztk=;
+        s=default; t=1545864892;
+        bh=lvy3Tp7WTDgJksiH2lWtQCNM0gHW3RFgYjlxYeoxlQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7oBEzXcCL1hBiXadH2K7wBZOrlEsnTsCCt7v/gusX0vyi24IR2bxemT5wn79G4vk
-         SIIqpX+697t8+LU29cfHJ4PFqGrMXVcy6ccCZQxb6trCVWNlW/3eP9BRIS/gGxS/go
-         +eqGRX+374BhfcFCn7JuG+1hpJEjr8Ee0CfaYG9k=
+        b=ZIFR59xIcFlH/HHwT7K8J45WJb2uvsa+NZun0xYvUvLl9gIZT+W2O5pfmlQSZBhlV
+         k++jTos50jtwIa496GOZsWvHxjJgdgiJC5kWSQoXTd1Vgy4VNzzh8xgNK0/YM8qBSZ
+         37c6droJMPuBX3m0k62RX5FMxkcpoapE5qr05XQ8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jason Martinsen <jasonmartinsen@msn.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 31/35] lan78xx: Resolve issue with changing MAC address
-Date:   Wed, 26 Dec 2018 17:41:38 -0500
-Message-Id: <20181226224142.150866-31-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>, security@kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 30/35] x86/mtrr: Don't copy uninitialized gentry fields back to userspace
+Date:   Wed, 26 Dec 2018 17:41:37 -0500
+Message-Id: <20181226224142.150866-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -58,53 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Martinsen <jasonmartinsen@msn.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
+[ Upstream commit 32043fa065b51e0b1433e48d118821c71b5cd65d ]
 
-Current state for the lan78xx driver does not allow for changing the
-MAC address of the interface, without either removing the module (if
-you compiled it that way) or rebooting the machine.  If you attempt to
-change the MAC address, ifconfig will show the new address, however,
-the system/interface will not respond to any traffic using that
-configuration.  A few short-term options to work around this are to
-unload the module and reload it with the new MAC address, change the
-interface to "promisc", or reboot with the correct configuration to
-change the MAC.
+Currently the copy_to_user of data in the gentry struct is copying
+uninitiaized data in field _pad from the stack to userspace.
 
-This patch enables the ability to change the MAC address via fairly normal means...
-ifdown <interface>
-modify entry in /etc/network/interfaces OR a similar method
-ifup <interface>
-Then test via any network communication, such as ICMP requests to gateway.
+Fix this by explicitly memset'ing gentry to zero, this also will zero any
+compiler added padding fields that may be in struct (currently there are
+none).
 
-My only test platform for this patch has been a raspberry pi model 3b+.
+Detected by CoverityScan, CID#200783 ("Uninitialized scalar variable")
 
-Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
-
------
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b263b31e8ad6 ("x86, mtrr: Use explicit sizing and padding for the 64-bit ioctls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Cc: security@kernel.org
+Link: https://lkml.kernel.org/r/20181218172956.1440-1-colin.king@canonical.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/cpu/mtrr/if.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 6b4e38105b72..e143a7fe9320 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2014,6 +2014,10 @@ static int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
- 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
- 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 6d9b45549109..d5b2a08e2b66 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -172,6 +172,8 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
  
-+	/* Added to support MAC address changes */
-+	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
-+	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
++	memset(&gentry, 0, sizeof(gentry));
 +
- 	return 0;
- }
- 
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
 -- 
 2.19.1
 
