@@ -7,60 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14471C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91657C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D371F218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57CFA218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:32:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPncZjQo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSif7DwU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeLZN3H (ORCPT
+        id S1726872AbeLZNcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:29:07 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38658 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbeLZN3G (ORCPT
+        Wed, 26 Dec 2018 08:32:19 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38204 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbeLZNcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:29:06 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so7559656plb.5;
-        Wed, 26 Dec 2018 05:29:06 -0800 (PST)
+        Wed, 26 Dec 2018 08:32:19 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so7877807pfi.5;
+        Wed, 26 Dec 2018 05:32:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=cZCqMyU2i0bTE0fJ/dKEPI9v0HFk11WpDVLEPGl7Eyo=;
-        b=hPncZjQo3A24KgaRhz/XLt28+TNt5vVk6LDyRjDjMVEhZ94U9JX7069aFnuCITAlVA
-         WAiZsRorZ3sseLsf1NVdI8xhwvWjcxrRPmQVdW9Ti58jizdfBN9mbvD6V4dN9k/EUPJG
-         OLLBEx83TEgjJSUj8upD8NUfwiakdDJWn8vTCk98aJ8g6WLZXBNQon9yl7GSEysd4cem
-         +De3hkIvWjpX5rdDQvA4xBvANOtmFhbQEAArURi3PGYsOD0tWqTZ21jj4TT3w+nNenKl
-         ZnKBGZwAlDteDp07Ze3xgf1sTVDuBFpB9TD10jLRYZ1HFD04LZkgHOVDoFX1UJwGn/xX
-         XYUQ==
+        bh=oXiqN+RrYGdfkWEsu1YpPKuSwaRt/K9PJb7pt5kxUUk=;
+        b=NSif7DwUlw5nSUGeOq/82phz7UDVUH/7HepPkT5w/8gSEv6+d6T8lNqYjMrYNUdcnp
+         covR7MM2dNajHbu/rE4xnMY2QVKOfHOD+S49xLzhQNGtCidpejotzX4+t15nH4oforDr
+         FqWpRSEiQN0u1mvbSGZy2n1ecBZrmfz6ljdXha4bMk8dnF9DuPGTARy4VJDtFe6mKEuq
+         RmHijbKgexo8KtSQ2ceX21YjfNUiPEvpzUKwZnqb8XJPp4Hs+8xcfJWT/9um109tqS/K
+         XpQvIAaQ5gV6DZFOAvDO/zwl7nkjQiFpg7X8S4auo2b+8S+b2WQ5pp1poby9RwTqX0pC
+         2Y3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cZCqMyU2i0bTE0fJ/dKEPI9v0HFk11WpDVLEPGl7Eyo=;
-        b=b1R40t3TyH68jUOV8QiPQ5H6wIPzNGyGJL/9S5j7Gdp84sZllRmnHCnJ/zIG/jZO4/
-         PMJkfkatfnfurebccJPm5lcMCP40EP0IZwAPc6kOWlBb8Xy1Fe+YnJtgCvRUZCLg5Y8O
-         52Rjq4VC208oblM3ZdXLC/Y2dpxvZ0XlG9pBfYzbzqsRYWGAd9ER4CATLHyTLbD8eRas
-         VLE6LzV3lTVwis3ygJulNYvztjzcBWZM3MwCrXS977mkqvDH6JZvM8hjaSxZDN9M1l8F
-         8PWwt5LYgA2vYi9p2p6OvEb07Kx5+hGEwAvLNXKL8V/rNuyo5wtqPx0wGvMjIW8Ti+VS
-         tbbg==
-X-Gm-Message-State: AJcUukf7NV7T85merTJ7ARTdtvmmQOp55f1QfKdPh/I3KC393Gz2FZVD
-        lFaUQiHHWnzeV693F4rSX/4=
-X-Google-Smtp-Source: ALg8bN4zO0PGpAA+wLXiM0eZ7YGJaalLPgcuS/4MXawTgS2EN/OL+agh4H7GDvSjgw4w26xyNAbRCg==
-X-Received: by 2002:a17:902:365:: with SMTP id 92mr18914147pld.327.1545830944597;
-        Wed, 26 Dec 2018 05:29:04 -0800 (PST)
+        bh=oXiqN+RrYGdfkWEsu1YpPKuSwaRt/K9PJb7pt5kxUUk=;
+        b=JifyeMZMxVI73waEbvCSxGxbnUZtzSlJhkine3YeVMMG4lS9Y2ztxxPNKROiiIpdf5
+         wcnvNECnpHdMJsSBs9d14r9idN4J1s02fA0Y4Gk0+6QFacr4auwnZQEiJ+kJrR3zXX0e
+         mYyb5K4J7q3OtVbVIT6ReR7xNzngU4KFOk0dZfV4jlDp4DbQNha2I/ZsHUmRPYtq/FOY
+         zvo1fNrOlNmdMe+ZuBDi2jIKsjbsdeU0BSjLiWA4qodwNrdBDwxvH72IwBiFXpht5tAL
+         NhXSX+8LnZ4rzX7hMAdcMcOZS7X6dJYkMHzLxR+5oIR8ftsO89uBUEubDi9iLIOpj7dk
+         zQTA==
+X-Gm-Message-State: AJcUukfcIyhvngBvQ7LpoMZooYyK59kg92L4xFtQz9Rc1Csp+ExtGpbE
+        XbkgpYmjm5CNTPr+7VMYoNY=
+X-Google-Smtp-Source: ALg8bN78uGlG2vYyUhfFJAmY421lVnBEi97xot6zFgkG2FDfmJoi3aYMa3kjUpaMRSJ1EzkzZ2pO6g==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr18770862pgh.265.1545831138571;
+        Wed, 26 Dec 2018 05:32:18 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id t5sm51109895pfb.60.2018.12.26.05.29.03
+        by smtp.gmail.com with ESMTPSA id 125sm67850226pfd.124.2018.12.26.05.32.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 05:29:03 -0800 (PST)
+        Wed, 26 Dec 2018 05:32:17 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     dinguyen@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+        kgene@kernel.org, krzk@kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: socfpga: fix refcount leak
-Date:   Wed, 26 Dec 2018 08:29:02 -0500
-Message-Id: <20181226132902.4807-1-tiny.windzz@gmail.com>
+Subject: [PATCH] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Wed, 26 Dec 2018 08:32:15 -0500
+Message-Id: <20181226133215.4939-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -73,34 +76,21 @@ done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/socfpga/clk-pll-a10.c | 1 +
- drivers/clk/socfpga/clk-pll.c     | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 35fabe1a32c3..269467e8e07e 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -95,6 +95,7 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 59d4d46667ce..54066e6508d3 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1028,6 +1028,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_a10_base_addr = of_iomap(clkmgr_np, 0);
-+	of_node_put(clkmgr_np);
- 	BUG_ON(!clk_mgr_a10_base_addr);
- 	pll_clk->hw.reg = clk_mgr_a10_base_addr + reg;
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
  
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index c7f463172e4b..b4b44e9b5901 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -100,6 +100,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 
- 	clkmgr_np = of_find_compatible_node(NULL, NULL, "altr,clk-mgr");
- 	clk_mgr_base_addr = of_iomap(clkmgr_np, 0);
-+	of_node_put(clkmgr_np);
- 	BUG_ON(!clk_mgr_base_addr);
- 	pll_clk->hw.reg = clk_mgr_base_addr + reg;
- 
+ 	return xom;
 -- 
 2.17.0
 
