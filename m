@@ -2,84 +2,72 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE966C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66048C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B68B218FC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8EC218FC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fv8BMoeH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmaZ0O1B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeLZQzJ (ORCPT
+        id S1727394AbeLZQ5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 11:55:09 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36217 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeLZQzJ (ORCPT
+        Wed, 26 Dec 2018 11:57:01 -0500
+Received: from mail-it1-f178.google.com ([209.85.166.178]:51589 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbeLZQ5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 11:55:09 -0500
-Received: by mail-ot1-f67.google.com with SMTP id k98so14421461otk.3;
-        Wed, 26 Dec 2018 08:55:08 -0800 (PST)
+        Wed, 26 Dec 2018 11:57:00 -0500
+Received: by mail-it1-f178.google.com with SMTP id w18so21569820ite.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 08:57:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SAaJlP9aaGld7gK+J2usCpSNkTRGzPvJFj+P3onMp90=;
-        b=fv8BMoeH0cql4EYJtwnL34VzbDLpBSCvQNWDMyja8i7xuq///1OY72WzC3xJSvRxYe
-         v/etlh5+V+HnHmCWttrYGvHe/AaUFqYr8ydNrp825j/PFxAccIFjofUnCMFxBFASEd3m
-         yqjpamPwyRKDysBYkGAy9oxl4HVWxygPX0gEcHLrYp6pSH0A6WxMOmnkiKDHS5kxNwUB
-         xYGcMmdSIFf+RhXJ+jjbZMZZxpaF0FsZI2Qa9wpyJqsMCLu/h+5KRMAZiJNWLGLwHwOg
-         H1ZqtwWV0Ce1INL/5EgAbavOtMkJmTRlTGFotAWRodMBImrpLNG7Ms2Ci/XPPnP89vU/
-         tcfg==
+        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
+        b=LmaZ0O1BCeWqef2qkgMVPzefM7luUZQI13QN/TrafEjI5kTRHPq5IVa5PeORBTsrOl
+         sMLejsu2ckqk3L9rX6VyIKh8i4/jAJJqjQc83GNJy7VRrRwWsbULrEXvWe7FgFmQv0qU
+         wkeTlknDdZnNQScjjMTgNjar+qKMXQcSEJpf8TONZXYYDtC3tzMvFAbE1RAL8NKg9Q8X
+         2TUTgbcMKhtb2xa/952ft8/vlVI+Rw1f3HKyJc/pHFq0sp11XnDKaJCdUq4Cehx1J8xB
+         ocpXcdQFHlorEwQnI6jVmk3L21uPrBSYJgGuU09/AaqAwqqPeJskj64FN0Jq780ItMny
+         qbUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SAaJlP9aaGld7gK+J2usCpSNkTRGzPvJFj+P3onMp90=;
-        b=AB4WuutalEDjlfw9ctEP6VGbg5ZsTKc9YUOv+BS7/aRPYO4xu+Tn4cPO/pIQjvjl06
-         cn6ymT6yo7lLOJDIxtECbQDs4yAvYcfN72O+WUDlyB+/0/tG8UnLoIKtnywwZgHyccss
-         uqrVmNKn5hDJXXMemcU3I0aZBvBwTj/QUfSRLMwEG7vA9OUMB0J3JH0TlOApdV+eF8ZN
-         q1WqqBvdgX0DfU2esvzaoYY+/cxfymQJHG38CWK1DEGaFPHcWrw8wA/nwACrfKm2n+Ah
-         kuX9Fw+VHd1WZ5nO23cPmWiccs7f8JdV2ntpcVayeEm/VlevGfKs0twWTzIAXuwm3dsk
-         xPeg==
-X-Gm-Message-State: AJcUukfAQqlfbyQ3dPRGDxsq7IQbhtCUVxEIjRzNXzR7kgu4nXXvpJmi
-        OrpITvb300nzueQwnuQm6MCXihMYOS2nPF8ZLXo=
-X-Google-Smtp-Source: ALg8bN46/yFlnYYvHSo31cQ0OC1KKdCHDMoq0CnWHb/MxFuZPkRqjfZCiddNIq8hC5SheSRlXQU2D4sXtFWLvzmGUAo=
-X-Received: by 2002:a9d:aa9:: with SMTP id 38mr14732995otq.255.1545843308196;
- Wed, 26 Dec 2018 08:55:08 -0800 (PST)
+        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
+        b=ZZOiLNY5izTznXyfpT+XClD/SusPcKTwsvjIC0q9hM+TKa3vWJ6HvWWxXn4AO3dTa9
+         +5Vy78UWtr+TD/EQ16Z8iniwkDVLs9OXmlBSbu+cebYWXV3dm9N804uQ5OClbZNRKAkT
+         UQ3/aPDlNHcBhBGfzOjd2TwgAq8n1c9BHj7ugZ0e6PdLHaTc9bXqzZe3cLVSXen4qEs2
+         LzRDbtA2/XdLbj1hBdCLk0J3ehRUNAdMg0tZA6ajO3guPf05Xsxrq5CnO0OkUE7cQm0l
+         JMeJNClviVgN9BZZReknB69WKX9bKSAUZx0JkqhcSYOxWGxjpGMfhLXVmyDlv8r1xqYI
+         MyhA==
+X-Gm-Message-State: AA+aEWbBwI8PzgKQG2L7+kyMNJIIVkr7R/k9EGcp/8eMroENRaIGn3RR
+        qn6t8Fh956bXelRk93NaXE+HSJ/FkS0zRLU/16pnvgegL54=
+X-Google-Smtp-Source: AFSGD/UHBSGNs6RmdTA0jFiqjpkw6ORCdl1iZ52LeD3vsMnS4RLyj+p+2ZcyQA1m6n8DjQK1o1wd2iaU24ufZG8U4hY=
+X-Received: by 2002:a02:b70c:: with SMTP id g12mr13056715jam.60.1545843419886;
+ Wed, 26 Dec 2018 08:56:59 -0800 (PST)
 MIME-Version: 1.0
-References: <1545548891-24671-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1545548891-24671-1-git-send-email-abel.vesa@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 26 Dec 2018 14:55:14 -0200
-Message-ID: <CAOMZO5Be40EHVw63FKksy0s5DHMLbQLyRVgCxczgz_55tHJYMw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: freescale: Break dependency on SOC_IMX8MQ for i.MX8MQ
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Stefan Agner <stefan.agner@toradex.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181126143326.31300-1-tiny.windzz@gmail.com> <20181130183627.GG2509588@devbig004.ftw2.facebook.com>
+ <CAEExFWv57CU=FHWxAKby4HmzZ9+8GAt2SniaUinvDdLgc3TKOQ@mail.gmail.com> <7f6d5e82-daf2-a12e-deab-87150d630df1@gmail.com>
+In-Reply-To: <7f6d5e82-daf2-a12e-deab-87150d630df1@gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 27 Dec 2018 00:56:47 +0800
+Message-ID: <CAEExFWv+RiONyLcNQd0zvqmFxc9zUe77MbdrQX5fFS_GNyp=pg@mail.gmail.com>
+Subject: Re: [PATCH] workqueue: remove some duplicated includes
+To:     Nikolay Borisov <n.borisov.lkml@gmail.com>
+Cc:     tj@kernel.org, jiangshanlai@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 23, 2018 at 2:38 PM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> The CONFIG_SOC_IMX8MQ will go away, so the dependency can be based on
-> ARCH_MXC && ARM64.
->
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+ping......
