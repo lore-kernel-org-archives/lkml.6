@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C31C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FAEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D203214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5674F214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:47:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864458;
-	bh=VPwiNYXg+2XpLkdGgmm2Xw1KLLmkQ13aSYN+U9KYetY=;
+	s=default; t=1545864467;
+	bh=/0MO91npWNYvNOFgyDWGtZ0HncdS3CyrScxoEsQMtug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xhZbohQWGXgox+gJklAe6aS8u3N17GSGcVwldJvfe6LNptfcQeVelM/icSJdfwxfS
-	 66lL3dltotsbCz+qFLtHnVbalhOiNFyBHXWhsv5bXfsIh/W8jHp14KRnJ+uDZ5DacT
-	 v9vT8K8xDwnWmchjN3O1pbPjhdBpNMwSaZ/dQQt0=
+	b=NdPX4WvVZWTH0Zm9sh3cQVtvtFttV23OBwiMOXcuOnlPTDgnPUNToXGVZkQCCSxaK
+	 a5zO1LCdJ0JoCQ1KXyrWAG2twHHM90B1eP9mckFG8pBIpHuTNKRBW3s+MHdQ3Bwx0T
+	 T6oPxKep921OGO1tty7pOKmBdaHasQ2hruvrkAho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeLZWrg (ORCPT
+        id S1729823AbeLZWrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:47:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38606 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:47:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbeLZWiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:20 -0500
+        id S1728717AbeLZWiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74EAA2054F;
-        Wed, 26 Dec 2018 22:38:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EFA6218E2;
+        Wed, 26 Dec 2018 22:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863899;
-        bh=VPwiNYXg+2XpLkdGgmm2Xw1KLLmkQ13aSYN+U9KYetY=;
+        s=default; t=1545863893;
+        bh=/0MO91npWNYvNOFgyDWGtZ0HncdS3CyrScxoEsQMtug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdruWp0kBDQYtcMDPH1tewYzHOsjcru5+o35B+afBBmbnbF++GUyxHng5MnAnVSUD
-         f5A+IOaS/rrDPPGo3TDPd6Hui4RQQgU2GOhRF7P5PJyd/T7R1Fsk2g8mkW6MtJAEnx
-         s7RC5VqVBeTnxO4gVTYXV/jrzQKrSu4hyhdA/BUo=
+        b=fcVF8bsM8FeID+8gonzC77PfrwMXhdT/LiCOoP/erIvWnXCW5zcxU+xKZLO+AWHdZ
+         jhAexcWw9P2qkQKSC8TFd/ExS0b1onv1VplEXUXu/t4tF1/UkIhCYsMsVMTNZjGX2C
+         DiFAPNLGsukYTuM2MeycblS+BFOUuHRCSAP2GvIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 84/97] net/mlx5e: RX, Fix wrong early return in receive queue poll
-Date:   Wed, 26 Dec 2018 17:35:44 -0500
-Message-Id: <20181226223557.149329-84-sashal@kernel.org>
+Cc:     Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 81/97] mac80211: free skb fraglist before freeing the skb
+Date:   Wed, 26 Dec 2018 17:35:41 -0500
+Message-Id: <20181226223557.149329-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,65 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit bfc698254ba97b3e3e4ebbfae0ffa1f7e2fa0717 ]
+[ Upstream commit 34b1e0e9efe101822e83cc62d22443ed3867ae7a ]
 
-When the completion queue of the RQ is empty, do not immediately return.
-If left-over decompressed CQEs (from the previous cycle) were processed,
-need to go to the finalization part of the poll function.
+mac80211 uses the frag list to build AMSDU. When freeing
+the skb, it may not be really freed, since someone is still
+holding a reference to it.
+In that case, when TCP skb is being retransmitted, the
+pointer to the frag list is being reused, while the data
+in there is no longer valid.
+Since we will never get frag list from the network stack,
+as mac80211 doesn't advertise the capability, we can safely
+free and nullify it before releasing the SKB.
 
-Bug exists only when CQE compression is turned ON.
-
-This solves the following issue:
-mlx5_core 0000:82:00.1: mlx5_eq_int:544:(pid 0): CQ error on CQN 0xc08, syndrome 0x1
-mlx5_core 0000:82:00.1 p4p2: mlx5e_cq_error_event: cqn=0x000c08 event=0x04
-
-Fixes: 4b7dfc992514 ("net/mlx5e: Early-return on empty completion queues")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/mac80211/status.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-index d543a5cff049..8262f093fec4 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -1150,7 +1150,7 @@ void mlx5e_handle_rx_cqe_mpwrq(struct mlx5e_rq *rq, struct mlx5_cqe64 *cqe)
- int mlx5e_poll_rx_cq(struct mlx5e_cq *cq, int budget)
- {
- 	struct mlx5e_rq *rq = container_of(cq, struct mlx5e_rq, cq);
--	struct mlx5e_xdpsq *xdpsq;
-+	struct mlx5e_xdpsq *xdpsq = &rq->xdpsq;
- 	struct mlx5_cqe64 *cqe;
- 	int work_done = 0;
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 7fa10d06cc51..534a604b75c2 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -556,6 +556,11 @@ static void ieee80211_report_used_skb(struct ieee80211_local *local,
+ 	}
  
-@@ -1161,10 +1161,11 @@ int mlx5e_poll_rx_cq(struct mlx5e_cq *cq, int budget)
- 		work_done += mlx5e_decompress_cqes_cont(rq, cq, 0, budget);
- 
- 	cqe = mlx5_cqwq_get_cqe(&cq->wq);
--	if (!cqe)
-+	if (!cqe) {
-+		if (unlikely(work_done))
-+			goto out;
- 		return 0;
--
--	xdpsq = &rq->xdpsq;
+ 	ieee80211_led_tx(local);
++
++	if (skb_has_frag_list(skb)) {
++		kfree_skb_list(skb_shinfo(skb)->frag_list);
++		skb_shinfo(skb)->frag_list = NULL;
 +	}
+ }
  
- 	do {
- 		if (mlx5_get_cqe_format(cqe) == MLX5_COMPRESSED) {
-@@ -1179,6 +1180,7 @@ int mlx5e_poll_rx_cq(struct mlx5e_cq *cq, int budget)
- 		rq->handle_rx_cqe(rq, cqe);
- 	} while ((++work_done < budget) && (cqe = mlx5_cqwq_get_cqe(&cq->wq)));
- 
-+out:
- 	if (xdpsq->doorbell) {
- 		mlx5e_xmit_xdp_doorbell(xdpsq);
- 		xdpsq->doorbell = false;
+ /*
 -- 
 2.19.1
 
