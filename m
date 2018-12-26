@@ -7,106 +7,107 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC7BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2ADC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248D7214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84DC72087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLkVpqGn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uV1wioqf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbeLZOJm (ORCPT
+        id S1727129AbeLZOWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 09:09:42 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36189 "EHLO
+        Wed, 26 Dec 2018 09:22:35 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43102 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeLZOJl (ORCPT
+        with ESMTP id S1726666AbeLZOWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 09:09:41 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so7628298pgm.3;
-        Wed, 26 Dec 2018 06:09:41 -0800 (PST)
+        Wed, 26 Dec 2018 09:22:35 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so7620256pgk.10;
+        Wed, 26 Dec 2018 06:22:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=y85zGKOTx0Tqi7DozW6mORIo44USvHnVcVjSBJz/9Ww=;
-        b=dLkVpqGnn0EOalMXMfrFtZRy7AfkZXQ1NElkvDzvyGNqnbzX1uX25sGNUTaCdyeVoJ
-         BMy7ORPMQaMNv/lpr76AbmbOz3rZVNi8hd/W6UY91kFmmqzJg2gcEWlR0f94b+VVG8Jh
-         niruZHsdzJtWo7oGzI1IQjHFeep8SITMYYMupLHOzA/2hc8LiE34T5dAVQpnBONyTywv
-         BKMIvFtPry3X0gIvxTkOVHc3eGwoFAfIqXY/ibvSv7SAUUWqDgwdTe/xPT9UfjRWUwiI
-         MtElMfCzZs2TYeO5rA6FYKzGgOIfRuLmZgsXBN0vM0nEFfl/queT6fOWlTa1+A+Dg2MN
-         eTjA==
+        bh=6TntGLTr54y8dewlGK4UCkfUJs2JacuKR9U0JDuJQpM=;
+        b=uV1wioqfD+sI3fPPeEcXzif+hGRAh0HnE3TQBHKSlOu/+/H/M72D53+2N/BCMRpQ/+
+         4fwobXzY93elB7x2XD8UDZsCRsb+Ocgj7QUdHvfjriBqlaPConuoUiWQbEQnKOhEJbsg
+         F4wZKRRppZizHyn6xILwlb10rnbnd8TQNWI1CeLUYIxA7gLSPIJOet0Rsuf3J5yyZrVT
+         wu6MKmqLN1Ta2C/bbpCM8FnRFvTncwJBlkNUfN8NgptjS5ZqyN9JJbCXRNk/fdn7DXYg
+         3xFnzB1HurP5JPinJuHnPCrrJ0f0iS0z24DW1wT3ozUpGcMnz+fkmKtsGyaRzHtjE1Px
+         CiNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=y85zGKOTx0Tqi7DozW6mORIo44USvHnVcVjSBJz/9Ww=;
-        b=AUCCzjTR6KlwlZ8qd5838GDSmkW6Rw3DWt7pRpIigsKTdkJtzyzS7q3F/XFTddW7M4
-         HQqr482CD8+KuJ5G2eTg/i9gPkgc/x5lcIkmiMO4GPuQH09Rgd3/rlKWOrkhK8aoteX+
-         PJiY5GMZb762MAJ5w12DmQgdtS1N9b8ZCXiH6J17sw02EYUpxlgv0eHGq9J3v1dabAtU
-         S5go4RTRD0iL9xm66kjpi6bNgf881W640c2aZ3nZKn9+RuJDl5U1a7g/tJBQkWTIcyDo
-         PoS5T6WncErcXGMOGduNhGmUITKs1Zr2c77rumFEthdOrRElKkqfqiwIXlzZfQndnaHk
-         nzjQ==
-X-Gm-Message-State: AJcUukc+DeHWTMOOnFoK0elMRSDwAm1BdaEiPGlgtl5UHFUr4RbdxMjc
-        anIP3upC/u2h3IR256DZi7izG2dS
-X-Google-Smtp-Source: ALg8bN4F3gkpG+h46tDeWhwyt5cqgggEly4LqEnUgNsCKE818YHJh9gd1mY77v+mD24vixQXLB03EA==
-X-Received: by 2002:a62:9f1b:: with SMTP id g27mr3994348pfe.87.1545833381191;
-        Wed, 26 Dec 2018 06:09:41 -0800 (PST)
+        bh=6TntGLTr54y8dewlGK4UCkfUJs2JacuKR9U0JDuJQpM=;
+        b=VffqGph7LNs3NeIerQy01067a3JXKg24tM7ClYuiR/OBHpTcLtbehpNDBlKEjKG74S
+         wckRgALxgYFu5mKW2c5d/l5ZRYBE2iSVaiZQb811CAiRfIh4V3oIxOT+CTUxcyissVgI
+         0JsBpa7OUFhDAKGTNuDnoqTl3XWZwK4Iz0yFIHHQKcOo0poaKxmsm2O9XP8bxGYGCwpm
+         /mEP9Rp0wq91gRXf7skcNTbYzM3eQMUopTas008Tz3jNwrw6x3/+Vc8aKlig26w+poqf
+         +FLrnSfpC0ARYUik/AhpwpjCYpxurxMfeR2IzGqac2BOjfkptgZyq+cORS7bn9IXbzOo
+         TKfA==
+X-Gm-Message-State: AA+aEWYOzUQxpFZYPcnz5PCaQAtntaWjplgUZym5FqrtSl5RmBJZ28/M
+        VpDpo9YQ6jski/eAkM3rclv93FBt
+X-Google-Smtp-Source: AFSGD/VSOgjpf8VKuTnshKY5khUrCtR7tomJJykNgo+N0UgEcBwY9fajEaZj6fVd2oN0gfqvBz2rJQ==
+X-Received: by 2002:aa7:8286:: with SMTP id s6mr19997794pfm.63.1545834154560;
+        Wed, 26 Dec 2018 06:22:34 -0800 (PST)
 Received: from localhost.localdomain ([2402:f000:1:4414:a8df:74f3:1213:8d3d])
-        by smtp.gmail.com with ESMTPSA id u8sm52661093pfl.16.2018.12.26.06.09.39
+        by smtp.gmail.com with ESMTPSA id e65sm66348298pfc.74.2018.12.26.06.22.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 06:09:40 -0800 (PST)
+        Wed, 26 Dec 2018 06:22:33 -0800 (PST)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     isdn@linux-pingi.de, davem@davemloft.net, natechancellor@gmail.com
+To:     m.grzeschik@pengutronix.de, davem@davemloft.net
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
-Date:   Wed, 26 Dec 2018 22:09:34 +0800
-Message-Id: <20181226140934.12903-1-baijiaju1990@gmail.com>
+Subject: [PATCH] net: arcnet: Fix a possible concurrency use-after-free bug in arcnet_reply_tasklet()
+Date:   Wed, 26 Dec 2018 22:22:26 +0800
+Message-Id: <20181226142226.13039-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
-HFCPCI_l1hw() may be concurrently executed.
+In drivers/net/arcnet/arcnet.c, the functions arcnet_reply_tasklet() and
+arcnet_send_packet() may be concurrently executed.
 
-HFCPCI_l1hw()
-  line 1173: if (!cs->tx_skb)
+arcnet_reply_tasklet()
+  line 430: dev_kfree_skb(lp->outgoing.skb);
 
-hfcpci_interrupt()
-  line 942: spin_lock_irqsave();
-  line 1066: dev_kfree_skb_irq(cs->tx_skb);
+arcnet_send_packet()
+  line 682: spin_lock_irqsave();
+  line 690: lp->outgoing.skb = skb;
+  line 691: proto->prepare_tx(..., skb->len, ...)
 
-Thus, a possible concurrency use-after-free bug may occur 
-in HFCPCI_l1hw().
+Thus, a possible concurrency use-after-free bugs may occur.
 
-To fix these bugs, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
-access to cs->tx_skb.
+To fix this bug, the calls to spin_lock_irqsave() and
+spin_unlock_irqrestore() are added in arcnet_reply_tasklet() to protect
+dev_kfree_skb(lp->outgoing.skb).
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/isdn/hisax/hfc_pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/arcnet/arcnet.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index ea0e4c6de3fb..0109e0e8bcb6 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1170,11 +1170,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
- 		if (cs->debug & L1_DEB_LAPD)
- 			debugl1(cs, "-> PH_REQUEST_PULL");
- #endif
-+		spin_lock_irqsave(&cs->lock, flags);
- 		if (!cs->tx_skb) {
- 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
- 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
- 		} else
- 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
-+		spin_unlock_irqrestore(&cs->lock, flags);
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
+diff --git a/drivers/net/arcnet/arcnet.c b/drivers/net/arcnet/arcnet.c
+index 8459115d9d4e..c5e943d01d66 100644
+--- a/drivers/net/arcnet/arcnet.c
++++ b/drivers/net/arcnet/arcnet.c
+@@ -426,10 +426,14 @@ static void arcnet_reply_tasklet(unsigned long data)
+ 	serr->ee.ee_data = skb_shinfo(skb)->tskey;
+ 	serr->ee.ee_info = lp->reply_status;
+ 
++	spin_lock_irqsave(&lp->lock, flags);
++
+ 	/* finally erasing outgoing skb */
+ 	dev_kfree_skb(lp->outgoing.skb);
+ 	lp->outgoing.skb = NULL;
+ 
++	spin_unlock_irqrestore(&lp->lock, flags);
++
+ 	ackskb->dev = lp->dev;
+ 
+ 	ret = sock_queue_err_skb(sk, ackskb);
 -- 
 2.17.0
 
