@@ -2,97 +2,202 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DE8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33694C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93EAA218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OySYPp7l"
+	by mail.kernel.org (Postfix) with ESMTP id 027B1218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeLZNhB (ORCPT
+        id S1727084AbeLZNhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:37:01 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45310 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbeLZNhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:37:01 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so7875711pfd.12;
-        Wed, 26 Dec 2018 05:37:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KbDUJL2ThReIk3QRep24tGKRwUy5XMoIYYyb8uG18qo=;
-        b=OySYPp7lHeGen61rx3QyEHLnrZMs7lwPaojSrXYAC4/2TMxt27Ae4+GcmWOWBdiMR6
-         t8GPR+zf/wrWSgzrZ6eXcnQrWfMMpqasThRuNTyVL5JkuUFUjJ3tU/RvyK4xb1RpUe9A
-         ugBqkW3DuFG/vciks5W+bkaWb14Cwp6lvQC4QtI7nJiUP/QEeqBKNtdyU1GiLpUMqS5Q
-         Lsa73ZOalXu+QbrnwWLDPKUhnH1Lt4Zsd4s9etOpTKlvFi5kTlJ8l35ILHZAjwhzlcp5
-         Wz/n0FB8GJuhujlVq4FR2ImHm2NHZnZMrQb+aRNLJ6YbvFRLw5Bnn2Wnq5uDb3+JOy6i
-         +DFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KbDUJL2ThReIk3QRep24tGKRwUy5XMoIYYyb8uG18qo=;
-        b=MyRRGo3reeTxF5DImygmoR3XyIl8DEhuG8ipAzi8GRlZL0pELHEz4Gm77zrCcaC7eH
-         WjK0bgd1Z59xsmKOZYO3/YCpnOfcMiLWrWdX83k+KZPOsd9+sgg1bROunVw49Ju9IKtv
-         izJIYEGF0ZLdqXDuupwzQyOCSwe0VfjqND625ygzYTLi2NCMXVI8Si45b6BbUbqGeBX4
-         Ax1UD6AahVGQE7mzluPq6BHa0bnTkK5nBotWVbXcEcOx2QTt0QXiAgYr74cfZ8KW5j3v
-         98bccjYXi8p65esnYA5XUtBGc3GZKn8fFkAeYDOXZMVUvLUAm5/GdABTUpKKVM8eAKqv
-         nmWA==
-X-Gm-Message-State: AA+aEWZj+iW/ONcONjAFcfZHy+5sqUQ62MLicjdQcTqz24bjXH6YUm1Y
-        AikiGqNxE+MWsXW3b/dCo/Lw77tgp1A=
-X-Google-Smtp-Source: ALg8bN7FAb8/917pRHb0eWAsLODsCMWGm6sdvHztqsvIT1S5nY9X7kKoCgbnXSknntaAP1j+hkTU7Q==
-X-Received: by 2002:a62:56c7:: with SMTP id h68mr21111535pfj.134.1545831420572;
-        Wed, 26 Dec 2018 05:37:00 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id l5sm41701552pgp.82.2018.12.26.05.36.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 05:36:59 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: armada-370: fix refcount leak in a370_clk_init()
-Date:   Wed, 26 Dec 2018 08:36:58 -0500
-Message-Id: <20181226133658.5095-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 26 Dec 2018 08:37:16 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21292 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726724AbeLZNhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 08:37:07 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 05:37:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
+   d="scan'208";a="113358947"
+Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
+  by orsmga003.jf.intel.com with ESMTP; 26 Dec 2018 05:37:02 -0800
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1gc9Mr-0005PD-Kb; Wed, 26 Dec 2018 21:37:01 +0800
+Message-Id: <20181226133352.076749877@intel.com>
+User-Agent: quilt/0.65
+Date:   Wed, 26 Dec 2018 21:15:03 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+cc:     kvm@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>
+cc:     Fan Du <fan.du@intel.com>
+cc:     Yao Yuan <yuan.yao@intel.com>
+cc:     Peng Dong <dongx.peng@intel.com>
+CC:     Liu Jingqi <jingqi.liu@intel.com>
+cc:     Dong Eddie <eddie.dong@intel.com>
+cc:     Dave Hansen <dave.hansen@intel.com>
+cc:     Zhang Yi <yi.z.zhang@linux.intel.com>
+cc:     Dan Williams <dan.j.williams@intel.com>
+Subject: [RFC][PATCH v2 17/21] proc: introduce /proc/PID/idle_pages
+References: <20181226131446.330864849@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=0008-proc-introduce-proc-PID-idle_pages.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+This will be similar to /sys/kernel/mm/page_idle/bitmap documented in
+Documentation/admin-guide/mm/idle_page_tracking.rst, however indexed
+by process virtual address.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+When using the global PFN indexed idle bitmap, we find 2 kind of
+overheads:
+
+- to track a task's working set, Brendan Gregg end up writing wss-v1
+  for small tasks and wss-v2 for large tasks:
+
+  https://github.com/brendangregg/wss
+
+  That's because VAs may point to random PAs throughout the physical
+  address space. So we either query /proc/pid/pagemap first and access
+  the lots of random PFNs (with lots of syscalls) in the bitmap, or
+  write+read the whole system idle bitmap beforehand.
+
+- page table walking by PFN has much more overheads than to walk a
+  page table in its natural order:
+  - rmap queries
+  - more locking
+  - random memory reads/writes
+
+This interface provides a cheap path for the majority non-shared mapping
+pages. To walk 1TB memory of 4k active pages, it costs 2s vs 15s system
+time to scan the per-task/global idle bitmaps. Which means ~7x speedup.
+The gap will be enlarged if consider
+
+- the extra /proc/pid/pagemap walk
+- natural page table walks can skip the whole 512 PTEs if PMD is idle
+
+OTOH, the per-task idle bitmap is not suitable in some situations:
+
+- not accurate for shared pages
+- don't work with non-mapped file pages
+- don't perform well for sparse page tables (pointed out by Huang Ying)
+
+So it's more about complementing the existing global idle bitmap.
+
+CC: Huang Ying <ying.huang@intel.com>
+CC: Brendan Gregg <bgregg@netflix.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- drivers/clk/mvebu/armada-370.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/proc/base.c     |    2 +
+ fs/proc/internal.h |    1 
+ fs/proc/task_mmu.c |   54 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
 
-diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
-index 7dedfaa6e152..5c6bbee396b3 100644
---- a/drivers/clk/mvebu/armada-370.c
-+++ b/drivers/clk/mvebu/armada-370.c
-@@ -175,8 +175,10 @@ static void __init a370_clk_init(struct device_node *np)
+--- linux.orig/fs/proc/base.c	2018-12-23 20:08:14.228919325 +0800
++++ linux/fs/proc/base.c	2018-12-23 20:08:14.224919327 +0800
+@@ -2969,6 +2969,7 @@ static const struct pid_entry tgid_base_
+ 	REG("smaps",      S_IRUGO, proc_pid_smaps_operations),
+ 	REG("smaps_rollup", S_IRUGO, proc_pid_smaps_rollup_operations),
+ 	REG("pagemap",    S_IRUSR, proc_pagemap_operations),
++	REG("idle_pages", S_IRUSR|S_IWUSR, proc_mm_idle_operations),
+ #endif
+ #ifdef CONFIG_SECURITY
+ 	DIR("attr",       S_IRUGO|S_IXUGO, proc_attr_dir_inode_operations, proc_attr_dir_operations),
+@@ -3357,6 +3358,7 @@ static const struct pid_entry tid_base_s
+ 	REG("smaps",     S_IRUGO, proc_pid_smaps_operations),
+ 	REG("smaps_rollup", S_IRUGO, proc_pid_smaps_rollup_operations),
+ 	REG("pagemap",    S_IRUSR, proc_pagemap_operations),
++	REG("idle_pages", S_IRUSR|S_IWUSR, proc_mm_idle_operations),
+ #endif
+ #ifdef CONFIG_SECURITY
+ 	DIR("attr",      S_IRUGO|S_IXUGO, proc_attr_dir_inode_operations, proc_attr_dir_operations),
+--- linux.orig/fs/proc/internal.h	2018-12-23 20:08:14.228919325 +0800
++++ linux/fs/proc/internal.h	2018-12-23 20:08:14.224919327 +0800
+@@ -298,6 +298,7 @@ extern const struct file_operations proc
+ extern const struct file_operations proc_pid_smaps_rollup_operations;
+ extern const struct file_operations proc_clear_refs_operations;
+ extern const struct file_operations proc_pagemap_operations;
++extern const struct file_operations proc_mm_idle_operations;
  
- 	mvebu_coreclk_setup(np, &a370_coreclks);
- 
--	if (cgnp)
-+	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, a370_gating_desc);
-+		of_node_put(cgnp);
+ extern unsigned long task_vsize(struct mm_struct *);
+ extern unsigned long task_statm(struct mm_struct *,
+--- linux.orig/fs/proc/task_mmu.c	2018-12-23 20:08:14.228919325 +0800
++++ linux/fs/proc/task_mmu.c	2018-12-23 20:08:14.224919327 +0800
+@@ -1559,6 +1559,60 @@ const struct file_operations proc_pagema
+ 	.open		= pagemap_open,
+ 	.release	= pagemap_release,
+ };
++
++/* will be filled when kvm_ept_idle module loads */
++struct file_operations proc_ept_idle_operations = {
++};
++EXPORT_SYMBOL_GPL(proc_ept_idle_operations);
++
++static ssize_t mm_idle_read(struct file *file, char __user *buf,
++			    size_t count, loff_t *ppos)
++{
++	if (proc_ept_idle_operations.read)
++		return proc_ept_idle_operations.read(file, buf, count, ppos);
++
++	return 0;
++}
++
++
++static int mm_idle_open(struct inode *inode, struct file *file)
++{
++	struct mm_struct *mm = proc_mem_open(inode, PTRACE_MODE_READ);
++
++	if (IS_ERR(mm))
++		return PTR_ERR(mm);
++
++	file->private_data = mm;
++
++	if (proc_ept_idle_operations.open)
++		return proc_ept_idle_operations.open(inode, file);
++
++	return 0;
++}
++
++static int mm_idle_release(struct inode *inode, struct file *file)
++{
++	struct mm_struct *mm = file->private_data;
++
++	if (mm) {
++		if (!mm_kvm(mm))
++			flush_tlb_mm(mm);
++		mmdrop(mm);
 +	}
- }
- CLK_OF_DECLARE(a370_clk, "marvell,armada-370-core-clock", a370_clk_init);
++
++	if (proc_ept_idle_operations.release)
++		return proc_ept_idle_operations.release(inode, file);
++
++	return 0;
++}
++
++const struct file_operations proc_mm_idle_operations = {
++	.llseek		= mem_lseek, /* borrow this */
++	.read		= mm_idle_read,
++	.open		= mm_idle_open,
++	.release	= mm_idle_release,
++};
++
+ #endif /* CONFIG_PROC_PAGE_MONITOR */
  
--- 
-2.17.0
+ #ifdef CONFIG_NUMA
+
 
