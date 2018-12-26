@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32124C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0818CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C6C214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16CA21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864494;
-	bh=i//FoLVYFFr3qEM7CG0uan4cmDpCYe4/AzwOBGH/i4g=;
+	s=default; t=1545864503;
+	bh=zqKtLihkc+vmOLtpHm6K3OlFwhWxhtlzqtpKwOXBj+4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uJOS7M+ML+YV/ZzNTCl+WexAFLlsCkzpMj2VL9w9KEt7kOrBUFdMyY9UcyXEtikla
-	 55BcVrlJJyS55j93IiV6jHxABdbrzO+1X0+JF+4EqCRZHmQV4ABoDhRbpqYNrPAmA/
-	 VBmoeUPHEnt/PGDltQEUzvV9YaLzTY6FrD9VmKc8=
+	b=sOGo0ukJiljIzVXvBQZs2j0nxoWlIzD7aVoQjRlkAxkyTR4ePfygnkweXgwCdJwHS
+	 IYE1yMxIhO6wcI0v7aHQvuClBZW1MyK9gjKbZZZwkI2gEeYb0F6goL1kZTrDNHk73N
+	 1jYflM8V/iZ0dEhg9lwl3zNg5TjXxc5rimpmydOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeLZWiK (ORCPT
+        id S1729869AbeLZWsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:38:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38378 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:48:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728664AbeLZWiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:08 -0500
+        id S1728679AbeLZWiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C0B6218E2;
-        Wed, 26 Dec 2018 22:38:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B5A6218EA;
+        Wed, 26 Dec 2018 22:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863887;
-        bh=i//FoLVYFFr3qEM7CG0uan4cmDpCYe4/AzwOBGH/i4g=;
+        s=default; t=1545863889;
+        bh=zqKtLihkc+vmOLtpHm6K3OlFwhWxhtlzqtpKwOXBj+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D7AklEgHoWebBjnrCODAlrYgrGlg0/pB48dp32f0gkl6uGRx3CLcLAuvRWOsk195f
-         XNfMMW3C3C6bHBpmNAuiZgY0kKqqd8iKFn/35gL25vDClo5CSNr8l6X5G+/4GgcyWq
-         LGKIgzNbIxb8O/wQHLISH/IDBdup9BbsUcOMDDtE=
+        b=VdPW9YEL5iV7KkdTj2bKX4axYrJV4kf5iVqiqI9oeLxqwXkDDWoz58+VLFjhGTppv
+         iUXV6g3nvOV98gxp82yDiwj2+mRgDWKsYYxVwF9QLEzplHrlYklPZdqoIRh1wRvDLP
+         /RJamZcqqWMGP6nDUJrYsrx3BsccQgKMD/8F//LE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bryan Whitehead <Bryan.Whitehead@microchip.com>,
+Cc:     Juergen Gross <jgross@suse.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 76/97] lan743x: Expand phy search for LAN7431
-Date:   Wed, 26 Dec 2018 17:35:36 -0500
-Message-Id: <20181226223557.149329-76-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 78/97] xen/netfront: tolerate frags with no data
+Date:   Wed, 26 Dec 2018 17:35:38 -0500
+Message-Id: <20181226223557.149329-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,38 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan Whitehead <Bryan.Whitehead@microchip.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit 0db7d253e9f0ff1a41c602429bea93df221be6ed ]
+[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
 
-The LAN7431 uses an external phy, and it can be found anywhere in
-the phy address space. This patch uses phy address 1 for LAN7430
-only. And searches all addresses otherwise.
+At least old Xen net backends seem to send frags with no real data
+sometimes. In case such a fragment happens to occur with the frag limit
+already reached the frontend will BUG currently even if this situation
+is easily recoverable.
 
-Signed-off-by: Bryan Whitehead <Bryan.Whitehead@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Modify the BUG_ON() condition accordingly.
+
+Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/microchip/lan743x_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index aaedf1072460..ff196a66eaaa 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -2722,8 +2722,9 @@ static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
- 	snprintf(adapter->mdiobus->id, MII_BUS_ID_SIZE,
- 		 "pci-%s", pci_name(adapter->pdev));
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index f17f602e6171..5b97cc946d70 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -905,7 +905,7 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
+ 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
  
--	/* set to internal PHY id */
--	adapter->mdiobus->phy_mask = ~(u32)BIT(1);
-+	if ((adapter->csr.id_rev & ID_REV_ID_MASK_) == ID_REV_ID_LAN7430_)
-+		/* LAN7430 uses internal phy at address 1 */
-+		adapter->mdiobus->phy_mask = ~(u32)BIT(1);
- 
- 	/* register mdiobus */
- 	ret = mdiobus_register(adapter->mdiobus);
+-			BUG_ON(pull_to <= skb_headlen(skb));
++			BUG_ON(pull_to < skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+ 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
 -- 
 2.19.1
 
