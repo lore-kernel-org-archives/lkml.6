@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E22C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C212C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC912070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EED32070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865309;
-	bh=xEPPcGyXYi+XdMfYyNIssjsFMKQvo60l134+7kkM1YQ=;
+	s=default; t=1545865319;
+	bh=iBs1IwAJBG9j6wZ0S40T6jmm7tFX7mbpiRpdcI5jWyk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vMJNbU1De0r4VuG3O9mKONHHJ9C/pT+tgo6mFQiwAS/4QtpiOxFS92tu+1bZFCfWs
-	 ESsY++lbBaKZyKOFJZaC1gYR+jl+RQP1V726MPRfPvzo5wfA2vLgWorjrQowDOaDnZ
-	 6xMvvdEJxYF+CSsoJk8FVyt3BJPDq3Bh+MtKk4ek=
+	b=Q32E3j3yIwTNNVZMBmTuKCDnQVSODDax+7x0P9opcPlkgbW8DyUYLkWB9w19A8yb1
+	 74KPUApyGGqxZmaztlA5prdVFNn1n9ucCFZRoY6ADIGiMG5sPo5w+ZpIBRoFDB0QTO
+	 jPv9msm5UsYe+0OEHZGTKPa1mtr31m4y0SoLiMP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbeLZXBs (ORCPT
+        id S1727124AbeLZWgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:01:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36334 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbeLZWgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:25 -0500
+        id S1726982AbeLZWgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 888A5218EA;
-        Wed, 26 Dec 2018 22:36:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01629218E2;
+        Wed, 26 Dec 2018 22:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863785;
-        bh=xEPPcGyXYi+XdMfYyNIssjsFMKQvo60l134+7kkM1YQ=;
+        s=default; t=1545863773;
+        bh=iBs1IwAJBG9j6wZ0S40T6jmm7tFX7mbpiRpdcI5jWyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fIB9M2B/9ZJMZ4ucBASWItoUGRgnDTbZ3owwZWdhNaeHN3n8wdiI6s7smO7Om8FL9
-         51tunsC8c2+q/qjTdByiIUEdYIqQod8y3PJ3Si1zSO2qtokPSR5rn2/RXjt9nK/YiE
-         bPwm+nFjoz6JAjDz4US1bwlKoKTZwBI1i3sciiv0=
+        b=GC+c5h4Eo+DIlPsysK4/anVhsorppo5UjKa696kCrvzk3DwjIBgfLQ30X9cCl8p+7
+         Y1BkDye5D5kGiCFuyv/aqVH0P8guu/3D8nUsrZzaJAuWPIZcGNWTRVhCRVtg2g5Gke
+         6gvGFiFphyPlv3+TgMEZnmSs0HIUVPE6aaSJVjsQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 16/97] xfrm: Fix error return code in xfrm_output_one()
-Date:   Wed, 26 Dec 2018 17:34:36 -0500
-Message-Id: <20181226223557.149329-16-sashal@kernel.org>
+Cc:     Yishai Hadas <yishaih@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 10/97] IB/mlx5: Block DEVX umem from the non applicable cases
+Date:   Wed, 26 Dec 2018 17:34:30 -0500
+Message-Id: <20181226223557.149329-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,34 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Yishai Hadas <yishaih@mellanox.com>
 
-[ Upstream commit 533555e5cbb6aa2d77598917871ae5b579fe724b ]
+[ Upstream commit 47f07f03b5ee436fe074c4fb1fb28d013c36a0d8 ]
 
-xfrm_output_one() does not return a error code when there is
-no dst_entry attached to the skb, it is still possible crash
-with a NULL pointer dereference in xfrm_output_resume(). Fix
-it by return error code -EHOSTUNREACH.
+Blocks creating a DEVX UMEM with the non applicable access flags
+as of ODP, MW_BIND, etc.
 
-Fixes: 9e1437937807 ("xfrm: Fix NULL pointer dereference when skb_dst_force clears the dst_entry.")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Specifically when an ODP flag is used below WARN call trace is issued.
+
+[ 2510.404131] RIP: 0010:__mlx5_ib_populate_pas+0x207/0x220 [mlx5_ib]
+...
+[ 2510.404143] Call Trace:
+[ 2510.404150]  ? __kmalloc_node+0x1b3/0x280
+[ 2510.404156]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
+[ 2510.404158]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
+[ 2510.404162]  mlx5_ib_populate_pas+0x53/0x60 [mlx5_ib]
+[ 2510.404167]  mlx5_ib_handler_MLX5_IB_METHOD_DEVX_UMEM_REG+0x273/0x3f0 [mlx5_ib]
+
+Fixes: aeae94579caf ("IB/mlx5: Add DEVX support for memory registration")
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_output.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx5/devx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_output.c b/net/xfrm/xfrm_output.c
-index 261995d37ced..6d20fbcde000 100644
---- a/net/xfrm/xfrm_output.c
-+++ b/net/xfrm/xfrm_output.c
-@@ -102,6 +102,7 @@ static int xfrm_output_one(struct sk_buff *skb, int err)
- 		skb_dst_force(skb);
- 		if (!skb_dst(skb)) {
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTERROR);
-+			err = -EHOSTUNREACH;
- 			goto error_nolock;
- 		}
+diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
+index f2f11e652dcd..02f36ab72ad4 100644
+--- a/drivers/infiniband/hw/mlx5/devx.c
++++ b/drivers/infiniband/hw/mlx5/devx.c
+@@ -857,7 +857,9 @@ static int devx_umem_get(struct mlx5_ib_dev *dev, struct ib_ucontext *ucontext,
+ 
+ 	err = uverbs_get_flags32(&access, attrs,
+ 				 MLX5_IB_ATTR_DEVX_UMEM_REG_ACCESS,
+-				 IB_ACCESS_SUPPORTED);
++				 IB_ACCESS_LOCAL_WRITE |
++				 IB_ACCESS_REMOTE_WRITE |
++				 IB_ACCESS_REMOTE_READ);
+ 	if (err)
+ 		return err;
  
 -- 
 2.19.1
