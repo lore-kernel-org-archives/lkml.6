@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8F0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385B4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F9E218E2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDDE2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863895;
-	bh=QRRLGNJoGKtGSB0xonutg2dNDuGwoLt+gbr6rF3iybs=;
+	s=default; t=1545863898;
+	bh=kXS4obVbAaMPDKZOlsK2UmO56efBgXsCoVsVdmPCIY8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S9QhD/ezyIgwjg4e372pEELj582NZsIp02I9B2wS0y6g9o7TENYuQzG6vHlVy29FF
-	 ia7rWB9MRssgXjvwor9NiBHreUupXmQ5fMS5zdbnNBGdl8kDDbxejCOIqK+3YmnbIU
-	 s9EiNQTVPLzK1dVL/pfc+cnYRJ8TA0AhNlZV7/hc=
+	b=t/yAkEHZCr38rUZSktnqMNRqVxs/nh9FVTOFvAP5mmBAnn3uPBsoE0DJ12q6rC8sl
+	 cwHq6+2kRYgXSyzMZg0bj1gAS6dK9Tzt5cJMV2fpRGm2wyTpfBLbmBJqsC2YjhwNDl
+	 SJmta+31xFUf4floA+W2v2MMKAdhapCLJfv9aNfU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbeLZWiO (ORCPT
+        id S1728735AbeLZWiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:38:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38354 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbeLZWiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:07 -0500
+        id S1728627AbeLZWiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5425D21901;
-        Wed, 26 Dec 2018 22:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72E3521741;
+        Wed, 26 Dec 2018 22:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863886;
-        bh=QRRLGNJoGKtGSB0xonutg2dNDuGwoLt+gbr6rF3iybs=;
+        s=default; t=1545863888;
+        bh=kXS4obVbAaMPDKZOlsK2UmO56efBgXsCoVsVdmPCIY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mYu8ywksjhowSc71FIXjG0P/2ikwwDWDBgf45/0Y2hBKiy2Ksd/b56yvP9PUoXXhf
-         t9I1c1opvtLt91eomw3+RQUj7m9JgYKyMFu92PkhlMgKWt5aEbNWscFwuupL4Ejekg
-         VNsB9+sjIs1TP8fmDBCWstm1LXH1UA2lPswX6O8c=
+        b=IsFgcIoepwVfIVU8zhFmLWgB9k8qMipgrHqsBFlwT9r0LXj9CG/bHKyeZeDvwXIwz
+         qa/6MuDqsS56PuoMYfCx1kUxNulnxq4XEQq6TcDKoE4ZfBVpDWy+GIk5LDBvEEKfLR
+         gilOOUEVOb5O/ML9DpMqSqLxoHqOsN4Tr4f/+fmo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+Cc:     Jason Martinsen <jasonmartinsen@msn.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 75/97] net: macb: add missing barriers when reading descriptors
-Date:   Wed, 26 Dec 2018 17:35:35 -0500
-Message-Id: <20181226223557.149329-75-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 77/97] lan78xx: Resolve issue with changing MAC address
+Date:   Wed, 26 Dec 2018 17:35:37 -0500
+Message-Id: <20181226223557.149329-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -58,96 +59,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anssi Hannula <anssi.hannula@bitwise.fi>
+From: Jason Martinsen <jasonmartinsen@msn.com>
 
-[ Upstream commit 6e0af298066f3b6d99f58989bb0dca6f764b4c6d ]
+[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
 
-When reading buffer descriptors on RX or on TX completion, an
-RX_USED/TX_USED bit is checked first to ensure that the descriptors have
-been populated, i.e. the ownership has been transferred. However, there
-are no memory barriers to ensure that the data protected by the
-RX_USED/TX_USED bit is up-to-date with respect to that bit.
+Current state for the lan78xx driver does not allow for changing the
+MAC address of the interface, without either removing the module (if
+you compiled it that way) or rebooting the machine.  If you attempt to
+change the MAC address, ifconfig will show the new address, however,
+the system/interface will not respond to any traffic using that
+configuration.  A few short-term options to work around this are to
+unload the module and reload it with the new MAC address, change the
+interface to "promisc", or reboot with the correct configuration to
+change the MAC.
 
-Specifically:
+This patch enables the ability to change the MAC address via fairly normal means...
+ifdown <interface>
+modify entry in /etc/network/interfaces OR a similar method
+ifup <interface>
+Then test via any network communication, such as ICMP requests to gateway.
 
-- TX timestamp descriptors may be loaded before ctrl is loaded for the
-  TX_USED check, which is racy as the descriptors may be updated between
-  the loads, causing old timestamp descriptor data to be used.
+My only test platform for this patch has been a raspberry pi model 3b+.
 
-- RX ctrl may be loaded before addr is loaded for the RX_USED check,
-  which is racy as a new frame may be written between the loads, causing
-  old ctrl descriptor data to be used.
-  This issue exists for both macb_rx() and gem_rx() variants.
+Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
 
-Fix the races by adding DMA read memory barriers on those paths and
-reordering the reads in macb_rx().
+-----
 
-I have not observed any actual problems in practice caused by these
-being missing, though.
-
-Tested on a ZynqMP based system.
-
-Fixes: 89e5785fc8a6 ("[PATCH] Atmel MACB ethernet driver")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 13 ++++++++++---
- drivers/net/ethernet/cadence/macb_ptp.c  |  2 ++
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/usb/lan78xx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index b8b37afc5dc3..8f4b2f9a8e07 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1001,11 +1001,15 @@ static int gem_rx(struct macb_queue *queue, int budget)
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index c3c9ba44e2a1..8d140495da79 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2335,6 +2335,10 @@ static int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
+ 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
+ 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
  
- 		rxused = (desc->addr & MACB_BIT(RX_USED)) ? true : false;
- 		addr = macb_get_addr(bp, desc);
--		ctrl = desc->ctrl;
- 
- 		if (!rxused)
- 			break;
- 
-+		/* Ensure ctrl is at least as up-to-date as rxused */
-+		dma_rmb();
++	/* Added to support MAC address changes */
++	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
++	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
 +
-+		ctrl = desc->ctrl;
-+
- 		queue->rx_tail++;
- 		count++;
+ 	return 0;
+ }
  
-@@ -1180,11 +1184,14 @@ static int macb_rx(struct macb_queue *queue, int budget)
- 		/* Make hw descriptor updates visible to CPU */
- 		rmb();
- 
--		ctrl = desc->ctrl;
--
- 		if (!(desc->addr & MACB_BIT(RX_USED)))
- 			break;
- 
-+		/* Ensure ctrl is at least as up-to-date as addr */
-+		dma_rmb();
-+
-+		ctrl = desc->ctrl;
-+
- 		if (ctrl & MACB_BIT(RX_SOF)) {
- 			if (first_frag != -1)
- 				discard_partial_frame(queue, first_frag, tail);
-diff --git a/drivers/net/ethernet/cadence/macb_ptp.c b/drivers/net/ethernet/cadence/macb_ptp.c
-index cd5296b84229..a6dc47edc4cf 100644
---- a/drivers/net/ethernet/cadence/macb_ptp.c
-+++ b/drivers/net/ethernet/cadence/macb_ptp.c
-@@ -319,6 +319,8 @@ int gem_ptp_txstamp(struct macb_queue *queue, struct sk_buff *skb,
- 	desc_ptp = macb_ptp_desc(queue->bp, desc);
- 	tx_timestamp = &queue->tx_timestamps[head];
- 	tx_timestamp->skb = skb;
-+	/* ensure ts_1/ts_2 is loaded after ctrl (TX_USED check) */
-+	dma_rmb();
- 	tx_timestamp->desc_ptp.ts_1 = desc_ptp->ts_1;
- 	tx_timestamp->desc_ptp.ts_2 = desc_ptp->ts_2;
- 	/* move head */
 -- 
 2.19.1
 
