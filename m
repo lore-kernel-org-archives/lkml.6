@@ -2,97 +2,88 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C97C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FD3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FE6214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:55:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DfwxmskI"
+	by mail.kernel.org (Postfix) with ESMTP id 65D752171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeLZRzE (ORCPT
+        id S1727483AbeLZR5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 12:55:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55903 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727372AbeLZRzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 12:55:04 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so14952782wmc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 09:55:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XD5GwOCYGmsfl9NX6pGxB9PT43U39Ax78jmvM+rJXlM=;
-        b=DfwxmskI+blaMa9oTM83Muz+PUgBNMGihlDCpVO2qLGBkj0UPFMFuOnyE4oPujQYXS
-         C0tFz28SsK4psUNAUcphxe5s4yyCU8eBYIffr/nzOEypFA7ROdW4wq3XyVudmL+MZ0b1
-         ueDWsUhb7f/fZcsNAsWP2VObVm39mloowRbnM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XD5GwOCYGmsfl9NX6pGxB9PT43U39Ax78jmvM+rJXlM=;
-        b=OyO4ymhC5YvZONoy7bOL8IMW/4wXieNUzGZtdg9wJJhKp8FsxtXSCOH5tAA2oX3JQI
-         wEXMKpTaCD13dhHqW1jfwfmqF/G3n3lTPxMrpAWb7VQG3tuWtohx8NuTAo4eVQ4YWxAy
-         E+qHGjQEgsaoOxLK/Wwmm/ObQnjxXh2qWDLRscoH4lzGUQt+LI9CvvzbywwT6EDMHZuW
-         X0PH4ZYknHcxvDWz/wV6t9YVe4OKHr+Cuyiwcr2d/Es2BRKV6pShgkPel9HQnldBZfia
-         Vq59TfiMI4jelaEAfy8Qpxeg2kKUEJDfuqHQal8I/+LJitSuP/LPIteadsUwgULqm8NY
-         AEMw==
-X-Gm-Message-State: AA+aEWZbIubnFPi45apV4bJ63bFUFrhBCdBencuKPQOmm427eO19ykqB
-        6zeX28a5E9XGKSkMOP1wCIzgYg==
-X-Google-Smtp-Source: AFSGD/UtLmG2xHr5SooXscLmEh4EgPP+g8cziwWw/94al7/uT1/culJVmppnJ1C00tHaqKmC0voDMw==
-X-Received: by 2002:a1c:6508:: with SMTP id z8mr19088736wmb.28.1545846902517;
-        Wed, 26 Dec 2018 09:55:02 -0800 (PST)
-Received: from [192.168.1.2] (227.red-79-146-82.dynamicip.rima-tde.net. [79.146.82.227])
-        by smtp.gmail.com with ESMTPSA id h2sm30697357wrv.87.2018.12.26.09.55.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 09:55:01 -0800 (PST)
-Subject: Re: [PATCH 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
- bindings
-To:     Stephen Boyd <swboyd@chromium.org>, gregkh@linuxfoundation.org,
-        kishon@ti.com, mark.rutland@arm.com, robh+dt@kernel.org
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shawn.guo@linaro.org,
-        vkoul@kernel.org
-References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1544176558-7946-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <154533751009.79149.13940391507897650993@swboyd.mtv.corp.google.com>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <4d6c6cd6-9c3a-84b8-d9f2-2d9933989594@linaro.org>
-Date:   Wed, 26 Dec 2018 18:55:00 +0100
+        Wed, 26 Dec 2018 12:57:49 -0500
+Received: from mga17.intel.com ([192.55.52.151]:14321 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727352AbeLZR5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 12:57:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 09:57:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,401,1539673200"; 
+   d="scan'208";a="305182563"
+Received: from vle-mobl.amr.corp.intel.com (HELO [10.254.191.139]) ([10.254.191.139])
+  by fmsmga006.fm.intel.com with ESMTP; 26 Dec 2018 09:57:47 -0800
+Subject: Re: [PATCH] sound: atom: fix a missing check of
+ snd_pcm_lib_malloc_pages
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20181226022950.71824-1-kjlu@umn.edu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a684ebcb-7b7a-d5b5-8770-f87db0c5a480@linux.intel.com>
+Date:   Wed, 26 Dec 2018 11:57:47 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <154533751009.79149.13940391507897650993@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181226022950.71824-1-kjlu@umn.edu>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 21:25, Stephen Boyd wrote:
-> Quoting Jorge Ramirez-Ortiz (2018-12-07 01:55:57)
->> +
->> +- qcom,vdd-voltage-level:
->> +    Value type: <prop-array>
->> +    Definition: This is a list of three integer values <no min max> where
->> +                each value corresponding to voltage corner in uV.
-> 
-> As far as I'm aware, this isn't how qcom's voltage corners are handled
-> or are going to be handled. Can't you hardcode it in the driver for now?
-> 
-> 
 
-sure will do.
+On 12/25/18 8:29 PM, Kangjie Lu wrote:
+> snd_pcm_lib_malloc_pages() may fail, so let's check its status and
+> return its error code upstream.
 
-if there is any other driver in some tree/branch that I could be looking 
-as a reference - to avoid having to hardcode the values in the driver- 
-please let me know.
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+
+>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>   sound/soc/intel/atom/sst-mfld-platform-pcm.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/intel/atom/sst-mfld-platform-pcm.c b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> index afc559866095..91a2436ce952 100644
+> --- a/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> +++ b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> @@ -399,7 +399,13 @@ static int sst_media_hw_params(struct snd_pcm_substream *substream,
+>   				struct snd_pcm_hw_params *params,
+>   				struct snd_soc_dai *dai)
+>   {
+> -	snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
+> +	int ret;
+> +
+> +	ret =
+> +		snd_pcm_lib_malloc_pages(substream,
+> +				params_buffer_bytes(params));
+> +	if (ret)
+> +		return ret;
+>   	memset(substream->runtime->dma_area, 0, params_buffer_bytes(params));
+>   	return 0;
+>   }
