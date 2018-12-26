@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CE1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78459C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A47214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F10D21741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865011;
-	bh=vvXH4R6dYzTpGyp1+Vp5R0R8S4GtWO4epVrosFLkRP8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=G9fgYdN3ka90Su/+pcHJJNALVLPeLAzZuBM1UWPgcIrFEpX4bD4DmgIOFVHpAb90T
-	 xWzMNFURQ56+6z1vam/R6QXmdo3hEP2fmcBut8nrltqtQe3bUkLuy6NIR2pLtLBMco
-	 wZE+/J5iyWikKXFNkjnJ61h55RikFHdyKyp1BRtQ=
+	s=default; t=1545865024;
+	bh=3Czy2PjlnymjrRkOxlN2tJetQsILPFtz8qPZkKjnUH8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=bWyToNpX0vdalmdVRKTsZzLu71w9okHEUpkBQtQapcKJfq6IFq9W6StMBAhIj3DQX
+	 Q73HcP0mA72W0Mi6huSjVcpubEkFRr6cY8avGsgSWFYTAIQ81CAJDY//UZ6bloPIke
+	 X819Tmix6V3rpByc0853U0/K2XGevOdhnOflnnYg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbeLZW4u (ORCPT
+        id S1730360AbeLZW5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:57:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730114AbeLZWyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:20 -0500
+        id S1728997AbeLZW47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:56:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C09A1214D8;
-        Wed, 26 Dec 2018 22:54:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F33A218A5;
+        Wed, 26 Dec 2018 22:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864859;
-        bh=vvXH4R6dYzTpGyp1+Vp5R0R8S4GtWO4epVrosFLkRP8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UuNyfnbycTgMnRzd7wZBD7OSMXegveY/QNlgywLI4xHvD4Rnk/n9opS89BiFDQXgW
-         /RNRqkkK+plVPaiZdWrzJKZs0hMhDkzZ9GulPYZuTq/6hjyd6bMHrq9DNB6YIF3PR2
-         xIrX53i7+GfrhH2bE78qaer/TXJ5nKI1yXdq3jg4=
+        s=default; t=1545865019;
+        bh=3Czy2PjlnymjrRkOxlN2tJetQsILPFtz8qPZkKjnUH8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Va6LhacFOtuWsD7UMYzcymsdA61W5Hf2uAEdRXYTlC+nBiWlllMfh9VqcKcYSjSJh
+         AbU5dNLNYMrFsCIlC5jfCxPqlLUSyMDjyvrTtwjaQ2p/wj7kBqd6mg/MJ0AHv6QZZZ
+         Ini4aaBYYXJQBTxD8QDZLYkMBJxGJ3uj4g2Tfqek=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 19/35] w90p910_ether: remove incorrect __init annotation
-Date:   Wed, 26 Dec 2018 17:41:26 -0500
-Message-Id: <20181226224142.150866-19-sashal@kernel.org>
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.4 01/21] powerpc: Fix COFF zImage booting on old powermacs
+Date:   Wed, 26 Dec 2018 17:54:39 -0500
+Message-Id: <20181226225501.151365-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
-References: <20181226224142.150866-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,40 +56,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 51367e423c6501a26e67d91a655d2bc892303462 ]
+[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
 
-The get_mac_address() function is normally inline, but when it is
-not, we get a warning that this configuration is broken:
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-WARNING: vmlinux.o(.text+0x4aff00): Section mismatch in reference from the function w90p910_ether_setup() to the function .init.text:get_mac_address()
-The function w90p910_ether_setup() references
-the function __init get_mac_address().
-This is often because w90p910_ether_setup lacks a __init
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
 
-Remove the __init to make it always do the right thing.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/nuvoton/w90p910_ether.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/nuvoton/w90p910_ether.c b/drivers/net/ethernet/nuvoton/w90p910_ether.c
-index 712d8bcb7d8c..a2960169a784 100644
---- a/drivers/net/ethernet/nuvoton/w90p910_ether.c
-+++ b/drivers/net/ethernet/nuvoton/w90p910_ether.c
-@@ -918,7 +918,7 @@ static const struct net_device_ops w90p910_ether_netdev_ops = {
- 	.ndo_change_mtu		= eth_change_mtu,
- };
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 5c2199857aa8..a3550e8f1a77 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
--static void __init get_mac_address(struct net_device *dev)
-+static void get_mac_address(struct net_device *dev)
- {
- 	struct w90p910_ether *ether = netdev_priv(dev);
- 	struct platform_device *pdev;
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
+ 
+ #ifdef __powerpc64__
+ .balign 8
 -- 
 2.19.1
 
