@@ -5,91 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6277CC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC7BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD18218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 248D7214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 14:09:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUjEfuUJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLkVpqGn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeLZN7j (ORCPT
+        id S1727070AbeLZOJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:59:39 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41686 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeLZN7i (ORCPT
+        Wed, 26 Dec 2018 09:09:42 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36189 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbeLZOJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:59:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so7897926pfi.8;
-        Wed, 26 Dec 2018 05:59:38 -0800 (PST)
+        Wed, 26 Dec 2018 09:09:41 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n2so7628298pgm.3;
+        Wed, 26 Dec 2018 06:09:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=O2DVCEK/vJVB+NMtEOXLiEGoK+ETh9cQ5Byi9Hzg60c=;
-        b=JUjEfuUJm1vVwV51/nZhtQW0UXpCdYDm3CccAOTt52ChVWbubwz/7Owl4/cmVtBHNH
-         CoxAvOp/L7WGTfIu4I6HlLBE1OWJQ2SY5nrCQV8TvSpvpzoggNwChzYDdwT2sBwUmklJ
-         7YLKgl00UbFrNMs7l43WW3bm0wJIDxUYBgRXQitItPtRdU2tAapUamXlcfPbkoXnAFXS
-         aNLqKbXrRXiNguPqAlt+sj55CGR3CTF94GrMGr4PyC8GmXhTIa+RFkgjePsFs6ObMu6N
-         zdDl4FMvNu0mMJ+b7WIXwYbnlvOCCK+vnCMPpLmTNO5biMsz+D31Z93sw7eDmg9wAvZ6
-         102g==
+        bh=y85zGKOTx0Tqi7DozW6mORIo44USvHnVcVjSBJz/9Ww=;
+        b=dLkVpqGnn0EOalMXMfrFtZRy7AfkZXQ1NElkvDzvyGNqnbzX1uX25sGNUTaCdyeVoJ
+         BMy7ORPMQaMNv/lpr76AbmbOz3rZVNi8hd/W6UY91kFmmqzJg2gcEWlR0f94b+VVG8Jh
+         niruZHsdzJtWo7oGzI1IQjHFeep8SITMYYMupLHOzA/2hc8LiE34T5dAVQpnBONyTywv
+         BKMIvFtPry3X0gIvxTkOVHc3eGwoFAfIqXY/ibvSv7SAUUWqDgwdTe/xPT9UfjRWUwiI
+         MtElMfCzZs2TYeO5rA6FYKzGgOIfRuLmZgsXBN0vM0nEFfl/queT6fOWlTa1+A+Dg2MN
+         eTjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O2DVCEK/vJVB+NMtEOXLiEGoK+ETh9cQ5Byi9Hzg60c=;
-        b=HAdJBkoDZMi8NnEnr62K1SGWNFPM9cEW08XpkC+hgquMOaCJrT0mtu9P3MSUBU/O7L
-         DGh/4ovmQTtAt5TGHicCvb2Tq2TPh2rR903UGtdpTfwEKwC0OdhnE6BJss675o3Nwvky
-         pozVAosqQuCExwy5uFKtpF+hnha2dTr9vbcD8T+pN4TX2w7N4bi54Muw1u4vAHsxi7pT
-         7T2RQd2zCwvGK60/NDkuVexzuRkeHCptr4D73ERlMxKG5UZ9du5oEtRj26X6aJpqKabH
-         7clwiNuELdFZIyz0jIJfP3ORg0aOLvvhyOC10mpt1lWQzy+qtXG4xrQ8ByPpkPGbOd1m
-         LZbQ==
-X-Gm-Message-State: AJcUukffWUqlMeDeaWfllWTFTIjo4uf3xk801ysaqyCI0tWRfu1HPXJP
-        iXzgPI9/UgwYqKVTz1iSh3Q=
-X-Google-Smtp-Source: ALg8bN4zOcEpOW1DkON5KL4ZWIHT47MFGAXjjtPbFaAvrTqM+woWuSSBdNw1BKDn/jpivWwKN5fVBA==
-X-Received: by 2002:a63:e21:: with SMTP id d33mr19032559pgl.272.1545832778325;
-        Wed, 26 Dec 2018 05:59:38 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id g11sm50426381pfo.139.2018.12.26.05.59.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 05:59:37 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: vf610: fix refcount leak in vf610_clocks_init()
-Date:   Wed, 26 Dec 2018 08:59:36 -0500
-Message-Id: <20181226135936.6102-1-tiny.windzz@gmail.com>
+        bh=y85zGKOTx0Tqi7DozW6mORIo44USvHnVcVjSBJz/9Ww=;
+        b=AUCCzjTR6KlwlZ8qd5838GDSmkW6Rw3DWt7pRpIigsKTdkJtzyzS7q3F/XFTddW7M4
+         HQqr482CD8+KuJ5G2eTg/i9gPkgc/x5lcIkmiMO4GPuQH09Rgd3/rlKWOrkhK8aoteX+
+         PJiY5GMZb762MAJ5w12DmQgdtS1N9b8ZCXiH6J17sw02EYUpxlgv0eHGq9J3v1dabAtU
+         S5go4RTRD0iL9xm66kjpi6bNgf881W640c2aZ3nZKn9+RuJDl5U1a7g/tJBQkWTIcyDo
+         PoS5T6WncErcXGMOGduNhGmUITKs1Zr2c77rumFEthdOrRElKkqfqiwIXlzZfQndnaHk
+         nzjQ==
+X-Gm-Message-State: AJcUukc+DeHWTMOOnFoK0elMRSDwAm1BdaEiPGlgtl5UHFUr4RbdxMjc
+        anIP3upC/u2h3IR256DZi7izG2dS
+X-Google-Smtp-Source: ALg8bN4F3gkpG+h46tDeWhwyt5cqgggEly4LqEnUgNsCKE818YHJh9gd1mY77v+mD24vixQXLB03EA==
+X-Received: by 2002:a62:9f1b:: with SMTP id g27mr3994348pfe.87.1545833381191;
+        Wed, 26 Dec 2018 06:09:41 -0800 (PST)
+Received: from localhost.localdomain ([2402:f000:1:4414:a8df:74f3:1213:8d3d])
+        by smtp.gmail.com with ESMTPSA id u8sm52661093pfl.16.2018.12.26.06.09.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 06:09:40 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     isdn@linux-pingi.de, davem@davemloft.net, natechancellor@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
+Date:   Wed, 26 Dec 2018 22:09:34 +0800
+Message-Id: <20181226140934.12903-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
+HFCPCI_l1hw() may be concurrently executed.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+HFCPCI_l1hw()
+  line 1173: if (!cs->tx_skb)
+
+hfcpci_interrupt()
+  line 942: spin_lock_irqsave();
+  line 1066: dev_kfree_skb_irq(cs->tx_skb);
+
+Thus, a possible concurrency use-after-free bug may occur 
+in HFCPCI_l1hw().
+
+To fix these bugs, the calls to spin_lock_irqsave() and
+spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
+access to cs->tx_skb.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/clk/imx/clk-vf610.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/isdn/hisax/hfc_pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 6dae54325a91..a334667c450a 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -203,6 +203,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,vf610-anatop");
- 	anatop_base = of_iomap(np, 0);
- 	BUG_ON(!anatop_base);
-+	of_node_put(np);
- 
- 	np = ccm_node;
- 	ccm_base = of_iomap(np, 0);
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index ea0e4c6de3fb..0109e0e8bcb6 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -1170,11 +1170,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
+ 		if (cs->debug & L1_DEB_LAPD)
+ 			debugl1(cs, "-> PH_REQUEST_PULL");
+ #endif
++		spin_lock_irqsave(&cs->lock, flags);
+ 		if (!cs->tx_skb) {
+ 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
+ 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
+ 		} else
+ 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
++		spin_unlock_irqrestore(&cs->lock, flags);
+ 		break;
+ 	case (HW_RESET | REQUEST):
+ 		spin_lock_irqsave(&cs->lock, flags);
 -- 
 2.17.0
 
