@@ -2,102 +2,88 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6013C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB6BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930F621720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1159921720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 06:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbeLZGOy (ORCPT
+        id S1726077AbeLZGQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 01:14:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39658 "EHLO mx1.redhat.com"
+        Wed, 26 Dec 2018 01:16:38 -0500
+Received: from mx.socionext.com ([202.248.49.38]:39164 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbeLZGOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 01:14:53 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A68DFA4042;
-        Wed, 26 Dec 2018 06:14:53 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-27.pek2.redhat.com [10.72.12.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B20606111A;
-        Wed, 26 Dec 2018 06:14:44 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v3] kdump: add the vmcoreinfo documentation
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, bhe@redhat.com,
-        linux-doc@vger.kernel.org, x86@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        anderson@redhat.com, Kazuhito Hagio <khagio@redhat.com>
-References: <20181216131617.2612-1-lijiang@redhat.com>
- <20181216131617.2612-2-lijiang@redhat.com> <20181217130024.GD12165@zn.tnic>
- <826c1a6b-41da-bc1a-f9c2-0d52e774b572@redhat.com>
- <20181226032433.GB13556@dhcp-128-65.nay.redhat.com>
- <20181226033658.GB13822@dhcp-128-65.nay.redhat.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <c64a0459-e715-0e10-c674-c50570f32f08@redhat.com>
-Date:   Wed, 26 Dec 2018 14:14:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181226033658.GB13822@dhcp-128-65.nay.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 26 Dec 2018 06:14:53 +0000 (UTC)
+        id S1725869AbeLZGQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 01:16:37 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 26 Dec 2018 15:16:36 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id BB48F60062;
+        Wed, 26 Dec 2018 15:16:36 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 26 Dec 2018 15:16:36 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 0CCF11A1210;
+        Wed, 26 Dec 2018 15:16:36 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v2] thermal: uniphier: Convert to SPDX identifier
+Date:   Wed, 26 Dec 2018 15:16:27 +0900
+Message-Id: <1545804987-6479-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年12月26日 11:36, Dave Young 写道:
-> On 12/26/18 at 11:24am, Dave Young wrote:
->>>>> +
->>>>> +KERNEL_IMAGE_SIZE
->>>>> +=================
->>>>> +The size of 'KERNEL_IMAGE_SIZE', currently unused.
->>>>
->>>> So remove?
->>>>
->>>
->>> I'm not sure whether it should be removed, so i keep it.
->>
->> Just remove it.  It was added by Baoquan for KASLR issues, later
->> makedumpfile reverted the userspace part and added other implementation.
->>
->> In case old makedumpfile does not support new kernel, it has some kernel
->> versions support list in code, thus no worry about the compatibility
->> issue.
-> 
-> Ah, it is not unused actually, clone crash tool git:
-> $ git grep KERNEL_IMAGE_SIZE
-> x86_64.c:               if ((string = pc->read_vmcoreinfo("NUMBER(KERNEL_IMAGE_SIZE)"))) {
-> 
-> So in the documentation, the use cases of crash tool should also be
-> covered.
-> 
+This converts license boilerplate to SPDX identifier, and removes
+unnecessary lines.
 
-Sure, maybe only this one was ignored.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/thermal/uniphier_thermal.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-I will improve this variable in the documentation.
+Changes since v1:
+- Add Reviewd-by line
 
-> Lianbo, it would be good to cc Dave and Kazu for these patches, could
-> you cc them in your next post?
-> 
+diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
+index 55477d7..bba2284 100644
+--- a/drivers/thermal/uniphier_thermal.c
++++ b/drivers/thermal/uniphier_thermal.c
+@@ -1,21 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
+ /**
+  * uniphier_thermal.c - Socionext UniPhier thermal driver
+- *
+  * Copyright 2014      Panasonic Corporation
+  * Copyright 2016-2017 Socionext Inc.
+- * All rights reserved.
+- *
+  * Author:
+  *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2  of
+- * the License as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/bitops.h>
+-- 
+2.7.4
 
-Yes, i will add Dave and Kazu, and also resend patch v4.
-
-Thanks.
-
->>
->> Thanks
->> Dave
-> 
-> Thanks
-> Dave
-> 
