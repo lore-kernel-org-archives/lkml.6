@@ -2,380 +2,170 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0915C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051DEC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77FB72148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1FEA2173B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:44:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeLZAob (ORCPT
+        id S1726038AbeLZAoC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:44:31 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57384 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbeLZAoC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Dec 2018 19:44:02 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57126 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeLZAn6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Dec 2018 19:43:58 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 2115F2952E; Tue, 25 Dec 2018 19:43:57 -0500 (EST)
+        id 7ADB929501; Tue, 25 Dec 2018 19:43:55 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linuxppc-dev@lists.ozlabs.org
-Message-Id: <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
-References: <cover.1545784679.git.fthain@telegraphics.com.au>
+Message-Id: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
+Subject: [PATCH v8 00/25] Re-use nvram module
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt nvram module to reduce code duplication. This means CONFIG_NVRAM
-becomes available to CONFIG_PPC64 builds (until now it was only PPC32).
+The generic NVRAM module, drivers/char/generic_nvram.c, implements a
+/dev/nvram misc device. This module is used only by 32-bit PowerPC
+platforms. Unfortunately, it isn't generic enough to be more widely used.
 
-The IOC_NVRAM_GET_OFFSET ioctl as implemented on PPC64 validates the offset
-returned by pmac_get_partition(). Add this test to the nvram module.
+The RTC "CMOS" NVRAM module, drivers/char/nvram.c, also implements a
+/dev/nvram misc device. This module is now used only by x86 and m68k
+thanks to commit 3ba9faedc180 ("char: nvram: disable on ARM").
 
-Note that the old PPC32 generic_nvram module lacked this test.
-So when CONFIG_PPC32 && CONFIG_PPC_PMAC, the IOC_NVRAM_GET_OFFSET ioctl
-would have returned 0 (always). But when CONFIG_PPC64 && CONFIG_PPC_PMAC,
-the IOC_NVRAM_GET_OFFSET ioctl would have returned -1 (which is -EPERM)
-when the requested partition was not found.
+The "generic" module cannot be used by x86 or m68k platforms because it
+cannot co-exist with the "CMOS" module. One reason for that is the
+CONFIG_GENERIC_NVRAM kludge in drivers/char/Makefile. Another reason is
+that automatically loading the appropriate module would be impossible
+because only one module can provide the 'char-major-10-144' alias.
 
-With this patch, the result is now -EINVAL on both PPC32 and PPC64 when
-the requested PowerMac NVRAM partition is not found. This is a userspace-
-visible change, in the non-existent partition case, which would be in
-an error path for an IOC_NVRAM_GET_OFFSET ioctl syscall.
+A multi-platform kernel binary needs a single generic module. With this
+patch series, drivers/char/nvram.c becomes more generic and some
+arch-specific code gets moved under arch/. The 'nvram' module is then
+usable by all m68k, powerpc and x86 platforms.
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Laurent Vivier <lvivier@redhat.com>
-Tested-by: Stan Johnson <userm57@yahoo.com>
----
-BTW, the IOC_NVRAM_SYNC ioctl call returns -EINVAL on PPC64. This patch
-retains this behaviour though it might be better to actually perform a sync.
-Both PPC64 and PPC32 kernels implement ppc_md.nvram_sync() for Core99,
-but on PPC64 the ioctl is unimplemented (unlike PPC32).
+This allows for removal of drivers/char/generic_nvram.c as well as some
+duplicated code in arch/powerpc/kernel/nvram_64.c. By reducing the number
+of /dev/nvram char misc device implementations, the number of bugs and
+inconsistencies is also reduced.
+
+This patch series reduces inconsistencies between PPC32 and PPC64, and
+between PPC_PMAC and MAC. A uniform API has benefits for userspace.
+For example, some error codes for some ioctl calls become consistent
+across PowerPC platforms. The uniform API can potentially benefit
+bootloaders that work across different platforms which all have XPRAM
+(e.g. Emile).
+
+I think there are two reasonable merge strategies for this patch series.
+The char misc maintainer could take the entire series. Alternatively the
+m68k maintainer could take patches 1 thru 14, and after those patches
+reach mainline the powerpc maintainer could take 15 thru 25 (even though
+patch 21 is not powerpc-related).
+
+This patch series has been tested on m68k, powerpc32, powerpc64 and x86.
+The nvram and thinkpad_acpi modules were regression tested on a ThinkPad
+T43. The /dev/nvram functionality was also regression tested on a G3
+PowerMac. The nvram module was also tested on a variety of m68k Macs
+and an Atari Falcon. The PPC64 changes were tested on a G5 PowerMac.
+AFAIK, there's been no testing on pSeries or CHRP as yet.
 
 Changed since v7:
- - Drop pointless comment edit.
----
- arch/powerpc/Kconfig                     |   3 +-
- arch/powerpc/kernel/nvram_64.c           | 185 +++++------------------
- arch/powerpc/platforms/powermac/Makefile |   2 -
- arch/powerpc/platforms/powermac/setup.c  |   2 +-
- arch/powerpc/platforms/powermac/time.c   |   2 +-
- arch/powerpc/platforms/pseries/nvram.c   |   2 -
- drivers/char/nvram.c                     |   2 +
- 7 files changed, 40 insertions(+), 158 deletions(-)
+ - Rebased.
+ - Dropped patch 9/26, "char/nvram: Use generic fixed_size_llseek()"
+because generic_file_llseek_size() was adopted in commit b808b1d632f6.
+ - Reordered the m68k and powerpc patches to simplify the merge strategy.
+ - Addressed some trivial checkpatch.pl complaints.
+ - Improved some commit log entries.
+ - Changed the CONFIG_NVRAM default to better approximate the present code.
+In particular, the CONFIG_GENERIC_NVRAM default and use of "select NVRAM".
+ - Added more tested-by tags.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 5b859b7f6599..940de2d62fb5 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -271,10 +271,9 @@ config SYSVIPC_COMPAT
- 	depends on COMPAT && SYSVIPC
- 	default y
- 
--# All PPC32s use generic nvram driver through ppc_md
- config HAVE_ARCH_NVRAM_OPS
- 	bool
--	default y if PPC32
-+	default y
- 
- config SCHED_OMIT_FRAME_POINTER
- 	bool
-diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
-index 22e9d281324d..6d0461c02e0f 100644
---- a/arch/powerpc/kernel/nvram_64.c
-+++ b/arch/powerpc/kernel/nvram_64.c
-@@ -7,12 +7,6 @@
-  *      2 of the License, or (at your option) any later version.
-  *
-  * /dev/nvram driver for PPC64
-- *
-- * This perhaps should live in drivers/char
-- *
-- * TODO: Split the /dev/nvram part (that one can use
-- *       drivers/char/generic_nvram.c) from the arch & partition
-- *       parsing code.
-  */
- 
- #include <linux/types.h>
-@@ -716,136 +710,6 @@ static void oops_to_nvram(struct kmsg_dumper *dumper,
- 	spin_unlock_irqrestore(&lock, flags);
- }
- 
--static loff_t dev_nvram_llseek(struct file *file, loff_t offset, int origin)
--{
--	if (ppc_md.nvram_size == NULL)
--		return -ENODEV;
--	return generic_file_llseek_size(file, offset, origin, MAX_LFS_FILESIZE,
--					ppc_md.nvram_size());
--}
--
--
--static ssize_t dev_nvram_read(struct file *file, char __user *buf,
--			  size_t count, loff_t *ppos)
--{
--	ssize_t ret;
--	char *tmp = NULL;
--	ssize_t size;
--
--	if (!ppc_md.nvram_size) {
--		ret = -ENODEV;
--		goto out;
--	}
--
--	size = ppc_md.nvram_size();
--	if (size < 0) {
--		ret = size;
--		goto out;
--	}
--
--	if (*ppos >= size) {
--		ret = 0;
--		goto out;
--	}
--
--	count = min_t(size_t, count, size - *ppos);
--	count = min(count, PAGE_SIZE);
--
--	tmp = kmalloc(count, GFP_KERNEL);
--	if (!tmp) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	ret = ppc_md.nvram_read(tmp, count, ppos);
--	if (ret <= 0)
--		goto out;
--
--	if (copy_to_user(buf, tmp, ret))
--		ret = -EFAULT;
--
--out:
--	kfree(tmp);
--	return ret;
--
--}
--
--static ssize_t dev_nvram_write(struct file *file, const char __user *buf,
--			  size_t count, loff_t *ppos)
--{
--	ssize_t ret;
--	char *tmp = NULL;
--	ssize_t size;
--
--	ret = -ENODEV;
--	if (!ppc_md.nvram_size)
--		goto out;
--
--	ret = 0;
--	size = ppc_md.nvram_size();
--	if (*ppos >= size || size < 0)
--		goto out;
--
--	count = min_t(size_t, count, size - *ppos);
--	count = min(count, PAGE_SIZE);
--
--	tmp = memdup_user(buf, count);
--	if (IS_ERR(tmp)) {
--		ret = PTR_ERR(tmp);
--		goto out;
--	}
--
--	ret = ppc_md.nvram_write(tmp, count, ppos);
--
--	kfree(tmp);
--out:
--	return ret;
--}
--
--static long dev_nvram_ioctl(struct file *file, unsigned int cmd,
--			    unsigned long arg)
--{
--	switch(cmd) {
--#ifdef CONFIG_PPC_PMAC
--	case OBSOLETE_PMAC_NVRAM_GET_OFFSET:
--		printk(KERN_WARNING "nvram: Using obsolete PMAC_NVRAM_GET_OFFSET ioctl\n");
--	case IOC_NVRAM_GET_OFFSET: {
--		int part, offset;
--
--		if (!machine_is(powermac))
--			return -EINVAL;
--		if (copy_from_user(&part, (void __user*)arg, sizeof(part)) != 0)
--			return -EFAULT;
--		if (part < pmac_nvram_OF || part > pmac_nvram_NR)
--			return -EINVAL;
--		offset = pmac_get_partition(part);
--		if (offset < 0)
--			return offset;
--		if (copy_to_user((void __user*)arg, &offset, sizeof(offset)) != 0)
--			return -EFAULT;
--		return 0;
--	}
--#endif /* CONFIG_PPC_PMAC */
--	default:
--		return -EINVAL;
--	}
--}
--
--static const struct file_operations nvram_fops = {
--	.owner		= THIS_MODULE,
--	.llseek		= dev_nvram_llseek,
--	.read		= dev_nvram_read,
--	.write		= dev_nvram_write,
--	.unlocked_ioctl	= dev_nvram_ioctl,
--};
--
--static struct miscdevice nvram_dev = {
--	NVRAM_MINOR,
--	"nvram",
--	&nvram_fops
--};
--
--
- #ifdef DEBUG_NVRAM
- static void __init nvram_print_partitions(char * label)
- {
-@@ -993,6 +857,8 @@ loff_t __init nvram_create_partition(const char *name, int sig,
- 	long size = 0;
- 	int rc;
- 
-+	BUILD_BUG_ON(NVRAM_BLOCK_LEN != 16);
-+
- 	/* Convert sizes from bytes to blocks */
- 	req_size = _ALIGN_UP(req_size, NVRAM_BLOCK_LEN) / NVRAM_BLOCK_LEN;
- 	min_size = _ALIGN_UP(min_size, NVRAM_BLOCK_LEN) / NVRAM_BLOCK_LEN;
-@@ -1194,21 +1060,40 @@ int __init nvram_scan_partitions(void)
- 	return err;
- }
- 
--static int __init nvram_init(void)
-+#if IS_ENABLED(CONFIG_NVRAM)
-+
-+static ssize_t ppc_nvram_read(char *buf, size_t count, loff_t *index)
- {
--	int rc;
--	
--	BUILD_BUG_ON(NVRAM_BLOCK_LEN != 16);
-+	if (ppc_md.nvram_read)
-+		return ppc_md.nvram_read(buf, count, index);
-+	return -EINVAL;
-+}
- 
--	if (ppc_md.nvram_size == NULL || ppc_md.nvram_size() <= 0)
--		return  -ENODEV;
-+static ssize_t ppc_nvram_write(char *buf, size_t count, loff_t *index)
-+{
-+	if (ppc_md.nvram_write)
-+		return ppc_md.nvram_write(buf, count, index);
-+	return -EINVAL;
-+}
- 
--  	rc = misc_register(&nvram_dev);
--	if (rc != 0) {
--		printk(KERN_ERR "nvram_init: failed to register device\n");
--		return rc;
--	}
--  	
--  	return rc;
-+static ssize_t ppc_nvram_get_size(void)
-+{
-+	if (ppc_md.nvram_size)
-+		return ppc_md.nvram_size();
-+	return -ENODEV;
-+}
-+
-+static long ppc_nvram_sync(void)
-+{
-+	return -EINVAL;
- }
--device_initcall(nvram_init);
-+
-+const struct nvram_ops arch_nvram_ops = {
-+	.read           = ppc_nvram_read,
-+	.write          = ppc_nvram_write,
-+	.get_size       = ppc_nvram_get_size,
-+	.sync           = ppc_nvram_sync,
-+};
-+EXPORT_SYMBOL(arch_nvram_ops);
-+
-+#endif /* CONFIG_NVRAM */
-diff --git a/arch/powerpc/platforms/powermac/Makefile b/arch/powerpc/platforms/powermac/Makefile
-index 923bfb340433..20ebf35d7913 100644
---- a/arch/powerpc/platforms/powermac/Makefile
-+++ b/arch/powerpc/platforms/powermac/Makefile
-@@ -15,7 +15,5 @@ obj-$(CONFIG_PMAC_BACKLIGHT)	+= backlight.o
- # need this to be a bool.  Cheat here and pretend CONFIG_NVRAM=m is really
- # CONFIG_NVRAM=y
- obj-$(CONFIG_NVRAM:m=y)		+= nvram.o
--# ppc64 pmac doesn't define CONFIG_NVRAM but needs nvram stuff
--obj-$(CONFIG_PPC64)		+= nvram.o
- obj-$(CONFIG_PPC32)		+= bootx_init.o
- obj-$(CONFIG_SMP)		+= smp.o
-diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
-index ce340ae4ee38..dc56ae23118a 100644
---- a/arch/powerpc/platforms/powermac/setup.c
-+++ b/arch/powerpc/platforms/powermac/setup.c
-@@ -316,7 +316,7 @@ static void __init pmac_setup_arch(void)
- 	find_via_pmu();
- 	smu_init();
- 
--#if IS_ENABLED(CONFIG_NVRAM) || defined(CONFIG_PPC64)
-+#if IS_ENABLED(CONFIG_NVRAM)
- 	pmac_nvram_init();
- #endif
- #ifdef CONFIG_PPC32
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index f157e3d071f2..b36ddee17c87 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -68,7 +68,7 @@
- long __init pmac_time_init(void)
- {
- 	s32 delta = 0;
--#ifdef CONFIG_NVRAM
-+#if defined(CONFIG_NVRAM) && defined(CONFIG_PPC32)
- 	int dst;
- 	
- 	delta = ((s32)pmac_xpram_read(PMAC_XPRAM_MACHINE_LOC + 0x9)) << 16;
-diff --git a/arch/powerpc/platforms/pseries/nvram.c b/arch/powerpc/platforms/pseries/nvram.c
-index 69cedc1b3b8a..1136a38ff039 100644
---- a/arch/powerpc/platforms/pseries/nvram.c
-+++ b/arch/powerpc/platforms/pseries/nvram.c
-@@ -7,8 +7,6 @@
-  *      2 of the License, or (at your option) any later version.
-  *
-  * /dev/nvram driver for PPC64
-- *
-- * This perhaps should live in drivers/char
-  */
- 
- 
-diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
-index 8339885e8e9b..8cbfed86ec8d 100644
---- a/drivers/char/nvram.c
-+++ b/drivers/char/nvram.c
-@@ -334,6 +334,8 @@ static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
- 			if (part < pmac_nvram_OF || part > pmac_nvram_NR)
- 				return -EINVAL;
- 			offset = pmac_get_partition(part);
-+			if (offset < 0)
-+				return -EINVAL;
- 			if (copy_to_user((void __user *)arg,
- 					 &offset, sizeof(offset)) != 0)
- 				return -EFAULT;
+For older change logs, please refer to,
+https://lore.kernel.org/lkml/20151101104202.301856132@telegraphics.com.au/
+
+
+Finn Thain (25):
+  scsi/atari_scsi: Don't select CONFIG_NVRAM
+  m68k/atari: Move Atari-specific code out of drivers/char/nvram.c
+  m68k/atari: Replace nvram_{read,write}_byte with arch_nvram_ops
+  char/nvram: Re-order functions to remove forward declarations and
+    #ifdefs
+  char/nvram: Adopt arch_nvram_ops
+  x86/thinkpad_acpi: Use arch_nvram_ops methods instead of
+    nvram_read_byte() and nvram_write_byte()
+  char/nvram: Allow the set_checksum and initialize ioctls to be omitted
+  char/nvram: Implement NVRAM read/write methods
+  m68k/atari: Implement arch_nvram_ops methods and enable
+    CONFIG_HAVE_ARCH_NVRAM_OPS
+  m68k/mac: Adopt naming and calling conventions for PRAM routines
+  m68k/mac: Use macros for RTC accesses not magic numbers
+  m68k/mac: Fix PRAM accessors
+  m68k: Dispatch nvram_ops calls to Atari or Mac functions
+  char/nvram: Add "devname:nvram" module alias
+  powerpc: Clean up nvram includes
+  powerpc: Add missing ppc_md.nvram_size for CHRP and PowerMac
+  powerpc: Implement arch_nvram_ops.get_size() and remove old nvram_*
+    exports
+  powerpc: Implement nvram sync ioctl
+  powerpc, fbdev: Use NV_CMODE and NV_VMODE only when CONFIG_PPC32 &&
+    CONFIG_PPC_PMAC && CONFIG_NVRAM
+  powerpc, fbdev: Use arch_nvram_ops methods instead of
+    nvram_read_byte() and nvram_write_byte()
+  nvram: Drop nvram_* symbol exports and prototypes
+  powerpc: Remove CONFIG_GENERIC_NVRAM and adopt
+    CONFIG_HAVE_ARCH_NVRAM_OPS
+  char/generic_nvram: Remove as unused
+  powerpc: Adopt nvram module for PPC64
+  powerpc: Remove pmac_xpram_{read,write} functions
+
+ arch/m68k/Kconfig                          |   3 +
+ arch/m68k/Kconfig.machine                  |   2 +
+ arch/m68k/atari/Makefile                   |   2 +
+ arch/m68k/atari/nvram.c                    | 279 ++++++++
+ arch/m68k/include/asm/atarihw.h            |   6 +
+ arch/m68k/include/asm/macintosh.h          |   4 +
+ arch/m68k/kernel/setup_mm.c                | 100 ++-
+ arch/m68k/mac/misc.c                       | 174 +++--
+ arch/powerpc/Kconfig                       |   5 +-
+ arch/powerpc/include/asm/nvram.h           |  13 -
+ arch/powerpc/kernel/nvram_64.c             | 188 ++----
+ arch/powerpc/kernel/setup_32.c             |  30 +-
+ arch/powerpc/platforms/chrp/Makefile       |   2 +-
+ arch/powerpc/platforms/chrp/nvram.c        |  14 +-
+ arch/powerpc/platforms/chrp/setup.c        |   2 +-
+ arch/powerpc/platforms/powermac/Makefile   |   2 -
+ arch/powerpc/platforms/powermac/nvram.c    |  37 +-
+ arch/powerpc/platforms/powermac/setup.c    |   3 +-
+ arch/powerpc/platforms/powermac/time.c     |  19 +-
+ arch/powerpc/platforms/pseries/nvram.c     |   2 -
+ drivers/char/Kconfig                       |  19 +-
+ drivers/char/Makefile                      |   6 +-
+ drivers/char/generic_nvram.c               | 159 -----
+ drivers/char/nvram.c                       | 701 +++++++++------------
+ drivers/platform/x86/thinkpad_acpi.c       |  20 +-
+ drivers/scsi/Kconfig                       |   6 +-
+ drivers/scsi/atari_scsi.c                  |  15 +-
+ drivers/video/fbdev/Kconfig                |   2 +-
+ drivers/video/fbdev/controlfb.c            |   4 +-
+ drivers/video/fbdev/imsttfb.c              |  16 +-
+ drivers/video/fbdev/matrox/matroxfb_base.c |   6 +-
+ drivers/video/fbdev/platinumfb.c           |   4 +-
+ drivers/video/fbdev/valkyriefb.c           |  18 +-
+ include/linux/nvram.h                      |  24 +-
+ include/uapi/linux/pmu.h                   |   2 +
+ 35 files changed, 964 insertions(+), 925 deletions(-)
+ create mode 100644 arch/m68k/atari/nvram.c
+ delete mode 100644 drivers/char/generic_nvram.c
+
 -- 
 2.19.2
 
