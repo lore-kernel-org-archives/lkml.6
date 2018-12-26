@@ -2,208 +2,96 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C45C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794F6C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D04F21720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:46:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B84921720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:48:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uzLaENZ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeLZNqm (ORCPT
+        id S1727012AbeLZNsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:46:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47892 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726750AbeLZNqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:46:42 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2527058E34;
-        Wed, 26 Dec 2018 13:46:41 +0000 (UTC)
-Received: from redhat.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E266D608E0;
-        Wed, 26 Dec 2018 13:46:39 +0000 (UTC)
-Date:   Wed, 26 Dec 2018 08:46:39 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
-Message-ID: <20181226083630-mutt-send-email-mst@kernel.org>
-References: <20181212092435-mutt-send-email-mst@kernel.org>
- <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
- <20181213092930-mutt-send-email-mst@kernel.org>
- <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
- <20181214081821-mutt-send-email-mst@kernel.org>
- <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
- <20181224123654-mutt-send-email-mst@kernel.org>
- <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
- <20181225111716-mutt-send-email-mst@kernel.org>
- <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 26 Dec 2018 13:46:41 +0000 (UTC)
+        Wed, 26 Dec 2018 08:48:10 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36210 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbeLZNsK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 08:48:10 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b85so7894040pfc.3;
+        Wed, 26 Dec 2018 05:48:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xs9bgwKVYqdbWfG93XdilpjgOed1rR2CFtz8b0OXHO0=;
+        b=uzLaENZ6BQGEuE0BgwOFvAxZBYyDZjSHYbmzcvWkzboYj1/yjSya3G2m9ojsQ8fcsE
+         rf8X7fpetNowRBu/ZlnK6rr86xFWOGZ9BUGYkQbEb4IAxui6o9sxVWa5mbMFb5zefWZ6
+         W4t+nJLZ3r7NVF6ZKS8ASvRBB1vwp7a9M6gB2ybQ4nHLMiR9+YuTgekT6b7H0GsFQZaA
+         6iMbMN6lj/dgZBGCrOypZoVzMaWjkH7/0ABR1erYbG6NhGbhALLvIDp1uQbj8LKQza/4
+         atc6TbP3hdSzspHYypJJ0/ynZQzvh09rR95+L9Goerqzp9HEbfKJ0n32SY9r3DGowN64
+         kAzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xs9bgwKVYqdbWfG93XdilpjgOed1rR2CFtz8b0OXHO0=;
+        b=LtctxkcyEX5c1ou8iFIzJv8015vgexGCO6n7yzAHJ9PBbIUzFEcQV/GAldTvlNklMQ
+         433vROkPql7CUH5ZpV8hGAnmyJ8DAP9vaTVse9uFxQ4ImgHN0PNJUWZzCSInrk0u9R21
+         3ukvD8F3jC1sw2j1p/wIT5O5JJ4TwCgx9I6vUCVqvJPggBSXzvApLoOEPRQ2xE+rLV7e
+         z8Rpfoo2tbMBoWLRvVmWzX80XrCl1Ozgn/H8slecHSptfglgwen55cDUOQE+80BLXsaH
+         6xwrzHhSGInXM+lnSpPgMhx/c91S0hTMoOw0d7d5kxpWATiPIQDyPFOoLnHB+1M9HqsG
+         nqVg==
+X-Gm-Message-State: AJcUukd3xIZ6AqYUbE5Qa/xZFGkp0rXRE2/4WEpJfFZPjYeGqZdl9Tee
+        Lp/SMmM0qE5sQ3dHBSUgeDE=
+X-Google-Smtp-Source: ALg8bN7bPq0z6y1+sNcTCiR1E9RghEudDh5Ri31cI2UMU/VSCI2B14+RCBtijm+pnOJOXWRUcgRMZw==
+X-Received: by 2002:a63:7a09:: with SMTP id v9mr19053049pgc.112.1545832088543;
+        Wed, 26 Dec 2018 05:48:08 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id m9sm41120620pgd.32.2018.12.26.05.48.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 05:48:07 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        gregory.clement@bootlin.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clk: mv98dx3236: fix refcount leak in mv98dx3236_clk_init()
+Date:   Wed, 26 Dec 2018 08:48:05 -0500
+Message-Id: <20181226134805.5447-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 01:43:26PM +0800, Jason Wang wrote:
-> 
-> On 2018/12/26 上午12:25, Michael S. Tsirkin wrote:
-> > On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
-> > > On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
-> > > > On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
-> > > > > On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
-> > > > > > On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
-> > > > > > > On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
-> > > > > > > > > Just to make sure I understand this. It looks to me we should:
-> > > > > > > > > 
-> > > > > > > > > - allow passing GIOVA->GPA through UAPI
-> > > > > > > > > 
-> > > > > > > > > - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
-> > > > > > > > > performance
-> > > > > > > > > 
-> > > > > > > > > Is this what you suggest?
-> > > > > > > > > 
-> > > > > > > > > Thanks
-> > > > > > > > Not really. We already have GPA->HVA, so I suggested a flag to pass
-> > > > > > > > GIOVA->GPA in the IOTLB.
-> > > > > > > > 
-> > > > > > > > This has advantages for security since a single table needs
-> > > > > > > > then to be validated to ensure guest does not corrupt
-> > > > > > > > QEMU memory.
-> > > > > > > > 
-> > > > > > > I wonder how much we can gain through this. Currently, qemu IOMMU gives
-> > > > > > > GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
-> > > > > > > GIOVA->HVA to vhost. It looks no difference to me.
-> > > > > > > 
-> > > > > > > Thanks
-> > > > > > The difference is in security not in performance.  Getting a bad HVA
-> > > > > > corrupts QEMU memory and it might be guest controlled. Very risky.
-> > > > > How can this be controlled by guest? HVA was generated from qemu ram blocks
-> > > > > which is totally under the control of qemu memory core instead of guest.
-> > > > > 
-> > > > > 
-> > > > > Thanks
-> > > > It is ultimately under guest influence as guest supplies IOVA->GPA
-> > > > translations.  qemu translates GPA->HVA and gives the translated result
-> > > > to the kernel.  If it's not buggy and kernel isn't buggy it's all
-> > > > fine.
-> > > 
-> > > If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
-> > > the point why we even want to try this. Buggy qemu code can crash itself in
-> > > many ways.
-> > > 
-> > > 
-> > > > But that's the approach that was proven not to work in the 20th century.
-> > > > In the 21st century we are trying defence in depth approach.
-> > > > 
-> > > > My point is that a single code path that is responsible for
-> > > > the HVA translations is better than two.
-> > > > 
-> > > So the difference whether or not use memory table information:
-> > > 
-> > > Current:
-> > > 
-> > > 1) SET_MEM_TABLE: GPA->HVA
-> > > 
-> > > 2) Qemu GIOVA->GPA
-> > > 
-> > > 3) Qemu GPA->HVA
-> > > 
-> > > 4) IOTLB_UPDATE: GIOVA->HVA
-> > > 
-> > > If I understand correctly you want to drop step 3 consider it might be buggy
-> > > which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
-> > > will ends up:
-> > > 
-> > > 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
-> > > do it during device IOTLB lookup).
-> > > 
-> > > 2) Extra bits to enable this capability.
-> > > 
-> > > So this looks need more codes in kernel than what qemu did in userspace.  Is
-> > > this really worthwhile?
-> > > 
-> > > Thanks
-> > So there are several points I would like to make
-> > 
-> > 1. At the moment without an iommu it is possible to
-> >     change GPA-HVA mappings and everything keeps working
-> >     because a change in memory tables flushes the rings.
-> 
-> 
-> Interesting, I don't know this before. But when can this happen?
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/clk/mvebu/mv98dx3236.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-It doesn't happen with existing qemu. But it seems like a valid
-thing to do to remap memory at a different address.
-
-
-> 
-> >     However I don't see the iotlb cache being invalidated
-> >     on that path - did I miss it? If it is not there it's
-> >     a related minor bug.
-> 
-> 
-> It might have a bug. But a question is consider the case without IOMMU. We
-> only update mem table (SET_MEM_TABLE), but not vring address. This looks
-> like a bug as well?
-
-I think that without an iommu it can only work without races if backend is
-stopped or if the vring isn't in guest memory with ring aliasing).
-
-
-> 
-> > 
-> > 2. qemu already has a GPA. Discarding it and re-calculating
-> >     when logging is on just seems wrong.
-> >     However if you would like to *also* keep the HVA in the iotlb
-> >     to avoid doing extra translations, that sounds like a
-> >     reasonable optimization.
-> 
-> 
-> Yes, traverse GPA->HVA mapping seems unnecessary.
-> 
-> 
-> > 
-> > 3. it also means that the hva->gpa translation only runs
-> >     when logging is enabled. That is a rarely excercised
-> >     path so any bugs there will not be caught.
-> 
-> 
-> I wonder maybe some kind of unit-test may help here.
-> 
-> 
-> > 
-> > So I really would like us long term to move away from
-> > hva->gpa translations, keep them for legacy userspace only
-> > but I don't really mind how we do it.
-> > 
-> > How about
-> > - a new flag to pass an iotlb with *both* a gpa and hva
-> > - for legacy userspace, calculate the gpa on iotlb update
-> >    so the device then uses a shared code path
-> > 
-> > what do you think?
-> > 
-> > 
-> 
-> I don't object this idea so I can try, just want to figure out why it was a
-> must.
-> 
-> Thanks
-
-Not a must but I think it's a good interface extension.
-
+diff --git a/drivers/clk/mvebu/mv98dx3236.c b/drivers/clk/mvebu/mv98dx3236.c
+index 0a74cf7a7725..1c8ab4f834ba 100644
+--- a/drivers/clk/mvebu/mv98dx3236.c
++++ b/drivers/clk/mvebu/mv98dx3236.c
+@@ -172,7 +172,9 @@ static void __init mv98dx3236_clk_init(struct device_node *np)
+ 
+ 	mvebu_coreclk_setup(np, &mv98dx3236_core_clocks);
+ 
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, mv98dx3236_gating_desc);
++		of_node_put(cgnp);
++	}
+ }
+ CLK_OF_DECLARE(mv98dx3236_clk, "marvell,mv98dx3236-core-clock", mv98dx3236_clk_init);
 -- 
-MST
+2.17.0
+
