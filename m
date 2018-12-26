@@ -2,139 +2,134 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF48C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7A1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F0D2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A774C2171F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 01:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbeLZAqL (ORCPT
+        id S1726040AbeLZBE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:46:11 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57140 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeLZAn7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:43:59 -0500
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 9772829510; Tue, 25 Dec 2018 19:43:55 -0500 (EST)
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org
-Message-Id: <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
-References: <cover.1545784679.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
-Date:   Wed, 26 Dec 2018 11:37:59 +1100
+        Tue, 25 Dec 2018 20:04:58 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55164 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbeLZBE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Dec 2018 20:04:58 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EB731A0063;
+        Wed, 26 Dec 2018 02:04:56 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A3B11A0085;
+        Wed, 26 Dec 2018 02:04:52 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 20E24402DD;
+        Wed, 26 Dec 2018 09:04:47 +0800 (SGT)
+From:   Alison Wang <alison.wang@nxp.com>
+To:     fabio.estevam@nxp.com, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Cc:     alison.wang@nxp.com
+Subject: [PATCH v2] ASoC: sgtl5000: Allow SCLK pad drive strength to be changed
+Date:   Wed, 26 Dec 2018 08:59:53 +0800
+Message-Id: <20181226005953.40908-1-alison.wang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On powerpc, setting CONFIG_NVRAM=n builds a kernel with no NVRAM support.
-Setting CONFIG_NVRAM=m enables the /dev/nvram misc device module without
-enabling NVRAM support in drivers. Setting CONFIG_NVRAM=y enables the
-misc device (built-in) and also enables NVRAM support in drivers.
+This patch introduces "sclk-strength" property to allow SCLK pad drive
+strength to be changed via device tree.
 
-m68k shares the valkyriefb driver with powerpc, and since that driver uses
-NVRAM, it is affected by CONFIG_ATARI_SCSI, because of the use of
-"select NVRAM".
+When running playback test on LS1028ARDB, Tx Frame sync error interrupt
+will occur sometimes. Some noises also exist. After changing SCLK pad
+drive strength to the maximum value, the issues are gone.
 
-Adopt the powerpc convention on m68k to avoid surprises.
-
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Christian T. Steigies <cts@debian.org>
+Signed-off-by: Alison Wang <alison.wang@nxp.com>
 ---
-This patch temporarily disables CONFIG_NVRAM on Atari, to prevent build
-failures when bisecting the rest of this patch series. It gets enabled
-again with the introduction of CONFIG_HAVE_ARCH_NVRAM_OPS, once the
-nvram_* global functions have been moved to an ops struct.
----
- drivers/char/Kconfig      | 5 +----
- drivers/scsi/Kconfig      | 6 +++---
- drivers/scsi/atari_scsi.c | 7 ++++---
- 3 files changed, 8 insertions(+), 10 deletions(-)
+Change in v2:
+ - Add the description about this new property in the dt-bindings.
 
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index 9d03b2ff5df6..5b54595dfe30 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -236,7 +236,7 @@ source "drivers/char/hw_random/Kconfig"
+ .../devicetree/bindings/sound/sgtl5000.txt         |    9 +++++++++
+ sound/soc/codecs/sgtl5000.c                        |   19 ++++++++++++++++++-
+ 2 files changed, 27 insertions(+), 1 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/sgtl5000.txt b/Documentation/devicetree/bindings/sound/sgtl5000.txt
+index 9c58f72..9d9ff51 100644
+--- a/Documentation/devicetree/bindings/sound/sgtl5000.txt
++++ b/Documentation/devicetree/bindings/sound/sgtl5000.txt
+@@ -37,6 +37,15 @@ VDDIO		1.8V		2.5V		3.3V
+ 2 =		3.33 mA		5.74 mA		8.03  mA
+ 3 =		4.99 mA		8.61 mA		12.05 mA
  
- config NVRAM
- 	tristate "/dev/nvram support"
--	depends on ATARI || X86 || GENERIC_NVRAM
-+	depends on X86 || GENERIC_NVRAM
- 	---help---
- 	  If you say Y here and create a character special file /dev/nvram
- 	  with major number 10 and minor number 144 using mknod ("man mknod"),
-@@ -254,9 +254,6 @@ config NVRAM
- 	  should NEVER idly tamper with it. See Ralf Brown's interrupt list
- 	  for a guide to the use of CMOS bytes by your BIOS.
++- sclk-strength: the SCLK pad strength. Possible values are:
++0, 1, 2 and 3 as per the table below:
++
++VDDIO		1.8V		2.5V		3.3V
++0 = 		Disable
++1 =		1.66 mA		2.87 mA		4.02  mA
++2 =		3.33 mA		5.74 mA		8.03  mA
++3 =		4.99 mA		8.61 mA		12.05 mA
++
+ Example:
  
--	  On Atari machines, /dev/nvram is always configured and does not need
--	  to be selected.
--
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called nvram.
+ sgtl5000: codec@a {
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index add18d6..a6a4748 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -116,6 +116,13 @@ enum  {
+ 	I2S_LRCLK_STRENGTH_HIGH,
+ };
  
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 640cd1b31a18..924eb69e7fc4 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -1381,14 +1381,14 @@ config ATARI_SCSI
- 	tristate "Atari native SCSI support"
- 	depends on ATARI && SCSI
- 	select SCSI_SPI_ATTRS
--	select NVRAM
- 	---help---
- 	  If you have an Atari with built-in NCR5380 SCSI controller (TT,
- 	  Falcon, ...) say Y to get it supported. Of course also, if you have
- 	  a compatible SCSI controller (e.g. for Medusa).
++enum  {
++	I2S_SCLK_STRENGTH_DISABLE,
++	I2S_SCLK_STRENGTH_LOW,
++	I2S_SCLK_STRENGTH_MEDIUM,
++	I2S_SCLK_STRENGTH_HIGH,
++};
++
+ /* sgtl5000 private structure in codec */
+ struct sgtl5000_priv {
+ 	int sysclk;	/* sysclk rate */
+@@ -129,6 +136,7 @@ struct sgtl5000_priv {
+ 	u8 micbias_resistor;
+ 	u8 micbias_voltage;
+ 	u8 lrclk_strength;
++	u8 sclk_strength;
+ };
  
--	  To compile this driver as a module, choose M here: the
--	  module will be called atari_scsi.
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called atari_scsi. If you also enable NVRAM support, the SCSI
-+	  host's ID is taken from the setting in TT RTC NVRAM.
+ /*
+@@ -1302,7 +1310,9 @@ static int sgtl5000_probe(struct snd_soc_component *component)
+ 			SGTL5000_DAC_MUTE_RIGHT |
+ 			SGTL5000_DAC_MUTE_LEFT);
  
- 	  This driver supports both styles of NCR integration into the
- 	  system: the TT style (separate DMA), and the Falcon style (via
-diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
-index 89f5154c40b6..99e5729d910d 100644
---- a/drivers/scsi/atari_scsi.c
-+++ b/drivers/scsi/atari_scsi.c
-@@ -755,9 +755,10 @@ static int __init atari_scsi_probe(struct platform_device *pdev)
- 	if (ATARIHW_PRESENT(TT_SCSI) && setup_sg_tablesize >= 0)
- 		atari_scsi_template.sg_tablesize = setup_sg_tablesize;
+-	reg = ((sgtl5000->lrclk_strength) << SGTL5000_PAD_I2S_LRCLK_SHIFT | 0x5f);
++	reg = ((sgtl5000->lrclk_strength) << SGTL5000_PAD_I2S_LRCLK_SHIFT |
++	       (sgtl5000->sclk_strength) << SGTL5000_PAD_I2S_SCLK_SHIFT |
++	       0x1f);
+ 	snd_soc_component_write(component, SGTL5000_CHIP_PAD_STRENGTH, reg);
  
--	if (setup_hostid >= 0) {
-+	if (setup_hostid >= 0)
- 		atari_scsi_template.this_id = setup_hostid & 7;
--	} else {
-+#ifdef CONFIG_NVRAM
-+	else
- 		/* Test if a host id is set in the NVRam */
- 		if (ATARIHW_PRESENT(TT_CLK) && nvram_check_checksum()) {
- 			unsigned char b = nvram_read_byte(16);
-@@ -768,7 +769,7 @@ static int __init atari_scsi_probe(struct platform_device *pdev)
- 			if (b & 0x80)
- 				atari_scsi_template.this_id = b & 7;
- 		}
--	}
-+#endif
+ 	snd_soc_component_write(component, SGTL5000_CHIP_ANA_CTRL,
+@@ -1542,6 +1552,13 @@ static int sgtl5000_i2c_probe(struct i2c_client *client,
+ 		sgtl5000->lrclk_strength = value;
+ 	}
  
- 	/* If running on a Falcon and if there's TT-Ram (i.e., more than one
- 	 * memory block, since there's always ST-Ram in a Falcon), then
++	sgtl5000->sclk_strength = I2S_SCLK_STRENGTH_LOW;
++	if (!of_property_read_u32(np, "sclk-strength", &value)) {
++		if (value > I2S_SCLK_STRENGTH_HIGH)
++			value = I2S_SCLK_STRENGTH_LOW;
++		sgtl5000->sclk_strength = value;
++	}
++
+ 	/* Ensure sgtl5000 will start with sane register values */
+ 	sgtl5000_fill_defaults(client);
+ 
 -- 
-2.19.2
+1.7.1
 
