@@ -2,81 +2,117 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5E4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B99C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA8021741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 09:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98760217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeLZJz7 (ORCPT
+        id S1726713AbeLZKAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 04:55:59 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40600 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726116AbeLZJz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 04:55:58 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1C00B8E3D130D;
-        Wed, 26 Dec 2018 17:55:55 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Wed, 26 Dec 2018
- 17:55:51 +0800
-Subject: Re: [PATCH v2] f2fs: fix use-after-free issue when accessing
- sbi->stat_info
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1545803429-14340-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <7f89b0c1-fc5d-8c83-0ecc-0b0943b7be69@huawei.com>
-Date:   Wed, 26 Dec 2018 17:55:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1545803429-14340-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Wed, 26 Dec 2018 05:00:42 -0500
+Received: from mga09.intel.com ([134.134.136.24]:3425 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbeLZKAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 05:00:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 02:00:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
+   d="scan'208";a="112107077"
+Received: from devel-ww.sh.intel.com ([10.239.48.119])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Dec 2018 02:00:38 -0800
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
+        arei.gonglei@huawei.com
+Subject: [PATCH v4 00/10] Guest LBR Enabling
+Date:   Wed, 26 Dec 2018 17:25:28 +0800
+Message-Id: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/26 13:50, Sahitya Tummala wrote:
-> iput() on sbi->node_inode can update sbi->stat_info
-> in the below context, if the f2fs_write_checkpoint()
-> has failed with error.
-> 
-> f2fs_balance_fs_bg+0x1ac/0x1ec
-> f2fs_write_node_pages+0x4c/0x260
-> do_writepages+0x80/0xbc
-> __writeback_single_inode+0xdc/0x4ac
-> writeback_single_inode+0x9c/0x144
-> write_inode_now+0xc4/0xec
-> iput+0x194/0x22c
-> f2fs_put_super+0x11c/0x1e8
-> generic_shutdown_super+0x70/0xf4
-> kill_block_super+0x2c/0x5c
-> kill_f2fs_super+0x44/0x50
-> deactivate_locked_super+0x60/0x8c
-> deactivate_super+0x68/0x74
-> cleanup_mnt+0x40/0x78
-> 
-> Fix this by moving f2fs_destroy_stats() further below iput() in
-> both f2fs_put_super() and f2fs_fill_super() paths.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
+on Intel CPUs that captures branch related info. This patch series enables
+this feature to KVM guests.
 
-It looks good to me now. :)
+Here is a conclusion of the fundamental methods that we use:
+1) the LBR feature is enabled per guest via QEMU setting of
+   KVM_CAP_X86_GUEST_LBR;
+2) the LBR stack is passed through to the guest for direct accesses after
+   the guest's first access to any of the lbr related MSRs;
+3) When the guest uses the LBR feature with the user callstack mode, the
+   host will help save/resotre the LBR stack when the vCPU is scheduled
+   out/in.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+ChangeLog:
+v3->v4:
+    - perf/x86:
+        - Patch 1: change the lbr msr variable type to "unsigned int";
+        - Patch 6: add a "no_counter" boolean attr to let callers
+          explicitly tell the perf core to not allocate counters for the
+          event;
+        - Patch 7: change "cpuc->vcpu_lbr" from "boolean" to "u8", and add
+          the PF_VCPU and is_kernel_event checks befoer setting it;
+        - Patch 8: add the LBR_SELECT save/restore on vCPU switching;
+	- Patch 9: move lbr_select_user_callstack to .h, instead of
+          exporting it;
 
-Thanks,
+    - KVM/x86:
+        - Patch 3: use "cap->args[0]" to enable/disable the lbr feature
+          from userspace;
+        - Patch 4: forbid the enabling the guest lbr when the host and
+          guest see different lbr stack entries;
+        - Patch 10: in guest_access_lbr_msr, pass through the lbr stack
+          only when it has been passed through (i.e. add the check
+          !vcpu->arch.lbr_used).
+previous:
+https://lkml.org/lkml/2018/9/20/507
+
+Like Xu (1):
+  KVM/x86/vPMU: Add APIs to support host save/restore the guest lbr
+    stack
+
+Wei Wang (9):
+  perf/x86: fix the variable type of the LBR MSRs
+  perf/x86: add a function to get the lbr stack
+  KVM/x86: KVM_CAP_X86_GUEST_LBR
+  KVM/x86: intel_pmu_lbr_enable
+  KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to the guest
+  perf/x86: no counter allocation support
+  perf/x86: save/restore LBR_SELECT on vCPU switching
+  perf/x86: function to check lbr user callstack mode
+  KVM/x86/lbr: lazy save the guest lbr stack
+
+ arch/x86/events/core.c            |  12 +++
+ arch/x86/events/intel/lbr.c       |  82 ++++++++---------
+ arch/x86/events/perf_event.h      |   6 +-
+ arch/x86/include/asm/kvm_host.h   |   7 ++
+ arch/x86/include/asm/perf_event.h |  64 +++++++++++++
+ arch/x86/kvm/cpuid.c              |   2 +-
+ arch/x86/kvm/cpuid.h              |   8 ++
+ arch/x86/kvm/pmu.c                |   8 ++
+ arch/x86/kvm/pmu.h                |  10 +++
+ arch/x86/kvm/pmu_intel.c          | 183 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx.c                | 147 ++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c                |  14 +++
+ include/linux/perf_event.h        |  12 +++
+ include/uapi/linux/kvm.h          |   1 +
+ include/uapi/linux/perf_event.h   |   3 +-
+ kernel/events/core.c              |   7 --
+ 16 files changed, 514 insertions(+), 52 deletions(-)
+
+-- 
+2.7.4
 
