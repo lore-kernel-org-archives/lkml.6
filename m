@@ -2,76 +2,67 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C10C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D094C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4546E21720
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24F46218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 12:52:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rPVp8VBt"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AlcxvR1G";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MNoM/9OL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeLZMLt (ORCPT
+        id S1726801AbeLZMwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 07:11:49 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44940 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeLZMLs (ORCPT
+        Wed, 26 Dec 2018 07:52:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40122 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeLZMwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 07:11:48 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so13705634lji.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 04:11:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+X0w/THYbT3kbTpjSVwr2WN+4tEBcCin8XCOgT3iv2w=;
-        b=rPVp8VBtmMIMBtT8jATY75owFpc5NiNuVhYUlldMQZd2IvDYUarP21JlfJUXKfR3D+
-         RhAqQuIz89MGwrz187kqf8E9HrL6pJWqd1RTxkEMMMtjoCy/BpaZytpd4xKNoqgcjKdD
-         KiN8dLeKvRogtpyC8cyUkAhkdKcXCEexgdiNKF4ps4xKagx3xw6mVGG5Fm/aqom+BdLK
-         6BUAfoLAQzAR1TldgZ4QbDoduhiqCzFX1R5xkMWBTlOGWrHETFfp2EaskyZIYhvdLCf8
-         Ft2cUAiJszzH3MgOg8V2k9Hq/srYa8VqT3cspIF5AypLpCLN8SxtlAaZqXkTc+n0bQ/v
-         76vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+X0w/THYbT3kbTpjSVwr2WN+4tEBcCin8XCOgT3iv2w=;
-        b=ssNBOQm6K+1uSqiwXBIMT7VwatcpsqGq22Wpi0QiIaHnWyJch96jrvL2YHayOTlNHx
-         VSDABIq5GHQcs4A1jip+qmWfbAgnMv0Yyswmt3n3pMpzHxFGJyzyct2X+d7KzUGrwvAl
-         mU82eqgTuHYwnWN4cinHKMfcgETi3RHVn9+P0VqXClWc7yMxwwHetFZY6M/B3juPpGtZ
-         cyjG346HK8evk9N2sa8lGoEYCyOm7FV3UgZdaxgPskpU5ykQYQuABZj93S3EceTysOrJ
-         TXjJ+GjUy85uiNAdfPQ3Kn2SsCYQRzu7Qme8LFGbHgJohvbj4koqBLtzAWncw/Zck+nz
-         Ud6Q==
-X-Gm-Message-State: AJcUukeJexaWtfxHNZwz4PA76GFaUb5GtmhFARlK/EMbO9qbwATqHUK/
-        dZH2QhZqGGMeSHfS4R1JnZvWfpRZfIGb5Q==
-X-Google-Smtp-Source: ALg8bN6mrzHWIaX1o1ulGrIteBPFQzA+28Qv7LNUjtdRBBi2HJcNEWYI8lP49Nqk3NYZacs2nCGVlw==
-X-Received: by 2002:a2e:9556:: with SMTP id t22-v6mr12374903ljh.36.1545826305892;
-        Wed, 26 Dec 2018 04:11:45 -0800 (PST)
-Received: from localhost.localdomain (pool-109-191-228-208.is74.ru. [109.191.228.208])
-        by smtp.gmail.com with ESMTPSA id q6sm7037684lfh.52.2018.12.26.04.11.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 04:11:45 -0800 (PST)
-From:   Ivan Mironov <mironov.ivan@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Ivan Mironov <mironov.ivan@gmail.com>
-Subject: [RFC PATCH 2/2] drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
-Date:   Wed, 26 Dec 2018 17:11:24 +0500
-Message-Id: <20181226121124.1632-3-mironov.ivan@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181226121124.1632-1-mironov.ivan@gmail.com>
-References: <20181226121124.1632-1-mironov.ivan@gmail.com>
+        Wed, 26 Dec 2018 07:52:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 207AF6037C; Wed, 26 Dec 2018 12:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545828770;
+        bh=9ZX127KRAPMnkAQirZ9Ho0EcLGtWDK8iOWK1RytxACA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AlcxvR1GwqVEYYiWGPCL0GrY+xoHXuGlbBH/1T5I5PltG0s1xcy94zOaZBAW4203q
+         Srukg2UWt1oBCgxLHT3wOsYWV6AroelrkwGr+1dazboUlYicZxTK2uBwTJQtiDmbYk
+         iPSOuWYUVjmO5RnDe2/CysaVizM/eEnrCFvxKaW8=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 647A36037C;
+        Wed, 26 Dec 2018 12:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545828769;
+        bh=9ZX127KRAPMnkAQirZ9Ho0EcLGtWDK8iOWK1RytxACA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MNoM/9OLq+udnwy8sW6SqtfW8eUxPgWhSj+cvkwR6wx/NSyqgi9rCiz9ckDBo5Tmd
+         ZZI/sDnNhuIrmEyIvTkzbwjF5VMzCbo5kPQwOcNuwnJ1QjevybFDf/772yW3PlmsbE
+         H+o815Ti2vo+vk2wYVblr8khwI+pfEJngIy9bTkk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 647A36037C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        dianders@chromium.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        evgreen@chromium.org, briannorris@chromium.org,
+        sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 1/8] dt-bindings: soc: qcom: Add remote-pid binding for GLINK SMEM
+Date:   Wed, 26 Dec 2018 18:22:22 +0530
+Message-Id: <20181226125229.20149-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,55 +70,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Strict requirement of pixclock to be zero breaks support of SDL 1.2
-which contains hardcoded table of supported video modes with non-zero
-pixclock values[1].
+Add missing qcom,remote-pid dt binding required for GLINK SMEM
+which specifies the remote endpoint of the GLINK edge.
 
-To better understand which pixclock values are considered valid and how
-driver should handle these values, I briefly examined few existing fbdev
-drivers and documentation in Documentation/fb/. And it looks like there
-are no strict rules on that and actual behaviour varies:
+Fixes: 2b41d6c8e696 ("dt-bindings: soc: qcom: Extend GLINK to cover
+SMEM")
 
-	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
-	* some treat (pixclock == 0) as invalid value which leads to
-	  -EINVAL (clps711x-fb.c);
-	* some pass converted pixclock value to hardware (uvesafb.c);
-	* some are trying to find nearest value from predefined table
-          (vga16fb.c, video_gx.c).
-
-Given this, I believe that it should be safe to just ignore this value if
-changing is not supported. It seems that any portable fbdev application
-which was not written only for one specific device working under one
-specific kernel version should not rely on any particular behaviour of
-pixclock anyway.
-
-[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
-
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index aff576c3c4fb..b95a0c23c7c8 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_framebuffer *fb = fb_helper->fb;
+v3:
+  * Fixed typo
+
+ Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+index 0b8cc533ca83..587bb1ddc8cc 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+@@ -21,6 +21,11 @@ edge.
+ 	Definition: should specify the IRQ used by the remote processor to
+ 		    signal this processor about communication related events
  
--	if (var->pixclock != 0 || in_dbg_master())
-+	if (in_dbg_master())
- 		return -EINVAL;
- 
-+	if (var->pixclock != 0) {
-+		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
-+		var->pixclock = 0;
-+	}
++- qcom,remote-pid:
++	Usage: required for glink-smem
++	Value type: <u32>
++	Definition: specifies the identifier of the remote endpoint of this edge
 +
- 	if ((drm_format_info_block_width(fb->format, 0) > 1) ||
- 	    (drm_format_info_block_height(fb->format, 0) > 1))
- 		return -EINVAL;
+ - qcom,rpm-msg-ram:
+ 	Usage: required for glink-rpm
+ 	Value type: <prop-encoded-array>
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
