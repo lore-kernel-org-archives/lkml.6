@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5087DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44F0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C2DB218A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93531218E2
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864923;
-	bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
+	s=default; t=1545864934;
+	bh=S0NC9yGQhGIGmCatCt8I4mQimRdefcd9swjNVB18ce4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D4Rhby75lqkS3j3BsLgIt6mZGSeHIZ5u/ow7IqKDm0DWIDPVF6AsF7Si0+X+2vwmw
-	 C8gRo4KVaoZpQH/3Gk5te/Gk0ski4HJil9HfzYkRlzb13YpydqSo0Zt57q71Veecge
-	 BdI2JALnvZPlJ8UyK234obEFoyoB7O0ObBTiIl1Y=
+	b=urxM9sCWgJsjL6M9i19WePhh5Sh2+Qxz+XwDemtCkzWhKylb3psLhkCzCLODr89lD
+	 mgid4CbVoOyXgkVlnxjqkghNAQp7fjdfX5H17UMp8rLvdGhbYb0cgADIkl95YMOgze
+	 ZSqzTgFB3lBO2lraaGkKCFvSXU6aXskq65mpn658=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbeLZWzV (ORCPT
+        id S1730275AbeLZWyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:55:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:54:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730291AbeLZWy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:57 -0500
+        id S1730248AbeLZWyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:54:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6005121741;
-        Wed, 26 Dec 2018 22:54:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 318B6214D8;
+        Wed, 26 Dec 2018 22:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864897;
-        bh=ix6BQ4iFK/BtGityYPUUl6oPHBdwvNrWvJtiJLpUc8g=;
+        s=default; t=1545864888;
+        bh=S0NC9yGQhGIGmCatCt8I4mQimRdefcd9swjNVB18ce4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z7ykhqQliACV/2Wzv9MBQjoPLeEu/r2llUh9uT+2fItFaIE2VqX1ypEJR/qoL5ZTG
-         L/A3z2BwmTX0Czll1BRMdZLf2xNPo86rC8h9y4ZHFvtcUOuhVW4Rt0IcW/0/EbGSQs
-         t9TtfAe/KINmFGN+BAcU1onIWIj9UL7/UDQwK5MQ=
+        b=L0AzNYd/rovW7J/mw/dPV06J7VhZN0KwFWkSfkC/OHXfb8Ql2g3Lu4SKMGuTStUag
+         iueE6gW/5aqUUj4ZxV8+Zx28MuGi0aqvgdXn7lGTGPd+3M9ntIrgFfY4bWJlBG+cIV
+         alagmEoJM8wYeLlE+aC0VtnILENIb/jzpzmpWgBE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 33/35] vxge: ensure data0 is initialized in when fetching firmware version information
-Date:   Wed, 26 Dec 2018 17:41:40 -0500
-Message-Id: <20181226224142.150866-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 28/35] net: hns: Add mac pcs config when enable|disable mac
+Date:   Wed, 26 Dec 2018 17:41:35 -0500
+Message-Id: <20181226224142.150866-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -58,40 +59,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
+[ Upstream commit 726ae5c9e5f0c18eca8ea5296b526242c3e89822 ]
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+In some case, when mac enable|disable and adjust link, may cause hard to
+link(or abnormal) between mac and phy. This patch adds the code for rx PCS
+to avoid this bug.
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+Disable the rx PCS when driver disable the gmac, and enable the rx PCS
+when driver enable the mac.
 
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 14 ++++++++++----
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 6223930a8155..6f57b0b7d57a 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index 02a03bccde7b..95967470d423 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -67,11 +67,14 @@ static void hns_gmac_enable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
  
- 	status = vxge_hw_vpath_fw_api(vpath,
+ 	/*enable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 1);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* enable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 0);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 1);
++	}
+ }
+ 
+ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+@@ -79,11 +82,14 @@ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
+ 
+ 	/*disable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 0);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* disable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 1);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 0);
++	}
+ }
+ 
+ /* hns_gmac_get_en - get port enable
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+index bf0c5a60f5f1..6f3ec2f1535d 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+@@ -528,6 +528,7 @@
+ #define GMAC_LD_LINK_COUNTER_REG		0x01D0UL
+ #define GMAC_LOOP_REG				0x01DCUL
+ #define GMAC_RECV_CONTROL_REG			0x01E0UL
++#define GMAC_PCS_RX_EN_REG			0x01E4UL
+ #define GMAC_VLAN_CODE_REG			0x01E8UL
+ #define GMAC_RX_OVERRUN_CNT_REG			0x01ECUL
+ #define GMAC_RX_LENGTHFIELD_ERR_CNT_REG		0x01F4UL
 -- 
 2.19.1
 
