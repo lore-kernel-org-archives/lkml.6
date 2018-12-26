@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573C2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836E4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263D3214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A76F214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864656;
-	bh=MQc64kaluLItWSsuH2whTZfPOM6BtEaMtqFQxpBWE2A=;
+	s=default; t=1545864666;
+	bh=tqnXBLGGESMm9WvLDATNKyT7sGo1rbilrdcDJjY2hks=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NBuxdqV1C/vo58BdW9tObWz+XmKIv0qaIvmK9ZDEDcP2E1+VXRjY+HnlwfYfyQnW2
-	 Qdhld797abWGg9liLMrdPigUzUADD9k292Mbae1M++/5YKnfHe8CEplHYQe4JJFtV4
-	 lVXb/GxUP5KjVLKfd+eS1/wm7DX19x9ODLHM5SN0=
+	b=Nj6GwvK/lB0J4ddvaZdql2nMwlnDPGz2tq2VSuCIU0+x+uMyApkNqb3PP5zuUT90j
+	 CwvGhhCBEbCFHqZP9sYgVR63Toang/IFDFCXb41LvbJlVWIfezO/qGG67/u8CTuF8F
+	 wVdJocK6V5tCghSWan9JfbJH9nhOGw/TE7sRG6mo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbeLZWuy (ORCPT
+        id S1729905AbeLZWvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:50:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37424 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:51:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728178AbeLZWhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:37:17 -0500
+        id S1728154AbeLZWhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:37:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0797620651;
-        Wed, 26 Dec 2018 22:37:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3DEC2054F;
+        Wed, 26 Dec 2018 22:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863836;
-        bh=MQc64kaluLItWSsuH2whTZfPOM6BtEaMtqFQxpBWE2A=;
+        s=default; t=1545863835;
+        bh=tqnXBLGGESMm9WvLDATNKyT7sGo1rbilrdcDJjY2hks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xnQ0gosb/uogWUata+YUD1MyQesgOapLnOgx3Q7gef6R8dC3wWWu3Ifneipe4Tf0B
-         x/RCkoHNc3ebDMDHM8YdCQHhogWZbtwjHG1L8AakdVffX7qR0l+OGp4/eJa0FxqP5J
-         kmm/13Z4+Y2Kx9kOgMY9+eXB0UWHEa8IxT85QSjs=
+        b=NQcYzc4DOZNjdRAryRnYvTSJB/KtdJI5ydYtEXPv0Cpya+L1oF54D5C0MIj1xKOan
+         dVzcNIB6ruwhOGCsZQ8KhDBMgXezFAwZ6B/gaUbV+rS7Qzi0lFLaeUOZRu8fkAhimP
+         L5FeL4gOWfRC+9oSyeFanR3yKsk4zpzAOG9UtUzI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 51/97] qmi_wwan: Added support for Fibocom NL668 series
-Date:   Wed, 26 Dec 2018 17:35:11 -0500
-Message-Id: <20181226223557.149329-51-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 50/97] w90p910_ether: remove incorrect __init annotation
+Date:   Wed, 26 Dec 2018 17:35:10 -0500
+Message-Id: <20181226223557.149329-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,32 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 110a1cc28bc383adb4885eff27e18c61ddebffb4 ]
+[ Upstream commit 51367e423c6501a26e67d91a655d2bc892303462 ]
 
-Added support for Fibocom NL668 series QMI interface.
-Using QMI_QUIRK_SET_DTR required for Qualcomm MDM9x07 chipsets.
+The get_mac_address() function is normally inline, but when it is
+not, we get a warning that this configuration is broken:
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
+WARNING: vmlinux.o(.text+0x4aff00): Section mismatch in reference from the function w90p910_ether_setup() to the function .init.text:get_mac_address()
+The function w90p910_ether_setup() references
+the function __init get_mac_address().
+This is often because w90p910_ether_setup lacks a __init
+
+Remove the __init to make it always do the right thing.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/nuvoton/w90p910_ether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 72a55b6b4211..dada68f279bc 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1117,6 +1117,7 @@ static const struct usb_device_id products[] = {
- 	{QMI_FIXED_INTF(0x1435, 0xd181, 4)},	/* Wistron NeWeb D18Q1 */
- 	{QMI_FIXED_INTF(0x1435, 0xd181, 5)},	/* Wistron NeWeb D18Q1 */
- 	{QMI_FIXED_INTF(0x1435, 0xd191, 4)},	/* Wistron NeWeb D19Q1 */
-+	{QMI_QUIRK_SET_DTR(0x1508, 0x1001, 4)},	/* Fibocom NL668 series */
- 	{QMI_FIXED_INTF(0x16d8, 0x6003, 0)},	/* CMOTech 6003 */
- 	{QMI_FIXED_INTF(0x16d8, 0x6007, 0)},	/* CMOTech CHE-628S */
- 	{QMI_FIXED_INTF(0x16d8, 0x6008, 0)},	/* CMOTech CMU-301 */
+diff --git a/drivers/net/ethernet/nuvoton/w90p910_ether.c b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+index 052b3d2c07a1..c662c6f5bee3 100644
+--- a/drivers/net/ethernet/nuvoton/w90p910_ether.c
++++ b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+@@ -912,7 +912,7 @@ static const struct net_device_ops w90p910_ether_netdev_ops = {
+ 	.ndo_validate_addr	= eth_validate_addr,
+ };
+ 
+-static void __init get_mac_address(struct net_device *dev)
++static void get_mac_address(struct net_device *dev)
+ {
+ 	struct w90p910_ether *ether = netdev_priv(dev);
+ 	struct platform_device *pdev;
 -- 
 2.19.1
 
