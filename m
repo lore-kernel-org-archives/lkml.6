@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1155C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF003C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E2BA2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731952070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865077;
-	bh=zwSoUtDKO+6kCG6FQ3aAIfRQdXcoOMx284ILeoDPiKw=;
+	s=default; t=1545865085;
+	bh=7rdMI+vpU5BXSaOm7tktjFG9kot4nRrYIaXL9lL/GPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=onyYWXMysP/WHdbehNe3o6dz4Ct49pVq0ltFaWLlXwy9WCJlNWrR+ve4LMhC+4LWB
-	 cAJgTojZ+RZFiK9yMVt7u0Ss4pdY+PjVxr0x9mpxa3/hOclLE2ZkoUf9vjvZcSbPEd
-	 iPjFC8q5ep4wyod4Qm/0goXV393pgvv8IeBfCKBY=
+	b=ExmrnO2lh2Dx36iwFHZ+GzUiqU/t/ZRNj8glS6Ilu49G+7ZumFI64B442zBLyXBQK
+	 JPkCJfHIDJO3af9nNeb9NEffc0X+brxRQ46YDz6fHDNmPbKPWR/JOp3w9R/ZxMsjZh
+	 cOXe/tGZhGzFS3CQTqVnpcRQItJJxqcuZmQ4DKR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbeLZW54 (ORCPT
+        id S1730537AbeLZW6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:57:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58668 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:58:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730479AbeLZW5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:38 -0500
+        id S1730488AbeLZW5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD21218A5;
-        Wed, 26 Dec 2018 22:57:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B163F218A5;
+        Wed, 26 Dec 2018 22:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865058;
-        bh=zwSoUtDKO+6kCG6FQ3aAIfRQdXcoOMx284ILeoDPiKw=;
+        s=default; t=1545865054;
+        bh=7rdMI+vpU5BXSaOm7tktjFG9kot4nRrYIaXL9lL/GPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OsWF87FApE0gM+cypp/JVNbkQ5j62PPi/4KQIGjjm+mOzM3LT6wKg5jAIizjApa38
-         yqhOrVZwJ3LDLyFs8250wPHs99DYBqJkuOtwqm1Ae8+WlYNAYOt5bxwbd9McHxU9yh
-         hEtiO6Xy5hhWkf1dHlqt6jaNzgzYdOLcCzus7w/Q=
+        b=zeKQvkUx3ALt2MDgfUVcIGQZqCaootd/x9+Fe8L9itdrgYld1Lu7jqHA/wrH+trpS
+         9eWkKUrYy99w7kp3mOZzh7K7DHblfcC5LobXjY6Svuf0NsEQEMtwou9f2gQ/KeNajt
+         pePTndoVF1ARPoJi2nTKp+udA60bc25h6YoK8/PM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
+Cc:     Juergen Gross <jgross@suse.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 20/21] net: netxen: fix a missing check and an uninitialized use
-Date:   Wed, 26 Dec 2018 17:54:58 -0500
-Message-Id: <20181226225501.151365-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 18/21] xen/netfront: tolerate frags with no data
+Date:   Wed, 26 Dec 2018 17:54:56 -0500
+Message-Id: <20181226225501.151365-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -58,36 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit d134e486e831defd26130770181f01dfc6195f7d ]
+[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
 
-When netxen_rom_fast_read() fails, "bios" is left uninitialized and may
-contain random value, thus should not be used.
+At least old Xen net backends seem to send frags with no real data
+sometimes. In case such a fragment happens to occur with the frag limit
+already reached the frontend will BUG currently even if this situation
+is easily recoverable.
 
-The fix ensures that if netxen_rom_fast_read() fails, we return "-EIO".
+Modify the BUG_ON() condition accordingly.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-index 7b43a3b4abdc..5cf551914767 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-@@ -1125,7 +1125,8 @@ netxen_validate_firmware(struct netxen_adapter *adapter)
- 		return -EINVAL;
- 	}
- 	val = nx_get_bios_version(adapter);
--	netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios);
-+	if (netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios))
-+		return -EIO;
- 	if ((__force u32)val != bios) {
- 		dev_err(&pdev->dev, "%s: firmware bios is incompatible\n",
- 				fw_name[fw_type]);
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 0a4bd73caae5..6f55ab4f7959 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -889,7 +889,7 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
+ 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+ 
+-			BUG_ON(pull_to <= skb_headlen(skb));
++			BUG_ON(pull_to < skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+ 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
 -- 
 2.19.1
 
