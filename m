@@ -2,58 +2,54 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E629C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED132C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B48EC2054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B84D92054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545863977;
-	bh=oaZGkzbrq/f0qgpip4hFlV589Pu3la6Zyjf8mfqSOoI=;
+	s=default; t=1545863984;
+	bh=+AGIJDS56ehtcTaiOjSMP93xAh14CUEQxrHoh0BPjjk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fbGUcwRCor4MU/jQQDLkmCIYMwIiPRiMufDZtWNf+CtP89AUfLEapMpKphkZpLK9r
-	 0r0YfWFHzQA1tRmKkRQAaKOkyA/OmZJNCjlB0Oks3p3O2+Ha2c98+2DtNXh1xnAEDd
-	 I2zfq6lcuESWdkSvfJihizVgbCaaCVHmhBC14jd4=
+	b=AOonZS3LvnOxQdZVDxFsuE/RSa33s47TX3suMNrwX51V3m5nJdu6sjvU9C+184k2U
+	 it1CkkrnCFGB01L0Xh4KoX3xup1bGfvgE+RNCMsnpSPSv8iNefXTm5dj4Aca2NDZXC
+	 /eIKgTAZauE8vGjdXUe4gB+7k4luLBDJhXGzTpSI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbeLZWjg (ORCPT
+        id S1728791AbeLZWi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:39:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38766 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728811AbeLZWib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:38:31 -0500
+        id S1728724AbeLZWiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:38:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 693FC21741;
-        Wed, 26 Dec 2018 22:38:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E5A32054F;
+        Wed, 26 Dec 2018 22:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863911;
-        bh=oaZGkzbrq/f0qgpip4hFlV589Pu3la6Zyjf8mfqSOoI=;
+        s=default; t=1545863895;
+        bh=+AGIJDS56ehtcTaiOjSMP93xAh14CUEQxrHoh0BPjjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l8OWaRYDQo4j+E1Mo9skjkD5SBLWE6EvhzQUs1iC/bEh8JhX37zIihkSW0UTok1EK
-         xZVs4s08wAlJa7qeTmudlkPVg34nMvyOnly0oIuood1PIbkHZNtNh1GTIGktFmDy6B
-         lJHb+pkaYUroZCDXms0BDP5JMw70s9ho6N6vB+oA=
+        b=g8AywyqG9PaVxpPJrs3KYz5AIGRBQfX73oX6NwUxfudCAGGeAIPFwR6Z8/dauRdFi
+         pfygfkTqx+Y4LdsrBn/KdnoY4phRlU+KDSW+zkWL14ejLLL2zQ95GzRbUqVxGnx5Cb
+         OxYRHtF4yvhSV3GKbOCTOhmGwEuqz00ah1xesQVs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 91/97] gpio: mvebu: only fail on missing clk if pwm is actually to be used
-Date:   Wed, 26 Dec 2018 17:35:51 -0500
-Message-Id: <20181226223557.149329-91-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 82/97] kbuild: fix false positive warning/error about missing libelf
+Date:   Wed, 26 Dec 2018 17:35:42 -0500
+Message-Id: <20181226223557.149329-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,48 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit c8da642d41a6811c21177c9994aa7dc35be67d46 ]
+[ Upstream commit ef7cfd00b2caf6edeb7f169682b64be2d0a798cf ]
 
-The gpio IP on Armada 370 at offset 0x18180 has neither a clk nor pwm
-registers. So there is no need for a clk as the pwm isn't used anyhow.
-So only check for the clk in the presence of the pwm registers. This fixes
-a failure to probe the gpio driver for the above mentioned gpio device.
+For the same reason as commit 25896d073d8a ("x86/build: Fix compiler
+support check for CONFIG_RETPOLINE"), you cannot put this $(error ...)
+into the parse stage of the top Makefile.
 
-Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Perhaps I'd propose a more sophisticated solution later, but this is
+the best I can do for now.
+
+Link: https://lkml.org/lkml/2017/12/25/211
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Reported-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Reported-by: Qian Cai <cai@lca.pw>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Tested-by: Qian Cai <cai@lca.pw>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mvebu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Makefile | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 6e02148c208b..adc768f908f1 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -773,9 +773,6 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 				     "marvell,armada-370-gpio"))
- 		return 0;
+diff --git a/Makefile b/Makefile
+index 9770f29a690a..b64adbc154e4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -954,11 +954,6 @@ ifdef CONFIG_STACK_VALIDATION
+   ifeq ($(has_libelf),1)
+     objtool_target := tools/objtool FORCE
+   else
+-    ifdef CONFIG_UNWINDER_ORC
+-      $(error "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
+-    else
+-      $(warning "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
+-    endif
+     SKIP_STACK_VALIDATION := 1
+     export SKIP_STACK_VALIDATION
+   endif
+@@ -1115,6 +1110,14 @@ uapi-asm-generic:
  
--	if (IS_ERR(mvchip->clk))
--		return PTR_ERR(mvchip->clk);
--
- 	/*
- 	 * There are only two sets of PWM configuration registers for
- 	 * all the GPIO lines on those SoCs which this driver reserves
-@@ -786,6 +783,9 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 	if (!res)
- 		return 0;
+ PHONY += prepare-objtool
+ prepare-objtool: $(objtool_target)
++ifeq ($(SKIP_STACK_VALIDATION),1)
++ifdef CONFIG_UNWINDER_ORC
++	@echo "error: Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
++	@false
++else
++	@echo "warning: Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
++endif
++endif
  
-+	if (IS_ERR(mvchip->clk))
-+		return PTR_ERR(mvchip->clk);
-+
- 	/*
- 	 * Use set A for lines of GPIO chip with id 0, B for GPIO chip
- 	 * with id 1. Don't allow further GPIO chips to be used for PWM.
+ # Generate some files
+ # ---------------------------------------------------------------------------
 -- 
 2.19.1
 
