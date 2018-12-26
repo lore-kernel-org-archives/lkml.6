@@ -6,138 +6,225 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA20C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CFFC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B1D2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9326F2148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 00:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeLZApp (ORCPT
+        id S1729826AbeLZApo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:45:45 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57334 "EHLO
+        Tue, 25 Dec 2018 19:45:44 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57340 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725984AbeLZAoA (ORCPT
+        with ESMTP id S1725985AbeLZAoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Dec 2018 19:44:00 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id E0E962951A; Tue, 25 Dec 2018 19:43:55 -0500 (EST)
+        id 2009129513; Tue, 25 Dec 2018 19:43:56 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
+        Joshua Thompson <funaho@jurai.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Message-Id: <416df0c555a86aee4d0e7e08675abf71f2f5b775.1545784679.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org
+Message-Id: <535828e73145446d4f1b9916f12c853c7026ce93.1545784679.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1545784679.git.fthain@telegraphics.com.au>
 References: <cover.1545784679.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v8 06/25] x86/thinkpad_acpi: Use arch_nvram_ops methods
- instead of nvram_read_byte() and nvram_write_byte()
+Subject: [PATCH v8 10/25] m68k/mac: Adopt naming and calling conventions for
+ PRAM routines
 Date:   Wed, 26 Dec 2018 11:37:59 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of arch_nvram_ops in the thinkpad_acpi driver so that the
-nvram_* function exports can be removed.
+Adopt the existing *_read_byte and *_write_byte naming convention.
+Rename via_pram_readbyte and via_pram_writebyte to avoid confusion.
+Adjust calling conventions of mac_pram_* functions to match the
+arch_nvram_ops struct methods.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Reviewed-by: Darren Hart <dvhart@linux.intel.com>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
-I've tested this on a ThinkPad T43.
+Changed since v7:
+ - Removed some gratuitous function pointers.
 ---
- drivers/platform/x86/thinkpad_acpi.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/m68k/mac/misc.c | 61 +++++++++++++++++---------------------------
+ 1 file changed, 23 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index fde08a997557..fbbf7b452e51 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -2435,30 +2435,30 @@ static void hotkey_read_nvram(struct tp_nvram_state *n, const u32 m)
- 	u8 d;
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index ebb3b6d169ea..9f6849deecea 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -37,7 +37,7 @@
+ static void (*rom_reset)(void);
  
- 	if (m & TP_NVRAM_HKEY_GROUP_HK2) {
--		d = nvram_read_byte(TP_NVRAM_ADDR_HK2);
-+		d = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_HK2);
- 		n->thinkpad_toggle = !!(d & TP_NVRAM_MASK_HKT_THINKPAD);
- 		n->zoom_toggle = !!(d & TP_NVRAM_MASK_HKT_ZOOM);
- 		n->display_toggle = !!(d & TP_NVRAM_MASK_HKT_DISPLAY);
- 		n->hibernate_toggle = !!(d & TP_NVRAM_MASK_HKT_HIBERNATE);
- 	}
- 	if (m & TP_ACPI_HKEY_KBD_LIGHT_MASK) {
--		d = nvram_read_byte(TP_NVRAM_ADDR_THINKLIGHT);
-+		d = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_THINKLIGHT);
- 		n->thinklight_toggle = !!(d & TP_NVRAM_MASK_THINKLIGHT);
- 	}
- 	if (m & TP_ACPI_HKEY_DISPXPAND_MASK) {
--		d = nvram_read_byte(TP_NVRAM_ADDR_VIDEO);
-+		d = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_VIDEO);
- 		n->displayexp_toggle =
- 				!!(d & TP_NVRAM_MASK_HKT_DISPEXPND);
- 	}
- 	if (m & TP_NVRAM_HKEY_GROUP_BRIGHTNESS) {
--		d = nvram_read_byte(TP_NVRAM_ADDR_BRIGHTNESS);
-+		d = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_BRIGHTNESS);
- 		n->brightness_level = (d & TP_NVRAM_MASK_LEVEL_BRIGHTNESS)
- 				>> TP_NVRAM_POS_LEVEL_BRIGHTNESS;
- 		n->brightness_toggle =
- 				!!(d & TP_NVRAM_MASK_HKT_BRIGHTNESS);
- 	}
- 	if (m & TP_NVRAM_HKEY_GROUP_VOLUME) {
--		d = nvram_read_byte(TP_NVRAM_ADDR_MIXER);
-+		d = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_MIXER);
- 		n->volume_level = (d & TP_NVRAM_MASK_LEVEL_VOLUME)
- 				>> TP_NVRAM_POS_LEVEL_VOLUME;
- 		n->mute = !!(d & TP_NVRAM_MASK_MUTE);
-@@ -6605,7 +6605,7 @@ static unsigned int tpacpi_brightness_nvram_get(void)
+ #ifdef CONFIG_ADB_CUDA
+-static __u8 cuda_read_pram(int offset)
++static unsigned char cuda_pram_read_byte(int offset)
  {
- 	u8 lnvram;
+ 	struct adb_request req;
  
--	lnvram = (nvram_read_byte(TP_NVRAM_ADDR_BRIGHTNESS)
-+	lnvram = (arch_nvram_ops.read_byte(TP_NVRAM_ADDR_BRIGHTNESS)
- 		  & TP_NVRAM_MASK_LEVEL_BRIGHTNESS)
- 		  >> TP_NVRAM_POS_LEVEL_BRIGHTNESS;
- 	lnvram &= bright_maxlvl;
-@@ -6630,7 +6630,7 @@ static void tpacpi_brightness_checkpoint_nvram(void)
- 	if (unlikely(!acpi_ec_read(TP_EC_BACKLIGHT, &lec)))
- 		goto unlock;
- 	lec &= TP_EC_BACKLIGHT_LVLMSK;
--	b_nvram = nvram_read_byte(TP_NVRAM_ADDR_BRIGHTNESS);
-+	b_nvram = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_BRIGHTNESS);
+@@ -49,7 +49,7 @@ static __u8 cuda_read_pram(int offset)
+ 	return req.reply[3];
+ }
  
- 	if (lec != ((b_nvram & TP_NVRAM_MASK_LEVEL_BRIGHTNESS)
- 			     >> TP_NVRAM_POS_LEVEL_BRIGHTNESS)) {
-@@ -6638,7 +6638,7 @@ static void tpacpi_brightness_checkpoint_nvram(void)
- 		b_nvram &= ~(TP_NVRAM_MASK_LEVEL_BRIGHTNESS <<
- 				TP_NVRAM_POS_LEVEL_BRIGHTNESS);
- 		b_nvram |= lec;
--		nvram_write_byte(b_nvram, TP_NVRAM_ADDR_BRIGHTNESS);
-+		arch_nvram_ops.write_byte(b_nvram, TP_NVRAM_ADDR_BRIGHTNESS);
- 		dbg_printk(TPACPI_DBG_BRGHT,
- 			   "updated NVRAM backlight level to %u (0x%02x)\n",
- 			   (unsigned int) lec, (unsigned int) b_nvram);
-@@ -7236,13 +7236,13 @@ static void tpacpi_volume_checkpoint_nvram(void)
- 	if (unlikely(!acpi_ec_read(TP_EC_AUDIO, &lec)))
- 		goto unlock;
- 	lec &= ec_mask;
--	b_nvram = nvram_read_byte(TP_NVRAM_ADDR_MIXER);
-+	b_nvram = arch_nvram_ops.read_byte(TP_NVRAM_ADDR_MIXER);
+-static void cuda_write_pram(int offset, __u8 data)
++static void cuda_pram_write_byte(unsigned char data, int offset)
+ {
+ 	struct adb_request req;
  
- 	if (lec != (b_nvram & ec_mask)) {
- 		/* NVRAM needs update */
- 		b_nvram &= ~ec_mask;
- 		b_nvram |= lec;
--		nvram_write_byte(b_nvram, TP_NVRAM_ADDR_MIXER);
-+		arch_nvram_ops.write_byte(b_nvram, TP_NVRAM_ADDR_MIXER);
- 		dbg_printk(TPACPI_DBG_MIXER,
- 			   "updated NVRAM mixer status to 0x%02x (0x%02x)\n",
- 			   (unsigned int) lec, (unsigned int) b_nvram);
+@@ -62,7 +62,7 @@ static void cuda_write_pram(int offset, __u8 data)
+ #endif /* CONFIG_ADB_CUDA */
+ 
+ #ifdef CONFIG_ADB_PMU
+-static __u8 pmu_read_pram(int offset)
++static unsigned char pmu_pram_read_byte(int offset)
+ {
+ 	struct adb_request req;
+ 
+@@ -74,7 +74,7 @@ static __u8 pmu_read_pram(int offset)
+ 	return req.reply[3];
+ }
+ 
+-static void pmu_write_pram(int offset, __u8 data)
++static void pmu_pram_write_byte(unsigned char data, int offset)
+ {
+ 	struct adb_request req;
+ 
+@@ -93,7 +93,7 @@ static void pmu_write_pram(int offset, __u8 data)
+  * the RTC should be enabled.
+  */
+ 
+-static __u8 via_pram_readbyte(void)
++static __u8 via_rtc_recv(void)
+ {
+ 	int i, reg;
+ 	__u8 data;
+@@ -120,7 +120,7 @@ static __u8 via_pram_readbyte(void)
+ 	return data;
+ }
+ 
+-static void via_pram_writebyte(__u8 data)
++static void via_rtc_send(__u8 data)
+ {
+ 	int i, reg, bit;
+ 
+@@ -157,17 +157,17 @@ static void via_pram_command(int command, __u8 *data)
+ 	via1[vBufB] = (via1[vBufB] | VIA1B_vRTCClk) & ~VIA1B_vRTCEnb;
+ 
+ 	if (command & 0xFF00) {		/* extended (two-byte) command */
+-		via_pram_writebyte((command & 0xFF00) >> 8);
+-		via_pram_writebyte(command & 0xFF);
++		via_rtc_send((command & 0xFF00) >> 8);
++		via_rtc_send(command & 0xFF);
+ 		is_read = command & 0x8000;
+ 	} else {			/* one-byte command */
+-		via_pram_writebyte(command);
++		via_rtc_send(command);
+ 		is_read = command & 0x80;
+ 	}
+ 	if (is_read) {
+-		*data = via_pram_readbyte();
++		*data = via_rtc_recv();
+ 	} else {
+-		via_pram_writebyte(*data);
++		via_rtc_send(*data);
+ 	}
+ 
+ 	/* All done, disable the RTC */
+@@ -177,12 +177,12 @@ static void via_pram_command(int command, __u8 *data)
+ 	local_irq_restore(flags);
+ }
+ 
+-static __u8 via_read_pram(int offset)
++static unsigned char via_pram_read_byte(int offset)
+ {
+ 	return 0;
+ }
+ 
+-static void via_write_pram(int offset, __u8 data)
++static void via_pram_write_byte(unsigned char data, int offset)
+ {
+ }
+ 
+@@ -326,63 +326,48 @@ static void cuda_shutdown(void)
+  *-------------------------------------------------------------------
+  */
+ 
+-void mac_pram_read(int offset, __u8 *buffer, int len)
++unsigned char mac_pram_read_byte(int addr)
+ {
+-	__u8 (*func)(int);
+-	int i;
+-
+ 	switch (macintosh_config->adb_type) {
+ 	case MAC_ADB_IOP:
+ 	case MAC_ADB_II:
+ 	case MAC_ADB_PB1:
+-		func = via_read_pram;
+-		break;
++		return via_pram_read_byte(addr);
+ #ifdef CONFIG_ADB_CUDA
+ 	case MAC_ADB_EGRET:
+ 	case MAC_ADB_CUDA:
+-		func = cuda_read_pram;
+-		break;
++		return cuda_pram_read_byte(addr);
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 	case MAC_ADB_PB2:
+-		func = pmu_read_pram;
+-		break;
++		return pmu_pram_read_byte(addr);
+ #endif
+ 	default:
+-		return;
+-	}
+-	for (i = 0 ; i < len ; i++) {
+-		buffer[i] = (*func)(offset++);
++		return 0xFF;
+ 	}
+ }
+ 
+-void mac_pram_write(int offset, __u8 *buffer, int len)
++void mac_pram_write_byte(unsigned char val, int addr)
+ {
+-	void (*func)(int, __u8);
+-	int i;
+-
+ 	switch (macintosh_config->adb_type) {
+ 	case MAC_ADB_IOP:
+ 	case MAC_ADB_II:
+ 	case MAC_ADB_PB1:
+-		func = via_write_pram;
++		via_pram_write_byte(val, addr);
+ 		break;
+ #ifdef CONFIG_ADB_CUDA
+ 	case MAC_ADB_EGRET:
+ 	case MAC_ADB_CUDA:
+-		func = cuda_write_pram;
++		cuda_pram_write_byte(val, addr);
+ 		break;
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 	case MAC_ADB_PB2:
+-		func = pmu_write_pram;
++		pmu_pram_write_byte(val, addr);
+ 		break;
+ #endif
+ 	default:
+-		return;
+-	}
+-	for (i = 0 ; i < len ; i++) {
+-		(*func)(offset++, buffer[i]);
++		break;
+ 	}
+ }
+ 
 -- 
 2.19.2
 
