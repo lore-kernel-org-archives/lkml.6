@@ -7,153 +7,115 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324BFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC24AC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC1D221726
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B98C621726
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 02:23:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="EoyA6lUP"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="di+lNTNe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbeLZCML (ORCPT
+        id S1725987AbeLZCXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Dec 2018 21:12:11 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:59982 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeLZCMK (ORCPT
+        Tue, 25 Dec 2018 21:23:07 -0500
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:41990 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbeLZCXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Dec 2018 21:12:10 -0500
+        Tue, 25 Dec 2018 21:23:06 -0500
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 1613CB0B
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 02:12:09 +0000 (UTC)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id E2C15AA1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 02:23:04 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id T7jIQjZrf0G9 for <linux-kernel@vger.kernel.org>;
-        Tue, 25 Dec 2018 20:12:08 -0600 (CST)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id CjS72rh1XH9E for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Dec 2018 20:23:04 -0600 (CST)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id D817893D
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 20:12:08 -0600 (CST)
-Received: by mail-io1-f72.google.com with SMTP id u2so17808319iob.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:12:08 -0800 (PST)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id B2AEA9CF
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 20:23:04 -0600 (CST)
+Received: by mail-io1-f70.google.com with SMTP id k25so2009011ios.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Dec 2018 18:23:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=yCzFoK1iiIRKLfANragzU6dURuTC3d2vdcMV+tmecXc=;
-        b=EoyA6lUPfFrG31KgmHniuKQsp4hLAXwDpSFCP5nzAE/qIaP2r8RimB77JASE9BeBFB
-         PdSkKoYEGoKIKy7JB27zQkLmRqtYwy5tNjromb7DZDEMo/8t46Rw2mTCIs+3FjgMRK14
-         LlcHPeUPCtZIiviABUrUtIXf1UMP05Rh3iu+EFAbObP4MAf4plFtEXypqLrOtFJirq0s
-         3JxFWbVLGUpTqtJbY9/xptt9RKO/f9BFtOLRs+RlKw5fgAOJuJKkEQg9uWvOJNGB+zyr
-         MFa8Z1Xdnj7P4ECkpg+topWnfJIKq9ACapxDOweB50SWMrUgUplozi6L9Enj9YVSVVww
-         e30g==
+        bh=cu8L5CSVbazjBHbPhWjYELagrYCmPrkJmVmLcFehgX0=;
+        b=di+lNTNeBipjGXK+tGQNXQ/GFr0DTNwP7tNlRS97MCm6cG+SJmaRMJYXkzx717LzlG
+         W1RNE0R1Yy4HYwhv4jcn36HSK76lNe800R/J9FL5VS+/1a+FC8iGODcMUGRFGer6O/ZE
+         ab0brs1g54l3lFgcTXx8N+qVeHiWs3MHlX1v+kVmL7Kzd+NEyZxEij0xQrOGgRqEBrrk
+         PDBfL7MAV348B/SnfBaD6dxPo8o6QFpSBsLtDVEpm+6lbwuROUdhtDoYOYF1ZL1Hi+yI
+         TMDV6li1qKEMW5PhUJz0w6oBJ7gmHqDlzobyeHL4JKW/WL5YYlNpV5iXIHzjxCmS5T/6
+         5t/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yCzFoK1iiIRKLfANragzU6dURuTC3d2vdcMV+tmecXc=;
-        b=fFAkGLSj/UCrAIDt/UwTcWt7IUYlI5uwGhybb+ba33+Y6TB1Ks6CiIlTEu5PBGVHDf
-         HblJ0Xao8rPaekAKfZ2cdU/jyxhuFHlfG0w/zxVwHNDYxvqoRpQZ1GWr2HW2W7Rs2GvG
-         0VsIoIIEkOed6yxd5uWD+Zzx/w5oxZMuZ9M8H6mDIdNx5HTccvQTlkSZhSenW6e4uKN+
-         +W29dkV8C8nAc0xJcIwNWzNOaNTvZrwCsySuNdhNuzrFEJNhZmvAaZu6TwJvbACo41gs
-         kdjv8o6s0tO6kHfjxsfSFbQB6fX6bMmz1XZ65oj5LplwCjgCAjPmJGK2fT6VYsZcUdXB
-         FpMg==
-X-Gm-Message-State: AJcUukdSzkXLI2g4sYTITRDlJAZYKZwFBioT/XDIjy3p2+7MJ/ECQ2lz
-        8f2UUdja17WEZesVVw6zNXgI33ju5FPEd6JG5AARfDrVFLmfdG/Ljt5xfc31WqCblMb85retqmn
-        bpwb8n/cMkKtcoqxU+5K+IJbYNl4Q
-X-Received: by 2002:a02:1106:: with SMTP id 6mr3949715jaf.122.1545790328517;
-        Tue, 25 Dec 2018 18:12:08 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5pq5pEAop9PnGtlNyQS6/ED5bVOheccLYkcSoMjL1ysm1BM9sV7TwXo+3mY0xCWAuVGRaoeQ==
-X-Received: by 2002:a02:1106:: with SMTP id 6mr3949708jaf.122.1545790328276;
-        Tue, 25 Dec 2018 18:12:08 -0800 (PST)
+        bh=cu8L5CSVbazjBHbPhWjYELagrYCmPrkJmVmLcFehgX0=;
+        b=ndZXOg/Yqk3eIwlPTaiJqlUUVu+IoKYneqICBEKioyKOO2COcwa+UZ90zj59tDaImw
+         Z2av/Ws1VRREiy/58wNCtSvD6dd6YYws4gbCWA0yNPW+6t2H3zEhQPbmRnPRyq2vuQ8s
+         rz5ZH2G3O5KugO3yPAb9vhujVD7z4+/hcLM2c8ujUSw6hWYF7zcHMJC7HVo/hlTfl91m
+         86h4rFGUKM3aIFaBA99MxvRLnEeX0IatkfwNAEgpgbF+rejtXjJeryFVaZEgxfXRJBGa
+         a3jl64s05jMNO348lk+Mxr0rfW/oOXDQSX2mjVkQOwFnydcIYNZsoFIxSy+nOKwpCRTH
+         3fhw==
+X-Gm-Message-State: AJcUukclrC5z3q46AyC/7dkVIANpbAKLv9hICkFW09KO4wE/hLQcf2Np
+        cFuNje3JiFNchxXZ4vl4pdZtQ/PRgo8bPK46x/uluwrOzuFc4oeIwM3PQKPiWZc/yXW2vmJruh4
+        JF+lgHYk0yVOSizI6qDRXQTEt4t/t
+X-Received: by 2002:a6b:b2d2:: with SMTP id b201mr12526866iof.303.1545790984285;
+        Tue, 25 Dec 2018 18:23:04 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN4Fd1qmDpyHH2kUifSAS2wjP7wQc3YVJ7Ux+5qwk3JxkaqBdiAev3dswZcM0W068jQf6A+LWg==
+X-Received: by 2002:a6b:b2d2:: with SMTP id b201mr12526856iof.303.1545790984010;
+        Tue, 25 Dec 2018 18:23:04 -0800 (PST)
 Received: from localhost.localdomain (host-173-230-104-22.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.22])
-        by smtp.gmail.com with ESMTPSA id x18sm4374671ion.0.2018.12.25.18.12.06
+        by smtp.gmail.com with ESMTPSA id c21sm15343229iob.22.2018.12.25.18.23.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Dec 2018 18:12:07 -0800 (PST)
+        Tue, 25 Dec 2018 18:23:03 -0800 (PST)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Alex Estrin <alex.estrin@intel.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] infiniband: add checks for the status of nla_put
-Date:   Tue, 25 Dec 2018 20:11:39 -0600
-Message-Id: <20181226021141.71538-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pci: dwc: add a check for resetting gpio
+Date:   Tue, 25 Dec 2018 20:22:36 -0600
+Message-Id: <20181226022236.71682-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fix inserts multiple checks for nla_put, and issues warnings if it
-fails.
+devm_gpio_request_one() could fail. The fix checks its status and issues
+an error if it fails.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/infiniband/core/sa_query.c | 39 ++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/core/sa_query.c b/drivers/infiniband/core/sa_query.c
-index be5ba5e15496..0e5d7a6dde36 100644
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -775,28 +775,37 @@ static void ib_nl_set_path_rec_attrs(struct sk_buff *skb,
- 	/* Now build the attributes */
- 	if (comp_mask & IB_SA_PATH_REC_SERVICE_ID) {
- 		val64 = be64_to_cpu(sa_rec->service_id);
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_SERVICE_ID,
--			sizeof(val64), &val64);
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_SERVICE_ID,
-+			sizeof(val64), &val64))
-+			pr_warn("nla_put failed\n");
-+	}
-+	if (comp_mask & IB_SA_PATH_REC_DGID) {
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_DGID,
-+			sizeof(sa_rec->dgid), &sa_rec->dgid))
-+			pr_warn("nla_put failed\n");
-+	}
-+	if (comp_mask & IB_SA_PATH_REC_SGID) {
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_SGID,
-+			sizeof(sa_rec->sgid), &sa_rec->sgid))
-+			pr_warn("nla_put failed\n");
-+	}
-+	if (comp_mask & IB_SA_PATH_REC_TRAFFIC_CLASS) {
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_TCLASS,
-+			sizeof(sa_rec->traffic_class), &sa_rec->traffic_class))
-+			pr_warn("nla_put failed\n");
- 	}
--	if (comp_mask & IB_SA_PATH_REC_DGID)
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_DGID,
--			sizeof(sa_rec->dgid), &sa_rec->dgid);
--	if (comp_mask & IB_SA_PATH_REC_SGID)
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_SGID,
--			sizeof(sa_rec->sgid), &sa_rec->sgid);
--	if (comp_mask & IB_SA_PATH_REC_TRAFFIC_CLASS)
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_TCLASS,
--			sizeof(sa_rec->traffic_class), &sa_rec->traffic_class);
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index cee5f2f590e2..e3a045e215d2 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -226,9 +226,12 @@ static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
+ 	struct dw_pcie *pci = ep->pci;
+ 	struct device *dev = pci->dev;
  
- 	if (comp_mask & IB_SA_PATH_REC_PKEY) {
- 		val16 = be16_to_cpu(sa_rec->pkey);
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_PKEY,
--			sizeof(val16), &val16);
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_PKEY,
-+			sizeof(val16), &val16))
-+			pr_warn("nla_put failed\n");
- 	}
- 	if (comp_mask & IB_SA_PATH_REC_QOS_CLASS) {
- 		val16 = be16_to_cpu(sa_rec->qos_class);
--		nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_QOS_CLASS,
--			sizeof(val16), &val16);
-+		if (nla_put(skb, RDMA_NLA_F_MANDATORY | LS_NLA_TYPE_QOS_CLASS,
-+			sizeof(val16), &val16))
-+			pr_warn("nla_put failed\n");
- 	}
+-	if (ep->reset_gpio >= 0)
+-		devm_gpio_request_one(dev, ep->reset_gpio,
+-				GPIOF_OUT_INIT_HIGH, "RESET");
++	if (ep->reset_gpio >= 0) {
++		if (devm_gpio_request_one(dev, ep->reset_gpio,
++				GPIOF_OUT_INIT_HIGH, "RESET"))
++			dev_err(dev, "Failed requesting reset gpio %d\n",
++					ep->reset_gpio);
++	}
  }
  
+ static int exynos_pcie_establish_link(struct exynos_pcie *ep)
 -- 
 2.17.2 (Apple Git-113)
 
