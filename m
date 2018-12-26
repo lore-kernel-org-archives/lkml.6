@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8D2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E822C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3592070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EB792070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865202;
-	bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
+	s=default; t=1545865218;
+	bh=+z7bDEYtvNBGGsFlgMMPjBtTW0WLpE2tcdsT7w9cS58=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yMyeELrM7cFJk1VReYkW0eRNqkGOysdow/AAiERzF46f6+cFI1si+Ypz7n56O6bHC
-	 3hOJ4io0PDXcipM9EBH19y4rw1v2p2AhblzW95UY3NCciSnSg4hWYcr/y4ob64J4/J
-	 84z9BYQ0xo9HnLSQCgo/gVVbyNG3gU+3d4PYzmqs=
+	b=xQfKAaQqtnSzh65vvsHx6k8OFlmSCeeeAfVNNY0CDFj6qjTkyToOoOmwIkvyjvuxz
+	 Oph6KXA0iddDtyzgbXbotQVzolsOrCIDflrV0zCbn81NltkkDT4jM/NfznoLe4EjQQ
+	 LWXcfiah4ZZ3FDAvwaNab0SK8KBNMmJojP+ZOD2M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbeLZWyH (ORCPT
+        id S1728741AbeLZXAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:54:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55404 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 18:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730004AbeLZWyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:54:03 -0500
+        id S1729989AbeLZWx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:53:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4363214D8;
-        Wed, 26 Dec 2018 22:54:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 408DF218E2;
+        Wed, 26 Dec 2018 22:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864842;
-        bh=+4oAHwyxsQMYW5HZf8D4wwfuwt+HvnFpmVwGSBO3rv8=;
+        s=default; t=1545864839;
+        bh=+z7bDEYtvNBGGsFlgMMPjBtTW0WLpE2tcdsT7w9cS58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2rd7ul4uo4SEFBk//KAjn7J6bwEetZeUZXeYvTPhJetW664HQBkPqdqipAs89hKfA
-         qRfy8F8mwFP1zvFxhCSo/y2Zl6lrRQcsEsVppT55G9Q4tHxLrwL+2YV7Lnt1VbobNF
-         wsRZHwqcEe02hopA/ad8ZJaogl2gtAtC/nVKuWnA=
+        b=rCDZAvVoOSbRtJIrrP8dL+roSPj5x3B40bH+iPg6h1ufqPsXcR0a4VAmRP9B16Nml
+         OifBhfaBpiShS/hAAhFlttsRR9SlGRIlrw1HJsBqnHrQhMtU/tdjLNsNYRW7u07MEr
+         ToDR7ZiYtP9lufvS5wXj2ou6wDzpMnGTqD45TSjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 10/35] Input: omap-keypad - fix idle configuration to not block SoC idle states
-Date:   Wed, 26 Dec 2018 17:41:17 -0500
-Message-Id: <20181226224142.150866-10-sashal@kernel.org>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 08/35] netfilter: seqadj: re-load tcp header pointer after possible head reallocation
+Date:   Wed, 26 Dec 2018 17:41:15 -0500
+Message-Id: <20181226224142.150866-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226224142.150866-1-sashal@kernel.org>
 References: <20181226224142.150866-1-sashal@kernel.org>
@@ -58,82 +60,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit e2ca26ec4f01486661b55b03597c13e2b9c18b73 ]
+[ Upstream commit 530aad77010b81526586dfc09130ec875cd084e4 ]
 
-With PM enabled, I noticed that pressing a key on the droid4 keyboard will
-block deeper idle states for the SoC. Let's fix this by using IRQF_ONESHOT
-and stop constantly toggling the device OMAP4_KBD_IRQENABLE register as
-suggested by Dmitry Torokhov <dmitry.torokhov@gmail.com>.
+When adjusting sack block sequence numbers, skb_make_writable() gets
+called to make sure tcp options are all in the linear area, and buffer
+is not shared.
 
-From the hardware point of view, looks like we need to manage the registers
-for OMAP4_KBD_IRQENABLE and OMAP4_KBD_WAKEUPENABLE together to avoid
-blocking deeper SoC idle states. And with toggling of OMAP4_KBD_IRQENABLE
-register now gone with IRQF_ONESHOT, also the SoC idle state problem is
-gone during runtime. We still also need to clear OMAP4_KBD_WAKEUPENABLE in
-omap4_keypad_close() though to pair it with omap4_keypad_open() to prevent
-blocking deeper SoC idle states after rmmod omap4-keypad.
+This can cause tcp header pointer to get reallocated, so we must
+reaload it to avoid memory corruption.
 
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This bug pre-dates git history.
+
+Reported-by: Neel Mehta <nmehta@google.com>
+Reported-by: Shane Huntley <shuntley@google.com>
+Reported-by: Heather Adkins <argv@google.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/keyboard/omap4-keypad.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ net/netfilter/nf_conntrack_seqadj.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index f78c464899db..3d2c60c8de83 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -126,12 +126,8 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
+diff --git a/net/netfilter/nf_conntrack_seqadj.c b/net/netfilter/nf_conntrack_seqadj.c
+index ef7063eced7c..dad08b9eaf62 100644
+--- a/net/netfilter/nf_conntrack_seqadj.c
++++ b/net/netfilter/nf_conntrack_seqadj.c
+@@ -115,12 +115,12 @@ static void nf_ct_sack_block_adjust(struct sk_buff *skb,
+ /* TCP SACK sequence number adjustment */
+ static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
+ 				      unsigned int protoff,
+-				      struct tcphdr *tcph,
+ 				      struct nf_conn *ct,
+ 				      enum ip_conntrack_info ctinfo)
  {
- 	struct omap4_keypad *keypad_data = dev_id;
+-	unsigned int dir, optoff, optend;
++	struct tcphdr *tcph = (void *)skb->data + protoff;
+ 	struct nf_conn_seqadj *seqadj = nfct_seqadj(ct);
++	unsigned int dir, optoff, optend;
  
--	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS)) {
--		/* Disable interrupts */
--		kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
--				 OMAP4_VAL_IRQDISABLE);
-+	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS))
- 		return IRQ_WAKE_THREAD;
--	}
+ 	optoff = protoff + sizeof(struct tcphdr);
+ 	optend = protoff + tcph->doff * 4;
+@@ -128,6 +128,7 @@ static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
+ 	if (!skb_make_writable(skb, optend))
+ 		return 0;
  
- 	return IRQ_NONE;
- }
-@@ -173,11 +169,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
- 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
++	tcph = (void *)skb->data + protoff;
+ 	dir = CTINFO2DIR(ctinfo);
  
--	/* enable interrupts */
--	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
--		OMAP4_DEF_IRQENABLE_EVENTEN |
--				OMAP4_DEF_IRQENABLE_LONGKEY);
--
- 	return IRQ_HANDLED;
- }
+ 	while (optoff < optend) {
+@@ -207,7 +208,7 @@ int nf_ct_seq_adjust(struct sk_buff *skb,
+ 		 ntohl(newack));
+ 	tcph->ack_seq = newack;
  
-@@ -214,9 +205,10 @@ static void omap4_keypad_close(struct input_dev *input)
+-	res = nf_ct_sack_adjust(skb, protoff, tcph, ct, ctinfo);
++	res = nf_ct_sack_adjust(skb, protoff, ct, ctinfo);
+ out:
+ 	spin_unlock_bh(&ct->lock);
  
- 	disable_irq(keypad_data->irq);
- 
--	/* Disable interrupts */
-+	/* Disable interrupts and wake-up events */
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
- 			 OMAP4_VAL_IRQDISABLE);
-+	kbd_writel(keypad_data, OMAP4_KBD_WAKEUPENABLE, 0);
- 
- 	/* clear pending interrupts */
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
-@@ -364,7 +356,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
- 	}
- 
- 	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
--				     omap4_keypad_irq_thread_fn, 0,
-+				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
- 				     "omap4-keypad", keypad_data);
- 	if (error) {
- 		dev_err(&pdev->dev, "failed to register interrupt\n");
 -- 
 2.19.1
 
