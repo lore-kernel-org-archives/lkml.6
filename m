@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE26C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC761C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F5A218A5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9AC20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 23:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545866559;
-	bh=FxZT9Y1bu3XXWFMVZVnUV2vDNH8IzsR1njXNRuDxvqs=;
+	s=default; t=1545866569;
+	bh=TVByAtQRdmkzi5dHXKSG7U7CBInqIgH0DCdOFRMgcbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cKsadEUWgiKoMG2xNDHtKW3k8H/1/2te7CmJXfyjjug0J8c1iCU5Hs34TLILUaQBI
-	 ZZcJ2+8B4cY3fmR3Q6Tieq6/Az/73EbrqjMdlEFUVr/BuQNeUMun1t6+lOlgwasAah
-	 I1rtlkHk02n35OPMo3VUr4loekxaioaCbuaIJwuY=
+	b=Q+XYuMX2Z9pFEnHfUEfc6EnVg8rIwsRnTDWr59Zz75xvFfI9ebzQRx1UcPuG9/+xy
+	 m7golzNWI4KEKbyf8LUINn7oSmraSg/M5fIYaDHqw8I4u9jszFPTAPsBhRWOINmnwa
+	 sGA9jsSXRVEW2SJhXBDuB9l9596lYrR8M71StHYg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbeLZXWi (ORCPT
+        id S1729669AbeLZXWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 18:22:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44106 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 18:22:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728826AbeLZXWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 18:22:24 -0500
+        id S1728645AbeLZXWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 18:22:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8488C218EA;
-        Wed, 26 Dec 2018 23:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D98D020811;
+        Wed, 26 Dec 2018 23:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545866543;
-        bh=FxZT9Y1bu3XXWFMVZVnUV2vDNH8IzsR1njXNRuDxvqs=;
+        s=default; t=1545866538;
+        bh=TVByAtQRdmkzi5dHXKSG7U7CBInqIgH0DCdOFRMgcbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LhoKHThXM7Hofiomuoblhb1sD+A1yPYxSAPruevsTXsO/izW0Bib4DafqS5/P6yGb
-         KJMU+0b6CsBEayxFhA1d9rn5ZGV6jSiAMw+UczAVrEiCQzdZZva2ZeJNujYX3lb0WR
-         U9qepskRNpgZ64/ILJEXbuecstcp3rsW33fBK9Bc=
+        b=hmeHZXxyID1L/Gtvp0wKtsejiTRvAATHQaj9IB9w+unOJjTXeMkOQU4ySv6/oWG/n
+         TKLkJ/0QZRN4vCDTdoA4zZOMSn62o5EprN2L6EAEmwX3BFFR4cW7JgFTqXlEgS9ce1
+         QZphi2I3LY1ENidmSh/WMqR+Ob5IgW/jy6380FpI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+Cc:     Juergen Gross <jgross@suse.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 12/12] serial/sunsu: fix refcount leak
-Date:   Wed, 26 Dec 2018 17:57:40 -0500
-Message-Id: <20181226225741.151608-12-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 09/12] xen/netfront: tolerate frags with no data
+Date:   Wed, 26 Dec 2018 17:57:37 -0500
+Message-Id: <20181226225741.151608-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225741.151608-1-sashal@kernel.org>
 References: <20181226225741.151608-1-sashal@kernel.org>
@@ -58,80 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
+[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
 
-The function of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
+At least old Xen net backends seem to send frags with no real data
+sometimes. In case such a fragment happens to occur with the frag limit
+already reached the frontend will BUG currently even if this situation
+is easily recoverable.
 
-su_get_type() doesn't do that. The match node are used as an identifier
-to compare against the current node, so we can directly drop the refcount
-after getting the node from the path as it is not used as pointer.
+Modify the BUG_ON() condition accordingly.
 
-Fix this by use a single variable and drop the refcount right after
-of_find_node_by_path().
-
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-index 5326ae195e5f..298c11556850 100644
---- a/drivers/tty/serial/sunsu.c
-+++ b/drivers/tty/serial/sunsu.c
-@@ -1380,22 +1380,43 @@ static inline struct console *SUNSU_CONSOLE(void)
- static enum su_type su_get_type(struct device_node *dp)
- {
- 	struct device_node *ap = of_find_node_by_path("/aliases");
-+	enum su_type rc = SU_PORT_PORT;
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 3bbfb09af65f..5d11e60d4995 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -913,7 +913,7 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
+ 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
  
- 	if (ap) {
- 		const char *keyb = of_get_property(ap, "keyboard", NULL);
- 		const char *ms = of_get_property(ap, "mouse", NULL);
-+		struct device_node *match;
- 
- 		if (keyb) {
--			if (dp == of_find_node_by_path(keyb))
--				return SU_PORT_KBD;
-+			match = of_find_node_by_path(keyb);
-+
-+			/*
-+			 * The pointer is used as an identifier not
-+			 * as a pointer, we can drop the refcount on
-+			 * the of__node immediately after getting it.
-+			 */
-+			of_node_put(match);
-+
-+			if (dp == match) {
-+				rc = SU_PORT_KBD;
-+				goto out;
-+			}
+-			BUG_ON(pull_to <= skb_headlen(skb));
++			BUG_ON(pull_to < skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
  		}
- 		if (ms) {
--			if (dp == of_find_node_by_path(ms))
--				return SU_PORT_MS;
-+			match = of_find_node_by_path(ms);
-+
-+			of_node_put(match);
-+
-+			if (dp == match) {
-+				rc = SU_PORT_MS;
-+				goto out;
-+			}
- 		}
- 	}
- 
--	return SU_PORT_PORT;
-+out:
-+	of_node_put(ap);
-+	return rc;
- }
- 
- static int su_probe(struct platform_device *op)
+ 		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
 -- 
 2.19.1
 
