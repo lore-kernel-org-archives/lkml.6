@@ -2,137 +2,109 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9286C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45F3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B67218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B309F218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 17:44:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WR1YTXZl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruMcwx3i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeLZRoX (ORCPT
+        id S1727472AbeLZRop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 12:44:23 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57564 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeLZRoV (ORCPT
+        Wed, 26 Dec 2018 12:44:45 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41745 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeLZRop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 12:44:21 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBQHiC7r070530;
-        Wed, 26 Dec 2018 17:44:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=b4f97dyP03PYE3j0dippliGp3beCkGWO/6teR4/z+/s=;
- b=WR1YTXZlROFtTwkzgQpnJbgx/yks78RYPHjoWCNO8+PljVk0eOAcDLkwAk2dedEd8khE
- KsljaPYj0Nm/axTVSnKrAYJ5hrKtCTReczRdgMki7ZjD6nOOLhljf97CRXgR7mttco9X
- QbXngtqBpyQxHmtVGXs+JNWPBs1z67jTBCG8un5hOG1KNqoi3uSrSOpOaKCK2135qMou
- ZyEmuqWc8TAbubeV9d7rFPQ5wuY3FVGSIQLVkYA0MDm16AE9FMVmSG1xC7aX7P2Auew0
- FuuLHkRoTHWkQkLui2nA4uJkO8pZBHKR3jV6V5/fdD6IeE4cwZAD21i0JZlHQHkktDQG MA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2phcpttatt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Dec 2018 17:44:11 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBQHiB4U020753
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Dec 2018 17:44:11 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBQHiACK013169;
-        Wed, 26 Dec 2018 17:44:10 GMT
-Received: from anon-dhcp-121.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Dec 2018 09:44:10 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] sunrpc: remove redundant code
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20181226032415.73064-1-kjlu@umn.edu>
-Date:   Wed, 26 Dec 2018 12:44:08 -0500
-Cc:     pakki001@umn.edu, Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
+        Wed, 26 Dec 2018 12:44:45 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x10so16201642wrs.8;
+        Wed, 26 Dec 2018 09:44:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e5StMPPFMeRNbftw1fp0WEMyIqn7SJHK8uWKlxriUww=;
+        b=ruMcwx3iw6zhSxXv/yhjhNphDrPYQ2LW76Rg+QTkVCh8cmzqK+FgEvJgOzmBXLKgaB
+         ni2NbDTiWF6Up11x9hZpw/XK+a8z7nIjgTJJtUbGifjMwHbMlWYkwWSWpRjrv7oXepe4
+         cu4RF4ROVFqlA9qfDyCOyWIMcFW+WTPLzMIkNQelRrtgRD3DuZCcmRerAPgJyqspG9Bj
+         t91gz6QfYdE9ytAH8wNKKA7Uewg4FXalq0qJyJKfFLc5nSw3GYAyCFoapFQxbUCRMcVE
+         RdntgzaW4vn/7NdfrfmKY3L7xyAf/54IAIbASH4GgxPQN8j6Z5b0M13RLYbuUTgqDvQS
+         qSNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e5StMPPFMeRNbftw1fp0WEMyIqn7SJHK8uWKlxriUww=;
+        b=SJ6C620e+4evVnKYRjlMrpgFtuqR9yUetw0W9ug3jQkOqou+WLobXIcFv8qrAHpDb+
+         ozMOcjuAwUoiqpd5/emlJVtU0DchoM+vg0W2mwPbwVSP3+gUfLtDXCR17V5AjsryZAwN
+         iNOsgGG1t4TuVv1XDV5zA8/EOJCDm2SUmtWcKifnn7nJOcqU7jXuOUrnCm9+4szKD5Z6
+         veDj8D09lgr8BWiYUL6nD/qjAykJBf9zu798OAb9vix+ZEIkj5Typh87zoa7T6hRhhYm
+         O8gNOKi21OpS3z/s5Bucvl689U5lzfTQVxrOnne7yT3y67pc48nXpvbtviHYJ8O0mVHn
+         R2kw==
+X-Gm-Message-State: AJcUukfWbkj2cdK7TGO3eVUyz7DBjAXLqKGg0sIO4ciPmPW80ya01YtX
+        GcAR65CNEUA3bdVmY+TX2O+gTIjA
+X-Google-Smtp-Source: ALg8bN7Ga4DsuTjqVwkemUhQ3883Y3CLsdvskq4+J04DI/hSvgRja6SOmPG0IMp81p06g34yQPYJuQ==
+X-Received: by 2002:a5d:678b:: with SMTP id v11mr20790314wru.245.1545846282766;
+        Wed, 26 Dec 2018 09:44:42 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:6194:598:7f5e:b2e? (p200300EA8BCFE300619405987F5E0B2E.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:6194:598:7f5e:b2e])
+        by smtp.googlemail.com with ESMTPSA id d4sm31348843wrp.89.2018.12.26.09.44.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 09:44:42 -0800 (PST)
+Subject: Re: [PATCH] net:phy: Add a return value check on bus write
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <432FED98-2410-4760-8E7C-20675051FE96@oracle.com>
-References: <20181226032415.73064-1-kjlu@umn.edu>
-To:     Kangjie Lu <kjlu@umn.edu>
-X-Mailer: Apple Mail (2.3445.9.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9118 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812260160
+        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181226173717.7113-1-pakki001@umn.edu>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <77ffa226-5d4c-3fec-6cdc-a2192eefd5dd@gmail.com>
+Date:   Wed, 26 Dec 2018 18:44:37 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181226173717.7113-1-pakki001@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Dec 25, 2018, at 10:24 PM, Kangjie Lu <kjlu@umn.edu> wrote:
->=20
-> If no bytes to decode, just use "xdr->p" instead of calling
-> xdr_inline_decode to get it. The fix cleans up the code.
->=20
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+On 26.12.2018 18:37, Aditya Pakki wrote:
+> xgmiitorgmii_read_status() could fail when writing to the bus via
+> mdiobus_write(). The fix adds a check and returns an error in case
+> of failure.
+> 
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 > ---
-> net/sunrpc/xprtrdma/rpc_rdma.c | 4 +---
-> 1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c =
-b/net/sunrpc/xprtrdma/rpc_rdma.c
-> index 9f53e0240035..2ef86be49bd8 100644
-> --- a/net/sunrpc/xprtrdma/rpc_rdma.c
-> +++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-> @@ -1123,7 +1123,6 @@ rpcrdma_decode_msg(struct rpcrdma_xprt *r_xprt, =
-struct rpcrdma_rep *rep,
-> {
-> 	struct xdr_stream *xdr =3D &rep->rr_stream;
-> 	u32 writelist, replychunk, rpclen;
-> -	char *base;
->=20
-> 	/* Decode the chunk lists */
-> 	if (decode_read_list(xdr))
-> @@ -1138,10 +1137,9 @@ rpcrdma_decode_msg(struct rpcrdma_xprt *r_xprt, =
-struct rpcrdma_rep *rep,
-> 		return -EIO;
->=20
-> 	/* Build the RPC reply's Payload stream in rqst->rq_rcv_buf */
-> -	base =3D (char *)xdr_inline_decode(xdr, 0);
-> 	rpclen =3D xdr_stream_remaining(xdr);
-> 	r_xprt->rx_stats.fixup_copy_count +=3D
-> -		rpcrdma_inline_fixup(rqst, base, rpclen, writelist & 3);
-> +		rpcrdma_inline_fixup(rqst, xdr->p, rpclen, writelist & =
-3);
+>  drivers/net/phy/xilinx_gmii2rgmii.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+> index 74a8782313cf..926879d43373 100644
+> --- a/drivers/net/phy/xilinx_gmii2rgmii.c
+> +++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+> @@ -58,7 +58,9 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+>  	else
+>  		val |= BMCR_SPEED10;
+>  
+> -	mdiobus_write(bus, addr, XILINX_GMII2RGMII_REG, val);
+> +	err = mdiobus_write(bus, addr, XILINX_GMII2RGMII_REG, val);
+> +	if (err)
+> +		return err;
+>  
+>  	return 0;
+Why not simply:
+return mdiobus_write(bus, addr, XILINX_GMII2RGMII_REG, val);
 
-I used xdr_inline_decode(xdr, 0) here because I didn't want to
-embed specific knowledge about struct xdr_stream into
-rpcrdma_decode_msg. IOW, adhere to the API contract.
-
-Given the need for adding a type cast to this function call, as
-reported by the kbuild robot, I don't see that this patch improves
-things significantly.
-
-
-> 	r_xprt->rx_stats.total_rdma_reply +=3D writelist;
-> 	return rpclen + xdr_align_size(writelist);
-> --=20
-> 2.17.2 (Apple Git-113)
->=20
-
---
-Chuck Lever
-
-
-
+Heiner
