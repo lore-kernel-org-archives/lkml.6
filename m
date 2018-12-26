@@ -2,59 +2,60 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F46C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8441C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A863218EA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:45:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766B0218EA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 16:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="CkOfY2zv"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="n2yeI7h8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbeLZQpN (ORCPT
+        id S1727225AbeLZQpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 11:45:13 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46171 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbeLZQpN (ORCPT
+        Wed, 26 Dec 2018 11:45:14 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42948 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbeLZQpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Dec 2018 11:45:13 -0500
-Received: by mail-qt1-f196.google.com with SMTP id y20so17719822qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 08:45:12 -0800 (PST)
+Received: by mail-qk1-f194.google.com with SMTP id 68so9569928qke.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 08:45:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=GgtfxdhiLdvQCW7QGYVErnx606LplLlDcwec6P3WJq0=;
-        b=CkOfY2zv/Z1q5cs672c00kKrdcb6NbKDvzkwnCCqm+j3yCQprxJC9get3MhYmhT6HW
-         WT2Fm2Zcd9hu8IsYMrVfLek4ZNi9gDKzxJQrPZyQbDKziMXxMtVFhY7Fh6LoGHLeBdM9
-         9/uBhvPBWzXxZDI+zua8lgN3BdlBlaj71dd8uuVo04q5ofFAWUHEIhKFUFm5/1U/bg6P
-         piiwt2Xla3lT1iZOb/zBbhZh0IAMONGE8IPrtGxS5AL3cOOQ4iqAuxNUgo+2oDmInrRT
-         AvFA/XWrzfZewqTxxu9W/L2V0ThNidVidy9ndxOQ9OFZknYaALgwpjA00/+dycf0/OMY
-         hD1A==
+        bh=InwYWFVcgsNeL+HQcZ5vgHtIv1cvzFUFvu3UrzzVaBw=;
+        b=n2yeI7h8aHMbPfRTciWj/doMgM6b2hrPX6d2Nj/RJqxw4rXomNTuaPW2Erzqdxudqj
+         HNe4J7qjWuhAu+sr6kO2Cn9ZtG7nf3kjP2aoJHXeK3lK8Ps5PHigegMsS8th/kDj44RG
+         2mFff9fAxK5Lhg7TT1GJ+S/ZVllpWgq26/9WsY+UpSgrZQxiaowZwLsfbGehuZbieptq
+         +RKEDVN2NxOqxiU239+RxtiFJNFjTvJ5TDIv3+q7DUFMpMkha/70/Hj3FnN3EjHRMLai
+         KTeD5ntD/a2Gl56CwuVqAuhsRChHnrdJGl+4yHROJecu0iOZFh265NPi+4ktGHw06pxr
+         3qOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GgtfxdhiLdvQCW7QGYVErnx606LplLlDcwec6P3WJq0=;
-        b=P6SE2WkMhwQd9KnMeV3nHa4hsKatJVjC4mxHMNTQAL1cxIvvHT776BP/13EGgYy/q/
-         rOdZHZ3xqOwtvPdJAi7efsCMEwhUyWUpw8ENGAObPZerU8Q9Bg9hbdI0t8ZGDak2FidT
-         ATOc/u/cnKBw6R3j/hNhK78u0x3I1bDKPEH7ZspSsCOaoHgw+UoVHZhfREyntavcecMI
-         /D6WaMglZLfh50s6f+Cb0jzeMhHmYNmbKHf7cKAT/zRprX28rk3Ibe8pbvPx19qEV3vM
-         rHTmN8mERFUeXNIXseQWoHSbrk26nUxjC8w3Lz388rt8BcTgZx/PgoJNFG/wy8thZ5sA
-         mQ4Q==
-X-Gm-Message-State: AA+aEWbuUYr+aetetE5tUC/igFmmvDzQqnKiwSr0Xf7SPDOV872qZeNh
-        zC6T6qRj+jRpuUBwSVlsj1q9xw==
-X-Google-Smtp-Source: ALg8bN7bG7R8aWj/3Z8/vN3VDVQ6HkXoBwOBo0vaBPWnVfhxTZqyOJOH4OSzdlwThfyjVARGZRGc7A==
-X-Received: by 2002:aed:3968:: with SMTP id l95mr19363089qte.344.1545842711736;
-        Wed, 26 Dec 2018 08:45:11 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=InwYWFVcgsNeL+HQcZ5vgHtIv1cvzFUFvu3UrzzVaBw=;
+        b=IBewGzGlAjVS3C41hpWQXsqDGAOsPA1FrYvxtl1kDDlt3dzz17qUhzwGte5OAvkCPh
+         IlJ0r2bIAx6XF5JEj8hMVyamRuBBJD1YqBpMRZTvaWh7F73s1clq13q3vDxpPlcvXRkF
+         O7u0lboZcMtOopkjDkBnTVcr2f0LDeRu2EIiJ7xfQXNI+1uYTgmtd5pAS3TS4hPJ8DhR
+         AsD0HpidBEze8FP45mQkKApw4OVjRJRuqkhw07XLMFebtlwogcWgGVeLq9l9xdjbsdlC
+         xFNgVCqn/w7x9APgaiTcMW4FE0sr6JfPtooaS5gR4ZV/JCX6b/gmOuZj7DmdW9g6KUB/
+         esXA==
+X-Gm-Message-State: AJcUukdCgI3ODecDn1DHnUvGKuSrH/4eOhDPyrEJ4WgV08vAf3EnRqWO
+        9jR9xZwP5xenAs9+WQxZ8A+Pxg==
+X-Google-Smtp-Source: ALg8bN5hCYw0xiCyKIk/UBSJ8upSjDurDY60a3X/min2YuOsLsTeTR9K8nj0IoPeS3sKp4NPKWn6TQ==
+X-Received: by 2002:ae9:ec02:: with SMTP id h2mr18855149qkg.84.1545842713028;
+        Wed, 26 Dec 2018 08:45:13 -0800 (PST)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id m41sm17874920qtc.58.2018.12.26.08.45.09
+        by smtp.gmail.com with ESMTPSA id m41sm17874920qtc.58.2018.12.26.08.45.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 08:45:10 -0800 (PST)
+        Wed, 26 Dec 2018 08:45:12 -0800 (PST)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     catalin.marinas@arm.com, will.deacon@arm.com,
         akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
@@ -62,10 +63,12 @@ To:     catalin.marinas@arm.com, will.deacon@arm.com,
         james.morse@arm.com, marc.zyngier@arm.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         pasha.tatashin@soleen.com
-Subject: [PATCH v3 0/3] Early boot time stamps for arm64
-Date:   Wed, 26 Dec 2018 11:45:06 -0500
-Message-Id: <20181226164509.22916-1-pasha.tatashin@soleen.com>
+Subject: [PATCH v3 1/3] arm_arch_timer: add macro for timer nbits
+Date:   Wed, 26 Dec 2018 11:45:07 -0500
+Message-Id: <20181226164509.22916-2-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181226164509.22916-1-pasha.tatashin@soleen.com>
+References: <20181226164509.22916-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,53 +76,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changelog:
-v2 - v3
-	Addressed comments from Will Deacon: split into three
-	patches, removed hardcoded assumption from vdso, don't
-	assign arch_timer_read_counter during early boot.
-v1 - v2
-	Addressed comments from Marc Zyngier
+The minimum value of bits arm defines for timer value is 56bits, add a new
+macro ARCH_TIMER_NBITS to use it in code instead of hardcoding 56.
 
-I made early boot time stamps available for SPARC and X86.
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+---
+ drivers/clocksource/arm_arch_timer.c | 8 ++++----
+ include/clocksource/arm_arch_timer.h | 3 +++
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-x86:
-https://lore.kernel.org/lkml/20180719205545.16512-1-pasha.tatashin@oracle.com
-
-sparc:
-https://www.spinics.net/lists/sparclinux/msg18063.html
-
-As discussed at plumbers, I would like to add the same for arm64. The
-implementation does not have to be perfect, and should work only when early
-clock is easy to determine. arm64 defines a clock register, and thus makes
-it easy, but on some platforms frequency register is broken, so if it is
-not known, simply don't initialize clock early.
-
-dmesg before:
-https://paste.ubuntu.com/p/3pJ5kgJHyN
-
-dmesg after:
-https://paste.ubuntu.com/p/RHKGVd9nSM
-
-As seen from the above with base smp_init is finished after 0.47s:
-[    0.464585] SMP: Total of 8 processors activated.
-
-But, in reality, 3.2s is missing which is a quiet long considering this is
-only 60G domain.
-
-
-Pavel Tatashin (3):
-  arm_arch_timer: add macro for timer nbits
-  arm64: vdso: Use ARCH_TIMER_NBITS to calculate mask
-  arm64: Early boot time stamps
-
- arch/arm64/kernel/asm-offsets.c       |  1 +
- arch/arm64/kernel/setup.c             | 25 +++++++++++++++++++++++++
- arch/arm64/kernel/vdso/gettimeofday.S |  3 +--
- drivers/clocksource/arm_arch_timer.c  |  8 ++++----
- include/clocksource/arm_arch_timer.h  |  3 +++
- 5 files changed, 34 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 9a7d4dc00b6e..e4843ad48bd3 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -175,13 +175,13 @@ static struct clocksource clocksource_counter = {
+ 	.name	= "arch_sys_counter",
+ 	.rating	= 400,
+ 	.read	= arch_counter_read,
+-	.mask	= CLOCKSOURCE_MASK(56),
++	.mask	= CLOCKSOURCE_MASK(ARCH_TIMER_NBITS),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+ 
+ static struct cyclecounter cyclecounter __ro_after_init = {
+ 	.read	= arch_counter_read_cc,
+-	.mask	= CLOCKSOURCE_MASK(56),
++	.mask	= CLOCKSOURCE_MASK(ARCH_TIMER_NBITS),
+ };
+ 
+ struct ate_acpi_oem_info {
+@@ -963,8 +963,8 @@ static void __init arch_counter_register(unsigned type)
+ 	timecounter_init(&arch_timer_kvm_info.timecounter,
+ 			 &cyclecounter, start_count);
+ 
+-	/* 56 bits minimum, so we assume worst case rollover */
+-	sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
++	sched_clock_register(arch_timer_read_counter, ARCH_TIMER_NBITS,
++			     arch_timer_rate);
+ }
+ 
+ static void arch_timer_stop(struct clock_event_device *clk)
+diff --git a/include/clocksource/arm_arch_timer.h b/include/clocksource/arm_arch_timer.h
+index 349e5957c949..c485512e1d01 100644
+--- a/include/clocksource/arm_arch_timer.h
++++ b/include/clocksource/arm_arch_timer.h
+@@ -71,6 +71,9 @@ enum arch_timer_spi_nr {
+ #define ARCH_TIMER_EVT_STREAM_FREQ				\
+ 	(USEC_PER_SEC / ARCH_TIMER_EVT_STREAM_PERIOD_US)
+ 
++/* 56 bits minimum, so we assume worst case rollover */
++#define	ARCH_TIMER_NBITS		56
++
+ struct arch_timer_kvm_info {
+ 	struct timecounter timecounter;
+ 	int virtual_irq;
 -- 
 2.20.1
 
