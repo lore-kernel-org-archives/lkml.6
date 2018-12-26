@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CC6C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86709C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59CF3218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47C1821720
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 13:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RW+f4zbd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSOpNnu4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbeLZNkY (ORCPT
+        id S1726966AbeLZNma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 08:40:24 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44182 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbeLZNkX (ORCPT
+        Wed, 26 Dec 2018 08:42:30 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44240 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeLZNm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 08:40:23 -0500
-Received: by mail-pg1-f193.google.com with SMTP id t13so7581035pgr.11;
-        Wed, 26 Dec 2018 05:40:23 -0800 (PST)
+        Wed, 26 Dec 2018 08:42:29 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so7874925pfh.11;
+        Wed, 26 Dec 2018 05:42:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=QtyU9ucOXiNiIeNjszvbCZO0uYJnsnaAu1XagrwM4a4=;
-        b=RW+f4zbdKKTuxJb4z6c1EDSpjskuMP/fNlnRX8H0lPCGS09WK8g1S/5q1lkgbYlXgJ
-         gYDFoKo+QcwZ474oDMbKvMImNpA3Cg8x248l533QbF5BCmk7TUEGgaAagWhlATtcWJUt
-         Y+3++rVbKQfi2vXxX/NH4ZUhIgc5vdaynkTWdEA5+XumZOahGlWnzZZ4ML5LVS6tx0b8
-         wk1hRieDocohC6BrlFr9fJ+73pqRlo64D+gNEg/YQ11h1889yGqgfVKJKPXeRBIPNy1V
-         Cym5Ob8vIyHwhZFQoOk20kCQOs/5ZAY/0DD8E/glX6wqOzcxDkhwcYo/d7eQsn4HjtCh
-         qQ9g==
+        bh=P6n/W1uiBOsiEw6UHJKLxP0YarUNUmHRgutmwheO4Xs=;
+        b=mSOpNnu4azDe5ieBenQ8M729RdRywthCmwj7olKsQyiTCpmFMxn4yFL/RqEH3HMVvW
+         155ZHzRTmkJuobVOGHTSUyDIMQlaHkjhBLD1JnklkFCxX6XRqMLatJcIGxvHQPSjo2Hd
+         w3YyNx3mKlGfmKQYkgDUGUg0yeI/iNi6vVCWPFGv8HCYLn6GJXPfx9jLDLOUekGoRjUK
+         BiEQI0FdYy6dJ2ZTGXCk0vOOBozc1gGOZY2BICplwKp32wKQE+8DLKvNYas2wDn0eVY5
+         lcXFnAjcMD+M1tAuvWnu9EFLqP2ogLIfaVdd7P0aPvN11Qw5369qksPV2+Y4ATTBZ0ip
+         nngw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QtyU9ucOXiNiIeNjszvbCZO0uYJnsnaAu1XagrwM4a4=;
-        b=hy92azVEW8LngkRFiF+jq8MG4lQZQ304d07txZ0UnrN06P2HW7XH1pecTuaof8JPKa
-         vHXSUa72UUOAHv4GjEOJ70q1vh4LB+nAbpnjhnrSQY28aJy8UR8aihFpC40ikmmJJelZ
-         cKmfb2INsqaHeN1NETtMkh2qYhbY2P9f8zBi9paIpbiuNfUYyTHlqstATiEvkxT34CQE
-         Gsm8CAnxnwtxw6/6MYL6ujsmNvJ98MRt3a+z/CMhbzQKH5bjdkUv5F0DBXY5yUcxlueA
-         51IKu/+8Qx2DcqP5gi9qQcVdePJo4zxsJ+u0vqxHOs+mIt+Fwr0P1WsdHKH9m50tTxw0
-         HZ7A==
-X-Gm-Message-State: AA+aEWYxNXCf8406WN1OJg//8oPuWFqgsMHPN8lIiHlhnERVxs9v2Jhp
-        12wlyOxKDW/kLvhItd4vnPY=
-X-Google-Smtp-Source: AFSGD/XFYspa/xUzEj5NeV3vcANlLDULhSBVjr9/Sdj/Aly7jSPCdjhuX2Px4rAkrkE/X7S4avlsVA==
-X-Received: by 2002:a62:60c5:: with SMTP id u188mr20299330pfb.4.1545831623121;
-        Wed, 26 Dec 2018 05:40:23 -0800 (PST)
+        bh=P6n/W1uiBOsiEw6UHJKLxP0YarUNUmHRgutmwheO4Xs=;
+        b=PQhx4ETqq9J4L39HP8L9IcabaeqDuxDW+1QWnK5U/NalW9Zhsaq3iqkdnruFmTGy3g
+         uSBY+lJPHw0LaOW1l4DLMD3YrObDDrt2ebkr3F1QogH3XeV/Ptb8ttqyXqS97aHmuKvx
+         0uWrD/LzbxoO4odAthOTIf8PqeGZC4qUvAO/uh/dpmS7QWY++6wxvAxnigqj79lNUgaD
+         ekrcNRMauY9z4AR+VVQuohFaBS7XnUM5K55ppKyl0gOLA8CLd6x0O2COmpLRxrkfCTFx
+         AHyDsOJVXCbkP8+XILEvG/8L2Zf/CA4pKgjG8WMEPognuKg6a2/6WXxPXb+eo1Oh51FU
+         TrdA==
+X-Gm-Message-State: AJcUukfPZHKPYGE5NANlxvnUT9KxwUsApcFiFjyKPBw061odCNKVtlhy
+        hgUFnbP0gWHr7Tk3a5bbvtvQNcpEXf0=
+X-Google-Smtp-Source: ALg8bN6agRPehym7UHELvgRx+LZYrSiHG96NcGv9VCoWDdR2iSAtYzusNYNgRqx9LllnSS93cgesgw==
+X-Received: by 2002:a63:6ac5:: with SMTP id f188mr19138566pgc.165.1545831749191;
+        Wed, 26 Dec 2018 05:42:29 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id e128sm49365293pfe.67.2018.12.26.05.40.22
+        by smtp.gmail.com with ESMTPSA id q75sm51635973pfa.38.2018.12.26.05.42.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 05:40:22 -0800 (PST)
+        Wed, 26 Dec 2018 05:42:28 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         gregory.clement@bootlin.com
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
-Date:   Wed, 26 Dec 2018 08:40:19 -0500
-Message-Id: <20181226134019.5229-1-tiny.windzz@gmail.com>
+Subject: [PATCH] clk: armada-xp: fix refcount leak in axp_clk_init()
+Date:   Wed, 26 Dec 2018 08:42:26 -0500
+Message-Id: <20181226134226.5338-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -74,22 +74,24 @@ done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/mvebu/kirkwood.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/mvebu/armada-xp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index 6f784167bda4..35af3aa18f1c 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -331,6 +331,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
- 	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
- 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
-+
+diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+index e8f03293ec83..fa1568279c23 100644
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -226,7 +226,9 @@ static void __init axp_clk_init(struct device_node *np)
+ 
+ 	mvebu_coreclk_setup(np, &axp_coreclks);
+ 
+-	if (cgnp)
++	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
 +		of_node_put(cgnp);
- 	}
++	}
  }
- CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
+ CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
 -- 
 2.17.0
 
