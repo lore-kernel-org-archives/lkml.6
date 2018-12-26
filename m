@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10861C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD21FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D339A21741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FD4214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864335;
-	bh=QNgFGXBUwtSfK+JzcYy+oYzDb2+fXfBB/vZvrsD883s=;
+	s=default; t=1545864345;
+	bh=xHpUPkfqehI0wryWmy2Iqaf+OscGaJXfXJrjlrv+mGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TCAgDTyFWvyZ7yODmv/h3vrv3komrxh3lAdO9TDIV84yGNtAqPDCBv8jJ2oZZcIz9
-	 E5rqhjgJTEYiKWtmUhlckq0ztZk72VLN9cU68tpMFfqEwUDbPpVsQ23+aulKvg9zEg
-	 rEqf8r5JmqCjh9SuSezfp2txm/3dY6PSQEfc6B4Y=
+	b=q12qZxpM+ER/P8t4dFW07tEUoUunTEvr/EDeTZY00pevY2lq3TWcBm1imiB9S4DQB
+	 5fAcnXQ6bQsGkTuVt1LFgx80XItspZYOm3WkjbywCFnt3ZOpAkvZC/cBPOEM3NflNJ
+	 gRW6sT8jHd4wFlP72T1UAVRzRuo3t25A6Tpb7Ilg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbeLZWpe (ORCPT
+        id S1729308AbeLZWpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:45:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40866 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:45:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728070AbeLZWkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:40:35 -0500
+        id S1729014AbeLZWk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:40:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6FE421901;
-        Wed, 26 Dec 2018 22:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2C9720651;
+        Wed, 26 Dec 2018 22:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545864034;
-        bh=QNgFGXBUwtSfK+JzcYy+oYzDb2+fXfBB/vZvrsD883s=;
+        s=default; t=1545864026;
+        bh=xHpUPkfqehI0wryWmy2Iqaf+OscGaJXfXJrjlrv+mGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PybmMzTA+xZfEZ8FqM0h4vGC84gBD7cMFi9Tx6ftyakIuZTIA/qFb9gkNXcMFD2+7
-         PSGt+pgflsGN8A7IZ+L5OYOReYYmtF9mmrBEglMX6glpx/VmTt1pqzuoYpOzLzbOe2
-         r1kruWLVWWgNCvzOVtkAPNfFPkAEDNqNquL/S+6s=
+        b=nK7XBcdl0v9Lo9olHrZfpw74BQYwQkYjsz3E9h2Z8V5wBQEu5ROMeKWa8ZfC2br+2
+         4Wf0JdT8xcGkHeD5751EGbmBIQGK/eDqGx3+74loibsqOlZK4OaaN20XiEOYo+D4La
+         oas4PZfxiuMFV1jDXNl7V+LxxR7edM8KAnv8C4Qc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/59] bnx2x: Clear fip MAC when fcoe offload support is disabled
-Date:   Wed, 26 Dec 2018 17:38:04 -0500
-Message-Id: <20181226223839.150262-24-sashal@kernel.org>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
+        bhe@redhat.com, hans.van.kranenburg@mendix.com, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 19/59] x86/dump_pagetables: Fix LDT remap address marker
+Date:   Wed, 26 Dec 2018 17:37:59 -0500
+Message-Id: <20181226223839.150262-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223839.150262-1-sashal@kernel.org>
 References: <20181226223839.150262-1-sashal@kernel.org>
@@ -60,39 +60,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-[ Upstream commit bbf666c1af916ed74795493c564df6fad462cc80 ]
+[ Upstream commit 254eb5505ca0ca749d3a491fc6668b6c16647a99 ]
 
-On some customer setups it was observed that shmem contains a non-zero fip
-MAC for 57711 which would lead to enabling of SW FCoE.
-Add a software workaround to clear the bad fip mac address if no FCoE
-connections are supported.
+The LDT remap placement has been changed. It's now placed before the direct
+mapping in the kernel virtual address space for both paging modes.
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Change address markers order accordingly.
+
+Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
+Cc: peterz@infradead.org
+Cc: boris.ostrovsky@oracle.com
+Cc: jgross@suse.com
+Cc: bhe@redhat.com
+Cc: hans.van.kranenburg@mendix.com
+Cc: linux-mm@kvack.org
+Cc: xen-devel@lists.xenproject.org
+Link: https://lkml.kernel.org/r/20181130202328.65359-3-kirill.shutemov@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/mm/dump_pagetables.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index bd3e3f080ebf..688d84cd6187 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -11733,8 +11733,10 @@ static void bnx2x_get_fcoe_info(struct bnx2x *bp)
- 	 * If maximum allowed number of connections is zero -
- 	 * disable the feature.
- 	 */
--	if (!bp->cnic_eth_dev.max_fcoe_conn)
-+	if (!bp->cnic_eth_dev.max_fcoe_conn) {
- 		bp->flags |= NO_FCOE_FLAG;
-+		eth_zero_addr(bp->fip_mac);
-+	}
- }
- 
- static void bnx2x_get_cnic_info(struct bnx2x *bp)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index cf403e057f3f..6bca45d06676 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -51,10 +51,10 @@ struct addr_marker {
+ enum address_markers_idx {
+ 	USER_SPACE_NR = 0,
+ 	KERNEL_SPACE_NR,
+-	LOW_KERNEL_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	LDT_NR,
+ #endif
++	LOW_KERNEL_NR,
+ 	VMALLOC_START_NR,
+ 	VMEMMAP_START_NR,
+ #ifdef CONFIG_KASAN
+@@ -62,9 +62,6 @@ enum address_markers_idx {
+ 	KASAN_SHADOW_END_NR,
+ #endif
+ 	CPU_ENTRY_AREA_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
+-	LDT_NR,
+-#endif
+ #ifdef CONFIG_X86_ESPFIX64
+ 	ESPFIX_START_NR,
+ #endif
 -- 
 2.19.1
 
