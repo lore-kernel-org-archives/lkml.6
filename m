@@ -2,152 +2,138 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0031C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1813C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92EE42148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9482A214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 11:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545824647;
+	bh=utkn1HW2Qr9QiYu8jfVXpKJDGr53KWTF4eFVRCLLa7U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ywh1ITf/eyTdD1n96PiNz6+ve5KXzYgPX4X843FfMSBZTwNWhV4TBNcjqM43jF8Hh
+	 ITTqDIs3MM4SCiigd8DyO0YVTjgtDdflxKwnWZ+pRJN5+MHiTspouXAB+E/sxpj+SW
+	 91ePuOzqOFCbXsAfauC9FHIPPQMrbghjDgAVhyfk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeLZLjb (ORCPT
+        id S1726761AbeLZLoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:39:31 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36356 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeLZLjb (ORCPT
+        Wed, 26 Dec 2018 06:44:06 -0500
+Received: from casper.infradead.org ([85.118.1.10]:44848 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbeLZLoG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:39:31 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j3so5021112uap.3;
-        Wed, 26 Dec 2018 03:39:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K8uHQBK+p8bWU3jeZO+0SoK4bhEO6ltE34jcIg+t5uo=;
-        b=WuDf89GR2wJXiJJwpmtdF7vCbVk0A6uC5BlyJfIMF8D8mN1LePsVAxC7TN+aFUWb0a
-         SOV5MpqNRnL6vV7zg/ycjoG9fxgWzUKE3qZCl9eqkaOO56WP4eriz2YvWmfk/ZajV0lh
-         caid5TYn6yxjiMmhgjRNGaLmm7y6j3sAEleQpXkuJTLm4jxlp3fM2eW9SkEeV6dcoMGF
-         N6OqsmBIFj2oyDCc0TwW/XKDh7x8M3ECPYX4U3IZxtuo3/vrYKeY9NPclabFwGLRB5Ed
-         /WUVlkWaOHnnd1KOdWkHnNT9vRh60JFcN+fqkisqM+EaXn051LvHTUd3PSqc43V3Z57E
-         iOIw==
-X-Gm-Message-State: AJcUukfoSEnHdfpRuNPJfAYfhrrtdSTf9OX+y2iKKUdwP+uqak3BQ46g
-        BIN9YfAvMHEr3vmD3I0Mmqgxtp0x8Ir8tDMWVRY=
-X-Google-Smtp-Source: ALg8bN6da+emb0AX8yQqL0KJl8G9h8gRNDz/pB+stWFNT7wXe5k9x4ri+lnIdbVAjTEb7L+UCKZq4EslouklsoXDypI=
-X-Received: by 2002:ab0:216:: with SMTP id 22mr7339580uas.28.1545824369729;
- Wed, 26 Dec 2018 03:39:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20181218115931.GA21253@localhost.localdomain>
-In-Reply-To: <20181218115931.GA21253@localhost.localdomain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Dec 2018 12:39:17 +0100
-Message-ID: <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq support
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Wed, 26 Dec 2018 06:44:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=EooV2cAZ15bFoWJtG+86LBUlp1H6fg8CN4reh6/6GJE=; b=kbNjwIWoBUg0dEnH7kW0eb3vz8
+        7Ev07m6xosB65ke+6pQwIip+piqiXGWdQZUdtKhNlmCwORii+lbM3tRFS2vsG8ooyQhs4ZBZbuAVX
+        nugVfZjJTaExLWAQHykhBfyX0CPehKZcUapTe1dCmoDG9Z4vRmdIdr1dowmrZfqpKGwVjnjfo2N3S
+        eCU1XpouPrW2wUTQDxckWZEVhyB/4FOhSHzhAQnhLD2CFKwmIMze8m1N2ofDO6JGE0DVhLTbJl384
+        Vrhzqg9C35FO0M805hzOFOce9/CDxshnHTlA7OBNuS2MJj2ubcG4dVR8GV4NDGyyGOxP+KILg+nOr
+        q15fvb+g==;
+Received: from [179.179.34.18] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gc7bX-00084F-3c; Wed, 26 Dec 2018 11:44:03 +0000
+Date:   Wed, 26 Dec 2018 09:43:57 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jonathan Corbet <corbet@lwn.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [GIT PULL for v4.21] second set of media patches: ipu3 driver
+Message-ID: <20181226094357.293fdd97@coco.lan>
+In-Reply-To: <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
+References: <20181220104544.72ee9203@coco.lan>
+        <CAHk-=wiqS_ShU4th7mKd4kLEXaKKyrnK5FkyJgdy=_=_wy1KGg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matti,
+Em Tue, 25 Dec 2018 13:12:58 -0800
+Linus Torvalds <torvalds@linux-foundation.org> escreveu:
 
-On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
-> Add level active IRQ support to regmap-irq irqchip. Change breaks
-> existing regmap-irq type setting. Convert the existing drivers which
+> On Thu, Dec 20, 2018 at 4:45 AM Mauro Carvalho Chehab
+> <mchehab+samsung@kernel.org> wrote:
+> >
+> > Also, it would be good if you merge first the docs-next pull request from
+> > Jon, as otherwise, you'll see some warnings when building documentation,
+> > due to an issue at scripts/kernel-doc, whose fix is at documentation tree.  
+> 
+> I don't seem to have that in my pile of pull requests, so docs
+> creation will warn for a bit. Not a huge deal.
 
-Indeed it does.
+Yeah, we can live without that for a while. In any case, the patch that
+fixes it is this one:
 
-> use regmap-irq with trigger type setting (gpio-max77620) to work
-> with this new approach. So we do not magically support level-active
-> IRQs on gpio-max77620 - but add support to the regmap-irq for chips
-> which support them =)
->
-> We do not support distinguishing situation where HW supports rising
-> and falling edge detection but not both. Separating this would require
-> inventing yet another flags for IRQ types.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+	3d9bfb19bd70 ("scripts/kernel-doc: Fix struct and struct field attribute processing")
 
-This is now upstream as commit 1c2928e3e3212252 ("regmap:
-regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
-on the Renesas Koelsch board:
+I'm enclosing it as a reference (as seen at Jon's docs-next tree). It is
+probably worth to just wait for Jon's pull request.
 
-    genirq: Setting trigger mode 8 for irq 157 failed
-(regmap_irq_set_type+0x0/0x140)
-    da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
-    da9063-rtc: probe of da9063-rtc failed with error -524
+Thanks,
+Mauro
 
-> ---
->
-> Version 3 of this patch is intended to be functionally identical to v2.
-> This patch is rebased on top of a tree which contains changes:
-> "regmap: irq: handle HW using separate rising/falling edge interrupts"
-> from Bartosz Golaszewski and the change
-> "regmap: regmap-irq: Remove default irq type setting from core"
-> (proposed here):
-> https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
->
-> There should not be direct dependency to "regmap: regmap-irq: Remove
-> default irq type setting from core" though. Patch was also tested to
-> apply cleany on regmap-tree.
->
-> Same statement regarding testing applies - gpio-max77620 are only
-> tested to compile. All real testing would be _HIGHLY_ appreciated.
->
->  drivers/base/regmap/regmap-irq.c | 35 ++++++++++-----
->  drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
->  include/linux/regmap.h           | 27 ++++++++---
->  3 files changed, 110 insertions(+), 48 deletions(-)
->
-> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-> index 8b216b2e2c19..31d23c9a5ae7 100644
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -199,7 +199,7 @@ static void regmap_irq_enable(struct irq_data *data)
->         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
->         unsigned int mask, type;
->
-> -       type = irq_data->type_falling_mask | irq_data->type_rising_mask;
-> +       type = irq_data->type.type_falling_val | irq_data->type.type_rising_val;
->
->         /*
->          * The type_in_mask flag means that the underlying hardware uses
-> @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
->         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
->         struct regmap *map = d->map;
->         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
-> -       int reg = irq_data->type_reg_offset / map->reg_stride;
-> +       int reg;
-> +       const struct regmap_irq_type *t = &irq_data->type;
->
-> -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
-> -               return 0;
-> +       if ((t->types_supported & type) != type)
-> +               return -ENOTSUPP;
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Thu, 22 Nov 2018 13:06:04 +0200
+Subject: [PATCH] scripts/kernel-doc: Fix struct and struct field attribute
+ processing
 
-Given types_supported defaults to zero, I think this breaks every existing
-setup using REGMAP_IRQ_REG().
+The kernel-doc attempts to clear the struct and struct member attributes
+from the API documentation it produces. It falls short of the job in the
+following respects:
 
-Gr{oetje,eeting}s,
+- extra whitespaces are left where __attribute__((...)) was removed,
 
-                        Geert
+- only a single attribute is removed per struct,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- attributes (such as aligned) containing numbers were not removed,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- attributes are only cleared from struct fields, not structs themselves.
+
+This patch addresses these issues by removing the attributes.
+
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index f9f143145c4b..c5333d251985 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1062,7 +1062,7 @@ sub dump_struct($$) {
+     my $x = shift;
+     my $file = shift;
+ 
+-    if ($x =~ /(struct|union)\s+(\w+)\s*\{(.*)\}/) {
++    if ($x =~ /(struct|union)\s+(\w+)\s*\{(.*)\}(\s*(__packed|__aligned|__attribute__\s*\(\([a-z0-9,_\s\(\)]*\)\)))*/) {
+ 	my $decl_type = $1;
+ 	$declaration_name = $2;
+ 	my $members = $3;
+@@ -1073,8 +1073,9 @@ sub dump_struct($$) {
+ 	# strip comments:
+ 	$members =~ s/\/\*.*?\*\///gos;
+ 	# strip attributes
+-	$members =~ s/__attribute__\s*\(\([a-z,_\*\s\(\)]*\)\)//i;
+-	$members =~ s/__aligned\s*\([^;]*\)//gos;
++	$members =~ s/\s*__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)//gi;
++	$members =~ s/\s*__aligned\s*\([^;]*\)//gos;
++	$members =~ s/\s*__packed\s*//gos;
+ 	$members =~ s/\s*CRYPTO_MINALIGN_ATTR//gos;
+ 	# replace DECLARE_BITMAP
+ 	$members =~ s/DECLARE_BITMAP\s*\(([^,)]+),\s*([^,)]+)\)/unsigned long $1\[BITS_TO_LONGS($2)\]/gos;
+
