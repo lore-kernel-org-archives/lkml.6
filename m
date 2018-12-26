@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5436C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1599C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969982171F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BFB8217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 10:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbeLZKAw (ORCPT
+        id S1726829AbeLZKA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 05:00:52 -0500
-Received: from mga09.intel.com ([134.134.136.24]:3425 "EHLO mga09.intel.com"
+        Wed, 26 Dec 2018 05:00:57 -0500
+Received: from mga09.intel.com ([134.134.136.24]:3453 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbeLZKAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 05:00:49 -0500
+        id S1726757AbeLZKAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 05:00:55 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 02:00:49 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 02:00:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,400,1539673200"; 
-   d="scan'208";a="112107116"
+   d="scan'208";a="112107144"
 Received: from devel-ww.sh.intel.com ([10.239.48.119])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Dec 2018 02:00:46 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 26 Dec 2018 02:00:50 -0800
 From:   Wei Wang <wei.w.wang@intel.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
 Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
         like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
         arei.gonglei@huawei.com
-Subject: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
-Date:   Wed, 26 Dec 2018 17:25:32 +0800
-Message-Id: <1545816338-1171-5-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v4 06/10] perf/x86: no counter allocation support
+Date:   Wed, 26 Dec 2018 17:25:34 +0800
+Message-Id: <1545816338-1171-7-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
 References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
@@ -45,238 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lbr stack is architecturally specific, for example, SKX has 32 lbr
-stack entries while HSW has 16 entries, so a HSW guest running on a SKX
-machine may not get accurate perf results. Currently, we forbid the
-guest lbr enabling when the guest and host see different lbr stack
-entries.
+In some cases, an event may be created without needing a counter
+allocation. For example, an lbr event may be created by the host
+only to help save/restore the lbr stack on the vCPU context switching.
+
+This patch adds a "no_counter" attr boolean to let the callers
+explicitly tell the perf core that no counter is needed.
 
 Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/x86/kvm/cpuid.h     |   8 ++++
- arch/x86/kvm/pmu.c       |   8 ++++
- arch/x86/kvm/pmu.h       |   2 +
- arch/x86/kvm/pmu_intel.c | 117 +++++++++++++++++++++++++++++++++++++++++++++++
- arch/x86/kvm/x86.c       |   3 +-
- 5 files changed, 136 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c          | 12 ++++++++++++
+ include/linux/perf_event.h      |  5 +++++
+ include/uapi/linux/perf_event.h |  3 ++-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index 9a327d5..92bdc7d 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -123,6 +123,14 @@ static inline bool guest_cpuid_is_amd(struct kvm_vcpu *vcpu)
- 	return best && best->ebx == X86EMUL_CPUID_VENDOR_AuthenticAMD_ebx;
- }
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 374a197..c09f03b 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -410,6 +410,9 @@ int x86_setup_perfctr(struct perf_event *event)
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	u64 config;
  
-+static inline bool guest_cpuid_is_intel(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_cpuid_entry2 *best;
++	if (is_no_counter_event(event))
++		return 0;
 +
-+	best = kvm_find_cpuid_entry(vcpu, 0, 0);
-+	return best && best->ebx == X86EMUL_CPUID_VENDOR_GenuineIntel_ebx;
-+}
-+
- static inline int guest_cpuid_family(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_cpuid_entry2 *best;
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 58ead7d..b438ffa 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -299,6 +299,14 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
- 	return 0;
- }
+ 	if (!is_sampling_event(event)) {
+ 		hwc->sample_period = x86_pmu.max_period;
+ 		hwc->last_period = hwc->sample_period;
+@@ -1209,6 +1212,12 @@ static int x86_pmu_add(struct perf_event *event, int flags)
+ 	hwc = &event->hw;
  
-+bool kvm_pmu_lbr_enable(struct kvm_vcpu *vcpu)
-+{
-+	if (guest_cpuid_is_intel(vcpu))
-+		return kvm_x86_ops->pmu_ops->lbr_enable(vcpu);
+ 	n0 = cpuc->n_events;
 +
-+	return false;
-+}
-+
- void kvm_pmu_deliver_pmi(struct kvm_vcpu *vcpu)
- {
- 	if (lapic_in_kernel(vcpu))
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index ba8898e..5f3c7a4 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -28,6 +28,7 @@ struct kvm_pmu_ops {
- 	struct kvm_pmc *(*msr_idx_to_pmc)(struct kvm_vcpu *vcpu, unsigned idx);
- 	int (*is_valid_msr_idx)(struct kvm_vcpu *vcpu, unsigned idx);
- 	bool (*is_valid_msr)(struct kvm_vcpu *vcpu, u32 msr);
-+	bool (*lbr_enable)(struct kvm_vcpu *vcpu);
- 	int (*get_msr)(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
- 	int (*set_msr)(struct kvm_vcpu *vcpu, struct msr_data *msr_info);
- 	void (*refresh)(struct kvm_vcpu *vcpu);
-@@ -106,6 +107,7 @@ void reprogram_gp_counter(struct kvm_pmc *pmc, u64 eventsel);
- void reprogram_fixed_counter(struct kvm_pmc *pmc, u8 ctrl, int fixed_idx);
- void reprogram_counter(struct kvm_pmu *pmu, int pmc_idx);
- 
-+bool kvm_pmu_lbr_enable(struct kvm_vcpu *vcpu);
- void kvm_pmu_deliver_pmi(struct kvm_vcpu *vcpu);
- void kvm_pmu_handle_event(struct kvm_vcpu *vcpu);
- int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned pmc, u64 *data);
-diff --git a/arch/x86/kvm/pmu_intel.c b/arch/x86/kvm/pmu_intel.c
-index 5ab4a36..c04cb6d 100644
---- a/arch/x86/kvm/pmu_intel.c
-+++ b/arch/x86/kvm/pmu_intel.c
-@@ -15,6 +15,7 @@
- #include <linux/kvm_host.h>
- #include <linux/perf_event.h>
- #include <asm/perf_event.h>
-+#include <asm/intel-family.h>
- #include "x86.h"
- #include "cpuid.h"
- #include "lapic.h"
-@@ -164,6 +165,121 @@ static bool intel_is_valid_msr(struct kvm_vcpu *vcpu, u32 msr)
- 	return ret;
- }
- 
-+static bool intel_pmu_lbr_enable(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm *kvm = vcpu->kvm;
-+	u8 vcpu_model = guest_cpuid_model(vcpu);
-+	unsigned int vcpu_lbr_nr;
-+
-+	if (x86_perf_get_lbr_stack(&kvm->arch.lbr_stack))
-+		return false;
-+
-+	if (guest_cpuid_family(vcpu) != boot_cpu_data.x86)
-+		return false;
-+
-+	/*
-+	 * It could be possible that people have vcpus of old model run on
-+	 * physcal cpus of newer model, for example a BDW guest on a SKX
-+	 * machine (but not possible to be the other way around).
-+	 * The BDW guest may not get accurate results on a SKX machine as it
-+	 * only reads 16 entries of the lbr stack while there are 32 entries
-+	 * of recordings. So we currently forbid the lbr enabling when the
-+	 * vcpu and physical cpu see different lbr stack entries.
-+	 */
-+	switch (vcpu_model) {
-+	case INTEL_FAM6_CORE2_MEROM:
-+	case INTEL_FAM6_CORE2_MEROM_L:
-+	case INTEL_FAM6_CORE2_PENRYN:
-+	case INTEL_FAM6_CORE2_DUNNINGTON:
-+		/* intel_pmu_lbr_init_core() */
-+		vcpu_lbr_nr = 4;
-+		break;
-+	case INTEL_FAM6_NEHALEM:
-+	case INTEL_FAM6_NEHALEM_EP:
-+	case INTEL_FAM6_NEHALEM_EX:
-+		/* intel_pmu_lbr_init_nhm() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_ATOM_BONNELL:
-+	case INTEL_FAM6_ATOM_BONNELL_MID:
-+	case INTEL_FAM6_ATOM_SALTWELL:
-+	case INTEL_FAM6_ATOM_SALTWELL_MID:
-+	case INTEL_FAM6_ATOM_SALTWELL_TABLET:
-+		/* intel_pmu_lbr_init_atom() */
-+		vcpu_lbr_nr = 8;
-+		break;
-+	case INTEL_FAM6_ATOM_SILVERMONT:
-+	case INTEL_FAM6_ATOM_SILVERMONT_X:
-+	case INTEL_FAM6_ATOM_SILVERMONT_MID:
-+	case INTEL_FAM6_ATOM_AIRMONT:
-+	case INTEL_FAM6_ATOM_AIRMONT_MID:
-+		/* intel_pmu_lbr_init_slm() */
-+		vcpu_lbr_nr = 8;
-+		break;
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GOLDMONT_X:
-+		/* intel_pmu_lbr_init_skl(); */
-+		vcpu_lbr_nr = 32;
-+		break;
-+	case INTEL_FAM6_ATOM_GOLDMONT_PLUS:
-+		/* intel_pmu_lbr_init_skl()*/
-+		vcpu_lbr_nr = 32;
-+		break;
-+	case INTEL_FAM6_WESTMERE:
-+	case INTEL_FAM6_WESTMERE_EP:
-+	case INTEL_FAM6_WESTMERE_EX:
-+		/* intel_pmu_lbr_init_nhm() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_SANDYBRIDGE:
-+	case INTEL_FAM6_SANDYBRIDGE_X:
-+		/* intel_pmu_lbr_init_snb() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_IVYBRIDGE:
-+	case INTEL_FAM6_IVYBRIDGE_X:
-+		/* intel_pmu_lbr_init_snb() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_HASWELL_CORE:
-+	case INTEL_FAM6_HASWELL_X:
-+	case INTEL_FAM6_HASWELL_ULT:
-+	case INTEL_FAM6_HASWELL_GT3E:
-+		/* intel_pmu_lbr_init_hsw() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_BROADWELL_CORE:
-+	case INTEL_FAM6_BROADWELL_XEON_D:
-+	case INTEL_FAM6_BROADWELL_GT3E:
-+	case INTEL_FAM6_BROADWELL_X:
-+		/* intel_pmu_lbr_init_hsw() */
-+		vcpu_lbr_nr = 16;
-+		break;
-+	case INTEL_FAM6_XEON_PHI_KNL:
-+	case INTEL_FAM6_XEON_PHI_KNM:
-+		/* intel_pmu_lbr_init_knl() */
-+		vcpu_lbr_nr = 8;
-+		break;
-+	case INTEL_FAM6_SKYLAKE_MOBILE:
-+	case INTEL_FAM6_SKYLAKE_DESKTOP:
-+	case INTEL_FAM6_SKYLAKE_X:
-+	case INTEL_FAM6_KABYLAKE_MOBILE:
-+	case INTEL_FAM6_KABYLAKE_DESKTOP:
-+		/* intel_pmu_lbr_init_skl() */
-+		vcpu_lbr_nr = 32;
-+		break;
-+	default:
-+		vcpu_lbr_nr = 0;
-+		pr_warn("%s: vcpu model not supported %d\n", __func__,
-+			vcpu_model);
++	if (is_no_counter_event(event)) {
++		n = n0;
++		goto done_collect;
 +	}
 +
-+	if (vcpu_lbr_nr != kvm->arch.lbr_stack.nr)
-+		return false;
+ 	ret = n = collect_events(cpuc, event, false);
+ 	if (ret < 0)
+ 		goto out;
+@@ -1387,6 +1396,9 @@ static void x86_pmu_del(struct perf_event *event, int flags)
+ 	if (cpuc->txn_flags & PERF_PMU_TXN_ADD)
+ 		goto do_del;
+ 
++	if (is_no_counter_event(event))
++		goto do_del;
 +
-+	return true;
+ 	/*
+ 	 * Not a TXN, therefore cleanup properly.
+ 	 */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 53c500f..e58a997 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1009,6 +1009,11 @@ static inline bool is_sampling_event(struct perf_event *event)
+ 	return event->attr.sample_period != 0;
+ }
+ 
++static inline bool is_no_counter_event(struct perf_event *event)
++{
++	return event->attr.no_counter;
 +}
 +
- static int intel_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-@@ -350,6 +466,7 @@ struct kvm_pmu_ops intel_pmu_ops = {
- 	.msr_idx_to_pmc = intel_msr_idx_to_pmc,
- 	.is_valid_msr_idx = intel_is_valid_msr_idx,
- 	.is_valid_msr = intel_is_valid_msr,
-+	.lbr_enable = intel_pmu_lbr_enable,
- 	.get_msr = intel_pmu_get_msr,
- 	.set_msr = intel_pmu_set_msr,
- 	.refresh = intel_pmu_refresh,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 50efee4..02e29fd 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4505,8 +4505,7 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		break;
- 	case KVM_CAP_X86_GUEST_LBR:
- 		r = -EINVAL;
--		if (cap->args[0] &&
--		    x86_perf_get_lbr_stack(&kvm->arch.lbr_stack)) {
-+		if (cap->args[0] && !kvm_pmu_lbr_enable(kvm->vcpus[0])) {
- 			pr_err("Failed to enable the guest lbr feature\n");
- 			break;
- 		}
+ /*
+  * Return 1 for a software event, 0 for a hardware event
+  */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 9de8780..ec97a70 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				no_counter     :  1, /* no counter allocation */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
 -- 
 2.7.4
 
