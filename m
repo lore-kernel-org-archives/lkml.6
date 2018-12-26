@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A481C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FAAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4789B214D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E533214D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545864790;
-	bh=6nHUlWfeEXVwQhqVLHcmGYryfJDQFgTSopZZTMiZ7sM=;
+	s=default; t=1545864805;
+	bh=AKAwVgYCWrmn0jf2dUo/OJhNSsq6Dn+dFmMe6MvOsC0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M3epoq+7oX2qdSrOPMn/BlA87nUQgn/29AbVN2CPh9FPDiNUGMX155cvVo7Ubd5Yu
-	 32Lz3IcVh3ICQoowsfJ03ET3IXZ72+W+TH1/y91BwRnXs8DmkLNUxhuogu7X8FALJ5
-	 eDRhqcxFt6+Bmk9OV3HNZPr76K5C6L5SJLPl8eNA=
+	b=L/Iic0jPL6Q+IfCyrcvqPGyijJheBBKfD1xZ0bXbOWw8ELmg36f5FM2oY7UfnH99B
+	 zTCIHcGTZqdKINp2SX1CsXwrJ/hzv2FNWrquA4GnolVNshX0gTHeIdcnLAjY25HkI+
+	 x/dzg1cXW0ApYGwzBGkOOmFpLtjOLkvOy38PGMi8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbeLZWxJ (ORCPT
+        id S1727829AbeLZWgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:53:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:36:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727899AbeLZWgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:36:49 -0500
+        id S1727750AbeLZWgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31B4F218EA;
-        Wed, 26 Dec 2018 22:36:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2A1218EA;
+        Wed, 26 Dec 2018 22:36:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545863808;
-        bh=6nHUlWfeEXVwQhqVLHcmGYryfJDQFgTSopZZTMiZ7sM=;
+        s=default; t=1545863800;
+        bh=AKAwVgYCWrmn0jf2dUo/OJhNSsq6Dn+dFmMe6MvOsC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pqVTejPHgylmWCK5BtIf/Xk5LJN0hwVxkB6tialysXxT0lR76ouLETXXbBVR9fnjs
-         Fze+NuI6DnX7Ivs6tJ1gv8HTf4XkIMrCLAUsllgLW47kn1BLZjvcsuDYfwSGyzho4l
-         TR9idOf3PD7ZMra88ijzaswq3eo/j1o7LoeWKeD8=
+        b=ZQXyhyyLRsd6/9jvYSHpVCE0iXmoDxoRPnWjkP0AxZy0gScUe2DmfbaokmLlE2/XV
+         tJ3ddN8ZS/WIgIF4LxCDcT8vsh+ZV/0E9+OCPdqTfZbptBdZDJtk7bT0S4EiMvo/1b
+         8u0CTwpyvILrmzLXGusKb0doUW7qC2Yu06n4b6tI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
-        bhe@redhat.com, hans.van.kranenburg@mendix.com, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 31/97] x86/dump_pagetables: Fix LDT remap address marker
-Date:   Wed, 26 Dec 2018 17:34:51 -0500
-Message-Id: <20181226223557.149329-31-sashal@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 27/97] ibmvnic: Fix non-atomic memory allocation in IRQ context
+Date:   Wed, 26 Dec 2018 17:34:47 -0500
+Message-Id: <20181226223557.149329-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226223557.149329-1-sashal@kernel.org>
 References: <20181226223557.149329-1-sashal@kernel.org>
@@ -61,62 +59,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit 254eb5505ca0ca749d3a491fc6668b6c16647a99 ]
+[ Upstream commit 1d1bbc37f89b0559c9e913682f2489d89cfde6b8 ]
 
-The LDT remap placement has been changed. It's now placed before the direct
-mapping in the kernel virtual address space for both paging modes.
+ibmvnic_reset allocated new reset work item objects in a non-atomic
+context. This can be called from a tasklet, generating the output below.
+Allocate work items with the GFP_ATOMIC flag instead.
 
-Change address markers order accordingly.
+BUG: sleeping function called from invalid context at mm/slab.h:421
+in_atomic(): 1, irqs_disabled(): 1, pid: 93, name: kworker/0:2
+INFO: lockdep is turned off.
+irq event stamp: 66049
+hardirqs last  enabled at (66048): [<c000000000122468>] tasklet_action_common.isra.12+0x78/0x1c0
+hardirqs last disabled at (66049): [<c000000000befce8>] _raw_spin_lock_irqsave+0x48/0xf0
+softirqs last  enabled at (66044): [<c000000000a8ac78>] dev_deactivate_queue.constprop.28+0xc8/0x160
+softirqs last disabled at (66045): [<c0000000000306e0>] call_do_softirq+0x14/0x24
+CPU: 0 PID: 93 Comm: kworker/0:2 Kdump: loaded Not tainted 4.20.0-rc6-00001-g1b50a8f03706 #7
+Workqueue: events linkwatch_event
+Call Trace:
+[c0000003fffe7ae0] [c000000000bc83e4] dump_stack+0xe8/0x164 (unreliable)
+[c0000003fffe7b30] [c00000000015ba0c] ___might_sleep+0x2dc/0x320
+[c0000003fffe7bb0] [c000000000391514] kmem_cache_alloc_trace+0x3e4/0x440
+[c0000003fffe7c30] [d000000005b2309c] ibmvnic_reset+0x16c/0x360 [ibmvnic]
+[c0000003fffe7cc0] [d000000005b29834] ibmvnic_tasklet+0x1054/0x2010 [ibmvnic]
+[c0000003fffe7e00] [c0000000001224c8] tasklet_action_common.isra.12+0xd8/0x1c0
+[c0000003fffe7e60] [c000000000bf1238] __do_softirq+0x1a8/0x64c
+[c0000003fffe7f90] [c0000000000306e0] call_do_softirq+0x14/0x24
+[c0000003f3967980] [c00000000001ba50] do_softirq_own_stack+0x60/0xb0
+[c0000003f39679c0] [c0000000001218a8] do_softirq+0xa8/0x100
+[c0000003f39679f0] [c000000000121a74] __local_bh_enable_ip+0x174/0x180
+[c0000003f3967a60] [c000000000bf003c] _raw_spin_unlock_bh+0x5c/0x80
+[c0000003f3967a90] [c000000000a8ac78] dev_deactivate_queue.constprop.28+0xc8/0x160
+[c0000003f3967ad0] [c000000000a8c8b0] dev_deactivate_many+0xd0/0x520
+[c0000003f3967b70] [c000000000a8cd40] dev_deactivate+0x40/0x60
+[c0000003f3967ba0] [c000000000a5e0c4] linkwatch_do_dev+0x74/0xd0
+[c0000003f3967bd0] [c000000000a5e694] __linkwatch_run_queue+0x1a4/0x1f0
+[c0000003f3967c30] [c000000000a5e728] linkwatch_event+0x48/0x60
+[c0000003f3967c50] [c0000000001444e8] process_one_work+0x238/0x710
+[c0000003f3967d20] [c000000000144a48] worker_thread+0x88/0x4e0
+[c0000003f3967db0] [c00000000014e3a8] kthread+0x178/0x1c0
+[c0000003f3967e20] [c00000000000bfd0] ret_from_kernel_thread+0x5c/0x6c
 
-Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: hans.van.kranenburg@mendix.com
-Cc: linux-mm@kvack.org
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20181130202328.65359-3-kirill.shutemov@linux.intel.com
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/dump_pagetables.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 073755c89126..c05a818224bb 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -53,10 +53,10 @@ struct addr_marker {
- enum address_markers_idx {
- 	USER_SPACE_NR = 0,
- 	KERNEL_SPACE_NR,
--	LOW_KERNEL_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	LDT_NR,
- #endif
-+	LOW_KERNEL_NR,
- 	VMALLOC_START_NR,
- 	VMEMMAP_START_NR,
- #ifdef CONFIG_KASAN
-@@ -64,9 +64,6 @@ enum address_markers_idx {
- 	KASAN_SHADOW_END_NR,
- #endif
- 	CPU_ENTRY_AREA_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
--	LDT_NR,
--#endif
- #ifdef CONFIG_X86_ESPFIX64
- 	ESPFIX_START_NR,
- #endif
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 5058bd83bdd6..c8704b1690eb 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -2055,7 +2055,7 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
+ 		}
+ 	}
+ 
+-	rwi = kzalloc(sizeof(*rwi), GFP_KERNEL);
++	rwi = kzalloc(sizeof(*rwi), GFP_ATOMIC);
+ 	if (!rwi) {
+ 		spin_unlock_irqrestore(&adapter->rwi_lock, flags);
+ 		ibmvnic_close(netdev);
 -- 
 2.19.1
 
