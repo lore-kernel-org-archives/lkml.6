@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6324FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36595C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF942070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072002070B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545865098;
-	bh=cgRaQDezgxyggRZb2be2bGN1295kG+KCiQ5vXQxiH7A=;
+	s=default; t=1545865101;
+	bh=y2pTSpCZ8iFSQV7vvXiimMCquqvPXMpv331xLSUgoTs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sIcwkgOyfBmv2eygtyXG44MFXNtYruxaiCokyByqmNncM6lKd6szBsA2mV2ha6Hp3
-	 JEbPbiivfFl13tsx5SS9Jxab4+LY3HzEPF1TT6NadMw9uwIR9dWTXrbKXCLl6XDGXb
-	 IuGMld3TKrJtnwy9OLNklZx1agF3XgwCJm9PZ0LI=
+	b=TD1aGrY+m7vJcS6T2cPeez25s74A0ctdJjDYAFU1cME7+q+e5E1p6UBA6rTuG1E/4
+	 jtZEZwJ3BYTNqsmDroQyTiUv8PHrY6OI6bMJV+hs2t5cTFLxr6Mu77xeXhGLzxgbp7
+	 AujWsDh/G1wA4nT1DucEzqqzmKCSp/OmDeXvmOsk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730469AbeLZW5c (ORCPT
+        id S1730488AbeLZW6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:57:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        Wed, 26 Dec 2018 17:58:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729393AbeLZW5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:57:30 -0500
+        id S1729393AbeLZW5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:57:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19972214D8;
-        Wed, 26 Dec 2018 22:57:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8974321741;
+        Wed, 26 Dec 2018 22:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545865049;
-        bh=cgRaQDezgxyggRZb2be2bGN1295kG+KCiQ5vXQxiH7A=;
+        s=default; t=1545865052;
+        bh=y2pTSpCZ8iFSQV7vvXiimMCquqvPXMpv331xLSUgoTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IIqGN2pjUsEeIzzxMjZOAE9yAhzNukCEBNbikI6/FgFY39HFLfD541VrNwz84lWpN
-         52UCb7A4NAN/8NKWoR1imGsDzw1PH0GV2d/5Vi308QTdXZoN6UNv3iaDRRCEYFK/bi
-         Sj/5pQ5xckBjhir/uErtOMH3C45STQUZfd0OtBVM=
+        b=0P/Uckm7M/0HJpja+8RBnMICXi7sCTDioDZKKU6/Geu+58e/zbzICtTr2weWBUbrO
+         d9rKpb7IvbKGGPku+OlCwcvfgVJBnGo1dClucU7enS9da76VNx2h+y/dKSdxmtgH9D
+         MgaSe+BLU5AK0Z4vjhZepolnW5pZgs89sY3Ovnwc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 15/21] SUNRPC: Fix a race with XPRT_CONNECTING
-Date:   Wed, 26 Dec 2018 17:54:53 -0500
-Message-Id: <20181226225501.151365-15-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>, security@kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 16/21] x86/mtrr: Don't copy uninitialized gentry fields back to userspace
+Date:   Wed, 26 Dec 2018 17:54:54 -0500
+Message-Id: <20181226225501.151365-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181226225501.151365-1-sashal@kernel.org>
 References: <20181226225501.151365-1-sashal@kernel.org>
@@ -58,45 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit cf76785d30712d90185455e752337acdb53d2a5d ]
+[ Upstream commit 32043fa065b51e0b1433e48d118821c71b5cd65d ]
 
-Ensure that we clear XPRT_CONNECTING before releasing the XPRT_LOCK so that
-we don't have races between the (asynchronous) socket setup code and
-tasks in xprt_connect().
+Currently the copy_to_user of data in the gentry struct is copying
+uninitiaized data in field _pad from the stack to userspace.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Tested-by: Chuck Lever <chuck.lever@oracle.com>
+Fix this by explicitly memset'ing gentry to zero, this also will zero any
+compiler added padding fields that may be in struct (currently there are
+none).
+
+Detected by CoverityScan, CID#200783 ("Uninitialized scalar variable")
+
+Fixes: b263b31e8ad6 ("x86, mtrr: Use explicit sizing and padding for the 64-bit ioctls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Cc: security@kernel.org
+Link: https://lkml.kernel.org/r/20181218172956.1440-1-colin.king@canonical.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprtsock.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/mtrr/if.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index c9c0976d3bbb..5047c20f4306 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2200,8 +2200,8 @@ static void xs_udp_setup_socket(struct work_struct *work)
- 	trace_rpc_socket_connect(xprt, sock, 0);
- 	status = 0;
- out:
--	xprt_unlock_connect(xprt, transport);
- 	xprt_clear_connecting(xprt);
-+	xprt_unlock_connect(xprt, transport);
- 	xprt_wake_pending_tasks(xprt, status);
- }
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index d76f13d6d8d6..ec894bf5eeb0 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -173,6 +173,8 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
  
-@@ -2374,8 +2374,8 @@ static void xs_tcp_setup_socket(struct work_struct *work)
- 	}
- 	status = -EAGAIN;
- out:
--	xprt_unlock_connect(xprt, transport);
- 	xprt_clear_connecting(xprt);
-+	xprt_unlock_connect(xprt, transport);
- 	xprt_wake_pending_tasks(xprt, status);
- }
- 
++	memset(&gentry, 0, sizeof(gentry));
++
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
 -- 
 2.19.1
 
