@@ -2,97 +2,198 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B6AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE3AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A1621741
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D77621741
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 05:43:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbeLZFnY (ORCPT
+        id S1726053AbeLZFng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 00:43:24 -0500
-Received: from mout.gmx.net ([212.227.17.22]:45595 "EHLO mout.gmx.net"
+        Wed, 26 Dec 2018 00:43:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:32896 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeLZFnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 00:43:24 -0500
-Received: from [0.0.0.0] ([173.82.105.236]) by mail.gmx.com (mrgmx103
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0M7H2Y-1hXxmc1E6o-00x3bx; Wed, 26
- Dec 2018 06:43:09 +0100
-Subject: Re: [PATCH v2] btrfs: add a check for sysfs_create_group
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181226053744.74740-1-kjlu@umn.edu>
-From:   Su Yue <Damenly_Su@gmx.com>
-Message-ID: <a840f129-9626-9b96-be2c-173b3e9371fe@gmx.com>
-Date:   Wed, 26 Dec 2018 13:51:16 +0800
+        id S1725889AbeLZFnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 00:43:35 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 19245C0528AC;
+        Wed, 26 Dec 2018 05:43:35 +0000 (UTC)
+Received: from [10.72.12.31] (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B33F620D8;
+        Wed, 26 Dec 2018 05:43:29 +0000 (UTC)
+Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jintack Lim <jintack@cs.columbia.edu>
+References: <20181212100819.21295-1-jasowang@redhat.com>
+ <20181212100819.21295-5-jasowang@redhat.com>
+ <20181212092435-mutt-send-email-mst@kernel.org>
+ <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
+ <20181213092930-mutt-send-email-mst@kernel.org>
+ <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
+ <20181214081821-mutt-send-email-mst@kernel.org>
+ <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
+ <20181224123654-mutt-send-email-mst@kernel.org>
+ <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
+ <20181225111716-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
+Date:   Wed, 26 Dec 2018 13:43:26 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181226053744.74740-1-kjlu@umn.edu>
+In-Reply-To: <20181225111716-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:lFxkscyVtjggi+zzSLUrNNsRK3Ab5RvLcpx6PxUoBduz9/rhVZL
- 7u4Vw3Ka88th18D58WFsTc2ecbX1rhbadBGRRXX9lAW3tM/dHfVDB4rNl3lGPwWjWHPFo7A
- g5mPGzflArZLlgbl/VmqH11MwvbwkNWD9C4rAsegHMbWspJ7MWQvmqLmoO1cfEBY834BvpQ
- hw3TkVo4FIpyUersR6xeA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:gIN2HJk2Vao=:rwMS5Id+bqEsK8qGVp4SlN
- nPFheSL1oozGYchouQEUgTLe3EjJtYr/NR9YHRVhjYooc3QLcKPHPnisvggsHafrlMB3RohIO
- 4u7VJVLs7UaTmfw2f1ogxKT8EPhdtRHV+4H/sHcu/21b7aR813iOoBXBGU21J14OGl5X8Fy2o
- edejlBJNNtmFwDDl/ih1Y7WTSRwaQEgoJcBqQ68w524Jqy/hi2HzZTgTSC5f9R1vABP8JhcTE
- 34HIkgsUWuw6ObIdV3Y2ByUfpw/Y3/N5aZBTE0lDqBoVXfWeE+PCEHZf9dHsaf8Tt2Ttwy0Zm
- 3xiiVjbvsm0Z6AYbAg+WkuSu4YCP8+kRDbPKDbIdoK/FG0Ly3X0vfEM4kkSHr3Ry4RxOsj5rw
- x64xN8+PoYLq6GNyhK0Lc7FrG5IJ8FMNOgUffo0iXruHXiq3pcJypHATrUh9LIlPNdiGhKAaO
- FR0HqVUmKLrAcE7E4cWH9LyGx2SqiaKo4FMRN29t+TAH+YaugWpcUx4jbEN5u4Zp/h7nJ+rCz
- LdQYCLQR+RF8VXa8g+c8piNRtCQtv0cI73JoVB38CoHuRrrMsMIJbuPkfP4WfdfbYC+QPxYmB
- fWc+u3TtxRP1fh0+WyABZlKruN0K02qmQIwDud+vxXw7INUvIBS6fk/MrsV5FsIWAzSIZrZ+x
- E+7r+MTGzhA2na/8519e6Tul9NyY0IV1egC++2Bjj842QaVdYXufKRPNrMe/utpTssgRE9BoS
- tAlDW4ZNle1JGvZaaOkAoArR0EjiTop6sT9WMim9EaUow9Ij3X6m0PXOB+zzFt8kx8lzoHqed
- Bb2ojDkswMxxusz1pmdTGz1fgikCKTrp8eP0fVCji6WVTV6vW5X25J6OfDS3TxDJViEsTUyyu
- x06o0W6R1xck7elb2/LPUiTHbjztDJfadjUsB3tI2V6NjtcugpNpa17+UGh65MFiuEMXXdKWf
- YeYX7P6Hubbg93DWjaQe6W40NcvThXlooorBUBHfk4ESxyesbjzaUlUlrkxvAEfpaHPEuCE4a
- NNvSCoqQ8Irs+p4e4nJCwfhp0WENpp+UBXR4VBIYRZ7uRvD5AAKhMpr2S+uUxra4A22MPNulJ
- ww7nytjai0vNoc=
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 26 Dec 2018 05:43:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 2018/12/26 上午12:25, Michael S. Tsirkin wrote:
+> On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
+>> On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
+>>> On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
+>>>> On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
+>>>>> On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
+>>>>>>>> Just to make sure I understand this. It looks to me we should:
+>>>>>>>>
+>>>>>>>> - allow passing GIOVA->GPA through UAPI
+>>>>>>>>
+>>>>>>>> - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
+>>>>>>>> performance
+>>>>>>>>
+>>>>>>>> Is this what you suggest?
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>> Not really. We already have GPA->HVA, so I suggested a flag to pass
+>>>>>>> GIOVA->GPA in the IOTLB.
+>>>>>>>
+>>>>>>> This has advantages for security since a single table needs
+>>>>>>> then to be validated to ensure guest does not corrupt
+>>>>>>> QEMU memory.
+>>>>>>>
+>>>>>> I wonder how much we can gain through this. Currently, qemu IOMMU gives
+>>>>>> GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
+>>>>>> GIOVA->HVA to vhost. It looks no difference to me.
+>>>>>>
+>>>>>> Thanks
+>>>>> The difference is in security not in performance.  Getting a bad HVA
+>>>>> corrupts QEMU memory and it might be guest controlled. Very risky.
+>>>> How can this be controlled by guest? HVA was generated from qemu ram blocks
+>>>> which is totally under the control of qemu memory core instead of guest.
+>>>>
+>>>>
+>>>> Thanks
+>>> It is ultimately under guest influence as guest supplies IOVA->GPA
+>>> translations.  qemu translates GPA->HVA and gives the translated result
+>>> to the kernel.  If it's not buggy and kernel isn't buggy it's all
+>>> fine.
+>>
+>> If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
+>> the point why we even want to try this. Buggy qemu code can crash itself in
+>> many ways.
+>>
+>>
+>>> But that's the approach that was proven not to work in the 20th century.
+>>> In the 21st century we are trying defence in depth approach.
+>>>
+>>> My point is that a single code path that is responsible for
+>>> the HVA translations is better than two.
+>>>
+>> So the difference whether or not use memory table information:
+>>
+>> Current:
+>>
+>> 1) SET_MEM_TABLE: GPA->HVA
+>>
+>> 2) Qemu GIOVA->GPA
+>>
+>> 3) Qemu GPA->HVA
+>>
+>> 4) IOTLB_UPDATE: GIOVA->HVA
+>>
+>> If I understand correctly you want to drop step 3 consider it might be buggy
+>> which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
+>> will ends up:
+>>
+>> 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
+>> do it during device IOTLB lookup).
+>>
+>> 2) Extra bits to enable this capability.
+>>
+>> So this looks need more codes in kernel than what qemu did in userspace.  Is
+>> this really worthwhile?
+>>
+>> Thanks
+> So there are several points I would like to make
+>
+> 1. At the moment without an iommu it is possible to
+>     change GPA-HVA mappings and everything keeps working
+>     because a change in memory tables flushes the rings.
 
-On 12/26/18 1:37 PM, Kangjie Lu wrote:
-> In case sysfs_create_group fails, let's check its return value and
-> issues an error message.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->   fs/btrfs/sysfs.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-> index 3717c864ba23..24ef416e700b 100644
-> --- a/fs/btrfs/sysfs.c
-> +++ b/fs/btrfs/sysfs.c
-> @@ -889,6 +889,8 @@ void btrfs_sysfs_feature_update(struct btrfs_fs_info *fs_info,
->   	 */
->   	sysfs_remove_group(fsid_kobj, &btrfs_feature_attr_group);
->   	ret = sysfs_create_group(fsid_kobj, &btrfs_feature_attr_group);
-> +	if (ret)
-> +		btrfs_err(fs_info, "failed to create btrfs_feature_attr_group.\n");
 
-NIT: ".\n" is unnecessary.
+Interesting, I don't know this before. But when can this happen?
 
----
-Su
->   }
->   
->   static int btrfs_init_debugfs(void)
-> 
+
+>     However I don't see the iotlb cache being invalidated
+>     on that path - did I miss it? If it is not there it's
+>     a related minor bug.
+
+
+It might have a bug. But a question is consider the case without IOMMU. 
+We only update mem table (SET_MEM_TABLE), but not vring address. This 
+looks like a bug as well?
+
+
+>
+> 2. qemu already has a GPA. Discarding it and re-calculating
+>     when logging is on just seems wrong.
+>     However if you would like to *also* keep the HVA in the iotlb
+>     to avoid doing extra translations, that sounds like a
+>     reasonable optimization.
+
+
+Yes, traverse GPA->HVA mapping seems unnecessary.
+
+
+>
+> 3. it also means that the hva->gpa translation only runs
+>     when logging is enabled. That is a rarely excercised
+>     path so any bugs there will not be caught.
+
+
+I wonder maybe some kind of unit-test may help here.
+
+
+>
+> So I really would like us long term to move away from
+> hva->gpa translations, keep them for legacy userspace only
+> but I don't really mind how we do it.
+>
+> How about
+> - a new flag to pass an iotlb with *both* a gpa and hva
+> - for legacy userspace, calculate the gpa on iotlb update
+>    so the device then uses a shared code path
+>
+> what do you think?
+>
+>
+
+I don't object this idea so I can try, just want to figure out why it 
+was a must.
+
+Thanks
+
+
