@@ -2,82 +2,99 @@ Return-Path: <SRS0=2CM+=PD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1445DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05C3C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11AF214AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A88218FE
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Dec 2018 22:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545863763;
+	bh=QWVrVEuD0twwM1dzn+bBLVRA49PR5gI/Sc5OihH+tJE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=b8mBFDuovTi2nHYhV7+q9q1OqYIOPfPsqkcB4nSPsIWV43BSqOl+x9bU7o5bR/R1x
+	 /R7JKd86QTU9pfmQqf61cLDZK78QTDtQsk8+YtN/gX5gdmQS21dGzmslEUwbR6mIJ+
+	 5yQhtjs8CL6CxYmAcMwuyRBGHg+1Xs035U+W0Hwk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeLZWWl (ORCPT
+        id S1726789AbeLZWgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 17:22:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48396 "EHLO mx1.redhat.com"
+        Wed, 26 Dec 2018 17:36:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbeLZWWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 17:22:39 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726138AbeLZWgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 17:36:02 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62F7E155E4;
-        Wed, 26 Dec 2018 22:22:39 +0000 (UTC)
-Received: from redhat.com (ovpn-120-211.rdu2.redhat.com [10.10.120.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 92119608E2;
-        Wed, 26 Dec 2018 22:22:38 +0000 (UTC)
-Date:   Wed, 26 Dec 2018 17:22:36 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hmm: Warn on devres_release failure
-Message-ID: <20181226222236.GA4931@redhat.com>
-References: <20181226180904.8193-1-pakki001@umn.edu>
+        by mail.kernel.org (Postfix) with ESMTPSA id 257C621741;
+        Wed, 26 Dec 2018 22:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545863761;
+        bh=QWVrVEuD0twwM1dzn+bBLVRA49PR5gI/Sc5OihH+tJE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jyydBE6pEb43ePf4zd64jKkd7rowoqRESv3K571SN3Cof20bSFX3ya1TZqka8R+d2
+         D3HV+CdQ6LWTWL0N0es4AdiESY3xii5SmNxyi8nxWvW8fXvGwIx81451E3hoHBi+zO
+         gue2RGkfaD6hgmYsj4RokE6rbAXs24p2NdbALMYA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Corentin Labbe <clabbe@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/97] ARM: dts: sun8i: a83t: bananapi-m3: increase vcc-pd voltage to 3.3V
+Date:   Wed, 26 Dec 2018 17:34:21 -0500
+Message-Id: <20181226223557.149329-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181226180904.8193-1-pakki001@umn.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 26 Dec 2018 22:22:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 12:09:04PM -0600, Aditya Pakki wrote:
-> devres_release can return -ENOENT if the device is not freed. The fix
-> throws a warning consistent with other invocations.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+From: Corentin Labbe <clabbe@baylibre.com>
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+[ Upstream commit 5f8208f557065163f9a8089ea2ea7888f9d96922 ]
 
-> ---
->  mm/hmm.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index 90c34f3d1243..b06e3f092fbf 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -1183,8 +1183,12 @@ static int hmm_devmem_match(struct device *dev, void *data, void *match_data)
->  
->  static void hmm_devmem_pages_remove(struct hmm_devmem *devmem)
->  {
-> -	devres_release(devmem->device, &hmm_devmem_release,
-> -		       &hmm_devmem_match, devmem->resource);
-> +	int rc;
-> +
-> +	rc = devres_release(devmem->device, &hmm_devmem_release,
-> +				&hmm_devmem_match, devmem->resource);
-> +	if (rc)
-> +		WARN_ON(rc);
->  }
->  
->  /*
-> -- 
-> 2.17.1
-> 
+Since commit d7c5f6863550 ("ARM: dts: sun8i: a83t: bananapi-m3: Add
+AXP813 regulator nodes") my BPIM3 no longer works at gigabit speed.
+
+With the default setting, dldo3 is regulated at 2.9v which seems
+sufficient for the PHY but the aforementioned commit drops it to 2.5V
+which is insufficient. Note that this behaviour is random for all BPIM3.
+Some work with 2.5V, but some don't.
+
+Finnaly, someone from Bananapi confirmed that this regulator must be set
+to 3.3V.
+
+Fixes: d7c5f6863550 ("ARM: dts: sun8i: a83t: bananapi-m3: Add AXP813
+		      regulator nodes")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+[wens@csie.org: Reworked commit message]
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index c7ce4158d6c8..f250b20af493 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -309,8 +309,8 @@
+ 
+ &reg_dldo3 {
+ 	regulator-always-on;
+-	regulator-min-microvolt = <2500000>;
+-	regulator-max-microvolt = <2500000>;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
+ 	regulator-name = "vcc-pd";
+ };
+ 
+-- 
+2.19.1
+
