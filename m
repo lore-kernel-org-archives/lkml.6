@@ -2,127 +2,178 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A83EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C829C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070EB218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0402148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:19:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="AQP2qlzv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JT6LCeJz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbeL0UND (ORCPT
+        id S1729718AbeL0US7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:13:03 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:60784 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbeL0UNC (ORCPT
+        Thu, 27 Dec 2018 15:18:59 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42918 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729494AbeL0US7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:13:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tUF3Nc9Cy2Iu7AF/uNSRNI7ASH7L3YuDeGvyAj2YKbA=; b=AQP2qlzvsCbFeNC+yB7i65MAO
-        olJy7Np4GGA7nZvCL5zSEtbVAOG7X/npOHMWEBVKwPHVrbJRFK0EWgeqh4EjnyoDCOd+9uL8Xch8a
-        ptByLVC3mTMRDZJfnmqZmJ84uVqnlTVdMBnaV2txWE8SOUCHLxG54vNuVpW1yVJK0UEa4=;
-Received: from p5dcc3f32.dip0.t-ipconnect.de ([93.204.63.50] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gcc1S-0006RY-Ed; Thu, 27 Dec 2018 21:12:50 +0100
-Date:   Thu, 27 Dec 2018 21:12:22 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        bcousson@baylibre.com, letux-kernel@openphoenux.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181227211222.5996c356@aktux>
-In-Reply-To: <20181204164556.GB6707@atomide.com>
-References: <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
-        <20181130071534.0a6cd455@kemnade.info>
-        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
-        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
-        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
-        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-        <20181130153729.GG53235@atomide.com>
-        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
-        <20181203153910.GA6707@atomide.com>
-        <20181203172246.0e767a16@kemnade.info>
-        <20181204164556.GB6707@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 27 Dec 2018 15:18:59 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so9159118pga.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 12:18:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GYI91X033NSGnZvBjCnNcYSVYclCXDlVA3GrVYN52WE=;
+        b=JT6LCeJzsDqjYqwqIusUOw+5OclRiNrmeisQkl4DNHqadMhxqaBCtvFhiItR2qL5c1
+         ZNcm9y8UxeU5CQ4iptj32xuvbOeYdW+4kq/IV6Ilusr1IjBnqL13Lkn4ia8+77cQXZHd
+         VIQTU6Lv1wHxCXl+cd0AVnzB6syz8JVdYSThA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GYI91X033NSGnZvBjCnNcYSVYclCXDlVA3GrVYN52WE=;
+        b=J8hkn2wrvC44ffOmB3blYNA1pn8B9c/mhiZ16NC//yo5ZAihAgo+RXoFOIux+/9Wrv
+         KOxyrX/4GKRkDjUcD4yKg5wObWS1tWCx1ahtRucdDmb3suOuoTj3StCXyqUsNw5Ssrk5
+         SnCODuoPpukUm9ZlB5/Rb5IESyMYL/lxAFBfLMzV1todhzIK+lS52S/5cC5ZLoTlsvm1
+         20M0aoC4jPLIUwsDt8+VxfRbebihuaXDZq4Ng3m/uiNDUcA8fzHepnrKlXTLnyBUnaaH
+         IWE/69rR+kRA+I2ac5yLr7EK9IXqDImeObUa+3igbibjmfbiL6LxvMPin0WUqB9wZzIv
+         VD7Q==
+X-Gm-Message-State: AA+aEWYJFuJ46hLolT6JwTo7BsCj+C5TmYy3CCw5JtWFbylEuWckYIy9
+        QCk1V15VfR+7qaFgAMr9yjiTjA==
+X-Google-Smtp-Source: AFSGD/XiGGfmU/3etUsizltHcSqH7L6d8qJ68T43Duk8gi9QGDRQdb9Hj4L6izSHEIY5/iAu4ixG6A==
+X-Received: by 2002:aa7:810c:: with SMTP id b12mr25299607pfi.44.1545941938146;
+        Thu, 27 Dec 2018 12:18:58 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id v62sm62071727pfd.163.2018.12.27.12.18.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 12:18:57 -0800 (PST)
+Date:   Thu, 27 Dec 2018 12:18:56 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+Message-ID: <20181227201856.GJ261387@google.com>
+References: <20181227073136.8431-1-bgodavar@codeaurora.org>
+ <20181227073136.8431-2-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TIvixuQ9bzfDR./7PwxIb2L"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181227073136.8431-2-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TIvixuQ9bzfDR./7PwxIb2L
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 27, 2018 at 01:01:31PM +0530, Balakrishna Godavarthi wrote:
+> wcn3990 requires a power pulse to turn ON/OFF along with
+> regulators. Sometimes we are observing the power pulses are sent
+> out with some time delay, due to queuing these commands. This is
+> causing synchronization issues with chip, which intern delay the
+> chip setup or may end up with communication issues.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> Changes in v6:
+>  * added serdev_device_write_flush() in qca_send_power_pulse
+>    instead during the power off pulse.
+> 
+> Changes in v5:
+>  * added serdev_device_write_flush() in qca_power_off().
+> 
+> ---
+>  drivers/bluetooth/hci_qca.c | 38 ++++++++++++++-----------------------
+>  1 file changed, 14 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index f036c8f98ea3..507a2355c758 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  		hci_uart_set_baudrate(hu, speed);
+>  }
+>  
+> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+>  {
+> -	struct hci_uart *hu = hci_get_drvdata(hdev);
+> -	struct qca_data *qca = hu->priv;
+> -	struct sk_buff *skb;
+> +	int ret;
+>  
+>  	/* These power pulses are single byte command which are sent
+>  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+> @@ -1029,19 +1027,17 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>  	 * save power. Disabling hardware flow control is mandatory while
+>  	 * sending power pulses to SoC.
+>  	 */
+> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+> -
+> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> -	if (!skb)
+> -		return -ENOMEM;
+> -
+> +	serdev_device_write_flush(hu->serdev);
+> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
 
-Hi,
+nit: why clutter the code flow by putting the log statement in the
+middle of code that is actually doing something with the serial
+interface?
 
-On Tue, 4 Dec 2018 08:45:57 -0800
-Tony Lindgren <tony@atomide.com> wrote:
+In case you respin anyway I suggest to structure it like this:
 
-> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
-> > On Mon, 3 Dec 2018 07:39:10 -0800
-> > Tony Lindgren <tony@atomide.com> wrote: =20
-> > > The consumer device stays active just fine with PM runtime
-> > > calls. So yes, the problem is keeping a clock controller forced
-> > > active for the period of consumer device reset. Other than
-> > > that typically autoidle can be just kept enabled.
-> > >  =20
-> > Are we still talking about the same problem? Maybe I am losing track
-> > here. Just to make sure.=20
-> > The patch series was about disabling autoidle for devices which cannot
-> > work with it during normal operation. Not during reset or something
-> > like that.=20
-> > Or is the keep-clock-active-during-reset just a requirement for bigger
-> > restructuring ideas? =20
->=20
-> Yeah there are two issues: The fix needed for the issue you brought up,
-> and also how to let a reset driver to block autoidle for reset.
->=20
-Hmm, is this set now waiting for the famous "somebody" fixing all
-the stuff?
-What are currently visible symptoms for the driver not blocking
-autoidle for reset? Maybe I can at least test something there. I have
-also omap5 here.
+  bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
 
-Regards,
-Andreas
+  hci_uart_set_flow_control(hu, true);
+  serdev_device_write_flush(hu->serdev);
+  ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
 
---Sig_/TIvixuQ9bzfDR./7PwxIb2L
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+>  	hci_uart_set_flow_control(hu, true);
+> +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
+> +	if (ret < 0) {
+> +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwlMiYACgkQfb1qx03i
-kySS0xAArFtcBqNv3FgSHyXCkCfojx8xM1WGyVr+paQgNoOZtmThhgTTi1CEgQ4a
-ElAK5Lp7sl1JeYmqIP/XYHBkFDRfavWRIGU1ZggahsP5gmalPZV1k7HtkCGaubua
-5pVvpmNYy4txp7oatJ4FpQJKAiyXqz9u6on4t2uUdOxqDIJWpnP/3EHORjiXzel4
-Ss4P712YS42TsKsCvdwNNXAMNtci1GyDZ0OWYITBgW+bqzIV+qWgaNAX6g2q+1rd
-0lmqTllP2N9KRLQ8dteBYlDQiB2A7GSblynObVnaRWGN/1/gFgbQ87SoSbyaFvXT
-4gmypEeB9Sh/vkg9Jjjxq7gkpV6v3STXIy8Dx7jY0I1/Wtd4KRhJYApOs2xQqZo0
-iOZqSflhm3/np3ldpxkZYb0IEqFHPZzYzfjlmNxYojpJ8qInrMF1sVcvpRFPNh/p
-mIx7bHF37KOmex/+H1GBHWTuAvEitrNHAYT3JdpKxVHfOJX/b7H0OhZXjnQ6Mvvm
-VAqWEBkjueo0wEH4cfMz3yxftEpjAYgBnOb7KLfinc38gS4PQWMEun6YyWTg8Z4E
-SSJvK3BYPXNZT1HLjlhB4W4JtzNtKbIqwJAOBahiK0KgHHNRg3FV+KE9ZdwMxX6O
-T+z8EQLrsdFkS5vM6LNJn7JbgSix33pO9X20xE50sLvCmqEEfrw=
-=5Sng
------END PGP SIGNATURE-----
+nit: especially on 'embedded' devices 'SoC' is typically associated
+with the CPU running Linux, you might want to change it to
+'controller'.
 
---Sig_/TIvixuQ9bzfDR./7PwxIb2L--
+> +			   cmd);
+> +		return ret;
+> +	}
+>  
+> -	skb_put_u8(skb, cmd);
+> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> -
+> -	skb_queue_tail(&qca->txq, skb);
+> -	hci_uart_tx_wakeup(hu);
+> +	serdev_device_wait_until_sent(hu->serdev, 0);
+>  
+>  	/* Wait for 100 uS for SoC to settle down */
+>  	usleep_range(100, 200);
+
+I said earlier the delay here should be enough to ensure that the byte
+gets transferred from a hardware buffer/FIFO to the controller,
+however that didn't take into account that the power pulses are sent
+with a baudrate of 2400. That translates to ~240 bytes/s, hence a
+delay of 5 ms is needed to be on the safe side.
+
+In case you change the delay please also update the comment to make
+clear this is not only time for the BT controller to settle, but also
+to guarantee that the command was actually sent to the controller.
+
+So far it seems no problems have been observed, though this could be
+thanks to the 100 ms delay in qca_wcn3990_init().
+
+Cheers
+
+Matthias
