@@ -2,184 +2,152 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E26C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 10:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817C5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 10:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E92DF214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 10:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF5E214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 10:01:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="shvsJTuV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbeL0KAw (ORCPT
+        id S1730711AbeL0KBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 05:00:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727926AbeL0KAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 05:00:52 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7615BB0824;
-        Thu, 27 Dec 2018 10:00:51 +0000 (UTC)
-Received: from [10.72.12.191] (ovpn-12-191.pek2.redhat.com [10.72.12.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1E81A60C66;
-        Thu, 27 Dec 2018 10:00:38 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20181205225323.12555-1-mst@redhat.com>
- <20181205225323.12555-2-mst@redhat.com>
- <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
- <20181226101528-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
-Date:   Thu, 27 Dec 2018 18:00:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 27 Dec 2018 05:01:33 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44900 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727926AbeL0KBc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 05:01:32 -0500
+Received: from avalon.localnet (unknown [91.182.109.47])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57BF6505;
+        Thu, 27 Dec 2018 11:01:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1545904889;
+        bh=Eefz2uYPZ2y1yUZ5udoBUQlTEx6wN2uNCe/i62ES1cM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=shvsJTuVglyWbQFxqXRTS4ZlbyoKWPohWg/dcNW/1lliFj3X/TqySYAyA2lwdtelK
+         sInrlJDrsQo9q/OqIhMiYFdpme6Ag4C2Cac6VImm17YW5JT1FW5exh1kjMZaQGD1za
+         EtPDP4zxR8OgyMC9yI2ep1Xc9FdKWvFeZHWvntVA=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v1 4/7] drm: remove include of drmP.h from bridge/dw_hdmi.h
+Date:   Thu, 27 Dec 2018 12:02:25 +0200
+Message-ID: <14317533.zFDg2lzPh5@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181226210353.13993-4-sam@ravnborg.org>
+References: <20181226210215.GA27610@ravnborg.org> <20181226210353.13993-4-sam@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <20181226101528-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 27 Dec 2018 10:00:51 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sam,
 
-On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
-> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
->> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
->>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
->>> similar to wifi.  It's worth considering whether something similar to
->>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
->>> benefitial.
->>
->> I've played a similar patch several days before. The tricky part is the mode
->> switching between napi and no napi. We should make sure when the packet is
->> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
->> tracking it through skb->cb.  And deal with the freeze by reset the BQL
->> status. Patch attached.
->>
->> But when testing with vhost-net, I don't very a stable performance,
-> So how about increasing TSQ pacing shift then?
+Thank you for the patch.
+
+On Wednesday, 26 December 2018 23:03:50 EET Sam Ravnborg wrote:
+> Add missing includes in dw_hdmi.h and
+> fix fallout in drivers.
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Archit Taneja <architt@codeaurora.org>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 4 ++++
+>  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c              | 1 +
+>  include/drm/bridge/dw_hdmi.h                        | 5 ++++-
+>  3 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
+> 8f9c8a6b46de..c61ec4caaa84 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+> @@ -8,6 +8,10 @@
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+>   */
+> +
+> +#include <linux/dma-mapping.h>
+> +#include <linux/module.h>
+> +
+>  #include <drm/bridge/dw_hdmi.h>
+> 
+>  #include <sound/hdmi-codec.h>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c index 75490a3e0a2a..f5b07a2e3f59
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> @@ -8,6 +8,7 @@
+>   */
+> 
+>  #include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+
+Nitpicking, _ comes before u.
+
+>  #include <linux/platform_device.h>
+> 
+>  #include <drm/bridge/dw_hdmi.h>
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index ccb5aa8468e0..b0218ee75a65 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -10,7 +10,10 @@
+>  #ifndef __DW_HDMI__
+>  #define __DW_HDMI__
+> 
+> -#include <drm/drmP.h>
+> +#include <linux/platform_device.h>
+
+I think you can replace this with a forward declaration of struct 
+platform_device. You will likely need to handle more fallout.
+
+> +#include <drm/drm_connector.h>
+> +#include <drm/drm_modes.h>
+
+Please add forward definitions for structures used in this file and not 
+defined in the above headers. I'm thinking about struct regmap and struct 
+drm_encoder. They may be defined in headers included from the above three, or 
+from headers included from files including dw_hdmi.h, but we shouldn't rely on 
+that as it may change.
+
+With this fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  struct dw_hdmi;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
 
-I can test this. But changing default TCP value is much more than a 
-virtio-net specific thing.
 
-
->
->> it was
->> probably because we batch the used ring updating so tx interrupt may come
->> randomly. We probably need to implement time bounded coalescing mechanism
->> which could be configured from userspace.
-> I don't think it's reasonable to expect userspace to be that smart ...
-> Why do we need time bounded? used ring is always updated when ring
-> becomes empty.
-
-
-We don't add used when means BQL may not see the consumed packet in 
-time. And the delay varies based on the workload since we count packets 
-not bytes or time before doing the batched updating.
-
-Thanks
-
-
->
->> Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
->> regression on machine without APICv, (haven't found time to test APICv
->> machine). But consider it was for correctness, I think it's acceptable? Then
->> we can do optimization on top?
->>
->>
->> Thanks
->>
->>
->>> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->>> ---
->>>    drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
->>>    1 file changed, 19 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->>> index cecfd77c9f3c..b657bde6b94b 100644
->>> --- a/drivers/net/virtio_net.c
->>> +++ b/drivers/net/virtio_net.c
->>> @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
->>>    	return stats.packets;
->>>    }
->>> -static void free_old_xmit_skbs(struct send_queue *sq)
->>> +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
->>> +			       bool use_napi)
->>>    {
->>>    	struct sk_buff *skb;
->>>    	unsigned int len;
->>> @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
->>>    	if (!packets)
->>>    		return;
->>> +	if (use_napi)
->>> +		netdev_tx_completed_queue(txq, packets, bytes);
->>> +
->>>    	u64_stats_update_begin(&sq->stats.syncp);
->>>    	sq->stats.bytes += bytes;
->>>    	sq->stats.packets += packets;
->>> @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
->>>    		return;
->>>    	if (__netif_tx_trylock(txq)) {
->>> -		free_old_xmit_skbs(sq);
->>> +		free_old_xmit_skbs(sq, txq, true);
->>>    		__netif_tx_unlock(txq);
->>>    	}
->>> @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
->>>    	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
->>>    	__netif_tx_lock(txq, raw_smp_processor_id());
->>> -	free_old_xmit_skbs(sq);
->>> +	free_old_xmit_skbs(sq, txq, true);
->>>    	__netif_tx_unlock(txq);
->>>    	virtqueue_napi_complete(napi, sq->vq, 0);
->>> @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>    	struct send_queue *sq = &vi->sq[qnum];
->>>    	int err;
->>>    	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
->>> -	bool kick = !skb->xmit_more;
->>> +	bool more = skb->xmit_more;
->>>    	bool use_napi = sq->napi.weight;
->>> +	unsigned int bytes = skb->len;
->>> +	bool kick;
->>>    	/* Free up any pending old buffers before queueing new ones. */
->>> -	free_old_xmit_skbs(sq);
->>> +	free_old_xmit_skbs(sq, txq, use_napi);
->>> -	if (use_napi && kick)
->>> +	if (use_napi && !more)
->>>    		virtqueue_enable_cb_delayed(sq->vq);
->>>    	/* timestamp packet in software */
->>> @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>    		if (!use_napi &&
->>>    		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
->>>    			/* More just got used, free them then recheck. */
->>> -			free_old_xmit_skbs(sq);
->>> +			free_old_xmit_skbs(sq, txq, false);
->>>    			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
->>>    				netif_start_subqueue(dev, qnum);
->>>    				virtqueue_disable_cb(sq->vq);
->>> @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->>>    		}
->>>    	}
->>> -	if (kick || netif_xmit_stopped(txq)) {
->>> +	if (use_napi)
->>> +		kick = __netdev_tx_sent_queue(txq, bytes, more);
->>> +	else
->>> +		kick = !more || netif_xmit_stopped(txq);
->>> +
->>> +	if (kick) {
->>>    		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
->>>    			u64_stats_update_begin(&sq->stats.syncp);
->>>    			sq->stats.kicks++;
