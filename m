@@ -2,73 +2,84 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AF7C43613
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF849C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FD3218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7F8218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545871483;
+	bh=ZYmP1T4qhzg6JaQfU9QkfoHFKICYGM776Tmo/B2bYRc=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=GDpeNNrISTV+R7YilN0UTmqRE3ZDNr+nuLLStUF4Qmj2NHJfxJhzHqZ2hmlQvFCMh
+	 vBHG5MmjCAvCYK+6p1rgDkMRhBh+9pyeZrvun2LtmO9ATNY/mYDzkKSw7CYmq+bwbX
+	 kUi5d3rTpgxRBkeqKF+hKV/WfvJj4fG1zSfsAh/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbeL0Ao2 (ORCPT
+        id S1728145AbeL0Aom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 19:44:28 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:33006 "EHLO mxct.zte.com.cn"
+        Wed, 26 Dec 2018 19:44:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727842AbeL0Ao2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 19:44:28 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2F6B128E61222EFC2C8F;
-        Thu, 27 Dec 2018 08:44:26 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wBR0iFFT081323;
-        Thu, 27 Dec 2018 08:44:15 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018122708444218-18985965 ;
-          Thu, 27 Dec 2018 08:44:42 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     christoffer.dall@arm.com, marc.zyngier@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  kvm: arm/arm64 : vgic: remove unneeded semicolon
-Date:   Thu, 27 Dec 2018 09:05:08 +0800
-Message-Id: <1545872708-82583-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-27 08:44:42,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-27 08:44:04,
-        Serialize complete at 2018-12-27 08:44:04
-X-MAIL: mse01.zte.com.cn wBR0iFFT081323
+        id S1727842AbeL0Aol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 19:44:41 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A74B4214D8;
+        Thu, 27 Dec 2018 00:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545871481;
+        bh=ZYmP1T4qhzg6JaQfU9QkfoHFKICYGM776Tmo/B2bYRc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Cnway4Vw8clzYsGLMvLXp5/cMB3Tu4Yzdb5aWAYoqfor5BHyJ4pE/+Jx2FmoJsuKv
+         7Dc/DKwaQWp5eocW13xmjKZJKuWwrgzhDSao4km3ERBtjhCPKq1/bKXQsnJvDJpUqj
+         WNzPeD6SkAoByo+n5uGvCR8lmIkWurgSvSXozEXI=
+Subject: Re: [PATCH V2] SelfTest: KVM: Drop Asserts for madvise
+ MADV_NOHUGEPAGE failure
+To:     Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        Andrew Jones <drjones@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Peter Xu <peterx@redhat.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        shuah <shuah@kernel.org>
+References: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com>
+ <20181116125858.yujwx5xkpg2kgyxe@kamzik.brq.redhat.com>
+ <CANBxJ=EeosO1EOfvQ6OFLps+D9ZQRBKTmByvcJ5r=h-4ahbekQ@mail.gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <218eb42a-ccbd-c454-e6f9-153f66c4478b@kernel.org>
+Date:   Wed, 26 Dec 2018 17:44:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CANBxJ=EeosO1EOfvQ6OFLps+D9ZQRBKTmByvcJ5r=h-4ahbekQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded semicolon in kvm_vgic_hyp_init.
+Hi Paolo,
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- virt/kvm/arm/vgic/vgic-init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/24/18 7:56 AM, Ahmed Soliman wrote:
+> Kind reminder to merge my patch into next
+> 
+> thanks.
+> 
 
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index c0c0b88..3496155 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -510,7 +510,7 @@ int kvm_vgic_hyp_init(void)
- 		break;
- 	default:
- 		ret = -ENODEV;
--	};
-+	}
- 
- 	if (ret)
- 		return ret;
--- 
-1.8.3.1
+I am assuming you will be picking this patch up. Please let me know if 
+you want me to take it through kselftest tree.
+
+thanks,
+-- Shuah
 
