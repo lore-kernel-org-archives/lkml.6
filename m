@@ -2,743 +2,236 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B810C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE14C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED34B2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C3F2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:59:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbeL0L6U convert rfc822-to-8bit (ORCPT
+        id S1730929AbeL0L7U convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 06:58:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:36119 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730221AbeL0L6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 06:58:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43QSyc3Rqzz9sCX;
-        Thu, 27 Dec 2018 22:58:00 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     aik@ozlabs.ru, alex.williamson@redhat.com,
-        alexandre.belloni@bootlin.com, alistair@popple.id.au,
-        andrew.donnellan@au1.ibm.com, andy.tang@nxp.com,
-        aneesh.kumar@linux.ibm.com, arnd@arndb.de,
-        benh@kernel.crashing.org, christophe.leroy@c-s.fr,
-        darren@stevens-zone.net, diana.craciun@nxp.com, dja@axtens.net,
-        elfring@users.sourceforge.net, fbarrat@linux.ibm.com,
-        firoz.khan@linaro.org, geert+renesas@glider.be, groug@kaod.org,
-        hch@lst.de, joel@jms.id.au, ldv@altlinux.org, leitao@debian.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linuxram@us.ibm.com, maddy@linux.vnet.ibm.com,
-        mahesh@linux.vnet.ibm.com, malat@debian.org, oohall@gmail.com,
-        oss@buserror.net, ravi.bangoria@linux.ibm.com, robh@kernel.org,
-        ruscur@russell.cc, sabyasachi.linux@gmail.com,
-        sathnaga@linux.vnet.ibm.com, sboyd@kernel.org,
-        sfr@canb.auug.org.au, tiny.windzz@gmail.com,
-        viresh.kumar@linaro.org, yuehaibing@huawei.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.21-1 tag
-Date:   Thu, 27 Dec 2018 22:58:06 +1100
-Message-ID: <87o997xju9.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
+        Thu, 27 Dec 2018 06:59:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55038 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728213AbeL0L7T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 06:59:19 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBRBtxDr122284
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 06:59:17 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pmv5ucst7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 06:59:17 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 27 Dec 2018 11:59:15 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Dec 2018 11:59:09 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBRBx8uD10224100
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Dec 2018 11:59:08 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F113952051;
+        Thu, 27 Dec 2018 11:59:07 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 858AF5204F;
+        Thu, 27 Dec 2018 11:59:04 +0000 (GMT)
+Subject: Re: [PATCH v37 0/3] Virtio-balloon: support free page reporting
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        akpm@linux-foundation.org, dgilbert@redhat.com
+Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com, quintela@redhat.com,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+References: <1535333539-32420-1-git-send-email-wei.w.wang@intel.com>
+ <0661b05a-d9d0-d374-44e8-2583463e94c2@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 27 Dec 2018 12:59:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+In-Reply-To: <0661b05a-d9d0-d374-44e8-2583463e94c2@de.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122711-0020-0000-0000-000002FCDF1B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122711-0021-0000-0000-0000214D0ECD
+Message-Id: <de167161-b586-6aee-d6a5-a90d47bbe1d4@de.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812270110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 27.12.2018 12:31, Christian Borntraeger wrote:
+> This patch triggers random crashes in the guest kernel on s390 early during boot.
+> No migration and no setting of the balloon is involved.
+> 
 
-Hi Linus,
+Adding Conny and Halil,
 
-Please pull powerpc updates for 4.21:
-
-The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
-
-  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.21-1
-
-for you to fetch changes up to 12526b0d6c580df860b31e59d68e5696e16c6e5b:
-
-  Merge branch 'next' of https://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux into next (2018-12-24 14:14:45 +1100)
+As the QEMU provides no PAGE_HINT feature yet, this quick hack makes the
+guest boot fine again:
 
 
-There are two conflicts I'm aware of.
-
-The first is in arch/powerpc/mm/fault.c, the resolution is to add the 0xe00 case
-to the switch and use the pr_alert() version of the printk.
-
-The other is in arch/powerpc/kernel/iommu.c, where we deleted some code that was
-modified in the iommu tree to use a new accessor.
-
-cheers
-
-- ------------------------------------------------------------------
-powerpc updates for 4.21
-
-Notable changes:
-
- - Mitigations for Spectre v2 on some Freescale (NXP) CPUs.
-
- - A large series adding support for pass-through of Nvidia V100 GPUs to guests
-   on Power9.
-
- - Another large series to enable hardware assistance for TLB table walk on
-   MPC8xx CPUs.
-
- - Some preparatory changes to our DMA code, to make way for further cleanups
-   from Christoph.
-
- - Several fixes for our Transactional Memory handling discovered by fuzzing the
-   signal return path.
-
- - Support for generating our system call table(s) from a text file like other
-   architectures.
-
- - A fix to our page fault handler so that instead of generating a WARN_ON_ONCE,
-   user accesses of kernel addresses instead print a ratelimited and
-   appropriately scary warning.
-
- - A cosmetic change to make our unhandled page fault messages more similar to
-   other arches and also more compact and informative.
-
- - Freescale updates from Scott:
-   "Highlights include elimination of legacy clock bindings use from dts
-    files, an 83xx watchdog handler, fixes to old dts interrupt errors, and
-    some minor cleanup."
-
-And many clean-ups, reworks and minor fixes etc.
-
-Thanks to:
- Alexandre Belloni, Alexey Kardashevskiy, Andrew Donnellan, Aneesh Kumar K.V,
- Arnd Bergmann, Benjamin Herrenschmidt, Breno Leitao, Christian Lamparter,
- Christophe Leroy, Christoph Hellwig, Daniel Axtens, Darren Stevens, David
- Gibson, Diana Craciun, Dmitry V. Levin, Firoz Khan, Geert Uytterhoeven, Greg
- Kurz, Gustavo Romero, Hari Bathini, Joel Stanley, Kees Cook, Madhavan
- Srinivasan, Mahesh Salgaonkar, Markus Elfring, Mathieu Malaterre, Michal
- Suchánek, Naveen N. Rao, Nick Desaulniers, Oliver O'Halloran, Paul Mackerras,
- Ram Pai, Ravi Bangoria, Rob Herring, Russell Currey, Sabyasachi Gupta, Sam
- Bobroff, Satheesh Rajendran, Scott Wood, Segher Boessenkool, Stephen Rothwell,
- Tang Yuantian, Thiago Jung Bauermann, Yangtao Li, Yuantian Tang, Yue Haibing.
-
-- ------------------------------------------------------------------
-Alexandre Belloni (2):
-      powerpc/fsl-rio: fix spelling mistake "reserverd" -> "reserved"
-      powerpc/fsl-rio: fix spelling mistake "reserverd" -> "reserved"
-
-Alexey Kardashevskiy (26):
-      powerpc/powernv/ioda: Allocate indirect TCE levels of cached userspace addresses on demand
-      powerpc/powernv/npu: Remove unused headers and a macro.
-      vfio/spapr_tce: Get rid of possible infinite loop
-      powerpc/powernv/ioda1: Remove dead code for a single device PE
-      powerpc/powernv/ioda: Reduce a number of hooks in pnv_phb
-      powerpc/powernv/eeh/npu: Fix uninitialized variables in opal_pci_eeh_freeze_status
-      powerpc/ioda/npu: Call skiboot's hot reset hook when disabling NPU2
-      powerpc/mm/iommu/vfio_spapr_tce: Change mm_iommu_get to reference a region
-      powerpc/vfio/iommu/kvm: Do not pin device memory
-      powerpc/powernv: Move npu struct from pnv_phb to pci_controller
-      powerpc/powernv/npu: Move OPAL calls away from context manipulation
-      powerpc/pseries/iommu: Use memory@ nodes in max RAM address calculation
-      powerpc/pseries/npu: Enable platform support
-      powerpc/pseries: Remove IOMMU API support for non-LPAR systems
-      powerpc/powernv/pseries: Rework device adding to IOMMU groups
-      powerpc/iommu_api: Move IOMMU groups setup to a single place
-      powerpc/powernv: Reference iommu_table while it is linked to a group
-      powerpc/powernv/npu: Move single TVE handling to NPU PE
-      powerpc/powernv/npu: Convert NPU IOMMU helpers to iommu_table_group_ops
-      powerpc/powernv/npu: Add compound IOMMU groups
-      powerpc/powernv/npu: Add release_ownership hook
-      powerpc/powernv/npu: Check mmio_atsd array bounds when populating
-      powerpc/powernv/npu: Fault user page into the hypervisor's pagetable
-      vfio_pci: Allow mapping extra regions
-      vfio_pci: Allow regions to add own capabilities
-      vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver
-
-Aneesh Kumar K.V (1):
-      powerpc/mm/hash: Handle user access of kernel address gracefully
-
-Arnd Bergmann (1):
-      powerpc: eeh_event: convert semaphore to completion
-
-Benjamin Herrenschmidt (2):
-      powerpc/44x/bamboo: Fix PCI range
-      powerpc: Fix HMIs on big-endian with CONFIG_RELOCATABLE=y
-
-Breno Leitao (20):
-      powerpc/64s: Include cpu header
-      powerpc/eeh: Declare pci_ers_result_name() as static
-      powerpc/xive: Define xive_do_source_eoi as static
-      powerpc/xmon: Define static functions
-      powerpc/lib: Declare static methods
-      powerpc/scom: Return NULL instead of 0
-      powerpc/perf: Declare static identifier a such
-      powerpc/pkey: Define functions as static
-      powerpc/mm: Remove extern from function definition
-      selftests/powerpc: Allocate base registers
-      selftests/powerpc: Create a new SKIP_IF macro
-      selftests/powerpc: Skip test instead of failing
-      powerpc/xmon: Fix invocation inside lock region
-      powerpc/pseries/cpuidle: Fix preempt warning
-      powerpc/mm: remove unused function prototype
-      powerpc/tm: Set MSR[TS] just prior to recheckpoint
-      powerpc/tm: Save MSR to PACA before RFID
-      powerpc/tm: Print scratch value
-      powerpc/tm: Unset MSR[TS] if not recheckpointing
-      selftests/powerpc: Add checks for transactional sigreturn
-
-Christoph Hellwig (10):
-      powerpc: allow NOT_COHERENT_CACHE for amigaone
-      powerpc/dma: properly wire up the unmap_page and unmap_sg methods
-      crypto4xx_core: don't abuse __dma_sync_page
-      powerpc/dma: remove the unused ARCH_HAS_DMA_MMAP_COHERENT define
-      powerpc/dma: remove the unused ISA_DMA_THRESHOLD export
-      powerpc/dma: remove the unused dma_iommu_ops export
-      powerpc/dma: split the two __dma_alloc_coherent implementations
-      cxl: drop the dma_set_mask callback from vphb
-      powerpc: use mm zones more sensibly
-      powerpc/fsl_pci: simplify fsl_pci_dma_set_mask
-
-Christophe Leroy (55):
-      drivers/cpufreq: change CONFIG_6xx to CONFIG_PPC_BOOK3S_32
-      powerpc: change CONFIG_6xx to CONFIG_PPC_BOOK3S_32
-      powerpc/kconfig: remove CONFIG_6xx
-      powerpc/32: Remove #ifdef CONFIG_PPC_STD_MMU_32 in asm/book3s/32/pgtable.h
-      powerpc: change CONFIG_PPC_STD_MMU_32 to CONFIG_PPC_BOOK3S_32
-      powerpc: change CONFIG_PPC_STD_MMU to CONFIG_PPC_BOOK3S
-      powerpc/kconfig: remove PPC_STD_MMU_32 and PPC_STD_MMU
-      powerpc/book3s32: Remove CONFIG_BOOKE dependent code
-      powerpc/8xx: Remove PTE_ATOMIC_UPDATES
-      powerpc/mm: Move pte_fragment_alloc() to a common location
-      powerpc/mm: Avoid useless lock with single page fragments
-      powerpc/mm: move platform specific mmu-xxx.h in platform directories
-      powerpc/mm: Move pgtable_t into platform headers
-      powerpc/mm: add helpers to get/set mm.context->pte_frag
-      powerpc/mm: Extend pte_fragment functionality to PPC32
-      powerpc/mm: enable the use of page table cache of order 0
-      powerpc/mm: replace hugetlb_cache by PGT_CACHE(PTE_T_ORDER)
-      powerpc/mm: fix a warning when a cache is common to PGD and hugepages
-      powerpc/mm: remove unnecessary test in pgtable_cache_init()
-      powerpc/8xx: Move SW perf counters in first 32kb of memory
-      powerpc/8xx: Temporarily disable 16k pages and hugepages
-      powerpc/8xx: Use hardware assistance in TLB handlers
-      powerpc/8xx: Enable 8M hugepage support with HW assistance
-      powerpc/8xx: Enable 512k hugepage support with HW assistance
-      powerpc/8xx: reintroduce 16K pages with HW assistance
-      powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 in TLB Miss handlers
-      powerpc/8xx: regroup TLB handler routines
-      powerpc/mm: dump segment registers on book3s/32
-      powerpc/mm: dump block address translation on book3s/32
-      lib: fix build failure in CONFIG_DEBUG_VIRTUAL test
-      powerpc: implement CONFIG_DEBUG_VIRTUAL
-      powerpc/mm: remove unused variable
-      powerpc: simplify patch_instruction_site() and patch_branch_site()
-      powerpc: add modify_instruction() and modify_instruction_site()
-      powerpc/32: use patch_site_addr() in machine_init()
-      powerpc/book3s/32: Use MMU_FTR_HPTE_TABLE in head_32.S
-      powerpc/book3s/32: Use patch_site to patch hash functions
-      powerpc/8xx: use modify_instruction_site()
-      powerpc/signal: Use code patching instead of hardcoding
-      powerpc/44x: use patch_sites for TLB handlers patching
-      powerpc/smp: Use code patching to restore reset vector
-      powerpc/mm: Eliminate not possible mmu features at compile time
-      powerpc/book3s/32: fix number of bats in p/v_block_mapped()
-      powerpc/8xx: add exception frame marker
-      powerpc/xmon: fix dump_segments()
-      powerpc: remove remaining bits from CONFIG_APUS
-      powerpc/uaccess: fix warning/error with access_ok()
-      powerpc/mm: define an empty slice_init_new_context_exec()
-      powerpc/mm: add exec protection on powerpc 603
-      powerpc/prom: fix early DEBUG messages
-      powerpc/mm: Make NULL pointer deferences explicit on bad page faults.
-      powerpc/prom: move the device tree if not in declared memory.
-      powerpc/8xx: Allow pinning IMMR TLB when using early debug console
-      powerpc/mm: Fix reporting of kernel execute faults on the 8xx
-      powerpc/83xx: handle machine check caused by watchdog timer
-
-Daniel Axtens (1):
-      powerpc: mark 64-bit PD_HUGE constant as unsigned long
-
-Darren Stevens (4):
-      powerpc/pasemi: Add PCI initialisation for Nemo board.
-      powerpc/pasemi: Add Nemo board IRQ initroutine
-      powerpc/pasemi: Add Nemo board device init code.
-      powerpc/pasemi: Add Nemo board IRQ initroutine
-
-Diana Craciun (11):
-      powerpc/fsl: Add infrastructure to fixup branch predictor flush
-      powerpc/fsl: Add macro to flush the branch predictor
-      powerpc/fsl: Fix spectre_v2 mitigations reporting
-      powerpc/fsl: Emulate SPRN_BUCSR register
-      powerpc/fsl: Add nospectre_v2 command line argument
-      powerpc/fsl: Flush the branch predictor at each kernel entry (64bit)
-      powerpc/fsl: Flush the branch predictor at each kernel entry (32 bit)
-      powerpc/fsl: Flush branch predictor when entering KVM
-      powerpc/fsl: Enable runtime patching if nospectre_v2 boot arg is used
-      powerpc/fsl: Update Spectre v2 reporting
-      powerpc/fsl: Add FSL_PPC_BOOK3E as supported arch for nospectre_v2 boot arg
-
-Dmitry V. Levin (1):
-      powerpc/ptrace: Combine SYSCALL_EMU & SYSCALL_TRACE handling
-
-Firoz Khan (5):
-      powerpc: add __NR_syscalls along with NR_syscalls
-      powerpc: move macro definition from asm/systbl.h
-      powerpc: split compat syscall table out from native table
-      powerpc: add system call table generation support
-      powerpc: generate uapi header and system call table files
-
-Geert Uytterhoeven (1):
-      powerpc: Typo s/use use/use/
-
-Greg Kurz (4):
-      ocxl: Fix endiannes bug in ocxl_link_update_pe()
-      ocxl: Clarify error path in setup_xsl_irq()
-      ocxl/afu_irq: Don't include <asm/pnv-ocxl.h>
-      ocxl: Fix endiannes bug in read_afu_name()
-
-Joel Stanley (3):
-      powerpc/math-emu: Update macros from GCC
-      raid6/ppc: Fix build for clang
-      powerpc/32: Avoid unsupported flags with clang
-
-Madhavan Srinivasan (6):
-      powerpc/perf: Fix thresholding counter data for unknown type
-      powerpc/perf: Update perf_regs structure to include SIER
-      powerpc/perf: Cleanup cache_sel bits comment
-      powerpc/perf: Fix unit_sel/cache_sel checks
-      powerpc/perf: Add constraints for power9 l2/l3 bus events
-      powerpc/perf: Remove l2 bus events from HW cache event array
-
-Mahesh Salgaonkar (4):
-      powerpc/powernv: Move opal_power_control_init() call in opal_init().
-      powerpc/fadump: Reservationless firmware assisted dump
-      powerpc/fadump: Throw proper error message on fadump registration failure
-      powerpc/fadump: Do not allow hot-remove memory from fadump reserved area.
-
-Markus Elfring (4):
-      powerpc/4xx: Combine four seq_printf() calls into two in ocm_debugfs_show()
-      powerpc/4xx: Use seq_putc() in ocm_debugfs_show()
-      powerpc/4xx: Delete error message for a ENOMEM in two functions
-      powerpc/4xx: Delete an unnecessary return statement in two functions
-
-Mathieu Malaterre (3):
-      powerpc/32: Add .data..Lubsan_data*/.data..Lubsan_type* sections explicitly
-      powerpc/mm: remove const type qualifier from function ‘pud_pfn’
-      powerpc/32: Move the old 6xx -mcpu logic before the TARGET_CPU logic
-
-Michael Ellerman (10):
-      Merge branch 'fixes' into next
-      powerpc/configs: Remove unnecessary ftrace symbols
-      powerpc/configs: Update ppc64_defconfig with savedefconfig
-      Merge branch 'fixes' into next
-      powerpc/ipic: Remove unused ipic_set_priority()
-      powerpc/configs: Don't enable PPC_EARLY_DEBUG in defconfigs
-      powerpc: Add some documentation of ISA versions
-      powerpc/pseries: Fix node leak in update_lmb_associativity_index()
-      powerpc/mm: Remove very old comment in hash-4k.h
-      Merge branch 'next' of https://git.kernel.org/.../scottwood/linux into next
-
-Oliver O'Halloran (2):
-      powerpc/powernv: Remove PCI_MSI ifdef checks
-      powerpc/zImage: Also check for stdout-path
-
-Ram Pai (1):
-      powerpc/pkeys: Fix handling of pkey state across fork()
-
-Ravi Bangoria (1):
-      Powerpc/perf: Wire up PMI throttling
-
-Rob Herring (9):
-      powerpc: Rework btext_find_display to use of_stdout and device_type helpers
-      powerpc: Use device_type helpers to access the node type
-      macintosh: windfarm: Another convert to using %pOFn instead of device_node.name
-      macintosh: Use device_type helpers to access the node type
-      cxl: Use device_type helpers to access the node type
-      powerpc/pseries/pmem: Convert to %pOFn instead of device_node.name
-      powerpc: Use of_node_name_eq for node name comparisons
-      ide: Use of_node_name_eq for node name comparisons
-      macintosh: Use of_node_name_{eq, prefix} for node name comparisons
-
-Russell Currey (1):
-      powerpc/tools/checkpatch: Ignore DT_SPLIT_BINDING_PATCH
-
-Sabyasachi Gupta (2):
-      powerpc/pasemi: Use dma_zalloc_coherent()
-      arch/powerpc/fsl_rmu: Use dma_zalloc_coherent
-
-Satheesh Rajendran (3):
-      powerpc/configs: Add CONFIG_NR_CPUS to ppc64_defconfig
-      powerpc/configs: Add missing config symbols for ppc64_defconfig
-      powerpc/configs: Add KVM guest defconfig
-
-Scott Wood (4):
-      powerpc/fsl: Use new clockgen binding
-      powerpc/dts/fsl: Fix dtc-flagged interrupt errors
-      powerpc/configs/85xx: Enable CONFIG_DEBUG_KERNEL
-      Revert "powerpc/fsl_pci: simplify fsl_pci_dma_set_mask"
-
-Stephen Rothwell (1):
-      powerpc: annotate implicit fall throughs
-
-Yangtao Li (2):
-      powerpc/powernv/vas: Use DEFINE_SHOW_ATTRIBUTE macro
-      powerpc/fadump: Change to use DEFINE_SHOW_ATTRIBUTE macro
-
-Yuantian Tang (1):
-      clk: qoriq: add more compatibles strings
-
-Yue Haibing (1):
-      powerpc/85xx: Drop pointless static qualifier
-
-YueHaibing (2):
-      powerpc64/ftrace: Drop pointless static qualifier in is_b_op()
-      powerpc/eeh: Fix debugfs_simple_attr.cocci warnings
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 728ecd1eea305..aa2e1864c5736 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -492,7 +492,7 @@ static int init_vqs(struct virtio_balloon *vb)
+                callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+        }
+ 
+-       err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
++       err = vb->vdev->config->find_vqs(vb->vdev, 3, //VIRTIO_BALLOON_VQ_MAX,
+                                         vqs, callbacks, names, NULL, NULL);
+        if (err)
+                return err;
 
 
- Documentation/admin-guide/kernel-parameters.txt    |   2 +-
- .../devicetree/bindings/clock/qoriq-clock.txt      |   6 +
- Documentation/powerpc/firmware-assisted-dump.txt   |  17 +-
- Documentation/powerpc/isa-versions.rst             |  74 +++
- arch/powerpc/Kconfig                               |  15 +-
- arch/powerpc/Makefile                              |  28 +-
- arch/powerpc/boot/dts/bamboo.dts                   |   4 +-
- arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi         |   4 +-
- arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/b4si-post.dtsi           |  15 -
- arch/powerpc/boot/dts/fsl/mpc8641_hpcn.dts         | 128 ++---
- arch/powerpc/boot/dts/fsl/mpc8641_hpcn_36b.dts     | 128 ++---
- arch/powerpc/boot/dts/fsl/mpc8641si-post.dtsi      |   2 +
- arch/powerpc/boot/dts/fsl/p1020rdb-pc.dtsi         |   4 +-
- arch/powerpc/boot/dts/fsl/p2041si-post.dtsi        |  18 -
- arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/p3041si-post.dtsi        |  18 -
- arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/p4080si-post.dtsi        |  70 ---
- arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi         |  16 +-
- arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi         |   4 +-
- arch/powerpc/boot/dts/fsl/p5040si-post.dtsi        |  18 -
- arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi     |  47 --
- arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi     |  30 --
- arch/powerpc/boot/dts/fsl/t1023si-post.dtsi        |  16 -
- arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi         |   4 +-
- arch/powerpc/boot/dts/fsl/t1040si-post.dtsi        |  44 --
- arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/t2081si-post.dtsi        |  22 -
- arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi         |   8 +-
- arch/powerpc/boot/dts/fsl/t4240si-post.dtsi        |  61 ---
- arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi         |  24 +-
- arch/powerpc/boot/dts/mpc832x_rdb.dts              |   4 -
- arch/powerpc/boot/serial.c                         |   3 +-
- arch/powerpc/configs/fsl-emb-nonhw.config          |   1 +
- arch/powerpc/configs/g5_defconfig                  |   1 -
- arch/powerpc/configs/guest.config                  |  13 +
- arch/powerpc/configs/maple_defconfig               |   1 -
- arch/powerpc/configs/pmac32_defconfig              |   1 -
- arch/powerpc/configs/ppc64_defconfig               |  81 +--
- arch/powerpc/configs/ppc6xx_defconfig              |   1 -
- arch/powerpc/configs/pseries_defconfig             |   2 -
- arch/powerpc/include/asm/Kbuild                    |   4 +
- arch/powerpc/include/asm/asm-prototypes.h          |   1 -
- arch/powerpc/include/asm/book3s/32/hash.h          |   1 +
- arch/powerpc/include/asm/book3s/32/mmu-hash.h      |  15 +
- arch/powerpc/include/asm/book3s/32/pgalloc.h       |  40 +-
- arch/powerpc/include/asm/book3s/32/pgtable.h       |  46 +-
- arch/powerpc/include/asm/book3s/64/hash-4k.h       |   6 +-
- arch/powerpc/include/asm/book3s/64/mmu.h           |   9 +
- arch/powerpc/include/asm/book3s/64/pgalloc.h       |   6 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h       |   2 +-
- arch/powerpc/include/asm/cache.h                   |   2 +-
- arch/powerpc/include/asm/code-patching.h           |  23 +-
- arch/powerpc/include/asm/cputable.h                |   9 +-
- arch/powerpc/include/asm/dma-mapping.h             |   7 -
- arch/powerpc/include/asm/fadump.h                  |   7 +-
- arch/powerpc/include/asm/feature-fixups.h          |  12 +
- arch/powerpc/include/asm/hugetlb.h                 |  15 +-
- arch/powerpc/include/asm/io.h                      |  13 +-
- arch/powerpc/include/asm/iommu.h                   |  17 +-
- arch/powerpc/include/asm/ipic.h                    |   1 -
- arch/powerpc/include/asm/mmu.h                     |  49 +-
- arch/powerpc/include/asm/mmu_context.h             |  32 +-
- arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h |   0
- arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h |   3 +
- arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h |   4 +
- arch/powerpc/include/asm/nohash/32/mmu.h           |  25 +
- arch/powerpc/include/asm/nohash/32/pgalloc.h       |  27 +-
- arch/powerpc/include/asm/nohash/32/pgtable.h       |  15 +-
- arch/powerpc/include/asm/nohash/32/pte-40x.h       |   2 +-
- arch/powerpc/include/asm/nohash/32/pte-8xx.h       |   3 -
- arch/powerpc/include/asm/nohash/64/mmu.h           |  12 +
- arch/powerpc/include/asm/nohash/64/pgalloc.h       |   5 +-
- arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h |   0
- arch/powerpc/include/asm/nohash/mmu.h              |  11 +
- arch/powerpc/include/asm/nohash/pgtable.h          |   4 +
- arch/powerpc/include/asm/opal.h                    |   1 +
- arch/powerpc/include/asm/page.h                    |  18 +-
- arch/powerpc/include/asm/page_32.h                 |   3 +-
- arch/powerpc/include/asm/pci-bridge.h              |   1 +
- arch/powerpc/include/asm/pci.h                     |   4 +
- arch/powerpc/include/asm/perf_event.h              |   3 +
- arch/powerpc/include/asm/perf_event_server.h       |   2 +
- arch/powerpc/include/asm/pgtable-types.h           |   4 +
- arch/powerpc/include/asm/pgtable.h                 |  32 +-
- arch/powerpc/include/asm/ppc-opcode.h              |   1 +
- arch/powerpc/include/asm/ppc_asm.h                 |  29 +-
- arch/powerpc/include/asm/reg.h                     |   4 +-
- arch/powerpc/include/asm/setup.h                   |   7 +
- arch/powerpc/include/asm/sfp-machine.h             |  92 ++--
- arch/powerpc/include/asm/slice.h                   |  14 +-
- arch/powerpc/include/asm/syscall.h                 |   3 +-
- arch/powerpc/include/asm/systbl.h                  | 396 ---------------
- arch/powerpc/include/asm/time.h                    |   2 +-
- arch/powerpc/include/asm/tlb.h                     |   2 +-
- arch/powerpc/include/asm/uaccess.h                 |   2 +-
- arch/powerpc/include/asm/unistd.h                  |   3 +-
- arch/powerpc/include/uapi/asm/Kbuild               |   2 +
- arch/powerpc/include/uapi/asm/perf_regs.h          |   1 +
- arch/powerpc/include/uapi/asm/unistd.h             | 389 +-------------
- arch/powerpc/kernel/Makefile                       |  12 +-
- arch/powerpc/kernel/btext.c                        |  16 +-
- arch/powerpc/kernel/cacheinfo.c                    |   2 +-
- arch/powerpc/kernel/cpu_setup_6xx.S                |   2 +-
- arch/powerpc/kernel/cpu_setup_fsl_booke.S          |   2 +-
- arch/powerpc/kernel/cputable.c                     |  10 +-
- arch/powerpc/kernel/dma-iommu.c                    |   2 -
- arch/powerpc/kernel/dma-swiotlb.c                  |   6 +-
- arch/powerpc/kernel/dma.c                          |  31 +-
- arch/powerpc/kernel/eeh.c                          |  20 +-
- arch/powerpc/kernel/eeh_driver.c                   |   2 +-
- arch/powerpc/kernel/eeh_event.c                    |   9 +-
- arch/powerpc/kernel/entry_32.S                     |  10 +-
- arch/powerpc/kernel/entry_64.S                     |  16 +-
- arch/powerpc/kernel/exceptions-64e.S               |  26 +-
- arch/powerpc/kernel/exceptions-64s.S               |   2 +-
- arch/powerpc/kernel/fadump.c                       | 154 +++++-
- arch/powerpc/kernel/head_32.S                      |  20 +-
- arch/powerpc/kernel/head_44x.S                     |  11 +-
- arch/powerpc/kernel/head_8xx.S                     | 369 +++++---------
- arch/powerpc/kernel/head_booke.h                   |   6 +
- arch/powerpc/kernel/head_fsl_booke.S               |  15 +
- arch/powerpc/kernel/iommu.c                        |  69 +--
- arch/powerpc/kernel/isa-bridge.c                   |   3 +-
- arch/powerpc/kernel/legacy_serial.c                |  10 +-
- arch/powerpc/kernel/misc_32.S                      |   4 +-
- arch/powerpc/kernel/nvram_64.c                     |   1 +
- arch/powerpc/kernel/pci_of_scan.c                  |  11 +-
- arch/powerpc/kernel/pmc.c                          |   2 +-
- arch/powerpc/kernel/prom.c                         |  10 +-
- arch/powerpc/kernel/ptrace.c                       |  54 +-
- arch/powerpc/kernel/security.c                     |  29 +-
- arch/powerpc/kernel/setup-common.c                 |   7 +-
- arch/powerpc/kernel/setup_32.c                     |   6 +-
- arch/powerpc/kernel/signal_32.c                    |  50 +-
- arch/powerpc/kernel/signal_64.c                    |  71 ++-
- arch/powerpc/kernel/syscalls/Makefile              |  63 +++
- arch/powerpc/kernel/syscalls/syscall.tbl           | 427 ++++++++++++++++
- arch/powerpc/kernel/syscalls/syscallhdr.sh         |  37 ++
- arch/powerpc/kernel/syscalls/syscalltbl.sh         |  36 ++
- arch/powerpc/kernel/sysfs.c                        |   2 +-
- arch/powerpc/kernel/systbl.S                       |  40 +-
- arch/powerpc/kernel/systbl_chk.c                   |  60 ---
- arch/powerpc/kernel/trace/ftrace.c                 |   2 +-
- arch/powerpc/kernel/traps.c                        |   3 +-
- arch/powerpc/kernel/vdso.c                         |   7 +-
- arch/powerpc/kernel/vmlinux.lds.S                  |  18 +-
- arch/powerpc/kvm/book3s_64_vio.c                   |  18 +-
- arch/powerpc/kvm/bookehv_interrupts.S              |   4 +
- arch/powerpc/kvm/e500.h                            |   2 +-
- arch/powerpc/kvm/e500_emulate.c                    |   7 +
- arch/powerpc/lib/code-patching.c                   |  16 -
- arch/powerpc/lib/feature-fixups.c                  |  27 +-
- arch/powerpc/mm/44x_mmu.c                          |  14 +-
- arch/powerpc/mm/8xx_mmu.c                          |  10 +-
- arch/powerpc/mm/Makefile                           |  11 +-
- arch/powerpc/mm/dma-noncoherent.c                  |  15 +-
- arch/powerpc/mm/dump_bats.c                        | 173 +++++++
- arch/powerpc/mm/dump_linuxpagetables-generic.c     |   2 -
- arch/powerpc/mm/dump_sr.c                          |  64 +++
- arch/powerpc/mm/fault.c                            |  49 +-
- arch/powerpc/mm/hash_low_32.S                      |  33 +-
- arch/powerpc/mm/hugetlbpage.c                      |  40 +-
- arch/powerpc/mm/init-common.c                      |  56 +-
- arch/powerpc/mm/mem.c                              |  51 +-
- arch/powerpc/mm/mmu_context.c                      |  10 +
- arch/powerpc/mm/mmu_context_book3s64.c             |  15 -
- arch/powerpc/mm/mmu_context_iommu.c                | 110 +++-
- arch/powerpc/mm/mmu_context_nohash.c               |   4 +-
- arch/powerpc/mm/mmu_decl.h                         |   2 +-
- arch/powerpc/mm/numa.c                             |   2 +-
- arch/powerpc/mm/pgtable-book3s64.c                 |  88 +---
- arch/powerpc/mm/pgtable-frag.c                     | 119 +++++
- arch/powerpc/mm/pgtable.c                          |  26 +-
- arch/powerpc/mm/pgtable_32.c                       |  29 +-
- arch/powerpc/mm/pkeys.c                            |  25 +-
- arch/powerpc/mm/ppc_mmu_32.c                       |  51 +-
- arch/powerpc/mm/tlb_low_64e.S                      |   7 +
- arch/powerpc/oprofile/Makefile                     |   2 +-
- arch/powerpc/oprofile/common.c                     |   2 +-
- arch/powerpc/perf/core-book3s.c                    |  39 +-
- arch/powerpc/perf/imc-pmu.c                        |   6 +-
- arch/powerpc/perf/isa207-common.c                  |  58 ++-
- arch/powerpc/perf/isa207-common.h                  |   9 +-
- arch/powerpc/perf/perf_regs.c                      |   7 +
- arch/powerpc/perf/power9-pmu.c                     |  22 +-
- arch/powerpc/platforms/44x/warp.c                  |   6 +-
- arch/powerpc/platforms/4xx/ocm.c                   |  17 +-
- arch/powerpc/platforms/4xx/pci.c                   |   7 +-
- arch/powerpc/platforms/512x/Kconfig                |   2 +-
- arch/powerpc/platforms/52xx/Kconfig                |   2 +-
- arch/powerpc/platforms/52xx/efika.c                |   6 +-
- arch/powerpc/platforms/82xx/Kconfig                |   4 +-
- arch/powerpc/platforms/83xx/Kconfig                |   2 +-
- arch/powerpc/platforms/83xx/misc.c                 |  17 +
- arch/powerpc/platforms/85xx/corenet_generic.c      |  10 -
- arch/powerpc/platforms/85xx/qemu_e500.c            |   9 -
- arch/powerpc/platforms/85xx/t1042rdb_diu.c         |   2 +-
- arch/powerpc/platforms/86xx/Kconfig                |   2 +-
- arch/powerpc/platforms/86xx/mpc86xx_smp.c          |   3 +-
- arch/powerpc/platforms/Kconfig                     |   8 +-
- arch/powerpc/platforms/Kconfig.cputype             |  21 +-
- arch/powerpc/platforms/amigaone/Kconfig            |   2 +-
- arch/powerpc/platforms/cell/cbe_regs.c             |   6 +-
- arch/powerpc/platforms/cell/setup.c                |   5 +-
- arch/powerpc/platforms/cell/spu_callbacks.c        |  17 +-
- arch/powerpc/platforms/cell/spu_manage.c           |  10 +-
- arch/powerpc/platforms/chrp/Kconfig                |   2 +-
- arch/powerpc/platforms/chrp/pci.c                  |   4 +-
- arch/powerpc/platforms/chrp/setup.c                |  10 +-
- arch/powerpc/platforms/embedded6xx/Kconfig         |   2 +-
- arch/powerpc/platforms/maple/pci.c                 |   6 +-
- arch/powerpc/platforms/pasemi/dma_lib.c            |   4 +-
- arch/powerpc/platforms/pasemi/pci.c                |  66 +++
- arch/powerpc/platforms/pasemi/setup.c              |  86 ++++
- arch/powerpc/platforms/powermac/cache.S            |   4 +-
- arch/powerpc/platforms/powermac/feature.c          |  14 +-
- arch/powerpc/platforms/powermac/low_i2c.c          |  11 +-
- arch/powerpc/platforms/powermac/pci.c              |  27 +-
- arch/powerpc/platforms/powermac/pfunc_base.c       |   7 +-
- arch/powerpc/platforms/powermac/pic.c              |   6 +-
- arch/powerpc/platforms/powermac/setup.c            |  10 +-
- arch/powerpc/platforms/powermac/sleep.S            |   4 +-
- arch/powerpc/platforms/powermac/smp.c              |   3 +-
- arch/powerpc/platforms/powermac/udbg_adb.c         |   2 +-
- arch/powerpc/platforms/powermac/udbg_scc.c         |   2 +-
- arch/powerpc/platforms/powernv/eeh-powernv.c       |   8 +-
- arch/powerpc/platforms/powernv/npu-dma.c           | 564 +++++++++++++++++----
- arch/powerpc/platforms/powernv/opal-power.c        |   3 +-
- arch/powerpc/platforms/powernv/opal.c              |   5 +-
- arch/powerpc/platforms/powernv/pci-ioda-tce.c      |   5 +-
- arch/powerpc/platforms/powernv/pci-ioda.c          | 265 ++++------
- arch/powerpc/platforms/powernv/pci.c               |  49 +-
- arch/powerpc/platforms/powernv/pci.h               |  36 +-
- arch/powerpc/platforms/powernv/vas-debug.c         |  28 +-
- arch/powerpc/platforms/pseries/hotplug-memory.c    |  16 +-
- arch/powerpc/platforms/pseries/iommu.c             |  88 ++--
- arch/powerpc/platforms/pseries/pci.c               |  22 +
- arch/powerpc/platforms/pseries/pmem.c              |   8 +-
- arch/powerpc/platforms/pseries/setup.c             |  12 +-
- arch/powerpc/platforms/pseries/vio.c               |  27 +-
- arch/powerpc/sysdev/Makefile                       |   2 +-
- arch/powerpc/sysdev/fsl_rio.h                      |   2 +-
- arch/powerpc/sysdev/fsl_rmu.c                      |   4 +-
- arch/powerpc/sysdev/ipic.c                         |  28 -
- arch/powerpc/sysdev/scom.c                         |   4 +-
- arch/powerpc/sysdev/xive/common.c                  |   2 +-
- arch/powerpc/tools/checkpatch.sh                   |   1 +
- arch/powerpc/xmon/xmon.c                           |  33 +-
- drivers/cpufreq/pmac32-cpufreq.c                   |   4 +-
- drivers/cpuidle/cpuidle-pseries.c                  |   8 +-
- drivers/crypto/amcc/crypto4xx_core.c               |   2 +-
- drivers/ide/pmac.c                                 |   2 +-
- drivers/macintosh/ans-lcd.c                        |   2 +-
- drivers/macintosh/macio_asic.c                     |  35 +-
- drivers/macintosh/macio_sysfs.c                    |  18 +-
- drivers/macintosh/rack-meter.c                     |  13 +-
- drivers/macintosh/via-pmu.c                        |   4 +-
- drivers/macintosh/windfarm_fcu_controls.c          |  14 +-
- drivers/macintosh/windfarm_lm87_sensor.c           |   4 +-
- drivers/macintosh/windfarm_smu_controls.c          |   4 +-
- drivers/macintosh/windfarm_smu_sat.c               |   9 +-
- drivers/macintosh/windfarm_smu_sensors.c           |  15 +-
- drivers/misc/cxl/pci.c                             |   4 +-
- drivers/misc/cxl/vphb.c                            |  12 -
- drivers/misc/ocxl/afu_irq.c                        |   1 -
- drivers/misc/ocxl/config.c                         |   2 +-
- drivers/misc/ocxl/link.c                           |  25 +-
- drivers/vfio/pci/Kconfig                           |   6 +
- drivers/vfio/pci/Makefile                          |   1 +
- drivers/vfio/pci/trace.h                           | 102 ++++
- drivers/vfio/pci/vfio_pci.c                        |  42 +-
- drivers/vfio/pci/vfio_pci_nvlink2.c                | 482 ++++++++++++++++++
- drivers/vfio/pci/vfio_pci_private.h                |  20 +
- drivers/vfio/vfio_iommu_spapr_tce.c                |  74 +--
- include/linux/mmzone.h                             |   2 +-
- include/uapi/linux/vfio.h                          |  42 ++
- lib/raid6/Makefile                                 |  15 +
- lib/test_debug_virtual.c                           |   1 +
- tools/arch/powerpc/include/uapi/asm/perf_regs.h    |   1 +
- tools/perf/arch/powerpc/include/perf_regs.h        |   3 +-
- tools/perf/arch/powerpc/util/perf_regs.c           |   1 +
- tools/testing/selftests/powerpc/include/utils.h    |  10 +
- tools/testing/selftests/powerpc/ptrace/core-pkey.c |   5 +-
- .../testing/selftests/powerpc/ptrace/ptrace-gpr.c  |   2 +-
- .../selftests/powerpc/ptrace/ptrace-tm-gpr.c       |   4 +-
- .../selftests/powerpc/ptrace/ptrace-tm-spd-tar.c   |   2 +-
- .../selftests/powerpc/ptrace/ptrace-tm-spd-vsx.c   |   3 +-
- .../selftests/powerpc/ptrace/ptrace-tm-spr.c       |   2 +-
- .../selftests/powerpc/ptrace/ptrace-tm-tar.c       |   2 +-
- .../selftests/powerpc/ptrace/ptrace-tm-vsx.c       |   3 +-
- tools/testing/selftests/powerpc/tm/.gitignore      |   1 +
- tools/testing/selftests/powerpc/tm/Makefile        |   2 +-
- .../selftests/powerpc/tm/tm-signal-sigreturn-nt.c  |  46 ++
- 296 files changed, 4689 insertions(+), 3411 deletions(-)
- create mode 100644 Documentation/powerpc/isa-versions.rst
- create mode 100644 arch/powerpc/configs/guest.config
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-40x.h (100%)
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-44x.h (98%)
- rename arch/powerpc/include/asm/{ => nohash/32}/mmu-8xx.h (98%)
- create mode 100644 arch/powerpc/include/asm/nohash/32/mmu.h
- create mode 100644 arch/powerpc/include/asm/nohash/64/mmu.h
- rename arch/powerpc/include/asm/{ => nohash}/mmu-book3e.h (100%)
- create mode 100644 arch/powerpc/include/asm/nohash/mmu.h
- delete mode 100644 arch/powerpc/include/asm/systbl.h
- create mode 100644 arch/powerpc/kernel/syscalls/Makefile
- create mode 100644 arch/powerpc/kernel/syscalls/syscall.tbl
- create mode 100644 arch/powerpc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/powerpc/kernel/syscalls/syscalltbl.sh
- delete mode 100644 arch/powerpc/kernel/systbl_chk.c
- create mode 100644 arch/powerpc/mm/dump_bats.c
- create mode 100644 arch/powerpc/mm/dump_sr.c
- create mode 100644 arch/powerpc/mm/pgtable-frag.c
- create mode 100644 drivers/vfio/pci/trace.h
- create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
- create mode 100644 tools/testing/selftests/powerpc/tm/tm-signal-sigreturn-nt.c
------BEGIN PGP SIGNATURE-----
+To me it looks like that virtio_ccw_find_vqs will abort if any of the virtqueues 
+that it is been asked for does not exist (including the earlier ones).
 
-iQIcBAEBAgAGBQJcJL3eAAoJEFHr6jzI4aWAom8P/RNu5cmjgbl2WIgke+xZDb8M
-FR868yMM7VFryQJ9bQ6hXMMF5RDD6mn4c/NBk61l5SgcsCfIa6gM5uiwp8T64/DC
-t6qZ9XNL99dTU3R5PEI8MBDOcGci0E9hDDKZAD7Ez9kuyeOWf7OP5Rk5xOiCp7Gv
-HADB81eXk+9GXFVKwEsludg7WaYCB2fthNWLDf4WTocHUadonR+NsvSntZUBU2Vl
-f59VVzBekROBo23WuAi+wnPEu8dbzMeQPsrsQWUBSru7KS2tZXKsU5+N5cql5gMn
-QCNwf/L52zgoFiroOyYHuXLAgd7xxDP4nrZhJTZmWH81P3ej+g3HN0GdJbci0+Rh
-6RdNi3U/KlH+DZGGIAmulwpUBCxyyNi/aY46zaoGPMSw+EJwpT15A9IG+dHn9Oba
-owUf66LXELmdkT0KpqhEjk/PI05ySINcQRmX0+Ar2eiUL8JeXc3bqDngr0Q/bbSv
-ZkUnuglxrIuw/UInM2X7fR3uR6Hok8mEhzDuYhxRnMTv+BTYMeYIpSljFq5juoxF
-v2wsrAkqS/T16vo75WHqWjAXUpUAWr9ODXisivdNC/Yrt1qfEv+8Cg+QjsC4V6e9
-8dYB89FxENEy0h9WGuJ9jdar8N1rgcKFSCcgddsNz7XqI8LlKY0wCv1r2KifB6or
-Ietwk+gAlOzJCxyDyjU/
-=8AUI
------END PGP SIGNATURE-----
+
+Christian
+
+> 
+> On 27.08.2018 03:32, Wei Wang wrote:
+>> The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT, implemented by this
+>> series enables the virtio-balloon driver to report hints of guest free
+>> pages to host. It can be used to accelerate virtual machine (VM) live
+>> migration. Here is an introduction of this usage:
+>>
+>> Live migration needs to transfer the VM's memory from the source machine
+>> to the destination round by round. For the 1st round, all the VM's memory
+>> is transferred. From the 2nd round, only the pieces of memory that were
+>> written by the guest (after the 1st round) are transferred. One method
+>> that is popularly used by the hypervisor to track which part of memory is
+>> written is to have the hypervisor write-protect all the guest memory.
+>>
+>> This feature enables the optimization by skipping the transfer of guest
+>> free pages during VM live migration. It is not concerned that the memory
+>> pages are used after they are given to the hypervisor as a hint of the
+>> free pages, because they will be tracked by the hypervisor and transferred
+>> in the subsequent round if they are used and written.
+>>
+>> * Tests
+>> 1 Test Environment
+>>     Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+>>     Migration setup: migrate_set_speed 100G, migrate_set_downtime 400ms
+>>
+>> 2 Test Results (results are averaged over several repeated runs)
+>>     2.1 Guest setup: 8G RAM, 4 vCPU
+>>         2.1.1 Idle guest live migration time
+>>             Optimization v.s. Legacy = 620ms vs 2970ms
+>>             --> ~79% reduction
+>>         2.1.2 Guest live migration with Linux compilation workload
+>>           (i.e. make bzImage -j4) running
+>>           1) Live Migration Time:
+>>              Optimization v.s. Legacy = 2273ms v.s. 4502ms
+>>              --> ~50% reduction
+>>           2) Linux Compilation Time:
+>>              Optimization v.s. Legacy = 8min42s v.s. 8min43s
+>>              --> no obvious difference
+>>
+>>     2.2 Guest setup: 128G RAM, 4 vCPU
+>>         2.2.1 Idle guest live migration time
+>>             Optimization v.s. Legacy = 5294ms vs 41651ms
+>>             --> ~87% reduction
+>>         2.2.2 Guest live migration with Linux compilation workload
+>>           1) Live Migration Time:
+>>             Optimization v.s. Legacy = 8816ms v.s. 54201ms
+>>             --> 84% reduction
+>>           2) Linux Compilation Time:
+>>              Optimization v.s. Legacy = 8min30s v.s. 8min36s
+>>              --> no obvious difference
+>>
+>> ChangeLog:
+>> v36->v37:
+>>     - free the reported pages to mm when receives a DONE cmd from host.
+>>       Please see patch 1's commit log for reasons. Please see patch 1's
+>>       commit for detailed explanations.
+>>
+>> For ChangeLogs from v22 to v36, please reference
+>> https://lkml.org/lkml/2018/7/20/199
+>>
+>> For ChangeLogs before v21, please reference
+>> https://lwn.net/Articles/743660/
+>>
+>> Wei Wang (3):
+>>   virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+>>   mm/page_poison: expose page_poisoning_enabled to kernel modules
+>>   virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
+>>
+>>  drivers/virtio/virtio_balloon.c     | 374 ++++++++++++++++++++++++++++++++----
+>>  include/uapi/linux/virtio_balloon.h |   8 +
+>>  mm/page_poison.c                    |   6 +
+>>  3 files changed, 355 insertions(+), 33 deletions(-)
+>>
+
