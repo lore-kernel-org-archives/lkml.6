@@ -2,170 +2,160 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_RHS_DOB autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9360C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F9BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB8752087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6C15208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbeL0PKb (ORCPT
+        id S1731077AbeL0PNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 10:10:31 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34227 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbeL0PKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 10:10:30 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9649B209ED; Thu, 27 Dec 2018 16:10:28 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-80-230.w90-88.abo.wanadoo.fr [90.88.22.230])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4B6122072F;
-        Thu, 27 Dec 2018 16:10:18 +0100 (CET)
-Message-ID: <3c5dd6c834406ffc1e674af7839eea09fea748ee.camel@bootlin.com>
-Subject: Re: [PATCH] i2c: bcm2835: Clear current message and count after a
- transaction
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Eric Anholt <eric@anholt.net>, linux-i2c@vger.kernel.org
-Date:   Thu, 27 Dec 2018 16:10:18 +0100
-In-Reply-To: <1232214204.268730.1545919526431@email.ionos.de>
-References: <20181221121135.4847-1-paul.kocialkowski@bootlin.com>
-         <1941132339.131316.1545481176339@email.ionos.de>
-         <baa17fb765bf8b40fe6e91b4884b83af6fcf7641.camel@bootlin.com>
-         <1232214204.268730.1545919526431@email.ionos.de>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Dec 2018 10:13:25 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:65339 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727546AbeL0PNY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 10:13:24 -0500
+X-IronPort-AV: E=Sophos;i="5.56,405,1539673200"; 
+   d="scan'208";a="24405601"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Dec 2018 08:13:23 -0700
+Received: from M43218.corp.atmel.com (10.10.76.4) by
+ chn-sv-exch03.mchp-main.com (10.10.76.49) with Microsoft SMTP Server id
+ 14.3.352.0; Thu, 27 Dec 2018 08:13:47 -0700
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC:     <me@jue.yt>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <wsa@the-dreams.de>, <andriy.shevchenko@linux.intel.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH v4 0/3] i2c: at91: slave mode support
+Date:   Thu, 27 Dec 2018 16:13:08 +0100
+Message-ID: <20181227151311.20107-1-ludovic.desroches@microchip.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+[Ludovic Desroches: see Changes section]
 
-On Thu, 2018-12-27 at 15:05 +0100, Stefan Wahren wrote:
-> Hi Paul,
-> 
-> > Paul Kocialkowski <paul.kocialkowski@bootlin.com> hat am 24. Dezember 2018 um 10:10 geschrieben:
-> > 
-> > 
-> > Hi,
-> > 
-> > On Sat, 2018-12-22 at 13:19 +0100, Stefan Wahren wrote:
-> > > Hi Paul,
-> > > 
-> > > > Paul Kocialkowski <paul.kocialkowski@bootlin.com> hat am 21. Dezember 2018 um 13:11 geschrieben:
-> > > > 
-> > > > 
-> > > > The driver's interrupt handler checks whether a message is currently
-> > > > being handled with the curr_msg pointer. When it is NULL, the interrupt
-> > > > is considered to be unexpected. Similarly, the i2c_start_transfer
-> > > > routine checks for the remaining number of messages to handle in
-> > > > num_msgs.
-> > > > 
-> > > > However, these values are never cleared and always keep the message and
-> > > > number relevant to the latest transfer (which might be done already and
-> > > > the underlying message memory might have been freed).
-> > > > 
-> > > > When an unexpected interrupt hits with the DONE bit set, the isr will
-> > > > then try to access the flags field of the curr_msg structure, leading
-> > > > to a fatal page fault.
-> > > > 
-> > > > Fix the issue by systematically clearing curr_msg and num_msgs in the
-> > > > driver-wide device structure when a transfer is considered complete.
-> > > > 
-> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > ---
-> > > >  drivers/i2c/busses/i2c-bcm2835.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
-> > > > index 44deae78913e..5486252f5f2f 100644
-> > > > --- a/drivers/i2c/busses/i2c-bcm2835.c
-> > > > +++ b/drivers/i2c/busses/i2c-bcm2835.c
-> > > > @@ -298,6 +298,9 @@ static int bcm2835_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
-> > > >  		return -ETIMEDOUT;
-> > > >  	}
-> > > >  
-> > > > +	i2c_dev->curr_msg = NULL;
-> > > > +	i2c_dev->num_msgs = 0;
-> > > 
-> > > AFAIU this would reduce the chance of a use-after-free dramatically but not completely.
-> > 
-> > Do you have a specific case of use-after-free related to these
-> > variables in mind that this cleanup would not fix (except for the
-> > timeout case)?
-> 
-> okay i was wrong about the use-after-free. But i'm not sure about this scenario on the I2C bus shared with the VC4:
-> 
-> 1. ARM core starts I2C transfer (bcm2835_i2c_start_transfer)
-> 2. VC4 triggers a BCM2835_I2C_S_DONE interrupt
-> 3. ARM core catches this interrupt before the VC4
+Based on the discussion we had on the i2c-linux list [1], I wrote a patch for
+AT91 hardware and tried to fulfill the Linux I2C slave interface description
+[2] as good as possible. This enables aforementioned hardware to act as an I2C
+slave that can be accessed by a remote I2C master.
 
-Well, I thought the VC4 has precedence over the ARM core, so if the
-interrupts hits in hardware, it should be seen by the VC4 first and
-forwarded to the ARM core if needed (I might be wrong though). So in
-that case, perhaps the ARM core wouldn't see the interrupt and just
-timeout?
+I have tested this patchset successfully on an ATSAMA5D27.
 
-Either way, I'm don't think that having both the VC4 and the ARM core
-poke on the same bus is a scenario we can realisticly aim to support.
-Although it should definitely not make our driver crash if that
-happens.
+                                 ^  3.3V   ^  3.3V
+    +-----------------------+    |         |         +-----------------------+
+    | Slave: ATSAMA5D27     |   +-+       +-+        | Master: ATSAMA5D35    |
+    | with i2c-slave-eeprom |   | | 100k  | | 100k   | with i2cset           |
+    +-------------------+-+-+   +-+       +-+        +-+-+-------------------+
+                        | |      |         |           | |
+                        | +------+---------|---(SDA)---+ |
+                        +------------------+---(SCL)-----+
 
-The HDMI DDC bus is an I2C bus shared between the ARM core and VC4, but
-the VC4 firmware should detect from the device-tree that Linux will
-attempt to drive the bus and let the ARM core deal with it without
-interference.
+    Schematic: Connection of slave and master with 100kOhm pullup resistors.
 
-Thanks for your feedback!
+On the master the following BASH script has been used to stress the slave.
 
-Cheers,
+        root@emblinux:~# cat ./stress.sh
+        #!/bin/bash
+        I=0
+        while true
+        do
+                if i2cset -y -r 1 0x64 0 $I w | grep mismatch
+                then
+                        echo "$(date): Error in transmission ${I}"
+                fi
+                ((I++))
+                if [ $I -eq 65536 ]
+                then
+                        I=0
+                        echo "$(date): Sent 65536 transmissions"
+                fi
+        done
 
-Paul
+After running the script for some time I had the following output. To me this
+looks promising :)
 
-> > The msg_buf element (in association with msg_buf_remaining keeping its
-> > previous value) could also lead to similar problems, so I'm thinking of
-> > making a bcm2835_i2c_finish_transfer function to group all the cleanups
-> > and call that right after wait_for_completion_timeout.
-> > 
-> > > Btw: Why did you leave of the i2c transfer timeout case?
-> > 
-> > I should definitely have included it, actually.
-> > 
-> > Cheers,
-> > 
-> > Paul
-> > 
-> > > Thanks
-> > > Stefan
-> > > 
-> > > > +
-> > > >  	if (!i2c_dev->msg_err)
-> > > >  		return num;
-> > > >  
-> > > > -- 
-> > > > 2.20.1
-> > > > 
-> > -- 
-> > Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> > Embedded Linux and kernel engineering
-> > https://bootlin.com
-> > 
+        root@emblinux:~# ./stress.sh
+        Thu Nov  9 13:58:45 CTE 2017: Sent 65536 transmissions
+        Thu Nov  9 14:35:20 CTE 2017: Sent 65536 transmissions
+        Thu Nov  9 15:12:11 CTE 2017: Sent 65536 transmissions
+        Thu Nov  9 15:49:04 CTE 2017: Sent 65536 transmissions
+        Thu Nov  9 16:26:00 CTE 2017: Sent 65536 transmissions
+        Thu Nov  9 17:03:07 UTC 2017: Sent 65536 transmissions
+        Thu Nov  9 17:40:15 UTC 2017: Sent 65536 transmissions
+
+        If you have some hardware with an at91-i2c interface included at hand, I really
+        would appreciate if you can run the test script on your hardware and test this
+        driver.
+        Thu Nov  9 17:40:15 UTC 2017: Sent 65536 transmissions
+
+        If you have some hardware with an at91-i2c interface included at hand, I really
+        would appreciate if you can run the test script on your hardware and test this
+        driver.
+
+Best regards
+  Juergen
+
+
+[Ludovic Desroches]
+Changes in v4:
+ - rebased on next-20181224
+ - update Kconfig part to state that this feature is experimental.
+ - tested quickly on a single board, SAMA5D2 Xplained, i2c-gpio as master, OK.
+Changes in v3:
+ - rebase (cherry-pick was enough)
+ - fix checkpatch errors
+ - tests:
+   - hangs with a SAMA5D4 (master and slave on different busses) after about
+   100 transfers. It's the first time I do this test.
+   - some mismatches with a SAMA5D4 as slave and a SAMA5D2 as master
+   I don't know if it's a regression. I don't remember having seen this
+   behavior previously.
+   I think it's worth taking those patches even if there are some possible
+   bugs. It'll allow to get more people using it and so to consolidate the
+   slave mode support.
+
+Changes in v2:
+ - Implemented all suggestions made by Ludovic. (Thank you!)
+ - Reworked the IRQ handler completely. Have a look in patch 3 fort further
+   details.
+
+[1] https://marc.info/?t=150824004800001&r=1&w=1
+[2] https://www.kernel.org/doc/Documentation/i2c/slave-interface
+
+
+
+Juergen Fitschen (3):
+  i2c: at91: segregate master mode specific code from probe and init
+    func
+  i2c: at91: split driver into core and master file
+  i2c: at91: added slave mode support
+
+ MAINTAINERS                                   |   3 +-
+ drivers/i2c/busses/Kconfig                    |  13 +
+ drivers/i2c/busses/Makefile                   |   4 +
+ drivers/i2c/busses/i2c-at91-core.c            | 380 +++++++++++++++
+ .../busses/{i2c-at91.c => i2c-at91-master.c}  | 453 +-----------------
+ drivers/i2c/busses/i2c-at91-slave.c           | 147 ++++++
+ drivers/i2c/busses/i2c-at91.h                 | 179 +++++++
+ 7 files changed, 732 insertions(+), 447 deletions(-)
+ create mode 100644 drivers/i2c/busses/i2c-at91-core.c
+ rename drivers/i2c/busses/{i2c-at91.c => i2c-at91-master.c} (67%)
+ create mode 100644 drivers/i2c/busses/i2c-at91-slave.c
+ create mode 100644 drivers/i2c/busses/i2c-at91.h
+
 -- 
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
+2.20.1
 
