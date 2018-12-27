@@ -2,99 +2,98 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911AFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E335C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61525206C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0877E2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545901166;
+	bh=FDSHDx97iL8Ml7t5wbTnJosUr4HcYAfnPzPDdKNBiTo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=BMziJmlj2WG051T1ATnzJzaaxHZwkBiUu3/NO5rdAA/0e03kncTRr7q28VfKerA4B
+	 NpECD1iRRYkS+bFDyRnW38qksDxYTZot1NQD/81V62htVHB34E7+5ewJNnFZ/8D3lG
+	 FLMaHZuJrcWi5WlwwU6CGAJpTL0oZP70mNYr9qPo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbeL0I5Q (ORCPT
+        id S1730492AbeL0I7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 03:57:16 -0500
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:22258 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728748AbeL0I5Q (ORCPT
+        Thu, 27 Dec 2018 03:59:25 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44827 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbeL0I7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 03:57:16 -0500
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Dec 2018 03:57:14 EST
-Received: from zxbjmbx2.zhaoxin.com (10.29.252.164) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Thu, 27 Dec
- 2018 16:42:05 +0800
-Received: from timguo-System-Product-Name.zhaoxin.com (10.29.8.54) by
- zxbjmbx2.zhaoxin.com (10.29.252.164) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1261.35; Thu, 27 Dec 2018 16:42:04 +0800
-From:   David Wang <davidwang@zhaoxin.com>
-To:     <rjw@rjwysocki.net>, <mingo@redhat.com>, <len.brown@intel.com>,
-        <pavel@ucw.cz>, <tglx@linutronix.de>, <hpa@zytor.com>,
-        <x86@kernel.org>, <linux-pm@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <timguo@zhaoxin.com>,
-        David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH v3] Optimize C3 entry on Centaur CPUs
-Date:   Thu, 27 Dec 2018 16:41:50 +0800
-Message-ID: <1545900110-2757-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 27 Dec 2018 03:59:24 -0500
+Received: by mail-oi1-f193.google.com with SMTP id m6so14617047oig.11;
+        Thu, 27 Dec 2018 00:59:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yVez7zKrOVCrs5c3/TVif3Q9a4O31adFJfGWNfLqTh4=;
+        b=b3MqYFiSeMOaahpHjmi0kJrSrJYGLYxx8YqsmC0M1P3efaTbJsYtYzOOed5k2yOYKK
+         R/WU0tJBZy9kX7ls+4S1EUVT69JAUdZLLc5wcnlkaM9m6QO54rQZT3uZ21arTGBZz/sf
+         UT9iHFTONbpE2L1yuXAV/9lYu7qTL+F8KfoYmzDqGbeh8NqZ/SocUScF9fgkweQsKseW
+         6gL/UBa/r1Ruwb41m7UfXQXp91IfCScSCM/XQH+b2dULTz8MbmCb+y++51e9wHw3Yxvf
+         jqICrbjdDuQUGmdfT6L2wjevRsf3XaK6wYqGx6dWRvoh9g7RASwOwwucubea1hv26wZ8
+         PooQ==
+X-Gm-Message-State: AJcUukf/a8wjSrjT/W/Cw3EPIXdpCchVhxMz80Bgm8eEavi3i4PoxXdV
+        YKCZHyEz2lU8fesXswyfKKKaWBG6UHPWbkFNNWsX3g==
+X-Google-Smtp-Source: ALg8bN5S0FO9Dqtb2ngKeUPOGIXbcR1u78d0XycRoRjy+Cz9g21x63GCK8et8lGRKP0Y3JNpOEU2MszxmaohJ+LfRyM=
+X-Received: by 2002:aca:6c8b:: with SMTP id h133mr14775616oic.33.1545901163534;
+ Thu, 27 Dec 2018 00:59:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx2.zhaoxin.com (10.29.252.164)
+References: <20181222124939.13744-1-colin.king@canonical.com>
+In-Reply-To: <20181222124939.13744-1-colin.king@canonical.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 27 Dec 2018 09:59:12 +0100
+Message-ID: <CAJZ5v0gpDVArGPAXj_D6+qS6=RLmBsS9+h3=w4tBwWZEP5ZmdQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: swnode: check if pointer p is null before
+ dereferencing it
+To:     Colin King <colin.king@canonical.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For new Centaur CPUs the ucode will take care of the preservation of cache coherence
-between CPU cores in C-states regardless of how deep the C-states are. So, it is not
-necessary to flush the caches in software befor entering C3. And this useless operation
-will cause performance drop for the cores which share some caches with the idling core.  
+On Sat, Dec 22, 2018 at 1:49 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The pointer p can be potentially null macro to_software_node can return
+> null.  Add null check on p before dereferencing it to avoid any null
+> pointer dereferences.
+>
+> Detected by CoverityScan, CID#1476039 ("Explicit null dereferenced")
+>
+> Fixes: 59abd83672f7 ("drivers: base: Introducing software nodes to the firmware node framework")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/base/swnode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index 204aa7d049e0..89ad8dee6ad5 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -488,7 +488,7 @@ software_node_get_next_child(const struct fwnode_handle *fwnode,
+>         struct software_node *p = to_software_node(fwnode);
+>         struct software_node *c = to_software_node(child);
+>
+> -       if (list_empty(&p->children) ||
+> +       if (!p || list_empty(&p->children) ||
+>             (c && list_is_last(&c->entry, &p->children)))
+>                 return NULL;
+>
+> --
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-
-Changes from v2 to v3:
-*1, Replace "c->x86_mask" with "c->x86_stepping".
-
-Changes from v1 to v2:
-* 1, Add some Family/Model/Stepping contrains to let this patch only apply
-* to new centaur CPUs.
-* 2, The arbiter disable/enable operations maybe needed for old VIA/Centaur
-* platform. So, delete "flags->bm_control=0" in patch v1.
-
----
- arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index 158ad14..ed17640 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
- 	if (c->x86_vendor == X86_VENDOR_INTEL &&
- 	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
- 			flags->bm_control = 0;
-+	/*
-+	* For all recent Centaur CPUs, the ucode will make sure that each
-+	* core can keep cache coherence with each other while entering C3
-+	* type state. So, set bm_check to 1 to indicate that the kernel
-+	* need not execute a cache flush operation (WBINVD) when entering
-+	* C3 type state.
-+	*/
-+	if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-+		if (c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0x0f &&
-+		    c->x86_stepping >= 0x0e))
-+			flags->bm_check = 1;
-+	}
- }
- EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
- 
--- 
-1.9.1
-
+Applied, thanks!
