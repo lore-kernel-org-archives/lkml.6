@@ -6,242 +6,177 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D40C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4AFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1E221741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DB7C218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="G0RPEUh1"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="blpGAfam";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="X/u0jNMT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbeL0Jgo (ORCPT
+        id S1730622AbeL0Jhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:36:44 -0500
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:42532 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbeL0Jgn (ORCPT
+        Thu, 27 Dec 2018 04:37:43 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:41940 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727926AbeL0Jhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:36:43 -0500
-Received: by mail-ed1-f52.google.com with SMTP id y20so14797702edw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 01:36:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=TTdYgvJZJHouTgXDeeoHF61S92FaSPLe5ePD4nC2AFs=;
-        b=G0RPEUh1E880S1Zjng7XFoF79NWWVt5bti+hrIsvNvZ2Q6Gh6bjcd+OqzEv+QTUrnr
-         Bwy28xSzBIXTpdkgTHPdEa4/dbm90TuAjvzxCJU7xCwHTm7V1JCKHmSxsDvdi5hz63EG
-         ADX2cmtuG7HyvqSA6LznG3VSya9MoAeyHPXxQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=TTdYgvJZJHouTgXDeeoHF61S92FaSPLe5ePD4nC2AFs=;
-        b=nO8LyqPcwqcogXYwrPH0SVcqNbpSMWa6eAXkyCIkBtEEFltrGZixxgaKhMjdTtwGD6
-         O9D510tr3de3zP4bBCeadbhanDEOxdLPiBYTodln1eKoHeTy64S03Pk3Hpc3l7B/gvA2
-         cXgNo5QWxYnximVGw/4rBVJ+8LdozvPyYtQVHcsuip27O4BtlsotUu1KjAmHKA4nK7Nt
-         t29I1a7Oe7PRFr6VAKWPhBmgfzym6F0rbeMX1reYDwb9UqNS6xw9S3wgtzghXhU0mDad
-         cLSlYQn4r8J1oJe1K5Z97AZIrIvtdx1ST6YFn2ulXnsENel5O1Srz2cDJFRQ5ycfo04q
-         1XmA==
-X-Gm-Message-State: AA+aEWYel8oLGuruCPyrjpEdw6HKT2n1Yb92I8rdTezAWo4hy7LCRA9r
-        fGuwmT02SqYd/NzfP/8jAULZVPXzRMcPyTpG496mzeS3
-X-Google-Smtp-Source: AFSGD/VX+OncOR2hbkbvM3SNomBaKOPUKy/cJqkyM9A2Ig82B4hs9u43gsnLJm5Y19ftePmRXUp4jE/Q4dcgPi66UtI=
-X-Received: by 2002:a50:903c:: with SMTP id b57mr18620450eda.161.1545903400766;
- Thu, 27 Dec 2018 01:36:40 -0800 (PST)
+        Thu, 27 Dec 2018 04:37:42 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBR9alsf001827;
+        Thu, 27 Dec 2018 01:36:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=/28zhW78OJWdl1eKI5cXg0MuD2uSYHis1+HSd5ZYYXU=;
+ b=blpGAfamB14xx1cEvsir3NkG/picKLtpPSa0zOA4L+nE8W41v8iJHBxlVptEiX3aLvTM
+ BWu0ALR3GLetf6uI9voqM84wQpG8aXx6gcn3wGPs8wVLNWU+RG0rAj/DMVbq7AaPpzRQ
+ 0Of40BqjOh1MxUMeA7l3GShCwpHLLakq2+aujeGD+We6Gg8F4dyEUiuMG59F5Jka1WA8
+ zdxxTkWjV2Jcl3nO0UlEqfcAikX2FCQLQowxvqYJtEOyQoFui+m2O6pCUUnXUEeB3iAT
+ r+uJ+4kpLxdgFfUhrdlrM4ltRbtTlz+X0Ms8YYqqyZAzm1u0cM5xiWI7R4v81FMizQMY tQ== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2058.outbound.protection.outlook.com [104.47.33.58])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2phjq23n28-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 27 Dec 2018 01:36:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/28zhW78OJWdl1eKI5cXg0MuD2uSYHis1+HSd5ZYYXU=;
+ b=X/u0jNMTJXD6zupm3B9hZUYoHxcHJ5tWL4d/4ZzpAaImapei2r/ppNyZjVdrP26khEch3KXxOQiD0t2/9v8+KuP94D20yliIzTnfN1d9hD/sCvw+03chINSwvpSaslLe2UDDYGTG1dPeQX+9AQuu20IvH+wYfnsKZWWAosfTDJ8=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB4583.namprd07.prod.outlook.com (52.135.204.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.24; Thu, 27 Dec 2018 09:36:41 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e97e:1c66:94bc:24ef]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e97e:1c66:94bc:24ef%3]) with mapi id 15.20.1471.019; Thu, 27 Dec 2018
+ 09:36:41 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Peter Chen <hzpeterchen@gmail.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHUmtItEP31Hrx74EuIb6kD4d3L1KWNo02AgAGSJYCAAx9OYA==
+Date:   Thu, 27 Dec 2018 09:36:40 +0000
+Message-ID: <BYAPR07MB4709F8A00A13390235BA4BE1DDB60@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1545577992-4013-1-git-send-email-pawell@cadence.com>
+ <1545577992-4013-6-git-send-email-pawell@cadence.com>
+ <CAL411-rj0mRMfPCZOHw04q3s-9oJx7Os9Jz83bO=RgPZKLrB1g@mail.gmail.com>
+ <CAL411-omVL2rwoQP6GwKZa9f_1TLBbEAkyLdxNkJZqaQu9cvsA@mail.gmail.com>
+In-Reply-To: <CAL411-omVL2rwoQP6GwKZa9f_1TLBbEAkyLdxNkJZqaQu9cvsA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNjgwNzMxYTEtMDliYS0xMWU5LTg3MjgtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDY4MDczMWEyLTA5YmEtMTFlOS04NzI4LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjkwNSIgdD0iMTMxOTAzNzY3ODU5MDY0NjUyIiBoPSJnekRrTGhwQTJ6dHFtWFErMk5BckEySHlmak09IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB4583;20:3c3otoZInGAx23D0SP3oSPXtykLdy/2pN9/MbO2FYMDa1MuPZGqpCxklr5OX8VN7q+ZUOAtDHCdMgYhhH3S96whIAUJ+KPKaNaigxfYrhdhByxhiZ7wCdFnQY3M2++V/GkN7NxZjvn/QS/mtHQ0BBR9aqRHPCNa9ivBAiZ0+Z9Kh5Vz8UAMdnDByNI3kYNkmnGiYM3UhCvK916I6E1j5sZ2btH73Bro/5B/Tr8hkb8La4XjBlHIcptgpdyCoBK2e
+x-ms-office365-filtering-correlation-id: 703887ff-c301-4d04-2432-08d66bdece95
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4583;
+x-ms-traffictypediagnostic: BYAPR07MB4583:
+x-microsoft-antispam-prvs: <BYAPR07MB4583E5DEAA57FBEE9CB6EC00DDB60@BYAPR07MB4583.namprd07.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4583;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4583;
+x-forefront-prvs: 0899B47777
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(366004)(396003)(346002)(36092001)(199004)(189003)(486006)(93886005)(81166006)(102836004)(71200400001)(25786009)(9686003)(86362001)(478600001)(76176011)(7736002)(53936002)(305945005)(106356001)(39060400002)(8936002)(107886003)(81156014)(71190400001)(6506007)(6246003)(4326008)(8676002)(14444005)(1411001)(256004)(476003)(6916009)(446003)(11346002)(7696005)(2906002)(99286004)(26005)(14454004)(186003)(229853002)(3846002)(6116002)(55016002)(68736007)(316002)(97736004)(66066001)(105586002)(6436002)(33656002)(54906003)(74316002)(7416002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4583;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: br81gjVSOxTeBSZswnpR48PjVN1B3apQ2e/mLGFaG4AX/3qszZCv0DFc0nd6lY6LCUa4c7t3cAiKZDgNwi6OPMCb3/DaGqd/Z7wdeC4tunrLxl13U97/IRbLebc7yFgJ4eFODkOqIHSBUeZyxSzJt92opYaK7Ot1gRvqfxOgiXYv5BqlIb3rvdFcys69TtrSifub4eMDs86gLE3FJeQXraJvoM3A/ynoRWiQLCttAdWqF0B04pFFbtT0RjotK74jO9Tw+qmZXCZQcoIceAjqA0ByEfJBZEgvWGcv8DgoP1EHv8wUsI8SDlV+fERFRZzT
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
-In-Reply-To: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Thu, 27 Dec 2018 04:36:04 -0500
-Message-ID: <CAMp4zn-J22fU8+Rp4WYtB0cZpXHo=mde_LWc+jjzRm9b=F=vNA@mail.gmail.com>
-Subject: Re: CPUs blocking in update_blocked_averages -- 4.19.12
-To:     LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        dmitry.adamushko@gmail.com, vincent.guittot@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 703887ff-c301-4d04-2432-08d66bdece95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Dec 2018 09:36:41.0114
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4583
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=843 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812270089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->
-> We're seeing an issue introduced in 4.18, and that still persists in
-> 4.19.12 (we upgraded from 4.9), where update_blocked_averages is
-> blocking. We're running a workload where a majority of our workloads
-> are  confined by cgroups. This exhibits itself due to a softlockup on
-> a CPU which is waiting on a lock that's held by
-> update_blocked_averages. I don't have access to any bare metal
-> hardware at the moment, and these are all systems running under KVM.
-> This kernel has CONFIG_FAIR_GROUP_SCHED on.
->
-> The Softlocked CPU:
-> crash> bt
-> PID: 29314  TASK: ffff99b5f0671f00  CPU: 0   COMMAND: "ag"
->  #0 [ffff99b67b203d58] machine_kexec at ffffffff91a602f3
->  #1 [ffff99b67b203db0] __crash_kexec at ffffffff91b49011
->  #2 [ffff99b67b203e70] panic at ffffffff91a896d1
->  #3 [ffff99b67b203ef8] watchdog_timer_fn at ffffffff91b816af
->  #4 [ffff99b67b203f28] __hrtimer_run_queues at ffffffff91b26359
->  #5 [ffff99b67b203f88] hrtimer_interrupt at ffffffff91b26de2
->  #6 [ffff99b67b203fd8] smp_apic_timer_interrupt at ffffffff92402b06
->  #7 [ffff99b67b203ff0] apic_timer_interrupt at ffffffff92401a9f
-> --- <IRQ stack> ---
->  #8 [ffffa49fa1acbc08] apic_timer_interrupt at ffffffff92401a9f
->     [exception RIP: smp_call_function_many+543]
->     RIP: ffffffff91b3e84f  RSP: ffffa49fa1acbcb0  RFLAGS: 00000202
->     RAX: 0000000000000010  RBX: ffff99b67b224fc0  RCX: ffff99b67b6286a0
->     RDX: 0000000000000001  RSI: 0000000000000200  RDI: ffff99b67b224fc8
->     RBP: ffff99b67b224fc8   R8: 0000000000000001   R9: 0000000000000000
->     R10: 0000000000000000  R11: 0000000000000000  R12: 0000000000025080
->     R13: ffffa49fa1acbd00  R14: 0000000000000001  R15: 0000000000000200
->     ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
->  #9 [ffffa49fa1acbcf8] flush_tlb_mm_range at ffffffff91a7853c
-> #10 [ffffa49fa1acbd90] free_pgtables at ffffffff91c4ac3b
-> #11 [ffffa49fa1acbdc8] unmap_region at ffffffff91c54439
-> #12 [ffffa49fa1acbe90] do_munmap at ffffffff91c56355
-> #13 [ffffa49fa1acbee0] vm_munmap at ffffffff91c56587
-> #14 [ffffa49fa1acbf20] __x64_sys_munmap at ffffffff91c565e2
-> #15 [ffffa49fa1acbf38] do_syscall_64 at ffffffff91a04590
-> #16 [ffffa49fa1acbf50] entry_SYSCALL_64_after_hwframe at ffffffff9240008d
->     RIP: 00007f43e94de747  RSP: 00007f43e91d7e28  RFLAGS: 00000213
->     RAX: ffffffffffffffda  RBX: 00000000011a6f30  RCX: 00007f43e94de747
->     RDX: 0000000000000001  RSI: 0000000000000ade  RDI: 00007f43ea47d000
->     RBP: 0000000000000005   R8: 00007f43e00008c0   R9: 00007f43e91d7d00
->     R10: 00000000011a53b0  R11: 0000000000000213  R12: 00007f43ea47d000
->     R13: 0000000000000ade  R14: 00007f43e91d89c0  R15: 0000000000000060
->     ORIG_RAX: 000000000000000b  CS: 0033  SS: 002b
->
-> This is waiting on CPU 16:
-> crash> bt
-> PID: 29299  TASK: ffff99b5dffd1f00  CPU: 16  COMMAND: "ag"
->  #0 [fffffe00002c8e38] crash_nmi_callback at ffffffff91a54202
->  #1 [fffffe00002c8e50] nmi_handle at ffffffff91a32ee2
->  #2 [fffffe00002c8ea0] default_do_nmi at ffffffff91a333ea
->  #3 [fffffe00002c8ec0] do_nmi at ffffffff91a33553
->  #4 [fffffe00002c8ef0] end_repeat_nmi at ffffffff924014e8
->     [exception RIP: native_queued_spin_lock_slowpath+33]
->     RIP: ffffffff91af2dc1  RSP: ffffa49fa1a93948  RFLAGS: 00000002
->     RAX: 0000000000000001  RBX: ffff99b67b763f40  RCX: 000000004f19a57a
->     RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b67b763f40
->     RBP: 0000000000000082   R8: 0000000000000001   R9: 0000000000000000
->     R10: ffffa49fa1a938f8  R11: ffffffff91aca4a7  R12: 0000000000000015
->     R13: ffff99b67b764940  R14: ffffa49fa1a93a60  R15: 0000000000000015
->     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
-> --- <NMI exception stack> ---
->  #5 [ffffa49fa1a93948] native_queued_spin_lock_slowpath at ffffffff91af2dc1
->  #6 [ffffa49fa1a93948] do_raw_spin_lock at ffffffff91af48dd
->  #7 [ffffa49fa1a93958] _raw_spin_lock_irqsave at ffffffff923c1154
->  #8 [ffffa49fa1a93978] update_blocked_averages at ffffffff91aca4a7
->  #9 [ffffa49fa1a93a10] update_nohz_stats at ffffffff91acaa3d
-> #10 [ffffa49fa1a93a20] find_busiest_group at ffffffff91ad2137
-> #11 [ffffa49fa1a93bb8] load_balance at ffffffff91ad2be0
-> #12 [ffffa49fa1a93cf0] pick_next_task_fair at ffffffff91ad41e6
-> #13 [ffffa49fa1a93da0] mark_held_locks at ffffffff91aeebe4
-> #14 [ffffa49fa1a93de8] schedule at ffffffff923b9ec2
-> #15 [ffffa49fa1a93df8] rwsem_down_read_failed at ffffffff923be859
-> #16 [ffffa49fa1a93e80] call_rwsem_down_read_failed at ffffffff923ae944
-> #17 [ffffa49fa1a93ec8] down_read at ffffffff923bdf0b
-> #18 [ffffa49fa1a93ee0] __do_page_fault at ffffffff91a71083
-> #19 [ffffa49fa1a93f50] async_page_fault at ffffffff924010ee
->     RIP: 00007f43e945f786  RSP: 00007ffde2b50070  RFLAGS: 00010206
->     RAX: 0000000000015f41  RBX: 00007f43e97a1b20  RCX: 0000000000000111
->     RDX: 00000000011affb0  RSI: 00000000011b00c0  RDI: 0000000000000000
->     RBP: 0000000000000111   R8: 00007f43e97a1bd8   R9: 0000000000000000
->     R10: 00007f43e97a1b78  R11: 00007f43e97a1b78  R12: 00007f43e97a1b78
->     R13: 00007f43e97a1b78  R14: 0000000000002710  R15: 00007f43e97a1c78
->     ORIG_RAX: ffffffffffffffff  CS: 0033  SS: 002b
->
-> Which is waiting on a lock held by CPU owned by CPU 9:
-> crash> struct raw_spinlock_t ffff99b67b763f40
-> struct raw_spinlock_t {
->   raw_lock = {
->     {
->       val = {
->         counter = 1
->       },
->       {
->         locked = 1 '\001',
->         pending = 0 '\000'
->       },
->       {
->         locked_pending = 1,
->         tail = 0
->       }
->     }
->   },
->   magic = 3735899821,
->   owner_cpu = 9,
->   owner = 0xffff99b66e7a8000,
->   dep_map = {
->     key = 0xffffffff9331d120,
->     class_cache = {0xffffffff93a13da0, 0x0},
->     name = 0xffffffff92a7d9ad "&rq->lock"
->   }
-> }
->
-> Which is hanging out in update_blocked_averages:
-> crash> bt
-> PID: 0      TASK: ffff99b66e7a8000  CPU: 9   COMMAND: "swapper/9"
->  #0 [fffffe0000194e38] crash_nmi_callback at ffffffff91a54202
->  #1 [fffffe0000194e50] nmi_handle at ffffffff91a32ee2
->  #2 [fffffe0000194ea0] default_do_nmi at ffffffff91a33362
->  #3 [fffffe0000194ec0] do_nmi at ffffffff91a33553
->  #4 [fffffe0000194ef0] end_repeat_nmi at ffffffff924014e8
->     [exception RIP: lock_is_held_type+70]
->     RIP: ffffffff91aecec6  RSP: ffff99b67b443e20  RFLAGS: 00000046
->     RAX: 0000000000000001  RBX: ffff99b66e7a8000  RCX: 00000000000000a8
->     RDX: 0000000000000001  RSI: 00000000ffffffff  RDI: 0000000000000046
->     RBP: 0000000000000046   R8: 0000000000000004   R9: 0000000000000000
->     R10: ffff99b67b443e38  R11: ffffffff91aca4a7  R12: ffff99b67b763f40
->     R13: ffff99b67b764940  R14: 0000000000000000  R15: ffff99b6193d9200
->     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-> --- <NMI exception stack> ---
->  #5 [ffff99b67b443e20] lock_is_held_type at ffffffff91aecec6
->  #6 [ffff99b67b443e30] update_blocked_averages at ffffffff91aca841
->  #7 [ffff99b67b443ec8] update_nohz_stats at ffffffff91acaa3d
->  #8 [ffff99b67b443ed8] _nohz_idle_balance at ffffffff91ad39f7
->  #9 [ffff99b67b443f70] __softirqentry_text_start at ffffffff926000d1
-> #10 [ffff99b67b443fd0] irq_exit at ffffffff91a911f5
-> #11 [ffff99b67b443fd8] smp_apic_timer_interrupt at ffffffff92402b2c
-> #12 [ffff99b67b443ff0] apic_timer_interrupt at ffffffff92401a9f
-> --- <IRQ stack> ---
-> #13 [ffffa49f98993df8] apic_timer_interrupt at ffffffff92401a9f
->     [exception RIP: mwait_idle+108]
->     RIP: ffffffff923c02fc  RSP: ffffa49f98993ea8  RFLAGS: 00000246
->     RAX: 0000000000000000  RBX: 0000000000000009  RCX: 0000000000000000
->     RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b66e7a8000
->     RBP: 0000000000000009   R8: 0000000000000001   R9: 0000000000000000
->     R10: 0000000000000000  R11: 0000000000000000  R12: ffff99b66e7a8000
->     R13: 0000000000000000  R14: 0000000000000000  R15: ffff99b66e7a8000
->     ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
-> #14 [ffffa49f98993ec0] do_idle at ffffffff91ac6ba3
-> #15 [ffffa49f98993f10] cpu_startup_entry at ffffffff91ac6f4f
-> #16 [ffffa49f98993f30] start_secondary at ffffffff91a55759
-> #17 [ffffa49f98993f50] secondary_startup_64 at ffffffff91a000d4
->
-> ---
->
-> Lockdep tells me nothing, which makes me think, somehow is the code in
-> for_each_leaf_cfs_rq_safe looping forever?
-
-On further investigation from another crash dump, it looks like (where
-0xffff9680bb4e3f40 = cpu_rq(11)) --
-crash> struct rq.leaf_cfs_rq_list 0xffff9680bb4e3f40
-  leaf_cfs_rq_list = {
-    next = 0xffff9680622ed980,
-    prev = 0xffff9680bb4e4180
-  }
-crash> struct list_head 0xffff9680622ed980
-struct list_head {
-  next = 0xffff9680622ed980,
-  prev = 0xffff9680622ed980
-}
-
----
-I instrumented update_blocked_averages with the start time of the
-function, to keep track of it with the scheduler clock, and it
-coincides at almost exactly 5.5 seconds, way longer than it should be.
-
-
-It looks like it never terminates because it stays in this loop
-forever. I'm not sure how things can get into this state, or even if
-this was the state to start with, and this isn't the result of some
-kind of concurrency skew or other shenanigans.
+SGksDQoNCj4+ID4gKw0KPj4gPiArICAgICAgIGlmIChyZXQpDQo+PiA+ICsgICAgICAgICAgICAg
+ICByZXR1cm4gcmV0Ow0KPj4gPiArDQo+PiA+ICsgICAgICAgc3RhdGUgPSByZWFkbCgmY2Rucy0+
+b3RnX3JlZ3MtPnN0cyk7DQo+PiA+ICsgICAgICAgaWYgKE9UR1NUU19PVEdfTlJEWShzdGF0ZSkg
+IT0gMCkgew0KPj4gPiArICAgICAgICAgICAgICAgZGV2X2VycihjZG5zLT5kZXYsICJDYWRlbmNl
+IFVTQjMgT1RHIGRldmljZSBub3QgcmVhZHlcbiIpOw0KPj4gPiArICAgICAgICAgICAgICAgcmV0
+dXJuIC1FTk9ERVY7DQo+PiA+ICsgICAgICAgfQ0KPj4gPiArDQo+PiA+ICsgICAgICAgcmV0ID0g
+Y2RuczNfZHJkX3VwZGF0ZV9tb2RlKGNkbnMpOw0KPj4gPiArDQo+Pg0KPj4gQ2FsbGluZyB0aGlz
+IGZ1bmN0aW9uLCBpdCBpcyB0aW1lb3V0IGZvciB3YWl0aW5nIE9UR1NUU19YSENJX1JFQURZIGF0
+IG90Z3N0cywNCj4+IGRvIHlvdSBrbm93IHBvc3NpYmxlIHJlYXNvbnM/ICBBZnRlciBjb21tZW50
+aW5nIG91dCB0aGlzIGZ1bmN0aW9uLCBteQ0KPj4geEhDSSBmdW5jdGlvbg0KPj4gd29ya3MuDQo+
+Pg0KPg0KPlBhd2VsLCBzaW5jZSBPVEcgY29tcGxpYW5jZSAoS25vd24gYXMgSE5QL1NSUCkgIGhh
+cyBub3QgYmVlbiB1c2VkDQo+d2lkZWx5LCBMaW51eCBrZXJuZWwgZG9lcyBub3QNCj5tYWludGFp
+biBpdCBmcm9tIHNvbWUgdGltZSBhZ28gKG1heWJlIDEtMiB5ZWFycykuIEluIHNvZnR3YXJlIGRl
+c2lnbiwNCj53ZSBkbyBub3QgbmVlZCB0byBjb25zaWRlciBpdCBmcm9tDQo+aGFyZHdhcmUgcG9p
+bnQsIGVnLCBraW5kcyBvZiBPVEcgdGltZXIuIEZvciBkdWFsLXJvbGUgc3dpdGNoIG9uIHRoZQ0K
+PmZseSwgIHRocm91Z2ggL3N5cyBpcyBlbm91Z2guDQo+DQo+VGhyb3VnaCB0aGUgZGVidWcsIHdl
+IGZpbmQgaXQgbmVlZHMgdG8gd2FpdCAxcyBhZnRlciBzZXR0aW5nIGRlLXNlbGVjdA0KPnRoZSBo
+b3N0IG9yIGdhZGdldCBiZWZvcmUgcmVxdWVzdA0KPlhIQ0kgYXQgb3RnX3JlZ3MtPmNtZCwgYW5k
+IGVuYWJsZSBmYXN0IHNpbXVsYXRlIGNhbiByZWR1Y2UgZGVsYXkgdG8NCj4yLTNtcy4gV291bGQg
+eW91IHBsZWFzZSBoZWxwDQo+dG8gY2hlY2sgd2l0aCB5b3VyIGhhcmR3YXJlIHRlYW0gdGhpcyBi
+ZWhhdmlvci4gV2l0aCBiZWxvdyBjaGFuZ2VzLCBJDQo+Y2FuIGdldCBPVEdTVFNfWEhDSV9SRUFE
+WSBhdCBvdGdzdHMuDQo+DQo+QEAgLTE0MSw2ICsxNDMsNyBAQCBzdGF0aWMgaW50IGNkbnMzX2Ry
+ZF9zd2l0Y2hfaG9zdChzdHJ1Y3QgY2RuczMgKmNkbnMsIGludCBvbikNCj4gICAgICAgICAgICAg
+ICAgd3JpdGVsKE9UR0NNRF9IT1NUX0JVU19EUk9QIHwgT1RHQ01EX0RFVl9CVVNfRFJPUCB8DQo+
+ICAgICAgICAgICAgICAgICAgICAgICBPVEdDTURfREVWX1BPV0VSX09GRiB8IE9UR0NNRF9IT1NU
+X1BPV0VSX09GRiwNCj4gICAgICAgICAgICAgICAgICAgICAgICZjZG5zLT5vdGdfcmVncy0+Y21k
+KTsNCj4rICAgICAgICAgICAgICAgdXNsZWVwX3JhbmdlKDMwMDAsIDQwMDApOw0KPiAgICAgICAg
+fQ0KPg0KPiAgICAgICAgcmV0dXJuIDA7DQo+QEAgLTE3OCw2ICsxODEsNyBAQCBzdGF0aWMgaW50
+IGNkbnMzX2RyZF9zd2l0Y2hfZ2FkZ2V0KHN0cnVjdCBjZG5zMw0KPipjZG5zLCBpbnQgb24pDQo+
+ICAgICAgICAgICAgICAgIHdyaXRlbChPVEdDTURfSE9TVF9CVVNfRFJPUCB8IE9UR0NNRF9ERVZf
+QlVTX0RST1AgfA0KPiAgICAgICAgICAgICAgICAgICAgICAgT1RHQ01EX0RFVl9QT1dFUl9PRkYg
+fCBPVEdDTURfSE9TVF9QT1dFUl9PRkYsDQo+ICAgICAgICAgICAgICAgICAgICAgICAmY2Rucy0+
+b3RnX3JlZ3MtPmNtZCk7DQo+KyAgICAgICAgICAgICAgIHVzbGVlcF9yYW5nZSgzMDAwLCA0MDAw
+KTsNCj4gICAgICAgIH0NCj4NCj5AQCAtMjk5LDYgKzMwNiw3IEBAIGludCBjZG5zM19kcmRfaW5p
+dChzdHJ1Y3QgY2RuczMgKmNkbnMpDQo+ICAgICAgICAgICAgICAgIGNkbnMtPnZlcnNpb24gID0g
+Q0ROUzNfQ09OVFJPTExFUl9WMDsNCj4gICAgICAgICAgICAgICAgY2Rucy0+b3RnX3YxX3JlZ3Mg
+PSBOVUxMOw0KPiAgICAgICAgICAgICAgICBjZG5zLT5vdGdfcmVncyA9IHJlZ3M7DQo+KyAgICAg
+ICAgICAgICAgIHdyaXRlbCgweDEsICZjZG5zLT5vdGdfdjBfcmVncy0+c2ltdWxhdGUpOw0KPiAg
+ICAgICAgICAgICAgICBkZXZfaW5mbyhjZG5zLT5kZXYsICJEUkQgdmVyc2lvbiB2MCAoJTA4eClc
+biIsDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIHJlYWRsKCZjZG5zLT5vdGdfdjBfcmVncy0+
+dmVyc2lvbikpOw0KPiAgICAgICAgfSBlbHNlIHsNCg0KSSBoYXZlIGNvbmZpcm1hdGlvbiBmcm9t
+IEhXIHRlYW0gdGhhdCB0aW1lIHRoYXQgZHJpdmVyIHNob3VsZCB3YWl0IGFmdGVyIGRlLXNlbGVj
+dGluZyBtb2RlIA0KaXMgMi0zbXMgZm9yIHNpbXVsYXRlIG1vZGUuIEl0J3MgdGltZSB3aGVuIEZT
+TSBpcyBpbiBEUkRfSF9XQUlUX1ZCVVNfRkFJTC4gDQpEcml2ZXIgY2Fubm90IHJlLWVuYWJsZSB0
+aGUgaG9zdC9kZXZpY2UgbW9kZSBiZWZvcmUgdGhpcyB0aW1lIGhhcyBlbGFwc2VkLiANCg0KMyBt
+cyBpcyB0aGUgbWF4aW11bSB0aW1lLiBBZGRpdGlvbmFsbHksIHlvdSBjYW4gY29uZmlybSB0aGUg
+Y3VycmVudCBGU00gc3RhdGUgYnkgcmVhZGluZyB0aGUNCmhvc3Rfb3RnX3N0YXRlIChiaXQgNToz
+KSBvciBkZXZfb3RnX3N0YXRlICgyOjApICBmcm9tIE9UR1NUQVRFIHJlZ2lzdGVyLiANCg0KSWYg
+Yml0IDAgaW4gc2ltdWxhdGUgcmVnaXN0ZXIgaXMgY2xlYXJlZCB0aGUgdGltZSBpcyBleGFjdGx5
+IDFzLg0KDQpDaGVlcnMsDQpQYXdlbA0KDQo=
