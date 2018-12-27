@@ -2,104 +2,107 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD4CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EC5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604002148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AC1C20874
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:56:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oj7fZOki"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYHQrOmV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbeL0Oqt (ORCPT
+        id S1731077AbeL0O4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 09:46:49 -0500
-Received: from mail-ed1-f45.google.com ([209.85.208.45]:37273 "EHLO
-        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727732AbeL0Oqs (ORCPT
+        Thu, 27 Dec 2018 09:56:23 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40075 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728132AbeL0O4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 09:46:48 -0500
-Received: by mail-ed1-f45.google.com with SMTP id h15so15417251edb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 06:46:46 -0800 (PST)
+        Thu, 27 Dec 2018 09:56:23 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y16so10938667qki.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 06:56:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=swHM4pFT+o4eUD1LQxcMTykYAXdK9jhT3Gm0xwLroX8=;
-        b=oj7fZOkig35gwcQH6Klw8AynreDbxQmo0Cz54uZlJVc9YlWK2gdCFZUGDCTLqzOO7k
-         Y9HzQ9gbmvzOwZg9zgzYzeS97BqacHTKdn2fbalxv2RrpRE5WGy0Si4AmZhLTFWrHR37
-         SsdrE4f6HpUw0V+TX2109iT4Zi/ngAE2HrqBcfEDr2IMY3ReHVnCGAwVIVLvz7ZFNXjL
-         5axswSA5wzdBnm7iGTyk4IWsHcsYan1sVA6M0W/E9KJqEB8GYjuxxkk2dVy7/IC2T8G7
-         /ht/eu4MNq41gcKRLnuLJj9OSJb8JLf8OsH8qCopbGDvWifWnFJWQW9u0mz1byxjECoz
-         ooqQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B1+FmvZXnUqqvWdNdU8jnu2ftZC3qkcxSQR84GGlPnk=;
+        b=DYHQrOmVjRhU/96m9z85JNZPU7I3aev5+tJYC7upN5GBC+tIGiH+QMkNq6zO4viIeV
+         W17JT2SXBN803hnhGW30ut60E1zH6LQ0IcywUwLDbT07g6l7/XlzEjvQZEeSAXGwDFtq
+         jqF162MWlt3LAkhSWXTSaaLsxIjndhfCZwGtd1J26/1t0W/+BIkkG3Yj5WvkS4uiV1He
+         OqvETd87PCibwQ0g/Rf1NTXy+sTpezd+UxUOVh3vzMAiXL/ogzwtOELPhzN6YAGLliGY
+         jqTAEXAbtBjN1LMBhHFlEWQtSSrJQO0JqI0eLBNnmoFyO6oj1Q1ouYzFeIhqjRIxloJl
+         zwHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=swHM4pFT+o4eUD1LQxcMTykYAXdK9jhT3Gm0xwLroX8=;
-        b=cXz7x1siAQctwjkAfgZlWq+JvDubIqasbx2VLoTCgw0+iWINJsdgpw3YmFaT28Kq16
-         ZlvshbO6EeaoJ7MNNvmW/CtPJ6tok6weNyfcm68TlJ/ROhJu7KDAYsRye4EaEqu8MiMY
-         HoRmq1VuZ5q1yh/wAXppdrLCCyi+05w5iL/ZA6D6QV0MD9mPlrxYpjrUM5hG8L1mkho3
-         MWMoRjXd1zW9pxHmK4ckS3b7TKNRtRCibzO7ykEOFfJf+lMu1nU716eaEsOkPNhWgjlp
-         e1ne+CNz8o+8QXYpT2VnNHr6qU82ipF5O4c5k1glgyVE6cyVFogg9zZmdenXzKFt5Uhp
-         RNdA==
-X-Gm-Message-State: AJcUukc7SOw4O2SQkExayRGkQbuNGOrtiV0daJ86O8TtgEnZ0PTVANlI
-        Bk+uhxkKfMuXOPlxPkOpqQ==
-X-Google-Smtp-Source: ALg8bN7nql76mxAEX/DqVyNJwu1iqvEd8e+W/dRlTrh0cX5z5833xCw7co9NvfOEr+vy+GCzAwGTgw==
-X-Received: by 2002:a17:906:e2c9:: with SMTP id gr9-v6mr5085150ejb.108.1545922006234;
-        Thu, 27 Dec 2018 06:46:46 -0800 (PST)
-Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
-        by smtp.gmail.com with ESMTPSA id c38sm11557631edb.15.2018.12.27.06.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 06:46:45 -0800 (PST)
-Date:   Thu, 27 Dec 2018 17:46:43 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org,
-        vyasevich@gmail.com, viro@zeniv.linux.org.uk, shli@kernel.org,
-        sds@tycho.nsa.gov, pshelar@ovn.org, paul@paul-moore.com,
-        nhorman@tuxdriver.com, marcelo.leitner@gmail.com,
-        eparis@parisplace.org, dave.hansen@intel.com,
-        kent.overstreet@gmail.com
-Subject: Re: + proc-commit-to-genradix.patch added to -mm tree
-Message-ID: <20181227144643.GA6925@avx2>
-References: <20181217205458.jBjXa%akpm@linux-foundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B1+FmvZXnUqqvWdNdU8jnu2ftZC3qkcxSQR84GGlPnk=;
+        b=fbk6nXwf9djHXRyRa2i6PklELvPbemHmk9fDa8lLAdgsHpzDIKZfbF6+en9oF5LFnI
+         vIgZXpmrqd/0642Tf3ghiF6vCE3al/AyDtgW96nf+JlsAaTyKmXEgmG5xRlYFJUCOQy7
+         iAImjLxp0JkZz9E4u9RqUHNzkUImh9SLHx53aQxSCPhmo4ib9/gkyttSI0EmKI6uauHi
+         w5zCdv1ZD7F3TdqL/kvtLkhO5vbbuj+X0ezwHqcbPZpgX0bhzFoIv0bPCt5AES52KPUJ
+         BZX50R3HQbbIP+F6F9wgo+F8nWieRGl5PtJd1X5PtwvIHgBEd8tzkLvO1z8fCG0QDbub
+         iUDg==
+X-Gm-Message-State: AJcUuke2u5FYXjkpL3DUdRy3ArSZFX/r4msJuUJAD33b9t0fFu/Ss1su
+        j9oPPCw0HmmXp/arDluq3w3R4/mLtnOy/aHhN82d8KTd
+X-Google-Smtp-Source: ALg8bN6VfblYnkztEanWXOEq431OCKsItGipVM8N2LQkZUPWn4fY+UxEjwes/D4yliDdPE0zxffxCBJrczk0l6gJdEg=
+X-Received: by 2002:ae9:dec5:: with SMTP id s188mr21550788qkf.127.1545922582209;
+ Thu, 27 Dec 2018 06:56:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181217205458.jBjXa%akpm@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1528819790.git.dolinux.peng@gmail.com> <b55024472e101a33b3d6b098aa2ce23c5b5dd6f7.1528819790.git.dolinux.peng@gmail.com>
+In-Reply-To: <b55024472e101a33b3d6b098aa2ce23c5b5dd6f7.1528819790.git.dolinux.peng@gmail.com>
+From:   Donglin Peng <dolinux.peng@gmail.com>
+Date:   Thu, 27 Dec 2018 22:56:10 +0800
+Message-ID: <CAErzpmv94LHULidn4n-ChgeJkXqc=Z1Zf-DaanBJE1iFpRe_xg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dump: Convert to use DEFINE_SHOW_ATTRIBUTE macro
+To:     catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 12:54:58PM -0800, akpm@linux-foundation.org wrote:
->     http://ozlabs.org/~akpm/mmots/broken-out/proc-commit-to-genradix.patch
-> Subject: proc: commit to genradix
-> 
-> The new generic radix trees have a simpler API and implementation, and no
-> limitations on number of elements, so all flex_array users are being
-> converted
+On Wed, Jun 13, 2018 at 9:15 AM Peng Donglin <dolinux.peng@gmail.com> wrote:
+>
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>
+> Signed-off-by: Peng Donglin <dolinux.peng@gmail.com>
+> ---
+>  arch/arm/mm/ptdump_debugfs.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+>
+> diff --git a/arch/arm/mm/ptdump_debugfs.c b/arch/arm/mm/ptdump_debugfs.c
+> index be8d87b..79002fe 100644
+> --- a/arch/arm/mm/ptdump_debugfs.c
+> +++ b/arch/arm/mm/ptdump_debugfs.c
+> @@ -11,18 +11,7 @@ static int ptdump_show(struct seq_file *m, void *v)
+>         ptdump_walk_pgd(m, info);
+>         return 0;
+>  }
+> -
+> -static int ptdump_open(struct inode *inode, struct file *file)
+> -{
+> -       return single_open(file, ptdump_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations ptdump_fops = {
+> -       .open           = ptdump_open,
+> -       .read           = seq_read,
+> -       .llseek         = seq_lseek,
+> -       .release        = single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(ptdump);
+>
+>  int ptdump_debugfs_register(struct ptdump_info *info, const char *name)
+>  {
+> --
+> 2.7.4
+>
 
-> --- a/fs/proc/base.c~proc-commit-to-genradix
-> +++ a/fs/proc/base.c
-> @@ -2142,11 +2142,12 @@ proc_map_files_readdir(struct file *file
->  	struct task_struct *task;
->  	struct mm_struct *mm;
->  	unsigned long nr_files, pos, i;
-> -	struct flex_array *fa = NULL;
-> -	struct map_files_info info;
-> +	GENRADIX(struct map_files_info) fa;
->  	struct map_files_info *p;
->  	int ret;
->  
-> +	genradix_init(&fa);
-
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-
-I'll try to check performance after New Year.
+any suggestion?
