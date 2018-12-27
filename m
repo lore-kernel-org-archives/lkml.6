@@ -2,112 +2,100 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19257C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A332C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 19:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D0F20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B2B20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 19:01:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="LeVxv/m/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6pA93fP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeL0S7B (ORCPT
+        id S1728127AbeL0TBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 13:59:01 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:57252 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbeL0S7A (ORCPT
+        Thu, 27 Dec 2018 14:01:34 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37459 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeL0TBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 13:59:00 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id CFE3CD9C
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 18:58:58 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hXj4Et6FkK0A for <linux-kernel@vger.kernel.org>;
-        Thu, 27 Dec 2018 12:58:58 -0600 (CST)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 3B162D82
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 12:58:12 -0600 (CST)
-Received: by mail-io1-f72.google.com with SMTP id o22so23498345iob.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 10:58:12 -0800 (PST)
+        Thu, 27 Dec 2018 14:01:34 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h15so15946032edb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 11:01:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=hUY2R81IpkxDQV+VP8dNZeYfbpjuKWDQGlzYigVB7HE=;
-        b=LeVxv/m/JnwXJsy7LjT4XvlbjtPdB46ZMma3aL13jGK4XzvQ8vU2xk8gMzuvmZv6hw
-         EZZwQlIvWe9yEwCwJ5k96k62PDAnFMxWE269wxFpTEWs9lnrxUnKHwzBLrVcwxakMlMo
-         JkwSrRcnfJb9rsey07UtNn+lzvR6E+Y/DsyPmDX6joYh9zI3Asa8imsqnlEyE/ixIoNN
-         nlrWzox0uIzCqHf8706hMC2Wy6VNzxJwFpipreIT4J+T7c4u8J0NyWbEW9tnNouzz5WF
-         Jnyah8lEqqlp08O4NYiVufkrfSNnqGer3M57LVir3mWEk0zSK49WwKqZBc0Z+sMtyNCm
-         b6OA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YeLTEE1Dx6n4L7qt3HAfaNdbaisfIf0DmmbR0jyozfU=;
+        b=M6pA93fPInmaZvTvAdoyA+R0K4MZ2cILF/roEYUEy7vyeNTrZDMfYfIeVKnN2ksomo
+         wb3ZllCfoj5ItsSgLGgnrocXifUUI2ioVQooSUejSHaW6aHN6Nzita6CUVXZVlIoYbxX
+         dxDbNZF2aXgPMcYNiWs9XEXUr2shErRoTsdqk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hUY2R81IpkxDQV+VP8dNZeYfbpjuKWDQGlzYigVB7HE=;
-        b=DS/c5KNVpwbDlBGpSyto1VlnNIulLn1ej09nyMijzjDoxFcFGlmTU4EradnEI9hbJk
-         K4+553KeM2U7t+WiNEDxGedHcqRA4sNUboCh9JregedxM7pf8VoDf2uSszdaDpyys4j8
-         6mB7R+HNcV6B0v8m635xIhJROUTIUc5zVEsMaL/IVwl9AAawwClswOBJJXKLu06iAcJk
-         qRe4uo8ovjA5JmCQcYCTqBBv30pSoiK27iKqXVKlSoy23xxzN2E/k1avpLd0cLBTZSZ3
-         v8kRePHbc73drGagBRL4ka35409Wl54o9g26Y5nwP1TiEvVMb6ypCYT4ZNNBJTNmCXhU
-         p+8g==
-X-Gm-Message-State: AA+aEWaOWgFKeJfiwZAINZ6vwydaZ5sHJb3NnSGFdgS24DsuNCX4FW0I
-        +vI9spbLyYS9mYCpdBPtlm5K3RCq/lwtXYYoG5zve33+Lxn964rjejHtFDHZjTOOsXRiugXp38r
-        q+DZK8V8F5P91q/gX68Z7kX9I5/MD
-X-Received: by 2002:a24:9307:: with SMTP id y7mr16295297itd.38.1545937091802;
-        Thu, 27 Dec 2018 10:58:11 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/V9qzz4f+wJfWaRkvH94ZQr6kQ905CNwOQ4Ma56gBT6+ROr1k19eFUg1H+xN7qaeBe25/xviA==
-X-Received: by 2002:a24:9307:: with SMTP id y7mr16295289itd.38.1545937091545;
-        Thu, 27 Dec 2018 10:58:11 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id q14sm13609003itb.36.2018.12.27.10.58.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YeLTEE1Dx6n4L7qt3HAfaNdbaisfIf0DmmbR0jyozfU=;
+        b=n4sL1OjxDaS6fD+cTMkauc8LoBPKvln+MuMlYoD3j//NAi6fXAb32RiOcTXE0FWCsF
+         KYt5XW4xcVj+xrKUIGSq+9g/fjXteFXFU45QLk7k0Ft5NtlNjN0AyPM5fplJHM8oavgD
+         a7y2cOGqzUfKm1D6l13smg9e35hbUunFOsShccWrVkC1uI68O+8f+1a1TPwxDF1xlqbD
+         GeLIK069O/n2Jo6qNrzgv3g+ZsuOLuGAOlzy1GkiD3HHK081SRiLDu99UpS6bF+wMl1K
+         AEl4TwYPKUg0kI0TasjDBjj1d5r1a4LudqJf1Y7EYLYOuYZzw1cplZj9CJZWjBkVyCdj
+         spDQ==
+X-Gm-Message-State: AA+aEWYO9LkS6f+ehBGAgb9x61xibwMH7perLpbatSfHnGm+w+KhQ5cX
+        veDAHWcgpausU8C+zQxMkJZWoPNQwYKNmg==
+X-Google-Smtp-Source: AFSGD/Xs9PQK5EMlwpd67QKcl1duFASXaWlzlSe73PPzPufYI5vRG92Fw31Jvjn+zhu4ihJM42WcWA==
+X-Received: by 2002:a17:906:4e82:: with SMTP id v2-v6mr16349209eju.149.1545937292430;
+        Thu, 27 Dec 2018 11:01:32 -0800 (PST)
+Received: from chuckie.home ([2a01:cb1d:112:6f00:6488:e12:eb9c:4813])
+        by smtp.gmail.com with ESMTPSA id v14sm11224376edq.74.2018.12.27.11.01.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 10:58:11 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvb: Add check on sp8870_readreg
-Date:   Thu, 27 Dec 2018 12:58:01 -0600
-Message-Id: <20181227185802.24213-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Thu, 27 Dec 2018 11:01:31 -0800 (PST)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Jerome Forissier <jerome.forissier@linaro.org>
+Subject: [RFC PATCH 0/2] allow optee to be exposed on ACPI systems
+Date:   Thu, 27 Dec 2018 20:01:20 +0100
+Message-Id: <20181227190122.23149-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sp8870_set_frontend_parameters, the function sp8870_readreg
-may return an error when i2c_transfer fails. The fix checks for
-this error and returns upstream consistent with other invocations.
+Similar to how OP-TEE is exposed as a pseudo device under /firmware/optee
+on DT systems, permit OP-TEE presence to be exposed via a device object
+in the ACPI namespace. This makes it possible to model the OP-TEE interface
+as a platform device gets instantiated automatically both on DT and ACPI
+systems, and implement the driver as a platform driver that is able to
+use the generic device properties API to access the 'method' attribute
+as well as potential future extensions to the binding that introduce
+new attributes.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/media/dvb-frontends/sp8870.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+What remains to be discussed is how to expose OP-TEE pseudo devices,
+e.g., Sumit's RNG implementation on SynQuacer which we would like to
+bind a Linux driver to.
 
-diff --git a/drivers/media/dvb-frontends/sp8870.c b/drivers/media/dvb-frontends/sp8870.c
-index 8d31cf3f4f07..270a3c559e08 100644
---- a/drivers/media/dvb-frontends/sp8870.c
-+++ b/drivers/media/dvb-frontends/sp8870.c
-@@ -293,7 +293,9 @@ static int sp8870_set_frontend_parameters(struct dvb_frontend *fe)
- 	sp8870_writereg(state, 0xc05, reg0xc05);
- 
- 	// read status reg in order to clear pending irqs
--	sp8870_readreg(state, 0x200);
-+	err = sp8870_readreg(state, 0x200);
-+	if (err)
-+		return err;
- 
- 	// system controller start
- 	sp8870_microcontroller_start(state);
+Cc: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: Graeme Gregory <graeme.gregory@linaro.org>
+Cc: Jerome Forissier <jerome.forissier@linaro.org>
+
+Ard Biesheuvel (2):
+  optee: model OP-TEE as a platform device/driver
+  optee: add ACPI support
+
+ drivers/tee/optee/core.c | 94 +++++++++-----------
+ 1 file changed, 41 insertions(+), 53 deletions(-)
+
 -- 
-2.17.1
+2.19.2
 
