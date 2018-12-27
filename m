@@ -2,106 +2,106 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A2EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40538C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8CA321741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 029A6208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:48:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="V0xNDF5g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcbzwwLv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbeL0Uek (ORCPT
+        id S1730013AbeL0Us0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:34:40 -0500
-Received: from cock.li ([185.100.85.212]:53462 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729867AbeL0Uek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:34:40 -0500
+        Thu, 27 Dec 2018 15:48:26 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35697 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727940AbeL0UsZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 15:48:25 -0500
+Received: by mail-qt1-f194.google.com with SMTP id v11so21464935qtc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 12:48:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=fi4v9QVEbJBS29NLpBWanHSYjhSWP0ozXzu1zdb62tQ=;
+        b=KcbzwwLv+0zx+u7ng/1EDextMWxtGE21w1KymZIOnpkKV322b65mq/p9lrrFbjZZue
+         JCaQQp73rwA1sERGbN3CZup2QCkg4asac2gV2Blgew+lwc17t+UHfhCKJyZUVvzrAxY2
+         +l1cUR28LyWNr++cD7P4u4AgsLRP6Hx4sawGyYbQUlQRiNXuZKxLDDDlMAxDJ477MeAk
+         tZ3/Dtw6N72isIUrrhbDRozstK5hIq1xT2on2VJ8/1NqeqPo7FEB44ECxmsO7jXHAy0r
+         wDp4hg2emgyXaQxrKreO9W6LfyIiWeMZS8zSEHPmCO4BAgkU6wFetLvKpW0mHmz/HjDu
+         0iGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=fi4v9QVEbJBS29NLpBWanHSYjhSWP0ozXzu1zdb62tQ=;
+        b=XGTSJGJgRbAk+I+QQoCY+fs/WuR0CY9fRmqrkGqHbtvAbsZM4Wl5VW4+exNZhGpfnF
+         5Dj/SIfD76aKq1gALduok5aBMI4RcM+gPFCMYF8FelagNPOSHC6dLE7WfB2Xja+Ee4WF
+         BS9wIaBiQt7r6rwl4z4oxja17Jb5bPwxQ4Y2WB90xl2kjkPUYp7sY3xRdtoNPIO7d53A
+         2jhPnUx0BTmsQJcZtiE5qmgZEcmhTi8kr8Kd6Iw/ykajDPv9HhDJS0bwp+ja4evYyPSb
+         e9oLbEpGK5tjFgxzVFOQRZnMlq8GrbByzWzxZJ3ruGlUUXBY+rRn19uGDDTD+9QFhncH
+         eruQ==
+X-Gm-Message-State: AA+aEWZ0hb6qc7oSYJZWzAHntEuXw6WwMx+3ruKBBI3zvfTGyP3P3lrU
+        UIRqMDWPhxIQO0sgs6cAucCjf0SZMpEIwnLLfIU=
+X-Google-Smtp-Source: AFSGD/VqAPX0VXaUA49Mwqx0exh7PvIBqs/kkMjMy7lEFPL9JyXNbqkxK4CmnWihb2jipD1wtGHr5+6cwhNYNQUqaeU=
+X-Received: by 2002:ac8:728f:: with SMTP id v15mr23042461qto.260.1545943705005;
+ Thu, 27 Dec 2018 12:48:25 -0800 (PST)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545942877; bh=OL/s0UHPW1xPIPf6/CQk21E2UL2uVi9ofZFGoNR80CQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=V0xNDF5gAOEI85WIa208L/qyLoiqm4EY6GFjcXyFCl9x5OF25xxvAe8ITJOmPjkC0
-         NNupuHecWgKSTErCDhAZJSa3JQvKJXFSoJDQrUFP+olZWGi/wY/7o9wow1S80tCsZo
-         AQAVnmBjKfHzNejKpF20Y2JdFXQM6MZz20yYmvrbbTd6ZjE1rqh7eJLcnm4WQUDYSe
-         pKan5vV6RnF7GhGkrIwntCWRzEWmeFgm0qMeOzyGIdK08L3fWYmR97IZRBIoFWXfjt
-         rIU2aUHbTwq+jIxJlDs6oPtwtd92sFsH3GG2LzP3UC9+j5WEisW6d2wsylJVmWXNxk
-         21HQzMD1/ybsg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 27 Dec 2018 20:34:37 +0000
-From:   vsnsdualce@memeware.net
-To:     dng@lists.dyne.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: Yes: The linux devs can rescind their license grant. GPLv2 is a
- bare license and is revocable by the grantor.
-In-Reply-To: <CAD2jOU9SV3nuQbv+Nnp6XSqo-EA90AWvn5_kagr63eAsA=MaYw@mail.gmail.com>
-References: <238e9be2bb4751406260ebdc7686ef54@redchan.it>
- <CAD2jOU9SV3nuQbv+Nnp6XSqo-EA90AWvn5_kagr63eAsA=MaYw@mail.gmail.com>
-Message-ID: <45d1521f5aa4962f96f0543bdbae69d9@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+References: <d1a036ae6ecc7614d969e841ee2e9d2f@memeware.net>
+In-Reply-To: <d1a036ae6ecc7614d969e841ee2e9d2f@memeware.net>
+Reply-To: BonOnlines@gmail.com
+From:   Bon Onlines <bononlines@gmail.com>
+Date:   Thu, 27 Dec 2018 21:48:11 +0100
+Message-ID: <CANV0cTm1PfB61hg-zcxDqdwCKOLSoX0evkwWmv0fHGxgxsf4iQ@mail.gmail.com>
+Subject: Re: Why is no one discussing this anymore?
+To:     vsnsdualce@memeware.net
+Cc:     Raul Miller <rauldmiller@gmail.com>, visionsofalice@redchan.it,
+        OpenBSD general usage list <misc@openbsd.org>,
+        linux-kernel@vger.kernel.org, freebsd-women@freebsd.org,
+        freebsd-chat@freebsd.org, owner-misc@openbsd.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> (2) ... (I am not going to go over the legal mistakes you've made,
-> because of (1))...
+Are you aware we are in the end of year holidays? I recommend you to
+not call others as an idiot, as the only idiot here are you ;)
 
-I have not made legal mistakes, pompous programmer a__hole*.
-
-A gratuitous license, absent an attached interest, is revocable at will.
-
-This goes for GPLv2 as used by linux, just as it goes for the BSD 
-license(s).
-The only entities who have, with regards to BSD, an attached interests
-are perhaps those companies who pay for its development. Non-gratis 
-(paying) customers
-may have some refuge under consumer protection statutes, for current 
-versions they have
-in their posession, paid for by good consideration.
-
-Everyone else has NOTHING.
-Do you understand that?
-
-In the case of the 1000's of linux copyright holders to whom no 
-consideration
-was given by an entity, and the various BSD copyright holders (read: the 
-programmers),
-who have not ASSIGNED their copyright over to some other entity, there 
-is
-NOTHING to hold them to a promise THEY NEVER MADE.
-
-DO YOU UNDERSTAND THAT YOU F___ING PIECE OF S__T?
-DO YOU UNDERSTAND THAT NEITHER THEY NOR YOU HAVE PROMISED NOT TO ELLECT
-TO USE YOUR AS-OF-RIGHT OPTION TO RESCIND YOUR GRATUITOUS LICENSE 
-REGARDING
-YOUR WORK.
-
-One cannot rely on a promise that was never made, additionally many of 
-them
-were never paid consideration for this non existant promise either.
-
-
-*(Note: I am both a programmer and an attorney, so I know the type)
-
-On 2018-12-24 16:01, Raul Miller wrote:
-> (1) Wrong mailing lists - these are not linux mailing lists.
-> 
-> (2) ... (I am not going to go over the legal mistakes you've made,
-> because of (1))...
-> 
-> (3) Anyways, ... people do make mistakes... But, please stop making
-> these mistakes.
-> 
-> Thanks,
-> 
-> --
-> Raul
-> 
+On Thu, Dec 27, 2018 at 9:31 PM <vsnsdualce@memeware.net> wrote:
+>
+> Why is no one discussing this anymore.
+>
+> It's like you just accepted the "NU UH U WRONG" proclamation from
+> programmers.
+>
+> Are you idiots aware that programmers DO NOT KNOW THE LAW simply by
+> virtue of being "smarts"?
+>
+> Are you idiots aware that I am a lawyer, I have studied the law, and I
+> do know more than the programmers on this issue (note: I'm also a
+> programmer too... but for something useful... like games :) )
+>
+> Are you idiots aware that Eben Moglen (drafter of the GPLv3 (not 2,
+> Linux is under 2)) has NOT made good on his pledge to publish a report
+> on how I'm wrong and let me "correct" him where he got it wrong.
+>
+> Why do you think that is? That in 2 months nothing.
+>
+> It's because, as a relative who's worked in the field for many decades
+> said: he's full of shit.
+>
+> Anything he publishes would just undermine the stance he's taken.
+>
+> The license IS recindable at the will of the 1000s of grantors. Any one
+> of them could shake the tree.
+> _______________________________________________
+> freebsd-chat@freebsd.org mailing list
+> https://lists.freebsd.org/mailman/listinfo/freebsd-chat
+> To unsubscribe, send any mail to "freebsd-chat-unsubscribe@freebsd.org"
