@@ -4,92 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315B8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D221C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41732148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 394EF21907
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:11:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545944996;
-	bh=oZqznBXMaiZnqAqQGyMlvK6Q621EYR+qs40m6c8fOzA=;
+	s=default; t=1545945093;
+	bh=8IRq20wouNZ1BsWajklRSoJFI7k10QDFHL8ponN98SY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jMf+jmUXFZrhEmaXU19sZ/CJZtZOaFQSeNKhZt+VsCfKikwm0A9DTP2J+yKL7KlMN
-	 cSBp6fzh4JYt9Nka5IMy4H50Su+QoBpau/yMTeLqWe+GN1xMbT8nsQIO9yd7xmPz7M
-	 /l68lS5WKvB+QFXt3nAzugAk0B1VU0Dup2tXHjxI=
+	b=b+MJCrvFbMkzRftIqy9xFV5CnoExBRtArLgWRPJPgHMMukKZ7IwAQCrIYzqIaDheS
+	 2xWtkhxw/QI2ULjNjJOR8aI9tNHm0xgLM5dRsWuxWnZWkpno5wPdGxX5oz78MBsjDv
+	 prjBvjgtBsGVyzTps07hfd3qvB88eDpqQBVIzxvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbeL0VJz (ORCPT
+        id S1730266AbeL0VLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 16:09:55 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40280 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbeL0VJy (ORCPT
+        Thu, 27 Dec 2018 16:11:32 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54610 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbeL0VLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 16:09:54 -0500
-Received: by mail-io1-f65.google.com with SMTP id a2so3058071iok.7;
-        Thu, 27 Dec 2018 13:09:54 -0800 (PST)
+        Thu, 27 Dec 2018 16:11:31 -0500
+Received: by mail-it1-f195.google.com with SMTP id i145so26045398ita.4;
+        Thu, 27 Dec 2018 13:11:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i3w/R5gR+TdjmOUjmdVKVXjH3rS0dZDOdRUKMIU0C5I=;
-        b=nVoLn1TTh1UjN3loMLWmzNftLA7SaUdxSTdWMOlIp3d4K1DktvCJBaGdZTBKkBA1Eg
-         ztXwrY5A+54FLz6DMzThSz6WtY4fTojJH4xKk762NX7XY/Yo3B821Z8jT9RvrfVU55NC
-         +6K62DdJQC/01evmA9G9bssqUf/XOGtmFe3X2u3NfaigV8vX0ken9yj+PCAA0vlS+aY2
-         5QpKN0kEUkS5tXoEL3J9WWzOzSW2CBUSl+nzdI8nlTB+wqIqEigJ3f7sF88BdUo2AVLI
-         9JFt9J4JF6NNpJOV/JhgHxGPUbNmfchtXUz2gq+GKypNJcrhc8dIR43wXK8xs8JlDK4e
-         Aidw==
-X-Gm-Message-State: AJcUukdCFFbMKCEz7iS1t80RIFk67UQwkdlRZ/DUl6+OKw1KFwSMN5If
-        4poOumqMZtdwdkK9DTpuiA==
-X-Google-Smtp-Source: ALg8bN6uxLNlL1SLxOd7h8Pw3C2ra6M6k6X40yXAXjKSMhjwoxv27WAOCn7jg8WfGYzvOkcZyslZcQ==
-X-Received: by 2002:a6b:7844:: with SMTP id h4mr2137221iop.216.1545944993830;
-        Thu, 27 Dec 2018 13:09:53 -0800 (PST)
+        bh=0C5cFFdd9ST3OZCDsfLCrMSaUPayJWdAvnN8vaUCc6k=;
+        b=freyMMsu20XxFslkscWZZMHYTQJN5mYqawN16wychw+kDj6arpL0MykD0EGrAbabmO
+         5lLhymKRwVKpGs5MmIvtgZ7oxBCB8GkJI2gSU2hSJEUK54U+LXaBbP9dblZ1MosIO9jQ
+         3z42wnlXiNdc1LwNR7SaY0sYEXFLcsMKrApjdaKrmJ7sazvQnoufJ6NNWMJDtC8j2g0l
+         uHtIsNfxAyHfx/r+uShm2ass/JdFVgakrkZ23AoZBjxlzoRZ8op4Oscm3Z74GhpSRxGZ
+         nBYXBKEbasi5aHB6Hm1tbV1AlRryxOF9dc+qIk/4SVa1FTth67HpfHj5OY++8//D93Qh
+         Nw/A==
+X-Gm-Message-State: AA+aEWZiP+Pg2tCGXqXbH1OuU5PUk5ldepxpGEVkKdyWQ3sWJAeTiQSg
+        bg0oQvmehUBxzIceZHj6Cw==
+X-Google-Smtp-Source: AFSGD/VVXzPQjRd2au3de0HN9ClKCKKGpfSpf3KHyQZtNjNqb/bbzgQHvoeaK0vIo4sRB4BhcpRiCQ==
+X-Received: by 2002:a02:89dd:: with SMTP id e29mr17355502jak.21.1545945090871;
+        Thu, 27 Dec 2018 13:11:30 -0800 (PST)
 Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id m186sm12985893ita.2.2018.12.27.13.09.52
+        by smtp.gmail.com with ESMTPSA id h140sm14296932itb.23.2018.12.27.13.11.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 13:09:53 -0800 (PST)
-Date:   Thu, 27 Dec 2018 15:09:52 -0600
+        Thu, 27 Dec 2018 13:11:30 -0800 (PST)
+Date:   Thu, 27 Dec 2018 15:11:29 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     cezary.gapinski@gmail.com
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Cezary Gapinski <cezary.gapinski@gmail.com>
-Subject: Re: [PATCH v2 14/14] spi: stm32: add description about STM32F4
- bindings
-Message-ID: <20181227210952.GA26671@bogus>
-References: <1545688840-23992-1-git-send-email-cezary.gapinski@gmail.com>
- <1545688840-23992-15-git-send-email-cezary.gapinski@gmail.com>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, dianders@chromium.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        evgreen@chromium.org, briannorris@chromium.org,
+        sricharan@codeaurora.org
+Subject: Re: [PATCH v3 7/8] dt-bindings: remoteproc: qcom: Add power-domain
+ bindings for Q6V5
+Message-ID: <20181227211129.GA27911@bogus>
+References: <20181226125229.20149-1-sibis@codeaurora.org>
+ <20181226125229.20149-7-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545688840-23992-15-git-send-email-cezary.gapinski@gmail.com>
+In-Reply-To: <20181226125229.20149-7-sibis@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Dec 2018 23:00:40 +0100, cezary.gapinski@gmail.com wrote:
-> From: Cezary Gapinski <cezary.gapinski@gmail.com>
+On Wed, Dec 26, 2018 at 06:22:28PM +0530, Sibi Sankar wrote:
+> Add power-domain bindings for Q6V5 MSS on MSM8996 and SDM845 SoCs.
 > 
-> Add description that STM32F4 can be used in compatible property.
-> Master Inter-Data Idleness optional property cannot be used in STM32F4.
-> 
-> Signed-off-by: Cezary Gapinski <cezary.gapinski@gmail.com>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/spi/spi-stm32.txt | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
+> v3:
+>   * Fixup dt-binding documentation as suggested by Doug
+>   * Dropping Rob's Reviewed-by due to documentation style
+>     change
+> 
+> v2:
+>   * Add load_state power-domain
+>   * List cx and mx power-domains for MSM8996
+> 
+>  .../bindings/remoteproc/qcom,q6v5.txt         | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
+Reviewed-by: Rob Herring <robh@kernel.org>
