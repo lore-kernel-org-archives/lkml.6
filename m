@@ -2,310 +2,146 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C12C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8FDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E4B2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C15D214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:13:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730532AbeL0JHV (ORCPT
+        id S1730536AbeL0JNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:07:21 -0500
-Received: from mga03.intel.com ([134.134.136.65]:42675 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728104AbeL0JHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:07:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2018 01:07:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,404,1539673200"; 
-   d="scan'208";a="101716154"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by orsmga007.jf.intel.com with ESMTP; 27 Dec 2018 01:07:15 -0800
-Subject: Re: [PATCH V5 3/3] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, mperttunen@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        ulf.hansson@linaro.org
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <1545355509-6914-1-git-send-email-skomatineni@nvidia.com>
- <1545355509-6914-4-git-send-email-skomatineni@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2e016ee1-3604-2909-dab9-7ca6abc2f097@intel.com>
-Date:   Thu, 27 Dec 2018 11:05:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 27 Dec 2018 04:13:11 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728946AbeL0JNL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:13:11 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBR999PQ006490
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:13:09 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pmu2nhxfw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:13:09 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 27 Dec 2018 09:13:06 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Dec 2018 09:13:03 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBR9D21Z2556324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Dec 2018 09:13:02 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7615FAE056;
+        Thu, 27 Dec 2018 09:13:02 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25C27AE053;
+        Thu, 27 Dec 2018 09:13:02 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Dec 2018 09:13:02 +0000 (GMT)
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, linux-s390 <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: 4.19.5 and later has tons of false messages "BUG: non-zero
+ pgtables_bytes on freeing mm: -16384"
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 27 Dec 2018 10:13:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1545355509-6914-4-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122709-0028-0000-0000-0000032FBF75
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122709-0029-0000-0000-000023ECFD1F
+Message-Id: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=671 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812270085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/12/18 3:25 AM, Sowjanya Komatineni wrote:
-> This patch adds HW Command Queue for supported Tegra SDMMC
-> controllers.
-> 
-> Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
-> use of 64_BIT DMA to disable 64-bit addressing mode access to the
-> system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
-> for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
-> 
-> CQE need to use ADMA3 as it need to fetch task descriptor along
-> with transfer descriptor, so this patch forces DMA Select to be
-> ADMA3 for CQE.
-> 
-> Tegra SDMMC Host design prevents write access to BLOCK_COUNT
-> register when CQE is enabled to prevent SW from updating block
-> size during Command Queue mode. As per eMMC5.1 device spec, block
-> size of 512 B need to be set prior to enabling Command Queue.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Martin,
 
-Just a couple of minor comments below.
+Right now you get a message 
+"BUG: non-zero pgtables_bytes on freeing mm: -16384"
+for EVERY process that exits in 4.19.5 and later.
 
-> ---
->  drivers/mmc/host/Kconfig       |   1 +
->  drivers/mmc/host/sdhci-tegra.c | 138 ++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 138 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 1b58739d9744..5aa2de2c7609 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
->  	depends on ARCH_TEGRA
->  	depends on MMC_SDHCI_PLTFM
->  	select MMC_SDHCI_IO_ACCESSORS
-> +	select MMC_CQHCI
->  	help
->  	  This selects the Tegra SD/MMC controller. If you have a Tegra
->  	  platform with SD or MMC devices, say Y or M here.
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 7b95d088fdef..68b328df05ed 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -33,6 +33,7 @@
->  #include <linux/ktime.h>
->  
->  #include "sdhci-pltfm.h"
-> +#include "cqhci.h"
->  
->  /* Tegra SDHOST controller vendor register definitions */
->  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-> @@ -89,6 +90,9 @@
->  #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
->  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
->  
-> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-> +#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-> +
->  struct sdhci_tegra_soc_data {
->  	const struct sdhci_pltfm_data *pdata;
->  	u32 nvquirks;
-> @@ -128,6 +132,7 @@ struct sdhci_tegra {
->  	u32 default_tap;
->  	u32 default_trim;
->  	u32 dqs_trim;
-> +	bool enable_hwcq;
->  };
->  
->  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> @@ -836,6 +841,80 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
->  		tegra_host->pad_calib_required = true;
->  }
->  
-> +static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	unsigned long flags;
-> +	u8 ctrl;
-> +	u32 cqcfg = 0;
-> +
-> +	spin_lock_irqsave(&host->lock, flags);
-> +
-> +	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
-> +	ctrl &= ~SDHCI_CTRL_DMA_MASK;
-> +	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
-> +			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
+bisect points to 
+commit 4136161d676a93fc8df6bdb80d720c15522d6c24
+Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Date:   Mon Oct 15 11:09:16 2018 +0200
 
-You are selecting 64-bit DMA if 64-bit DMA is broken.  Is that intended?
-Maybe add a comment.
+    s390/mm: fix mis-accounting of pgtable_bytes
+    
+    [ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
 
-> +		ctrl |= SDHCI_CTRL_ADMA64;
-> +	else
-> +		ctrl |= SDHCI_CTRL_ADMA32;
-> +	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
-> +
-> +	/* Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
-> +	 * registers when CQE is enabled.
-> +	 */
-> +	cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
-> +	if (cqcfg & CQHCI_ENABLE)
-> +		cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
-> +
-> +	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, 512),
-> +		     SDHCI_BLOCK_SIZE);
-> +
-> +	if (cqcfg & CQHCI_ENABLE)
-> +		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-> +
-> +	/* Set maximum timeout */
-> +	sdhci_writeb(host, 0xE, SDHCI_TIMEOUT_CONTROL);
-> +
-> +	host->ier = host->cqe_ier;
-> +
-> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> +
-> +	host->cqe_on = true;
-> +
-> +	pr_debug("%s: sdhci: CQE on, IRQ mask %#x, IRQ status %#x\n",
-> +		 mmc_hostname(mmc), host->ier,
-> +		 sdhci_readl(host, SDHCI_INT_STATUS));
-> +
-> +	mmiowb();
-> +	spin_unlock_irqrestore(&host->lock, flags);
+Turns out that this patch requires several dependencies so the autoselection of this
+patch was missing that. 
 
-Most of this is the same as sdhci_cqe_enable().  Did you consider
-rearranging things and calling sdhci_cqe_enable()?
+Can we either revert this patch or add the dependencies?
 
-> +}
-> +
-> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-> +{
-> +	sdhci_dumpregs(mmc_priv(mmc));
-> +}
-> +
-> +static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
-> +{
-> +	int cmd_error = 0;
-> +	int data_error = 0;
-> +
-> +	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-> +		return intmask;
-> +
-> +	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-> +	.enable	= sdhci_tegra_cqe_enable,
-> +	.disable = sdhci_cqe_disable,
-> +	.dumpregs = sdhci_tegra_dumpregs,
-> +};
-> +
->  static const struct sdhci_ops tegra_sdhci_ops = {
->  	.get_ro     = tegra_sdhci_get_ro,
->  	.read_w     = tegra_sdhci_readw,
-> @@ -989,6 +1068,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
->  	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
->  	.voltage_switch = tegra_sdhci_voltage_switch,
->  	.get_max_clock = tegra_sdhci_get_max_clock,
-> +	.irq = sdhci_tegra_cqhci_irq,
->  };
->  
->  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> @@ -1030,6 +1110,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
->  
-> +static int sdhci_tegra_add_host(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct cqhci_host *cq_host;
-> +	bool dma64;
-> +	int ret;
-> +
-> +	if (!tegra_host->enable_hwcq)
-> +		return sdhci_add_host(host);
-> +
-> +	host->v4_mode = true;
-> +
-> +	ret = sdhci_setup_host(host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-> +
-> +	cq_host = devm_kzalloc(host->mmc->parent,
-> +				sizeof(*cq_host), GFP_KERNEL);
-> +	if (!cq_host) {
-> +		ret = -ENOMEM;
-> +		goto cleanup;
-> +	}
-> +
-> +	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-> +	cq_host->ops = &sdhci_tegra_cqhci_ops;
-> +
-> +	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-> +	if (dma64)
-> +		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-> +
-> +	ret = cqhci_init(cq_host, host->mmc, dma64);
-> +	if (ret)
-> +		goto cleanup;
-> +
-> +	ret = __sdhci_add_host(host);
-> +	if (ret)
-> +		goto cleanup;
-> +
-> +	return 0;
-> +
-> +cleanup:
-> +	sdhci_cleanup_host(host);
-> +	return ret;
-> +
-> +}
-> +
->  static int sdhci_tegra_probe(struct platform_device *pdev)
->  {
->  	const struct of_device_id *match;
-> @@ -1039,6 +1168,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  	struct sdhci_tegra *tegra_host;
->  	struct clk *clk;
->  	int rc;
-> +	struct resource *iomem;
->  
->  	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
->  	if (!match)
-> @@ -1056,6 +1186,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  	tegra_host->pad_control_available = false;
->  	tegra_host->soc_data = soc_data;
->  
-> +	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-> +		tegra_host->enable_hwcq = true;
-> +	else
-> +		tegra_host->enable_hwcq = false;
-> +
->  	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
->  		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
->  		if (rc == 0)
-> @@ -1117,7 +1253,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  
->  	usleep_range(2000, 4000);
->  
-> -	rc = sdhci_add_host(host);
-> +	rc = sdhci_tegra_add_host(host);
->  	if (rc)
->  		goto err_add_host;
->  
-> 
+Christian
 
