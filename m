@@ -2,131 +2,221 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63013C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A845C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305D620861
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE60320866
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:09:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FWv+IICm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pFhlksWD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731223AbeL0RG1 (ORCPT
+        id S1731221AbeL0RJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 12:06:27 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37187 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeL0RG0 (ORCPT
+        Thu, 27 Dec 2018 12:09:39 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52281 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728359AbeL0RJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 12:06:26 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y11so13056818lfj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 09:06:25 -0800 (PST)
+        Thu, 27 Dec 2018 12:09:39 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m1so17230995wml.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 09:09:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oi8WN8kNafIykeFb/KTAQ4OeK2++07SfINculc5UpXY=;
-        b=FWv+IICmnGAVqwGRIzAPFVeErGKEGY6MhfE8+8cbpFI/zlwNOpyw1p/q4ZrQIHM04T
-         k5ZcJRoSH93hVg+3/Ugx21StpgxdPAyjhvfHj1EheFQABwkZ/6Ak565xSuhXSpQFUYKK
-         miUFs93eidKU9qzgdVNCmsumnGJsuoKBKZ3qw=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dL10Nbf5DaOn0Qr5ZWd0sebGIsPWW1EyeGiD9qCqudo=;
+        b=pFhlksWDvKOj+9lOLuhkMxidFpJmWIiqW40Ndy1La9HOmtXE/hYoTgcL9R5ZmCuWUD
+         NiAPRabOZdtyUjotXGyUUCsbKyXMlZO/gkIZkQHkunJq5WMJ0winWnxbdRS5lbTz54Q4
+         BlKPTYGOFEhqYBTbWQfwKBjxG3xTOFv+154b2qu//7qrVRxVwKyyFOwpYS+d+1XtoW5U
+         vty7t+S6AdYu0ei8k1PtWBn9CRyrIPByBKs89wRVJcddyCn3ULm3zSmTOeZoHD+OroWc
+         XFG7CnQsKKDVxrU6bVPvp8Dxy1buje9JRXwoHP9RZMR2S/SI8OkOD9O3Cbz2tXMm5V72
+         h9sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oi8WN8kNafIykeFb/KTAQ4OeK2++07SfINculc5UpXY=;
-        b=Hho1CCOx+fPk+GCa5D9mYYwLQo9tzTXtuA4AbYSXI1E9ZU9A7S3HMM2cSULR72MXNA
-         zsVYYJpRNkFAJoA1CfdBYvQVZ8h9ecFzU6fFObVIKl9WXc2vpc02SPEb3rFMg0meCycg
-         JzX+aUMWY/H0pUimL9rQVX3EaHUPWLNqMQe6mblM2VkhWvbTYgtlFRMRxFux4RxseR0R
-         Qms3OnTmbbM4GvbHLtm+b+ogEAWS+lzVuOwOYumLI8PZ0JNPrIWL86Io0V6LKTEcTOxg
-         ++DVc76ESV3pYxyadPYzW3nhI9u0qeLPJwU7F9MAnMux6+yw7nbt8HUoOe47xmWRHUF6
-         nEtg==
-X-Gm-Message-State: AA+aEWb3XkTLN++fr4ihafdnyANiONb/CI84g0lhFrnhWaVsm5tgkbi8
-        xOAuhfCvyxbFC0QFpcK1hYyPlZH2Mco=
-X-Google-Smtp-Source: AFSGD/XikYpV8ZYnp9Uk9Ym2l0iT2lIlT8+UAeuARDJuKgKHKANCeBaRinClR4Wy++Zt/G6C8o9quQ==
-X-Received: by 2002:a19:aace:: with SMTP id t197mr12066434lfe.7.1545930384321;
-        Thu, 27 Dec 2018 09:06:24 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id a62sm7701946lfa.37.2018.12.27.09.06.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 09:06:24 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id u18so13056269lff.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 09:06:23 -0800 (PST)
-X-Received: by 2002:a19:982:: with SMTP id 124mr11882593lfj.138.1545930005227;
- Thu, 27 Dec 2018 09:00:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dL10Nbf5DaOn0Qr5ZWd0sebGIsPWW1EyeGiD9qCqudo=;
+        b=Mr65ggARmPrVe03PqY5XQ0qtOFOzM9OR2AymJFrecQ4tZ+QycQXWccZoPyktmW+o0p
+         TtHIImm7RwOw18NycFSCEXx2TnPJ8K9vICSZm2d/LANGYLfykgyPJQCA6h+jLdPwnGqW
+         /5SAUZAnYuassCn4QecrGJ9ejHjT3AoC8MpATzCLrlPSVo7rH0fmogNejG2qIglgn37J
+         7aWPseV5f+Y5k/ijTGKnHB76D8mdFzv/cw/99nubv/OtFfkaLcW9MjT0mGQ9aQgLi1b6
+         7TOE1gxNiF27Ds/7qXbWPTg/UdSuCkxocXRbt/1B6r8rLa+kY+6Mt11W+iMG9RYacjBK
+         JuOQ==
+X-Gm-Message-State: AJcUukceBKIjQFMr7HjBRymlmQaqP2Uwz6Wf/gzeV7jP4BziPwuZZR1f
+        L8oY25WABuBZqnkjShO0cQ==
+X-Google-Smtp-Source: AFSGD/WNvpCiJ90ZptnSsGK4bMIyUn0rbM9ga0HzsZsnHlJNwq1qNh4VV/3HzSVVs68ceqS76rulLg==
+X-Received: by 2002:a1c:934e:: with SMTP id v75mr22139107wmd.126.1545930576223;
+        Thu, 27 Dec 2018 09:09:36 -0800 (PST)
+Received: from localhost (host254-25-dynamic.53-79-r.retail.telecomitalia.it. [79.53.25.254])
+        by smtp.gmail.com with ESMTPSA id v8sm34826871wrq.53.2018.12.27.09.09.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 09:09:35 -0800 (PST)
+Date:   Thu, 27 Dec 2018 18:09:34 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] x86: kprobes: Show correct blaclkist in debugfs
+Message-ID: <20181227170934.GA2057@xps-13>
+References: <154503482486.26176.6224515860220847638.stgit@devbox>
+ <20181217154713.GA1308@Dell>
+ <20181218135026.6f96a89247e9b70fa45afbe9@kernel.org>
+ <20181218172134.GA2902@xps-13>
 MIME-Version: 1.0
-References: <1542702858-4318-1-git-send-email-wanpengli@tencent.com>
- <442fc8ca-f92c-eded-9ede-c800a03bf39a@redhat.com> <CACT4Y+Z_wqpUoLDdTdAoSHSXEYRR8PFpGOzLC0kS4Y52c3QmPw@mail.gmail.com>
-In-Reply-To: <CACT4Y+Z_wqpUoLDdTdAoSHSXEYRR8PFpGOzLC0kS4Y52c3QmPw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Dec 2018 08:59:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whZ3_T9b=pac=H1tvdjgX0vjE7FDsC=LfQYDmiY5Aq_kg@mail.gmail.com>
-Message-ID: <CAHk-=whZ3_T9b=pac=H1tvdjgX0vjE7FDsC=LfQYDmiY5Aq_kg@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Fix scan ioapic use-before-initialization
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dledford@redhat.com, KVM list <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Wei Wu <ww9210@gmail.com>, Kostya Serebryany <kcc@google.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Chris Mason <clm@fb.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Olof Johansson <olofj@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Theodore Tso <tytso@google.com>, Tim.Bird@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218172134.GA2902@xps-13>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 6:28 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> Lots of kernel bug reports routinely get lost on mailing lists, which is bad.
+On Tue, Dec 18, 2018 at 06:24:35PM +0100, Andrea Righi wrote:
+> On Tue, Dec 18, 2018 at 01:50:26PM +0900, Masami Hiramatsu wrote:
+> ...
+> > > Side question: there are certain symbols in arch/x86/xen that should be
+> > > blacklisted explicitly, because they're non-attachable.
+> > > 
+> > > More exactly, all functions defined in arch/x86/xen/spinlock.c,
+> > > arch/x86/xen/time.c and arch/x86/xen/irq.c.
+> > > 
+> > > The reason is that these files are compiled without -pg to allow the
+> > > usage of ftrace within a Xen domain apparently (from
+> > > arch/x86/xen/Makefile):
+> > > 
+> > >  ifdef CONFIG_FUNCTION_TRACER
+> > >  # Do not profile debug and lowlevel utilities
+> > >  CFLAGS_REMOVE_spinlock.o = -pg
+> > >  CFLAGS_REMOVE_time.o = -pg
+> > >  CFLAGS_REMOVE_irq.o = -pg
+> > >  endif
+> > 
+> > 
+> > Actually, the reason why you can not probe those functions via
+> > tracing/kprobe_events is just a side effect. You can probe it if you
+> > write a kprobe module. Since the kprobe_events depends on some ftrace
+> > tracing functions, it sometimes cause a recursive call problem. To avoid
+> > this issue, I have introduced a CONFIG_KPROBE_EVENTS_ON_NOTRACE, see
+> > commit 45408c4f9250 ("tracing: kprobes: Prohibit probing on notrace function").
+> > 
+> > If you set CONFIG_KPROBE_EVENTS_ON_NOTRACE=n, you can continue putting probes
+> > on Xen spinlock functions too.
+> 
+> OK.
+> 
+> > 
+> > > Do you see a nice and clean way to blacklist all these functions
+> > > (something like arch_populate_kprobe_blacklist()), or should we just
+> > > flag all of them explicitly with NOKPROBE_SYMBOL()?
+> > 
+> > As I pointed, you can probe it via your own kprobe module. Like systemtap,
+> > you still can probe it. The blacklist is for "kprobes", not for "kprobe_events".
+> > (Those are used to same, but since the above commit, those are different now)
+> > 
+> > I think the most sane solution is, identifying which (combination of) functions
+> > in ftrace (kernel/trace/*) causes a problem, marking those NOKPROBE_SYMBOL() and
+> > removing CONFIG_KPROBE_EVENTS_ON_NOTRACE.
 
-Nobody reads the kernel mailing list directly - there's just too much traffic.
+I'm planning to spend a little bit more time on this and see if I can
+identify the problematic ftrace functions and eventually drop
+CONFIG_KPROBE_EVENTS_ON_NOTRACE, following the sane solution.
 
-And honestly, even fewer people then read the syzbot reports, because
-they are so illegible and inhuman. They're better than they used to
-be, but they are still basically impossible to parse without a lot of
-effort.
+However, in the meantime, with the following patch I've been able to get
+a more reliable kprobes blacklist and show also the notrace functions in
+debugfs when CONFIG_KPROBE_EVENTS_ON_NOTRACE is off.
 
-And no, syzbot didn't really report the bug with any specificity - it
-wasn't clear *which* commit it was that caused it, so reading that
-syzbot report, at no point was it then obvious that the original patch
-had issues.
+It's probably ugly and inefficient, because it's iterating over all
+symbols in x86's arch_populate_kprobe_blacklist(), but it seems to work
+for my specific use case, so I thought it shouldn't be bad to share it,
+just in case (maybe someone else is also interested).
 
-See the problem?
+Thanks,
 
-So the issue seems to be that syzbot is simply not useful enough. It's
-output is too rough for people to take it seriously. You see how the
-report by Wei Wu then got traction, because Wei took a syzbot report
-and added some human background and distilled it down to not be
-"here's a big dump of random information".
+From: Andrea Righi <righi.andrea@gmail.com>
+Subject: [PATCH] x86: kprobes: automatically blacklist all non-traceable functions
 
-So I suspect syzbot should strive to make for a much stronger
-signal-to-noise ratio. For example, if syzbot had actually bisected
-the bug it reported, that would have been quite a strong signal.
+Iterate over all symbols to detect those that are non-traceable and
+blacklist them.
 
-Compare these two emails:
+Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+---
+ arch/x86/kernel/kprobes/core.c | 11 +++++++++--
+ kernel/kprobes.c               | 22 ++++++++++++++++++++--
+ 2 files changed, 29 insertions(+), 4 deletions(-)
 
-    https://lore.kernel.org/lkml/1542702858-4318-1-git-send-email-wanpengli@tencent.com/
-    https://lore.kernel.org/lkml/0000000000001c7a5c0573607583@google.com/
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 4ba75afba527..8cc7191ba3f9 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1026,10 +1026,17 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+ }
+ NOKPROBE_SYMBOL(kprobe_fault_handler);
+ 
++static int do_kprobes_arch_blacklist(void *data, const char *name,
++				     struct module *mod, unsigned long addr)
++{
++	if (arch_within_kprobe_blacklist(addr))
++		kprobe_add_ksym_blacklist(addr);
++	return 0;
++}
++
+ int __init arch_populate_kprobe_blacklist(void)
+ {
+-	return kprobe_add_area_blacklist((unsigned long)__entry_text_start,
+-					 (unsigned long)__entry_text_end);
++	return kallsyms_on_each_symbol(do_kprobes_arch_blacklist, NULL);
+ }
+ 
+ int __init arch_init_kprobes(void)
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index f4ddfdd2d07e..2e824cd536ba 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1389,11 +1389,29 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+ 	return ret;
+ }
+ 
++#if defined(CONFIG_KPROBES_ON_FTRACE) && \
++	!defined(CONFIG_KPROBE_EVENTS_ON_NOTRACE)
++static bool within_notrace(unsigned long addr)
++{
++	unsigned long offset, size;
++
++	if (!kallsyms_lookup_size_offset(addr, &size, &offset))
++		return true;
++	return !ftrace_location_range(addr - offset, addr - offset + size);
++}
++#else
++static bool within_notrace(unsigned long addr)
++{
++	return false;
++}
++#endif
++
+ bool __weak arch_within_kprobe_blacklist(unsigned long addr)
+ {
+ 	/* The __kprobes marked functions and entry code must not be probed */
+-	return addr >= (unsigned long)__kprobes_text_start &&
+-	       addr < (unsigned long)__kprobes_text_end;
++	return (addr >= (unsigned long)__kprobes_text_start &&
++	       addr < (unsigned long)__kprobes_text_end) ||
++	       within_notrace(addr);
+ }
+ 
+ bool within_kprobe_blacklist(unsigned long addr)
+-- 
+2.17.1
 
-and note the absolutely huge difference in actual *information* (as
-opposed to raw data).
-
-Any possibility that syzbot would actually do the bisection once it
-finds a problem, and write a report based on the commit that caused
-the problem rather than just a problem dump?
-
-                 Linus
