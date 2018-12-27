@@ -2,92 +2,93 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E375C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B830EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6907F21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:45:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY+a5UjM"
+	by mail.kernel.org (Postfix) with ESMTP id 8C7B1218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 17:56:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbeL0Rp5 (ORCPT
+        id S1726143AbeL0R4G convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 12:45:57 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41105 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeL0Rp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 12:45:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so9008125plm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 09:45:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yev7m4B2M10EsjSBd6b2yI5+9OujsX/kg7Dboym9xos=;
-        b=QY+a5UjMzi2ZAhzy69B7B9hV2u+wwpvCG4ojs1HsH6F77vTB1oMseGdANsjFIUm562
-         vQcJhZ1y2MQCOFpy6Ta4ddsA5PWqRndI/zbjJrOYdtO9ee4bm3CV85pPcst9IZ2JfEwj
-         vm85ukqDB48+295OwotXbKx/Z2qe6f6OwEyD2FlikBbX/0qDqYTnGTRz+DvpEYrUsKjd
-         PHlMkfPINfwpYpQSYsSp+51HX4UfsRQcT4BAybJU2KT5dcSvrwA5M5etrx+xuIDwkBfV
-         rqDmkSLmn9TF02H6yHh+5NzpOeg+FTs0pf2uorxJnQyrIN5/wb624KM5fOir81Bnfeez
-         MNug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yev7m4B2M10EsjSBd6b2yI5+9OujsX/kg7Dboym9xos=;
-        b=MvtFZ/yzwcA39YAtuRO9DKe0JPoD8xOOdv/ao7ruSiJp2NbYUEJHonbm7c2rUWGWDj
-         0xNM5G01BC7iwFdQshGN4dUoXUjKEHaBlzeiW3ERsEBq5S7tmgGk2kg3/U315x7wdN1h
-         dsdYypBsMA/QN/Ks2AV4ZW/rfGIEiyB7CPcbcCjNCtFBJCGXACuaPjxfsm9SGDJwbENe
-         5qN605boXKFHNNKV0ecF3HdHDHg7Gm6gUOC9c2PFSZMAZqcUfe7ki+fBfbcTfyJ9NtpV
-         0Id+BpmllUIPREUUzwuttxOSSZPMJ27Hle5U/t0Yi5JqCDAohKbe9Qmi/zxzjXL2Fco3
-         VnGg==
-X-Gm-Message-State: AJcUukfKFewVRY1ehqHEx6JrIvcjcj2eehIh1ORi72yMIesqF0vycx6y
-        oFawWiI/zMJ+Atf/MjL5zx8=
-X-Google-Smtp-Source: ALg8bN52m01cJw/LLTP7QLOeSlEsiLIkG2SJLKWKfE80HWU2cMiKEswqdLBhLxrU7bQWc+RQcyLI5A==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6mr24478516plt.21.1545932755446;
-        Thu, 27 Dec 2018 09:45:55 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id l85sm73271898pfg.161.2018.12.27.09.45.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 09:45:54 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     guoren@kernel.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] csky: Don't leak device tree node reference
-Date:   Thu, 27 Dec 2018 12:45:51 -0500
-Message-Id: <20181227174551.7564-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 27 Dec 2018 12:56:06 -0500
+Received: from albireo.enyo.de ([5.158.152.32]:48474 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbeL0R4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 12:56:05 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1gcZt4-0005Ag-5F; Thu, 27 Dec 2018 17:56:02 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.89)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1gcZt4-0001kn-2M; Thu, 27 Dec 2018 18:56:02 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, libc-alpha@sourceware.org,
+        qemu-devel@nongnu.org, ericvh@gmail.com, lucho@ionkov.net,
+        hpa@zytor.com, arnd@arndb.de
+Subject: Re: d_off field in struct dirent and 32-on-64 emulation
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+        <C65D3222-723F-4C0B-AF02-38488C302E84@amacapital.net>
+Date:   Thu, 27 Dec 2018 18:56:02 +0100
+In-Reply-To: <C65D3222-723F-4C0B-AF02-38488C302E84@amacapital.net> (Andy
+        Lutomirski's message of "Thu, 27 Dec 2018 10:38:10 -0700")
+Message-ID: <87wonuua4t.fsf@mid.deneb.enyo.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_node_by_type() acquires a reference to the node returned by it
-and that reference needs to be dropped by its caller. setup_smp()
-doesn't do that, so fix it by converting to for_each_of_cpu_node().
+* Andy Lutomirski:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- arch/csky/kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> On Dec 27, 2018, at 10:18 AM, Florian Weimer <fw@deneb.enyo.de> wrote:
+>> 
+>> We have a bit of an interesting problem with respect to the d_off
+>> field in struct dirent.
+>> 
+>> When running a 64-bit kernel on certain file systems, notably ext4,
+>> this field uses the full 63 bits even for small directories (strace -v
+>> output, wrapped here for readability):
+>> 
+>> getdents(3, [
+>>  {d_ino=1494304, d_off=3901177228673045825, d_reclen=40,
+>> d_name="authorized_keys", d_type=DT_REG},
+>>  {d_ino=1494277, d_off=7491915799041650922, d_reclen=24, d_name=".",
+>> d_type=DT_DIR},
+>>  {d_ino=1314655, d_off=9223372036854775807, d_reclen=24,
+>> d_name="..", d_type=DT_DIR}
+>> ], 32768) = 88
+>> 
+>> When running in 32-bit compat mode, this value is somehow truncated to
+>> 31 bits, for both the getdents and the getdents64 (!) system call (at
+>> least on i386).
+>
+> I imagine you’re encountering this bug:
+>
+> https://lkml.org/lkml/2018/10/18/859
 
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-index 36ebaf9834e1..74d627300c55 100644
---- a/arch/csky/kernel/smp.c
-+++ b/arch/csky/kernel/smp.c
-@@ -138,7 +138,7 @@ void __init setup_smp(void)
- 	struct device_node *node = NULL;
- 	int cpu;
- 
--	while ((node = of_find_node_by_type(node, "cpu"))) {
-+	for_each_of_cpu_node(node) {
- 		if (!of_device_is_available(node))
- 			continue;
- 
--- 
-2.17.0
+It's definitely in this area.  However, the original collision problem
+with 32-bit hashes is also real, so I can see the desire to use more
+bits.
 
+> Presumably the right fix involves modifying the relevant VFS file
+> operations to indicate the relevant ABI to the implementations.
+
+Not sure.  How does NFS solve this problem when access happens from a
+32-bit process and the rest (client kernel, transport, server kernel)
+is 64-bit all the way?
+
+> I would guess that 9p is triggering the “not really in the syscall you
+> think you’re in” issue.
+
+I think the issue is more like the networking case for 9p.  In this
+scenario, the server shouldn't have to care whether the client process
+is in 32-bit mode or 64-bit mode.  But maybe the only solution is to
+pass through some sort of flag, as Peter Maydell has just suggested.
