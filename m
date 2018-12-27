@@ -2,180 +2,68 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE60C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 19:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566B5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEAB214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 19:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2302721741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:07:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="TOF2ro9U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbeL0Tz4 (ORCPT
+        id S1729497AbeL0UH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 14:55:56 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59310 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728837AbeL0Tz4 (ORCPT
+        Thu, 27 Dec 2018 15:07:28 -0500
+Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:52068 "EHLO
+        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728837AbeL0UH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 14:55:56 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 80067806DE; Thu, 27 Dec 2018 20:55:48 +0100 (CET)
-Date:   Thu, 27 Dec 2018 20:55:52 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: leds/lm3642: simplify error handling, remove user-triggerable errors
-Message-ID: <20181227195552.GB12008@amd>
+        Thu, 27 Dec 2018 15:07:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545941246;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=QTawriguloQdF7CFQCrxqBobe3Vbqu3Bc8KBa60ZtJY=;
+        b=TOF2ro9UED8NSFyGorBRsg+X2DDadwH1nM2B9UdS6Bhj2/qGg+zM4pDa67jHnv16
+        sqcbXF8yAOKi4/erGhfr/4AEEK/+b+zmwBDhpxj2i0ndnFLIfX/72SM2mYZ+rKoV21n
+        MOE+VlpbpmatqS5fDdmrTqc2jcBtjLUH3HMFK8Rk=
+Date:   Thu, 27 Dec 2018 20:07:26 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Fengguang Wu <fengguang.wu@intel.com>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Fan Du <fan.du@intel.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 08/21] mm: introduce and export pgdat peer_node
+In-Reply-To: <20181226133351.521151384@intel.com>
+Message-ID: <01000167f14761d6-b1564081-0d5f-4752-86be-2e99c8375866-000000@email.amazonses.com>
+References: <20181226131446.330864849@intel.com> <20181226133351.521151384@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vGgW1X5XWziG23Ko"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.12.27-54.240.9.35
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 26 Dec 2018, Fengguang Wu wrote:
 
---vGgW1X5XWziG23Ko
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Each CPU socket can have 1 DRAM and 1 PMEM node, we call them "peer nodes".
+> Migration between DRAM and PMEM will by default happen between peer nodes.
 
-Doing goto just to return is unneccessarily complex, simplify code a
-bit.
+Which one does numa_node_id() point to? I guess that is the DRAM node and
+then we fall back to the PMEM node?
 
-Drop dev_err()s that can be triggered by user.
-
-   =20
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
-index cada084..62fc752 100644
---- a/drivers/leds/leds-lm3642.c
-+++ b/drivers/leds/leds-lm3642.c
-@@ -110,7 +110,7 @@ static int lm3642_control(struct lm3642_chip_data *chip,
- 	ret =3D regmap_read(chip->regmap, REG_FLAG, &chip->last_flag);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to read REG_FLAG Register\n");
--		goto out;
-+		return ret;
- 	}
-=20
- 	if (chip->last_flag)
-@@ -150,11 +150,11 @@ static int lm3642_control(struct lm3642_chip_data *ch=
-ip,
- 		break;
-=20
- 	default:
--		return ret;
-+		return -EINVAL;
- 	}
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to write REG_I_CTRL Register\n");
--		goto out;
-+		return ret;
- 	}
-=20
- 	if (chip->tx_pin)
-@@ -163,13 +163,12 @@ static int lm3642_control(struct lm3642_chip_data *ch=
-ip,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 MODE_BITS_MASK << MODE_BITS_SHIFT,
- 				 opmode << MODE_BITS_SHIFT);
--out:
- 	return ret;
- }
-=20
- /* torch */
-=20
--/* torch pin config for lm3642*/
-+/* torch pin config for lm3642 */
- static ssize_t lm3642_torch_pin_store(struct device *dev,
- 				      struct device_attribute *attr,
- 				      const char *buf, size_t size)
-@@ -182,7 +181,7 @@ static ssize_t lm3642_torch_pin_store(struct device *de=
-v,
-=20
- 	ret =3D kstrtouint(buf, 10, &state);
- 	if (ret)
--		goto out_strtoint;
-+		return ret;
- 	if (state !=3D 0)
- 		state =3D 0x01 << TORCH_PIN_EN_SHIFT;
-=20
-@@ -190,16 +189,12 @@ static ssize_t lm3642_torch_pin_store(struct device *=
-dev,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 TORCH_PIN_EN_MASK << TORCH_PIN_EN_SHIFT,
- 				 state);
--	if (ret < 0)
--		goto out;
-+	if (ret < 0) {
-+		dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
-+		return ret;
-+	}
-=20
- 	return size;
--out:
--	dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
--	return ret;
--out_strtoint:
--	dev_err(chip->dev, "%s: fail to change str to int\n", __func__);
--	return ret;
- }
-=20
- static DEVICE_ATTR(torch_pin, S_IWUSR, NULL, lm3642_torch_pin_store);
-@@ -233,7 +228,7 @@ static ssize_t lm3642_strobe_pin_store(struct device *d=
-ev,
-=20
- 	ret =3D kstrtouint(buf, 10, &state);
- 	if (ret)
--		goto out_strtoint;
-+		return ret;
- 	if (state !=3D 0)
- 		state =3D 0x01 << STROBE_PIN_EN_SHIFT;
-=20
-@@ -241,16 +236,12 @@ static ssize_t lm3642_strobe_pin_store(struct device =
-*dev,
- 	ret =3D regmap_update_bits(chip->regmap, REG_ENABLE,
- 				 STROBE_PIN_EN_MASK << STROBE_PIN_EN_SHIFT,
- 				 state);
--	if (ret < 0)
--		goto out;
-+	if (ret < 0) {
-+		dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
-+		return ret;
-+	}
-=20
- 	return size;
--out:
--	dev_err(chip->dev, "%s:i2c access fail to register\n", __func__);
--	return ret;
--out_strtoint:
--	dev_err(chip->dev, "%s: fail to change str to int\n", __func__);
--	return ret;
- }
-=20
- static DEVICE_ATTR(strobe_pin, S_IWUSR, NULL, lm3642_strobe_pin_store);
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vGgW1X5XWziG23Ko
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwlLkgACgkQMOfwapXb+vICRwCgpVbhHJLOtKvwzizn7W/nzSrQ
-IgIAoI+S3v0lcb6Woq4G20Uhajrh6OWz
-=LzCi
------END PGP SIGNATURE-----
-
---vGgW1X5XWziG23Ko--
