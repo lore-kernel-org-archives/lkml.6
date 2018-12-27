@@ -2,113 +2,113 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC35CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CCCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A8421741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D5D218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:13:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="YIikThvL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeL0FHB (ORCPT
+        id S1726222AbeL0FNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 00:07:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43580 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbeL0FHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 00:07:01 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02A4F1390C;
-        Thu, 27 Dec 2018 05:07:01 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-42.pek2.redhat.com [10.72.12.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 72EC05D781;
-        Thu, 27 Dec 2018 05:06:56 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 13:06:52 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Baoquan He <bhe@redhat.com>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: [PATCH] x86/kexec: fix a kexec_file_load failure
-Message-ID: <20181227050652.GA2960@dhcp-128-65.nay.redhat.com>
+        Thu, 27 Dec 2018 00:13:53 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45305 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbeL0FNx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 00:13:53 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 32so15478158ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 21:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ftfuiarJULp6LGAC1L+YMAmCWxT2Y+iCGWC6BJNMoXo=;
+        b=YIikThvLQ8IAZpHYpIhHe29MuKFyMl7UkFM4k4x03s8/UTgokT39mAcnWeWrfjejGT
+         +bR4zVFoLG3Ki81dw/+0Fscg0HG9n1uZT228sCoeV77peVYuV6dXMti4nLzxbDmrSR52
+         QjRbQbRUEZaakYYBEujqD///8n9dfsrXvL1qZzdNtnx8NocSTIWZSd4QpyZejOJ0HRaz
+         W+2ahbcJIYS7RMwEBOCnzaoi8igwnpnfQY5sqBoZkpKCBi1KTVFEJCF27KCIDJaPcFP7
+         IAb/w0ce6b7+5A7w0qQRAdd32TUMK/Fgvy0IApu7yMHCPUGGI8ujRdfrnq6fGuVIPP20
+         49aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ftfuiarJULp6LGAC1L+YMAmCWxT2Y+iCGWC6BJNMoXo=;
+        b=c97Vr2RXAuzIVW5jcxpx0YXOXGqJts/NUnCglxZZwijvsg90srBVd+VKfZecYkzhuv
+         6QZ5qLF+v6QC5KviglIB7QAuaaj44/ZgrQ0wgrcz8PXSiR5INVVIJWn0zZt87eAkPfUS
+         LRSE19wUqzmNQKdpdSuAAIO3dcpmKJIjYOE17P4cvCJ9ycyen3CcMHc6qBrEIsxLvZZz
+         fX36ntIRVl2feuif0y7ZeGeDMP+aBX54bhgoWw8j8AZMfyBhWawBGSS8N1oSchKV8UFw
+         btguuiJwpoEQwqIc+Elhc63gI1dsv97JkbqFfRiFKDbaelABOwzlKxjTfGLwLQ1HfvC/
+         ARuA==
+X-Gm-Message-State: AJcUukdTv50Ux5B7ZjlEkzQYi9Gi0LlG4tst+GuUkkuWZ1KeGPUOMUWU
+        IXv6FT/SnwI4vIWFCFsOlQtarI+u+4tv4jNUzb+XNA==
+X-Google-Smtp-Source: ALg8bN6Dxet1e8l14A8HQYdHaiIuWMpqBmLTwhbymWcx5qe0/GbeewX38xDJMTNKauZxJps/A7yeR/FdC+aeyPO9jco=
+X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr14682282otq.353.1545887632331;
+ Wed, 26 Dec 2018 21:13:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 27 Dec 2018 05:07:01 +0000 (UTC)
+References: <20181226131446.330864849@intel.com> <20181226133351.106676005@intel.com>
+ <20181227034141.GD20878@bombadil.infradead.org> <20181227041132.xxdnwtdajtm7ny4q@wfg-t540p.sh.intel.com>
+In-Reply-To: <20181227041132.xxdnwtdajtm7ny4q@wfg-t540p.sh.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 26 Dec 2018 21:13:41 -0800
+Message-ID: <CAPcyv4hBBvcHiUSU4ER6WV7Po_GEwDjFcJy2aE3VW5Nwiu+Qyw@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 01/21] e820: cheat PMEM as DRAM
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Fan Du <fan.du@intel.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code cleanup mentioned in Fixes tag changed the behavior of
-kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
-allocate free memory only when kbuf.mem is initialized as zero.
+On Wed, Dec 26, 2018 at 8:11 PM Fengguang Wu <fengguang.wu@intel.com> wrote:
+>
+> On Wed, Dec 26, 2018 at 07:41:41PM -0800, Matthew Wilcox wrote:
+> >On Wed, Dec 26, 2018 at 09:14:47PM +0800, Fengguang Wu wrote:
+> >> From: Fan Du <fan.du@intel.com>
+> >>
+> >> This is a hack to enumerate PMEM as NUMA nodes.
+> >> It's necessary for current BIOS that don't yet fill ACPI HMAT table.
+> >>
+> >> WARNING: take care to backup. It is mutual exclusive with libnvdimm
+> >> subsystem and can destroy ndctl managed namespaces.
+> >
+> >Why depend on firmware to present this "correctly"?  It seems to me like
+> >less effort all around to have ndctl label some namespaces as being for
+> >this kind of use.
+>
+> Dave Hansen may be more suitable to answer your question. He posted
+> patches to make PMEM NUMA node coexist with libnvdimm and ndctl:
+>
+> [PATCH 0/9] Allow persistent memory to be used like normal RAM
+> https://lkml.org/lkml/2018/10/23/9
+>
+> That depends on future BIOS. So we did this quick hack to test out
+> PMEM NUMA node for the existing BIOS.
 
-But in x86 kexec_file_load implementation there are a few places
-the kbuf.mem is reused like below:
-  /* kbuf initialized, kbuf.mem = 0 */
-  ...
-  kexec_add_buffer()
-  ...
-  kexec_add_buffer()
+No, it does not depend on a future BIOS.
 
-  The second kexec_add_buffer will reuse previous kbuf but not
-  reinitialize the kbuf.mem.
+Willy, have a look here [1], here [2], and here [3] for the
+work-in-progress ndctl takeover approach (actually 'daxctl' in this
+case).
 
-Thus kexec_file_load failed because the sanity check failed.
-
-So explictily reset mem = 0 to fix the issue.
-
-Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Cc: <stable@vger.kernel.org>
----
- arch/x86/kernel/crash.c           | 1 +
- arch/x86/kernel/kexec-bzimage64.c | 2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index f631a3f15587..37147509d2c8 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
- 
- 	kbuf.memsz = kbuf.bufsz;
- 	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
-+	kbuf.mem = 0;
- 	ret = kexec_add_buffer(&kbuf);
- 	if (ret) {
- 		vfree((void *)image->arch.elf_headers);
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 278cd07228dd..558204bdf412 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 	kbuf.memsz = PAGE_ALIGN(header->init_size);
- 	kbuf.buf_align = header->kernel_alignment;
- 	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
-+	kbuf.mem = 0;
- 	ret = kexec_add_buffer(&kbuf);
- 	if (ret)
- 		goto out_free_params;
-@@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 		kbuf.bufsz = kbuf.memsz = initrd_len;
- 		kbuf.buf_align = PAGE_SIZE;
- 		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
-+		kbuf.mem = 0;
- 		ret = kexec_add_buffer(&kbuf);
- 		if (ret)
- 			goto out_free_params;
--- 
-2.17.0
-
+[1]: https://lkml.org/lkml/2018/10/23/9
+[2]: https://lkml.org/lkml/2018/10/31/243
+[3]: https://lists.01.org/pipermail/linux-nvdimm/2018-November/018677.html
