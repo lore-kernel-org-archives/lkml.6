@@ -2,113 +2,134 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C692CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BD2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6B921741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:17:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="rXpUPikK"
+	by mail.kernel.org (Postfix) with ESMTP id 90721214AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbeL0ERX (ORCPT
+        id S1729045AbeL0E0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 23:17:23 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33548 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728877AbeL0ERX (ORCPT
+        Wed, 26 Dec 2018 23:26:39 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:64249 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728877AbeL0E0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 23:17:23 -0500
-Received: by mail-io1-f65.google.com with SMTP id t24so13678229ioi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 20:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QCESWc1L3bXPUa7GxzNSYipd+HI9huEQRbmH4ojmiqc=;
-        b=rXpUPikKG0nTVOVh2RPsNpb5CEfK5+vEMUUYURHRWVezC2K4eYPPIU2o+NPmLmyC2b
-         fx4EtBPwKucVAM+FCm/v6wjyU78spO9XiObkRYLpAAgMi+pRnk9Y8OuhtHYIuAV1ndhd
-         8pxFiYte3iTMC3lfyblpr7YrLCsUsKw9s8a5rv+but4gI8wjffFcE0DME9Gd4nAH8jJU
-         wSeqiU3IpuOPDUJuft/C6/otFtMKqTL2vIt9CaEF16pzbk545goRltzuwqewwxoAsGrB
-         VDaZDz5usQtd3lrUf9cReTp3UmR87Wtye8ByO09mGD3tBu/o4XR2DyVjasg6IQmiVi4g
-         T/Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QCESWc1L3bXPUa7GxzNSYipd+HI9huEQRbmH4ojmiqc=;
-        b=XqTOIBXhcy9OPZxvJ52Gxm8fQRfoi5lIGkopW6Fh0UXjxAahlLyEa3qvVSSEZytCCU
-         MvwAB2Rx7KYlOKxUeH92nIFNRYHhOX92TOzMCgnc5y79gMAVq9jOgQbJxIYwMJ8VgF0a
-         YVtBbq6fEtgIkdqtV8JU4J4Cw0w81Ik5aU/IlpFnE7o6iAtztELJVnTLuHikg7Kc0eDD
-         XuNldozDaqnvRmKPKR7VnLGeiCTqVP6f0+vur7tQkp3SNJMv2bnJZp2p4KA3DCo7almx
-         VCNA0xAVmVZND9U3JDSS5zQliKac/KM0E9NzVQsTXtX4Qlb2oGKqiefujlJLhy+JC177
-         6suA==
-X-Gm-Message-State: AJcUukcsq/Dy4NdDIgu604Se5Oyd8IRtmg90Gs8AA5FTTDUXzHDHN+Xi
-        sDZOVHMeWTrdYozrnQVxQOc14SsoSCz+/0zZIMijTw==
-X-Google-Smtp-Source: ALg8bN56iFsIa3OCzxkzjoM03MTjmhkTJRpJyLEmUTeELW4QtTvSLuBo7tv9QpBn5fsFNGc7frKIzAbbKOVOAkSQ84A=
-X-Received: by 2002:a5e:c107:: with SMTP id v7mr16450758iol.155.1545884241356;
- Wed, 26 Dec 2018 20:17:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20181224224509.GA67077@gmail.com>
-In-Reply-To: <20181224224509.GA67077@gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 26 Dec 2018 20:17:10 -0800
-Message-ID: <CAOesGMjQg2vo2-fbjppumttN1Mz9Ce6VqvK0SkfhdkHPxhP=DQ@mail.gmail.com>
-Subject: Re: [GIT PULL] scheduler changes for v4.21
-To:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Wed, 26 Dec 2018 23:26:39 -0500
+X-UUID: 2ba5b45eb5224a44a7c1ae143cbddafe-20181227
+X-UUID: 2ba5b45eb5224a44a7c1ae143cbddafe-20181227
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 544729285; Thu, 27 Dec 2018 12:26:29 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 27 Dec 2018 12:26:28 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 27 Dec 2018 12:26:22 +0800
+Message-ID: <1545884782.31506.4.camel@mtksdaap41>
+Subject: Re: [PATCH 13/18] drm/mediatek: add ddp write register common api
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Yongqiang Niu <yongqiang.niu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 27 Dec 2018 12:26:22 +0800
+In-Reply-To: <1545638931-24938-14-git-send-email-yongqiang.niu@mediatek.com>
+References: <1545638931-24938-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1545638931-24938-14-git-send-email-yongqiang.niu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi, Yongqiang:
 
-On Mon, Dec 24, 2018 at 2:45 PM Ingo Molnar <mingo@kernel.org> wrote:
->
-> Linus,
->
-> Please pull the latest sched-core-for-linus git tree from:
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
->
->    # HEAD: 732cd75b8c920d3727e69957b14faa7c2d7c3b75 sched/fair: Select an energy-efficient CPU on task wake-up
->
-> The main changes in this cycle were:
->
->  - Introduce "Energy Aware Scheduling" - by Quentin Perret. This is a
->    coherent topology description of CPUs in cooperation with the PM
->    subsystem, with the goal to schedule more energy-efficiently on
->    assymetric SMP platform - such as waking up tasks to the more
->    energy-efficient CPUs first, as long as the system isn't
->    oversubscribed.
->
->    For details of the design, see:
->
->       https://marc.info/?l=linux-kernel&m=153243513908731&w=2
->
->  - Misc cleanups and smaller enhancements.
+On Mon, 2018-12-24 at 16:08 +0800, Yongqiang Niu wrote:
+> This patch add ddp write register common api
+> 
 
-Looks like my warnings fix never made it in, even after a few pings.
+I could not see anywhere you use these function. If the function is
+useless, drop this patch.
 
-Linus, can you apply directly? Causes warning noise on all !SMP ARM builds:
+Regards,
+CK
 
-https://lore.kernel.org/lkml/20181125224105.123568-1-olof@lixom.net/
+> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 24 ++++++++++++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  9 +++++++++
+>  2 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> index a97e27b..1c0f9cc 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> @@ -84,6 +84,30 @@
+>  #define DITHER_ADD_LSHIFT_G(x)			(((x) & 0x7) << 4)
+>  #define DITHER_ADD_RSHIFT_G(x)			(((x) & 0x7) << 0)
+>  
+> +void mtk_ddp_write(unsigned int value, struct mtk_ddp_comp *comp,
+> +		   unsigned int offset)
+> +{
+> +	writel(value, comp->regs + offset);
+> +}
+> +
+> +void mtk_ddp_write_relaxed(unsigned int value,
+> +			   struct mtk_ddp_comp *comp,
+> +			   unsigned int offset)
+> +{
+> +	writel_relaxed(value, comp->regs + offset);
+> +}
+> +
+> +void mtk_ddp_write_mask(unsigned int value,
+> +			struct mtk_ddp_comp *comp,
+> +			unsigned int offset,
+> +			unsigned int mask)
+> +{
+> +	unsigned int tmp = readl(comp->regs + offset);
+> +
+> +	tmp = (tmp & ~mask) | (value & mask);
+> +	writel(tmp, comp->regs + offset);
+> +}
+> +
+>  void mtk_dither_set(struct mtk_ddp_comp *comp, unsigned int bpc,
+>  		    unsigned int CFG)
+>  {
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> index f2ab0b3..b908172 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> @@ -189,5 +189,14 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *comp_node,
+>  void mtk_ddp_comp_unregister(struct drm_device *drm, struct mtk_ddp_comp *comp);
+>  void mtk_dither_set(struct mtk_ddp_comp *comp, unsigned int bpc,
+>  		    unsigned int CFG);
+> +void mtk_ddp_write(unsigned int value, struct mtk_ddp_comp *comp,
+> +		   unsigned int offset);
+> +void mtk_ddp_write_relaxed(unsigned int value,
+> +			   struct mtk_ddp_comp *comp,
+> +			   unsigned int offset);
+> +void mtk_ddp_write_mask(unsigned int value,
+> +			struct mtk_ddp_comp *comp,
+> +			unsigned int offset,
+> +			unsigned int mask);
+>  
+>  #endif /* MTK_DRM_DDP_COMP_H */
 
 
-Thanks,
-
--Olof
-
-
-
--Olof
