@@ -2,194 +2,116 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FA1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E599C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5233B2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213C321741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pMXB/bUp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PLjPPkk5"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bWTusvGr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeL0DYM (ORCPT
+        id S1728511AbeL0DcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 22:24:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33976 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeL0DYL (ORCPT
+        Wed, 26 Dec 2018 22:32:18 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46813 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeL0DcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 22:24:11 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CCA1C607F4; Thu, 27 Dec 2018 03:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545881050;
-        bh=Q7PDw9ZDvEmIOC1MPCXNl2zdmgOOLQvl7m3RYcVLv+c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pMXB/bUpqQ20VDTOSCVLABrMaKEIEqv5Hgidoa2l30skwXP/xG8bOYqMXq+cyaJ5p
-         7E4d7hMt1COtTBWugkL+5KyCRrKFXPx8zyLP1ZLJ2BGjX/xDQ+28UVUgbV0TfHuYsp
-         6N9G5/IRrPV7DMLjBUHrfZZTwhDvBLkX+x+MPIo0=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7DBAE60559;
-        Thu, 27 Dec 2018 03:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545881036;
-        bh=Q7PDw9ZDvEmIOC1MPCXNl2zdmgOOLQvl7m3RYcVLv+c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PLjPPkk5nuYds6SF8dKQBzViOjEyoo/u2S0hbMYQYW9ozZZ77mS7s4DYKlJwkbnDp
-         dkPmIliB2QtebaA/sx2k/08xDT3fcpsPlfAWyp2nWYH86WTLStMoZVTaneB8PZVv4m
-         sRiaXe0K+wpLHZ5e82b6wf0f4tA6h6F1AOX88M3o=
+        Wed, 26 Dec 2018 22:32:17 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so15192179ljh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 19:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JsQOaWra+DSUeycw9x63/D4S8hJKNBuEWfhDTZUo++k=;
+        b=bWTusvGr6tF3mvaag+JNlxFO8/D3rA+zAbnFBKpmnfU3wzw8ahHWKghD5/A9kAKNMr
+         ZX3TjGlWJFMXgAnXxzGdnHACfrRcc93JpS3FvauhGdSOlS5Ao2lmhoKhIuimrJ3zAMM/
+         tI6XoV1YNoXmKqVTx5W4uTXQ6E54p4OI5Fozc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JsQOaWra+DSUeycw9x63/D4S8hJKNBuEWfhDTZUo++k=;
+        b=jGkIDGsQ80kyqyiaJEalW+i9t9ecUo/Nn6fCtbXa4M4itUDzg4YwqZ/WJfxkgB1e1Y
+         uHOQz/rzCiIEHS6EJ5tnCS2Pw0DEBC6Xr3gs5ib7ki581eQCFIa/aBgqjq2JetAjT3Gr
+         QsFj8bJQz/OuwExI5kiPqWAaa/RH+wES/ZrE96bIXZ/xDFPWFlnPuta3LiWW9PAVxRLL
+         aIINbDVDiedbV8lUtX0KdiEvgFC6Odyeq7ZI6pZQVE+mpUdlEhHLlWe+iiIMusZ2R5pr
+         83u5edNATfXOI4gDJIgKq9WgSlp2JUQpDoZ7LGPcy4txeyczjL04XfCnlDY1xRnkiTXG
+         M1YQ==
+X-Gm-Message-State: AA+aEWYSLFeyIiCTpOUAgmUm6NS6E9f5b5SX7p+sZztX9dRixzyn4QMc
+        X6rB8XXHq5d/uCxw3Df8n7Nan0AgjPY=
+X-Google-Smtp-Source: ALg8bN4NCzZ455W3v+GJ1DCKxRcbEhz5NJ88z2RgqkEtMNb1HEv8IlOhRpt4zbUya698Wyu1KGe7FQ==
+X-Received: by 2002:a2e:99d7:: with SMTP id l23-v6mr12210528ljj.165.1545881534059;
+        Wed, 26 Dec 2018 19:32:14 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id i143sm7497853lfg.74.2018.12.26.19.32.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 19:32:13 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id n18so11887348lfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 19:32:12 -0800 (PST)
+X-Received: by 2002:a19:cbcc:: with SMTP id b195mr11594246lfg.117.1545881532303;
+ Wed, 26 Dec 2018 19:32:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 27 Dec 2018 08:53:56 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-In-Reply-To: <20181226222148.GI261387@google.com>
-References: <20181220144639.15928-1-bgodavar@codeaurora.org>
- <20181220144639.15928-2-bgodavar@codeaurora.org>
- <20181222015947.GF261387@google.com>
- <379c7c10d70ad86e03122d051ce0cf6f@codeaurora.org>
- <20181226222148.GI261387@google.com>
-Message-ID: <75a8b12023f38a8af5e281ea1902cb73@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <s5hk1k48ayx.wl-tiwai@suse.de>
+In-Reply-To: <s5hk1k48ayx.wl-tiwai@suse.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 26 Dec 2018 19:31:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg+hjDa8UGRVnCFytjwYLPk2yDgJoKOESVSE7_6KfaeTg@mail.gmail.com>
+Message-ID: <CAHk-=wg+hjDa8UGRVnCFytjwYLPk2yDgJoKOESVSE7_6KfaeTg@mail.gmail.com>
+Subject: Re: [GIT PULL] sound updates for 4.21
+To:     Takashi Iwai <tiwai@suse.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On Thu, Dec 20, 2018 at 7:38 AM Takashi Iwai <tiwai@suse.de> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.21-rc1
 
-On 2018-12-27 03:51, Matthias Kaehlcke wrote:
-> On Wed, Dec 26, 2018 at 12:01:51PM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2018-12-22 07:29, Matthias Kaehlcke wrote:
->> > On Thu, Dec 20, 2018 at 08:16:35PM +0530, Balakrishna Godavarthi wrote:
->> > > wcn3990 requires a power pulse to turn ON/OFF along with
->> > > regulators. Sometimes we are observing the power pulses are sent
->> > > out with some time delay, due to queuing these commands. This is
->> > > causing synchronization issues with chip, which intern delay the
->> > > chip setup or may end up with communication issues.
->> > >
->> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > ---
->> > >  drivers/bluetooth/hci_qca.c | 38
->> > > ++++++++++++++-----------------------
->> > >  1 file changed, 14 insertions(+), 24 deletions(-)
->> > >
->> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> > > index f036c8f98ea3..5a07c2370289 100644
->> > > --- a/drivers/bluetooth/hci_qca.c
->> > > +++ b/drivers/bluetooth/hci_qca.c
->> > > @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct
->> > > hci_uart *hu, unsigned int speed)
->> > >  		hci_uart_set_baudrate(hu, speed);
->> > >  }
->> > >
->> > > -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->> > > +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->> > >  {
->> > > -	struct hci_uart *hu = hci_get_drvdata(hdev);
->> > > -	struct qca_data *qca = hu->priv;
->> > > -	struct sk_buff *skb;
->> > > +	int ret;
->> > >
->> > >  	/* These power pulses are single byte command which are sent
->> > >  	 * at required baudrate to wcn3990. On wcn3990, we have an external
->> > > @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct
->> > > hci_dev *hdev, u8 cmd)
->> > >  	 * save power. Disabling hardware flow control is mandatory while
->> > >  	 * sending power pulses to SoC.
->> > >  	 */
->> > > -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
->> > > -
->> > > -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> > > -	if (!skb)
->> > > -		return -ENOMEM;
->> > > -
->> > > +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
->> > >  	hci_uart_set_flow_control(hu, true);
->> > > +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
->> > > +	if (ret < 0) {
->> > > +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
->> > > +			   cmd);
->> > > +		return ret;
->> > > +	}
->> > >
->> > > -	skb_put_u8(skb, cmd);
->> > > -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> > > -
->> > > -	skb_queue_tail(&qca->txq, skb);
->> > > -	hci_uart_tx_wakeup(hu);
->> > > +	serdev_device_wait_until_sent(hu->serdev, 0);
->> >
->> > serdev_device_wait_until_sent() might only guarantee that the UART
->> > circular buffer is empty (see
->> > https://elixir.bootlin.com/linux/v4.19/source/drivers/tty/tty_ioctl.c#L225),
->> > not that the data has actually sent (e.g. it might be sitting in
->> > the UART FIFO). However with this:
->> >
->> > >  	/* Wait for 100 uS for SoC to settle down */
->> > >  	usleep_range(100, 200);
->> >
->> > we should probably be fine, unless there's tons of data in the
->> > FIFO.
->> >
->> > You currently call serdev_device_write_flush() in
->> > qca_power_shutdown(), I wonder if it would make sense to call it in
->> > qca_send_power_pulse(), regardless of whether it's an on or off
->> 
->> [Bala]: during sending the ON pulse we will not have any data in the
->>         UART circular buffer as this is the first command to send and 
->> we are
->> sending it as soon as we open the port.
->>         so i taught why should be flush the circular as it is already 
->> empty.
-> 
->> > pulse. In any case we don't care if the chip receives any 'pending'
->> > data when we switch it on or off, right?
->> >
->> 
->> [Bala]: during on we freshly open port and i see that flush() called 
->> while
->> port opening.
->> 
->> https://elixir.bootlin.com/linux/latest/source/drivers/tty/serial/serial_core.c#L207
-> 
-> I would argue that the serdev_device_write_flush() call in
-> qca_power_shutdown() is related with/needed for sending the power off
-> pulse, hence it should be part of qca_send_power_pulse(), unless it
-> adds a significant overhead and we really want to call it only in the
-> shutdown case.
-> 
-> Flushing the buffer should be fairly lightweight and power pulses are
-> only sent when the device is switched on or off, so the overhead
-> should be negligible. You *could* restrict the flush to the power off
-> pulse, assuming that the driver always re-opens the port in
-> qca_wcn3990_init() (tests with this patch set suggest this might not
-> be needed) and that serdev_device_open() flushes the buffer (which
-> seems a sane assumption). Yet given the minimal overhead I'd suggest
-> to not make assumptions about what happened previously in other code
-> and avoid the clutter of a condition that doesn't add much value.
-> 
-[Bala]: will call the flush() while sending the power pulses 
-irrespective of the pulse type.
+Hmm.
 
-> Cheers
-> 
-> Matthias
+It turns out that commit c337104b1a16 ("ALSA: HD-Audio: SKL+: abort
+probe if DSP is present and Skylake driver selected") causes my laptop
+(XPS13 9350) to no longer suspend.
 
--- 
-Regards
-Balakrishna.
+The screen goes dark, but the power light never turns off. There's
+nothing in the logs.
+
+> Pierre-Louis Bossart (16):
+>       ALSA: HD-Audio: SKL+: abort probe if DSP is present and Skylake driver selected
+
+Sadly, that commit does not revert cleanly, since it's preparatory for
+a lot of other changes.
+
+Here's the lspci output:
+
+  /sbin/lspci -s 0:1f.3 -vn
+  00:1f.3 0403: 8086:9d70 (rev 21) (prog-if 80)
+  Subsystem: 1028:0704
+  Flags: bus master, fast devsel, latency 32, IRQ 16
+  Memory at dc328000 (64-bit, non-prefetchable) [size=16K]
+  Memory at dc300000 (64-bit, non-prefetchable) [size=64K]
+  Capabilities: <access denied>
+  Kernel driver in use: snd_soc_skl
+  Kernel modules: snd_hda_intel, snd_soc_skl
+
+and it's a bog-standard Intel i7-6560U laptop.
+
+I have no real information, except that I bisected the (reliable)
+behavior to this commit. Before that commit, suspend/resume works
+fine. After that commit, suspend just hangs and leaves a dead machine.
+
+            Linus
