@@ -2,116 +2,126 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B904AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D17C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCA1206BB
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA191206BB
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:15:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="FC/btq9j"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IJgmifz8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbeL0SPk (ORCPT
+        id S1728765AbeL0SPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 13:15:40 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:53792 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbeL0SN7 (ORCPT
+        Thu, 27 Dec 2018 13:15:38 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35773 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbeL0SPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 13:13:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1545934435; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=97gZpq5eTpivMWrRpp/HIsXxIT7K2juYtyAs2Sp2NwA=;
-        b=FC/btq9jSV6KkMmNyJ3xGzr9nJedrWec15hCHTkfInSksDQ0cCJLdsp5rBqG9OU3QHptA3
-        woyKahjJ4cKDHIaO7uDpwNtojEkAE5TTGUxnBnOllPabjcBsOIrdPkSqccfGD+stESJAJd
-        p4rQO4Plhq8iJ51WqRV5IkKpcEmImC8=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v9 14/27] pwm: jz4740: Improve algorithm of clock calculation
-Date:   Thu, 27 Dec 2018 19:13:06 +0100
-Message-Id: <20181227181319.31095-15-paul@crapouillou.net>
-In-Reply-To: <20181227181319.31095-1-paul@crapouillou.net>
-References: <20181227181319.31095-1-paul@crapouillou.net>
+        Thu, 27 Dec 2018 13:15:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so16911454ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 10:15:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZGMMdRR51gZrz3buUuepUm5lmSENf5MPqQ/IfjT9YLc=;
+        b=IJgmifz8ghi4hLPl0jnkUo3AGlk946gOb/GHMmxt5PCZbUw28k888n7Vvg2sLzDYhX
+         v3MHTlndwIpXWO+UELsfy97FBSQnK7jdmRt7aDOxCvBjIlSUi/ATw9A9s5IaQKmHXZCp
+         awRnzryCDCIDs8BiMJIBv0xDrjxccfWkJOY4o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZGMMdRR51gZrz3buUuepUm5lmSENf5MPqQ/IfjT9YLc=;
+        b=pGV88VFQ2N0QKjVQ9z/rHOgEQiFf6I8ovDxNX77c4amKf4cMoXlHXwpZ3i8552DJ9Z
+         tPNmjeCXZsysc6f675L6xH+81O61jIW3tAzc3MK3PlLT/Jfnp/9qXhszkexl/buTDsYL
+         vsKYzd2cUDsiM4PYu1wbZ10HNc4JynEhfCWNMH+BcOU7/nw7VT5gczBz00g8lq6+T4qB
+         GfEEFa71eRGDd7DjXyRht28AkjDqe//3GgBqBqzMpDtOw0aumbKHIMXhStnqygV9vGU7
+         MYdK/A9iT8J3xGZ9TfP4WbLrTccWcbUI6NciaHQ8jLH8+OJVVNVKO9+MnKSLrpWtqosf
+         U6Yg==
+X-Gm-Message-State: AJcUukdhrLRhUHe/KlanywVPFVI1XAlEp1GfXKf0ITR3i7/7MoQv8Mil
+        sQbx/RofgPfj8OB7h3XcuEk+SunBBSU=
+X-Google-Smtp-Source: ALg8bN55XNs4WgNlG1iLqqh/U6TkmfCOLJlh/RQiTWZE8Fq/GXstscpllX+wmRujy/H1T4PX5rbjdA==
+X-Received: by 2002:a2e:1b47:: with SMTP id b68-v6mr11961332ljb.104.1545934534634;
+        Thu, 27 Dec 2018 10:15:34 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id d15-v6sm8136477lja.38.2018.12.27.10.15.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Dec 2018 10:15:33 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id t18-v6so16889791ljd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 10:15:33 -0800 (PST)
+X-Received: by 2002:a2e:3e04:: with SMTP id l4-v6mr13657272lja.148.1545934533233;
+ Thu, 27 Dec 2018 10:15:33 -0800 (PST)
+MIME-Version: 1.0
+References: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
+ <CAKfTPtDRGULW3mdFzeyT=OBPdtPsz-6BG-=UGWbK6RQ7Lg8YpA@mail.gmail.com>
+ <20181227102107.GA21156@linaro.org> <CAKfTPtD7O_DU5no36jaQziZDCvy=BMJk+tZbnQk2yVt=pzRfPw@mail.gmail.com>
+ <CAMp4zn-bN=DdiKox-xZ++i2n_pgTA7Ms+1hBnAY2AbYv2iqXOA@mail.gmail.com> <CAKfTPtAmkHZ5XVHpf6rE8nrSPGzW_uO7a0tvH5JqDSpTzK9D=Q@mail.gmail.com>
+In-Reply-To: <CAKfTPtAmkHZ5XVHpf6rE8nrSPGzW_uO7a0tvH5JqDSpTzK9D=Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 27 Dec 2018 10:15:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wja7WN1sDz5_E7hf8c47CmX=yH8xc3h0zmmF8Y_fSR71A@mail.gmail.com>
+Message-ID: <CAHk-=wja7WN1sDz5_E7hf8c47CmX=yH8xc3h0zmmF8Y_fSR71A@mail.gmail.com>
+Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Sargun Dhillon <sargun@sargun.me>, Xie XiuQi <xiexiuqi@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, xiezhipeng1@huawei.com,
+        huawei.libin@huawei.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Adamushko <dmitry.adamushko@gmail.com>,
+        Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous algorithm hardcoded details about how the TCU clocks work.
-The new algorithm will use clk_round_rate to find the perfect clock rate
-for the PWM channel.
+On Thu, Dec 27, 2018 at 9:02 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> In the original behavior, the cs_rq was removed from the list only
+> when the cgroup was removed.
+> patch a9e7f6544b9c (sched/fair: Fix O(nr_cgroups) in load balance
+> path) has added an optimization which remove the cfs_rq when there
+> were no blocked load to update in order to optimize the loop but it
+> has introduced a race condition that create this infinite loop. The
+> patch fixes the problem by removing the optimization.
+> I will look at re-adding the optimization once i will have afix for
+> the race condition
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+Hmm. What's the race? We seem to take the rq lock for all the cases,
+but maybe I'm missing something?
 
-Notes:
-     v9: New patch
+That commit a9e7f6544b9c is a year and a half old, why did this start
+being reported now?
 
- drivers/pwm/pwm-jz4740.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+[ goes off and looks ]
 
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index c6136bd4434b..dd80a2cf6528 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -110,23 +110,27 @@ static int jz4740_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
- 	struct clk *clk = jz4740->clks[pwm->hwpwm],
- 		   *parent_clk = clk_get_parent(clk);
--	unsigned long rate, period, duty;
-+	unsigned long rate, new_rate, period, duty;
- 	unsigned long long tmp;
--	unsigned int prescaler = 0;
- 
- 	rate = clk_get_rate(parent_clk);
--	tmp = (unsigned long long)rate * state->period;
--	do_div(tmp, 1000000000);
--	period = tmp;
- 
--	while (period > 0xffff && prescaler < 6) {
--		period >>= 2;
--		rate >>= 2;
--		++prescaler;
-+	for (;;) {
-+		tmp = (unsigned long long)rate * state->period;
-+		do_div(tmp, 1000000000);
-+
-+		if (tmp <= 0xffff)
-+			break;
-+
-+		new_rate = clk_round_rate(clk, rate - 1);
-+
-+		if (new_rate < rate)
-+			rate = new_rate;
-+		else
-+			return -EINVAL;
- 	}
- 
--	if (prescaler == 6)
--		return -EINVAL;
-+	period = tmp;
- 
- 	tmp = (unsigned long long)period * state->duty_cycle;
- 	do_div(tmp, state->period);
--- 
-2.11.0
+Oh. unthrottle_cfs_rq -> enqueue_entity -> list_add_leaf_cfs_rq()
+doesn't actually seem to hold the rq lock at all. It's just called
+under a rcu read lock.
 
+So it all seems to depend on that "on_list" flag for exclusion. Which
+seems fundamentally racy, since it's not protected by a lock.
+
+So yeah, the whole logic seems to depend on "on_list is sticky and
+stays set until the whole task group is destroyed".
+
+So commit a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance
+path") would appear to be entirely wrong, because on_list isn't
+actually protected by a lock, and that can confuse things.
+
+But that still makes me go "how come is this only noticed 18 months
+after the fact"?
+
+So I'm probably still missing something.
+
+Tejun? PeterZ? Tell my why I'm being dense.
+
+                   Linus
