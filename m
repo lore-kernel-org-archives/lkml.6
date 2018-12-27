@@ -2,208 +2,246 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1970DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D40C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D612B21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1E221741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:36:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="G0RPEUh1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbeL0Jca (ORCPT
+        id S1730604AbeL0Jgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:32:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727996AbeL0Jca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:32:30 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 708A92CD7EE;
-        Thu, 27 Dec 2018 09:32:29 +0000 (UTC)
-Received: from [10.72.12.191] (ovpn-12-191.pek2.redhat.com [10.72.12.191])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2CF35D965;
-        Thu, 27 Dec 2018 09:32:23 +0000 (UTC)
-Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-References: <20181212092435-mutt-send-email-mst@kernel.org>
- <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
- <20181213092930-mutt-send-email-mst@kernel.org>
- <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
- <20181214081821-mutt-send-email-mst@kernel.org>
- <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
- <20181224123654-mutt-send-email-mst@kernel.org>
- <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
- <20181225111716-mutt-send-email-mst@kernel.org>
- <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
- <20181226083630-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <ad02985b-7a3c-06e2-7614-3ac29e69d678@redhat.com>
-Date:   Thu, 27 Dec 2018 17:32:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 27 Dec 2018 04:36:44 -0500
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:42532 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbeL0Jgn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:36:43 -0500
+Received: by mail-ed1-f52.google.com with SMTP id y20so14797702edw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 01:36:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=TTdYgvJZJHouTgXDeeoHF61S92FaSPLe5ePD4nC2AFs=;
+        b=G0RPEUh1E880S1Zjng7XFoF79NWWVt5bti+hrIsvNvZ2Q6Gh6bjcd+OqzEv+QTUrnr
+         Bwy28xSzBIXTpdkgTHPdEa4/dbm90TuAjvzxCJU7xCwHTm7V1JCKHmSxsDvdi5hz63EG
+         ADX2cmtuG7HyvqSA6LznG3VSya9MoAeyHPXxQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=TTdYgvJZJHouTgXDeeoHF61S92FaSPLe5ePD4nC2AFs=;
+        b=nO8LyqPcwqcogXYwrPH0SVcqNbpSMWa6eAXkyCIkBtEEFltrGZixxgaKhMjdTtwGD6
+         O9D510tr3de3zP4bBCeadbhanDEOxdLPiBYTodln1eKoHeTy64S03Pk3Hpc3l7B/gvA2
+         cXgNo5QWxYnximVGw/4rBVJ+8LdozvPyYtQVHcsuip27O4BtlsotUu1KjAmHKA4nK7Nt
+         t29I1a7Oe7PRFr6VAKWPhBmgfzym6F0rbeMX1reYDwb9UqNS6xw9S3wgtzghXhU0mDad
+         cLSlYQn4r8J1oJe1K5Z97AZIrIvtdx1ST6YFn2ulXnsENel5O1Srz2cDJFRQ5ycfo04q
+         1XmA==
+X-Gm-Message-State: AA+aEWYel8oLGuruCPyrjpEdw6HKT2n1Yb92I8rdTezAWo4hy7LCRA9r
+        fGuwmT02SqYd/NzfP/8jAULZVPXzRMcPyTpG496mzeS3
+X-Google-Smtp-Source: AFSGD/VX+OncOR2hbkbvM3SNomBaKOPUKy/cJqkyM9A2Ig82B4hs9u43gsnLJm5Y19ftePmRXUp4jE/Q4dcgPi66UtI=
+X-Received: by 2002:a50:903c:: with SMTP id b57mr18620450eda.161.1545903400766;
+ Thu, 27 Dec 2018 01:36:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181226083630-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 27 Dec 2018 09:32:29 +0000 (UTC)
+References: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
+In-Reply-To: <CAMp4zn8YdVh62Ti=CPfoerK=QuHTp-HKiWPEdRb8kB325-KDdw@mail.gmail.com>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Thu, 27 Dec 2018 04:36:04 -0500
+Message-ID: <CAMp4zn-J22fU8+Rp4WYtB0cZpXHo=mde_LWc+jjzRm9b=F=vNA@mail.gmail.com>
+Subject: Re: CPUs blocking in update_blocked_averages -- 4.19.12
+To:     LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        dmitry.adamushko@gmail.com, vincent.guittot@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2018/12/26 下午9:46, Michael S. Tsirkin wrote:
-> On Wed, Dec 26, 2018 at 01:43:26PM +0800, Jason Wang wrote:
->> On 2018/12/26 上午12:25, Michael S. Tsirkin wrote:
->>> On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
->>>> On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
->>>>> On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
->>>>>> On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
->>>>>>> On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
->>>>>>>> On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
->>>>>>>>>> Just to make sure I understand this. It looks to me we should:
->>>>>>>>>>
->>>>>>>>>> - allow passing GIOVA->GPA through UAPI
->>>>>>>>>>
->>>>>>>>>> - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
->>>>>>>>>> performance
->>>>>>>>>>
->>>>>>>>>> Is this what you suggest?
->>>>>>>>>>
->>>>>>>>>> Thanks
->>>>>>>>> Not really. We already have GPA->HVA, so I suggested a flag to pass
->>>>>>>>> GIOVA->GPA in the IOTLB.
->>>>>>>>>
->>>>>>>>> This has advantages for security since a single table needs
->>>>>>>>> then to be validated to ensure guest does not corrupt
->>>>>>>>> QEMU memory.
->>>>>>>>>
->>>>>>>> I wonder how much we can gain through this. Currently, qemu IOMMU gives
->>>>>>>> GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
->>>>>>>> GIOVA->HVA to vhost. It looks no difference to me.
->>>>>>>>
->>>>>>>> Thanks
->>>>>>> The difference is in security not in performance.  Getting a bad HVA
->>>>>>> corrupts QEMU memory and it might be guest controlled. Very risky.
->>>>>> How can this be controlled by guest? HVA was generated from qemu ram blocks
->>>>>> which is totally under the control of qemu memory core instead of guest.
->>>>>>
->>>>>>
->>>>>> Thanks
->>>>> It is ultimately under guest influence as guest supplies IOVA->GPA
->>>>> translations.  qemu translates GPA->HVA and gives the translated result
->>>>> to the kernel.  If it's not buggy and kernel isn't buggy it's all
->>>>> fine.
->>>> If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
->>>> the point why we even want to try this. Buggy qemu code can crash itself in
->>>> many ways.
->>>>
->>>>
->>>>> But that's the approach that was proven not to work in the 20th century.
->>>>> In the 21st century we are trying defence in depth approach.
->>>>>
->>>>> My point is that a single code path that is responsible for
->>>>> the HVA translations is better than two.
->>>>>
->>>> So the difference whether or not use memory table information:
->>>>
->>>> Current:
->>>>
->>>> 1) SET_MEM_TABLE: GPA->HVA
->>>>
->>>> 2) Qemu GIOVA->GPA
->>>>
->>>> 3) Qemu GPA->HVA
->>>>
->>>> 4) IOTLB_UPDATE: GIOVA->HVA
->>>>
->>>> If I understand correctly you want to drop step 3 consider it might be buggy
->>>> which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
->>>> will ends up:
->>>>
->>>> 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
->>>> do it during device IOTLB lookup).
->>>>
->>>> 2) Extra bits to enable this capability.
->>>>
->>>> So this looks need more codes in kernel than what qemu did in userspace.  Is
->>>> this really worthwhile?
->>>>
->>>> Thanks
->>> So there are several points I would like to make
->>>
->>> 1. At the moment without an iommu it is possible to
->>>      change GPA-HVA mappings and everything keeps working
->>>      because a change in memory tables flushes the rings.
->>
->> Interesting, I don't know this before. But when can this happen?
 >
-> It doesn't happen with existing qemu. But it seems like a valid
-> thing to do to remap memory at a different address.
+> We're seeing an issue introduced in 4.18, and that still persists in
+> 4.19.12 (we upgraded from 4.9), where update_blocked_averages is
+> blocking. We're running a workload where a majority of our workloads
+> are  confined by cgroups. This exhibits itself due to a softlockup on
+> a CPU which is waiting on a lock that's held by
+> update_blocked_averages. I don't have access to any bare metal
+> hardware at the moment, and these are all systems running under KVM.
+> This kernel has CONFIG_FAIR_GROUP_SCHED on.
 >
-
-Ok.
-
-
->>>      However I don't see the iotlb cache being invalidated
->>>      on that path - did I miss it? If it is not there it's
->>>      a related minor bug.
->>
->> It might have a bug. But a question is consider the case without IOMMU. We
->> only update mem table (SET_MEM_TABLE), but not vring address. This looks
->> like a bug as well?
-> I think that without an iommu it can only work without races if backend is
-> stopped or if the vring isn't in guest memory with ring aliasing).
-
-
-Right.
-
-
+> The Softlocked CPU:
+> crash> bt
+> PID: 29314  TASK: ffff99b5f0671f00  CPU: 0   COMMAND: "ag"
+>  #0 [ffff99b67b203d58] machine_kexec at ffffffff91a602f3
+>  #1 [ffff99b67b203db0] __crash_kexec at ffffffff91b49011
+>  #2 [ffff99b67b203e70] panic at ffffffff91a896d1
+>  #3 [ffff99b67b203ef8] watchdog_timer_fn at ffffffff91b816af
+>  #4 [ffff99b67b203f28] __hrtimer_run_queues at ffffffff91b26359
+>  #5 [ffff99b67b203f88] hrtimer_interrupt at ffffffff91b26de2
+>  #6 [ffff99b67b203fd8] smp_apic_timer_interrupt at ffffffff92402b06
+>  #7 [ffff99b67b203ff0] apic_timer_interrupt at ffffffff92401a9f
+> --- <IRQ stack> ---
+>  #8 [ffffa49fa1acbc08] apic_timer_interrupt at ffffffff92401a9f
+>     [exception RIP: smp_call_function_many+543]
+>     RIP: ffffffff91b3e84f  RSP: ffffa49fa1acbcb0  RFLAGS: 00000202
+>     RAX: 0000000000000010  RBX: ffff99b67b224fc0  RCX: ffff99b67b6286a0
+>     RDX: 0000000000000001  RSI: 0000000000000200  RDI: ffff99b67b224fc8
+>     RBP: ffff99b67b224fc8   R8: 0000000000000001   R9: 0000000000000000
+>     R10: 0000000000000000  R11: 0000000000000000  R12: 0000000000025080
+>     R13: ffffa49fa1acbd00  R14: 0000000000000001  R15: 0000000000000200
+>     ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
+>  #9 [ffffa49fa1acbcf8] flush_tlb_mm_range at ffffffff91a7853c
+> #10 [ffffa49fa1acbd90] free_pgtables at ffffffff91c4ac3b
+> #11 [ffffa49fa1acbdc8] unmap_region at ffffffff91c54439
+> #12 [ffffa49fa1acbe90] do_munmap at ffffffff91c56355
+> #13 [ffffa49fa1acbee0] vm_munmap at ffffffff91c56587
+> #14 [ffffa49fa1acbf20] __x64_sys_munmap at ffffffff91c565e2
+> #15 [ffffa49fa1acbf38] do_syscall_64 at ffffffff91a04590
+> #16 [ffffa49fa1acbf50] entry_SYSCALL_64_after_hwframe at ffffffff9240008d
+>     RIP: 00007f43e94de747  RSP: 00007f43e91d7e28  RFLAGS: 00000213
+>     RAX: ffffffffffffffda  RBX: 00000000011a6f30  RCX: 00007f43e94de747
+>     RDX: 0000000000000001  RSI: 0000000000000ade  RDI: 00007f43ea47d000
+>     RBP: 0000000000000005   R8: 00007f43e00008c0   R9: 00007f43e91d7d00
+>     R10: 00000000011a53b0  R11: 0000000000000213  R12: 00007f43ea47d000
+>     R13: 0000000000000ade  R14: 00007f43e91d89c0  R15: 0000000000000060
+>     ORIG_RAX: 000000000000000b  CS: 0033  SS: 002b
 >
->>> 2. qemu already has a GPA. Discarding it and re-calculating
->>>      when logging is on just seems wrong.
->>>      However if you would like to *also* keep the HVA in the iotlb
->>>      to avoid doing extra translations, that sounds like a
->>>      reasonable optimization.
->>
->> Yes, traverse GPA->HVA mapping seems unnecessary.
->>
->>
->>> 3. it also means that the hva->gpa translation only runs
->>>      when logging is enabled. That is a rarely excercised
->>>      path so any bugs there will not be caught.
->>
->> I wonder maybe some kind of unit-test may help here.
->>
->>
->>> So I really would like us long term to move away from
->>> hva->gpa translations, keep them for legacy userspace only
->>> but I don't really mind how we do it.
->>>
->>> How about
->>> - a new flag to pass an iotlb with *both* a gpa and hva
->>> - for legacy userspace, calculate the gpa on iotlb update
->>>     so the device then uses a shared code path
->>>
->>> what do you think?
->>>
->>>
->> I don't object this idea so I can try, just want to figure out why it was a
->> must.
->>
->> Thanks
-> Not a must but I think it's a good interface extension.
+> This is waiting on CPU 16:
+> crash> bt
+> PID: 29299  TASK: ffff99b5dffd1f00  CPU: 16  COMMAND: "ag"
+>  #0 [fffffe00002c8e38] crash_nmi_callback at ffffffff91a54202
+>  #1 [fffffe00002c8e50] nmi_handle at ffffffff91a32ee2
+>  #2 [fffffe00002c8ea0] default_do_nmi at ffffffff91a333ea
+>  #3 [fffffe00002c8ec0] do_nmi at ffffffff91a33553
+>  #4 [fffffe00002c8ef0] end_repeat_nmi at ffffffff924014e8
+>     [exception RIP: native_queued_spin_lock_slowpath+33]
+>     RIP: ffffffff91af2dc1  RSP: ffffa49fa1a93948  RFLAGS: 00000002
+>     RAX: 0000000000000001  RBX: ffff99b67b763f40  RCX: 000000004f19a57a
+>     RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b67b763f40
+>     RBP: 0000000000000082   R8: 0000000000000001   R9: 0000000000000000
+>     R10: ffffa49fa1a938f8  R11: ffffffff91aca4a7  R12: 0000000000000015
+>     R13: ffff99b67b764940  R14: ffffa49fa1a93a60  R15: 0000000000000015
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0000
+> --- <NMI exception stack> ---
+>  #5 [ffffa49fa1a93948] native_queued_spin_lock_slowpath at ffffffff91af2dc1
+>  #6 [ffffa49fa1a93948] do_raw_spin_lock at ffffffff91af48dd
+>  #7 [ffffa49fa1a93958] _raw_spin_lock_irqsave at ffffffff923c1154
+>  #8 [ffffa49fa1a93978] update_blocked_averages at ffffffff91aca4a7
+>  #9 [ffffa49fa1a93a10] update_nohz_stats at ffffffff91acaa3d
+> #10 [ffffa49fa1a93a20] find_busiest_group at ffffffff91ad2137
+> #11 [ffffa49fa1a93bb8] load_balance at ffffffff91ad2be0
+> #12 [ffffa49fa1a93cf0] pick_next_task_fair at ffffffff91ad41e6
+> #13 [ffffa49fa1a93da0] mark_held_locks at ffffffff91aeebe4
+> #14 [ffffa49fa1a93de8] schedule at ffffffff923b9ec2
+> #15 [ffffa49fa1a93df8] rwsem_down_read_failed at ffffffff923be859
+> #16 [ffffa49fa1a93e80] call_rwsem_down_read_failed at ffffffff923ae944
+> #17 [ffffa49fa1a93ec8] down_read at ffffffff923bdf0b
+> #18 [ffffa49fa1a93ee0] __do_page_fault at ffffffff91a71083
+> #19 [ffffa49fa1a93f50] async_page_fault at ffffffff924010ee
+>     RIP: 00007f43e945f786  RSP: 00007ffde2b50070  RFLAGS: 00010206
+>     RAX: 0000000000015f41  RBX: 00007f43e97a1b20  RCX: 0000000000000111
+>     RDX: 00000000011affb0  RSI: 00000000011b00c0  RDI: 0000000000000000
+>     RBP: 0000000000000111   R8: 00007f43e97a1bd8   R9: 0000000000000000
+>     R10: 00007f43e97a1b78  R11: 00007f43e97a1b78  R12: 00007f43e97a1b78
+>     R13: 00007f43e97a1b78  R14: 0000000000002710  R15: 00007f43e97a1c78
+>     ORIG_RAX: ffffffffffffffff  CS: 0033  SS: 002b
 >
+> Which is waiting on a lock held by CPU owned by CPU 9:
+> crash> struct raw_spinlock_t ffff99b67b763f40
+> struct raw_spinlock_t {
+>   raw_lock = {
+>     {
+>       val = {
+>         counter = 1
+>       },
+>       {
+>         locked = 1 '\001',
+>         pending = 0 '\000'
+>       },
+>       {
+>         locked_pending = 1,
+>         tail = 0
+>       }
+>     }
+>   },
+>   magic = 3735899821,
+>   owner_cpu = 9,
+>   owner = 0xffff99b66e7a8000,
+>   dep_map = {
+>     key = 0xffffffff9331d120,
+>     class_cache = {0xffffffff93a13da0, 0x0},
+>     name = 0xffffffff92a7d9ad "&rq->lock"
+>   }
+> }
+>
+> Which is hanging out in update_blocked_averages:
+> crash> bt
+> PID: 0      TASK: ffff99b66e7a8000  CPU: 9   COMMAND: "swapper/9"
+>  #0 [fffffe0000194e38] crash_nmi_callback at ffffffff91a54202
+>  #1 [fffffe0000194e50] nmi_handle at ffffffff91a32ee2
+>  #2 [fffffe0000194ea0] default_do_nmi at ffffffff91a33362
+>  #3 [fffffe0000194ec0] do_nmi at ffffffff91a33553
+>  #4 [fffffe0000194ef0] end_repeat_nmi at ffffffff924014e8
+>     [exception RIP: lock_is_held_type+70]
+>     RIP: ffffffff91aecec6  RSP: ffff99b67b443e20  RFLAGS: 00000046
+>     RAX: 0000000000000001  RBX: ffff99b66e7a8000  RCX: 00000000000000a8
+>     RDX: 0000000000000001  RSI: 00000000ffffffff  RDI: 0000000000000046
+>     RBP: 0000000000000046   R8: 0000000000000004   R9: 0000000000000000
+>     R10: ffff99b67b443e38  R11: ffffffff91aca4a7  R12: ffff99b67b763f40
+>     R13: ffff99b67b764940  R14: 0000000000000000  R15: ffff99b6193d9200
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> --- <NMI exception stack> ---
+>  #5 [ffff99b67b443e20] lock_is_held_type at ffffffff91aecec6
+>  #6 [ffff99b67b443e30] update_blocked_averages at ffffffff91aca841
+>  #7 [ffff99b67b443ec8] update_nohz_stats at ffffffff91acaa3d
+>  #8 [ffff99b67b443ed8] _nohz_idle_balance at ffffffff91ad39f7
+>  #9 [ffff99b67b443f70] __softirqentry_text_start at ffffffff926000d1
+> #10 [ffff99b67b443fd0] irq_exit at ffffffff91a911f5
+> #11 [ffff99b67b443fd8] smp_apic_timer_interrupt at ffffffff92402b2c
+> #12 [ffff99b67b443ff0] apic_timer_interrupt at ffffffff92401a9f
+> --- <IRQ stack> ---
+> #13 [ffffa49f98993df8] apic_timer_interrupt at ffffffff92401a9f
+>     [exception RIP: mwait_idle+108]
+>     RIP: ffffffff923c02fc  RSP: ffffa49f98993ea8  RFLAGS: 00000246
+>     RAX: 0000000000000000  RBX: 0000000000000009  RCX: 0000000000000000
+>     RDX: 0000000000000001  RSI: 0000000000000001  RDI: ffff99b66e7a8000
+>     RBP: 0000000000000009   R8: 0000000000000001   R9: 0000000000000000
+>     R10: 0000000000000000  R11: 0000000000000000  R12: ffff99b66e7a8000
+>     R13: 0000000000000000  R14: 0000000000000000  R15: ffff99b66e7a8000
+>     ORIG_RAX: ffffffffffffff13  CS: 0010  SS: 0018
+> #14 [ffffa49f98993ec0] do_idle at ffffffff91ac6ba3
+> #15 [ffffa49f98993f10] cpu_startup_entry at ffffffff91ac6f4f
+> #16 [ffffa49f98993f30] start_secondary at ffffffff91a55759
+> #17 [ffffa49f98993f50] secondary_startup_64 at ffffffff91a000d4
+>
+> ---
+>
+> Lockdep tells me nothing, which makes me think, somehow is the code in
+> for_each_leaf_cfs_rq_safe looping forever?
 
-Ok. let me try to do this.
+On further investigation from another crash dump, it looks like (where
+0xffff9680bb4e3f40 = cpu_rq(11)) --
+crash> struct rq.leaf_cfs_rq_list 0xffff9680bb4e3f40
+  leaf_cfs_rq_list = {
+    next = 0xffff9680622ed980,
+    prev = 0xffff9680bb4e4180
+  }
+crash> struct list_head 0xffff9680622ed980
+struct list_head {
+  next = 0xffff9680622ed980,
+  prev = 0xffff9680622ed980
+}
 
-Thanks
+---
+I instrumented update_blocked_averages with the start time of the
+function, to keep track of it with the scheduler clock, and it
+coincides at almost exactly 5.5 seconds, way longer than it should be.
 
+
+It looks like it never terminates because it stays in this loop
+forever. I'm not sure how things can get into this state, or even if
+this was the state to start with, and this isn't the result of some
+kind of concurrency skew or other shenanigans.
