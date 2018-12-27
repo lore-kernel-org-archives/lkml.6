@@ -2,110 +2,64 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2624BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7616BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA7F921741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B4A6218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:07:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fCrt/flw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbeL0IGn (ORCPT
+        id S1730326AbeL0IHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 03:06:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbeL0IGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 03:06:42 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 310B658E38;
-        Thu, 27 Dec 2018 08:06:42 +0000 (UTC)
-Received: from krava (ovpn-204-89.brq.redhat.com [10.40.204.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 423F1608DD;
-        Thu, 27 Dec 2018 08:06:39 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 09:06:38 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        =?utf-8?Q?Ond=C5=99ej_Lyson=C4=9Bk?= <olysonek@redhat.com>,
-        Jaroslav =?utf-8?B?xaBrYXJ2YWRh?= <jskarvad@redhat.com>
-Subject: Re: [PATCH] perf python: Do not force closing original perf
- descriptor in evlist.get_pollfd
-Message-ID: <20181227080638.GA2313@krava>
-References: <20181226112121.5285-1-jolsa@kernel.org>
+        Thu, 27 Dec 2018 03:07:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728809AbeL0IHe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 03:07:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=slO9quz+S2uPeebro6tFtxNIF0siAxfD0oAKEXiXNMc=; b=fCrt/flwy59kcUZvcdPMRRYgw
+        FnQUE9JPoDxgd80IlEML9zTcKWDzUc0ESEzt7VWr9OzhH6q4d1d8YBwZ/PZKeFYYC9PVqZ3sRsSgo
+        jjnx5gLht0A5WMuo2n8qVeuHsQJD50G+tqw49jr7AG9giTyzfoJVmjR9VudH764hOcO6T2ZNgloyY
+        6ALQtubvZBvd97Ux390IkzBij5EXsc9Ar9hNwwty64glxokvFkY4BH6OAYCc90JBL8nUaCr3TctcS
+        QSPJJ2W0t4tCf5VNMyNyBycAvnxIiPr4JkspMDq1I6rJ6IWETExTZWbqKT9OO72+QTYI0NZbxUhDR
+        srT31SKFQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gcQhV-0003Bs-Au; Thu, 27 Dec 2018 08:07:29 +0000
+Date:   Thu, 27 Dec 2018 00:07:29 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: add a check for xfs_trans_commit
+Message-ID: <20181227080728.GA12171@infradead.org>
+References: <20181226060516.75103-1-kjlu@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181226112121.5285-1-jolsa@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 27 Dec 2018 08:06:42 +0000 (UTC)
+In-Reply-To: <20181226060516.75103-1-kjlu@umn.edu>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 12:21:21PM +0100, Jiri Olsa wrote:
-> Ondřej reported that when compiled with python3, the python
-> extension regress in evlist.get_pollfd function behaviour.
+On Wed, Dec 26, 2018 at 12:05:16AM -0600, Kangjie Lu wrote:
+> xfs_trans_commit could fails. The checks issues an error message upon
+> its failure.
 > 
-> The evlist.get_pollfd creates file objects from evlist's fds
-> and returns them in the list. The python3 version also sets
-> them to 'close the original descriptor' when the object die
-> (is closed), by passing True via 'closefd' arg in PyFile_FromFd
-> call.
-> 
-> The python's closefd doc says:
->   If closefd is False, the underlying file descriptor will be kept open
->   when the file is closed.
-> 
-> That's why following line in python3 closes all evlist fds:
->   evlist.get_pollfd()
-> 
-> the returned list is immediately destroyed and that takes
-> down the original events fds.
-> 
-> Passing closefd as False to PyFile_FromFd to fix this.
-> 
-> Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
-> Link: http://lkml.kernel.org/n/tip-ru9hmsaliew8p01kr0050mvg@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 
-oops, forgot to add.. and cc-ing Jaroslav Škarvada
-
-Fixes: 66dfdff03d19 ("perf tools: Add Python 3 support")
-
-jirka
-
-> ---
->  tools/perf/util/python.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 47628e85c5eb..dda0ac978b1e 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
->  
->  		file = PyFile_FromFile(fp, "perf", "r", NULL);
->  #else
-> -		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
-> +		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
-> +				     NULL, NULL, NULL, 0);
->  #endif
->  		if (file == NULL)
->  			goto free_list;
-> -- 
-> 2.17.2
-> 
+Please take a close look at what could fail in xfs_trans_commit, and how
+those failures are logged inside the implementation.
