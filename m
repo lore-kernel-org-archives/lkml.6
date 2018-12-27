@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1C3C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7321C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEF820856
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 840E620856
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DMN6g2og";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TkB6z5LB"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ea7hOzy4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fE/65OUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbeL0HcQ (ORCPT
+        id S1729786AbeL0HcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 02:32:16 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50348 "EHLO
+        Thu, 27 Dec 2018 02:32:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49994 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729457AbeL0HcO (ORCPT
+        with ESMTP id S1727007AbeL0HcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 02:32:14 -0500
+        Thu, 27 Dec 2018 02:32:04 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4E6AC604BE; Thu, 27 Dec 2018 07:32:11 +0000 (UTC)
+        id 88BCF60909; Thu, 27 Dec 2018 07:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545895932;
-        bh=rnu8okox5XvhBmPI7ntxGTYhG719Crq47GRi3axFzJg=;
+        s=default; t=1545895923;
+        bh=sxbJZsIl6dSwUQXUl+ptgK5p2se5Ox/n8dWLHLdYxkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DMN6g2ogDrRAIcQgfuWJc4KkyHjn8WHkiFd8dW/AztqrqFaHU2ccdWYlWwhrkc5Zc
-         TObnPt9Jx8UsGFggj9YnSveIrWMsCaFhIYoSxaka8sAOHULJk04ztY8nEQbW1RLP+b
-         tmGpPgyUsP9Q/dwfHOWsqvLjDg+h/ecSbthlyBXQ=
+        b=ea7hOzy4oRTosQISc+WXiHvhqbVFbaRie7KmxvcP/beD/KSNNZGO7GG+KiTTB6j/s
+         vJaWxyFgET1YjcbFK2YWNbMslZCcB7EmgzhEV+6jMFZ/BT4R92Yg+wuuBRlJGFBGcb
+         2IZ/jGVGNvlGaUCxrZQvSY1h2Jq/rlPzjjn9h9i8=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF01B607F1;
-        Thu, 27 Dec 2018 07:32:03 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 56EE0607F1;
+        Thu, 27 Dec 2018 07:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545895926;
-        bh=rnu8okox5XvhBmPI7ntxGTYhG719Crq47GRi3axFzJg=;
+        s=default; t=1545895916;
+        bh=sxbJZsIl6dSwUQXUl+ptgK5p2se5Ox/n8dWLHLdYxkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkB6z5LBf46mELscd+Y4H5ne9m3rgSjn7zMXxLO3Ge2nT60sdsFGWItvoYwMBCFbI
-         R/YFR4v68rxIPt0qWprkeBTceMxSs0aoeo0L6JJkUiFMvdY/VIL/4Zemv9jH7syT+N
-         AD02vjywoZYDczz3cjjTKVzc6gQSVZTPb5Nf//gk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF01B607F1
+        b=fE/65OUgjT4+JZ9nMVMDkxHOEllYgxjLE1dxWK65eRlM0zS8OSoNvodqlD8jObZ36
+         r9HtMWMx+YaWv8kQfbOviyO+BejIBJQ5PEN9WELv2OQjd3JzTZC3rgY19KHPrMfe42
+         A66Xp6ua1PrcbfEVDPWVVLTzfal+iiTxqDhK7T5c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56EE0607F1
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -55,9 +55,9 @@ Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
         linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v6 6/6] Bluetooth: btqca: inject command complete event during fw download
-Date:   Thu, 27 Dec 2018 13:01:36 +0530
-Message-Id: <20181227073136.8431-7-bgodavar@codeaurora.org>
+Subject: [PATCH v6 3/6] Bluetooth: hci_qca: Fix frame reassembly errors for wcn3990
+Date:   Thu, 27 Dec 2018 13:01:33 +0530
+Message-Id: <20181227073136.8431-4-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181227073136.8431-1-bgodavar@codeaurora.org>
 References: <20181227073136.8431-1-bgodavar@codeaurora.org>
@@ -68,109 +68,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Latest qualcomm chips are not sending an command complete event for
-every firmware packet sent to chip. They only respond with a vendor
-specific event for the last firmware packet. This optimization will
-decrease the BT ON time. Due to this we are seeing a timeout error
-message logs on the console during firmware download. Now we are
-injecting a command complete event once we receive an vendor specific
-event for the last RAM firmware packet.
+During initalization of wcn3990, we observed UART is reading some
+stray bytes on the Rx line. This is logging Frame reassembly errors
+on the serial console. This could be because of tristate of Tx line
+of wcn3990 during boot up.
+
+[  176.929612] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  176.945734] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  176.953298] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  177.010660] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  177.067633] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+
+Now we enable a flag during bootup to stop executing proto receive
+function and clear it back once the initialization is done.
 
 Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/bluetooth/btqca.c | 39 ++++++++++++++++++++++++++++++++++++++-
- drivers/bluetooth/btqca.h |  3 +++
- 2 files changed, 41 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_qca.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index ec9e03a6b778..0b533f65f652 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct rome_config *config,
- 		 * In case VSE is skipped, only the last segment is acked.
- 		 */
- 		config->dnld_mode = tlv_patch->download_mode;
-+		config->dnld_type = config->dnld_mode;
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 63436023632d..0751b2359f6f 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -56,6 +56,7 @@
  
- 		BT_DBG("Total Length           : %d bytes",
- 		       le32_to_cpu(tlv_patch->total_size));
-@@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
- 	return err;
- }
+ /* Controller states */
+ #define STATE_IN_BAND_SLEEP_ENABLED	1
++#define STATE_DISCARD_RX		2
  
-+static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
-+{
-+	struct hci_event_hdr *hdr;
-+	struct hci_ev_cmd_complete *evt;
-+	struct sk_buff *skb;
-+
-+	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	hdr = skb_put(skb, sizeof(*hdr));
-+	hdr->evt = HCI_EV_CMD_COMPLETE;
-+	hdr->plen = sizeof(*evt) + 1;
-+
-+	evt = skb_put(skb, sizeof(*evt));
-+	evt->ncmd = 1;
-+	evt->opcode = HCI_OP_NOP;
-+
-+	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
-+
-+	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
-+
-+	return hci_recv_frame(hdev, skb);
-+}
-+
- static int qca_download_firmware(struct hci_dev *hdev,
- 				  struct rome_config *config)
- {
-@@ -297,11 +323,22 @@ static int qca_download_firmware(struct hci_dev *hdev,
- 		ret = qca_tlv_send_segment(hdev, segsize, segment,
- 					    config->dnld_mode);
- 		if (ret)
--			break;
-+			goto out;
+ #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+ #define IBS_TX_IDLE_TIMEOUT_MS		2000
+@@ -511,6 +512,7 @@ static int qca_open(struct hci_uart *hu)
+ 		} else {
+ 			hu->init_speed = qcadev->init_speed;
+ 			hu->oper_speed = qcadev->oper_speed;
++			set_bit(STATE_DISCARD_RX, &qca->flags);
+ 			ret = qca_power_setup(hu, true);
+ 			if (ret) {
+ 				destroy_workqueue(qca->workqueue);
+@@ -903,6 +905,13 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
  
- 		segment += segsize;
- 	}
- 
-+	/* Latest qualcomm chipsets are not sending a command complete event
-+	 * for every fw packet sent. They only respond with a vendor specific
-+	 * event for the last packet. This optimization in the chip will
-+	 * decrease the BT in initialization time. Here we will inject a command
-+	 * complete event to avoid a command timeout error message.
++	/* We discard Rx data received while device is in booting
++	 * stage, This is because of BT chip Tx line is in tristate.
++	 * Due to this we read some garbage data on UART Rx.
 +	 */
-+	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
-+	    config->dnld_type == ROME_SKIP_EVT_VSE))
-+		return qca_inject_cmd_complete_event(hdev);
++	if (test_bit(STATE_DISCARD_RX, &qca->flags))
++		return 0;
 +
-+out:
- 	release_firmware(fw);
+ 	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
+ 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
+ 	if (IS_ERR(qca->rx_skb)) {
+@@ -1195,6 +1204,7 @@ static int qca_setup(struct hci_uart *hu)
+ 		if (ret)
+ 			return ret;
  
- 	return ret;
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 0c01f375fe83..5c8fc54133e3 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -40,6 +40,8 @@
- #define QCA_WCN3990_POWERON_PULSE	0xFC
- #define QCA_WCN3990_POWEROFF_PULSE	0xC0
++		clear_bit(STATE_DISCARD_RX, &qca->flags);
+ 		ret = qca_read_soc_version(hdev, &soc_ver);
+ 		if (ret)
+ 			return ret;
+@@ -1271,6 +1281,12 @@ static const struct qca_vreg_data qca_soc_data = {
  
-+#define QCA_HCI_CC_SUCCESS		0x00
+ static void qca_power_shutdown(struct hci_uart *hu)
+ {
++	struct qca_data *qca = hu->priv;
 +
- enum qca_bardrate {
- 	QCA_BAUDRATE_115200 	= 0,
- 	QCA_BAUDRATE_57600,
-@@ -81,6 +83,7 @@ struct rome_config {
- 	char fwname[64];
- 	uint8_t user_baud_rate;
- 	enum rome_tlv_dnld_mode dnld_mode;
-+	enum rome_tlv_dnld_mode dnld_type;
- };
- 
- struct edl_event_hdr {
++	/* From this point we go into power off state. But serial port is
++	 * still open, discard all the garbage data received on the Rx line.
++	 */
++	set_bit(STATE_DISCARD_RX, &qca->flags);
+ 	host_set_baudrate(hu, 2400);
+ 	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
+ 	qca_power_setup(hu, false);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
