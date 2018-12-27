@@ -2,447 +2,135 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15195C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 22:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5599C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 22:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F1E20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 22:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71F262148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 22:18:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS+oDPUd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbeL0WRT (ORCPT
+        id S1733167AbeL0WSC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 17:17:19 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:51909 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733136AbeL0WRS (ORCPT
+        Thu, 27 Dec 2018 17:18:02 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36675 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733136AbeL0WSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 17:17:18 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id DC62D20058;
-        Thu, 27 Dec 2018 23:17:12 +0100 (CET)
-Date:   Thu, 27 Dec 2018 23:17:11 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v1 2/7] drm: move DRM_SWITCH_POWER defines to drm_device.h
-Message-ID: <20181227221711.GA29366@ravnborg.org>
-References: <20181226210215.GA27610@ravnborg.org>
- <20181226210353.13993-2-sam@ravnborg.org>
- <20181227121234.GE9058@dvetter-linux.ger.corp.intel.com>
+        Thu, 27 Dec 2018 17:18:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p6so18482074wmc.1;
+        Thu, 27 Dec 2018 14:18:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=oGNNGvY06rqC10oMV7fuETey3BupeXG8K/FvVNM0iaU=;
+        b=KS+oDPUdLOWGYpfmAsSmGbPSPaBr0dzm7mMgi7I8/BMaKVIjI2iV+LBq1yqPb6FHaX
+         ZTwnMoQnkvgdbYXcJpAAbrmWxiglKMbppMDuLWEPS+2SfjdsGpU1CdMH+8F7pdOQWW1X
+         jQ+E7Sw+RXf4EUwsD2HILqsLwAgylKOq99gSMIqiVyLsRsGreW46rIKPFfFh96zp0IuV
+         vF9E4tbj8/lYBwBl6B4F+0NSRD5K7OQaNQJdKSmF3wKLI/lV86YgZA1GtQsLx9lWWRPo
+         tcEpxbT+96eaeVI0Smkb9kj3hdJXCtbwIcejPDZHqCVxD2Rf8FLPuBauKNFR0LUekuZU
+         i2EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=oGNNGvY06rqC10oMV7fuETey3BupeXG8K/FvVNM0iaU=;
+        b=F1kxumExgF5h65xvxp1idYEdfjqfhYkOfpS7LSGFVcGjFCpkfWyt6k+144oK8rkPnP
+         6nMCpovf4Lxl76qJYne6yUznFlcVLxSLr6ahZmknZGMmOi+VnHdxNpqoGoRFiy/soOux
+         dxItUJCSuT1T5i9ZH1FpMxPSt2TeiRCpFMz3msiBY44Sq1sDy8YuhgIEv6IYzc8ohjId
+         i6K04+eUbED3vYLecdAR2ZoDl++uTGp93ZM1JPZLmvyIe/A9L61I02oWhboX/CdNa2Lv
+         VQqz1Vcyo2+WkAf2nyVXUEWoD15NelJMN/YIzdH0nJ3K06xKFqzwg6OBew3BcFWTcFrP
+         Pr1Q==
+X-Gm-Message-State: AA+aEWb772hRjlrmKoWQUepx+V/0ojm3K2lNB/tvMORxTWG8f2UihpeB
+        LbaOZfraZTCVRNiM/gUVQCA=
+X-Google-Smtp-Source: AFSGD/URH75KiQQuhKr4u9DKFGgJzoVaAm/jQfogPI1xvP8PXaIMHFeKk0zD/7XVNm2uJALFbBhYfg==
+X-Received: by 2002:a7b:c5d1:: with SMTP id n17mr22486139wmk.152.1545949080352;
+        Thu, 27 Dec 2018 14:18:00 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id v133sm27149420wmf.19.2018.12.27.14.17.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 14:17:58 -0800 (PST)
+Date:   Thu, 27 Dec 2018 23:17:48 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Andreas Bombe <andreas.bombe@gmail.com>
+Cc:     Andreas Henriksson <andreas@fatal.se>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mpluskal@suse.com,
+        base-system@gentoo.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+Message-ID: <20181227221748.zsz6bwqqia7ybfwj@pali>
+References: <20180929084038.an6pfhnsd6tblejl@pali>
+ <20181002081654.jxesr3kj62snzez5@pali>
+ <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
+ <20181012091941.o22srnhse4kzqjhf@fatal.se>
+ <20181114113341.yx2wlzqku5yh3k4h@pali>
+ <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
+ <20181206083828.4bp3oypkto2ngobu@pali>
+ <20181212135736.xtb57r2eatqsgenb@pali>
+ <20181217095004.c6c6itvyfp7cf3ta@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181227121234.GE9058@dvetter-linux.ger.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=QyXUC8HyAAAA:8 a=P-IC7800AAAA:8
-        a=-UzwvaD4mrT_bkKbTtgA:9 a=gTs02ahKwakilbJL:21 a=Ox9J3REOmXjxrJcp:21
-        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=d3PnA9EDa4IxuAV0gXij:22
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181217095004.c6c6itvyfp7cf3ta@pali>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel.
+On Monday 17 December 2018 10:50:04 Pali Roh=C3=A1r wrote:
+> On Wednesday 12 December 2018 14:57:36 Pali Roh=C3=A1r wrote:
+> > On Thursday 06 December 2018 09:38:28 Pali Roh=C3=A1r wrote:
+> > > On Thursday 06 December 2018 01:53:02 Andreas Bombe wrote:
+> > > > Pali Roh=C3=A1r <pali.rohar@gmail.com> schrieb am Mi., 14. Nov. 201=
+8 um
+> > > > 12:33 Uhr:
+> > > >=20
+> > > > > And... has somebody else time to look at those pending patches an=
+d do
+> > > > > some initial review? I would really appreciate if somebody look a=
+nd
+> > > > > comment them.
+> > > > >
+> > > > > There are 14 open pull requests:
+> > > > > https://github.com/dosfstools/dosfstools/pulls
+> > > >=20
+> > > >=20
+> > > > I'll spend time on this again. It would help if you could make a li=
+st of
+> > > > higher priority PRs you would like see being looked at first.
+> > >=20
+> > > So.. here is some list:
+> > >=20
+> > > https://github.com/dosfstools/dosfstools/pull/92
+> > > https://github.com/dosfstools/dosfstools/pull/93
+> > > https://github.com/dosfstools/dosfstools/pull/94
+> > > https://github.com/dosfstools/dosfstools/pull/101
+> > > https://github.com/dosfstools/dosfstools/pull/104
+> > > https://github.com/dosfstools/dosfstools/pull/84
+> >=20
+> > Maybe you can start with Year 2038 problem in PR 94:
+> > https://github.com/dosfstools/dosfstools/pull/94
+>=20
+> Thanks for review of #94! As next you can take #92 from list.
 
-> > +/* Used by drm_device.switch_power_state */
-> > +#define DRM_SWITCH_POWER_ON 0
-> > +#define DRM_SWITCH_POWER_OFF 1
-> > +#define DRM_SWITCH_POWER_CHANGING 2
-> > +#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
-> 
-> Since this isn't uapi it'd be nice to change it to an enum, which we can
-> then properly kernel-doc and make your references links in the resulting
-> html. Otherwise lgtm.
-> 
-> Would need an include stanza for drm_device.h in drm-internals.rst, plus a
-> bit of kernel-doc cleanup in here I think (which iirc is why I didn't yet
-> do this).
+Andreas, can you look at next pull requests?
 
-Converting to enum was easy, the documentation part not so.
-I have tried to add some documentation based on what I could figure out.
-There are room for improvements.
-
-The other task was to include drm_device in the documentation.
-
-This work resulted in the following two patches that I will post
-as part of an updated series later.
-Posted here to maybe get some initial feedback.
-
-	Sam
-
-From 3bc5d6a11a1e04f20a465e2690583c87cee74ac0 Mon Sep 17 00:00:00 2001
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Thu, 27 Dec 2018 23:03:12 +0100
-Subject: [PATCH 1/7] drm: add drm_device.h to kernel-doc
-
-Updated comment style to kernel-doc format
-
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
----
- Documentation/gpu/drm-internals.rst |   4 +
- include/drm/drm_device.h            | 157 ++++++++++++++++++++++--------------
- 2 files changed, 101 insertions(+), 60 deletions(-)
-
-diff --git a/Documentation/gpu/drm-internals.rst b/Documentation/gpu/drm-internals.rst
-index 5ee9674fb9e9..7a677b2b0ebc 100644
---- a/Documentation/gpu/drm-internals.rst
-+++ b/Documentation/gpu/drm-internals.rst
-@@ -149,6 +149,10 @@ Device Instance and Driver Handling
- .. kernel-doc:: drivers/gpu/drm/drm_drv.c
-    :export:
- 
-+DRM Device
-+----------
-+.. kernel-doc:: include/drm/drm_device.h
-+
- Driver Load
- -----------
- 
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index 42411b3ea0c8..cd385d3fc979 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -25,24 +25,39 @@ struct pci_dev;
- struct pci_controller;
- 
- /**
-- * DRM device structure. This structure represent a complete card that
-+ * struct drm_device - DRM device structure
-+ *
-+ * This structure represent a complete card that
-  * may contain multiple heads.
-  */
- struct drm_device {
--	struct list_head legacy_dev_list;/**< list of devices per driver for stealth attach cleanup */
--	int if_version;			/**< Highest interface version set */
--
--	/** \name Lifetime Management */
--	/*@{ */
--	struct kref ref;		/**< Object ref-count */
--	struct device *dev;		/**< Device structure of bus-device */
--	struct drm_driver *driver;	/**< DRM driver managing the device */
--	void *dev_private;		/**< DRM driver private data */
--	struct drm_minor *primary;		/**< Primary node */
--	struct drm_minor *render;		/**< Render node */
-+	/** @legacy_dev_list: List of devices per driver for stealth attach cleanup */
-+	struct list_head legacy_dev_list;
-+
-+	/** @if_version: Highest interface version set */
-+	int if_version;
-+
-+	/** @ref: Object ref-count */
-+	struct kref ref;
-+
-+	/** @dev: Device structure of bus-device */
-+	struct device *dev;
-+
-+	/** @driver: DRM driver managing the device */
-+	struct drm_driver *driver;
-+
-+	/** @dev_private: DRM driver private data */
-+	void *dev_private;
-+
-+	/** @primary: Primary node */
-+	struct drm_minor *primary;
-+
-+	/** @render: Render node */
-+	struct drm_minor *render;
-+
- 	bool registered;
- 
--	/* currently active master for this device. Protected by master_mutex */
-+	/** @master: Currently active master for this device. Protected by master_mutex */
- 	struct drm_master *master;
- 
- 	/**
-@@ -63,23 +78,29 @@ struct drm_device {
- 	 */
- 	bool unplugged;
- 
--	struct inode *anon_inode;		/**< inode for private address-space */
--	char *unique;				/**< unique name of the device */
--	/*@} */
-+	/** @anon_inode: inode for private address-space */
-+	struct inode *anon_inode;
-+
-+	/** @unique: Unique name of the device */
-+	char *unique;
-+
-+	/** @struct_mutex: Lock for others (not drm_minor::master and drm_file::is_master) */
-+	struct mutex struct_mutex;
-+
-+	/** @master_mutex: Lock for drm_minor::master and drm_file::is_master */
-+	struct mutex master_mutex;
-+
-+	/** @open_count: Usage counter for outstanding files open, protected by drm_global_mutex. */
-+	int open_count;
- 
--	/** \name Locks */
--	/*@{ */
--	struct mutex struct_mutex;	/**< For others */
--	struct mutex master_mutex;      /**< For drm_minor::master and drm_file::is_master */
--	/*@} */
-+	/** @buf_lock: Lock for drm_device::buf_use and a few other things. */
-+	spinlock_t buf_lock;
- 
--	/** \name Usage Counters */
--	/*@{ */
--	int open_count;			/**< Outstanding files open, protected by drm_global_mutex. */
--	spinlock_t buf_lock;		/**< For drm_device::buf_use and a few other things. */
--	int buf_use;			/**< Buffers in use -- cannot alloc */
--	atomic_t buf_alloc;		/**< Buffer allocation in progress */
--	/*@} */
-+	/** @buf_use: Usage counter for buffers in use -- cannot alloc */
-+	int buf_use;
-+
-+	/** @buf_alloc: Buffer allocation in progress */
-+	atomic_t buf_alloc;
- 
- 	struct mutex filelist_mutex;
- 	struct list_head filelist;
-@@ -105,33 +126,32 @@ struct drm_device {
- 	 */
- 	struct list_head clientlist;
- 
--	/** \name Memory management */
--	/*@{ */
--	struct list_head maplist;	/**< Linked list of regions */
--	struct drm_open_hash map_hash;	/**< User token hash table for maps */
-+	/** @maplist: Memory management - linked list of regions */
-+	struct list_head maplist;
- 
--	/** \name Context handle management */
--	/*@{ */
--	struct list_head ctxlist;	/**< Linked list of context handles */
--	struct mutex ctxlist_mutex;	/**< For ctxlist */
-+	/** @map_hash: Memory management - user token hash table for maps */
-+	struct drm_open_hash map_hash;
- 
--	struct idr ctx_idr;
-+	/** @ctxlist: Context handle management - linked list of context handles */
-+	struct list_head ctxlist;
-+
-+	/** @ctxlist_mutex: Context handle management - mutex for ctxlist */
-+	struct mutex ctxlist_mutex;
- 
--	struct list_head vmalist;	/**< List of vmas (for debugging) */
-+	/** @ctx_idr: Context handle management */
-+	struct idr ctx_idr;
- 
--	/*@} */
-+	/** @vmalist: Context handle management - list of vmas (for debugging) */
-+	struct list_head vmalist;
- 
--	/** \name DMA support */
--	/*@{ */
--	struct drm_device_dma *dma;		/**< Optional pointer for DMA support */
--	/*@} */
-+	/** @dma: Optional pointer for DMA support */
-+	struct drm_device_dma *dma;
- 
--	/** \name Context support */
--	/*@{ */
-+	/** @context_flag: Context swapping flag */
-+	__volatile__ long context_flag;
- 
--	__volatile__ long context_flag;	/**< Context swapping flag */
--	int last_context;		/**< Last current context */
--	/*@} */
-+	/** @last_context: Last current context */
-+	int last_context;
- 
- 	/**
- 	 * @irq_enabled:
-@@ -168,7 +188,12 @@ struct drm_device {
- 	 */
- 	struct drm_vblank_crtc *vblank;
- 
--	spinlock_t vblank_time_lock;    /**< Protects vblank count and time updates during vblank enable/disable */
-+	/**
-+	 * @vblank_time_lock:
-+	 * 
-+	 *  Protects vblank count and time updates during vblank enable/disable
-+	 */
-+	spinlock_t vblank_time_lock;
- 	spinlock_t vbl_lock;
- 
- 	/**
-@@ -186,25 +211,33 @@ struct drm_device {
- 	 *
- 	 * If non-zeor, &drm_crtc_funcs.get_vblank_counter must be set.
- 	 */
--	u32 max_vblank_count;           /**< size of vblank counter register */
-+
-+	/** @max_vblank_count: Size of vblank counter register */
-+	u32 max_vblank_count;
- 
- 	/**
--	 * List of events
-+	 * @vblank_event_list:
-+	 *
-+	 * List of vblank events
- 	 */
- 	struct list_head vblank_event_list;
- 	spinlock_t event_lock;
- 
--	/*@} */
-+	/** @agp: AGP data */
-+	struct drm_agp_head *agp;
- 
--	struct drm_agp_head *agp;	/**< AGP data */
-+	/** @pdev: PCI device structure */
-+	struct pci_dev *pdev;
- 
--	struct pci_dev *pdev;		/**< PCI device structure */
- #ifdef __alpha__
- 	struct pci_controller *hose;
- #endif
- 
--	struct drm_sg_mem *sg;	/**< Scatter gather memory */
--	unsigned int num_crtcs;                  /**< Number of CRTCs on this device */
-+	/** @sg: Scatter gather memory */
-+	struct drm_sg_mem *sg;
-+
-+	/** @num_crtcs: Number of CRTCs on this device */
-+	unsigned int num_crtcs;
- 
- 	struct {
- 		int context;
-@@ -214,14 +247,18 @@ struct drm_device {
- 	struct drm_local_map *agp_buffer_map;
- 	unsigned int agp_buffer_token;
- 
--	struct drm_mode_config mode_config;	/**< Current mode config */
-+	/** @mode_config: Current mode config */
-+	struct drm_mode_config mode_config;
- 
--	/** \name GEM information */
--	/*@{ */
-+	/** @object_name_lock: GEM information */
- 	struct mutex object_name_lock;
-+
-+	/** @object_name_idr: GEM information */
- 	struct idr object_name_idr;
-+
-+	/** @vma_offset_manager: GEM information */
- 	struct drm_vma_offset_manager *vma_offset_manager;
--	/*@} */
-+
- 	int switch_power_state;
- 
- 	/**
--- 
-2.12.0
-
-From a3c94604f8c32a2a48efc79d15fbc66e0e62fd33 Mon Sep 17 00:00:00 2001
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Wed, 26 Dec 2018 14:21:01 +0100
-Subject: [PATCH 2/7] drm: move DRM_SWITCH_POWER defines to drm_device.h
-
-Move DRM_SWITCH_POWER out of drmP.h to allow users
-to get rid of the drmP include.
-
-DRM_SWITCH_POWER defines are used in combination
-with drm_device.switch_power_state.
-
-Move the DRM_SWITCH_POWER defines to the file where
-drm_device.switch_power_state is defined.
-
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
----
- include/drm/drmP.h       |  5 -----
- include/drm/drm_device.h | 37 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 6 deletions(-)
-
-diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-index b6b8436b5123..2ba786820052 100644
---- a/include/drm/drmP.h
-+++ b/include/drm/drmP.h
-@@ -95,11 +95,6 @@ struct dma_buf_attachment;
- struct pci_dev;
- struct pci_controller;
- 
--#define DRM_SWITCH_POWER_ON 0
--#define DRM_SWITCH_POWER_OFF 1
--#define DRM_SWITCH_POWER_CHANGING 2
--#define DRM_SWITCH_POWER_DYNAMIC_OFF 3
--
- /* returns true if currently okay to sleep */
- static inline bool drm_can_sleep(void)
- {
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index cd385d3fc979..098bbc2b169e 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -24,6 +24,33 @@ struct inode;
- struct pci_dev;
- struct pci_controller;
- 
-+
-+/**
-+ * enum drm_switch_power - power state of drm device
-+ */
-+
-+enum switch_power_state {
-+	/**
-+	 * @DRM_SWITCH_POWER_ON: Power state is ON
-+	 */
-+	DRM_SWITCH_POWER_ON = 0,
-+
-+	/**
-+	 * @DRM_SWITCH_POWER_OFF: Power state is OFF
-+	 */
-+	DRM_SWITCH_POWER_OFF = 1,
-+
-+	/**
-+	 * @DRM_SWITCH_POWER_CHANGING: Power state is changing
-+	 */
-+	DRM_SWITCH_POWER_CHANGING = 2,
-+
-+	/**
-+	 * @DRM_SWITCH_POWER_DYNAMIC_OFF: Suspended
-+	 */
-+	DRM_SWITCH_POWER_DYNAMIC_OFF = 3,
-+};
-+
- /**
-  * struct drm_device - DRM device structure
-  *
-@@ -259,7 +286,15 @@ struct drm_device {
- 	/** @vma_offset_manager: GEM information */
- 	struct drm_vma_offset_manager *vma_offset_manager;
- 
--	int switch_power_state;
-+	/**
-+	 * @switch_power_state:
-+	 *
-+	 * Power state of the client.
-+	 * Used by drivers supporting the switcheroo driver.
-+	 * The state is maintained in the
-+	 * &vga_switcheroo_client_ops.set_gpu_state callback
-+	 */
-+	enum switch_power_state switch_power_state;
- 
- 	/**
- 	 * @fb_helper:
--- 
-2.12.0
-
-
-
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
