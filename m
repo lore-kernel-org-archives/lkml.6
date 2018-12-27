@@ -2,187 +2,155 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41888C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BB5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F48214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8961B214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:26:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d32Sbt/2"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="qlH6udro"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730516AbeL0JWG (ORCPT
+        id S1730557AbeL0J0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:22:06 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39701 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728946AbeL0JWF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:22:05 -0500
-Received: by mail-it1-f193.google.com with SMTP id a6so23011309itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 01:22:04 -0800 (PST)
+        Thu, 27 Dec 2018 04:26:33 -0500
+Received: from mail-eopbgr780074.outbound.protection.outlook.com ([40.107.78.74]:4972
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728050AbeL0J0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:26:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JGnxTlkBePL2hGiYdxZdokq66LzFPRS5t+3d0/lD/d4=;
-        b=d32Sbt/25ZtdTJ2Rdv5JHkIAdMtl7A1xFcxV444b8RIngG3IZOcL2TdGerXoNXIrDC
-         SZJGmZehCR4vcSYOxLg7ySpny1kDUWRTMN4vDbKsk99m9iCnULpihbfBk5FtYK/nrEDE
-         9kadA6Dja9WLCHOMUHKj772QJ6H3ho6EyPcRM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JGnxTlkBePL2hGiYdxZdokq66LzFPRS5t+3d0/lD/d4=;
-        b=k8PceGfIF9FfO3nG3R7QrSEGinXjTwtICf7cu3w/wW9EvUq+te5uh4CPnf1KtEdDlK
-         MXcJLh5O1zN6ba1rBIzNinfCk4DvQTC98wmccwxMJWZ5mKY6URxsBaVl55zs7K0nxWN6
-         M4JWOy7eVve2v3vrmcFozUY4AfXcFQITiAAALN4XaugCkLiMZUNBRQv2DFbgMzG8lxCT
-         pDpbh/HKADu3R9W2gHTbh6h/PTCIfdqEDSSJW7dvvPiyfyZGaOrUyZ0JGQZYXMZe3hC+
-         7DBpvHPl8JkkOARRryY566ddFVisgxDSJEc3BrSRZJWJd4tvLKzgZVX4xEiuMmytLnb2
-         Yurg==
-X-Gm-Message-State: AA+aEWYYaLMJ5k+drcDjBYtQxg7kqYs6rDnKVgoWyHU31aQ928yu24tQ
-        ZP8tso8CliGRdnv15ecHVl1EtnZMYirt6+w4Z2DoCA==
-X-Google-Smtp-Source: AFSGD/WqOUQ0mpp15WOOAm/4Vaxc00XroXhRZ/PHXu/6dJVKVk7JWYPSPu51ObP6Nnf8wKVbULBK6Tuzr08tvjvAWb0=
-X-Received: by 2002:a02:7f08:: with SMTP id r8mr15452617jac.20.1545902524284;
- Thu, 27 Dec 2018 01:22:04 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qgnjVPmKTwJ2mnndFLWPXGAT8/NcXBB712VcDy/YA/g=;
+ b=qlH6udrotS9oPt9rBaMG1TySe/MNHHm/UrQv4xsFjUNrkBx/EMNaVMk04u2TFhujii1+jn4QeVDEsURFZdXKwfdBUknF4eGq6CrXPZjI9BoQIhEUQVO7t8arVI2XVAue401oUE5KDua0vI3HpfX4K/xr7/321x5Alf3wrVahlxc=
+Received: from BYAPR12MB2791.namprd12.prod.outlook.com (20.177.126.80) by
+ BYAPR12MB2760.namprd12.prod.outlook.com (20.177.125.225) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.21; Thu, 27 Dec 2018 09:26:28 +0000
+Received: from BYAPR12MB2791.namprd12.prod.outlook.com
+ ([fe80::203a:c88d:8f6d:4080]) by BYAPR12MB2791.namprd12.prod.outlook.com
+ ([fe80::203a:c88d:8f6d:4080%6]) with mapi id 15.20.1471.019; Thu, 27 Dec 2018
+ 09:26:26 +0000
+From:   "Qu, Jim" <Jim.Qu@amd.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+CC:     "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        "Xu, Feifei" <Feifei.Xu@amd.com>,
+        "Francis, David" <David.Francis@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "pakki001@umn.edu" <pakki001@umn.edu>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Gao, Likun" <Likun.Gao@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhang, Hawking" <Hawking.Zhang@amd.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBncHU6IGRybTogZml4IGFuIGltcHJvcGVyIGNoZWNr?=
+ =?gb2312?B?IG9mIGFtZGdwdV9ib19jcmVhdGVfa2VybmVs?=
+Thread-Topic: [PATCH] gpu: drm: fix an improper check of
+ amdgpu_bo_create_kernel
+Thread-Index: AQHUnOONEcshgKVKEU2ZwQMEVbCPbaWSSTbJ
+Date:   Thu, 27 Dec 2018 09:26:26 +0000
+Message-ID: <BYAPR12MB279124DEA06FE8EA43E164BC99B60@BYAPR12MB2791.namprd12.prod.outlook.com>
+References: <20181226062348.75519-1-kjlu@umn.edu>
+In-Reply-To: <20181226062348.75519-1-kjlu@umn.edu>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=Jim.Qu@amd.com; 
+x-originating-ip: [116.228.147.241]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB2760;20:litC8WQ4OT/NdWXcViYmB3BHsgLP8BfNEE/73OLbayBRClB1EDA5Ird9GT8QiKWBBajX8PD8KYIphNwu1G1VLxHX1oydeKIz4ZTyRZgHUqT5nsyLVL+2VbnFxSwzQkH1AHcVM4kC8Ng8LdreW0Q/YSaYNa8DpbNhsZofZwVsDRla6IiUTD6VEN9zh1wUwYF6gBIIL1R9iM7gbB3KRQAX4CULFDDI6CLWLzT+dv+1SecU0GpcWE8xTyQwewi+dUqb
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(199004)(189003)(54906003)(106356001)(86362001)(4326008)(8936002)(81166006)(105586002)(99286004)(224303003)(5660300001)(446003)(11346002)(186003)(316002)(25786009)(81156014)(9686003)(68736007)(55016002)(7696005)(72206003)(66066001)(76176011)(102836004)(6506007)(33656002)(97736004)(486006)(476003)(6436002)(966005)(256004)(14454004)(71190400001)(53936002)(6306002)(2906002)(6916009)(478600001)(305945005)(74316002)(2171002)(26005)(3846002)(71200400001)(7736002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2760;H:BYAPR12MB2791.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: d53b0bb9-c063-4e7f-71fb-08d66bdd605c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2760;
+x-ms-traffictypediagnostic: BYAPR12MB2760:
+x-microsoft-antispam-prvs: <BYAPR12MB27601D8C715E8E971EA4E38899B60@BYAPR12MB2760.namprd12.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR12MB2760;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2760;
+x-forefront-prvs: 0899B47777
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: F+SrmYuNerhsTMJENKkUdIQD2KnrDZ1xqjqsajeHprJF8n6auR2dHfQlWxM1YZ30amvzx+wn8q3WOPcuenYnoNlrPhcES/UCZKVNl4RiYGEboJtVb5l/qJZUoEwN6j0qNKJcg/y5PYZeZGqiiwW4hfDQaNvfqSTCw1pFSf/M8U/lXTNYNJP8MgETzCGpIerVj36sFHMTnMJee1b8yViwuwLwEIL7ND8b793jIR3YZOPLUNuiyjYeJc9woSTa+V5Y56znisD/RVUrSXmclaAqoSyD10YHtYkyHG2bLsUJ1GH7fQnE5VnDstCITa7WXf45
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
-In-Reply-To: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 27 Dec 2018 10:21:53 +0100
-Message-ID: <CAKfTPtDRGULW3mdFzeyT=OBPdtPsz-6BG-=UGWbK6RQ7Lg8YpA@mail.gmail.com>
-Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
-To:     Xie XiuQi <xiexiuqi@huawei.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, xiezhipeng1@huawei.com,
-        huawei.libin@huawei.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d53b0bb9-c063-4e7f-71fb-08d66bdd605c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Dec 2018 09:26:26.6438
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2760
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xie,
-
-On Thu, 27 Dec 2018 at 03:57, Xie XiuQi <xiexiuqi@huawei.com> wrote:
->
-> Zhepeng Xie report a bug, there is a infinity loop in
-> update_blocked_averages().
->
-> PID: 14233  TASK: ffff800b2de08fc0  CPU: 1   COMMAND: "docker"
->  #0 [ffff00002213b9d0] update_blocked_averages at ffff00000811e4a8
->  #1 [ffff00002213ba60] pick_next_task_fair at ffff00000812a3b4
->  #2 [ffff00002213baf0] __schedule at ffff000008deaa88
->  #3 [ffff00002213bb70] schedule at ffff000008deb1b8
->  #4 [ffff00002213bb80] futex_wait_queue_me at ffff000008180754
->  #5 [ffff00002213bbd0] futex_wait at ffff00000818192c
->  #6 [ffff00002213bd00] do_futex at ffff000008183ee4
->  #7 [ffff00002213bde0] __arm64_sys_futex at ffff000008184398
->  #8 [ffff00002213be60] el0_svc_common at ffff0000080979ac
->  #9 [ffff00002213bea0] el0_svc_handler at ffff000008097a6c
->  #10 [ffff00002213bff0] el0_svc at ffff000008084044
->
-> rq->tmp_alone_branch introduced in 4.10, used to point to
-> the new beg of the list. If this cfs_rq is deleted somewhere
-> else, then the tmp_alone_branch will be illegal and cause
-> a list_add corruption.
-
-shouldn't all the sequence  be protected by rq_lock ?
-
-
->
-> (When enabled DEBUG_LIST, we fould this list_add corruption)
->
-> [ 2546.741103] list_add corruption. next->prev should be prev
-> (ffff800b4d61ad40), but was ffff800ba434fa38. (next=ffff800b6a95e740).
-> [ 2546.741130] ------------[ cut here ]------------
-> [ 2546.741132] kernel BUG at lib/list_debug.c:25!
-> [ 2546.741136] Internal error: Oops - BUG: 0 [#1] SMP
-> [ 2546.742870] CPU: 1 PID: 29428 Comm: docker-runc Kdump: loaded Tainted: G E  4.19.5-1.aarch64 #1
-> [ 2546.745415] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-> [ 2546.747402] pstate: 40000085 (nZcv daIf -PAN -UAO)
-> [ 2546.749015] pc : __list_add_valid+0x50/0x90
-> [ 2546.750485] lr : __list_add_valid+0x50/0x90
-> [ 2546.751975] sp : ffff00001b5eb910
-> [ 2546.753286] x29: ffff00001b5eb910 x28: ffff800abacf0000
-> [ 2546.754976] x27: ffff00001b5ebbb0 x26: ffff000009570000
-> [ 2546.756665] x25: ffff00000960d000 x24: 00000250f41ca8f8
-> [ 2546.758366] x23: ffff800b6a95e740 x22: ffff800b4d61ad40
-> [ 2546.760066] x21: ffff800b4d61ad40 x20: ffff800ba434f080
-> [ 2546.761742] x19: ffff800b4d61ac00 x18: ffffffffffffffff
-> [ 2546.763425] x17: 0000000000000000 x16: 0000000000000000
-> [ 2546.765089] x15: ffff000009570748 x14: 6666662073617720
-> [ 2546.766755] x13: 747562202c293034 x12: 6461313664346230
-> [ 2546.768429] x11: 3038666666662820 x10: 0000000000000000
-> [ 2546.770124] x9 : 0000000000000001 x8 : ffff000009f34a0f
-> [ 2546.771831] x7 : 0000000000000000 x6 : 000000000000250d
-> [ 2546.773525] x5 : 0000000000000000 x4 : 0000000000000000
-> [ 2546.775227] x3 : 0000000000000000 x2 : 70ef7f624013ca00
-> [ 2546.776929] x1 : 0000000000000000 x0 : 0000000000000075
-> [ 2546.778623] Process docker-runc (pid: 29428, stack limit = 0x00000000293494a2)
-> [ 2546.780742] Call trace:
-> [ 2546.781955]  __list_add_valid+0x50/0x90
-> [ 2546.783469]  enqueue_entity+0x4a0/0x6e8
-> [ 2546.784957]  enqueue_task_fair+0xac/0x610
-> [ 2546.786502]  sched_move_task+0x134/0x178
-> [ 2546.787993]  cpu_cgroup_attach+0x40/0x78
-> [ 2546.789540]  cgroup_migrate_execute+0x378/0x3a8
-> [ 2546.791169]  cgroup_migrate+0x6c/0x90
-> [ 2546.792663]  cgroup_attach_task+0x148/0x238
-> [ 2546.794211]  __cgroup1_procs_write.isra.2+0xf8/0x160
-> [ 2546.795935]  cgroup1_procs_write+0x38/0x48
-> [ 2546.797492]  cgroup_file_write+0xa0/0x170
-> [ 2546.799010]  kernfs_fop_write+0x114/0x1e0
-> [ 2546.800558]  __vfs_write+0x60/0x190
-> [ 2546.801977]  vfs_write+0xac/0x1c0
-> [ 2546.803341]  ksys_write+0x6c/0xd8
-> [ 2546.804674]  __arm64_sys_write+0x24/0x30
-> [ 2546.806146]  el0_svc_common+0x78/0x100
-> [ 2546.807584]  el0_svc_handler+0x38/0x88
-> [ 2546.809017]  el0_svc+0x8/0xc
->
-
-Have you got more details about the sequence that generates this bug ?
-Is it easily reproducible ?
-
-> In this patch, we move rq->tmp_alone_branch point to its prev before delete it
-> from list.
->
-> Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-> Cc: Bin Li <huawei.libin@huawei.com>
-> Cc: <stable@vger.kernel.org>        [4.10+]
-> Fixes: 9c2791f936ef (sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list)
-
-If it only happens in update_blocked_averages(), the del leaf has been added by:
-a9e7f6544b9c (sched/fair: Fix O(nr_cgroups) in load balance path)
-
-> Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-> Tested-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-> ---
->  kernel/sched/fair.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index ac855b2..7a72702 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -347,6 +347,11 @@ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->  static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->  {
->         if (cfs_rq->on_list) {
-> +               struct rq *rq = rq_of(cfs_rq);
-> +
-> +               if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
-> +                       rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
-> +
->                 list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
->                 cfs_rq->on_list = 0;
->         }
-> --
-> 1.8.3.1
->
+DQpDb21tZW50cyBpbiBsaW5lLg0KDQpUaGFua3MNCkppbVF1DQpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IGFtZC1nZnggPGFtZC1nZngtYm91bmNlc0Bs
+aXN0cy5mcmVlZGVza3RvcC5vcmc+ILT6se0gS2FuZ2ppZSBMdSA8a2psdUB1bW4uZWR1Pg0Kt6LL
+zcqxvOQ6IDIwMTjE6jEy1MIyNsjVIDE0OjIzDQrK1bz+yMs6IGtqbHVAdW1uLmVkdQ0Ks63LzTog
+WmhvdSwgRGF2aWQoQ2h1bk1pbmcpOyBEYXZpZCBBaXJsaWU7IFh1LCBGZWlmZWk7IEZyYW5jaXMs
+IERhdmlkOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBhbWQtZ2Z4QGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZzsgSHVhbmcsIFJheTsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsg
+RGFuaWVsIFZldHRlcjsgcGFra2kwMDFAdW1uLmVkdTsgRGV1Y2hlciwgQWxleGFuZGVyOyBHYW8s
+IExpa3VuOyBaaHUsIFJleDsgS29lbmlnLCBDaHJpc3RpYW47IFpoYW5nLCBIYXdraW5nDQrW98zi
+OiBbUEFUQ0hdIGdwdTogZHJtOiBmaXggYW4gaW1wcm9wZXIgY2hlY2sgb2YgYW1kZ3B1X2JvX2Ny
+ZWF0ZV9rZXJuZWwNCg0KYWRldi0+ZmlybXdhcmUuZndfYnVmIGJlaW5nIG5vdCBOVUxMIG1heSBu
+b3QgaW5kaWNhdGUga2VybmVsIGJ1ZmZlciBpcw0KY3JlYXRlZCBzdWNjZXNzZnVsLiBBIGJldHRl
+ciB3YXkgaXMgdG8gY2hlY2sgdGhlIHN0YXR1cyAocmV0dXJuIHZhbHVlKQ0Kb2YgaXQuIFRoZSBm
+aXggZG9lcyBzby4NCg0KU2lnbmVkLW9mZi1ieTogS2FuZ2ppZSBMdSA8a2psdUB1bW4uZWR1Pg0K
+LS0tDQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMgfCAxOCArKysr
+KysrKysrKystLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNiBkZWxl
+dGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdw
+dV91Y29kZS5jIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMNCmlu
+ZGV4IDdiMzM4NjcwMzZlNy4uYmEzYzFjZmIyYzM1IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMNCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQv
+YW1kZ3B1L2FtZGdwdV91Y29kZS5jDQpAQCAtNDIyLDEzICs0MjIsMTkgQEAgc3RhdGljIGludCBh
+bWRncHVfdWNvZGVfcGF0Y2hfanQoc3RydWN0IGFtZGdwdV9maXJtd2FyZV9pbmZvICp1Y29kZSwN
+Cg0KIGludCBhbWRncHVfdWNvZGVfY3JlYXRlX2JvKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2
+KQ0KIHsNCisgICAgICAgaW50IHJldDsNCisNCiAgICAgICAgaWYgKGFkZXYtPmZpcm13YXJlLmxv
+YWRfdHlwZSAhPSBBTURHUFVfRldfTE9BRF9ESVJFQ1QpIHsNCi0gICAgICAgICAgICAgICBhbWRn
+cHVfYm9fY3JlYXRlX2tlcm5lbChhZGV2LCBhZGV2LT5maXJtd2FyZS5md19zaXplLCBQQUdFX1NJ
+WkUsDQotICAgICAgICAgICAgICAgICAgICAgICBhbWRncHVfc3Jpb3ZfdmYoYWRldikgPyBBTURH
+UFVfR0VNX0RPTUFJTl9WUkFNIDogQU1ER1BVX0dFTV9ET01BSU5fR1RULA0KLSAgICAgICAgICAg
+ICAgICAgICAgICAgJmFkZXYtPmZpcm13YXJlLmZ3X2J1ZiwNCi0gICAgICAgICAgICAgICAgICAg
+ICAgICZhZGV2LT5maXJtd2FyZS5md19idWZfbWMsDQotICAgICAgICAgICAgICAgICAgICAgICAm
+YWRldi0+ZmlybXdhcmUuZndfYnVmX3B0cik7DQotICAgICAgICAgICAgICAgaWYgKCFhZGV2LT5m
+aXJtd2FyZS5md19idWYpIHsNCisgICAgICAgICAgICAgICByZXQgPQ0KKyAgICAgICAgICAgICAg
+ICAgICAgICAgYW1kZ3B1X2JvX2NyZWF0ZV9rZXJuZWwoYWRldiwNCisgICAgICAgICAgICAgICAg
+ICAgICAgICAgYWRldi0+ZmlybXdhcmUuZndfc2l6ZSwNCisgICAgICAgICAgICAgICAgICAgICAg
+ICAgUEFHRV9TSVpFLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICBhbWRncHVfc3Jpb3ZfdmYo
+YWRldikgPyBBTURHUFVfR0VNX0RPTUFJTl9WUkFNIDoNCisgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgQU1ER1BVX0dFTV9ET01BSU5fR1RULA0KKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAmYWRldi0+ZmlybXdhcmUuZndfYnVmLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAmYWRl
+di0+ZmlybXdhcmUuZndfYnVmX21jLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAm
+YWRldi0+ZmlybXdhcmUuZndfYnVmX3B0cik7DQorICAgICAgICAgICAgICAgaWYgKHJldCkgew0K
+DQpKaW1RdTogTG9vayBpbnRvIGFtZGdwdV9ib19jcmVhdGVfa2VybmVsKCksIG5ldyBibyB3aWxs
+IGJlIGNyZWF0ZWQgb25seSBpZiAqYm9fcHRyID0gTlVMTCwgU28gaWYgeW91IGVuY291bnRlciB0
+aGUgaXNzdWUgdGhlIGFkZXYtPmZpcm13YXJlLmZ3X2J1ZiAhPSBOVUxMIGJ1dCBuZXcgYm8gaXMg
+bm90IGNyZWF0ZWQsIHRoZSBvbmx5IHByb2JsZW0gSSBjYW4gc2VlIGFyZToNCg0KMS4gdGhlcmUg
+aXMgYnVnIGluIGFtZGdwdV9ib19jcmVhdGVfa2VybmVsKCkNCjIuIGFkZXYtPmZpcm13YXJlLmZ3
+X2J1ZiAhPSBOVUxMIGJlZm9yZSBpdCBpcyB0cmFuc2ZlcnJlZCBpbnRvIGFtZGdwdV9ib19jcmVh
+dGVfa2VybmVsKCkuDQoNCkNvdWxkIHlvdSBjb21taXQgd2hhdCBpcyBlbnZpcm9ubWVudCB5b3Ug
+ZW5jb3VudGVyIHRoZSBpc3N1ZT8NCg0KVGhhbmtzDQpKaW1RdSANCiAgICAgICAgICAgICAgICAg
+ICAgICAgIGRldl9lcnIoYWRldi0+ZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSBrZXJuZWwgYnVmZmVy
+IGZvciBmaXJtd2FyZS5md19idWZcbiIpOw0KICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJu
+IC1FTk9NRU07DQogICAgICAgICAgICAgICAgfSBlbHNlIGlmIChhbWRncHVfc3Jpb3ZfdmYoYWRl
+dikpIHsNCi0tDQoyLjE3LjIgKEFwcGxlIEdpdC0xMTMpDQoNCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fDQphbWQtZ2Z4IG1haWxpbmcgbGlzdA0KYW1kLWdm
+eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vYW1kLWdmeA0K
