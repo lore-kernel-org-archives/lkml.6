@@ -2,100 +2,110 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6BEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2624BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E0E421741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:03:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBwFrKgj"
+	by mail.kernel.org (Postfix) with ESMTP id EA7F921741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 08:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbeL0IDi (ORCPT
+        id S1730236AbeL0IGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 03:03:38 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34822 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbeL0IDi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 03:03:38 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so17521444wrb.2;
-        Thu, 27 Dec 2018 00:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FXaipZicuaA3PxmcnsRTC44H8F4Ri9DgI3x3aUybNYg=;
-        b=KBwFrKgj5lyUpNQ62v9jc36LU4zWga+GAXj++ueulmGgv/V6f/z1tDobaR7WVwld9t
-         jOH+tHjVxNwEdT/kLuPODHHGYSZHNv9RNbLVZ2PpNHVreObDgZl9zV+sa5NZaOQTWRKO
-         a+staD/ljZHaRBEhUncJ/fUUNnkl2E6+2M0PV0ZcyWIAlFbF8l5s4BiXqvy37O9z6gMj
-         AFhtMFq9EGGDW02ZDzUK4f/IVTyCUhLZH8AHbPQd5ncmpKDybkQOZu2kczOgWy89H+lC
-         MQVhgtOC+KJPjki7v4l5wwWeXPRC2gTB6xgHPHEKmn52OMXFOcIZmCKzmiSxTprYtMWM
-         b4og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FXaipZicuaA3PxmcnsRTC44H8F4Ri9DgI3x3aUybNYg=;
-        b=h/sGyEPKPerZZS2Tw4fUxkc8ywu0iNq8KzcpiYQbRpUp2aqmM+8XpDD1qFmWurTTHG
-         IJ/zp57A5joHRVOjFVundjzFnIOHFd4GVZ0NoDcLJoP8fpN37Adb0LuSvcOZZWehLeGT
-         lYyV/PWPJ53aDndxJp5Tk6XMvlG09sOL1HvxyCJ8SfBSj5XiaG2gYhDJNN+HPd+g3et2
-         tzGtC1zD3nrRyritJA0UI/ipSHs9sjIjk7Ika26jk6VHXwva7YQfBOqWoTKFMQqTN0uq
-         GvCUiTEfw3aCSeytDKmuNatMyALfmT62V54EpLjGcsVQDZrl5OCfPnnmCFuRDQLUnWup
-         eAaQ==
-X-Gm-Message-State: AJcUukczg5xgFXwBA2SNfYUbKPNwYKmRQC36Z5oLO+F/o1tg4S6YogX7
-        wGRc3OZv8cCGpc80zTFIUcbxluQa2I81GKTi+84=
-X-Google-Smtp-Source: ALg8bN5zBtLYJragIsflCyqhVx6xNUdO2YOYveUXThVk59B/ILLUjMsr79nQUUm+ko1mIgNhhwklrd9j5tWYqs30GaA=
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr20339550wro.77.1545897816080;
- Thu, 27 Dec 2018 00:03:36 -0800 (PST)
+        Thu, 27 Dec 2018 03:06:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51190 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728809AbeL0IGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 03:06:42 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 310B658E38;
+        Thu, 27 Dec 2018 08:06:42 +0000 (UTC)
+Received: from krava (ovpn-204-89.brq.redhat.com [10.40.204.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 423F1608DD;
+        Thu, 27 Dec 2018 08:06:39 +0000 (UTC)
+Date:   Thu, 27 Dec 2018 09:06:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        =?utf-8?Q?Ond=C5=99ej_Lyson=C4=9Bk?= <olysonek@redhat.com>,
+        Jaroslav =?utf-8?B?xaBrYXJ2YWRh?= <jskarvad@redhat.com>
+Subject: Re: [PATCH] perf python: Do not force closing original perf
+ descriptor in evlist.get_pollfd
+Message-ID: <20181227080638.GA2313@krava>
+References: <20181226112121.5285-1-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <1544519572-21921-1-git-send-email-zhang.chunyan@linaro.org>
- <1544519572-21921-2-git-send-email-zhang.chunyan@linaro.org> <0e683aef-383c-8200-0059-44a9abb654b8@intel.com>
-In-Reply-To: <0e683aef-383c-8200-0059-44a9abb654b8@intel.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 27 Dec 2018 16:02:59 +0800
-Message-ID: <CAAfSe-tHu5m3Of6=KBCxBBH1T8=4tgN8aZP_7QaGERctECZPoQ@mail.gmail.com>
-Subject: Re: [PATCH V4 1/3] mmc: sdhci: add support for using external DMA devices
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Faiz Abbas <faiz_abbas@ti.com>, linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181226112121.5285-1-jolsa@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 27 Dec 2018 08:06:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Dec 2018 at 15:44, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 11/12/18 11:12 AM, Chunyan Zhang wrote:
-> > Some standard SD host controllers can support both external dma
-> > controllers as well as ADMA/SDMA in which the SD host controller
-> > acts as DMA master. TI's omap controller is the case as an example.
-> >
-> > Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> > the host controller but does not have any support for external DMA
-> > controllers implemented using dmaengine, meaning that custom code is
-> > needed for any systems that use an external DMA controller with SDHCI.
-> >
-> > Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->
-> FYI, I am waiting on successful testing before reviewing these patches again.
+On Wed, Dec 26, 2018 at 12:21:21PM +0100, Jiri Olsa wrote:
+> Ondřej reported that when compiled with python3, the python
+> extension regress in evlist.get_pollfd function behaviour.
+> 
+> The evlist.get_pollfd creates file objects from evlist's fds
+> and returns them in the list. The python3 version also sets
+> them to 'close the original descriptor' when the object die
+> (is closed), by passing True via 'closefd' arg in PyFile_FromFd
+> call.
+> 
+> The python's closefd doc says:
+>   If closefd is False, the underlying file descriptor will be kept open
+>   when the file is closed.
+> 
+> That's why following line in python3 closes all evlist fds:
+>   evlist.get_pollfd()
+> 
+> the returned list is immediately destroyed and that takes
+> down the original events fds.
+> 
+> Passing closefd as False to PyFile_FromFd to fix this.
+> 
+> Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
+> Link: http://lkml.kernel.org/n/tip-ru9hmsaliew8p01kr0050mvg@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-Yeah, that makes sense, thanks Adrian!
+oops, forgot to add.. and cc-ing Jaroslav Škarvada
 
-I intend to send out another new patchset after the holidays.
-After had another look at omap_hsmmc, I knew something need to be
-modified (emailed Faiz about this privately), but I was still not sure
-if it can fix the problem Faiz found.
+Fixes: 66dfdff03d19 ("perf tools: Add Python 3 support")
 
-Happy new year to all,
-Chunyan
+jirka
+
+> ---
+>  tools/perf/util/python.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 47628e85c5eb..dda0ac978b1e 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
+>  
+>  		file = PyFile_FromFile(fp, "perf", "r", NULL);
+>  #else
+> -		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
+> +		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
+> +				     NULL, NULL, NULL, 0);
+>  #endif
+>  		if (file == NULL)
+>  			goto free_list;
+> -- 
+> 2.17.2
+> 
