@@ -2,180 +2,69 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C216AC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32EEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 01:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87749214D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 00:51:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="BcWgCGAU"
+	by mail.kernel.org (Postfix) with ESMTP id C6CA3218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 01:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeL0Ava (ORCPT
+        id S1728237AbeL0BDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 19:51:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40727 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbeL0Ava (ORCPT
+        Wed, 26 Dec 2018 20:03:17 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:46526 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbeL0BDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 19:51:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so15005783lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 16:51:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=uH/pa7SFbafKjIu7Tgwhca4U1gxNiGLmaZb2brlO4XY=;
-        b=BcWgCGAUTyl21MebFT1YNOvIF3YmpJj5ghIPyMj5YbxQ/yfkVtDTwRkkMGk/vKv+CV
-         j09MivrDQ/mUuh3P6/NmR47edxp7oGRFpToy8R69kp6RGFk7WoN7zdgmkS+Zenc7CeHN
-         EdKdjVoRbzY2wJlSALgGp03NOJEDk7dVdPFU6PqP0SH3qktbuVKBn28/1c/Hy+MSRFEz
-         Hy4aIcQF8A095NttKzrulpmoBhr+UT7ywOOIi6uR7Cg5MXB9RnChzhB3ajtIT5+uQh1z
-         HBP4heE3RosypR6XwBSrvy0GxA5agkrQc3H0LB06Bsa7SIMkV4BwhOD1MUbAMXjAxqgs
-         36rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=uH/pa7SFbafKjIu7Tgwhca4U1gxNiGLmaZb2brlO4XY=;
-        b=dm9PnNgNyQu0Tu+OJgarNobfrAEsrh/p9qAWs+AYTsKyeIco2WC9ZnUDR8arlNGZDj
-         C4pdlVKn2nCkfxqVqnLUMMKuH+c9oivNzd4JItNKn5WhqObv464emzE2eOC0DeoRkeMS
-         QTAfsUWvOmxrfCA+7S3XmjLYaqS+D6ItZR8b8dFiWsao89u4gRqDFjmt1dKIQrc7UJdY
-         qH1glbqNSNuoKnZYEo5RfwAJ1Msca9OF4C3Cgktooo/9PHiNDHHSo218doZVtjBtz9rt
-         LVa+81AOrmSvZf/0atG9j3KFOpcUyp9NKtHLiFNRDlXFeXvGbrDZ7UGxu26EvPg46mNQ
-         T6eg==
-X-Gm-Message-State: AJcUukeYupkoyy8TVjvltA+TquWmk+/CiBXOEP2Y1JxJksJZ819nwn6Z
-        V5WOLcFtbRU5zbBLSMTFQ4eHxA==
-X-Google-Smtp-Source: ALg8bN7VuBZMGPFgoBb6HMtblr60AV2Gq0iL5eTtj5mhwpEnb9PgKU7CiwXqfXVH8Vrxb8uGeX/TIg==
-X-Received: by 2002:a2e:89d7:: with SMTP id c23-v6mr4910848ljk.0.1545871887182;
-        Wed, 26 Dec 2018 16:51:27 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm7747503ljj.34.2018.12.26.16.51.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 16:51:26 -0800 (PST)
-Date:   Thu, 27 Dec 2018 01:51:25 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] media: rcar-vin: Allow independent VIN link
- enablement
-Message-ID: <20181227005125.GK19796@bigcity.dyn.berto.se>
-References: <20181225232725.15935-1-slongerbeam@gmail.com>
+        Wed, 26 Dec 2018 20:03:16 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gcK4t-0001Zd-OH; Thu, 27 Dec 2018 09:03:11 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gcK4s-0008Hj-BK; Thu, 27 Dec 2018 09:03:10 +0800
+Date:   Thu, 27 Dec 2018 09:03:10 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: Crypto Update for 4.21
+Message-ID: <20181227010310.xhq3cgmd44vgum7y@gondor.apana.org.au>
+References: <20161119102748.GA4277@gondor.apana.org.au>
+ <20161213132414.GA7898@gondor.apana.org.au>
+ <20170223125141.GA17400@gondor.apana.org.au>
+ <20170904101225.GA12613@gondor.apana.org.au>
+ <20171113074346.GA20245@gondor.apana.org.au>
+ <20181023100958.GA11991@gondor.apana.org.au>
+ <20181226132257.w43gf2fouprimwk2@gondor.apana.org.au>
+ <20181226164906.GA622@zzz.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181225232725.15935-1-slongerbeam@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181226164906.GA622@zzz.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
-
-Thanks for your patch.
-
-On 2018-12-25 15:27:25 -0800, Steve Longerbeam wrote:
-> There is a block of code in rvin_group_link_notify() that prevents
-> enabling a link to a VIN node if any entity in the media graph is
-> in use. This prevents enabling a VIN link even if there is an in-use
-> entity somewhere in the graph that is independent of the link's
-> pipeline.
+On Wed, Dec 26, 2018 at 10:49:08AM -0600, Eric Biggers wrote:
+> On Wed, Dec 26, 2018 at 09:22:57PM +0800, Herbert Xu wrote:
+> > 
+> > Please pull from
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+> > 
 > 
-> For example, the code block will prevent enabling a link from
-> the first rcar-csi2 receiver to a VIN node even if there is an
-> enabled link somewhere far upstream on the second independent
-> rcar-csi2 receiver pipeline.
+> Hi Herbert, that branch is still on an old commit.  Probably you forgot to push.
 
-Unfortunately this is by design and needed due to the hardware design.  
-The different VIN endpoints shares a configuration register which 
-controls the routing from the CSI-2 receivers to the VIN (register name 
-CHSEL). Modifying the CHSEL register which is what happens when a link 
-is enabled/disabled can have side effects on running streams even if 
-they are not shown to be dependent in the media graph.
-
-There is a CHSEL register in VIN0 which controls the routing from all 
-CSI-2 receivers to VIN0-3 and a CHSEL register in VIN4 which controls 
-the same for VIN4-7.
-
-> 
-> If this code block is meant to prevent modifying a link if the
-> link is actively involved in streaming, there is already such a
-> check in __media_entity_setup_link() that verifies the stream_count
-> of the link's source and sink entities are both zero.
-
-For the reason above the check in __media_entity_setup_link() is not 
-enough :-( This register sharing is my least favorite thing about the 
-VIN on Gen3 and forces the driver to become more complex as all VIN 
-instances needs to know about each other and interact.
-
-> 
-> Remove the code block so that VIN node links can be enabled even if
-> there are other independent in-use entities.
-
-There is room for some improvement in this area disregarding the odd 
-hardware design. It *could* be allowed to change a link terminating in  
-VIN4-7 even if there is a stream running for one or more in VIN0-3.
-
-I would be interested to test such a patch but to allow any link change 
-which is allowed by __media_entity_setup_link() is unfortunately not 
-possible, as I understand it. Maybe someone more clever then me can find 
-ways to unlock even more then just the split between VIN0-3 and VIn4-7.
-
-In essence the CHSEL register can not be changed if it's involved in a 
-running pipeline even if the end result would be that the running 
-pipeline would look the same. This is possible as there are multiple 
-CHSEL settings where the same source is connected to a specific VIN 
-while other members of the "subgroup of VINs" (e.g. VIN0-3) is routed to 
-something else for the two CHSEL settings.
-
-> 
-> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
-> 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index f0719ce24b97..b2c9a876969e 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -116,7 +116,6 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
->  						struct rvin_group, mdev);
->  	unsigned int master_id, channel, mask_new, i;
->  	unsigned int mask = ~0;
-> -	struct media_entity *entity;
->  	struct video_device *vdev;
->  	struct media_pad *csi_pad;
->  	struct rvin_dev *vin = NULL;
-> @@ -131,11 +130,6 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
->  	    !is_media_entity_v4l2_video_device(link->sink->entity))
->  		return 0;
->  
-> -	/* If any entity is in use don't allow link changes. */
-> -	media_device_for_each_entity(entity, &group->mdev)
-> -		if (entity->use_count)
-> -			return -EBUSY;
-> -
->  	mutex_lock(&group->lock);
->  
->  	/* Find the master VIN that controls the routes. */
-> -- 
-> 2.17.1
-> 
-
+Thanks Eric, it should be right now.
 -- 
-Regards,
-Niklas Söderlund
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
