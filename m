@@ -2,330 +2,180 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE3AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 12:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F21CC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 12:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01A9F2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 12:14:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Yn5RV9KK"
+	by mail.kernel.org (Postfix) with ESMTP id EDE95218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 12:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeL0MOt (ORCPT
+        id S1731006AbeL0MRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 07:14:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37297 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730960AbeL0MOs (ORCPT
+        Thu, 27 Dec 2018 07:17:32 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730891AbeL0MRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 07:14:48 -0500
-Received: by mail-ed1-f65.google.com with SMTP id h15so15100696edb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:14:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=oSmBbyFlcd4Vbqc07UuobxFNkmU5iZuoUmyD5uzDAUE=;
-        b=Yn5RV9KK/EWohm7Evp61eYl8M8zEVsJKd3DsFGjbfQPmcCfGhQ7ZOqHo8tnXnpZEfv
-         xYJWYLU2We6sTtgpfXKvyM6WH6ljOoIR4TgoHS9dQHyvOAc1Y9Do16cjC2c7F7Vm4jqN
-         IBlq8uZaTOKmXAq+d8rtfzekX4+GjGuBQ9rMc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=oSmBbyFlcd4Vbqc07UuobxFNkmU5iZuoUmyD5uzDAUE=;
-        b=Hih6CrDyNNFCgwpL9pEqxrEIr3ZacqRogsEuxAiGoDIX3js2mzX2qYssixcwAQtFRx
-         rB9qyR7bg1bu8GBD0KraXYJxCQyHr2wvfFPuV82hxt4M/4Wso0d3K0thZtgCHsI2Extm
-         VABTumqn5iIRms7w4lAckm9ink7q9QxTvVNTsQFaoJv/prQurea0LUyu2qGoegYFtVNJ
-         Ivm7uMjHsKX+RvIf6MwcP81GIpR6AWheEJZ2rtEnxTmOrs1pGefoVFIbFgxJqmea2KPz
-         o+ln72XQjXjzP2Pk42Sa7QQpJvFVF81dm/VHdy+Pghh2JzWC8UkMJjygKlt/6aQfjljw
-         tCDQ==
-X-Gm-Message-State: AA+aEWbuWgpiN8yMaN0h+873ng7rxGVtDCEOQf4wdYlEZEZkKifPChMH
-        t5p4Z515hikkV4cJY5pJSoFx5K3EPJ8=
-X-Google-Smtp-Source: AFSGD/XWoCD+XhVetYakBI8NFPIR0Rc1pg4MMsYYGRY+mSTHbCzUBGCbehcdb70f498LKSH60U8h7A==
-X-Received: by 2002:a17:906:6b99:: with SMTP id l25-v6mr15215283ejr.154.1545912886103;
-        Thu, 27 Dec 2018 04:14:46 -0800 (PST)
-Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
-        by smtp.gmail.com with ESMTPSA id j8sm11385499ede.55.2018.12.27.04.14.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 04:14:45 -0800 (PST)
-Date:   Thu, 27 Dec 2018 13:14:41 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH v1 3/7] drm: move drm_can_sleep() to drm_util.h
-Message-ID: <20181227121441.GF9058@dvetter-linux.ger.corp.intel.com>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>, Rob Clark <robdclark@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Eric Anholt <eric@anholt.net>
-References: <20181226210215.GA27610@ravnborg.org>
- <20181226210353.13993-3-sam@ravnborg.org>
+        Thu, 27 Dec 2018 07:17:32 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBRC97Y5028047
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 07:17:31 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pmu9mfmnh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 07:17:31 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 27 Dec 2018 12:17:28 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Dec 2018 12:17:22 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBRCHLia34799844
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Dec 2018 12:17:21 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EE7B52050;
+        Thu, 27 Dec 2018 12:17:21 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6FDB752052;
+        Thu, 27 Dec 2018 12:17:20 +0000 (GMT)
+Subject: Re: [PATCH v37 0/3] Virtio-balloon: support free page reporting
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        akpm@linux-foundation.org, dgilbert@redhat.com
+Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        peterx@redhat.com, quintela@redhat.com,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+References: <1535333539-32420-1-git-send-email-wei.w.wang@intel.com>
+ <0661b05a-d9d0-d374-44e8-2583463e94c2@de.ibm.com>
+ <de167161-b586-6aee-d6a5-a90d47bbe1d4@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 27 Dec 2018 13:17:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <de167161-b586-6aee-d6a5-a90d47bbe1d4@de.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122712-0008-0000-0000-000002A6EF65
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122712-0009-0000-0000-00002212F58E
+Message-Id: <e79b5c3d-aa89-6b99-00b1-c92c85fe214c@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181226210353.13993-3-sam@ravnborg.org>
-X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
- 4.19.10-200.fc28.x86_64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812270112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 10:03:49PM +0100, Sam Ravnborg wrote:
-> Move drm_can_sleep() out of drmP.h to allow users
-> to get rid of the drmP.h include.
-> 
-> There was no header file that was a good match for this helper function.
-> So add this to drm_util with the relevant includes.
-> 
-> Add include of drm_util.h to all users.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Alex Deucher <alexander.deucher@amd.com>
-> Cc: "Christian König" <christian.koenig@amd.com>
-> Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-> Cc: Gerd Hoffmann <kraxel@redhat.com>
-> Cc: Rob Clark <robdclark@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Eric Anholt <eric@anholt.net>
-> ---
->  drivers/gpu/drm/amd/amdgpu/atom.c               |  2 ++
->  drivers/gpu/drm/ast/ast_fb.c                    |  1 +
->  drivers/gpu/drm/cirrus/cirrus_fbdev.c           |  1 +
->  drivers/gpu/drm/drm_flip_work.c                 |  1 +
->  drivers/gpu/drm/mgag200/mgag200_fb.c            |  1 +
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c        |  1 +
->  drivers/gpu/drm/omapdrm/omap_fbdev.c            |  1 +
->  drivers/gpu/drm/qxl/qxl_cmd.c                   |  2 ++
->  drivers/gpu/drm/radeon/atom.c                   |  2 ++
->  drivers/gpu/drm/radeon/radeon_legacy_encoders.c |  1 +
->  drivers/gpu/drm/vc4/vc4_drv.h                   |  1 +
->  include/drm/drmP.h                              |  8 --------
->  include/drm/drm_util.h                          | 13 +++++++++++++
->  13 files changed, 27 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/atom.c b/drivers/gpu/drm/amd/amdgpu/atom.c
-> index e9934de1b9cf..dd30f4e61a8c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/atom.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/atom.c
-> @@ -27,6 +27,8 @@
->  #include <linux/slab.h>
->  #include <asm/unaligned.h>
->  
-> +#include <drm/drm_util.h>
-> +
->  #define ATOM_DEBUG
->  
->  #include "atom.h"
-> diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
-> index de26df0c6044..fb56fe848e81 100644
-> --- a/drivers/gpu/drm/ast/ast_fb.c
-> +++ b/drivers/gpu/drm/ast/ast_fb.c
-> @@ -38,6 +38,7 @@
->  
->  #include <drm/drmP.h>
->  #include <drm/drm_crtc.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
->  #include "ast_drv.h"
-> diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-> index 68ab1821e15b..1544fa55d1ff 100644
-> --- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-> +++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
-> @@ -10,6 +10,7 @@
->   */
->  #include <linux/module.h>
->  #include <drm/drmP.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
->  
-> diff --git a/drivers/gpu/drm/drm_flip_work.c b/drivers/gpu/drm/drm_flip_work.c
-> index 12dea16f22a8..3da3bf5af405 100644
-> --- a/drivers/gpu/drm/drm_flip_work.c
-> +++ b/drivers/gpu/drm/drm_flip_work.c
-> @@ -22,6 +22,7 @@
->   */
->  
->  #include <drm/drmP.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_flip_work.h>
->  
->  /**
-> diff --git a/drivers/gpu/drm/mgag200/mgag200_fb.c b/drivers/gpu/drm/mgag200/mgag200_fb.c
-> index 30726c9fe28c..6893934b26c0 100644
-> --- a/drivers/gpu/drm/mgag200/mgag200_fb.c
-> +++ b/drivers/gpu/drm/mgag200/mgag200_fb.c
-> @@ -12,6 +12,7 @@
->   */
->  #include <linux/module.h>
->  #include <drm/drmP.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
->  
-> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-> index 96c2b828dba4..fa2d1d8995ee 100644
-> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
-> @@ -16,6 +16,7 @@
->   * this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
->  
-> +#include <drm/drm_util.h>
->  
->  #include "mdp5_kms.h"
->  #include "mdp5_smp.h"
-> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> index aee99194499f..851c59f07eb1 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-> @@ -16,6 +16,7 @@
->   */
->  
->  #include <drm/drm_crtc.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_fb_helper.h>
->  
->  #include "omap_drv.h"
-> diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
-> index 208af9f37914..d17676824377 100644
-> --- a/drivers/gpu/drm/qxl/qxl_cmd.c
-> +++ b/drivers/gpu/drm/qxl/qxl_cmd.c
-> @@ -25,6 +25,8 @@
->  
->  /* QXL cmd/ring handling */
->  
-> +#include <drm/drm_util.h>
-> +
->  #include "qxl_drv.h"
->  #include "qxl_object.h"
->  
-> diff --git a/drivers/gpu/drm/radeon/atom.c b/drivers/gpu/drm/radeon/atom.c
-> index e55cbeee7a53..ac98ad561870 100644
-> --- a/drivers/gpu/drm/radeon/atom.c
-> +++ b/drivers/gpu/drm/radeon/atom.c
-> @@ -27,6 +27,8 @@
->  #include <linux/slab.h>
->  #include <asm/unaligned.h>
->  
-> +#include <drm/drm_util.h>
-> +
->  #define ATOM_DEBUG
->  
->  #include "atom.h"
-> diff --git a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-> index 222a1fa41d7c..7e3257e8fd56 100644
-> --- a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-> +++ b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
-> @@ -24,6 +24,7 @@
->   *          Alex Deucher
->   */
->  #include <drm/drmP.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_crtc_helper.h>
->  #include <drm/radeon_drm.h>
->  #include "radeon.h"
-> diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-> index bd6ef1f31822..79c6bcc4f509 100644
-> --- a/drivers/gpu/drm/vc4/vc4_drv.h
-> +++ b/drivers/gpu/drm/vc4/vc4_drv.h
-> @@ -9,6 +9,7 @@
->  #include <linux/mm_types.h>
->  #include <linux/reservation.h>
->  #include <drm/drmP.h>
-> +#include <drm/drm_util.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_gem_cma_helper.h>
->  #include <drm/drm_atomic.h>
-> diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-> index 2ba786820052..a77c9ee43b68 100644
-> --- a/include/drm/drmP.h
-> +++ b/include/drm/drmP.h
-> @@ -95,12 +95,4 @@ struct dma_buf_attachment;
->  struct pci_dev;
->  struct pci_controller;
->  
-> -/* returns true if currently okay to sleep */
-> -static inline bool drm_can_sleep(void)
-> -{
-> -	if (in_atomic() || in_dbg_master() || irqs_disabled())
-> -		return false;
-> -	return true;
-> -}
-> -
->  #endif
-> diff --git a/include/drm/drm_util.h b/include/drm/drm_util.h
-> index 88abdca89baa..e3200980d3f3 100644
-> --- a/include/drm/drm_util.h
-> +++ b/include/drm/drm_util.h
-> @@ -26,7 +26,20 @@
->  #ifndef _DRM_UTIL_H_
->  #define _DRM_UTIL_H_
->  
-> +#include <linux/irqflags.h>
-> +#include <linux/preempt.h>
-> +#include <linux/kgdb.h>
-> +#include <linux/smp.h>
-> +
->  /* helper for handling conditionals in various for_each macros */
->  #define for_each_if(condition) if (!(condition)) {} else
->  
-> +/* returns true if currently okay to sleep */
 
-Kerneldoc would be nice for this, specifically a huge warning that this
-shouldn't be used (it doesn't work everywhere) and a FIXME that all users
-should be removed. We might even want to include this as a todo item in
-gpu/todo.rst
--Daniel
 
-> +static inline bool drm_can_sleep(void)
-> +{
-> +	if (in_atomic() || in_dbg_master() || irqs_disabled())
-> +		return false;
-> +	return true;
-> +}
-> +
->  #endif
-> -- 
-> 2.12.0
+On 27.12.2018 12:59, Christian Borntraeger wrote:
+> On 27.12.2018 12:31, Christian Borntraeger wrote:
+>> This patch triggers random crashes in the guest kernel on s390 early during boot.
+>> No migration and no setting of the balloon is involved.
+>>
+> 
+> Adding Conny and Halil,
+> 
+> As the QEMU provides no PAGE_HINT feature yet, this quick hack makes the
+> guest boot fine again:
+> 
+> 
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index 728ecd1eea305..aa2e1864c5736 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -492,7 +492,7 @@ static int init_vqs(struct virtio_balloon *vb)
+>                 callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+>         }
+>  
+> -       err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
+> +       err = vb->vdev->config->find_vqs(vb->vdev, 3, //VIRTIO_BALLOON_VQ_MAX,
+>                                          vqs, callbacks, names, NULL, NULL);
+>         if (err)
+>                 return err;
+> 
+> 
+> To me it looks like that virtio_ccw_find_vqs will abort if any of the virtqueues 
+> that it is been asked for does not exist (including the earlier ones).
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+This "hack" makes the random crashes go away, but the balloon interface itself
+does not work. (setting the value to anything will hang the guest). 
+As patch 1 also modifies the main path, there seem to be additional issues, maybe
+endianess
+
+Looking at things like
+
++		vb->cmd_id_received = VIRTIO_BALLOON_CMD_ID_STOP;
++		vb->cmd_id_active = cpu_to_virtio32(vb->vdev,
++						  VIRTIO_BALLOON_CMD_ID_STOP);
++		vb->cmd_id_stop = cpu_to_virtio32(vb->vdev,
++						  VIRTIO_BALLOON_CMD_ID_STOP);
+
+
+Why is cmd_id_received not using cpu_to_virtio32?
+
