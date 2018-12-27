@@ -2,91 +2,276 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC27BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122ADC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3B5B21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB003218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730637AbeL0Jj4 (ORCPT
+        id S1730663AbeL0JkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:39:56 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:34003 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727926AbeL0Jj4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:39:56 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 27 Dec 2018 04:40:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45154 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727926AbeL0JkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:40:07 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 0709B20027;
-        Thu, 27 Dec 2018 10:39:52 +0100 (CET)
-Date:   Thu, 27 Dec 2018 10:39:51 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        pakki001@umn.edu, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] backlight: (adp8870) fix a missing check for
- adp8870_write
-Message-ID: <20181227093951.GA14579@ravnborg.org>
-References: <20181225062109.66943-1-kjlu@umn.edu>
+        by mx1.redhat.com (Postfix) with ESMTPS id 01BD2C04F4D3;
+        Thu, 27 Dec 2018 09:40:06 +0000 (UTC)
+Received: from [10.72.12.191] (ovpn-12-191.pek2.redhat.com [10.72.12.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA0B0608E2;
+        Thu, 27 Dec 2018 09:39:33 +0000 (UTC)
+Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
+ virtual address
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213101022.12475-4-jasowang@redhat.com>
+ <20181213102713-mutt-send-email-mst@kernel.org>
+ <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+ <20181214073332-mutt-send-email-mst@kernel.org>
+ <2ea274df-a79a-250f-648f-12927529d78a@redhat.com>
+ <20181224125237-mutt-send-email-mst@kernel.org>
+ <b31dbf4c-d499-1d34-f39f-f10cc0febc84@redhat.com>
+ <20181225071501-mutt-send-email-mst@kernel.org>
+ <70978ed8-bf76-693a-0e11-d31b6234af5c@redhat.com>
+ <20181226092431-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <8ef53a5c-ad4e-fadd-b460-18b3e589ead9@redhat.com>
+Date:   Thu, 27 Dec 2018 17:39:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181225062109.66943-1-kjlu@umn.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=weBmRkxsz3CPpMl1aI4A:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <20181226092431-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 27 Dec 2018 09:40:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kangjie
 
-> adp8870_write() may fail. This fix checks if adp8870_write fails, and if
-> so, returns its error code.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/video/backlight/adp8870_bl.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/adp8870_bl.c b/drivers/video/backlight/adp8870_bl.c
-> index 8d50e0299578..79901fb4fcd1 100644
-> --- a/drivers/video/backlight/adp8870_bl.c
-> +++ b/drivers/video/backlight/adp8870_bl.c
-> @@ -811,9 +811,14 @@ static ssize_t adp8870_bl_ambient_light_zone_store(struct device *dev,
->  		if (!ret) {
->  			reg_val &= ~(CFGR_BLV_MASK << CFGR_BLV_SHIFT);
->  			reg_val |= (val - 1) << CFGR_BLV_SHIFT;
-> -			adp8870_write(data->client, ADP8870_CFGR, reg_val);
-> -		}
-> -		mutex_unlock(&data->lock);
-> +			ret = adp8870_write(data->client,
-> +					ADP8870_CFGR, reg_val);
-> +			if (ret) {
-> +				mutex_unlock(&data->lock);
-> +				return ret;
-> +			}
-> +		}	else
-> +			mutex_unlock(&data->lock);
->  	}
+On 2018/12/26 下午11:02, Michael S. Tsirkin wrote:
+> On Wed, Dec 26, 2018 at 11:57:32AM +0800, Jason Wang wrote:
+>> On 2018/12/25 下午8:50, Michael S. Tsirkin wrote:
+>>> On Tue, Dec 25, 2018 at 06:05:25PM +0800, Jason Wang wrote:
+>>>> On 2018/12/25 上午2:10, Michael S. Tsirkin wrote:
+>>>>> On Mon, Dec 24, 2018 at 03:53:16PM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/14 下午8:36, Michael S. Tsirkin wrote:
+>>>>>>> On Fri, Dec 14, 2018 at 11:57:35AM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
+>>>>>>>>> On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
+>>>>>>>>>> It was noticed that the copy_user() friends that was used to access
+>>>>>>>>>> virtqueue metdata tends to be very expensive for dataplane
+>>>>>>>>>> implementation like vhost since it involves lots of software check,
+>>>>>>>>>> speculation barrier, hardware feature toggling (e.g SMAP). The
+>>>>>>>>>> extra cost will be more obvious when transferring small packets.
+>>>>>>>>>>
+>>>>>>>>>> This patch tries to eliminate those overhead by pin vq metadata pages
+>>>>>>>>>> and access them through vmap(). During SET_VRING_ADDR, we will setup
+>>>>>>>>>> those mappings and memory accessors are modified to use pointers to
+>>>>>>>>>> access the metadata directly.
+>>>>>>>>>>
+>>>>>>>>>> Note, this was only done when device IOTLB is not enabled. We could
+>>>>>>>>>> use similar method to optimize it in the future.
+>>>>>>>>>>
+>>>>>>>>>> Tests shows about ~24% improvement on TX PPS when using virtio-user +
+>>>>>>>>>> vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
+>>>>>>>>>>
+>>>>>>>>>> Before: ~5.0Mpps
+>>>>>>>>>> After:  ~6.1Mpps
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+>>>>>>>>>> ---
+>>>>>>>>>>       drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>       drivers/vhost/vhost.h |  11 +++
+>>>>>>>>>>       2 files changed, 189 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>>>>>>>>>> index bafe39d2e637..1bd24203afb6 100644
+>>>>>>>>>> --- a/drivers/vhost/vhost.c
+>>>>>>>>>> +++ b/drivers/vhost/vhost.c
+>>>>>>>>>> @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
+>>>>>>>>>>       		vq->indirect = NULL;
+>>>>>>>>>>       		vq->heads = NULL;
+>>>>>>>>>>       		vq->dev = dev;
+>>>>>>>>>> +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
+>>>>>>>>>> +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
+>>>>>>>>>> +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
+>>>>>>>>>>       		mutex_init(&vq->mutex);
+>>>>>>>>>>       		vhost_vq_reset(dev, vq);
+>>>>>>>>>>       		if (vq->handle_kick)
+>>>>>>>>>> @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
+>>>>>>>>>>       	spin_unlock(&dev->iotlb_lock);
+>>>>>>>>>>       }
+>>>>>>>>>> +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
+>>>>>>>>>> +			   size_t size, int write)
+>>>>>>>>>> +{
+>>>>>>>>>> +	struct page **pages;
+>>>>>>>>>> +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
+>>>>>>>>>> +	int npinned;
+>>>>>>>>>> +	void *vaddr;
+>>>>>>>>>> +
+>>>>>>>>>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+>>>>>>>>>> +	if (!pages)
+>>>>>>>>>> +		return -ENOMEM;
+>>>>>>>>>> +
+>>>>>>>>>> +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
+>>>>>>>>>> +	if (npinned != npages)
+>>>>>>>>>> +		goto err;
+>>>>>>>>>> +
+>>>>>>>>> As I said I have doubts about the whole approach, but this
+>>>>>>>>> implementation in particular isn't a good idea
+>>>>>>>>> as it keeps the page around forever.
+>>>>>> The pages wil be released during set features.
+>>>>>>
+>>>>>>
+>>>>>>>>> So no THP, no NUMA rebalancing,
+>>>>>> For THP, we will probably miss 2 or 4 pages, but does this really matter
+>>>>>> consider the gain we have?
+>>>>> We as in vhost? networking isn't the only thing guest does.
+>>>>> We don't even know if this guest does a lot of networking.
+>>>>> You don't
+>>>>> know what else is in this huge page. Can be something very important
+>>>>> that guest touches all the time.
+>>>> Well, the probability should be very small consider we usually give several
+>>>> gigabytes to guest. The rest of the pages that doesn't sit in the same
+>>>> hugepage with metadata can still be merged by THP.  Anyway, I can test the
+>>>> differences.
+>>> Thanks!
+>>>
+>>>>>> For NUMA rebalancing, I'm even not quite sure if
+>>>>>> it can helps for the case of IPC (vhost). It looks to me the worst case it
+>>>>>> may cause page to be thrash between nodes if vhost and userspace are running
+>>>>>> in two nodes.
+>>>>> So again it's a gain for vhost but has a completely unpredictable effect on
+>>>>> other functionality of the guest.
+>>>>>
+>>>>> That's what bothers me with this approach.
+>>>> So:
+>>>>
+>>>> - The rest of the pages could still be balanced to other nodes, no?
+>>>>
+>>>> - try to balance metadata pages (belongs to co-operate processes) itself is
+>>>> still questionable
+>>> I am not sure why. It should be easy enough to force the VCPU and vhost
+>>> to move (e.g. start them pinned to 1 cpu, then pin them to another one).
+>>> Clearly sometimes this would be necessary for load balancing reasons.
+>>
+>> Yes, but it looks to me the part of motivation of auto NUMA is to avoid
+>> manual pinning.
+> ... of memory. Yes.
+>
+>
+>>> With autonuma after a while (could take seconds but it will happen) the
+>>> memory will migrate.
+>>>
+>> Yes. As you mentioned during the discuss, I wonder we could do it similarly
+>> through mmu notifier like APIC access page in commit c24ae0dcd3e ("kvm: x86:
+>> Unpin and remove kvm_arch->apic_access_page")
+> That would be a possible approach.
 
-Something looks wrong with the indent.
-If you have braces around first part of if () then use
-barces also after else. Then it is easier to follow the code.
-In this case please consider another approach where you
-have only a single mutex_unlock() both in the good and
-in the error case.
 
-	Sam
+Yes, this looks possible, and the conversion seems not hard. Let me have 
+a try with this.
+
+
+[...]
+
+
+>>>>>>> I don't see how a kthread makes any difference. We do have a validation
+>>>>>>> step which makes some difference.
+>>>>>> The problem is not kthread but the address of userspace address. The
+>>>>>> addresses of vq metadata tends to be consistent for a while, and vhost knows
+>>>>>> they will be frequently. SMAP doesn't help too much in this case.
+>>>>>>
+>>>>>> Thanks.
+>>>>> It's true for a real life applications but a malicious one
+>>>>> can call the setup ioctls any number of times. And SMAP is
+>>>>> all about malcious applications.
+>>>> We don't do this in the path of ioctl, there's no context switch between
+>>>> userspace and kernel in the worker thread. SMAP is used to prevent kernel
+>>>> from accessing userspace pages unexpectedly which is not the case for
+>>>> metadata access.
+>>>>
+>>>> Thanks
+>>> OK let's forget smap for now.
+>>
+>> Some numbers I measured:
+>>
+>> On an old Sandy bridge machine without SMAP support. Remove speculation
+>> barrier boost the performance from 4.6Mpps to 5.1Mpps
+>>
+>> On a newer Broadwell machine with SMAP support. Remove speculation barrier
+>> only gives 2%-5% improvement, disable SMAP completely through Kconfig boost
+>> 57% performance from 4.8Mpps to 7.5Mpps. (Vmap gives 6Mpps - 6.1Mpps, it
+>> only bypass SMAP for metadata).
+>>
+>> So it looks like for recent machine, SMAP becomes pain point when the copy
+>> is short (e.g 64B) for high PPS.
+>>
+>> Thanks
+> Thanks a lot for looking into this!
+>
+> So first of all users can just boot with nosmap, right?
+> What's wrong with that?
+
+
+Nothing wrong, just realize we had this kernel parameter.
+
+
+>   Yes it's not fine-grained but OTOH
+> it's easy to understand.
+>
+> And I guess this confirms that if we are going to worry
+> about smap enabled, we need to look into packet copies
+> too, not just meta-data.
+
+
+For packet copies, we can do batch copy which is pretty simple for the 
+case of XDP. I've already had patches for this.
+
+
+>
+> Vaguely could see a module option (off by default)
+> where vhost basically does user_access_begin
+> when it starts running, then uses unsafe accesses
+> in vhost and tun and then user_access_end.
+
+
+Using user_access_begin() is more tricky than imaged. E.g it requires:
+
+- userspace address to be validated before through access_ok() [1]
+
+- It doesn't support calling a function that does explicit schedule 
+since SMAP/PAN state is not maintained through schedule() [2]
+
+[1] https://lwn.net/Articles/736348/
+
+[2] https://lkml.org/lkml/2018/11/23/430
+
+So calling user_access_begin() all the time when vhost is running seems 
+pretty dangerous.
+
+For a better batched datacopy, I tend to build not only XDP but also skb 
+in vhost in the future.
+
+Thanks
+
+
+>
+>
+>>>>>>>> Packet or AF_XDP benefit from
+>>>>>>>> accessing metadata directly, we should do it as well.
+>>>>>>>>
+>>>>>>>> Thanks
