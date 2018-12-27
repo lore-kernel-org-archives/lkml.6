@@ -7,32 +7,31 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=FROM_WORDY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73891C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F62C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3912A20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C925320882
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731067AbeL0O2f (ORCPT
+        id S1727679AbeL0Ob4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 09:28:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:48418 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731036AbeL0O2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 09:28:34 -0500
+        Thu, 27 Dec 2018 09:31:56 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48454 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726552AbeL0Obz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 09:31:55 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DBB1A78;
-        Thu, 27 Dec 2018 06:28:33 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81351A78;
+        Thu, 27 Dec 2018 06:31:53 -0800 (PST)
 Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25F053F5AF;
-        Thu, 27 Dec 2018 06:28:33 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 243D73F5AF;
+        Thu, 27 Dec 2018 06:31:53 -0800 (PST)
 Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 77CC3680369; Thu, 27 Dec 2018 14:28:31 +0000 (GMT)
-Date:   Thu, 27 Dec 2018 14:28:31 +0000
-From:   Liviu Dudau <Liviu.Dudau@foss.arm.com>
+        id 6A46E680369; Thu, 27 Dec 2018 14:31:51 +0000 (GMT)
+Date:   Thu, 27 Dec 2018 14:31:51 +0000
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
 To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+Cc:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         Brian Starkey <Brian.Starkey@arm.com>,
         "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
         "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
@@ -64,7 +63,7 @@ Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
         "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
 Subject: Re: [PATCH v3 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
-Message-ID: <20181227142830.GA6047@e110455-lin.cambridge.arm.com>
+Message-ID: <20181227143151.GM22341@e110455-lin.cambridge.arm.com>
 References: <20181221095757.15510-1-james.qian.wang@arm.com>
  <20181221095757.15510-8-james.qian.wang@arm.com>
  <20181224123213.GI22341@e110455-lin.cambridge.arm.com>
@@ -404,6 +403,7 @@ forever for the fence to be signalled.
 
 Best regards,
 Liviu
+
 
 
 > 
