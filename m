@@ -2,130 +2,118 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5408FC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A89C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27FD8218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F4B214AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:47:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lxefvhKZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeL0Lo6 (ORCPT
+        id S1730814AbeL0Lr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 06:44:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60287 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729925AbeL0Lo5 (ORCPT
+        Thu, 27 Dec 2018 06:47:29 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42766 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729305AbeL0Lr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 06:44:57 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gcU5u-0004Ch-E5; Thu, 27 Dec 2018 11:44:54 +0000
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        stable@vger.kernel.org, linux-mm@kvack.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: bug report: hugetlbfs: use i_mmap_rwsem for more pmd sharing,
- synchronization
-Message-ID: <5c8be807-03cd-991d-c79b-3c10a4d6d67b@canonical.com>
-Date:   Thu, 27 Dec 2018 11:44:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 27 Dec 2018 06:47:29 -0500
+Received: by mail-ed1-f67.google.com with SMTP id y20so15032626edw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 03:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T9EQeQqyXSQT9eLYZlJGFkV2DHt4b7iWeFMtPC8nNSo=;
+        b=lxefvhKZ1BoMkP0htwWXNy/hM1RjYF0mfn6ZTCewqX9m6AfXWNIEhPtoZnh27UteKR
+         LyZetsee8ZM9+wCnUsKZy0IDGZg/KSkf3kHmTYFIScWY5Lb7BnQH97cUUBS0rT64eegr
+         hn5zlGPR19Rlmwn936QZrcvHjMVtxslBkfTp0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=T9EQeQqyXSQT9eLYZlJGFkV2DHt4b7iWeFMtPC8nNSo=;
+        b=L9nFiL8SenPdK1fOH9tBYKCI0iS8tzRqiO92v+spVKtWFogvBthXhj2y7rCVAAjQaV
+         s+6v1ulRK2K5JvXgxFzSTUpKJ4qQy6ZO3hO64qer6TfgkZNmGwncJM04k6DXFaUSLq1B
+         YZ/09+iFFATlcpsTBkligJ+7a3Z/P2U07pRsvkdMBuo4vO5EE21RYkDijUQwpDo6TNLG
+         TGC1PXnAw79nJ/2uy3B8ESMllMLjJSQJVH66GlzDebyl6SIw86aOCl9VazhrabzdhTiv
+         LeH+9nK+84Oyjfir36X7/60ACFg01DXAtpfHLLK/TuqjzQ/VGsV0QNNe4mlOw+9qYpl1
+         F20w==
+X-Gm-Message-State: AA+aEWYZezM+sABzpaSbfXJ2Yvgf2bgKDhbNDdOtKAhW/mR0Ok5TmY5T
+        d/5YyqD1GuL+oka0V6/hihJ51Q==
+X-Google-Smtp-Source: AFSGD/WOLgfSxsy65glmPVaOMu2EPDs2+Ca1NBgMKUtQwmfgbgR3mbooRoArNj5ShwYiYHyeymsLEg==
+X-Received: by 2002:a17:906:495:: with SMTP id f21-v6mr15474764eja.95.1545911247044;
+        Thu, 27 Dec 2018 03:47:27 -0800 (PST)
+Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm4600171eji.64.2018.12.27.03.47.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 03:47:26 -0800 (PST)
+Date:   Thu, 27 Dec 2018 12:47:15 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
+        sean@poorly.run, airlied@linux.ie, sabyasachi.linux@gmail.com,
+        jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/drm_drv.c: Remove duplicate header
+Message-ID: <20181227114704.GA9058@dvetter-linux.ger.corp.intel.com>
+Mail-Followup-To: Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
+        sean@poorly.run, airlied@linux.ie, sabyasachi.linux@gmail.com,
+        jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20181224143636.GA3237@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181224143636.GA3237@hp-pavilion-15-notebook-pc-brajeswar>
+X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
+ 4.19.10-200.fc28.x86_64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Dec 24, 2018 at 08:06:36PM +0530, Brajeswar Ghosh wrote:
+> Remove drm_crtc_internal.h which is included more than once
+> 
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
-Static analysis with CoverityScan on linux-next detected a potential
-null pointer dereference with the following commit:
+Applied, thanks for your patch.
+-Daniel
 
-From d8a1051ed4ba55679ef24e838a1942c9c40f0a14 Mon Sep 17 00:00:00 2001
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Date: Sat, 22 Dec 2018 10:55:57 +1100
-Subject: [PATCH] hugetlbfs: use i_mmap_rwsem for more pmd sharing
+> ---
+>  drivers/gpu/drm/drm_drv.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+> index 4126bb6e1a4a..75f4e6bf67ca 100644
+> --- a/drivers/gpu/drm/drm_drv.c
+> +++ b/drivers/gpu/drm/drm_drv.c
+> @@ -41,7 +41,6 @@
+>  #include "drm_crtc_internal.h"
+>  #include "drm_legacy.h"
+>  #include "drm_internal.h"
+> -#include "drm_crtc_internal.h"
+>  
+>  /*
+>   * drm_debug: Enable debug output.
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-The earlier check implies that "mapping" may be a null pointer:
-
-var_compare_op: Comparing mapping to null implies that mapping might be
-null.
-
-1008        if (!(flags & MF_MUST_KILL) && !PageDirty(hpage) && mapping &&
-1009            mapping_cap_writeback_dirty(mapping)) {
-
-..however later "mapper" is dereferenced when it may be potentially null:
-
-1034                /*
-1035                 * For hugetlb pages, try_to_unmap could potentially
-call
-1036                 * huge_pmd_unshare.  Because of this, take semaphore in
-1037                 * write mode here and set TTU_RMAP_LOCKED to
-indicate we
-1038                 * have taken the lock at this higer level.
-1039                 */
-    CID 1476097 (#1 of 1): Dereference after null check (FORWARD_NULL)
-
-var_deref_model: Passing null pointer mapping to
-i_mmap_lock_write, which dereferences it.
-
-1040                i_mmap_lock_write(mapping);
-1041                unmap_success = try_to_unmap(hpage,
-ttu|TTU_RMAP_LOCKED);
-1042                i_mmap_unlock_write(mapping);
-
-
-Colin
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
