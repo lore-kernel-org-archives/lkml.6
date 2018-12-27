@@ -5,158 +5,205 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875DCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1970DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B1321741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D612B21741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbeL0J3G (ORCPT
+        id S1730598AbeL0Jca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:29:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51048 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727996AbeL0J3F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:29:05 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBR9NYM5043485
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:29:03 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pmu9ma26d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:29:03 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 27 Dec 2018 09:29:01 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Dec 2018 09:28:58 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBR9Svjh49348654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Dec 2018 09:28:57 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F19B4A4065;
-        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8FC8A405C;
-        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
-Subject: Re: 4.19.5 and later has tons of false messages "BUG: non-zero
- pgtables_bytes on freeing mm: -16384"
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        stable@vger.kernel.org, linux-s390 <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 27 Dec 2018 10:28:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Dec 2018 04:32:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727996AbeL0Jca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:32:30 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 708A92CD7EE;
+        Thu, 27 Dec 2018 09:32:29 +0000 (UTC)
+Received: from [10.72.12.191] (ovpn-12-191.pek2.redhat.com [10.72.12.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2CF35D965;
+        Thu, 27 Dec 2018 09:32:23 +0000 (UTC)
+Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jintack Lim <jintack@cs.columbia.edu>
+References: <20181212092435-mutt-send-email-mst@kernel.org>
+ <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
+ <20181213092930-mutt-send-email-mst@kernel.org>
+ <519ee6f7-06fc-ad49-03da-c096aeb24ced@redhat.com>
+ <20181214081821-mutt-send-email-mst@kernel.org>
+ <55b3d55a-950f-eeaf-1908-bed78a1a9200@redhat.com>
+ <20181224123654-mutt-send-email-mst@kernel.org>
+ <9e57732f-2d42-173f-9297-42821f34ab8f@redhat.com>
+ <20181225111716-mutt-send-email-mst@kernel.org>
+ <2a78e991-1917-256b-4f09-60c228c17979@redhat.com>
+ <20181226083630-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <ad02985b-7a3c-06e2-7614-3ac29e69d678@redhat.com>
+Date:   Thu, 27 Dec 2018 17:32:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18122709-0008-0000-0000-000002A6DF72
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122709-0009-0000-0000-00002212E523
-Message-Id: <1d6288dd-a65b-463a-8aeb-33904dafa9cc@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181226083630-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812270087
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 27 Dec 2018 09:32:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 2018/12/26 下午9:46, Michael S. Tsirkin wrote:
+> On Wed, Dec 26, 2018 at 01:43:26PM +0800, Jason Wang wrote:
+>> On 2018/12/26 上午12:25, Michael S. Tsirkin wrote:
+>>> On Tue, Dec 25, 2018 at 05:43:25PM +0800, Jason Wang wrote:
+>>>> On 2018/12/25 上午1:41, Michael S. Tsirkin wrote:
+>>>>> On Mon, Dec 24, 2018 at 11:43:31AM +0800, Jason Wang wrote:
+>>>>>> On 2018/12/14 下午9:20, Michael S. Tsirkin wrote:
+>>>>>>> On Fri, Dec 14, 2018 at 10:43:03AM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/13 下午10:31, Michael S. Tsirkin wrote:
+>>>>>>>>>> Just to make sure I understand this. It looks to me we should:
+>>>>>>>>>>
+>>>>>>>>>> - allow passing GIOVA->GPA through UAPI
+>>>>>>>>>>
+>>>>>>>>>> - cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB for
+>>>>>>>>>> performance
+>>>>>>>>>>
+>>>>>>>>>> Is this what you suggest?
+>>>>>>>>>>
+>>>>>>>>>> Thanks
+>>>>>>>>> Not really. We already have GPA->HVA, so I suggested a flag to pass
+>>>>>>>>> GIOVA->GPA in the IOTLB.
+>>>>>>>>>
+>>>>>>>>> This has advantages for security since a single table needs
+>>>>>>>>> then to be validated to ensure guest does not corrupt
+>>>>>>>>> QEMU memory.
+>>>>>>>>>
+>>>>>>>> I wonder how much we can gain through this. Currently, qemu IOMMU gives
+>>>>>>>> GIOVA->GPA mapping, and qemu vhost code will translate GPA to HVA then pass
+>>>>>>>> GIOVA->HVA to vhost. It looks no difference to me.
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>> The difference is in security not in performance.  Getting a bad HVA
+>>>>>>> corrupts QEMU memory and it might be guest controlled. Very risky.
+>>>>>> How can this be controlled by guest? HVA was generated from qemu ram blocks
+>>>>>> which is totally under the control of qemu memory core instead of guest.
+>>>>>>
+>>>>>>
+>>>>>> Thanks
+>>>>> It is ultimately under guest influence as guest supplies IOVA->GPA
+>>>>> translations.  qemu translates GPA->HVA and gives the translated result
+>>>>> to the kernel.  If it's not buggy and kernel isn't buggy it's all
+>>>>> fine.
+>>>> If qemu provides buggy GPA->HVA, we can't workaround this. And I don't get
+>>>> the point why we even want to try this. Buggy qemu code can crash itself in
+>>>> many ways.
+>>>>
+>>>>
+>>>>> But that's the approach that was proven not to work in the 20th century.
+>>>>> In the 21st century we are trying defence in depth approach.
+>>>>>
+>>>>> My point is that a single code path that is responsible for
+>>>>> the HVA translations is better than two.
+>>>>>
+>>>> So the difference whether or not use memory table information:
+>>>>
+>>>> Current:
+>>>>
+>>>> 1) SET_MEM_TABLE: GPA->HVA
+>>>>
+>>>> 2) Qemu GIOVA->GPA
+>>>>
+>>>> 3) Qemu GPA->HVA
+>>>>
+>>>> 4) IOTLB_UPDATE: GIOVA->HVA
+>>>>
+>>>> If I understand correctly you want to drop step 3 consider it might be buggy
+>>>> which is just 19 lines of code in qemu (vhost_memory_region_lookup()). This
+>>>> will ends up:
+>>>>
+>>>> 1) Do GPA->HVA translation in IOTLB_UPDATE path (I believe we won't want to
+>>>> do it during device IOTLB lookup).
+>>>>
+>>>> 2) Extra bits to enable this capability.
+>>>>
+>>>> So this looks need more codes in kernel than what qemu did in userspace.  Is
+>>>> this really worthwhile?
+>>>>
+>>>> Thanks
+>>> So there are several points I would like to make
+>>>
+>>> 1. At the moment without an iommu it is possible to
+>>>      change GPA-HVA mappings and everything keeps working
+>>>      because a change in memory tables flushes the rings.
+>>
+>> Interesting, I don't know this before. But when can this happen?
+>
+> It doesn't happen with existing qemu. But it seems like a valid
+> thing to do to remap memory at a different address.
+>
 
-On 27.12.2018 10:13, Christian Borntraeger wrote:
-> Martin,
-> 
-> Right now you get a message 
-> "BUG: non-zero pgtables_bytes on freeing mm: -16384"
-> for EVERY process that exits in 4.19.5 and later.
-> 
-> bisect points to 
-> commit 4136161d676a93fc8df6bdb80d720c15522d6c24
-> Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Date:   Mon Oct 15 11:09:16 2018 +0200
-> 
->     s390/mm: fix mis-accounting of pgtable_bytes
->     
->     [ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
-> 
-> Turns out that this patch requires several dependencies so the autoselection of this
-> patch was missing that. 
-> 
-> Can we either revert this patch or add the dependencies?
-> 
-> Christian
-> 
+Ok.
 
-It seems that adding 
 
-commit 6d212db11947ae5464e4717536ed9faf61c01e86 ("mm: add mm_pxd_folded checks to pgtable_bytes accounting functions") 
-fixes the issue. 
+>>>      However I don't see the iotlb cache being invalidated
+>>>      on that path - did I miss it? If it is not there it's
+>>>      a related minor bug.
+>>
+>> It might have a bug. But a question is consider the case without IOMMU. We
+>> only update mem table (SET_MEM_TABLE), but not vring address. This looks
+>> like a bug as well?
+> I think that without an iommu it can only work without races if backend is
+> stopped or if the vring isn't in guest memory with ring aliasing).
 
-Martin, do we need more?
 
-Christian
+Right.
+
+
+>
+>>> 2. qemu already has a GPA. Discarding it and re-calculating
+>>>      when logging is on just seems wrong.
+>>>      However if you would like to *also* keep the HVA in the iotlb
+>>>      to avoid doing extra translations, that sounds like a
+>>>      reasonable optimization.
+>>
+>> Yes, traverse GPA->HVA mapping seems unnecessary.
+>>
+>>
+>>> 3. it also means that the hva->gpa translation only runs
+>>>      when logging is enabled. That is a rarely excercised
+>>>      path so any bugs there will not be caught.
+>>
+>> I wonder maybe some kind of unit-test may help here.
+>>
+>>
+>>> So I really would like us long term to move away from
+>>> hva->gpa translations, keep them for legacy userspace only
+>>> but I don't really mind how we do it.
+>>>
+>>> How about
+>>> - a new flag to pass an iotlb with *both* a gpa and hva
+>>> - for legacy userspace, calculate the gpa on iotlb update
+>>>     so the device then uses a shared code path
+>>>
+>>> what do you think?
+>>>
+>>>
+>> I don't object this idea so I can try, just want to figure out why it was a
+>> must.
+>>
+>> Thanks
+> Not a must but I think it's a good interface extension.
+>
+
+Ok. let me try to do this.
+
+Thanks
 
