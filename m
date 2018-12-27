@@ -2,155 +2,161 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BB5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875DCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8961B214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:26:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="qlH6udro"
+	by mail.kernel.org (Postfix) with ESMTP id 51B1321741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 09:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbeL0J0d (ORCPT
+        id S1730572AbeL0J3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 04:26:33 -0500
-Received: from mail-eopbgr780074.outbound.protection.outlook.com ([40.107.78.74]:4972
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728050AbeL0J0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 04:26:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qgnjVPmKTwJ2mnndFLWPXGAT8/NcXBB712VcDy/YA/g=;
- b=qlH6udrotS9oPt9rBaMG1TySe/MNHHm/UrQv4xsFjUNrkBx/EMNaVMk04u2TFhujii1+jn4QeVDEsURFZdXKwfdBUknF4eGq6CrXPZjI9BoQIhEUQVO7t8arVI2XVAue401oUE5KDua0vI3HpfX4K/xr7/321x5Alf3wrVahlxc=
-Received: from BYAPR12MB2791.namprd12.prod.outlook.com (20.177.126.80) by
- BYAPR12MB2760.namprd12.prod.outlook.com (20.177.125.225) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.21; Thu, 27 Dec 2018 09:26:28 +0000
-Received: from BYAPR12MB2791.namprd12.prod.outlook.com
- ([fe80::203a:c88d:8f6d:4080]) by BYAPR12MB2791.namprd12.prod.outlook.com
- ([fe80::203a:c88d:8f6d:4080%6]) with mapi id 15.20.1471.019; Thu, 27 Dec 2018
- 09:26:26 +0000
-From:   "Qu, Jim" <Jim.Qu@amd.com>
-To:     Kangjie Lu <kjlu@umn.edu>
-CC:     "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Xu, Feifei" <Feifei.Xu@amd.com>,
-        "Francis, David" <David.Francis@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "pakki001@umn.edu" <pakki001@umn.edu>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Gao, Likun" <Likun.Gao@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhang, Hawking" <Hawking.Zhang@amd.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBncHU6IGRybTogZml4IGFuIGltcHJvcGVyIGNoZWNr?=
- =?gb2312?B?IG9mIGFtZGdwdV9ib19jcmVhdGVfa2VybmVs?=
-Thread-Topic: [PATCH] gpu: drm: fix an improper check of
- amdgpu_bo_create_kernel
-Thread-Index: AQHUnOONEcshgKVKEU2ZwQMEVbCPbaWSSTbJ
-Date:   Thu, 27 Dec 2018 09:26:26 +0000
-Message-ID: <BYAPR12MB279124DEA06FE8EA43E164BC99B60@BYAPR12MB2791.namprd12.prod.outlook.com>
-References: <20181226062348.75519-1-kjlu@umn.edu>
-In-Reply-To: <20181226062348.75519-1-kjlu@umn.edu>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=Jim.Qu@amd.com; 
-x-originating-ip: [116.228.147.241]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB2760;20:litC8WQ4OT/NdWXcViYmB3BHsgLP8BfNEE/73OLbayBRClB1EDA5Ird9GT8QiKWBBajX8PD8KYIphNwu1G1VLxHX1oydeKIz4ZTyRZgHUqT5nsyLVL+2VbnFxSwzQkH1AHcVM4kC8Ng8LdreW0Q/YSaYNa8DpbNhsZofZwVsDRla6IiUTD6VEN9zh1wUwYF6gBIIL1R9iM7gbB3KRQAX4CULFDDI6CLWLzT+dv+1SecU0GpcWE8xTyQwewi+dUqb
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(136003)(199004)(189003)(54906003)(106356001)(86362001)(4326008)(8936002)(81166006)(105586002)(99286004)(224303003)(5660300001)(446003)(11346002)(186003)(316002)(25786009)(81156014)(9686003)(68736007)(55016002)(7696005)(72206003)(66066001)(76176011)(102836004)(6506007)(33656002)(97736004)(486006)(476003)(6436002)(966005)(256004)(14454004)(71190400001)(53936002)(6306002)(2906002)(6916009)(478600001)(305945005)(74316002)(2171002)(26005)(3846002)(71200400001)(7736002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2760;H:BYAPR12MB2791.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: d53b0bb9-c063-4e7f-71fb-08d66bdd605c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2760;
-x-ms-traffictypediagnostic: BYAPR12MB2760:
-x-microsoft-antispam-prvs: <BYAPR12MB27601D8C715E8E971EA4E38899B60@BYAPR12MB2760.namprd12.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR12MB2760;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2760;
-x-forefront-prvs: 0899B47777
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: F+SrmYuNerhsTMJENKkUdIQD2KnrDZ1xqjqsajeHprJF8n6auR2dHfQlWxM1YZ30amvzx+wn8q3WOPcuenYnoNlrPhcES/UCZKVNl4RiYGEboJtVb5l/qJZUoEwN6j0qNKJcg/y5PYZeZGqiiwW4hfDQaNvfqSTCw1pFSf/M8U/lXTNYNJP8MgETzCGpIerVj36sFHMTnMJee1b8yViwuwLwEIL7ND8b793jIR3YZOPLUNuiyjYeJc9woSTa+V5Y56znisD/RVUrSXmclaAqoSyD10YHtYkyHG2bLsUJ1GH7fQnE5VnDstCITa7WXf45
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Thu, 27 Dec 2018 04:29:06 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51048 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727996AbeL0J3F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 04:29:05 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBR9NYM5043485
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:29:03 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pmu9ma26d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 04:29:03 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 27 Dec 2018 09:29:01 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Dec 2018 09:28:58 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBR9Svjh49348654
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Dec 2018 09:28:57 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F19B4A4065;
+        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8FC8A405C;
+        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Dec 2018 09:28:56 +0000 (GMT)
+Subject: Re: 4.19.5 and later has tons of false messages "BUG: non-zero
+ pgtables_bytes on freeing mm: -16384"
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, linux-s390 <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 27 Dec 2018 10:28:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d53b0bb9-c063-4e7f-71fb-08d66bdd605c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Dec 2018 09:26:26.6438
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2760
+In-Reply-To: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122709-0008-0000-0000-000002A6DF72
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122709-0009-0000-0000-00002212E523
+Message-Id: <1d6288dd-a65b-463a-8aeb-33904dafa9cc@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812270087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpDb21tZW50cyBpbiBsaW5lLg0KDQpUaGFua3MNCkppbVF1DQpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fDQq3orz+yMs6IGFtZC1nZnggPGFtZC1nZngtYm91bmNlc0Bs
-aXN0cy5mcmVlZGVza3RvcC5vcmc+ILT6se0gS2FuZ2ppZSBMdSA8a2psdUB1bW4uZWR1Pg0Kt6LL
-zcqxvOQ6IDIwMTjE6jEy1MIyNsjVIDE0OjIzDQrK1bz+yMs6IGtqbHVAdW1uLmVkdQ0Ks63LzTog
-WmhvdSwgRGF2aWQoQ2h1bk1pbmcpOyBEYXZpZCBBaXJsaWU7IFh1LCBGZWlmZWk7IEZyYW5jaXMs
-IERhdmlkOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBhbWQtZ2Z4QGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZzsgSHVhbmcsIFJheTsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsg
-RGFuaWVsIFZldHRlcjsgcGFra2kwMDFAdW1uLmVkdTsgRGV1Y2hlciwgQWxleGFuZGVyOyBHYW8s
-IExpa3VuOyBaaHUsIFJleDsgS29lbmlnLCBDaHJpc3RpYW47IFpoYW5nLCBIYXdraW5nDQrW98zi
-OiBbUEFUQ0hdIGdwdTogZHJtOiBmaXggYW4gaW1wcm9wZXIgY2hlY2sgb2YgYW1kZ3B1X2JvX2Ny
-ZWF0ZV9rZXJuZWwNCg0KYWRldi0+ZmlybXdhcmUuZndfYnVmIGJlaW5nIG5vdCBOVUxMIG1heSBu
-b3QgaW5kaWNhdGUga2VybmVsIGJ1ZmZlciBpcw0KY3JlYXRlZCBzdWNjZXNzZnVsLiBBIGJldHRl
-ciB3YXkgaXMgdG8gY2hlY2sgdGhlIHN0YXR1cyAocmV0dXJuIHZhbHVlKQ0Kb2YgaXQuIFRoZSBm
-aXggZG9lcyBzby4NCg0KU2lnbmVkLW9mZi1ieTogS2FuZ2ppZSBMdSA8a2psdUB1bW4uZWR1Pg0K
-LS0tDQogZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMgfCAxOCArKysr
-KysrKysrKystLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgNiBkZWxl
-dGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdw
-dV91Y29kZS5jIGIvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMNCmlu
-ZGV4IDdiMzM4NjcwMzZlNy4uYmEzYzFjZmIyYzM1IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3Vjb2RlLmMNCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQv
-YW1kZ3B1L2FtZGdwdV91Y29kZS5jDQpAQCAtNDIyLDEzICs0MjIsMTkgQEAgc3RhdGljIGludCBh
-bWRncHVfdWNvZGVfcGF0Y2hfanQoc3RydWN0IGFtZGdwdV9maXJtd2FyZV9pbmZvICp1Y29kZSwN
-Cg0KIGludCBhbWRncHVfdWNvZGVfY3JlYXRlX2JvKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2
-KQ0KIHsNCisgICAgICAgaW50IHJldDsNCisNCiAgICAgICAgaWYgKGFkZXYtPmZpcm13YXJlLmxv
-YWRfdHlwZSAhPSBBTURHUFVfRldfTE9BRF9ESVJFQ1QpIHsNCi0gICAgICAgICAgICAgICBhbWRn
-cHVfYm9fY3JlYXRlX2tlcm5lbChhZGV2LCBhZGV2LT5maXJtd2FyZS5md19zaXplLCBQQUdFX1NJ
-WkUsDQotICAgICAgICAgICAgICAgICAgICAgICBhbWRncHVfc3Jpb3ZfdmYoYWRldikgPyBBTURH
-UFVfR0VNX0RPTUFJTl9WUkFNIDogQU1ER1BVX0dFTV9ET01BSU5fR1RULA0KLSAgICAgICAgICAg
-ICAgICAgICAgICAgJmFkZXYtPmZpcm13YXJlLmZ3X2J1ZiwNCi0gICAgICAgICAgICAgICAgICAg
-ICAgICZhZGV2LT5maXJtd2FyZS5md19idWZfbWMsDQotICAgICAgICAgICAgICAgICAgICAgICAm
-YWRldi0+ZmlybXdhcmUuZndfYnVmX3B0cik7DQotICAgICAgICAgICAgICAgaWYgKCFhZGV2LT5m
-aXJtd2FyZS5md19idWYpIHsNCisgICAgICAgICAgICAgICByZXQgPQ0KKyAgICAgICAgICAgICAg
-ICAgICAgICAgYW1kZ3B1X2JvX2NyZWF0ZV9rZXJuZWwoYWRldiwNCisgICAgICAgICAgICAgICAg
-ICAgICAgICAgYWRldi0+ZmlybXdhcmUuZndfc2l6ZSwNCisgICAgICAgICAgICAgICAgICAgICAg
-ICAgUEFHRV9TSVpFLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICBhbWRncHVfc3Jpb3ZfdmYo
-YWRldikgPyBBTURHUFVfR0VNX0RPTUFJTl9WUkFNIDoNCisgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgQU1ER1BVX0dFTV9ET01BSU5fR1RULA0KKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAmYWRldi0+ZmlybXdhcmUuZndfYnVmLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAmYWRl
-di0+ZmlybXdhcmUuZndfYnVmX21jLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAm
-YWRldi0+ZmlybXdhcmUuZndfYnVmX3B0cik7DQorICAgICAgICAgICAgICAgaWYgKHJldCkgew0K
-DQpKaW1RdTogTG9vayBpbnRvIGFtZGdwdV9ib19jcmVhdGVfa2VybmVsKCksIG5ldyBibyB3aWxs
-IGJlIGNyZWF0ZWQgb25seSBpZiAqYm9fcHRyID0gTlVMTCwgU28gaWYgeW91IGVuY291bnRlciB0
-aGUgaXNzdWUgdGhlIGFkZXYtPmZpcm13YXJlLmZ3X2J1ZiAhPSBOVUxMIGJ1dCBuZXcgYm8gaXMg
-bm90IGNyZWF0ZWQsIHRoZSBvbmx5IHByb2JsZW0gSSBjYW4gc2VlIGFyZToNCg0KMS4gdGhlcmUg
-aXMgYnVnIGluIGFtZGdwdV9ib19jcmVhdGVfa2VybmVsKCkNCjIuIGFkZXYtPmZpcm13YXJlLmZ3
-X2J1ZiAhPSBOVUxMIGJlZm9yZSBpdCBpcyB0cmFuc2ZlcnJlZCBpbnRvIGFtZGdwdV9ib19jcmVh
-dGVfa2VybmVsKCkuDQoNCkNvdWxkIHlvdSBjb21taXQgd2hhdCBpcyBlbnZpcm9ubWVudCB5b3Ug
-ZW5jb3VudGVyIHRoZSBpc3N1ZT8NCg0KVGhhbmtzDQpKaW1RdSANCiAgICAgICAgICAgICAgICAg
-ICAgICAgIGRldl9lcnIoYWRldi0+ZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSBrZXJuZWwgYnVmZmVy
-IGZvciBmaXJtd2FyZS5md19idWZcbiIpOw0KICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJu
-IC1FTk9NRU07DQogICAgICAgICAgICAgICAgfSBlbHNlIGlmIChhbWRncHVfc3Jpb3ZfdmYoYWRl
-dikpIHsNCi0tDQoyLjE3LjIgKEFwcGxlIEdpdC0xMTMpDQoNCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fDQphbWQtZ2Z4IG1haWxpbmcgbGlzdA0KYW1kLWdm
-eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcNCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vYW1kLWdmeA0K
+
+
+On 27.12.2018 10:13, Christian Borntraeger wrote:
+> Martin,
+> 
+> Right now you get a message 
+> "BUG: non-zero pgtables_bytes on freeing mm: -16384"
+> for EVERY process that exits in 4.19.5 and later.
+> 
+> bisect points to 
+> commit 4136161d676a93fc8df6bdb80d720c15522d6c24
+> Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Date:   Mon Oct 15 11:09:16 2018 +0200
+> 
+>     s390/mm: fix mis-accounting of pgtable_bytes
+>     
+>     [ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
+> 
+> Turns out that this patch requires several dependencies so the autoselection of this
+> patch was missing that. 
+> 
+> Can we either revert this patch or add the dependencies?
+> 
+> Christian
+> 
+
+It seems that adding 
+
+commit 6d212db11947ae5464e4717536ed9faf61c01e86 ("mm: add mm_pxd_folded checks to pgtable_bytes accounting functions") 
+fixes the issue. 
+
+Martin, do we need more?
+
+Christian
+
