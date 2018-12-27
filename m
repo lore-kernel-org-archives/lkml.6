@@ -2,892 +2,431 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F62C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44784C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C925320882
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1DF320882
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:32:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N+N/WPbT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeL0Ob4 (ORCPT
+        id S1730455AbeL0OcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 09:31:56 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48454 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbeL0Obz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 09:31:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81351A78;
+        Thu, 27 Dec 2018 09:32:00 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44721 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbeL0Ob5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 09:31:57 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k19-v6so16374344lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 06:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QCs8pBKN+hxmQXcfjZffVoDcu0W3sA5mPgv66EEhPoY=;
+        b=N+N/WPbTGlRSThquDzxFbn8RLTmTSs7zD4IcWbzW6ItfOdzFhnF6aAoY72cvuzqq3N
+         kdUG88RhvtPxUDHXeoxdK8DAWAHOO0z6yVQ2ZXXt9T5CAblpBvuymxVb+3jaBEsN/xMh
+         IMQxtcrtmT9GOd+KpmVkchLeLecurLxvWhyAg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QCs8pBKN+hxmQXcfjZffVoDcu0W3sA5mPgv66EEhPoY=;
+        b=g+Mx0kEc/9m2mbRcJeQwhnNKsIHKEmpIC6YaN7tnI9INXJHi62659hTBAtz/X+zoED
+         Ot/o+HFY156qys3pTLiWXkCP731m89FAYWLcxOh2q88Z7oleFqSf9Cr5eTjGXPkHn+qY
+         oGESYYN78T53W2xBnducroq3YxxEuYx3U2JFBfrTco0YeCA+XSEtr8511kgd3A/xtDdR
+         pSySJq22hYdUg7I57p7Gf9ZPppgISA7wYFNvLl4oGYMa0Al+ALm/9cQ0I9mwLYLyuG6W
+         u/VaAi6EVs9eMReQRcBTGcrIWGKpBNFmB/CNvL20KApbswwfJIR4f+6mIqlg/ZPQXSbZ
+         6nXA==
+X-Gm-Message-State: AJcUukf6teTRTKGPx8ud/xdoyXKGMjESzQ/DdW2OAJ+DN9+6/Okj8Auo
+        NcHLjJia429XlfV1a2Dy0ztRZw==
+X-Google-Smtp-Source: ALg8bN4Cj/yvYXy6cJUDf4WbJN086dtGs8C6Z9k3qTQJ4arHBbvnqCxiTH33ktaTEtt4zJEKUvlHZA==
+X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr13837796ljb.176.1545921114742;
+        Thu, 27 Dec 2018 06:31:54 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id j76-v6sm8157182ljb.12.2018.12.27.06.31.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 27 Dec 2018 06:31:53 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 243D73F5AF;
-        Thu, 27 Dec 2018 06:31:53 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 6A46E680369; Thu, 27 Dec 2018 14:31:51 +0000 (GMT)
-Date:   Thu, 27 Dec 2018 14:31:51 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Cc:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        nd <nd@arm.com>, "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
-Message-ID: <20181227143151.GM22341@e110455-lin.cambridge.arm.com>
-References: <20181221095757.15510-1-james.qian.wang@arm.com>
- <20181221095757.15510-8-james.qian.wang@arm.com>
- <20181224123213.GI22341@e110455-lin.cambridge.arm.com>
- <20181227070853.GC26908@james-ThinkStation-P300>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC updates for v4.21
+Date:   Thu, 27 Dec 2018 15:31:52 +0100
+Message-Id: <20181227143152.11176-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181227070853.GC26908@james-ThinkStation-P300>
-User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 07:09:07AM +0000, james qian wang (Arm Technology China) wrote:
-> On Mon, Dec 24, 2018 at 08:32:14PM +0800, Liviu Dudau wrote:
-> > On Fri, Dec 21, 2018 at 10:00:33AM +0000, james qian wang (Arm Technology China) wrote:
-> > > Add komeda_kms abstracton to attach komeda_dev to DRM-KMS
-> > >   CRTC: according to the komeda_pipeline
-> > >   PLANE: according to komeda_layer (layer input pipeline)
-> > >   PRIVATE_OBJS: komeda_pipeline/component all will be treat as private_objs
-> > > 
-> > > komeda_kms is for connecting DRM-KMS and komeda_dev, like reporting the
-> > > kms object properties according to the komeda_dev, and pass/convert KMS's
-> > > requirement to komeda_dev.
-> > > 
-> > > Changes in v3:
-> > > - Fixed style problem found by checkpatch.pl --strict.
-> > > 
-> > > Changes in v2:
-> > > - Unified abbreviation of "pipeline" to "pipe".
-> > > 
-> > > Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-> > > ---
-> > >  drivers/gpu/drm/arm/display/komeda/Makefile   |   6 +-
-> > >  .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 106 +++++++++++
-> > >  .../gpu/drm/arm/display/komeda/komeda_drv.c   |  19 +-
-> > >  .../gpu/drm/arm/display/komeda/komeda_kms.c   | 169 ++++++++++++++++++
-> > >  .../gpu/drm/arm/display/komeda/komeda_kms.h   | 113 ++++++++++++
-> > >  .../drm/arm/display/komeda/komeda_pipeline.h  |   3 +
-> > >  .../gpu/drm/arm/display/komeda/komeda_plane.c | 109 +++++++++++
-> > >  .../arm/display/komeda/komeda_private_obj.c   |  88 +++++++++
-> > >  8 files changed, 608 insertions(+), 5 deletions(-)
-> > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.h
-> > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-> > > 
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/arm/display/komeda/Makefile
-> > > index 25beae900ed2..1b875e5dc0f6 100644
-> > > --- a/drivers/gpu/drm/arm/display/komeda/Makefile
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/Makefile
-> > > @@ -9,7 +9,11 @@ komeda-y := \
-> > >  	komeda_dev.o \
-> > >  	komeda_format_caps.o \
-> > >  	komeda_pipeline.o \
-> > > -	komeda_framebuffer.o
-> > > +	komeda_framebuffer.o \
-> > > +	komeda_kms.o \
-> > > +	komeda_crtc.o \
-> > > +	komeda_plane.o \
-> > > +	komeda_private_obj.o
-> > >  
-> > >  komeda-y += \
-> > >  	d71/d71_dev.o
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > > new file mode 100644
-> > > index 000000000000..5bb5a55f6b31
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> > > @@ -0,0 +1,106 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> > > + *
-> > > + */
-> > > +#include <linux/clk.h>
-> > > +#include <linux/spinlock.h>
-> > > +#include <drm/drm_atomic.h>
-> > > +#include <drm/drm_atomic_helper.h>
-> > > +#include <drm/drm_plane_helper.h>
-> > > +#include <drm/drm_crtc_helper.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include "komeda_dev.h"
-> > > +#include "komeda_kms.h"
-> > > +
-> > > +struct drm_crtc_helper_funcs komeda_crtc_helper_funcs = {
-> > > +};
-> > > +
-> > > +static const struct drm_crtc_funcs komeda_crtc_funcs = {
-> > > +};
-> > > +
-> > > +int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
-> > > +			   struct komeda_dev *mdev)
-> > > +{
-> > > +	struct komeda_crtc *crtc;
-> > > +	struct komeda_pipeline *master;
-> > > +	char str[16];
-> > > +	int i;
-> > > +
-> > > +	kms->n_crtcs = 0;
-> > > +
-> > > +	for (i = 0; i < mdev->n_pipelines; i++) {
-> > > +		crtc = &kms->crtcs[kms->n_crtcs];
-> > > +		master = mdev->pipelines[i];
-> > > +
-> > > +		crtc->master = master;
-> > > +		crtc->slave  = NULL;
-> > > +
-> > > +		if (crtc->slave)
-> > > +			sprintf(str, "pipe-%d", crtc->slave->id);
-> > > +		else
-> > > +			sprintf(str, "None");
-> > > +
-> > > +		DRM_INFO("crtc%d: master(pipe-%d) slave(%s) output: %s.\n",
-> > > +			 kms->n_crtcs, master->id, str,
-> > > +			 master->of_output_dev ?
-> > > +			 master->of_output_dev->full_name : "None");
-> > > +
-> > > +		kms->n_crtcs++;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static struct drm_plane *
-> > > +get_crtc_primary(struct komeda_kms_dev *kms, struct komeda_crtc *crtc)
-> > > +{
-> > > +	struct komeda_plane *kplane;
-> > > +	struct drm_plane *plane;
-> > > +
-> > > +	drm_for_each_plane(plane, &kms->base) {
-> > > +		if (plane->type != DRM_PLANE_TYPE_PRIMARY)
-> > > +			continue;
-> > > +
-> > > +		kplane = to_kplane(plane);
-> > > +		/* only master can be primary */
-> > > +		if (kplane->layer->base.pipeline == crtc->master)
-> > > +			return plane;
-> > > +	}
-> > > +
-> > > +	return NULL;
-> > > +}
-> > > +
-> > > +static int komeda_crtc_add(struct komeda_kms_dev *kms,
-> > > +			   struct komeda_crtc *kcrtc)
-> > > +{
-> > > +	struct drm_crtc *crtc = &kcrtc->base;
-> > > +	int err;
-> > > +
-> > > +	err = drm_crtc_init_with_planes(&kms->base, crtc,
-> > > +					get_crtc_primary(kms, kcrtc), NULL,
-> > > +					&komeda_crtc_funcs, NULL);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
-> > > +	drm_crtc_vblank_reset(crtc);
-> > > +
-> > > +	crtc->port = kcrtc->master->of_output_port;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *mdev)
-> > > +{
-> > > +	int i, err;
-> > > +
-> > > +	for (i = 0; i < kms->n_crtcs; i++) {
-> > > +		err = komeda_crtc_add(kms, &kms->crtcs[i]);
-> > > +		if (err)
-> > > +			return err;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-> > > index a2657b3d09d7..4b8ce717a71c 100644
-> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-> > > @@ -13,18 +13,21 @@
-> > >  
-> > >  struct komeda_drv {
-> > >  	struct komeda_dev *mdev;
-> > > +	struct komeda_kms_dev *kms;
-> > >  };
-> > >  
-> > >  static void komeda_unbind(struct device *dev)
-> > >  {
-> > >  	struct komeda_drv *mdrv = dev_get_drvdata(dev);
-> > >  
-> > > -	dev_set_drvdata(dev, NULL);
-> > > -
-> > 
-> > I would argue that you're fixing a bug here that was introduced in an
-> > earlier patch, and that you should fix that patch rather than this
-> > change.
-> 
-> Sorry, you're right, will fix it the next version.
-> 
-> > >  	if (!mdrv)
-> > >  		return;
-> > >  
-> > > +	komeda_kms_detach(mdrv->kms);
-> > > +
-> > >  	komeda_dev_destroy(mdrv->mdev);
-> > > +
-> > > +	dev_set_drvdata(dev, NULL);
-> > >  	kfree(mdrv);
-> > >  }
-> > >  
-> > > @@ -33,7 +36,7 @@ static int komeda_bind(struct device *dev)
-> > >  	struct komeda_drv *mdrv;
-> > >  	int err;
-> > >  
-> > > -	mdrv = kzalloc(sizeof(*mdrv), GFP_KERNEL);
-> > > +	mdrv = devm_kzalloc(dev, sizeof(*mdrv), GFP_KERNEL);
-> > >  	if (!mdrv)
-> > >  		return -ENOMEM;
-> > >  
-> > > @@ -45,10 +48,18 @@ static int komeda_bind(struct device *dev)
-> > >  
-> > >  	dev_set_drvdata(dev, mdrv);
-> > >  
-> > > +	mdrv->kms = komeda_kms_attach(mdrv->mdev);
-> > > +	if (IS_ERR(mdrv->kms)) {
-> > > +		err = PTR_ERR(mdrv->kms);
-> > 
-> > does mdrv->kms needs to be set to NULL here?
+Hi Linus,
 
-Ping on this one.
+Here's the PR with MMC updates for v4.21. Details about the highlights are as
+usual found in the signed tag. Please pull this in!
 
-> > 
-> > > +		goto destroy_mdev;
-> > > +	}
-> > > +
-> > >  	return 0;
-> > >  
-> > > +destroy_mdev:
-> > > +	komeda_dev_destroy(mdrv->mdev);
-> > >  free_mdrv:
-> > > -	kfree(mdrv);
-> > > +	devm_kfree(dev, mdrv);
-> > >  	return err;
-> > >  }
-> > >  
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > new file mode 100644
-> > > index 000000000000..fd48360ca524
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-> > > @@ -0,0 +1,169 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> > > + *
-> > > + */
-> > > +#include <linux/component.h>
-> > > +#include <drm/drm_atomic.h>
-> > > +#include <drm/drm_atomic_helper.h>
-> > > +#include <drm/drm_gem_framebuffer_helper.h>
-> > > +#include <drm/drm_gem_cma_helper.h>
-> > > +#include <drm/drm_fb_helper.h>
-> > > +#include <linux/interrupt.h>
-> > > +#include "komeda_dev.h"
-> > > +#include "komeda_kms.h"
-> > > +#include "komeda_framebuffer.h"
-> > > +
-> > > +DEFINE_DRM_GEM_CMA_FOPS(komeda_cma_fops);
-> > > +
-> > > +static int komeda_gem_cma_dumb_create(struct drm_file *file,
-> > > +				      struct drm_device *dev,
-> > > +				      struct drm_mode_create_dumb *args)
-> > > +{
-> > > +	u32 alignment = 16; /* TODO get alignment from dev */
-> > > +
-> > > +	args->pitch = ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8),
-> > > +			    alignment);
-> > > +
-> > > +	return drm_gem_cma_dumb_create_internal(file, dev, args);
-> > > +}
-> > > +
-> > > +static struct drm_driver komeda_kms_driver = {
-> > > +	.driver_features = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
-> > > +			   DRIVER_PRIME,
-> > > +	.lastclose			= drm_fb_helper_lastclose,
-> > > +	.gem_free_object_unlocked	= drm_gem_cma_free_object,
-> > > +	.gem_vm_ops			= &drm_gem_cma_vm_ops,
-> > > +	.dumb_create			= komeda_gem_cma_dumb_create,
-> > > +	.prime_handle_to_fd		= drm_gem_prime_handle_to_fd,
-> > > +	.prime_fd_to_handle		= drm_gem_prime_fd_to_handle,
-> > > +	.gem_prime_export		= drm_gem_prime_export,
-> > > +	.gem_prime_import		= drm_gem_prime_import,
-> > > +	.gem_prime_get_sg_table		= drm_gem_cma_prime_get_sg_table,
-> > > +	.gem_prime_import_sg_table	= drm_gem_cma_prime_import_sg_table,
-> > > +	.gem_prime_vmap			= drm_gem_cma_prime_vmap,
-> > > +	.gem_prime_vunmap		= drm_gem_cma_prime_vunmap,
-> > > +	.gem_prime_mmap			= drm_gem_cma_prime_mmap,
-> > > +	.fops = &komeda_cma_fops,
-> > > +	.name = "komeda",
-> > > +	.desc = "ARM Mali Komeda Display Processor driver",
-> > > +	.date = "20181101",
-> > > +	.major = 0,
-> > > +	.minor = 1,
-> > > +};
-> > > +
-> > > +static void komeda_kms_commit_tail(struct drm_atomic_state *old_state)
-> > > +{
-> > > +	struct drm_device *dev = old_state->dev;
-> > > +
-> > > +	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-> > > +
-> > > +	drm_atomic_helper_commit_planes(dev, old_state, 0);
-> > > +
-> > > +	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-> > 
-> > Mainline has also introduced the drm_atomic_helper_fake_vblank(old_state) call
-> > to help with writebacks on CRTCs that might be otherwise disabled. Do we need
-> > to have it here too?
-> 
-> we don't need it, since D71 HW still sends flip interrupt even on oneshot
-> writeback mode.
+This time, the PR contains changes crossing subsystems/archs/platforms, which
+is mainly because of a bigger modernization of moving from legacy GPIO to GPIO
+descriptors for MMC (by Linus Walleij). Additionally, again, I am funneling
+changes to drivers/misc/cardreader/* and drivers/memstick/*, through my MMC
+tree, mostly due to that we lack a maintainer for these. Perhaps, I should
+simply volunteer and make that the formal process, let's see.
 
-Yeah, but does it do it when the CRTC is disabled? Given that the
-writeback could take a while, and it is something that gets started
-during one atomic commit but finishes at some later time without
-blocking the next commit, you could have one atomic commit asking for a
-writeback and then another commit disabling the CRTC before the
-writeback has finished. In that case you still need to fake the vblank
-event when the writeback is done, otherwise userspace will hung waiting
-forever for the fence to be signalled.
+Happy holidays!
+
+Kind regards
+Ulf Hansson
 
 
-Best regards,
-Liviu
+The following changes since commit e3ae3401aa19432ee4943eb0bbc2ec704d07d793:
 
+  mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl (2018-12-17 08:59:42 +0100)
 
+are available in the Git repository at:
 
-> 
-> > > +
-> > > +	drm_atomic_helper_wait_for_flip_done(dev, old_state);
-> > > +
-> > > +	drm_atomic_helper_commit_hw_done(old_state);
-> > > +
-> > > +	drm_atomic_helper_cleanup_planes(dev, old_state);
-> > > +}
-> > > +
-> > > +static const struct drm_mode_config_helper_funcs komeda_mode_config_helpers = {
-> > > +	.atomic_commit_tail = komeda_kms_commit_tail,
-> > > +};
-> > > +
-> > > +static const struct drm_mode_config_funcs komeda_mode_config_funcs = {
-> > > +	.fb_create		= komeda_fb_create,
-> > > +	.atomic_check		= NULL,/*komeda_kms_check*/
-> > 
-> > I would argue that you should at least use drm_atomic_helper_check here,
-> > rather than set it to NULL, even if later you will replace it with a
-> > komeda function.
-> 
-> OK.
-> 
-> > 
-> > > +	.atomic_commit		= drm_atomic_helper_commit,
-> > > +};
-> > > +
-> > > +static void komeda_kms_mode_config_init(struct komeda_kms_dev *kms,
-> > > +					struct komeda_dev *mdev)
-> > > +{
-> > > +	struct drm_mode_config *config = &kms->base.mode_config;
-> > > +
-> > > +	drm_mode_config_init(&kms->base);
-> > > +
-> > > +	komeda_kms_setup_crtcs(kms, mdev);
-> > > +
-> > > +	/* Get value from dev */
-> > > +	config->min_width	= 0;
-> > > +	config->min_height	= 0;
-> > > +	config->max_width	= 4096;
-> > > +	config->max_height	= 4096;
-> > > +	config->allow_fb_modifiers = true;
-> > > +
-> > > +	config->funcs = &komeda_mode_config_funcs;
-> > > +	config->helper_private = &komeda_mode_config_helpers;
-> > > +}
-> > > +
-> > > +struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
-> > > +{
-> > > +	struct komeda_kms_dev *kms = kzalloc(sizeof(*kms), GFP_KERNEL);
-> > > +	struct drm_device *drm;
-> > > +	int err;
-> > > +
-> > > +	if (!kms)
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	drm = &kms->base;
-> > > +	err = drm_dev_init(drm, &komeda_kms_driver, mdev->dev);
-> > > +	if (err)
-> > > +		goto free_kms;
-> > > +
-> > > +	drm->dev_private = mdev;
-> > > +
-> > > +	komeda_kms_mode_config_init(kms, mdev);
-> > > +
-> > > +	err = komeda_kms_add_private_objs(kms, mdev);
-> > > +	if (err)
-> > > +		goto cleanup_mode_config;
-> > > +
-> > > +	err = komeda_kms_add_planes(kms, mdev);
-> > > +	if (err)
-> > > +		goto cleanup_mode_config;
-> > > +
-> > > +	err = drm_vblank_init(drm, kms->n_crtcs);
-> > > +	if (err)
-> > > +		goto cleanup_mode_config;
-> > > +
-> > > +	err = komeda_kms_add_crtcs(kms, mdev);
-> > > +	if (err)
-> > > +		goto cleanup_mode_config;
-> > > +
-> > > +	err = component_bind_all(mdev->dev, kms);
-> > > +	if (err)
-> > > +		goto cleanup_mode_config;
-> > > +
-> > > +	drm_mode_config_reset(drm);
-> > > +
-> > > +	err = drm_dev_register(drm, 0);
-> > > +	if (err)
-> > > +		goto uninstall_irq;
-> > > +
-> > > +	return kms;
-> > > +
-> > > +uninstall_irq:
-> > > +	drm_irq_uninstall(drm);
-> > > +cleanup_mode_config:
-> > > +	drm_mode_config_cleanup(drm);
-> > > +free_kms:
-> > > +	kfree(kms);
-> > > +	return ERR_PTR(err);
-> > > +}
-> > > +
-> > > +void komeda_kms_detach(struct komeda_kms_dev *kms)
-> > > +{
-> > > +	struct drm_device *drm = &kms->base;
-> > > +	struct komeda_dev *mdev = drm->dev_private;
-> > > +
-> > > +	drm_dev_unregister(drm);
-> > > +	component_unbind_all(mdev->dev, drm);
-> > > +	komeda_kms_cleanup_private_objs(mdev);
-> > > +	drm_mode_config_cleanup(drm);
-> > > +	drm->dev_private = NULL;
-> > > +	drm_dev_put(drm);
-> > > +}
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.h b/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
-> > > new file mode 100644
-> > > index 000000000000..f13666004a42
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
-> > > @@ -0,0 +1,113 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/*
-> > > + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> > > + *
-> > > + */
-> > > +#ifndef _KOMEDA_KMS_H_
-> > > +#define _KOMEDA_KMS_H_
-> > > +
-> > > +#include <drm/drm_atomic.h>
-> > > +#include <drm/drm_atomic_helper.h>
-> > > +#include <drm/drm_crtc_helper.h>
-> > > +#include <drm/drm_writeback.h>
-> > > +
-> > > +/** struct komeda_plane - komeda instance of drm_plane */
-> > > +struct komeda_plane {
-> > > +	/** @base: &drm_plane */
-> > > +	struct drm_plane base;
-> > > +	/**
-> > > +	 * @layer:
-> > > +	 *
-> > > +	 * represents available layer input pipelines for this plane.
-> > > +	 *
-> > > +	 * NOTE:
-> > > +	 * the layer is not for a specific Layer, but indicate a group of
-> > > +	 * Layers with same capabilities.
-> > > +	 */
-> > > +	struct komeda_layer *layer;
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct komeda_plane_state
-> > > + *
-> > > + * The plane_state can be split into two data flow (left/right) and handled
-> > > + * by two layers &komeda_plane.layer and &komeda_plane.layer.right
-> > > + */
-> > > +struct komeda_plane_state {
-> > > +	/** @base: &drm_plane_state */
-> > > +	struct drm_plane_state base;
-> > > +
-> > > +	/* private properties */
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct komeda_wb_connector
-> > > + */
-> > > +struct komeda_wb_connector {
-> > > +	/** @base: &drm_writeback_connector */
-> > > +	struct drm_writeback_connector base;
-> > > +
-> > > +	/** @wb_layer: represents associated writeback pipeline of komeda */
-> > > +	struct komeda_layer *wb_layer;
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct komeda_crtc
-> > > + */
-> > > +struct komeda_crtc {
-> > > +	/** @base: &drm_crtc */
-> > > +	struct drm_crtc base;
-> > > +	/** @master: only master has display output */
-> > > +	struct komeda_pipeline *master;
-> > > +	/**
-> > > +	 * @slave: optional
-> > > +	 *
-> > > +	 * Doesn't have its own display output, the handled data flow will
-> > > +	 * merge into the master.
-> > > +	 */
-> > > +	struct komeda_pipeline *slave;
-> > > +};
-> > > +
-> > > +/** struct komeda_crtc_state */
-> > > +struct komeda_crtc_state {
-> > > +	/** @base: &drm_crtc_state */
-> > > +	struct drm_crtc_state base;
-> > > +
-> > > +	/* private properties */
-> > > +
-> > > +	/* computed state which are used by validate/check */
-> > > +	u32 affected_pipes;
-> > > +	u32 active_pipes;
-> > > +};
-> > > +
-> > > +/** struct komeda_kms_dev - for gather KMS related things */
-> > > +struct komeda_kms_dev {
-> > > +	/** @base: &drm_device */
-> > > +	struct drm_device base;
-> > > +
-> > > +	/** @n_crtcs: valid numbers of crtcs in &komeda_kms_dev.crtcs */
-> > > +	int n_crtcs;
-> > > +	/** @crtcs: crtcs list */
-> > > +	struct komeda_crtc crtcs[KOMEDA_MAX_PIPELINES];
-> > > +};
-> > > +
-> > > +#define to_kplane(p)	container_of(p, struct komeda_plane, base)
-> > > +#define to_kplane_st(p)	container_of(p, struct komeda_plane_state, base)
-> > > +#define to_kconn(p)	container_of(p, struct komeda_wb_connector, base)
-> > > +#define to_kcrtc(p)	container_of(p, struct komeda_crtc, base)
-> > > +#define to_kcrtc_st(p)	container_of(p, struct komeda_crtc_state, base)
-> > > +#define to_kdev(p)	container_of(p, struct komeda_kms_dev, base)
-> > > +
-> > > +int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *mdev);
-> > > +
-> > > +int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *mdev);
-> > > +int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *mdev);
-> > > +int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
-> > > +				struct komeda_dev *mdev);
-> > > +void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev);
-> > > +
-> > > +struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev);
-> > > +void komeda_kms_detach(struct komeda_kms_dev *kms);
-> > > +
-> > > +#endif /*_KOMEDA_KMS_H_*/
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> > > index 2d68ffeae25d..114129d96851 100644
-> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-> > > @@ -333,6 +333,9 @@ struct komeda_pipeline_state {
-> > >  #define to_improc_st(c)	container_of(c, struct komeda_improc_state, base)
-> > >  #define to_ctrlr_st(c)	container_of(c, struct komeda_timing_ctrlr_state, base)
-> > >  
-> > > +#define priv_to_comp_st(o) container_of(o, struct komeda_component_state, obj)
-> > > +#define priv_to_pipe_st(o)  container_of(o, struct komeda_pipeline_state, obj)
-> > > +
-> > >  /* pipeline APIs */
-> > >  struct komeda_pipeline *
-> > >  komeda_pipeline_add(struct komeda_dev *mdev, size_t size,
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> > > new file mode 100644
-> > > index 000000000000..0a4953a9a909
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-> > > @@ -0,0 +1,109 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> > > + *
-> > > + */
-> > > +#include <drm/drm_atomic.h>
-> > > +#include <drm/drm_atomic_helper.h>
-> > > +#include <drm/drm_plane_helper.h>
-> > > +#include "komeda_dev.h"
-> > > +#include "komeda_kms.h"
-> > > +
-> > > +static const struct drm_plane_helper_funcs komeda_plane_helper_funcs = {
-> > > +};
-> > > +
-> > > +static void komeda_plane_destroy(struct drm_plane *plane)
-> > > +{
-> > > +	drm_plane_cleanup(plane);
-> > > +
-> > > +	kfree(to_kplane(plane));
-> > > +}
-> > > +
-> > > +static const struct drm_plane_funcs komeda_plane_funcs = {
-> > > +};
-> > > +
-> > > +/* for komeda, which is pipeline can be share between crtcs */
-> > > +static u32 get_possible_crtcs(struct komeda_kms_dev *kms,
-> > > +			      struct komeda_pipeline *pipe)
-> > > +{
-> > > +	struct komeda_crtc *crtc;
-> > > +	u32 possible_crtcs = 0;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < kms->n_crtcs; i++) {
-> > > +		crtc = &kms->crtcs[i];
-> > > +
-> > > +		if ((pipe == crtc->master) || (pipe == crtc->slave))
-> > > +			possible_crtcs |= BIT(i);
-> > > +	}
-> > > +
-> > > +	return possible_crtcs;
-> > > +}
-> > > +
-> > > +/* use Layer0 as primary */
-> > > +static u32 get_plane_type(struct komeda_kms_dev *kms,
-> > > +			  struct komeda_component *c)
-> > > +{
-> > > +	bool is_primary = (c->id == KOMEDA_COMPONENT_LAYER0);
-> > > +
-> > > +	return is_primary ? DRM_PLANE_TYPE_PRIMARY : DRM_PLANE_TYPE_OVERLAY;
-> > > +}
-> > > +
-> > > +static int komeda_plane_add(struct komeda_kms_dev *kms,
-> > > +			    struct komeda_layer *layer)
-> > > +{
-> > > +	struct komeda_dev *mdev = kms->base.dev_private;
-> > > +	struct komeda_component *c = &layer->base;
-> > > +	struct komeda_plane *kplane;
-> > > +	struct drm_plane *plane;
-> > > +	u32 *formats, n_formats = 0;
-> > > +	int err;
-> > > +
-> > > +	kplane = kzalloc(sizeof(*kplane), GFP_KERNEL);
-> > > +	if (!kplane)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	plane = &kplane->base;
-> > > +	kplane->layer = layer;
-> > > +
-> > > +	formats = komeda_get_layer_fourcc_list(&mdev->fmt_tbl,
-> > > +					       layer->layer_type, &n_formats);
-> > > +
-> > > +	err = drm_universal_plane_init(&kms->base, plane,
-> > > +			get_possible_crtcs(kms, c->pipeline),
-> > > +			&komeda_plane_funcs,
-> > > +			formats, n_formats, NULL,
-> > > +			get_plane_type(kms, c),
-> > > +			"%s", c->name);
-> > > +
-> > > +	komeda_put_fourcc_list(formats);
-> > > +
-> > > +	if (err)
-> > > +		goto cleanup;
-> > > +
-> > > +	drm_plane_helper_add(plane, &komeda_plane_helper_funcs);
-> > > +
-> > > +	return 0;
-> > > +cleanup:
-> > > +	komeda_plane_destroy(plane);
-> > > +	return err;
-> > > +}
-> > > +
-> > > +int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *mdev)
-> > > +{
-> > > +	struct komeda_pipeline *pipe;
-> > > +	int i, j, err;
-> > > +
-> > > +	for (i = 0; i < mdev->n_pipelines; i++) {
-> > > +		pipe = mdev->pipelines[i];
-> > > +
-> > > +		for (j = 0; j < pipe->n_layers; j++) {
-> > > +			err = komeda_plane_add(kms, pipe->layers[j]);
-> > > +			if (err)
-> > > +				return err;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-> > > new file mode 100644
-> > > index 000000000000..9edfd6ab0c12
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-> > > @@ -0,0 +1,88 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-> > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
-> > > + *
-> > > + */
-> > > +#include "komeda_dev.h"
-> > > +#include "komeda_kms.h"
-> > > +
-> > > +static struct drm_private_state *
-> > > +komeda_pipeline_atomic_duplicate_state(struct drm_private_obj *obj)
-> > > +{
-> > > +	struct komeda_pipeline_state *st;
-> > > +
-> > > +	st = kmemdup(obj->state, sizeof(*st), GFP_KERNEL);
-> > > +	if (!st)
-> > > +		return NULL;
-> > > +
-> > > +	st->active_comps = 0;
-> > > +
-> > > +	__drm_atomic_helper_private_obj_duplicate_state(obj, &st->obj);
-> > > +
-> > > +	return &st->obj;
-> > > +}
-> > > +
-> > > +static void
-> > > +komeda_pipeline_atomic_destroy_state(struct drm_private_obj *obj,
-> > > +				     struct drm_private_state *state)
-> > > +{
-> > > +	kfree(priv_to_pipe_st(state));
-> > > +}
-> > > +
-> > > +static const struct drm_private_state_funcs komeda_pipeline_obj_funcs = {
-> > > +	.atomic_duplicate_state	= komeda_pipeline_atomic_duplicate_state,
-> > > +	.atomic_destroy_state	= komeda_pipeline_atomic_destroy_state,
-> > > +};
-> > > +
-> > > +static int komeda_pipeline_obj_add(struct komeda_kms_dev *kms,
-> > > +				   struct komeda_pipeline *pipe)
-> > > +{
-> > > +	struct komeda_pipeline_state *st;
-> > > +
-> > > +	st = kzalloc(sizeof(*st), GFP_KERNEL);
-> > > +	if (!st)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	st->pipe = pipe;
-> > > +	drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-> > > +				    &komeda_pipeline_obj_funcs);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
-> > > +				struct komeda_dev *mdev)
-> > > +{
-> > > +	struct komeda_pipeline *pipe;
-> > > +	int i, err;
-> > > +
-> > > +	for (i = 0; i < mdev->n_pipelines; i++) {
-> > > +		pipe = mdev->pipelines[i];
-> > > +
-> > > +		err = komeda_pipeline_obj_add(kms, pipe);
-> > > +		if (err)
-> > > +			return err;
-> > > +
-> > > +		/* Add component */
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev)
-> > > +{
-> > > +	struct komeda_pipeline *pipe;
-> > > +	struct komeda_component *c;
-> > > +	int i, id;
-> > > +
-> > > +	for (i = 0; i < mdev->n_pipelines; i++) {
-> > > +		pipe = mdev->pipelines[i];
-> > > +		dp_for_each_set_bit(id, pipe->avail_comps) {
-> > > +			c = komeda_pipeline_get_component(pipe, id);
-> > > +
-> > > +			drm_atomic_private_obj_fini(&c->obj);
-> > > +		}
-> > > +		drm_atomic_private_obj_fini(&pipe->obj);
-> > > +	}
-> > > +}
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> > 
-> > Best regards,
-> > Liviu
-> > 
-> > 
-> > -- 
-> > ====================
-> > | I would like to |
-> > | fix the world,  |
-> > | but they're not |
-> > | giving me the   |
-> >  \ source code!  /
-> >   ---------------
-> >     ¯\_(ツ)_/¯
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.21
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+for you to fetch changes up to 5215b2e952f3f94d74cac1a59494eb8ac647e216:
+
+  mmc: mediatek: Add MMC_CAP_SDIO_IRQ support (2018-12-19 10:16:15 +0100)
+
+----------------------------------------------------------------
+MMC core:
+ - Cleanup BKOPS support
+ - Introduce MMC_CAP_SYNC_RUNTIME_PM
+ - slot-gpio: Delete legacy slot GPIO handling
+
+MMC host:
+ - alcor: Add new mmc host driver for Alcor Micro PCI based cardreader
+ - bcm2835: Several improvements to better recover from errors
+ - jz4740: Rework and fixup pre|post_req support
+ - mediatek: Add support for SDIO IRQs
+ - meson-gx: Improve clock phase management
+ - meson-gx: Stop descriptor on errors
+ - mmci: Complete the sbc error path by sending a stop command
+ - renesas_sdhi/tmio: Fixup reset/resume operations
+ - renesas_sdhi: Add support for r8a774c0 and R7S9210
+ - renesas_sdhi: Whitelist R8A77990 SDHI
+ - renesas_sdhi: Fixup eMMC HS400 compatibility issues for H3 and M3-W
+ - rtsx_usb_sdmmc: Re-work card detection/removal support
+ - rtsx_usb_sdmmc: Re-work runtime PM support
+ - sdhci: Fix timeout loops for some variant drivers
+ - sdhci: Improve support for error handling due to failing commands
+ - sdhci-acpi/pci: Disable LED control for Intel BYT-based controllers
+ - sdhci_am654: Add new SDHCI variant driver to support TI's AM654 SOCs
+ - sdhci-of-esdhc: Add support for eMMC HS400 mode
+ - sdhci-omap: Fixup reset support
+ - sdhci-omap: Workaround errata regarding SDR104/HS200 tuning failures
+ - sdhci-msm: Fixup sporadic write transfers issues for SDR104/HS200
+ - sdhci-msm: Fixup dynamical clock gating issues
+ - various: Complete converting all hosts into using slot GPIO descriptors
+
+Other:
+ - Move GPIO mmc platform data for mips/sh/arm to GPIO descriptors
+ - Add new Alcor Micro cardreader PCI driver
+ - Support runtime power management for memstick rtsx_usb_ms driver
+ - Use USB remote wakeups for card detection for rtsx_usb misc driver
+
+----------------------------------------------------------------
+A.s. Dong (1):
+      dt-bindings: mmc: fsl-imx-esdhc: add imx8qxp compatible string
+
+Adrian Hunter (10):
+      mmc: sdhci: Fix data command CRC error handling
+      mmc: sdhci: Rename SDHCI_ACMD12_ERR and SDHCI_INT_ACMD12ERR
+      mmc: sdhci: Handle auto-command errors
+      mmc: sdhci-pci: Add max-frequency device property for Intel controllers
+      mmc: sdhci-of-esdhc: Fix timeout checks
+      mmc: sdhci-omap: Fix timeout checks
+      mmc: sdhci-xenon: Fix timeout checks
+      mmc: sdhci: Add quirk to disable LED control
+      mmc: sdhci-pci: Disable LED control for Intel BYT-based controllers
+      mmc: sdhci-acpi: Disable LED control for Intel BYT-based controllers
+
+Arnd Bergmann (1):
+      mmc: sdhci-msm: avoid unused function warning
+
+Biju Das (1):
+      mmc: renesas_sdhi_internal_dmac: Whitelist r8a774c0
+
+Chris Brandt (2):
+      mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+      dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+
+Chunyan Zhang (1):
+      mmc: sdhci: Convert sdhci_allocate_bounce_buffer() to return void
+
+Colin Ian King (2):
+      mmc: sdhci-of-esdhc: fix spelling mistake "upsupported" -> "unsupported"
+      misc: alcor_pci: fix spelling mistake "invailid" -> "invalid"
+
+Evan Green (1):
+      dt-bindings: mmc: sdhci-msm: Clarify register requirements
+
+Ezequiel Garcia (1):
+      mmc: jz4740: rework pre_req/post_req implementation
+
+Fabrizio Castro (1):
+      dt-bindings: mmc: renesas_sdhi: Add r8a774c0 support
+
+Faiz Abbas (7):
+      mmc: sdhci-omap: Add platform specific reset callback
+      mmc: sdhci-omap: Remove redundant structure assignments
+      dt-bindings: mmc: sdhci-am654: Document bindings for the host controllers on TI's AM654 SOCs
+      dt-bindings: mmc: sdhci-of-arasan: Add deprecated message for AM65
+      mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver
+      dt-bindings: sdhci-omap: Add note for cpu_thermal
+      mmc: sdhci-omap: Workaround errata regarding SDR104/HS200 tuning failures (i929)
+
+Jerome Brunet (4):
+      mmc: meson-gx: make sure the descriptor is stopped on errors
+      mmc: meson-gx: remove useless lock
+      mmc: meson-gx: align default phase on soc vendor tree
+      mmc: meson-gx: add signal resampling
+
+Jonas Danielsson (1):
+      mmc: atmel-mci: do not assume idle after atmci_request_end
+
+Kai-Heng Feng (5):
+      memstick: rtsx_usb_ms: Add missing pm_runtime_disable() in probe function
+      misc: rtsx_usb: Use USB remote wakeup signaling for card insertion detection
+      memstick: Prevent memstick host from getting runtime suspended during card detection
+      memstick: rtsx_usb_ms: Use ms_dev() helper
+      memstick: rtsx_usb_ms: Support runtime power management
+
+Liming Sun (1):
+      mmc: dw_mmc-bluefield: simplify the probe() function
+
+Linus Walleij (16):
+      mmc: slot-gpio: Allocate GPIO labels dynamically
+      mmc: jz4740: Get CD/WP GPIOs from descriptors
+      mmc: jz4740: Use GPIO descriptor for power
+      mmc: sdhci: imx: Use the slot GPIO descriptor
+      mmc: spi: Convert to use GPIO descriptors
+      mmc: host: tmio: Use GPIO descriptors
+      mmc: s3cmci: Use the slot GPIO descriptor
+      gpio: name PCA953x gpio chips after device name
+      ARM: pxa: Add gpio descriptor lookup tables for MMC CD/WP
+      ARM: pxa: Add GPIO descriptors for Palm27x
+      mmc: pxamci: Support getting GPIO descs for RO and WP
+      ARM: pxa: Delete platform data for CD/WP
+      mmc: pxamci: Delete platform data handling of CD and WP
+      mmc: pxa: Use GPIO descriptor for power
+      mmc: slot-gpio: Delete legacy GPIO handling
+      sh: ecovec24: Fix an ifdef
+
+Loic Poulain (1):
+      mmc: sdhci-msm: Disable CDR function on TX
+
+Ludovic Barre (2):
+      mmc: mmci: send stop command if sbc error issue
+      mmc: mmci: add variant property to set command stop bit
+
+Marek Vasut (1):
+      mmc: renesas_sdhi: Whitelist R8A77990 SDHI
+
+Masaharu Hayakawa (1):
+      mmc: tmio: delete wait in tuning process
+
+Masahiro Yamada (1):
+      mmc: sdhci-cadence: include <linux/bits.h> instead of <linux/bitops.h>
+
+Michal Suchanek (1):
+      mmc: bcm2835: reset host on timeout
+
+Nicholas Mc Guire (1):
+      mmc: meson-mx-sdio: check devm_kasprintf for failure
+
+Niklas Söderlund (7):
+      mmc: renesas_sdhi: remove workaround for HS400 clock
+      mmc: tmio: enable module clock before resetting when resuming
+      mmc: tmio: fix reset operation
+      mmc: renesas_sdhi: add initial setting of interrupt mask register
+      mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
+      mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
+      mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.[012]
+
+Oleksij Rempel (2):
+      misc: cardreader: add new Alcor Micro Cardreader PCI driver
+      mmc: add new Alcor Micro Cardreader SD/MMC driver
+
+Phil Elwell (1):
+      mmc: bcm2835: Recover from MMC_SEND_EXT_CSD
+
+Stefan Wahren (6):
+      mmc: bcm2835: Switch to SPDX identifier
+      mmc: bcm2835: Release DMA channel on driver unload
+      mmc: bcm2835: Avoid possible races on data requests
+      mmc: bcm2835: Terminate timeout work synchronously
+      mmc: bcm2835: Refactor dma_map_sg handling
+      mmc: bcm2835: Properly handle dmaengine_prep_slave_sg
+
+Ulf Hansson (7):
+      mmc: core: Introduce MMC_CAP_SYNC_RUNTIME_PM
+      mmc: rtsx_usb_sdmmc: Don't runtime resume the device while changing led
+      mmc: rtsx_usb_sdmmc: Re-work runtime PM support
+      mmc: rtsx_usb_sdmmc: Re-work card detection/removal support
+      Merge branch 'fixes' into next
+      mmc: core: Drop redundant check in mmc_send_hpi_cmd()
+      mmc: core: Cleanup BKOPS support
+
+Veerabhadrarao Badiganti (2):
+      dt-bindings: mmc: sdhci-msm: Add SoC-specific compatible strings
+      mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
+
+Wolfram Sang (3):
+      mmc: core: remove obsolete mmc_set_blockcount() function
+      mmc: tmio: introduce mask for 'always 1' bits
+      mmc: document 'Reliable Write' bit in uapi header
+
+Yangbo Lu (4):
+      mmc: sdhci-of-esdhc: add hs400 mode support
+      mmc: sdhci-of-esdhc: add erratum A011334 support
+      mmc: sdhci-of-esdhc: temporary fixup for eMMC HS400 issue
+      mmc: sdhci-of-esdhc: workaround for unreliable pulse width detection
+
+Yangtao Li (1):
+      mmc: convert to DEFINE_SHOW_ATTRIBUTE
+
+Yinbo Zhu (1):
+      mmc: core: Add ->hs400_prepare_ddr() callback
+
+YueHaibing (2):
+      mmc: jz4740: Use PTR_ERR_OR_ZERO in jz4740_mmc_request_gpios()
+      mmc: alcor: remove set but not used variables 'len, clock_out'
+
+jjian zhou (1):
+      mmc: mediatek: Add MMC_CAP_SDIO_IRQ support
+
+ .../devicetree/bindings/mmc/arasan,sdhci.txt       |    4 +
+ .../devicetree/bindings/mmc/fsl-imx-esdhc.txt      |    1 +
+ .../devicetree/bindings/mmc/sdhci-am654.txt        |   36 +
+ .../devicetree/bindings/mmc/sdhci-msm.txt          |   23 +-
+ .../devicetree/bindings/mmc/sdhci-omap.txt         |    2 +
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |    4 +-
+ arch/arm/mach-ep93xx/simone.c                      |   14 +-
+ arch/arm/mach-ep93xx/vision_ep9307.c               |   17 +-
+ arch/arm/mach-imx/mach-pcm043.c                    |   17 +-
+ arch/arm/mach-pxa/balloon3.c                       |    3 -
+ arch/arm/mach-pxa/cm-x270.c                        |   18 +-
+ arch/arm/mach-pxa/cm-x300.c                        |   18 +-
+ arch/arm/mach-pxa/colibri-evalboard.c              |   40 +-
+ arch/arm/mach-pxa/colibri-pxa270-income.c          |   19 +-
+ arch/arm/mach-pxa/corgi.c                          |   20 +-
+ arch/arm/mach-pxa/csb726.c                         |   19 +-
+ arch/arm/mach-pxa/em-x270.c                        |   34 +-
+ arch/arm/mach-pxa/gumstix.c                        |    3 -
+ arch/arm/mach-pxa/idp.c                            |    3 -
+ arch/arm/mach-pxa/littleton.c                      |   18 +-
+ arch/arm/mach-pxa/lubbock.c                        |    3 -
+ arch/arm/mach-pxa/magician.c                       |   26 +-
+ arch/arm/mach-pxa/mainstone.c                      |    3 -
+ arch/arm/mach-pxa/mioa701.c                        |   21 +-
+ arch/arm/mach-pxa/mxm8x10.c                        |   19 +-
+ arch/arm/mach-pxa/palm27x.c                        |   10 +-
+ arch/arm/mach-pxa/palm27x.h                        |    8 +-
+ arch/arm/mach-pxa/palmld.c                         |   16 +-
+ arch/arm/mach-pxa/palmt5.c                         |   16 +-
+ arch/arm/mach-pxa/palmtc.c                         |   19 +-
+ arch/arm/mach-pxa/palmte2.c                        |   18 +-
+ arch/arm/mach-pxa/palmtreo.c                       |   31 +-
+ arch/arm/mach-pxa/palmtx.c                         |   16 +-
+ arch/arm/mach-pxa/palmz72.c                        |   16 +-
+ arch/arm/mach-pxa/pcm990-baseboard.c               |    3 -
+ arch/arm/mach-pxa/poodle.c                         |   15 +-
+ arch/arm/mach-pxa/raumfeld.c                       |    3 -
+ arch/arm/mach-pxa/spitz.c                          |   16 +-
+ arch/arm/mach-pxa/stargate2.c                      |    3 -
+ arch/arm/mach-pxa/tosa.c                           |   18 +-
+ arch/arm/mach-pxa/trizeps4.c                       |    3 -
+ arch/arm/mach-pxa/vpac270.c                        |   16 +-
+ arch/arm/mach-pxa/z2.c                             |   14 +-
+ arch/arm/mach-pxa/zeus.c                           |   15 +-
+ arch/arm/mach-pxa/zylonite.c                       |   57 +-
+ arch/arm/mach-pxa/zylonite_pxa300.c                |    2 +
+ arch/arm/mach-s3c24xx/mach-at2440evb.c             |   14 +-
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |   15 +-
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |   15 +-
+ arch/arm/mach-s3c24xx/mach-n30.c                   |   15 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |   15 +-
+ arch/mips/include/asm/mach-jz4740/jz4740_mmc.h     |    4 -
+ arch/mips/jz4740/board-qi_lb60.c                   |   18 +-
+ arch/sh/boards/mach-ecovec24/setup.c               |   43 +-
+ drivers/gpio/gpio-pca953x.c                        |    2 +-
+ drivers/memstick/core/memstick.c                   |    3 +
+ drivers/memstick/host/rtsx_usb_ms.c                |  170 +--
+ drivers/misc/Makefile                              |    2 +-
+ drivers/misc/cardreader/Kconfig                    |   11 +
+ drivers/misc/cardreader/Makefile                   |    4 +-
+ drivers/misc/cardreader/alcor_pci.c                |  371 +++++++
+ drivers/misc/cardreader/rtsx_usb.c                 |    8 +
+ drivers/mmc/core/block.c                           |    2 +-
+ drivers/mmc/core/card.h                            |    6 +-
+ drivers/mmc/core/core.c                            |   19 +-
+ drivers/mmc/core/core.h                            |    2 -
+ drivers/mmc/core/mmc.c                             |    9 +-
+ drivers/mmc/core/mmc_ops.c                         |   93 +-
+ drivers/mmc/core/mmc_ops.h                         |    3 +-
+ drivers/mmc/core/mmc_test.c                        |   14 +-
+ drivers/mmc/core/slot-gpio.c                       |   97 +-
+ drivers/mmc/host/Kconfig                           |   28 +-
+ drivers/mmc/host/Makefile                          |    2 +
+ drivers/mmc/host/alcor.c                           | 1162 ++++++++++++++++++++
+ drivers/mmc/host/atmel-mci.c                       |   34 +-
+ drivers/mmc/host/bcm2835.c                         |   71 +-
+ drivers/mmc/host/dw_mmc-bluefield.c                |   11 +-
+ drivers/mmc/host/jz4740_mmc.c                      |  202 ++--
+ drivers/mmc/host/meson-gx-mmc.c                    |  100 +-
+ drivers/mmc/host/meson-mx-sdio.c                   |    6 +
+ drivers/mmc/host/mmc_spi.c                         |   27 +-
+ drivers/mmc/host/mmci.c                            |   11 +-
+ drivers/mmc/host/mmci.h                            |    2 +
+ drivers/mmc/host/mtk-sd.c                          |   53 +-
+ drivers/mmc/host/of_mmc_spi.c                      |   34 -
+ drivers/mmc/host/omap_hsmmc.c                      |   14 +-
+ drivers/mmc/host/pxamci.c                          |   68 +-
+ drivers/mmc/host/renesas_sdhi_core.c               |   50 +-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |   28 +-
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c           |   20 +-
+ drivers/mmc/host/rtsx_usb_sdmmc.c                  |   44 +-
+ drivers/mmc/host/s3cmci.c                          |   59 +-
+ drivers/mmc/host/sdhci-acpi.c                      |    7 +-
+ drivers/mmc/host/sdhci-cadence.c                   |    2 +-
+ drivers/mmc/host/sdhci-esdhc-imx.c                 |   26 +-
+ drivers/mmc/host/sdhci-esdhc.h                     |   24 +
+ drivers/mmc/host/sdhci-msm.c                       |  126 ++-
+ drivers/mmc/host/sdhci-of-arasan.c                 |   46 -
+ drivers/mmc/host/sdhci-of-esdhc.c                  |  151 ++-
+ drivers/mmc/host/sdhci-omap.c                      |  130 ++-
+ drivers/mmc/host/sdhci-pci-core.c                  |   19 +-
+ drivers/mmc/host/sdhci-xenon-phy.c                 |   10 +-
+ drivers/mmc/host/sdhci-xenon.c                     |   10 +-
+ drivers/mmc/host/sdhci.c                           |  106 +-
+ drivers/mmc/host/sdhci.h                           |   13 +-
+ drivers/mmc/host/sdhci_am654.c                     |  374 +++++++
+ drivers/mmc/host/tmio_mmc.h                        |    6 +
+ drivers/mmc/host/tmio_mmc_core.c                   |   41 +-
+ include/linux/alcor_pci.h                          |  286 +++++
+ include/linux/mfd/tmio.h                           |    9 +-
+ include/linux/mmc/host.h                           |    5 +-
+ include/linux/mmc/slot-gpio.h                      |    5 -
+ include/linux/platform_data/mmc-esdhc-imx.h        |    4 -
+ include/linux/platform_data/mmc-pxamci.h           |    4 -
+ include/linux/platform_data/mmc-s3cmci.h           |    4 -
+ include/linux/spi/mmc_spi.h                        |   15 -
+ include/uapi/linux/mmc/ioctl.h                     |    5 +-
+ 117 files changed, 4012 insertions(+), 1097 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-am654.txt
+ create mode 100644 drivers/misc/cardreader/alcor_pci.c
+ create mode 100644 drivers/mmc/host/alcor.c
+ create mode 100644 drivers/mmc/host/sdhci_am654.c
+ create mode 100644 include/linux/alcor_pci.h
