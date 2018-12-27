@@ -2,103 +2,73 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CE5C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBA1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F27214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 05:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF322214AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729200AbeL0F1s (ORCPT
+        id S1729289AbeL0GBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 00:27:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:57791 "EHLO ozlabs.org"
+        Thu, 27 Dec 2018 01:01:37 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:33588 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbeL0F1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 00:27:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43QJJJ14NFz9s3l;
-        Thu, 27 Dec 2018 16:27:44 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Subject: Re: [PATCH 04/10] pseries: ibmebus.c: convert to use BUS_ATTR_WO
-In-Reply-To: <20181221075442.17109-5-gregkh@linuxfoundation.org>
-References: <20181221075442.17109-1-gregkh@linuxfoundation.org> <20181221075442.17109-5-gregkh@linuxfoundation.org>
-Date:   Thu, 27 Dec 2018 16:27:50 +1100
-Message-ID: <87tvizy1wp.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726307AbeL0GBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 01:01:36 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 19DB27A21E19AF38F022;
+        Thu, 27 Dec 2018 14:01:33 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wBR61QKn017328;
+        Thu, 27 Dec 2018 14:01:26 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018122714015542-19046726 ;
+          Thu, 27 Dec 2018 14:01:55 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH]  kvm/eventfd : unnecessory conversion to bool
+Date:   Thu, 27 Dec 2018 14:22:17 +0800
+Message-Id: <1545891737-84095-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-27 14:01:55,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-27 14:01:14,
+        Serialize complete at 2018-12-27 14:01:14
+X-MAIL: mse01.zte.com.cn wBR61QKn017328
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> We are trying to get rid of BUS_ATTR() and the usage of that in
-> ibmebus.c can be trivially converted to use BUS_ATTR_WO(), so use that
-> instead.
->
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/powerpc/platforms/pseries/ibmebus.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+Conversion to bool is not needed in ioeventfd_in_range.
 
-LGTM.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ virt/kvm/eventfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index b20b751..d4cdc9c 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -723,7 +723,7 @@ struct _ioeventfd {
+ 		return false;
+ 	}
+ 
+-	return _val == p->datamatch ? true : false;
++	return _val == p->datamatch;
+ }
+ 
+ /* MMIO/PIO writes trigger an event if the addr/val match */
+-- 
+1.8.3.1
 
-cheers
-
-> diff --git a/arch/powerpc/platforms/pseries/ibmebus.c b/arch/powerpc/platforms/pseries/ibmebus.c
-> index 5b4a56131904..84e8ec4011ba 100644
-> --- a/arch/powerpc/platforms/pseries/ibmebus.c
-> +++ b/arch/powerpc/platforms/pseries/ibmebus.c
-> @@ -261,8 +261,7 @@ static char *ibmebus_chomp(const char *in, size_t count)
->  	return out;
->  }
->  
-> -static ssize_t ibmebus_store_probe(struct bus_type *bus,
-> -				   const char *buf, size_t count)
-> +static ssize_t probe_store(struct bus_type *bus, const char *buf, size_t count)
->  {
->  	struct device_node *dn = NULL;
->  	struct device *dev;
-> @@ -298,10 +297,9 @@ static ssize_t ibmebus_store_probe(struct bus_type *bus,
->  		return rc;
->  	return count;
->  }
-> -static BUS_ATTR(probe, 0200, NULL, ibmebus_store_probe);
-> +static BUS_ATTR_WO(probe);
->  
-> -static ssize_t ibmebus_store_remove(struct bus_type *bus,
-> -				    const char *buf, size_t count)
-> +static ssize_t remove_store(struct bus_type *bus, const char *buf, size_t count)
->  {
->  	struct device *dev;
->  	char *path;
-> @@ -325,7 +323,7 @@ static ssize_t ibmebus_store_remove(struct bus_type *bus,
->  		return -ENODEV;
->  	}
->  }
-> -static BUS_ATTR(remove, 0200, NULL, ibmebus_store_remove);
-> +static BUS_ATTR_WO(remove);
->  
->  static struct attribute *ibmbus_bus_attrs[] = {
->  	&bus_attr_probe.attr,
-> -- 
-> 2.20.1
