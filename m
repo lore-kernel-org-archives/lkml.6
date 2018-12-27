@@ -2,142 +2,135 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22797C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DAEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6930218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B2162148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:47:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYZCz+ll"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFNTkx4T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733232AbeL0Xnt (ORCPT
+        id S2387410AbeL0Xr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 18:43:49 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37086 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727907AbeL0Xns (ORCPT
+        Thu, 27 Dec 2018 18:47:58 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34484 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbeL0Xr5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 18:43:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id s12so19586865wrt.4;
-        Thu, 27 Dec 2018 15:43:47 -0800 (PST)
+        Thu, 27 Dec 2018 18:47:57 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w4so9319965plz.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 15:47:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ueXQcrLnuDIN0Go1ih+DHYn457KWlH7rVZ5/vFNinl8=;
-        b=GYZCz+ll361gHEWMXKWQmM4emiYmxyo/puNa6FeNcrg56DZuOPkOnttDd5twArtrVk
-         DIwsHxIB8wDPGsPebmf4IPbHgPjaXWxYBGvsvOqLflCfsXkI6957u0D7odJk7uFO/Z3w
-         LepFMwpmDh33P8NBnO9BrBEwDiUmM8lGgRmVHaggRy2XD12YOsI1oobak43RvbDiER2C
-         Y+bMNXwASLqnxpHlg8Vn/1G2ne+gftHOtMKOVpTzvMGADatia9eoNSEC75bkQViylmU+
-         nuICF4eXfT3pVVkqLZ7nC9qKuFLuIupOqEqz4jQUxPoV5zMkbOqxGa9i2nnPJx9ySsJ+
-         2nVw==
+        h=from:to:cc:subject:date:message-id;
+        bh=q2nJ9rfyypggwGRZ0F93ZauVq8Vari0uStE/oU9pY6s=;
+        b=QFNTkx4TFLmeIKJblC3YN67IvstJInDThS2hmGCMZO1ketk5nOP8rCdoZq3NgCHIdb
+         24/CDpxmU6MTkStMDpgcmP8XPoVnmkElu4KMmU3BDOd6Nxn0BXhvG0QPdoPcbcXzFQ21
+         t+nfaksHzRwg5JhiLgvh7G6FX1qj1v1R2VaeqM/rVIS4uKfGaycVpjVQ/06BTHSWU3eB
+         r07EU+Lf5w9EAx53nW4nRqv35UVh6vAVamDwoCVsvsf7TFnBlUXiBZh0BfEpCpZZ1spE
+         7EoUhMk7PJE05WKDVHj+oUQDpRcwpyFvmPD/HiHOGVlrO6VW99sl41iXZO8y+CSbzmAX
+         4uPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ueXQcrLnuDIN0Go1ih+DHYn457KWlH7rVZ5/vFNinl8=;
-        b=TyYL+iPCeWJH6xiHYeJBh3rnTGNoftxxx0YJUsncfEHjUovQd8FIHC2I8ZBevHwYzG
-         YSU0ueiJFYYzXDpFJb0a6dx0i5de4A3dHt6W6R2hGotUQNEuT35WMYKE+sNA7TD7Bpy4
-         Ko1gL/BbT32G7apKtti+BfNyFag6qT47WpfkcB41HaUe6vO6k6inYslcfTRLueQdCUxS
-         S9SjfvLKr2fqxHUBjR6xSIdX9uNPDmHRDQ3O4v60Wzqqn+oWlkNEuozDLFAMxBsYCb6P
-         iS58Wu429KdKJ0Eq3kCMCmWy/lUi3wymQuQexN3dY6amUGDDj/Aj9idG+d+ttSoP2j7R
-         vgcQ==
-X-Gm-Message-State: AJcUukejXnTF6rMgQUls8whWjf0gudJb2ZOzxE3I7KfI+inuigYpW220
-        eQjolBM4dHqXjoVIi4RQ/klcjTqL
-X-Google-Smtp-Source: ALg8bN4r7DVS2ouEbX3eeFD338Zd/aOxCJm3zBkXyTNIRLJ0Qsfb6+BRn4laLE/YQRxSFN3CqxluaQ==
-X-Received: by 2002:adf:e78f:: with SMTP id n15mr24154230wrm.115.1545954226274;
-        Thu, 27 Dec 2018 15:43:46 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:25c7:a0bd:faa6:5840? (p200300EA8BCFE30025C7A0BDFAA65840.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:25c7:a0bd:faa6:5840])
-        by smtp.googlemail.com with ESMTPSA id m4sm34686535wmi.3.2018.12.27.15.43.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 15:43:45 -0800 (PST)
-Subject: Re: [PATCH] rtc: rv8803: Check return value of rv8803_write_reg
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     Aditya Pakki <pakki001@umn.edu>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-References: <20181227202856.27408-1-pakki001@umn.edu>
- <ab4c081a-82d7-4a50-5c2a-4dbb4ba79223@gmail.com>
- <CAK8KejrntOUb7Q2MrPR6mYDKyHKc=pzO5hOYv=ZfLaP_xg0Zsw@mail.gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <cc8304f6-4f48-0e23-daff-f7b3802c7a9a@gmail.com>
-Date:   Fri, 28 Dec 2018 00:43:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8KejrntOUb7Q2MrPR6mYDKyHKc=pzO5hOYv=ZfLaP_xg0Zsw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=q2nJ9rfyypggwGRZ0F93ZauVq8Vari0uStE/oU9pY6s=;
+        b=k2yFrsuze6AR84dNZBZqt0GDOXy8jR6Kh5g33YXz4MMyzvBfmdiw4jviKPz2WVUT3g
+         esLl1uIZ25PqxfeDA7xs63mi64n/yV51LeAtYs6JqSDV+4L/6pMVYyN2ndaATfOtq/5G
+         OJXfOYDUs9CsgeE7VAq6Pu2s/KpCZ44u66onJLSa3j8gDKVUd1bJiChGyWAqdypjJupt
+         j/lUkeEsIhgpw0Sk7Z7Q6RXAQYZUkZt8b9nhYEMnDATNTM1vl4UgKsrcKGZYcvvS5Qhz
+         5iqYijjEU1nGtCQAUfv6u/GsQVUP+HYFI12bK74hjY+c9DrAPdAH8S3ianVZbdOgJbl3
+         tSQQ==
+X-Gm-Message-State: AJcUukehn/bLrWsHXLinDuGDnw5Vuc5kQmhE/ZjJSimhiNSczb2OickJ
+        VMfP9u2Eiai2KDJU4zwfZjo=
+X-Google-Smtp-Source: ALg8bN47/jxZO17cgPLQQSuAQ9rjaDbOV9Lq9vKY8gFaVkf2/1PNJy/xoWCJuIl0kSBeQH4kVaSpbg==
+X-Received: by 2002:a17:902:2b84:: with SMTP id l4mr25578969plb.191.1545954476894;
+        Thu, 27 Dec 2018 15:47:56 -0800 (PST)
+Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id l64sm48462219pge.73.2018.12.27.15.47.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Dec 2018 15:47:56 -0800 (PST)
+From:   Doug Berger <opendmb@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Doug Berger <opendmb@gmail.com>
+Subject: [PATCH] ARM: mm: initialize pfn limits with find_limits()
+Date:   Thu, 27 Dec 2018 15:47:27 -0800
+Message-Id: <1545954447-22513-1-git-send-email-opendmb@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.12.2018 00:28, Kangjie Lu wrote:
-> 
-> 
-> On Thu, Dec 27, 2018 at 4:31 PM Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
-> 
->     On 27.12.2018 21:28, Aditya Pakki wrote:
->     > In rv8803_handle_irq, rv8803_write_reg can return a failed return
->     > value when attempting to write to the bus. The fix checks the output
->     > and throws a dev_warn notifying of the failure.
->     >
->     > Signed-off-by: Aditya Pakki <pakki001@umn.edu <mailto:pakki001@umn.edu>>
->     > ---
->     >  drivers/rtc/rtc-rv8803.c | 9 +++++++--
->     >  1 file changed, 7 insertions(+), 2 deletions(-)
->     >
->     You seem to submit the same type of changes throughout very
->     different subsystems. And you do it w/o thinking and testing.
->     If you would have looked at rv8803_write_reg() you would have
->     seen that it prints an error in case of failure. So your
->     patch achieves nothing.
->     You got David Miller upset already and it looks like you
->     want to achieve the same with other maintainers too.
->     I'd strongly suggest that you stop sending patches until
->     you better understand the kernel code.
-> 
-> 
-> Hello Heiner,
-> 
-> Thanks for your suggestion. Sure, we will try to better understand
-> how the kernel works when we are preparing other patches. We recently
-> found a lot of potential bugs; due to the significant workload but 
-> limited labor force, we may make some mistakes, but yes, we will try 
-> to avoid them. 
-> 
-> One main reason we submit the patches is to seek feedback from Linux
-> maintainers who know how the kernel works best.  We hope to get: (1) 
-> confirmation: if this is indeed a bug; (2) improvement feedback: if
-> it is a bug and our fix is problematic, how can we improve it? 
-> 
-> Taking the case in this email as an example, rv8803_write_reg could
-> fail, so returning IRQ_HANDLED even when it failed doesn't seem to be
-> a good practice. Would "returning IRQ_NONE upon failure" be a better
-> fix?
-> 
-> Thanks again for your suggestion.
+The max_low_pfn value must be set before sparse_init() is called to
+keep the early memblock allocations and frees balanced for kmemleak
+initialization when sparsemem is enabled.
 
-If you want to understand whether a certain code piece includes a bug
-or not, first you need to understand what the code does. In addition
-to own analysis you could post a question to the respective mailing
-list.
-Maintainers usually have a tough workload and can't explain to every
-beginner what the code in their respective subsystem does. It's not
-the smartest approach to bother and upset them with dumb patches.
+This commit accomplishes that by replacing the local variables min,
+max_low, and max_high with the global limit variables min_low_pfn,
+max_low_pfn, and max_pfn respectively in bootmem_init(). The global
+variables are initialized directly by find_limits() and used in the
+remainder of the function.
 
-Last but not least: You seem to submit all your patches w/o even
-compile-testing. Also that's not a smart approach.
-Read "SubmittingPatches" carefully, understand it, and follow the
-rules.
+Fixes: 9099daed9c69 ("mm: kmemleak: avoid using __va() on addresses that don't have a lowmem mapping")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+---
+ arch/arm/mm/init.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-Heiner
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 32e4845af2b6..98a733f3a5b9 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -302,15 +302,12 @@ void __init arm_memblock_init(const struct machine_desc *mdesc)
+ 
+ void __init bootmem_init(void)
+ {
+-	unsigned long min, max_low, max_high;
+-
+ 	memblock_allow_resize();
+-	max_low = max_high = 0;
+ 
+-	find_limits(&min, &max_low, &max_high);
++	find_limits(&min_low_pfn, &max_low_pfn, &max_pfn);
+ 
+-	early_memtest((phys_addr_t)min << PAGE_SHIFT,
+-		      (phys_addr_t)max_low << PAGE_SHIFT);
++	early_memtest((phys_addr_t)min_low_pfn << PAGE_SHIFT,
++		      (phys_addr_t)max_low_pfn << PAGE_SHIFT);
+ 
+ 	/*
+ 	 * Sparsemem tries to allocate bootmem in memory_present(),
+@@ -328,16 +325,7 @@ void __init bootmem_init(void)
+ 	 * the sparse mem_map arrays initialized by sparse_init()
+ 	 * for memmap_init_zone(), otherwise all PFNs are invalid.
+ 	 */
+-	zone_sizes_init(min, max_low, max_high);
+-
+-	/*
+-	 * This doesn't seem to be used by the Linux memory manager any
+-	 * more, but is used by ll_rw_block.  If we can get rid of it, we
+-	 * also get rid of some of the stuff above as well.
+-	 */
+-	min_low_pfn = min;
+-	max_low_pfn = max_low;
+-	max_pfn = max_high;
++	zone_sizes_init(min_low_pfn, max_low_pfn, max_pfn);
+ }
+ 
+ /*
+-- 
+2.7.4
+
