@@ -2,130 +2,87 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A83C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2C2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960832148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:05:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XuBPV1SY"
+	by mail.kernel.org (Postfix) with ESMTP id 078852148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 04:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbeL0EFD (ORCPT
+        id S1728976AbeL0ELh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 23:05:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45879 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbeL0EFC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 23:05:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so8275594pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 20:05:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cvXQ4mLFRGvm8zhEeMGUp5Fx2IDR+KBFGhFVEaC/w/0=;
-        b=XuBPV1SYKUgBhRhQ0vneoxdAM8a4F3343q8jR/tIzeCVZ4Z3x4dZUL6y1uGiogE7Fy
-         4v3+OJfO0bfRRQer1tVCKXWzRhIlzhFLrfqw1CMJAD3UzLStTcDYqCS0pcWk/bhwwy55
-         ayNaag6o6MGobiQ1q1DuGmAAiW/6O4FQh4m4c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cvXQ4mLFRGvm8zhEeMGUp5Fx2IDR+KBFGhFVEaC/w/0=;
-        b=IHOBkPPiwa6vLJK+RrrsooNx5RGZFf+w1nBc2ikNH+K+zmUvofO6OBuLWHJa2YCvxw
-         jMIOfCbHkc2d8BiA6nz2bPFuRkLwWoOzFLeLfE1mBE1MEk6mvCDUpy7WNscVgIsig5rm
-         FSHO5/rn5fJwKWBNLex0uapWyX1FuU6K7WImJ5PbzG7GnMnZR+jaeZPkBShs0mIvTX1e
-         d/REKUkPruC7sLz2i54KkpPRvyo4XKwm7dylQkoJIV30Rd5GFjT8YRlUkxNp3x0WIhN2
-         r+x4m3DPUkZ7gadg19T2Bnk+J4htmAs5sI22W+hjr3n6D2miCDqeFifWeksnnsAKZgul
-         mm3w==
-X-Gm-Message-State: AJcUukcEoNnMx3wclL4bQ66fdZUP5fwop4oHHlS4jat1Z26/ozVs63Tl
-        qQ4Fb3bUjBd23k9Ksg92qALzRg==
-X-Google-Smtp-Source: AFSGD/UZs+p52NYLcCx/BqpT/TKjoGHJpi7g8759+hfAuWmg2k1L9MpVuSEa/lTZw7oOTQNa4N05wg==
-X-Received: by 2002:a62:6f88:: with SMTP id k130mr22476992pfc.234.1545883501100;
-        Wed, 26 Dec 2018 20:05:01 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k63sm69080469pfc.76.2018.12.26.20.04.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Dec 2018 20:05:00 -0800 (PST)
-Date:   Wed, 26 Dec 2018 20:03:41 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Kishon Vijay Abraham <kishon@ti.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Yaniv Gardi <ygardi@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Matt Wagantall <mattw@codeaurora.org>,
-        Mitchel Humpherys <mitchelh@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] phy: qcom-ufs: Use iopoll.h readl_poll_timeout macro
-Message-ID: <20181227040341.GA9651@builder>
-References: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
+        Wed, 26 Dec 2018 23:11:37 -0500
+Received: from mga06.intel.com ([134.134.136.31]:56032 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727591AbeL0ELg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 23:11:36 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2018 20:11:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,403,1539673200"; 
+   d="scan'208";a="113511082"
+Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
+  by orsmga003.jf.intel.com with ESMTP; 26 Dec 2018 20:11:33 -0800
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1gcN1A-0004IK-H2; Thu, 27 Dec 2018 12:11:32 +0800
+Date:   Thu, 27 Dec 2018 12:11:32 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Fan Du <fan.du@intel.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 01/21] e820: cheat PMEM as DRAM
+Message-ID: <20181227041132.xxdnwtdajtm7ny4q@wfg-t540p.sh.intel.com>
+References: <20181226131446.330864849@intel.com>
+ <20181226133351.106676005@intel.com>
+ <20181227034141.GD20878@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20181227034141.GD20878@bombadil.infradead.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 21 Dec 02:13 PST 2018, Marc Gonzalez wrote:
+On Wed, Dec 26, 2018 at 07:41:41PM -0800, Matthew Wilcox wrote:
+>On Wed, Dec 26, 2018 at 09:14:47PM +0800, Fengguang Wu wrote:
+>> From: Fan Du <fan.du@intel.com>
+>>
+>> This is a hack to enumerate PMEM as NUMA nodes.
+>> It's necessary for current BIOS that don't yet fill ACPI HMAT table.
+>>
+>> WARNING: take care to backup. It is mutual exclusive with libnvdimm
+>> subsystem and can destroy ndctl managed namespaces.
+>
+>Why depend on firmware to present this "correctly"?  It seems to me like
+>less effort all around to have ndctl label some namespaces as being for
+>this kind of use.
 
-> The private copy of readl_poll_timeout is no longer needed.
-> Use the implementation in iopoll.h instead.
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Dave Hansen may be more suitable to answer your question. He posted
+patches to make PMEM NUMA node coexist with libnvdimm and ndctl:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+[PATCH 0/9] Allow persistent memory to be used like normal RAM
+https://lkml.org/lkml/2018/10/23/9
 
-Regards,
-Bjorn
+That depends on future BIOS. So we did this quick hack to test out
+PMEM NUMA node for the existing BIOS.
 
-> ---
->  drivers/phy/qualcomm/phy-qcom-ufs-i.h | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-> index 681644e43248..f798fb64de94 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-> @@ -23,24 +23,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
->  #include <linux/delay.h>
-> -
-> -#define readl_poll_timeout(addr, val, cond, sleep_us, timeout_us) \
-> -({ \
-> -	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-> -	might_sleep_if(timeout_us); \
-> -	for (;;) { \
-> -		(val) = readl(addr); \
-> -		if (cond) \
-> -			break; \
-> -		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-> -			(val) = readl(addr); \
-> -			break; \
-> -		} \
-> -		if (sleep_us) \
-> -			usleep_range(DIV_ROUND_UP(sleep_us, 4), sleep_us); \
-> -	} \
-> -	(cond) ? 0 : -ETIMEDOUT; \
-> -})
-> +#include <linux/iopoll.h>
->  
->  #define UFS_QCOM_PHY_CAL_ENTRY(reg, val)	\
->  	{				\
-> -- 
-> 2.17.1
+Thanks,
+Fengguang
