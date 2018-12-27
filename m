@@ -2,165 +2,146 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E2CC43612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54952C43387
 	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475A7218E2
+	by mail.kernel.org (Postfix) with ESMTP id 2475B214D8
 	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+2m4e4d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbeL0C5k (ORCPT
+        id S1728240AbeL0C5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 21:57:40 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36078 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeL0C5j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 21:57:39 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f23so14322412edb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kKQTIZOHtW8ffxErHOxVgcrRWqvLiNdZTXKdv5GszKU=;
-        b=H+2m4e4dUs2NStwlS0hNRqDW2kNZIKr0QiDZbzwa7QrQDDrGpHrDHp0zQMhgOA3mZa
-         vmXbW+d9hrltuJFXIAoxcrAQ7k5Rs9FPmL8tRs60/9A5mqcqBuRb848DMy+7p+knRDTc
-         WBt4SZJjIWQ/ECMFPaWUYCj7a8GEWe7TcPDFikUgtNSTI6Fy1ohNNCxUXNsYVcyXrjzt
-         QZA/i4iqHnNd5fwrtUlZri1s8OcbTRosZ6gC9m/LSHOPBhe3Ecb3QAU0LYBsMfzv9Aqa
-         SpdW72rhHFiXcIVQ0NbiqmkAa6q5Wx/CfUsZmtfAFym8UUtaLaFuvf8DG6tF4zZk9Jjo
-         5ltw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kKQTIZOHtW8ffxErHOxVgcrRWqvLiNdZTXKdv5GszKU=;
-        b=jyvzMPgco1q8TNAXkz1PzIlr5Fc8jefNKYuhaUmdMffnuLToO+rBR9eqmspYc+3zn8
-         XnYPS5G9lbVJSmTnwLuJUATUhPC/W6FlzfieY6gO7HRtqMyuYq/KGvKhQoO59ufQmQ0L
-         RlWaUFbszfcaXihsAteI2pUG7tjatc9qN4YZNMjM84suDL/Sv7nddIFN5Ajd7/ulUvx2
-         6OBzjEeOWpWzvGxf+7uj5YN/nvDkRCKtvdWVqwWFBIjRUuPR+JvDNIASeKglKVdhl6U1
-         wKYaKHYo5Lol7oKoGRDzGGEPFtdisKJSZ+zGZSC5IMNPrerPUyQMlHQ3fIJQmDHRY772
-         +9hQ==
-X-Gm-Message-State: AA+aEWYBGWEO2xjv03Y+42ueDUUQ6+gvncZNUHftA7sRMTmxrTvjlZY4
-        VAYe7c10pD5ZvVYAdkNNnwCtTO4UXmJyufNphg==
-X-Google-Smtp-Source: AFSGD/XtHFKn4kDyEZN6q8HVJOLIljvc5tPo+g6X6lq6NAdQq+bFPvJ910kno6zkzXg7UkcdqOmZpVtsTreRnXOikTo=
-X-Received: by 2002:a17:906:2acf:: with SMTP id m15-v6mr14416497eje.180.1545879457523;
- Wed, 26 Dec 2018 18:57:37 -0800 (PST)
+        Wed, 26 Dec 2018 21:57:31 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17063 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726847AbeL0C5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 21:57:31 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 06DE3E68A1BBB;
+        Thu, 27 Dec 2018 10:57:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 27 Dec 2018 10:57:16 +0800
+From:   Xie XiuQi <xiexiuqi@huawei.com>
+To:     <mingo@redhat.com>, <vincent.guittot@linaro.org>,
+        <peterz@infradead.org>, <xiezhipeng1@huawei.com>
+CC:     <huawei.libin@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sched: fix infinity loop in update_blocked_averages
+Date:   Thu, 27 Dec 2018 11:04:26 +0800
+Message-ID: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-References: <1544760446-506-1-git-send-email-kernelfans@gmail.com> <20181226014701.GD11472@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20181226014701.GD11472@dhcp-128-65.nay.redhat.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu, 27 Dec 2018 10:57:26 +0800
-Message-ID: <CAFgQCTtEMw9f9H-nMAEntwLkNLTP9s9zpoNLvx+cK_hquXTA4A@mail.gmail.com>
-Subject: Re: [PATCHv2] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        kexec@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
-        vgoyal@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 9:47 AM Dave Young <dyoung@redhat.com> wrote:
->
-> On 12/14/18 at 12:07pm, Pingfan Liu wrote:
-> > Customer reported a bug on a high end server with many pcie devices, where
-> > kernel bootup with crashkernel=384M, and kaslr is enabled. Even
-> > though we still see much memory under 896 MB, the finding still failed
-> > intermittently. Because currently we can only find region under 896 MB,
-> > if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
-> > randomly, and crashkernel reservation need be aligned to 128 MB, that's
-> > why failure is found. It raises confusion to the end user that sometimes
-> > crashkernel=X works while sometimes fails.
-> > If want to make it succeed, customer can change kernel option to
-> > "crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
-> > limited space to behave even though its grammer looks more generic.
-> > And we can't answer questions raised from customer that confidently:
-> > 1) why it doesn't succeed to reserve 896 MB;
-> > 2) what's wrong with memory region under 4G;
-> > 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
-> >
-> > This patch simplifies the method suggested in the mail [1]. It just goes
-> > bottom-up to find a candidate region for crashkernel. The bottom-up may be
-> > better compatible with the old reservation style, i.e. still want to get
-> > memory region from 896 MB firstly, then [896 MB, 4G], finally above 4G.
-> >
-> > There is one trivial thing about the compatibility with old kexec-tools:
-> > if the reserved region is above 896M, then old tool will fail to load
-> > bzImage. But without this patch, the old tool also fail since there is no
-> > memory below 896M can be reserved for crashkernel.
-> >
-> > [1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> > Cc: Dave Young <dyoung@redhat.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Baoquan He <bhe@redhat.com>
-> > Cc: yinghai@kernel.org,
-> > Cc: vgoyal@redhat.com
-> > Cc: kexec@lists.infradead.org
-> >
-> > ---
-> > v1->v2:
-> >   improve commit log
-> >  arch/x86/kernel/setup.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> > index d494b9b..60f12c4 100644
-> > --- a/arch/x86/kernel/setup.c
-> > +++ b/arch/x86/kernel/setup.c
-> > @@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
-> >
-> >       /* 0 means: find the address automatically */
-> >       if (crash_base <= 0) {
-> > +             if (!memblock_bottom_up())
-> > +                     memblock_set_bottom_up(true);
-> >               /*
-> >                * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
-> >                * as old kexec-tools loads bzImage below that, unless
-> >                * "crashkernel=size[KMG],high" is specified.
-> >                */
-> >               crash_base = memblock_find_in_range(CRASH_ALIGN,
-> > -                                                 high ? CRASH_ADDR_HIGH_MAX
-> > -                                                      : CRASH_ADDR_LOW_MAX,
-> > -                                                 crash_size, CRASH_ALIGN);
-> > +                     (max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
-> > +             if (!memblock_bottom_up())
-> > +                     memblock_set_bottom_up(false);
->
-> The previous memblock_set_bottom_up(true) set it as true, so
-> "!memblock_bottom_up()" is impossible, not sure what is the point of
-> this condition check.
->
-> Do you want to restore the original memblock direction? If so a variable
-> to save the old direction is needed.  But is this really necessary?
-> Do you know any side effects of setting the bottom up as true?
->
-Yes, will fix it.
+Zhepeng Xie report a bug, there is a infinity loop in
+update_blocked_averages().
 
-Thanks
-> > +
-> >               if (!crash_base) {
-> >                       pr_info("crashkernel reservation failed - No suitable area found.\n");
-> >                       return;
-> > --
-> > 2.7.4
-> >
-> >
-> > _______________________________________________
-> > kexec mailing list
-> > kexec@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/kexec
->
-> Thanks
-> Dave
+PID: 14233  TASK: ffff800b2de08fc0  CPU: 1   COMMAND: "docker"
+ #0 [ffff00002213b9d0] update_blocked_averages at ffff00000811e4a8
+ #1 [ffff00002213ba60] pick_next_task_fair at ffff00000812a3b4
+ #2 [ffff00002213baf0] __schedule at ffff000008deaa88
+ #3 [ffff00002213bb70] schedule at ffff000008deb1b8
+ #4 [ffff00002213bb80] futex_wait_queue_me at ffff000008180754
+ #5 [ffff00002213bbd0] futex_wait at ffff00000818192c
+ #6 [ffff00002213bd00] do_futex at ffff000008183ee4
+ #7 [ffff00002213bde0] __arm64_sys_futex at ffff000008184398
+ #8 [ffff00002213be60] el0_svc_common at ffff0000080979ac
+ #9 [ffff00002213bea0] el0_svc_handler at ffff000008097a6c
+ #10 [ffff00002213bff0] el0_svc at ffff000008084044
+
+rq->tmp_alone_branch introduced in 4.10, used to point to
+the new beg of the list. If this cfs_rq is deleted somewhere
+else, then the tmp_alone_branch will be illegal and cause
+a list_add corruption.
+
+(When enabled DEBUG_LIST, we fould this list_add corruption)
+
+[ 2546.741103] list_add corruption. next->prev should be prev
+(ffff800b4d61ad40), but was ffff800ba434fa38. (next=ffff800b6a95e740).
+[ 2546.741130] ------------[ cut here ]------------
+[ 2546.741132] kernel BUG at lib/list_debug.c:25!
+[ 2546.741136] Internal error: Oops - BUG: 0 [#1] SMP
+[ 2546.742870] CPU: 1 PID: 29428 Comm: docker-runc Kdump: loaded Tainted: G E  4.19.5-1.aarch64 #1
+[ 2546.745415] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+[ 2546.747402] pstate: 40000085 (nZcv daIf -PAN -UAO)
+[ 2546.749015] pc : __list_add_valid+0x50/0x90
+[ 2546.750485] lr : __list_add_valid+0x50/0x90
+[ 2546.751975] sp : ffff00001b5eb910
+[ 2546.753286] x29: ffff00001b5eb910 x28: ffff800abacf0000
+[ 2546.754976] x27: ffff00001b5ebbb0 x26: ffff000009570000
+[ 2546.756665] x25: ffff00000960d000 x24: 00000250f41ca8f8
+[ 2546.758366] x23: ffff800b6a95e740 x22: ffff800b4d61ad40
+[ 2546.760066] x21: ffff800b4d61ad40 x20: ffff800ba434f080
+[ 2546.761742] x19: ffff800b4d61ac00 x18: ffffffffffffffff
+[ 2546.763425] x17: 0000000000000000 x16: 0000000000000000
+[ 2546.765089] x15: ffff000009570748 x14: 6666662073617720
+[ 2546.766755] x13: 747562202c293034 x12: 6461313664346230
+[ 2546.768429] x11: 3038666666662820 x10: 0000000000000000
+[ 2546.770124] x9 : 0000000000000001 x8 : ffff000009f34a0f
+[ 2546.771831] x7 : 0000000000000000 x6 : 000000000000250d
+[ 2546.773525] x5 : 0000000000000000 x4 : 0000000000000000
+[ 2546.775227] x3 : 0000000000000000 x2 : 70ef7f624013ca00
+[ 2546.776929] x1 : 0000000000000000 x0 : 0000000000000075
+[ 2546.778623] Process docker-runc (pid: 29428, stack limit = 0x00000000293494a2)
+[ 2546.780742] Call trace:
+[ 2546.781955]  __list_add_valid+0x50/0x90
+[ 2546.783469]  enqueue_entity+0x4a0/0x6e8
+[ 2546.784957]  enqueue_task_fair+0xac/0x610
+[ 2546.786502]  sched_move_task+0x134/0x178
+[ 2546.787993]  cpu_cgroup_attach+0x40/0x78
+[ 2546.789540]  cgroup_migrate_execute+0x378/0x3a8
+[ 2546.791169]  cgroup_migrate+0x6c/0x90
+[ 2546.792663]  cgroup_attach_task+0x148/0x238
+[ 2546.794211]  __cgroup1_procs_write.isra.2+0xf8/0x160
+[ 2546.795935]  cgroup1_procs_write+0x38/0x48
+[ 2546.797492]  cgroup_file_write+0xa0/0x170
+[ 2546.799010]  kernfs_fop_write+0x114/0x1e0
+[ 2546.800558]  __vfs_write+0x60/0x190
+[ 2546.801977]  vfs_write+0xac/0x1c0
+[ 2546.803341]  ksys_write+0x6c/0xd8
+[ 2546.804674]  __arm64_sys_write+0x24/0x30
+[ 2546.806146]  el0_svc_common+0x78/0x100
+[ 2546.807584]  el0_svc_handler+0x38/0x88
+[ 2546.809017]  el0_svc+0x8/0xc
+
+In this patch, we move rq->tmp_alone_branch point to its prev before delete it
+from list.
+
+Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+Cc: Bin Li <huawei.libin@huawei.com>
+Cc: <stable@vger.kernel.org>        [4.10+]
+Fixes: 9c2791f936ef (sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list)
+Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
+Tested-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+---
+ kernel/sched/fair.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ac855b2..7a72702 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -347,6 +347,11 @@ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+ 	if (cfs_rq->on_list) {
++		struct rq *rq = rq_of(cfs_rq);
++
++		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
++			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
++
+ 		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
+ 		cfs_rq->on_list = 0;
+ 	}
+-- 
+1.8.3.1
+
