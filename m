@@ -2,112 +2,159 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_RHS_DOB
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895D5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 13:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2442C43613
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FA820685
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 13:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pLpLlsu7"
+	by mail.kernel.org (Postfix) with ESMTP id 907222148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbeL0NrN (ORCPT
+        id S1729920AbeL0OFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 08:47:13 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:43372 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeL0NrM (ORCPT
+        Thu, 27 Dec 2018 09:05:53 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:57157 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729726AbeL0OFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 08:47:12 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBRDd30u050865;
-        Thu, 27 Dec 2018 13:41:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=wWhlKvi6DYO/+w7JYjA/SNhf/XJAF2jtuIRmY0IuZj4=;
- b=pLpLlsu7wAnzIkELBQItlkruOcNnB9iJ3uXpebHwioUiJxQ1DDDMwth+uHf2+MF+A5We
- nj9KTNHdA7E7/qdaioAPmfta88TiY/cWfqhbU+DqbdpuJBW6S0K8hs2NQpBW22TGLNjP
- w+zkwr/gNluxEunFCkDABo/dN0Y4BZy8IYv+8ba3xrIebAAjT1Lnpfa5/d1MoXelqmNG
- xJuOEkpVEa+6ca8MhwaWsPcEHzCb6CFq7Zmsote4JmrENcGPgE0N6dMwO9XLwGU4vAM3
- vAXCHmSqLps+zZ/QWYuOuWOI9e9epAlBxvpHKm+v2eU2o3vS2FuiRBOF5k1+a6dE4ANo Lw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2phasdwfjk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Dec 2018 13:41:10 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBRDfAD1032512
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Dec 2018 13:41:10 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBRDf940020543;
-        Thu, 27 Dec 2018 13:41:09 GMT
-Received: from kadam (/197.157.34.167)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Dec 2018 05:41:08 -0800
-Date:   Thu, 27 Dec 2018 16:40:55 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Tom Psyborg <pozega.tomislav@gmail.com>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org,
+        Thu, 27 Dec 2018 09:05:52 -0500
+Received: from oxbsltgw01.schlund.de ([212.227.220.145]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M3DaN-1gdsni1hE5-003g2j; Thu, 27 Dec 2018 15:05:27 +0100
+Date:   Thu, 27 Dec 2018 15:05:26 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-scsi@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 00/20] drop useless LIST_HEAD
-Message-ID: <20181227134055.GA2272@kadam>
-References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAKR_QVJefW1vxYb7-qiU8=0YdbFghYo15SK2eGjOC-dntRfyYA@mail.gmail.com>
- <alpine.DEB.2.21.1812232304130.2940@hadrien>
- <CAKR_QVLeZBL43W4x1mzcfcakSZyyh9L81vgUMxfnSccKawEfdg@mail.gmail.com>
+        Eric Anholt <eric@anholt.net>, linux-i2c@vger.kernel.org
+Message-ID: <1232214204.268730.1545919526431@email.ionos.de>
+In-Reply-To: <baa17fb765bf8b40fe6e91b4884b83af6fcf7641.camel@bootlin.com>
+References: <20181221121135.4847-1-paul.kocialkowski@bootlin.com>
+ <1941132339.131316.1545481176339@email.ionos.de>
+ <baa17fb765bf8b40fe6e91b4884b83af6fcf7641.camel@bootlin.com>
+Subject: Re: [PATCH] i2c: bcm2835: Clear current message and count after a
+ transaction
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKR_QVLeZBL43W4x1mzcfcakSZyyh9L81vgUMxfnSccKawEfdg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9118 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=656
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812270124
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:bkHrRQSzEZAB3EkVyauNGzE9blzsvZJTbZfxiCMtNSBZBy1BzlJ
+ 0uyYAI8QNl9zetV7oJvwirP74XLhDur2QfBa0oc08bxPuAT6jSmFLFFhqR+vg3l4COSI52Y
+ 620kn9pOsA4TfrZHXk2CQzDuBkjLBw0cEcpxEhJOOl1aC+N0lfRwK1aoNAF9wAtXspiwt0u
+ KTHjFZKcFuPEaC2L8YU9A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:r2FXzmONG+w=:MNB21GyzlDtQSWfAN9SG9J
+ CeVhx5Sq5BeKlSRHRbbN10rR02+jWzrRVhHjAwTK9H9xaDiGHlIvgC2k+OWFp/t5Gghd++DPJ
+ YD8tAKpUR31YQxytiOjotRUx/g+lXXlsQrvXAL7RpR4jukzgNy0HsV4hJKSWNYoSp519pPvvq
+ ddqI/INFqs4MtlMzm/rL/G3PfNX1RSDHqrbBdaXSuAW503XTDA14ajsBmMJ0S0I61m6Gt7zhC
+ Umb+ldN9X/Eivv3aRxy+xNj7dPhPgwJYEC1nf+saAVdPdtjuaYR52oFBRrjOHSb2cnicMxtqO
+ 74GfgeTMTyR07XFS+cN24KNoaBw3ZWBKepdwtXXey51RqA0TwLLTAMlXRsEXgqTGFKP7RbJOg
+ 7phGohipzXpJmJA+kS2KF47/K5bC8CH85FZFmeMEX4EKKe+kkHD+UDCJARrj6iAIegj0FD7ui
+ sINT6kOBzGWD5JS64Ax6y5u0xLjdGst0EQ1a5ZkfkkYr2qrPduVBepNEv58GdU18gyDIHoFC7
+ HjvK/D5M6eIB2abgG0vfoT/XH6MVXkYnOj06y9Fu0NLoNKZbuj/wSsYYZmJj0y1reJs1ZggyN
+ v6TMDpU5y2xMSx6Hk/Zq+YamSlDmW4yLHBDKVpYCuDrepJ4qT5NiEgMDa3krMn3wLKhqVk9iW
+ OO5SWf3+YSujHfcmO+lprspPDDOcMvBH7eObbTbgAZotB1Ua+KkDK4ta+0mdhKLQupwpHChl4
+ 82CWAPObpzwSAHcH7UPEdonfZgq6BNegCOml4RWRRMkSxPe7HwGS/kFiHpQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 25, 2018 at 11:12:20PM +0100, Tom Psyborg wrote:
-> there was discussion about this just some days ago. CC 4-5 lists is
-> more than enough
+Hi Paul,
+
+> Paul Kocialkowski <paul.kocialkowski@bootlin.com> hat am 24. Dezember 2018 um 10:10 geschrieben:
 > 
+> 
+> Hi,
+> 
+> On Sat, 2018-12-22 at 13:19 +0100, Stefan Wahren wrote:
+> > Hi Paul,
+> > 
+> > > Paul Kocialkowski <paul.kocialkowski@bootlin.com> hat am 21. Dezember 2018 um 13:11 geschrieben:
+> > > 
+> > > 
+> > > The driver's interrupt handler checks whether a message is currently
+> > > being handled with the curr_msg pointer. When it is NULL, the interrupt
+> > > is considered to be unexpected. Similarly, the i2c_start_transfer
+> > > routine checks for the remaining number of messages to handle in
+> > > num_msgs.
+> > > 
+> > > However, these values are never cleared and always keep the message and
+> > > number relevant to the latest transfer (which might be done already and
+> > > the underlying message memory might have been freed).
+> > > 
+> > > When an unexpected interrupt hits with the DONE bit set, the isr will
+> > > then try to access the flags field of the curr_msg structure, leading
+> > > to a fatal page fault.
+> > > 
+> > > Fix the issue by systematically clearing curr_msg and num_msgs in the
+> > > driver-wide device structure when a transfer is considered complete.
+> > > 
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > ---
+> > >  drivers/i2c/busses/i2c-bcm2835.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
+> > > index 44deae78913e..5486252f5f2f 100644
+> > > --- a/drivers/i2c/busses/i2c-bcm2835.c
+> > > +++ b/drivers/i2c/busses/i2c-bcm2835.c
+> > > @@ -298,6 +298,9 @@ static int bcm2835_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+> > >  		return -ETIMEDOUT;
+> > >  	}
+> > >  
+> > > +	i2c_dev->curr_msg = NULL;
+> > > +	i2c_dev->num_msgs = 0;
+> > 
+> > AFAIU this would reduce the chance of a use-after-free dramatically but not completely.
+> 
+> Do you have a specific case of use-after-free related to these
+> variables in mind that this cleanup would not fix (except for the
+> timeout case)?
 
-I don't know who you were discussing this with...
+okay i was wrong about the use-after-free. But i'm not sure about this scenario on the I2C bus shared with the VC4:
 
-You should CC the 0th patch to all the mailinglists.  That much is a
-clear rule.
+1. ARM core starts I2C transfer (bcm2835_i2c_start_transfer)
+2. VC4 triggers a BCM2835_I2C_S_DONE interrupt
+3. ARM core catches this interrupt before the VC4
 
-For the rest, Julia's position is the more conservative one.  I was in
-a conversation in RL and they were like, "CC everyone for all the
-patches".  It depends on the context, of course.  If the patches are
-dependent on each other then you *have* to CC everyone for everything.
+Stefan
 
-If we really have other clear rules, then it should be encoded into
-get_maintainer.pl so that it's automatic.
-
-My other question is why do the linux-arm-kernel@lists.infradead.org
-people feel like they need to be CC'd about every driver???  I always
-remove them from the CC list unless it's an arch/arm issue.
-
-regards,
-dan carpenter
-
-PS:  Please, no more top posting.
-
+> 
+> The msg_buf element (in association with msg_buf_remaining keeping its
+> previous value) could also lead to similar problems, so I'm thinking of
+> making a bcm2835_i2c_finish_transfer function to group all the cleanups
+> and call that right after wait_for_completion_timeout.
+> 
+> > Btw: Why did you leave of the i2c transfer timeout case?
+> 
+> I should definitely have included it, actually.
+> 
+> Cheers,
+> 
+> Paul
+> 
+> > Thanks
+> > Stefan
+> > 
+> > > +
+> > >  	if (!i2c_dev->msg_err)
+> > >  		return num;
+> > >  
+> > > -- 
+> > > 2.20.1
+> > > 
+> -- 
+> Paul Kocialkowski, Bootlin (formerly Free Electrons)
+> Embedded Linux and kernel engineering
+> https://bootlin.com
+>
