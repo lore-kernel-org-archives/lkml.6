@@ -2,89 +2,117 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F70C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD902C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7302148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A2C0214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:29:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YzVqKFyJ"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="oUuWXCTp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbeL0UZR (ORCPT
+        id S1729872AbeL0U3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:25:17 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34321 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729751AbeL0UZQ (ORCPT
+        Thu, 27 Dec 2018 15:29:10 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:54802 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729817AbeL0U3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:25:16 -0500
-Received: by mail-pg1-f194.google.com with SMTP id j10so9184980pga.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 12:25:16 -0800 (PST)
+        Thu, 27 Dec 2018 15:29:10 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id BCF11148
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 20:29:08 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fn9FsSTG4EW8 for <linux-kernel@vger.kernel.org>;
+        Thu, 27 Dec 2018 14:29:08 -0600 (CST)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 96E53607
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 14:29:08 -0600 (CST)
+Received: by mail-io1-f70.google.com with SMTP id p4so23092620iod.17
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 12:29:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sa2xitYbhv23h6ykCl7D8XaNx7MbfbYEeVHMesewNC8=;
-        b=YzVqKFyJo8YHNUflNhbmKT+rZCU6/rWDP5kI6Il6u8ohHUVdm2aBULXJzqu5J8apof
-         jS+nmwaaJT09WYX5l6zf7H259MgoTdJ7aD+DstwxGQqUkNBQ/AxhCj58PPw0sAVaU1Wy
-         2s4WlOQOfNyRsqIr2kfR4FfQsUdj3/+QEHwHc=
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qjUzW9f7/4yeimAegS9XhZOTjFBdcEVLwOSIBSJ0prc=;
+        b=oUuWXCTpnteBWnI7shWgSBR6/dafAmlge67rmMw8AoI0fYVSGB+vMFxmNnSDgZzBqW
+         O8OiIPO7JuAvHiCDL6TmdY68CRnbQ6Ll3+GYvs0yq4DYHdMZ2Kn+Q/DwKoLGvyYsJIfH
+         8M82wut5lzjcXbYgCUEm3XpzccArpvpZtPq2SLUI0WJbDoJKcT62MI9+lvAqnMtgs/l7
+         ukGYreIYE/t55c0lqqEuSfTMLQNzHp+Ero8wAqSL0DO/M3/ydOeYP2pJpM+SkInJcfYf
+         CfIslQ5mndO4jLwByaeZZGAen7TD6umUdBCJM5UoebdqJCJaym40Szuqlkxtgi4vt4a+
+         RM2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sa2xitYbhv23h6ykCl7D8XaNx7MbfbYEeVHMesewNC8=;
-        b=IBmXkejUkcsDNwgoeqF0XTP1PdyFkA1mFSn1ITktQu8HA3qFMsc8CgP5o11A8nZeg9
-         CuHpxWHKcc/hrFL1XZcMCH07J08DXwRR92+Sr1bqw+99CRsF/jAOW25ZCef/qDtVm6Zc
-         DgKUx6jWSn0EUW36J3w2q+HU1O9XMPswPigUHctUhqpBzpuKSGgcc19QXmdrSTupyNp/
-         8rGpTkEw2oIFZU/3wRRVMj+xy9HJ4de8MGR1axLRzh98H2WXeTZKTVSkP2MKlTmIziFd
-         KjnbVU3zo36gIAt21Wg3KZeX86em+8EEQxZJPo1yx7UcmGXTREHKuiXlNovvRCgm8lql
-         EgYw==
-X-Gm-Message-State: AJcUukfWZ8mRAWmJ+KjBXNgA7Lev5dD5MVgMwNMearQvx867gDo9ClI+
-        wNskycsXhN5BgscXjLY2jfcNbA==
-X-Google-Smtp-Source: ALg8bN7EqY+GDPLCJ2z0F2pcDn5LznrSo5TjwPUF6c9WUZwYu7SUnzHd2QWEH8iwueB3d1+bTQCxYw==
-X-Received: by 2002:a63:5c41:: with SMTP id n1mr22920893pgm.1.1545942316143;
-        Thu, 27 Dec 2018 12:25:16 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id p24sm62813200pfk.155.2018.12.27.12.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 12:25:15 -0800 (PST)
-Date:   Thu, 27 Dec 2018 12:25:14 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v6 3/6] Bluetooth: hci_qca: Fix frame reassembly errors
- for wcn3990
-Message-ID: <20181227202514.GK261387@google.com>
-References: <20181227073136.8431-1-bgodavar@codeaurora.org>
- <20181227073136.8431-4-bgodavar@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181227073136.8431-4-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qjUzW9f7/4yeimAegS9XhZOTjFBdcEVLwOSIBSJ0prc=;
+        b=Czo9MBIghZliUpXMGgSZm30/Edh/4s0QMhQnTzWHjtSlrCoZE03ARH/rjigewn+BRE
+         R97hZYOrFDNMXZo1A4yvZ4BFv/1kD9+fRRoqRZ4cSfrYzFybEDR1q8eb4dePFYCWf0yi
+         X2fjv7xPW6CjkxvXZ/kIUAAt65o4sB8u67bv0ti2BSH7/kKyTnJnwKr8xiYSuA0C8iVF
+         DAVOdawxTmecYmPXJ+i1jVAo9d0ijAUpscDvGyM4ATS4wOcWWYNep/7HHivZdEigKvzY
+         hN91D48jgimeiNLm4lc9qDTMEjdkZDc4sCusgNPt0iF/RDs6SYHkwTE32fjCpkjvbhm+
+         dJBw==
+X-Gm-Message-State: AA+aEWaja8sjufZoH/zIvVCP0Mk5cM8OkTjbmD2XWSx+f1jV2XL2yuQM
+        hzSURlNzQG/cHTv0dH88ktvqFS8t7dTuVaPKRAWWvFE3nawynj9pep/o3lJdSFiQiScX4Iqujit
+        1dlUriAgmXfWka3O9a8Hw1JWhyc86
+X-Received: by 2002:a24:8e43:: with SMTP id h64mr15070165ite.26.1545942548193;
+        Thu, 27 Dec 2018 12:29:08 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/VD7S7scoxbvijQJ57zJIpbBZuVTH+RSgqsOE0jWcyAHMojgpEI41XBpcaw6fJooQyYfnvKeQ==
+X-Received: by 2002:a24:8e43:: with SMTP id h64mr15070154ite.26.1545942547933;
+        Thu, 27 Dec 2018 12:29:07 -0800 (PST)
+Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
+        by smtp.gmail.com with ESMTPSA id j129sm14939661itb.41.2018.12.27.12.29.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Dec 2018 12:29:07 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: rv8803: Check return value of rv8803_write_reg
+Date:   Thu, 27 Dec 2018 14:28:55 -0600
+Message-Id: <20181227202856.27408-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 01:01:33PM +0530, Balakrishna Godavarthi wrote:
-> During initalization of wcn3990, we observed UART is reading some
-> stray bytes on the Rx line. This is logging Frame reassembly errors
-> on the serial console. This could be because of tristate of Tx line
-> of wcn3990 during boot up.
+In rv8803_handle_irq, rv8803_write_reg can return a failed return
+value when attempting to write to the bus. The fix checks the output
+and throws a dev_warn notifying of the failure.
 
-My testing suggests that this change is not needed if the Rx line of
-the SoC/AP is configured with a pull-up. We'd probably all prefer not
-to have this change if there's a neater way to address the garbage
-data. Could you test with adding the pull-up and dropping this patch
-on your side?
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/rtc/rtc-rv8803.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Thanks
+diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
+index 450a0b831a2d..5a19d5ecbf57 100644
+--- a/drivers/rtc/rtc-rv8803.c
++++ b/drivers/rtc/rtc-rv8803.c
+@@ -180,8 +180,13 @@ static irqreturn_t rv8803_handle_irq(int irq, void *dev_id)
+ 
+ 	if (events) {
+ 		rtc_update_irq(rv8803->rtc, 1, events);
+-		rv8803_write_reg(client, RV8803_FLAG, flags);
+-		rv8803_write_reg(rv8803->client, RV8803_CTRL, rv8803->ctrl);
++		if (rv8803_write_reg(client, RV8803_FLAG, flags))
++			dev_warn(&client->dev, "Failed to write RV8803 reg.\n");
++
++		if (rv8803_write_reg(rv8803->client, RV8803_CTRL,
++					rv8803->ctrl))
++			dev_warn(&rv8803->client->dev,
++				"Failed to write RV8803_CTRL reg.\n");
+ 	}
+ 
+ 	mutex_unlock(&rv8803->flags_lock);
+-- 
+2.17.1
 
-Matthias
