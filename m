@@ -2,182 +2,92 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC21DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA4EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA92214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:50:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MZEWHRlx"
+	by mail.kernel.org (Postfix) with ESMTP id 1DA0A214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545947733;
+	bh=QHuHbp0K8ZXS8JWLw/8yjxTAKp5bopzXiD5kwRNeF/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NOjZst3MNAlhdgT+TFWV8hAyfQdtXRDvmA8u3u0D2C2xQ1ArYt7fux1cSI6wsQHe4
+	 /CvSZsqOKPQqPKhLB1WI4lErcIuik/Ana7vfBt1ojT9UFUOLDQWmqbhY4ya+6mWCES
+	 MfiS75Ytrwjq30tHxqSVbKzli/N+FhWOjPdZXvE8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbeL0Vu6 (ORCPT
+        id S1730360AbeL0Vzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 16:50:58 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51276 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730257AbeL0Vuu (ORCPT
+        Thu, 27 Dec 2018 16:55:32 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45421 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729935AbeL0Vzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 16:50:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so17714072wmj.1;
-        Thu, 27 Dec 2018 13:50:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lpJZNxi0lfyjPq2DOZ1N4ZgeJo5jnwrwv6zYfdTu/XE=;
-        b=MZEWHRlxukr3TVr/+J9GcVck7lzhvcJo7uRAyUDuYKhq3QM9as3zFVCmdWfTT1BTCL
-         Mo0BEQ/Oc1hFiVUVwOwITnUQTPEWEz7kR4uDnrCwVM1HzcE2b4R8bVYgG+Ead57WeJFd
-         pZhqSAKhUnTbQ0tKBicrWo7RbqpxsyrQWagnhF4Xc07JyGAYlr6vjzoXXBueQ33TRJEh
-         5gRx2KUOulz+JSVhRLUyR++9PhYUb+2rIxlM5rFFt4LFyetLo2BHwKHWcoQsOoywOyTS
-         f837w8nRT835Ns5lZ8NGLAdHOuqCQLa674Cn89RR07MgmC4pT+j0PH+ZDjZYgS9BDjq8
-         AAFg==
+        Thu, 27 Dec 2018 16:55:32 -0500
+Received: by mail-io1-f66.google.com with SMTP id p7so4646216iog.12;
+        Thu, 27 Dec 2018 13:55:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lpJZNxi0lfyjPq2DOZ1N4ZgeJo5jnwrwv6zYfdTu/XE=;
-        b=jeIbPWLRVwS+wYm3snj7XZBd0B1ushyn1V3wWiRc5ee65l8rqEwS6QJdWsGCsx8tgm
-         qEf97RO9SfWK7tPmpbuUDq2V3B6vbOZE1HKnc/RiWbwQZMRpNFtWDxJDsIniQQRuVZZE
-         yweGx0cZ/nX2D9qjswjMokgdo0k0YKHldBOlU2SCuqdHbiIuPDSAplj56KVmCVDKCIzr
-         RXJbEjROdMQqKbVFxl2z3CqRxOVxVXjBKtA9nMS2VHFpvyX1aKqcEWd9/3c161NDFyxw
-         Smun4KJo1AUHtnHyXQyczcD0qRK3OshzNowETEuFG+bPApMEMHwR/Fu0VJIbn3U0ky9x
-         u39A==
-X-Gm-Message-State: AJcUukeJVtx81yOA/VDt3r+E+wN3V0aomcZUQ9w32c8gKPscx4ReYI2r
-        ambwq0wTDkxYv8O697LYRvU=
-X-Google-Smtp-Source: ALg8bN4LwXOC6Od3bQrCvJ5wI00pK1Br2wvc86MuMB8vExxb417vahgIsH0SVF7dTI6iI9phpIo4qg==
-X-Received: by 2002:a1c:4807:: with SMTP id v7mr22944033wma.53.1545947446671;
-        Thu, 27 Dec 2018 13:50:46 -0800 (PST)
-Received: from blackbox.darklights.net (p200300DCD711B00071582302E30AD474.dip0.t-ipconnect.de. [2003:dc:d711:b000:7158:2302:e30a:d474])
-        by smtp.googlemail.com with ESMTPSA id m4sm34538164wmi.3.2018.12.27.13.50.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 13:50:46 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     balbes-150@yandex.ru, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/2] iio: adc: meson-saradc: enable the temperature sensor two more SoCs
-Date:   Thu, 27 Dec 2018 22:50:20 +0100
-Message-Id: <20181227215020.9803-3-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181227215020.9803-1-martin.blumenstingl@googlemail.com>
-References: <20181227215020.9803-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k0U7J2xOIEEC+eWkilrMlWfIWSU0tnSbCNiiL3pABK8=;
+        b=Un+goGwI8f+HtG0GtGO1o67StWSSUL+Eds3fOTUsLd3eBVSbbdA1LcvhrNShEXimpW
+         PdS3g7LNNe9QIEJe8ti6cpM2FOFOqtr2o4+ltiuBOCPNQysJMcWk6CNuLteMq+77NaPg
+         B/KOFq2GVl9+ft6sWHnKt9pq3qcTEY6wmE4re0zDHrdxqYI+IRIhmFGi/7IC/yZWL2EX
+         WRRIB4+mah0C9dfTZAoeUnXSeOLqWS7bgnlyt28mLNj4vXpsBZVfE1F5vop1FW+N7dXk
+         /cav+TkOZNY+PGo7afS+izHik4S2jRBD0bA5OKBCqcEOFbW+FwVkTCCZcEF29cs7Sham
+         Y7Rg==
+X-Gm-Message-State: AJcUukeq/eiSVN0CZKbwuELYgjPCUJr2ytSnKaFqVwoLfj9+wnMXmf+7
+        bEcUPORH+sf3WSE926NIFxC5udg=
+X-Google-Smtp-Source: ALg8bN7mH6HQCvMJLH8zx9yWurN0Uz5QjqtUOCNzsdt/52P/Ueujz50bHUvPv1SP21xcxvm9c6Px3A==
+X-Received: by 2002:a6b:3bc8:: with SMTP id i191mr18307377ioa.23.1545947731029;
+        Thu, 27 Dec 2018 13:55:31 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id e16sm19699465iob.43.2018.12.27.13.55.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 13:55:30 -0800 (PST)
+Date:   Thu, 27 Dec 2018 15:55:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        ohad@wizery.com, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org, dianders@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: qcom: Introduce
+ shutdown-ack irq for Q6V5
+Message-ID: <20181227215529.GA13758@bogus>
+References: <20181224084824.25193-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181224084824.25193-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Meson8b and Meson8m2 use the same logic to convert the ADC register
-value to celsius, which is different from Meson8:
-- Meson8 has different multiplier and divider values
-- Meson8 uses a 4-bit TSC (temperature sensor coefficient) which fits
-  into the 4-bit field in the MESON_SAR_ADC_DELTA_10 register:
-  MESON_SAR_ADC_DELTA_10_TS_C_MASK. Meson8b and Meson8m2 have a 5-bit
-  TSC which requires writing the upper-most bit into the
-  MESON_HHI_DPLL_TOP_0[9] register from the HHI register area.
+On Mon, 24 Dec 2018 14:18:21 +0530, Sibi Sankar wrote:
+> Introduce shutdown-irq binding required for sysmon shutdown for Q6V5 MSS
+> on SDM845/MSM8996 SoCs and for WCSS Q6V5 on QCS404 SoC.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+> 
+> v2:
+>   Make shutdown-ack mandatory for MSS on SDM845/MSM8996 and
+>   for WCSS on QCS404 (Dropping Rob's reviewed-by due to this)
+> 
+>  .../bindings/remoteproc/qcom,adsp.txt           | 17 ++++++++++++++---
+>  .../bindings/remoteproc/qcom,q6v5.txt           | 15 ++++++++++++---
+>  2 files changed, 26 insertions(+), 6 deletions(-)
+> 
 
-This adds support for the temperature sensor on the Meson8b and Meson8m2
-SoCs by implementing the logic to write the upper-most TSC bit into the
-HHI register area. The SoC-specific values (temperature_trimming_bits,
-temperature_multiplier, temperature_divider) are added - these simply
-integrate into the existing infrastructure (which was implemented for
-Meson8) and thus require no further changes to the existing temperature
-calculation logic.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/iio/adc/meson_saradc.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
-index 729becb2d3d9..f8600fbcdfe3 100644
---- a/drivers/iio/adc/meson_saradc.c
-+++ b/drivers/iio/adc/meson_saradc.c
-@@ -26,6 +26,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/mfd/syscon.h>
- 
- #define MESON_SAR_ADC_REG0					0x00
- 	#define MESON_SAR_ADC_REG0_PANEL_DETECT			BIT(31)
-@@ -174,6 +175,9 @@
- #define MESON_SAR_ADC_EFUSE_BYTE3_UPPER_ADC_VAL			GENMASK(6, 0)
- #define MESON_SAR_ADC_EFUSE_BYTE3_IS_CALIBRATED			BIT(7)
- 
-+#define MESON_HHI_DPLL_TOP_0					0x318
-+#define MESON_HHI_DPLL_TOP_0_TSC_BIT4				BIT(9)
-+
- /* for use with IIO_VAL_INT_PLUS_MICRO */
- #define MILLION							1000000
- 
-@@ -280,6 +284,7 @@ struct meson_sar_adc_priv {
- 	struct completion			done;
- 	int					calibbias;
- 	int					calibscale;
-+	struct regmap				*tsc_regmap;
- 	bool					temperature_sensor_calibrated;
- 	u8					temperature_sensor_coefficient;
- 	u16					temperature_sensor_adc_val;
-@@ -727,6 +732,15 @@ static int meson_sar_adc_temp_sensor_init(struct iio_dev *indio_dev)
- 		return ret;
- 	}
- 
-+	priv->tsc_regmap =
-+		syscon_regmap_lookup_by_phandle(indio_dev->dev.parent->of_node,
-+						"amlogic,hhi-sysctrl");
-+	if (IS_ERR(priv->tsc_regmap)) {
-+		dev_err(indio_dev->dev.parent,
-+			"failed to get amlogic,hhi-sysctrl regmap\n");
-+		return PTR_ERR(priv->tsc_regmap);
-+	}
-+
- 	read_len = MESON_SAR_ADC_EFUSE_BYTES;
- 	buf = nvmem_cell_read(temperature_calib, &read_len);
- 	if (IS_ERR(buf)) {
-@@ -861,6 +875,22 @@ static int meson_sar_adc_init(struct iio_dev *indio_dev)
- 				    priv->temperature_sensor_coefficient);
- 		regmap_update_bits(priv->regmap, MESON_SAR_ADC_DELTA_10,
- 				   MESON_SAR_ADC_DELTA_10_TS_C_MASK, regval);
-+
-+		if (priv->param->temperature_trimming_bits == 5) {
-+			if (priv->temperature_sensor_coefficient & BIT(4))
-+				regval = MESON_HHI_DPLL_TOP_0_TSC_BIT4;
-+			else
-+				regval = 0;
-+
-+			/*
-+			 * bit [4] (the 5th bit when starting to count at 1)
-+			 * of the TSC is located in the HHI register area.
-+			 */
-+			regmap_update_bits(priv->tsc_regmap,
-+					   MESON_HHI_DPLL_TOP_0,
-+					   MESON_HHI_DPLL_TOP_0_TSC_BIT4,
-+					   regval);
-+		}
- 	} else {
- 		regmap_update_bits(priv->regmap, MESON_SAR_ADC_DELTA_10,
- 				   MESON_SAR_ADC_DELTA_10_TS_REVE1, 0);
-@@ -1064,6 +1094,9 @@ static const struct meson_sar_adc_param meson_sar_adc_meson8b_param = {
- 	.bandgap_reg = MESON_SAR_ADC_DELTA_10,
- 	.regmap_config = &meson_sar_adc_regmap_config_meson8,
- 	.resolution = 10,
-+	.temperature_trimming_bits = 5,
-+	.temperature_multiplier = 10,
-+	.temperature_divider = 32,
- };
- 
- static const struct meson_sar_adc_param meson_sar_adc_gxbb_param = {
--- 
-2.20.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
