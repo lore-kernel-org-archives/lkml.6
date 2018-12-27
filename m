@@ -2,182 +2,134 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F865C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A722EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EACB8214AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78DF9214AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbeL0Ltt (ORCPT
+        id S1730892AbeL0LzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 06:49:49 -0500
-Received: from dcvr.yhbt.net ([64.71.152.64]:50582 "EHLO dcvr.yhbt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728213AbeL0Ltt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 06:49:49 -0500
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 3E2AF211BB;
-        Thu, 27 Dec 2018 11:49:48 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 11:49:48 +0000
-From:   Eric Wong <e@80x24.org>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: iommu_intel or i915 regression in 4.18, 4.19.12 and drm-tip
-Message-ID: <20181227114948.ev4b3jte3ubsc5us@dcvr>
+        Thu, 27 Dec 2018 06:55:06 -0500
+Received: from mail.netline.ch ([148.251.143.178]:38128 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728213AbeL0LzF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 06:55:05 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 5C4622A605E;
+        Thu, 27 Dec 2018 12:55:02 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id C7abSc3RHOD7; Thu, 27 Dec 2018 12:55:01 +0100 (CET)
+Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 177CF2A605D;
+        Thu, 27 Dec 2018 12:55:01 +0100 (CET)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.91)
+        (envelope-from <michel@daenzer.net>)
+        id 1gcUFg-00086r-LE; Thu, 27 Dec 2018 12:55:00 +0100
+Subject: Re: [PATCH 2/3] drm/amd: validate user pitch alignment
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     David Zhou <David1.Zhou@amd.com>,
+        Daniel Stone <daniels@collabora.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Junwei Zhang <Jerry.Zhang@amd.com>,
+        amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Samuel Li <Samuel.Li@amd.com>
+References: <20181221031053.240161-1-yuzhao@google.com>
+ <20181221031053.240161-2-yuzhao@google.com>
+ <90677da7-d74d-c725-f669-88fe18789d5b@daenzer.net>
+ <20181223214439.GA157289@google.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <3e7afc3a-cfe5-234b-8a32-00bf4746d5e7@daenzer.net>
+Date:   Thu, 27 Dec 2018 12:54:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20181223214439.GA157289@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I just got a used Thinkpad X201 (Core i5 M 520, Intel QM57
-chipset) and hit some kernel panics while trying to view
-image/animation-intensive stuff in Firefox (X11) unless I use
-"iommu_intel=igfx_off".
+On 2018-12-23 10:44 p.m., Yu Zhao wrote:
+> On Fri, Dec 21, 2018 at 10:07:26AM +0100, Michel Dänzer wrote:
+>> On 2018-12-21 4:10 a.m., Yu Zhao wrote:
+>>> Userspace may request pitch alignment that is not supported by GPU.
+>>> Some requests 32, but GPU ignores it and uses default 64 when cpp is
+>>> 4. If GEM object is allocated based on the smaller alignment, GPU
+>>> DMA will go out of bound.
+>>>
+>>> For GPU that does frame buffer compression, DMA writing out of bound
+>>> memory will cause memory corruption.
+>>>
+>>> Signed-off-by: Yu Zhao <yuzhao@google.com>
+>>> ---
+>>>  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> index e309d26170db..755daa332f8a 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+>>> @@ -527,6 +527,15 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
+>>>  	struct drm_gem_object *obj;
+>>>  	struct amdgpu_framebuffer *amdgpu_fb;
+>>>  	int ret;
+>>> +	struct amdgpu_device *adev = dev->dev_private;
+>>> +	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
+>>> +	int pitch = amdgpu_align_pitch(adev, mode_cmd->width, cpp, false);
+>>
+>> Also, this needs to use mode_cmd->pitches[0] instead of mode_cmd->width,
+>> otherwise it'll spuriously fail for larger but well-aligned pitches.
+> 
+> Actually mode_cmd->pitches[0] is aligned mode_cmd->width multiplied
+> by cpp. So we can't just use mode_cmd->pitches[0].
 
-With Debian stable backport kernels, "linux-image-4.17.0-0.bpo.3-amd64"
-(4.17.17-1~bpo9+1) has no problems.  But "linux-image-4.18.0-0.bpo.3-amd64"
-(4.18.20-2~bpo9+1) gives a blank screen before I can login via agetty
-and run startx.
-
-Building 4.19.12 myself got me into X11 and able to start
-Firefox to panic the kernel.  I also updated to the latest BIOS
-(1.40), but it's an EOL laptop (but it's still the most powerful
-laptop I use).  I intend to replace the BIOS with Coreboot soon...
-
-Initially, I thought I was hitting another GPU hang from 4.18+:
-
-	https://bugs.freedesktop.org/show_bug.cgi?id=107945
-
-But building drm-tip @ commit 28bb1fc015cedadf3b099b8bd0bb27609849f362
-("drm-tip: 2018y-12m-25d-08h-12m-37s UTC integration manifest")
-I was still able to reproduce the panic unless I use iommu_intel=igfx_off
-"i915.reset=1" did not help matters, either.
-
-Below is what I got from netconsole while on drm-tip:
-
-Kernel panic - not syncing: DMAR hardware is malfunctioning
-Shutting down cpus with NMI
-Kernel Offset: disabled
----[ end Kernel panic - not syncing: DMAR hardware is malfunctioning ]---
-------------[ cut here ]------------
-sched: Unexpected reschedule of offline CPU#3!
-WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
-Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
-CPU: 0 PID: 105 Comm: kworker/u8:3 Not tainted 4.20.0-rc7b1+ #1
-Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
-Workqueue: i915 __i915_gem_free_work [i915]
-RIP: 0010:native_smp_send_reschedule+0x34/0x40
-Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
-RSP: 0018:ffff888075003d98 EFLAGS: 00010092
-RAX: 000000000000002e RBX: ffff8880751a0740 RCX: 0000000000000006
-RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff888075015440
-RBP: ffff88806e823700 R08: 0000000000000000 R09: ffff888072fc07c0
-R10: ffff888075003d60 R11: 00000000fff5c002 R12: ffff8880751a0740
-R13: ffff8880751a0740 R14: 0000000000000000 R15: 0000000000000003
-FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
-Call Trace:
- <IRQ>
- ? check_preempt_curr+0x4e/0x90
- ? ttwu_do_wakeup.isra.19+0x14/0xf0
- ? try_to_wake_up+0x323/0x410
- ? autoremove_wake_function+0xe/0x30
- ? __wake_up_common+0x8d/0x140
- ? __wake_up_common_lock+0x6c/0x90
- ? irq_work_run_list+0x49/0x80
- ? tick_sched_handle.isra.6+0x50/0x50
- ? update_process_times+0x3b/0x50
- ? tick_sched_handle.isra.6+0x30/0x50
- ? tick_sched_timer+0x3b/0x80
- ? __hrtimer_run_queues+0xea/0x270
- ? hrtimer_interrupt+0x101/0x240
- ? smp_apic_timer_interrupt+0x6a/0x150
- ? apic_timer_interrupt+0xf/0x20
- </IRQ>
- ? panic+0x1ca/0x212
- ? panic+0x1c7/0x212
- ? __iommu_flush_iotlb+0x19e/0x1c0
- ? iommu_flush_iotlb_psi+0x96/0xf0
- ? intel_unmap+0xbf/0xf0
- ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
- ? drm_ht_remove+0x20/0x20 [drm]
- ? drm_mm_remove_node+0x1ad/0x310 [drm]
- ? __pm_runtime_resume+0x54/0x70
- ? __i915_gem_object_unset_pages+0x129/0x170 [i915]
- ? __i915_gem_object_put_pages+0x70/0xa0 [i915]
- ? __i915_gem_free_objects+0x245/0x4e0 [i915]
- ? __switch_to_asm+0x24/0x60
- ? __i915_gem_free_work+0x65/0xa0 [i915]
- ? process_one_work+0x1fd/0x410
- ? worker_thread+0x49/0x3f0
- ? kthread+0xf8/0x130
- ? process_one_work+0x410/0x410
- ? kthread_park+0x90/0x90
- ? ret_from_fork+0x35/0x40
-WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
----[ end trace 7dd2184d8c86cef5 ]---
-------------[ cut here ]------------
-sched: Unexpected reschedule of offline CPU#2!
-WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
-Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
-CPU: 0 PID: 105 Comm: kworker/u8:3 Tainted: G        W         4.20.0-rc7b1+ #1
-Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
-Workqueue: i915 __i915_gem_free_work [i915]
-RIP: 0010:native_smp_send_reschedule+0x34/0x40
-Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
-RSP: 0018:ffff888075003d10 EFLAGS: 00010086
-RAX: 000000000000002e RBX: ffff888075120740 RCX: 0000000000000006
-RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff888075015440
-RBP: ffff88807378b700 R08: 0000000000000000 R09: ffff888072fc07c0
-R10: ffff888075003cd8 R11: 00000000ffeb4a02 R12: ffff888075120740
-R13: ffff888075120740 R14: 0000000000000004 R15: 0000000000000002
-FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
-Call Trace:
- <IRQ>
- ? check_preempt_curr+0x4e/0x90
- ? ttwu_do_wakeup.isra.19+0x14/0xf0
- ? try_to_wake_up+0x323/0x410
- ? __wake_up_common+0x8d/0x140
- ? ep_poll_callback+0xbd/0x2a0
- ? __wake_up_common+0x8d/0x140
- ? __wake_up_common_lock+0x6c/0x90
- ? irq_work_run_list+0x49/0x80
- ? tick_sched_handle.isra.6+0x50/0x50
- ? update_process_times+0x3b/0x50
- ? tick_sched_handle.isra.6+0x30/0x50
- ? tick_sched_timer+0x3b/0x80
- ? __hrtimer_run_queues+0xea/0x270
- ? hrtimer_interrupt+0x101/0x240
- ? smp_apic_timer_interrupt+0x6a/0x150
- ? apic_timer_interrupt+0xf/0x20
- </IRQ>
- ? panic+0x1ca/0x212
- ? panic+0x1c7/0x212
- ? __iommu_flush_iotlb+0x19e/0x1c0
- ? iommu_flush_iotlb_psi+0x96/0xf0
- ? intel_unmap+0xbf/0xf0
- ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
- ? drm_ht_remove+0x20/0x20 [drm]
----[ end trace 7dd2184d8c86cef6 ]---
+Use mode_cmd->pitches[0] / cpp then?
 
 
-Thanks.  I barely use graphics and certainly not with KVM;
-so I don't think I'll be missing anything igfx_off.  But
-maybe this bugreport can help other X201 users.
+> And I'm not sure if the hardware works with larger alignment
+
+It does.
+
+> (it certainly ignores smaller alignment).
+
+Yeah, pitch must be >= width. Maybe this patch could check that as well.
+
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
