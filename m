@@ -3,123 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13472C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D2AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D102221741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0134214D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:17:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJsMPaNA"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="XRVW/VY0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbeL0CBw (ORCPT
+        id S1727846AbeL0CPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 21:01:52 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44648 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeL0CBv (ORCPT
+        Wed, 26 Dec 2018 21:15:32 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:57882 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeL0CPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 21:01:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so8477388pfh.11;
-        Wed, 26 Dec 2018 18:01:49 -0800 (PST)
+        Wed, 26 Dec 2018 21:15:32 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id A7372BB9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 02:15:30 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YLHamTgDwpJk for <linux-kernel@vger.kernel.org>;
+        Wed, 26 Dec 2018 20:15:30 -0600 (CST)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 7E283B45
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 20:15:30 -0600 (CST)
+Received: by mail-it1-f198.google.com with SMTP id g7so21434404itg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:15:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=2hLP0bIbGgAKMIlM16dWI6+N/9EXK5WvBD9KloAL1A4=;
-        b=VJsMPaNAyNFTKSwDKBIFcb3bfQIWJHT7mCTQ+xeBdhSzFrfE821NO9M4Rt8TjcJILZ
-         YWlhNruTjIo04Lbpz0vUmOiHWVPfwnrTXwBco4jn0uUW7fzm9e2/qwALyI5zwiThb01c
-         pHSDr3XptWS/kgEn4mKp11Ztn5Uf9IysNbRLqbWbLSFcsAAL1SnDD59Bb+hhhWxTEk2S
-         vjL2nIU7d6jDiCK4HKlLEQoTxUfxZ6OOw5wcTDdCbRmo3YHau5DAzQWOOS2/ZKtG8mHs
-         5stcrwptkJ8sCDvqeFZi2wWelv0lBvPOmr5gpbK9dipJYCAxY/PX/MqgsVewUHr7oiez
-         Dr+g==
+        bh=X1U5qGJoVBkQ4oS7PPT35S44J3WF8fo8sL5YNAro4GE=;
+        b=XRVW/VY0UE9OphL/xbeGLUO/qBCxXXm1b1MAtnmOelrB6rTycvOddlSv7Nw8VUoqlv
+         ImfMnDLpoG2A51Y7wob9i3PX3KHAP8vKSL7AV/oCUK/VGynzB/mQpRLje9CaD0UFRPSo
+         01MhS2pVbM2VhpBaQBUwhcmA9LAqV9Dqof/d1PGk9/yp4idSi08Hxo5wnUYYzJTRGa6o
+         aZkJYGl4WScO+t5cK8rbYITJS9pHf2jOtdGrLHbVx1GNCot55DhTB8evu79ZHxfjTAUO
+         q7LKJtu9a1E91XIvPeV9VcXSOtXGQsvRDD23NwHr++eOGREcFxaltLyih5+zp+Y4ysA4
+         Foiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2hLP0bIbGgAKMIlM16dWI6+N/9EXK5WvBD9KloAL1A4=;
-        b=LPGeIW4YRP6eaZjzCyV4v7XGwHrPVqEin7tkDCNw9J8a4LdWvjQts9VNzCVjBysf09
-         3onKI+aOVf1OBPFkWuxEBQ2IziwtGwWtNWAl06Nv932JfebsIAs6yRSUCEsBrXJc9Ii7
-         u/H7Li/lpaJLcdncxgGp/ARDdJ4iBOFq3IEZcnfTamHYwydjzLO1SB8+tn7U+q7vu81x
-         1KiyiXCB+/7XIC9JP5AMINzunVbNFX5xXBHXLjhhBRrwrVDaNABTVzIWEofZKqww24lV
-         lL1nHgIy6i5EEsDLy8ets4Zol0VaBS2Vx1bqI9/vZFL8cZdTBCGvEF+Y0BcAo9DbCC1M
-         twVg==
-X-Gm-Message-State: AA+aEWbhq1S9j5KMICnRwQq+V9PvUqirU4Lx/Ji9VCrVkdgILb3Tvw/w
-        zeqCZeixTu8crMKs3gkMoy0=
-X-Google-Smtp-Source: AFSGD/X2rgkbhWk1MXIWow15lhHoJzr+X6jIc52BA3iM0/T1lYrjiq+cMT+cvJDSigdcNwh/HVfUJw==
-X-Received: by 2002:a62:9fd9:: with SMTP id v86mr22176469pfk.191.1545876109309;
-        Wed, 26 Dec 2018 18:01:49 -0800 (PST)
-Received: from localhost.localdomain ([2402:f000:1:4414:dd5d:2433:dd9b:37a2])
-        by smtp.gmail.com with ESMTPSA id u8sm53957792pfl.16.2018.12.26.18.01.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 18:01:48 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     m.grzeschik@pengutronix.de, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH v2] net: arcnet: Fix a possible concurrency use-after-free bug in arcnet_reply_tasklet()
-Date:   Thu, 27 Dec 2018 10:01:42 +0800
-Message-Id: <20181227020142.18190-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        bh=X1U5qGJoVBkQ4oS7PPT35S44J3WF8fo8sL5YNAro4GE=;
+        b=Y9dYiRRtcnE74rEqFtH6ccJclvtCbcW0UdX04k+qca4NY/iWpLW1eZXlNBTN2/3sG4
+         6oCabCWvbW2HDGCwLMlaZAGLKNF1Ep0kRmbJklzZCNwsNJc9Lk+hDLW4vnCvvfRT+g6c
+         V6PUPtfOB4yW6V+tIDazFTy0wPHUwTzVwfVPtg9wgWJaUBBb1lSQHy7TT0NXROTHgOTt
+         cOTfHKto5G90WpgeYaswijwOwygH72pGsGPF5k8XukYUadQlTks7rk2g1n6eKDt2zsp0
+         0ApKGWiXRHB6DtjCFfGGDAgEP/XiuDkWSmm4jtlAIc5G8jLKiJVV0cLsRFqNCPH6WvoO
+         O3sw==
+X-Gm-Message-State: AA+aEWb0TxOw5v6I1UZYTJONdvCOKR917fnYg7Ao55f9DLvUvbJ6IyXZ
+        K5J5P3jF9vg7e0BhIU6iKMit4HwXJw7jbewWqeEuC8qhM3E7hVKTjnHH/85R168Kz8hjQ0yv5wy
+        +7gcMs5L3iD9SlILM/irqMSQqsvZe
+X-Received: by 2002:a24:9686:: with SMTP id z128mr14050215itd.97.1545876929844;
+        Wed, 26 Dec 2018 18:15:29 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/VtZCt+FwvpfXyBdyqwfHL1SEAa7Vs0fSem3rVUYSb4W+qbLpIVNPs75X6cbn8Q5UMpUVbENw==
+X-Received: by 2002:a24:9686:: with SMTP id z128mr14050210itd.97.1545876929637;
+        Wed, 26 Dec 2018 18:15:29 -0800 (PST)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id 196sm14893109itu.37.2018.12.26.18.15.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 26 Dec 2018 18:15:28 -0800 (PST)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Maurizio Lombardi <mlombard@redhat.com>,
+        zhong jiang <zhongjiang@huawei.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] gdrom: fix a memory leak bug
+Date:   Wed, 26 Dec 2018 20:15:13 -0600
+Message-Id: <1545876914-11283-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In drivers/net/arcnet/arcnet.c, the functions arcnet_reply_tasklet() and
-arcnet_send_packet() may be concurrently executed.
+In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
+kzalloc() and is used to hold the information of the gdrom device. To
+register and unregister the device, the pointer 'gd.cd_info' is passed to
+the functions register_cdrom() and unregister_cdrom(), respectively.
+However, this buffer is not freed after it is used, which can cause a
+memory leak bug.
 
-arcnet_reply_tasklet()
-  line 430: dev_kfree_skb(lp->outgoing.skb);
+This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
+above issue.
 
-arcnet_send_packet()
-  line 682: spin_lock_irqsave();
-  line 690: lp->outgoing.skb = skb;
-  line 691: proto->prepare_tx(..., skb->len, ...)
-
-Thus, a possible concurrency use-after-free bugs may occur.
-
-To fix this bug, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in arcnet_reply_tasklet() to protect
-dev_kfree_skb(lp->outgoing.skb).
-
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 ---
-v2:
-* Add the definition of flags to fix the compilation error.
----
- drivers/net/arcnet/arcnet.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/cdrom/gdrom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/arcnet/arcnet.c b/drivers/net/arcnet/arcnet.c
-index 8459115d9d4e..1e1b12650964 100644
---- a/drivers/net/arcnet/arcnet.c
-+++ b/drivers/net/arcnet/arcnet.c
-@@ -401,6 +401,7 @@ static void arcnet_reply_tasklet(unsigned long data)
- 	struct sock_exterr_skb *serr;
- 	struct sock *sk;
- 	int ret;
-+	unsigned long flags;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index a5b8afe..f8b7345 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -873,6 +873,7 @@ static void __exit exit_gdrom(void)
+ 	platform_device_unregister(pd);
+ 	platform_driver_unregister(&gdrom_driver);
+ 	kfree(gd.toc);
++	kfree(gd.cd_info);
+ }
  
- 	local_irq_disable();
- 	skb = lp->outgoing.skb;
-@@ -426,10 +427,14 @@ static void arcnet_reply_tasklet(unsigned long data)
- 	serr->ee.ee_data = skb_shinfo(skb)->tskey;
- 	serr->ee.ee_info = lp->reply_status;
- 
-+	spin_lock_irqsave(&lp->lock, flags);
-+
- 	/* finally erasing outgoing skb */
- 	dev_kfree_skb(lp->outgoing.skb);
- 	lp->outgoing.skb = NULL;
- 
-+	spin_unlock_irqrestore(&lp->lock, flags);
-+
- 	ackskb->dev = lp->dev;
- 
- 	ret = sock_queue_err_skb(sk, ackskb);
+ module_init(init_gdrom);
 -- 
-2.17.0
+2.7.4
 
