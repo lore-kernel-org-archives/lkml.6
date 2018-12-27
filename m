@@ -2,98 +2,100 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBEAC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90189C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20712148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BDC12148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545944500;
-	bh=mLotmiNr6dIUJ6upszcjdJYgFHeM4EDlFxzf/om2+sA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HuS8+w6UlbLYSrI4zO4uyRa2sVmWojYgqBZcehdgiPIgSJLpUvdH83sBDqQwRQWBG
-	 xlMwkExDuh9tuwROtsw3zC6lwcMjjMygbKbbip8jJdGNR8XDRfeK47os32iCw6/zK2
-	 RrEOddvt7c6wWSgY/Ra31QGA1n/lsWi8HwIDJ42E=
+	s=default; t=1545944514;
+	bh=Y4GOugBwhWonDxoH19LzI5jgWAjvjeNTZvWf90USwsw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=PfE+T3tmQSFFX4UPSP6D27dKb+mMB7xegJ8Li+TQCtuRn9GwA65SfRZsu6HlcFiVC
+	 qRAXE1HlZhqLJMZAeDrKa5g4qsDva4sY1QRqh7qmboM7V/v5zR65WRfiwFJqH/veJt
+	 33rfT1IKay1l9RZ2g4tzsKYis0YjY7HEpskBpyqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbeL0VBj (ORCPT
+        id S1730165AbeL0VBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 16:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54516 "EHLO mail.kernel.org"
+        Thu, 27 Dec 2018 16:01:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727607AbeL0VBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 16:01:38 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727607AbeL0VBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 16:01:52 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1C2D2148D;
-        Thu, 27 Dec 2018 21:01:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F39D121907;
+        Thu, 27 Dec 2018 21:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545944498;
-        bh=mLotmiNr6dIUJ6upszcjdJYgFHeM4EDlFxzf/om2+sA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xgeXbZLgQiQXi3w8Hov71OAufXRXr0b7syJFG1eYIAwuiB9KNDKeVuzCD6I2OtTwE
-         tD6/YcvppgAOMxzmAQYGWEgHP/1TNEPHuFzZrtvpTQN+rNV9iZ2I2pnGrcR3iw4OfM
-         RedU+uMGdJYy684wTbHTmPr3hUcR5EC8e2GRLEeE=
-Date:   Thu, 27 Dec 2018 16:01:36 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        stable@vger.kernel.org, linux-s390 <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: 4.19.5 and later has tons of false messages "BUG: non-zero
- pgtables_bytes on freeing mm: -16384"
-Message-ID: <20181227210136.GV86645@sasha-vm>
-References: <4e58571e-1991-4a70-7012-ff9dd76afee3@de.ibm.com>
- <1d6288dd-a65b-463a-8aeb-33904dafa9cc@de.ibm.com>
+        s=default; t=1545944512;
+        bh=Y4GOugBwhWonDxoH19LzI5jgWAjvjeNTZvWf90USwsw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KoyPxGWg9Hx+ClwtgxdI0pF59ghQQSzB7qBr0bkHgNpmzdZfxirQPCjOedEA5uLDL
+         FRrp2azvq43bbIAITc8BbPZwBafJ6J0iHYcy1VyNqLo1GrtV3KhXzX06y0lTqddhGT
+         s76BrsNYDgDk96/u+FxgGzQhlE0hRKqdwoIETviw=
+Received: by mail-qt1-f182.google.com with SMTP id t33so21470658qtt.4;
+        Thu, 27 Dec 2018 13:01:51 -0800 (PST)
+X-Gm-Message-State: AJcUukcJvDmied3Y3vvIiUeU/2vSpws+Iu2kafKvRUo2sNqW2yZmLdlu
+        c/M1w6CklRKhNY2BK3Kxl/uJpLPbikVkpMa7aQ==
+X-Google-Smtp-Source: ALg8bN4M3Xqy+r6gdp6Pn0xk9/FlLMGkh2No+BfyI9khb1P85Nt7XFms0Znf8gD49Ezqh0We0OBo8fPF+vcxbG8J2zk=
+X-Received: by 2002:aed:3ecf:: with SMTP id o15mr24181299qtf.26.1545944511155;
+ Thu, 27 Dec 2018 13:01:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1d6288dd-a65b-463a-8aeb-33904dafa9cc@de.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
+ <1544445555-17325-2-git-send-email-pawell@cadence.com> <20181220200111.GA27998@bogus>
+ <BYAPR07MB4709910A6EE4B54BA455E713DDB90@BYAPR07MB4709.namprd07.prod.outlook.com>
+In-Reply-To: <BYAPR07MB4709910A6EE4B54BA455E713DDB90@BYAPR07MB4709.namprd07.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 27 Dec 2018 15:01:39 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLQ83f74kMRsRX=Bo+xwP05v+2dLQaPLVV3EU7k=QwvSQ@mail.gmail.com>
+Message-ID: <CAL_JsqLQ83f74kMRsRX=Bo+xwP05v+2dLQaPLVV3EU7k=QwvSQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: add binding for USBSS-DRD controller.
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 10:28:56AM +0100, Christian Borntraeger wrote:
+On Sat, Dec 22, 2018 at 4:24 PM Pawel Laszczak <pawell@cadence.com> wrote:
 >
+> Hi Rob,
 >
->On 27.12.2018 10:13, Christian Borntraeger wrote:
->> Martin,
->>
->> Right now you get a message
->> "BUG: non-zero pgtables_bytes on freeing mm: -16384"
->> for EVERY process that exits in 4.19.5 and later.
->>
->> bisect points to
->> commit 4136161d676a93fc8df6bdb80d720c15522d6c24
->> Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
->> Date:   Mon Oct 15 11:09:16 2018 +0200
->>
->>     s390/mm: fix mis-accounting of pgtable_bytes
->>
->>     [ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
->>
->> Turns out that this patch requires several dependencies so the autoselection of this
->> patch was missing that.
->>
->> Can we either revert this patch or add the dependencies?
->>
->> Christian
->>
->
->It seems that adding
->
->commit 6d212db11947ae5464e4717536ed9faf61c01e86 ("mm: add mm_pxd_folded checks to pgtable_bytes accounting functions")
->fixes the issue.
+> >On Mon, Dec 10, 2018 at 12:39:14PM +0000, Pawel Laszczak wrote:
+> >> This patch aim at documenting USB related dt-bindings for the
+> >> Cadence USBSS-DRD controller.
+> >>
+> >> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-I've queued 6d212db11947 for 4.19 for now, thank you.
+[...]
 
---
-Thanks,
-Sasha
+> >> + - phys: reference to the USB PHY
+> >> + - phy-names: name of the USB PHY, should be "cdns3,usbphy"
+> >
+> >Don't need -names when there is only one.
+>
+> But in the future probably we will need to add next phy version.
+> So maybe it's better to leave this name ?
+
+'-names' are for when there is more than one phy connected, not
+different phy versions. For example, if you had separate phys for HS
+and SS.
+
+Rob
