@@ -2,118 +2,182 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A89C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F865C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F4B214AE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:47:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lxefvhKZ"
+	by mail.kernel.org (Postfix) with ESMTP id EACB8214AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 11:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730814AbeL0Lr3 (ORCPT
+        id S1730876AbeL0Ltt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 06:47:29 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42766 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729305AbeL0Lr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 06:47:29 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y20so15032626edw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 03:47:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T9EQeQqyXSQT9eLYZlJGFkV2DHt4b7iWeFMtPC8nNSo=;
-        b=lxefvhKZ1BoMkP0htwWXNy/hM1RjYF0mfn6ZTCewqX9m6AfXWNIEhPtoZnh27UteKR
-         LyZetsee8ZM9+wCnUsKZy0IDGZg/KSkf3kHmTYFIScWY5Lb7BnQH97cUUBS0rT64eegr
-         hn5zlGPR19Rlmwn936QZrcvHjMVtxslBkfTp0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=T9EQeQqyXSQT9eLYZlJGFkV2DHt4b7iWeFMtPC8nNSo=;
-        b=L9nFiL8SenPdK1fOH9tBYKCI0iS8tzRqiO92v+spVKtWFogvBthXhj2y7rCVAAjQaV
-         s+6v1ulRK2K5JvXgxFzSTUpKJ4qQy6ZO3hO64qer6TfgkZNmGwncJM04k6DXFaUSLq1B
-         YZ/09+iFFATlcpsTBkligJ+7a3Z/P2U07pRsvkdMBuo4vO5EE21RYkDijUQwpDo6TNLG
-         TGC1PXnAw79nJ/2uy3B8ESMllMLjJSQJVH66GlzDebyl6SIw86aOCl9VazhrabzdhTiv
-         LeH+9nK+84Oyjfir36X7/60ACFg01DXAtpfHLLK/TuqjzQ/VGsV0QNNe4mlOw+9qYpl1
-         F20w==
-X-Gm-Message-State: AA+aEWYZezM+sABzpaSbfXJ2Yvgf2bgKDhbNDdOtKAhW/mR0Ok5TmY5T
-        d/5YyqD1GuL+oka0V6/hihJ51Q==
-X-Google-Smtp-Source: AFSGD/WOLgfSxsy65glmPVaOMu2EPDs2+Ca1NBgMKUtQwmfgbgR3mbooRoArNj5ShwYiYHyeymsLEg==
-X-Received: by 2002:a17:906:495:: with SMTP id f21-v6mr15474764eja.95.1545911247044;
-        Thu, 27 Dec 2018 03:47:27 -0800 (PST)
-Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm4600171eji.64.2018.12.27.03.47.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 03:47:26 -0800 (PST)
-Date:   Thu, 27 Dec 2018 12:47:15 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, airlied@linux.ie, sabyasachi.linux@gmail.com,
-        jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/drm_drv.c: Remove duplicate header
-Message-ID: <20181227114704.GA9058@dvetter-linux.ger.corp.intel.com>
-Mail-Followup-To: Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, airlied@linux.ie, sabyasachi.linux@gmail.com,
-        jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20181224143636.GA3237@hp-pavilion-15-notebook-pc-brajeswar>
+        Thu, 27 Dec 2018 06:49:49 -0500
+Received: from dcvr.yhbt.net ([64.71.152.64]:50582 "EHLO dcvr.yhbt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728213AbeL0Ltt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 06:49:49 -0500
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id 3E2AF211BB;
+        Thu, 27 Dec 2018 11:49:48 +0000 (UTC)
+Date:   Thu, 27 Dec 2018 11:49:48 +0000
+From:   Eric Wong <e@80x24.org>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: iommu_intel or i915 regression in 4.18, 4.19.12 and drm-tip
+Message-ID: <20181227114948.ev4b3jte3ubsc5us@dcvr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181224143636.GA3237@hp-pavilion-15-notebook-pc-brajeswar>
-X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
- 4.19.10-200.fc28.x86_64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 08:06:36PM +0530, Brajeswar Ghosh wrote:
-> Remove drm_crtc_internal.h which is included more than once
-> 
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+I just got a used Thinkpad X201 (Core i5 M 520, Intel QM57
+chipset) and hit some kernel panics while trying to view
+image/animation-intensive stuff in Firefox (X11) unless I use
+"iommu_intel=igfx_off".
 
-Applied, thanks for your patch.
--Daniel
+With Debian stable backport kernels, "linux-image-4.17.0-0.bpo.3-amd64"
+(4.17.17-1~bpo9+1) has no problems.  But "linux-image-4.18.0-0.bpo.3-amd64"
+(4.18.20-2~bpo9+1) gives a blank screen before I can login via agetty
+and run startx.
 
-> ---
->  drivers/gpu/drm/drm_drv.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index 4126bb6e1a4a..75f4e6bf67ca 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -41,7 +41,6 @@
->  #include "drm_crtc_internal.h"
->  #include "drm_legacy.h"
->  #include "drm_internal.h"
-> -#include "drm_crtc_internal.h"
->  
->  /*
->   * drm_debug: Enable debug output.
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Building 4.19.12 myself got me into X11 and able to start
+Firefox to panic the kernel.  I also updated to the latest BIOS
+(1.40), but it's an EOL laptop (but it's still the most powerful
+laptop I use).  I intend to replace the BIOS with Coreboot soon...
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Initially, I thought I was hitting another GPU hang from 4.18+:
+
+	https://bugs.freedesktop.org/show_bug.cgi?id=107945
+
+But building drm-tip @ commit 28bb1fc015cedadf3b099b8bd0bb27609849f362
+("drm-tip: 2018y-12m-25d-08h-12m-37s UTC integration manifest")
+I was still able to reproduce the panic unless I use iommu_intel=igfx_off
+"i915.reset=1" did not help matters, either.
+
+Below is what I got from netconsole while on drm-tip:
+
+Kernel panic - not syncing: DMAR hardware is malfunctioning
+Shutting down cpus with NMI
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: DMAR hardware is malfunctioning ]---
+------------[ cut here ]------------
+sched: Unexpected reschedule of offline CPU#3!
+WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
+CPU: 0 PID: 105 Comm: kworker/u8:3 Not tainted 4.20.0-rc7b1+ #1
+Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
+Workqueue: i915 __i915_gem_free_work [i915]
+RIP: 0010:native_smp_send_reschedule+0x34/0x40
+Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
+RSP: 0018:ffff888075003d98 EFLAGS: 00010092
+RAX: 000000000000002e RBX: ffff8880751a0740 RCX: 0000000000000006
+RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff888075015440
+RBP: ffff88806e823700 R08: 0000000000000000 R09: ffff888072fc07c0
+R10: ffff888075003d60 R11: 00000000fff5c002 R12: ffff8880751a0740
+R13: ffff8880751a0740 R14: 0000000000000000 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
+Call Trace:
+ <IRQ>
+ ? check_preempt_curr+0x4e/0x90
+ ? ttwu_do_wakeup.isra.19+0x14/0xf0
+ ? try_to_wake_up+0x323/0x410
+ ? autoremove_wake_function+0xe/0x30
+ ? __wake_up_common+0x8d/0x140
+ ? __wake_up_common_lock+0x6c/0x90
+ ? irq_work_run_list+0x49/0x80
+ ? tick_sched_handle.isra.6+0x50/0x50
+ ? update_process_times+0x3b/0x50
+ ? tick_sched_handle.isra.6+0x30/0x50
+ ? tick_sched_timer+0x3b/0x80
+ ? __hrtimer_run_queues+0xea/0x270
+ ? hrtimer_interrupt+0x101/0x240
+ ? smp_apic_timer_interrupt+0x6a/0x150
+ ? apic_timer_interrupt+0xf/0x20
+ </IRQ>
+ ? panic+0x1ca/0x212
+ ? panic+0x1c7/0x212
+ ? __iommu_flush_iotlb+0x19e/0x1c0
+ ? iommu_flush_iotlb_psi+0x96/0xf0
+ ? intel_unmap+0xbf/0xf0
+ ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
+ ? drm_ht_remove+0x20/0x20 [drm]
+ ? drm_mm_remove_node+0x1ad/0x310 [drm]
+ ? __pm_runtime_resume+0x54/0x70
+ ? __i915_gem_object_unset_pages+0x129/0x170 [i915]
+ ? __i915_gem_object_put_pages+0x70/0xa0 [i915]
+ ? __i915_gem_free_objects+0x245/0x4e0 [i915]
+ ? __switch_to_asm+0x24/0x60
+ ? __i915_gem_free_work+0x65/0xa0 [i915]
+ ? process_one_work+0x1fd/0x410
+ ? worker_thread+0x49/0x3f0
+ ? kthread+0xf8/0x130
+ ? process_one_work+0x410/0x410
+ ? kthread_park+0x90/0x90
+ ? ret_from_fork+0x35/0x40
+WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+---[ end trace 7dd2184d8c86cef5 ]---
+------------[ cut here ]------------
+sched: Unexpected reschedule of offline CPU#2!
+WARNING: CPU: 0 PID: 105 at native_smp_send_reschedule+0x34/0x40
+Modules linked in: netconsole ccm snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic intel_powerclamp coretemp kvm_intel kvm irqbypass crc32_pclmul crc32c_intel ghash_clmulni_intel arc4 iwldvm aesni_intel aes_x86_64 crypto_simd cryptd mac80211 glue_helper intel_cstate iwlwifi intel_uncore i915 intel_gtt i2c_algo_bit iosf_mbi drm_kms_helper cfbfillrect syscopyarea intel_ips cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea thinkpad_acpi prime_numbers cfg80211 ledtrig_audio i2c_i801 sg snd_hda_intel led_class snd_hda_codec drm ac drm_panel_orientation_quirks snd_hwdep battery e1000e agpgart snd_hda_core snd_pcm snd_timer ptp snd soundcore pps_core ehci_pci ehci_hcd lpc_ich video mfd_core button acpi_cpufreq ecryptfs ip_tables x_tables ipv6 evdev thermal [last unloaded: netconsole]
+CPU: 0 PID: 105 Comm: kworker/u8:3 Tainted: G        W         4.20.0-rc7b1+ #1
+Hardware name: LENOVO 3680FBU/3680FBU, BIOS 6QET70WW (1.40 ) 10/11/2012
+Workqueue: i915 __i915_gem_free_work [i915]
+RIP: 0010:native_smp_send_reschedule+0x34/0x40
+Code: 05 69 c6 c9 00 73 15 48 8b 05 18 2d b3 00 be fd 00 00 00 48 8b 40 30 e9 9a 58 7d 00 89 fe 48 c7 c7 78 73 af 81 e8 dc c2 01 00 <0f> 0b c3 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 8b 05 0d 7d df
+RSP: 0018:ffff888075003d10 EFLAGS: 00010086
+RAX: 000000000000002e RBX: ffff888075120740 RCX: 0000000000000006
+RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff888075015440
+RBP: ffff88807378b700 R08: 0000000000000000 R09: ffff888072fc07c0
+R10: ffff888075003cd8 R11: 00000000ffeb4a02 R12: ffff888075120740
+R13: ffff888075120740 R14: 0000000000000004 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffff888075000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdb1f53f000 CR3: 0000000001c0a004 CR4: 00000000000206f0
+Call Trace:
+ <IRQ>
+ ? check_preempt_curr+0x4e/0x90
+ ? ttwu_do_wakeup.isra.19+0x14/0xf0
+ ? try_to_wake_up+0x323/0x410
+ ? __wake_up_common+0x8d/0x140
+ ? ep_poll_callback+0xbd/0x2a0
+ ? __wake_up_common+0x8d/0x140
+ ? __wake_up_common_lock+0x6c/0x90
+ ? irq_work_run_list+0x49/0x80
+ ? tick_sched_handle.isra.6+0x50/0x50
+ ? update_process_times+0x3b/0x50
+ ? tick_sched_handle.isra.6+0x30/0x50
+ ? tick_sched_timer+0x3b/0x80
+ ? __hrtimer_run_queues+0xea/0x270
+ ? hrtimer_interrupt+0x101/0x240
+ ? smp_apic_timer_interrupt+0x6a/0x150
+ ? apic_timer_interrupt+0xf/0x20
+ </IRQ>
+ ? panic+0x1ca/0x212
+ ? panic+0x1c7/0x212
+ ? __iommu_flush_iotlb+0x19e/0x1c0
+ ? iommu_flush_iotlb_psi+0x96/0xf0
+ ? intel_unmap+0xbf/0xf0
+ ? i915_gem_object_put_pages_gtt+0x36/0x220 [i915]
+ ? drm_ht_remove+0x20/0x20 [drm]
+---[ end trace 7dd2184d8c86cef6 ]---
+
+
+Thanks.  I barely use graphics and certainly not with KVM;
+so I don't think I'll be missing anything igfx_off.  But
+maybe this bugreport can help other X201 users.
