@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311B6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C589FC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B02214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:14:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2E3218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 06:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yaZNONT9"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HUhQYUnb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729969AbeL0GOa (ORCPT
+        id S1730003AbeL0GOe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 01:14:30 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40926 "EHLO
+        Thu, 27 Dec 2018 01:14:34 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40924 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728837AbeL0GO3 (ORCPT
+        with ESMTP id S1726222AbeL0GOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 01:14:29 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBR6Ds2q042891;
-        Thu, 27 Dec 2018 00:13:54 -0600
+        Thu, 27 Dec 2018 01:14:30 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBR6DkgO042868;
+        Thu, 27 Dec 2018 00:13:46 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545891234;
-        bh=6Bxn6N+GWrk3vb3sPK93KMd8FPjCInAorojDfdx2VkQ=;
+        s=ti-com-17Q1; t=1545891226;
+        bh=uhkSFur9amqSU/lf2jFRv0WEDXi0CV/d2GKDrIG/3zQ=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yaZNONT98a54VhEIVUYbrdYW9+Gt4o8gTyXRLMaxdLrD8NL9HY6RtUj7/rDS7JTPA
-         biowVQHRig1kYK8cxhDtQt+tbTZVjWvy3v+0JOPi2mQ8tA8wxn7B163KDQf+BMKzZm
-         LPqm8C1OWU8bKURuwCOfgQ5WjupAH5ixJLN63GLU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBR6Ds3K052982
+        b=HUhQYUnb5hcUaR9gp5dOFYGy/oLoNgGYlAsCBbpbkVNTvssEEDkfcB2kEklvvfpBN
+         yk+MLpqkgfAHj8JVmvp0DlUGKKmiP1y/vUptikEnIJbCXSXRyAoeH0lvMlGm827l/p
+         GJu7IOA2kMJ14QqHt5nwvy2cALWwqGW6T4UNeAKg=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBR6DkiP125533
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Dec 2018 00:13:54 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 27 Dec 2018 00:13:46 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 27
- Dec 2018 00:13:54 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ Dec 2018 00:13:46 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 27 Dec 2018 00:13:54 -0600
+ Thu, 27 Dec 2018 00:13:46 -0600
 Received: from uda0131933.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBR6DRrD026064;
-        Thu, 27 Dec 2018 00:13:50 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBR6DRrB026064;
+        Thu, 27 Dec 2018 00:13:43 -0600
 From:   Lokesh Vutla <lokeshvutla@ti.com>
 To:     <marc.zyngier@arm.com>, Nishanth Menon <nm@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
@@ -59,9 +59,9 @@ CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Device Tree Mailing List <devicetree@vger.kernel.org>,
         Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Lokesh Vutla <lokeshvutla@ti.com>
-Subject: [PATCH v4 07/13] irqchip: ti-sci-intr: Add support for Interrupt Router driver
-Date:   Thu, 27 Dec 2018 11:43:07 +0530
-Message-ID: <20181227061313.5451-7-lokeshvutla@ti.com>
+Subject: [PATCH v4 05/13] firmware: ti_sci: Add helper apis to manage resources
+Date:   Thu, 27 Dec 2018 11:43:05 +0530
+Message-ID: <20181227061313.5451-5-lokeshvutla@ti.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181227061313.5451-1-lokeshvutla@ti.com>
 References: <20181227060829.5080-1-lokeshvutla@ti.com>
@@ -75,386 +75,228 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instruments' K3 generation SoCs has an IP Interrupt Router
-that does allows for redirection of input interrupts to host
-interrupt controller. Interrupt Router inputs are either from a
-peripheral or from an Interrupt Aggregator which is another
-interrupt controller.
-
-Configuration of the interrupt router registers can only be done by
-a system co-processor and the driver needs to send a message to this
-co processor over TISCI protocol.
-
-Add support for Interrupt Router driver over TISCI protocol.
+Each resource with in the device can be uniquely identified
+by a type and subtype as defined by TISCI. Since this is generic
+across the devices, resource allocation also can be made generic
+instead of each client driver handling the resource. So add helper
+apis to manage the resource.
 
 Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 ---
- MAINTAINERS                       |   1 +
- drivers/irqchip/Kconfig           |  11 ++
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-ti-sci-intr.c | 310 ++++++++++++++++++++++++++++++
- 4 files changed, 323 insertions(+)
- create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
+ drivers/firmware/ti_sci.c              | 126 +++++++++++++++++++++++++
+ include/linux/soc/ti/ti_sci_protocol.h |  48 ++++++++++
+ 2 files changed, 174 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8c7513b02d50..4480eb2fe851 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15024,6 +15024,7 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
- F:	drivers/clk/keystone/sci-clk.c
- F:	drivers/reset/reset-ti-sci.c
- F:	Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
-+F:	drivers/irqchip/irq-ti-sci-intr.c
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index c2f0815edab6..b6804c214be9 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -2480,6 +2480,132 @@ const struct ti_sci_handle *devm_ti_sci_get_by_phandle(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_ti_sci_get_by_phandle);
  
- Texas Instruments ASoC drivers
- M:	Peter Ujfalusi <peter.ujfalusi@ti.com>
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 3d1e60779078..a8d9bed0254b 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -406,6 +406,17 @@ config IMX_IRQSTEER
- 	help
- 	  Support for the i.MX IRQSTEER interrupt multiplexer/remapper.
- 
-+config TI_SCI_INTR_IRQCHIP
-+	bool
-+	depends on TI_SCI_PROTOCOL && ARCH_K3
-+	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  This enables the irqchip driver support for K3 Interrupt router
-+	  over TI System Control Interface available on some new TI's SoCs.
-+	  If you wish to use interrupt router irq resources managed by the
-+	  TI System Controller, say Y here. Otherwise, say N.
-+
- endmenu
- 
- config SIFIVE_PLIC
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index c93713d24b86..b4ff376a08ef 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -94,3 +94,4 @@ obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
- obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
- obj-$(CONFIG_MADERA_IRQ)		+= irq-madera.o
-+obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
-diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
-new file mode 100644
-index 000000000000..a5396e08412c
---- /dev/null
-+++ b/drivers/irqchip/irq-ti-sci-intr.c
-@@ -0,0 +1,310 @@
-+// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Texas Instruments' K3 Interrupt Router irqchip driver
++ * ti_sci_get_free_resource() - Get a free resource from TISCI resource.
++ * @res:	Pointer to the TISCI resource
 + *
-+ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+ *	Lokesh Vutla <lokeshvutla@ti.com>
++ * Return: resource num if all went ok else TI_SCI_RESOURCE_NULL.
 + */
++u16 ti_sci_get_free_resource(struct ti_sci_resource *res)
++{
++	unsigned long flags;
++	u16 set, free_bit;
 +
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/irqchip.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/irqdomain.h>
-+#include <linux/soc/ti/ti_sci_protocol.h>
++	raw_spin_lock_irqsave(&res->lock, flags);
++	for (set = 0; set < res->sets; set++) {
++		free_bit = find_first_zero_bit(res->desc[set].res_map,
++					       res->desc[set].num);
++		if (free_bit != res->desc[set].num) {
++			set_bit(free_bit, res->desc[set].res_map);
++			raw_spin_unlock_irqrestore(&res->lock, flags);
++			return res->desc[set].start + free_bit;
++		}
++	}
++	raw_spin_unlock_irqrestore(&res->lock, flags);
 +
-+#define TI_SCI_DEV_ID_MASK	0xffff
-+#define TI_SCI_DEV_ID_SHIFT	16
-+#define TI_SCI_IRQ_ID_MASK	0xffff
-+#define TI_SCI_IRQ_ID_SHIFT	0
-+#define TI_SCI_EVENT_IRQ	BIT(0)
-+
-+#define HWIRQ_TO_DEVID(hwirq)	(((hwirq) >> (TI_SCI_DEV_ID_SHIFT)) & \
-+				 (TI_SCI_DEV_ID_MASK))
-+#define HWIRQ_TO_IRQID(hwirq)	((hwirq) & (TI_SCI_IRQ_ID_MASK))
-+#define FWSPEC_TO_HWIRQ(fwspec)	(((fwspec->param[0] & TI_SCI_DEV_ID_MASK) << \
-+				 TI_SCI_DEV_ID_SHIFT) | \
-+				(fwspec->param[1] & TI_SCI_IRQ_ID_MASK))
++	return TI_SCI_RESOURCE_NULL;
++}
++EXPORT_SYMBOL_GPL(ti_sci_get_free_resource);
 +
 +/**
-+ * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
-+ *				   Interrupt Router IRQ domain.
-+ * @sci:	Pointer to TISCI handle
-+ * @dst_irq:	TISCI resource pointer representing destination irq controller.
-+ * @dst_id:	TISCI device ID of the destination irq controller.
++ * ti_sci_release_resource() - Release a resource from TISCI resource.
++ * @res:	Pointer to the TISCI resource
 + */
-+struct ti_sci_intr_irq_domain {
-+	const struct ti_sci_handle *sci;
-+	struct ti_sci_resource *dst_irq;
-+	u16 dst_id;
-+};
++void ti_sci_release_resource(struct ti_sci_resource *res, u16 id)
++{
++	unsigned long flags;
++	u16 set;
 +
-+static struct irq_chip ti_sci_intr_irq_chip = {
-+	.name			= "INTR",
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+};
++	raw_spin_lock_irqsave(&res->lock, flags);
++	for (set = 0; set < res->sets; set++) {
++		if (res->desc[set].start <= id &&
++		    (res->desc[set].num + res->desc[set].start) > id)
++			clear_bit(id - res->desc[set].start,
++				  res->desc[set].res_map);
++	}
++	raw_spin_unlock_irqrestore(&res->lock, flags);
++}
++EXPORT_SYMBOL_GPL(ti_sci_release_resource);
 +
 +/**
-+ * ti_sci_intr_irq_domain_translate() - Retrieve hwirq and type from
-+ *					IRQ firmware specific handler.
-+ * @domain:	Pointer to IRQ domain
-+ * @fwspec:	Pointer to IRQ specific firmware structure
-+ * @hwirq:	IRQ number identified by hardware
-+ * @type:	IRQ type
++ * devm_ti_sci_get_of_resource() - Get a TISCI resource assigned to a device
++ * @handle:	TISCI handle
++ * @dev:	Device pointer to which the resource is assigned
++ * @of_prop:	property name by which the resource are represented
 + *
-+ * Return 0 if all went ok else appropriate error.
-+ */
-+static int ti_sci_intr_irq_domain_translate(struct irq_domain *domain,
-+					    struct irq_fwspec *fwspec,
-+					    unsigned long *hwirq,
-+					    unsigned int *type)
-+{
-+	if (is_of_node(fwspec->fwnode)) {
-+		if (fwspec->param_count != 4)
-+			return -EINVAL;
-+
-+		*hwirq = FWSPEC_TO_HWIRQ(fwspec);
-+		*type = fwspec->param[2];
-+
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static inline void ti_sci_intr_delete_desc(struct ti_sci_intr_irq_domain *intr,
-+					   u16 src_id, u16 src_index,
-+					   u16 dst_irq)
-+{
-+	intr->sci->ops.rm_irq_ops.free_direct_irq(intr->sci, src_id, src_index,
-+						  intr->dst_id, dst_irq);
-+}
-+
-+/**
-+ * ti_sci_intr_irq_domain_free() - Free the specified IRQs from the domain.
-+ * @domain:	Domain to which the irqs belong
-+ * @virq:	Linux virtual IRQ to be freed.
-+ * @nr_irqs:	Number of continuous irqs to be freed
-+ */
-+static void ti_sci_intr_irq_domain_free(struct irq_domain *domain,
-+					unsigned int virq, unsigned int nr_irqs)
-+{
-+	struct ti_sci_intr_irq_domain *intr = domain->host_data;
-+	struct irq_data *data, *parent_data;
-+	u64 flags;
-+	int i;
-+
-+	intr = domain->host_data;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		data = irq_domain_get_irq_data(domain, virq + i);
-+		flags = (u64)irq_data_get_irq_chip_data(data);
-+		parent_data = irq_domain_get_irq_data(domain->parent, virq + i);
-+
-+		if (!(flags & TI_SCI_EVENT_IRQ))
-+			ti_sci_intr_delete_desc(intr,
-+						HWIRQ_TO_DEVID(data->hwirq),
-+						HWIRQ_TO_IRQID(data->hwirq),
-+						parent_data->hwirq);
-+		ti_sci_release_resource(intr->dst_irq, parent_data->hwirq);
-+		irq_domain_free_irqs_parent(domain, virq + i, 1);
-+		irq_domain_reset_irq_data(data);
-+	}
-+}
-+
-+/**
-+ * ti_sci_intr_allocate_gic_irq() - Allocate GIC specific IRQ
-+ * @domain:	Point to the interrupt router IRQ domain
-+ * @dev:	TISCI device IRQ generating the IRQ
-+ * @irq:	IRQ offset within the device
-+ * @flags:	Corresponding flags to the IRQ
-+ * @event_irq:	Flag to tell if requested irq is from interrupt aggregator.
++ * Note: This function expects of_prop to be in the form of tuples
++ *	<type, subtype>. Allocates and initializes ti_sci_resource structure
++ *	for each of_prop. Client driver can directly call
++ *	ti_sci_(get_free, release)_resource apis for handling the resource.
 + *
-+ * Returns 0 if all went well else appropriate error pointer.
++ * Return: Pointer to ti_sci_resource if all went well else appropriate
++ *	   error pointer.
 + */
-+static int ti_sci_intr_allocate_gic_irq(struct irq_domain *domain,
-+					unsigned int virq, u16 dev, u16 irq,
-+					u32 flags, u8 event_irq)
++struct ti_sci_resource *
++devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
++			    struct device *dev, u32 dev_id, char *of_prop)
 +{
-+	struct ti_sci_intr_irq_domain *intr = domain->host_data;
-+	struct irq_fwspec fwspec;
-+	u16 dst_irq;
-+	int err;
++	struct ti_sci_resource *res;
++	u32 resource_subtype;
++	u16 resource_type;
++	int i, ret;
 +
-+	if (!irq_domain_get_of_node(domain->parent))
-+		return -EINVAL;
++	res = devm_kzalloc(dev, sizeof(*res), GFP_KERNEL);
++	if (!res)
++		return ERR_PTR(-ENOMEM);
 +
-+	dst_irq = ti_sci_get_free_resource(intr->dst_irq);
-+	if (dst_irq == TI_SCI_RESOURCE_NULL)
-+		return -EINVAL;
-+
-+	fwspec.fwnode = domain->parent->fwnode;
-+	fwspec.param_count = 3;
-+	fwspec.param[0] = 0;	/* SPI */
-+	fwspec.param[1] = dst_irq - 32; /* SPI offset */
-+	fwspec.param[2] = flags & IRQ_TYPE_SENSE_MASK;
-+
-+	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
-+	if (err)
-+		goto err_irqs;
-+
-+	/* If event is requested then return */
-+	if (event_irq == TI_SCI_EVENT_IRQ)
-+		return 0;
-+
-+	err = intr->sci->ops.rm_irq_ops.set_direct_irq(intr->sci, dev, irq,
-+						       intr->dst_id, dst_irq);
-+	if (err) {
-+		pr_err("%s: IRQ allocation failed from src = %d, src_index = %d to dst_id = %d, dst_irq = %d",
-+		       __func__, dev, irq, intr->dst_id, dst_irq);
-+		goto err_msg;
++	res->sets = of_property_count_elems_of_size(dev_of_node(dev), of_prop,
++						    sizeof(u32));
++	if (res->sets < 0) {
++		dev_err(dev, "%s resource type ids not available\n", of_prop);
++		return ERR_PTR(res->sets);
 +	}
 +
-+	return 0;
++	res->desc = devm_kcalloc(dev, res->sets, sizeof(*res->desc),
++				 GFP_KERNEL);
++	if (!res->desc)
++		return ERR_PTR(-ENOMEM);
 +
-+err_msg:
-+	irq_domain_free_irqs_parent(domain, virq, 1);
-+err_irqs:
-+	ti_sci_release_resource(intr->dst_irq, dst_irq);
-+	return err;
-+}
-+
-+/**
-+ * ti_sci_intr_irq_domain_alloc() - Allocate Interrupt router IRQs
-+ * @domain:	Point to the interrupt router IRQ domain
-+ * @virq:	Corresponding Linux virtual IRQ number
-+ * @nr_irqs:	Continuous irqs to be allocated
-+ * @data:	Pointer to firmware specifier
-+ *
-+ * Return 0 if all went well else appropriate error value.
-+ */
-+static int ti_sci_intr_irq_domain_alloc(struct irq_domain *domain,
-+					unsigned int virq, unsigned int nr_irqs,
-+					void *data)
-+{
-+	struct irq_fwspec *fwspec = data;
-+	u16 src_id, src_index;
-+	unsigned long hwirq;
-+	u8 event_irq;
-+	int i, err;
-+	u32 type;
-+
-+	err = ti_sci_intr_irq_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (err)
-+		return err;
-+
-+	src_id = HWIRQ_TO_DEVID(hwirq);
-+	src_index = HWIRQ_TO_IRQID(hwirq);
-+	event_irq = fwspec->param[3];
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = ti_sci_intr_allocate_gic_irq(domain, virq + i, src_id,
-+						   src_index + i, type,
-+						   event_irq);
-+		if (err)
-+			goto err_irq;
-+
-+		err = irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+						    &ti_sci_intr_irq_chip,
-+						    (void *)(u64)event_irq);
-+		if (err)
-+			goto err_irq;
-+	}
-+
-+	return 0;
-+err_irq:
-+	ti_sci_intr_irq_domain_free(domain, virq, i);
-+	return err;
-+}
-+
-+static const struct irq_domain_ops ti_sci_intr_irq_domain_ops = {
-+	.alloc		= ti_sci_intr_irq_domain_alloc,
-+	.free		= ti_sci_intr_irq_domain_free,
-+	.translate	= ti_sci_intr_irq_domain_translate,
-+};
-+
-+static int ti_sci_intr_irq_domain_probe(struct platform_device *pdev)
-+{
-+	struct irq_domain *parent_domain, *domain;
-+	struct ti_sci_intr_irq_domain *intr;
-+	struct device_node *parent_node;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	parent_node = of_irq_find_parent(dev_of_node(dev));
-+	if (!parent_node) {
-+		dev_err(dev, "Failed to get IRQ parent node\n");
-+		return -ENODEV;
-+	}
-+
-+	parent_domain = irq_find_host(parent_node);
-+	if (!parent_domain) {
-+		dev_err(dev, "Failed to find IRQ parent domain\n");
-+		return -ENODEV;
-+	}
-+
-+	intr = devm_kzalloc(dev, sizeof(*intr), GFP_KERNEL);
-+	if (!intr)
-+		return -ENOMEM;
-+
-+	intr->sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
-+	if (IS_ERR(intr->sci)) {
-+		ret = PTR_ERR(intr->sci);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "ti,sci read fail %d\n", ret);
-+		intr->sci = NULL;
-+		return ret;
-+	}
-+
-+	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dst-id",
-+				   (u32 *)&intr->dst_id);
++	ret = ti_sci_get_resource_type(handle_to_ti_sci_info(handle), dev_id,
++				       &resource_type);
 +	if (ret) {
-+		dev_err(dev, "missing 'ti,sci-dst-id' property\n");
-+		return -EINVAL;
++		dev_err(dev, "No valid resource type for %u\n", dev_id);
++		return ERR_PTR(-EINVAL);
 +	}
 +
-+	intr->dst_irq = devm_ti_sci_get_of_resource(intr->sci, dev,
-+						    intr->dst_id,
-+						    "ti,sci-rm-range-girq");
-+	if (IS_ERR(intr->dst_irq)) {
-+		dev_err(dev, "Destination irq resource allocation failed\n");
-+		return PTR_ERR(intr->dst_irq);
-+	}
++	for (i = 0; i < res->sets; i++) {
++		ret = of_property_read_u32_index(dev_of_node(dev), of_prop, i,
++						 &resource_subtype);
++		if (ret)
++			return ERR_PTR(-EINVAL);
 +
-+	domain = irq_domain_add_hierarchy(parent_domain, 0, 0, dev_of_node(dev),
-+					  &ti_sci_intr_irq_domain_ops, intr);
-+	if (!domain) {
-+		dev_err(dev, "Failed to allocate IRQ domain\n");
-+		return -ENOMEM;
-+	}
++		ret = handle->ops.rm_core_ops.get_range(handle, dev_id,
++							resource_subtype,
++							&res->desc[i].start,
++							&res->desc[i].num);
++		if (ret) {
++			dev_err(dev, "type %d subtype %d not allocated for host %d\n",
++				resource_type, resource_subtype,
++				handle_to_ti_sci_info(handle)->host_id);
++			return ERR_PTR(ret);
++		}
 +
-+	return 0;
++		dev_dbg(dev, "res type = %d, subtype = %d, start = %d, num = %d\n",
++			resource_type, resource_subtype, res->desc[i].start,
++			res->desc[i].num);
++
++		res->desc[i].res_map =
++			devm_kzalloc(dev, BITS_TO_LONGS(res->desc[i].num) *
++				     sizeof(*res->desc[i].res_map), GFP_KERNEL);
++		if (!res->desc[i].res_map)
++			return ERR_PTR(-ENOMEM);
++	}
++	raw_spin_lock_init(&res->lock);
++
++	return res;
++}
++EXPORT_SYMBOL_GPL(devm_ti_sci_get_of_resource);
++
+ static int tisci_reboot_handler(struct notifier_block *nb, unsigned long mode,
+ 				void *cmd)
+ {
+diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
+index 6d17580839dc..2a1a41a17295 100644
+--- a/include/linux/soc/ti/ti_sci_protocol.h
++++ b/include/linux/soc/ti/ti_sci_protocol.h
+@@ -317,6 +317,33 @@ struct ti_sci_handle {
+ 	struct ti_sci_ops ops;
+ };
+ 
++#define TI_SCI_RESOURCE_NULL	0xffff
++
++/**
++ * struct ti_sci_resource_desc - Description of TI SCI resource instance range.
++ * @start:	Start index of the resource.
++ * @num:	Number of resources.
++ * @res_map:	Bitmap to manage the allocation of these resources.
++ */
++struct ti_sci_resource_desc {
++	u16 start;
++	u16 num;
++	unsigned long *res_map;
++};
++
++/**
++ * struct ti_sci_resource - Structure representing a resource assigned
++ *			    to a device.
++ * @sets:	Number of sets available from this resource type
++ * @lock:	Lock to guard the res map in each set.
++ * @desc:	Array of resource descriptors.
++ */
++struct ti_sci_resource {
++	u16 sets;
++	raw_spinlock_t lock;
++	struct ti_sci_resource_desc *desc;
++};
++
+ #if IS_ENABLED(CONFIG_TI_SCI_PROTOCOL)
+ const struct ti_sci_handle *ti_sci_get_handle(struct device *dev);
+ int ti_sci_put_handle(const struct ti_sci_handle *handle);
+@@ -325,6 +352,11 @@ const struct ti_sci_handle *ti_sci_get_by_phandle(struct device_node *np,
+ 						  const char *property);
+ const struct ti_sci_handle *devm_ti_sci_get_by_phandle(struct device *dev,
+ 						       const char *property);
++u16 ti_sci_get_free_resource(struct ti_sci_resource *res);
++void ti_sci_release_resource(struct ti_sci_resource *res, u16 id);
++struct ti_sci_resource *
++devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
++			    struct device *dev, u32 dev_id, char *of_prop);
+ 
+ #else	/* CONFIG_TI_SCI_PROTOCOL */
+ 
+@@ -357,6 +389,22 @@ const struct ti_sci_handle *devm_ti_sci_get_by_phandle(struct device *dev,
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
++
++static inline u16 ti_sci_get_free_resource(struct ti_sci_resource *res)
++{
++	return TI_SCI_RESOURCE_NULL;
 +}
 +
-+static const struct of_device_id ti_sci_intr_irq_domain_of_match[] = {
-+	{ .compatible = "ti,sci-intr", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, ti_sci_intr_irq_domain_of_match);
++static inline void ti_sci_release_resource(struct ti_sci_resource *res, u16 id)
++{
++}
 +
-+static struct platform_driver ti_sci_intr_irq_domain_driver = {
-+	.probe = ti_sci_intr_irq_domain_probe,
-+	.driver = {
-+		.name = "ti-sci-intr",
-+		.of_match_table = ti_sci_intr_irq_domain_of_match,
-+	},
-+};
-+module_platform_driver(ti_sci_intr_irq_domain_driver);
-+
-+MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
-+MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
-+MODULE_LICENSE("GPL v2");
++static inline struct ti_sci_resource *
++devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
++			    struct device *dev, u32 dev_id, char *of_prop)
++{
++	return ERR_PTR(-EINVAL);
++}
+ #endif	/* CONFIG_TI_SCI_PROTOCOL */
+ 
+ #endif	/* __TISCI_PROTOCOL_H */
 -- 
 2.19.2
 
