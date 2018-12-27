@@ -6,290 +6,123 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F18C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A83EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA59A21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 070EB218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="sP87Kajt"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="AQP2qlzv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeL0UMd (ORCPT
+        id S1729667AbeL0UND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:12:33 -0500
-Received: from cock.li ([185.100.85.212]:55558 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729494AbeL0UMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:12:33 -0500
+        Thu, 27 Dec 2018 15:13:03 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:60784 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729494AbeL0UNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 15:13:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tUF3Nc9Cy2Iu7AF/uNSRNI7ASH7L3YuDeGvyAj2YKbA=; b=AQP2qlzvsCbFeNC+yB7i65MAO
+        olJy7Np4GGA7nZvCL5zSEtbVAOG7X/npOHMWEBVKwPHVrbJRFK0EWgeqh4EjnyoDCOd+9uL8Xch8a
+        ptByLVC3mTMRDZJfnmqZmJ84uVqnlTVdMBnaV2txWE8SOUCHLxG54vNuVpW1yVJK0UEa4=;
+Received: from p5dcc3f32.dip0.t-ipconnect.de ([93.204.63.50] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gcc1S-0006RY-Ed; Thu, 27 Dec 2018 21:12:50 +0100
+Date:   Thu, 27 Dec 2018 21:12:22 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        bcousson@baylibre.com, letux-kernel@openphoenux.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181227211222.5996c356@aktux>
+In-Reply-To: <20181204164556.GB6707@atomide.com>
+References: <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+        <20181130071534.0a6cd455@kemnade.info>
+        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+        <20181130153729.GG53235@atomide.com>
+        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+        <20181203153910.GA6707@atomide.com>
+        <20181203172246.0e767a16@kemnade.info>
+        <20181204164556.GB6707@atomide.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545941549; bh=52AdPDMsW9Ymh97xkjtD3NHn67drtE6th6bXKip2k34=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sP87Kajt8vFeF3pHOJA4jGKKRG+fPoVhOfsP0HPRJ4gR7ViphGDCohygrrFB84bBd
-         y4PdH1ksmAIXXFyRQr5DL8F/0IqDen5Pm0GC8+/fg+1rVJ9A8nqDdo9iiZ8vl6fZ5V
-         m1ioBTxUb6oWCKL2/LBo1ed3mdI8LxVEhFzEdi+vKUy508EermFMe//LRwB7q1jewE
-         QHxX50kWZgir0O3ly8K/ap+FFvwYkotMU+5SJSGQdPZuMua1cKypkpdmYoZR1XWyZB
-         BMmBS5D2qvbUtLxg2uiiqLngmoPE8dQIP0Dhvqd7/dA+Xtw7EwDJ5X+dt94xjKdSeg
-         Js8kxcqR2Swng==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 27 Dec 2018 20:12:28 +0000
-From:   vsnsdualce@memeware.net
-To:     Raul Miller <rauldmiller@gmail.com>
-Cc:     visionsofalice@redchan.it, freebsd-women@freebsd.org,
-        freebsd-chat@freebsd.org,
-        OpenBSD general usage list <misc@openbsd.org>,
-        owner-misc@openbsd.org, linux-kernel@vger.kernel.org
-Subject: Re: Yes: The linux devs can rescind their license grant. GPLv2 is a
- bare license and is revocable by the grantor.
-In-Reply-To: <CAD2jOU9SV3nuQbv+Nnp6XSqo-EA90AWvn5_kagr63eAsA=MaYw@mail.gmail.com>
-References: <238e9be2bb4751406260ebdc7686ef54@redchan.it>
- <CAD2jOU9SV3nuQbv+Nnp6XSqo-EA90AWvn5_kagr63eAsA=MaYw@mail.gmail.com>
-Message-ID: <673b3e733204be78710280893ccc350d@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TIvixuQ9bzfDR./7PwxIb2L"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> (2) ... (I am not going to go over the legal mistakes you've made,
-> because of (1))...
+--Sig_/TIvixuQ9bzfDR./7PwxIb2L
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have not made legal mistakes, pompous programmer asshole*.
+Hi,
 
-A gratuitous license, absent an attached interest, is revocable at will.
+On Tue, 4 Dec 2018 08:45:57 -0800
+Tony Lindgren <tony@atomide.com> wrote:
 
-This goes for GPLv2 as used by linux, just as it goes for the BSD 
-license(s).
-The only entities who have, with regards to BSD, an attached interests
-are perhaps those companies who pay for its development. Non-gratis 
-(paying) customers
-may have some refuge under consumer protection statutes, for current 
-versions they have
-in their posession, paid for by good consideration.
+> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
+> > On Mon, 3 Dec 2018 07:39:10 -0800
+> > Tony Lindgren <tony@atomide.com> wrote: =20
+> > > The consumer device stays active just fine with PM runtime
+> > > calls. So yes, the problem is keeping a clock controller forced
+> > > active for the period of consumer device reset. Other than
+> > > that typically autoidle can be just kept enabled.
+> > >  =20
+> > Are we still talking about the same problem? Maybe I am losing track
+> > here. Just to make sure.=20
+> > The patch series was about disabling autoidle for devices which cannot
+> > work with it during normal operation. Not during reset or something
+> > like that.=20
+> > Or is the keep-clock-active-during-reset just a requirement for bigger
+> > restructuring ideas? =20
+>=20
+> Yeah there are two issues: The fix needed for the issue you brought up,
+> and also how to let a reset driver to block autoidle for reset.
+>=20
+Hmm, is this set now waiting for the famous "somebody" fixing all
+the stuff?
+What are currently visible symptoms for the driver not blocking
+autoidle for reset? Maybe I can at least test something there. I have
+also omap5 here.
 
-Everyone else has NOTHING.
-Do you understand that?
+Regards,
+Andreas
 
-In the case of the 1000's of linux copyright holders to whom no 
-consideration
-was given by an entity, and the various BSD copyright holders (read: the 
-programmers),
-who have not ASSIGNED their copyright over to some other entity, there 
-is
-NOTHING to hold them to a promise THEY NEVER MADE.
+--Sig_/TIvixuQ9bzfDR./7PwxIb2L
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-DO YOU UNDERSTAND THAT YOU FUCKING PIECE OF SHIT?
-DO YOU UNDERSTAND THAT NEITHER THEY NOR YOU HAVE PROMISED NOT TO ELLECT
-TO USE YOUR AS-OF-RIGHT OPTION TO RESCIND YOUR GRATUITOUS LICENSE 
-REGARDING
-YOUR WORK.
+-----BEGIN PGP SIGNATURE-----
 
-One cannot rely on a promise that was never made, additionally many of 
-them
-were never paid consideration for this non existant promise either.
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwlMiYACgkQfb1qx03i
+kySS0xAArFtcBqNv3FgSHyXCkCfojx8xM1WGyVr+paQgNoOZtmThhgTTi1CEgQ4a
+ElAK5Lp7sl1JeYmqIP/XYHBkFDRfavWRIGU1ZggahsP5gmalPZV1k7HtkCGaubua
+5pVvpmNYy4txp7oatJ4FpQJKAiyXqz9u6on4t2uUdOxqDIJWpnP/3EHORjiXzel4
+Ss4P712YS42TsKsCvdwNNXAMNtci1GyDZ0OWYITBgW+bqzIV+qWgaNAX6g2q+1rd
+0lmqTllP2N9KRLQ8dteBYlDQiB2A7GSblynObVnaRWGN/1/gFgbQ87SoSbyaFvXT
+4gmypEeB9Sh/vkg9Jjjxq7gkpV6v3STXIy8Dx7jY0I1/Wtd4KRhJYApOs2xQqZo0
+iOZqSflhm3/np3ldpxkZYb0IEqFHPZzYzfjlmNxYojpJ8qInrMF1sVcvpRFPNh/p
+mIx7bHF37KOmex/+H1GBHWTuAvEitrNHAYT3JdpKxVHfOJX/b7H0OhZXjnQ6Mvvm
+VAqWEBkjueo0wEH4cfMz3yxftEpjAYgBnOb7KLfinc38gS4PQWMEun6YyWTg8Z4E
+SSJvK3BYPXNZT1HLjlhB4W4JtzNtKbIqwJAOBahiK0KgHHNRg3FV+KE9ZdwMxX6O
+T+z8EQLrsdFkS5vM6LNJn7JbgSix33pO9X20xE50sLvCmqEEfrw=
+=5Sng
+-----END PGP SIGNATURE-----
 
-
-*(Note: I am both a programmer and an attorney, so I know the type)
-
-On 2018-12-24 16:01, Raul Miller wrote:
-> (1) Wrong mailing lists - these are not linux mailing lists.
-> 
-> (2) ... (I am not going to go over the legal mistakes you've made,
-> because of (1))...
-> 
-> (3) Anyways, ... people do make mistakes... But, please stop making
-> these mistakes.
-> 
-> Thanks,
-> 
-> --
-> Raul
-> 
-> On Mon, Dec 24, 2018 at 10:55 AM <visionsofalice@redchan.it> wrote:
->> 
->> Bradley M. Kuhn: The SFConservancy's new explanation was refuted 5 
->> hours
->> after it was published:
->> 
->> 
->> 
->> 
->> Yes they can, greg.
->> 
->> The GPL v2, is a bare license. It is not a contract. It lacks
->> consideration between the licensee and the grantor.
->> 
->> (IE: They didn't pay you, Greg, a thing. YOU, Greg, simply have chosen
->> to bestow a benefit upon them where they suffer no detriment and you, 
->> in
->> fact, gain no bargained-for benefit)
->> 
->> As a bare license, (read: property license), the standard rules
->> regarding the alienation of property apply.
->> 
->> Therein: a gratuitous license is revocable at the will of the grantor.
->> 
->> The licensee then may ATTEMPT, as an affirmative defense against your
->> as-of-right action to claim promissory estoppel in state court, and
->> "keep you to your word". However you made no such promise disclaiming
->> your right to rescind the license.
->> 
->> Remeber: There is no utterance disclaiming this right within the GPL
->> version 2. Linus, furthermore, has chosen both to exclude the "or any
->> later version" codicil, to reject the GPL version 3, AND to publicly
->> savage GPL version 3 (he surely has his reasons, perhaps this is one 
->> of
->> them, left unstated). (GPLv3 which has such promises listed (not to 
->> say
->> that they would be effective against the grantor, but it is an attempt
->> at the least)).
->> 
->> 
->> 
->> 
->> The Software Freedom Conservancy has attempted to mis-construe clause 
->> 4
->> of the GPL version 2 as a "no-revocation by grantor" clause.
->> 
->> However, reading said clause, using plain construction, leads a
->> reasonable person to understand that said clause is speaking
->> specifically about the situation where an upstream licensee loses 
->> their
->> permission under the terms due to a violation of the terms; in that 
->> case
->> the down-stream licensee does not in-turn also lose their permission
->> under the terms.
->> 
->> Additionally, clause 0 makes it crystal clear that "You" is defined as
->> the licensee, not the grantor. Another issue the SFConservancy's 
->> public
->> service announcement chooses to ignore.
->> 
->> Thirdly, the SFConservancy banks on the ignorance of both the public 
->> and
->> the developers regarding property alienation. A license does not 
->> impinge
->> the rights of the party granting the license in a quid-pro-quo manner
->> vis a vis the licensee's taking. A license merely grants permission,
->> extended from the grantor, to the licensee, regarding the article of
->> property that is being impinged. A license is NOT a full nor is it a
->> permanent alienation of the article(property) in question. The 
->> impinged
->> property, being under a non bargained-for temporary grant, can be 
->> taken
->> back into the sole dominion of the owner - at his election to do so.
->> 
->> 
->> 
->> Now as to the 9th circuit appellate court's decision in Jacobsen v.
->> Katzer . While the court waxes eloquently about opensource licenses,
->> even mentioning the word "consideration" in it's long dicta, when it
->> comes time to make the binding decision the court found that the lower
->> (district) court was in _ERROR_ regarding the application of
->> contract-law principals to the Artistic License, regarding the case, 
->> and
->> instructed the lower court to instead construe said license as a
->> Copyright License.
->> 
->> The SFConservancy, and Bruce Perens have chosen to:
->> 1) Rely on the dicta. (non-binding - "some things could be contracts -
->> opensource is great")
->> 2) Ignore the actual ruling. (Binding - Copyright License - Not
->> Contract)
->> 3) Ignore that this case was about the AL, not the GPLv2
->> 4) Ignore the existence of different jurisdictions.
->> (Why file in the roll-the-dice 9th district if you can file in a
->> district that has personal-juristicion over the defendant and is much
->> more consistent in it's rulings?)
->> 5) Ignore all established law regard property licensing, contract
->> formation, meeting of the minds, what consideration is etc.
->> 
->> Which is not surprising considering the desire of people like Bruce
->> Perens is to rob MEN of EVERY benefit of their Labour and every speck 
->> of
->> happiness in life and to transfer those benefits to WOMEN and those 
->> who
->> support women.
->> 
->> (This is why people who are like Bruce Perens, the SFConservancy
->> menbers, and the CoC supporters, banned men from taking female 
->> children
->> as brides: in contrivance to the law of YHWH (Devarim chapter 22 - -
->> verse 28 (na'ar (LXX: padia)), and continue to uphold that ban
->> world-wide, and seek to destroy ALL cultures that do no bend to their
->> will.... who are not idolators of Women)
->> 
->> 
->> 
->> 
->> Look, you may love your users, you may love the people who edit your
->> code in their home or office; but the fact of the matter is...
->> 
->> They have done nothing for you, they have promised nothing to you. 
->> They
->> CANNOT hold YOU.
->> 
->> You have the right to rescind at any time, and remove your work from 
->> any
->> future versions of Linux. And you might consider doing so if YOU are
->> done harm.
->> 
->> Don't let the insatiable, never-satisfied, public fool you into 
->> thinking
->> otherwise.
->> 
->> And, yes, I am a lawyer.
->> And, no, unlike the SFConservancy, I did not have to call upon outside
->> counsel to analyze the fact pattern. (And even then all they could 
->> come
->> up with was statements using weasel words "may" etc: not even wanting 
->> to
->> commit to their clearly-disingenuous publication)
->> 
->> 
->> (Note: If you would like to read a nice discussion on the topic, here 
->> is
->> one 
->> http://illinoisjltp.com/journal/wp-content/uploads/2013/10/kumar.pdf
->> )
->> 
->> On 2018-10-25 08:19, Greg Kroah-Hartman wrote:
->> > On Thu, Oct 25, 2018 at 07:56:26AM +0000, visionsofalice@redchan.it
->> > wrote:
->> >> The linux devs can rescind their license grant.
->> >
->> > No they can not, please do not keep spreading false information.
->> >
->> > greg k-h
->> 
->> 
->> 
->> On 2018-10-29 22:31, Bradley M. Kuhn wrote:
->> > On Thu, Oct 25, 2018 at 07:56:26AM +0000, visionsofalice@redchan.it
->> > wrote:
->> >> The linux devs can rescind their license grant.
->> > Greg KH responded on Thu, 25 Oct 2018 09:19:11 +0100:
->> >>> No they can not, please do not keep spreading false information.
->> >
->> > I was explicitly cc'ed on this thread by visionsofalice.  I've read the
->> > whole thread, and the only useful thing I can contribute here is to
->> > agree
->> > with Greg and additionally provide some backup research on the point:
->> > https://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
->> >
->> > Software Freedom Conservancy engaged our legal counsel to write a new
->> > section for the Copyleft Guide that further explains the irrevocability
->> > of
->> > GPLv2.  We published this when others raised these specious claims back
->> > in
->> > September.  Direct link to new section:
->> > https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
->> >
->> >
->> > HTH,
->> 
->> 
->> 
+--Sig_/TIvixuQ9bzfDR./7PwxIb2L--
