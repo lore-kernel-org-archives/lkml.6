@@ -2,351 +2,115 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE233C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD353C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BDC220874
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90FE620882
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbeL0PeK (ORCPT
+        id S1728559AbeL0Pmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 10:34:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39024 "EHLO mx1.redhat.com"
+        Thu, 27 Dec 2018 10:42:51 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35028 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727119AbeL0PeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 10:34:09 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFCB989AD5;
-        Thu, 27 Dec 2018 15:34:08 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01884101961E;
-        Thu, 27 Dec 2018 15:33:56 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 10:33:54 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     simo@redhat.com, carlos@redhat.com, netdev@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 09/10] audit: NETFILTER_PKT:
- record each container ID associated with a netNS
-Message-ID: <20181227153354.k2vd4be2c6t2kqe4@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <3f5edfb0d530d7f0061fe11b817b315b350b9d86.1533065887.git.rgb@redhat.com>
- <CAHC9VhT2GJH2cJsrCsxCZMLsdv67oXJhH9mHAgpfMRY4=y43WQ@mail.gmail.com>
- <20181031193018.67pxaxzxlbdc4lkd@madcap2.tricolour.ca>
+        id S1727119AbeL0Pmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 10:42:51 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0C8952072F; Thu, 27 Dec 2018 16:42:49 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-80-230.w90-88.abo.wanadoo.fr [90.88.22.230])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 603C12070E;
+        Thu, 27 Dec 2018 16:42:48 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     bcm-kernel-feedback-list@broadcom.com, linux-i2c@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Eben Upton <eben@raspberrypi.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2] i2c: bcm2835: Clear current buffer pointers and counts after a transfer
+Date:   Thu, 27 Dec 2018 16:42:25 +0100
+Message-Id: <20181227154225.5492-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031193018.67pxaxzxlbdc4lkd@madcap2.tricolour.ca>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Dec 2018 15:34:09 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-31 15:30, Richard Guy Briggs wrote:
-> On 2018-10-19 19:18, Paul Moore wrote:
-> > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Add audit container identifier auxiliary record(s) to NETFILTER_PKT
-> > > event standalone records.  Iterate through all potential audit container
-> > > identifiers associated with a network namespace.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h    |  5 +++++
-> > >  kernel/audit.c           | 26 ++++++++++++++++++++++++++
-> > >  net/netfilter/xt_AUDIT.c | 12 ++++++++++--
-> > >  3 files changed, 41 insertions(+), 2 deletions(-)
-> > 
-> > ...
-> > 
-> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > > index 9a02095..8755f4d 100644
-> > > --- a/include/linux/audit.h
-> > > +++ b/include/linux/audit.h
-> > > @@ -169,6 +169,8 @@ extern int audit_log_contid(struct audit_context *context,
-> > >  extern void audit_netns_contid_add(struct net *net, u64 contid);
-> > >  extern void audit_netns_contid_del(struct net *net, u64 contid);
-> > >  extern void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p);
-> > > +extern void audit_log_netns_contid_list(struct net *net,
-> > > +                                struct audit_context *context);
-> > >
-> > >  extern int                 audit_update_lsm_rules(void);
-> > >
-> > > @@ -228,6 +230,9 @@ static inline void audit_netns_contid_del(struct net *net, u64 contid)
-> > >  { }
-> > >  static inline void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> > >  { }
-> > > +static inline void audit_log_netns_contid_list(struct net *net,
-> > > +                                       struct audit_context *context)
-> > > +{ }
-> > >
-> > >  #define audit_enabled AUDIT_OFF
-> > >  #endif /* CONFIG_AUDIT */
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index c5fed3b..b23711c 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -392,6 +392,32 @@ void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> > >                 audit_netns_contid_add(new->net_ns, contid);
-> > >  }
-> > >
-> > > +void audit_log_netns_contid_list(struct net *net, struct audit_context *context)
-> > > +{
-> > > +       spinlock_t *lock = audit_get_netns_contid_list_lock(net);
-> > > +       struct audit_buffer *ab;
-> > > +       struct audit_contid *cont;
-> > > +       bool first = true;
-> > > +
-> > > +       /* Generate AUDIT_CONTAINER record with container ID CSV list */
-> > > +       ab = audit_log_start(context, GFP_ATOMIC, AUDIT_CONTAINER);
-> > > +       if (!ab) {
-> > > +               audit_log_lost("out of memory in audit_log_netns_contid_list");
-> > > +               return;
-> > > +       }
-> > > +       audit_log_format(ab, "contid=");
-> > > +       spin_lock(lock);
-> > > +       list_for_each_entry(cont, audit_get_netns_contid_list(net), list) {
-> > > +               if (!first)
-> > > +                       audit_log_format(ab, ",");
-> > > +               audit_log_format(ab, "%llu", cont->id);
-> > > +               first = false;
-> > > +       }
-> > > +       spin_unlock(lock);
-> > 
-> > This is looking like potentially a lot of work to be doing under a
-> > spinlock, not to mention a single spinlock that is shared across CPUs.
-> > Considering that I expect changes to the list to be somewhat
-> > infrequent, this might be a good candidate for a RCU based locking
-> > scheme.
-> 
-> Would something like this look reasonable?
-> (This is on top of a patch to make contid list lock and unlock
-> functions.)
+The driver's interrupt handler checks whether a message is currently
+being handled with the curr_msg pointer. When it is NULL, the interrupt
+is considered to be unexpected. Similarly, the i2c_start_transfer
+routine checks for the remaining number of messages to handle in
+num_msgs.
 
-Paul, could I please get your review on this locking approach I proposed
-almost two months ago so I can be more reassured that it won't be an
-issue in v5?  Thanks!
+However, these values are never cleared and always keep the message and
+number relevant to the latest transfer (which might be done already and
+the underlying message memory might have been freed).
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index be5d6eb..9428fc3 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -92,6 +92,7 @@ struct audit_contid {
->  	struct list_head	list;
->  	u64			id;
->  	refcount_t		refcount;
-> +	struct rcu_head		rcu;
->  };
->  
->  extern int is_audit_feature_set(int which);
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index d5b58163..6f84c25 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -106,7 +106,6 @@
->  struct audit_net {
->  	struct sock *sk;
->  	struct list_head contid_list;
-> -	spinlock_t contid_list_lock;
->  };
->  
->  /**
-> @@ -327,26 +326,6 @@ struct list_head *audit_get_netns_contid_list(const struct net *net)
->  	return &aunet->contid_list;
->  }
->  
-> -static int audit_netns_contid_lock(const struct net *net)
-> -{
-> -	struct audit_net *aunet = net_generic(net, audit_net_id);
-> -
-> -	if (!aunet)
-> -		return -EINVAL;
-> -	spin_lock(aunet->contid_list_lock);
-> -	return 0;
-> -}
-> -
-> -static int audit_netns_contid_unlock(const struct net *net)
-> -{
-> -	struct audit_net *aunet = net_generic(net, audit_net_id);
-> -
-> -	if (!aunet)
-> -		return -EINVAL;
-> -	spin_unlock(aunet->contid_list_lock);
-> -	return 0;
-> -}
-> -
->  void audit_netns_contid_add(struct net *net, u64 contid)
->  {
->  	struct list_head *contid_list = audit_get_netns_contid_list(net);
-> @@ -354,10 +333,9 @@ void audit_netns_contid_add(struct net *net, u64 contid)
->  
->  	if (!audit_contid_valid(contid))
->  		return;
-> -	if (audit_netns_contid_lock(net))
-> -		return;
-> +	rcu_read_lock();
->  	if (!list_empty(contid_list))
-> -		list_for_each_entry(cont, contid_list, list)
-> +		list_for_each_entry_rcu(cont, contid_list, list)
->  			if (cont->id == contid) {
->  				refcount_inc(&cont->refcount);
->  				goto out;
-> @@ -367,10 +345,16 @@ void audit_netns_contid_add(struct net *net, u64 contid)
->  		INIT_LIST_HEAD(&cont->list);
->  		cont->id = contid;
->  		refcount_set(&cont->refcount, 1);
-> -		list_add(&cont->list, contid_list);
-> +		list_add_rcu(&cont->list, contid_list);
->  	}
->  out:
-> -	audit_netns_contid_unlock(net);
-> +	rcu_read_unlock();
-> +}
-> +
-> +audit_free_contid_rcu(struct rcu_head *head) {
-> +	struct audit_contid *contid = container_of(head, struct audit_contid, rcu);
-> +
-> +	kfree(contid);
->  }
->  
->  void audit_netns_contid_del(struct net *net, u64 contid)
-> @@ -380,17 +364,16 @@ void audit_netns_contid_del(struct net *net, u64 contid)
->  
->  	if (!audit_contid_valid(contid))
->  		return;
-> -	if (audit_netns_contid_lock(net))
-> -		return;
-> +	rcu_read_lock();
->  	if (!list_empty(contid_list))
-> -		list_for_each_entry(cont, contid_list, list)
-> +		list_for_each_entry_rcu(cont, contid_list, list)
->  			if (cont->id == contid) {
-> -				list_del(&cont->list);
-> +				list_del_rcu(&cont->list);
->  				if (refcount_dec_and_test(&cont->refcount))
-> -					kfree(cont);
-> +					call_rcu(&cont->rcu, audit_free_contid_rcu);
->  				break;
->  			}
-> -	audit_netns_contid_unlock(net);
-> +	rcu_read_unlock();
->  }
->  
->  void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> @@ -418,15 +401,14 @@ void audit_log_netns_contid_list(struct net *net, struct audit_context *context)
->  		return;
->  	}
->  	audit_log_format(ab, "ref=net contid=");
-> -	if (audit_netns_contid_lock(net))
-> -		return;
-> -	list_for_each_entry(cont, audit_get_netns_contid_list(net), list) {
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(cont, audit_get_netns_contid_list(net), list) {
->  		if (!first)
->  			audit_log_format(ab, ",");
->  		audit_log_format(ab, "%llu", cont->id);
->  		first = false;
->  	}
-> -	audit_netns_contid_unlock(net);
-> +	rcu_read_unlock();
->  	audit_log_end(ab);
->  }
->  EXPORT_SYMBOL(audit_log_netns_contid_list);
-> @@ -1674,7 +1656,6 @@ static int __net_init audit_net_init(struct net *net)
->  		.flags	= NL_CFG_F_NONROOT_RECV,
->  		.groups	= AUDIT_NLGRP_MAX,
->  	};
-> -
->  	struct audit_net *aunet = net_generic(net, audit_net_id);
->  
->  	aunet->sk = netlink_kernel_create(net, NETLINK_AUDIT, &cfg);
-> @@ -1684,8 +1665,6 @@ static int __net_init audit_net_init(struct net *net)
->  	}
->  	aunet->sk->sk_sndtimeo = MAX_SCHEDULE_TIMEOUT;
->  	INIT_LIST_HEAD(&aunet->contid_list);
-> -	spin_lock_init(&aunet->contid_list_lock);
-> -
->  	return 0;
->  }
->  
-> > 
-> > > +       audit_log_end(ab);
-> > > +}
-> > > +EXPORT_SYMBOL(audit_log_netns_contid_list);
-> > >
-> > >  void audit_panic(const char *message)
-> > >  {
-> > >         switch (audit_failure) {
-> > > diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-> > > index af883f1..44fac3f 100644
-> > > --- a/net/netfilter/xt_AUDIT.c
-> > > +++ b/net/netfilter/xt_AUDIT.c
-> > > @@ -71,10 +71,13 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
-> > >  {
-> > >         struct audit_buffer *ab;
-> > >         int fam = -1;
-> > > +       struct audit_context *context;
-> > > +       struct net *net;
-> > >
-> > >         if (audit_enabled == AUDIT_OFF)
-> > > -               goto errout;
-> > > -       ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
-> > > +               goto out;
-> > > +       context = audit_alloc_local(GFP_ATOMIC);
-> > > +       ab = audit_log_start(context, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
-> > >         if (ab == NULL)
-> > >                 goto errout;
-> > >
-> > > @@ -104,7 +107,12 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
-> > >
-> > >         audit_log_end(ab);
-> > >
-> > > +       net = xt_net(par);
-> > > +       audit_log_netns_contid_list(net, context);
-> > > +
-> > >  errout:
-> > > +       audit_free_context(context);
-> > > +out:
-> > >         return XT_CONTINUE;
-> > >  }
-> > >
-> > 
-> > --
-> > paul moore
-> > www.paul-moore.com
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+When an unexpected interrupt hits with the DONE bit set, the isr will
+then try to access the flags field of the curr_msg structure, leading
+to a fatal page fault.
 
-- RGB
+The msg_buf and msg_buf_remaining fields are also never cleared at the
+end of the transfer, which can lead to similar pitfalls.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Fix these issues by introducing a cleanup function and always calling
+it after a transfer is finished.
+
+Fixes: e2474541032d ("i2c: bcm2835: Fix hang for writing messages larger than 16 bytes")
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+
+Changes since v1:
+* Added cleanup of msg_buf and msg_buf_remaining;
+* Moved cleanups to a dedicated function;
+* Performed cleanup on timeout as well;
+* Added Fixes tag.
+
+ drivers/i2c/busses/i2c-bcm2835.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
+index 44deae78913e..4d19254f78c8 100644
+--- a/drivers/i2c/busses/i2c-bcm2835.c
++++ b/drivers/i2c/busses/i2c-bcm2835.c
+@@ -191,6 +191,15 @@ static void bcm2835_i2c_start_transfer(struct bcm2835_i2c_dev *i2c_dev)
+ 	bcm2835_i2c_writel(i2c_dev, BCM2835_I2C_C, c);
+ }
+ 
++static void bcm2835_i2c_finish_transfer(struct bcm2835_i2c_dev *i2c_dev)
++{
++	i2c_dev->curr_msg = NULL;
++	i2c_dev->num_msgs = 0;
++
++	i2c_dev->msg_buf = NULL;
++	i2c_dev->msg_buf_remaining = 0;
++}
++
+ /*
+  * Note about I2C_C_CLEAR on error:
+  * The I2C_C_CLEAR on errors will take some time to resolve -- if you were in
+@@ -291,6 +300,9 @@ static int bcm2835_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 
+ 	time_left = wait_for_completion_timeout(&i2c_dev->completion,
+ 						adap->timeout);
++
++	bcm2835_i2c_finish_transfer(i2c_dev);
++
+ 	if (!time_left) {
+ 		bcm2835_i2c_writel(i2c_dev, BCM2835_I2C_C,
+ 				   BCM2835_I2C_C_CLEAR);
+-- 
+2.20.1
+
