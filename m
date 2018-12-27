@@ -2,146 +2,278 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54952C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8287C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2475B214D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 756CA2148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:21:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rkfaju7D";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AHj6pals"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeL0C5b (ORCPT
+        id S1728406AbeL0DVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 21:57:31 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17063 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726847AbeL0C5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 21:57:31 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 06DE3E68A1BBB;
-        Thu, 27 Dec 2018 10:57:26 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 27 Dec 2018 10:57:16 +0800
-From:   Xie XiuQi <xiexiuqi@huawei.com>
-To:     <mingo@redhat.com>, <vincent.guittot@linaro.org>,
-        <peterz@infradead.org>, <xiezhipeng1@huawei.com>
-CC:     <huawei.libin@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] sched: fix infinity loop in update_blocked_averages
-Date:   Thu, 27 Dec 2018 11:04:26 +0800
-Message-ID: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 26 Dec 2018 22:21:00 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeL0DVA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Dec 2018 22:21:00 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E7EFF607F1; Thu, 27 Dec 2018 03:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545880858;
+        bh=a1z6d1hl4bhsyXWF2E7inQkMB0X0cHgtUVgzwRbBGTA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Rkfaju7DpkgYZK/5zLk3v+epnTxEbf3ric4IrIJnsUa/RIPdVcO/U559MxxMo1pBK
+         2kenJ4zneHG8cGBeNJbegBYQBpFKvie63No3Nud7Si67LL8MBCNwEiIE99dmwFKqQk
+         SWmZ9FNg3+NkGI2WvtkIteMtX8/gI/vtGDXP09QQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 619D960559;
+        Thu, 27 Dec 2018 03:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545880849;
+        bh=a1z6d1hl4bhsyXWF2E7inQkMB0X0cHgtUVgzwRbBGTA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AHj6palsHcVskezFe3U+C4KuRjb1nOHpHzY7Uo31ktcJkI3US77D72raojo+rH3Vq
+         ZFmqzfYHmaa0J/SDbE0RgcaDMbZeuVrVM9MjaSYKVxssGHmYir605tVJd9EDiKuvU+
+         W0/qRKjZNqLw7pq/t9cRGtdSCzLYBniqlfEWV19U=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 27 Dec 2018 08:50:49 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+In-Reply-To: <20181226202501.GH261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-3-bgodavar@codeaurora.org>
+ <20181222003116.GE261387@google.com>
+ <a8a0c1dc563faa62cf8a6d952295eee6@codeaurora.org>
+ <20181226202501.GH261387@google.com>
+Message-ID: <33b964734ec255f75482475e7cb064c2@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhepeng Xie report a bug, there is a infinity loop in
-update_blocked_averages().
+Hi Matthias,
 
-PID: 14233  TASK: ffff800b2de08fc0  CPU: 1   COMMAND: "docker"
- #0 [ffff00002213b9d0] update_blocked_averages at ffff00000811e4a8
- #1 [ffff00002213ba60] pick_next_task_fair at ffff00000812a3b4
- #2 [ffff00002213baf0] __schedule at ffff000008deaa88
- #3 [ffff00002213bb70] schedule at ffff000008deb1b8
- #4 [ffff00002213bb80] futex_wait_queue_me at ffff000008180754
- #5 [ffff00002213bbd0] futex_wait at ffff00000818192c
- #6 [ffff00002213bd00] do_futex at ffff000008183ee4
- #7 [ffff00002213bde0] __arm64_sys_futex at ffff000008184398
- #8 [ffff00002213be60] el0_svc_common at ffff0000080979ac
- #9 [ffff00002213bea0] el0_svc_handler at ffff000008097a6c
- #10 [ffff00002213bff0] el0_svc at ffff000008084044
+On 2018-12-27 01:55, Matthias Kaehlcke wrote:
+> Hi Balakrishna,
+> 
+> On Wed, Dec 26, 2018 at 11:15:30AM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2018-12-22 06:01, Matthias Kaehlcke wrote:
+>> > On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
+>> > > This patch will help to stop frame reassembly errors while changing
+>> > > the baudrate. This is because host send a change baudrate request
+>> > > command to the chip with 115200 bps, Whereas chip will change their
+>> > > UART clocks to the enable for new baudrate and sends the response
+>> > > for the change request command with newer baudrate, On host side
+>> > > we are still operating in 115200 bps which results of reading garbage
+>> > > data. Here we are pulling RTS line, so that chip we will wait to
+>> > > send data
+>> > > to host until host change its baudrate.
+>> > >
+>> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> > > Tested-by: Matthias Kaehlcke <mka@chromium.org>
+>> > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>> > > ---
+>> > >  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>> > >  1 file changed, 13 insertions(+), 11 deletions(-)
+>> > >
+>> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> > > index 5a07c2370289..1680ead6cc3d 100644
+>> > > --- a/drivers/bluetooth/hci_qca.c
+>> > > +++ b/drivers/bluetooth/hci_qca.c
+>> > > @@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev
+>> > > *hdev, uint8_t baudrate)
+>> > >  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>> > >  	struct qca_data *qca = hu->priv;
+>> > >  	struct sk_buff *skb;
+>> > > -	struct qca_serdev *qcadev;
+>> > >  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>> > >
+>> > >  	if (baudrate > QCA_BAUDRATE_3200000)
+>> > > @@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev
+>> > > *hdev, uint8_t baudrate)
+>> > >  		return -ENOMEM;
+>> > >  	}
+>> > >
+>> > > -	/* Disabling hardware flow control is mandatory while
+>> > > -	 * sending change baudrate request to wcn3990 SoC.
+>> > > -	 */
+>> > > -	qcadev = serdev_device_get_drvdata(hu->serdev);
+>> > > -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> > > -		hci_uart_set_flow_control(hu, true);
+>> > > -
+>> > >  	/* Assign commands to change baudrate and packet type. */
+>> > >  	skb_put_data(skb, cmd, sizeof(cmd));
+>> > >  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> > > @@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev
+>> > > *hdev, uint8_t baudrate)
+>> > >  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>> > >  	set_current_state(TASK_RUNNING);
+>> > >
+>> > > -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> > > -		hci_uart_set_flow_control(hu, false);
+>> > > -
+>> > >  	return 0;
+>> > >  }
+>> > >
+>> > > @@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>> > >  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type
+>> > > speed_type)
+>> > >  {
+>> > >  	unsigned int speed, qca_baudrate;
+>> > > +	struct qca_serdev *qcadev;
+>> > >  	int ret;
+>> > >
+>> > >  	if (speed_type == QCA_INIT_SPEED) {
+>> > > @@ -1097,6 +1087,15 @@ static int qca_set_speed(struct hci_uart *hu,
+>> > > enum qca_speed_type speed_type)
+>> > >  		if (!speed)
+>> > >  			return 0;
+>> > >
+>> > > +		/* Deassert RTS while changing the baudrate of chip and host.
+>> > > +		 * This will prevent chip from transmitting its response with
+>> > > +		 * the new baudrate while the host port is still operating at
+>> > > +		 * the old speed.
+>> > > +		 */
+>> > > +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> > > +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> > > +			serdev_device_set_rts(hu->serdev, false);
+>> > > +
+>> > >  		qca_baudrate = qca_get_baudrate_value(speed);
+>> > >  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>> > >  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+>> > > @@ -1104,6 +1103,9 @@ static int qca_set_speed(struct hci_uart *hu,
+>> > > enum qca_speed_type speed_type)
+>> > >  			return ret;
+>> > >
+>> > >  		host_set_baudrate(hu, speed);
+>> > > +
+>> > > +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> > > +			serdev_device_set_rts(hu->serdev, true);
+>> > >  	}
+>> > >
+>> > >  	return 0;
+>> >
+>> > I looked for ways to do without this change, but didn't find a good
+>> > solution. There are several possible problems with baudrate changes:
+>> >
+>> > 1) send request to BT controller to change the baudrate
+>> >
+>> >   this is an asynchronous operation, the actual baudrate change can
+>> >   be delayed for multiple reasons, e.g.:
+>> >
+>> >   - request sits in the BT driver's TX queue
+>> >
+>> >     this could be worked around by checking skb_queue_empty()
+>> >
+>> >   - request sits in the UART buffer
+>> >
+>> >     a workaround for this could be calling
+>> >     serdev_device_wait_until_sent() (only available with serdev though)
+>> >
+>> >   - the request sits in the UART FIFO
+>> >
+>> >     will be sent out 'immediately'. no neat solution available AFAIK,
+>> >     a short sleep could be an effective workaround
+>> >
+>> >   - the controller may have a short delay to apply the change
+>> >
+>> >     Also no neat solution here. A/the same short sleep could work
+>> >     around this
+>> >
+>> > 2) change baudrate of the host UART
+>> >   - this must not happen before the baudrate change request has been
+>> >     sent to the BT controller, otherwise things are messed up
+>> >     seriously
+>> >
+>> >     Ideally set_termios would make sure all pending data is sent
+>> >     before the change is applied, some UART drivers do this, others
+>> >     don't, so we can't rely on this.
+>> >
+>> > 3) BT controller sends data after baudrate change
+>> >
+>> >   a few ms after a baudrate change the BT controller sends data
+>> >   (4, 255, 2, 146, 1, 4, 14, 4, 1, 0, 0, 0) with the new baudrate
+>> >
+>> >   - dunno what the data stands for, but the BT stack/driver appears to
+>> >     be fine with it, as long as the host UART operates at the new
+>> >     baudrate when the data is received.
+>> >
+>> >   - if the data is received before the baudrate of the host UART is
+>> >     changes we see 'frame reassembly' errors
+>> >
+>> >
+>> [Bala]: the data is an vendor specific event and command complete 
+>> event,
+>>          4, 255, 2, 146, 1, : vendor specific event
+>>          4, 14, 4, 1, 0, 0, 0: command complete event.
+> 
+> Thanks!
+> 
+>> > In summary, I think it should be feasible to guarantee that the
+>> > baudrate change of the host UART is always done after the controller
+>> > changed it's baudrate, however we can't guarantee at the same time
+>> > that the baudrate change of the host controller is completed before
+>> > the BT controller sends its 'response'.
+>> >
+>> > Using the RTS signal seems a reasonable way to delay the controller
+>> > data until the host is ready, the only thing I don't like too much
+>> > is that in this patch set we currently have two mechanisms to
+>> > suppress/delay unwanted data. Unfortunately the RTS method isn't
+>> > effective at initialization time.
+>> >
+>> > Not the scope of this patch set, but I really dislike the 300 ms delay
+>> > (BAUDRATE_SETTLE_TIMEOUT_MS) in qca_set_baudrate(), and wonder if it
+>> > is actually needed (I seriously doubt that it takes the BT controller
+>> > 300 ms to change its baudrate). I guess it's more a combination of what
+>> > I
+>> > described above in 1), once we are done with this series I might try
+>> > to improve this, unless somebody is really, really convinced that such
+>> > a gigantic delay is actually needed.
+>> >
+>> [Bala]:  Thanks for detail analysis.
+>>         even i feel the same whether is it really required to have an 
+>> delay
+>> of 300ms.
+>>         But during our testing we found the it depends on the 
+>> controller
+>> clock settling time.
+>>         all observations are less than 100 ms. will update this change 
+>> in
+>> separate patch series.
+> 
+> 100 ms is definitely better than 300 ms if that's not really
+> needed. Did you see the need for a 100 ms delay with the WCN3990 or
+> some other QCA controller?
 
-rq->tmp_alone_branch introduced in 4.10, used to point to
-the new beg of the list. If this cfs_rq is deleted somewhere
-else, then the tmp_alone_branch will be illegal and cause
-a list_add corruption.
+[Bala]: i am not sure about other controller will check that. but for 
+wcn3990 we can go
+         with the 100ms.
 
-(When enabled DEBUG_LIST, we fould this list_add corruption)
+> 
+> Cheers
+> 
+> Matthias
 
-[ 2546.741103] list_add corruption. next->prev should be prev
-(ffff800b4d61ad40), but was ffff800ba434fa38. (next=ffff800b6a95e740).
-[ 2546.741130] ------------[ cut here ]------------
-[ 2546.741132] kernel BUG at lib/list_debug.c:25!
-[ 2546.741136] Internal error: Oops - BUG: 0 [#1] SMP
-[ 2546.742870] CPU: 1 PID: 29428 Comm: docker-runc Kdump: loaded Tainted: G E  4.19.5-1.aarch64 #1
-[ 2546.745415] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-[ 2546.747402] pstate: 40000085 (nZcv daIf -PAN -UAO)
-[ 2546.749015] pc : __list_add_valid+0x50/0x90
-[ 2546.750485] lr : __list_add_valid+0x50/0x90
-[ 2546.751975] sp : ffff00001b5eb910
-[ 2546.753286] x29: ffff00001b5eb910 x28: ffff800abacf0000
-[ 2546.754976] x27: ffff00001b5ebbb0 x26: ffff000009570000
-[ 2546.756665] x25: ffff00000960d000 x24: 00000250f41ca8f8
-[ 2546.758366] x23: ffff800b6a95e740 x22: ffff800b4d61ad40
-[ 2546.760066] x21: ffff800b4d61ad40 x20: ffff800ba434f080
-[ 2546.761742] x19: ffff800b4d61ac00 x18: ffffffffffffffff
-[ 2546.763425] x17: 0000000000000000 x16: 0000000000000000
-[ 2546.765089] x15: ffff000009570748 x14: 6666662073617720
-[ 2546.766755] x13: 747562202c293034 x12: 6461313664346230
-[ 2546.768429] x11: 3038666666662820 x10: 0000000000000000
-[ 2546.770124] x9 : 0000000000000001 x8 : ffff000009f34a0f
-[ 2546.771831] x7 : 0000000000000000 x6 : 000000000000250d
-[ 2546.773525] x5 : 0000000000000000 x4 : 0000000000000000
-[ 2546.775227] x3 : 0000000000000000 x2 : 70ef7f624013ca00
-[ 2546.776929] x1 : 0000000000000000 x0 : 0000000000000075
-[ 2546.778623] Process docker-runc (pid: 29428, stack limit = 0x00000000293494a2)
-[ 2546.780742] Call trace:
-[ 2546.781955]  __list_add_valid+0x50/0x90
-[ 2546.783469]  enqueue_entity+0x4a0/0x6e8
-[ 2546.784957]  enqueue_task_fair+0xac/0x610
-[ 2546.786502]  sched_move_task+0x134/0x178
-[ 2546.787993]  cpu_cgroup_attach+0x40/0x78
-[ 2546.789540]  cgroup_migrate_execute+0x378/0x3a8
-[ 2546.791169]  cgroup_migrate+0x6c/0x90
-[ 2546.792663]  cgroup_attach_task+0x148/0x238
-[ 2546.794211]  __cgroup1_procs_write.isra.2+0xf8/0x160
-[ 2546.795935]  cgroup1_procs_write+0x38/0x48
-[ 2546.797492]  cgroup_file_write+0xa0/0x170
-[ 2546.799010]  kernfs_fop_write+0x114/0x1e0
-[ 2546.800558]  __vfs_write+0x60/0x190
-[ 2546.801977]  vfs_write+0xac/0x1c0
-[ 2546.803341]  ksys_write+0x6c/0xd8
-[ 2546.804674]  __arm64_sys_write+0x24/0x30
-[ 2546.806146]  el0_svc_common+0x78/0x100
-[ 2546.807584]  el0_svc_handler+0x38/0x88
-[ 2546.809017]  el0_svc+0x8/0xc
 
-In this patch, we move rq->tmp_alone_branch point to its prev before delete it
-from list.
-
-Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-Cc: Bin Li <huawei.libin@huawei.com>
-Cc: <stable@vger.kernel.org>        [4.10+]
-Fixes: 9c2791f936ef (sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list)
-Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
-Tested-by: Zhipeng Xie <xiezhipeng1@huawei.com>
----
- kernel/sched/fair.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ac855b2..7a72702 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -347,6 +347,11 @@ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- {
- 	if (cfs_rq->on_list) {
-+		struct rq *rq = rq_of(cfs_rq);
-+
-+		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
-+			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
-+
- 		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
- 		cfs_rq->on_list = 0;
- 	}
 -- 
-1.8.3.1
-
+Regards
+Balakrishna.
