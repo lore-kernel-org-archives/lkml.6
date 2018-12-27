@@ -7,143 +7,71 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7321C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2D4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840E620856
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD6DA20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 07:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ea7hOzy4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fE/65OUg"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bwiJX9nx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbeL0HcH (ORCPT
+        id S1730236AbeL0Hd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 02:32:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49994 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeL0HcE (ORCPT
+        Thu, 27 Dec 2018 02:33:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52288 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728319AbeL0Hd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 02:32:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 88BCF60909; Thu, 27 Dec 2018 07:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545895923;
-        bh=sxbJZsIl6dSwUQXUl+ptgK5p2se5Ox/n8dWLHLdYxkA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ea7hOzy4oRTosQISc+WXiHvhqbVFbaRie7KmxvcP/beD/KSNNZGO7GG+KiTTB6j/s
-         vJaWxyFgET1YjcbFK2YWNbMslZCcB7EmgzhEV+6jMFZ/BT4R92Yg+wuuBRlJGFBGcb
-         2IZ/jGVGNvlGaUCxrZQvSY1h2Jq/rlPzjjn9h9i8=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 56EE0607F1;
-        Thu, 27 Dec 2018 07:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545895916;
-        bh=sxbJZsIl6dSwUQXUl+ptgK5p2se5Ox/n8dWLHLdYxkA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fE/65OUgjT4+JZ9nMVMDkxHOEllYgxjLE1dxWK65eRlM0zS8OSoNvodqlD8jObZ36
-         r9HtMWMx+YaWv8kQfbOviyO+BejIBJQ5PEN9WELv2OQjd3JzTZC3rgY19KHPrMfe42
-         A66Xp6ua1PrcbfEVDPWVVLTzfal+iiTxqDhK7T5c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56EE0607F1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v6 3/6] Bluetooth: hci_qca: Fix frame reassembly errors for wcn3990
-Date:   Thu, 27 Dec 2018 13:01:33 +0530
-Message-Id: <20181227073136.8431-4-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181227073136.8431-1-bgodavar@codeaurora.org>
-References: <20181227073136.8431-1-bgodavar@codeaurora.org>
+        Thu, 27 Dec 2018 02:33:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pPyyHsYu/BbkZXviNa4czWkQtW0flQ6AgEzLZ/T9LiA=; b=bwiJX9nxqDIq8zC+8pIAx/BBd
+        V6AeXHtyIDHwHaBmhp/PG3Vt9dFz0dHHdEfmTQiTs0jMvtyWR8PntE0zVzDX2oL1t8WkP88yGuJQ6
+        Dqnlv4/njN0N+6TWjABlL/e7SS6REJ8Ng/4iH1eVokLwveiyQEbpkjNtM5EXvR15XMxLjAIsCuIvi
+        nvgJW21+EwACKlOUxSOdkjSIe4rMake9BmLYO+LXaucktN7yXlgo7ugluVBcln7wkcQVhJdziuwMa
+        hNVf3ffFPdpHR+J4LFRWk059/EPxvDV0BUNDFzI7vDuRjqWrLE0+LJyU0ah4Kwz9M9XzKPtzRGS+X
+        QRxb9V/Gw==;
+Received: from p4ff2ede0.dip0.t-ipconnect.de ([79.242.237.224] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gcQAZ-0007zU-8t; Thu, 27 Dec 2018 07:33:27 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     richard@nod.at
+Cc:     linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] um: writev needs <sys/uio.h>
+Date:   Thu, 27 Dec 2018 08:33:24 +0100
+Message-Id: <20181227073324.10090-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During initalization of wcn3990, we observed UART is reading some
-stray bytes on the Rx line. This is logging Frame reassembly errors
-on the serial console. This could be because of tristate of Tx line
-of wcn3990 during boot up.
+vector_user.c doesn't compile without this for me.
 
-[  176.929612] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-[  176.945734] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-[  176.953298] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-[  177.010660] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-[  177.067633] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
-
-Now we enable a flag during bootup to stop executing proto receive
-function and clear it back once the initialization is done.
-
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/bluetooth/hci_qca.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/um/drivers/vector_user.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 63436023632d..0751b2359f6f 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -56,6 +56,7 @@
- 
- /* Controller states */
- #define STATE_IN_BAND_SLEEP_ENABLED	1
-+#define STATE_DISCARD_RX		2
- 
- #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
- #define IBS_TX_IDLE_TIMEOUT_MS		2000
-@@ -511,6 +512,7 @@ static int qca_open(struct hci_uart *hu)
- 		} else {
- 			hu->init_speed = qcadev->init_speed;
- 			hu->oper_speed = qcadev->oper_speed;
-+			set_bit(STATE_DISCARD_RX, &qca->flags);
- 			ret = qca_power_setup(hu, true);
- 			if (ret) {
- 				destroy_workqueue(qca->workqueue);
-@@ -903,6 +905,13 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
-+	/* We discard Rx data received while device is in booting
-+	 * stage, This is because of BT chip Tx line is in tristate.
-+	 * Due to this we read some garbage data on UART Rx.
-+	 */
-+	if (test_bit(STATE_DISCARD_RX, &qca->flags))
-+		return 0;
-+
- 	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
- 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
- 	if (IS_ERR(qca->rx_skb)) {
-@@ -1195,6 +1204,7 @@ static int qca_setup(struct hci_uart *hu)
- 		if (ret)
- 			return ret;
- 
-+		clear_bit(STATE_DISCARD_RX, &qca->flags);
- 		ret = qca_read_soc_version(hdev, &soc_ver);
- 		if (ret)
- 			return ret;
-@@ -1271,6 +1281,12 @@ static const struct qca_vreg_data qca_soc_data = {
- 
- static void qca_power_shutdown(struct hci_uart *hu)
- {
-+	struct qca_data *qca = hu->priv;
-+
-+	/* From this point we go into power off state. But serial port is
-+	 * still open, discard all the garbage data received on the Rx line.
-+	 */
-+	set_bit(STATE_DISCARD_RX, &qca->flags);
- 	host_set_baudrate(hu, 2400);
- 	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
- 	qca_power_setup(hu, false);
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 3d8cdbdb4e66..41eefbcdc86f 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -25,6 +25,7 @@
+ #include <linux/if_packet.h>
+ #include <sys/socket.h>
+ #include <sys/wait.h>
++#include <sys/uio.h>
+ #include <linux/virtio_net.h>
+ #include <netdb.h>
+ #include <stdlib.h>
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.19.2
 
