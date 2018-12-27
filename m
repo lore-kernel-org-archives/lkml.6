@@ -2,114 +2,351 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8CDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE233C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5568B208E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:21:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o+lsZIVi"
+	by mail.kernel.org (Postfix) with ESMTP id 6BDC220874
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 15:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeL0PVN (ORCPT
+        id S1728345AbeL0PeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 10:21:13 -0500
-Received: from mail-pf1-f177.google.com ([209.85.210.177]:42409 "EHLO
-        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbeL0PVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 10:21:12 -0500
-Received: by mail-pf1-f177.google.com with SMTP id 64so9261563pfr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 07:21:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h2EGYq8XTKqDNlssItDJr1D7HvVzviICZgcJkBUhouQ=;
-        b=o+lsZIViOhVMBZaQmR9XX3L1dHn4EmbIWJalPCayhnKcnph0w5lZ/IAYbjQtdej+E1
-         1Msmkxd9/iv3OtnGBCncNWYh/1FmvZrfnhmoETbKp1WhdfohCzcj6Tj04MDAxPmDj+Ll
-         nm4steYkwKEhsT8KnAfiTssWcYV81zREG4S99JkH3bpyFNXGtHeEnV/4YpqOuyFj07N+
-         aS1J+Tw6i+243o+B6sN7ixqhFJrRReVe8uIaLrK63g1hAR/dvZEzoesIV68JVtr2/YZl
-         03lMrTpWc/m/O4KkXny6zjXaWjZNirxNs8i2AR5Jtc5Ju3o3moKPoFAgDkxnkqH4eNEI
-         +teQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h2EGYq8XTKqDNlssItDJr1D7HvVzviICZgcJkBUhouQ=;
-        b=IAFxERcHn9dUKyQHyZjFHMQQFzAIuxsvqOCiSoU9GE/Kc+k2ese8B6HZ8RS07pyeXn
-         HlzBZCE8XW8GWkEtpij6KVJtV9Wu5rGGItPAhi3NWWPJrVQT1Y61Z0iS63lLlb9EF0ZN
-         51FvdsiTTS7vx0wM8KaF8bXFjr4l9DYPA6ndjYtH60s3E+YHrU8DCmB/ElBzub6rJWJ7
-         fDXEe88XDqncwC34CFlDH/KCBNb2S5fRhxPOEj4kL2o71lm6SZrOmX1ORV0/f1++Zk7y
-         RgQ498Yap5frRF2YBVWG0Le9bJGH+XDGEIFLucfhOxoy2rumE3kEBiCkKy4WxQVzZXj7
-         mzoA==
-X-Gm-Message-State: AJcUukfgPmXV+rGTCc6SMnOYc5GKqt8oqVSrEmxWBfFXLWLBgGvWgE6Z
-        fJ5dr6NRHSbx2YcsqHVY3MU11TWFdDHtXyR8ItuPfQ==
-X-Google-Smtp-Source: ALg8bN6T8NvDJ2PBQQwHgBrKDWlnRFUo+0Y11//Bd7DA4F8zknOWe3sAFZQutsygcML14CuAp8P5ZBXhNq7w9Ap/5mU=
-X-Received: by 2002:a63:9e58:: with SMTP id r24mr23625868pgo.264.1545924071964;
- Thu, 27 Dec 2018 07:21:11 -0800 (PST)
+        Thu, 27 Dec 2018 10:34:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727119AbeL0PeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 10:34:09 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFCB989AD5;
+        Thu, 27 Dec 2018 15:34:08 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01884101961E;
+        Thu, 27 Dec 2018 15:33:56 +0000 (UTC)
+Date:   Thu, 27 Dec 2018 10:33:54 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     simo@redhat.com, carlos@redhat.com, netdev@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH ghak90 (was ghak32) V4 09/10] audit: NETFILTER_PKT:
+ record each container ID associated with a netNS
+Message-ID: <20181227153354.k2vd4be2c6t2kqe4@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <3f5edfb0d530d7f0061fe11b817b315b350b9d86.1533065887.git.rgb@redhat.com>
+ <CAHC9VhT2GJH2cJsrCsxCZMLsdv67oXJhH9mHAgpfMRY4=y43WQ@mail.gmail.com>
+ <20181031193018.67pxaxzxlbdc4lkd@madcap2.tricolour.ca>
 MIME-Version: 1.0
-References: <20181226020550.63712-1-cai@lca.pw>
-In-Reply-To: <20181226020550.63712-1-cai@lca.pw>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 27 Dec 2018 16:21:00 +0100
-Message-ID: <CAAeHK+zj0LcjhcQFd4H9CfRbyzz8u+HuhA4-c-pjnDobkDGRJQ@mail.gmail.com>
-Subject: Re: [PATCH -mmotm] arm64: skip kmemleak for KASAN again
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031193018.67pxaxzxlbdc4lkd@madcap2.tricolour.ca>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Dec 2018 15:34:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 3:06 AM Qian Cai <cai@lca.pw> wrote:
->
-> Due to 871ac3d540f (kasan: initialize shadow to 0xff for tag-based
-> mode), kmemleak is broken again with KASAN. It needs a similar fix
-> from e55058c2983 (mm/memblock.c: skip kmemleak for kasan_init()).
->
-> Signed-off-by: Qian Cai <cai@lca.pw>
+On 2018-10-31 15:30, Richard Guy Briggs wrote:
+> On 2018-10-19 19:18, Paul Moore wrote:
+> > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Add audit container identifier auxiliary record(s) to NETFILTER_PKT
+> > > event standalone records.  Iterate through all potential audit container
+> > > identifiers associated with a network namespace.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  include/linux/audit.h    |  5 +++++
+> > >  kernel/audit.c           | 26 ++++++++++++++++++++++++++
+> > >  net/netfilter/xt_AUDIT.c | 12 ++++++++++--
+> > >  3 files changed, 41 insertions(+), 2 deletions(-)
+> > 
+> > ...
+> > 
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index 9a02095..8755f4d 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -169,6 +169,8 @@ extern int audit_log_contid(struct audit_context *context,
+> > >  extern void audit_netns_contid_add(struct net *net, u64 contid);
+> > >  extern void audit_netns_contid_del(struct net *net, u64 contid);
+> > >  extern void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p);
+> > > +extern void audit_log_netns_contid_list(struct net *net,
+> > > +                                struct audit_context *context);
+> > >
+> > >  extern int                 audit_update_lsm_rules(void);
+> > >
+> > > @@ -228,6 +230,9 @@ static inline void audit_netns_contid_del(struct net *net, u64 contid)
+> > >  { }
+> > >  static inline void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
+> > >  { }
+> > > +static inline void audit_log_netns_contid_list(struct net *net,
+> > > +                                       struct audit_context *context)
+> > > +{ }
+> > >
+> > >  #define audit_enabled AUDIT_OFF
+> > >  #endif /* CONFIG_AUDIT */
+> > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > index c5fed3b..b23711c 100644
+> > > --- a/kernel/audit.c
+> > > +++ b/kernel/audit.c
+> > > @@ -392,6 +392,32 @@ void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
+> > >                 audit_netns_contid_add(new->net_ns, contid);
+> > >  }
+> > >
+> > > +void audit_log_netns_contid_list(struct net *net, struct audit_context *context)
+> > > +{
+> > > +       spinlock_t *lock = audit_get_netns_contid_list_lock(net);
+> > > +       struct audit_buffer *ab;
+> > > +       struct audit_contid *cont;
+> > > +       bool first = true;
+> > > +
+> > > +       /* Generate AUDIT_CONTAINER record with container ID CSV list */
+> > > +       ab = audit_log_start(context, GFP_ATOMIC, AUDIT_CONTAINER);
+> > > +       if (!ab) {
+> > > +               audit_log_lost("out of memory in audit_log_netns_contid_list");
+> > > +               return;
+> > > +       }
+> > > +       audit_log_format(ab, "contid=");
+> > > +       spin_lock(lock);
+> > > +       list_for_each_entry(cont, audit_get_netns_contid_list(net), list) {
+> > > +               if (!first)
+> > > +                       audit_log_format(ab, ",");
+> > > +               audit_log_format(ab, "%llu", cont->id);
+> > > +               first = false;
+> > > +       }
+> > > +       spin_unlock(lock);
+> > 
+> > This is looking like potentially a lot of work to be doing under a
+> > spinlock, not to mention a single spinlock that is shared across CPUs.
+> > Considering that I expect changes to the list to be somewhat
+> > infrequent, this might be a good candidate for a RCU based locking
+> > scheme.
+> 
+> Would something like this look reasonable?
+> (This is on top of a patch to make contid list lock and unlock
+> functions.)
 
-Hi Qian,
+Paul, could I please get your review on this locking approach I proposed
+almost two months ago so I can be more reassured that it won't be an
+issue in v5?  Thanks!
 
-Sorry, didn't see your first kmemleak fix. I can merge this fix into
-my series if I end up resending it.
-
-In any case:
-
-Acked-by: Andrey Konovalov <andreyknvl@google.com>
-
-Thanks!
-
-> ---
->  arch/arm64/mm/kasan_init.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-> index 48d8f2fa0d14..4b55b15707a3 100644
-> --- a/arch/arm64/mm/kasan_init.c
-> +++ b/arch/arm64/mm/kasan_init.c
-> @@ -47,8 +47,7 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
->  {
->         void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
->                                                 __pa(MAX_DMA_ADDRESS),
-> -                                               MEMBLOCK_ALLOC_ACCESSIBLE,
-> -                                               node);
-> +                                               MEMBLOCK_ALLOC_KASAN, node);
->         return __pa(p);
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index be5d6eb..9428fc3 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -92,6 +92,7 @@ struct audit_contid {
+>  	struct list_head	list;
+>  	u64			id;
+>  	refcount_t		refcount;
+> +	struct rcu_head		rcu;
+>  };
+>  
+>  extern int is_audit_feature_set(int which);
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index d5b58163..6f84c25 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -106,7 +106,6 @@
+>  struct audit_net {
+>  	struct sock *sk;
+>  	struct list_head contid_list;
+> -	spinlock_t contid_list_lock;
+>  };
+>  
+>  /**
+> @@ -327,26 +326,6 @@ struct list_head *audit_get_netns_contid_list(const struct net *net)
+>  	return &aunet->contid_list;
 >  }
->
+>  
+> -static int audit_netns_contid_lock(const struct net *net)
+> -{
+> -	struct audit_net *aunet = net_generic(net, audit_net_id);
+> -
+> -	if (!aunet)
+> -		return -EINVAL;
+> -	spin_lock(aunet->contid_list_lock);
+> -	return 0;
+> -}
+> -
+> -static int audit_netns_contid_unlock(const struct net *net)
+> -{
+> -	struct audit_net *aunet = net_generic(net, audit_net_id);
+> -
+> -	if (!aunet)
+> -		return -EINVAL;
+> -	spin_unlock(aunet->contid_list_lock);
+> -	return 0;
+> -}
+> -
+>  void audit_netns_contid_add(struct net *net, u64 contid)
+>  {
+>  	struct list_head *contid_list = audit_get_netns_contid_list(net);
+> @@ -354,10 +333,9 @@ void audit_netns_contid_add(struct net *net, u64 contid)
+>  
+>  	if (!audit_contid_valid(contid))
+>  		return;
+> -	if (audit_netns_contid_lock(net))
+> -		return;
+> +	rcu_read_lock();
+>  	if (!list_empty(contid_list))
+> -		list_for_each_entry(cont, contid_list, list)
+> +		list_for_each_entry_rcu(cont, contid_list, list)
+>  			if (cont->id == contid) {
+>  				refcount_inc(&cont->refcount);
+>  				goto out;
+> @@ -367,10 +345,16 @@ void audit_netns_contid_add(struct net *net, u64 contid)
+>  		INIT_LIST_HEAD(&cont->list);
+>  		cont->id = contid;
+>  		refcount_set(&cont->refcount, 1);
+> -		list_add(&cont->list, contid_list);
+> +		list_add_rcu(&cont->list, contid_list);
+>  	}
+>  out:
+> -	audit_netns_contid_unlock(net);
+> +	rcu_read_unlock();
+> +}
+> +
+> +audit_free_contid_rcu(struct rcu_head *head) {
+> +	struct audit_contid *contid = container_of(head, struct audit_contid, rcu);
+> +
+> +	kfree(contid);
+>  }
+>  
+>  void audit_netns_contid_del(struct net *net, u64 contid)
+> @@ -380,17 +364,16 @@ void audit_netns_contid_del(struct net *net, u64 contid)
+>  
+>  	if (!audit_contid_valid(contid))
+>  		return;
+> -	if (audit_netns_contid_lock(net))
+> -		return;
+> +	rcu_read_lock();
+>  	if (!list_empty(contid_list))
+> -		list_for_each_entry(cont, contid_list, list)
+> +		list_for_each_entry_rcu(cont, contid_list, list)
+>  			if (cont->id == contid) {
+> -				list_del(&cont->list);
+> +				list_del_rcu(&cont->list);
+>  				if (refcount_dec_and_test(&cont->refcount))
+> -					kfree(cont);
+> +					call_rcu(&cont->rcu, audit_free_contid_rcu);
+>  				break;
+>  			}
+> -	audit_netns_contid_unlock(net);
+> +	rcu_read_unlock();
+>  }
+>  
+>  void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
+> @@ -418,15 +401,14 @@ void audit_log_netns_contid_list(struct net *net, struct audit_context *context)
+>  		return;
+>  	}
+>  	audit_log_format(ab, "ref=net contid=");
+> -	if (audit_netns_contid_lock(net))
+> -		return;
+> -	list_for_each_entry(cont, audit_get_netns_contid_list(net), list) {
+> +	rcu_read_lock();
+> +	list_for_each_entry_rcu(cont, audit_get_netns_contid_list(net), list) {
+>  		if (!first)
+>  			audit_log_format(ab, ",");
+>  		audit_log_format(ab, "%llu", cont->id);
+>  		first = false;
+>  	}
+> -	audit_netns_contid_unlock(net);
+> +	rcu_read_unlock();
+>  	audit_log_end(ab);
+>  }
+>  EXPORT_SYMBOL(audit_log_netns_contid_list);
+> @@ -1674,7 +1656,6 @@ static int __net_init audit_net_init(struct net *net)
+>  		.flags	= NL_CFG_F_NONROOT_RECV,
+>  		.groups	= AUDIT_NLGRP_MAX,
+>  	};
+> -
+>  	struct audit_net *aunet = net_generic(net, audit_net_id);
+>  
+>  	aunet->sk = netlink_kernel_create(net, NETLINK_AUDIT, &cfg);
+> @@ -1684,8 +1665,6 @@ static int __net_init audit_net_init(struct net *net)
+>  	}
+>  	aunet->sk->sk_sndtimeo = MAX_SCHEDULE_TIMEOUT;
+>  	INIT_LIST_HEAD(&aunet->contid_list);
+> -	spin_lock_init(&aunet->contid_list_lock);
+> -
+>  	return 0;
+>  }
+>  
+> > 
+> > > +       audit_log_end(ab);
+> > > +}
+> > > +EXPORT_SYMBOL(audit_log_netns_contid_list);
+> > >
+> > >  void audit_panic(const char *message)
+> > >  {
+> > >         switch (audit_failure) {
+> > > diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> > > index af883f1..44fac3f 100644
+> > > --- a/net/netfilter/xt_AUDIT.c
+> > > +++ b/net/netfilter/xt_AUDIT.c
+> > > @@ -71,10 +71,13 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+> > >  {
+> > >         struct audit_buffer *ab;
+> > >         int fam = -1;
+> > > +       struct audit_context *context;
+> > > +       struct net *net;
+> > >
+> > >         if (audit_enabled == AUDIT_OFF)
+> > > -               goto errout;
+> > > -       ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+> > > +               goto out;
+> > > +       context = audit_alloc_local(GFP_ATOMIC);
+> > > +       ab = audit_log_start(context, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+> > >         if (ab == NULL)
+> > >                 goto errout;
+> > >
+> > > @@ -104,7 +107,12 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+> > >
+> > >         audit_log_end(ab);
+> > >
+> > > +       net = xt_net(par);
+> > > +       audit_log_netns_contid_list(net, context);
+> > > +
+> > >  errout:
+> > > +       audit_free_context(context);
+> > > +out:
+> > >         return XT_CONTINUE;
+> > >  }
+> > >
+> > 
+> > --
+> > paul moore
+> > www.paul-moore.com
+> 
+> - RGB
+> 
 > --
-> 2.17.2 (Apple Git-113)
->
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+> 
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
