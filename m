@@ -2,103 +2,90 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DDEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40EEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B4220879
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 719B320879
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiURFLvr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Lf9ivfN7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbeL0Q1P (ORCPT
+        id S1729410AbeL0Q2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 11:27:15 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35006 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731108AbeL0Q1O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 11:27:14 -0500
-Received: by mail-pf1-f194.google.com with SMTP id z9so9335012pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 08:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=C4owL0Q5cdICQJysAq8wkZCFPkIVra+RBhh8CoohHrE=;
-        b=aiURFLvrSs5+d6+pBgqG893JwqFbxkvJc8hwYm2wL6q71AWEie7Wx56I1WMtsNcYNB
-         4BascNSqT3rThLyHRbCK8A/f4g3eZ9OXXSBSy/jSokopqPkcr+KTsezCakquFtxV193y
-         sJwTu4cLUu5YCYoE4aF+f4HENJuAJEXaxsamFIa71o22SPy1U9aoLP1NH0UwrR2iLYau
-         zxge8vzxavboxqI4A46N8GV6JsXD0JInqRSP1GDCrCekqGrawQ1VL/82yTMbtsHwXwse
-         Yos0LKGVNbD9prxRnThenFbLnN/EtHlvMiP55fH2x+HVbFN6fdPoOPCTsu1LWMQd4j5q
-         rKpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=C4owL0Q5cdICQJysAq8wkZCFPkIVra+RBhh8CoohHrE=;
-        b=qS4JXetidjenNpyMyi1kGqJ9quiz58043PEqJKAUKsf1HsLwrqLWA29Lf6EcSDWSwO
-         Ea724mWkgokekg9sr15dkt4+2rQ0V60S3qDWjkedji5VR00ZFEshpWzlBLom87+jkt3i
-         jTE+XhskyINsOC4zYVBTQqHzlbeCZ6FAm1d7tOmSlYyjEQZ2zIK7GMMcRwzvfdOcld93
-         lM9aywhNbkZPZBBFzHwSq3CGCW0PvicGpSCzIF4CiN6OGL6Jk/x7Z8R+a93ZOgUHQSuV
-         W64daImAlj0chqpan3fAJ/suX1xdSNJpz7ce4FTYed3YwfLd1jBcWjIoxsFEYNDKZuxM
-         5EMA==
-X-Gm-Message-State: AJcUukfGDyQUpQxS1L43hIhjRMRCK/f6ZdPlJJ0FgoACYotUFu0NAik0
-        CFyHlU2fLsmqkB9TIK0f5TI=
-X-Google-Smtp-Source: ALg8bN7XRLfvUCcO6fQkb/e3DL+HY/CccMRiu9DCH0qf83OAUv9OMoShGl2rV/cvurzQcZ7YXdNZ6w==
-X-Received: by 2002:a65:590b:: with SMTP id f11mr23311831pgu.60.1545928034277;
-        Thu, 27 Dec 2018 08:27:14 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id 125sm74431154pfx.159.2018.12.27.08.27.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 08:27:13 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     guoren@kernel.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] csky: fix refcount leak in setup_smp()
-Date:   Thu, 27 Dec 2018 11:27:11 -0500
-Message-Id: <20181227162711.7346-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 27 Dec 2018 11:28:14 -0500
+Received: from vern.gendns.com ([98.142.107.122]:40948 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbeL0Q2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 11:28:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=y+kGUCB1+8fLhg3IJ1Z6BZFbVIcGq1DOLF8KUZUsMr8=; b=Lf9ivfN73Gud5qzSgvduC8rfvY
+        FYaBJVqUCTAxKZi60cLYyZkb5PBJeldc4sh9S2xR24Dpr4CafigbQC9GMdpe1yYh1qCaRFptijHlC
+        6TITKyBswQQh486oczWIWDxIKGJQB1WVejPEXVIGJzZWYo3hnvQ7KkkNq7VWwx82piT+5guoTr131
+        7fkedLVWc6y84fO31zHKXsb47JoOpJ1JVGX3xyt6b2ODSC7cXL1kcgDKDDzYI6hqzhUXvV+ssOXCn
+        5Kh63lOp44G0jTW2VsPIP5e//EvEjKYlGDxs3IJz7QAHlzJQNfQjFKQi1baDrCd7bTC8LZbn50rnd
+        brpoKPEA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:48608 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gcYU2-0003Qs-BW; Thu, 27 Dec 2018 11:26:06 -0500
+Subject: Re: [PATCH v1 7/7] drm: remove include of drmP.h from
+ drm_gem_cma_helper.h
+To:     Sam Ravnborg <sam@ravnborg.org>, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc:     Alexey Brodkin <abrodkin@synopsys.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+References: <20181226210215.GA27610@ravnborg.org>
+ <20181226210353.13993-7-sam@ravnborg.org>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <6c792214-ed92-e942-0e3d-72628c037d00@lechnology.com>
+Date:   Thu, 27 Dec 2018 10:28:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181226210353.13993-7-sam@ravnborg.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The of_find_node_by_type() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+On 12/26/18 3:03 PM, Sam Ravnborg wrote:
+> Fix fallout in various files/drivers.
+> 
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- arch/csky/kernel/smp.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-index 36ebaf9834e1..adec56df613b 100644
---- a/arch/csky/kernel/smp.c
-+++ b/arch/csky/kernel/smp.c
-@@ -139,11 +139,17 @@ void __init setup_smp(void)
- 	int cpu;
- 
- 	while ((node = of_find_node_by_type(node, "cpu"))) {
--		if (!of_device_is_available(node))
-+		if (!of_device_is_available(node)) {
-+			of_node_put(node);
- 			continue;
-+		}
- 
--		if (of_property_read_u32(node, "reg", &cpu))
-+		if (of_property_read_u32(node, "reg", &cpu)) {
-+			of_node_put(node);
- 			continue;
-+		}
-+
-+		of_node_put(node);
- 
- 		if (cpu >= NR_CPUS)
- 			continue;
--- 
-2.17.0
+What fallout is being fixed? It would be helpful if we received the full
+patch series for context. It would also be nice to have a more detailed
+description in this commit message.
 
