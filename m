@@ -2,113 +2,103 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCDDC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DDEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B05206A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B4220879
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 16:27:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiURFLvr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbeL0QUJ (ORCPT
+        id S1731164AbeL0Q1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 11:20:09 -0500
-Received: from app2.whu.edu.cn ([202.114.64.89]:33724 "EHLO whu.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727086AbeL0QUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 11:20:08 -0500
-Received: from localhost (unknown [114.255.3.133])
-        by email2 (Coremail) with SMTP id AgBjCgCHbzV5+yRc4uVxCQ--.60699S2;
-        Fri, 28 Dec 2018 00:19:13 +0800 (CST)
-From:   Peng Wang <rocking@whu.edu.cn>
-To:     andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        ynorov@caviumnetworks.com, arnd@arndb.de, rocking@whu.edu.cn,
-        courbet@google.com, osandov@fb.com, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] bitmap: Add bitmap_valloc(), bitmap_vzalloc() and bitmap_vfree()
-Date:   Fri, 28 Dec 2018 00:18:29 +0800
-Message-Id: <20181227161829.32177-1-rocking@whu.edu.cn>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AgBjCgCHbzV5+yRc4uVxCQ--.60699S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kry5AFy5CrW8uF4kAFWfuFg_yoW8ArW8pF
-        s7KrnrKr4rW34jqr9rA3yrGFW3trs8J3Z7KF4xtry3uw12gF93Xr1fCas8tw15ArWDJF4x
-        Ary3KF98CrWDXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-        6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVWU
-        MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
-        WxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-        IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUUQVy7UUUU
-        U==
-X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
+        Thu, 27 Dec 2018 11:27:15 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35006 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731108AbeL0Q1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 11:27:14 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z9so9335012pfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 08:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=C4owL0Q5cdICQJysAq8wkZCFPkIVra+RBhh8CoohHrE=;
+        b=aiURFLvrSs5+d6+pBgqG893JwqFbxkvJc8hwYm2wL6q71AWEie7Wx56I1WMtsNcYNB
+         4BascNSqT3rThLyHRbCK8A/f4g3eZ9OXXSBSy/jSokopqPkcr+KTsezCakquFtxV193y
+         sJwTu4cLUu5YCYoE4aF+f4HENJuAJEXaxsamFIa71o22SPy1U9aoLP1NH0UwrR2iLYau
+         zxge8vzxavboxqI4A46N8GV6JsXD0JInqRSP1GDCrCekqGrawQ1VL/82yTMbtsHwXwse
+         Yos0LKGVNbD9prxRnThenFbLnN/EtHlvMiP55fH2x+HVbFN6fdPoOPCTsu1LWMQd4j5q
+         rKpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=C4owL0Q5cdICQJysAq8wkZCFPkIVra+RBhh8CoohHrE=;
+        b=qS4JXetidjenNpyMyi1kGqJ9quiz58043PEqJKAUKsf1HsLwrqLWA29Lf6EcSDWSwO
+         Ea724mWkgokekg9sr15dkt4+2rQ0V60S3qDWjkedji5VR00ZFEshpWzlBLom87+jkt3i
+         jTE+XhskyINsOC4zYVBTQqHzlbeCZ6FAm1d7tOmSlYyjEQZ2zIK7GMMcRwzvfdOcld93
+         lM9aywhNbkZPZBBFzHwSq3CGCW0PvicGpSCzIF4CiN6OGL6Jk/x7Z8R+a93ZOgUHQSuV
+         W64daImAlj0chqpan3fAJ/suX1xdSNJpz7ce4FTYed3YwfLd1jBcWjIoxsFEYNDKZuxM
+         5EMA==
+X-Gm-Message-State: AJcUukfGDyQUpQxS1L43hIhjRMRCK/f6ZdPlJJ0FgoACYotUFu0NAik0
+        CFyHlU2fLsmqkB9TIK0f5TI=
+X-Google-Smtp-Source: ALg8bN7XRLfvUCcO6fQkb/e3DL+HY/CccMRiu9DCH0qf83OAUv9OMoShGl2rV/cvurzQcZ7YXdNZ6w==
+X-Received: by 2002:a65:590b:: with SMTP id f11mr23311831pgu.60.1545928034277;
+        Thu, 27 Dec 2018 08:27:14 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id 125sm74431154pfx.159.2018.12.27.08.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 08:27:13 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     guoren@kernel.org, arnd@arndb.de
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] csky: fix refcount leak in setup_smp()
+Date:   Thu, 27 Dec 2018 11:27:11 -0500
+Message-Id: <20181227162711.7346-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce bitmap alloc/free helpers when contiguous
-memory is not necessary.
+The of_find_node_by_type() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- include/linux/bitmap.h |  3 +++
- lib/bitmap.c           | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ arch/csky/kernel/smp.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index f58e97446abc..aaad1b33dfd5 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -111,6 +111,9 @@
- extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
- extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
- extern void bitmap_free(const unsigned long *bitmap);
-+extern unsigned long *bitmap_valloc(unsigned int nbits, gfp_t flags);
-+extern unsigned long *bitmap_vzalloc(unsigned int nbits, gfp_t flags);
-+extern void bitmap_vfree(const unsigned long *bitmap);
+diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
+index 36ebaf9834e1..adec56df613b 100644
+--- a/arch/csky/kernel/smp.c
++++ b/arch/csky/kernel/smp.c
+@@ -139,11 +139,17 @@ void __init setup_smp(void)
+ 	int cpu;
  
- /*
-  * lib/bitmap.c provides these functions:
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index eead55aa7170..739597e436ad 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -1139,6 +1139,25 @@ void bitmap_free(const unsigned long *bitmap)
- }
- EXPORT_SYMBOL(bitmap_free);
+ 	while ((node = of_find_node_by_type(node, "cpu"))) {
+-		if (!of_device_is_available(node))
++		if (!of_device_is_available(node)) {
++			of_node_put(node);
+ 			continue;
++		}
  
-+unsigned long *bitmap_valloc(unsigned int nbits, gfp_t flags)
-+{
-+	return kvmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long),
-+			     flags);
-+}
-+EXPORT_SYMBOL(bitmap_valloc);
+-		if (of_property_read_u32(node, "reg", &cpu))
++		if (of_property_read_u32(node, "reg", &cpu)) {
++			of_node_put(node);
+ 			continue;
++		}
 +
-+unsigned long *bitmap_vzalloc(unsigned int nbits, gfp_t flags)
-+{
-+	return bitmap_valloc(nbits, flags | __GFP_ZERO);
-+}
-+EXPORT_SYMBOL(bitmap_vzalloc);
-+
-+void bitmap_vfree(const unsigned long *bitmap)
-+{
-+	kvfree(bitmap);
-+}
-+EXPORT_SYMBOL(bitmap_vfree);
-+
- #if BITS_PER_LONG == 64
- /**
-  * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
++		of_node_put(node);
+ 
+ 		if (cpu >= NR_CPUS)
+ 			continue;
 -- 
-2.19.1
+2.17.0
 
