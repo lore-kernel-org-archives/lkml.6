@@ -2,78 +2,96 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59469C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B63C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1867321741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:41:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t201GZVG"
+	by mail.kernel.org (Postfix) with ESMTP id 61A07218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 03:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbeL0Dlo (ORCPT
+        id S1728844AbeL0Dr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 22:41:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39188 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeL0Dln (ORCPT
+        Wed, 26 Dec 2018 22:47:59 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38948 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeL0Dr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 22:41:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GjfXRjsa8UwubNB4Ft5yoX1RnN0GXGwDzWwt1eXGKQU=; b=t201GZVG6tuO6caEtWnXBRKA4
-        lL0tOh7EZwnjeu2aMXsWWNLycpq8Qoe1N54w5gPds4VzKQ7BoAeNeifITYjdqibqjx8V+HOXPXB5t
-        OiaoiE/n8Fd5nyWWkm3VaZQo+iOA4WtskaafGqAXiAnrSH8ZA+1uqHQG6Tg9U3vb+plsdicbR48K/
-        DIDj7kJpglrKva9+KPP/ahuvvMvhYQl4bbOY0h8nAz2eChe6TM2f2234bxRPDedgfkKPheZbXLF+l
-        ESoj5Bf8CGhtlSd4jfplNON5fjn+i6AixvNSjcAUtY5NMPM48zsEuMMB+2+QIpvvwK9WbhZqaDGLp
-        t5wqA/uRA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gcMYH-0007Hl-Eb; Thu, 27 Dec 2018 03:41:41 +0000
-Date:   Wed, 26 Dec 2018 19:41:41 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Fan Du <fan.du@intel.com>, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC][PATCH v2 01/21] e820: cheat PMEM as DRAM
-Message-ID: <20181227034141.GD20878@bombadil.infradead.org>
-References: <20181226131446.330864849@intel.com>
- <20181226133351.106676005@intel.com>
+        Wed, 26 Dec 2018 22:47:59 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q70so10268403qkh.6;
+        Wed, 26 Dec 2018 19:47:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=flBSzbI1OYoZW+Hfqe5p4rOykPnXqU7IxxbXr//JY3U=;
+        b=egybJQAtYgc5U/rl6b1M3T0es1pBgoXI1z6ZLWDrpWxY3FcOTFdRAdZ/hLhAyg9hiD
+         Hq5D9Tgh44+YGcMn7qhPGTrOkgBIsX9LaOb5fEBdPaS1DSZz/9WYBiDT9EOtHDqyXV7U
+         QBh+ky9D9+vb25vNiNDUG2xfvYjiJ+bdFaHBNvzAq4zES8j+40FOZvPuhLr/MVfqi5nY
+         pzADgNeGCK4NwkbdjULPE8KygdscoAyMviwOT5uAY7seTwpWk3EKE7ck8kOZ2YS0L26i
+         Vr6lW2b6pBgAk7G9Ter4BP71gLAx1AUTHZsZ3G/vNNUdwwE2ol6drwGhjul5xz/xjw1S
+         th1Q==
+X-Gm-Message-State: AJcUukeXEmqmLoZJ9yRRL6FK6NLuycCiPeEZhWR3MdK3J+Ykr9r30t5f
+        aTQtl1omy4HW0Hy3Jpd/PoOtQQkQ3NATrds9Fw0=
+X-Google-Smtp-Source: ALg8bN5rhvknZBezQAC985fWjmYM5DUZsu0cl2BfGcKp3HcNpRczUwi7R9pDHnliTQ5Rm5lYbTNRqOHVb2lHbIV9sGA=
+X-Received: by 2002:ae9:dc43:: with SMTP id q64mr19584970qkf.223.1545882478316;
+ Wed, 26 Dec 2018 19:47:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181226133351.106676005@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181226055809.74979-1-kjlu@umn.edu>
+In-Reply-To: <20181226055809.74979-1-kjlu@umn.edu>
+From:   Michael Ira Krufky <mkrufky@linuxtv.org>
+Date:   Wed, 26 Dec 2018 22:47:46 -0500
+Message-ID: <CAOcJUbzr+cQ-Dk4HrYEgkRhgRPMeXAc_ZrXkp1ChKHAW5Rw+Tg@mail.gmail.com>
+Subject: Re: [PATCH] usb: dvb: check status of mxl111sf_read_reg
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 09:14:47PM +0800, Fengguang Wu wrote:
-> From: Fan Du <fan.du@intel.com>
-> 
-> This is a hack to enumerate PMEM as NUMA nodes.
-> It's necessary for current BIOS that don't yet fill ACPI HMAT table.
-> 
-> WARNING: take care to backup. It is mutual exclusive with libnvdimm
-> subsystem and can destroy ndctl managed namespaces.
+Kangjie,
 
-Why depend on firmware to present this "correctly"?  It seems to me like
-less effort all around to have ndctl label some namespaces as being for
-this kind of use.
+On Wed, Dec 26, 2018 at 12:59 AM Kangjie Lu <kjlu@umn.edu> wrote:
+>
+> When mxl111sf_read_reg fails, we shouldn't use "mode". The fix checks
+> its return value using mxl_fail
+>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c b/drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c
+> index ffb6e7c72f57..aecc3d02fc1e 100644
+> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c
+> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c
+> @@ -130,7 +130,8 @@ int mxl111sf_config_mpeg_in(struct mxl111sf_state *state,
+>         mxl_fail(ret);
+>
+>         /* Configure MPEG Clock phase */
+> -       mxl111sf_read_reg(state, V6_MPEG_IN_CLK_INV_REG, &mode);
+> +       ret = mxl111sf_read_reg(state, V6_MPEG_IN_CLK_INV_REG, &mode);
+> +       mxl_fail(ret);
+>
+>         if (clock_phase == TSIF_NORMAL)
+>                 mode &= ~V6_INVERTED_CLK_PHASE;
+> --
+> 2.17.2 (Apple Git-113)
+
+It *looks* correct, however....
+
+If I recall correctly, this chip will often fail when reading
+registers.   Notice, `mode` is initialized to zero at first, and not
+again touched before being passed to the readreg function - this is on
+purpose.   The value remains untouched if the read fails. ....and the
+read _wil_ fail.  Maybe not always, but sometimes.
+
+When you run with the patch applied, does it just spew errors?
+
+-Mike
