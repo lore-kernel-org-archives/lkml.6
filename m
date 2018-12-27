@@ -2,119 +2,142 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D90DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22797C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1118720869
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545954125;
-	bh=k6p7gJ05xPVEAlLpXeuRETqv2Lu6OouHV4sFMd/s5k0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JLKQUaGCNpe3f5xxZaTk+Xea3LD/1Xn3co2K4VY6HmL8j5746hIYIZqaWnEpx9JQa
-	 BYEtT2Nhz5U0mBreAauhJf/veLugCSQlT0gnkoo2NjvVpi5VYnNxDtfzc3oGeXfkHW
-	 ylxHTssld8pDdoIF70xdoCp/+TTHBgDUwKXFaDUI=
+	by mail.kernel.org (Postfix) with ESMTP id E6930218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:44:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYZCz+ll"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733224AbeL0Xlu (ORCPT
+        id S1733232AbeL0Xnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 18:41:50 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:40510 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727907AbeL0Xlu (ORCPT
+        Thu, 27 Dec 2018 18:43:49 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37086 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727907AbeL0Xns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 18:41:50 -0500
-Received: by mail-yb1-f196.google.com with SMTP id x201so4030458ybg.7;
-        Thu, 27 Dec 2018 15:41:49 -0800 (PST)
+        Thu, 27 Dec 2018 18:43:48 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s12so19586865wrt.4;
+        Thu, 27 Dec 2018 15:43:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xXBTIXHVAax3PJVgWEmGAt722IyPRVkq/7ftu76zskQ=;
-        b=nHfNQX9WXbd4v1mYIWQy9AJqEYEykYb6VEtomgVx398VGjNDSzl1QME1bez7OOt2Vw
-         wSqtfmtGl2Gc9HatZWi/yVq3upLi8AJolttyrb0KzXCS+OGY+dsUPieA7cy199UNekp4
-         pPzQcLgMIGp1H+wAlId3XaC5phb2GrqvWxY1ZIOjP23OxnhDaIA9C1IPYlXkYoNBwQar
-         u97YBGsc2chKeilI6xnMZ2oVYWXKbWOi3ucrHJkfmRlc/JnJHq8WVIyDoQwGTM3iGhbM
-         Q5PIgAeFdI4adTRai6O64MmXbIFRr0EhhZ06navKwHiU5mFIpXG+ofq4TJkz89aleImg
-         XvsQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ueXQcrLnuDIN0Go1ih+DHYn457KWlH7rVZ5/vFNinl8=;
+        b=GYZCz+ll361gHEWMXKWQmM4emiYmxyo/puNa6FeNcrg56DZuOPkOnttDd5twArtrVk
+         DIwsHxIB8wDPGsPebmf4IPbHgPjaXWxYBGvsvOqLflCfsXkI6957u0D7odJk7uFO/Z3w
+         LepFMwpmDh33P8NBnO9BrBEwDiUmM8lGgRmVHaggRy2XD12YOsI1oobak43RvbDiER2C
+         Y+bMNXwASLqnxpHlg8Vn/1G2ne+gftHOtMKOVpTzvMGADatia9eoNSEC75bkQViylmU+
+         nuICF4eXfT3pVVkqLZ7nC9qKuFLuIupOqEqz4jQUxPoV5zMkbOqxGa9i2nnPJx9ySsJ+
+         2nVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xXBTIXHVAax3PJVgWEmGAt722IyPRVkq/7ftu76zskQ=;
-        b=nqcIdhueK6hjdrT6g/ts6tPodjw7mu1CWs8PYNjm2RJUZGAlOUgXgvb46sLWtNkuu6
-         Xt+t3W+/2JBFkRV4VrGbTpBpWPBdxGAVxUbN+L//4aE8DMkWn+/WaC+zBtgt5bhOtJuZ
-         kzeI8qcMvZOqRFdYmJ4JbPJmmEyLXeDW8VP7v06dh2VR4l07tHsQl0Y+YAFeef5oAeUN
-         /8rV0Tkb0N3rCegV33Se/vr1DmfUhH/0aqalGxR04Ny9NHcdws9M/SlY97KQGlRa4ZLs
-         zlRocP0yQ60vXyvUplzwGA4xq5dpQV6rVQRJJJg2o7l0dcFvW3+teAI2/8SMXQuniR6A
-         1nlQ==
-X-Gm-Message-State: AJcUukf1IyJbM/FHIPP6Qa3QM+bInzbtfzKjhN2rfIhtgvtyT52C529p
-        fsnCE0HAavJKt3mHvBSEdFg=
-X-Google-Smtp-Source: AFSGD/VzIZXeDLBlBNwHflUwXYh0UgkX4wlTAZfzxQkH57xCRgOFqGov3CIUJ2Go8/Y5FqpPwM9LCA==
-X-Received: by 2002:a25:15c1:: with SMTP id 184-v6mr25095796ybv.332.1545954108520;
-        Thu, 27 Dec 2018 15:41:48 -0800 (PST)
-Received: from localhost ([2620:10d:c091:180::1:7729])
-        by smtp.gmail.com with ESMTPSA id z186sm21072531ywd.107.2018.12.27.15.41.46
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ueXQcrLnuDIN0Go1ih+DHYn457KWlH7rVZ5/vFNinl8=;
+        b=TyYL+iPCeWJH6xiHYeJBh3rnTGNoftxxx0YJUsncfEHjUovQd8FIHC2I8ZBevHwYzG
+         YSU0ueiJFYYzXDpFJb0a6dx0i5de4A3dHt6W6R2hGotUQNEuT35WMYKE+sNA7TD7Bpy4
+         Ko1gL/BbT32G7apKtti+BfNyFag6qT47WpfkcB41HaUe6vO6k6inYslcfTRLueQdCUxS
+         S9SjfvLKr2fqxHUBjR6xSIdX9uNPDmHRDQ3O4v60Wzqqn+oWlkNEuozDLFAMxBsYCb6P
+         iS58Wu429KdKJ0Eq3kCMCmWy/lUi3wymQuQexN3dY6amUGDDj/Aj9idG+d+ttSoP2j7R
+         vgcQ==
+X-Gm-Message-State: AJcUukejXnTF6rMgQUls8whWjf0gudJb2ZOzxE3I7KfI+inuigYpW220
+        eQjolBM4dHqXjoVIi4RQ/klcjTqL
+X-Google-Smtp-Source: ALg8bN4r7DVS2ouEbX3eeFD338Zd/aOxCJm3zBkXyTNIRLJ0Qsfb6+BRn4laLE/YQRxSFN3CqxluaQ==
+X-Received: by 2002:adf:e78f:: with SMTP id n15mr24154230wrm.115.1545954226274;
+        Thu, 27 Dec 2018 15:43:46 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:25c7:a0bd:faa6:5840? (p200300EA8BCFE30025C7A0BDFAA65840.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:25c7:a0bd:faa6:5840])
+        by smtp.googlemail.com with ESMTPSA id m4sm34686535wmi.3.2018.12.27.15.43.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 15:41:47 -0800 (PST)
-Date:   Thu, 27 Dec 2018 15:41:44 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     bfq-iosched@googlegroups.com,
-        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
-        oleksandr@natalenko.name, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-Message-ID: <20181227234144.GE2509588@devbig004.ftw2.facebook.com>
-References: <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
- <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
- <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
- <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
- <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
- <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
- <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
- <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
- <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
- <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
+        Thu, 27 Dec 2018 15:43:45 -0800 (PST)
+Subject: Re: [PATCH] rtc: rv8803: Check return value of rv8803_write_reg
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     Aditya Pakki <pakki001@umn.edu>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <20181227202856.27408-1-pakki001@umn.edu>
+ <ab4c081a-82d7-4a50-5c2a-4dbb4ba79223@gmail.com>
+ <CAK8KejrntOUb7Q2MrPR6mYDKyHKc=pzO5hOYv=ZfLaP_xg0Zsw@mail.gmail.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <cc8304f6-4f48-0e23-daff-f7b3802c7a9a@gmail.com>
+Date:   Fri, 28 Dec 2018 00:43:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAK8KejrntOUb7Q2MrPR6mYDKyHKc=pzO5hOYv=ZfLaP_xg0Zsw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Paolo.
+On 28.12.2018 00:28, Kangjie Lu wrote:
+> 
+> 
+> On Thu, Dec 27, 2018 at 4:31 PM Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
+> 
+>     On 27.12.2018 21:28, Aditya Pakki wrote:
+>     > In rv8803_handle_irq, rv8803_write_reg can return a failed return
+>     > value when attempting to write to the bus. The fix checks the output
+>     > and throws a dev_warn notifying of the failure.
+>     >
+>     > Signed-off-by: Aditya Pakki <pakki001@umn.edu <mailto:pakki001@umn.edu>>
+>     > ---
+>     >  drivers/rtc/rtc-rv8803.c | 9 +++++++--
+>     >  1 file changed, 7 insertions(+), 2 deletions(-)
+>     >
+>     You seem to submit the same type of changes throughout very
+>     different subsystems. And you do it w/o thinking and testing.
+>     If you would have looked at rv8803_write_reg() you would have
+>     seen that it prints an error in case of failure. So your
+>     patch achieves nothing.
+>     You got David Miller upset already and it looks like you
+>     want to achieve the same with other maintainers too.
+>     I'd strongly suggest that you stop sending patches until
+>     you better understand the kernel code.
+> 
+> 
+> Hello Heiner,
+> 
+> Thanks for your suggestion. Sure, we will try to better understand
+> how the kernel works when we are preparing other patches. We recently
+> found a lot of potential bugs; due to the significant workload but 
+> limited labor force, we may make some mistakes, but yes, we will try 
+> to avoid them. 
+> 
+> One main reason we submit the patches is to seek feedback from Linux
+> maintainers who know how the kernel works best.  We hope to get: (1) 
+> confirmation: if this is indeed a bug; (2) improvement feedback: if
+> it is a bug and our fix is problematic, how can we improve it? 
+> 
+> Taking the case in this email as an example, rv8803_write_reg could
+> fail, so returning IRQ_HANDLED even when it failed doesn't seem to be
+> a good practice. Would "returning IRQ_NONE upon failure" be a better
+> fix?
+> 
+> Thanks again for your suggestion.
 
-On Sun, Dec 23, 2018 at 12:00:14PM +0100, Paolo Valente wrote:
-> 4.21 is coming ...  and the legacy proportional share interface will
-> be gone with cfq.  This will break legacy code using the
-> proportional-share interface on top of bfq.  This code may just fail
-> when trying to use interface files that don't exist any longer.
+If you want to understand whether a certain code piece includes a bug
+or not, first you need to understand what the code does. In addition
+to own analysis you could post a question to the respective mailing
+list.
+Maintainers usually have a tough workload and can't explain to every
+beginner what the code in their respective subsystem does. It's not
+the smartest approach to bother and upset them with dumb patches.
 
-Sounds like inheriting .cfq namespace would be the easiest.  Would
-that work?
+Last but not least: You seem to submit all your patches w/o even
+compile-testing. Also that's not a smart approach.
+Read "SubmittingPatches" carefully, understand it, and follow the
+rules.
 
-Thanks.
-
--- 
-tejun
+Heiner
