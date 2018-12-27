@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0614CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9248C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0D421741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A50FC208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 14:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbeL0OiN (ORCPT
+        id S1727998AbeL0Oin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 09:38:13 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:59230 "EHLO hermes.aosc.io"
+        Thu, 27 Dec 2018 09:38:43 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:59250 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726764AbeL0OiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 09:38:12 -0500
+        id S1726764AbeL0Oim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 09:38:42 -0500
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 2DE8A15E503;
-        Thu, 27 Dec 2018 14:38:08 +0000 (UTC)
-Message-ID: <4f331bc4bdfdeeec98a9a59b097ee8c36d597cfe.camel@aosc.io>
-Subject: Re: [PATCH 1/2] USB: storage: don't insert sane sense for SPC3+
- when bad sense specified
+        by hermes.aosc.io (Postfix) with ESMTPSA id F3EDE15E503;
+        Thu, 27 Dec 2018 14:38:38 +0000 (UTC)
+Message-ID: <12c8418f525591cd8aad011dedd96a7c7af9ca99.camel@aosc.io>
+Subject: Re: [PATCH 2/2] USB: storage: add quirk for SMI SM3350
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
         linux-kernel@vger.kernel.org
 Cc:     stable@vger.kernel.org
-Date:   Thu, 27 Dec 2018 22:38:05 +0800
-In-Reply-To: <20181227143437.17151-2-icenowy@aosc.io>
+Date:   Thu, 27 Dec 2018 22:38:33 +0800
+In-Reply-To: <20181227143437.17151-3-icenowy@aosc.io>
 References: <20181227143437.17151-1-icenowy@aosc.io>
-         <20181227143437.17151-2-icenowy@aosc.io>
+         <20181227143437.17151-3-icenowy@aosc.io>
 Organization: Anthon Open-Source Community
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
@@ -45,15 +44,13 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 在 2018-12-27四的 22:34 +0800，Icenowy Zheng写道：
-> Currently the code will set US_FL_SANE_SENSE flag unconditionally if
-> device claims SPC3+, however we should allow US_FL_BAD_SENSE flag to
-> prevent this behavior, because SMI SM3350 UFS-USB bridge controller,
-> which claims SPC4, will show strange behavior with 96-byte sense
-> (put the chip into a wrong state that cannot read/write anything).
+> The SMI SM3350 USB-UFS bridge controller cannot handle long sense
+> request
+> correctly and will make the chip refuse to do read/write when
+> requested
+> long sense.
 > 
-> Check the presence of US_FL_BAD_SENSE when assuming US_FL_SANE_SENSE
-> on
-> SPC4+ devices.
+> Add a bad sense quirk for it.
 > 
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
@@ -62,24 +59,32 @@ I forgot to:
 
 Cc: stable@vger.kernel.org
 
->  drivers/usb/storage/scsiglue.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/usb/storage/unusual_devs.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/drivers/usb/storage/scsiglue.c
-> b/drivers/usb/storage/scsiglue.c
-> index fde2e71a6ade..699fe9557127 100644
-> --- a/drivers/usb/storage/scsiglue.c
-> +++ b/drivers/usb/storage/scsiglue.c
-> @@ -236,7 +236,8 @@ static int slave_configure(struct scsi_device
-> *sdev)
->  			sdev->try_rc_10_first = 1;
+> diff --git a/drivers/usb/storage/unusual_devs.h
+> b/drivers/usb/storage/unusual_devs.h
+> index f7f83b21dc74..ea0d27a94afe 100644
+> --- a/drivers/usb/storage/unusual_devs.h
+> +++ b/drivers/usb/storage/unusual_devs.h
+> @@ -1265,6 +1265,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xffff,
+>  		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+>  		US_FL_FIX_CAPACITY ),
 >  
->  		/* assume SPC3 or latter devices support sense size >
-> 18 */
-> -		if (sdev->scsi_level > SCSI_SPC_2)
-> +		if (sdev->scsi_level > SCSI_SPC_2 &&
-> +		    !(us->fflags & US_FL_BAD_SENSE))
->  			us->fflags |= US_FL_SANE_SENSE;
->  
->  		/*
+> +/*
+> + * Reported by Icenowy Zheng <icenowy@aosc.io>
+> + * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
+> + * that do not process read/write command if a long sense is
+> requested,
+> + * so force to use 18-byte sense.
+> + */
+> +UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
+> +		"SMI",
+> +		"SM3350 UFS-to-USB-Mass-Storage bridge",
+> +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> +		US_FL_BAD_SENSE ),
+> +
+>  /*
+>   * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
+>   * This card reader returns "Illegal Request, Logical Block Address
 
