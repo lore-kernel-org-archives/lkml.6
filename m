@@ -2,98 +2,119 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410B4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D90DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB8520811
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1118720869
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 23:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545954125;
+	bh=k6p7gJ05xPVEAlLpXeuRETqv2Lu6OouHV4sFMd/s5k0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JLKQUaGCNpe3f5xxZaTk+Xea3LD/1Xn3co2K4VY6HmL8j5746hIYIZqaWnEpx9JQa
+	 BYEtT2Nhz5U0mBreAauhJf/veLugCSQlT0gnkoo2NjvVpi5VYnNxDtfzc3oGeXfkHW
+	 ylxHTssld8pDdoIF70xdoCp/+TTHBgDUwKXFaDUI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733217AbeL0XgZ (ORCPT
+        id S1733224AbeL0Xlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 18:36:25 -0500
-Received: from anholt.net ([50.246.234.109]:41652 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727907AbeL0XgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 18:36:24 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 1F72310A2767;
-        Thu, 27 Dec 2018 15:36:24 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id C-VJAvKEgT5Y; Thu, 27 Dec 2018 15:36:22 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B403E10A0EA3;
-        Thu, 27 Dec 2018 15:36:22 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 2A97B2FE36F3; Thu, 27 Dec 2018 15:36:22 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eben Upton <eben@raspberrypi.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH] drm/vc4: Allow fb modifiers early enough to fill IN_FORMATS property
-In-Reply-To: <20181224122551.9912-1-paul.kocialkowski@bootlin.com>
-References: <20181224122551.9912-1-paul.kocialkowski@bootlin.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Thu, 27 Dec 2018 15:36:20 -0800
-Message-ID: <878t0amtjf.fsf@anholt.net>
+        Thu, 27 Dec 2018 18:41:50 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:40510 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727907AbeL0Xlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 18:41:50 -0500
+Received: by mail-yb1-f196.google.com with SMTP id x201so4030458ybg.7;
+        Thu, 27 Dec 2018 15:41:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xXBTIXHVAax3PJVgWEmGAt722IyPRVkq/7ftu76zskQ=;
+        b=nHfNQX9WXbd4v1mYIWQy9AJqEYEykYb6VEtomgVx398VGjNDSzl1QME1bez7OOt2Vw
+         wSqtfmtGl2Gc9HatZWi/yVq3upLi8AJolttyrb0KzXCS+OGY+dsUPieA7cy199UNekp4
+         pPzQcLgMIGp1H+wAlId3XaC5phb2GrqvWxY1ZIOjP23OxnhDaIA9C1IPYlXkYoNBwQar
+         u97YBGsc2chKeilI6xnMZ2oVYWXKbWOi3ucrHJkfmRlc/JnJHq8WVIyDoQwGTM3iGhbM
+         Q5PIgAeFdI4adTRai6O64MmXbIFRr0EhhZ06navKwHiU5mFIpXG+ofq4TJkz89aleImg
+         XvsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xXBTIXHVAax3PJVgWEmGAt722IyPRVkq/7ftu76zskQ=;
+        b=nqcIdhueK6hjdrT6g/ts6tPodjw7mu1CWs8PYNjm2RJUZGAlOUgXgvb46sLWtNkuu6
+         Xt+t3W+/2JBFkRV4VrGbTpBpWPBdxGAVxUbN+L//4aE8DMkWn+/WaC+zBtgt5bhOtJuZ
+         kzeI8qcMvZOqRFdYmJ4JbPJmmEyLXeDW8VP7v06dh2VR4l07tHsQl0Y+YAFeef5oAeUN
+         /8rV0Tkb0N3rCegV33Se/vr1DmfUhH/0aqalGxR04Ny9NHcdws9M/SlY97KQGlRa4ZLs
+         zlRocP0yQ60vXyvUplzwGA4xq5dpQV6rVQRJJJg2o7l0dcFvW3+teAI2/8SMXQuniR6A
+         1nlQ==
+X-Gm-Message-State: AJcUukf1IyJbM/FHIPP6Qa3QM+bInzbtfzKjhN2rfIhtgvtyT52C529p
+        fsnCE0HAavJKt3mHvBSEdFg=
+X-Google-Smtp-Source: AFSGD/VzIZXeDLBlBNwHflUwXYh0UgkX4wlTAZfzxQkH57xCRgOFqGov3CIUJ2Go8/Y5FqpPwM9LCA==
+X-Received: by 2002:a25:15c1:: with SMTP id 184-v6mr25095796ybv.332.1545954108520;
+        Thu, 27 Dec 2018 15:41:48 -0800 (PST)
+Received: from localhost ([2620:10d:c091:180::1:7729])
+        by smtp.gmail.com with ESMTPSA id z186sm21072531ywd.107.2018.12.27.15.41.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Dec 2018 15:41:47 -0800 (PST)
+Date:   Thu, 27 Dec 2018 15:41:44 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     bfq-iosched@googlegroups.com,
+        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
+ policy in blkio/io
+Message-ID: <20181227234144.GE2509588@devbig004.ftw2.facebook.com>
+References: <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
+ <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
+ <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
+ <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
+ <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
+ <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
+ <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
+ <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
+ <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
+ <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Hello, Paolo.
 
-Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
+On Sun, Dec 23, 2018 at 12:00:14PM +0100, Paolo Valente wrote:
+> 4.21 is coming ...  and the legacy proportional share interface will
+> be gone with cfq.  This will break legacy code using the
+> proportional-share interface on top of bfq.  This code may just fail
+> when trying to use interface files that don't exist any longer.
 
-> The KMS mode_config elements are currently configured in vc4_kms_load,
-> that is called after all components are binded (component_bind_all).
-> However, the CRTC component (for the Pixel Valve) needs to access the
-> allow_fb_modifiers element at bind time, when initializing its planes
-> through drm_universal_plane_init.
->
-> This helpers checks allow_fb_modifiers to decide whether to fill the
-> IN_FORMATS property. Because allow_fb_modifiers is still set to false
-> at this point, the property is never filled and userspace cannot
-> retrieve the combination of supported formats and modifiers.
->
-> Fix this by setting allow_fb_modifiers right after calling
-> drm_mode_config_init (which initializes the structure), before binding
-> the components of the driver.
+Sounds like inheriting .cfq namespace would be the easiest.  Would
+that work?
 
-This makes me wonder if the flag could be removed and replaced with "did
-non-NULL modifiers get supplied to plane init?"  I think I've tripped
-over this flag in other KMS hacking, too.
+Thanks.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlwlYfQACgkQtdYpNtH8
-nuiOBw//ectS22fws7UfJU6FIPjXTtTpBBSoCBHV39sR0d4X4/bXl0PGHPeD5PLw
-GGMpImve5tSYOH4f1WBUaM+KcrVJcFdFo25qIkiLrjBIY520uqemZfb49Zc9b14B
-Q9jV+vz7Vov8mPi/boaEZRGkFGsetRS757nxTIO/P5ZnmrKBZbiCketNRAJZKRfm
-5xFdTKOlgHMtHn6SySyAzqSVO2ITuMdqr6AnKcD+Akj75z8Myz66kaXqy7eWXTUo
-hzVjMuyqYTQsJsHQYd/Qc2s15w/9rOQPGCyz/vdWT7fd4arV+VBg+RHKgNNYufm1
-/RD07yOkby+aTEUYdPfyE6NtoEYDMFG4Nf79JXkRA4QLvMkoX7+3Otuud8Hcx9zH
-WcQBDFDBDtGvoZG2fMjAP8umAVTmsrHbLvgNZnAOoLWw01WQAEUsAKCObnaSgdkD
-MaAHgugEC0ugiYxDRGPCQSRxdB9ha6VnQgwcz8KVMG8ahU3ZaWoOaRPc3wEx1rX5
-Xc2EujotR7U8DY5RmJ6uWtL/+ESrrZGev8CxYnfs8uEBy+1bSBsXA3y3+uXNdXY+
-ZCzXBKgQVxM81MJ8I5u5/GbcBuG3WY5GWxFf4qWcWJn8czUSGR0AOB0UiN7vQJbI
-tPX65W31eX+FIfet85sntnzjr0L4HOwFJXbd2nOiOyjS0lffOs0=
-=1fjQ
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+tejun
