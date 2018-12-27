@@ -2,118 +2,88 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0D1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 01:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A744AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5A121741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 01:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7380521741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:01:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cUmQTo/O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeL0BQs (ORCPT
+        id S1727650AbeL0CBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 20:16:48 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:46917 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726764AbeL0BQs (ORCPT
+        Wed, 26 Dec 2018 21:01:36 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:36250 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbeL0CBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 20:16:48 -0500
-X-UUID: 6c0a9899b77d4df2b0ff991fab78289b-20181227
-X-UUID: 6c0a9899b77d4df2b0ff991fab78289b-20181227
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 588625557; Thu, 27 Dec 2018 09:16:40 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 27 Dec 2018 09:16:39 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 27 Dec 2018 09:16:39 +0800
-Message-ID: <1545873399.31506.2.camel@mtksdaap41>
-Subject: Re: [PATCH 11/18] drm/medaitek: add layer_nr for ovl private data
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Yongqiang Niu <yongqiang.niu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Thu, 27 Dec 2018 09:16:39 +0800
-In-Reply-To: <1545638931-24938-12-git-send-email-yongqiang.niu@mediatek.com>
-References: <1545638931-24938-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1545638931-24938-12-git-send-email-yongqiang.niu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+        Wed, 26 Dec 2018 21:01:36 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBR1tvvF122776;
+        Thu, 27 Dec 2018 02:01:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=fXn3Oto089QTnnQEcK+DF10o1EUTdFRTMobcbtRb6RU=;
+ b=cUmQTo/Ou0BPm/XZg3tPOcjDPpHgA9aQb6rMW4HUldODVm0Hc9OgLoQ58lSDYjpbKzC9
+ rYx+dlZaRe3ORrILYBFlfaWmY3WakDIus7UvTiTgQVuhhXGKpCH8Sq4xfDod+Jrpgxli
+ qWRJKEoxVkLrryZkRarSJPLIesPYos10IeNl9ijYY3AlQj9ccuSLfZudq3zphzmwIkvU
+ tvMp2zQQw0eq/FirS3UgLwgfFf+C8+YxemJJR83P0Av2UNqU0zIDzoguGKfjwnLTmN5f
+ IIRvwhn6u73y4fAO53IB/ChlebB+aUGy92n4kaIKl1bH0va3lVY6Sw4o2iuKW2Sk9W4C AA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2phasdu93j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Dec 2018 02:01:31 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBR21VAu001911
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Dec 2018 02:01:31 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBR21UVh016640;
+        Thu, 27 Dec 2018 02:01:30 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Dec 2018 18:01:29 -0800
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] blk-mq: small optimization for accessing of queue map
+Date:   Thu, 27 Dec 2018 10:00:39 +0800
+Message-Id: <1545876041-16076-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9118 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=947
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812270015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yongqiang:
+Hi Jens
 
-On Mon, 2018-12-24 at 16:08 +0800, Yongqiang Niu wrote:
-> This patch add layer_nr for ovl private data
-> 
+These two patches are small optimization for accessing the queue mapping
+in hot path. It saves the queue mapping results into blk_mq_ctx directly,
+then we needn't do the complicated bounce on queue_hw_ctx[] map[] and
+mq_map[].
 
-I think you do this because ovl-2l and ovl share the same driver and the
-ovl layer is different, so this patch is a preparation for ovl-2l and
-ovl share the same driver. Describe more information for this patch.
+Jianchao Wang(2)
+  blk-mq: save queue mapping result into ctx directly
+  blk-mq: save default hctx into ctx->hctxs for not-supported type
 
-Regards,
-CK
+block/blk-mq-sched.c |  2 +-
+block/blk-mq-tag.c   |  2 +-
+block/blk-mq.c       | 13 ++++++++++---
+block/blk-mq.h       | 20 +++++++++-----------
+block/blk.h          |  2 +-
+5 files changed, 22 insertions(+), 17 deletions(-)
 
-> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> index afb313c..a0ab760 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -60,6 +60,7 @@
->  struct mtk_disp_ovl_data {
->  	unsigned int addr;
->  	unsigned int gmc_bits;
-> +	unsigned int layer_nr;
->  	bool fmt_rgb565_is_0;
->  };
->  
-> @@ -137,7 +138,9 @@ static void mtk_ovl_config(struct mtk_ddp_comp *comp, unsigned int w,
->  
->  static unsigned int mtk_ovl_layer_nr(struct mtk_ddp_comp *comp)
->  {
-> -	return 4;
-> +	struct mtk_disp_ovl *ovl = comp_to_ovl(comp);
-> +
-> +	return ovl->data->layer_nr;
->  }
->  
->  static void mtk_ovl_layer_on(struct mtk_ddp_comp *comp, unsigned int idx)
-> @@ -342,12 +345,14 @@ static int mtk_disp_ovl_remove(struct platform_device *pdev)
->  static const struct mtk_disp_ovl_data mt2701_ovl_driver_data = {
->  	.addr = DISP_REG_OVL_ADDR_MT2701,
->  	.gmc_bits = 8,
-> +	.layer_nr = 4,
->  	.fmt_rgb565_is_0 = false,
->  };
->  
->  static const struct mtk_disp_ovl_data mt8173_ovl_driver_data = {
->  	.addr = DISP_REG_OVL_ADDR_MT8173,
->  	.gmc_bits = 8,
-> +	.layer_nr = 4,
->  	.fmt_rgb565_is_0 = true,
->  };
->  
-
-
+Thanks
+Jianchao
+ 
