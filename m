@@ -7,71 +7,71 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93D9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E2CC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC97921741
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 475A7218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 02:59:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrcnsvaO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+2m4e4d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeL0Czh (ORCPT
+        id S1728360AbeL0C5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Dec 2018 21:55:37 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41390 "EHLO
+        Wed, 26 Dec 2018 21:57:40 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36078 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeL0Czh (ORCPT
+        with ESMTP id S1726720AbeL0C5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Dec 2018 21:55:37 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a20so7516242edc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:55:35 -0800 (PST)
+        Wed, 26 Dec 2018 21:57:39 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so14322412edb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Dec 2018 18:57:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ADLELYSduE8Jo4WSgQe9/+4jTmUv08JSVGYSSnL6oqM=;
-        b=VrcnsvaO6g3vr0rOK3JVCBOk2PQk0Ari9fi72BFPM2roITmJBgLTZBCtHcmXX5qIfH
-         Z+2oiVzjYGbRggTJBde5FMYmkRHm425wLAmF921A2JVS6KeMI/J8EWyUL84rcSS6tdDY
-         RXH3ARaqPWF4YLMIXMuxTCLojJkVBqeemszbjU6UV3611/1FZ+uGFfdlKItJUChdXvEG
-         eQD8spRloGpzKegHRoPd4uKi5CB0dppvPCMWdqnQMXk8/pQie6vquHGOi4P3GdAKTZp4
-         mLis2jvNDf4oPbbUFCU7EIQ5oyZjpSMd+vF35zu+moCjn6qdT7BNIdOhTxoiKEQn2DyW
-         HM+w==
+        bh=kKQTIZOHtW8ffxErHOxVgcrRWqvLiNdZTXKdv5GszKU=;
+        b=H+2m4e4dUs2NStwlS0hNRqDW2kNZIKr0QiDZbzwa7QrQDDrGpHrDHp0zQMhgOA3mZa
+         vmXbW+d9hrltuJFXIAoxcrAQ7k5Rs9FPmL8tRs60/9A5mqcqBuRb848DMy+7p+knRDTc
+         WBt4SZJjIWQ/ECMFPaWUYCj7a8GEWe7TcPDFikUgtNSTI6Fy1ohNNCxUXNsYVcyXrjzt
+         QZA/i4iqHnNd5fwrtUlZri1s8OcbTRosZ6gC9m/LSHOPBhe3Ecb3QAU0LYBsMfzv9Aqa
+         SpdW72rhHFiXcIVQ0NbiqmkAa6q5Wx/CfUsZmtfAFym8UUtaLaFuvf8DG6tF4zZk9Jjo
+         5ltw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ADLELYSduE8Jo4WSgQe9/+4jTmUv08JSVGYSSnL6oqM=;
-        b=gESRiHGnqgrdVJjVAmC/cw0HsFEP36NJ1/bBH9VcJkz/MrQkcZmwMV6cVbeKrpTDFw
-         PvXfhjn8OwOkqR6TMsR2L/JJHFASC0rWjJIHVTPQ7hufXSImbhroAxqt0LgjqFPWpzZQ
-         Hbhpyfg2kcSwa0NEhn99ST4O8z1EH8XSBWB/lz1SdZDLUn7KGLWY3UhG7LPk2RK67FoP
-         c9+XvBJnn9MyO/Oz9Kmt1TCZDuMZGfmdxLbJ4hF9iswx/ZykWJIwxopgGlIoPsA+e1db
-         KzWd+BPcoEvf1eQ6R1m9GLzEoRjwRNRj+1pr66X1/Gr/YQhIK/OGFkUlTFA0DisYuviw
-         Yclg==
-X-Gm-Message-State: AA+aEWZ2uZAgwpDCYSQdXjQerU8ZMlAW3rZGI3bO3zwmFOyvyNfbWiyP
-        NimaaMxu1/tDCMLrq4CnaOsEXEpAX4WLKs9gEvgOSWM=
-X-Google-Smtp-Source: AFSGD/XIMwUogzKEdtm6t7TMlgtxM7+uXqYGVcdn2Nc0IweNcJLi95epz5NmKGs8cFLCUVPX6vfSjvUEvLoYF3HK7bY=
-X-Received: by 2002:a17:906:22ca:: with SMTP id q10-v6mr14474398eja.66.1545879334698;
- Wed, 26 Dec 2018 18:55:34 -0800 (PST)
+        bh=kKQTIZOHtW8ffxErHOxVgcrRWqvLiNdZTXKdv5GszKU=;
+        b=jyvzMPgco1q8TNAXkz1PzIlr5Fc8jefNKYuhaUmdMffnuLToO+rBR9eqmspYc+3zn8
+         XnYPS5G9lbVJSmTnwLuJUATUhPC/W6FlzfieY6gO7HRtqMyuYq/KGvKhQoO59ufQmQ0L
+         RlWaUFbszfcaXihsAteI2pUG7tjatc9qN4YZNMjM84suDL/Sv7nddIFN5Ajd7/ulUvx2
+         6OBzjEeOWpWzvGxf+7uj5YN/nvDkRCKtvdWVqwWFBIjRUuPR+JvDNIASeKglKVdhl6U1
+         wKYaKHYo5Lol7oKoGRDzGGEPFtdisKJSZ+zGZSC5IMNPrerPUyQMlHQ3fIJQmDHRY772
+         +9hQ==
+X-Gm-Message-State: AA+aEWYBGWEO2xjv03Y+42ueDUUQ6+gvncZNUHftA7sRMTmxrTvjlZY4
+        VAYe7c10pD5ZvVYAdkNNnwCtTO4UXmJyufNphg==
+X-Google-Smtp-Source: AFSGD/XtHFKn4kDyEZN6q8HVJOLIljvc5tPo+g6X6lq6NAdQq+bFPvJ910kno6zkzXg7UkcdqOmZpVtsTreRnXOikTo=
+X-Received: by 2002:a17:906:2acf:: with SMTP id m15-v6mr14416497eje.180.1545879457523;
+ Wed, 26 Dec 2018 18:57:37 -0800 (PST)
 MIME-Version: 1.0
-References: <1544760446-506-1-git-send-email-kernelfans@gmail.com> <20181226015757.GA12717@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20181226015757.GA12717@dhcp-128-65.nay.redhat.com>
+References: <1544760446-506-1-git-send-email-kernelfans@gmail.com> <20181226014701.GD11472@dhcp-128-65.nay.redhat.com>
+In-Reply-To: <20181226014701.GD11472@dhcp-128-65.nay.redhat.com>
 From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Thu, 27 Dec 2018 10:55:23 +0800
-Message-ID: <CAFgQCTv9COU776G+157KaLRj_0y30u1eRZ2SKcruu-6xvsJ_sg@mail.gmail.com>
+Date:   Thu, 27 Dec 2018 10:57:26 +0800
+Message-ID: <CAFgQCTtEMw9f9H-nMAEntwLkNLTP9s9zpoNLvx+cK_hquXTA4A@mail.gmail.com>
 Subject: Re: [PATCHv2] x86/kdump: bugfix, make the behavior of crashkernel=X
  consistent with kaslr
 To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Baoquan He <bhe@redhat.com>,
+        kexec@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
+        vgoyal@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 9:58 AM Dave Young <dyoung@redhat.com> wrote:
+On Wed, Dec 26, 2018 at 9:47 AM Dave Young <dyoung@redhat.com> wrote:
 >
 > On 12/14/18 at 12:07pm, Pingfan Liu wrote:
 > > Customer reported a bug on a high end server with many pcie devices, where
@@ -125,22 +125,6 @@ On Wed, Dec 26, 2018 at 9:58 AM Dave Young <dyoung@redhat.com> wrote:
 > >       if (crash_base <= 0) {
 > > +             if (!memblock_bottom_up())
 > > +                     memblock_set_bottom_up(true);
->
-> Looking at the memblock_find_in_range_node code, it is allocating
-> bottom up in case bottom_up is true, but it will try to allocate above
-> kernel_end:
->
-> bottom_up_start = max(start, kernel_end);
->
-> If kernel lives very high eg. KASLR case, then this bottom up way does
-> not help.  So probably previous old version to try 896M first then 4G
-> then maxmem is better.
->
-Yes, you are right. I will try to see whether it can be resolved or not.
-
-Thanks,
-Pingfan
-
 > >               /*
 > >                * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
 > >                * as old kexec-tools loads bzImage below that, unless
@@ -153,6 +137,18 @@ Pingfan
 > > +                     (max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
 > > +             if (!memblock_bottom_up())
 > > +                     memblock_set_bottom_up(false);
+>
+> The previous memblock_set_bottom_up(true) set it as true, so
+> "!memblock_bottom_up()" is impossible, not sure what is the point of
+> this condition check.
+>
+> Do you want to restore the original memblock direction? If so a variable
+> to save the old direction is needed.  But is this really necessary?
+> Do you know any side effects of setting the bottom up as true?
+>
+Yes, will fix it.
+
+Thanks
 > > +
 > >               if (!crash_base) {
 > >                       pr_info("crashkernel reservation failed - No suitable area found.\n");
@@ -160,3 +156,11 @@ Pingfan
 > > --
 > > 2.7.4
 > >
+> >
+> > _______________________________________________
+> > kexec mailing list
+> > kexec@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/kexec
+>
+> Thanks
+> Dave
