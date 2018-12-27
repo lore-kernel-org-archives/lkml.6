@@ -2,94 +2,122 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5498FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3E7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9CE2148D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 20:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C5A2148D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="GqzG4yVj"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NBBcG4bs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730098AbeL0U57 (ORCPT
+        id S1730127AbeL0VA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:57:59 -0500
-Received: from cock.li ([185.100.85.212]:51116 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbeL0U56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:57:58 -0500
+        Thu, 27 Dec 2018 16:00:27 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38452 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730104AbeL0VA0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 16:00:26 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so9204065pgc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 13:00:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jlMOSTAQF7sg7dUm0vX5Uc3p3AImalzdvneGP4S4Zug=;
+        b=NBBcG4bsRLAFeDj23oFgLCuUtNQX0uR8cDEx1OJhK2dZDzflTSA5Kz+J8wU3nQAAuI
+         VUWTXcGNztQmj8PrI8ocf22Yutr33CvXhru1689HZc74iBosCzsBIMKOLSCTtkCz+1jl
+         LDgVVL0tUd9gT/cnjq3YodPXe8RR69OZK5hq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jlMOSTAQF7sg7dUm0vX5Uc3p3AImalzdvneGP4S4Zug=;
+        b=nB5fy9cHZUtK0UmBgQzt+gL5hFq334/1ViRsBDRlRDG38KMhMUUf2yKpApsqOcBWMM
+         JRKy4TUJKBJ0NsoFBQ4pWPKLWDfHh6p2Y5VXfE4O41Irgdsl/oJMN8rpYePZpjaAbqcy
+         JXXLojL0XqAn7kNWc/EAnRkk0HrWAW8omLED2EErxR7XzV/hvoSZAMj4rGmLZ5Fxs5/d
+         DbOTdd25oRTsJ+Ziy3MyGpS8PtSJ7u3jw+ZdKhK0W0bqJjvJKZ764peNuRs7TIMmiqsN
+         vEmdeX8Z30O4U7pcfpMfKQ1SlHgdylOGF0k16eIHEpVI3cXphWcsCar1Y9Sx0UwfzCXn
+         47ew==
+X-Gm-Message-State: AA+aEWY+WTh7dKGuxNxAneHiF4stdu7j+qat24YrHMalILyLg3t2TPfc
+        lcto9awaPmEW9mm7dPN1aJBcbA==
+X-Google-Smtp-Source: AFSGD/Vre/vkO3+WhnxM/vhkxWJJlXyuv6LqDeccp9BTeKvLebPxMj2guY+GAWiu8uV02jz9GjyBag==
+X-Received: by 2002:a62:ea09:: with SMTP id t9mr26733373pfh.228.1545944424432;
+        Thu, 27 Dec 2018 13:00:24 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id c67sm48700506pfg.170.2018.12.27.13.00.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 13:00:23 -0800 (PST)
+Date:   Thu, 27 Dec 2018 13:00:23 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] Bluetooth: hci_qca: Update baudrate change wait
+ time for wcn3990
+Message-ID: <20181227210023.GL261387@google.com>
+References: <20181227073136.8431-1-bgodavar@codeaurora.org>
+ <20181227073136.8431-6-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1545944275; bh=PDArw3eCKrgBPn3Du2da92DBo+ZezoXuDe42llF0hQM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GqzG4yVjyvoaG/mriKkLP4VARTnTgJZ9LVYGHQM9lsyp/z1O2Pie+bosmCnir7JPS
-         c6IpDx2wRsKvvKJd6l4PyhFNAPWjxN+PgbmQvquCOylNF/8qYf9y/j7tWlY8PPWLV1
-         3fDvfFpm2xM7HsiJsXMhFf11OMt4qawR8oLhlTuqLT/9qxeVo8e1MvFZuFeS56xt6R
-         Y3xSdkQJkw/JbHrke/BpfXAI23tGc7v05tn+YrIg78SBRnbDvzaM3ie94XWiEmAVNE
-         gj3zxMygHArMBE2mdoqtw8IMhEOhuKHqVmDKC+u+LyiDRZzBTcgsJFmMKPseWslvyy
-         OSIL7vcHNGzRA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 27 Dec 2018 20:57:55 +0000
-From:   vsnsdualce@memeware.net
-To:     Paul Stuffins <mail@paulstuffins.me.uk>
-Cc:     owner-misc@openbsd.org,
-        OpenBSD general usage list <misc@openbsd.org>,
-        Raul Miller <rauldmiller@gmail.com>,
-        linux-kernel@vger.kernel.org, freebsd-women@freebsd.org,
-        freebsd-chat@freebsd.org, visionsofalice@redchan.it,
-        owner-freebsd-chat@freebsd.org
-Subject: Re: Why is no one discussing this anymore?
-In-Reply-To: <CAKtRYpcHnGW9ftu7UaimH6RejgezeqNZW+rFkEm_GdYdGuXO5A@mail.gmail.com>
-References: <d1a036ae6ecc7614d969e841ee2e9d2f@memeware.net>
- <CAKtRYpcHnGW9ftu7UaimH6RejgezeqNZW+rFkEm_GdYdGuXO5A@mail.gmail.com>
-Message-ID: <f11c56360b48b5c4a2a1ae60fdc2f2f8@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181227073136.8431-6-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Waiting quietly for two months for Eben Moglen's preliminary write-up 
-(which I was to be sent to "correct") got me no-where. Every seems to 
-have concluded that the issue is settled since there was no more public 
-discussion.
+On Thu, Dec 27, 2018 at 01:01:35PM +0530, Balakrishna Godavarthi wrote:
+> This patch will update the baudrate change request wait time from
+> 300 ms to 100 ms. When host sends the change baudrate request to
+> the controller, controller sets its clock and wait until the
+> clocks settle down. Here the Wait time is required for both
+> host and controller to be on sync.
 
-All the "other side" said was "nuh-uh" and "you're not a lawyer" (false: 
-I am) and "you deserve to be in prison , isn't practicing law without a 
-license a crime!" (I have a license), and "I'm sure RMS would have made 
-sure the license was not revocable" (he required everyone to sign over 
-their copyright to his foundation... guess why...).
+Ultimately up to you, but I would advise against adding 'improvement'
+changes to this series. The scope of the series is already fairly
+vague ("Bug fixes for Qualcomm BT chip wcn3990"), with at least some
+patches that could be sent individually, which would reduce churn when
+respinning.
 
-Along with "This Artistic License Case decided the AL was not a 
-contract, it was simply a copyright license!! SO THERE!!" (AL is not the 
-GPL... but... the finding in that case helps me, why are you citing 
-it?).
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> 
+> Changes in v6:
+>  * intial patch.
+> 
+> ---
+>  drivers/bluetooth/hci_qca.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 4677a6a2716a..61b0fb1ff32f 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -60,7 +60,8 @@
+>  
+>  #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+>  #define IBS_TX_IDLE_TIMEOUT_MS		2000
+> -#define BAUDRATE_SETTLE_TIMEOUT_MS	300
+> +#define ROME_BD_SETTLE_TIMEOUT_MS	300
+> +#define WCN3990_BD_SETTLE_TIMEOUT_MS	100
 
-(They wisely did not cite the printer driver case where the court looked 
-at the offer to do (paying) business and decided that their was an offer 
-and acceptance based on that other additional writing... since that one 
-isn't on point at all except for the fact that one of the options in 
-that writing was a choice of a GPL licensed work if you didn't want to 
-pay a commercial fee. (The contract there was the other writing giving 
-the option: Pay and get more rights, don't pay and here's the GPL), so 
-at-least there's that.)
+My testing suggests that even the lower 100 ms delay isn't needed, if
+different parts that require a delay are addressed more specifically,
+instead of using a single long 'settle' delay
+(https://lore.kernel.org/patchwork/patch/1026795/#1212816 has some
+details).
 
-Being nice did nothing but harm the case of the truth in the eyes of the 
-people however.
+My idea was to sent a patch after this series has landed to avoid
+interfering with it.
 
-The guys on the DNG list (Steve Litt I believe) are the ones that want 
-me jailed...
+Cheers
 
-On 2018-12-27 20:37, Paul Stuffins wrote:
->> <snip>Are you idiots aware <snip>
-> Insulting people is not the right way to get your point across!
-> _______________________________________________
-> freebsd-chat@freebsd.org mailing list
-> https://lists.freebsd.org/mailman/listinfo/freebsd-chat
-> To unsubscribe, send any mail to "freebsd-chat-unsubscribe@freebsd.org"
+Matthias
