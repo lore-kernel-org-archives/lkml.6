@@ -2,109 +2,93 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCF8C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BCFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AD40214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1719521741
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 21:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hc6SMTqW"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SrLggIT5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbeL0V4l (ORCPT
+        id S1730594AbeL0V6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 16:56:41 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34443 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730428AbeL0V4k (ORCPT
+        Thu, 27 Dec 2018 16:58:06 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12154 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730415AbeL0V6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 16:56:40 -0500
-Received: by mail-ot1-f67.google.com with SMTP id t5so17379425otk.1;
-        Thu, 27 Dec 2018 13:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qpvNNDNFbl2XbhdSLEQ4I8hppK6pfisIA9kuAu0WWwU=;
-        b=hc6SMTqW8avzQ7rmPZQdiGq7T0o5dRNfIz+a/uG4biAb2WML9ZWIruyB9goiv15u8q
-         3BQhnP8Hvts53wqfGupIuPPuzxsBQAXllRYp4zlQxxkGLd3ztouHSNA4qkYZwu5P3l23
-         C+Xmk2ufdPGsh0oy4wFv+H1HnOPxQIkSneY9NW8x57i9NAjIBl9gJ8KuOU2EIKGqVqWo
-         qN+a1WxyCqQ5ANlfdo9ynbm/O22mL28XIO3/UO/RdlTA4OGMeL2ca3bTsi00g6xY23n+
-         X1kWiAQv0GtKKzgsHvz+gCbjCWWAi0zcc8VuVwIKY5JNQk4Bo5icXfXbKUlBTPmaxITe
-         +6tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qpvNNDNFbl2XbhdSLEQ4I8hppK6pfisIA9kuAu0WWwU=;
-        b=D+s/K5eZ6SDI5dYSBpSUI7qI3SO4FT39wO1in7tK4/sRO5k+Flk6mcArS8auxKxoHa
-         //TA4On0BMZSdOKagc4lXR3+5C5cUFRh/4aqGqj0ThwkBGwbsMddubtQQe3CFW8Has59
-         YUuhgQSm4rTB1M40e0bmHn7U0dyXlgsLhsAfjyQAArtFboSrYpZiHnXln23vPbGuViDB
-         IeT6Ywiijc1jdQIHgWFfWLNQh8iwkzI/PS7OdqlsSSXKmdz1iJQOGpXxfXqgquPRPwq9
-         YsGUQtRedIelJuk5hNtrMYhzePtIJ6uVvRrP7yl1NIgDLxk6pC/8GZ0owiqxXfFqXZJ0
-         CgNw==
-X-Gm-Message-State: AJcUukcKX3J27znkydQuDzVLWaj7YltCsk+J4uk/7yHkCsSeIYRGO+Q8
-        nv2J+UVO93DG7REqgM8nJhAfcvL6r16p81pofK0=
-X-Google-Smtp-Source: ALg8bN4JIlq1HeVMU+lVRPIXqHKVDV+Dv+k1Q24nGnE9gM6S4jB8m07E2kNz5c71dIobNSQqIrpuDcnUflGeon0qzzk=
-X-Received: by 2002:a9d:715d:: with SMTP id y29mr17710714otj.148.1545947799737;
- Thu, 27 Dec 2018 13:56:39 -0800 (PST)
+        Thu, 27 Dec 2018 16:58:06 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c254ae50000>; Thu, 27 Dec 2018 13:57:57 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 27 Dec 2018 13:58:05 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 27 Dec 2018 13:58:05 -0800
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 27 Dec
+ 2018 21:58:05 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 27 Dec 2018 21:58:05 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c254aed0000>; Thu, 27 Dec 2018 13:58:05 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <mperttunen@nvidia.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V6 0/2] HW Command Queue support for Tegra SDMMC
+Date:   Thu, 27 Dec 2018 13:58:00 -0800
+Message-ID: <1545947882-18875-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20181202220847.24364-1-martin.blumenstingl@googlemail.com>
- <20181202220847.24364-3-martin.blumenstingl@googlemail.com>
- <85aa8e12-0bca-6432-e1a8-0faceff1dd5e@codethink.co.uk> <CAFBinCBDUxTc+ofCYm-zEeiFdU90U6DQOkX4B659q=MvRK64fg@mail.gmail.com>
- <CAFBinCAY7+-zA5-hY6oXmFz2i8aj9wFJsb-HBbKt_Swn9BtMMg@mail.gmail.com>
-In-Reply-To: <CAFBinCAY7+-zA5-hY6oXmFz2i8aj9wFJsb-HBbKt_Swn9BtMMg@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 27 Dec 2018 22:56:29 +0100
-Message-ID: <CAFBinCBh8hy8xmtz6j5mKPKwy3yW5bxTQG8TEFDNN-ocHfqTEw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] rtc: support for the Amlogic Meson RTC
-To:     ben.dooks@codethink.co.uk
-Cc:     linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-        alexandre.belloni@bootlin.com, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ccaione@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545947877; bh=PO4tnPArrGBMDSApMJU/nzcJOPiM9huOCdFM4cCW8bQ=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=SrLggIT5W1WZkXBlMeWTQ+sOujcpkAs0ebxfSRT1vE1UonuaI9maU0pGIZIPt5cSi
+         GJVrwstaWV2sF8GU7t3+REruNs+weR4LCEMbBahDBQfWsqVjwGIWt+mrMaoB6+RRGf
+         EzymgJpKS0MomwQTYRhOJqC9R6QOqZ+4aW9Nx3kbm6uX8R5tLHNQSpoAMNwTthZpli
+         C7MY/3fbtNeeI8O1pok/e3bOAOewSvglrYrgbGRl5ZAvymsBgYHz/QZk3TeXfkxdpb
+         lvfV5/Rwtn308aEEO2a/aJlQQxuE5WWk9BkUNktt84R4xdIB4aP64QoqOsqgwJaiPJ
+         a/rLBdtK2XVTw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ben,
+This patch series is for HW Command Queue support for Tegra SDMMC.
 
-On Tue, Dec 18, 2018 at 12:48 AM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Hi Ben,
->
-> On Wed, Dec 5, 2018 at 11:15 PM Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
-> [...]
-> > > > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> > > > [resurrected Ben's patches after 2 years]
-> > > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > >
-> > > Just checking if the change of author is deliberate?
-> > > not sure how to do >1 author on patches like this.
-> > I changed the author on purpose after seeing how much I changed
-> > (compared to your v4). this is also why I added you to the CC list
-> > however, I left in your copyright (just like you kept Carlo's
-> > copyright note) and MODULE_AUTHOR
-> please let me know:
-> 1. whether you want to be the author of the patch or if you're fine
-> with my name in there
-> 2. if you are fine with both of us being listed as Signed-off-by or if
-> you want me to switch to Co-authored-by
-> 3. about any other concerns you have
->
-> I would like to update this patch next weekend so it can be reviewed
-> (and merged once all is fine) for v4.22
-I've been busy last weekend so I didn't manage to update this series
-please let me know how you want me to proceed with this
+Patch[2] adds HW Command Queue support for Tegra SDMMC and has
+dependencies on other patches in this series as explained below.
 
+Patch[1] SDMMC address range:
+This patch defines exact register space for all the SDMMC
+Controllers. Controllers supporting command queue are having
+CQHCI register space from offset 0xF000.
+Patch[2] uses address range of sdmmc controllers to identify command
+queue supported controllers
 
-Regards
-Martin
+Sowjanya Komatineni (2):
+  arm64: dtsi: Fix SDMMC address range
+  mmc: tegra: HW Command Queue Support for Tegra SDMMC
+
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi |   6 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi |   4 +-
+ drivers/mmc/host/Kconfig                 |   1 +
+ drivers/mmc/host/sdhci-tegra.c           | 107 ++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.c                 |   6 +-
+ 5 files changed, 117 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
+
