@@ -2,34 +2,35 @@ Return-Path: <SRS0=YyAj=PE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F8C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F80EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A246206BB
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4116820856
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Dec 2018 18:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Y9r6b//U"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="JqwT8Mzp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeL0SNg (ORCPT
+        id S1726732AbeL0SNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 13:13:36 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:53590 "EHLO
+        Thu, 27 Dec 2018 13:13:40 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:53656 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeL0SNg (ORCPT
+        with ESMTP id S1726549AbeL0SNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 13:13:36 -0500
+        Thu, 27 Dec 2018 13:13:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1545934412; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1545934414; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=iHRs7F5NSB5E2tPXVk3y3c+0YxqPmlhOCMBNLvl0sfo=;
-        b=Y9r6b//UO1SFRoFninfKrapxXnrAXKcf2yZ0QPQv9IOlfF/rdNRbWU/h/N6exCPBmtLyJE
-        ZrNmQmRIuJXAcHxFu6mEKQ08qnok8V+e8c2QWqCqwPWlz5UoCPTknL5TaxifNAI2I7oHH3
-        ZWIGo8e0Py3To2ZCH0LO6ABNRklKkpc=
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=vI/q5d8GNrVQclW8Z7qvB3AxNbNko22OaZZ2GZimLvU=;
+        b=JqwT8MzptOrD0q8uNbho0XJFCGWgwcCeQaUxTx6B9kzjCBqxO1RWuy8/vXZm4AZrGMQLLk
+        6XZDb8JBQ4UGqwjOHX+amjS54cmkarVQw68qo1JVQRE1Je/5fYBqI3sUOvR54tbUus9LPl
+        JE842cu901ru9v6+rSx1478IeHFsYBI=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -45,40 +46,72 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v9 00/27] Ingenic TCU patchset v9
-Date:   Thu, 27 Dec 2018 19:12:52 +0100
-Message-Id: <20181227181319.31095-1-paul@crapouillou.net>
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v9 01/27] dt-bindings: ingenic: Add DT bindings for TCU clocks
+Date:   Thu, 27 Dec 2018 19:12:53 +0100
+Message-Id: <20181227181319.31095-2-paul@crapouillou.net>
+In-Reply-To: <20181227181319.31095-1-paul@crapouillou.net>
+References: <20181227181319.31095-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This header provides clock numbers for the ingenic,tcu
+DT binding.
 
-This is the v9 of my patchset to add support for the Timer/Counter Unit
-present on Ingenic JZ47xx SoCs.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
 
-Changes from v8 mainly include:
+Notes:
+     v2: Use SPDX identifier for the license
+    
+     v3: No change
+    
+     v4: No change
+    
+     v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
+    
+     v6: No change
+    
+     v7: No change
 
-- The system timer and clocksource sub-nodes of the ingenic-timer driver
-  are gone. Now, the ingenic-timer will use the (optional) property
-  named "ingenic,pwm-channels-mask" to know which TCU channels are
-  reserved for PWM use.
+     v8: No change
 
-- New patch [11/27] makes the PWM driver implement the .apply callback,
-  which is cleaner and incidentally fixes a long-standing bug.
+     v9: No change
 
-- The patch in V8 that converted the PWM driver to use the regmap and
-  clocks provided by the ingenic-timer driver has been splitted in three
-  patches, [12,13,14/27]. The algorithm in [14/27] has been slightly
-  improved.
+ include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
-- The patch that adds support for the JZ4725B SoC to the PWM driver has
-  been removed from the patchset, as it's been suggested that the core
-  could use a "npwms" device property to override the number of PWMs set
-  in the driver.
-
-Thanks,
--Paul Cercueil
+diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+new file mode 100644
+index 000000000000..d569650a7945
+--- /dev/null
++++ b/include/dt-bindings/clock/ingenic,tcu.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,tcu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++
++#define TCU_CLK_TIMER0	0
++#define TCU_CLK_TIMER1	1
++#define TCU_CLK_TIMER2	2
++#define TCU_CLK_TIMER3	3
++#define TCU_CLK_TIMER4	4
++#define TCU_CLK_TIMER5	5
++#define TCU_CLK_TIMER6	6
++#define TCU_CLK_TIMER7	7
++#define TCU_CLK_WDT	8
++#define TCU_CLK_OST	9
++
++#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+-- 
+2.11.0
 
