@@ -7,46 +7,56 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B398C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4B2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28DD22148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FCEE20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999331;
-	bh=yI0MqnuWgBm4DRSxQ7CUx+PxBvmsb5JnRpnqpvXjh9Q=;
+	s=default; t=1545999335;
+	bh=ZkBy9mYLZRTnnv4W+GrK5w14fDnCrMXybu3WxRp1YnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u5ZllIMHOCJy5fOzVcUxpT+sKRR3aOYHW+bj8zYnncn5lUy0jyQRIO+gHVZfke2Ez
-	 IhrUoQbHEUMxdrge41U/E+3f5cGOooym9lAfZIEFmg9guGZUHeDDU/JZfxSH//IAG8
-	 cTKB4HafadpzfiMSIWG90sIQrEo+oVGwnxb1To+s=
+	b=tdfhSXHv07ybxHJsARVT8S7V/wJDdRtttxGT5Kn1IdRsx6QEF2ODvH0gzumXL/Pp7
+	 MdSzEPmwVRO5R+d1uP6FLf1cWqfO+PZqpD49SYsdOZDekG7q+ggLcCYUrzqEv8k27l
+	 6bFL48HBPHUvoXZkw1AXNFw4FdVdO2P8T3BC7L/Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbeL1MPa (ORCPT
+        id S1732473AbeL1MPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34492 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732244AbeL1MP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:26 -0500
+        id S1732455AbeL1MPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB371218F0;
-        Fri, 28 Dec 2018 12:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C830F2087F;
+        Fri, 28 Dec 2018 12:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999326;
-        bh=yI0MqnuWgBm4DRSxQ7CUx+PxBvmsb5JnRpnqpvXjh9Q=;
+        s=default; t=1545999331;
+        bh=ZkBy9mYLZRTnnv4W+GrK5w14fDnCrMXybu3WxRp1YnY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sf+UMwpbeDew9iAA2Ug/cV6TIbjTPMOob67iVhS49BobTehIheS188Guy08myBSNJ
-         qPa5xFlitXfUdJryvviaxm2ZfS4uY/IxDXYvP8NWFXPm6bkGdqXMFKPG87KS2Pwwgi
-         17qOHQs49TmMKkdDh9by6iZssYV4mPRPdydBuNsk=
+        b=od8jC1LqMDCHkz8k41vyS74N/z3VmJbxhpl28PZtJdK3Qy6OgqF3gd19jyEouJmDz
+         ZbKkcH075OeTsPEUkk1hYFmy6x4ZqwxxGI9ujvgLy9NAiDyj0oZbVXvUDQft/RRFo/
+         FlCHRdiTnbJEswWPSgnQw6EZBM+vjMR7WYUOPrvU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.19 45/46] proc/sysctl: dont return ENOMEM on lookup when a table is unregistering
-Date:   Fri, 28 Dec 2018 12:52:39 +0100
-Message-Id: <20181228113127.606449021@linuxfoundation.org>
+        stable@vger.kernel.org, Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 40/46] mm, memory_hotplug: initialize struct pages for the full memory section
+Date:   Fri, 28 Dec 2018 12:52:34 +0100
+Message-Id: <20181228113127.244829208@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -65,82 +75,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Delalande <colona@arista.com>
+From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 
-commit ea5751ccd665a2fd1b24f9af81f6167f0718c5f6 upstream.
+commit 2830bf6f05fb3e05bc4743274b806c821807a684 upstream.
 
-proc_sys_lookup can fail with ENOMEM instead of ENOENT when the
-corresponding sysctl table is being unregistered. In our case we see
-this upon opening /proc/sys/net/*/conf files while network interfaces
-are being deleted, which confuses our configuration daemon.
+If memory end is not aligned with the sparse memory section boundary,
+the mapping of such a section is only partly initialized.  This may lead
+to VM_BUG_ON due to uninitialized struct page access from
+is_mem_section_removable() or test_pages_in_a_zone() function triggered
+by memory_hotplug sysfs handlers:
 
-The problem was successfully reproduced and this fix tested on v4.9.122
-and v4.20-rc6.
+Here are the the panic examples:
+ CONFIG_DEBUG_VM=y
+ CONFIG_DEBUG_VM_PGFLAGS=y
 
-v2: return ERR_PTRs in all cases when proc_sys_make_inode fails instead
-of mixing them with NULL. Thanks Al Viro for the feedback.
+ kernel parameter mem=2050M
+ --------------------------
+ page:000003d082008000 is uninitialized and poisoned
+ page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+ Call Trace:
+ ( test_pages_in_a_zone+0xde/0x160)
+   show_valid_zones+0x5c/0x190
+   dev_attr_show+0x34/0x70
+   sysfs_kf_seq_show+0xc8/0x148
+   seq_read+0x204/0x480
+   __vfs_read+0x32/0x178
+   vfs_read+0x82/0x138
+   ksys_read+0x5a/0xb0
+   system_call+0xdc/0x2d8
+ Last Breaking-Event-Address:
+   test_pages_in_a_zone+0xde/0x160
+ Kernel panic - not syncing: Fatal exception: panic_on_oops
 
-Fixes: ace0c791e6c3 ("proc/sysctl: Don't grab i_lock under sysctl_lock.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Delalande <colona@arista.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+ kernel parameter mem=3075M
+ --------------------------
+ page:000003d08300c000 is uninitialized and poisoned
+ page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+ Call Trace:
+ ( is_mem_section_removable+0xb4/0x190)
+   show_mem_removable+0x9a/0xd8
+   dev_attr_show+0x34/0x70
+   sysfs_kf_seq_show+0xc8/0x148
+   seq_read+0x204/0x480
+   __vfs_read+0x32/0x178
+   vfs_read+0x82/0x138
+   ksys_read+0x5a/0xb0
+   system_call+0xdc/0x2d8
+ Last Breaking-Event-Address:
+   is_mem_section_removable+0xb4/0x190
+ Kernel panic - not syncing: Fatal exception: panic_on_oops
+
+Fix the problem by initializing the last memory section of each zone in
+memmap_init_zone() till the very end, even if it goes beyond the zone end.
+
+Michal said:
+
+: This has alwways been problem AFAIU.  It just went unnoticed because we
+: have zeroed memmaps during allocation before f7f99100d8d9 ("mm: stop
+: zeroing memory during allocation in vmemmap") and so the above test
+: would simply skip these ranges as belonging to zone 0 or provided a
+: garbage.
+:
+: So I guess we do care for post f7f99100d8d9 kernels mostly and
+: therefore Fixes: f7f99100d8d9 ("mm: stop zeroing memory during
+: allocation in vmemmap")
+
+Link: http://lkml.kernel.org/r/20181212172712.34019-2-zaslonko@linux.ibm.com
+Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/proc_sysctl.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ mm/page_alloc.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -464,7 +464,7 @@ static struct inode *proc_sys_make_inode
- 
- 	inode = new_inode(sb);
- 	if (!inode)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	inode->i_ino = get_next_ino();
- 
-@@ -474,8 +474,7 @@ static struct inode *proc_sys_make_inode
- 	if (unlikely(head->unregistering)) {
- 		spin_unlock(&sysctl_lock);
- 		iput(inode);
--		inode = NULL;
--		goto out;
-+		return ERR_PTR(-ENOENT);
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5538,6 +5538,18 @@ not_early:
+ 			cond_resched();
+ 		}
  	}
- 	ei->sysctl = head;
- 	ei->sysctl_entry = table;
-@@ -500,7 +499,6 @@ static struct inode *proc_sys_make_inode
- 	if (root->set_ownership)
- 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
- 
--out:
- 	return inode;
++#ifdef CONFIG_SPARSEMEM
++	/*
++	 * If the zone does not span the rest of the section then
++	 * we should at least initialize those pages. Otherwise we
++	 * could blow up on a poisoned page in some paths which depend
++	 * on full sections being initialized (e.g. memory hotplug).
++	 */
++	while (end_pfn % PAGES_PER_SECTION) {
++		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
++		end_pfn++;
++	}
++#endif
  }
  
-@@ -549,10 +547,11 @@ static struct dentry *proc_sys_lookup(st
- 			goto out;
- 	}
- 
--	err = ERR_PTR(-ENOMEM);
- 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
--	if (!inode)
-+	if (IS_ERR(inode)) {
-+		err = ERR_CAST(inode);
- 		goto out;
-+	}
- 
- 	d_set_d_op(dentry, &proc_sys_dentry_operations);
- 	err = d_splice_alias(inode, dentry);
-@@ -685,7 +684,7 @@ static bool proc_sys_fill_cache(struct f
- 		if (d_in_lookup(child)) {
- 			struct dentry *res;
- 			inode = proc_sys_make_inode(dir->d_sb, head, table);
--			if (!inode) {
-+			if (IS_ERR(inode)) {
- 				d_lookup_done(child);
- 				dput(child);
- 				return false;
+ static void __meminit zone_init_free_lists(struct zone *zone)
 
 
