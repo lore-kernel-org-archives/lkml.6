@@ -7,48 +7,56 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3278C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F97C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D9620675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E37FA20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999519;
-	bh=FnRDY1OXTCm55v5r/xPzm8qumVYpk8/DOuLCPxDkxac=;
+	s=default; t=1545999531;
+	bh=ShAB/C/RKQjqa7v47RkxZPS2eTI397LlYvnDQoJiBSo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aCDdt+GHHytSegW9BFdnbGY20adID7UKQVHJo0YmGfF+E7QxYZJ+i1pZryCy2YMBN
-	 OqQD3KvdcTfGWBW3iBJgjfLAnLlnSbU9Lp2J9I1uGewFZw7V+FgLZ44t9u6jYMAJ29
-	 Dk7GZJifiKbKxZ8EpQeti8Sqi7GQ8BHHsC4WbWNw=
+	b=wKKp2okur8JCvIlOctWSVj0Arux0pACKTUq/P86GeljCUWyZfuVzia9g8DWD3w6q+
+	 ytc8rkpZHyf+0rKKBQBsDWA+35P+Iy43QBgcph+jFMimIXxXAUuNyyVvdoX+Pb2oZ9
+	 Z7E2D5G1Tizj0uB1KbkZUk5cWBvy1S0nrLb9RohM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733163AbeL1MSi (ORCPT
+        id S1733190AbeL1MSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:18:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:18:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733055AbeL1MRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:55 -0500
+        id S1733017AbeL1MRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49996218FE;
-        Fri, 28 Dec 2018 12:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 277B820675;
+        Fri, 28 Dec 2018 12:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999474;
-        bh=FnRDY1OXTCm55v5r/xPzm8qumVYpk8/DOuLCPxDkxac=;
+        s=default; t=1545999464;
+        bh=ShAB/C/RKQjqa7v47RkxZPS2eTI397LlYvnDQoJiBSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JeuwilvZHL0oa0EVcHWISt22qt+P3CRBYQPebCfsg/SETTNUApPxM+X6S4Yf3XG9Y
-         rM7bRKEjpPRYOn02mI0rA3xtmUDeAq7B4kb90JFhSoLQXRXpweQK1FxKEjHkMOlLGj
-         qM8xAzh6aEsixnEoUCfZqhFjXFvsNB56y6m/IyPo=
+        b=pJJrjvErXLhg2V8m6nwAf95S7znzlx5ekn7V5PRgEgMDqYFXUQtQZ0le6pP2XgBZp
+         0CUFj2qP4xKfTkEQ2d8He5+elaw4Hgay7MOAh8/X6eBzWoF7a/yv5Tc3ohPgILvvNa
+         Xwx6nJ68H9r0B6pxWAj8THgTy161LnBxG2OnbjRE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 04/22] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
-Date:   Fri, 28 Dec 2018 12:52:41 +0100
-Message-Id: <20181228113126.447124983@linuxfoundation.org>
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.9 20/22] panic: avoid deadlocks in re-entrant console drivers
+Date:   Fri, 28 Dec 2018 12:52:57 +0100
+Message-Id: <20181228113127.547233295@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -67,67 +75,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
+commit c7c3f05e341a9a2bd1a92993d4f996cfd6e7348e upstream.
 
-The function hso_probe reads if_num from the USB device (as an u8) and uses
-it without a length check to index an array, resulting in an OOB memory read
-in hso_probe or hso_get_config_data.
+>From printk()/serial console point of view panic() is special, because
+it may force CPU to re-enter printk() or/and serial console driver.
+Therefore, some of serial consoles drivers are re-entrant. E.g. 8250:
 
-Add a length check for both locations and updated hso_probe to bail on
-error.
+serial8250_console_write()
+{
+	if (port->sysrq)
+		locked = 0;
+	else if (oops_in_progress)
+		locked = spin_trylock_irqsave(&port->lock, flags);
+	else
+		spin_lock_irqsave(&port->lock, flags);
+	...
+}
 
-This issue has been assigned CVE-2018-19985.
+panic() does set oops_in_progress via bust_spinlocks(1), so in theory
+we should be able to re-enter serial console driver from panic():
 
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	CPU0
+	<NMI>
+	uart_console_write()
+	serial8250_console_write()		// if (oops_in_progress)
+						//    spin_trylock_irqsave()
+	call_console_drivers()
+	console_unlock()
+	console_flush_on_panic()
+	bust_spinlocks(1)			// oops_in_progress++
+	panic()
+	<NMI/>
+	spin_lock_irqsave(&port->lock, flags)   // spin_lock_irqsave()
+	serial8250_console_write()
+	call_console_drivers()
+	console_unlock()
+	printk()
+	...
+
+However, this does not happen and we deadlock in serial console on
+port->lock spinlock. And the problem is that console_flush_on_panic()
+called after bust_spinlocks(0):
+
+void panic(const char *fmt, ...)
+{
+	bust_spinlocks(1);
+	...
+	bust_spinlocks(0);
+	console_flush_on_panic();
+	...
+}
+
+bust_spinlocks(0) decrements oops_in_progress, so oops_in_progress
+can go back to zero. Thus even re-entrant console drivers will simply
+spin on port->lock spinlock. Given that port->lock may already be
+locked either by a stopped CPU, or by the very same CPU we execute
+panic() on (for instance, NMI panic() on printing CPU) the system
+deadlocks and does not reboot.
+
+Fix this by removing bust_spinlocks(0), so oops_in_progress is always
+set in panic() now and, thus, re-entrant console drivers will trylock
+the port->lock instead of spinning on it forever, when we call them
+from console_flush_on_panic().
+
+Link: http://lkml.kernel.org/r/20181025101036.6823-1-sergey.senozhatsky@gmail.com
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Daniel Wang <wonderfly@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Peter Feiner <pfeiner@google.com>
+Cc: linux-serial@vger.kernel.org
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/hso.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ kernel/panic.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2808,6 +2808,12 @@ static int hso_get_config_data(struct us
- 		return -EIO;
- 	}
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -13,6 +13,7 @@
+ #include <linux/kmsg_dump.h>
+ #include <linux/kallsyms.h>
+ #include <linux/notifier.h>
++#include <linux/vt_kern.h>
+ #include <linux/module.h>
+ #include <linux/random.h>
+ #include <linux/ftrace.h>
+@@ -228,7 +229,10 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
  
-+	/* check if we have a valid interface */
-+	if (if_num > 16) {
-+		kfree(config_data);
-+		return -EINVAL;
-+	}
-+
- 	switch (config_data[if_num]) {
- 	case 0x0:
- 		result = 0;
-@@ -2878,10 +2884,18 @@ static int hso_probe(struct usb_interfac
+-	bust_spinlocks(0);
++#ifdef CONFIG_VT
++	unblank_screen();
++#endif
++	console_unblank();
  
- 	/* Get the interface/port specification from either driver_info or from
- 	 * the device itself */
--	if (id->driver_info)
-+	if (id->driver_info) {
-+		/* if_num is controlled by the device, driver_info is a 0 terminated
-+		 * array. Make sure, the access is in bounds! */
-+		for (i = 0; i <= if_num; ++i)
-+			if (((u32 *)(id->driver_info))[i] == 0)
-+				goto exit;
- 		port_spec = ((u32 *)(id->driver_info))[if_num];
--	else
-+	} else {
- 		port_spec = hso_get_config_data(interface);
-+		if (port_spec < 0)
-+			goto exit;
-+	}
- 
- 	/* Check if we need to switch to alt interfaces prior to port
- 	 * configuration */
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
 
 
