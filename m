@@ -2,166 +2,148 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F73AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B44DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4463218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545960676;
-	bh=PNdKjiejv1c3vuPKiJg74rlUNlPwA3twtEwJShES/JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sBbFskS6CTdJuC4tootVxnDuI4O5EnZVtYf9IgmUedLfKDKP/74YsKsf5Yg4SlFLX
-	 QTlr2TANGpC4rLuuH+MA4rBD0uQtfMwmivJBbfBFAHwjaBYIGc9/AzVJw5Ro7k7CUM
-	 +aUs9Jo/utAF/T7kGQ78uhdFtYZularQ4ikjCjn4=
+	by mail.kernel.org (Postfix) with ESMTP id 23B62218FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbeL1BbP (ORCPT
+        id S1731024AbeL1BbS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 20:31:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49740 "EHLO mail.kernel.org"
+        Thu, 27 Dec 2018 20:31:18 -0500
+Received: from mga03.intel.com ([134.134.136.65]:55625 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727705AbeL1BbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 20:31:15 -0500
-Received: from localhost (lfbn-ncy-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 408C021741;
-        Fri, 28 Dec 2018 01:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545960673;
-        bh=PNdKjiejv1c3vuPKiJg74rlUNlPwA3twtEwJShES/JY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XddiK5ElwxSCYqhEdWRB1GOVXUXNhNisuQBXCc9+457f8he5jk+lNsK40GvK5vpWJ
-         cXMhHWAw52bHpJyYAhvwbs3GvzUh4TKVVWCp1AI1Tk+a1he8Yb33hpi6obuD8bV8AO
-         6kMa98ifHib5Q7IPLW3KbNmeDG3CV7rtccImlOIg=
-Date:   Fri, 28 Dec 2018 02:31:10 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()") may
- have revealed another problem
-Message-ID: <20181228013109.GB3749@lerouge>
-References: <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
- <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
- <20180824143056.GC2730@lerouge>
- <d8fd3322-e982-2c9c-85e3-9b1770357520@gmail.com>
- <20180828022545.GA25943@lerouge>
- <alpine.DEB.2.21.1809271805190.8118@nanos.tec.linutronix.de>
- <20180928131855.GB8795@lerouge>
- <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
- <20181227065321.GA3749@lerouge>
- <e838fa7f-f43f-7b3c-aae6-edb4f6734964@gmail.com>
+        id S1727705AbeL1BbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 20:31:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2018 17:31:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,407,1539673200"; 
+   d="scan'208";a="113754196"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga003.jf.intel.com with ESMTP; 27 Dec 2018 17:31:16 -0800
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 27 Dec 2018 17:31:16 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 27 Dec 2018 17:31:15 -0800
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.196]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.160]) with mapi id 14.03.0415.000;
+ Fri, 28 Dec 2018 09:31:12 +0800
+From:   "Wang, Kemi" <kemi.wang@intel.com>
+To:     Waiman Long <longman@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "Davidlohr Bueso" <dave@stgolabs.net>
+CC:     "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        Colin King <colin.king@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "lkp@01.org" <lkp@01.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Wang, Kemi" <kemi.wang@intel.com>
+Subject: RE: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
+ regression
+Thread-Topic: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
+ regression
+Thread-Index: AQHUdMWPUnemr3UzVU6RWrhq1FnjvaVA8FWAgAAm6ACAACL3gIAABy0AgFJutVA=
+Date:   Fri, 28 Dec 2018 01:31:11 +0000
+Message-ID: <25017BF213203E48912DB000DE5F5E1E76365678@SHSMSX101.ccr.corp.intel.com>
+References: <20181105050813.GP24195@shao2-debian>
+ <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+ <f901e346-6203-371d-a39a-ed9231187570@suse.cz>
+ <CAHk-=wjZ1C2iL79jOuC9ysvX2oRpUjoqXirvY0NRuLC0eQ8nbg@mail.gmail.com>
+ <60ef3584-6f3a-1a9a-94d1-3d4a5b9f1e56@redhat.com>
+In-Reply-To: <60ef3584-6f3a-1a9a-94d1-3d4a5b9f1e56@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDdmOTVlZDAtYzcwNi00YmE1LTllNDktZjA2ZTZmZTk3MjNmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibDAwbHBQWUVPcGs3NHowRnZicTVjOHJXdjA2UDc5K002VHcxK0d2cG1USmw3bEJzbFJtZXNUQ1lxN0hUMFJYKyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e838fa7f-f43f-7b3c-aae6-edb4f6734964@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 12:11:12AM +0100, Heiner Kallweit wrote:
-> 
-> OK, did as you advised and here comes the trace. That's the related dmesg part:
-> 
-> [ 1479.025092] x86: Booting SMP configuration:
-> [ 1479.025129] smpboot: Booting Node 0 Processor 1 APIC 0x2
-> [ 1479.094715] NOHZ: local_softirq_pending 202
-> [ 1479.096557] smpboot: CPU 1 is now offline
-> 
-> Hope it helps.
-> Heiner
-> 
-> 
-> # tracer: nop
-> #
-> #                              _-----=> irqs-off
-> #                             / _----=> need-resched
-> #                            | / _---=> hardirq/softirq
-> #                            || / _--=> preempt-depth
-> #                            ||| /     delay
-> #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
-> #              | |       |   ||||       |         |
-[...]
->           <idle>-0     [001] d.h2  1479.111017: softirq_raise: vec=9 [action=RCU]
->           <idle>-0     [001] d.h2  1479.111026: softirq_raise: vec=7 [action=SCHED]
->           <idle>-0     [001] ..s2  1479.111035: softirq_entry: vec=1 [action=TIMER]
->           <idle>-0     [001] ..s2  1479.111040: softirq_exit: vec=1 [action=TIMER]
->           <idle>-0     [001] ..s2  1479.111040: softirq_entry: vec=7 [action=SCHED]
->           <idle>-0     [001] ..s2  1479.111052: softirq_exit: vec=7 [action=SCHED]
->           <idle>-0     [001] ..s2  1479.111052: softirq_entry: vec=9 [action=RCU]
->           <idle>-0     [001] .Ns2  1479.111079: softirq_exit: vec=9 [action=RCU]
->          cpuhp/1-13    [001] dNh2  1479.112930: softirq_raise: vec=1 [action=TIMER]
->          cpuhp/1-13    [001] dNh2  1479.112935: softirq_raise: vec=9 [action=RCU]
+Hi, Waiman
+   Did you post that patch? Let's see if it helps.
 
-Interesting, the softirq is raised from hardirq but it's not handled in the end of
-the IRQ. Are you running threaded IRQS by any chance? If so I would expect ksoftirqd
-to handle the pending work before we go idle. However I can imagine a small window
-where such an expectation may not be met: if the softirq is raised after the ksoftirqd
-thread is parked (CPUHP_AP_SMPBOOT_THREADS), which is right before we disable the CPU
-(CPUHP_TEARDOWN_CPU).
+-----Original Message-----
+From: LKP [mailto:lkp-bounces@lists.01.org] On Behalf Of Waiman Long
+Sent: Tuesday, November 6, 2018 6:40 AM
+To: Linus Torvalds <torvalds@linux-foundation.org>; vbabka@suse.cz; Davidlohr Bueso <dave@stgolabs.net>
+Cc: yang.shi@linux.alibaba.com; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Matthew Wilcox <willy@infradead.org>; mhocko@kernel.org; Colin King <colin.king@canonical.com>; Andrew Morton <akpm@linux-foundation.org>; ldufour@linux.vnet.ibm.com; lkp@01.org; kirill.shutemov@linux.intel.com
+Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1% regression
 
-I don't know if we can afford to ignore a softirq even at this late stage. We should
-probably avoid leaking any. So here is a possible fix, if you don't mind trying:
+On 11/05/2018 05:14 PM, Linus Torvalds wrote:
+> On Mon, Nov 5, 2018 at 12:12 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> I didn't spot an obvious mistake in the patch itself, so it looks
+>> like some bad interaction between scheduler and the mmap downgrade?
+> I'm thinking it's RWSEM_SPIN_ON_OWNER that ends up being confused by
+> the downgrade.
+>
+> It looks like the benchmark used to be basically CPU-bound, at about
+> 800% CPU, and now it's somewhere in the 200% CPU region:
+>
+>                   will-it-scale.time.percent_of_cpu_this_job_got
+>
+>   800 +-+-------------------------------------------------------------------+
+>       |.+.+.+.+.+.+.+.  .+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+..+.+.+.+. .+.+.+.|
+>   700 +-+             +.                                            +       |
+>       |                                                                     |
+>   600 +-+                                                                   |
+>       |                                                                     |
+>   500 +-+                                                                   |
+>       |                                                                     |
+>   400 +-+                                                                   |
+>       |                                                                     |
+>   300 +-+                                                                   |
+>       |                                                                     |
+>   200 O-O O O O O                O                                          |
+>       |           O O O  O O O O   O O O O O O O O O O O                    |
+>   100 +-+-------------------------------------------------------------------+
+>
+> which sounds like the downgrade really messes with the "spin waiting
+> for lock" logic.
+>
+> I'm thinking it's the "wake up waiter" logic that has some bad
+> interaction with spinning, and breaks that whole optimization.
+>
+> Adding Waiman and Davidlohr to the participants, because they seem to
+> be the obvious experts in this area.
+>
+>                             Linus
 
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index d288133..716096b 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -56,6 +56,7 @@ EXPORT_PER_CPU_SYMBOL(irq_stat);
- static struct softirq_action softirq_vec[NR_SOFTIRQS] __cacheline_aligned_in_smp;
- 
- DEFINE_PER_CPU(struct task_struct *, ksoftirqd);
-+DEFINE_PER_CPU(int, ksoftirqd_parked);
- 
- const char * const softirq_to_name[NR_SOFTIRQS] = {
- 	"HI", "TIMER", "NET_TX", "NET_RX", "BLOCK", "IRQ_POLL",
-@@ -363,7 +364,7 @@ static inline void invoke_softirq(void)
- 	if (ksoftirqd_running(local_softirq_pending()))
- 		return;
- 
--	if (!force_irqthreads) {
-+	if (!force_irqthreads || __this_cpu_read(ksoftirqd_parked)) {
- #ifdef CONFIG_HAVE_IRQ_EXIT_ON_IRQ_STACK
- 		/*
- 		 * We can safely execute softirq on the current stack if
-@@ -659,6 +660,22 @@ static void run_ksoftirqd(unsigned int cpu)
- 	local_irq_enable();
- }
- 
-+static void ksoftirqd_park(unsigned int cpu)
-+{
-+	local_irq_disable();
-+	__this_cpu_write(ksoftirqd_parked, 1);
-+
-+	if (local_softirq_pending())
-+		run_ksoftirqd(cpu);
-+
-+	local_irq_enable();
-+}
-+
-+static void ksoftirqd_unpark(unsigned int cpu)
-+{
-+	__this_cpu_write(ksoftirqd_parked, 0);
-+}
-+
- #ifdef CONFIG_HOTPLUG_CPU
- /*
-  * tasklet_kill_immediate is called to remove a tasklet which can already be
-@@ -724,6 +741,8 @@ static int takeover_tasklets(unsigned int cpu)
- static struct smp_hotplug_thread softirq_threads = {
- 	.store			= &ksoftirqd,
- 	.thread_should_run	= ksoftirqd_should_run,
-+	.park			= ksoftirqd_park,
-+	.unpark			= ksoftirqd_unpark,
- 	.thread_fn		= run_ksoftirqd,
- 	.thread_comm		= "ksoftirqd/%u",
- };
+Optimistic spinning on rwsem is done only on writers spinning on a
+writer-owned rwsem. If a write-lock is downgraded to a read-lock, all
+the spinning waiters will quit. That may explain the drop in cpu
+utilization. I do have a old patch that enable a certain amount of
+reader spinning which may help the situation. I can rebase that and send
+it out for review if people have interest.
+
+Cheers,
+Longman
+
+
+_______________________________________________
+LKP mailing list
+LKP@lists.01.org
+https://lists.01.org/mailman/listinfo/lkp
