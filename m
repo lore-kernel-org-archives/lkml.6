@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C75BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E932EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61FB20675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B792820675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999653;
-	bh=K3WWvwiU65vjCkT4POSAvgmoumTzYrOoZVg/gM6fGFk=;
+	s=default; t=1545999658;
+	bh=8f9J3HDGzn4HJ4y3ReeKRdJmGw8Ps56PPJeBBm6b2zg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VzTB40ljXGiNSWnPB99MqAs6RIqP/6fMMx3UUxO6MSN8yXpb4O+GmjIwnimxUNE7/
-	 7KnnRZdBClH4lpxbdie5m0Gl4wvYAmPGHICfxo6Gc44IvDfR7hqIenM+BN5FxBpuw5
-	 C2BJmaqiXCeMihrAbkgBKEbxyeCAtAo8otoxvrV0=
+	b=nRJhnPy+T9qJj8OcGMfgVo+x/vzbcdlwl0mk02VrDxiNM0kjouWvuG879KC52EtY9
+	 un2vSgcnewFy+OGbDyGP6ta6YeL3at2zzOsGY2sPn6huJxjQVSGzIyKwa+F2OAruvB
+	 98IbikXWPL18qBQbWrgwgcn9hEB38V3g9QbDSpmw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732651AbeL1MQR (ORCPT
+        id S1728786AbeL1MU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35290 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:20:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732637AbeL1MQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:13 -0500
+        id S1732642AbeL1MQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AABC42184B;
-        Fri, 28 Dec 2018 12:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5021A2184B;
+        Fri, 28 Dec 2018 12:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999373;
-        bh=K3WWvwiU65vjCkT4POSAvgmoumTzYrOoZVg/gM6fGFk=;
+        s=default; t=1545999375;
+        bh=8f9J3HDGzn4HJ4y3ReeKRdJmGw8Ps56PPJeBBm6b2zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N8pvJEb2YjCOf0zUax/31krZOAKmo26UYU3zh15cp0yHxcFKmez3s0oIFnh6loS4G
-         b1wiwFO9pnPsrcPFETlRw2HsuE7CgMPI26bB/EPB9VGBpGlwhIf0KyNL1y2zVGau3Z
-         N35J7LI5XtW0PEiRqa4iGM40t2OrEWR7mmppY3JQ=
+        b=0r65KqJfJBuG0T/x8ivBHYm2CKfScKhj3RQKeaAzTKH7fp+RhsPxhnNjxWyCUTJ+e
+         hG+7In5h+x+xyuDbP+/oQD8ruKiESeTgBDmpvxEjalL7gEo+WyeDTLt0XaeJHKrX/7
+         d3SnGDOnuSKRas7dtTqsTT8GG9zV1g2JAgHnrPek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eduardo Habkost <ehabkost@redhat.com>,
+        stable@vger.kernel.org, Andy Honig <ahonig@google.com>,
+        Cfir Cohen <cfir@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 24/36] kvm: x86: Add AMDs EX_CFG to the list of ignored MSRs
-Date:   Fri, 28 Dec 2018 12:52:40 +0100
-Message-Id: <20181228113128.219016224@linuxfoundation.org>
+Subject: [PATCH 4.14 25/36] KVM: Fix UAF in nested posted interrupt processing
+Date:   Fri, 28 Dec 2018 12:52:41 +0100
+Message-Id: <20181228113128.280581015@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -64,56 +66,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eduardo Habkost <ehabkost@redhat.com>
+From: Cfir Cohen <cfir@google.com>
 
-commit 0e1b869fff60c81b510c2d00602d778f8f59dd9a upstream.
+commit c2dd5146e9fe1f22c77c1b011adf84eea0245806 upstream.
 
-Some guests OSes (including Windows 10) write to MSR 0xc001102c
-on some cases (possibly while trying to apply a CPU errata).
-Make KVM ignore reads and writes to that MSR, so the guest won't
-crash.
+nested_get_vmcs12_pages() processes the posted_intr address in vmcs12. It
+caches the kmap()ed page object and pointer, however, it doesn't handle
+errors correctly: it's possible to cache a valid pointer, then release
+the page and later dereference the dangling pointer.
 
-The MSR is documented as "Execution Unit Configuration (EX_CFG)",
-at AMD's "BIOS and Kernel Developer's Guide (BKDG) for AMD Family
-15h Models 00h-0Fh Processors".
+I was able to reproduce with the following steps:
 
+1. Call vmlaunch with valid posted_intr_desc_addr but an invalid
+MSR_EFER. This causes nested_get_vmcs12_pages() to cache the kmap()ed
+pi_desc_page and pi_desc. Later the invalid EFER value fails
+check_vmentry_postreqs() which fails the first vmlaunch.
+
+2. Call vmlanuch with a valid EFER but an invalid posted_intr_desc_addr
+(I set it to 2G - 0x80). The second time we call nested_get_vmcs12_pages
+pi_desc_page is unmapped and released and pi_desc_page is set to NULL
+(the "shouldn't happen" clause). Due to the invalid
+posted_intr_desc_addr, kvm_vcpu_gpa_to_page() fails and
+nested_get_vmcs12_pages() returns. It doesn't return an error value so
+vmlaunch proceeds. Note that at this time we have a dangling pointer in
+vmx->nested.pi_desc and POSTED_INTR_DESC_ADDR in L0's vmcs.
+
+3. Issue an IPI in L2 guest code. This triggers a call to
+vmx_complete_nested_posted_interrupt() and pi_test_and_clear_on() which
+dereferences the dangling pointer.
+
+Vulnerable code requires nested and enable_apicv variables to be set to
+true. The host CPU must also support posted interrupts.
+
+Fixes: 5e2f30b756a37 "KVM: nVMX: get rid of nested_get_page()"
 Cc: stable@vger.kernel.org
-Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
+Reviewed-by: Andy Honig <ahonig@google.com>
+Signed-off-by: Cfir Cohen <cfir@google.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/msr-index.h |    1 +
- arch/x86/kvm/x86.c               |    2 ++
- 2 files changed, 3 insertions(+)
+ arch/x86/kvm/vmx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -372,6 +372,7 @@
- #define MSR_F15H_NB_PERF_CTR		0xc0010241
- #define MSR_F15H_PTSC			0xc0010280
- #define MSR_F15H_IC_CFG			0xc0011021
-+#define MSR_F15H_EX_CFG			0xc001102c
- 
- /* Fam 10h MSRs */
- #define MSR_FAM10H_MMIO_CONF_BASE	0xc0010058
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2227,6 +2227,7 @@ int kvm_set_msr_common(struct kvm_vcpu *
- 	case MSR_AMD64_PATCH_LOADER:
- 	case MSR_AMD64_BU_CFG2:
- 	case MSR_AMD64_DC_CFG:
-+	case MSR_F15H_EX_CFG:
- 		break;
- 
- 	case MSR_IA32_UCODE_REV:
-@@ -2508,6 +2509,7 @@ int kvm_get_msr_common(struct kvm_vcpu *
- 	case MSR_AMD64_BU_CFG2:
- 	case MSR_IA32_PERF_CTL:
- 	case MSR_AMD64_DC_CFG:
-+	case MSR_F15H_EX_CFG:
- 		msr_info->data = 0;
- 		break;
- 	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10447,6 +10447,8 @@ static void nested_get_vmcs12_pages(stru
+ 			kunmap(vmx->nested.pi_desc_page);
+ 			kvm_release_page_dirty(vmx->nested.pi_desc_page);
+ 			vmx->nested.pi_desc_page = NULL;
++			vmx->nested.pi_desc = NULL;
++			vmcs_write64(POSTED_INTR_DESC_ADDR, -1ull);
+ 		}
+ 		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->posted_intr_desc_addr);
+ 		if (is_error_page(page))
 
 
