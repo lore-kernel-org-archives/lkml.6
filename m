@@ -2,56 +2,56 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1319FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FDEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BAD2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 990D720675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999431;
-	bh=1WFmST+wts88L5mqBrSxyXlyeq1y9+51jSiyaXjjdyY=;
+	s=default; t=1545999436;
+	bh=xLo+A00IV1UQgq4LU/ithV4VkCjTMXLgRB4wVtrpfAg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qmWLibVw3yMHMcaZ92d7D1E2hjxZ8+2j66YJ+DVGPlAtPu9Vas5HOETbUGjv32tlo
-	 KvJlIaAOhb7kzGKBNqkyS2HAVe9TzrAcc8SqZcgPUTt4lcrjteFg9iBQf7HdilMWaQ
-	 hOA+/krROmDS3oiBTY5eSe6jTa8kDvFRBffFkkVE=
+	b=EEUp5POc1aSzEWERKwBnFqxdC4rzOv/6gDKCGlZMqAV2K3YmMZOY5NfQZ3CKXCFyx
+	 OacrSP6G6PfFGJjMcSRwXmnaswBzPP0qLkDpuzf6jJ/71AWrOvoUJisGPckHrNgO1V
+	 okSFRLUVwuX9oayNB23izmp+JMsAbjTsckwydC60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732871AbeL1MRK (ORCPT
+        id S1732887AbeL1MRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36206 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:17:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732849AbeL1MRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:07 -0500
+        id S1732872AbeL1MRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9C9D2087F;
-        Fri, 28 Dec 2018 12:17:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77D6B2087F;
+        Fri, 28 Dec 2018 12:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999426;
-        bh=1WFmST+wts88L5mqBrSxyXlyeq1y9+51jSiyaXjjdyY=;
+        s=default; t=1545999432;
+        bh=xLo+A00IV1UQgq4LU/ithV4VkCjTMXLgRB4wVtrpfAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNsW3VnrXXSH5Ae92whLoqL63cN/umrk873xsY8RtJkAICvdwqVJwvl56EgheEXMW
-         LnAxAXhoNkuEEmNxe43/nEnkgOj91ho9HCaDKmmmpLJL0ymjP1kNzz3YUN3PCqwAm7
-         U6JTYw1NVM9F1IW1gLLuvef0CWvePYmIbDn4bpqk=
+        b=HqwCU2p7IJ501VK8BNBeX4Vlo8yIPVIK8SrNzcbcdyHPTwPXO50U/ZurND3ljbAEP
+         jnCU+cwYbcnUg4So9TtXhAlxdawZJJ6UEaUJ1z/qcWBJDMc54n1eBNdKQAl5siqrWV
+         QlMk4v0gYu1m/bZhxIGPszkF3VvfxrxzI3S00S2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 22/36] gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
+        stable@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 01/22] block: break discard submissions into the user defined size
 Date:   Fri, 28 Dec 2018 12:52:38 +0100
-Message-Id: <20181228113128.083628450@linuxfoundation.org>
+Message-Id: <20181228113126.222869065@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
-References: <20181228113126.526729877@linuxfoundation.org>
+In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
+References: <20181228113126.144310132@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,306 +63,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+[ Upstream commit af097f5d199e2aa3ab3ef777f0716e487b8f7b08 ]
 
-commit e59f5e08ece1060073d92c66ded52e1f2c43b5bb upstream.
+Don't build discards bigger than what the user asked for, if the
+user decided to limit the size by writing to 'discard_max_bytes'.
 
-Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
-from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
-call for each event resource.
-
-This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
-call. This is a problem if some AML code reads the GPIO pin before we
-run the deferred acpi_gpiochip_request_interrupt, because in that case
-acpi_gpio_adr_space_handler() will already have called
-gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
-acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
-register an event handler.
-
-acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
-already having claimed the pin, but the other way around does not work.
-
-One example of a problem this causes, is the event handler for the OTG
-ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
-in whatever mode it was in during boot and e.g. only allowing charging
-after a reboot.
-
-This commit fixes this by only deferring the request_irq call and the
-initial run of edge-triggered IRQs instead of deferring all of
-acpi_gpiochip_request_interrupt.
-
-Cc: stable@vger.kernel.org
-Fixes: 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event ...")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib-acpi.c |  144 +++++++++++++++++++++++++-------------------
- 1 file changed, 84 insertions(+), 60 deletions(-)
+ block/blk-lib.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -23,11 +23,28 @@
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 46fe9248410d..d8b89c58af3d 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -63,10 +63,16 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		unsigned int req_sects;
+ 		sector_t end_sect, tmp;
  
- #include "gpiolib.h"
+-		/* Make sure bi_size doesn't overflow */
+-		req_sects = min_t(sector_t, nr_sects, UINT_MAX >> 9);
++		/*
++		 * Issue in chunks of the user defined max discard setting,
++		 * ensuring that bi_size doesn't overflow
++		 */
++		req_sects = min_t(sector_t, nr_sects,
++					q->limits.max_discard_sectors);
++		if (req_sects > UINT_MAX >> 9)
++			req_sects = UINT_MAX >> 9;
  
-+/**
-+ * struct acpi_gpio_event - ACPI GPIO event handler data
-+ *
-+ * @node:	  list-entry of the events list of the struct acpi_gpio_chip
-+ * @handle:	  handle of ACPI method to execute when the IRQ triggers
-+ * @handler:	  irq_handler to pass to request_irq when requesting the IRQ
-+ * @pin:	  GPIO pin number on the gpio_chip
-+ * @irq:	  Linux IRQ number for the event, for request_ / free_irq
-+ * @irqflags:     flags to pass to request_irq when requesting the IRQ
-+ * @irq_is_wake:  If the ACPI flags indicate the IRQ is a wakeup source
-+ * @is_requested: True if request_irq has been done
-+ * @desc:	  gpio_desc for the GPIO pin for this event
-+ */
- struct acpi_gpio_event {
- 	struct list_head node;
- 	acpi_handle handle;
-+	irq_handler_t handler;
- 	unsigned int pin;
- 	unsigned int irq;
-+	unsigned long irqflags;
-+	bool irq_is_wake;
-+	bool irq_requested;
- 	struct gpio_desc *desc;
- };
- 
-@@ -53,10 +70,10 @@ struct acpi_gpio_chip {
- 
- /*
-  * For gpiochips which call acpi_gpiochip_request_interrupts() before late_init
-- * (so builtin drivers) we register the ACPI GpioInt event handlers from a
-+ * (so builtin drivers) we register the ACPI GpioInt IRQ handlers from a
-  * late_initcall_sync handler, so that other builtin drivers can register their
-  * OpRegions before the event handlers can run.  This list contains gpiochips
-- * for which the acpi_gpiochip_request_interrupts() has been deferred.
-+ * for which the acpi_gpiochip_request_irqs() call has been deferred.
-  */
- static DEFINE_MUTEX(acpi_gpio_deferred_req_irqs_lock);
- static LIST_HEAD(acpi_gpio_deferred_req_irqs_list);
-@@ -194,8 +211,42 @@ bool acpi_gpio_get_irq_resource(struct a
- }
- EXPORT_SYMBOL_GPL(acpi_gpio_get_irq_resource);
- 
--static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
--						   void *context)
-+static void acpi_gpiochip_request_irq(struct acpi_gpio_chip *acpi_gpio,
-+				      struct acpi_gpio_event *event)
-+{
-+	int ret, value;
-+
-+	ret = request_threaded_irq(event->irq, NULL, event->handler,
-+				   event->irqflags, "ACPI:Event", event);
-+	if (ret) {
-+		dev_err(acpi_gpio->chip->parent,
-+			"Failed to setup interrupt handler for %d\n",
-+			event->irq);
-+		return;
-+	}
-+
-+	if (event->irq_is_wake)
-+		enable_irq_wake(event->irq);
-+
-+	event->irq_requested = true;
-+
-+	/* Make sure we trigger the initial state of edge-triggered IRQs */
-+	value = gpiod_get_raw_value_cansleep(event->desc);
-+	if (((event->irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
-+	    ((event->irqflags & IRQF_TRIGGER_FALLING) && value == 0))
-+		event->handler(event->irq, event);
-+}
-+
-+static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
-+{
-+	struct acpi_gpio_event *event;
-+
-+	list_for_each_entry(event, &acpi_gpio->events, node)
-+		acpi_gpiochip_request_irq(acpi_gpio, event);
-+}
-+
-+static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
-+					     void *context)
- {
- 	struct acpi_gpio_chip *acpi_gpio = context;
- 	struct gpio_chip *chip = acpi_gpio->chip;
-@@ -204,8 +255,7 @@ static acpi_status acpi_gpiochip_request
- 	struct acpi_gpio_event *event;
- 	irq_handler_t handler = NULL;
- 	struct gpio_desc *desc;
--	unsigned long irqflags;
--	int ret, pin, irq, value;
-+	int ret, pin, irq;
- 
- 	if (!acpi_gpio_get_irq_resource(ares, &agpio))
- 		return AE_OK;
-@@ -240,8 +290,6 @@ static acpi_status acpi_gpiochip_request
- 
- 	gpiod_direction_input(desc);
- 
--	value = gpiod_get_value_cansleep(desc);
--
- 	ret = gpiochip_lock_as_irq(chip, pin);
- 	if (ret) {
- 		dev_err(chip->parent, "Failed to lock GPIO as interrupt\n");
-@@ -254,64 +302,42 @@ static acpi_status acpi_gpiochip_request
- 		goto fail_unlock_irq;
- 	}
- 
--	irqflags = IRQF_ONESHOT;
-+	event = kzalloc(sizeof(*event), GFP_KERNEL);
-+	if (!event)
-+		goto fail_unlock_irq;
-+
-+	event->irqflags = IRQF_ONESHOT;
- 	if (agpio->triggering == ACPI_LEVEL_SENSITIVE) {
- 		if (agpio->polarity == ACPI_ACTIVE_HIGH)
--			irqflags |= IRQF_TRIGGER_HIGH;
-+			event->irqflags |= IRQF_TRIGGER_HIGH;
- 		else
--			irqflags |= IRQF_TRIGGER_LOW;
-+			event->irqflags |= IRQF_TRIGGER_LOW;
- 	} else {
- 		switch (agpio->polarity) {
- 		case ACPI_ACTIVE_HIGH:
--			irqflags |= IRQF_TRIGGER_RISING;
-+			event->irqflags |= IRQF_TRIGGER_RISING;
- 			break;
- 		case ACPI_ACTIVE_LOW:
--			irqflags |= IRQF_TRIGGER_FALLING;
-+			event->irqflags |= IRQF_TRIGGER_FALLING;
- 			break;
- 		default:
--			irqflags |= IRQF_TRIGGER_RISING |
--				    IRQF_TRIGGER_FALLING;
-+			event->irqflags |= IRQF_TRIGGER_RISING |
-+					   IRQF_TRIGGER_FALLING;
- 			break;
- 		}
- 	}
- 
--	event = kzalloc(sizeof(*event), GFP_KERNEL);
--	if (!event)
--		goto fail_unlock_irq;
--
- 	event->handle = evt_handle;
-+	event->handler = handler;
- 	event->irq = irq;
-+	event->irq_is_wake = agpio->wake_capable == ACPI_WAKE_CAPABLE;
- 	event->pin = pin;
- 	event->desc = desc;
- 
--	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
--				   "ACPI:Event", event);
--	if (ret) {
--		dev_err(chip->parent,
--			"Failed to setup interrupt handler for %d\n",
--			event->irq);
--		goto fail_free_event;
--	}
--
--	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
--		enable_irq_wake(irq);
--
- 	list_add_tail(&event->node, &acpi_gpio->events);
- 
--	/*
--	 * Make sure we trigger the initial state of the IRQ when using RISING
--	 * or FALLING.  Note we run the handlers on late_init, the AML code
--	 * may refer to OperationRegions from other (builtin) drivers which
--	 * may be probed after us.
--	 */
--	if (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
--	    ((irqflags & IRQF_TRIGGER_FALLING) && value == 0))
--		handler(event->irq, event);
--
- 	return AE_OK;
- 
--fail_free_event:
--	kfree(event);
- fail_unlock_irq:
- 	gpiochip_unlock_as_irq(chip, pin);
- fail_free_desc:
-@@ -348,6 +374,9 @@ void acpi_gpiochip_request_interrupts(st
- 	if (ACPI_FAILURE(status))
- 		return;
- 
-+	acpi_walk_resources(handle, "_AEI",
-+			    acpi_gpiochip_alloc_event, acpi_gpio);
-+
- 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
- 	defer = !acpi_gpio_deferred_req_irqs_done;
- 	if (defer)
-@@ -358,8 +387,7 @@ void acpi_gpiochip_request_interrupts(st
- 	if (defer)
- 		return;
- 
--	acpi_walk_resources(handle, "_AEI",
--			    acpi_gpiochip_request_interrupt, acpi_gpio);
-+	acpi_gpiochip_request_irqs(acpi_gpio);
- }
- EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
- 
-@@ -396,10 +424,13 @@ void acpi_gpiochip_free_interrupts(struc
- 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
- 		struct gpio_desc *desc;
- 
--		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
--			disable_irq_wake(event->irq);
-+		if (event->irq_requested) {
-+			if (event->irq_is_wake)
-+				disable_irq_wake(event->irq);
-+
-+			free_irq(event->irq, event);
-+		}
- 
--		free_irq(event->irq, event);
- 		desc = event->desc;
- 		if (WARN_ON(IS_ERR(desc)))
- 			continue;
-@@ -1253,23 +1284,16 @@ bool acpi_can_fallback_to_crs(struct acp
- 	return con_id == NULL;
- }
- 
--/* Run deferred acpi_gpiochip_request_interrupts() */
--static int acpi_gpio_handle_deferred_request_interrupts(void)
-+/* Run deferred acpi_gpiochip_request_irqs() */
-+static int acpi_gpio_handle_deferred_request_irqs(void)
- {
- 	struct acpi_gpio_chip *acpi_gpio, *tmp;
- 
- 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
- 	list_for_each_entry_safe(acpi_gpio, tmp,
- 				 &acpi_gpio_deferred_req_irqs_list,
--				 deferred_req_irqs_list_entry) {
--		acpi_handle handle;
--
--		handle = ACPI_HANDLE(acpi_gpio->chip->parent);
--		acpi_walk_resources(handle, "_AEI",
--				    acpi_gpiochip_request_interrupt, acpi_gpio);
--
--		list_del_init(&acpi_gpio->deferred_req_irqs_list_entry);
--	}
-+				 deferred_req_irqs_list_entry)
-+		acpi_gpiochip_request_irqs(acpi_gpio);
- 
- 	acpi_gpio_deferred_req_irqs_done = true;
- 	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
-@@ -1277,4 +1301,4 @@ static int acpi_gpio_handle_deferred_req
- 	return 0;
- }
- /* We must use _sync so that this runs after the first deferred_probe run */
--late_initcall_sync(acpi_gpio_handle_deferred_request_interrupts);
-+late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
+-		/**
++		/*
+ 		 * If splitting a request, and the next starting sector would be
+ 		 * misaligned, stop the discard at the previous aligned sector.
+ 		 */
+-- 
+2.19.1
+
 
 
