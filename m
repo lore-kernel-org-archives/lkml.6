@@ -2,168 +2,227 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B361CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD20C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749082148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6C7218FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbeL1IED convert rfc822-to-8bit (ORCPT
+        id S1730176AbeL1IFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 03:04:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48556 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729014AbeL1IEC (ORCPT
+        Fri, 28 Dec 2018 03:05:40 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42318 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbeL1IFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 03:04:02 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBS83XQp069729
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 03:04:01 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pneb6byt2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 03:04:00 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Fri, 28 Dec 2018 08:03:59 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Dec 2018 08:03:54 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBS83rkT49479708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Dec 2018 08:03:53 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0BF64C046;
-        Fri, 28 Dec 2018 08:03:53 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8F40B4C040;
-        Fri, 28 Dec 2018 08:03:47 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Dec 2018 08:03:47 +0000 (GMT)
-Subject: Re: [PATCH v37 1/3] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, dgilbert@redhat.com
-Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com, quintela@redhat.com,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <1535333539-32420-1-git-send-email-wei.w.wang@intel.com>
- <1535333539-32420-2-git-send-email-wei.w.wang@intel.com>
- <49d706f7-a0ee-e571-7d02-bcadac5ce742@de.ibm.com>
- <5C259485.2030809@intel.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Fri, 28 Dec 2018 09:03:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-In-Reply-To: <5C259485.2030809@intel.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18122808-0016-0000-0000-0000023C2434
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122808-0017-0000-0000-000032956EDF
-Message-Id: <2e801749-eb66-1d68-3c06-67cc6508e067@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+        Fri, 28 Dec 2018 03:05:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l15-v6so18063632lja.9;
+        Fri, 28 Dec 2018 00:05:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wUuOMXiAveNS6pMX+WJG4oevliLdJmLbcbPk2PdcfTo=;
+        b=ueAafLHIs0v4NlZVn3fiLftHdzdTp2dt4+xxleS8M6Fcg9ixPTjdgMP6pHItuEdAsb
+         pIrnwaI8Hlka7/6Zu3TPsAomIQ8qofgIpErstVuGgr7zoS+C1MfAqDUSfClM5WW50tJ9
+         4jUy5APZyUBHOMJXGF1IbhVz+cW6Ch7311t707xusUFKSNC8J0wdB4pJ0nHY8qWiVqSe
+         4dmNIYaXtko9qrr/3V5S5Nq+SPjANRwmPHwP7qGvr7HViQ9ah8Nl+nGYtI/5cp/4uMAO
+         ebw6w7aoIOvQ5HpBbebFaHbrglfoyC1Tfog18ti7KSU85ImhX3bms1wrNmcgUTzWc7qJ
+         0Bww==
+X-Gm-Message-State: AA+aEWYKyHdInL1p5ES72Jky1Qo3BTd6/RBEOkGmGJTA7ajvvS5H4X0+
+        OfGgt3pQjMCbBfT2tAwIvbk=
+X-Google-Smtp-Source: ALg8bN4eqVUhMDGmwphsxT0yqOzfZ5ma8mZZ+tTjbCVPxLTaeeWe4sZwLKsT3eXgCDhxa6/wS0HMCQ==
+X-Received: by 2002:a2e:84ca:: with SMTP id q10-v6mr14873052ljh.65.1545984337279;
+        Fri, 28 Dec 2018 00:05:37 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm8409276ljb.80.2018.12.28.00.05.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 00:05:36 -0800 (PST)
+Date:   Fri, 28 Dec 2018 10:05:33 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Message-ID: <20181228080533.GC2461@localhost.localdomain>
+References: <20181218115931.GA21253@localhost.localdomain>
+ <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
+ <20181227073531.GA2461@localhost.localdomain>
+ <20181227075648.GB2461@localhost.localdomain>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-28_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812280074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181227075648.GB2461@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 28.12.2018 04:12, Wei Wang wrote:
-> On 12/27/2018 08:03 PM, Christian Borntraeger wrote:
->> On 27.08.2018 03:32, Wei Wang wrote:
->>>   static int init_vqs(struct virtio_balloon *vb)
->>>   {
->>> -    struct virtqueue *vqs[3];
->>> -    vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
->>> -    static const char * const names[] = { "inflate", "deflate", "stats" };
->>> -    int err, nvqs;
->>> +    struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
->>> +    vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
->>> +    const char *names[VIRTIO_BALLOON_VQ_MAX];
->>> +    int err;
->>>
->>>       /*
->>> -     * We expect two virtqueues: inflate and deflate, and
->>> -     * optionally stat.
->>> +     * Inflateq and deflateq are used unconditionally. The names[]
->>> +     * will be NULL if the related feature is not enabled, which will
->>> +     * cause no allocation for the corresponding virtqueue in find_vqs.
->>>        */
->> This might be true for virtio-pci, but it is not for virtio-ccw.
+On Thu, Dec 27, 2018 at 09:56:48AM +0200, Matti Vaittinen wrote:
+> Hello All,
 > 
-> Hi Christian,
+> On Thu, Dec 27, 2018 at 09:35:31AM +0200, Matti Vaittinen wrote:
+> > On Wed, Dec 26, 2018 at 12:39:17PM +0100, Geert Uytterhoeven wrote:
+> > > Hi Matti,
+> > > 
+> > > On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
+> > > <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > > > Add level active IRQ support to regmap-irq irqchip. Change breaks
+> > > > existing regmap-irq type setting. Convert the existing drivers which
+> > > 
+> > > Indeed it does.
+> > > 
+> > > This is now upstream as commit 1c2928e3e3212252 ("regmap:
+> > > regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
+> > > on the Renesas Koelsch board:
+> > > 
+> > >     genirq: Setting trigger mode 8 for irq 157 failed
+> > > (regmap_irq_set_type+0x0/0x140)
+> > >     da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
+> > >     da9063-rtc: probe of da9063-rtc failed with error -524
+> > 
+> > This is strange as I do not see any type setting support code in
+> > drivers/mfd/da9063-irq.c. The type setting registers are neither
+> > specified in static const struct regmap_irq_chip da9063l_irq_chip nor
+> > in static const struct regmap_irq_chip da9063_irq_chip. Hence I don't
+> > understand how the da9063 could have been supporting IRQ type setting in
+> > first place.
+> > 
+> > > > @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+> > > >         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+> > > >         struct regmap *map = d->map;
+> > > >         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+> > > > -       int reg = irq_data->type_reg_offset / map->reg_stride;
+> > > > +       int reg;
+> > > > +       const struct regmap_irq_type *t = &irq_data->type;
+> > > >
+> > > > -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> > > > -               return 0;
+> > > > +       if ((t->types_supported & type) != type)
+> > > > +               return -ENOTSUPP;
+> > > 
+> > > Given types_supported defaults to zero, I think this breaks every existing
+> > > setup using REGMAP_IRQ_REG().
 > 
+> Right. Now I see what you mean. Original code did:
 > 
-> Please try the fix patches: https://lkml.org/lkml/2018/12/27/336
+> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> 		return 0;
+> 
+> Eg, even when the driver was not able to perform the type-setting this
+> failure was silently ignored, right. So doing:
+>        if ((t->types_supported & type) != type)
+>                return 0;
+> would be functionally equal. It feels like utterly wrong thing to do
+> (to me) - if driver is written to work with edge or level active
+> interrupts - and if the irq controller is not supporting this - then we
+> should warn the user. Just silently ignoring this sounds like asking for
+> irq storm or missed interrupts - but maybe I just don't get this =)
+> 
+> I'll send a patch with 
+> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> 		return 0;
+> in order to not break existing functionality - but it feels plain wrong
+> to me.
 
-See answer to that thread. It fixes the random boot crashes.
-There is still the regression that ballooning does no longer work on
-s390 (see the call trace).
+Geert, I did send this patch yesterday. It's here if you wish to try it:
+https://lore.kernel.org/patchwork/patch/1027963/
 
+Last night - just when I was about to get some sleep - it stroke me. I
+think the correct thing to do would be leaving the irq_set_type to NULL
+for those IRQ chips which do not support type setting. If we do that,
+then the irq core will take care of situations where user requests type
+setting but the chip does not support it. Which means the regmap-irq
+would be no different from any other irq chip where type setting is not
+supported.
+
+/// irrelevant ///
+I guess you know the moment of "Hypnagogia" when you are comfortably at
+bed your head feels all dizzy and world is starting to faint away...
+And just a second later you are fully awake thinking of a possible
+solution - and definitely not able to sleep anymore :/
+
+https://www.reddit.com/r/ProgrammerHumor/comments/93eq0e/everytime/
+/// irrelevant ends ///
+
+I just took a peek in 
+kernel/irq/manage.c - and found following:
+
+int __irq_set_trigger(struct irq_desc *desc, unsigned long flags)
+{
+	struct irq_chip *chip = desc->irq_data.chip;
+	int ret, unmask = 0;
+
+	if (!chip || !chip->irq_set_type) {
+		/*
+		 * IRQF_TRIGGER_* but the PIC does not support multiple
+		 * flow-types?
+		 */
+		pr_debug("No set_type function for IRQ %d (%s)\n",
+			 irq_desc_get_irq(desc),
+			 chip ? (chip->name ? : "unknown") : "unknown");
+		return 0;
+	}
+
+...
+
+so at the moment the IRQ core is also just spilling out the warning and
+then returning zero. But at least we would get the warning from core if
+the irq-chip does not support type config.
+
+So at the cost of removing "const" from regmap_irq_chip we could do:
+
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 2a031743f31f..b6aef50ab378 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -298,12 +298,11 @@ static int regmap_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
+ 
+-static const struct irq_chip regmap_irq_chip = {
++static struct irq_chip regmap_irq_chip = {
+ 	.irq_bus_lock		= regmap_irq_lock,
+ 	.irq_bus_sync_unlock	= regmap_irq_sync_unlock,
+ 	.irq_disable		= regmap_irq_disable,
+ 	.irq_enable		= regmap_irq_enable,
+-	.irq_set_type		= regmap_irq_set_type,
+ 	.irq_set_wake		= regmap_irq_set_wake,
+ };
+ 
+@@ -610,6 +609,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 
+ 	num_type_reg = chip->type_in_mask ? chip->num_regs : chip->num_type_reg;
+ 	if (num_type_reg) {
++		regmap_irq_chip.irq_set_type = regmap_irq_set_type;
+ 		d->type_buf_def = kcalloc(num_type_reg,
+ 					  sizeof(unsigned int), GFP_KERNEL);
+ 		if (!d->type_buf_def)
+
+
+
+Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
+but I did omit this as I have never looked at the wake functionality
+before).
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
