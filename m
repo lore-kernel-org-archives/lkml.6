@@ -2,101 +2,103 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750A6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F9AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398EA21741
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D003820879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeL1CXn (ORCPT
+        id S1727549AbeL1Cas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 21:23:43 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:35866 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeL1CXm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 21:23:42 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 2701072CA65;
-        Fri, 28 Dec 2018 05:23:39 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 1654A965691; Fri, 28 Dec 2018 05:23:39 +0300 (MSK)
-Date:   Fri, 28 Dec 2018 05:23:39 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, libc-alpha@sourceware.org,
-        qemu-devel@nongnu.org, ericvh@gmail.com, rminnich@sandia.gov,
-        lucho@ionkov.net, hpa@zytor.com, arnd@arndb.de
-Subject: Re: d_off field in struct dirent and 32-on-64 emulation
-Message-ID: <20181228022338.GA27992@altlinux.org>
-References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+        Thu, 27 Dec 2018 21:30:48 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39643 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727253AbeL1Cas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 21:30:48 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 83BADE006AE0D;
+        Fri, 28 Dec 2018 10:30:42 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.210) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 28 Dec 2018
+ 10:30:35 +0800
+Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
+To:     Tejun Heo <tj@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
+ <CAKfTPtDRGULW3mdFzeyT=OBPdtPsz-6BG-=UGWbK6RQ7Lg8YpA@mail.gmail.com>
+ <20181227102107.GA21156@linaro.org>
+ <CAKfTPtD7O_DU5no36jaQziZDCvy=BMJk+tZbnQk2yVt=pzRfPw@mail.gmail.com>
+ <CAMp4zn-bN=DdiKox-xZ++i2n_pgTA7Ms+1hBnAY2AbYv2iqXOA@mail.gmail.com>
+ <CAKfTPtAmkHZ5XVHpf6rE8nrSPGzW_uO7a0tvH5JqDSpTzK9D=Q@mail.gmail.com>
+ <CAHk-=wja7WN1sDz5_E7hf8c47CmX=yH8xc3h0zmmF8Y_fSR71A@mail.gmail.com>
+ <20181228011524.GF2509588@devbig004.ftw2.facebook.com>
+ <CAHk-=wj33F7LKQS3wCYJtb_yCzYhbjPzFqhVS_ZPPNOWTTMHFQ@mail.gmail.com>
+ <20181228015352.GG2509588@devbig004.ftw2.facebook.com>
+ <20181228020243.GH2509588@devbig004.ftw2.facebook.com>
+CC:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        <xiezhipeng1@huawei.com>, <huawei.libin@huawei.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Adamushko <dmitry.adamushko@gmail.com>,
+        Rik van Riel <riel@surriel.com>
+From:   Xie XiuQi <xiexiuqi@huawei.com>
+Message-ID: <5ed559eb-f169-ecd0-0f1a-65786422b9ac@huawei.com>
+Date:   Fri, 28 Dec 2018 10:30:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+In-Reply-To: <20181228020243.GH2509588@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.210]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tejun,
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/12/28 10:02, Tejun Heo wrote:
+> On Thu, Dec 27, 2018 at 05:53:52PM -0800, Tejun Heo wrote:
+>> Vincent knows that part way better than me but I think the safest way
+>> would be doing the optimization removal iff tmp_alone_branch is
+>> already pointing to leaf_cfs_rq_list.  IIUC, it's pointing to
+>> something else only while a branch is being built and deferring
+>> optimization removal by an avg update cycle isn't gonna make any
+>> difference anyway.
+> 
+> So, something like the following.  Xie, can you see whether the
+> following patch resolves the problem?
 
-On Thu, Dec 27, 2018 at 06:18:19PM +0100, Florian Weimer wrote:
-> We have a bit of an interesting problem with respect to the d_off
-> field in struct dirent.
->=20
-> When running a 64-bit kernel on certain file systems, notably ext4,
-> this field uses the full 63 bits even for small directories (strace -v
-> output, wrapped here for readability):
->=20
-> getdents(3, [
->   {d_ino=3D1494304, d_off=3D3901177228673045825, d_reclen=3D40, d_name=3D=
-"authorized_keys", d_type=3DDT_REG},
->   {d_ino=3D1494277, d_off=3D7491915799041650922, d_reclen=3D24, d_name=3D=
-".", d_type=3DDT_DIR},
->   {d_ino=3D1314655, d_off=3D9223372036854775807, d_reclen=3D24, d_name=3D=
-"..", d_type=3DDT_DIR}
-> ], 32768) =3D 88
->=20
-> When running in 32-bit compat mode, this value is somehow truncated to
-> 31 bits, for both the getdents and the getdents64 (!) system call (at
-> least on i386).
+Zhipeng is preparing to test it, thanks.
 
-Why getdents64 system call is affected by this truncation,
-isn't it a kernel bug that has to be fixed in the kernel instead?
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index d1907506318a..88b9118b5191 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7698,7 +7698,8 @@ static void update_blocked_averages(int cpu)
+>  		 * There can be a lot of idle CPU cgroups.  Don't let fully
+>  		 * decayed cfs_rqs linger on the list.
+>  		 */
+> -		if (cfs_rq_is_decayed(cfs_rq))
+> +		if (cfs_rq_is_decayed(cfs_rq) &&
+> +		    rq->tmp_alone_branch == &rq->leaf_cfs_rq_list)
+>  			list_del_leaf_cfs_rq(cfs_rq);
+>  
+>  		/* Don't need periodic decay once load/util_avg are null */
+> 
+> .
+> 
 
+-- 
+Thanks,
+Xie XiuQi
 
---=20
-ldv
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcJYkqAAoJEAVFT+BVnCUIcosQANvtFPNcdpTeqDv4BvJh1mmD
-tLkXHBOml79JQ42kYPcOV3iwQ4WJNkOdL9TzjrIGfEiwUVC8Kd6zJDt4SIeUGTlk
-JvKVizkgH7vtPL3dFwfBb4GSiBdRTK3+NP0MwbHjbIgHI0o9kmghqyElbMWdvhlO
-qUHuNcoAMI05qd0ZFJ31jHylo747iIQXmVha5CaK/4ntDYcx2/v+HFLzzgW7Ymm6
-B14TgVRFDQGZtRjrAfp0cFFPiluXSfWwmLYUOnnqgGqxscj3uxkUIVdb4PSLEt3C
-BEfkBq9I9et6UVUh1Yunu9pYArOoZzYgJZOeoLm3QTijMKWeDJ5mqF33swjHGNQD
-71ef9YTrWaZ0HnYgbiGTQCMskOSTgSMc7iugHNMdlba56QK/urmwiCP1Bc/4uiMO
-QrUziTdJc+pH7ZB4IG3n+3JK1LcSnlhv+i68BfvgJ5ZtN1v4xuLupe1K8JhLn0hT
-rDUJWdH+VQKSUZe4tKy1ElsvKF4yGrmwaILHE6fGwtY33XGUSKxGsidyWHZSVOms
-nk4P5w2hWrlQ0oCwqJ3d9uErV5Ih0UkxmRK9sNHmQXKw3cC3RjOSc33x8k6XAeAQ
-DIw4pRx94ePNbkavwVgr67DxGo3CmTcdlbfvFMf7J58DodxLZRBJENqeZAF4GTtN
-A091yYWKMqB/+28jrJD5
-=C0vz
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
