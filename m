@@ -2,119 +2,146 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295C0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0503C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAB820856
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546033739;
-	bh=HFMaKroDzHtipIHAZDno4GUadc1hp4rR+dpnwd3/iSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nq230xDsDPjf4kib20ebmJXFe4wchTTt/DOWflWP7rkPSQy/OZWOQdVZ18zhDwhBo
-	 xgZgXOWtOgGNSzrMyfUI48L0ZPbZGUuGAHzLumDmocmAMH3RUkoXI5DMA+52ZSQFx7
-	 HYTpKGavznICg/rdsX3F9Xyo88/dqLsz6kP79594=
+	by mail.kernel.org (Postfix) with ESMTP id 3FB2220856
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:49:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="OP1mU2x/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbeL1Vs6 (ORCPT
+        id S1726560AbeL1Vtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 16:48:58 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46839 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeL1Vs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 16:48:57 -0500
-Received: by mail-io1-f65.google.com with SMTP id v10so17639484ios.13;
-        Fri, 28 Dec 2018 13:48:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pgp8QGM8Sxxy+ekOkA+knxIXmgF85vwv+RMpA4VSbk8=;
-        b=lAWfndzZAMnCjngEkD+CYOj+aq8t05yWQfWRZosGqPSC12qfTFpRAKpMSd6gf3TkV6
-         IL25p+pRj2n++KIGdwJTc9+EypgTMJG3llJCiOjHUnfjH0x0XQhwisTC1be7hj4Qv65W
-         AQK3fJ84WdfcHi16RktPzKRrQAW6W9loM1+954d0GTXRgptdf535yYHtzFphVbn+9mtk
-         /Q2e01DzgEcgPgRbamGmig9oPxuzmqmjTT8/8WXgAX1Do5cfotxv+E3oyzHZBBcwBd+o
-         xxgc+ct6DoLDq0A1rAr7c8TuCSpFWTK21xakt4cwx0vuxMuJeQlVcIloRzVoQfXKj+Fs
-         AbbQ==
-X-Gm-Message-State: AJcUukdjTKdDG8gMQDC2OfNnLjGcDrfV2BmlkKOF7UU0m9gh9kCdIJGs
-        kU7dfUrxbPwScQvLW38yxLyp0kU=
-X-Google-Smtp-Source: ALg8bN6aDTD1I7/EbuShlAij+H9/MbsXHjlDPik1xXo1Fd8ylo7K27yHtXd/qIvMn/YaGE7V6iXytg==
-X-Received: by 2002:a6b:2b07:: with SMTP id r7mr19828025ior.169.1546033735971;
-        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id m10sm4218931ioq.25.2018.12.28.13.48.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
-Date:   Fri, 28 Dec 2018 15:48:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v9 03/27] dt-bindings: Add doc for the Ingenic TCU drivers
-Message-ID: <20181228214853.GA8568@bogus>
-References: <20181227181319.31095-1-paul@crapouillou.net>
- <20181227181319.31095-4-paul@crapouillou.net>
+        Fri, 28 Dec 2018 16:49:49 -0500
+Received: from cock.li ([185.100.85.212]:40396 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbeL1Vtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 16:49:49 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227181319.31095-4-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546033784; bh=GGvRJxB6F+JXm8bO025Wa/gNEXjIv5qcSIynU0md4E0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OP1mU2x/nNEyV/7/eNdVxDCIBt/t2I85Q760igaBrLXz+gOXgbp6LtxuKsVxWKImu
+         vbQv+qJaYIha/PjsZK98yow6Cz+eNB9cfyH5IxFE4gYz1ipqBlgmXK7sxG9BTfZ9l4
+         Ykx9N4ROOFYqqF/z6o3dX+V+sKngOn7TUNr5+ArOsdepU1vkfjrecCSGYUpNwau0kz
+         zQ9RNEXAiSyKSkXplJqrzIWekb4rVUMUnFRY4QSHpodhnCnr9HRJxRhbVLg44FGTGQ
+         QEhtyGU2benUwWAP2qMQKPwNas6duZUoOf9vtA274Onk4EpCm8597jjQzCrDAlyN++
+         W85lbQVnAT/8A==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Dec 2018 21:49:44 +0000
+From:   vnsndalce@memeware.net
+To:     Ralf Mardorf <silver.bullet@zoho.com>
+Cc:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        misc@openbsd.org
+Subject: It is my intention to inform you of your legal rights. - Yes you can
+ rescind your code license.
+Message-ID: <500f8f184fe9b054df61995e63112a95@memeware.net>
+X-Sender: vnsndalce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Dec 2018 19:12:55 +0100, Paul Cercueil wrote:
-> Add documentation about how to properly use the Ingenic TCU
-> (Timer/Counter Unit) drivers from devicetree.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->      v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
->          added content.
->     
->      v5: - Edited PWM/watchdog DT bindings documentation to point to the new
->            document.
->          - Moved main document to
->            Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->          - Updated documentation to reflect the new devicetree bindings.
->     
->      v6: - Removed PWM/watchdog documentation files as asked by upstream
->          - Removed doc about properties that should be implicit
->          - Removed doc about ingenic,timer-channel /
->            ingenic,clocksource-channel as they are gone
->          - Fix WDT clock name in the binding doc
->          - Fix lengths of register areas in watchdog/pwm nodes
->     
->      v7: No change
-> 
->      v8: - Fix address of the PWM node
->          - Added doc about system timer and clocksource children nodes
-> 
->      v9: - Remove doc about system timer and clocksource children
->            nodes...
-> 	 - Add doc about ingenic,pwm-channels-mask property
-> 
->  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
->  .../devicetree/bindings/timer/ingenic,tcu.txt      | 139 +++++++++++++++++++++
->  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
->  3 files changed, 139 insertions(+), 42 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
-> 
+It is my intention to inform you of your legal rights.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+A license is revocable by the property owner.
+Others are suggesting to you otherwise. They are being disingenuous.
+
+With both Linux and BSD there is no attached interest (no one paid you)
+There is no detrimental reliance (you never promised anyone you would 
+forfeit your default property rights, and they never payed you for this 
+forfeit)
+
+I waited two months for Eben Moglen's promised refutation. It never 
+came.
+
+You concoct some conspiracy theory about "trolling" because you simply 
+do not understand
+the very simple legal principals. You furthermore imagine it impossible 
+for
+a lawyer to waste his time informing you, because you see such a 
+position
+(one you did not obtain) as too lofty for any to waste their time with 
+you.
+
+I'm wasting my time. With you. To try to get it through your ignorant 
+skulls
+that you can rescind the grant, and that it is a partial remedy to 
+getting thrown
+out for whatever CoC is being foisted upon both the FreeBSD and Linux 
+programmers.
+
+Suffice to say: you are too stupid to understand that you do not know 
+what you do not know
+and that your leaders are blowing smoke up your ass in an attempt to get 
+you to sign
+a pledge against your current legal rights before you might make use of 
+them.
+
+That is: You are a Stupid Man. Like many of the weak twig like men in 
+the movement.
+You are little more than employees: and you accept being treated like 
+cattle.
+You accept being dominated by women, and revel in it: it is all you 
+know.
+You accept being dominated by bosses, and revel in it: it is all you 
+know.
+
+You also accept that you cannot take young girls as brides.
+You accept that "your" wives dominate you.
+You celebrate this.
+
+You hate YHWH's law, which allows men to take girls (female children) as 
+brides,
+including in cases of rape (5th book of the law, 22nd chapter, 28th 
+verse, in the Greek Septuagint or the Hebrew MT)
+
+You are an enemy of the god. You are an enemy of man.
+You are a friend to women, and their support groups.
+You design to convert all the intellectual property of the men who 
+created the edifice into the hands of the women and
+the entrenched interests that support them.
+
+Men who do not like this have an option: Band together as a Bloc, and 
+rescind license to your code.
+
+On 2018-12-28 19:10, Ralf Mardorf via freebsd-chat wrote:
+> On Fri, 28 Dec 2018 14:51:04 +0000 (UTC), Robbie Herb wrote:
+>> Would it be possible to blacklist those domains? I was wondering that
+>> from the first mail in this thread.
+> 
+> This is my first and last reply regarding this topic.
+> 
+> This troll sends this kind of spam to more mailing lists, than "just"
+> those BSD and the Linux kernel lists we see in the headers here. I've
+> noticed it at e.g. an Ubuntu mailing list, too.
+> 
+> At one or the other mailing list, a list admin might not maintain the
+> mailing list during festive season and several subscribers retrieve
+> mails less often than usual, so instead getting one by one, they get
+> tons of them at once, since an untrained spam filter can't work.
+> 
+> However, 1. there are lists of those and other disposable-email-domains
+> on git hub or similar sources available. 2. I'm not using such a list,
+> but after reading half of the first sentence of one of the first mails
+> from this spammer, a single mouse click to teach bogofilter was enough
+> to get rid of all following emails immediately, excepted of replies to
+> this malicious grinch.
+> 
+> It is intended by this person to do it during festive season. We need
+> to stand that this is an unfortunate moment to maintain spam filters
+> and mailing lists. It gets even more worth, if people reply to those
+> mindless mails. I can't understand that anybody takes the time to read
+> more than one sentence, let alone to reply to it.
+> 
+> _______________________________________________
+> freebsd-chat@freebsd.org mailing list
+> https://lists.freebsd.org/mailman/listinfo/freebsd-chat
+> To unsubscribe, send any mail to "freebsd-chat-unsubscribe@freebsd.org"
