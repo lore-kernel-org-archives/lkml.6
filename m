@@ -2,95 +2,151 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367BBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F301BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095BB2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2938218FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeL1XUQ (ORCPT
+        id S1727561AbeL1XZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 18:20:16 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37396 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbeL1XUP (ORCPT
+        Fri, 28 Dec 2018 18:25:41 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36104 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbeL1XZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 18:20:15 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B08D5BD1;
-        Fri, 28 Dec 2018 23:20:13 +0000 (UTC)
-Date:   Fri, 28 Dec 2018 15:20:12 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com,
-        keescook@chromium.org, jannh@google.com, oleg@redhat.com,
-        cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, dancol@google.com,
-        timmurray@google.com, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, ebiederm@xmission.com
-Subject: Re: [PATCH v5 RESEND] signal: add pidfd_send_signal() syscall
-Message-Id: <20181228152012.dbf0508c2508138efc5f2bbe@linux-foundation.org>
-In-Reply-To: <20181228224853.26032-1-christian@brauner.io>
-References: <20181228224853.26032-1-christian@brauner.io>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Dec 2018 18:25:41 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id EE1DC80785; Sat, 29 Dec 2018 00:25:32 +0100 (CET)
+Date:   Sat, 29 Dec 2018 00:25:36 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20181228232536.GA7355@amd>
+References: <20181217004450.GW6707@atomide.com>
+ <20181227101647.GA32260@amd>
+ <20181228193105.GW6707@atomide.com>
+ <20181228204614.GA9431@amd>
+ <20181228222805.GC6707@atomide.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Disposition: inline
+In-Reply-To: <20181228222805.GC6707@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Dec 2018 23:48:53 +0100 Christian Brauner <christian@brauner.io> wrote:
 
-> The kill() syscall operates on process identifiers (pid). After a process
-> has exited its pid can be reused by another process. If a caller sends a
-> signal to a reused pid it will end up signaling the wrong process. This
-> issue has often surfaced and there has been a push to address this problem [1].
-> 
-> This patch uses file descriptors (fd) from proc/<pid> as stable handles on
-> struct pid. Even if a pid is recycled the handle will not change. The fd
-> can be used to send signals to the process it refers to.
-> Thus, the new syscall pidfd_send_signal() is introduced to solve this
-> problem. Instead of pids it operates on process fds (pidfd).
+--IJpNTDwzlM2Ie8A6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I can't see a description of what happens when the target process has
-exited.  Is the task_struct pinned by the fd?  Does the entire procfs
-directory remain visible?  Just one entry within it?  Does the pid
-remain reserved?  Do attempts to signal that fd return errors? 
-etcetera.  These behaviors should be described in the changelog and
-manipulate please.
+Hi!
 
-The code in signal.c appears to be compiled in even when
-CONFIG_PROC_FS=y.  Can we add the appropriate ifdefs and an entry in
-sys_ni.c?
+> * Pavel Machek <pavel@ucw.cz> [181228 20:46]:
+> > I have ofone with direct AT access --
+> > https://github.com/pavelmachek/unicsy_demo/blob/master/ofone/at.py .
+>=20
+> OK thanks, that shows some of the commands I was wondering about.
 
-A selftest in toole/testing/selftests would be nice.  And it will be
-helpful to architecture maintainers as they wire this up.
+I had some luck just googling AT commands. They are somehow
+standartized.
 
-The feature doesn't have its own Kconfig setting.  Perhaps it should?
-It should presumably depend on PROC_FS.
+> > Now, ttyUSB4 provides quite a rich interface, and you can actually
+> > select what if you want messages in text and PDU format, and if you
+> > want modem to auto-acknowledge messages for you.
+>=20
+> So which AT command configures auto-ack of SMS? I don't need it,
+> just wondering what all these commands do.
 
-I must say that I dislike the linkage to procfs.  procfs is a
-high-level thing which is manipulated using syscalls.  To turn around
-and make a syscall dependent upon the presence of procfs seems just ...
-wrong.  Is there a cleaner way of obtaining the fd?  Another syscall
-perhaps.
+So this would be "text mode": AT+CMGF=3D1. And I'd actually expect
+auto-ack to be the default on ttyUSB4, but in any case this is the
+command that controls it is: AT+CNMI=3D1,2,2,1,0.
 
-This fd-for-a-process sounds like a handy thing and people may well
-think up other uses for it in the future, probably unrelated to
-signals.  Are the code and the interface designed to permit such future
-applications?  I guess "no" - it presently assumes that anything which
-is written to that fd is a signal.  Perhaps there should be a tag at
-the start of the message (which is what it is) which identifies the
-message's type?
+>=20
+> > What kind of battery life do you get with all the optimalizations?
+> > IIRC I was getting 7h with ttyUSB4 in use...
+>=20
+> With droid4-pending-mdm-v4.20 branch in the following state:
+>=20
+> - UARTs idled
+> - LCD blanked (well no drivers yet droid4-sms-read.rb)
+> - MUSB and EHCI USB modules unloaded
+> - OHCI loaded with all the children in autosuspend via sysfs
+> - WLAN connected
+> - busybox acpid stopped (yup, it keeps polling something???)
+> - MDM6600 online with AT+CFUN=3D1 on /dev/motmdm1
+> - MDM6600 notifications disabled with AT+SCRN=3D0 on /motmdm1
+> - droid4-sms-read.rb running
+>=20
+> I'm seeing droid 4 idle at 119mW according to my power supply.
+> So I guess theoretical battery life would currently be
+> (1785mWh * 3.8V) / 119mW =3D 57h. But in practise things are not
+> completely idle and monitoring sysfs POWER_SUPPLY_POWER_AVG
+> every 10 seconds I'm seeing something along these 10 samples:
+>=20
+> POWER_SUPPLY_POWER_AVG=3D138938
+> POWER_SUPPLY_POWER_AVG=3D134571
+> POWER_SUPPLY_POWER_AVG=3D505802
+> POWER_SUPPLY_POWER_AVG=3D240412
+> POWER_SUPPLY_POWER_AVG=3D134252
+> POWER_SUPPLY_POWER_AVG=3D132694
+> POWER_SUPPLY_POWER_AVG=3D571569
+> POWER_SUPPLY_POWER_AVG=3D132694
+> POWER_SUPPLY_POWER_AVG=3D190456
+> POWER_SUPPLY_POWER_AVG=3D518288
+>=20
+> So the average based on that sampling is about 270mW and the idle
+> time should be about 1785 * 3.8 / 270 =3D 25h, which is quite usable
+> already :)
 
-Now I think about it, why a new syscall?  This thing is looking rather
-like an ioctl?
+So... 57h would be very nice, and even 25h is cool. IIRC original
+motorola firmware does something like 100hours, and cyanogenmod is
+closer to 24h...
 
+Note that there's something in the sysfs that allows "precise"
+measurements. Aha, it is "charge_counter" on droid4.
 
+(I even have some software to do the monitoring and display the
+graphs. unicsy_demo/monitor/batmond).
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--IJpNTDwzlM2Ie8A6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwmsPAACgkQMOfwapXb+vK2WwCeKIea4YAGqvay75E9BHuB1r73
+cgEAoIGlkRXIcPRq4N40FeroyIRbuCWV
+=Gb00
+-----END PGP SIGNATURE-----
+
+--IJpNTDwzlM2Ie8A6--
