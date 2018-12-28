@@ -2,328 +2,239 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B367C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991B7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F3F2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="N0fxvX/U"
+	by mail.kernel.org (Postfix) with ESMTP id 56E322184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545999371;
+	bh=wNrrf7LtXou4mTQDhMbho2MUOfZixkv6/ZkS+LIXUJ4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=lGLOgxWl1jdZL+or9UGh2D+c5DxSIW12BPrDiNG8lKa15ce9sM24pkBKYQfQ4ph1U
+	 vhCogc7ow0eUVhOIhVQElJMqJ8B0Qq/GyKTSPepski4RBQulLAVvliSABdKT6YkbAF
+	 qt68GTTsc+wlYVwn1xS1JI5FJHL1U7yXLctIXfvI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732595AbeL1MQC (ORCPT
+        id S1732622AbeL1MQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:02 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44155 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732555AbeL1MPz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:55 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y56so17358412edd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 04:15:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hZl86Ng8RRRyTx252mtZZjArORtBEtxc7ZsfLHhg5k0=;
-        b=N0fxvX/U2tnKev8PyNCbd9UDYW9h2a9Qd04d9Gy6kVnEfy4sfmscTJO1D/8adSko5X
-         AQ5qCQcfH7z8aNSCs1afkQgty1cWGfumpMFOqRml91jc8/ACYmtwHEZpnG86YboGvGTm
-         6ezjpe+cgcNVycJvxnQ4KJoQlJLyngs3qDkGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=hZl86Ng8RRRyTx252mtZZjArORtBEtxc7ZsfLHhg5k0=;
-        b=tAfpUnZsqEyQNie00WyBolROd8+eQK0X7rU+qwirGSdEpFD5q+edQwvAAwm0vC+XVU
-         0OyRdrfFWb9bbcimh7lub3k72Aw5AHcF9j1uBERonrVHYe0ocsylLenUkGVcyCixLsP5
-         ihED+tmfO3DLk3E7KHaTDE0iRBF1hQc5gLmA8l4eZMpSMLmXW5S+Bfd6091Xa/Qa92sG
-         3/Uix1hxpcFAnnTbdm27NnRhH4qY4+M07sUtxqMQwax55bxKSJWWOjXCzVTaEfWWyn5V
-         mpaRJD9fey8LoXp/RB79tFmbVZiZTvFVKPFj3XFMH8GUTJM9wGKAAZ1xJmDVxVHo9iyw
-         EQwA==
-X-Gm-Message-State: AA+aEWbKyiyz9j/e7c8q0jHU2PRTKr6uOpj/JeHYDzfwRf6hypj4ssul
-        QcnncPEM3UQxkrukz9SH2saYjA==
-X-Google-Smtp-Source: AFSGD/U21RizcuAk+JOBPmVOu4uMk5/oAMmn54WiCpTfHwgS9QjIy77ipco1CkAwXepwi4cNrlKp0Q==
-X-Received: by 2002:a50:ba5c:: with SMTP id 28mr21787248eds.91.1545999353378;
-        Fri, 28 Dec 2018 04:15:53 -0800 (PST)
-Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
-        by smtp.gmail.com with ESMTPSA id by5-v6sm6662181ejb.7.2018.12.28.04.15.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 04:15:52 -0800 (PST)
-Date:   Fri, 28 Dec 2018 13:15:49 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Ivan Mironov <mironov.ivan@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Fri, 28 Dec 2018 07:16:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732602AbeL1MQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:06 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B2EA2146F;
+        Fri, 28 Dec 2018 12:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545999365;
+        bh=wNrrf7LtXou4mTQDhMbho2MUOfZixkv6/ZkS+LIXUJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kH9z+S0xFJ6TTEAKqmlNCfA6GhM3gF7UtCcSU7FwuXmcEHQBOSU2Tq6Wf/+SW3H9B
+         HacCdt0twBXXBxkbFkzYTDjHWpvTS27juJ0gxBWzJheTgPU4seaDK33dx2U6jDSzFJ
+         o34mrk/LZ+KQ1GyfaljDPAUNuWkcvsuGTXMZNafA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] drm/fb-helper: Bring back workaround for bugs of
- SDL 1.2
-Message-ID: <20181228121549.GU9058@dvetter-linux.ger.corp.intel.com>
-Mail-Followup-To: Ivan Mironov <mironov.ivan@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        stable@vger.kernel.org
-References: <20181227231308.16904-1-mironov.ivan@gmail.com>
- <20181227231308.16904-2-mironov.ivan@gmail.com>
+Subject: [PATCH 4.14 00/36] 4.14.91-stable review
+Date:   Fri, 28 Dec 2018 12:52:16 +0100
+Message-Id: <20181228113126.526729877@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227231308.16904-2-mironov.ivan@gmail.com>
-X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
- 4.19.10-200.fc28.x86_64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.91-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.91-rc1
+X-KernelTest-Deadline: 2018-12-30T11:31+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 04:13:07AM +0500, Ivan Mironov wrote:
-> SDL 1.2 sets all fields related to the pixel format to zero in some
-> cases[1]. Prior to commit db05c48197759 ("drm: fb-helper: Reject all
-> pixel format changing requests"), there was an unintentional workaround
-> for this that existed for more than a decade. First in device-specific DRM
-> drivers, then here in drm_fb_helper.c.
-> 
-> Previous code containing this workaround just ignores pixel format fields
-> from userspace code. Not a good thing either, as this way, driver may
-> silently use pixel format different from what client actually requested,
-> and this in turn will lead to displaying garbage on the screen. I think
-> that returning EINVAL to userspace in this particular case is the right
-> option, so I decided to left code from problematic commit untouched
-> instead of just reverting it entirely.
-> 
-> Here is the steps required to reproduce this problem exactly:
-> 	1) Compile fceux[2] with SDL 1.2.15 and without GTK or OpenGL
-> 	   support. SDL should be compiled with fbdev support (which is
-> 	   on by default).
-> 	2) Create /etc/fb.modes with following contents (values seems
-> 	   not used, and just required to trigger problematic code in
-> 	   SDL):
-> 
-> 		mode "test"
-> 		    geometry 1 1 1 1 1
-> 		    timings 1 1 1 1 1 1 1
-> 		endmode
-> 
-> 	3) Create ~/.fceux/fceux.cfg with following contents:
-> 
-> 		SDL.Hotkeys.Quit = 27
-> 		SDL.DoubleBuffering = 1
-> 
-> 	4) Ensure that screen resolution is at least 1280x960 (e.g.
-> 	   append "video=Virtual-1:1280x960-32" to the kernel cmdline
-> 	   for qemu/QXL).
-> 
-> 	5) Try to run fceux on VT with some ROM file[3]:
-> 
-> 		# ./fceux color_test.nes
-> 
-> [1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c,
->     FB_SetVideoMode()
-> [2] http://www.fceux.com
-> [3] Example ROM: https://github.com/bokuweb/rustynes/blob/master/roms/color_test.nes
-> 
-> Reported-by: saahriktu <mail@saahriktu.org>
-> Suggested-by: saahriktu <mail@saahriktu.org>
-> Cc: stable@vger.kernel.org
-> Fixes: db05c48197759 ("drm: fb-helper: Reject all pixel format changing requests")
-> Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-> ---
->  drivers/gpu/drm/drm_fb_helper.c | 146 ++++++++++++++++++++------------
->  1 file changed, 93 insertions(+), 53 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index d3af098b0922..aff576c3c4fb 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -1621,6 +1621,64 @@ static bool drm_fb_pixel_format_equal(const struct fb_var_screeninfo *var_1,
->  	       var_1->transp.msb_right == var_2->transp.msb_right;
->  }
->  
-> +static void drm_fb_helper_fill_pixel_fmt(struct fb_var_screeninfo *var,
-> +					 u8 depth)
-> +{
-> +	switch (depth) {
-> +	case 8:
-> +		var->red.offset = 0;
-> +		var->green.offset = 0;
-> +		var->blue.offset = 0;
-> +		var->red.length = 8; /* 8bit DAC */
-> +		var->green.length = 8;
-> +		var->blue.length = 8;
-> +		var->transp.offset = 0;
-> +		var->transp.length = 0;
-> +		break;
-> +	case 15:
-> +		var->red.offset = 10;
-> +		var->green.offset = 5;
-> +		var->blue.offset = 0;
-> +		var->red.length = 5;
-> +		var->green.length = 5;
-> +		var->blue.length = 5;
-> +		var->transp.offset = 15;
-> +		var->transp.length = 1;
-> +		break;
-> +	case 16:
-> +		var->red.offset = 11;
-> +		var->green.offset = 5;
-> +		var->blue.offset = 0;
-> +		var->red.length = 5;
-> +		var->green.length = 6;
-> +		var->blue.length = 5;
-> +		var->transp.offset = 0;
-> +		break;
-> +	case 24:
-> +		var->red.offset = 16;
-> +		var->green.offset = 8;
-> +		var->blue.offset = 0;
-> +		var->red.length = 8;
-> +		var->green.length = 8;
-> +		var->blue.length = 8;
-> +		var->transp.offset = 0;
-> +		var->transp.length = 0;
-> +		break;
-> +	case 32:
-> +		var->red.offset = 16;
-> +		var->green.offset = 8;
-> +		var->blue.offset = 0;
-> +		var->red.length = 8;
-> +		var->green.length = 8;
-> +		var->blue.length = 8;
-> +		var->transp.offset = 24;
-> +		var->transp.length = 8;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->  /**
->   * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
->   * @var: screeninfo to check
-> @@ -1654,6 +1712,40 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * Workaround for SDL 1.2, which is known to be setting all pixel format
-> +	 * fields values to zero in some cases. We treat this situation as a
-> +	 * kind of "use some reasonable autodetected values".
-> +	 */
-> +	if (!var->red.offset     && !var->green.offset    &&
-> +	    !var->blue.offset    && !var->transp.offset   &&
-> +	    !var->red.length     && !var->green.length    &&
-> +	    !var->blue.length    && !var->transp.length   &&
-> +	    !var->red.msb_right  && !var->green.msb_right &&
-> +	    !var->blue.msb_right && !var->transp.msb_right) {
-> +		u8 depth;
-> +
-> +		/*
-> +		 * There is no way to guess the right value for depth when
-> +		 * bpp is 16 or 32. So we just restore the behaviour previously
-> +		 * introduced here by commit 785b93ef8c309. In fact, this was
-> +		 * implemented even earlier in various device drivers.
-> +		 */
-> +		switch (var->bits_per_pixel) {
-> +		case 16:
-> +			depth = 15;
-> +			break;
-> +		case 32:
-> +			depth = 24;
-> +			break;
-> +		default:
-> +			depth = var->bits_per_pixel;
-> +			break;
-> +		}
-> +
-> +		drm_fb_helper_fill_pixel_fmt(var, depth);
+This is the start of the stable review cycle for the 4.14.91 release.
+There are 36 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Please use fb->format->depth here instead of guessing.
--Daniel
-> +	}
-> +
->  	/*
->  	 * drm fbdev emulation doesn't support changing the pixel format at all,
->  	 * so reject all pixel format changing requests.
-> @@ -1967,59 +2059,7 @@ void drm_fb_helper_fill_var(struct fb_info *info, struct drm_fb_helper *fb_helpe
->  	info->var.yoffset = 0;
->  	info->var.activate = FB_ACTIVATE_NOW;
->  
-> -	switch (fb->format->depth) {
-> -	case 8:
-> -		info->var.red.offset = 0;
-> -		info->var.green.offset = 0;
-> -		info->var.blue.offset = 0;
-> -		info->var.red.length = 8; /* 8bit DAC */
-> -		info->var.green.length = 8;
-> -		info->var.blue.length = 8;
-> -		info->var.transp.offset = 0;
-> -		info->var.transp.length = 0;
-> -		break;
-> -	case 15:
-> -		info->var.red.offset = 10;
-> -		info->var.green.offset = 5;
-> -		info->var.blue.offset = 0;
-> -		info->var.red.length = 5;
-> -		info->var.green.length = 5;
-> -		info->var.blue.length = 5;
-> -		info->var.transp.offset = 15;
-> -		info->var.transp.length = 1;
-> -		break;
-> -	case 16:
-> -		info->var.red.offset = 11;
-> -		info->var.green.offset = 5;
-> -		info->var.blue.offset = 0;
-> -		info->var.red.length = 5;
-> -		info->var.green.length = 6;
-> -		info->var.blue.length = 5;
-> -		info->var.transp.offset = 0;
-> -		break;
-> -	case 24:
-> -		info->var.red.offset = 16;
-> -		info->var.green.offset = 8;
-> -		info->var.blue.offset = 0;
-> -		info->var.red.length = 8;
-> -		info->var.green.length = 8;
-> -		info->var.blue.length = 8;
-> -		info->var.transp.offset = 0;
-> -		info->var.transp.length = 0;
-> -		break;
-> -	case 32:
-> -		info->var.red.offset = 16;
-> -		info->var.green.offset = 8;
-> -		info->var.blue.offset = 0;
-> -		info->var.red.length = 8;
-> -		info->var.green.length = 8;
-> -		info->var.blue.length = 8;
-> -		info->var.transp.offset = 24;
-> -		info->var.transp.length = 8;
-> -		break;
-> -	default:
-> -		break;
-> -	}
-> +	drm_fb_helper_fill_pixel_fmt(&info->var, fb->format->depth);
->  
->  	info->var.xres = fb_width;
->  	info->var.yres = fb_height;
-> -- 
-> 2.20.1
-> 
+Responses should be made by Sun Dec 30 11:30:54 UTC 2018.
+Anything received after that time might be too late.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.91-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.91-rc1
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    drm/ioctl: Fix Spectre v1 vulnerabilities
+
+Ivan Delalande <colona@arista.com>
+    proc/sysctl: don't return ENOMEM on lookup when a table is unregistering
+
+Roman Gushchin <guro@fb.com>
+    mm: don't miss the last page because of round-off error
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Handle re-linking of inodes correctly while recovery
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    spi: imx: mx51-ecspi: Move some initialisation to prepare_message hook.
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    spi: imx: add a device specific prepare_message callback
+
+Ihab Zhaika <ihab.zhaika@intel.com>
+    iwlwifi: add new cards for 9560, 9462, 9461 and killer series
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    iwlwifi: mvm: don't send GEO_TX_POWER_LIMIT to old firmwares
+
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+    panic: avoid deadlocks in re-entrant console drivers
+
+Colin Ian King <colin.king@canonical.com>
+    x86/mtrr: Don't copy uninitialized gentry fields back to userspace
+
+Dexuan Cui <decui@microsoft.com>
+    Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
+
+Cfir Cohen <cfir@google.com>
+    KVM: Fix UAF in nested posted interrupt processing
+
+Eduardo Habkost <ehabkost@redhat.com>
+    kvm: x86: Add AMD's EX_CFG to the list of ignored MSRs
+
+Thomas Gleixner <tglx@linutronix.de>
+    posix-timers: Fix division by zero bug
+
+Hans de Goede <hdegoede@redhat.com>
+    gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    mmc: omap_hsmmc: fix DMA API warning
+
+Ulf Hansson <ulf.hansson@linaro.org>
+    mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
+
+Ulf Hansson <ulf.hansson@linaro.org>
+    mmc: core: Allow BKOPS and CACHE ctrl even if no HPI support
+
+Ulf Hansson <ulf.hansson@linaro.org>
+    mmc: core: Reset HPI enabled state during re-init and in case of errors
+
+Jens Axboe <axboe@kernel.dk>
+    scsi: sd: use mempool for discard special page
+
+Jörgen Storvist <jorgen.storvist@gmail.com>
+    USB: serial: option: add Telit LN940 series
+
+Jörgen Storvist <jorgen.storvist@gmail.com>
+    USB: serial: option: add Fibocom NL668 series
+
+Jörgen Storvist <jorgen.storvist@gmail.com>
+    USB: serial: option: add Simcom SIM7500/SIM7600 (MBIM mode)
+
+Tore Anderson <tore@fud.no>
+    USB: serial: option: add HP lt4132
+
+Jörgen Storvist <jorgen.storvist@gmail.com>
+    USB: serial: option: add GosunCn ZTE WeLink ME3630
+
+Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+    USB: xhci: fix 'broken_suspend' placement in struct xchi_hcd
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: Don't prevent USB2 bus suspend in state check intended for USB3 only
+
+Hui Peng <benquike@gmail.com>
+    USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    cifs: integer overflow in in SMB2_ioctl()
+
+Jiri Olsa <jolsa@kernel.org>
+    perf record: Synthesize features before events in pipe mode
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    ib_srpt: Fix a use-after-free in __srpt_close_all_ch()
+
+Richard Weinberger <richard@nod.at>
+    ubifs: Fix directory size calculation for symlinks
+
+Daniel Mack <daniel@zonque.org>
+    ASoC: sta32x: set ->component pointer in private struct
+
+Mikulas Patocka <mpatocka@redhat.com>
+    block: fix infinite loop if the device loses discard capability
+
+Jens Axboe <axboe@kernel.dk>
+    block: break discard submissions into the user defined size
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                      |   4 +-
+ arch/x86/include/asm/msr-index.h              |   1 +
+ arch/x86/kernel/cpu/mtrr/if.c                 |   2 +
+ arch/x86/kvm/vmx.c                            |   2 +
+ arch/x86/kvm/x86.c                            |   2 +
+ block/blk-lib.c                               |  22 +++-
+ drivers/gpio/gpio-max7301.c                   |  12 +--
+ drivers/gpio/gpiolib-acpi.c                   | 144 +++++++++++++++-----------
+ drivers/gpu/drm/drm_ioctl.c                   |  10 +-
+ drivers/hv/vmbus_drv.c                        |  20 ++++
+ drivers/infiniband/ulp/srpt/ib_srpt.c         |   4 +-
+ drivers/mmc/core/mmc.c                        |  24 +++--
+ drivers/mmc/host/omap_hsmmc.c                 |  12 ++-
+ drivers/net/usb/hso.c                         |  18 +++-
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c   |   9 ++
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c |  50 +++++++++
+ drivers/scsi/sd.c                             |  23 +++-
+ drivers/spi/spi-imx.c                         |  91 ++++++++++++----
+ drivers/usb/host/xhci-hub.c                   |   3 +-
+ drivers/usb/host/xhci.h                       |   4 +-
+ drivers/usb/serial/option.c                   |  16 ++-
+ fs/cifs/smb2pdu.c                             |   4 +-
+ fs/proc/proc_sysctl.c                         |  13 ++-
+ fs/ubifs/dir.c                                |   5 +-
+ fs/ubifs/replay.c                             |  37 +++++++
+ include/linux/math64.h                        |   3 +
+ kernel/panic.c                                |   6 +-
+ kernel/time/posix-timers.c                    |   5 +-
+ mm/vmscan.c                                   |   6 +-
+ sound/soc/codecs/sta32x.c                     |   3 +
+ tools/perf/builtin-record.c                   |  18 ++--
+ 31 files changed, 430 insertions(+), 143 deletions(-)
+
+
