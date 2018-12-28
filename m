@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5ADC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05527C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB328218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C11C02087F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999413;
-	bh=hSoUSRntLY29uPkLS7rCGNzylYTx6HVPTSPeFLEqWHY=;
+	s=default; t=1545999416;
+	bh=4mPUExptAVIbqohtVs62eBlkcnGTlN9l0LVU2P+B0ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K97Mv2txh1WIu4yv4FuyxaMa5OaU4DEh0PRb4IyBcafdZNjRFfS6S1dt7wQfWfWLO
-	 oTByxmhAENG8i758Cog+XIkmR7mGI7sTINxUxfX0iqXOset4akkJdF7u2hHfCZKFes
-	 vNPmgnOXK1KjT1OSYMTTB2IZV35BI0JNefNWPJzw=
+	b=zjju3QJ6IANcp9RLamha0/MCHEYZNX8pRkBxPmScpxtsjpVW+ZUD1qSXu0v1BL1Kx
+	 zUN6VLsAtMgEpaaJ+iaSY62EzlePflTDhmqTkJzjOiG34aYU+r5YeG5KbAhZBOrZVm
+	 lnJVVgOp/XZ9VByji4lwIclpB4zoT5pWzv/hzJsQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732793AbeL1MQv (ORCPT
+        id S1732809AbeL1MQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35896 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:16:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732777AbeL1MQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:47 -0500
+        id S1732788AbeL1MQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 676EF2148E;
-        Fri, 28 Dec 2018 12:16:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1679B2146F;
+        Fri, 28 Dec 2018 12:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999406;
-        bh=hSoUSRntLY29uPkLS7rCGNzylYTx6HVPTSPeFLEqWHY=;
+        s=default; t=1545999412;
+        bh=4mPUExptAVIbqohtVs62eBlkcnGTlN9l0LVU2P+B0ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XafhEYNJfPe/tV0KOtUjQAqjVOTs+hSJT9voYVLqtEqIGR91fCk6TuT/E/1LJpm+U
-         njVi+6UrVnf8xzxloW37m2foux5NT6NXOwbhc9G395m3+spMrhvFtSYXoxL6RJDKBK
-         Qu9D03OhuiFBK+uXfreWzdroB4fV7HD3L6pJqvCQ=
+        b=aWB0ut315BtMpg6DEnpufMVjNtI8KfqET/sk5+WAoSXKgDMhPNWRrVBpe1C2shyBX
+         NY90oCosFsBXa8fw5ekyfFr17PeKWY688fDPwpeYCbyphvDBthdEs72I/9RkjpSdoI
+         EGFr+nW4Eq0uth6yRHlZyO7CUI2RN7S1rec4mcl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 36/36] drm/ioctl: Fix Spectre v1 vulnerabilities
-Date:   Fri, 28 Dec 2018 12:52:52 +0100
-Message-Id: <20181228113128.729676917@linuxfoundation.org>
+        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 17/36] mmc: core: Reset HPI enabled state during re-init and in case of errors
+Date:   Fri, 28 Dec 2018 12:52:33 +0100
+Message-Id: <20181228113127.758657235@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -66,75 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit 505b5240329b922f21f91d5b5d1e535c805eca6d upstream.
+commit a0741ba40a009f97c019ae7541dc61c1fdf41efb upstream.
 
-nr is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+During a re-initialization of the eMMC card, we may fail to re-enable HPI.
+In these cases, that isn't properly reflected in the card->ext_csd.hpi_en
+bit, as it keeps being set. This may cause following attempts to use HPI,
+even if's not enabled. Let's fix this!
 
-This issue was detected with the help of Smatch:
-
-drivers/gpu/drm/drm_ioctl.c:805 drm_ioctl() warn: potential spectre issue 'dev->driver->ioctls' [r]
-drivers/gpu/drm/drm_ioctl.c:810 drm_ioctl() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-drivers/gpu/drm/drm_ioctl.c:892 drm_ioctl_flags() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-
-Fix this by sanitizing nr before using it to index dev->driver->ioctls
-and drm_ioctls.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181220000015.GA18973@embeddedor
+Fixes: eb0d8f135b67 ("mmc: core: support HPI send command")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_ioctl.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/mmc/core/mmc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -37,6 +37,7 @@
- 
- #include <linux/pci.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- 
- /**
-  * DOC: getunique and setversion story
-@@ -778,13 +779,17 @@ long drm_ioctl(struct file *filp,
- 
- 	if (is_driver_ioctl) {
- 		/* driver ioctl */
--		if (nr - DRM_COMMAND_BASE >= dev->driver->num_ioctls)
-+		unsigned int index = nr - DRM_COMMAND_BASE;
-+
-+		if (index >= dev->driver->num_ioctls)
- 			goto err_i1;
--		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
-+		index = array_index_nospec(index, dev->driver->num_ioctls);
-+		ioctl = &dev->driver->ioctls[index];
- 	} else {
- 		/* core ioctl */
- 		if (nr >= DRM_CORE_IOCTL_COUNT)
- 			goto err_i1;
-+		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 		ioctl = &drm_ioctls[nr];
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1755,9 +1755,11 @@ static int mmc_init_card(struct mmc_host
+ 		if (err) {
+ 			pr_warn("%s: Enabling HPI failed\n",
+ 				mmc_hostname(card->host));
++			card->ext_csd.hpi_en = 0;
+ 			err = 0;
+-		} else
++		} else {
+ 			card->ext_csd.hpi_en = 1;
++		}
  	}
  
-@@ -866,6 +871,7 @@ bool drm_ioctl_flags(unsigned int nr, un
- 
- 	if (nr >= DRM_CORE_IOCTL_COUNT)
- 		return false;
-+	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 
- 	*flags = drm_ioctls[nr].flags;
- 	return true;
+ 	/*
 
 
