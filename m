@@ -2,105 +2,76 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AAFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8521C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE452087F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:45:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="D+gJKUeO"
+	by mail.kernel.org (Postfix) with ESMTP id A1C262087F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731777AbeL1Hpt (ORCPT
+        id S1731800AbeL1Hqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 02:45:49 -0500
-Received: from owa.iluvatar.ai ([103.91.158.24]:39034 "EHLO owa.iluvatar.ai"
+        Fri, 28 Dec 2018 02:46:36 -0500
+Received: from albireo.enyo.de ([5.158.152.32]:52790 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729379AbeL1Hpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 02:45:49 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
-        c=relaxed/relaxed; t=1545983134; h=from:subject:to:date:message-id;
-        bh=tfTMWdHonUAcpyICrMa3tyJtkMvHBFpQ82GdAPtnW5c=;
-        b=D+gJKUeOkUfCr9jw9W5A8wEv5G88ErfV+FJZ/77NWazg1d8yKJYmGbFOusIvors72NHT14aZwFH
-        ltcguKVeSon1uOgkpgWcE/Pi143Sg1waupxUjqMpR27/vXdn90kZy8dbvzHh5YUKcpmn6TkOB6zWz
-        gyHOViPWXI9UqoDGYA8=
-Received: from hsj-Precision-5520 (10.101.1.99) by
- S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Fri, 28 Dec 2018 15:45:33 +0800
-Date:   Fri, 28 Dec 2018 15:45:32 +0800
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <sfr@canb.auug.org.au>, <alexey.skidanov@intel.com>,
-        <linux-kernel@vger.kernel.org>, <shijie8@gmail.com>
-Subject: Re: [PATCH 2/2] lib/genalloc.c: export symbol addr_in_gen_pool
-Message-ID: <20181228074531.GA2439@hsj-Precision-5520>
-References: <20181224070622.22197-1-sjhuang@iluvatar.ai>
- <20181224070622.22197-2-sjhuang@iluvatar.ai>
- <20181227214929.713f8421d1991806e8f6fe7f@linux-foundation.org>
+        id S1729313AbeL1Hqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 02:46:35 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1gcmqk-00059a-1l; Fri, 28 Dec 2018 07:46:30 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.89)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1gcmin-0001pk-T5; Fri, 28 Dec 2018 08:38:17 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, libc-alpha@sourceware.org,
+        qemu-devel@nongnu.org, ericvh@gmail.com, rminnich@sandia.gov,
+        lucho@ionkov.net, hpa@zytor.com, arnd@arndb.de
+Subject: Re: d_off field in struct dirent and 32-on-64 emulation
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+        <20181228022338.GA27992@altlinux.org>
+Date:   Fri, 28 Dec 2018 08:38:17 +0100
+In-Reply-To: <20181228022338.GA27992@altlinux.org> (Dmitry V. Levin's message
+        of "Fri, 28 Dec 2018 05:23:39 +0300")
+Message-ID: <87bm56w17a.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-In-Reply-To: <20181227214929.713f8421d1991806e8f6fe7f@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.101.1.99]
-X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
- S-10-101-1-102.iluvatar.local (10.101.1.102)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 09:49:29PM -0800, Andrew Morton wrote:
-> On Mon, 24 Dec 2018 15:06:22 +0800 Huang Shijie <sjhuang@iluvatar.ai> wrote:
-> 
-> > We may use the addr_in_gen_pool() in the driver module.
-> > So export the addr_in_gen_pool for the compiling.
-> > 
-> > ...
-> >
-> > --- a/lib/genalloc.c
-> > +++ b/lib/genalloc.c
-> > @@ -450,6 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
-> >  	rcu_read_unlock();
-> >  	return found;
-> >  }
-> > +EXPORT_SYMBOL(addr_in_gen_pool);
-> >  
-> >  /**
-> >   * gen_pool_avail - get available free space of the pool
-> 
-> OK, but...  The name is poor.
-> 
-> q:/usr/src/25> grep EXPORT_SYMBOL lib/genalloc.c
-> EXPORT_SYMBOL(gen_pool_create);
-> EXPORT_SYMBOL(gen_pool_add_virt);
-> EXPORT_SYMBOL(gen_pool_virt_to_phys);
-> EXPORT_SYMBOL(gen_pool_destroy);
-> EXPORT_SYMBOL(gen_pool_alloc);
-> EXPORT_SYMBOL(gen_pool_alloc_algo);
-> EXPORT_SYMBOL(gen_pool_dma_alloc);
-> EXPORT_SYMBOL(gen_pool_free);
-> EXPORT_SYMBOL(gen_pool_for_each_chunk);
-> EXPORT_SYMBOL_GPL(gen_pool_avail);
-> EXPORT_SYMBOL_GPL(gen_pool_size);
-> EXPORT_SYMBOL(gen_pool_set_algo);
-> EXPORT_SYMBOL(gen_pool_first_fit);
-> EXPORT_SYMBOL(gen_pool_first_fit_align);
-> EXPORT_SYMBOL(gen_pool_fixed_alloc);
-> EXPORT_SYMBOL(gen_pool_first_fit_order_align);
-> EXPORT_SYMBOL(gen_pool_best_fit);
-> EXPORT_SYMBOL_GPL(gen_pool_get);
-> EXPORT_SYMBOL(devm_gen_pool_create);
-> EXPORT_SYMBOL_GPL(of_gen_pool_get);
-> 
-> See?  Almost everything is called gen_pool_foo.  Which is correct as
-> per kernel conventions.  We should globally rename this to
-> gen_pool_has_addr or similar.
-okay, I will do it right now..
+* Dmitry V. Levin:
 
-Thanks
-Huang Shijie
+> On Thu, Dec 27, 2018 at 06:18:19PM +0100, Florian Weimer wrote:
+>> We have a bit of an interesting problem with respect to the d_off
+>> field in struct dirent.
+>> 
+>> When running a 64-bit kernel on certain file systems, notably ext4,
+>> this field uses the full 63 bits even for small directories (strace -v
+>> output, wrapped here for readability):
+>> 
+>> getdents(3, [
+>>   {d_ino=1494304, d_off=3901177228673045825, d_reclen=40,
+>> d_name="authorized_keys", d_type=DT_REG},
+>>   {d_ino=1494277, d_off=7491915799041650922, d_reclen=24,
+>> d_name=".", d_type=DT_DIR},
+>>   {d_ino=1314655, d_off=9223372036854775807, d_reclen=24,
+>> d_name="..", d_type=DT_DIR}
+>> ], 32768) = 88
+>> 
+>> When running in 32-bit compat mode, this value is somehow truncated to
+>> 31 bits, for both the getdents and the getdents64 (!) system call (at
+>> least on i386).
+>
+> Why getdents64 system call is affected by this truncation,
+> isn't it a kernel bug that has to be fixed in the kernel instead?
+
+It's required because POSIX specifies that telldir and seekdir use
+long int (and not off_t) as the seek offset.  If the kernel does not
+truncate while keeping a useful value, these functions would turn
+unusable.
