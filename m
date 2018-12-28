@@ -2,151 +2,533 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F301BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2666C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2938218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:25:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8776C21901
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546039560;
+	bh=V4/grCzbai5eW702BlKyqyAKyVcxCYtRYCjhJXfXyLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nrrKUQgsE7cVv0tRXw5ok6som4chZamqugJHg++o6LpiMlYB0cMb7+sKcCmpLjKJS
+	 rv7wx/2a001omLk2aqlBGdK3Q90QOhj6Or6qgQ/PDh7q3ExEokZLtTWvV5/wQEBI5C
+	 zOIQb7y9MUwLX0FIGlmZ2e6rInzehxvO2ahusBD4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeL1XZl (ORCPT
+        id S1727576AbeL1XZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 18:25:41 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36104 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeL1XZl (ORCPT
+        Fri, 28 Dec 2018 18:25:59 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36336 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbeL1XZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 18:25:41 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EE1DC80785; Sat, 29 Dec 2018 00:25:32 +0100 (CET)
-Date:   Sat, 29 Dec 2018 00:25:36 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
-Message-ID: <20181228232536.GA7355@amd>
-References: <20181217004450.GW6707@atomide.com>
- <20181227101647.GA32260@amd>
- <20181228193105.GW6707@atomide.com>
- <20181228204614.GA9431@amd>
- <20181228222805.GC6707@atomide.com>
+        Fri, 28 Dec 2018 18:25:59 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so28628517itj.1;
+        Fri, 28 Dec 2018 15:25:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xLWKpArYmP939ZciSeWZtiKAwoluQd+BRd7JdU1nnwQ=;
+        b=kuoAv99azyhnaUBOmdbXBtQ5HytoyRcc2fmsV6eGji6m3nKO90kcU3Ym3aKGvSNp3p
+         DcqzLSZJ4PbcMkbAUnmggwj03cFOMmEfIdknCqb1ZM7/3/fny83LGRArPsSUswGEbkPB
+         ZwnFbmNlTaEJo2E2eQr3f3oobQQUAtIsoI/v98QCzRc4QlqqJ5peZdFCyWEhhy+H6xtb
+         vGxMkci046uanVoL6ixXc7XvP2IvWNNaVJVXuKoL1/b/gp9RgAD1c6yUH935WR7GhP1F
+         UhYRfQZK6OQ5THwS+nLboP0IoEsTDvtnS4fHOePV9TWZExk80SsDGDRWvGU4XUCeNi3k
+         OZ+A==
+X-Gm-Message-State: AA+aEWag3QFjENmbe9LJAvXUYhiLSrLdFgzAV6zcXhchXDT3VvfY73F3
+        qL+j2ix9ufwTnvJ3iABy2g==
+X-Google-Smtp-Source: AFSGD/WkP376usd0YBwSN7ffqk+04TgSzBcWd73v9BkrHguXDSLT5ab5CqPCTQhNB8Ly9V6h+Zx2Pg==
+X-Received: by 2002:a02:89dd:: with SMTP id e29mr20406039jak.21.1546039557745;
+        Fri, 28 Dec 2018 15:25:57 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id v202sm16107447ita.13.2018.12.28.15.25.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 15:25:57 -0800 (PST)
+Date:   Fri, 28 Dec 2018 17:25:56 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2] ARM: dts: imx: Add Y Soft IOTA Draco, Hydra and Ursa
+ boards
+Message-ID: <20181228232556.GA14277@bogus>
+References: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181228222805.GC6707@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 18, 2018 at 02:42:11PM +0000, Vokáč Michal wrote:
+> These are i.MX6S/DL based SBCs embedded in various Y Soft products.
+> All share the same board design but have slightly different HW
+> configuration.
+> 
+> Ursa
+> - i.MX6S SoC, 512MB RAM DDR3, 4GB eMMC, microSD
+> - parallel WVGA 7" LCD with touch panel
+> - 1x Eth (QCA8334 switch)
+> - USB OTG
+> - USB host (micro-B)
+> 
+> Draco
+> - i.MX6S SoC, 512MB RAM DDR3, 4GB eMMC, microSD
+> - parallel WVGA 7" LCD with touch panel
+> - 2x Eth (QCA8334 switch)
+> - USB OTG
+> - USB host (micro-B)
+> - RGB LED (I2C LP5562)
+> - 3.5mm audio jack + codec (LM49350)
+> 
+> Hydra
+> - i.MX6DL SoC, 2GB RAM DDR3, 4GB eMMC, microSD
+> - I2C OLED display, capacitive matrix keys
+> - 2x Eth (QCA8334 switch)
+> - USB OTG
+> - RGB LED (I2C LP5562)
+> - 3.5mm audio jack + codec (LM49350)
+> - HDMI
+> - miniPCIe slot
+> 
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> ---
+> Changes since v1:
+>  - Enable HDMI on Hydra board.
+>  - Move regulators to the root node and remove simple-bus property. (Rob)
+>  - Remove reg and unit-address property from regulators. (Rob)
+>  - Use correct names for led-controller and pmic node. (Rob)
+>  - Use wakeup-source instead of deprecated enable-sdio-wakeup. (Shawn)
+> 
+> Link to v1: http://patchwork.ozlabs.org/patch/991975/
+> 
+> No change regarding the documentation and split of the dtsi files as
+> I did not get answers to my questions and was not sure how to proceed.
+> Andrew pointed me to the Kirkwood Synology platform. That boards use
+> the same concept to organize the "disabled" and "okay" nodes.
+> 
+> Thanks,
+> Michal
+> 
+>  arch/arm/boot/dts/Makefile                 |   3 +
+>  arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 595 +++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/imx6dl-yapp4-draco.dts   |  61 +++
+>  arch/arm/boot/dts/imx6dl-yapp4-hydra.dts   |  49 +++
+>  arch/arm/boot/dts/imx6dl-yapp4-ursa.dts    |  57 +++
+>  5 files changed, 765 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-draco.dts
+>  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-hydra.dts
+>  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-ursa.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b0e966d..9bdf394 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -443,6 +443,9 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6dl-wandboard.dtb \
+>  	imx6dl-wandboard-revb1.dtb \
+>  	imx6dl-wandboard-revd1.dtb \
+> +	imx6dl-yapp4-draco.dtb \
+> +	imx6dl-yapp4-hydra.dtb \
+> +	imx6dl-yapp4-ursa.dtb \
+>  	imx6q-apalis-eval.dtb \
+>  	imx6q-apalis-ixora.dtb \
+>  	imx6q-apalis-ixora-v1.1.dtb \
+> diff --git a/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+> new file mode 100644
+> index 0000000..7eb6427
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
+> @@ -0,0 +1,595 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2015-2018 Y Soft Corporation, a.s.
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +
+> +/ {
+> +	backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pwms = <&pwm1 0 500000 PWM_POLARITY_INVERTED>;
+> +		brightness-levels = <0 32 64 128 255>;
+> +		default-brightness-level = <32>;
+> +		num-interpolated-steps = <8>;
+> +		power-supply = <&sw2_reg>;
+> +		status = "disabled";
+> +	};
+> +
+> +	lcd_display: display {
+> +		compatible = "fsl,imx-parallel-display";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		interface-pix-fmt = "rgb24";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_ipu1>;
+> +		status = "disabled";
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			lcd_display_in: endpoint {
+> +				remote-endpoint = <&ipu1_di0_disp0>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			lcd_display_out: endpoint {
+> +				remote-endpoint = <&lcd_panel_in>;
+> +			};
+> +		};
+> +	};
+> +
+> +	panel: panel {
+> +		compatible = "dataimage,scf0700c48ggu18";
+> +		power-supply = <&sw2_reg>;
+> +		status = "disabled";
+> +
+> +		port {
+> +			lcd_panel_in: endpoint {
+> +				remote-endpoint = <&lcd_display_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	reg_usb_h1_vbus: reg_usb_h1_vbus {
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use '-' rather than '_' in node names.
 
-Hi!
+> +		compatible = "regulator-fixed";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_usbh1_vbus>;
+> +		regulator-name = "usb_h1_vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +		status = "disabled";
+> +	};
+> +
+> +	reg_usb_otg_vbus: reg_usb_otg_vbus {
+> +		compatible = "regulator-fixed";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_usbotg_vbus>;
+> +		regulator-name = "usb_otg_vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +		status = "okay";
+> +	};
+> +
+> +	reg_pcie: reg_pcie {
+> +		compatible = "regulator-fixed";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pcie_reg>;
+> +		regulator-name = "MPCIE_3V3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		gpio = <&gpio3 19 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> +&fec {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet>;
+> +	phy-mode = "rgmii-id";
+> +	phy-reset-gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+> +	phy-reset-duration = <20>;
+> +	phy-supply = <&sw2_reg>;
+> +	phy-handle = <&ethphy0>;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		phy_port2: phy@1 {
+> +			reg = <1>;
+> +		};
+> +
+> +		phy_port3: phy@2 {
+> +			reg = <2>;
+> +		};
+> +
+> +		switch@0 {
+> +			compatible = "qca,qca8334";
+> +			reg = <0>;
+> +
+> +			switch_ports: ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				ethphy0: port@0 {
+> +					reg = <0>;
+> +					label = "cpu";
+> +					phy-mode = "rgmii";
+> +					ethernet = <&fec>;
+> +					fixed-link {
+> +						speed = <1000>;
+> +						full-duplex;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +					label = "eth2";
+> +					phy-handle = <&phy_port2>;
+> +				};
+> +
+> +				port@3 {
+> +					reg = <3>;
+> +					label = "eth1";
+> +					phy-handle = <&phy_port3>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmi {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hdmi_cec>;
+> +	ddc-i2c-bus = <&i2c2>;
+> +	status = "disabled";
+> +};
+> +
+> +&i2c2 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c2>;
+> +	status = "okay";
+> +
+> +	eeprom@57 {
+> +		compatible = "atmel,24c128";
+> +		reg = <0x57>;
+> +		pagesize = <64>;
+> +		status = "okay";
+> +	};
+> +
+> +	leds: led-controller@30 {
+> +		compatible = "ti,lp5562";
+> +		label = "lp5562_leds";
 
-> * Pavel Machek <pavel@ucw.cz> [181228 20:46]:
-> > I have ofone with direct AT access --
-> > https://github.com/pavelmachek/unicsy_demo/blob/master/ofone/at.py .
->=20
-> OK thanks, that shows some of the commands I was wondering about.
+label should be for a specific led. The use here doesn't seem that 
+useful.
 
-I had some luck just googling AT commands. They are somehow
-standartized.
+> +		reg = <0x30>;
+> +		clock-mode = /bits/ 8 <1>;
+> +		status = "disabled";
+> +
+> +		chan0 {
+> +			chan-name = "R";
+> +			led-cur = /bits/ 8 <0x20>;
+> +			max-cur = /bits/ 8 <0x60>;
+> +		};
+> +
+> +		chan1 {
+> +			chan-name = "G";
+> +			led-cur = /bits/ 8 <0x20>;
+> +			max-cur = /bits/ 8 <0x60>;
+> +		};
+> +
+> +		chan2 {
+> +			chan-name = "B";
+> +			led-cur = /bits/ 8 <0x20>;
+> +			max-cur = /bits/ 8 <0x60>;
+> +		};
+> +
+> +		chan3 {
+> +			chan-name = "W";
+> +			led-cur = /bits/ 8 <0x0>;
+> +			max-cur = /bits/ 8 <0x0>;
+> +		};
+> +	};
+> +
+> +	pmic@8 {
+> +		compatible = "fsl,pfuze200";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_pmic>;
+> +		reg = <0x8>;
+> +
+> +		regulators {
+> +			sw1a_reg: sw1ab {
+> +				regulator-min-microvolt = <300000>;
+> +				regulator-max-microvolt = <1875000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +				regulator-ramp-delay = <6250>;
+> +			};
+> +
+> +			sw2_reg: sw2 {
+> +				regulator-min-microvolt = <800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			sw3a_reg: sw3a {
+> +				regulator-min-microvolt = <400000>;
+> +				regulator-max-microvolt = <1975000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			sw3b_reg: sw3b {
+> +				regulator-min-microvolt = <400000>;
+> +				regulator-max-microvolt = <1975000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			swbst_reg: swbst {
+> +				regulator-min-microvolt = <5000000>;
+> +				regulator-max-microvolt = <5150000>;
+> +			};
+> +
+> +			snvs_reg: vsnvs {
+> +				regulator-min-microvolt = <1000000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vref_reg: vrefddr {
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vgen1_reg: vgen1 {
+> +				regulator-min-microvolt = <800000>;
+> +				regulator-max-microvolt = <1550000>;
+> +			};
+> +
+> +			vgen2_reg: vgen2 {
+> +				regulator-min-microvolt = <800000>;
+> +				regulator-max-microvolt = <1550000>;
+> +			};
+> +
+> +			vgen3_reg: vgen3 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vgen4_reg: vgen4 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vgen5_reg: vgen5 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +
+> +			vgen6_reg: vgen6 {
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+> +			};
+> +		};
+> +	};
+> +
+> +	touchscreen: touchscreen@5c {
+> +		compatible = "pixcir,pixcir_tangoc";
+> +		reg = <0x5c>;
+> +		pinctrl-0 = <&pinctrl_touch>;
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
+> +		attb-gpio = <&gpio4 5 GPIO_ACTIVE_HIGH>;
+> +		reset-gpio = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+> +		touchscreen-size-x = <800>;
+> +		touchscreen-size-y = <480>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	clock-frequency = <100000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_i2c3>;
+> +	status = "disabled";
+> +
+> +	gpio_oled: gpio@41 {
+> +		compatible = "nxp,pca9536";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		reg = <0x41>;
+> +		vcc-supply = <&sw2_reg>;
+> +		status = "disabled";
+> +	};
+> +
+> +	oled: oled@3d {
+> +		compatible = "solomon,ssd1305fb-i2c";
 
-> > Now, ttyUSB4 provides quite a rich interface, and you can actually
-> > select what if you want messages in text and PDU format, and if you
-> > want modem to auto-acknowledge messages for you.
->=20
-> So which AT command configures auto-ack of SMS? I don't need it,
-> just wondering what all these commands do.
+Not documented.
 
-So this would be "text mode": AT+CMGF=3D1. And I'd actually expect
-auto-ack to be the default on ttyUSB4, but in any case this is the
-command that controls it is: AT+CNMI=3D1,2,2,1,0.
+> +		reg = <0x3d>;
+> +		solomon,height = <64>;
+> +		solomon,width = <128>;
+> +		solomon,page-offset = <0>;
+> +		solomon,prechargep2 = <15>;
+> +		reset-gpios = <&gpio_oled 1 GPIO_ACTIVE_LOW>;
+> +		vbat-supply = <&sw2_reg>;
+> +		status = "disabled";
+> +	};
 
->=20
-> > What kind of battery life do you get with all the optimalizations?
-> > IIRC I was getting 7h with ttyUSB4 in use...
->=20
-> With droid4-pending-mdm-v4.20 branch in the following state:
->=20
-> - UARTs idled
-> - LCD blanked (well no drivers yet droid4-sms-read.rb)
-> - MUSB and EHCI USB modules unloaded
-> - OHCI loaded with all the children in autosuspend via sysfs
-> - WLAN connected
-> - busybox acpid stopped (yup, it keeps polling something???)
-> - MDM6600 online with AT+CFUN=3D1 on /dev/motmdm1
-> - MDM6600 notifications disabled with AT+SCRN=3D0 on /motmdm1
-> - droid4-sms-read.rb running
->=20
-> I'm seeing droid 4 idle at 119mW according to my power supply.
-> So I guess theoretical battery life would currently be
-> (1785mWh * 3.8V) / 119mW =3D 57h. But in practise things are not
-> completely idle and monitoring sysfs POWER_SUPPLY_POWER_AVG
-> every 10 seconds I'm seeing something along these 10 samples:
->=20
-> POWER_SUPPLY_POWER_AVG=3D138938
-> POWER_SUPPLY_POWER_AVG=3D134571
-> POWER_SUPPLY_POWER_AVG=3D505802
-> POWER_SUPPLY_POWER_AVG=3D240412
-> POWER_SUPPLY_POWER_AVG=3D134252
-> POWER_SUPPLY_POWER_AVG=3D132694
-> POWER_SUPPLY_POWER_AVG=3D571569
-> POWER_SUPPLY_POWER_AVG=3D132694
-> POWER_SUPPLY_POWER_AVG=3D190456
-> POWER_SUPPLY_POWER_AVG=3D518288
->=20
-> So the average based on that sampling is about 270mW and the idle
-> time should be about 1785 * 3.8 / 270 =3D 25h, which is quite usable
-> already :)
+[...]
 
-So... 57h would be very nice, and even 25h is cool. IIRC original
-motorola firmware does something like 100hours, and cyanogenmod is
-closer to 24h...
+> diff --git a/arch/arm/boot/dts/imx6dl-yapp4-draco.dts b/arch/arm/boot/dts/imx6dl-yapp4-draco.dts
+> new file mode 100644
+> index 0000000..2b9a7ad
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6dl-yapp4-draco.dts
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2015-2018 Y Soft Corporation, a.s.
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6dl.dtsi"
+> +#include "imx6dl-yapp4-common.dtsi"
+> +
+> +/ {
+> +	model = "Y Soft IOTA Draco i.MX6Solo board";
+> +	compatible = "ysoft,imx6dl-yapp4-draco", "fsl,imx6dl";
 
-Note that there's something in the sysfs that allows "precise"
-measurements. Aha, it is "charge_counter" on droid4.
+All compatible strings should be documented, not just SoC vendor boards.
 
-(I even have some software to do the monitoring and display the
-graphs. unicsy_demo/monitor/batmond).
+> +
+> +	cpus {
+> +		/delete-node/ cpu@1;
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Seems like this is a chip property, not a board specific property. IOW, 
+you need an imx6solo.dtsi file.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwmsPAACgkQMOfwapXb+vK2WwCeKIea4YAGqvay75E9BHuB1r73
-cgEAoIGlkRXIcPRq4N40FeroyIRbuCWV
-=Gb00
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+> +	};
