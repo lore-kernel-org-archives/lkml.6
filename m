@@ -2,153 +2,107 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A332C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9D6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350CE20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:40:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="Zfq4RP+j"
+	by mail.kernel.org (Postfix) with ESMTP id 8FF1120866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545986470;
+	bh=bsGKByOD9pF+cn3wiSdefRhm5ys3EQb4J4hY0hw8iQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UxnjgtbS2aQ8Qor8kqU+Y163G1Pb2q/mqNksK7DEUaccsj6mWza77Z8EWYCKlF1HR
+	 H4HOLPCMa7+PyzBz+tKqf7tR71gKbj2EvAc9JwCGf0g0dBQF/zu4ElWEGei1B8hMtn
+	 mK6oDy4cC45SMlpWR53sLXCdt8zlfqRZFyqElyBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731746AbeL1IkV (ORCPT
+        id S1729870AbeL1IlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 03:40:21 -0500
-Received: from owa.iluvatar.ai ([103.91.158.24]:45982 "EHLO owa.iluvatar.ai"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbeL1IkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 03:40:20 -0500
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
-        c=relaxed/relaxed; t=1545986414; h=from:subject:to:date:message-id;
-        bh=hPGTggK5mBzVng4X/eY1ndyLBHEXD2yxkrrkNdSjxi0=;
-        b=Zfq4RP+jdHrA0A51NQKdLp5tsQsTocr4Or1dwH/oIl6/cFk/15xI33rESQpgeKkf542rE/7olws
-        o3jnXO+UK7b2HiDiXH2CvnBZJUWEkARdP0Wym+B9sLFz1seKactB8dyfqDrOEXjqk6TNDVb9CyACa
-        BYV3hS8K0Jnd3zi7h70=
-Received: from localhost.localdomain (10.101.1.99) by
- S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Fri, 28 Dec 2018 16:40:13 +0800
-From:   Huang Shijie <sjhuang@iluvatar.ai>
-To:     <akpm@linux-foundation.org>
-CC:     <linux@armlinux.org.uk>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <hch@lst.de>,
-        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <sfr@canb.auug.org.au>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <shijie8@gmail.com>, Huang Shijie <sjhuang@iluvatar.ai>
-Subject: [PATCH] lib/genalloc.c: rename addr_in_gen_pool to gen_pool_has_addr
-Date:   Fri, 28 Dec 2018 16:39:50 +0800
-Message-ID: <20181228083950.20398-1-sjhuang@iluvatar.ai>
-X-Mailer: git-send-email 2.17.1
+        Fri, 28 Dec 2018 03:41:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35420 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726700AbeL1IlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 03:41:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1CCEAAB93;
+        Fri, 28 Dec 2018 08:41:07 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 09:41:05 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20181228084105.GQ16738@dhcp22.suse.cz>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.101.1.99]
-X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
- S-10-101-1-102.iluvatar.local (10.101.1.102)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow the kernel conventions, rename addr_in_gen_pool to
-gen_pool_has_addr.
+On Fri 28-12-18 13:08:06, Wu Fengguang wrote:
+[...]
+> Optimization: do hot/cold page tracking and migration
+> =====================================================
+> 
+> Since PMEM is slower than DRAM, we need to make sure hot pages go to
+> DRAM and cold pages stay in PMEM, to get the best out of PMEM and DRAM.
+> 
+> - DRAM=>PMEM cold page migration
+> 
+> It can be done in kernel page reclaim path, near the anonymous page
+> swap out point. Instead of swapping out, we now have the option to
+> migrate cold pages to PMEM NUMA nodes.
 
-Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
----
- arch/arm/mm/dma-mapping.c | 2 +-
- drivers/misc/sram-exec.c  | 2 +-
- include/linux/genalloc.h  | 2 +-
- kernel/dma/remap.c        | 2 +-
- lib/genalloc.c            | 6 +++---
- 5 files changed, 7 insertions(+), 7 deletions(-)
+OK, this makes sense to me except I am not sure this is something that
+should be pmem specific. Is there any reason why we shouldn't migrate
+pages on memory pressure to other nodes in general? In other words
+rather than paging out we whould migrate over to the next node that is
+not under memory pressure. Swapout would be the next level when the
+memory is (almost_) fully utilized. That wouldn't be pmem specific.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index f1e2922e447c..a876101a0f82 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -563,7 +563,7 @@ static void *__alloc_from_pool(size_t size, struct page **ret_page)
- 
- static bool __in_atomic_pool(void *start, size_t size)
- {
--	return addr_in_gen_pool(atomic_pool, (unsigned long)start, size);
-+	return gen_pool_has_addr(atomic_pool, (unsigned long)start, size);
- }
- 
- static int __free_from_pool(void *start, size_t size)
-diff --git a/drivers/misc/sram-exec.c b/drivers/misc/sram-exec.c
-index 426ad912b441..d054e2842a5f 100644
---- a/drivers/misc/sram-exec.c
-+++ b/drivers/misc/sram-exec.c
-@@ -96,7 +96,7 @@ void *sram_exec_copy(struct gen_pool *pool, void *dst, void *src,
- 	if (!part)
- 		return NULL;
- 
--	if (!addr_in_gen_pool(pool, (unsigned long)dst, size))
-+	if (!gen_pool_has_addr(pool, (unsigned long)dst, size))
- 		return NULL;
- 
- 	base = (unsigned long)part->base;
-diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
-index dd0a452373e7..c5e5bed82fbc 100644
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@ -156,7 +156,7 @@ extern struct gen_pool *devm_gen_pool_create(struct device *dev,
- 		int min_alloc_order, int nid, const char *name);
- extern struct gen_pool *gen_pool_get(struct device *dev, const char *name);
- 
--bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
-+extern bool gen_pool_has_addr(struct gen_pool *pool, unsigned long start,
- 			size_t size);
- 
- #ifdef CONFIG_OF
-diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
-index 18cc09fc27b9..5022b904d7bc 100644
---- a/kernel/dma/remap.c
-+++ b/kernel/dma/remap.c
-@@ -158,7 +158,7 @@ int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
- 
- bool dma_in_atomic_pool(void *start, size_t size)
- {
--	return addr_in_gen_pool(atomic_pool, (unsigned long)start, size);
-+	return gen_pool_has_addr(atomic_pool, (unsigned long)start, size);
- }
- 
- void *dma_alloc_from_pool(size_t size, struct page **ret_page, gfp_t flags)
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 96b6f478d275..946bbeefec81 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -423,7 +423,7 @@ void gen_pool_for_each_chunk(struct gen_pool *pool,
- EXPORT_SYMBOL(gen_pool_for_each_chunk);
- 
- /**
-- * addr_in_gen_pool - checks if an address falls within the range of a pool
-+ * gen_pool_has_addr - checks if an address falls within the range of a pool
-  * @pool:	the generic memory pool
-  * @start:	start address
-  * @size:	size of the region
-@@ -431,7 +431,7 @@ EXPORT_SYMBOL(gen_pool_for_each_chunk);
-  * Check if the range of addresses falls within the specified pool. Returns
-  * true if the entire range is contained in the pool and false otherwise.
-  */
--bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
-+bool gen_pool_has_addr(struct gen_pool *pool, unsigned long start,
- 			size_t size)
- {
- 	bool found = false;
-@@ -450,7 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
- 	rcu_read_unlock();
- 	return found;
- }
--EXPORT_SYMBOL(addr_in_gen_pool);
-+EXPORT_SYMBOL(gen_pool_has_addr);
- 
- /**
-  * gen_pool_avail - get available free space of the pool
+> User space may also do it, however cannot act on-demand, when there
+> are memory pressure in DRAM nodes.
+> 
+> - PMEM=>DRAM hot page migration
+> 
+> While LRU can be good enough for identifying cold pages, frequency
+> based accounting can be more suitable for identifying hot pages.
+> 
+> Our design choice is to create a flexible user space daemon to drive
+> the accounting and migration, with necessary kernel supports by this
+> patchset.
+
+We do have numa balancing, why cannot we rely on it? This along with the
+above would allow to have pmem numa nodes (cpuless nodes in fact)
+without any special casing and a natural part of the MM. It would be
+only the matter of the configuration to set the appropriate distance to
+allow reasonable allocation fallback strategy.
+
+I haven't looked at the implementation yet but if you are proposing a
+special cased zone lists then this is something CDM (Coherent Device
+Memory) was trying to do two years ago and there was quite some
+skepticism in the approach.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
