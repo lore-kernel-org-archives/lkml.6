@@ -2,117 +2,100 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1E6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA2920879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:31:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="yy0O3yL9"
+	by mail.kernel.org (Postfix) with ESMTP id C88DB20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387553AbeL1Rbg (ORCPT
+        id S2387565AbeL1Rek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 12:31:36 -0500
-Received: from cock.li ([185.100.85.212]:57574 "EHLO cock.li"
+        Fri, 28 Dec 2018 12:34:40 -0500
+Received: from ms.lwn.net ([45.79.88.28]:42464 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727954AbeL1Rbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 12:31:36 -0500
+        id S1727954AbeL1Rej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 12:34:39 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 648972D9;
+        Fri, 28 Dec 2018 17:34:38 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 10:34:37 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Kosina <jikos@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and
+ its mitigations
+Message-ID: <20181228103437.4c03c181@lwn.net>
+In-Reply-To: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
+References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
+Organization: LWN.net
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546018292; bh=s0zqPFsYY8ec9E1esg0nCucoUNGApeXUsz9yw9aWrkc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=yy0O3yL9qKsR0+/nIuJANs6i338amtXkXLxQ2miXwpY1lTe8a/tcWyMFYNyAAxmyw
-         /DHihMAA4V+i+8GWJRxn8Dd2MqLuWx5L6QsWiWE02aM5pmas6lU8iSBuBA4veLPjS/
-         vQyC4xDSHTFhS3MGMXCpwcoSbLq6BGyA3Tzf/ejJkIxhXZQIUuzOaGYAPKPkCJeu/1
-         9vO6taVE2Zl6xUb2qd2mZstlPedYonWacI5v2NlcL2Rk1QkpxV/As7nOXwD8GdZRty
-         ViQCuawnLZPMF52G7Y0+I6L893r0VHlt+3Oi8k6HJ7slWkcjQq89PhVOwx3n1akvS0
-         8LInE8KLYqRDQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 28 Dec 2018 17:31:31 +0000
-From:   vsnsdualce@memeware.net
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Bon Onlines <bononlines@gmail.com>,
-        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        Raul Miller <rauldmiller@gmail.com>,
-        OpenBSD general usage list <misc@openbsd.org>,
-        linux-kernel@vger.kernel.org, freebsd-women@freebsd.org,
-        freebsd-chat@freebsd.org, owner-misc@openbsd.org
-Cc:     linux-kernel-owner@vger.kernel.org
-Subject: Re: Why is no one discussing this anymore? - Attack the messaging
- rely, not the message!
-In-Reply-To: <20181228135728.GD5864@mit.edu>
-References: <20181228135728.GD5864@mit.edu>
-Message-ID: <c9d2e5c760bd722c2363acb440b9f12a@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lieutenant Ts'o:
-I see that you have adopted the strategy of "Attack the messaging 
-service, not the message".
+On Fri, 21 Dec 2018 09:44:44 -0800
+Tim Chen <tim.c.chen@linux.intel.com> wrote:
 
-You cannot refute my arguments, you and yours simply claim "it's a lie", 
-"it's BS!", "it's a troll".
-
-The fact of the matter is: a license without an interest attached is 
-revocable by the grantor.
-That is: if you have not been paid to forgo your right to rescind, you 
-still retain that right.
-
-In the case of Linux or BSD: if entity X did not pay you, and did not 
-reasonably rely on a promise not to rescind
-(a promise you never made), you can rescind the license at any time.
-
-This goes for all the 1000s of linux and BSD programmers who have not 
-transferred their rights.
-
-Yes I am a licensed attorney.
-Yes my analysis is correct.
-And yes I'm still waiting on Eben Moglen's promised counter-analysis 
-(it's been 2 months)...
-take a guess as to why.
-
-On 2018-12-28 13:57, Theodore Y. Ts'o wrote:
-> +-------------------+             .:\:\:/:/:.
->          |   PLEASE DO NOT   |            :.:\:\:/:/:.:
->          |  FEED THE TROLLS  |           :=.' -   - '.=:
->          |                   |           '=(\ 9   9 /)='
->          |   Thank you,      |              (  (_)  )
->          |       Management  |              /`-vvv-'\
->          +-------------------+             /         \
->                  |  |        @@@          / /|,,,,,|\ \
->                  |  |        @@@         /_//  /^\  \\_\
->    @x@@x@        |  |         |/         WW(  (   )  )WW
->    \||||/        |  |        \|           __\,,\ /,,/__
->     \||/         |  |         |          (______Y______)
-> /\/\/\/\/\/\/\/\//\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-> ==================================================================
+> Andi and I have made an update to our draft of the Spectre admin guide.
+> We may be out on Christmas vacation for a while.  But we want to
+> send it out for everyone to take a look.
 > 
+> Thanks.
 > 
-> I recommend that people not respond to vsnsdualce@memeware.net,
-> visionsofalice@redchan.it, and in general, any e-mail coming from
-> domains served by the cock.li service (which comes from the IP address
-> 185.100.85.212).  As you can tell if you go to its web page, this
-> mailer serves the following domains:
+> Tim
 > 
-> 	cock.li, airmail.cc, 8chan.co, redchan.it, 420blaze.it,
-> 	aaathats3as.com, cumallover.me, dicksinhisan.us,
-> 	loves.dicksinhisan.us, wants.dicksinhisan.us, dicksinmyan.us,
-> 	loves.dicksinmyan.us, wants.dicksinmyan.us, goat.si, horsefucker.org,
-> 	national.shitposting.agency, nigge.rs, tfwno.gf, cock.lu, cock.email,
-> 	firemail.cc, getbackinthe.kitchen, memeware.net, cocaine.ninja,
-> 	waifu.club, rape.lol, and nuke.africa
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> This has been a public service announcement.
+> There are no document in admin guides describing
+> Spectre v1 and v2 side channels and their mitigations
+> in Linux.
 > 
-> "Never to wrestle with a pig. You get dirty, and besides, the pig
-> likes it." - George Bernard Shaw
+> Create a document to describe Spectre and the mitigation
+> methods used in the kernel.
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  Documentation/admin-guide/spectre.rst | 502 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 502 insertions(+)
+>  create mode 100644 Documentation/admin-guide/spectre.rst
+
+I only saw this now, seems I wasn't copied... I'll take a deeper look, but
+I have a couple of meta comments:
+
+ - This could arguably go in the security book rather than the admin
+   guide.  I don't really have a strong opinion on which is right at the
+   moment, but others might.
+
+ - Wherever it ends up, can you also please add it to the appropriate
+   index.rst file so it actually gets built with the rest of the docs?
+
+Thanks,
+
+jon
