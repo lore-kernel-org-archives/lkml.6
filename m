@@ -2,151 +2,92 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF41CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7256C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC68F20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 984282070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999751;
-	bh=3yyD6OfFoBXnAX9nRh17ccyPROfLQFNvdhYSfZZ2oyY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VYaBbKovPmNq/RbME/9f1m8763m6WfxHzD2wUClwPmTxJsd3FtrwD3Rllx4RHhfjP
-	 CAwl04j+hWmFDLF9xVOpcwfr7xEvubH1MDrKGpHdhWJwypUeVwx/obDGVPVf6AVOcw
-	 5cdRUC3YcGBkqRuaZRx+OSP5t5v3assQCx9e4+uU=
+	s=default; t=1545999759;
+	bh=+BejAo61/fsxzdj9e6zJOYiIaF37W4dRZrh0KwkzL90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O/09G3hLvsKnYMTQcAqGDMzanyUHacvWsOaifOxzJ/hOivZF3g1ksvSE22FQ1YdDt
+	 f3LcVlDgpORNDt5vHqtb5lqfBlEQ9HQE5blxUFLi+3DhJb059M0YoUaBMkwrv8CQia
+	 ENkk5MPee6Dd5nM8V/V0R+FtF6ZygBJ/vt1PWDzs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbeL1MWb (ORCPT
+        id S1731640AbeL1MWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:22:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732296AbeL1MPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:19 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEB142148E;
-        Fri, 28 Dec 2018 12:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999318;
-        bh=3yyD6OfFoBXnAX9nRh17ccyPROfLQFNvdhYSfZZ2oyY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xv50jDl1FoS3bjtRIDKWaJfKiBJEib95T1GVju+BbGy0FTeefVoheTfffRzhW91E/
-         7s5HxuI4dSSFqQX8DsVxk3jO+HS467B9RBSxXR4tOsGMZmXOY1gY/y17bie8Xlm0w8
-         4ReiZSIeTq/Vk812lRUf6vLJcQKQpfh834MwRosM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 42/46] mm, page_alloc: fix has_unmovable_pages for HugePages
-Date:   Fri, 28 Dec 2018 12:52:36 +0100
-Message-Id: <20181228113127.401931331@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
-References: <20181228113124.971620049@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 28 Dec 2018 07:22:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731789AbeL1MPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3E00FAF3D;
+        Fri, 28 Dec 2018 12:15:16 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 13:15:15 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20181228121515.GS16738@dhcp22.suse.cz>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Fri 28-12-18 17:42:08, Wu Fengguang wrote:
+[...]
+> Those look unnecessary complexities for this post. This v2 patchset
+> mainly fulfills our first milestone goal: a minimal viable solution
+> that's relatively clean to backport. Even when preparing for new
+> upstreamable versions, it may be good to keep it simple for the
+> initial upstream inclusion.
 
-------------------
+On the other hand this is creating a new NUMA semantic and I would like
+to have something long term thatn let's throw something in now and care
+about long term later. So I would really prefer to talk about long term
+plans first and only care about implementation details later.
 
-From: Oscar Salvador <osalvador@suse.de>
+> > I haven't looked at the implementation yet but if you are proposing a
+> > special cased zone lists then this is something CDM (Coherent Device
+> > Memory) was trying to do two years ago and there was quite some
+> > skepticism in the approach.
+> 
+> It looks we are pretty different than CDM. :)
+> We creating new NUMA nodes rather than CDM's new ZONE.
+> The zonelists modification is just to make PMEM nodes more separated.
 
-commit 17e2e7d7e1b83fa324b3f099bfe426659aa3c2a4 upstream.
+Yes, this is exactly what CDM was after. Have a zone which is not
+reachable without explicit request AFAIR. So no, I do not think you are
+too different, you just use a different terminology ;)
 
-While playing with gigantic hugepages and memory_hotplug, I triggered
-the following #PF when "cat memoryX/removable":
-
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-  #PF error: [normal kernel read fault]
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP PTI
-  CPU: 1 PID: 1481 Comm: cat Tainted: G            E     4.20.0-rc6-mm1-1-default+ #18
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-  RIP: 0010:has_unmovable_pages+0x154/0x210
-  Call Trace:
-   is_mem_section_removable+0x7d/0x100
-   removable_show+0x90/0xb0
-   dev_attr_show+0x1c/0x50
-   sysfs_kf_seq_show+0xca/0x1b0
-   seq_read+0x133/0x380
-   __vfs_read+0x26/0x180
-   vfs_read+0x89/0x140
-   ksys_read+0x42/0x90
-   do_syscall_64+0x5b/0x180
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The reason is we do not pass the Head to page_hstate(), and so, the call
-to compound_order() in page_hstate() returns 0, so we end up checking
-all hstates's size to match PAGE_SIZE.
-
-Obviously, we do not find any hstate matching that size, and we return
-NULL.  Then, we dereference that NULL pointer in
-hugepage_migration_supported() and we got the #PF from above.
-
-Fix that by getting the head page before calling page_hstate().
-
-Also, since gigantic pages span several pageblocks, re-adjust the logic
-for skipping pages.  While are it, we can also get rid of the
-round_up().
-
-[osalvador@suse.de: remove round_up(), adjust skip pages logic per Michal]
-  Link: http://lkml.kernel.org/r/20181221062809.31771-1-osalvador@suse.de
-Link: http://lkml.kernel.org/r/20181217225113.17864-1-osalvador@suse.de
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/page_alloc.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7716,11 +7716,14 @@ bool has_unmovable_pages(struct zone *zo
- 		 * handle each tail page individually in migration.
- 		 */
- 		if (PageHuge(page)) {
-+			struct page *head = compound_head(page);
-+			unsigned int skip_pages;
- 
--			if (!hugepage_migration_supported(page_hstate(page)))
-+			if (!hugepage_migration_supported(page_hstate(head)))
- 				goto unmovable;
- 
--			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
-+			skip_pages = (1 << compound_order(head)) - (page - head);
-+			iter += skip_pages - 1;
- 			continue;
- 		}
- 
-
-
+-- 
+Michal Hocko
+SUSE Labs
