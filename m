@@ -2,89 +2,305 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C162C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C863C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF70921479
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:05:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fztLfO0D"
+	by mail.kernel.org (Postfix) with ESMTP id 0FFC42146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733260AbeL1QFw (ORCPT
+        id S1733265AbeL1QGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 11:05:52 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37075 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728769AbeL1QFv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 11:05:51 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 40so18961288oth.4
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 08:05:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ezGYfVxiwhlDU503aVqkNVICSduystT0QEAYy84RgY4=;
-        b=fztLfO0DXWBYQ35Nz5OkG1AxRjZhZABkT878ZN8nmYN5+7yD/I3qbE1Pvukiqb4Ouo
-         ATCsUH5/2VLHV5RwcVW7gX+OFDDORrWMtsfA/IFKVWTMOAZCnSRvHRLzOMXVC6ysavux
-         lrdou3MbozxK716J+y6cye7q8fjM3mkpjsrRA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ezGYfVxiwhlDU503aVqkNVICSduystT0QEAYy84RgY4=;
-        b=UZIUN+iY2o1alInN84CqAPjtl7hdxPCD1HGryzJKJCKsN+HMdD1jbuFleM/EcpwVJQ
-         MG4ZLuesqczFZSVyeYZGI4/9GDYPQy5YK6KhGkEpBt2gskGhi4MfGWlB6SYaMdSCedPQ
-         jKvFc4aQePN9BUSwS9b6MjZqjeK9aNz5S/Ozbw/Zobwo+CSr7YyRZWrfQKJ6VCKqf5jQ
-         tN9mdhyPphhTO0DhtWgbSXfyEhnNce2zgOWlfrkQCBSrJ5mLxacolsuqNi32OGyinRiu
-         1XnEJBalFHrHEs6P2lN2cvQbi3MgspXYleAc/WpDciHnREzausCKIMnkiBroRXMeCMhv
-         sqaQ==
-X-Gm-Message-State: AJcUukc1USZg1JVOOYbSrV8JUyZ0ByKRURcC454qjRAA0fzPwKO4RYss
-        4nnKZElKdP722HDlwfEnHwn4dw==
-X-Google-Smtp-Source: ALg8bN7r1HuYdAqB7iSYNL/3a4xAII9XX5thrOd0eQZVkZNOPfV+ymfot699NE25EOSTCek7SiO2SA==
-X-Received: by 2002:a9d:8e4:: with SMTP id 91mr18438655otf.169.1546013150937;
-        Fri, 28 Dec 2018 08:05:50 -0800 (PST)
-Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net. [107.207.74.175])
-        by smtp.gmail.com with ESMTPSA id a1sm18537313oto.71.2018.12.28.08.05.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 08:05:50 -0800 (PST)
-Date:   Fri, 28 Dec 2018 10:05:46 -0600
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Kishon Vijay Abraham <kishon@ti.com>,
-        David Brown <david.brown@linaro.org>,
-        Yaniv Gardi <ygardi@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Matt Wagantall <mattw@codeaurora.org>,
-        Mitchel Humpherys <mitchelh@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Fri, 28 Dec 2018 11:06:25 -0500
+Received: from ms.lwn.net ([45.79.88.28]:42212 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726563AbeL1QGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 11:06:25 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id CAB4697E;
+        Fri, 28 Dec 2018 16:06:23 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 09:06:22 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] phy: qcom-ufs: Use iopoll.h readl_poll_timeout macro
-Message-ID: <20181228160546.GC25288@hector.attlocal.net>
-References: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
+Cc:     linux-doc@vger.kernel.org
+Subject: [GIT PULL] Documentation for 5.0
+Message-ID: <20181228090622.4c210228@lwn.net>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88cd3a2e-2acc-02ff-9f27-284d3b679d10@free.fr>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 11:13:18AM +0100, Marc Gonzalez wrote:
-> The private copy of readl_poll_timeout is no longer needed.
-> Use the implementation in iopoll.h instead.
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+The following changes since commit
+651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.lwn.net/linux.git tags/docs-5.0
+
+for you to fetch changes up to 942104a21ce4951420ddf6c6b3179a0627301f7e:
+
+  docs: improve pathname-lookup document structure (2018-12-20 08:47:18 -0700)
+
+----------------------------------------------------------------
+A fairly normal cycle for documentation stuff.  We have a new
+document on perf security, more Italian translations, more
+improvements to the memory-management docs, improvements to the
+pathname lookup documentation, and the usual array of smaller
+fixes.
+
+As is often the case, there are a few reaches outside of
+Documentation/ to adjust kerneldoc comments.
+
+Expect a trivial merge conflict with the fscrypt tree; the resolution
+is to just take both sides.
+----------------------------------------------------------------
+Alexey Budankov (2):
+      Documentation/admin-guide: introduce perf-security.rst file
+      Documentation/admin-guide: update admin-guide index.rst
+
+Amir Livneh (1):
+      doc: tracing: Fix a number of typos
+
+Andrzej Bednarski (1):
+      Correct gen_init_cpio tool's documentation
+
+Andy Shevchenko (1):
+      dmaengine: Add mailing list address to the documentation
+
+Christoph Niedermaier (2):
+      Docs/EDID: Fixed erroneous bits of XOFFSET, XPULSE, YOFFSET and YPULSE
+      Docs/EDID: Calculate CRC while building the code
+
+Colin Ian King (1):
+      Documentation: fix spelling mistake, EACCESS -> EACCES
+
+Daniel Colascione (1):
+      Document /proc/pid PID reuse behavior
+
+Federico Vaga (6):
+      doc:it_IT: add some process/* translations
+      doc:it_IT: fix locking.rst section title
+      doc:it_IT:doc-guide: fix reference to foobar
+      doc:it: fixes in process/1.Intro
+      doc:it: add some process/* translations
+      doc:process: add links where missing
+
+Geert Uytterhoeven (1):
+      Documentation/ras: Typo s/use use/use/
+
+Helen Koike (1):
+      configfs: fix wrong name of struct in documentation
+
+Jonathan Corbet (1):
+      Merge branch 'kmalloc' into docs-next
+
+Joris Gutjahr (1):
+      doc-guide:kernel-doc.rst: Reference to foobar
+
+Matthew Wilcox (1):
+      Link the memory allocation guide from the MM docs
+
+Michael S. Tsirkin (1):
+      x86, boot: documentation whitespace fixup
+
+Mike Rapoport (7):
+      kernel-doc: kill trailing whitespace
+      kernel-doc: extend $type_param to match members referenced by pointer
+      docs/mm: update kmalloc kernel-doc description
+      docs/admin-guide/mm/concepts.rst: grammar and style fixups
+      docs/core-api: make mm-api.rst more structured
+      slab: make kmem_cache_create{_usercopy} description proper kernel-doc
+      docs/mm-api: link slab_common.c to "The Slab Cache" section
+
+NeilBrown (3):
+      Documentation: update path-lookup.md for parallel lookups
+      Documentation: convert path-lookup from markdown to resturctured text
+      docs: improve pathname-lookup document structure
+
+Nicholas Mc Guire (1):
+      Documentation: devres: note checking needs when converting
+
+Randy Dunlap (3):
+      Documentation: dynamic_debug: fix a couple of typos
+      Documentation: dynamic-debug: fix wildcard description
+      Documentation/dev-tools: clean up kselftest.rst
+
+Sakari Ailus (1):
+      scripts/kernel-doc: Fix struct and struct field attribute processing
+
+Shreyans Devendra Doshi (1):
+      Documentation: dev-tools: Fix typos in index.rst
+
+Waiman Long (1):
+      Documentation/proc.txt: Add 2 missing fields for /proc/<pid>/status
+
+Will Deacon (1):
+      Documentation: Use "while" instead of "whilst"
+
+ Documentation/EDID/1024x768.S                      |    5 +-
+ Documentation/EDID/1280x1024.S                     |    5 +-
+ Documentation/EDID/1600x1200.S                     |    5 +-
+ Documentation/EDID/1680x1050.S                     |    5 +-
+ Documentation/EDID/1920x1080.S                     |    5 +-
+ Documentation/EDID/800x600.S                       |    5 +-
+ Documentation/EDID/HOWTO.txt                       |   13 +-
+ Documentation/EDID/Makefile                        |   15 +-
+ Documentation/EDID/edid.S                          |   10 +-
+ Documentation/admin-guide/devices.rst              |    1 +
+ Documentation/admin-guide/dynamic-debug-howto.rst  |    8 +-
+ Documentation/admin-guide/index.rst                |    1 +
+ Documentation/admin-guide/kernel-parameters.txt    |    2 +-
+ Documentation/admin-guide/mm/concepts.rst          |   51 +-
+ Documentation/admin-guide/perf-security.rst        |   97 ++
+ Documentation/admin-guide/ras.rst                  |    2 +-
+ Documentation/admin-guide/security-bugs.rst        |    2 +-
+ Documentation/arm/Booting                          |    2 +-
+ Documentation/arm/Samsung-S3C24XX/GPIO.txt         |    2 +-
+ Documentation/arm/Samsung-S3C24XX/Overview.txt     |    2 +-
+ Documentation/arm/Samsung-S3C24XX/Suspend.txt      |    2 +-
+ Documentation/core-api/assoc_array.rst             |    6 +-
+ Documentation/core-api/memory-allocation.rst       |    2 +
+ Documentation/core-api/mm-api.rst                  |   32 +-
+ Documentation/dev-tools/coccinelle.rst             |    2 +
+ Documentation/dev-tools/index.rst                  |    4 +-
+ Documentation/dev-tools/kselftest.rst              |   12 +-
+ Documentation/device-mapper/dm-raid.txt            |    2 +-
+ .../devicetree/bindings/arm/idle-states.txt        |    2 +-
+ .../devicetree/bindings/pci/host-generic-pci.txt   |    2 +-
+ Documentation/devicetree/bindings/serial/rs485.txt |    2 +-
+ Documentation/doc-guide/kernel-doc.rst             |    2 +-
+ Documentation/doc-guide/sphinx.rst                 |    2 +
+ Documentation/driver-api/dmaengine/dmatest.rst     |    4 +
+ Documentation/driver-api/pm/devices.rst            |    2 +
+ Documentation/driver-model/devres.txt              |    7 +
+ Documentation/early-userspace/README               |    2 +-
+ Documentation/filesystems/caching/backend-api.txt  |    2 +-
+ Documentation/filesystems/caching/cachefiles.txt   |    4 +-
+ Documentation/filesystems/caching/netfs-api.txt    |    2 +-
+ Documentation/filesystems/caching/operations.txt   |    2 +-
+ Documentation/filesystems/configfs/configfs.txt    |    2 +-
+ Documentation/filesystems/index.rst                |   21 +
+ .../{path-lookup.md => path-lookup.rst}            |  913 ++++++++--------
+ Documentation/filesystems/proc.txt                 |   13 +-
+ Documentation/filesystems/qnx6.txt                 |    4 +-
+ Documentation/filesystems/spufs.txt                |    2 +-
+ Documentation/filesystems/vfs.txt                  |    2 +-
+ .../filesystems/xfs-self-describing-metadata.txt   |    2 +-
+ Documentation/filesystems/xfs.txt                  |    2 +-
+ Documentation/gpu/drm-uapi.rst                     |    4 +-
+ Documentation/leds/leds-class.txt                  |    2 +-
+ Documentation/media/uapi/v4l/extended-controls.rst |    2 +-
+ Documentation/memory-barriers.txt                  |   22 +-
+ Documentation/networking/de4x5.txt                 |    2 +-
+ Documentation/networking/rxrpc.txt                 |   10 +-
+ Documentation/power/regulator/overview.txt         |    2 +-
+ Documentation/process/1.Intro.rst                  |    2 +
+ Documentation/process/4.Coding.rst                 |    3 +-
+ Documentation/process/5.Posting.rst                |   23 +-
+ Documentation/process/8.Conclusion.rst             |    7 +-
+ Documentation/process/adding-syscalls.rst          |    3 +
+ Documentation/process/changes.rst                  |    2 +-
+ Documentation/process/coding-style.rst             |    2 +-
+ Documentation/process/howto.rst                    |   13 +-
+ Documentation/process/kernel-driver-statement.rst  |    2 +
+ .../process/kernel-enforcement-statement.rst       |    4 +-
+ Documentation/process/magic-number.rst             |    2 +
+ Documentation/process/management-style.rst         |    5 +-
+ Documentation/process/submitting-drivers.rst       |    8 +-
+ Documentation/s390/3270.ChangeLog                  |    2 +-
+ Documentation/security/credentials.rst             |    8 +-
+ Documentation/security/keys/request-key.rst        |    2 +-
+ Documentation/serial/serial-rs485.txt              |    2 +-
+ Documentation/sound/soc/dai.rst                    |    6 +-
+ Documentation/sound/soc/dpcm.rst                   |    2 +-
+ Documentation/static-keys.txt                      |    2 +-
+ Documentation/thermal/power_allocator.txt          |    2 +-
+ Documentation/trace/ftrace.rst                     |   14 +-
+ .../translations/it_IT/admin-guide/README.rst      |   12 +
+ .../it_IT/admin-guide/security-bugs.rst            |   12 +
+ .../translations/it_IT/doc-guide/kernel-doc.rst    |    2 +-
+ Documentation/translations/it_IT/index.rst         |    1 +
+ .../translations/it_IT/kernel-hacking/locking.rst  |    4 +-
+ .../translations/it_IT/process/1.Intro.rst         |  297 ++++++
+ .../translations/it_IT/process/2.Process.rst       |  531 ++++++++++
+ .../translations/it_IT/process/3.Early-stage.rst   |  241 +++++
+ .../translations/it_IT/process/4.Coding.rst        |  447 ++++++++
+ .../translations/it_IT/process/5.Posting.rst       |  348 +++++++
+ .../translations/it_IT/process/6.Followthrough.rst |  240 +++++
+ .../it_IT/process/7.AdvancedTopics.rst             |  191 ++++
+ .../translations/it_IT/process/8.Conclusion.rst    |   85 ++
+ .../translations/it_IT/process/adding-syscalls.rst |  643 ++++++++++++
+ .../it_IT/process/applying-patches.rst             |   13 +
+ .../translations/it_IT/process/changes.rst         |   12 +
+ .../translations/it_IT/process/clang-format.rst    |  197 ++++
+ .../translations/it_IT/process/code-of-conduct.rst |   12 +
+ .../translations/it_IT/process/coding-style.rst    | 1094 ++++++++++++++++++++
+ .../it_IT/process/development-process.rst          |   33 +
+ .../translations/it_IT/process/email-clients.rst   |   12 +
+ Documentation/translations/it_IT/process/howto.rst |  655 ++++++++++++
+ Documentation/translations/it_IT/process/index.rst |   67 ++
+ .../translations/it_IT/process/kernel-docs.rst     |   13 +
+ .../it_IT/process/kernel-driver-statement.rst      |  211 ++++
+ .../it_IT/process/kernel-enforcement-statement.rst |   13 +
+ .../translations/it_IT/process/magic-number.rst    |  170 +++
+ .../it_IT/process/maintainer-pgp-guide.rst         |   13 +
+ .../it_IT/process/management-style.rst             |   12 +
+ .../it_IT/process/stable-api-nonsense.rst          |   13 +
+ .../it_IT/process/stable-kernel-rules.rst          |   12 +
+ .../it_IT/process/submit-checklist.rst             |   12 +
+ .../it_IT/process/submitting-drivers.rst           |   12 +
+ .../it_IT/process/submitting-patches.rst           |   13 +
+ .../it_IT/process/volatile-considered-harmful.rst  |  134 +++
+ Documentation/vm/index.rst                         |    4 +-
+ Documentation/x86/boot.txt                         |    2 +-
+ include/linux/slab.h                               |   55 +-
+ mm/slab_common.c                                   |   35 +-
+ scripts/kernel-doc                                 |   13 +-
+ 119 files changed, 6688 insertions(+), 654 deletions(-)
+ create mode 100644 Documentation/admin-guide/perf-security.rst
+ rename Documentation/filesystems/{path-lookup.md => path-lookup.rst} (56%)
+ create mode 100644 Documentation/translations/it_IT/admin-guide/README.rst
+ create mode 100644 Documentation/translations/it_IT/admin-guide/security-bugs.rst
+ create mode 100644 Documentation/translations/it_IT/process/1.Intro.rst
+ create mode 100644 Documentation/translations/it_IT/process/2.Process.rst
+ create mode 100644 Documentation/translations/it_IT/process/3.Early-stage.rst
+ create mode 100644 Documentation/translations/it_IT/process/4.Coding.rst
+ create mode 100644 Documentation/translations/it_IT/process/5.Posting.rst
+ create mode 100644 Documentation/translations/it_IT/process/6.Followthrough.rst
+ create mode 100644 Documentation/translations/it_IT/process/7.AdvancedTopics.rst
+ create mode 100644 Documentation/translations/it_IT/process/8.Conclusion.rst
+ create mode 100644 Documentation/translations/it_IT/process/adding-syscalls.rst
+ create mode 100644 Documentation/translations/it_IT/process/applying-patches.rst
+ create mode 100644 Documentation/translations/it_IT/process/changes.rst
+ create mode 100644 Documentation/translations/it_IT/process/clang-format.rst
+ create mode 100644 Documentation/translations/it_IT/process/code-of-conduct.rst
+ create mode 100644 Documentation/translations/it_IT/process/coding-style.rst
+ create mode 100644 Documentation/translations/it_IT/process/development-process.rst
+ create mode 100644 Documentation/translations/it_IT/process/email-clients.rst
+ create mode 100644 Documentation/translations/it_IT/process/howto.rst
+ create mode 100644 Documentation/translations/it_IT/process/index.rst
+ create mode 100644 Documentation/translations/it_IT/process/kernel-docs.rst
+ create mode 100644 Documentation/translations/it_IT/process/kernel-driver-statement.rst
+ create mode 100644 Documentation/translations/it_IT/process/kernel-enforcement-statement.rst
+ create mode 100644 Documentation/translations/it_IT/process/magic-number.rst
+ create mode 100644 Documentation/translations/it_IT/process/maintainer-pgp-guide.rst
+ create mode 100644 Documentation/translations/it_IT/process/management-style.rst
+ create mode 100644 Documentation/translations/it_IT/process/stable-api-nonsense.rst
+ create mode 100644 Documentation/translations/it_IT/process/stable-kernel-rules.rst
+ create mode 100644 Documentation/translations/it_IT/process/submit-checklist.rst
+ create mode 100644 Documentation/translations/it_IT/process/submitting-drivers.rst
+ create mode 100644 Documentation/translations/it_IT/process/submitting-patches.rst
+ create mode 100644 Documentation/translations/it_IT/process/volatile-considered-harmful.rst
