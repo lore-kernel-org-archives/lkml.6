@@ -6,62 +6,60 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931C3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBF2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587F5218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 700CD21901
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545961506;
-	bh=GsG/5sQUUzOvgbh9/aOWroc5FPxh1QmhMvZB8ehfE4E=;
+	s=default; t=1545961512;
+	bh=jJkHocf4VuKd6XqJ8oi7zZVy5PZYU7oYPaDXh+N/3cw=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=uw/ICjMKM29xlbKeysYDYzXuPR+XX5sjrYhovCOGjjSSdGHgSzKG142w2QhkBmqyK
-	 PWIKoFKvwk4WgPQqzZMDqikr5oOwV+PQIefHIZIEAc3DbKfvofmrju4neGq5lFH/fn
-	 wVJlaght3/IKstjGXG/LhO/NOs5dWqf7wZND5Mag=
+	b=OIbyEY07ChC7f8+XFjnTIdlcgX/2MnIzawRB54Cd5wZx9JlS0KjvpDBZb2JqqyGV6
+	 iJEFo9+y4AoWKDAR9z97b/dJMzhksb6+4P1IWjOfgr8yBM9/PNZZRd30LnwhPrP61H
+	 jYDkNo0S+FfPNBTbzbPKXaBa6Dk4R7BbOvC6kXJs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731403AbeL1BpF (ORCPT
+        id S1731389AbeL1BpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 20:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57806 "EHLO mail.kernel.org"
+        Thu, 27 Dec 2018 20:45:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731363AbeL1BpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 20:45:03 -0500
-Subject: Re: [GIT PULL] iomap: updates for v4.21
+        id S1731352AbeL1BpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 20:45:02 -0500
+Subject: Re: [GIT PULL] dlm updates for 4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545961503;
-        bh=GsG/5sQUUzOvgbh9/aOWroc5FPxh1QmhMvZB8ehfE4E=;
+        s=default; t=1545961502;
+        bh=jJkHocf4VuKd6XqJ8oi7zZVy5PZYU7oYPaDXh+N/3cw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=wk95cp5HsLjflIw7WO3dVTZLZn0uHofCoUTpRDyj9uriVzpVV55pNYSHIR9g6KsmS
-         TxsYCBf5DK/KWq75a/QIr0MBrebI45FzcMMsSpJR/zMtawrPMJhgW5fCi0riQowvWn
-         FsbvogxCNs9Wvfe1st+T+Z1BW7x0tD0dmpwETAQg=
+        b=JiqGC3vjQcZX69RLS6HqYS4sryY6yAJBq9vpC25gSqENRQNGZSyY3XHGOsXCxgwWX
+         CN2j1iSK3nL3dIpQ2oBFoTjVSxFfPZ5JLeTCrBvHj3Lx0XIFz89GgnYSYJN0MrhzTZ
+         cMuk0Lmn8egVanllOOUOlGbALZHglL5PVDd/uLcw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181224004204.GL27208@magnolia>
-References: <20181224004204.GL27208@magnolia>
+In-Reply-To: <20181219171722.GA14517@redhat.com>
+References: <20181219171722.GA14517@redhat.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181224004204.GL27208@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/iomap-4.21-merge-2
-X-PR-Tracked-Commit-Id: 3cc31fa65d85610574c0f6a474e89f4c419923d5
+X-PR-Tracked-Message-Id: <20181219171722.GA14517@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-4.21
+X-PR-Tracked-Commit-Id: 3595c559326d0b660bb088a88e22e0ca630a0e35
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bc77789a491cdc6f47e5bbd1d04ddd283d64658b
-Message-Id: <20181228014503.3597.80670.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 28 Dec 2018 01:45:03 +0000
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     torvalds@linux-foundation.org, Dave Chinner <david@fromorbit.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        sandeen@sandeen.net
+X-PR-Merge-Commit-Id: 4de3aea385f5a054885bc96ffdb9c7d0ea0c9486
+Message-Id: <20181228014502.3597.55728.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Fri, 28 Dec 2018 01:45:02 +0000
+To:     David Teigland <teigland@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 23 Dec 2018 16:42:04 -0800:
+The pull request you sent on Wed, 19 Dec 2018 11:17:22 -0600:
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-4.21-merge-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-4.21
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bc77789a491cdc6f47e5bbd1d04ddd283d64658b
+https://git.kernel.org/torvalds/c/4de3aea385f5a054885bc96ffdb9c7d0ea0c9486
 
 Thank you!
 
