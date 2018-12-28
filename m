@@ -2,231 +2,173 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE62C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ED3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446B02148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:48:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m3aMZp7s";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="diWERArP"
+	by mail.kernel.org (Postfix) with ESMTP id B3B3D20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731614AbeL1Es6 (ORCPT
+        id S1728986AbeL1E6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 23:48:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41158 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbeL1Es5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 23:48:57 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BBE5E6090F; Fri, 28 Dec 2018 04:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545972535;
-        bh=ryH/2egY4Zlt+ep7xo7/xqU7OMbF4ez1VbeR3zkkFfU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3aMZp7sL0orNag8/AhAquCwbLxsFfZr0xtPe2dhKofH2WnfrO5EgdXmA1FtWw0V7
-         C03RCmIyYEcd9ghRDVshONZwUXpK8CN7iaPx8XHM9d6wzPpaTv8P4HL7q0vcdjT1qN
-         H/oS0vTzDbT4AE7LZgDiTC+FM4fxmxu5Me7Ctynw=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F9E96089D;
-        Fri, 28 Dec 2018 04:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545972534;
-        bh=ryH/2egY4Zlt+ep7xo7/xqU7OMbF4ez1VbeR3zkkFfU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=diWERArPk0DrBHtXEmY+ELw9y+VSRW4iUpy0OyCd9kAULo8eG4eVCDSmlwq8RCyiL
-         aie7/yNiG+Gd5wesGL4Vz0akjvn/jEHC3OwP4iDNJKjjRjKCtBmQ/REEt6hO0UGiEM
-         5UjISr/Oe0Nb4e7FVntr7HhE7QPyO6P1voBRG9SY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F9E96089D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
-Cc:     briannorris@chromium.org, akdwived@codeaurora.org,
-        clew@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: qcom: Add support for parsing fw dt bindings
-Date:   Fri, 28 Dec 2018 10:18:19 +0530
-Message-Id: <20181228044819.5697-3-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181228044819.5697-1-sibis@codeaurora.org>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
+        Thu, 27 Dec 2018 23:58:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43846 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728174AbeL1E57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 23:57:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 65D6FAC9C;
+        Fri, 28 Dec 2018 04:57:56 +0000 (UTC)
+Subject: Re: [PATCH v5 6/6] net: lorawan: List LORAWAN in menuconfig
+To:     Alexander Aring <aring@mojatatu.com>,
+        Xue Liu <liuxuenetmail@gmail.com>
+Cc:     Jian-Hong Pan <starnight@g.ncu.edu.tw>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>,
+        Jiri Pirko <jiri@resnulli.us>
+References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
+ <20181216101858.9585-7-starnight@g.ncu.edu.tw>
+ <CAJuUDwtS3c7NhcNqijyFNtZeupO2HLQ8ZuMA1a-azEQL5yHjng@mail.gmail.com>
+ <8bfdccbf-fb47-daa5-fbd0-ed16a3d6d334@suse.de>
+ <CAJuUDwsypFMEbTXZO+NwQ_FnD1wsO3ZRc3dthZphFGJ-u0n_=Q@mail.gmail.com>
+ <20181224153205.ycr2zdrjbyklulfh@x220t>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <57bead63-bc4e-4dfe-57a9-9875600f5e37@suse.de>
+Date:   Fri, 28 Dec 2018 05:57:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181224153205.ycr2zdrjbyklulfh@x220t>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for parsing "firmware-name" dt bindings which specifies
-the relative paths of mba/modem/pas image as strings. Fallback to
-the default paths for mba/modem/pas image on -EINVAL.
+Hi Alexander and Xue Liu,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 46 +++++++++++++++++++++++-------
- drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-
- 2 files changed, 46 insertions(+), 11 deletions(-)
+Am 24.12.18 um 16:32 schrieb Alexander Aring:
+> On Tue, Dec 18, 2018 at 02:50:58PM +0100, Xue Liu wrote:
+>> On Mon, 17 Dec 2018 at 15:19, Andreas Färber <afaerber@suse.de> wrote:
+>>> Am 17.12.18 um 09:50 schrieb Xue Liu:
+>>>> I have a question about the architecture of your module. AFAIK LoRaWAN
+>>>> is already the MAC Layer above the LoRa technology. Why do you want to
+>>>> make a new layer called "maclorawan" ?
+>>>
+>>> I had asked Jian-Hong to separate between his soft-MAC implementation
+>>> and the common bits needed to drive hard-MAC implementations found on
+>>> several of the hardware modules made available to me.
+>>>
+>> As a reference Linux 802.11 uses cfg80211 to talk with hard-MAC devices.
+>> We may also use the name “cfglora” for hard-MAC implementation.
+> 
+> There exists also a cfg802154. :-)
+> 
+> Note that cfg80211 is also for providing a backwardscompatibility to the
+> wireless ioctl() interface.
+> 
+> In theory it's simple:
+> 
+> netlink API -> SoftMAC (macFOOBAR layer) -> cfgFOOBAR implementation -> driver layer
+>             \-> HardMAC (driver layer) -> cfgFOOBAR implementation
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 01be7314e176..c75179006e24 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -188,6 +188,7 @@ struct q6v5 {
- 	bool has_alt_reset;
- 	int mpss_perm;
- 	int mba_perm;
-+	const char *hexagon_mdt_image;
- 	int version;
- };
- 
-@@ -860,17 +861,27 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	bool relocate = false;
--	char seg_name[10];
-+	char *fw_name;
-+	size_t fw_name_len;
- 	ssize_t offset;
- 	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
- 
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	fw_name_len = strlen(qproc->hexagon_mdt_image);
-+	if (fw_name_len <= 4)
-+		return -EINVAL;
-+
-+	fw_name = kstrdup(qproc->hexagon_mdt_image, GFP_KERNEL);
-+	if (!fw_name)
-+		return -ENOMEM;
-+
-+	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
--		return ret;
-+		dev_err(qproc->dev, "unable to load %s\n",
-+			qproc->hexagon_mdt_image);
-+		goto out;
- 	}
- 
- 	/* Initialize the RMB validator */
-@@ -918,10 +929,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 		ptr = qproc->mpss_region + offset;
- 
- 		if (phdr->p_filesz) {
--			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
--			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
-+			snprintf(fw_name + fw_name_len - 3, fw_name_len,
-+				 "b%02d", i);
-+			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
- 			if (ret) {
--				dev_err(qproc->dev, "failed to load %s\n", seg_name);
-+				dev_err(qproc->dev, "failed to load %s\n",
-+					fw_name);
- 				goto release_firmware;
- 			}
- 
-@@ -960,6 +973,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 
- release_firmware:
- 	release_firmware(fw);
-+out:
-+	kfree(fw_name);
- 
- 	return ret < 0 ? ret : 0;
- }
-@@ -1075,9 +1090,10 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 	unsigned long i;
- 	int ret;
- 
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
-+		dev_err(qproc->dev, "unable to load %s\n",
-+			qproc->hexagon_mdt_image);
- 		return ret;
- 	}
- 
-@@ -1253,6 +1269,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 	const struct rproc_hexagon_res *desc;
- 	struct q6v5 *qproc;
- 	struct rproc *rproc;
-+	const char *mba_image;
-+	const char *fw_name[2];
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -1262,8 +1280,15 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (desc->need_mem_protection && !qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
-+					    fw_name, 2);
-+	if (ret != -EINVAL && ret != 2)
-+		return ret > 0 ? -EINVAL : ret;
-+
-+	mba_image = (ret != 2) ? desc->hexagon_mba_image : fw_name[0];
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
--			    desc->hexagon_mba_image, sizeof(*qproc));
-+			    mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -1272,6 +1297,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
-+	qproc->hexagon_mdt_image = (ret != 2) ? "modem.mdt" : fw_name[1];
- 	platform_set_drvdata(pdev, qproc);
- 
- 	ret = q6v5_init_mem(qproc, pdev);
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b1e63fcd5fdf..141c7da29e9a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -258,6 +258,8 @@ static int adsp_probe(struct platform_device *pdev)
- 	const struct adsp_data *desc;
- 	struct qcom_adsp *adsp;
- 	struct rproc *rproc;
-+	const char *fw_name;
-+	const char *of_fw_name;
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -267,8 +269,15 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (!qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &of_fw_name);
-+	if (ret && ret != -EINVAL)
-+		return ret;
-+
-+	fw_name = ret ? desc->firmware_name : of_fw_name;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
--			    desc->firmware_name, sizeof(*adsp));
-+			    fw_name, sizeof(*adsp));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
+So how does cfgFOOBAR relate to nlFOOBAR now? Given that we were told to
+use netlink and pointed to some nl802whatever, I am confused about two
+people now calling for cfg. We have an nllora stubbed in linux-lora.git,
+and I was expecting to see an nllorawan¹ either in this series or on
+top. If you're suggesting to rename them technology-neutral, then please
+say so clearly - otherwise it sounds to me like you didn't actually look
+at the staged code yet or didn't read our previous discussions and lead
+our contributors to reinvent things we already have...
+
+We really need to complete the layers from the ground up before we get
+lost in more nice-to-have upper layers: For LoRaWAN that means we need
+to have TX and RX working for LoRa _and_ FSK. sx1276 still has lots of
+hardcoded stuff from my own testing that needs to hook into nllora, and
+FSK exists only as ETH_P_FSK constant so far, with no concept for
+switching modes yet (which as mentioned in my presentation¹ needs to go
+via sleep mode, losing most register settings) nor any netlink support.
+Not all drivers need to be at the same implementation level, of course,
+but we need at least one that's far enough to validate such patches.
+
+And seeing that I just found a major bug in sx1276 driver's TX path,
+apparently no one apart from me is testing that driver - sx128x and
+sx1301 were not yet complete enough to transmit, and due to the open
+socket address/protocol discussions none can receive yet, so as Jiri
+hinted, this LoRaWAN soft-MAC patch series can't have been
+runtime-tested against any staged driver at all!  => [RFC lora-next v5 6/6]
+
+Therefore I thought in our case some hard-MAC may be easier to validate
+LoRaWAN sockets (patch 1/6), to avoid a dependency on completing the MAC
+implementation first. For example, iM880, RF1276TS and 32001353 are pure
+LoRaWAN modules without raw LoRa support. (Whereas many others support
+both and I'm still looking for input on how to best deal with that -
+currently exposing them as LoRa devices for maximal flexibility.)
+
+Regards,
+Andreas
+
+¹
+https://events.linuxfoundation.org/wp-content/uploads/2017/12/ELCE2018_LoRa_final_Andreas-Farber.pdf
+https://www.youtube.com/watch?v=Jjel65sZO9M
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
