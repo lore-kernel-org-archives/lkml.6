@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A725C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B285C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A01B218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D2A12184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999374;
-	bh=kYTUJGQWrx3cU4nitdFKgwgWZ6GoDD9caBe/2d2Fq/w=;
+	s=default; t=1545999380;
+	bh=rAIlrZbDQYTKCFRc4har1wxqsFSdVh0izl/ghOVbOK4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W0bkBUGMcyw60A9HCgXyMAxAzCB5qe6wIwCRRzX+guDx1mTxIqUlFMkgFUIIZTW1Q
-	 SG63aNcmR3wztus6Eo7b0+lCDaahU7TNVsi0XmwgXphnuoM6pgjTOjt4wltnKpDSqw
-	 Jae3vN6z89rXNnk2QOQ9uTu+tbmYmZj08DvTEsLA=
+	b=d0mrGxgCXYa5Trz+3+XxvgohfuAEQqxw8kSW/F1GGrHPwSHu7iOi1lQxbUY3dc6SI
+	 TkhXUjg5AY7zQIsQ8/ZQ3HkWO9cag5x8r72Sz7glSDXHU4uuCfh8ZvHpaGwHE9/QA/
+	 6ylCoN6yhXO7y2csJMAYaiwCeIqHu7smFGizkKEc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732635AbeL1MQM (ORCPT
+        id S1732664AbeL1MQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:16:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732617AbeL1MQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:09 -0500
+        id S1732624AbeL1MQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1E1A2184B;
-        Fri, 28 Dec 2018 12:16:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D40E2087F;
+        Fri, 28 Dec 2018 12:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999368;
-        bh=kYTUJGQWrx3cU4nitdFKgwgWZ6GoDD9caBe/2d2Fq/w=;
+        s=default; t=1545999370;
+        bh=rAIlrZbDQYTKCFRc4har1wxqsFSdVh0izl/ghOVbOK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J3GplDq3KOghCr/hyzI3D2OV6Ol/TmuyWrhYeOpN6RJ+mndVwTES1eDPA615J8LIb
-         njMB5FK16YCRL7Cgb3G84DHEn4dRfgF6y5dSkoqont5Py6kkG5JFo9nVa1ReQJinxD
-         S0l8tkXUthlLnZLYQxeGs/U7OLiDDl6t0Zz7bLco=
+        b=AfPIQ5v+VHUXMch9Bn77amQ87mTlkhipmMrYT3La8t08f4QkBUClfRaTYhYLebWAA
+         aA7Z19PNR0vMikH98fksEWXRVt1y14JvcMNQLRnCa6ATmjNTPO1nvhe34hWyuA6j31
+         MLCC6ohwT0YT9iV2HknMkG8ZDgYyQMfEwoBKV8K8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 14/36] USB: serial: option: add Fibocom NL668 series
-Date:   Fri, 28 Dec 2018 12:52:30 +0100
-Message-Id: <20181228113127.537564538@linuxfoundation.org>
+        syzbot+9d38bedac9cc77b8ad5e@syzkaller.appspotmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, sboyd@kernel.org,
+        syzkaller-bugs@googlegroups.com, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 23/36] posix-timers: Fix division by zero bug
+Date:   Fri, 28 Dec 2018 12:52:39 +0100
+Message-Id: <20181228113128.135627109@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -66,63 +70,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 30360224441ce89a98ed627861e735beb4010775 upstream.
+commit 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94 upstream.
 
-Added USB serial option driver support for Fibocom NL668 series cellular
-modules. Reserved USB endpoints 4, 5 and 6 for network + ADB interfaces.
+The signal delivery path of posix-timers can try to rearm the timer even if
+the interval is zero. That's handled for the common case (hrtimer) but not
+for alarm timers. In that case the forwarding function raises a division by
+zero exception.
 
-usb-devices output (QMI mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+The handling for hrtimer based posix timers is wrong because it marks the
+timer as active despite the fact that it is stopped.
 
-usb-devices output (ECM mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 17 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+Move the check from common_hrtimer_rearm() to posixtimer_rearm() to cure
+both issues.
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Reported-by: syzbot+9d38bedac9cc77b8ad5e@syzkaller.appspotmail.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: sboyd@kernel.org
+Cc: stable@vger.kernel.org
+Cc: syzkaller-bugs@googlegroups.com
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1812171328050.1880@nanos.tec.linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/time/posix-timers.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1951,6 +1951,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
-+	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
-+	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -298,9 +298,6 @@ static void common_hrtimer_rearm(struct
+ {
+ 	struct hrtimer *timer = &timr->it.real.timer;
+ 
+-	if (!timr->it_interval)
+-		return;
+-
+ 	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
+ 					    timr->it_interval);
+ 	hrtimer_restart(timer);
+@@ -326,7 +323,7 @@ void posixtimer_rearm(struct siginfo *in
+ 	if (!timr)
+ 		return;
+ 
+-	if (timr->it_requeue_pending == info->si_sys_private) {
++	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
+ 		timr->kclock->timer_rearm(timr);
+ 
+ 		timr->it_active = 1;
 
 
