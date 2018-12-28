@@ -7,118 +7,121 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50501C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA9CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1331A20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBFE20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q4IrFHJK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUG6U8gy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbeL1SUc (ORCPT
+        id S2387667AbeL1S2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 13:20:32 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34189 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731921AbeL1SUb (ORCPT
+        Fri, 28 Dec 2018 13:28:44 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37077 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729445AbeL1S2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 13:20:31 -0500
-Received: by mail-oi1-f195.google.com with SMTP id r62so17940400oie.1;
-        Fri, 28 Dec 2018 10:20:30 -0800 (PST)
+        Fri, 28 Dec 2018 13:28:43 -0500
+Received: by mail-qt1-f195.google.com with SMTP id t33so24131006qtt.4;
+        Fri, 28 Dec 2018 10:28:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=o2YXIoyu6bSMKbOxxf+CV2nKYwO4K74uKrdD9f4+e0E=;
-        b=q4IrFHJKtGP0RM4MxQTuLvHmJyqKET+5BojWDQHiqrdz2ssf1pIxhDluLaFACnYzlP
-         fM9VHZECe8lSg5KF1tYT0OtqhNBC1WB+uBduaJqcellmXMm9kikqqkp5b21SimFSK8Vk
-         GpPTWjpm8GnEevvjelGVhvBMPS+kVjU6gi8G4T+J5R4yInUd62N3891qMIggPU+Yc2Rp
-         fner+zF/SrjKYIW0uC7xAqqpB40p2TcyEFBoikscH0RADzYNafWN8yfAh8dk/6kxfOQ9
-         3frlKqDJ70om14+PNgHBNYmEhgzTLTUk70W3fZfx2bJjXcEI9QaEcykPL22IxycfI2qN
-         ObkQ==
+         :cc;
+        bh=OTNffT1eaQTcLAFvhNIeVKJ7Ks4jO89gQtFc2V6+jxc=;
+        b=jUG6U8gyE0Alt4dCEEdEDk07uJSsv2AxyaUFQYbBJkEFYAu5vHDV/GiLr6INd9lez6
+         0UhHUrZgwErbcyXor/OQNXMHw2EShgs/2woci1E53qGKB1Ww6jWW8TxwaexcrRy3DdDs
+         aADE9YRxF2BNelhszBtKIFNWemeRmXM/yRSYY2FyxAv0J764P4bFijA+wI7xjjyY4n2x
+         grcohJbASFlIP1mGO223kt6hpP4aLxKr+ddyDWBqXLz/TP2GPEqq1aG3v96dLn2QjIFe
+         4W/4tQtMkMUnj8aAtkNOJCZXGmfrrlO318fs6Wh6bDPzSh31mJOdY8fNGAtTPTSgIXSo
+         L2DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=o2YXIoyu6bSMKbOxxf+CV2nKYwO4K74uKrdD9f4+e0E=;
-        b=Vok4OoBt8vdNH2KasEIdZwipDLSum8iZBfF90y3GwAbH06+EfpG5lrlNS/mGFDGLu2
-         wH8CJ2XfMse7DTqAeY61HQZj7adHPCzTU4+bW9LAiuMxCytD5Jjlw3hat560sJEskuVq
-         pAZfOpXD588Ycy5t8O18yPBOUqPYrbbhXmkGgeWmTXFupIEmc3YWWVr6jFAEMQTp1gWF
-         Q1Qo8tz08u18VhK5ZJaXHiARE3qKWkFc20tuYutmZ5pO+j855CVkhErba2nzbiL1ueYj
-         SloakXDtwZjUMnivWA868eKtTNFhGDxAjzXR0Cvt6fZA0lTNdKufbP2iJ12v3tkZ6enO
-         uT9A==
-X-Gm-Message-State: AA+aEWY0fd0Q65JZ2ucLTxm+XL2yATWfNqmyi4HddUVv6zB53BwBcMmh
-        9HYaX84gOu+blsgPPg9QqAQAQb2I3X9/ldnqfWk=
-X-Google-Smtp-Source: AFSGD/Wkie2QMUosQmCIyvZWZnqyOc+ein4UvUeNMqz9+cg9KRobn2FA7dREwy8KmU2GhlKV1hZ/WVqsPuPUSkaYl/Y=
-X-Received: by 2002:aca:3011:: with SMTP id w17mr19048334oiw.342.1546021230223;
- Fri, 28 Dec 2018 10:20:30 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=OTNffT1eaQTcLAFvhNIeVKJ7Ks4jO89gQtFc2V6+jxc=;
+        b=PT/LztCxUDkau14sGAVEIa2vRiLj2YpURRo0zgZMl0N3OLHIlcPBZgcFmlj+O3Y2Hq
+         /OJ6WxA//uedZj2lXs4cXK6Se+ok0QiySaJuL7oTxKOsUDB0YKacbpLepKfbgebDPx5J
+         od2+IEwasZDmMbABpPP4ESDJ8weKEs/c7O8uf/00LkgbqVpvNoEvWaTGCHOxityoXkfF
+         hmo/vVVJX6cRxqjThOeJwmTPSo3FKfaTNwDTzRwzjeSy15TrWyoFCaHGFL8H96G3YmFj
+         ndmCnelkxVwsJSDa7tRpkTSEqYYBOJ72WIwASHq3thKkzsw6we8dq7QbNKM1s0pamHyI
+         MEwA==
+X-Gm-Message-State: AJcUukc7OYLplDGrrjqSGudHOA0rBvJzb/oPCuO/Aky0sk9O6BLqCbQd
+        pcmAWIW3BPXmLMP9/UmwF42BwM+urnuqC6JxF6c=
+X-Google-Smtp-Source: ALg8bN6RJdjZWgaVAH30ZoxdUdjJEqpmXXm26j1aZhLKG+0DgYFGZcwn6g8o/jfNjBK84H50M7BIgQMeXCPIJZOkxnM=
+X-Received: by 2002:a0c:d29b:: with SMTP id q27mr27178531qvh.62.1546021722446;
+ Fri, 28 Dec 2018 10:28:42 -0800 (PST)
 MIME-Version: 1.0
-References: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
-In-Reply-To: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 28 Dec 2018 16:20:37 -0200
-Message-ID: <CAOMZO5CuPr_BxMP_wjPuZNTCinHQ-cb08wPHr=Od_Qw_aafPTw@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: imx: Add Y Soft IOTA Draco, Hydra and Ursa boards
-To:     =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
+References: <20181226131446.330864849@intel.com> <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com> <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com> <20181228121515.GS16738@dhcp22.suse.cz>
+ <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+In-Reply-To: <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 28 Dec 2018 10:28:31 -0800
+Message-ID: <CAHbLzkq91SY2s-N8sKReaQeC4z16DHsygFad4sqSzuXsZFzwQg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness accounting/migration
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Fan Du <fan.du@intel.com>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vok=C3=A1=C4=8D,
+On Fri, Dec 28, 2018 at 5:31 AM Fengguang Wu <fengguang.wu@intel.com> wrote:
+>
+> >> > I haven't looked at the implementation yet but if you are proposing a
+> >> > special cased zone lists then this is something CDM (Coherent Device
+> >> > Memory) was trying to do two years ago and there was quite some
+> >> > skepticism in the approach.
+> >>
+> >> It looks we are pretty different than CDM. :)
+> >> We creating new NUMA nodes rather than CDM's new ZONE.
+> >> The zonelists modification is just to make PMEM nodes more separated.
+> >
+> >Yes, this is exactly what CDM was after. Have a zone which is not
+> >reachable without explicit request AFAIR. So no, I do not think you are
+> >too different, you just use a different terminology ;)
+>
+> Got it. OK.. The fall back zonelists patch does need more thoughts.
+>
+> In long term POV, Linux should be prepared for multi-level memory.
+> Then there will arise the need to "allocate from this level memory".
+> So it looks good to have separated zonelists for each level of memory.
 
-On Tue, Dec 18, 2018 at 12:42 PM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft=
-.com> wrote:
+I tend to agree with Fengguang. We do have needs for finer grained
+control to the usage of DRAM and PMEM, for example, controlling the
+percentage of DRAM and PMEM for a specific VMA.
 
-> +&fec {
-> +       pinctrl-names =3D "default";
-> +       pinctrl-0 =3D <&pinctrl_enet>;
-> +       phy-mode =3D "rgmii-id";
-> +       phy-reset-gpios =3D <&gpio1 25 GPIO_ACTIVE_HIGH>;
+NUMA policy sounds not good enough for some usecases since it just can
+control what mempolicy is used by what memory range. Our usecase's
+memory access pattern is random in a VMA. So, we can't control the
+percentage by mempolicy. We have to put PMEM into a separate zonelist
+to make sure memory allocation happens on PMEM when certain criteria
+is met as what Fengguang does in this patch series.
 
-Are you sure this is active high?
+Thanks,
+Yang
 
-The FEC driver ignores the polarity of phy-reset-gpios and it assumes
-the GPIO reset as active low.
-
-If it really is active high, then you would need to pass the
-"phy-reset-active-high" property.
-
-> +/ {
-> +       model =3D "Y Soft IOTA Draco i.MX6Solo board";
-> +       compatible =3D "ysoft,imx6dl-yapp4-draco", "fsl,imx6dl";
-> +
-> +       cpus {
-> +               /delete-node/ cpu@1;
-
-Is this really needed? We don't usually do this on imx6solo dts board files=
-.
-
-Only one CPU will be brought up online on imx6solo anyway.
-
-> +       };
-> +
-> +       memory@10000000 {
-
-Need to pass "device_type =3D "memory";"
-
-> +/ {
-> +       model =3D "Y Soft IOTA Hydra i.MX6DualLite board";
-> +       compatible =3D "ysoft,imx6dl-yapp4-hydra", "fsl,imx6dl";
-> +
-> +       memory@10000000 {
-
-Need to pass "device_type =3D "memory";"
-
-> +       memory@10000000 {
-
-Need to pass "device_type =3D "memory";"
+>
+> On the other hand, there will also be page allocations that don't care
+> about the exact memory level. So it looks reasonable to expect
+> different kind of fallback zonelists that can be selected by NUMA policy.
+>
+> Thanks,
+> Fengguang
+>
