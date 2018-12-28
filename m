@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D38C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5EBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835A820675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1CCB20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999534;
-	bh=6A1eIaMLcC+fjnsk7HOlhpSObdQhNzw+DuN/68z5SJg=;
+	s=default; t=1545999550;
+	bh=B0T3mV7ZCrHBYlDiz0cthIGWZktg4hfefeYgNNoeeUk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aqiK7bQX+18TqFtbIuXDGyVnqxdlwxRGELQ+Ab7NFD8+hM12HXZwj2tlw+epp39Yc
-	 +cDTbUY9NNiVBRcbHBxCeWIVgtVx/9KAnU+yGAAlciuK04kzCIi4C2ErHJG7sXUXis
-	 Y6NyoD5n8V97d9ZXtVlsmZGhWPOjKf80Zb0xc6Ys=
+	b=OJe/pd/HCkSKpcz8dG6zOHu4pPUGXw6cbVpe18DDd8vSmeqH1ypoQpLPMg3VduGG0
+	 saestD2riTdGl8XtYHTauDq7FtcUD8n+ANsHc3NyXeHoCGAMX4mDGOO5dc5ZmY60I+
+	 g5csJ60DDAvmBKpxs2zMHX6pF2x/dMT/JsZD8sGU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbeL1MSr (ORCPT
+        id S1732957AbeL1MRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:18:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36892 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733023AbeL1MRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:47 -0500
+        id S1727264AbeL1MR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D103218F0;
-        Fri, 28 Dec 2018 12:17:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28E172146F;
+        Fri, 28 Dec 2018 12:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999467;
-        bh=6A1eIaMLcC+fjnsk7HOlhpSObdQhNzw+DuN/68z5SJg=;
+        s=default; t=1545999448;
+        bh=B0T3mV7ZCrHBYlDiz0cthIGWZktg4hfefeYgNNoeeUk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uGRw/v/Mhxx0dY2PjJXdw4sxLaRgAjHfhMWrYJJGDuSqOs8Bvz3cMeuFrXI781Puv
-         beDohgDShAygWqjGP9GnskE56SaU1GaafeDiyCWif9sVaDOGUtzDoTLnHOPtAp4yjf
-         69CxJy9pgl+YdNP/n++fVzxWbUK6XSHQ9I7bR/f8=
+        b=NWUdqfPBkMpOAq1V7jk/G0F11GFrvKTXFp2sgzEMiZbRhqPOgMZ61Dt480J9ZK78L
+         tmwkVeA9tQiZSNryrHKCleYlzRuPDxumjFWswm00Wek0B1TCX5J+xiqPy88vCoyQZj
+         g8cVLngiaC9r6aXsVGRAtmf+2Np14BYZCuMLzEkw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Delalande <colona@arista.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 21/22] proc/sysctl: dont return ENOMEM on lookup when a table is unregistering
-Date:   Fri, 28 Dec 2018 12:52:58 +0100
-Message-Id: <20181228113127.624192129@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 15/22] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+Date:   Fri, 28 Dec 2018 12:52:52 +0100
+Message-Id: <20181228113127.199849134@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -64,82 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Delalande <colona@arista.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit ea5751ccd665a2fd1b24f9af81f6167f0718c5f6 upstream.
+commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
 
-proc_sys_lookup can fail with ENOMEM instead of ENOENT when the
-corresponding sysctl table is being unregistered. In our case we see
-this upon opening /proc/sys/net/*/conf files while network interfaces
-are being deleted, which confuses our configuration daemon.
+spi_read() and spi_write() require DMA-safe memory. When
+CONFIG_VMAP_STACK is selected, those functions cannot be used
+with buffers on stack.
 
-The problem was successfully reproduced and this fix tested on v4.9.122
-and v4.20-rc6.
+This patch replaces calls to spi_read() and spi_write() by
+spi_write_then_read() which doesn't require DMA-safe buffers.
 
-v2: return ERR_PTRs in all cases when proc_sys_make_inode fails instead
-of mixing them with NULL. Thanks Al Viro for the feedback.
-
-Fixes: ace0c791e6c3 ("proc/sysctl: Don't grab i_lock under sysctl_lock.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Delalande <colona@arista.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/proc_sysctl.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-max7301.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -466,7 +466,7 @@ static struct inode *proc_sys_make_inode
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
  
- 	inode = new_inode(sb);
- 	if (!inode)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	inode->i_ino = get_next_ino();
- 
-@@ -476,8 +476,7 @@ static struct inode *proc_sys_make_inode
- 	if (unlikely(head->unregistering)) {
- 		spin_unlock(&sysctl_lock);
- 		iput(inode);
--		inode = NULL;
--		goto out;
-+		return ERR_PTR(-ENOENT);
- 	}
- 	ei->sysctl = head;
- 	ei->sysctl_entry = table;
-@@ -502,7 +501,6 @@ static struct inode *proc_sys_make_inode
- 	if (root->set_ownership)
- 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
- 
--out:
- 	return inode;
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
  }
  
-@@ -551,10 +549,11 @@ static struct dentry *proc_sys_lookup(st
- 			goto out;
- 	}
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
+ 	struct spi_device *spi = to_spi_device(dev);
  
--	err = ERR_PTR(-ENOMEM);
- 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
--	if (!inode)
-+	if (IS_ERR(inode)) {
-+		err = ERR_CAST(inode);
- 		goto out;
-+	}
- 
- 	err = NULL;
- 	d_set_d_op(dentry, &proc_sys_dentry_operations);
-@@ -687,7 +686,7 @@ static bool proc_sys_fill_cache(struct f
- 			return false;
- 		if (d_in_lookup(child)) {
- 			inode = proc_sys_make_inode(dir->d_sb, head, table);
--			if (!inode) {
-+			if (IS_ERR(inode)) {
- 				d_lookup_done(child);
- 				dput(child);
- 				return false;
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
 
 
