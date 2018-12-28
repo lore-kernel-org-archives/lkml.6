@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CE7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEBEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485F42148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE55F2184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999455;
-	bh=wUwE9SvCBqBcyktQSNZb3gccuREclHr+BCDeLBIVrOE=;
+	s=default; t=1545999457;
+	bh=5k4mGRgCxQ6flAlwauhceCBwzXnErLaV1PfqyW7kyj8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wYgdoPGYxyJZC5JlHYS1u2QPTVWADckON1XvuuXrOL43OA7+cUb3avCfdI3Haw+OJ
-	 rpF0laTi7Fvanm/II4f3HRFxrlcDPi24bEfkMbeIG6Ef12ycHz686Cv8tAZlbAzOmP
-	 OxdwXRcieBuKNRbYH5f73czoqdDqPZalvzlyMNF8=
+	b=KpUhOjUnk0jDvzdH2/hkmv2yilwrjcwYtbq2TFWaAqmjhjM33w3fhaIR3DeMIvvCX
+	 4SGoK+XOGjCpA0hzyRlfe5vXeKVELH61ajaKlgIZttTcvSUszDUSD8sLJZ8Jmv2rjA
+	 9UXpWFoX4MlE07CYLTgFLWggxEBRaDk4ZRaipDcA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbeL1MRe (ORCPT
+        id S1732982AbeL1MRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:17:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:17:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbeL1MRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:32 -0500
+        id S1732965AbeL1MRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD57920675;
-        Fri, 28 Dec 2018 12:17:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89BC420675;
+        Fri, 28 Dec 2018 12:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999451;
-        bh=wUwE9SvCBqBcyktQSNZb3gccuREclHr+BCDeLBIVrOE=;
+        s=default; t=1545999454;
+        bh=5k4mGRgCxQ6flAlwauhceCBwzXnErLaV1PfqyW7kyj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DcGBUnbtcifGJsOPu8QDZUtaHuarmUAcKrbO368fchPBMJMHKZELCF+fkw6ebSErL
-         M2BGm9uT62PgXYVR3932mF603o8QJ6DZwLHlpSqVSB90APiH3jjxn8dMr1xYCyV4OO
-         xm4kULOx8VO9dvd6m8/8KgOlESq/Ac1/b/xPDS3Y=
+        b=m67JLoYYgkaYARQpu1uOw9DfhLCeLsDfPmNMyYIkSnFTMjOSlUo6Rll3MJL/stkyw
+         F3+Blp69sRpArYM3SEvYYETpVmCAYGMsj1q+jJ67cXte77lHO41lCslT5V6T5d7+tb
+         5oMbp281lDiNzivC6A92ctGPQx4VIBnbo9BqWQFI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/22] Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
-Date:   Fri, 28 Dec 2018 12:52:53 +0100
-Message-Id: <20181228113127.284712177@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tyler Hicks <tyhicks@canonical.com>, security@kernel.org
+Subject: [PATCH 4.9 17/22] x86/mtrr: Dont copy uninitialized gentry fields back to userspace
+Date:   Fri, 28 Dec 2018 12:52:54 +0100
+Message-Id: <20181228113127.345382776@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -68,119 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit fc96df16a1ce80cbb3c316ab7d4dc8cd5c2852ce upstream.
+commit 32043fa065b51e0b1433e48d118821c71b5cd65d upstream.
 
-Before 98f4c651762c, we returned zeros for unopened channels.
-With 98f4c651762c, we started to return random on-stack values.
+Currently the copy_to_user of data in the gentry struct is copying
+uninitiaized data in field _pad from the stack to userspace.
 
-We'd better return -EINVAL instead.
+Fix this by explicitly memset'ing gentry to zero, this also will zero any
+compiler added padding fields that may be in struct (currently there are
+none).
 
-Fixes: 98f4c651762c ("hv: move ringbuffer bus attributes to dev_groups")
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Detected by CoverityScan, CID#200783 ("Uninitialized scalar variable")
+
+Fixes: b263b31e8ad6 ("x86, mtrr: Use explicit sizing and padding for the 64-bit ioctls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Cc: security@kernel.org
+Link: https://lkml.kernel.org/r/20181218172956.1440-1-colin.king@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/vmbus_drv.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/kernel/cpu/mtrr/if.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -317,6 +317,8 @@ static ssize_t out_intr_mask_show(struct
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -172,6 +172,8 @@ mtrr_ioctl(struct file *file, unsigned i
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
  
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
- }
-@@ -330,6 +332,8 @@ static ssize_t out_read_index_show(struc
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_read_index);
- }
-@@ -344,6 +348,8 @@ static ssize_t out_write_index_show(stru
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_write_index);
- }
-@@ -358,6 +364,8 @@ static ssize_t out_read_bytes_avail_show
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
- }
-@@ -372,6 +380,8 @@ static ssize_t out_write_bytes_avail_sho
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
- }
-@@ -385,6 +395,8 @@ static ssize_t in_intr_mask_show(struct
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
- }
-@@ -398,6 +410,8 @@ static ssize_t in_read_index_show(struct
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_read_index);
- }
-@@ -411,6 +425,8 @@ static ssize_t in_write_index_show(struc
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_write_index);
- }
-@@ -425,6 +441,8 @@ static ssize_t in_read_bytes_avail_show(
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
- }
-@@ -439,6 +457,8 @@ static ssize_t in_write_bytes_avail_show
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
- }
++	memset(&gentry, 0, sizeof(gentry));
++
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
 
 
