@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F87C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA5AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165272070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F76E2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999792;
-	bh=D0PAI3AM5KAq8V3mPMetl6GyKgT9yCR+W1c+8Qu4vyo=;
+	s=default; t=1545999801;
+	bh=DeGWKLMnwDZHJOGB2FtI7wd65UOGDYEYn3BUjUPxNlM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y/wZqONOM/ssp7NaTmtyrdC0rHS1XBCtsMtkoyPsXlC2uHeLHQKcHWQQ/AWyHVvPQ
-	 8o25s6OKslWyRI5HgpfQxfDVLFgLo2jjei7obHlkQeno5ZFrkLLej8LG89/a3SXZn5
-	 379cj3QwqaObw93PFp8YPjZHllgRZqB+mv5ZMoRY=
+	b=xiX3bCU9LmCxm3hsLesoGEWaFg2beMq0mYtG6s+D2+p0Mue86V26lpsACna0LbEfY
+	 IUtBGoc5a7Z6gwAqSfc4yS+g74sd5LAN6h6W6gUFMVg1hr3SdloVpt+6pdrhd29quj
+	 yIporGF71ZT2tuflzEMvKEttyV7WEnqxW6qdK1b4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbeL1MO5 (ORCPT
+        id S1730041AbeL1MXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:14:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33832 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731315AbeL1MOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:14:53 -0500
+        id S1731118AbeL1MOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:14:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B36672148E;
-        Fri, 28 Dec 2018 12:14:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BFFB2184B;
+        Fri, 28 Dec 2018 12:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999292;
-        bh=D0PAI3AM5KAq8V3mPMetl6GyKgT9yCR+W1c+8Qu4vyo=;
+        s=default; t=1545999286;
+        bh=DeGWKLMnwDZHJOGB2FtI7wd65UOGDYEYn3BUjUPxNlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GVr/juI/aTT/OPyP0PWdZQb32MZVMfpqbjo3k7Bz5X3zSU0J39Aj5cv85K5iJnzYn
-         TzOcptJE/yW0FyIoCqm3ZQwwvU7Ug15WvgJj20OG9b0Q5BYBV0m+YvSkr3fu94geCM
-         3DWH8cciY8SaAtNM4tPPAXphUFVpzwMbSYCIajZs=
+        b=KVQNpyNbLzJ9NINpAILygeiHNC5XlH/EErJqYSr51cayD4Vkg2LIFP1LZEXoki3ct
+         XbPn9Jesq1DcRzxj1WboEG6P1y2R3gOBdPVBN/V8jedse/a0THVB0ocEsmCy2DFMjw
+         kjiMWeG+WDkmoAab0QvdPrIhMxUVr9NQnrjXfKPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ihab Zhaika <ihab.zhaika@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 4.19 38/46] iwlwifi: add new cards for 9560, 9462, 9461 and killer series
-Date:   Fri, 28 Dec 2018 12:52:32 +0100
-Message-Id: <20181228113127.111816281@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 36/46] iwlwifi: mvm: dont send GEO_TX_POWER_LIMIT to old firmwares
+Date:   Fri, 28 Dec 2018 12:52:30 +0100
+Message-Id: <20181228113126.967185612@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -64,79 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ihab Zhaika <ihab.zhaika@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit f108703cb5f199d0fc98517ac29a997c4c646c94 upstream.
+commit eca1e56ceedd9cc185eb18baf307d3ff2e4af376 upstream.
 
-add few PCI ID'S for 9560, 9462, 9461 and killer series.
+Old firmware versions don't support this command. Sending it
+to any firmware before -41.ucode will crash the firmware.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ihab Zhaika <ihab.zhaika@intel.com>
+This fixes https://bugzilla.kernel.org/show_bug.cgi?id=201975
+
+Fixes: 66e839030fd6 ("iwlwifi: fix wrong WGDS_WIFI_DATA_SIZE")
+CC: <stable@vger.kernel.org> #4.19+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c |   50 ++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -518,6 +518,56 @@ static const struct pci_device_id iwl_hw
- 	{IWL_PCI_DEVICE(0x24FD, 0x9074, iwl8265_2ac_cfg)},
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -868,6 +868,15 @@ static int iwl_mvm_sar_geo_init(struct i
+ 	int ret, i, j;
+ 	u16 cmd_wide_id =  WIDE_ID(PHY_OPS_GROUP, GEO_TX_POWER_LIMIT);
  
- /* 9000 Series */
-+	{IWL_PCI_DEVICE(0x02F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x02F0, 0x42A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0038, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x003C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0060, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0064, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x00A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x00A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0230, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0238, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x023C, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0260, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x0264, iwl9461_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x02A0, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x02A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x1551, iwl9560_killer_s_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x1552, iwl9560_killer_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x2030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x2034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4030, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4034, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x40A4, iwl9462_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x4234, iwl9560_2ac_cfg_soc)},
-+	{IWL_PCI_DEVICE(0x06F0, 0x42A4, iwl9462_2ac_cfg_soc)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0010, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0014, iwl9260_2ac_cfg)},
- 	{IWL_PCI_DEVICE(0x2526, 0x0018, iwl9260_2ac_cfg)},
++	/*
++	 * This command is not supported on earlier firmware versions.
++	 * Unfortunately, we don't have a TLV API flag to rely on, so
++	 * rely on the major version which is in the first byte of
++	 * ucode_ver.
++	 */
++	if (IWL_UCODE_SERIAL(mvm->fw->ucode_ver) < 41)
++		return 0;
++
+ 	ret = iwl_mvm_sar_get_wgds_table(mvm);
+ 	if (ret < 0) {
+ 		IWL_DEBUG_RADIO(mvm,
 
 
