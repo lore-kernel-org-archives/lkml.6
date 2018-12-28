@@ -2,68 +2,84 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796B7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 760CB218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 220C9217F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbeL1XdQ (ORCPT
+        id S1727682AbeL1XeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 18:33:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 18:34:22 -0500
+Received: from muru.com ([72.249.23.125]:59714 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbeL1XdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 18:33:16 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16BC9217F9;
-        Fri, 28 Dec 2018 23:33:15 +0000 (UTC)
-Date:   Fri, 28 Dec 2018 18:33:13 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     mingo@redhat.com, tom.zanussi@linux.intel.com, mhiramat@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ring-buffer: Remove unused function
- ring_buffer_page_len()
-Message-ID: <20181228183313.674ef6de@gandalf.local.home>
-In-Reply-To: <20181228133847.106177-1-mbenes@suse.cz>
-References: <20181228133847.106177-1-mbenes@suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726113AbeL1XeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 18:34:21 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 237E280BF;
+        Fri, 28 Dec 2018 23:34:25 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 15:34:17 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20181228233417.GD6707@atomide.com>
+References: <20181217004450.GW6707@atomide.com>
+ <20181227101647.GA32260@amd>
+ <20181228193105.GW6707@atomide.com>
+ <20181228204614.GA9431@amd>
+ <20181228222805.GC6707@atomide.com>
+ <20181228232536.GA7355@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228232536.GA7355@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Dec 2018 14:38:47 +0100
-Miroslav Benes <mbenes@suse.cz> wrote:
+* Pavel Machek <pavel@ucw.cz> [181228 23:25]:
+> So this would be "text mode": AT+CMGF=1. And I'd actually expect
+> auto-ack to be the default on ttyUSB4, but in any case this is the
+> command that controls it is: AT+CNMI=1,2,2,1,0.
 
-> Commit 6b7e633fe9c2 ("tracing: Remove extra zeroing out of the ring
-> buffer page") removed the only caller of ring_buffer_page_len(). The
-> function is now unused and may be removed.
+OK thanks. These are not available for /dev/motmdm* files AFAIK.
+
+> So... 57h would be very nice, and even 25h is cool. IIRC original
+> motorola firmware does something like 100hours, and cyanogenmod is
+> closer to 24h...
+
+Well I got things down to about 55mW during idle but that still needs
+more work. So that would be in theory idle battery life of:
+
+(1735mWh * 3.8V) / 55mW = 119.87h (4.99d)
+
+> Note that there's something in the sysfs that allows "precise"
+> measurements. Aha, it is "charge_counter" on droid4.
 > 
-> Signed-off-by: Miroslav Benes <mbenes@suse.cz>
-> ---
-> I am sorry if you received the patch more than once (hopefully not). For some
-> strange reasons git send-email segfaulted, I tried to send from a different
-> machine and made a mistake. Holiday mode *sigh*.
-> 
->
+> (I even have some software to do the monitoring and display the
+> graphs. unicsy_demo/monitor/batmond).
 
-No worries. I'm also in holiday mode. I marked the patch in my INBOX
-and hopefully when I'm back to work it's not buried and lost for months.
+Oh nice, I'll give that a try.
 
-Even if it is, I periodically purge my INBOX where I find missing
-patches like these ;-)
+Regards,
 
-So if it's not applied in a couple of weeks, just ping me about it.
+Tony
 
--- Steve
