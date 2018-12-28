@@ -2,57 +2,51 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AB8C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4154DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0760A2087F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09BBD2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545997989;
-	bh=7xLWbpTNoINnohjSUok0jUwBkUcYyCNmQMx23Lvj1d0=;
+	s=default; t=1545997995;
+	bh=bssLn8UrTvvzWrN7aVKK3Nniygjm1ILHg6E9lyzHfUo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=klYCKrsbPtb7AxUgXDvc69k9GDDjIuQg22iXlEGCRTOE8+00b22AeQIF/j+CmE5WW
-	 5Zni/1+svDM4VLV2dJeuC7pJE6zm9mfQcPqny5G84AiYUIXZ2jV+xiYNVo0JS3k07Z
-	 DF3q1QhkpP2XuthKg1R4kW5qkQiM0Zu8Fx5I0/Fc=
+	b=Io0VF3aA0K4RpxR5zqM1jaqzIx/TKT1OuoxdiomfzYNXq1kl1kQWM7afC/ONSU7hE
+	 1rOAti0YhBjJrSJxTMdjXl4OFmoiOBofxg19Q7Dgx0Eyp6VGEeVIw+CuHCheicZHr9
+	 ew2b/KBWjF0og7JTXg3TbCn4FZGy1nHivVdqeI3E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeL1LxI (ORCPT
+        id S1729334AbeL1LxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 06:53:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52884 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 06:53:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbeL1LxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 06:53:08 -0500
+        id S1726149AbeL1LxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 06:53:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 968F520879;
-        Fri, 28 Dec 2018 11:53:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 473862087F;
+        Fri, 28 Dec 2018 11:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545997987;
-        bh=7xLWbpTNoINnohjSUok0jUwBkUcYyCNmQMx23Lvj1d0=;
+        s=default; t=1545997989;
+        bh=bssLn8UrTvvzWrN7aVKK3Nniygjm1ILHg6E9lyzHfUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KgVUSNEB2VNpXKybolYAxh5eQTlomfhWdsMfoE/Ng8FYLXnKsMqKRqoi7B2w6FFZh
-         PaTY+7lNVMCfor1t9dUV/EUnjYga3dgMPyf9dsQF0qD7Y0pVuP1bAq7ypqcxBsAkgX
-         TQwwpjW6oFVaOONle9UhvcNlkSmrLj2z0BkFlmfc=
+        b=C7nuAL6Hx1rM8k5dHzEdkb7RVrJ6DV4b60avsj+O1QSx5Af8FRfEjp/FNCZqgfUn+
+         eKzeeZAhpfS/vCOUyvJvrVXR3F56Cn+KBTfi4GyqXiFBrRd7SghZnYzH+7ZWGGZ6Ic
+         tUSssbPuh24Z/m6/rqMIvn97P52uC8gW0vUTQllw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 01/46] iomap: Revert "fs/iomap.c: get/put the page in iomap_page_create/release()"
-Date:   Fri, 28 Dec 2018 12:51:55 +0100
-Message-Id: <20181228113125.027425649@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 10/46] USB: serial: option: add Telit LN940 series
+Date:   Fri, 28 Dec 2018 12:52:04 +0100
+Message-Id: <20181228113125.398241330@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -71,113 +65,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a837eca2412051628c0529768c9bc4f3580b040e ]
+From: Jörgen Storvist <jorgen.storvist@gmail.com>
 
-This reverts commit 61c6de667263184125d5ca75e894fcad632b0dd3.
+commit 28a86092b1753b802ef7e3de8a4c4a69a9c1bb03 upstream.
 
-The reverted commit added page reference counting to iomap page
-structures that are used to track block size < page size state. This
-was supposed to align the code with page migration page accounting
-assumptions, but what it has done instead is break XFS filesystems.
-Every fstests run I've done on sub-page block size XFS filesystems
-has since picking up this commit 2 days ago has failed with bad page
-state errors such as:
+Added USB serial option driver support for Telit LN940 series cellular
+modules. Covering both QMI and MBIM modes.
 
-# ./run_check.sh "-m rmapbt=1,reflink=1 -i sparse=1 -b size=1k" "generic/038"
-....
-SECTION       -- xfs
-FSTYP         -- xfs (debug)
-PLATFORM      -- Linux/x86_64 test1 4.20.0-rc6-dgc+
-MKFS_OPTIONS  -- -f -m rmapbt=1,reflink=1 -i sparse=1 -b size=1k /dev/sdc
-MOUNT_OPTIONS -- /dev/sdc /mnt/scratch
+usb-devices output (0x1900):
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 21 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=1bc7 ProdID=1900 Rev=03.10
+S:  Manufacturer=Telit
+S:  Product=Telit LN940 Mobile Broadband
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
 
-generic/038 454s ...
- run fstests generic/038 at 2018-12-20 18:43:05
- XFS (sdc): Unmounting Filesystem
- XFS (sdc): Mounting V5 Filesystem
- XFS (sdc): Ending clean mount
- BUG: Bad page state in process kswapd0  pfn:3a7fa
- page:ffffea0000ccbeb0 count:0 mapcount:0 mapping:ffff88800d9b6360 index:0x1
- flags: 0xfffffc0000000()
- raw: 000fffffc0000000 dead000000000100 dead000000000200 ffff88800d9b6360
- raw: 0000000000000001 0000000000000000 00000000ffffffff
- page dumped because: non-NULL mapping
- CPU: 0 PID: 676 Comm: kswapd0 Not tainted 4.20.0-rc6-dgc+ #915
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
- Call Trace:
-  dump_stack+0x67/0x90
-  bad_page.cold.116+0x8a/0xbd
-  free_pcppages_bulk+0x4bf/0x6a0
-  free_unref_page_list+0x10f/0x1f0
-  shrink_page_list+0x49d/0xf50
-  shrink_inactive_list+0x19d/0x3b0
-  shrink_node_memcg.constprop.77+0x398/0x690
-  ? shrink_slab.constprop.81+0x278/0x3f0
-  shrink_node+0x7a/0x2f0
-  kswapd+0x34b/0x6d0
-  ? node_reclaim+0x240/0x240
-  kthread+0x11f/0x140
-  ? __kthread_bind_mask+0x60/0x60
-  ret_from_fork+0x24/0x30
- Disabling lock debugging due to kernel taint
-....
+usb-devices output (0x1901):
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 20 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=1bc7 ProdID=1901 Rev=03.10
+S:  Manufacturer=Telit
+S:  Product=Telit LN940 Mobile Broadband
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
 
-The failures are from anyway that frees pages and empties the
-per-cpu page magazines, so it's not a predictable failure or an easy
-to debug failure.
+Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-generic/038 is a reliable reproducer of this problem - it has a 9 in
-10 failure rate on one of my test machines. Failure on other
-machines have been at random points in fstests runs but every run
-has ended up tripping this problem. Hence generic/038 was used to
-bisect the failure because it was the most reliable failure.
-
-It is too close to the 4.20 release (not to mention holidays) to
-try to diagnose, fix and test the underlying cause of the problem,
-so reverting the commit is the only option we have right now. The
-revert has been tested against a current tot 4.20-rc7+ kernel across
-multiple machines running sub-page block size XFs filesystems and
-none of the bad page state failures have been seen.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Cc: Piotr Jaroszynski <pjaroszynski@nvidia.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Brian Foster <bfoster@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/iomap.c b/fs/iomap.c
-index 37da7a61a6c5..ec15cf2ec696 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -117,12 +117,6 @@ iomap_page_create(struct inode *inode, struct page *page)
- 	atomic_set(&iop->read_count, 0);
- 	atomic_set(&iop->write_count, 0);
- 	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
--
--	/*
--	 * migrate_page_move_mapping() assumes that pages with private data have
--	 * their count elevated by 1.
--	 */
--	get_page(page);
- 	set_page_private(page, (unsigned long)iop);
- 	SetPagePrivate(page);
- 	return iop;
-@@ -139,7 +133,6 @@ iomap_page_release(struct page *page)
- 	WARN_ON_ONCE(atomic_read(&iop->write_count));
- 	ClearPagePrivate(page);
- 	set_page_private(page, 0);
--	put_page(page);
- 	kfree(iop);
- }
- 
--- 
-2.19.1
-
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1164,6 +1164,10 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1213, 0xff) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1214),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
++	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1900),				/* Telit LN940 (QMI) */
++	  .driver_info = NCTRL(0) | RSVD(1) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1901, 0xff),	/* Telit LN940 (MBIM) */
++	  .driver_info = NCTRL(0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, ZTE_PRODUCT_MF622, 0xff, 0xff, 0xff) }, /* ZTE WCDMA products */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0002, 0xff, 0xff, 0xff),
+ 	  .driver_info = RSVD(1) },
 
 
