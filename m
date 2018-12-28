@@ -2,168 +2,166 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B73C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4BFC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE7F20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F243420873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:44:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="D/ik45k1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731793AbeL1Qiv convert rfc822-to-8bit (ORCPT
+        id S2387409AbeL1Qo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 11:38:51 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:22315 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727551AbeL1Qiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 11:38:51 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43RC8739THz9v118;
-        Fri, 28 Dec 2018 17:38:47 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id tJgowDavkt9D; Fri, 28 Dec 2018 17:38:47 +0100 (CET)
-Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43RC872bZsz9v117;
-        Fri, 28 Dec 2018 17:38:47 +0100 (CET)
-Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
-        id B14EB614; Fri, 28 Dec 2018 17:38:46 +0100 (CET)
-Received: from 37.165.157.78 ([37.165.157.78]) by messagerie.si.c-s.fr
- (Horde Framework) with HTTP; Fri, 28 Dec 2018 17:38:46 +0100
-Date:   Fri, 28 Dec 2018 17:38:46 +0100
-Message-ID: <20181228173846.Horde.z_zDEJN0rVd8tkt3HjYzmg2@messagerie.si.c-s.fr>
-From:   LEROY Christophe <christophe.leroy@c-s.fr>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
-References: <cover.1545784679.git.fthain@telegraphics.com.au>
- <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>
-In-Reply-To: <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+        Fri, 28 Dec 2018 11:44:57 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:54234 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeL1Qo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 11:44:56 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4444D24E10BE;
+        Fri, 28 Dec 2018 08:44:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1546015496; bh=Tog/g5/fknCUgJEdC2kZb5YmtmjeT94ifEw7Fx+8MpM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D/ik45k1QfGL39OpV1TqKHrzRXCDqiZ92MPBxW1xtZGULZMxy9mMZI4br8CNoYtvs
+         4ETsbQLdYm8XNeJOT0u7xM5vG/JFE2l71vQ+hy2jRLp/mZjlMoUPKb/kciHyNuYN1D
+         2kYslbb41ylOKXznhWfIIikLY7Z01PdqMVnC0uD3B9uWk/BGYBAXrCW4m9Sp93Wrk2
+         il2oTvadb5V8j8doP1Y4hHBZvvukTpS3Dth6kTept4CvXeWvfvMSn6s3y44RJEzrX5
+         Qyp7HYVuSJh/k7DgYP8DlaAUmJcgDmT5JAfOvrq/hDP+5BYsXlRrGKHLth974L95e/
+         ilxZ2XBjbHJmQ==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B520639B1;
+        Fri, 28 Dec 2018 08:44:53 -0800 (PST)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] ARC: show detaled ActionPoint configuration in mumbojumbo
+Date:   Fri, 28 Dec 2018 19:44:44 +0300
+Message-Id: <20181228164444.11241-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Finn Thain <fthain@telegraphics.com.au> a écrit :
+Add information about ActionPointis number and supported set
+of targets (minimum / full).
 
-> On powerpc, setting CONFIG_NVRAM=n builds a kernel with no NVRAM support.
-> Setting CONFIG_NVRAM=m enables the /dev/nvram misc device module without
-> enabling NVRAM support in drivers. Setting CONFIG_NVRAM=y enables the
-> misc device (built-in) and also enables NVRAM support in drivers.
->
-> m68k shares the valkyriefb driver with powerpc, and since that driver uses
-> NVRAM, it is affected by CONFIG_ATARI_SCSI, because of the use of
-> "select NVRAM".
->
-> Adopt the powerpc convention on m68k to avoid surprises.
->
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> Tested-by: Christian T. Steigies <cts@debian.org>
-> ---
-> This patch temporarily disables CONFIG_NVRAM on Atari, to prevent build
-> failures when bisecting the rest of this patch series. It gets enabled
-> again with the introduction of CONFIG_HAVE_ARCH_NVRAM_OPS, once the
-> nvram_* global functions have been moved to an ops struct.
-> ---
->  drivers/char/Kconfig      | 5 +----
->  drivers/scsi/Kconfig      | 6 +++---
->  drivers/scsi/atari_scsi.c | 7 ++++---
->  3 files changed, 8 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> index 9d03b2ff5df6..5b54595dfe30 100644
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -236,7 +236,7 @@ source "drivers/char/hw_random/Kconfig"
->
->  config NVRAM
->  	tristate "/dev/nvram support"
-> -	depends on ATARI || X86 || GENERIC_NVRAM
-> +	depends on X86 || GENERIC_NVRAM
->  	---help---
->  	  If you say Y here and create a character special file /dev/nvram
->  	  with major number 10 and minor number 144 using mknod ("man mknod"),
-> @@ -254,9 +254,6 @@ config NVRAM
->  	  should NEVER idly tamper with it. See Ralf Brown's interrupt list
->  	  for a guide to the use of CMOS bytes by your BIOS.
->
-> -	  On Atari machines, /dev/nvram is always configured and does not need
-> -	  to be selected.
-> -
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called nvram.
->
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 640cd1b31a18..924eb69e7fc4 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -1381,14 +1381,14 @@ config ATARI_SCSI
->  	tristate "Atari native SCSI support"
->  	depends on ATARI && SCSI
->  	select SCSI_SPI_ATTRS
-> -	select NVRAM
->  	---help---
->  	  If you have an Atari with built-in NCR5380 SCSI controller (TT,
->  	  Falcon, ...) say Y to get it supported. Of course also, if you have
->  	  a compatible SCSI controller (e.g. for Medusa).
->
-> -	  To compile this driver as a module, choose M here: the
-> -	  module will be called atari_scsi.
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called atari_scsi. If you also enable NVRAM support, the SCSI
-> +	  host's ID is taken from the setting in TT RTC NVRAM.
->
->  	  This driver supports both styles of NCR integration into the
->  	  system: the TT style (separate DMA), and the Falcon style (via
-> diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
-> index 89f5154c40b6..99e5729d910d 100644
-> --- a/drivers/scsi/atari_scsi.c
-> +++ b/drivers/scsi/atari_scsi.c
-> @@ -755,9 +755,10 @@ static int __init atari_scsi_probe(struct  
-> platform_device *pdev)
->  	if (ATARIHW_PRESENT(TT_SCSI) && setup_sg_tablesize >= 0)
->  		atari_scsi_template.sg_tablesize = setup_sg_tablesize;
->
-> -	if (setup_hostid >= 0) {
-> +	if (setup_hostid >= 0)
->  		atari_scsi_template.this_id = setup_hostid & 7;
-> -	} else {
-> +#ifdef CONFIG_NVRAM
-> +	else
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/include/asm/arcregs.h |  8 +++++++
+ arch/arc/kernel/setup.c        | 53 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 56 insertions(+), 5 deletions(-)
 
-Such ifdefs should be avoided in C files.
-It would be better to use
-
-} else if (IS_ENABLED(CONFIG_NVRAM)) {
-
->  		/* Test if a host id is set in the NVRam */
->  		if (ATARIHW_PRESENT(TT_CLK) && nvram_check_checksum()) {
->  			unsigned char b = nvram_read_byte(16);
-> @@ -768,7 +769,7 @@ static int __init atari_scsi_probe(struct  
-> platform_device *pdev)
->  			if (b & 0x80)
->  				atari_scsi_template.this_id = b & 7;
->  		}
-> -	}
-> +#endif
->
->  	/* If running on a Falcon and if there's TT-Ram (i.e., more than one
->  	 * memory block, since there's always ST-Ram in a Falcon), then
-> --
-> 2.19.2
-
+diff --git a/arch/arc/include/asm/arcregs.h b/arch/arc/include/asm/arcregs.h
+index 49bfbd879caa..aa673e27add5 100644
+--- a/arch/arc/include/asm/arcregs.h
++++ b/arch/arc/include/asm/arcregs.h
+@@ -216,6 +216,14 @@ struct bcr_fp_arcv2 {
+ #endif
+ };
+ 
++struct bcr_actionpoint {
++#ifdef CONFIG_CPU_BIG_ENDIAN
++	unsigned int pad:20, type:4, ver:8;
++#else
++	unsigned int ver:8, type:4, pad:20;
++#endif
++};
++
+ #include <soc/arc/timers.h>
+ 
+ struct bcr_bpu_arcompact {
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index b2cae79a25d7..c8d67f9cd40d 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -115,6 +115,47 @@ static void read_decode_ccm_bcr(struct cpuinfo_arc *cpu)
+ 	}
+ }
+ 
++static bool actionpoints_exists(void)
++{
++	struct bcr_actionpoint bcr;
++
++	READ_BCR(ARC_REG_AP_BCR, bcr);
++	return !!bcr.ver;
++}
++
++static const char *actionpoints_configuration(void)
++{
++	struct bcr_actionpoint bcr;
++
++	READ_BCR(ARC_REG_AP_BCR, bcr);
++	switch (bcr.type) {
++	case 0x0:
++		return "2, full";
++	case 0x1:
++		return "4, full";
++	case 0x2:
++		return "8, full";
++	case 0x4:
++		return "2, minimum";
++	case 0x5:
++		return "4, minimum";
++	case 0x6:
++		return "8, minimum";
++
++	default:
++		return "unknown";
++	}
++}
++
++static int actionpoints_mumbojumbo(char *buf, int len)
++{
++	if (!actionpoints_exists())
++		return 0;
++
++	return scnprintf(buf, len, "ActionPoint (%s set)",
++			 actionpoints_configuration());
++}
++
+ static void read_arc_build_cfg_regs(void)
+ {
+ 	struct bcr_timer timer;
+@@ -206,8 +247,7 @@ static void read_arc_build_cfg_regs(void)
+ 		}
+ 	}
+ 
+-	READ_BCR(ARC_REG_AP_BCR, bcr);
+-	cpu->extn.ap = bcr.ver ? 1 : 0;
++	cpu->extn.ap = actionpoints_exists();
+ 
+ 	READ_BCR(ARC_REG_SMART_BCR, bcr);
+ 	cpu->extn.smart = bcr.ver ? 1 : 0;
+@@ -332,12 +372,15 @@ static char *arc_extn_mumbojumbo(int cpu_id, char *buf, int len)
+ 			       IS_AVAIL1(cpu->extn.fpu_sp, "SP "),
+ 			       IS_AVAIL1(cpu->extn.fpu_dp, "DP "));
+ 
+-	if (cpu->extn.debug)
+-		n += scnprintf(buf + n, len - n, "DEBUG\t\t: %s%s%s\n",
+-			       IS_AVAIL1(cpu->extn.ap, "ActionPoint "),
++	if (cpu->extn.debug) {
++		n += scnprintf(buf + n, len - n, "DEBUG\t\t: %s%s",
+ 			       IS_AVAIL1(cpu->extn.smart, "smaRT "),
+ 			       IS_AVAIL1(cpu->extn.rtt, "RTT "));
+ 
++		n += actionpoints_mumbojumbo(buf + n, len - n);
++		n += scnprintf(buf + n, len - n, "\n");
++	}
++
+ 	if (cpu->dccm.sz || cpu->iccm.sz)
+ 		n += scnprintf(buf + n, len - n, "Extn [CCM]\t: DCCM @ %x, %d KB / ICCM: @ %x, %d KB\n",
+ 			       cpu->dccm.base_addr, TO_KB(cpu->dccm.sz),
+-- 
+2.14.5
 
