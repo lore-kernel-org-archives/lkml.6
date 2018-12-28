@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7237C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EBDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B4120675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9636D20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999618;
-	bh=i5rdA6ktjYoODdHrVjqcaCDUcPgrm8C5NvQE5Mri91c=;
+	s=default; t=1545999626;
+	bh=ySzjE/IvqsrpXr131umIJ4LSWGT+TraJdwRAXd8oLds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E2MLGs3chTI+/0CK5ntV9jTJDs1Ougo6j/T1YcKxO20VOLnQTP8KWP7iU+5jhy/KB
-	 LZNUnR0ZoHAM3QiWIyPYbpy8SkxFfhYq2eGIksihIGQ2paZPIptoxeBonrOYY+1IZT
-	 c9TyNIqZaRe52Uzhood1ApBbzVBjbkLdyRdm7cdw=
+	b=XpKUHrABL+myEN6x35LziCcNyq2R6VZrNSaFsP0HszwT5gqtYRHCwTu8LKo68N9o5
+	 Xyzvl4s8akHGRYxRyxw7quJXwX3oNiJGXBGO1ObzXN45zao1InX9kEaje+aDzYBLdn
+	 GDhv/GzGSypxJgChhThFcZom4R6LJv3JYy44z1Hw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbeL1MUR (ORCPT
+        id S1731494AbeL1MU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:20:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:20:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732740AbeL1MQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:39 -0500
+        id S1732718AbeL1MQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E1BF2146F;
-        Fri, 28 Dec 2018 12:16:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643762148E;
+        Fri, 28 Dec 2018 12:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999399;
-        bh=i5rdA6ktjYoODdHrVjqcaCDUcPgrm8C5NvQE5Mri91c=;
+        s=default; t=1545999393;
+        bh=ySzjE/IvqsrpXr131umIJ4LSWGT+TraJdwRAXd8oLds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FEe9IZ4eJQ2JskhnPDEfmNGxVwRowQ2nwjNNjhFlC5eKB436NTA6IuAhqHgueU6SA
-         dihNS8bwB7ZOtj1UHmf4jBCxG50pRpBBtz7ZFm7n9l0aeckTyDJ5mmHV35uq0/K5De
-         kkoI624kR6WRXUXn9zT3f4DYcFRH/bgMnVtCdLrc=
+        b=Rdu4FcyjjUs8fs3G37eFwS4FMvq2CgoCWBmuTLMJCOivYpZDgPC5wxd1sgEL6Z+Hn
+         vbrE8FU1mg34I1jxjAoHeHRsl5omQVhwNvBF+fJamVadt/70iGuQEtfYZdVTF5tuGs
+         jR4vNxk+zTCt3yh9+kql5nipk2TEM8yswYzXqNJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell Senior <russell@personaltelco.net>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 33/36] ubifs: Handle re-linking of inodes correctly while recovery
-Date:   Fri, 28 Dec 2018 12:52:49 +0100
-Message-Id: <20181228113128.614177090@linuxfoundation.org>
+Subject: [PATCH 4.14 32/36] spi: imx: mx51-ecspi: Move some initialisation to prepare_message hook.
+Date:   Fri, 28 Dec 2018 12:52:48 +0100
+Message-Id: <20181228113128.578444285@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -68,97 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit e58725d51fa8da9133f3f1c54170aa2e43056b91 upstream.
+The relevant difference between prepare_message and config is that the
+former is run before the CS signal is asserted. So the polarity of the
+CLK line must be configured in prepare_message as an edge generated by
+config might already result in a latch of the MOSI line.
 
-UBIFS's recovery code strictly assumes that a deleted inode will never
-come back, therefore it removes all data which belongs to that inode
-as soon it faces an inode with link count 0 in the replay list.
-Before O_TMPFILE this assumption was perfectly fine. With O_TMPFILE
-it can lead to data loss upon a power-cut.
-
-Consider a journal with entries like:
-0: inode X (nlink = 0) /* O_TMPFILE was created */
-1: data for inode X /* Someone writes to the temp file */
-2: inode X (nlink = 0) /* inode was changed, xattr, chmod, … */
-3: inode X (nlink = 1) /* inode was re-linked via linkat() */
-
-Upon replay of entry #2 UBIFS will drop all data that belongs to inode X,
-this will lead to an empty file after mounting.
-
-As solution for this problem, scan the replay list for a re-link entry
-before dropping data.
-
-Fixes: 474b93704f32 ("ubifs: Implement O_TMPFILE")
-Cc: stable@vger.kernel.org # 4.9-4.18
-Cc: Russell Senior <russell@personaltelco.net>
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Reported-by: Russell Senior <russell@personaltelco.net>
-Reported-by: Rafał Miłecki <zajec5@gmail.com>
-Tested-by: Rafał Miłecki <rafal@milecki.pl>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-[rmilecki: update ubifs_assert() calls to compile with 4.18 and older]
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-(cherry picked from commit e58725d51fa8da9133f3f1c54170aa2e43056b91)
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+[ukleinek: backport to v4.14.x]
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ubifs/replay.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/spi/spi-imx.c | 59 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 23 deletions(-)
 
-diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
-index ae5c02f22f3e..d998fbf7de30 100644
---- a/fs/ubifs/replay.c
-+++ b/fs/ubifs/replay.c
-@@ -209,6 +209,38 @@ static int trun_remove_range(struct ubifs_info *c, struct replay_entry *r)
- 	return ubifs_tnc_remove_range(c, &min_key, &max_key);
- }
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 3fdb0652429b..df18d07d544d 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -443,14 +443,9 @@ static void mx51_ecspi_trigger(struct spi_imx_data *spi_imx)
+ static int mx51_ecspi_prepare_message(struct spi_imx_data *spi_imx,
+ 				      struct spi_message *msg)
+ {
+-	return 0;
+-}
+-
+-static int mx51_ecspi_config(struct spi_device *spi)
+-{
+-	struct spi_imx_data *spi_imx = spi_master_get_devdata(spi->master);
++	struct spi_device *spi = msg->spi;
+ 	u32 ctrl = MX51_ECSPI_CTRL_ENABLE;
+-	u32 clk = spi_imx->speed_hz, delay, reg;
++	u32 testreg;
+ 	u32 cfg = readl(spi_imx->base + MX51_ECSPI_CONFIG);
  
-+/**
-+ * inode_still_linked - check whether inode in question will be re-linked.
-+ * @c: UBIFS file-system description object
-+ * @rino: replay entry to test
-+ *
-+ * O_TMPFILE files can be re-linked, this means link count goes from 0 to 1.
-+ * This case needs special care, otherwise all references to the inode will
-+ * be removed upon the first replay entry of an inode with link count 0
-+ * is found.
-+ */
-+static bool inode_still_linked(struct ubifs_info *c, struct replay_entry *rino)
-+{
-+	struct replay_entry *r;
-+
-+	ubifs_assert(rino->deletion);
-+	ubifs_assert(key_type(c, &rino->key) == UBIFS_INO_KEY);
-+
+ 	/*
+@@ -468,14 +463,21 @@ static int mx51_ecspi_config(struct spi_device *spi)
+ 	if (spi->mode & SPI_READY)
+ 		ctrl |= MX51_ECSPI_CTRL_DRCTL(spi_imx->spi_drctl);
+ 
+-	/* set clock speed */
+-	ctrl |= mx51_ecspi_clkdiv(spi_imx, spi_imx->speed_hz, &clk);
+-	spi_imx->spi_bus_clk = clk;
+-
+ 	/* set chip select to use */
+ 	ctrl |= MX51_ECSPI_CTRL_CS(spi->chip_select);
+ 
+-	ctrl |= (spi_imx->bits_per_word - 1) << MX51_ECSPI_CTRL_BL_OFFSET;
 +	/*
-+	 * Find the most recent entry for the inode behind @rino and check
-+	 * whether it is a deletion.
++	 * The ctrl register must be written first, with the EN bit set other
++	 * registers must not be written to.
 +	 */
-+	list_for_each_entry_reverse(r, &c->replay_list, list) {
-+		ubifs_assert(r->sqnum >= rino->sqnum);
-+		if (key_inum(c, &r->key) == key_inum(c, &rino->key))
-+			return r->deletion == 0;
++	writel(ctrl, spi_imx->base + MX51_ECSPI_CTRL);
 +
-+	}
++	testreg = readl(spi_imx->base + MX51_ECSPI_TESTREG);
++	if (spi->mode & SPI_LOOP)
++		testreg |= MX51_ECSPI_TESTREG_LBC;
++	else
++		testreg &= ~MX51_ECSPI_TESTREG_LBC;
++	writel(testreg, spi_imx->base + MX51_ECSPI_TESTREG);
+ 
+ 	cfg |= MX51_ECSPI_CONFIG_SBBCTRL(spi->chip_select);
+ 
+@@ -491,26 +493,38 @@ static int mx51_ecspi_config(struct spi_device *spi)
+ 		cfg &= ~MX51_ECSPI_CONFIG_SCLKPOL(spi->chip_select);
+ 		cfg &= ~MX51_ECSPI_CONFIG_SCLKCTL(spi->chip_select);
+ 	}
 +
-+	ubifs_assert(0);
-+	return false;
+ 	if (spi->mode & SPI_CS_HIGH)
+ 		cfg |= MX51_ECSPI_CONFIG_SSBPOL(spi->chip_select);
+ 	else
+ 		cfg &= ~MX51_ECSPI_CONFIG_SSBPOL(spi->chip_select);
+ 
++	writel(cfg, spi_imx->base + MX51_ECSPI_CONFIG);
++
++	return 0;
 +}
 +
- /**
-  * apply_replay_entry - apply a replay entry to the TNC.
-  * @c: UBIFS file-system description object
-@@ -239,6 +271,11 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
- 			{
- 				ino_t inum = key_inum(c, &r->key);
- 
-+				if (inode_still_linked(c, r)) {
-+					err = 0;
-+					break;
-+				}
++static int mx51_ecspi_config(struct spi_device *spi)
++{
++	struct spi_imx_data *spi_imx = spi_master_get_devdata(spi->master);
++	u32 ctrl = readl(spi_imx->base + MX51_ECSPI_CTRL);
++	u32 clk = spi_imx->speed_hz, delay;
 +
- 				err = ubifs_tnc_remove_ino(c, inum);
- 				break;
- 			}
++	/* Clear BL field and set the right value */
++	ctrl &= ~MX51_ECSPI_CTRL_BL_MASK;
++	ctrl |= (spi_imx->bits_per_word - 1) << MX51_ECSPI_CTRL_BL_OFFSET;
++
++	/* set clock speed */
++	ctrl &= ~(0xf << MX51_ECSPI_CTRL_POSTDIV_OFFSET |
++		  0xf << MX51_ECSPI_CTRL_PREDIV_OFFSET);
++	ctrl |= mx51_ecspi_clkdiv(spi_imx, spi_imx->speed_hz, &clk);
++	spi_imx->spi_bus_clk = clk;
++
+ 	if (spi_imx->usedma)
+ 		ctrl |= MX51_ECSPI_CTRL_SMC;
+ 
+-	/* CTRL register always go first to bring out controller from reset */
+ 	writel(ctrl, spi_imx->base + MX51_ECSPI_CTRL);
+ 
+-	reg = readl(spi_imx->base + MX51_ECSPI_TESTREG);
+-	if (spi->mode & SPI_LOOP)
+-		reg |= MX51_ECSPI_TESTREG_LBC;
+-	else
+-		reg &= ~MX51_ECSPI_TESTREG_LBC;
+-	writel(reg, spi_imx->base + MX51_ECSPI_TESTREG);
+-
+-	writel(cfg, spi_imx->base + MX51_ECSPI_CONFIG);
+-
+ 	/*
+ 	 * Wait until the changes in the configuration register CONFIGREG
+ 	 * propagate into the hardware. It takes exactly one tick of the
+@@ -532,7 +546,6 @@ static int mx51_ecspi_config(struct spi_device *spi)
+ 	 * Configure the DMA register: setup the watermark
+ 	 * and enable DMA request.
+ 	 */
+-
+ 	writel(MX51_ECSPI_DMA_RX_WML(spi_imx->wml) |
+ 		MX51_ECSPI_DMA_TX_WML(spi_imx->wml) |
+ 		MX51_ECSPI_DMA_RXT_WML(spi_imx->wml) |
 -- 
 2.19.1
 
