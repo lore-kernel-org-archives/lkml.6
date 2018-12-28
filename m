@@ -2,53 +2,54 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE931C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886A5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E83520675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF2920675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999690;
-	bh=TI0jSZ45vf8hdE681Db7g5hCV6mmBCHjs50Y3Dj7ZZs=;
+	s=default; t=1545999698;
+	bh=zAuV90xVVdb/PjeGmfGcj0CX2EH4v4NgJBPu+IfcDBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xGkutG0mvOcbqA69xUe/dc4triAiMy6DAHIogccghoIU0+pl7xKGjnrlZT/gHGFAK
-	 t9BdBpsGMULU7zxNa92AHSKWxrMyezY7z8U4Pmxqkx4CJVpFJPOj/it5q/PSRlx433
-	 VjmhQlrXxHDwrXmMpe15RENvpF6M6d5ZXrN8BXnY=
+	b=Lvx5pBFFGMQf8qH8eXpeBx5r6FR1V8aEIKXi8jcvpNbSg0jB2L6jnymaur5t9nzml
+	 Z9RqMmVG2aLhfTOjRSpEw36XC5fg/DK2l33KwDQUzO8CRnBy/He88VJe3BZe08oI1F
+	 d+vWiwwP4bYqToJpLFm/IYrrNNkWmcj5eidk++ic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731520AbeL1MV3 (ORCPT
+        id S1731589AbeL1MVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:21:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35072 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:21:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732582AbeL1MQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:01 -0500
+        id S1732572AbeL1MP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E14602087F;
-        Fri, 28 Dec 2018 12:15:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AB9B2087F;
+        Fri, 28 Dec 2018 12:15:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999360;
-        bh=TI0jSZ45vf8hdE681Db7g5hCV6mmBCHjs50Y3Dj7ZZs=;
+        s=default; t=1545999357;
+        bh=zAuV90xVVdb/PjeGmfGcj0CX2EH4v4NgJBPu+IfcDBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SvX7i0V+JpVTQeYlYxM3gVFUVgjSot9qooTPHFJImb+fuMVIGkQQoXBDGbMoqrMqn
-         NoyKoNjiBANCinKmvuRk2a+k3xcpi5IBhuLk8odNOiXGc6ObXrJT2ebQ4sHaNus1FD
-         IvIpe8X6z4JnlfrBzgsF2aA+p2nCZ1NQNw/W4UM4=
+        b=a7Z6vSN+A+wBwtqxYquXlDhz43nevJ5r/u23ZOjCGp+ykQeKihuIsnZlG2T1z9E+Q
+         ATI1Yb3MM4XlTAIzhLIKRGQtwErBGnrepI0XWRjzh7oLes9zVr8LRll7dnXUk6zlPi
+         kVJPFf8scTq9fXc1FBPH+ZR7kJHd1qdjtmLJtbdc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/36] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
-Date:   Fri, 28 Dec 2018 12:52:24 +0100
-Message-Id: <20181228113127.077956012@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 07/36] cifs: integer overflow in in SMB2_ioctl()
+Date:   Fri, 28 Dec 2018 12:52:23 +0100
+Message-Id: <20181228113127.007159491@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -67,67 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+commit 2d204ee9d671327915260071c19350d84344e096 upstream
 
-commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
+The "le32_to_cpu(rsp->OutputOffset) + *plen" addition can overflow and
+wrap around to a smaller value which looks like it would lead to an
+information leak.
 
-The function hso_probe reads if_num from the USB device (as an u8) and uses
-it without a length check to index an array, resulting in an OOB memory read
-in hso_probe or hso_get_config_data.
-
-Add a length check for both locations and updated hso_probe to bail on
-error.
-
-This issue has been assigned CVE-2018-19985.
-
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 4a72dafa19ba ("SMB2 FSCTL and IOCTL worker function")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/hso.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ fs/cifs/smb2pdu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2806,6 +2806,12 @@ static int hso_get_config_data(struct us
- 		return -EIO;
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 69309538ffb8..1581e8668b09 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2020,14 +2020,14 @@ SMB2_ioctl(const unsigned int xid, struct cifs_tcon *tcon, u64 persistent_fid,
+ 	/* We check for obvious errors in the output buffer length and offset */
+ 	if (*plen == 0)
+ 		goto ioctl_exit; /* server returned no data */
+-	else if (*plen > 0xFF00) {
++	else if (*plen > rsp_iov.iov_len || *plen > 0xFF00) {
+ 		cifs_dbg(VFS, "srv returned invalid ioctl length: %d\n", *plen);
+ 		*plen = 0;
+ 		rc = -EIO;
+ 		goto ioctl_exit;
  	}
  
-+	/* check if we have a valid interface */
-+	if (if_num > 16) {
-+		kfree(config_data);
-+		return -EINVAL;
-+	}
-+
- 	switch (config_data[if_num]) {
- 	case 0x0:
- 		result = 0;
-@@ -2876,10 +2882,18 @@ static int hso_probe(struct usb_interfac
- 
- 	/* Get the interface/port specification from either driver_info or from
- 	 * the device itself */
--	if (id->driver_info)
-+	if (id->driver_info) {
-+		/* if_num is controlled by the device, driver_info is a 0 terminated
-+		 * array. Make sure, the access is in bounds! */
-+		for (i = 0; i <= if_num; ++i)
-+			if (((u32 *)(id->driver_info))[i] == 0)
-+				goto exit;
- 		port_spec = ((u32 *)(id->driver_info))[if_num];
--	else
-+	} else {
- 		port_spec = hso_get_config_data(interface);
-+		if (port_spec < 0)
-+			goto exit;
-+	}
- 
- 	/* Check if we need to switch to alt interfaces prior to port
- 	 * configuration */
+-	if (get_rfc1002_length(rsp) < le32_to_cpu(rsp->OutputOffset) + *plen) {
++	if (get_rfc1002_length(rsp) - *plen < le32_to_cpu(rsp->OutputOffset)) {
+ 		cifs_dbg(VFS, "Malformed ioctl resp: len %d offset %d\n", *plen,
+ 			le32_to_cpu(rsp->OutputOffset));
+ 		*plen = 0;
+-- 
+2.19.1
+
 
 
