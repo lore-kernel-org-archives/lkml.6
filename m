@@ -2,131 +2,108 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F177C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC79CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD1720869
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D6320869
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="SKf+lX2P"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FICDzroG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FICDzroG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbeL1SvX (ORCPT
+        id S1730707AbeL1SxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 13:51:23 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:34452 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729181AbeL1SvW (ORCPT
+        Fri, 28 Dec 2018 13:53:24 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeL1SxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 13:51:22 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id CD005D50
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 18:51:20 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GUTvsq7P6koi for <linux-kernel@vger.kernel.org>;
-        Fri, 28 Dec 2018 12:51:20 -0600 (CST)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        Fri, 28 Dec 2018 13:53:23 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E7A7A607C6; Fri, 28 Dec 2018 18:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546023202;
+        bh=I0YOiRYPU9cMm9CE7tw0dqP156rQwU3Y4aa5AvbNQzk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FICDzroG6jl9vFD2ZrDWNrfPV5enCpCYkM3fB6gjywlTuaraCBsph3V+MhkfW4gt4
+         esvP8kKuFJc2MHsY3+X/V5+cmHGYnHoqQXmpa2RKcByzXySAzKzuDNT4taJM4d8tJT
+         sl+a1nRhnlvgy3zfXvioeZ3xnS8NOZJmzPOPTix8=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id A15E1D2D
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 12:51:20 -0600 (CST)
-Received: by mail-io1-f69.google.com with SMTP id s3so20206167iob.15
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 10:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BKmAowL9CrGWw001NSvJtihXWXDshTIblf7Rok4lT+E=;
-        b=SKf+lX2PJakHOLfeEZyYiQPqtZ2EyxWauTxKtioXYN45kSKia0u5BxYp70raqIBd00
-         5fpUDNimW2K+3H6SRfNzrXAfafK44Dxj/XzphZ7k6WpvLfIkrLDfbYQp26pvC9FUj0/O
-         5kRo4zy+OAMOidJxavNUGd2DsofPahGD1/hu6ux4eNjbA3xBzlegrpCpe0uwgwuZREzy
-         xuDCdbFwtglUxdD2Q8FhhG06EzUG8dOVGuXU2qkEnTOaywXEdPQI7q1oa/lL3Eb9edfp
-         uAddl4Y9dK+Akidmv27g5VPtdkVceNyr8XHEMy1H0iu+WIpJBx4JEHgLYuEpHZ+5ah+v
-         q8pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BKmAowL9CrGWw001NSvJtihXWXDshTIblf7Rok4lT+E=;
-        b=J5LyIiEgBay1JZ4Txr6d7O1CVN61t/EFs65q18P6zYX3C+ExYJfHR3phz5+nVpkSp2
-         YE4NX4kaPgjMWCQR+6ffFFpQBGlsR+Xh3IQQusqucLeOW1EfFwUvNktcxFfOtiwf3p5M
-         DVdmra4OBSiJlDPTFvY9NmdV786h48eNkQnJvKI2/PtssPwNOECMJtJC2BTkhnf7AO4o
-         Z8Q3CcD6bmOv1kXHtze9weiF7OKhKgiFkRPYVrn9eRHe9NWyaIah7c+hEpuMYaejooUv
-         en4AXXdMwcUbZ+ycAX45lsRXYuEfzccFjmSfhP+jggS5dquGo1GKcC9gOF0R70KtY9Sh
-         BNPQ==
-X-Gm-Message-State: AJcUukfAAZ5b2TiZwQuH/xgQN8YoW8KOr0+qj6TSKu6fXAfaoUiIzjcX
-        X5Ro1oEaXi3yQ+istJNmOhRRPUWwJE/ByGZC4DpVyrWBtd+/annmn219wIWzbKBikmxwtsaN7lz
-        Z+CZMHebRt53ggVrq/6SKZF/MJ5Lj
-X-Received: by 2002:a5d:8d18:: with SMTP id p24mr1765057ioj.223.1546023080240;
-        Fri, 28 Dec 2018 10:51:20 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5dolxj3j7NBrvJfJRJz7xeln8Oz7Oq/6VgGfKgwhzJIuoTkiZV35HoZIXp2jyDRr7I4pJhHg==
-X-Received: by 2002:a5d:8d18:: with SMTP id p24mr1765048ioj.223.1546023080017;
-        Fri, 28 Dec 2018 10:51:20 -0800 (PST)
-Received: from cs-u-syssec1.cs.umn.edu (cs-u-syssec1.cs.umn.edu. [134.84.121.78])
-        by smtp.gmail.com with ESMTPSA id z10sm19098372ioh.20.2018.12.28.10.51.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 10:51:19 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Erik Andren <erik.andren@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: gspca: mt9m111: Check write_bridge for timeout
-Date:   Fri, 28 Dec 2018 12:51:10 -0600
-Message-Id: <20181228185110.8579-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BADFC60452;
+        Fri, 28 Dec 2018 18:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546023202;
+        bh=I0YOiRYPU9cMm9CE7tw0dqP156rQwU3Y4aa5AvbNQzk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FICDzroG6jl9vFD2ZrDWNrfPV5enCpCYkM3fB6gjywlTuaraCBsph3V+MhkfW4gt4
+         esvP8kKuFJc2MHsY3+X/V5+cmHGYnHoqQXmpa2RKcByzXySAzKzuDNT4taJM4d8tJT
+         sl+a1nRhnlvgy3zfXvioeZ3xnS8NOZJmzPOPTix8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BADFC60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        dianders@chromium.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        evgreen@chromium.org, briannorris@chromium.org,
+        sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v4 1/8] dt-bindings: soc: qcom: Add remote-pid binding for GLINK SMEM
+Date:   Sat, 29 Dec 2018 00:23:00 +0530
+Message-Id: <20181228185307.25645-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In mt9m111_probe, m5602_write_bridge can timeout and return a negative
-error value. The fix checks for this error and passes it upstream.
+Add missing qcom,remote-pid dt binding required for GLINK SMEM
+which specifies the remote endpoint of the GLINK edge.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Fixes: 2b41d6c8e696 ("dt-bindings: soc: qcom: Extend GLINK to cover
+SMEM")
+
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/usb/gspca/m5602/m5602_mt9m111.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/m5602/m5602_mt9m111.c b/drivers/media/usb/gspca/m5602/m5602_mt9m111.c
-index c9947c4a0f63..8fac814f4779 100644
---- a/drivers/media/usb/gspca/m5602/m5602_mt9m111.c
-+++ b/drivers/media/usb/gspca/m5602/m5602_mt9m111.c
-@@ -199,7 +199,7 @@ static const struct v4l2_ctrl_config mt9m111_greenbal_cfg = {
- int mt9m111_probe(struct sd *sd)
- {
- 	u8 data[2] = {0x00, 0x00};
--	int i;
-+	int i, rc = 0;
- 	struct gspca_dev *gspca_dev = (struct gspca_dev *)sd;
+v3:
+  * Fixed typo
+
+ Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+index 0b8cc533ca83..587bb1ddc8cc 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+@@ -21,6 +21,11 @@ edge.
+ 	Definition: should specify the IRQ used by the remote processor to
+ 		    signal this processor about communication related events
  
- 	if (force_sensor) {
-@@ -217,16 +217,18 @@ int mt9m111_probe(struct sd *sd)
- 	/* Do the preinit */
- 	for (i = 0; i < ARRAY_SIZE(preinit_mt9m111); i++) {
- 		if (preinit_mt9m111[i][0] == BRIDGE) {
--			m5602_write_bridge(sd,
-+			rc |= m5602_write_bridge(sd,
- 				preinit_mt9m111[i][1],
- 				preinit_mt9m111[i][2]);
- 		} else {
- 			data[0] = preinit_mt9m111[i][2];
- 			data[1] = preinit_mt9m111[i][3];
--			m5602_write_sensor(sd,
-+			rc |= m5602_write_sensor(sd,
- 				preinit_mt9m111[i][1], data, 2);
- 		}
- 	}
-+	if (rc < 0)
-+		return rc;
- 
- 	if (m5602_read_sensor(sd, MT9M111_SC_CHIPVER, data, 2))
- 		return -ENODEV;
++- qcom,remote-pid:
++	Usage: required for glink-smem
++	Value type: <u32>
++	Definition: specifies the identifier of the remote endpoint of this edge
++
+ - qcom,rpm-msg-ram:
+ 	Usage: required for glink-rpm
+ 	Value type: <prop-encoded-array>
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
