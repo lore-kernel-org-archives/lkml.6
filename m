@@ -2,181 +2,119 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7372C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8296020861
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:38:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WMLKpvwM"
+	by mail.kernel.org (Postfix) with ESMTP id DAAB820856
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 21:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546033739;
+	bh=HFMaKroDzHtipIHAZDno4GUadc1hp4rR+dpnwd3/iSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nq230xDsDPjf4kib20ebmJXFe4wchTTt/DOWflWP7rkPSQy/OZWOQdVZ18zhDwhBo
+	 xgZgXOWtOgGNSzrMyfUI48L0ZPbZGUuGAHzLumDmocmAMH3RUkoXI5DMA+52ZSQFx7
+	 HYTpKGavznICg/rdsX3F9Xyo88/dqLsz6kP79594=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbeL1Via (ORCPT
+        id S1726388AbeL1Vs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 16:38:30 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40366 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbeL1Via (ORCPT
+        Fri, 28 Dec 2018 16:48:58 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46839 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeL1Vs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 16:38:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so10924573pfo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 13:38:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:message-id:references
-         :subject:cc:from:user-agent:in-reply-to:date;
-        bh=NLDRg8d3P3g0015PxnCaL0q7vIF2U2AakIDHRtQEgcM=;
-        b=WMLKpvwMb+vkyQWUm24xoSbGH6GsvRBrNeY4IZ8EJnN2uD4d6jYbV0pfLa57wmO5m5
-         hG7vbl8fPOBZbg5fRrysph0bLPC4Gp5js9hpXb/A4KaLiIF/hi/3Z1/mE+fIq3XUoGWz
-         RMKaVKDFdRWhVbWYtndw8uO0AJ4SmdVw7/2c4=
+        Fri, 28 Dec 2018 16:48:57 -0500
+Received: by mail-io1-f65.google.com with SMTP id v10so17639484ios.13;
+        Fri, 28 Dec 2018 13:48:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :message-id:references:subject:cc:from:user-agent:in-reply-to:date;
-        bh=NLDRg8d3P3g0015PxnCaL0q7vIF2U2AakIDHRtQEgcM=;
-        b=dI3BopC91zACtZfRah43fEqRYUhv2QRReEPsdx85Sjmymn7iCeDy9EUlZWXXGTtIEa
-         8Ak1CjcGYcmHdl2O2qjKDaUsOaJoilyayyxZ5OWGfZ885V0xd0zuHrUtvyD4qTvUP3yl
-         yzji/RQemX6aTWWeUhcbWg2lGlKg6l3dpCT3fazwcgg4xSMLpUrS6RsjGvD7pqFpu2qz
-         72va1R/yJ2kDwOKYcKxoot3SJbTdwRsxKIcibLyimzO9GrasuzIsu/cGijXYVQ08Jp6U
-         jIQfOtX4tW1Z9IgSREj7ghKn+pxUxcc2GAtpq72Ei5jgZwdcMKmLkhczM5rJPkLM3Stz
-         NNUw==
-X-Gm-Message-State: AA+aEWYGrs7Gr1BFAn37F1Xbq1vYYf+YBx1K+xMFBX7xJKORG1P7uncQ
-        bLGl146OKH/CBbA9AEJ7jk5ceA==
-X-Google-Smtp-Source: AFSGD/XqPjsUb/JfrS+qCKtXNHaLkd+ERTq3bD6qUBzo0Fh7aqQvuKQ+qt2qm3y/fftdftZw605qJw==
-X-Received: by 2002:a62:1d4c:: with SMTP id d73mr29863361pfd.90.1546033109141;
-        Fri, 28 Dec 2018 13:38:29 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id s9sm57225203pgl.88.2018.12.28.13.38.28
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pgp8QGM8Sxxy+ekOkA+knxIXmgF85vwv+RMpA4VSbk8=;
+        b=lAWfndzZAMnCjngEkD+CYOj+aq8t05yWQfWRZosGqPSC12qfTFpRAKpMSd6gf3TkV6
+         IL25p+pRj2n++KIGdwJTc9+EypgTMJG3llJCiOjHUnfjH0x0XQhwisTC1be7hj4Qv65W
+         AQK3fJ84WdfcHi16RktPzKRrQAW6W9loM1+954d0GTXRgptdf535yYHtzFphVbn+9mtk
+         /Q2e01DzgEcgPgRbamGmig9oPxuzmqmjTT8/8WXgAX1Do5cfotxv+E3oyzHZBBcwBd+o
+         xxgc+ct6DoLDq0A1rAr7c8TuCSpFWTK21xakt4cwx0vuxMuJeQlVcIloRzVoQfXKj+Fs
+         AbbQ==
+X-Gm-Message-State: AJcUukdjTKdDG8gMQDC2OfNnLjGcDrfV2BmlkKOF7UU0m9gh9kCdIJGs
+        kU7dfUrxbPwScQvLW38yxLyp0kU=
+X-Google-Smtp-Source: ALg8bN6aDTD1I7/EbuShlAij+H9/MbsXHjlDPik1xXo1Fd8ylo7K27yHtXd/qIvMn/YaGE7V6iXytg==
+X-Received: by 2002:a6b:2b07:: with SMTP id r7mr19828025ior.169.1546033735971;
+        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id m10sm4218931ioq.25.2018.12.28.13.48.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 13:38:28 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
+Date:   Fri, 28 Dec 2018 15:48:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v9 03/27] dt-bindings: Add doc for the Ingenic TCU drivers
+Message-ID: <20181228214853.GA8568@bogus>
+References: <20181227181319.31095-1-paul@crapouillou.net>
+ <20181227181319.31095-4-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Raju P L S S S N <rplsssn@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Message-ID: <154603310752.179992.9262815873457262616@swboyd.mtv.corp.google.com>
-References: <20181221115946.10095-1-rplsssn@codeaurora.org> <20181221115946.10095-4-rplsssn@codeaurora.org> <154546438942.179992.14851496143150245966@swboyd.mtv.corp.google.com> <504cae51-0f35-beb8-496b-a335863a9071@codeaurora.org>
-Subject: Re: [PATCH RFC 3/5] dt-bindings: Add PDC timer bindings for Qualcomm SoCs
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-In-Reply-To: <504cae51-0f35-beb8-496b-a335863a9071@codeaurora.org>
-Date:   Fri, 28 Dec 2018 13:38:27 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181227181319.31095-4-paul@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Raju P L S S S N (2018-12-26 01:44:43)
->=20
->=20
-> On 12/22/2018 1:09 PM, Stephen Boyd wrote:
-> >> +If an RSC needs to program next wake-up in the PDC timer, it must spe=
-cify the
-> >> +binding as child node with the following properties:
-> >> +
-> >> +Properties:
-> >> +- compatible:
-> >> +    Usage: required
-> >> +       Value type: <string>
-> >> +       Definition: must be "qcom,pdc-timer".
-> >> +
-> >> +- reg:
-> >> +    Usage: required
-> >> +       Value type: <prop-encoded-array>
-> >> +       Definition: Specifies the offset of the control register.
-> >> +
-> >>   Example 1:
-> >>  =20
-> >>   For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id=
- of 2, the
-> >> @@ -103,6 +123,9 @@ TCS-OFFSET: 0xD00
-> >>                        <0x179d0000 0x10000>,
-> >>                        <0x179e0000 0x10000>;
-> >>                  reg-names =3D "drv-0", "drv-1", "drv-2";
-> >> +               #address-cells =3D <1>;
-> >> +               #size-cells =3D <1>;
-> >> +               ranges;
-> >>                  interrupts =3D <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> >>                               <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> >>                               <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-> >> @@ -112,6 +135,12 @@ TCS-OFFSET: 0xD00
-> >>                                    <SLEEP_TCS   3>,
-> >>                                    <WAKE_TCS    3>,
-> >>                                    <CONTROL_TCS 1>;
-> >> +
-> >> +               pdc_timer@38 {
-> >> +                       compatible =3D "qcom,pdc-timer";
-> >> +                       reg =3D <0x38 0x1>,
-> >> +                             <0x40 0x1>;
-> > I don't understand this whole binding. Why can't the pdc timer be
-> > programmed within the rpmh driver? This looks like a node is being added
-> > as a child just to make a platform driver and device match up in the
-> > linux kernel. And that in turn causes a regmap to need to be created?
-> > Sorry, it just looks really bad.
->=20
->=20
-> There are two RSC devices in SoC one for application processor subsystem =
+On Thu, 27 Dec 2018 19:12:55 +0100, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>      v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>          added content.
+>     
+>      v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+>            document.
+>          - Moved main document to
+>            Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>          - Updated documentation to reflect the new devicetree bindings.
+>     
+>      v6: - Removed PWM/watchdog documentation files as asked by upstream
+>          - Removed doc about properties that should be implicit
+>          - Removed doc about ingenic,timer-channel /
+>            ingenic,clocksource-channel as they are gone
+>          - Fix WDT clock name in the binding doc
+>          - Fix lengths of register areas in watchdog/pwm nodes
+>     
+>      v7: No change
+> 
+>      v8: - Fix address of the PWM node
+>          - Added doc about system timer and clocksource children nodes
+> 
+>      v9: - Remove doc about system timer and clocksource children
+>            nodes...
+> 	 - Add doc about ingenic,pwm-channels-mask property
+> 
+>  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 139 +++++++++++++++++++++
+>  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
+>  3 files changed, 139 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+> 
 
-> & other display subsystem. Both RSC contain registers for PDC timers=20
-> (one for each subsystem).
-
-When is the timer programmed on the display subsystem's RSC? It's hard
-to give advice without all the information.
-
-> But only for application processor the PDC=20
-> timer needs to be programmed when application processor enters=20
-> sleep/suspend. As the driver is common between both RSC devices, this=20
-> approach is taken. Do you have any other suggestions to distinguish=20
-> between the two? Perhaps, by additional compatible string?
->=20
-
-Maybe compatible? I sort of doubt it though. Do all RSCs have a PDC
-timer?
-
-I would think that it would make sense for the application processor's
-RSC timer to be programmed from the broadcast timer mechanism in the
-kernel so that timers during idle work and suspend turns off the timer
-appropriately with a shutdown hook. I guess the PDC can't tell you the
-time though? It looks like a shadow (and limited) version of the ARM
-architected MMIO timer that we already program for the broadcast timer
-mechanism. Is that because even the MMIO timer can't wakeup the system
-in deep idle?  Assuming that's true, it means the ARM MMIO timer can't
-always be used as the system wide broadcast mechanism because we need to
-augment it with the PDC timer to get the actual wakeup.
-
-Maybe we should be adding hooks into the broadcast timer mechanism to
-program this wakeup event hardware in addition to the ARM MMIO timer. Or
-we should stop using the ARM MMIO timer on these systems and read the
-system register based physical time in the RSC timer driver and register
-this 64-bit PDC register as the broadcast timer. So the time reading
-would be through sysreg and the wakeup programming would be done by
-writing the PDC timer. The assumption would be that we have access to
-the physical time registers (which sounds like the assumption we have to
-make).
-
-Do we get an interrupt somewhere from the RSC hardware when the timer
-fires? Or does that just cause a system wakeup event without any pending
-irq and then another irq (like the ARM architected timer) just happens
-to be pending around the same time? If we get an interrupt somehow then
-I would prefer to drop the ARM MMIO timer and do this hybrid broadcast
-timer approach.
-
-How the RSC is used in general by other devices, like display, is not
-clear to me. We don't have a "wakeup event" framework in the kernel that
-device drivers like the display driver can grab a reference to and
-program some system wide wakeup for. That sounds like something new that
-could be handled entirely in the display driver with direct register
-writes, or it could be some qcom specific API/framework that eventually
-calls down into the same RSC driver that knows what offsets to write
-into in the display RSC's register space, or it could be an entirely
-generic framework like clk or regulator frameworks that could be used by
-anything. BTW, are we using the display RSC yet?
+Reviewed-by: Rob Herring <robh@kernel.org>
