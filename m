@@ -2,91 +2,117 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1027AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C773FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D176520879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EEFA2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbeL1NbQ (ORCPT
+        id S1730455AbeL1NfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 08:31:16 -0500
-Received: from mga05.intel.com ([192.55.52.43]:54405 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbeL1NbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 08:31:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Dec 2018 05:31:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,409,1539673200"; 
-   d="scan'208";a="113864058"
-Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
-  by orsmga003.jf.intel.com with ESMTP; 28 Dec 2018 05:31:12 -0800
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1gcsEJ-0007g4-SO; Fri, 28 Dec 2018 21:31:11 +0800
-Date:   Fri, 28 Dec 2018 21:31:11 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
+        Fri, 28 Dec 2018 08:35:15 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:46182 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729469AbeL1NfP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 08:35:15 -0500
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBSDYH3M067251;
+        Fri, 28 Dec 2018 22:34:17 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Fri, 28 Dec 2018 22:34:17 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBSDYHF2067245
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 28 Dec 2018 22:34:17 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: INFO: task hung in generic_file_write_iter
+To:     Jan Kara <jack@suse.cz>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
- accounting/migration
-Message-ID: <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
-References: <20181226131446.330864849@intel.com>
- <20181227203158.GO16738@dhcp22.suse.cz>
- <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
- <20181228084105.GQ16738@dhcp22.suse.cz>
- <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
- <20181228121515.GS16738@dhcp22.suse.cz>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, mgorman@techsingularity.net,
+        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
+        jlayton@redhat.com, linux-kernel@vger.kernel.org,
+        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <0000000000009ce88d05714242a8@google.com>
+ <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+ <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
+Date:   Fri, 28 Dec 2018 22:34:13 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181228121515.GS16738@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> > I haven't looked at the implementation yet but if you are proposing a
->> > special cased zone lists then this is something CDM (Coherent Device
->> > Memory) was trying to do two years ago and there was quite some
->> > skepticism in the approach.
+On 2018/08/06 19:09, Jan Kara wrote:
+> On Tue 31-07-18 00:07:22, Tetsuo Handa wrote:
+>> On 2018/07/21 5:06, Andrew Morton wrote:
+>>> On Fri, 20 Jul 2018 19:36:23 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+>>>
+>>>>>
+>>>>> This report is stalling after mount() completed and process used remap_file_pages().
+>>>>> I think that we might need to use debug printk(). But I don't know what to examine.
+>>>>>
+>>>>
+>>>> Andrew, can you pick up this debug printk() patch?
+>>>> I guess we can get the result within one week.
+>>>
+>>> Sure, let's toss it in -next for a while.
+>>>
+>>>> >From 8f55e00b21fefffbc6abd9085ac503c52a302464 Mon Sep 17 00:00:00 2001
+>>>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>>>> Date: Fri, 20 Jul 2018 19:29:06 +0900
+>>>> Subject: [PATCH] fs/buffer.c: add debug print for __getblk_gfp() stall problem
+>>>>
+>>>> Among syzbot's unresolved hung task reports, 18 out of 65 reports contain
+>>>> __getblk_gfp() line in the backtrace. Since there is a comment block that
+>>>> says that __getblk_gfp() will lock up the machine if try_to_free_buffers()
+>>>> attempt from grow_dev_page() is failing, let's start from checking whether
+>>>> syzbot is hitting that case. This change will be removed after the bug is
+>>>> fixed.
+>>>
+>>> I'm not sure that grow_dev_page() is hanging.  It has often been
+>>> suspected, but always is proven innocent.  Lets see.
 >>
->> It looks we are pretty different than CDM. :)
->> We creating new NUMA nodes rather than CDM's new ZONE.
->> The zonelists modification is just to make PMEM nodes more separated.
->
->Yes, this is exactly what CDM was after. Have a zone which is not
->reachable without explicit request AFAIR. So no, I do not think you are
->too different, you just use a different terminology ;)
+>> syzbot reproduced this problem ( https://syzkaller.appspot.com/text?tag=CrashLog&x=11f2fc44400000 ) .
+>> It says that grow_dev_page() is returning 1 but __find_get_block() is failing forever. Any idea?
+> 
+> Looks like some kind of a race where device block size gets changed while
+> getblk() runs (and creates buffers for underlying page). I don't have time
+> to nail it down at this moment can have a look into it later unless someone
+> beats me to it.
 
-Got it. OK.. The fall back zonelists patch does need more thoughts.
+I feel that the frequency of hitting this problem was decreased
+by merging loop module's ioctl() serialization patches. But this
+problem is still there, and syzbot got a new line in
+https://syzkaller.appspot.com/text?tag=CrashLog&x=177f889f400000 .
 
-In long term POV, Linux should be prepared for multi-level memory.
-Then there will arise the need to "allocate from this level memory".
-So it looks good to have separated zonelists for each level of memory.  
+  [  615.881781] __loop_clr_fd: partition scan of loop5 failed (rc=-22)
+  [  619.059920] syz-executor4(2193): getblk(): executed=cd bh_count=0 bh_state=29
+  [  622.069808] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
+  [  625.080013] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
+  [  628.089900] syz-executor4(2193): getblk(): executed=9 bh_count=0 bh_state=0
 
-On the other hand, there will also be page allocations that don't care
-about the exact memory level. So it looks reasonable to expect
-different kind of fallback zonelists that can be selected by NUMA policy.
-
-Thanks,
-Fengguang
+I guess that loop module is somehow related to this problem.
