@@ -2,229 +2,117 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F34C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4090220873
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA2920879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TYwzIZt1"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="yy0O3yL9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbeL1R23 (ORCPT
+        id S2387553AbeL1Rbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 12:28:29 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:51924 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731806AbeL1R23 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 12:28:29 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AA88A10C116A;
-        Fri, 28 Dec 2018 09:28:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1546018108; bh=c9faIExNHWjDHwiu6rmw9Y69CCmc2VdT/V4PCyyDN0s=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=TYwzIZt1cG2VCy59EjV0wYuS/TA8dZRhQDyEJtHfGBrYsdnwnMHqVg44tdQJtvVi7
-         BSoZaxtDVExZFkSC6i7Qh9r8GjgvxT6box8xwosZ/06vC9k9SNjSfrUOQ/jFJ88eng
-         a30eO9L7ZvhRma5AHKKLDGeZr93c6vrM8BtxEuT63fAoGBzPR9KmCAYRGu98Z+4OeM
-         XRV4+etAD77czE/hltik62kKq0jGZItqoHnSFgO78/Z2Q6c18XoHoky7GNahCAk4/W
-         kU301yTY12ZNjvKrjq3p9dipsRDadA+QQFQxDiFGCDLNSHLV5DhNTp+BfNZKw/SAO0
-         PfHoz1wPTFYjw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 8F41C35A2;
-        Fri, 28 Dec 2018 09:28:26 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 28 Dec 2018 09:28:26 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
- 28 Dec 2018 18:28:24 +0100
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "mironov.ivan@gmail.com" <mironov.ivan@gmail.com>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>
-CC:     "snps-arc@lists.infradead.org" <snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "mail@saahriktu.org" <mail@saahriktu.org>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>
-Subject: Re: [PATCH v1 1/2] drm/fb-helper: Bring back workaround for bugs of
- SDL 1.2
-Thread-Topic: [PATCH v1 1/2] drm/fb-helper: Bring back workaround for bugs
- of SDL 1.2
-Thread-Index: AQHUnjnTq0EhbU+miUmPEtW3Or+D8qWUWD8A
-Date:   Fri, 28 Dec 2018 17:28:23 +0000
-Message-ID: <1546018102.2822.14.camel@synopsys.com>
-References: <20181227231308.16904-1-mironov.ivan@gmail.com>
-         <20181227231308.16904-2-mironov.ivan@gmail.com>
-In-Reply-To: <20181227231308.16904-2-mironov.ivan@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.66]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A3388F6513E2FA46A478AFF04FE75FAD@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Fri, 28 Dec 2018 12:31:36 -0500
+Received: from cock.li ([185.100.85.212]:57574 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727954AbeL1Rbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 12:31:36 -0500
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546018292; bh=s0zqPFsYY8ec9E1esg0nCucoUNGApeXUsz9yw9aWrkc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=yy0O3yL9qKsR0+/nIuJANs6i338amtXkXLxQ2miXwpY1lTe8a/tcWyMFYNyAAxmyw
+         /DHihMAA4V+i+8GWJRxn8Dd2MqLuWx5L6QsWiWE02aM5pmas6lU8iSBuBA4veLPjS/
+         vQyC4xDSHTFhS3MGMXCpwcoSbLq6BGyA3Tzf/ejJkIxhXZQIUuzOaGYAPKPkCJeu/1
+         9vO6taVE2Zl6xUb2qd2mZstlPedYonWacI5v2NlcL2Rk1QkpxV/As7nOXwD8GdZRty
+         ViQCuawnLZPMF52G7Y0+I6L893r0VHlt+3Oi8k6HJ7slWkcjQq89PhVOwx3n1akvS0
+         8LInE8KLYqRDQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Dec 2018 17:31:31 +0000
+From:   vsnsdualce@memeware.net
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Bon Onlines <bononlines@gmail.com>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        Raul Miller <rauldmiller@gmail.com>,
+        OpenBSD general usage list <misc@openbsd.org>,
+        linux-kernel@vger.kernel.org, freebsd-women@freebsd.org,
+        freebsd-chat@freebsd.org, owner-misc@openbsd.org
+Cc:     linux-kernel-owner@vger.kernel.org
+Subject: Re: Why is no one discussing this anymore? - Attack the messaging
+ rely, not the message!
+In-Reply-To: <20181228135728.GD5864@mit.edu>
+References: <20181228135728.GD5864@mit.edu>
+Message-ID: <c9d2e5c760bd722c2363acb440b9f12a@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTEyLTI4IGF0IDA0OjEzICswNTAwLCBJdmFuIE1pcm9ub3Ygd3JvdGU6DQo+
-IFNETCAxLjIgc2V0cyBhbGwgZmllbGRzIHJlbGF0ZWQgdG8gdGhlIHBpeGVsIGZvcm1hdCB0byB6
-ZXJvIGluIHNvbWUNCj4gY2FzZXNbMV0uIFByaW9yIHRvIGNvbW1pdCBkYjA1YzQ4MTk3NzU5ICgi
-ZHJtOiBmYi1oZWxwZXI6IFJlamVjdCBhbGwNCj4gcGl4ZWwgZm9ybWF0IGNoYW5naW5nIHJlcXVl
-c3RzIiksIHRoZXJlIHdhcyBhbiB1bmludGVudGlvbmFsIHdvcmthcm91bmQNCj4gZm9yIHRoaXMg
-dGhhdCBleGlzdGVkIGZvciBtb3JlIHRoYW4gYSBkZWNhZGUuIEZpcnN0IGluIGRldmljZS1zcGVj
-aWZpYyBEUk0NCj4gZHJpdmVycywgdGhlbiBoZXJlIGluIGRybV9mYl9oZWxwZXIuYy4NCj4gDQo+
-IFByZXZpb3VzIGNvZGUgY29udGFpbmluZyB0aGlzIHdvcmthcm91bmQganVzdCBpZ25vcmVzIHBp
-eGVsIGZvcm1hdCBmaWVsZHMNCj4gZnJvbSB1c2Vyc3BhY2UgY29kZS4gTm90IGEgZ29vZCB0aGlu
-ZyBlaXRoZXIsIGFzIHRoaXMgd2F5LCBkcml2ZXIgbWF5DQo+IHNpbGVudGx5IHVzZSBwaXhlbCBm
-b3JtYXQgZGlmZmVyZW50IGZyb20gd2hhdCBjbGllbnQgYWN0dWFsbHkgcmVxdWVzdGVkLA0KPiBh
-bmQgdGhpcyBpbiB0dXJuIHdpbGwgbGVhZCB0byBkaXNwbGF5aW5nIGdhcmJhZ2Ugb24gdGhlIHNj
-cmVlbi4gSSB0aGluaw0KPiB0aGF0IHJldHVybmluZyBFSU5WQUwgdG8gdXNlcnNwYWNlIGluIHRo
-aXMgcGFydGljdWxhciBjYXNlIGlzIHRoZSByaWdodA0KPiBvcHRpb24sIHNvIEkgZGVjaWRlZCB0
-byBsZWZ0IGNvZGUgZnJvbSBwcm9ibGVtYXRpYyBjb21taXQgdW50b3VjaGVkDQo+IGluc3RlYWQg
-b2YganVzdCByZXZlcnRpbmcgaXQgZW50aXJlbHkuDQoNClllcCwgcmV2ZXJ0aW5nIGNvbW1pdCBk
-YjA1YzQ4MTk3NzU5ICgiZHJtOiBmYi1oZWxwZXI6IFJlamVjdCBhbGwgcGl4ZWwNCmZvcm1hdCBj
-aGFuZ2luZyByZXF1ZXN0cyIpIGlzbid0IGEgZ29vZCBpZGVhIGFzIGl0IHdpbGwgYnJlYWsgV2Vz
-dG9uIHdpdGgNCmZiZGV2LWJhY2tlbmQgd2hlcmUgd2UgZ2V0IGV4YWN0bHkgZGVzY3JpYmVkIHNp
-dHVhdGlvbiAtIHdlIHJlcXVlc3Qgb25lDQpwaXhlbCBmb3JtYXQgYnV0IGtlcm5lbCBzdWNjZXNz
-ZnVsbHkgYW5kIHNpbGVudGx5IHNldCBhbm90aGVyIG9uZS4gU28gd2UNCmdldCBwaWN0dXJlc3F1
-ZSBnYXJiYWdlIG9uIHRoZSBzY3JlZW4gOikNCg0KPiBIZXJlIGlzIHRoZSBzdGVwcyByZXF1aXJl
-ZCB0byByZXByb2R1Y2UgdGhpcyBwcm9ibGVtIGV4YWN0bHk6DQo+IAkxKSBDb21waWxlIGZjZXV4
-WzJdIHdpdGggU0RMIDEuMi4xNSBhbmQgd2l0aG91dCBHVEsgb3IgT3BlbkdMDQo+IAkgICBzdXBw
-b3J0LiBTREwgc2hvdWxkIGJlIGNvbXBpbGVkIHdpdGggZmJkZXYgc3VwcG9ydCAod2hpY2ggaXMN
-Cj4gCSAgIG9uIGJ5IGRlZmF1bHQpLg0KPiAJMikgQ3JlYXRlIC9ldGMvZmIubW9kZXMgd2l0aCBm
-b2xsb3dpbmcgY29udGVudHMgKHZhbHVlcyBzZWVtcw0KPiAJICAgbm90IHVzZWQsIGFuZCBqdXN0
-IHJlcXVpcmVkIHRvIHRyaWdnZXIgcHJvYmxlbWF0aWMgY29kZSBpbg0KPiAJICAgU0RMKToNCj4g
-DQo+IAkJbW9kZSAidGVzdCINCj4gCQkgICAgZ2VvbWV0cnkgMSAxIDEgMSAxDQo+IAkJICAgIHRp
-bWluZ3MgMSAxIDEgMSAxIDEgMQ0KPiAJCWVuZG1vZGUNCj4gDQo+IAkzKSBDcmVhdGUgfi8uZmNl
-dXgvZmNldXguY2ZnIHdpdGggZm9sbG93aW5nIGNvbnRlbnRzOg0KPiANCj4gCQlTREwuSG90a2V5
-cy5RdWl0ID0gMjcNCj4gCQlTREwuRG91YmxlQnVmZmVyaW5nID0gMQ0KPiANCj4gCTQpIEVuc3Vy
-ZSB0aGF0IHNjcmVlbiByZXNvbHV0aW9uIGlzIGF0IGxlYXN0IDEyODB4OTYwIChlLmcuDQo+IAkg
-ICBhcHBlbmQgInZpZGVvPVZpcnR1YWwtMToxMjgweDk2MC0zMiIgdG8gdGhlIGtlcm5lbCBjbWRs
-aW5lDQo+IAkgICBmb3IgcWVtdS9RWEwpLg0KPiANCj4gCTUpIFRyeSB0byBydW4gZmNldXggb24g
-VlQgd2l0aCBzb21lIFJPTSBmaWxlWzNdOg0KPiANCj4gCQkjIC4vZmNldXggY29sb3JfdGVzdC5u
-ZXMNCj4gDQo+IFsxXSBTREwgMS4yLjE1IHNvdXJjZSBjb2RlLCBzcmMvdmlkZW8vZmJjb24vU0RM
-X2ZidmlkZW8uYywNCj4gICAgIEZCX1NldFZpZGVvTW9kZSgpDQo+IFsyXSBodHRwczovL3VybGRl
-ZmVuc2UucHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0cC0zQV9fd3d3LmZjZXV4LmNvbSZkPUR3
-SURBZyZjPURQTDZfWF82SmtYRng3QVhXcUIwdGcmcj1abEpOMU1yaVBVVGtCS0NyUFN4NjdHbWFw
-bEVVR2NBRWs5eVB0Q0xkVVgNCj4gSSZtPXFJb0FwQXEtTFk4Y2pUb3c4Ml9sWVd3bTRMOEhpT1lu
-THBfRTRBemlBeG8mcz1mTV95eE1GNlQ1LVJ5WEtsYmJmZl9TNjJrX29wSHhsb2xxTlBYVjBSUGE0
-JmU9DQo+IFszXSBFeGFtcGxlIFJPTTogaHR0cHM6Ly91cmxkZWZlbnNlLnByb29mcG9pbnQuY29t
-L3YyL3VybD91PWh0dHBzLTNBX19naXRodWIuY29tX2Jva3V3ZWJfcnVzdHluZXNfYmxvYl9tYXN0
-ZXJfcm9tc19jb2xvci01RnRlc3QubmVzJmQ9RHdJREFnJmM9RFBMNl8NCj4gWF82SmtYRng3QVhX
-cUIwdGcmcj1abEpOMU1yaVBVVGtCS0NyUFN4NjdHbWFwbEVVR2NBRWs5eVB0Q0xkVVhJJm09cUlv
-QXBBcS0NCj4gTFk4Y2pUb3c4Ml9sWVd3bTRMOEhpT1luTHBfRTRBemlBeG8mcz00Z05NOFBXMXlO
-cWluWWlXVzlsR2pqM2lrMEttbzQwWFhRWUxsMFVjRUhjJmU9DQo+IA0KPiBSZXBvcnRlZC1ieTog
-c2FhaHJpa3R1IDxtYWlsQHNhYWhyaWt0dS5vcmc+DQo+IFN1Z2dlc3RlZC1ieTogc2FhaHJpa3R1
-IDxtYWlsQHNhYWhyaWt0dS5vcmc+DQo+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQo+IEZp
-eGVzOiBkYjA1YzQ4MTk3NzU5ICgiZHJtOiBmYi1oZWxwZXI6IFJlamVjdCBhbGwgcGl4ZWwgZm9y
-bWF0IGNoYW5naW5nIHJlcXVlc3RzIikNCj4gU2lnbmVkLW9mZi1ieTogSXZhbiBNaXJvbm92IDxt
-aXJvbm92Lml2YW5AZ21haWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZmJf
-aGVscGVyLmMgfCAxNDYgKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0NCj4gIDEgZmls
-ZSBjaGFuZ2VkLCA5MyBpbnNlcnRpb25zKCspLCA1MyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJt
-L2RybV9mYl9oZWxwZXIuYw0KPiBpbmRleCBkM2FmMDk4YjA5MjIuLmFmZjU3NmMzYzRmYiAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYw0KPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jDQo+IEBAIC0xNjIxLDYgKzE2MjEsNjQgQEAgc3Rh
-dGljIGJvb2wgZHJtX2ZiX3BpeGVsX2Zvcm1hdF9lcXVhbChjb25zdCBzdHJ1Y3QgZmJfdmFyX3Nj
-cmVlbmluZm8gKnZhcl8xLA0KPiAgCSAgICAgICB2YXJfMS0+dHJhbnNwLm1zYl9yaWdodCA9PSB2
-YXJfMi0+dHJhbnNwLm1zYl9yaWdodDsNCj4gIH0NCj4gIA0KPiArc3RhdGljIHZvaWQgZHJtX2Zi
-X2hlbHBlcl9maWxsX3BpeGVsX2ZtdChzdHJ1Y3QgZmJfdmFyX3NjcmVlbmluZm8gKnZhciwNCj4g
-KwkJCQkJIHU4IGRlcHRoKQ0KPiArew0KPiArCXN3aXRjaCAoZGVwdGgpIHsNCj4gKwljYXNlIDg6
-DQo+ICsJCXZhci0+cmVkLm9mZnNldCA9IDA7DQo+ICsJCXZhci0+Z3JlZW4ub2Zmc2V0ID0gMDsN
-Cj4gKwkJdmFyLT5ibHVlLm9mZnNldCA9IDA7DQo+ICsJCXZhci0+cmVkLmxlbmd0aCA9IDg7IC8q
-IDhiaXQgREFDICovDQo+ICsJCXZhci0+Z3JlZW4ubGVuZ3RoID0gODsNCj4gKwkJdmFyLT5ibHVl
-Lmxlbmd0aCA9IDg7DQo+ICsJCXZhci0+dHJhbnNwLm9mZnNldCA9IDA7DQo+ICsJCXZhci0+dHJh
-bnNwLmxlbmd0aCA9IDA7DQo+ICsJCWJyZWFrOw0KPiArCWNhc2UgMTU6DQo+ICsJCXZhci0+cmVk
-Lm9mZnNldCA9IDEwOw0KPiArCQl2YXItPmdyZWVuLm9mZnNldCA9IDU7DQo+ICsJCXZhci0+Ymx1
-ZS5vZmZzZXQgPSAwOw0KPiArCQl2YXItPnJlZC5sZW5ndGggPSA1Ow0KPiArCQl2YXItPmdyZWVu
-Lmxlbmd0aCA9IDU7DQo+ICsJCXZhci0+Ymx1ZS5sZW5ndGggPSA1Ow0KPiArCQl2YXItPnRyYW5z
-cC5vZmZzZXQgPSAxNTsNCj4gKwkJdmFyLT50cmFuc3AubGVuZ3RoID0gMTsNCj4gKwkJYnJlYWs7
-DQo+ICsJY2FzZSAxNjoNCj4gKwkJdmFyLT5yZWQub2Zmc2V0ID0gMTE7DQo+ICsJCXZhci0+Z3Jl
-ZW4ub2Zmc2V0ID0gNTsNCj4gKwkJdmFyLT5ibHVlLm9mZnNldCA9IDA7DQo+ICsJCXZhci0+cmVk
-Lmxlbmd0aCA9IDU7DQo+ICsJCXZhci0+Z3JlZW4ubGVuZ3RoID0gNjsNCj4gKwkJdmFyLT5ibHVl
-Lmxlbmd0aCA9IDU7DQo+ICsJCXZhci0+dHJhbnNwLm9mZnNldCA9IDA7DQo+ICsJCWJyZWFrOw0K
-PiArCWNhc2UgMjQ6DQo+ICsJCXZhci0+cmVkLm9mZnNldCA9IDE2Ow0KPiArCQl2YXItPmdyZWVu
-Lm9mZnNldCA9IDg7DQo+ICsJCXZhci0+Ymx1ZS5vZmZzZXQgPSAwOw0KPiArCQl2YXItPnJlZC5s
-ZW5ndGggPSA4Ow0KPiArCQl2YXItPmdyZWVuLmxlbmd0aCA9IDg7DQo+ICsJCXZhci0+Ymx1ZS5s
-ZW5ndGggPSA4Ow0KPiArCQl2YXItPnRyYW5zcC5vZmZzZXQgPSAwOw0KPiArCQl2YXItPnRyYW5z
-cC5sZW5ndGggPSAwOw0KPiArCQlicmVhazsNCj4gKwljYXNlIDMyOg0KPiArCQl2YXItPnJlZC5v
-ZmZzZXQgPSAxNjsNCj4gKwkJdmFyLT5ncmVlbi5vZmZzZXQgPSA4Ow0KPiArCQl2YXItPmJsdWUu
-b2Zmc2V0ID0gMDsNCj4gKwkJdmFyLT5yZWQubGVuZ3RoID0gODsNCj4gKwkJdmFyLT5ncmVlbi5s
-ZW5ndGggPSA4Ow0KPiArCQl2YXItPmJsdWUubGVuZ3RoID0gODsNCj4gKwkJdmFyLT50cmFuc3Au
-b2Zmc2V0ID0gMjQ7DQo+ICsJCXZhci0+dHJhbnNwLmxlbmd0aCA9IDg7DQo+ICsJCWJyZWFrOw0K
-PiArCWRlZmF1bHQ6DQo+ICsJCWJyZWFrOw0KPiArCX0NCj4gK30NCj4gKw0KPiAgLyoqDQo+ICAg
-KiBkcm1fZmJfaGVscGVyX2NoZWNrX3ZhciAtIGltcGxlbWVudGF0aW9uIGZvciAmZmJfb3BzLmZi
-X2NoZWNrX3Zhcg0KPiAgICogQHZhcjogc2NyZWVuaW5mbyB0byBjaGVjaw0KPiBAQCAtMTY1NCw2
-ICsxNzEyLDQwIEBAIGludCBkcm1fZmJfaGVscGVyX2NoZWNrX3ZhcihzdHJ1Y3QgZmJfdmFyX3Nj
-cmVlbmluZm8gKnZhciwNCj4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+ICAJfQ0KPiAgDQo+ICsJLyoN
-Cj4gKwkgKiBXb3JrYXJvdW5kIGZvciBTREwgMS4yLCB3aGljaCBpcyBrbm93biB0byBiZSBzZXR0
-aW5nIGFsbCBwaXhlbCBmb3JtYXQNCj4gKwkgKiBmaWVsZHMgdmFsdWVzIHRvIHplcm8gaW4gc29t
-ZSBjYXNlcy4gV2UgdHJlYXQgdGhpcyBzaXR1YXRpb24gYXMgYQ0KPiArCSAqIGtpbmQgb2YgInVz
-ZSBzb21lIHJlYXNvbmFibGUgYXV0b2RldGVjdGVkIHZhbHVlcyIuDQo+ICsJICovDQo+ICsJaWYg
-KCF2YXItPnJlZC5vZmZzZXQgICAgICYmICF2YXItPmdyZWVuLm9mZnNldCAgICAmJg0KPiArCSAg
-ICAhdmFyLT5ibHVlLm9mZnNldCAgICAmJiAhdmFyLT50cmFuc3Aub2Zmc2V0ICAgJiYNCj4gKwkg
-ICAgIXZhci0+cmVkLmxlbmd0aCAgICAgJiYgIXZhci0+Z3JlZW4ubGVuZ3RoICAgICYmDQo+ICsJ
-ICAgICF2YXItPmJsdWUubGVuZ3RoICAgICYmICF2YXItPnRyYW5zcC5sZW5ndGggICAmJg0KPiAr
-CSAgICAhdmFyLT5yZWQubXNiX3JpZ2h0ICAmJiAhdmFyLT5ncmVlbi5tc2JfcmlnaHQgJiYNCj4g
-KwkgICAgIXZhci0+Ymx1ZS5tc2JfcmlnaHQgJiYgIXZhci0+dHJhbnNwLm1zYl9yaWdodCkgew0K
-PiArCQl1OCBkZXB0aDsNCj4gKw0KPiArCQkvKg0KPiArCQkgKiBUaGVyZSBpcyBubyB3YXkgdG8g
-Z3Vlc3MgdGhlIHJpZ2h0IHZhbHVlIGZvciBkZXB0aCB3aGVuDQo+ICsJCSAqIGJwcCBpcyAxNiBv
-ciAzMi4gU28gd2UganVzdCByZXN0b3JlIHRoZSBiZWhhdmlvdXIgcHJldmlvdXNseQ0KPiArCQkg
-KiBpbnRyb2R1Y2VkIGhlcmUgYnkgY29tbWl0IDc4NWI5M2VmOGMzMDkuIEluIGZhY3QsIHRoaXMg
-d2FzDQo+ICsJCSAqIGltcGxlbWVudGVkIGV2ZW4gZWFybGllciBpbiB2YXJpb3VzIGRldmljZSBk
-cml2ZXJzLg0KPiArCQkgKi8NCj4gKwkJc3dpdGNoICh2YXItPmJpdHNfcGVyX3BpeGVsKSB7DQo+
-ICsJCWNhc2UgMTY6DQo+ICsJCQlkZXB0aCA9IDE1Ow0KPiArCQkJYnJlYWs7DQo+ICsJCWNhc2Ug
-MzI6DQo+ICsJCQlkZXB0aCA9IDI0Ow0KPiArCQkJYnJlYWs7DQo+ICsJCWRlZmF1bHQ6DQo+ICsJ
-CQlkZXB0aCA9IHZhci0+Yml0c19wZXJfcGl4ZWw7DQo+ICsJCQlicmVhazsNCj4gKwkJfQ0KPiAr
-DQo+ICsJCWRybV9mYl9oZWxwZXJfZmlsbF9waXhlbF9mbXQodmFyLCBkZXB0aCk7DQo+ICsJfQ0K
-PiArDQo+ICAJLyoNCj4gIAkgKiBkcm0gZmJkZXYgZW11bGF0aW9uIGRvZXNuJ3Qgc3VwcG9ydCBj
-aGFuZ2luZyB0aGUgcGl4ZWwgZm9ybWF0IGF0IGFsbCwNCj4gIAkgKiBzbyByZWplY3QgYWxsIHBp
-eGVsIGZvcm1hdCBjaGFuZ2luZyByZXF1ZXN0cy4NCj4gQEAgLTE5NjcsNTkgKzIwNTksNyBAQCB2
-b2lkIGRybV9mYl9oZWxwZXJfZmlsbF92YXIoc3RydWN0IGZiX2luZm8gKmluZm8sIHN0cnVjdCBk
-cm1fZmJfaGVscGVyICpmYl9oZWxwZQ0KPiAgCWluZm8tPnZhci55b2Zmc2V0ID0gMDsNCj4gIAlp
-bmZvLT52YXIuYWN0aXZhdGUgPSBGQl9BQ1RJVkFURV9OT1c7DQo+ICANCj4gLQlzd2l0Y2ggKGZi
-LT5mb3JtYXQtPmRlcHRoKSB7DQo+IC0JY2FzZSA4Og0KPiAtCQlpbmZvLT52YXIucmVkLm9mZnNl
-dCA9IDA7DQo+IC0JCWluZm8tPnZhci5ncmVlbi5vZmZzZXQgPSAwOw0KPiAtCQlpbmZvLT52YXIu
-Ymx1ZS5vZmZzZXQgPSAwOw0KPiAtCQlpbmZvLT52YXIucmVkLmxlbmd0aCA9IDg7IC8qIDhiaXQg
-REFDICovDQo+IC0JCWluZm8tPnZhci5ncmVlbi5sZW5ndGggPSA4Ow0KPiAtCQlpbmZvLT52YXIu
-Ymx1ZS5sZW5ndGggPSA4Ow0KPiAtCQlpbmZvLT52YXIudHJhbnNwLm9mZnNldCA9IDA7DQo+IC0J
-CWluZm8tPnZhci50cmFuc3AubGVuZ3RoID0gMDsNCj4gLQkJYnJlYWs7DQo+IC0JY2FzZSAxNToN
-Cj4gLQkJaW5mby0+dmFyLnJlZC5vZmZzZXQgPSAxMDsNCj4gLQkJaW5mby0+dmFyLmdyZWVuLm9m
-ZnNldCA9IDU7DQo+IC0JCWluZm8tPnZhci5ibHVlLm9mZnNldCA9IDA7DQo+IC0JCWluZm8tPnZh
-ci5yZWQubGVuZ3RoID0gNTsNCj4gLQkJaW5mby0+dmFyLmdyZWVuLmxlbmd0aCA9IDU7DQo+IC0J
-CWluZm8tPnZhci5ibHVlLmxlbmd0aCA9IDU7DQo+IC0JCWluZm8tPnZhci50cmFuc3Aub2Zmc2V0
-ID0gMTU7DQo+IC0JCWluZm8tPnZhci50cmFuc3AubGVuZ3RoID0gMTsNCj4gLQkJYnJlYWs7DQo+
-IC0JY2FzZSAxNjoNCj4gLQkJaW5mby0+dmFyLnJlZC5vZmZzZXQgPSAxMTsNCj4gLQkJaW5mby0+
-dmFyLmdyZWVuLm9mZnNldCA9IDU7DQo+IC0JCWluZm8tPnZhci5ibHVlLm9mZnNldCA9IDA7DQo+
-IC0JCWluZm8tPnZhci5yZWQubGVuZ3RoID0gNTsNCj4gLQkJaW5mby0+dmFyLmdyZWVuLmxlbmd0
-aCA9IDY7DQo+IC0JCWluZm8tPnZhci5ibHVlLmxlbmd0aCA9IDU7DQo+IC0JCWluZm8tPnZhci50
-cmFuc3Aub2Zmc2V0ID0gMDsNCj4gLQkJYnJlYWs7DQo+IC0JY2FzZSAyNDoNCj4gLQkJaW5mby0+
-dmFyLnJlZC5vZmZzZXQgPSAxNjsNCj4gLQkJaW5mby0+dmFyLmdyZWVuLm9mZnNldCA9IDg7DQo+
-IC0JCWluZm8tPnZhci5ibHVlLm9mZnNldCA9IDA7DQo+IC0JCWluZm8tPnZhci5yZWQubGVuZ3Ro
-ID0gODsNCj4gLQkJaW5mby0+dmFyLmdyZWVuLmxlbmd0aCA9IDg7DQo+IC0JCWluZm8tPnZhci5i
-bHVlLmxlbmd0aCA9IDg7DQo+IC0JCWluZm8tPnZhci50cmFuc3Aub2Zmc2V0ID0gMDsNCj4gLQkJ
-aW5mby0+dmFyLnRyYW5zcC5sZW5ndGggPSAwOw0KPiAtCQlicmVhazsNCj4gLQljYXNlIDMyOg0K
-PiAtCQlpbmZvLT52YXIucmVkLm9mZnNldCA9IDE2Ow0KPiAtCQlpbmZvLT52YXIuZ3JlZW4ub2Zm
-c2V0ID0gODsNCj4gLQkJaW5mby0+dmFyLmJsdWUub2Zmc2V0ID0gMDsNCj4gLQkJaW5mby0+dmFy
-LnJlZC5sZW5ndGggPSA4Ow0KPiAtCQlpbmZvLT52YXIuZ3JlZW4ubGVuZ3RoID0gODsNCj4gLQkJ
-aW5mby0+dmFyLmJsdWUubGVuZ3RoID0gODsNCj4gLQkJaW5mby0+dmFyLnRyYW5zcC5vZmZzZXQg
-PSAyNDsNCj4gLQkJaW5mby0+dmFyLnRyYW5zcC5sZW5ndGggPSA4Ow0KPiAtCQlicmVhazsNCj4g
-LQlkZWZhdWx0Og0KPiAtCQlicmVhazsNCj4gLQl9DQo+ICsJZHJtX2ZiX2hlbHBlcl9maWxsX3Bp
-eGVsX2ZtdCgmaW5mby0+dmFyLCBmYi0+Zm9ybWF0LT5kZXB0aCk7DQo+ICANCj4gIAlpbmZvLT52
-YXIueHJlcyA9IGZiX3dpZHRoOw0KPiAgCWluZm8tPnZhci55cmVzID0gZmJfaGVpZ2h0Ow0KPiAt
-LSANCj4gMi4yMC4xDQo+IA0KLS0gDQogRXVnZW5peSBQYWx0c2V2
+Lieutenant Ts'o:
+I see that you have adopted the strategy of "Attack the messaging 
+service, not the message".
+
+You cannot refute my arguments, you and yours simply claim "it's a lie", 
+"it's BS!", "it's a troll".
+
+The fact of the matter is: a license without an interest attached is 
+revocable by the grantor.
+That is: if you have not been paid to forgo your right to rescind, you 
+still retain that right.
+
+In the case of Linux or BSD: if entity X did not pay you, and did not 
+reasonably rely on a promise not to rescind
+(a promise you never made), you can rescind the license at any time.
+
+This goes for all the 1000s of linux and BSD programmers who have not 
+transferred their rights.
+
+Yes I am a licensed attorney.
+Yes my analysis is correct.
+And yes I'm still waiting on Eben Moglen's promised counter-analysis 
+(it's been 2 months)...
+take a guess as to why.
+
+On 2018-12-28 13:57, Theodore Y. Ts'o wrote:
+> +-------------------+             .:\:\:/:/:.
+>          |   PLEASE DO NOT   |            :.:\:\:/:/:.:
+>          |  FEED THE TROLLS  |           :=.' -   - '.=:
+>          |                   |           '=(\ 9   9 /)='
+>          |   Thank you,      |              (  (_)  )
+>          |       Management  |              /`-vvv-'\
+>          +-------------------+             /         \
+>                  |  |        @@@          / /|,,,,,|\ \
+>                  |  |        @@@         /_//  /^\  \\_\
+>    @x@@x@        |  |         |/         WW(  (   )  )WW
+>    \||||/        |  |        \|           __\,,\ /,,/__
+>     \||/         |  |         |          (______Y______)
+> /\/\/\/\/\/\/\/\//\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+> ==================================================================
+> 
+> 
+> I recommend that people not respond to vsnsdualce@memeware.net,
+> visionsofalice@redchan.it, and in general, any e-mail coming from
+> domains served by the cock.li service (which comes from the IP address
+> 185.100.85.212).  As you can tell if you go to its web page, this
+> mailer serves the following domains:
+> 
+> 	cock.li, airmail.cc, 8chan.co, redchan.it, 420blaze.it,
+> 	aaathats3as.com, cumallover.me, dicksinhisan.us,
+> 	loves.dicksinhisan.us, wants.dicksinhisan.us, dicksinmyan.us,
+> 	loves.dicksinmyan.us, wants.dicksinmyan.us, goat.si, horsefucker.org,
+> 	national.shitposting.agency, nigge.rs, tfwno.gf, cock.lu, cock.email,
+> 	firemail.cc, getbackinthe.kitchen, memeware.net, cocaine.ninja,
+> 	waifu.club, rape.lol, and nuke.africa
+> 
+> This has been a public service announcement.
+> 
+> "Never to wrestle with a pig. You get dirty, and besides, the pig
+> likes it." - George Bernard Shaw
