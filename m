@@ -2,115 +2,333 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3853DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D7FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041212080D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546002608;
-	bh=ctV+K/hsCEVMhNgKNXlY9RjtGdNON0VBDuG/HCdZhAw=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=vzQdnHNW/MB/GDc/02PwPOTB+7H8jam7UC2+EXSPh4MKrJ25U0QXaqzD4TF7qYAN6
-	 kfhdl3Yj1Ev9ffICYblV1ziJ+/ap1GlTMZytnZo31D217w2aouznn1fsG9Hb7ZSlTY
-	 uYl25EdE1HKpKe6HuolYpNj+n7dMRjVh/QWGyt0c=
+	by mail.kernel.org (Postfix) with ESMTP id B1F9620873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 13:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbeL1NKG (ORCPT
+        id S1730564AbeL1NPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 08:10:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 08:15:47 -0500
+Received: from mga09.intel.com ([134.134.136.24]:49734 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729401AbeL1NKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 08:10:06 -0500
-Received: from earth.universe (unknown [151.217.27.112])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBE772080D;
-        Fri, 28 Dec 2018 13:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546002605;
-        bh=ctV+K/hsCEVMhNgKNXlY9RjtGdNON0VBDuG/HCdZhAw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BgpoKdVTws+rd6fADVV03mo67ob9+geyl9KoAZJ4g8SbgPY20qefI5B/yVjKIjlkW
-         mnpfDkPKzoHi6SZR+Es0c/SK3jp6nZrz13ze4MctaqqFsCEGfRfsUp84PAUiTGtsOY
-         UA6tV3q2hKW+6J7KiPBK+w0CiyveWb6JJJrjeLxA=
-Received: by earth.universe (Postfix, from userid 1000)
-        id F2D853C08E4; Fri, 28 Dec 2018 14:10:03 +0100 (CET)
-Date:   Fri, 28 Dec 2018 14:10:03 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hsi changes for hsi-4.21
-Message-ID: <20181228131003.5ncwdjazidyk3rgz@earth.universe>
+        id S1727337AbeL1NPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 08:15:47 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Dec 2018 05:15:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,409,1539673200"; 
+   d="scan'208,223";a="121783989"
+Received: from wangdan1-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.210.154])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Dec 2018 05:15:43 -0800
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1gcrzK-0007b1-JE; Fri, 28 Dec 2018 21:15:42 +0800
+Date:   Fri, 28 Dec 2018 21:15:42 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20181228131542.geshbmzvhr3litty@wfg-t540p.sh.intel.com>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+ <20181228121515.GS16738@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xgxvcfdi2dt6i554"
+Content-Type: multipart/mixed; boundary="sbnmklyntwize2li"
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181228121515.GS16738@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---xgxvcfdi2dt6i554
-Content-Type: text/plain; charset=us-ascii
+--sbnmklyntwize2li
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
 
-Hi Linus,
+On Fri, Dec 28, 2018 at 01:15:15PM +0100, Michal Hocko wrote:
+>On Fri 28-12-18 17:42:08, Wu Fengguang wrote:
+>[...]
+>> Those look unnecessary complexities for this post. This v2 patchset
+>> mainly fulfills our first milestone goal: a minimal viable solution
+>> that's relatively clean to backport. Even when preparing for new
+>> upstreamable versions, it may be good to keep it simple for the
+>> initial upstream inclusion.
+>
+>On the other hand this is creating a new NUMA semantic and I would like
+>to have something long term thatn let's throw something in now and care
+>about long term later. So I would really prefer to talk about long term
+>plans first and only care about implementation details later.
 
-Not much to say about this. The patch has been in linux-next for 3
-or 4 weeks.
+That makes good sense. FYI here are the several in-house patches that
+try to leverage (but not yet integrate with) NUMA balancing. The last
+one is brutal force hacking. They obviously break original NUMA
+balancing logic.
 
--- Sebastian
+Thanks,
+Fengguang
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+--sbnmklyntwize2li
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0074-migrate-set-PROT_NONE-on-the-PTEs-and-let-NUMA-balan.patch"
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+From ef41a542568913c8c62251021c3bc38b7a549440 Mon Sep 17 00:00:00 2001
+From: Liu Jingqi <jingqi.liu@intel.com>
+Date: Sat, 29 Sep 2018 23:29:56 +0800
+Subject: [PATCH 074/166] migrate: set PROT_NONE on the PTEs and let NUMA
+ balancing
 
-are available in the Git repository at:
+Need to enable CONFIG_NUMA_BALANCING firstly.
+Set PROT_NONE on the PTEs that map to the page,
+and do the actual migration in the context of process which initiate migration.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-4.21
+Signed-off-by: Liu Jingqi <jingqi.liu@intel.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ mm/migrate.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-for you to fetch changes up to 3a658e09a215586918044d8f8b8358eb14fa3f7d:
+diff --git a/mm/migrate.c b/mm/migrate.c
+index b27a287081c2..d933f6966601 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1530,6 +1530,21 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+ 	if (page_mapcount(page) > 1 && !migrate_all)
+ 		goto out_putpage;
+ 
++	if (flags & MPOL_MF_SW_YOUNG) {
++		unsigned long start, end;
++		unsigned long nr_pte_updates = 0;
++
++		start = max(addr, vma->vm_start);
++
++		/* TODO: if huge page  */
++		end = ALIGN(addr + (1 << PAGE_SHIFT), PAGE_SIZE);
++		end = min(end, vma->vm_end);
++		nr_pte_updates = change_prot_numa(vma, start, end);
++
++		err = 0;
++		goto out_putpage;
++	}
++
+ 	if (PageHuge(page)) {
+ 		if (PageHead(page)) {
+ 			/* Check if the page is software young. */
+-- 
+2.15.0
 
-  HSI: omap_ssi: Change to use DEFINE_SHOW_ATTRIBUTE macro (2018-12-05 00:16:59 +0100)
 
-----------------------------------------------------------------
-HSI changes for the 4.18 series
+--sbnmklyntwize2li
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0075-migrate-consolidate-MPOL_MF_SW_YOUNG-behaviors.patch"
 
-* omap-ssi: use DEFINE_SHOW_ATTRIBUTE
+From e617e8c2034387cbed50bafa786cf83528dbe3df Mon Sep 17 00:00:00 2001
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 30 Sep 2018 10:50:58 +0800
+Subject: [PATCH 075/166] migrate: consolidate MPOL_MF_SW_YOUNG behaviors
 
-----------------------------------------------------------------
-Yangtao Li (1):
-      HSI: omap_ssi: Change to use DEFINE_SHOW_ATTRIBUTE macro
+- if page already in target node: SetPageReferenced
+- otherwise: change_prot_numa
 
- drivers/hsi/controllers/omap_ssi_core.c | 29 ++++-------------------------
- drivers/hsi/controllers/omap_ssi_port.c | 14 ++------------
- 2 files changed, 6 insertions(+), 37 deletions(-)
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ arch/x86/kvm/Kconfig |  1 +
+ mm/migrate.c         | 65 +++++++++++++++++++++++++++++++---------------------
+ 2 files changed, 40 insertions(+), 26 deletions(-)
 
---xgxvcfdi2dt6i554
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index 4c6dec47fac6..c103373536fc 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -100,6 +100,7 @@ config KVM_EPT_IDLE
+ 	tristate "KVM EPT idle page tracking"
+ 	depends on KVM_INTEL
+ 	depends on PROC_PAGE_MONITOR
++	depends on NUMA_BALANCING
+ 	---help---
+ 	  Provides support for walking EPT to get the A bits on Intel
+ 	  processors equipped with the VT extensions.
+diff --git a/mm/migrate.c b/mm/migrate.c
+index d933f6966601..d944f031c9ea 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1500,6 +1500,8 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+ {
+ 	struct vm_area_struct *vma;
+ 	struct page *page;
++	unsigned long end;
++	unsigned int page_nid;
+ 	unsigned int follflags;
+ 	int err;
+ 	bool migrate_all = flags & MPOL_MF_MOVE_ALL;
+@@ -1522,49 +1524,60 @@ static int add_page_for_migration(struct mm_struct *mm, unsigned long addr,
+ 	if (!page)
+ 		goto out;
+ 
+-	err = 0;
+-	if (page_to_nid(page) == node)
+-		goto out_putpage;
++	page_nid = page_to_nid(page);
+ 
+ 	err = -EACCES;
+ 	if (page_mapcount(page) > 1 && !migrate_all)
+ 		goto out_putpage;
+ 
+-	if (flags & MPOL_MF_SW_YOUNG) {
+-		unsigned long start, end;
+-		unsigned long nr_pte_updates = 0;
+-
+-		start = max(addr, vma->vm_start);
+-
+-		/* TODO: if huge page  */
+-		end = ALIGN(addr + (1 << PAGE_SHIFT), PAGE_SIZE);
+-		end = min(end, vma->vm_end);
+-		nr_pte_updates = change_prot_numa(vma, start, end);
+-
+-		err = 0;
+-		goto out_putpage;
+-	}
+-
++	err = 0;
+ 	if (PageHuge(page)) {
+-		if (PageHead(page)) {
+-			/* Check if the page is software young. */
+-			if (flags & MPOL_MF_SW_YOUNG)
++		if (!PageHead(page)) {
++			err = -EACCES;
++			goto out_putpage;
++		}
++		if (flags & MPOL_MF_SW_YOUNG) {
++			if (page_nid == node)
+ 				SetPageReferenced(page);
+-			isolate_huge_page(page, pagelist);
+-			err = 0;
++			else if (PageAnon(page)) {
++				end = addr + (hpage_nr_pages(page) << PAGE_SHIFT);
++				if (end <= vma->vm_end)
++					change_prot_numa(vma, addr, end);
++			}
++			goto out_putpage;
+ 		}
++		if (page_nid == node)
++			goto out_putpage;
++		isolate_huge_page(page, pagelist);
+ 	} else {
+ 		struct page *head;
+ 
+ 		head = compound_head(page);
++
++		if (flags & MPOL_MF_SW_YOUNG) {
++			if (page_nid == node)
++				SetPageReferenced(head);
++			else {
++				unsigned long size;
++				size = hpage_nr_pages(head) << PAGE_SHIFT;
++				end = addr + size;
++				if (unlikely(addr & (size - 1)))
++					err = -EXDEV;
++				else if (likely(end <= vma->vm_end))
++					change_prot_numa(vma, addr, end);
++				else
++					err = -ERANGE;
++			}
++			goto out_putpage;
++		}
++		if (page_nid == node)
++			goto out_putpage;
++
+ 		err = isolate_lru_page(head);
+ 		if (err)
+ 			goto out_putpage;
+ 
+ 		err = 0;
+-		/* Check if the page is software young. */
+-		if (flags & MPOL_MF_SW_YOUNG)
+-			SetPageReferenced(head);
+ 		list_add_tail(&head->lru, pagelist);
+ 		mod_node_page_state(page_pgdat(head),
+ 			NR_ISOLATED_ANON + page_is_file_cache(head),
+-- 
+2.15.0
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwmIKsACgkQ2O7X88g7
-+pqoEw//bK49o25VbfkMNbvrUIH8UreeP9ta+By1rwwnsdvYLk1tVF0Imk1hBhJq
-RkactDqxdjVYg/g2LAamhRbvJfl5BD1ZL4vyFG4P91jsAUEKsb4jFltvUWYI3yyH
-hu8oR7OT+OJXk+XOZ8f+NjLpm7ko+3fYXmK2ImJz142psaPiypDzWTsKuKpRRZeL
-NYL4GjDUPWRjynPBSo028unffRUCBzD+h9aXEtf3f30E58D+0zMh50D1dAgEpmke
-7piPRDUbRG6J9ouiPpvC9NTy3jzO1a5E9gTbE76cb158X+pYaEZ2H7bTDnHgqd6n
-bt/dRXoU3OSPGtT8DTAopxeeLUwLaFx3fTlSUI/ba9hGK8J1X2EIgHaRlBVTDMH7
-AZjaE4oRg3lAeNIEuoa4OAjZCcD7QAsdRDYyJ0C0Nwo9xi1+Ef9cYIyBunq9J/2m
-aljBBMsZ1jkC0tsCDBhqhAc1rWY5JMZSxdILBQucjn6FFmizt+uTWJ2szV9hun/I
-Ud5h/L9scj5H1Wd4XnUICXWlksi+Hj55+RHHlT7Fx3ZgSwK+msRZmI2C+y+LKAmr
-vbjU14oHR4cXjlFzlenOE7aEyMEoL0BOm0Xf371ENn++w+tqcXaQzlZRQnFrrXnL
-5qF0JUVUv0u5qQojDDXrWY6XYU1ibAH3AuzeAQWHMKy1XNW9WtY=
-=H261
------END PGP SIGNATURE-----
+--sbnmklyntwize2li
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0076-mempolicy-force-NUMA-balancing.patch"
 
---xgxvcfdi2dt6i554--
+From a2d9740d1639f807868014c16dc9e2620d356f3c Mon Sep 17 00:00:00 2001
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 30 Sep 2018 19:22:27 +0800
+Subject: [PATCH 076/166] mempolicy: force NUMA balancing
+
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ mm/memory.c    | 3 ++-
+ mm/mempolicy.c | 5 -----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index c467102a5cbc..20c7efdff63b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3775,7 +3775,8 @@ static int numa_migrate_prep(struct page *page, struct vm_area_struct *vma,
+ 		*flags |= TNF_FAULT_LOCAL;
+ 	}
+ 
+-	return mpol_misplaced(page, vma, addr);
++	return 0;
++	/* return mpol_misplaced(page, vma, addr); */
+ }
+ 
+ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index da858f794eb6..21dc6ba1d062 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2295,8 +2295,6 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 	int ret = -1;
+ 
+ 	pol = get_vma_policy(vma, addr);
+-	if (!(pol->flags & MPOL_F_MOF))
+-		goto out;
+ 
+ 	switch (pol->mode) {
+ 	case MPOL_INTERLEAVE:
+@@ -2336,9 +2334,6 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 	/* Migrate the page towards the node whose CPU is referencing it */
+ 	if (pol->flags & MPOL_F_MORON) {
+ 		polnid = thisnid;
+-
+-		if (!should_numa_migrate_memory(current, page, curnid, thiscpu))
+-			goto out;
+ 	}
+ 
+ 	if (curnid != polnid)
+-- 
+2.15.0
+
+
+--sbnmklyntwize2li--
