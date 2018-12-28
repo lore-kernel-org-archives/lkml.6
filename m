@@ -2,122 +2,103 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A575C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0E7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388C420879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344BF2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:19:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LPgGrCbK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5GrK7QW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbeL1PLE (ORCPT
+        id S1731533AbeL1PTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 10:11:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43203 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeL1PLD (ORCPT
+        Fri, 28 Dec 2018 10:19:32 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33117 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727967AbeL1PTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 10:11:03 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v28so10175220pgk.10;
-        Fri, 28 Dec 2018 07:11:03 -0800 (PST)
+        Fri, 28 Dec 2018 10:19:32 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so14772479lfc.0;
+        Fri, 28 Dec 2018 07:19:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XI2WVwqKlqLXYSxDN0ff8vz5ETvbH2FvKrW546WUppY=;
-        b=LPgGrCbKughYOV33vPrAx27RGITI7WUVObwe4d9vc+NFRKyxBg6bNK0zliXEehylDO
-         CQztcbxyUDYly18OHRILnhCfvNMpbpAr3n74tIasyxCytOlxy2mK/So3Wxcj31j7eFlp
-         v9kx35XMmpLW7Ej6MVVOsfk0pjLXKgC/MnBh5fZ4/GyU+8N0VRbfGYTVOOOZZtiI+Sbh
-         dI3EQUMoomcdi5h6eQAD7SScjtE9efBxa4gu/xQ7NAS3qntiNKhqON4WbdtIPaVHavlF
-         RyoXBy/BygrcMqkGrVA9JrXq4dga/APZWrf85RZoK549gUf7ccoAcy/2lbwiRloyIuFB
-         Z2Og==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9d49aBJNh7GrHY65V1PzLXouo3n3U60A46Zt1GxLt60=;
+        b=g5GrK7QW5rvkGbZVfcKa0UDTnZMhppExbS7Rh8AtxaYaabOp7Lx3+fXGXbiyA0rzG7
+         hIE/R2KfUijQWlH+PL8Q3R1kT7wj8A6WlQSkCdc6Z8plxfWcr8qmivXrlsjSAqLLTQ+L
+         cVdbiDy7EhVQ6qV0xmnY12N4BWzGxZkU8Pshr3IObch660jlHqC9xQzEd26TcELpGzyk
+         kQbWUMQ7IjkhC9xtIvhp5lFLnGfIYCeHte21bwVptbS+edeqhCMiGI98RZGpvLN6Tx8P
+         CaMSy/CYH8BvzWiSOl+VsyQGUDz6KgW8edjRRIAiFm2aDoOfpQmmDi4DLnf5r1ENsAXa
+         3PJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=XI2WVwqKlqLXYSxDN0ff8vz5ETvbH2FvKrW546WUppY=;
-        b=lEXTaWN7ogcriywOJnNk2IIcubuaG4ll/uIRY6nhnBt337nMQWjlaUOazJIQsigHEL
-         9rUiu4kJEU1qSvlwxsqwk/AJwKeDqEAuEAHLGUe2qjBt6M5TIqHJozBmW+Rg6gKZR7UO
-         1QkKVst8etv/SvaE0TkVFZhN6FfURMcKSytA3F8scB5gFqaWSwyERd+YhqM4x/1etof7
-         CPwFiyMmmqnzYakrNw5aqaSvo+zVxLWkqCNDcdXRslN9HFD8j2bUFg/YMca+Y/iCllUD
-         FHntEgRlOFnRVNRAbawJchlVzgFGawXeyeLzRE9eOslTyuhamt3mGsuJxO9NOkoNDqmI
-         xFlA==
-X-Gm-Message-State: AJcUukcLSBKvYad8fxaNhfnZwNUDD6NsxhzokmjVUVdYmP7jZ80lbVaq
-        bMD1HFf9LAgkerWqYIUwghg=
-X-Google-Smtp-Source: ALg8bN7hZ0jrVxagyitQGtdxmhfAgQOrpfVtZsw8X0Br93ZkMtblDdv65PcP4HG5fz2E1NtpEyyY+Q==
-X-Received: by 2002:a63:4611:: with SMTP id t17mr26429412pga.119.1546009862638;
-        Fri, 28 Dec 2018 07:11:02 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id n22sm81917777pfh.166.2018.12.28.07.11.01
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9d49aBJNh7GrHY65V1PzLXouo3n3U60A46Zt1GxLt60=;
+        b=J6LOba9+JeKH8erhMa0zBlLHACNFKSvU/s4d563k5QPkMm63tjNMJb+yQOn3FdceBS
+         RuYXnTDrkI+P75wENOtWjCkQ8EV25sSWeaZX4lNd7uE9sUZ0MK3U/PV7NO54469IGK7M
+         UWZCg7TveaIhPhB0s33he2KwSjpAbmB0q/PK9sP2KSENWL6PNMQ9Kl/odnqSBxRUT0WN
+         W2fyC9TZanVRGKYPNRIkPj2ea/XvPFHQCks6nT0auIfrrni/phyXagjzT9sEvtLWchuW
+         A7i8F9BduWzu9x2HpMcNrnIwjTsDPIwxovNYkHpPGlsv3wnNoSeU3XIlZ+k/Dk5ewZw5
+         HS/w==
+X-Gm-Message-State: AA+aEWaXEqb8sbyV9N1V76a/6ccdGsl4Hv6k9SfjhuGkOeddxGDwu79X
+        WAnpESQTdR2Af0eYCnej8KI=
+X-Google-Smtp-Source: AFSGD/UTmAYOInFAWM4uvvTang73uSr38uYkOrdHoN7K5qcGiCjGYskp9put4k+MrxVZpvlYqkj5Tw==
+X-Received: by 2002:a19:d5:: with SMTP id 204mr13259672lfa.116.1546010369714;
+        Fri, 28 Dec 2018 07:19:29 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:7146:fd07:48ff:9665])
+        by smtp.googlemail.com with ESMTPSA id s24sm7872704lfc.30.2018.12.28.07.19.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 07:11:02 -0800 (PST)
-Date:   Fri, 28 Dec 2018 07:11:00 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Tony_Ao@wiwynn.com
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matt_Chen@wiwynn.com,
-        vijaykhemka@fb.com
-Subject: Re: [PATCH] hwmon: (tmp421) Correct the misspelling of the tmp442
- compatible attribute in OF device ID table
-Message-ID: <20181228151100.GA22978@roeck-us.net>
+        Fri, 28 Dec 2018 07:19:28 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     inki.dae@samsung.com, krzk@kernel.org, airlied@linux.ie
+Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 0/3] drm/exynos: rotator: Add support for s5pv210
+Date:   Fri, 28 Dec 2018 16:19:01 +0100
+Message-Id: <20181228151904.12079-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 02:03:22AM +0000, Tony_Ao@wiwynn.com wrote:
-> Hi there,
-> 
-> Correct a typo in OF device ID table.
-> The last one should be 'ti,tmp442'.
-> 
+This patchset adds support for s5pv210 soc, into 
+Samsung DRM Rotator driver. Currently only NV12 and XRGB8888 formats
+ are supported.
 
-Good catch. Unfortunately, the patch is corrupted and does not apply
-(tabs replaced with spaces). Please resend and make sure that your
-mailer leaves it alone (possibly use git send-email).
+It was tested by using simple tool from 
+https://www.spinics.net/lists/linux-samsung-soc/msg60498.html
 
-Also, please drop the "confidential" trailer.
+Changes from v1:
+  - fixed order of chipsets in documentation and removed ordering
+    from it
 
-Thanks,
-Guenter
+Paweł Chmiel (3):
+  drm/exynos: rotator: Add support for s5pv210
+  dt-bindings: gpu: samsung-rotator: Document s5pv210 support
+  ARM: dts: s5pv210: Add node for exynos-rotator
 
-> Signed-off-by: Cheng-Min Ao <tony_ao@wiwynn.com>
-> Signed-off-by: Yu-Hsiang Chen <matt_chen@wiwynn.com>
-> ---
-> drivers/hwmon/tmp421.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
-> index 8844c95..7053be5 100644
-> --- a/drivers/hwmon/tmp421.c
-> +++ b/drivers/hwmon/tmp421.c
-> @@ -88,7 +88,7 @@
->                 .data = (void *)2
->         },
->         {
-> -               .compatible = "ti,tmp422",
-> +               .compatible = "ti,tmp442",
->                 .data = (void *)3
->         },
->         { },
-> --
-> 1.9.1
-> 
-> Regards,
-> Tony
-> 
-> 
-> ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-> This email contains confidential or legally privileged information and is for the sole use of its intended recipient. 
-> Any unauthorized review, use, copying or distribution of this email or the content of this email is strictly prohibited.
-> If you are not the intended recipient, you may reply to the sender and should delete this e-mail immediately.
-> ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ .../bindings/gpu/samsung-rotator.txt          |  7 +++---
+ arch/arm/boot/dts/s5pv210.dtsi                |  9 ++++++++
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 23 +++++++++++++++++++
+ 3 files changed, 36 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
