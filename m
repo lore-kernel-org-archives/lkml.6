@@ -2,78 +2,91 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EDAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC65C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 702D8208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D816208E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbeL1HRo (ORCPT
+        id S1731719AbeL1H0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 02:17:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:46516 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728488AbeL1HRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 02:17:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2018 23:17:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,408,1539673200"; 
-   d="scan'208";a="133389244"
-Received: from dlipka-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.42.217])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Dec 2018 23:17:39 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie
-Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: Re: [PATCH] drm/intel_dsi_vbt: Remove duplicate header
-In-Reply-To: <20181225133055.GA2628@hp-pavilion-15-notebook-pc-brajeswar>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181225133055.GA2628@hp-pavilion-15-notebook-pc-brajeswar>
-Date:   Fri, 28 Dec 2018 09:18:07 +0200
-Message-ID: <87a7kqw24w.fsf@intel.com>
+        Fri, 28 Dec 2018 02:26:42 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36459 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729081AbeL1H0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 02:26:42 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 58BCE6873934B;
+        Fri, 28 Dec 2018 15:26:38 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 28 Dec 2018 15:26:29 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Randy Dunlap" <rdunlap@infradead.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] HSI: omap_ssi_port: fix debugfs_simple_attr.cocci warnings
+Date:   Fri, 28 Dec 2018 07:33:35 +0000
+Message-ID: <1545982415-103859-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Dec 2018, Brajeswar Ghosh <brajeswar.linux@gmail.com> wrote:
-> Remove video/mipi_display.h which is included more than once
->
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+for debugfs files.
 
-Pushed to drm-intel-next-queued, thanks for the patch.
+Semantic patch information:
+Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+imposes some significant overhead as compared to
+DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
 
-BR,
-Jani.
+Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
 
-> ---
->  drivers/gpu/drm/i915/intel_dsi_vbt.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_dsi_vbt.c b/drivers/gpu/drm/i915/intel_dsi_vbt.c
-> index ac83d6b89ae0..40a5efa33c3d 100644
-> --- a/drivers/gpu/drm/i915/intel_dsi_vbt.c
-> +++ b/drivers/gpu/drm/i915/intel_dsi_vbt.c
-> @@ -32,7 +32,6 @@
->  #include <linux/slab.h>
->  #include <video/mipi_display.h>
->  #include <asm/intel-mid.h>
-> -#include <video/mipi_display.h>
->  #include "i915_drv.h"
->  #include "intel_drv.h"
->  #include "intel_dsi.h"
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/hsi/controllers/omap_ssi_port.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+diff --git a/drivers/hsi/controllers/omap_ssi_port.c b/drivers/hsi/controllers/omap_ssi_port.c
+index b2b3989c..afbf134 100644
+--- a/drivers/hsi/controllers/omap_ssi_port.c
++++ b/drivers/hsi/controllers/omap_ssi_port.c
+@@ -162,7 +162,7 @@ static int ssi_div_set(void *data, u64 val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(ssi_sst_div_fops, ssi_div_get, ssi_div_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(ssi_sst_div_fops, ssi_div_get, ssi_div_set, "%llu\n");
+ 
+ static int ssi_debug_add_port(struct omap_ssi_port *omap_port,
+ 				     struct dentry *dir)
+@@ -177,8 +177,8 @@ static int ssi_debug_add_port(struct omap_ssi_port *omap_port,
+ 	dir = debugfs_create_dir("sst", dir);
+ 	if (!dir)
+ 		return -ENOMEM;
+-	debugfs_create_file("divisor", S_IRUGO | S_IWUSR, dir, port,
+-			    &ssi_sst_div_fops);
++	debugfs_create_file_unsafe("divisor", 0644, dir, port,
++				   &ssi_sst_div_fops);
+ 
+ 	return 0;
+ }
+
+
+
+
+
