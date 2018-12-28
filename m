@@ -6,48 +6,56 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A211C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CA1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563122070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6518D20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999811;
-	bh=qs8KlSQ+rjh8e+02sNflB8EQeYUwTVRq5iy9QGpg2iI=;
+	s=default; t=1545999820;
+	bh=dYs9yUv45BPAwratRjMZTmlNuHMCeu9CWLptFW4IlEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l0UfwILLK/4etWsI7YArzolwu4GADfPBBQHxNNUGO0OPVCuQf0e4NehV/3RZVNagd
-	 kTBIyzHvahZei1dXYj9fjhZv09CM/3jMMuQxXpLuiSJ/6veNF4P66yGjFDLAY8NZA/
-	 sMdUF3I85+hmwP0V9w9pkWnMD1snbXm18nXppQb8=
+	b=pttXLLQuTym+wN15XbyySOXPiRcJm0/yL/Tt+t3u2WpsgG2KYK1mg0PvdksEHER0y
+	 EjAPjt/bggSr9NQTHymzLdSvb+bhF9Jc90uUwuFPV7yORg4mUAXYXopQKBJoR5TjsW
+	 jYFBxSQiLwc/eTPhwB3dzxlkccA4aKws0ZMutQU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbeL1MXa (ORCPT
+        id S1731133AbeL1MOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:23:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33604 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:14:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731160AbeL1MOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:14:42 -0500
+        id S1731066AbeL1MOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:14:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39B102146F;
-        Fri, 28 Dec 2018 12:14:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09C5521901;
+        Fri, 28 Dec 2018 12:14:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999281;
-        bh=qs8KlSQ+rjh8e+02sNflB8EQeYUwTVRq5iy9QGpg2iI=;
+        s=default; t=1545999271;
+        bh=dYs9yUv45BPAwratRjMZTmlNuHMCeu9CWLptFW4IlEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lp5uhpFwW5X4i6EHP2bcwazigWiaWIiENqTc0DstPVu7QRcgWr/Xn4nK77Det+B2a
-         8uRHAcTbRX98LFI0QvoJcTFHpJFzRQbH57XFkC8GEQGJmL1SldAr7b7Kd2MJ0CUSMD
-         xWe5l+oor++N4xKll7WxfcGbiE8YXP6pXDQBA07g=
+        b=uwET7iK+k6uis0baKCnixpTsSkDGqB2TTT+lFamRPckCYmA+kXnITaojPynT9Yx4A
+         FpX1D8kbnvyNNWZiNWZZt6YWGBe7GCpNnME0jowqggJcwYGC7jpfR6suyiPHPYB9QA
+         s5eH1ey8a8VHsxVHiGg7KriZKJWdBbcgi5Seg7gU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Mathias Krause <minipli@googlemail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.19 34/46] xfrm_user: fix freeing of xfrm states on acquire
-Date:   Fri, 28 Dec 2018 12:52:28 +0100
-Message-Id: <20181228113126.828460603@linuxfoundation.org>
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.19 30/46] panic: avoid deadlocks in re-entrant console drivers
+Date:   Fri, 28 Dec 2018 12:52:24 +0100
+Message-Id: <20181228113126.577353246@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -66,83 +74,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Krause <minipli@googlemail.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-commit 4a135e538962cb00a9667c82e7d2b9e4d7cd7177 upstream.
+commit c7c3f05e341a9a2bd1a92993d4f996cfd6e7348e upstream.
 
-Commit 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct
-xfrm_state") moved xfrm state objects to use their own slab cache.
-However, it missed to adapt xfrm_user to use this new cache when
-freeing xfrm states.
+>From printk()/serial console point of view panic() is special, because
+it may force CPU to re-enter printk() or/and serial console driver.
+Therefore, some of serial consoles drivers are re-entrant. E.g. 8250:
 
-Fix this by introducing and make use of a new helper for freeing
-xfrm_state objects.
+serial8250_console_write()
+{
+	if (port->sysrq)
+		locked = 0;
+	else if (oops_in_progress)
+		locked = spin_trylock_irqsave(&port->lock, flags);
+	else
+		spin_lock_irqsave(&port->lock, flags);
+	...
+}
 
-Fixes: 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct xfrm_state")
-Reported-by: Pan Bian <bianpan2016@163.com>
-Cc: <stable@vger.kernel.org> # v4.18+
-Signed-off-by: Mathias Krause <minipli@googlemail.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+panic() does set oops_in_progress via bust_spinlocks(1), so in theory
+we should be able to re-enter serial console driver from panic():
+
+	CPU0
+	<NMI>
+	uart_console_write()
+	serial8250_console_write()		// if (oops_in_progress)
+						//    spin_trylock_irqsave()
+	call_console_drivers()
+	console_unlock()
+	console_flush_on_panic()
+	bust_spinlocks(1)			// oops_in_progress++
+	panic()
+	<NMI/>
+	spin_lock_irqsave(&port->lock, flags)   // spin_lock_irqsave()
+	serial8250_console_write()
+	call_console_drivers()
+	console_unlock()
+	printk()
+	...
+
+However, this does not happen and we deadlock in serial console on
+port->lock spinlock. And the problem is that console_flush_on_panic()
+called after bust_spinlocks(0):
+
+void panic(const char *fmt, ...)
+{
+	bust_spinlocks(1);
+	...
+	bust_spinlocks(0);
+	console_flush_on_panic();
+	...
+}
+
+bust_spinlocks(0) decrements oops_in_progress, so oops_in_progress
+can go back to zero. Thus even re-entrant console drivers will simply
+spin on port->lock spinlock. Given that port->lock may already be
+locked either by a stopped CPU, or by the very same CPU we execute
+panic() on (for instance, NMI panic() on printing CPU) the system
+deadlocks and does not reboot.
+
+Fix this by removing bust_spinlocks(0), so oops_in_progress is always
+set in panic() now and, thus, re-entrant console drivers will trylock
+the port->lock instead of spinning on it forever, when we call them
+from console_flush_on_panic().
+
+Link: http://lkml.kernel.org/r/20181025101036.6823-1-sergey.senozhatsky@gmail.com
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Daniel Wang <wonderfly@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Peter Feiner <pfeiner@google.com>
+Cc: linux-serial@vger.kernel.org
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/xfrm.h    |    1 +
- net/xfrm/xfrm_state.c |    8 +++++++-
- net/xfrm/xfrm_user.c  |    4 ++--
- 3 files changed, 10 insertions(+), 3 deletions(-)
+ kernel/panic.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -1552,6 +1552,7 @@ int xfrm_state_walk(struct net *net, str
- 		    int (*func)(struct xfrm_state *, int, void*), void *);
- void xfrm_state_walk_done(struct xfrm_state_walk *walk, struct net *net);
- struct xfrm_state *xfrm_state_alloc(struct net *net);
-+void xfrm_state_free(struct xfrm_state *x);
- struct xfrm_state *xfrm_state_find(const xfrm_address_t *daddr,
- 				   const xfrm_address_t *saddr,
- 				   const struct flowi *fl,
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -426,6 +426,12 @@ static void xfrm_put_mode(struct xfrm_mo
- 	module_put(mode->owner);
- }
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -14,6 +14,7 @@
+ #include <linux/kmsg_dump.h>
+ #include <linux/kallsyms.h>
+ #include <linux/notifier.h>
++#include <linux/vt_kern.h>
+ #include <linux/module.h>
+ #include <linux/random.h>
+ #include <linux/ftrace.h>
+@@ -233,7 +234,10 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
  
-+void xfrm_state_free(struct xfrm_state *x)
-+{
-+	kmem_cache_free(xfrm_state_cache, x);
-+}
-+EXPORT_SYMBOL(xfrm_state_free);
-+
- static void xfrm_state_gc_destroy(struct xfrm_state *x)
- {
- 	tasklet_hrtimer_cancel(&x->mtimer);
-@@ -452,7 +458,7 @@ static void xfrm_state_gc_destroy(struct
- 	}
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
--	kmem_cache_free(xfrm_state_cache, x);
-+	xfrm_state_free(x);
- }
+-	bust_spinlocks(0);
++#ifdef CONFIG_VT
++	unblank_screen();
++#endif
++	console_unblank();
  
- static void xfrm_state_gc_task(struct work_struct *work)
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -2288,13 +2288,13 @@ static int xfrm_add_acquire(struct sk_bu
- 
- 	}
- 
--	kfree(x);
-+	xfrm_state_free(x);
- 	kfree(xp);
- 
- 	return 0;
- 
- free_state:
--	kfree(x);
-+	xfrm_state_free(x);
- nomem:
- 	return err;
- }
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
 
 
