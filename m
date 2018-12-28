@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D441C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE931C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F48C20675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E83520675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999683;
-	bh=iswoIo8hIR7L5r1Eur5PMcmykedhbk7C3VZmkcTVVPE=;
+	s=default; t=1545999690;
+	bh=TI0jSZ45vf8hdE681Db7g5hCV6mmBCHjs50Y3Dj7ZZs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0QN3p4IbhWk3NUTtgKToMnIrsc5bev+frqiujXxKDQUy2SdSmJTO7VY5yYJ4mRuYx
-	 dIA4yF7fEATDSvNLfMxsIQGvkhN9s/VCgK8U8ZnmjxfghgxeH0Fliy3z+/Fqsx7sWB
-	 qkbHA8iqY4Ir0BEqMrxJHYjH6QJdKOzKt6aYy2js=
+	b=xGkutG0mvOcbqA69xUe/dc4triAiMy6DAHIogccghoIU0+pl7xKGjnrlZT/gHGFAK
+	 t9BdBpsGMULU7zxNa92AHSKWxrMyezY7z8U4Pmxqkx4CJVpFJPOj/it5q/PSRlx433
+	 VjmhQlrXxHDwrXmMpe15RENvpF6M6d5ZXrN8BXnY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbeL1MQH (ORCPT
+        id S1731520AbeL1MV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35132 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:21:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732555AbeL1MQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:03 -0500
+        id S1732582AbeL1MQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 686802146F;
-        Fri, 28 Dec 2018 12:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E14602087F;
+        Fri, 28 Dec 2018 12:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999362;
-        bh=iswoIo8hIR7L5r1Eur5PMcmykedhbk7C3VZmkcTVVPE=;
+        s=default; t=1545999360;
+        bh=TI0jSZ45vf8hdE681Db7g5hCV6mmBCHjs50Y3Dj7ZZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kad7jnUu5gO83LTpwCPCrCcIJtbpooCf4X6eluJNG7mWUi1oanr/J5Ss5/MDhGVkn
-         anWeN7d47dEnhfU/mbIR+kOoPaiaMd/YzAhE3De1ZBkPPCkvhr9Od4+pn6UzCivRg0
-         10nHqGOawxDXyyg4C+I+HL2k1cFnlNXFbymquoRw=
+        b=SvX7i0V+JpVTQeYlYxM3gVFUVgjSot9qooTPHFJImb+fuMVIGkQQoXBDGbMoqrMqn
+         NoyKoNjiBANCinKmvuRk2a+k3xcpi5IBhuLk8odNOiXGc6ObXrJT2ebQ4sHaNus1FD
+         IvIpe8X6z4JnlfrBzgsF2aA+p2nCZ1NQNw/W4UM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 09/36] xhci: Dont prevent USB2 bus suspend in state check intended for USB3 only
-Date:   Fri, 28 Dec 2018 12:52:25 +0100
-Message-Id: <20181228113127.142487229@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 08/36] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+Date:   Fri, 28 Dec 2018 12:52:24 +0100
+Message-Id: <20181228113127.077956012@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -64,39 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Hui Peng <benquike@gmail.com>
 
-commit 45f750c16cae3625014c14c77bd9005eda975d35 upstream.
+commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
 
-The code to prevent a bus suspend if a USB3 port was still in link training
-also reacted to USB2 port polling state.
-This caused bus suspend to busyloop in some cases.
-USB2 polling state is different from USB3, and should not prevent bus
-suspend.
+The function hso_probe reads if_num from the USB device (as an u8) and uses
+it without a length check to index an array, resulting in an OOB memory read
+in hso_probe or hso_get_config_data.
 
-Limit the USB3 link training state check to USB3 root hub ports only.
-The origial commit went to stable so this need to be applied there as well
+Add a length check for both locations and updated hso_probe to bail on
+error.
 
-Fixes: 2f31a67f01a8 ("usb: xhci: Prevent bus suspend if a port connect change or polling state is detected")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+This issue has been assigned CVE-2018-19985.
+
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/hso.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1512,7 +1512,8 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 		portsc_buf[port_index] = 0;
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2806,6 +2806,12 @@ static int hso_get_config_data(struct us
+ 		return -EIO;
+ 	}
  
- 		/* Bail out if a USB3 port has a new device in link training */
--		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
-+		if ((hcd->speed >= HCD_USB3) &&
-+		    (t1 & PORT_PLS_MASK) == XDEV_POLLING) {
- 			bus_state->bus_suspended = 0;
- 			spin_unlock_irqrestore(&xhci->lock, flags);
- 			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
++
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2876,10 +2882,18 @@ static int hso_probe(struct usb_interfac
+ 
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
+ 
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
 
 
