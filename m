@@ -2,154 +2,123 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3E0C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50501C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D7020873
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1331A20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:20:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AEPiOveC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q4IrFHJK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387657AbeL1SMP (ORCPT
+        id S2387666AbeL1SUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 13:12:15 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39087 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387643AbeL1SMO (ORCPT
+        Fri, 28 Dec 2018 13:20:32 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34189 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731921AbeL1SUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 13:12:14 -0500
-Received: by mail-io1-f65.google.com with SMTP id k7so17265626iob.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 10:12:14 -0800 (PST)
+        Fri, 28 Dec 2018 13:20:31 -0500
+Received: by mail-oi1-f195.google.com with SMTP id r62so17940400oie.1;
+        Fri, 28 Dec 2018 10:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=YvN5XzGEE5f57wuqld1AUnhuW43YgetQQF7INKbOvoQ=;
-        b=AEPiOveC1yivxHKPymqfJKJBjnZZ9x/ymZ2xRMIF4SJpTJB/JhN/xBZgJcJa/lxo7o
-         MK7JKbyV6p0vpc84pv0qJMh0aj6FZOuMD74UzpmmYaiuTyymYecGI8fBPKIXd8pgxhgA
-         7qtqDmBaFUWU4BFqEd8jzMwqaOytJg+M842hA=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=o2YXIoyu6bSMKbOxxf+CV2nKYwO4K74uKrdD9f4+e0E=;
+        b=q4IrFHJKtGP0RM4MxQTuLvHmJyqKET+5BojWDQHiqrdz2ssf1pIxhDluLaFACnYzlP
+         fM9VHZECe8lSg5KF1tYT0OtqhNBC1WB+uBduaJqcellmXMm9kikqqkp5b21SimFSK8Vk
+         GpPTWjpm8GnEevvjelGVhvBMPS+kVjU6gi8G4T+J5R4yInUd62N3891qMIggPU+Yc2Rp
+         fner+zF/SrjKYIW0uC7xAqqpB40p2TcyEFBoikscH0RADzYNafWN8yfAh8dk/6kxfOQ9
+         3frlKqDJ70om14+PNgHBNYmEhgzTLTUk70W3fZfx2bJjXcEI9QaEcykPL22IxycfI2qN
+         ObkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=YvN5XzGEE5f57wuqld1AUnhuW43YgetQQF7INKbOvoQ=;
-        b=Z6LyRQxjsPMNx9/7Vuj1dg3jhlK+aQYvambhYElIMIVFoLou3YRfe/OefI1bWDYiGp
-         U2EjsdavrXClpJNwJl/lz8MZAmZ8DK/FbwN494aU5DrgD5CQO6XoUL+es63C+YFi2Wab
-         yXX5ZTNC0pwCr/hcP3bqODUYLhotAlCxJ50NXGKzaE9EznEyP9AENDvzk5iPTnxNZM7t
-         y4Ma3DMUBcEotptULc6k3Ta1oD5zU0DUUGQzhhM4TCD1ACUwowjOyCa1ec0Ff7BpbLt5
-         EKXR9RbTkYBP7O3RE4NWiKkW5uHhyiTiBTq4c8vy/3oL/deQqz1EPTL0YI/gdPrZFfPd
-         mEWA==
-X-Gm-Message-State: AJcUuke1isXxrS40kaMQpNpuqY7waiKPlGUyW0PNHSzVv3/FrOjlOJ6Y
-        f3ZmYcxjxpK91Gg4mLZmPe/xkQ==
-X-Google-Smtp-Source: ALg8bN7dAUt2zMXcYA20JBEczGMLWKntOEOcI3OSRf1HCpR75u92mW4eOJ0Iz223N1CiqXeSOetzAg==
-X-Received: by 2002:a6b:6604:: with SMTP id a4mr19274508ioc.10.1546020733576;
-        Fri, 28 Dec 2018 10:12:13 -0800 (PST)
-Received: from localhost (c-73-24-4-37.hsd1.mn.comcast.net. [73.24.4.37])
-        by smtp.gmail.com with ESMTPSA id q9sm18439496ioh.32.2018.12.28.10.12.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 10:12:12 -0800 (PST)
-Date:   Fri, 28 Dec 2018 12:12:11 -0600
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/22] 4.9.148-stable review
-Message-ID: <20181228181211.izpzyi24nwxpfyxm@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20181228113126.144310132@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=o2YXIoyu6bSMKbOxxf+CV2nKYwO4K74uKrdD9f4+e0E=;
+        b=Vok4OoBt8vdNH2KasEIdZwipDLSum8iZBfF90y3GwAbH06+EfpG5lrlNS/mGFDGLu2
+         wH8CJ2XfMse7DTqAeY61HQZj7adHPCzTU4+bW9LAiuMxCytD5Jjlw3hat560sJEskuVq
+         pAZfOpXD588Ycy5t8O18yPBOUqPYrbbhXmkGgeWmTXFupIEmc3YWWVr6jFAEMQTp1gWF
+         Q1Qo8tz08u18VhK5ZJaXHiARE3qKWkFc20tuYutmZ5pO+j855CVkhErba2nzbiL1ueYj
+         SloakXDtwZjUMnivWA868eKtTNFhGDxAjzXR0Cvt6fZA0lTNdKufbP2iJ12v3tkZ6enO
+         uT9A==
+X-Gm-Message-State: AA+aEWY0fd0Q65JZ2ucLTxm+XL2yATWfNqmyi4HddUVv6zB53BwBcMmh
+        9HYaX84gOu+blsgPPg9QqAQAQb2I3X9/ldnqfWk=
+X-Google-Smtp-Source: AFSGD/Wkie2QMUosQmCIyvZWZnqyOc+ein4UvUeNMqz9+cg9KRobn2FA7dREwy8KmU2GhlKV1hZ/WVqsPuPUSkaYl/Y=
+X-Received: by 2002:aca:3011:: with SMTP id w17mr19048334oiw.342.1546021230223;
+ Fri, 28 Dec 2018 10:20:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+References: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 28 Dec 2018 16:20:37 -0200
+Message-ID: <CAOMZO5CuPr_BxMP_wjPuZNTCinHQ-cb08wPHr=Od_Qw_aafPTw@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: imx: Add Y Soft IOTA Draco, Hydra and Ursa boards
+To:     =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 12:52:37PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.148 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Vok=C3=A1=C4=8D,
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+On Tue, Dec 18, 2018 at 12:42 PM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft=
+.com> wrote:
 
-Summary
-------------------------------------------------------------------------
+> +&fec {
+> +       pinctrl-names =3D "default";
+> +       pinctrl-0 =3D <&pinctrl_enet>;
+> +       phy-mode =3D "rgmii-id";
+> +       phy-reset-gpios =3D <&gpio1 25 GPIO_ACTIVE_HIGH>;
 
-kernel: 4.9.148-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.9.y
-git commit: 90e2ba75f3b479bb8fb03958c1882389aeb50c45
-git describe: v4.9.147-23-g90e2ba75f3b4
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.147-23-g90e2ba75f3b4
+Are you sure this is active high?
 
-No regressions (compared to build v4.9.146-62-gbbfc30f29cb3)
+The FEC driver ignores the polarity of phy-reset-gpios and it assumes
+the GPIO reset as active low.
 
-No fixes (compared to build v4.9.146-62-gbbfc30f29cb3)
+If it really is active high, then you would need to pass the
+"phy-reset-active-high" property.
 
-Ran 21367 total tests in the following environments and test suites.
+> +/ {
+> +       model =3D "Y Soft IOTA Draco i.MX6Solo board";
+> +       compatible =3D "ysoft,imx6dl-yapp4-draco", "fsl,imx6dl";
+> +
+> +       cpus {
+> +               /delete-node/ cpu@1;
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+Is this really needed? We don't usually do this on imx6solo dts board files=
+.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+Only one CPU will be brought up online on imx6solo anyway.
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+> +       };
+> +
+> +       memory@10000000 {
+
+Need to pass "device_type =3D "memory";"
+
+> +/ {
+> +       model =3D "Y Soft IOTA Hydra i.MX6DualLite board";
+> +       compatible =3D "ysoft,imx6dl-yapp4-hydra", "fsl,imx6dl";
+> +
+> +       memory@10000000 {
+
+Need to pass "device_type =3D "memory";"
+
+> +       memory@10000000 {
+
+Need to pass "device_type =3D "memory";"
