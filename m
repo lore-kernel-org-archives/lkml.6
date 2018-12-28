@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8071C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A995AC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 898CF208E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0672148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbeL1Giu (ORCPT
+        id S1729260AbeL1Giv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 01:38:50 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16667 "EHLO huawei.com"
+        Fri, 28 Dec 2018 01:38:51 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16666 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726055AbeL1Git (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725929AbeL1Git (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Dec 2018 01:38:49 -0500
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B7D91D5F454AC;
+        by Forcepoint Email with ESMTP id B130931B40F1A;
         Fri, 28 Dec 2018 14:38:46 +0800 (CST)
 Received: from SIA1000080854.huawei.com (10.180.101.187) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 28 Dec 2018 14:38:40 +0800
+ 14.3.408.0; Fri, 28 Dec 2018 14:38:42 +0800
 From:   h00249924 <hutenghui@huawei.com>
 To:     <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
@@ -35,12 +35,15 @@ CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
         <wangyoulin1@hisilicon.com>, <ninggaoyu@hisilicon.com>,
         <hanxiaolong3@hisilicon.com>,
         Youlin Wang <wwx575822@notesmail.huawei.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 1/3] k3dma: Upgrade k3dma drever to support hisi_asp_dma hardware
-Date:   Fri, 28 Dec 2018 14:36:21 +0800
-Message-ID: <1545978983-124360-1-git-send-email-hutenghui@huawei.com>
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 2/3] dmaengine: Extend the k3dma driver binding
+Date:   Fri, 28 Dec 2018 14:36:22 +0800
+Message-ID: <1545978983-124360-2-git-send-email-hutenghui@huawei.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1545978983-124360-1-git-send-email-hutenghui@huawei.com>
+References: <1545978983-124360-1-git-send-email-hutenghui@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.180.101.187]
@@ -52,54 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Youlin Wang <wwx575822@notesmail.huawei.com>
 
-There is an new "hisi-pcm-asp-dma-1.0" device added in
-"arch/arm64/boot/dts/hisilicon/hi3660.dtsi".
-So we have to add a matching id in the driver file:
-"{ .compatible = "hisilicon,hisi-pcm-asp-dma-1.0", }"
-
-And also hisi-pcm-asp dma device needs no setting to the clock.
-So we skip this by "if" sentence on id string matching:
-"if (strcasecmp((of_id->compatible), (k3_pdma_dt_ids[0].compatible)) == 0)"
-
-After above this driver will support both k3 and hisi_asp dma hardware.
+Extend the k3dma driver binding to support hisi-asp hardware variants.
 
 Signed-off-by: Youlin Wang <wwx575822@notesmail.huawei.com>
 Signed-off-by: Tanglei Han <hantanglei@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
 Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 ---
- drivers/dma/k3dma.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/dma/k3dma.txt | 33 ++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
-index fdec2b6..10eecc2 100644
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -792,6 +792,7 @@ static int k3_dma_transfer_resume(struct dma_chan *chan)
+diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
+index 4945aea..cd21b82 100644
+--- a/Documentation/devicetree/bindings/dma/k3dma.txt
++++ b/Documentation/devicetree/bindings/dma/k3dma.txt
+@@ -3,7 +3,9 @@
+ See dma.txt first
  
- static const struct of_device_id k3_pdma_dt_ids[] = {
- 	{ .compatible = "hisilicon,k3-dma-1.0", },
-+	{ .compatible = "hisilicon,hisi-pcm-asp-dma-1.0", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, k3_pdma_dt_ids);
-@@ -835,10 +836,12 @@ static int k3_dma_probe(struct platform_device *op)
- 				"dma-requests", &d->dma_requests);
- 	}
+ Required properties:
+-- compatible: Should be "hisilicon,k3-dma-1.0"
++- compatible: Must be one of
++-		"hisilicon,k3-dma-1.0"
++-		"hisilicon,hisi-pcm-asp-dma-1.0"
+ - reg: Should contain DMA registers location and length.
+ - interrupts: Should contain one interrupt shared by all channel
+ - #dma-cells: see dma.txt, should be 1, para number
+@@ -43,3 +45,32 @@ For example, i2c0 read channel request line is 18, while write channel use 19
+ 			dma-names = "rx", "tx";
+ 		};
  
--	d->clk = devm_clk_get(&op->dev, NULL);
--	if (IS_ERR(d->clk)) {
--		dev_err(&op->dev, "no dma clk\n");
--		return PTR_ERR(d->clk);
-+	if (strcasecmp((of_id->compatible), (k3_pdma_dt_ids[0].compatible)) == 0) {
-+		d->clk = devm_clk_get(&op->dev, NULL);
-+		if (IS_ERR(d->clk)) {
-+			dev_err(&op->dev, "no dma clk\n");
-+			return PTR_ERR(d->clk);
-+		}
- 	}
- 
- 	irq = platform_get_irq(op, 0);
++
++
++
++Controller:
++		asp_dmac: asp_dmac@E804B000 {
++			compatible = "hisilicon,hisi-pcm-asp-dma-1.0";
++			reg = <0x0 0xe804b000 0x0 0x1000>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			dma-requests = <32>;
++			dma-min-chan = <0>;
++			dma-used-chans = <0xFFFE>;
++			dma-share;
++			interrupts = <0 216 4>;
++			interrupt-names = "asp_dma_irq";
++			status = "ok";
++		};
++
++Client:
++		i2s2: hisi_i2s {
++			compatible = "hisilicon,hisi-i2s";
++			reg = <0x0 0xe804f800 0x0 0x400>,
++				<0x0 0xe804e000 0x0 0x400>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2s2_pmx_func &i2s2_cfg_func>;
++			dmas = <&asp_dmac 18 &asp_dmac 19>;
++			dma-names = "rx", "tx";
++			#sound-dai-cells = <0>;
++		};
 -- 
 1.9.1
 
