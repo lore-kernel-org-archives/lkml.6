@@ -2,103 +2,205 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDF2C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC100217F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DE8921874
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 23:16:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHmIEuzZ"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="f6VsMJZi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeL1Ww0 (ORCPT
+        id S1727514AbeL1XQ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 17:52:26 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43231 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbeL1Ww0 (ORCPT
+        Fri, 28 Dec 2018 18:16:28 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43738 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeL1XQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 17:52:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2-v6so19739286lji.10;
-        Fri, 28 Dec 2018 14:52:24 -0800 (PST)
+        Fri, 28 Dec 2018 18:16:28 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so10540853plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 15:16:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PjI0ZHVTu6WYpNrElbpPf/NUK0zpmDF6Y7VvKGBI5UM=;
-        b=SHmIEuzZlres43uPFWrHKnFh70b4VEzU3cV5fimT/U+BvMVXVplo6NuP29dazn5Zpb
-         f/UqXxlN+XqJ1mNloiJBOMM8WlRjXADhKblh6obZ/3r9bkM/4WDEPte2jV6H7rDbkLJ1
-         hWZzBwp21kdzRbPH1JUZ0pvUnwzvtJLQYb2wmaOGikkeMOjr0eB6LvgEbC5x+n8dqFON
-         PRR8B28Sew3aOSY9jcsRXLIcXA/5U5pVyzGtibSCbmE2zwx92oXTg5RYCS/K4RVL0Evf
-         RC5Hugi5TSDz396V/nepCQN2gJBN+Mz1NcuvyC4Ni5kLNCpPzAs4E6xSJ9vI9mBW4iit
-         Klyw==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=DVRU4TKZa6jxqu6R6SbMdxQOygD+STQ1r4IFvyjL/9E=;
+        b=f6VsMJZichOxVbBt+2/xevV/tcqLlR8U7iStUclrTRKQTkN15V/CQ/nflfVYch85/w
+         oDc7j69nRD81KTPBNI9h6oRbP0ArZRK1djCZsgDGmeyyShLu6nQzFnytWVXOuDq2sa76
+         4SqLyObO0W4Oon5nFjbH8tETpp/lyhqzwNUO6MlfkZ3GXbe/Kh80iQcP9TpBD/i01wi4
+         SGoMLjLsHLUviMGN2PhDMMR3dWjTuRtiTcGaf+YnsKt6Jv2C51p9lJYHL7F+3W+VZMhK
+         hQNqgsVATCi5I1/grutcIEk6WQy6I+0IlhfM4ksKJJIOLtvyVIRpM10xORIZfttPuslG
+         THMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PjI0ZHVTu6WYpNrElbpPf/NUK0zpmDF6Y7VvKGBI5UM=;
-        b=UBpiYRta+qCTRjI916qBbRBxVQCnlJW0K0HFltJu0562Y+qcqXL5LNkqdnc2DUWPQZ
-         HUkTyPKDsEizD60Wr4TUWouglO3ZvG1uKZiex4F72qX6MUf9ndqgUphZC8eK8YtlesaH
-         izBRF89q6+zqRcoZF+47V9QiaVeXjVenFegBVYlMxSSW0/nlCzMXoHzc5QnZmvQs3/58
-         hWVmzEfTSyoGzGNCGjkxA7bCLDepB6GLMhtkp/bahWJErUj1rfwBd0hfffIl0xc7tkYs
-         omVp6EhXBW2ZPAW10W16jglFw9flZPFsmpRZdTt6azNFwYw6vkPxNnAjJ02kqa7z/JQC
-         VsIw==
-X-Gm-Message-State: AA+aEWamqA4TXcgA+vPo197Lw2IU1n/3Qs6HfeYGw1wZ0O/30TbT58cb
-        w8H63ybqre7+8MCS6oz3r+h1Lof1lLHpQKG4wj4=
-X-Google-Smtp-Source: ALg8bN7m0oEw5Xi5Ka7uGCpm4lH/npv5HjeKZPpdWe6nNpUGCG7CZPADXhAy7pFk2GcILs72a4tW08STn1eHzThOJ4E=
-X-Received: by 2002:a2e:5356:: with SMTP id t22-v6mr16104063ljd.26.1546037543450;
- Fri, 28 Dec 2018 14:52:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20181228154609.14846-1-pawel.mikolaj.chmiel@gmail.com>
- <20181228154609.14846-6-pawel.mikolaj.chmiel@gmail.com> <20181228224707.GA7218@bogus>
-In-Reply-To: <20181228224707.GA7218@bogus>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Fri, 28 Dec 2018 14:52:12 -0800
-Message-ID: <CAKdAkRQ6iO5bSUkSuPOUXMy46W1kENqg3ev=i+75459wfWAhfw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] Input: dt-bindings: tm2-touchkey: Document new
- keycodes property
-To:     Rob Herring <robh@kernel.org>
-Cc:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, xc-racer2@live.ca,
-        Simon Shields <simon@lineageos.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=DVRU4TKZa6jxqu6R6SbMdxQOygD+STQ1r4IFvyjL/9E=;
+        b=JIr36SbqdXk/L8V6tCkbSdgHWpnaMdmBiLc5b0TfpW4l78Uu+h41YLdn7o6B9HfDwJ
+         YIt7g5MIisejCiKOAdgM1DZOEnhNq2M+JgsQffwntT95M2hlX6SC8/gFVxEYRgpf0Jv0
+         AhCUWHQ8hE7HSzqesOwK7EX/mqlap1Bxizu5lArIZ7wWbGjp6gQRCWzTtPR8dnvqsdRJ
+         GhVz0v2a/W2A0TgkZ8u10RRV+F8tJ0xUe8f+sc1J4v+v4ZqAAIQ0FLEY5yQLDPCJyn/U
+         NL1FOuOlafdPljCZf/kN1H9JUqbNXCSQkRoZxJTS9f/XATRLx7FsNQoPlrMZ4LjFtgmi
+         YTYg==
+X-Gm-Message-State: AJcUukdMouVpQsCCAf0mEbp8e3jiSbq+t0l4c0LnAS6iEV4oeOQWJp0y
+        aZqKZJ1R7/yUsEFTqMG58klr0g==
+X-Google-Smtp-Source: ALg8bN5D6iyEnO8lgmSbFhB+TGwgkNJTruTIlNXaIi4pbtzdoM5JklFoPlmqpc1K/TMyy+2LPxN4sw==
+X-Received: by 2002:a17:902:7296:: with SMTP id d22mr29902592pll.265.1546038987148;
+        Fri, 28 Dec 2018 15:16:27 -0800 (PST)
+Received: from cabot.hitronhub.home (S0106bc4dfb596de3.ek.shawcable.net. [174.0.67.248])
+        by smtp.gmail.com with ESMTPSA id v13sm54755314pff.20.2018.12.28.15.16.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Dec 2018 15:16:25 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <1EF1B31A-83D8-4642-BEBF-F56E45485223@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_08DEB4F4-6BEB-4500-881F-7C4F24C62FEB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [Qemu-devel] d_off field in struct dirent and 32-on-64 emulation
+Date:   Fri, 28 Dec 2018 16:16:21 -0700
+In-Reply-To: <CAFEAcA9W+JK7_TrtTnL1P2ES1knNPJX9wcUvhfLwxLq9augq1w@mail.gmail.com>
+Cc:     Florian Weimer <fw@deneb.enyo.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        lucho@ionkov.net, libc-alpha@sourceware.org,
+        Arnd Bergmann <arnd@arndb.de>, ericvh@gmail.com, hpa@zytor.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>, rminnich@sandia.gov,
+        v9fs-developer@lists.sourceforge.net
+To:     Peter Maydell <peter.maydell@linaro.org>
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+ <CAFEAcA92m4vhzjJ+B=mP_o6Wfhx1XSKo3uWxah3osh=u5UXFuw@mail.gmail.com>
+ <9C6A7D45-CF53-4C61-B5DD-12CA0D419972@dilger.ca>
+ <CAFEAcA9W+JK7_TrtTnL1P2ES1knNPJX9wcUvhfLwxLq9augq1w@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 2:47 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, 28 Dec 2018 16:46:07 +0100, =3D?UTF-8?q?Pawe=3DC5=3D82=3D20Chmiel=
-?=3D wrote:
-> > From: Jonathan Bakker <xc-racer2@live.ca>
-> >
-> > Document new optional property for setting custom keycodes.
-> >
-> > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> > Changes from v1:
-> >   - Because key codes could be bigger than 255, use ints for keycodes
-> > ---
-> >  .../devicetree/bindings/input/cypress,tm2-touchkey.txt        | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Shouldn't this be "linux,keycodes" though?
+--Apple-Mail=_08DEB4F4-6BEB-4500-881F-7C4F24C62FEB
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Thanks.
+On Dec 28, 2018, at 4:18 AM, Peter Maydell <peter.maydell@linaro.org> =
+wrote:
+>=20
+> On Fri, 28 Dec 2018 at 00:23, Andreas Dilger <adilger@dilger.ca> =
+wrote:
+>> On Dec 27, 2018, at 10:41 AM, Peter Maydell =
+<peter.maydell@linaro.org> wrote:
+>>> As you note, this causes breakage for userspace programs which
+>>> need to implement an API/ABI with 32-bit offset but which only
+>>> have access to the kernel's 64-bit offset API/ABI.
+>>=20
+>> This is (IMHO) a bit of an oxymoron, isn't it?  Applications using
+>> the 64-bit API, but storing the value in a 32-bit field?
+>=20
+> I didn't say "which choose to store the value in a 32-bit field",
+> I said "which have to implement an API/ABI which has 32-bit fields".
+> In QEMU's case, we use the host kernel's ABI, which has 64-bit
+> offset fields. We implement a syscall ABI for the guest binary
+> we are running under emulation, which may have 32-bit offset fields
+> (for instance if we are running a 32-bit Arm binary.) Both of
+> these ABIs are fixed -- QEMU doesn't have a choice here, it
+> just has to make the best effort it can with what the host kernel
+> provides it, to provide the semantics the guest binary needs.
+> My suggestion in this thread is that the host kernel provides
+> a wider range of facilities so that QEMU can do the job it's
+> trying to do.
+>=20
+>> The same
+>> problem would exist for filesystems with 64-bit inodes or 64-bit
+>> file offsets trying to store these values in 32-bit variables.
+>> It might work most of the time, but it can also break randomly.
+>=20
+> In general inodes and offsets start from 0 and work up --
+> so almost all of the time they don't actually overflow.
+> The problem with ext4 directory hash "offsets" is that they
+> overflow all the time and immediately, so instead of "works
+> unless you have a weird edge case" like all the other filesystems,
+> it's "never works".
+>=20
+>>> I think the best fix for this would be for the kernel to either
+>>> (a) consistently use a 32-bit hash or (b) to provide an API
+>>> so that userspace can use the FMODE_32BITHASH flag the way
+>>> that kernel-internal users already can.
+>>=20
+>> It would be relatively straight forward to add a "32bitapi" mount
+>> option to return a 32-bit directory hash to userspace for operations
+>> on that mountpoint (ext4 doesn't have 64-bit inode numbers yet).
+>> However, I can't think of an easy way to do this on a per-process
+>> basis without just having it call the 32-bit API directly.
+>=20
+> The problem is that there is no 32-bit API in some cases
+> (unless I have misunderstood the kernel code) -- not all
+> host architectures implement compat syscalls or allow them
+> to be called from 64-bit processes or implement all the older
+> syscall variants that had smaller offets. If there was a guaranteed
+> "this syscall always exists and always gives me 32-bit offsets"
+> we could use it.
 
---=20
-Dmitry
+The "32bitapi" mount option would use 32-bit hash for seekdir
+and telldir, regardless of what kernel API was used.  That would
+just set the FMODE_32BITHASH flag in the file->f_mode for all files.
+
+Using 32-bit directory hash values is not necessarily harmful, but
+it returns the possibility to hit the problem with hash collisions
+that previously existed before the move to 64-bit hash values.
+This becomes more of a problem as directory sizes increase.
+
+>> For ext4 at least, you could just shift the high 32-bit part of
+>> the 64-bit hash down into a 32-bit value in telldir(), and
+>> shift it back up when seekdir() is called.
+>=20
+> Yes, that has been suggested, but it seemed a bit dubious
+> to bake in knowledge of ext4's internal implementation details.
+> Can we rely on this as an ABI promise that will always work
+> for all versions of all file systems going forwards?
+
+Well, the directory cookies need to be relatively stable over
+time because they are exported to applications and possibly
+remote nodes via NFS, so it can't be changed very much.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_08DEB4F4-6BEB-4500-881F-7C4F24C62FEB
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlwmrsUACgkQcqXauRfM
+H+BcEQ//QtSwKaRnVgyNL34t9fYOhxAIo5A4AwgxC6dafaNLpFdDCfow3frNBTFj
+wtyqIoCmGFa10unoaI1hY+u9gTgs+//zAOtggfvLV3VRHzupxc5g2dILnAo4jVVW
+td+CgZamBXFaMrYkTX4gx2rm/9Bc/W0R/1KasC/DXtNQEMrUybwv1x2OMmhx8cfH
+fcVcjLbl94JNqfVZLVtCF08sqECh2dvBNWHB95Mfnzy6qEeLyI4VS32ydZ2HEAcB
+tkRGukzGn3eDhh3nZl5FiqWEEB5ZYSTE8KIPkZ/h2dCsSZjvW5gB/o6EC7Ig+A80
+IuBddSkTF023UmQ6PiGKDr8BmKGYf7lJxa6IYW+2HjT6Vp89XmJSTCdoFRJnFW9z
+nKHTA2mFmHZN3L4DAvdMGc3VfXBEHyTw4V1q/Mf37QtP8Z+FSYvAGll22DbMMysl
+hlNFqothpjCNcjWpuT22Pu6T9gKLmwSvLYA0cr8C8dYGHt2F8+jbhL7ld5I0kBPA
+IGREujjMVKuA46BMrqQ8oL12PrYhAo0HbPvaAvwJ2HHcYtwjuv3bUOc6VgV8oipq
+wOFgTk8WAZfHEPQrfSoG5TatNixl58Q+GvBD7S8TS4/hgxaMluhxfw9sqQ6C7SwO
+JFVtp2MYJumNd6niFwfR8J52SV3+lIXohPfbccr6LEtvc7fMtIc=
+=Hl10
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_08DEB4F4-6BEB-4500-881F-7C4F24C62FEB--
