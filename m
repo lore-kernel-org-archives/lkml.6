@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A5AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF7421902
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E3521902
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545973337;
-	bh=XKV5OBswjcoUlEHNzPzPwkeCRzdC8ws0ndr0j2F/Jn4=;
+	s=default; t=1545973341;
+	bh=2EvVsJwT7PohD2FVSHOn2LkR9g8Q9EYeBe1XKtulr0I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pk1oQOesKo4L3n47DdgTkCZpjV38/qFIObcGq8HU8aNuEPEbfTv0y762ITBrDzRIf
-	 co8n3/vNer8VGcItucVuPDqIiQTPXyOj+NWUl4LGK1bx4auyohwtv+m7t6a/Zc9ij+
-	 uI6Uz1jdExiXO8njSoCe1gh9/sSeUGiam72GymJU=
+	b=KOYU0HXOGxbwHId32K5NV6edrk33NthDyfTtnu0lXyYi2eujIeQRdu9DfXUISDKWR
+	 mNNt+lLw/wTuvg9ZqJf+w7bcZr4/90b+9ncjJVJcuVGif+WE5rFchfMm4SNoZ21l7x
+	 uuU/HXMjcWhd8UT0fDHzvLjbovq4eGjA26BYewow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbeL1FCQ (ORCPT
+        id S1727170AbeL1FCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 00:02:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59390 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 00:02:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbeL1FCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 00:02:13 -0500
+        id S1725978AbeL1FCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 00:02:11 -0500
 Received: from lerouge.suse.de (lfbn-ncy-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FF4E21901;
-        Fri, 28 Dec 2018 05:02:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6225218FE;
+        Fri, 28 Dec 2018 05:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545973332;
-        bh=XKV5OBswjcoUlEHNzPzPwkeCRzdC8ws0ndr0j2F/Jn4=;
+        s=default; t=1545973330;
+        bh=2EvVsJwT7PohD2FVSHOn2LkR9g8Q9EYeBe1XKtulr0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IsipIGL3sf4EoCLcNRODelIlS8CwC/9f96aRFxLBlUHKD15zPqa5o0552ITVyk30g
-         OKO1brlqTH2YL4e0NTNEbnfsA/Gx8cDxlSc/UbsBaDb9Dk1IB+njocdD20PPNFJsNL
-         hks0s5X74JRS7gFDFTBhy63bAmU03xQytkAsEt8k=
+        b=aMmUJsPEYh+D1REQSmkq04YOdBrDMY889jMGQuDpCzOBAnc7faOUwlS4HexSPvqwd
+         zUqWGwM9bFDe5c/UmNR2AsSgpAcDMFqQYwzDhccdoNV29ON+jM1Lz4sTosTw6BjVhO
+         wg3EtFrxzJYSsQ+OqhKGPsPN+tHPcq/e+U5WpCqI=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 2/2] locking/lockdep: Provide enum lock_usage_bit mask names
-Date:   Fri, 28 Dec 2018 06:02:01 +0100
-Message-Id: <1545973321-24422-3-git-send-email-frederic@kernel.org>
+Subject: [PATCH 1/2] locking/lockdep: Simplify mark_held_locks()
+Date:   Fri, 28 Dec 2018 06:02:00 +0100
+Message-Id: <1545973321-24422-2-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545973321-24422-1-git-send-email-frederic@kernel.org>
 References: <1545973321-24422-1-git-send-email-frederic@kernel.org>
@@ -55,121 +55,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It makes the code more self-explanatory and tells throughout the code
-what magic number refers to:
-
-* state (Hardirq/Softirq)
-* direction (used in or enabled above state)
-* read or write
-
-We can even remove some comments that were compensating for the lack of
-those constant names.
+The enum mark_type appears a bit artificial here. We can directly pass
+the base enum lock_usage_bit value to mark_held_locks(). All we need
+then is to add the read index for each lock if necessary. It makes the
+code clearer.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/lockdep.c           | 33 +++++++++++----------------------
- kernel/locking/lockdep_internals.h |  4 ++++
- 2 files changed, 15 insertions(+), 22 deletions(-)
+ kernel/locking/lockdep.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 118a554..115d43e 100644
+index 5c837a5..118a554 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -1624,29 +1624,18 @@ static const char *state_rnames[] = {
- 
- static inline const char *state_name(enum lock_usage_bit bit)
- {
--	return (bit & 1) ? state_rnames[bit >> 2] : state_names[bit >> 2];
-+	return (bit & LOCK_USAGE_READ_MASK) ? state_rnames[bit >> 2] : state_names[bit >> 2];
+@@ -2709,35 +2709,28 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
+ 	return 1;
  }
  
- static int exclusive_bit(int new_bit)
- {
--	/*
--	 * USED_IN
--	 * USED_IN_READ
--	 * ENABLED
--	 * ENABLED_READ
--	 *
--	 * bit 0 - write/read
--	 * bit 1 - used_in/enabled
--	 * bit 2+  state
--	 */
+-enum mark_type {
+-#define LOCKDEP_STATE(__STATE)	__STATE,
+-#include "lockdep_states.h"
+-#undef LOCKDEP_STATE
+-};
 -
--	int state = new_bit & ~3;
--	int dir = new_bit & 2;
-+	int state = new_bit & LOCK_USAGE_STATE_MASK;
-+	int dir = new_bit & LOCK_USAGE_DIR_MASK;
- 
- 	/*
- 	 * keep state, bit flip the direction and strip read.
- 	 */
--	return state | (dir ^ 2);
-+	return state | (dir ^ LOCK_USAGE_DIR_MASK);
- }
- 
- static int check_irq_usage(struct task_struct *curr, struct held_lock *prev,
-@@ -2662,8 +2651,8 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
- 		enum lock_usage_bit new_bit)
+ /*
+  * Mark all held locks with a usage bit:
+  */
+ static int
+-mark_held_locks(struct task_struct *curr, enum mark_type mark)
++mark_held_locks(struct task_struct *curr, enum lock_usage_bit base_bit)
  {
- 	int excl_bit = exclusive_bit(new_bit);
--	int read = new_bit & 1;
--	int dir = new_bit & 2;
-+	int read = new_bit & LOCK_USAGE_READ_MASK;
-+	int dir = new_bit & LOCK_USAGE_DIR_MASK;
+-	enum lock_usage_bit usage_bit;
+ 	struct held_lock *hlock;
+ 	int i;
  
- 	/*
- 	 * mark USED_IN has to look forwards -- to ensure no dependency
-@@ -2687,19 +2676,19 @@ mark_lock_irq(struct task_struct *curr, struct held_lock *this,
- 	 * states.
- 	 */
- 	if ((!read || !dir || STRICT_READ_CHECKS) &&
--			!usage(curr, this, excl_bit, state_name(new_bit & ~1)))
-+			!usage(curr, this, excl_bit, state_name(new_bit & ~LOCK_USAGE_READ_MASK)))
- 		return 0;
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
++		enum lock_usage_bit hlock_bit = base_bit;
+ 		hlock = curr->held_locks + i;
  
- 	/*
- 	 * Check for read in write conflicts
- 	 */
- 	if (!read) {
--		if (!valid_state(curr, this, new_bit, excl_bit + 1))
-+		if (!valid_state(curr, this, new_bit, excl_bit + LOCK_USAGE_READ_MASK))
- 			return 0;
+-		usage_bit = 2 + (mark << 2); /* ENABLED */
+ 		if (hlock->read)
+-			usage_bit += 1; /* READ */
++			hlock_bit += 1; /* READ */
  
- 		if (STRICT_READ_CHECKS &&
--			!usage(curr, this, excl_bit + 1,
--				state_name(new_bit + 1)))
-+			!usage(curr, this, excl_bit + LOCK_USAGE_READ_MASK,
-+				state_name(new_bit + LOCK_USAGE_READ_MASK)))
+-		BUG_ON(usage_bit >= LOCK_USAGE_STATES);
++		BUG_ON(hlock_bit >= LOCK_USAGE_STATES);
+ 
+ 		if (!hlock->check)
+ 			continue;
+ 
+-		if (!mark_lock(curr, hlock, usage_bit))
++		if (!mark_lock(curr, hlock, hlock_bit))
  			return 0;
  	}
  
-@@ -2723,7 +2712,7 @@ mark_held_locks(struct task_struct *curr, enum lock_usage_bit base_bit)
- 		hlock = curr->held_locks + i;
+@@ -2758,7 +2751,7 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	 * We are going to turn hardirqs on, so set the
+ 	 * usage bit for all held locks:
+ 	 */
+-	if (!mark_held_locks(curr, HARDIRQ))
++	if (!mark_held_locks(curr, LOCK_ENABLED_HARDIRQ))
+ 		return;
+ 	/*
+ 	 * If we have softirqs enabled, then set the usage
+@@ -2766,7 +2759,7 @@ static void __trace_hardirqs_on_caller(unsigned long ip)
+ 	 * this bit from being set before)
+ 	 */
+ 	if (curr->softirqs_enabled)
+-		if (!mark_held_locks(curr, SOFTIRQ))
++		if (!mark_held_locks(curr, LOCK_ENABLED_SOFTIRQ))
+ 			return;
  
- 		if (hlock->read)
--			hlock_bit += 1; /* READ */
-+			hlock_bit += LOCK_USAGE_READ_MASK;
+ 	curr->hardirq_enable_ip = ip;
+@@ -2880,7 +2873,7 @@ void trace_softirqs_on(unsigned long ip)
+ 	 * enabled too:
+ 	 */
+ 	if (curr->hardirqs_enabled)
+-		mark_held_locks(curr, SOFTIRQ);
++		mark_held_locks(curr, LOCK_ENABLED_SOFTIRQ);
+ 	current->lockdep_recursion = 0;
+ }
  
- 		BUG_ON(hlock_bit >= LOCK_USAGE_STATES);
- 
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 88c847a..2ebb9d0 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -22,6 +22,10 @@ enum lock_usage_bit {
- 	LOCK_USAGE_STATES
- };
- 
-+#define LOCK_USAGE_READ_MASK 1
-+#define LOCK_USAGE_DIR_MASK  2
-+#define LOCK_USAGE_STATE_MASK (~(LOCK_USAGE_READ_MASK | LOCK_USAGE_DIR_MASK))
-+
- /*
-  * Usage-state bitmasks:
-  */
 -- 
 2.7.4
 
