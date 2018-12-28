@@ -3,123 +3,218 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1622C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D37C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5AB021741
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0775A21741
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:35:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="j5F5b15t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qoSNAPd8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbeL1Bbg (ORCPT
+        id S1731058AbeL1BfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 20:31:36 -0500
-Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:64453
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727705AbeL1Bbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 20:31:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+oad70CdTPjtJGT2oG9Dm5ojwf2LMOe1+9hPhS8LCi4=;
- b=j5F5b15t+1+KDoDxOSHfvTTuSGL7yvHrwA6CE5LZGFRJbZeMC4EbTM+PwlQaAQ3ezSgcpbnnb4nheG0+G//ixWujle1ev7mbuhYa7BpSNS3hsdUXlEXgvh02DmXD79WkfZQZr8Yz75LloawiF9Ur/VP0ybpcbu2o0EhejXy6e80=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB5053.eurprd04.prod.outlook.com (20.177.50.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Fri, 28 Dec 2018 01:31:28 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::c92b:a786:d2c5:fa1e]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::c92b:a786:d2c5:fa1e%4]) with mapi id 15.20.1471.019; Fri, 28 Dec 2018
- 01:31:27 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Pawel Laszczak <pawell@cadence.com>,
-        Peter Chen <hzpeterchen@gmail.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Thu, 27 Dec 2018 20:35:22 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46244 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbeL1BfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 20:35:22 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x202so16333854oif.13
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 17:35:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:openpgp:autocrypt:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Qx+xOrtf5aIwVOrAj7bVsl9Jc/HCNCAmUBz24+oOR0Q=;
+        b=qoSNAPd8634wrWR8Qw7P4NJDRozTGFx5IDqWgBGmOQVNS0r+6hqXWW2yfrt3vk5Jt4
+         3kBH3NHicF/Nq0kez5szyMOoMYqM765eG1+a793hPPj+wdVC36Ir2IXYAYEq+VhVUxOU
+         TkdoEyzoGHpqYSJMELsWYPXyQeDh81ehztrTfDtWCAcllQjNy0v2duEc1/MQzUNIlThF
+         Yv9romwMG1L+6sUwJMZPVvN+5oPAQe0VlT2OyaDPrBAAuckt4cyNkqT/mCAytPGEfjd2
+         3H8iXMznMUXS5GM5HzpJ+k+Ju6y6XJI7TUTF05w3tU9Lu9UiFaPxTcccQradcomk7aK7
+         fsBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:openpgp:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Qx+xOrtf5aIwVOrAj7bVsl9Jc/HCNCAmUBz24+oOR0Q=;
+        b=olBkeHHUIvg/P4qP6a1All0oLWSzfSElJb2i3REzIHZzcDuPZRl5GRi3sX6+3xNxGG
+         DimkUrLijwIzTZuANvlLqGAMY161mBTYxyDjOzCs1ytmzP8K5sZAnGd8OgwUDOaxIq5N
+         TXev/ADUztluE3GoaOp6Alq8zVukn4fxef7LHxFbVFsCXnM205/NnqjwWSZJADTEaSmL
+         EQMWJScQeSOkmYRpZn7jQGFj3ya5wzRuyG9GrOm/jsixeqGciBmTQROqqlYLQAeJBaOI
+         iY2PFchso9TVL9aQ2vl7jLeymDJhUXmvjfj/fRTJ1dh65HP6+pa1hNXssQW4OPy1e5bR
+         v+iQ==
+X-Gm-Message-State: AA+aEWYkqCnRoCpmOQRCyDavQ507/mBHrVUwojoNvTRf+XIhGqVvVhtC
+        hJKzG4U028EzFOYEmHS+57M=
+X-Google-Smtp-Source: AFSGD/VH8nsEFH6Q5wh+amnMKr33q2FxcazAvDAAAlj/WgwS4SurnVagpbItoKCoLMFv883S6LAuWQ==
+X-Received: by 2002:a54:440d:: with SMTP id k13mr17578159oiw.263.1545960921032;
+        Thu, 27 Dec 2018 17:35:21 -0800 (PST)
+Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.googlemail.com with ESMTPSA id c19sm19620018otl.16.2018.12.27.17.35.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Dec 2018 17:35:20 -0800 (PST)
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Topic: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Index: AQHUmtJd+BfLe8fbYEifIrO2qZg/uqWNo02AgAGSJYCAAyRAAIABCfXQ
-Date:   Fri, 28 Dec 2018 01:31:27 +0000
-Message-ID: <VI1PR04MB53274270615A700AB36967F78BB70@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <1545577992-4013-1-git-send-email-pawell@cadence.com>
- <1545577992-4013-6-git-send-email-pawell@cadence.com>
- <CAL411-rj0mRMfPCZOHw04q3s-9oJx7Os9Jz83bO=RgPZKLrB1g@mail.gmail.com>
- <CAL411-omVL2rwoQP6GwKZa9f_1TLBbEAkyLdxNkJZqaQu9cvsA@mail.gmail.com>
- <BYAPR07MB4709F8A00A13390235BA4BE1DDB60@BYAPR07MB4709.namprd07.prod.outlook.com>
-In-Reply-To: <BYAPR07MB4709F8A00A13390235BA4BE1DDB60@BYAPR07MB4709.namprd07.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [240e:e0:591c:f000:9ad:839e:cd6e:aea2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5053;6:MAO6inFTaBbEkcYgLuMWv/SoJqcK25CV7AQInmQuonK8DIE+g/UcRn6FPi8vb09dW6ofMfUQahJLNjHtDGoUoWD5kgi4BhH5zIkJzO1q6q0vePY1dbSd4CGhSDp3CLAAdsWrqWAsHOIqEQLb85kgAcN+YZ4WhY7I09z319/ELsnN+xuTa5emnnQQnvzl5dn7oN6ACYXKOGEHAPiq8p3OlH+I75UsFcvxJOQPLpzni3gTsTleBUR6egw1UJNnnZsijBa8x/9o8d+wfUAyfV++4jVNZz70+yRWK/kmQe6v6RHcUR5mtSVKgaw+qkStkAvxzIqJXQ+UNMW+wX2pJme/hbvS5aVAKT41DkW8ROzHW/scZYIx0BwUduYx+nkBfrr0ImDGGcLXZUUdIni09lRxpXGOX7jtvi+G/aQ9ccYULqrcRp5P/qTgg7ElH5aODG/79FFuO2dcHaawzFZ2LF5Cqw==;5:w4d0cazq6jHh1f+UYjJqAqI3P5VRGfkKJ3ggrK/KOxHwvoZCRpCLJwoUzjSzbO07OKMlBYozY1Z+3SMDml/K19E0wts3LFLR8TSBS8ZHxOCkzgfy7czU9to7fAFaUQjWlA6Hwsizw+NOlTozpbNc6YkWONGqw+qfDBsiRgUe0SA=;7:exCrRGi9xwk+/50KF5CoBaEVqt4WC2zcZYqoOa42/CpQ0+xoIlaE3HdyNAubPpM2LEYO+XLRXERcGOIGmQk+zfFt1zevGg2tIJzqKxcl5UD81rCJXRqnLf7Ubq8igNIQCaqIt9iF7hYxE2swa8NsDA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 8127bd96-c753-4c36-61de-08d66c64301c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5053;
-x-ms-traffictypediagnostic: VI1PR04MB5053:
-x-microsoft-antispam-prvs: <VI1PR04MB5053A711152551F6447081AF8BB70@VI1PR04MB5053.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5053;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5053;
-x-forefront-prvs: 09007040D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(189003)(7416002)(229853002)(93886005)(7736002)(478600001)(25786009)(14454004)(316002)(305945005)(86362001)(33656002)(6116002)(110136005)(54906003)(2906002)(97736004)(5660300001)(8676002)(81156014)(74316002)(81166006)(39060400002)(105586002)(106356001)(6436002)(186003)(6246003)(8936002)(68736007)(53936002)(446003)(11346002)(476003)(71190400001)(46003)(44832011)(486006)(9686003)(7696005)(71200400001)(102836004)(99286004)(256004)(6506007)(14444005)(76176011)(55016002)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5053;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vim00IBTqga8IWs9tK+lsYMuXRByJ4dE+uyHm7Q0b0qqh5oE3EibFGQ4iIy/8ezQFLtPuWYbRbAArYnXspoluFfRUWuMD05rm0FmKJwxq2pBAuz645vrBzZ7A/xT6mtK87IBe2s4Nx5f0gWy3mOvA8HWtTFv0++mr1ezPwARM4jn69i2z0CLjlml/HOEKwq4RG+LfcPmkhlQZ04xaAxfgJJJXT77SIOizxzS81omWjvra45rfC9yHXbZS/t2rAUwqYGmegX6fHT7kJrEtyfGIlruzmfHnrCBJFLok7PylF4ZYUZcMzrdgJRHbul5CsVt
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de,
+        kernel-team@lge.com
+References: <20181221034337.26663-1-f.fainelli@gmail.com>
+ <20181227105539.GA4521@sejong>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
+Subject: Re: [PATCH v3 0/2] perf tests: Check for ARM [vectors] page
+Message-ID: <27ac27b2-c373-2831-e7ce-4e898365d517@gmail.com>
+Date:   Thu, 27 Dec 2018 17:35:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8127bd96-c753-4c36-61de-08d66c64301c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Dec 2018 01:31:27.7668
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5053
+In-Reply-To: <20181227105539.GA4521@sejong>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IA0KPiA+DQo+ID5AQCAtMjk5LDYgKzMwNiw3IEBAIGludCBjZG5zM19kcmRfaW5pdChzdHJ1Y3Qg
-Y2RuczMgKmNkbnMpDQo+ID4gICAgICAgICAgICAgICAgY2Rucy0+dmVyc2lvbiAgPSBDRE5TM19D
-T05UUk9MTEVSX1YwOw0KPiA+ICAgICAgICAgICAgICAgIGNkbnMtPm90Z192MV9yZWdzID0gTlVM
-TDsNCj4gPiAgICAgICAgICAgICAgICBjZG5zLT5vdGdfcmVncyA9IHJlZ3M7DQo+ID4rICAgICAg
-ICAgICAgICAgd3JpdGVsKDB4MSwgJmNkbnMtPm90Z192MF9yZWdzLT5zaW11bGF0ZSk7DQo+ID4g
-ICAgICAgICAgICAgICAgZGV2X2luZm8oY2Rucy0+ZGV2LCAiRFJEIHZlcnNpb24gdjAgKCUwOHgp
-XG4iLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIHJlYWRsKCZjZG5zLT5vdGdfdjBfcmVn
-cy0+dmVyc2lvbikpOw0KPiA+ICAgICAgICB9IGVsc2Ugew0KPiANCj4gSSBoYXZlIGNvbmZpcm1h
-dGlvbiBmcm9tIEhXIHRlYW0gdGhhdCB0aW1lIHRoYXQgZHJpdmVyIHNob3VsZCB3YWl0IGFmdGVy
-IGRlLQ0KPiBzZWxlY3RpbmcgbW9kZSBpcyAyLTNtcyBmb3Igc2ltdWxhdGUgbW9kZS4gSXQncyB0
-aW1lIHdoZW4gRlNNIGlzIGluDQo+IERSRF9IX1dBSVRfVkJVU19GQUlMLg0KPiBEcml2ZXIgY2Fu
-bm90IHJlLWVuYWJsZSB0aGUgaG9zdC9kZXZpY2UgbW9kZSBiZWZvcmUgdGhpcyB0aW1lIGhhcyBl
-bGFwc2VkLg0KPiANCj4gMyBtcyBpcyB0aGUgbWF4aW11bSB0aW1lLiBBZGRpdGlvbmFsbHksIHlv
-dSBjYW4gY29uZmlybSB0aGUgY3VycmVudCBGU00gc3RhdGUgYnkNCj4gcmVhZGluZyB0aGUgaG9z
-dF9vdGdfc3RhdGUgKGJpdCA1OjMpIG9yIGRldl9vdGdfc3RhdGUgKDI6MCkgIGZyb20gT1RHU1RB
-VEUNCj4gcmVnaXN0ZXIuDQo+IA0KPiBJZiBiaXQgMCBpbiBzaW11bGF0ZSByZWdpc3RlciBpcyBj
-bGVhcmVkIHRoZSB0aW1lIGlzIGV4YWN0bHkgMXMuDQo+IA0KDQpUaGFua3MsIFBhd2VsLg0KDQpX
-b3VsZCB5b3UgcGxlYXNlIGFkZCBiZWxvdyBjaGFuZ2VzIGluIHlvdXIgbmV4dCByZXZpc2lvbj8N
-Ci0gU2V0IGJpdCAwIGluIHNpbXVsYXRlIHJlZ2lzdGVyDQotIHRpbWVvdXQgbG9naWMgZm9yIHdh
-aXRpbmcgaG9zdF9vdGdfc3RhdGUgb3IgZGV2X290Z19zdGF0ZSBhdCBPVEdTVEFURQ0Kd2hlbiBz
-d2l0Y2ggdG8gaG9zdCBvciBkZXZpY2UuDQoNClBldGVyDQoNCg==
+Le 12/27/18 à 2:55 AM, Namhyung Kim a écrit :
+> Hello,
+> 
+> On Thu, Dec 20, 2018 at 07:43:35PM -0800, Florian Fainelli wrote:
+>> Hi all,
+>>
+>> I just painfully learned that perf would segfault when
+>> CONFIG_KUSER_HELPERS is disabled because it unconditionally makes use of
+> 
+> Could you please elaborate?
+
+Sure, I was debugging why perf was segfaulting on my systems and saw
+that the faulting address was within 0xffff_0000 (high vectors); and
+because CONFIG_KUSER_HELPERS was not enabled, nothing was mapped at that
+address so this was a legitimate crash. This was on a variety of ARMv7A
+systems, Cortex-A9, Cortex-A5 etc.
+
+Later on, I found that in tools/arch/arm/include/asm/barrier.h the
+barriers are unconditionally defined to make use of the [vectors] page
+that the ARM kernel only sets up when CONFIG_KUSER_HELPERS is enabled
+and this is the reason for the crash.
+
+Testing for the page itself is pretty harmless if you think we should
+make something more robust around checking for HAVE_AUXTRACE_SUPPORT
+(which appears to be the specific location making use of barriers), let
+me know.
+
+Thanks!
+
+> 
+> Thanks,
+> Namhyung
+> 
+> 
+>> it. This patch series adds an ARM test for that by leveraging the
+>> existing find_vdso_map() function and making it more generic and capable
+>> of location any map within /proc/self/maps.
+>>
+>> Changes in v3:
+>>
+>> - remove find_vdso_map() call find_map() with VDSO__MAP_NAME
+>>
+>> Changes in v2:
+>>
+>> - use strlen() instead of sizeof() -1 since we made the page name a
+>>   parameter
+>> - use TEST_OK/TEST_FAIL in lieu of 0/-1
+>> - added an error message indicating CONFIG_KUSER_HELPERS might be
+>>   disabled
+>>
+>> Florian Fainelli (2):
+>>   perf tools: Make find_vdso_map() more modular
+>>   perf tests: Add a test for the ARM 32-bit [vectors] page
+>>
+>>  tools/perf/Makefile.perf                      |  4 ++--
+>>  tools/perf/arch/arm/tests/Build               |  1 +
+>>  tools/perf/arch/arm/tests/arch-tests.c        |  4 ++++
+>>  tools/perf/arch/arm/tests/vectors-page.c      | 24 +++++++++++++++++++
+>>  tools/perf/perf-read-vdso.c                   |  6 ++---
+>>  tools/perf/tests/tests.h                      |  5 ++++
+>>  .../perf/util/{find-vdso-map.c => find-map.c} |  7 +++---
+>>  tools/perf/util/vdso.c                        |  6 ++---
+>>  8 files changed, 45 insertions(+), 12 deletions(-)
+>>  create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+>>  rename tools/perf/util/{find-vdso-map.c => find-map.c} (71%)
+>>
+>> -- 
+>> 2.17.1
+>>
+
+
+-- 
+Florian
