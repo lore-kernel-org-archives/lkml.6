@@ -2,144 +2,245 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231F6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C7220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943BC20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:59:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BUj6JJZH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbeL1P6O convert rfc822-to-8bit (ORCPT
+        id S1729098AbeL1P7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 10:58:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51193 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeL1P6O (ORCPT
+        Fri, 28 Dec 2018 10:59:35 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:46256 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbeL1P7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 10:58:14 -0500
-Received: from mail-pg1-f200.google.com ([209.85.215.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gcuWa-00029l-Lk
-        for linux-kernel@vger.kernel.org; Fri, 28 Dec 2018 15:58:12 +0000
-Received: by mail-pg1-f200.google.com with SMTP id r16so20175729pgr.15
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 07:58:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ulLqU3PlhucDKkxvVuvxhe6MyXAHLoaby6+i54zQTAc=;
-        b=uj2ILhvwdp1/xaq4+mgZ8DAFT6w+aN4kUCzdb2Zeu+xzYksqZw0TaGHUybwkpEOBEi
-         lxI4lz/m9pMy0kwFgcl6wSezz5A9C53mHNTbvXB+I8sy8hjQmjbvlodVgnu1PGztw9xH
-         uNT+hPtXNE6uEIcS/64V23gomizASOccXj6nUZLCJn1jZ4flZTO15aDr4ChBucYGMycg
-         yWLxgsYGTEAifw24ZWwI7ryF+MYBbLPSYd49ABE9uv2k7wLXL5EdqXdFibnc60AjC7wh
-         ixXSFuep6l30EN1DUrR1bOS+o9k1zWK8R9NfRwE7UpYA/FBMQ3WVF68U+1SFxc8Oqz7h
-         +ypQ==
-X-Gm-Message-State: AA+aEWa9LYEByYcwk2WTxDTWWt5waMocfGxURPwy5rpStDqdSU5EUIDg
-        +fJnDi74FXQlxxtNOkibmWSd0/dF17pPprwFRyJgSqIyhplzRxVKefl7lelyF7x1mGphl5LSasM
-        Z0ocK5V9x2PSgaINt+9gpRghMzBpAroIFSHR16suFNA==
-X-Received: by 2002:a62:509b:: with SMTP id g27mr28801041pfj.48.1546012691044;
-        Fri, 28 Dec 2018 07:58:11 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/VWV4H7KPkGUWy/hSdExjqltyuto1L9J3vkMdopmSB6yWJ/vzIb+BPAAVWGGhTI+qN7peNnSg==
-X-Received: by 2002:a62:509b:: with SMTP id g27mr28801025pfj.48.1546012690714;
-        Fri, 28 Dec 2018 07:58:10 -0800 (PST)
-Received: from 2001-b011-380f-3f3d-00b6-82e2-e99e-76d3.dynamic-ip6.hinet.net (2001-b011-380f-3f3d-00b6-82e2-e99e-76d3.dynamic-ip6.hinet.net. [2001:b011:380f:3f3d:b6:82e2:e99e:76d3])
-        by smtp.gmail.com with ESMTPSA id b7sm58008003pfa.52.2018.12.28.07.58.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 07:58:09 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] HID: i2c-hid: Ignore input report if there's no data
- present on Elan touchpanels
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <nycvar.YFH.7.76.1812191406240.17216@cbobk.fhfr.pm>
-Date:   Fri, 28 Dec 2018 23:58:07 +0800
-Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <C2BE37B9-E122-45FD-BFC6-C3DB79DB141D@canonical.com>
-References: <20181214090930.13386-1-kai.heng.feng@canonical.com>
- <nycvar.YFH.7.76.1812191406240.17216@cbobk.fhfr.pm>
-To:     Jiri Kosina <jikos@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Fri, 28 Dec 2018 10:59:35 -0500
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wBSFxFLR032434;
+        Sat, 29 Dec 2018 00:59:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wBSFxFLR032434
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546012756;
+        bh=9B1nVZidBx81ko79v8bcq+RiBWWdam0WFlOtoKTLYC8=;
+        h=From:Date:Subject:To:Cc:From;
+        b=BUj6JJZHGXBuJLN8T+CsmL4UYWcA/Q3HO1yfq+wscQmx48L2gv0UJfQA9LUVbTkGs
+         LKfQCyN6x29+3xDyV6IrZzQvl4ENfcLLlJkFCGKpsJ4PigOMnyJDbAdJVOr8rxMY+V
+         QOQJOL909oMHrgqhX92quSc/t1AHeCkxhA+uPYeVEBJ+pggHuNZ7x0gYllZHrL82z1
+         f6bfjmvnvYnZOQG8Kjgm01nyijHdpc3K3bPUiG8ZdE6ISbzEKRnli/lQA2ihzl7/yo
+         +pumq+UKNGN3sN1Sd3rnUxadWGI5K698I4Y1nKJ9eVLTZdB1ID41wnaQ1dbgCTXaNS
+         +p5ZoNXIxEfpw==
+X-Nifty-SrcIP: [209.85.222.44]
+Received: by mail-ua1-f44.google.com with SMTP id d2so6974290ual.2;
+        Fri, 28 Dec 2018 07:59:15 -0800 (PST)
+X-Gm-Message-State: AJcUukdmXb8M7coX3QbQgXdyYRTHC6URVXkkJvQ32GkA812ECXu6aNsB
+        0vwnBROf5bhJKG36gD/o0myOsJ2ANJJMlg2FQqo=
+X-Google-Smtp-Source: ALg8bN6z4Ar6Bhw3q2XdvLc8Z7dwkH+MIO+aywjNKjFdOOK0Pn5ZTtBsASZaqylqGGRXaLvLrN8LVuzMDtvOa6wiIEA=
+X-Received: by 2002:ab0:849:: with SMTP id b9mr10316820uaf.93.1546012754710;
+ Fri, 28 Dec 2018 07:59:14 -0800 (PST)
+MIME-Version: 1.0
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 29 Dec 2018 00:58:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQzEHv7Y69xFTPDEhyMP6JX4ghb96UMqMdxYyVyah6-VA@mail.gmail.com>
+Message-ID: <CAK7LNAQzEHv7Y69xFTPDEhyMP6JX4ghb96UMqMdxYyVyah6-VA@mail.gmail.com>
+Subject: [GIT PULL 1/4] Kbuild updates for v4.21
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
+
+Please pull Kbuild updates for v4.21
 
 
-> On Dec 19, 2018, at 21:09, Jiri Kosina <jikos@kernel.org> wrote:
-> 
-> On Fri, 14 Dec 2018, Kai-Heng Feng wrote:
-> 
->> While using Elan touchpads, the message floods:
->> [  136.138487] i2c_hid i2c-DELL08D6:00: i2c_hid_get_input: incomplete report (14/65535)
->> 
->> Though the message flood is annoying, the device it self works without
->> any issue. I suspect that the device in question takes too much time to
->> pull the IRQ back to high after I2C host has done reading its data.
->> 
->> Since the host receives all useful data, let's ignore the input report
->> when there's no data.
-> 
-> Interesting, never seen such a bug before.
-> 
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> drivers/hid/i2c-hid/i2c-hid-core.c | 9 +++++++++
->> 1 file changed, 9 insertions(+)
->> 
->> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
->> index 8555ce7e737b..1776afa6d69c 100644
->> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
->> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
->> @@ -50,6 +50,7 @@
->> #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
->> #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
->> #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
->> +#define I2C_HID_QUIRK_BOGUS_IRQ			BIT(4)
->> 
->> /* flags */
->> #define I2C_HID_STARTED		0
->> @@ -179,6 +180,8 @@ static const struct i2c_hid_quirks {
->> 		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
->> 	{ USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
->> 		I2C_HID_QUIRK_NO_RUNTIME_PM },
->> +	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
->> +		 I2C_HID_QUIRK_BOGUS_IRQ },
->> 	{ 0, 0 }
->> };
->> 
->> @@ -503,6 +506,12 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
->> 		return;
->> 	}
->> 
->> +	if (ihid->quirks & I2C_HID_QUIRK_BOGUS_IRQ && ret_size == 0xffff) {
->> +		dev_dbg(&ihid->client->dev,
->> +			"%s: IRQ triggered but there's no data\n", __func__);
->> +		return;
->> +	}
-> 
-> Would it perhaps make sense to make this some sort of printk_once(), so 
-> that it's immediately apparent from dmesg that the system/device is 
-> suffering from this particular problem? Might potentially be helpful piece 
-> of information.
+You will see a conflict in the top Makefile.
+The correct fix is available in linux-next.
 
-Good advice, I’ll send a v2 patch to address this issue.
 
-Kai-Heng
 
-> 
-> Thanks,
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v4.21
+
+for you to fetch changes up to dec28d8ea2f731b7ec68a2c9421e99a165d47b57:
+
+  kbuild: remove unused cmd_gentimeconst (2018-12-25 00:10:30 +0900)
+
+----------------------------------------------------------------
+Kbuild updates for v4.21
+
+Kbuild core:
+ - remove unneeded $(call cc-option,...) switches
+ - consolidate Clang compiler flags into CLANG_FLAGS
+ - announce the deprecation of SUBDIRS
+ - fix single target build for external module
+ - simplify the dependencies of 'prepare' stage targets
+ - allow fixdep to directly write to .*.cmd files
+ - simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
+ - change if_changed_rule to accept multi-line recipe
+ - move .SECONDARY special target to scripts/Kbuild.include
+ - remove redundant 'set -e'
+ - improve parallel execution for CONFIG_HEADERS_CHECK
+ - misc cleanups
+
+Treewide fixes and cleanups
+ - set Clang flags correctly for PowerPC boot images
+ - fix UML build error with CONFIG_GCC_PLUGINS
+ - remove unneeded patterns from .gitignore files
+ - refactor firmware/Makefile
+ - remove unneeded rules for *offsets.s
+ - avoid unneeded regeneration of intermediate .s files
+ - clean up ./Kbuild
+
+Modpost:
+ - remove unused -M, -K options
+ - fix false positive warnings about section mismatch
+ - use simple devtable lookup instead of linker magic
+ - misc cleanups
+
+Coccinelle:
+ - relax boolinit.cocci checks for overall consistency
+ - fix warning messages of boolinit.cocci
+
+Other tools:
+ - improve -dirty check of scripts/setlocalversion
+ - add a tool to generate compile_commands.json from .*.cmd files
+
+----------------------------------------------------------------
+Brian Norris (1):
+      scripts/setlocalversion: Improve -dirty check with git-status
+--no-optional-locks
+
+Eugen Cazacu (1):
+      user/Makefile: Fix typo and capitalization in comment section
+
+Joel Stanley (2):
+      Makefile: Export clang toolchain variables
+      powerpc/boot: Set target when cross-compiling for clang
+
+Julia Lawall (2):
+      scripts: coccinelle: only suggest true/false in files that
+already use them
+      scripts: coccinelle: Correct warning message
+
+Masahiro Yamada (41):
+      kbuild: add -no-integrated-as Clang option unconditionally
+      kbuild: consolidate Clang compiler flags
+      kbuild: announce removal of SUBDIRS if used
+      kbuild: fix single target build for external module
+      modpost: file2alias: go back to simple devtable lookup
+      modpost: file2alias: check prototype of handler
+      modpost: refactor seen flag clearing in add_depends()
+      modpost: merge module iterations
+      modpost: move unresolved symbol checks to check_exports()
+      kbuild: fix UML build error with CONFIG_GCC_PLUGINS
+      kbuild: move modpost out of 'scripts' target
+      kbuild: make 'archprepare' depend on 'scripts'
+      kbuild: descend into scripts/gcc-plugins/ via scripts/Makefile
+      kbuild: let fixdep directly write to .*.cmd files
+      kbuild: remove redundant 'set -e' from filechk_offsets
+      kbuild: remove redundant 'set -e' from sub_cmd_record_mcount
+      kbuild: refactor modversions build rules
+      kbuild: simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
+      kbuild: change if_changed_rule for multi-line recipe
+      kbuild: remove trailing semicolon from cmd_* passed to if_changed_rule
+      kbuild: refactor if_changed
+      kbuild: remove redundant 'set -e' from cmd_* defines
+      kbuild: move .SECONDARY special target to Kbuild.include
+      kbuild: remove a special handling for *.agh in Makefile.headersinst
+      kbuild: exploit parallel building for CONFIG_HEADERS_CHECK
+      kbuild: refactor Makefile.asm-generic
+      kbuild: remove redundant quiet_modtag for $(obj-m)
+      kbuild: refactor quiet_modtag
+      kbuild: refactor part-of-module
+      kbuild: handle part-of-module correctly for *.ll and *.symtypes
+      kbuild: add -fno-PIE flag unconditionally
+      kbuild: add -Werror=strict-prototypes flag unconditionally
+      kbuild: add -Werror=implicit-int flag unconditionally
+      um: remove unused filechk_gen_header in Makefile
+      scripts: remove unnecessary ihex2fw and check-lc_ctypes from .gitignore
+      firmware: remove unnecessary patterns from .gitignore
+      firmware: refactor firmware/Makefile
+      treewide: remove explicit rules for *offsets.s
+      treewide: add intermediate .s files to targets
+      kbuild: remove $(obj)/ prefixes in ./Kbuild
+      kbuild: remove unused cmd_gentimeconst
+
+Paul Walmsley (2):
+      modpost: drop unused command line switches
+      modpost: skip ELF local symbols during section mismatch check
+
+Sami Tolvanen (1):
+      modpost: validate symbol names also in find_elf_symbol
+
+Tom Roeder (1):
+      scripts: add a tool to produce a compile_commands.json file
+
+ Documentation/kbuild/kbuild.txt        |   7 +--
+ Kbuild                                 |  21 ++------
+ Makefile                               | 111
++++++++++++++++++++----------------------
+ arch/arm/crypto/Makefile               |   2 +-
+ arch/arm/mach-at91/Makefile            |   5 +-
+ arch/arm/mach-omap2/Makefile           |   5 +-
+ arch/arm64/crypto/Makefile             |   2 +-
+ arch/ia64/kernel/Makefile              |   7 +--
+ arch/powerpc/boot/Makefile             |   5 ++
+ arch/um/Makefile                       |  26 +---------
+ arch/x86/um/Makefile                   |   5 +-
+ drivers/memory/Makefile.asm-offsets    |   5 +-
+ drivers/mtd/maps/scx200_docflash.c     |   7 ---
+ drivers/watchdog/scx200_wdt.c          |   7 ---
+ firmware/.gitignore                    |   5 --
+ firmware/Makefile                      |  84 ++++++++++++-------------------
+ include/asm-generic/export.h           |  13 +++--
+ include/linux/export.h                 |  18 +++----
+ samples/bpf/Makefile                   |   4 +-
+ samples/connector/Makefile             |   2 +-
+ scripts/.gitignore                     |   2 -
+ scripts/Kbuild.include                 |  52 ++++---------------
+ scripts/Makefile                       |   4 +-
+ scripts/Makefile.asm-generic           |  37 +++++++-------
+ scripts/Makefile.build                 | 128
+++++++++++++++++++-----------------------------
+ scripts/Makefile.gcc-plugins           |   8 ---
+ scripts/Makefile.headersinst           |   1 -
+ scripts/Makefile.lib                   |   2 +-
+ scripts/basic/fixdep.c                 |  31 ++----------
+ scripts/coccinelle/misc/boolinit.cocci |  43 ++++++++++------
+ scripts/gen_compile_commands.py        | 151
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/gen_ksymdeps.sh                |  25 ++++++++++
+ scripts/mod/Makefile                   |   2 -
+ scripts/mod/file2alias.c               | 149
++++++++++++++++++++------------------------------------
+ scripts/mod/modpost.c                  | 114
++++++++++++++++++++++++-------------------
+ scripts/package/Makefile               |   1 -
+ scripts/setlocalversion                |  12 ++++-
+ usr/Makefile                           |   4 +-
+ 38 files changed, 543 insertions(+), 564 deletions(-)
+ create mode 100755 scripts/gen_compile_commands.py
+ create mode 100755 scripts/gen_ksymdeps.sh
+
+
+--
+Best Regards
+Masahiro Yamada
