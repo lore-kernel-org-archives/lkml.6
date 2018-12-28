@@ -2,138 +2,154 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A5EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EBAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87EC20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D96320866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:54:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6qhHIPc"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bB418Edf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387604AbeL1Rxe (ORCPT
+        id S2387619AbeL1Ry0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 12:53:34 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41621 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729898AbeL1Rxd (ORCPT
+        Fri, 28 Dec 2018 12:54:26 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34532 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387605AbeL1Ry0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 12:53:33 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a20so11300014edc.8;
-        Fri, 28 Dec 2018 09:53:32 -0800 (PST)
+        Fri, 28 Dec 2018 12:54:26 -0500
+Received: by mail-it1-f194.google.com with SMTP id x124so30295778itd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 09:54:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I476dXzolvS36Jo8keWAqI+uNVpug96GEqSAmmxEOBM=;
-        b=X6qhHIPcmynvX6WXNf8TQbRGT5b97pOPe+7NTxz+tNxhXZDxqzAKD1dyjlAmsvSDPl
-         TMiE2OnBAgPD5dCoOJOxkdFI8qeoq19BywD73NqqHgzMMyD9Fa3IDTO5RWAZRy6kNkRe
-         NPF4V3pxnWAiDFvaL8B6ltiKSkPcOSHSg42s94c1RMtzRPHyq8j2OjaO2fx/Aj6gfYHG
-         jKF1tmGnIF5anVeGGyLDx54kHTBSNpEVqPMGUcxQt5Jo9ZJJJtfhaosfYNGE7kqd1fLp
-         KEfdu9BBSY2CX+F1WxM4iJH0isgncFTjgohPSfOiNh6sCoYhZ7B0W+Q+lNWVWlKharEf
-         0vYA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+L5mghNay0zgQMmifgSt2xM+U8WUyGWrEugaEBgM8+s=;
+        b=bB418EdfR0L+Lkvmau6Yi9KRm41LZJaPZDCniDEG/xMdsXqTamVdzBKbm7GFgu3U+j
+         HGksRUfNHLI57jorBrqbMLImD3OupOLU9P7/Lvk+Q7fWXwXTo412gqakcFoA3zZ16TBj
+         2MX/gK2EyWmFCj+rTO0j6Al6m9c69JgbLvucM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I476dXzolvS36Jo8keWAqI+uNVpug96GEqSAmmxEOBM=;
-        b=XF7niHp9hte/wB7W1miYkXrrNyT7Bs9dT00hXMaOPbe2sYhZJSJzbKg9/7vrA1sLNA
-         IRdEMuQjZtMFlL032ptqVAcwzGJp7HJfuce7V3Oj/OATzAILbht+9fWVeqvh6JYTs9EB
-         mNh41aBaNFiBWXht4cjOeLRdj/vVn39xDzj+96cZMUNz4AfMMvqCafzuXFNIFPuF9dxd
-         turOTwSZHq8wHVJVo5CLPMtbjus6VGMrzvP3CRwKo3xr3rXZm3AF+W7jhVICmwZwE1xK
-         iRPqs/W2kKrv1Y1R280YKvW/umsU22GRvBjacom9zoUOCPOUjSqjVRabJy0gPAnBzuro
-         9yOQ==
-X-Gm-Message-State: AA+aEWayi//ygnHSuAiGXJxDXMrEwhESNQ0OX8UD3APmIA4kpwLjvhq/
-        wopTKk04T0qIWY5mW1N6WvWxUXMJZ3M=
-X-Google-Smtp-Source: AFSGD/VZSmt9+afVDr+tfxq5UivXBT6u/d9XH9YxpLjaWBAZgKSZ7Jbu4bH50ZZE7htqURJ1LfrWIg==
-X-Received: by 2002:a17:906:d41:: with SMTP id r1-v6mr19309835ejh.186.1546019611291;
-        Fri, 28 Dec 2018 09:53:31 -0800 (PST)
-Received: from manjaro.fritz.box (adsl-84-226-151-28.adslplus.ch. [84.226.151.28])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm7207665ejf.48.2018.12.28.09.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 09:53:30 -0800 (PST)
-From:   Philipp Kaelin <kaelinphilipp@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Philipp Kaelin <kaelinphilipp@gmail.com>
-Subject: [PATCH] Elantech Touchpad: Fix Elantech touchpad and trackpoint for Lenovo ThinkPad notebooks.
-Date:   Fri, 28 Dec 2018 18:53:27 +0100
-Message-Id: <20181228175327.14863-1-kaelinphilipp@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=+L5mghNay0zgQMmifgSt2xM+U8WUyGWrEugaEBgM8+s=;
+        b=Ds+A7jCAQZzVIeu8xg+G8gE4Kb87ZHAOeQ7la6kcx0vaDchszrxQWmdkKw1NOZVZV2
+         haanb53RozdUUxBqb5Fv9FDm9hLQASUrn7suTLb2RXuL4xsmEre69EWR7mUgUFGjGLam
+         kGZPNT2O3iBmCIoM7FpimPkcfSzB8cJ/XHyRLxM1wXJzS3fg720eZvOXkzdPOzSJjzYV
+         qpNDQ2w0GcQQjcjqhkOzEk7FMwiy+pJa/+UcQrUuyZhPoixhEbEEWPPMw78yC34zhURg
+         WuxLId2bFAzVUV9v4WLZ/JIDjaIdYUVyhPlEGpI4oekBAU+zz20Hpd//kV+QM+frbAjQ
+         Kd5g==
+X-Gm-Message-State: AA+aEWYQSW1Il3rcji47SsSRNjSVEoaqm5d5qBFVQGQMb48IWbmCe0dK
+        r722N5Qxkx2FAYNDd11Tcb5l0A==
+X-Google-Smtp-Source: AFSGD/UapRxxONOBdMSPeQFdiBYbMEfPMq0KegAiVKRkeP64Lj/GFC5HrOgbINc9dw9XV2YXAuaHhg==
+X-Received: by 2002:a02:104a:: with SMTP id 71mr17333870jay.103.1546019664518;
+        Fri, 28 Dec 2018 09:54:24 -0800 (PST)
+Received: from localhost (c-73-24-4-37.hsd1.mn.comcast.net. [73.24.4.37])
+        by smtp.gmail.com with ESMTPSA id q76sm20058340iod.35.2018.12.28.09.54.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 09:54:23 -0800 (PST)
+Date:   Fri, 28 Dec 2018 11:54:22 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/46] 4.19.13-stable review
+Message-ID: <20181228175422.iagcsu3y7tzpuxq6@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20181228113124.971620049@linuxfoundation.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial situation:
-- The touchpad of a Lenovo ThinkPad L580 doesn't work with newer kernel versions eg. 4.20
-- It used to work on earlier versions eg. 4.14
+On Fri, Dec 28, 2018 at 12:51:54PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.13 release.
+> There are 46 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Cause:
-- The elantech driver was adapted in to support SMBus wich not all firmware versions
-  of the elantech firmware support. The SMBus is used as default.
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Solution:
-- Previously a blacklist was introduced for devices which doesn't support the access using SMBus.
-  The ThinkPad P52 and P72 have already been fixed by adding it to such a blacklist in a prevois patch.
-  The exact same solution fixed also the issue on the mentioned ThinkPad L580.
+Summary
+------------------------------------------------------------------------
 
-Change:
-1) The firmware id of the ThinkPad L580 was added to this blacklist.
-2) To not have a half baked solution the information which firmware versions are using the same driver
-   and therefore most probably have all the same issue was extracted from the Lenovo Windows driver package.
-   All these firmware versions are now also added to the blacklist.
+kernel: 4.19.13-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.19.y
+git commit: 08ae917b140b0fdd38906cfd569014b030a0f60e
+git describe: v4.19.12-47-g08ae917b140b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.12-47-g08ae917b140b
 
-Risk assesment:
-As in prevois versions of the kernel eg. 4.14 none of the devices used to be accessed via SMBus
-(and they are reported to work at this time) it's quite safe that this blaklisting doesn't cause
-any harm on devices which have not been testes but included in the blacklist.
+No regressions (compared to build v4.19.11-68-g2a7cb228d29c)
 
-Signed-off-by: Philipp Kaelin <kaelinphilipp@gmail.com>
----
- drivers/input/mouse/elantech.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+No fixes (compared to build v4.19.11-68-g2a7cb228d29c)
 
-diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-index 9fe075c137dc..e5fa8cfd8393 100644
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1772,10 +1772,25 @@ static const char * const i2c_blacklist_pnp_ids[] = {
- 	 * These are known to not be working properly as bits are missing
- 	 * in elan_i2c.
- 	 */
--	"LEN2131", /* ThinkPad P52 w/ NFC */
--	"LEN2132", /* ThinkPad P52 */
--	"LEN2133", /* ThinkPad P72 w/ NFC */
--	"LEN2134", /* ThinkPad P72 */
-+	"LEN2131", /* Walter-3	w/ NFC		ThinkPad P52 w/ NFC	*/
-+	"LEN2132", /* Walter-3	w/o/ NFC	ThinkPad P52		*/
-+	"LEN2133", /* Chiron	w/ NFC		ThinkPad P72 w/ NFC	*/
-+	"LEN2134", /* Chiron	w/o/ NFC	ThinkPad P72		*/
-+	"LEN2037", /* Lando	w/ NFC		ThinkPad L580 w/ NFC	*/
-+	"LEN2038", /* Lando	w/o/ NFC	ThinkPad L580		*/
-+	"LEN004F", /* Storm	w/o/ NFC				*/
-+	"LEN005C", /* Storm	w/ NFC					*/
-+	"LEN2030", /* Carling						*/
-+	"LEN2031", /* Bell						*/
-+	"LEN2032", /* Bell-2						*/
-+	"LEN2033", /* Storm-2						*/
-+	"LEN2034", /* Storm-3						*/
-+	"LEN2035", /* Solo	w/ NFC					*/
-+	"LEN2036", /* Solo	w/o/ NFC				*/
-+	"LEN2039", /* Leia						*/
-+	"LEN2130", /* Kylo	(Clamshell)				*/
-+	"LEN008F", /* Kolar	w/o/ NF					*/
-+	"LEN0090", /* Kolar	w/ NFC					*/
- 	NULL
- };
- 
+Ran 20389 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
 -- 
-2.19.2
-
+Linaro LKFT
+https://lkft.linaro.org
