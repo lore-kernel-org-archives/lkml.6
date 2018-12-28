@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F033C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33F2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09522148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF02B2087F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:53:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545998014;
-	bh=/+brTRHRjqDBbBu/uLsP1nmJjpnyTfltWBQORYRx0JE=;
+	s=default; t=1545998017;
+	bh=G8TH5o2P35swP0E91NYORtckycqijh0Sll6E+LRL1Fg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tHom0E0KSROXxEX3clYtfGGf3AtMdjWVDerGKAfMY5Lt7Jk/oNMI6dhV4GAg7XFqa
-	 FmgtYtDiqwy2SsClJciuF077JvqgdXbK9cswNeMsmAH2tj+qr546hVK0pdJZSBb0Eh
-	 PTz8MRbCOILxI40Z5V6xdZOl6mpnicq4z1xSgx8w=
+	b=tNW47cmYUjtbHbadjXfrt2qmlqTYpnlOHAzTHiqGtZp1xBMIh56fY0seWkTQQ633Z
+	 ASMsb8Um2BIesk7Fj46tSMGn1mihUimPZ/a1+Pgi944f1IexT05pVh/Mz4zpLOHuHK
+	 OBPwrIB6OLEx1GokTx81FT5FSgPynXCcf5jOMW5M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732297AbeL1Lxc (ORCPT
+        id S1732310AbeL1Lxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 06:53:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53254 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 06:53:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732247AbeL1Lx0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 06:53:26 -0500
+        id S1732247AbeL1Lxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 06:53:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEBD920879;
-        Fri, 28 Dec 2018 11:53:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14ACB2146F;
+        Fri, 28 Dec 2018 11:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545998005;
-        bh=/+brTRHRjqDBbBu/uLsP1nmJjpnyTfltWBQORYRx0JE=;
+        s=default; t=1545998013;
+        bh=G8TH5o2P35swP0E91NYORtckycqijh0Sll6E+LRL1Fg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C9PeHV4XAfU2VvY8h4dZZuqkBZTgusXQrJZUbaXBuHEtVQ8s8JiOOSBQaa1x1PXxN
-         GUufsHqtZsyKLaBG0XVr+zkG0n3Ll2BE6nHpMD3DxYujB3Y5o5KRCBk/TyINjh8wUr
-         oQKcNsSOEdPVTODimmTv2tRY1AirGkHdfMZPVX5k=
+        b=A3/ZXspX08SpYpet/zI9jGxWSd5jFERB+H2UVr/7xXoNafQS+tO/vUnAEcTgaewCB
+         nsBTBaF0BEVW/ZfPbWwcGNJbYR0Z22GbwPNlpa0aITKkjH0ZhxQghTNq8VYMDL5qAq
+         iPYzqe7+CVJOB9ppgIy8XqTIX/EB52T4lelFq6/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 16/46] mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
-Date:   Fri, 28 Dec 2018 12:52:10 +0100
-Message-Id: <20181228113125.722066548@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 19/46] gpiolib-acpi: Only defer request_irq for GpioInt ACPI event handlers
+Date:   Fri, 28 Dec 2018 12:52:13 +0100
+Message-Id: <20181228113125.904407232@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -67,64 +67,302 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit e3ae3401aa19432ee4943eb0bbc2ec704d07d793 upstream.
+commit e59f5e08ece1060073d92c66ded52e1f2c43b5bb upstream.
 
-Some eMMCs from Micron have been reported to need ~800 ms timeout, while
-enabling the CACHE ctrl after running sudden power failure tests. The
-needed timeout is greater than what the card specifies as its generic CMD6
-timeout, through the EXT_CSD register, hence the problem.
+Commit 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event handlers
+from a late_initcall") deferred the entire acpi_gpiochip_request_interrupt
+call for each event resource.
 
-Normally we would introduce a card quirk to extend the timeout for these
-specific Micron cards. However, due to the rather complicated debug process
-needed to find out the error, let's simply use a minimum timeout of 1600ms,
-the double of what has been reported, for all cards when enabling CACHE
-ctrl.
+This means it also delays the gpiochip_request_own_desc(..., "ACPI:Event")
+call. This is a problem if some AML code reads the GPIO pin before we
+run the deferred acpi_gpiochip_request_interrupt, because in that case
+acpi_gpio_adr_space_handler() will already have called
+gpiochip_request_own_desc(..., "ACPI:OpRegion") causing the call from
+acpi_gpiochip_request_interrupt to fail with -EBUSY and we will fail to
+register an event handler.
 
-Reported-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reported-by: Andreas Dannenberg <dannenberg@ti.com>
-Reported-by: Faiz Abbas <faiz_abbas@ti.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+acpi_gpio_adr_space_handler is prepared for acpi_gpiochip_request_interrupt
+already having claimed the pin, but the other way around does not work.
+
+One example of a problem this causes, is the event handler for the OTG
+ID pin on a Prowise PT301 tablet not registering, keeping the port stuck
+in whatever mode it was in during boot and e.g. only allowing charging
+after a reboot.
+
+This commit fixes this by only deferring the request_irq call and the
+initial run of edge-triggered IRQs instead of deferring all of
+acpi_gpiochip_request_interrupt.
+
+Cc: stable@vger.kernel.org
+Fixes: 78d3a92edbfb ("gpiolib-acpi: Register GpioInt ACPI event ...")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/mmc.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib-acpi.c |  144 +++++++++++++++++++++++++-------------------
+ 1 file changed, 84 insertions(+), 60 deletions(-)
 
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -30,6 +30,7 @@
- #include "pwrseq.h"
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -23,11 +23,28 @@
  
- #define DEFAULT_CMD6_TIMEOUT_MS	500
-+#define MIN_CACHE_EN_TIMEOUT_MS 1600
+ #include "gpiolib.h"
  
- static const unsigned int tran_exp[] = {
- 	10000,		100000,		1000000,	10000000,
-@@ -1789,13 +1790,18 @@ static int mmc_init_card(struct mmc_host
++/**
++ * struct acpi_gpio_event - ACPI GPIO event handler data
++ *
++ * @node:	  list-entry of the events list of the struct acpi_gpio_chip
++ * @handle:	  handle of ACPI method to execute when the IRQ triggers
++ * @handler:	  irq_handler to pass to request_irq when requesting the IRQ
++ * @pin:	  GPIO pin number on the gpio_chip
++ * @irq:	  Linux IRQ number for the event, for request_ / free_irq
++ * @irqflags:     flags to pass to request_irq when requesting the IRQ
++ * @irq_is_wake:  If the ACPI flags indicate the IRQ is a wakeup source
++ * @is_requested: True if request_irq has been done
++ * @desc:	  gpio_desc for the GPIO pin for this event
++ */
+ struct acpi_gpio_event {
+ 	struct list_head node;
+ 	acpi_handle handle;
++	irq_handler_t handler;
+ 	unsigned int pin;
+ 	unsigned int irq;
++	unsigned long irqflags;
++	bool irq_is_wake;
++	bool irq_requested;
+ 	struct gpio_desc *desc;
+ };
+ 
+@@ -53,10 +70,10 @@ struct acpi_gpio_chip {
+ 
+ /*
+  * For gpiochips which call acpi_gpiochip_request_interrupts() before late_init
+- * (so builtin drivers) we register the ACPI GpioInt event handlers from a
++ * (so builtin drivers) we register the ACPI GpioInt IRQ handlers from a
+  * late_initcall_sync handler, so that other builtin drivers can register their
+  * OpRegions before the event handlers can run.  This list contains gpiochips
+- * for which the acpi_gpiochip_request_interrupts() has been deferred.
++ * for which the acpi_gpiochip_request_irqs() call has been deferred.
+  */
+ static DEFINE_MUTEX(acpi_gpio_deferred_req_irqs_lock);
+ static LIST_HEAD(acpi_gpio_deferred_req_irqs_list);
+@@ -137,8 +154,42 @@ bool acpi_gpio_get_irq_resource(struct a
+ }
+ EXPORT_SYMBOL_GPL(acpi_gpio_get_irq_resource);
+ 
+-static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+-						   void *context)
++static void acpi_gpiochip_request_irq(struct acpi_gpio_chip *acpi_gpio,
++				      struct acpi_gpio_event *event)
++{
++	int ret, value;
++
++	ret = request_threaded_irq(event->irq, NULL, event->handler,
++				   event->irqflags, "ACPI:Event", event);
++	if (ret) {
++		dev_err(acpi_gpio->chip->parent,
++			"Failed to setup interrupt handler for %d\n",
++			event->irq);
++		return;
++	}
++
++	if (event->irq_is_wake)
++		enable_irq_wake(event->irq);
++
++	event->irq_requested = true;
++
++	/* Make sure we trigger the initial state of edge-triggered IRQs */
++	value = gpiod_get_raw_value_cansleep(event->desc);
++	if (((event->irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
++	    ((event->irqflags & IRQF_TRIGGER_FALLING) && value == 0))
++		event->handler(event->irq, event);
++}
++
++static void acpi_gpiochip_request_irqs(struct acpi_gpio_chip *acpi_gpio)
++{
++	struct acpi_gpio_event *event;
++
++	list_for_each_entry(event, &acpi_gpio->events, node)
++		acpi_gpiochip_request_irq(acpi_gpio, event);
++}
++
++static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
++					     void *context)
+ {
+ 	struct acpi_gpio_chip *acpi_gpio = context;
+ 	struct gpio_chip *chip = acpi_gpio->chip;
+@@ -147,8 +198,7 @@ static acpi_status acpi_gpiochip_request
+ 	struct acpi_gpio_event *event;
+ 	irq_handler_t handler = NULL;
+ 	struct gpio_desc *desc;
+-	unsigned long irqflags;
+-	int ret, pin, irq, value;
++	int ret, pin, irq;
+ 
+ 	if (!acpi_gpio_get_irq_resource(ares, &agpio))
+ 		return AE_OK;
+@@ -179,8 +229,6 @@ static acpi_status acpi_gpiochip_request
+ 
+ 	gpiod_direction_input(desc);
+ 
+-	value = gpiod_get_value_cansleep(desc);
+-
+ 	ret = gpiochip_lock_as_irq(chip, pin);
+ 	if (ret) {
+ 		dev_err(chip->parent, "Failed to lock GPIO as interrupt\n");
+@@ -193,64 +241,42 @@ static acpi_status acpi_gpiochip_request
+ 		goto fail_unlock_irq;
  	}
  
- 	/*
--	 * If cache size is higher than 0, this indicates
--	 * the existence of cache and it can be turned on.
-+	 * If cache size is higher than 0, this indicates the existence of cache
-+	 * and it can be turned on. Note that some eMMCs from Micron has been
-+	 * reported to need ~800 ms timeout, while enabling the cache after
-+	 * sudden power failure tests. Let's extend the timeout to a minimum of
-+	 * DEFAULT_CACHE_EN_TIMEOUT_MS and do it for all cards.
- 	 */
- 	if (card->ext_csd.cache_size > 0) {
-+		unsigned int timeout_ms = MIN_CACHE_EN_TIMEOUT_MS;
+-	irqflags = IRQF_ONESHOT;
++	event = kzalloc(sizeof(*event), GFP_KERNEL);
++	if (!event)
++		goto fail_unlock_irq;
 +
-+		timeout_ms = max(card->ext_csd.generic_cmd6_time, timeout_ms);
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
--				EXT_CSD_CACHE_CTRL, 1,
--				card->ext_csd.generic_cmd6_time);
-+				EXT_CSD_CACHE_CTRL, 1, timeout_ms);
- 		if (err && err != -EBADMSG)
- 			goto free_card;
++	event->irqflags = IRQF_ONESHOT;
+ 	if (agpio->triggering == ACPI_LEVEL_SENSITIVE) {
+ 		if (agpio->polarity == ACPI_ACTIVE_HIGH)
+-			irqflags |= IRQF_TRIGGER_HIGH;
++			event->irqflags |= IRQF_TRIGGER_HIGH;
+ 		else
+-			irqflags |= IRQF_TRIGGER_LOW;
++			event->irqflags |= IRQF_TRIGGER_LOW;
+ 	} else {
+ 		switch (agpio->polarity) {
+ 		case ACPI_ACTIVE_HIGH:
+-			irqflags |= IRQF_TRIGGER_RISING;
++			event->irqflags |= IRQF_TRIGGER_RISING;
+ 			break;
+ 		case ACPI_ACTIVE_LOW:
+-			irqflags |= IRQF_TRIGGER_FALLING;
++			event->irqflags |= IRQF_TRIGGER_FALLING;
+ 			break;
+ 		default:
+-			irqflags |= IRQF_TRIGGER_RISING |
+-				    IRQF_TRIGGER_FALLING;
++			event->irqflags |= IRQF_TRIGGER_RISING |
++					   IRQF_TRIGGER_FALLING;
+ 			break;
+ 		}
+ 	}
  
+-	event = kzalloc(sizeof(*event), GFP_KERNEL);
+-	if (!event)
+-		goto fail_unlock_irq;
+-
+ 	event->handle = evt_handle;
++	event->handler = handler;
+ 	event->irq = irq;
++	event->irq_is_wake = agpio->wake_capable == ACPI_WAKE_CAPABLE;
+ 	event->pin = pin;
+ 	event->desc = desc;
+ 
+-	ret = request_threaded_irq(event->irq, NULL, handler, irqflags,
+-				   "ACPI:Event", event);
+-	if (ret) {
+-		dev_err(chip->parent,
+-			"Failed to setup interrupt handler for %d\n",
+-			event->irq);
+-		goto fail_free_event;
+-	}
+-
+-	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
+-		enable_irq_wake(irq);
+-
+ 	list_add_tail(&event->node, &acpi_gpio->events);
+ 
+-	/*
+-	 * Make sure we trigger the initial state of the IRQ when using RISING
+-	 * or FALLING.  Note we run the handlers on late_init, the AML code
+-	 * may refer to OperationRegions from other (builtin) drivers which
+-	 * may be probed after us.
+-	 */
+-	if (((irqflags & IRQF_TRIGGER_RISING) && value == 1) ||
+-	    ((irqflags & IRQF_TRIGGER_FALLING) && value == 0))
+-		handler(event->irq, event);
+-
+ 	return AE_OK;
+ 
+-fail_free_event:
+-	kfree(event);
+ fail_unlock_irq:
+ 	gpiochip_unlock_as_irq(chip, pin);
+ fail_free_desc:
+@@ -287,6 +313,9 @@ void acpi_gpiochip_request_interrupts(st
+ 	if (ACPI_FAILURE(status))
+ 		return;
+ 
++	acpi_walk_resources(handle, "_AEI",
++			    acpi_gpiochip_alloc_event, acpi_gpio);
++
+ 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
+ 	defer = !acpi_gpio_deferred_req_irqs_done;
+ 	if (defer)
+@@ -297,8 +326,7 @@ void acpi_gpiochip_request_interrupts(st
+ 	if (defer)
+ 		return;
+ 
+-	acpi_walk_resources(handle, "_AEI",
+-			    acpi_gpiochip_request_interrupt, acpi_gpio);
++	acpi_gpiochip_request_irqs(acpi_gpio);
+ }
+ EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
+ 
+@@ -335,10 +363,13 @@ void acpi_gpiochip_free_interrupts(struc
+ 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
+ 		struct gpio_desc *desc;
+ 
+-		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
+-			disable_irq_wake(event->irq);
++		if (event->irq_requested) {
++			if (event->irq_is_wake)
++				disable_irq_wake(event->irq);
++
++			free_irq(event->irq, event);
++		}
+ 
+-		free_irq(event->irq, event);
+ 		desc = event->desc;
+ 		if (WARN_ON(IS_ERR(desc)))
+ 			continue;
+@@ -1204,23 +1235,16 @@ bool acpi_can_fallback_to_crs(struct acp
+ 	return con_id == NULL;
+ }
+ 
+-/* Run deferred acpi_gpiochip_request_interrupts() */
+-static int acpi_gpio_handle_deferred_request_interrupts(void)
++/* Run deferred acpi_gpiochip_request_irqs() */
++static int acpi_gpio_handle_deferred_request_irqs(void)
+ {
+ 	struct acpi_gpio_chip *acpi_gpio, *tmp;
+ 
+ 	mutex_lock(&acpi_gpio_deferred_req_irqs_lock);
+ 	list_for_each_entry_safe(acpi_gpio, tmp,
+ 				 &acpi_gpio_deferred_req_irqs_list,
+-				 deferred_req_irqs_list_entry) {
+-		acpi_handle handle;
+-
+-		handle = ACPI_HANDLE(acpi_gpio->chip->parent);
+-		acpi_walk_resources(handle, "_AEI",
+-				    acpi_gpiochip_request_interrupt, acpi_gpio);
+-
+-		list_del_init(&acpi_gpio->deferred_req_irqs_list_entry);
+-	}
++				 deferred_req_irqs_list_entry)
++		acpi_gpiochip_request_irqs(acpi_gpio);
+ 
+ 	acpi_gpio_deferred_req_irqs_done = true;
+ 	mutex_unlock(&acpi_gpio_deferred_req_irqs_lock);
+@@ -1228,4 +1252,4 @@ static int acpi_gpio_handle_deferred_req
+ 	return 0;
+ }
+ /* We must use _sync so that this runs after the first deferred_probe run */
+-late_initcall_sync(acpi_gpio_handle_deferred_request_interrupts);
++late_initcall_sync(acpi_gpio_handle_deferred_request_irqs);
 
 
