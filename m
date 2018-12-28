@@ -7,47 +7,52 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE6FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C618FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F08E2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 918202148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999402;
-	bh=8FNGcaD8Y0/M0T5FXp5q05iB8T22JEJAjlW4tInt+Kk=;
+	s=default; t=1545999405;
+	bh=NtxTcTJ0l9oKO0yIweq9s23+d2vDv9F+ZEO1nGdLEVQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PJiByf8XRDhE5kh0onWd18Nh3vkLQ8IbVEifJDMcrjWBOajb25QIWbLkrERzYWPPC
-	 Ks02CNYXAzrMaN6cQRteV8tVx7ak/+5Tf/3bdGFS4nhFLTnRc1P/71DpIZybbKvUpL
-	 ZvwY/o0b8WRhsGkjh0gDlUu/Xws7uBb4mFLjssmI=
+	b=H4VXPqauxuxULvHF7uhDBg6Z3xA2FfO0G8rSZcDUx2abdukFWtRLLnZi5VaQctxxs
+	 r4OSeaf2mEgU79hM7E1RrfyRvoKX6uX1YeBgY/F0fTG7HlYmnAMsFMz8VhN6vfQtng
+	 Y2RD9zkAlSMEqPkjlkX2dKhfW4SxA5tKQ/pygXz8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732751AbeL1MQk (ORCPT
+        id S1732766AbeL1MQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35716 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:16:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732734AbeL1MQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:37 -0500
+        id S1732734AbeL1MQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F33712087F;
-        Fri, 28 Dec 2018 12:16:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA2C12087F;
+        Fri, 28 Dec 2018 12:16:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999396;
-        bh=8FNGcaD8Y0/M0T5FXp5q05iB8T22JEJAjlW4tInt+Kk=;
+        s=default; t=1545999401;
+        bh=NtxTcTJ0l9oKO0yIweq9s23+d2vDv9F+ZEO1nGdLEVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HIVi0xHHSSRVxKPf8gb9PzecEbcQAgA38i/SImymLeMkZgDN6olY+xFZKsXaJsY9/
-         UtRAgymvFq9NmXBhmp5+/kr689QykQhY76Wyq5l+6pNndhwvO8hi9Efxr7CquXn48y
-         05Up7p8Gf2VzPxRpgfMteB1mimYNXiwaZp2ajH4o=
+        b=EKRFMcXLkffpn3nLZJ4qQx93Vu+d5wDUDLGNITyOknTu9ATNTWajjsDmVQzaqGbxI
+         gXiLU6NVJtEv1uPLvcfMlY5SD2/M6ufNCNDdNF5/0cga4VVkFPOJjrVS4R3NYnNJ82
+         rWhxHcRf34h3SxyiXqnbcjSSfo8t5ecBADZLoQZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 15/36] USB: serial: option: add Telit LN940 series
-Date:   Fri, 28 Dec 2018 12:52:31 +0100
-Message-Id: <20181228113127.620023685@linuxfoundation.org>
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 34/36] mm: dont miss the last page because of round-off error
+Date:   Fri, 28 Dec 2018 12:52:50 +0100
+Message-Id: <20181228113128.655959064@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -66,63 +71,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Roman Gushchin <guro@fb.com>
 
-commit 28a86092b1753b802ef7e3de8a4c4a69a9c1bb03 upstream.
+commit 68600f623d69da428c6163275f97ca126e1a8ec5 upstream.
 
-Added USB serial option driver support for Telit LN940 series cellular
-modules. Covering both QMI and MBIM modes.
+I've noticed, that dying memory cgroups are often pinned in memory by a
+single pagecache page.  Even under moderate memory pressure they sometimes
+stayed in such state for a long time.  That looked strange.
 
-usb-devices output (0x1900):
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 21 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=1900 Rev=03.10
-S:  Manufacturer=Telit
-S:  Product=Telit LN940 Mobile Broadband
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+My investigation showed that the problem is caused by applying the LRU
+pressure balancing math:
 
-usb-devices output (0x1901):
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 20 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=1901 Rev=03.10
-S:  Manufacturer=Telit
-S:  Product=Telit LN940 Mobile Broadband
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+  scan = div64_u64(scan * fraction[lru], denominator),
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+where
+
+  denominator = fraction[anon] + fraction[file] + 1.
+
+Because fraction[lru] is always less than denominator, if the initial scan
+size is 1, the result is always 0.
+
+This means the last page is not scanned and has
+no chances to be reclaimed.
+
+Fix this by rounding up the result of the division.
+
+In practice this change significantly improves the speed of dying cgroups
+reclaim.
+
+[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
+  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
+Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/math64.h |    3 +++
+ mm/vmscan.c            |    6 ++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1167,6 +1167,10 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1213, 0xff) },
- 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1214),
- 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
-+	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1900),				/* Telit LN940 (QMI) */
-+	  .driver_info = NCTRL(0) | RSVD(1) },
-+	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1901, 0xff),	/* Telit LN940 (MBIM) */
-+	  .driver_info = NCTRL(0) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, ZTE_PRODUCT_MF622, 0xff, 0xff, 0xff) }, /* ZTE WCDMA products */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0002, 0xff, 0xff, 0xff),
- 	  .driver_info = RSVD(1) },
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -254,4 +254,7 @@ static inline u64 mul_u64_u32_div(u64 a,
+ }
+ #endif /* mul_u64_u32_div */
+ 
++#define DIV64_U64_ROUND_UP(ll, d)	\
++	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
++
+ #endif /* _LINUX_MATH64_H */
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2367,9 +2367,11 @@ out:
+ 			/*
+ 			 * Scan types proportional to swappiness and
+ 			 * their relative recent reclaim efficiency.
++			 * Make sure we don't miss the last page
++			 * because of a round-off error.
+ 			 */
+-			scan = div64_u64(scan * fraction[file],
+-					 denominator);
++			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
++						  denominator);
+ 			break;
+ 		case SCAN_FILE:
+ 		case SCAN_ANON:
 
 
