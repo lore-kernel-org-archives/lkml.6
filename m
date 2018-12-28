@@ -2,133 +2,115 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A9AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425FAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D2D020869
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A8F620869
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546026749;
+	bh=hACC3o2RWzXfBoH9c8ngcNjCjkyNHl/PMk87f5XHLAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fYKHOWghiorey2x27kpsdevnWRKZq+eol5EsYg4AdyyWw0iBjZvbmZESnELf8z0nL
+	 TIb/Jj3yE97rvnctKLNffKEIlJX4GuzLS76GCbSGG3j/VMjECOX9wzpns5TizRqvVn
+	 3glUM7ZVucOhxmL9H9x3+ErxthZHdLL+3nJvH0nI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbeL1TvF (ORCPT
+        id S1732157AbeL1Tw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 14:51:05 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:36398 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730760AbeL1TvE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 14:51:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id w15so26304969ita.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 11:51:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vO+sy5ajdT1RB/SBCsLDHsVtjeChrmgh8EMOQPPpINo=;
-        b=SVm6kNRUP2MrriV9lj4hGD7vg8lLFgFO2x0sx9RGumVTVTL7VqB9nvS4MCEWpMUy3X
-         ZjOlUK+jsiQnZUZ+ZxxTtFidhhGPJ988H5XK4ibM2gGppaBnTKuzt2LPi7OFvI3Uy/lt
-         pRR7d7xvHgoSpDFhBgTMriWk1Hw+M1qtL+JxHT4+a8GdY3SSbNCI+7U8afYIFI5O9/aq
-         M5TxuhtW546PfpkVIt5k9y/sk0ocB6Y0FC9FgzPDhusN1oJTwL7Ijl83b9zrBK8r7/gX
-         a9wegQSTXn2MlO+GPYHjtDZQSmfXsDVu1Sk0s0l9aQvnL/1VttqLM+p0S0VDQ3PjZIK8
-         fvKg==
-X-Gm-Message-State: AA+aEWa+xVxC94awqoYGOtDX9O/buSfILQwZ7fBxipCVdIRCNd9Zl+ji
-        cZB+qzaPBC87N0zSHq01glgx2vgiIJ+QwvAS3QV+zZkj0/ic
-X-Google-Smtp-Source: AFSGD/VJJMJuzC2al3sNU1u/OYbpTlAWPbF9wCQJTIyery/BazQuuGyW2BbvMV6P1MXqfXEyWoHrOfYqShOs2+88jZ5FHLFlG59Q
+        Fri, 28 Dec 2018 14:52:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40386 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726466AbeL1Tw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 14:52:27 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 77850AF57;
+        Fri, 28 Dec 2018 19:52:25 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 20:52:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20181228195224.GY16738@dhcp22.suse.cz>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+ <20181228121515.GS16738@dhcp22.suse.cz>
+ <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:f986:: with SMTP id l128mr21121565ith.5.1546026663644;
- Fri, 28 Dec 2018 11:51:03 -0800 (PST)
-Date:   Fri, 28 Dec 2018 11:51:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000199a53057e1a62ff@google.com>
-Subject: general protection fault in ax25cmp
-From:   syzbot <syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+[Ccing Mel and Andrea]
 
-syzbot found the following crash on:
+On Fri 28-12-18 21:31:11, Wu Fengguang wrote:
+> > > > I haven't looked at the implementation yet but if you are proposing a
+> > > > special cased zone lists then this is something CDM (Coherent Device
+> > > > Memory) was trying to do two years ago and there was quite some
+> > > > skepticism in the approach.
+> > > 
+> > > It looks we are pretty different than CDM. :)
+> > > We creating new NUMA nodes rather than CDM's new ZONE.
+> > > The zonelists modification is just to make PMEM nodes more separated.
+> > 
+> > Yes, this is exactly what CDM was after. Have a zone which is not
+> > reachable without explicit request AFAIR. So no, I do not think you are
+> > too different, you just use a different terminology ;)
+> 
+> Got it. OK.. The fall back zonelists patch does need more thoughts.
+> 
+> In long term POV, Linux should be prepared for multi-level memory.
+> Then there will arise the need to "allocate from this level memory".
+> So it looks good to have separated zonelists for each level of memory.
 
-HEAD commit:    d8924c0d76aa Merge tag 'devprop-4.21-rc1' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=145051dd400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=91a256823ef17263
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a2c456a1ea08fa5b5f7
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1683ae57400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1410f3af400000
+Well, I do not have a good answer for you here. We do not have good
+experiences with those systems, I am afraid. NUMA is with us for more
+than a decade yet our APIs are coarse to say the least and broken at so
+many times as well. Starting a new API just based on PMEM sounds like a
+ticket to another disaster to me.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
+I would like to see solid arguments why the current model of numa nodes
+with fallback in distances order cannot be used for those new
+technologies in the beginning and develop something better based on our
+experiences that we gain on the way.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 2660 Comm: aoe_tx0 Not tainted 4.20.0+ #388
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:ax25cmp+0x3e/0x180 net/ax25/ax25_addr.c:122
-Code: f6 41 55 49 89 fd 41 54 49 89 f4 53 48 83 ec 10 48 89 7d d0 48 89 75  
-c8 e8 ff 46 7f fa 4c 89 e8 4c 89 ea 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38  
-38 d0 7f 08 84 c0 0f 85 23 01 00 00 4c 89 e0 4c 89
-RSP: 0018:ffff8881ce3cf3c8 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: ffff8881c5a59800 RCX: 0000000000000001
-RDX: 0000000000000007 RSI: ffffffff86ff11d1 RDI: 0000000000000017
-RBP: ffff8881ce3cf400 R08: ffffed1039c79e70 R09: ffffed1039c79e6f
-R10: ffffed1039c79e6f R11: 0000000000000003 R12: ffff8881c5a59808
-R13: 0000000000000017 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe5864d7d4 CR3: 000000000946a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  rose_route_frame+0x2d6/0x19b0 net/rose/rose_route.c:885
-  rose_xmit+0x8e/0x180 net/rose/rose_dev.c:110
-  __netdev_start_xmit include/linux/netdevice.h:4356 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4365 [inline]
-  xmit_one net/core/dev.c:3257 [inline]
-  dev_hard_start_xmit+0x295/0xc90 net/core/dev.c:3273
-  __dev_queue_xmit+0x2f0d/0x3950 net/core/dev.c:3843
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3876
-  tx+0x77/0xd0 drivers/block/aoe/aoenet.c:63
-  kthread+0x296/0x4a0 drivers/block/aoe/aoecmd.c:1248
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 623634688d1951e4 ]---
-RIP: 0010:ax25cmp+0x3e/0x180 net/ax25/ax25_addr.c:122
-Code: f6 41 55 49 89 fd 41 54 49 89 f4 53 48 83 ec 10 48 89 7d d0 48 89 75  
-c8 e8 ff 46 7f fa 4c 89 e8 4c 89 ea 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38  
-38 d0 7f 08 84 c0 0f 85 23 01 00 00 4c 89 e0 4c 89
-RSP: 0018:ffff8881ce3cf3c8 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: ffff8881c5a59800 RCX: 0000000000000001
-RDX: 0000000000000007 RSI: ffffffff86ff11d1 RDI: 0000000000000017
-RBP: ffff8881ce3cf400 R08: ffffed1039c79e70 R09: ffffed1039c79e6f
-R10: ffffed1039c79e6f R11: 0000000000000003 R12: ffff8881c5a59808
-R13: 0000000000000017 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe5864d7d4 CR3: 000000000946a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+I would be especially interested about a possibility of the memory
+migration idea during a memory pressure and relying on numa balancing to
+resort the locality on demand rather than hiding certain NUMA nodes or
+zones from the allocator and expose them only to the userspace.
 
+> On the other hand, there will also be page allocations that don't care
+> about the exact memory level. So it looks reasonable to expect
+> different kind of fallback zonelists that can be selected by NUMA policy.
+> 
+> Thanks,
+> Fengguang
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Michal Hocko
+SUSE Labs
