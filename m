@@ -2,123 +2,101 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D018C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFEEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB1F2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546001066;
-	bh=iO8RoXxwTgTbMF2IOJk932pJdEc29IH2p4LM4Jpb1UY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=K7F9u41pR7aR/er6uyaDrE5DwLuQMFXFWk47quUrp5z0cUMsWGX+2uW05rfVv96cq
-	 iiRoIIg3gx9z4HVgizfwI/CmN5uhJFBGOOllQdhbcv1GNvO0fPhOvrUlK4OUZtPm12
-	 gxKPZ6NOfMhGmRqBNXgtwNKD8gKorEjzXXDq+ohM=
+	by mail.kernel.org (Postfix) with ESMTP id A09E920873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:48:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpXVYTif"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeL1MoZ (ORCPT
+        id S1729826AbeL1Mso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:44:25 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50872 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeL1MoY (ORCPT
+        Fri, 28 Dec 2018 07:48:44 -0500
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:33959 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729597AbeL1Msn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:44:24 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so18895830wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 04:44:22 -0800 (PST)
+        Fri, 28 Dec 2018 07:48:43 -0500
+Received: by mail-lj1-f176.google.com with SMTP id u89-v6so18656139lje.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 04:48:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gbpg4bS5dKA4EqIfeTpxujWmST1hw7rXzOrqemUGMAY=;
-        b=itQ6CUedaMORK4R3EwZLl7dgQ/h6vMhnd0sYhd+LPtTyaWGkiOxUiv6//pD9+8iVEM
-         bFK0RoxSpOfuowORJGnpfCqqVhFdk5fzuXQuMo0iZeSDbTcM0JKrUS2nV5YiN+x88pK9
-         u6rYwrvOa15t7mgL/u1mqkGljPInFu3jG6nqBfQDRgAwvvwacqam+TazniJHJabEq51I
-         j1QprLVTzz9KlPhkS4h0SvkYgDfkhwwzTuXaza+uXIYvEhQ2El2Ul46OFbeF8uw7P49P
-         z4GcnPPQA1YIeeu5mzqrMdknn2DkeAVwblHRjDbLmAyHxKXJLpSdt6fealIZUDKHQI6R
-         nHzg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TB9wd4V1lU8rUWRSA3Zy0k9okpjm28MYCb8GMqiX3ZI=;
+        b=UpXVYTif9qGUlbxNsDp7j8a2AYFaxKukSwnsFrvAwKQ/a9v1cPWSN4Faj/Wu0BLWbS
+         Gh2oCNc5DQ63aLtyKCPQqLNKDpt0rWpKI5w6Zyo4lSnKOQslVpSzN98OEC/bXrXXcWov
+         Q/9NzdqBt4vpYQCoxWgaCDUqL01Y0R1X+NtrI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gbpg4bS5dKA4EqIfeTpxujWmST1hw7rXzOrqemUGMAY=;
-        b=sQ6qG6RC31+RH6yDwOs7w9QifiI2QcxYDV8E3c9qmKa1Ga7gGxJ/ANiMCa5ze7lpyw
-         PQpmn29CuMjM6cYas/SSoDxIYHQ1zJDgXgTUawnUlibsQvLK4F4+zLDxWv1uqcSmy/8O
-         laIKZ/Lw3oQXmVC9mn7qaA5r244UaUT0lvoxiE/sqc/wWAbuyT1HoHk6UeZiYZr/M+ys
-         sQzo1lI0DmlU+pd4zibymxHzNm+xOLGLoJUobtqfiUfeXSwFzzhQkCdS8xgQ/SEoKKJA
-         O852GtJh6CKtxBzJXmqifgKgJ7etof0GMyDmc/ALMjpMAPG24g/Rr7VwCGh2/JNj6vMi
-         X86A==
-X-Gm-Message-State: AJcUukcw6Vlbq9imPsDbHlEG681/AEaepKV9LagmJNfRKzGORWW7bQPs
-        a6M8ATLZoTEzxqmhqLdplu0=
-X-Google-Smtp-Source: ALg8bN6bdMLebzvVP+p9ka3Mj4NBrpSfojmp5IzYKYSjgsYtEaK3u02Emqw8qRhBSkvNzYudZJcoOg==
-X-Received: by 2002:a1c:7c3:: with SMTP id 186mr11962032wmh.41.1546001061510;
-        Fri, 28 Dec 2018 04:44:21 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 126sm22283943wmd.1.2018.12.28.04.44.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 04:44:20 -0800 (PST)
-Date:   Fri, 28 Dec 2018 13:44:18 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] scheduler changes for v4.21
-Message-ID: <20181228124418.GA20003@gmail.com>
-References: <20181224224509.GA67077@gmail.com>
- <CAOesGMjQg2vo2-fbjppumttN1Mz9Ce6VqvK0SkfhdkHPxhP=DQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TB9wd4V1lU8rUWRSA3Zy0k9okpjm28MYCb8GMqiX3ZI=;
+        b=AsK5gSPYQSRh6FojtEinVATLetJ6iJzp68s3y9W8DcI3Un/UrYizFb0wUy93P85GsN
+         Q/o907aA2QrptJNL4AzUhjCsPQpA6gparC64/NZM6OBz6SmZR67ccviEWYmGL4Tsa++z
+         7crgjvjREHdZYopT0Y2eXyGhLbPAOR/ToQwL8KW94KUYCvUJO8bcB04aRFmtv+sRH2Lm
+         rffSjszGucTeBIJ+z/LYZaU2DYERAe4Q5OreeuyYpG7UIeSBikxRQzwhhe8cQf1TIMU5
+         Cv2DdurcdzvrapUKr32RACm2hKwuZd/7SVm0Nz7gHcSk0xOyvtNERwS8T9i+oqlvrhfU
+         Be2w==
+X-Gm-Message-State: AJcUukdsDrYDaf+FNzShRSmpz+I0I2NLObO97If8iTDeicukVPIAxx/q
+        48/xJsMsfpOD8UrOxRmW/aMJO77rcqMmmbwRimqk9g==
+X-Google-Smtp-Source: ALg8bN6eyxe/cSRx4wcL79zouY/8C04rEZ8Y9PxGaLVRo0OjSOtSN/oHZfI8+VtITN5csA1Irm5U/3F1iV++5f0pzsg=
+X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr10895366ljj.120.1546001321639;
+ Fri, 28 Dec 2018 04:48:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjQg2vo2-fbjppumttN1Mz9Ce6VqvK0SkfhdkHPxhP=DQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <4085fc648ff5086bd6e6237d74d2a11e945a617b.camel@gmail.com>
+In-Reply-To: <4085fc648ff5086bd6e6237d74d2a11e945a617b.camel@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 28 Dec 2018 13:48:29 +0100
+Message-ID: <CACRpkdaDT9xZe6r3pJvYqubrvHh4+PkV8D38yYMEbv8fhdHMKQ@mail.gmail.com>
+Subject: Re: Interrupt storm from pinctrl-amd on Acer AN515-42
+To:     Leonard Crestez <cdleonard@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Daniel Kurtz <djkurtz@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 28, 2018 at 12:02 AM Leonard Crestez <cdleonard@gmail.com> wrote:
 
-* Olof Johansson <olof@lixom.net> wrote:
+> Digging a little deeper it seems the touchpad interrupt is active on
+> boot and since it's configured as "level" and no touchpad driver is
+> available yet there does not seem to be any way to clear it.
 
-> Hi,
-> 
-> On Mon, Dec 24, 2018 at 2:45 PM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > Linus,
-> >
-> > Please pull the latest sched-core-for-linus git tree from:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
-> >
-> >    # HEAD: 732cd75b8c920d3727e69957b14faa7c2d7c3b75 sched/fair: Select an energy-efficient CPU on task wake-up
-> >
-> > The main changes in this cycle were:
-> >
-> >  - Introduce "Energy Aware Scheduling" - by Quentin Perret. This is a
-> >    coherent topology description of CPUs in cooperation with the PM
-> >    subsystem, with the goal to schedule more energy-efficiently on
-> >    assymetric SMP platform - such as waking up tasks to the more
-> >    energy-efficient CPUs first, as long as the system isn't
-> >    oversubscribed.
-> >
-> >    For details of the design, see:
-> >
-> >       https://marc.info/?l=linux-kernel&m=153243513908731&w=2
-> >
-> >  - Misc cleanups and smaller enhancements.
-> 
-> Looks like my warnings fix never made it in, even after a few pings.
-> 
-> Linus, can you apply directly? Causes warning noise on all !SMP ARM builds:
-> 
-> https://lore.kernel.org/lkml/20181125224105.123568-1-olof@lixom.net/
+I think these are called "spurious interrupts".
 
-Thanks and sorry about that!
+> I don't know how this should be handled, booting with an active enabled but
+> unclearable interrupt seems like a platform bug to me. There is even an
+> option to set touchpad to "basic" which does some sort of ps2 emulation
+> but the IRQ issue still happens!
+>
+> One workaround is to explicitly disable the interrupt from the handler
+> if no mapping is found; this will keep it disabled until
+> amd_gpio_irq_set_type is called later.
 
-	Ingo
+I don't know how x86 and ACPI systems usually deal with this stuff
+so I'm kind of lost. On the embedded systems that I develop on,
+I would just disable all interrupts on probe() (usually writing 0x0 in
+some interrupt enable register) and then they will get enabled
+once consumers need them.
+
+But I have come to understand that maybe ACPI systems are
+not so happy about drivers doing things like that?
+
+Yours,
+Linus Walleij
