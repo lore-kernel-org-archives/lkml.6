@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66901C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9661AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C19A2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FE8E2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999444;
-	bh=FRClkQMXU/kP6lJjyoPFEDeS4FkBdOfj5TsfOd7H9M0=;
+	s=default; t=1545999447;
+	bh=pWxKid7FWINrmtGd3FRUEzA4w8Gr2C6ohhjz2A39CiY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wuvugaM+Mq+ja14luGp9gfQZPxFapJ/nVZEVXBCyuLGZu+1q2pbuVZEgqLZEHi0qi
-	 F6ciOUN0s3mmSsE74DSLw3rFUmGLw1gm0mV9M2gUPxGxogrUBY7pHZIQyjGIVxoUX5
-	 PhFdOGnVYCz89KD/N4x0GP0ZZLCQ3M9x9RxPxZ8I=
+	b=VnWfxobubxtVgRYXJ3Wvw+JUpdJv0pVA++v9pqdG6p8RyoVKMM2D/b+1TkNFDY+Of
+	 /tO1NqJjbgKd8bCkIt9Gs679InMJ2bS8SBqPJqwY/PX9Ho8yuI5MAp7aGjUs7vTIZX
+	 sKZAO0ER5pAwcz2uyAiActVCGUXY1mUhHihx1dn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732917AbeL1MRX (ORCPT
+        id S1732930AbeL1MR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:17:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:17:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732889AbeL1MRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:18 -0500
+        id S1732906AbeL1MRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F05B120675;
-        Fri, 28 Dec 2018 12:17:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8700520675;
+        Fri, 28 Dec 2018 12:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999437;
-        bh=FRClkQMXU/kP6lJjyoPFEDeS4FkBdOfj5TsfOd7H9M0=;
+        s=default; t=1545999443;
+        bh=pWxKid7FWINrmtGd3FRUEzA4w8Gr2C6ohhjz2A39CiY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGFG26sx5I3PBG2/nB9Ht57Rx1MIicfFK5P7t9m8F1pCbHyDW7ECrerxAGiUqj1Br
-         6SmZ7AZVZ7eEp4YZqf4Ud60UBeP9wC0cvkYljEBkC4bfNus7q6hWMd1M4dLJWNNgZt
-         tvOd1gCJHaoDD3553sTYFUrC+Gujivh9k3DKyATs=
+        b=AtdelVKOd2q5VtbMqMM7MZWcTGTwWkVrhaHO4SkABuSLEWOxEInXgtEhHyN8I2f9/
+         dzklWpCXZtlEAPnMZTnVzzSgbpo84toke6g6KdyA/at/s3PieJazU2/70RBxBGRziB
+         2hxrgEH2tEQMgsQ+VTnYtnJOFwS4MC1E5U8t8wAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 11/22] mmc: core: Reset HPI enabled state during re-init and in case of errors
-Date:   Fri, 28 Dec 2018 12:52:48 +0100
-Message-Id: <20181228113126.916957499@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        Andreas Dannenberg <dannenberg@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 13/22] mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
+Date:   Fri, 28 Dec 2018 12:52:50 +0100
+Message-Id: <20181228113127.054616024@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -66,36 +70,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ulf Hansson <ulf.hansson@linaro.org>
 
-commit a0741ba40a009f97c019ae7541dc61c1fdf41efb upstream.
+commit e3ae3401aa19432ee4943eb0bbc2ec704d07d793 upstream.
 
-During a re-initialization of the eMMC card, we may fail to re-enable HPI.
-In these cases, that isn't properly reflected in the card->ext_csd.hpi_en
-bit, as it keeps being set. This may cause following attempts to use HPI,
-even if's not enabled. Let's fix this!
+Some eMMCs from Micron have been reported to need ~800 ms timeout, while
+enabling the CACHE ctrl after running sudden power failure tests. The
+needed timeout is greater than what the card specifies as its generic CMD6
+timeout, through the EXT_CSD register, hence the problem.
 
-Fixes: eb0d8f135b67 ("mmc: core: support HPI send command")
+Normally we would introduce a card quirk to extend the timeout for these
+specific Micron cards. However, due to the rather complicated debug process
+needed to find out the error, let's simply use a minimum timeout of 1600ms,
+the double of what has been reported, for all cards when enabling CACHE
+ctrl.
+
+Reported-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Reported-by: Andreas Dannenberg <dannenberg@ti.com>
+Reported-by: Faiz Abbas <faiz_abbas@ti.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/mmc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/core/mmc.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 --- a/drivers/mmc/core/mmc.c
 +++ b/drivers/mmc/core/mmc.c
-@@ -1719,9 +1719,11 @@ static int mmc_init_card(struct mmc_host
- 		if (err) {
- 			pr_warn("%s: Enabling HPI failed\n",
- 				mmc_hostname(card->host));
-+			card->ext_csd.hpi_en = 0;
- 			err = 0;
--		} else
-+		} else {
- 			card->ext_csd.hpi_en = 1;
-+		}
+@@ -27,6 +27,7 @@
+ #include "sd_ops.h"
+ 
+ #define DEFAULT_CMD6_TIMEOUT_MS	500
++#define MIN_CACHE_EN_TIMEOUT_MS 1600
+ 
+ static const unsigned int tran_exp[] = {
+ 	10000,		100000,		1000000,	10000000,
+@@ -1726,13 +1727,18 @@ static int mmc_init_card(struct mmc_host
  	}
  
  	/*
+-	 * If cache size is higher than 0, this indicates
+-	 * the existence of cache and it can be turned on.
++	 * If cache size is higher than 0, this indicates the existence of cache
++	 * and it can be turned on. Note that some eMMCs from Micron has been
++	 * reported to need ~800 ms timeout, while enabling the cache after
++	 * sudden power failure tests. Let's extend the timeout to a minimum of
++	 * DEFAULT_CACHE_EN_TIMEOUT_MS and do it for all cards.
+ 	 */
+ 	if (card->ext_csd.cache_size > 0) {
++		unsigned int timeout_ms = MIN_CACHE_EN_TIMEOUT_MS;
++
++		timeout_ms = max(card->ext_csd.generic_cmd6_time, timeout_ms);
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-				EXT_CSD_CACHE_CTRL, 1,
+-				card->ext_csd.generic_cmd6_time);
++				EXT_CSD_CACHE_CTRL, 1, timeout_ms);
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
+ 
 
 
