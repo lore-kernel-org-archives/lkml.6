@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3760FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E039AC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CBE2087F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD2E520866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999343;
-	bh=+jqyR5q9iHUEVkADcuAI0W0SuJSlAQSQc1rrBFM1iK0=;
+	s=default; t=1545999346;
+	bh=DgLK6wjD5ta8lYbXJSEI/gHvfAnvNOXdDRVwZWOIqqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TbE3bWiWh41/OJpLkjrK9Themc7zTZe7RaDSurifMvkgaEltEXLAvnlXfcvRk+OK1
-	 ZaKhxR3DOQCaTk50cMFpUwCswDWc7nsjK2TaGod8OcNfRWhgbI07F4WGJyJAhE7XJ8
-	 BDjwBH+uXJ2LC7VDRndKIlh11Hc15w3bcl2X6FVE=
+	b=Um2aUNmG6R4MXngGqEh7TlMYe3YSc+paW6eoJol2edKsS8jAUbMXTbKZ3ihUGcVpq
+	 rsjZ90YRqj7iIo3Ug6l/JSMGj7sgabce3+61YCMhXaLMmEgmQmGPx2sDyeQD88zjC/
+	 1MQJAVHP+YFJYIY+l1WrXmM/cREINcewjqGALeBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732500AbeL1MPm (ORCPT
+        id S1732516AbeL1MPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34680 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732478AbeL1MPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:37 -0500
+        id S1732478AbeL1MPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C99020866;
-        Fri, 28 Dec 2018 12:15:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889AD20866;
+        Fri, 28 Dec 2018 12:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999336;
-        bh=+jqyR5q9iHUEVkADcuAI0W0SuJSlAQSQc1rrBFM1iK0=;
+        s=default; t=1545999342;
+        bh=DgLK6wjD5ta8lYbXJSEI/gHvfAnvNOXdDRVwZWOIqqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mddCjU238M5o7ycAgR7okYqZ04CKnQcoW2e1Ry7SajdbcSqfndQZzc83LMUkmBRIk
-         P9KHfQgK0m1UtixA6Wvt/pqb694wBCG/srjc5h535FIPEcAT+2ZYwUME6y9Zof8bRC
-         o5quPqz7XMKByae26WPb8WuB2eSEw/gVxaIFTEQY=
+        b=AI11ARPf3F52d0Fo+qUkWLnLZzz+ja+Od9fQJbOLQmonZV3H00EuklEXlfiZGV8fF
+         h9i6p8e92bvDrbt93MbK67NbBYHZn0mPkbFzAlsyKz+LIoLJOmUxDV57KxeBDcMsSs
+         LLMWjgYbFORmC3BzEbQZwTm7ThXFYPDR9s36Wg9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.14 10/36] USB: xhci: fix broken_suspend placement in struct xchi_hcd
-Date:   Fri, 28 Dec 2018 12:52:26 +0100
-Message-Id: <20181228113127.217870861@linuxfoundation.org>
+        stable@vger.kernel.org, Tore Anderson <tore@fud.no>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 12/36] USB: serial: option: add HP lt4132
+Date:   Fri, 28 Dec 2018 12:52:28 +0100
+Message-Id: <20181228113127.378586873@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -66,46 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Tore Anderson <tore@fud.no>
 
-commit 2419f30a4a4fcaa5f35111563b4c61f1b2b26841 upstream.
+commit d57ec3c83b5153217a70b561d4fb6ed96f2f7a25 upstream.
 
-As commented in the struct's definition there shouldn't be anything
-underneath its 'priv[0]' member as it would break some macros.
+The HP lt4132 is a rebranded Huawei ME906s-158 LTE modem.
 
-The patch converts the broken_suspend into a bit-field and relocates it
-next to to the rest of bit-fields.
+The interface with protocol 0x16 is "CDC ECM & NCM" according to the *.inf
+files included with the Windows driver. Attaching the option driver to it
+doesn't result in a /dev/ttyUSB* device being created, so I've excluded it.
+Note that it is also excluded for corresponding Huawei-branded devices, cf.
+commit d544db293a44 ("USB: support new huawei devices in option.c").
 
-Fixes: a7d57abcc8a5 ("xhci: workaround CSS timeout on AMD SNPS 3.0 xHC")
-Reported-by: Oliver Neukum  <oneukum@suse.com>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=06 Prot=16 Driver=(none)
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
+
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
+
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 3 Cfg#= 3 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+
+Signed-off-by: Tore Anderson <tore@fud.no>
+Cc: stable@vger.kernel.org
+[ johan: drop id defines ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/option.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1859,6 +1859,8 @@ struct xhci_hcd {
- 	unsigned		sw_lpm_support:1;
- 	/* support xHCI 1.0 spec USB2 hardware LPM */
- 	unsigned		hw_lpm_support:1;
-+	/* Broken Suspend flag for SNPS Suspend resume issue */
-+	unsigned		broken_suspend:1;
- 	/* cached usb2 extened protocol capabilites */
- 	u32                     *ext_caps;
- 	unsigned int            num_ext_caps;
-@@ -1871,8 +1873,6 @@ struct xhci_hcd {
- 
- 	/* platform-specific data -- must come last */
- 	unsigned long		priv[0] __aligned(sizeof(s64));
--	/* Broken Suspend flag for SNPS Suspend resume issue */
--	u8			broken_suspend;
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1944,7 +1944,12 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD200, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+-	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },	/* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },	/* HP lt4132 (Huawei ME906s-158) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
+ 	{ } /* Terminating entry */
  };
- 
- /* Platform specific overrides to generic XHCI hc_driver ops */
+ MODULE_DEVICE_TABLE(usb, option_ids);
 
 
