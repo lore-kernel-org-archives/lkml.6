@@ -2,49 +2,50 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0593C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9F3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCFA2081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3074520869
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387787AbeL1T36 (ORCPT
+        id S2387796AbeL1TbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 14:29:58 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35907 "EHLO mga18.intel.com"
+        Fri, 28 Dec 2018 14:31:11 -0500
+Received: from muru.com ([72.249.23.125]:59584 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729398AbeL1T36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 14:29:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Dec 2018 11:29:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,410,1539673200"; 
-   d="scan'208";a="305834893"
-Received: from ellie.jf.intel.com (HELO ellie) ([10.54.70.81])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Dec 2018 11:29:56 -0800
-From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To:     PO LIU <po.liu@nxp.com>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "davem\@davemloft.net" <davem@davemloft.net>,
-        "haustad\@cisco.com" <haustad@cisco.com>,
-        "nicolas.ferre\@microchip.com" <nicolas.ferre@microchip.com>,
-        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        PO LIU <po.liu@nxp.com>, PO LIU <po.liu@nxp.com>
-Subject: Re: [PATCH] net: tsn: add an netlink interface between kernel and application layer
-In-Reply-To: <1545968945-7290-1-git-send-email-Po.Liu@nxp.com>
-References: <1545968772-7237-1-git-send-email-Po.Liu@nxp.com> <1545968945-7290-1-git-send-email-Po.Liu@nxp.com>
-Date:   Fri, 28 Dec 2018 11:29:56 -0800
-Message-ID: <87r2e14fgr.fsf@intel.com>
+        id S1729398AbeL1TbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 14:31:10 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id AD68280BF;
+        Fri, 28 Dec 2018 19:31:13 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 11:31:05 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20181228193105.GW6707@atomide.com>
+References: <20181217004450.GW6707@atomide.com>
+ <20181227101647.GA32260@amd>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181227101647.GA32260@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,73 +53,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-PO LIU <po.liu@nxp.com> writes:
+* Pavel Machek <pavel@ucw.cz> [181227 10:17]:
+> Ok, I really need SMS messages, too.
+> 
+> Fortunately, they are on /dev/motmdm9, in PDU format. Quite
+> logical. And you probably need to acknowledge them, using PDU,
+> too... (because otherwise you'll just get the same SMS over and over
+> and over). Which is also logical, but hard to do from shell/python.
 
-> This patch provids netlink method to configure the TSN protocols hardwares.
-> TSN guaranteed packet transport with bounded low latency, low packet delay
-> variation, and low packet loss by hardware and software methods.
+Yeah so I found that Ruby pdu_tools module allows decoding PDUs
+properly while I did not have much luck with other tools.
 
-I don't think having another way to configure TSN features is a good
-idea. We already have the CBS/ETF/taprio family of qdiscs, that provide
-(or will in the near future, more on this later) a way to configure the
-hardware.
+So I wrote a hasty script to read SMS, copy it to a Maildir and
+then ack it:
 
-A little background on the choice of qdiscs as an interface (and why we
-came to believe they are a good abstraction), they already provide a way
-to map packets into traffic classes (it isn't clear in our proposal how
-you do that, but I think you are using something like mqprio), they
-provide a neat way to "compose" (by installing one under another), they
-already have a user facing API with various counters, and very
-importantly for TSN they have mecanisms to offload some of their work to
-the hardware.
+https://github.com/tmlind/droid4-sms-tools
 
-I suggest is for you to take a look at how CBS offloading was
-implemented for the Intel i210:
+> Proper solution involves special support for ofonod...
 
-https://patchwork.ozlabs.org/cover/824626/
+Yeah at least we're dealing with standard PDU format now for
+incoming SMS.
 
-Patches 4 and 5 should be the interesting ones. I think you can use them
-as inspiration for enabling CBS offload in your driver.
+Also looks like there is no status on the modem for these incoming
+messages as checked with mmcli. I guess the idea with raw PDU
+access is that the message is delivered directly to the client
+and then acked instead of being queued in the modem?
 
-If you did take a look at those patches (and the current work that has
-been upstreamed), my question then becomes, what are the reasons that it
-might not work for your use cases?
+> Fortunately ttyUSB4 still works, so I can still use my old code... and
+> I started logging motmdm1 and 9 to a file as a backup... that should
+> be better than my existing solution. (But I don't get power benefits
+> etc.)
 
->
-> The three basic components of TSN are:
->
-> 1. Time synchronization: This was implement by 8021AS which base on the
->    IEEE1588 precision Time Protocol. This is configured by the other way
->    in kernel.
->    8021AS not included in this patch.
->
-> 2. Scheduling and traffic shaping and per-stream filter policing:
->    This patch support Qbv/Qci.
+So what are you using to ack the received SMS over ttyUSB4?
 
-I am working on a proposal for the API for Qbv (and Qbu) offloading
-using taprio. I should send it soon-ish. Your feedback would be very
-welcome.
+My logs show that Android uses two different commands for ack.
+Either AT+GCNMA=1 or AT+CNMA=0,0 gets used depending on something
+that I have no idea of.. Maybe the network connected?
 
-Also, how to expose in the qdiscs the per-stream filtering and policing
-parts (Qci) is something that I don't know how to do right now, any
-suggestions would be nice.
+Sending SMS via /dev/motmdm3 needs move investigation, but at
+least ModemManager mmcli can be used to create and send SMS.
 
-In short, take a look at what's there and see what's missing for the
-stuff that you care about, then we can work on that.
+Hmm or what are you using to send SMS over ttyUSB4?
+I think you already replied with some of that info earlier
+but I can't find it..
 
->
-> 3. Selection of communication paths:
->    This patch not support the pure software only TSN protocols(like Qcc)
->    but hardware related configuration.
->
-> TSN Protocols supports by this patch: Qbv/Qci/Qbu/Credit-base Shaper(Qav).
-> This patch verified on NXP ls1028ardb board.
->
-> Will add more protocols in the future.
->
-> Signed-off-by: Po Liu <Po.Liu@nxp.com>
+Oh one more thing, I noticed that on /dev/motmdm1, typing
+AT+SCRN=0 supresses notifications except for WAKEUP, and then
+1 is used to enable them again. That allows the UART to idle
+instead of getting network status messages every few seconds :)
 
+Regards,
 
-Cheers,
---
-Vinicius
+Tony
