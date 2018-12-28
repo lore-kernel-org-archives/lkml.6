@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713C5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3278C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3E22148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4D9620675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999506;
-	bh=ElaTNq9eOW0hgfEwvhGMeviB/6dOE8mfD3JjD0cThmc=;
+	s=default; t=1545999519;
+	bh=FnRDY1OXTCm55v5r/xPzm8qumVYpk8/DOuLCPxDkxac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2u/OD7A6MXbK41PkjoEX2vb3BzdH03e9qBPVBICZkXhU0uWCRTyIYfpCSD3m68aEk
-	 vZwKV6DbtEUuClsGKkGaPMucPf52BD057VLz21ndEvPJj36oHj6dGlmjOwA0rww4O9
-	 rFrEtyGMugzCGbCskmqvo0h7Y7RCITgpceJeFk3g=
+	b=aCDdt+GHHytSegW9BFdnbGY20adID7UKQVHJo0YmGfF+E7QxYZJ+i1pZryCy2YMBN
+	 OqQD3KvdcTfGWBW3iBJgjfLAnLlnSbU9Lp2J9I1uGewFZw7V+FgLZ44t9u6jYMAJ29
+	 Dk7GZJifiKbKxZ8EpQeti8Sqi7GQ8BHHsC4WbWNw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733155AbeL1MSZ (ORCPT
+        id S1733163AbeL1MSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:18:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:18:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733108AbeL1MSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:18:08 -0500
+        id S1733055AbeL1MRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534482146F;
-        Fri, 28 Dec 2018 12:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49996218FE;
+        Fri, 28 Dec 2018 12:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999487;
-        bh=ElaTNq9eOW0hgfEwvhGMeviB/6dOE8mfD3JjD0cThmc=;
+        s=default; t=1545999474;
+        bh=FnRDY1OXTCm55v5r/xPzm8qumVYpk8/DOuLCPxDkxac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QdZc3V6mdPR1bfDpTC2MzkyN9YSzVwJwDaYuMb/hE5qlFL6cxjJAC21y4wOHaI7Xp
-         5TaiJLT+VF5FbCcIcF80n9HHNSX0lTsXqYxQFTceSGz21ecgeW2J1JIW+9MVmdQ1Ep
-         CcTIVkVr18JwD7ohM44ji9bEq8pUM1dUtiQRd6yE=
+        b=JeuwilvZHL0oa0EVcHWISt22qt+P3CRBYQPebCfsg/SETTNUApPxM+X6S4Yf3XG9Y
+         rM7bRKEjpPRYOn02mI0rA3xtmUDeAq7B4kb90JFhSoLQXRXpweQK1FxKEjHkMOlLGj
+         qM8xAzh6aEsixnEoUCfZqhFjXFvsNB56y6m/IyPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 09/22] USB: serial: option: add Fibocom NL668 series
-Date:   Fri, 28 Dec 2018 12:52:46 +0100
-Message-Id: <20181228113126.781560771@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 04/22] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+Date:   Fri, 28 Dec 2018 12:52:41 +0100
+Message-Id: <20181228113126.447124983@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -66,63 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Hui Peng <benquike@gmail.com>
 
-commit 30360224441ce89a98ed627861e735beb4010775 upstream.
+commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
 
-Added USB serial option driver support for Fibocom NL668 series cellular
-modules. Reserved USB endpoints 4, 5 and 6 for network + ADB interfaces.
+The function hso_probe reads if_num from the USB device (as an u8) and uses
+it without a length check to index an array, resulting in an OOB memory read
+in hso_probe or hso_get_config_data.
 
-usb-devices output (QMI mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+Add a length check for both locations and updated hso_probe to bail on
+error.
 
-usb-devices output (ECM mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 17 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+This issue has been assigned CVE-2018-19985.
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/usb/hso.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1950,6 +1950,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
-+	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
-+	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2808,6 +2808,12 @@ static int hso_get_config_data(struct us
+ 		return -EIO;
+ 	}
+ 
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
++
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2878,10 +2884,18 @@ static int hso_probe(struct usb_interfac
+ 
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
+ 
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
 
 
