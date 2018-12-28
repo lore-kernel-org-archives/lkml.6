@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B285C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D65C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2A12184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4524321902
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999380;
-	bh=rAIlrZbDQYTKCFRc4har1wxqsFSdVh0izl/ghOVbOK4=;
+	s=default; t=1545999383;
+	bh=E4KkI7V7ZX3GCmH81d76zp2LPGzqEeZcsoMQRbSau/Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d0mrGxgCXYa5Trz+3+XxvgohfuAEQqxw8kSW/F1GGrHPwSHu7iOi1lQxbUY3dc6SI
-	 TkhXUjg5AY7zQIsQ8/ZQ3HkWO9cag5x8r72Sz7glSDXHU4uuCfh8ZvHpaGwHE9/QA/
-	 6ylCoN6yhXO7y2csJMAYaiwCeIqHu7smFGizkKEc=
+	b=m8TAokNl5eVpxNKHCLud1SeXWohCnasg/UBgCQed5RgJvAe191FPmozYWrXkgt4jj
+	 gaO5W2aKDRbncunZ8z7P6xZU6fJcilgMnwYPlz6eYU2nuygdsvNnWgDh5PwAr4b4la
+	 tkLTKiUAL8bIDWJi+d65nvW9JzXE7kU5jMdIoCUA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732664AbeL1MQT (ORCPT
+        id S1732677AbeL1MQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:16:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35232 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:16:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732624AbeL1MQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:11 -0500
+        id S1732662AbeL1MQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:16:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D40E2087F;
-        Fri, 28 Dec 2018 12:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F323A218FD;
+        Fri, 28 Dec 2018 12:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999370;
-        bh=rAIlrZbDQYTKCFRc4har1wxqsFSdVh0izl/ghOVbOK4=;
+        s=default; t=1545999378;
+        bh=E4KkI7V7ZX3GCmH81d76zp2LPGzqEeZcsoMQRbSau/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AfPIQ5v+VHUXMch9Bn77amQ87mTlkhipmMrYT3La8t08f4QkBUClfRaTYhYLebWAA
-         aA7Z19PNR0vMikH98fksEWXRVt1y14JvcMNQLRnCa6ATmjNTPO1nvhe34hWyuA6j31
-         MLCC6ohwT0YT9iV2HknMkG8ZDgYyQMfEwoBKV8K8=
+        b=CK/QtOELZtSnaS7i93nERZhiTCNCBuSCxVlQQe7SNguZEPlsq/FDgAHFcrlesONq7
+         IU55vC7w+k9ZcsLj1u38fIsGOP6/e+xL3oY0sB/WHNPJNTbF8mj7E0I4uUDm6RQJcO
+         p8oCFejHvo3LsFTFAJyreXHiOBZs97BTCQZ94K8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9d38bedac9cc77b8ad5e@syzkaller.appspotmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, sboyd@kernel.org,
-        syzkaller-bugs@googlegroups.com, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 23/36] posix-timers: Fix division by zero bug
-Date:   Fri, 28 Dec 2018 12:52:39 +0100
-Message-Id: <20181228113128.135627109@linuxfoundation.org>
+        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 26/36] Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
+Date:   Fri, 28 Dec 2018 12:52:42 +0100
+Message-Id: <20181228113128.324394005@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -70,57 +68,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94 upstream.
+commit fc96df16a1ce80cbb3c316ab7d4dc8cd5c2852ce upstream.
 
-The signal delivery path of posix-timers can try to rearm the timer even if
-the interval is zero. That's handled for the common case (hrtimer) but not
-for alarm timers. In that case the forwarding function raises a division by
-zero exception.
+Before 98f4c651762c, we returned zeros for unopened channels.
+With 98f4c651762c, we started to return random on-stack values.
 
-The handling for hrtimer based posix timers is wrong because it marks the
-timer as active despite the fact that it is stopped.
+We'd better return -EINVAL instead.
 
-Move the check from common_hrtimer_rearm() to posixtimer_rearm() to cure
-both issues.
-
-Reported-by: syzbot+9d38bedac9cc77b8ad5e@syzkaller.appspotmail.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: sboyd@kernel.org
+Fixes: 98f4c651762c ("hv: move ringbuffer bus attributes to dev_groups")
 Cc: stable@vger.kernel.org
-Cc: syzkaller-bugs@googlegroups.com
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1812171328050.1880@nanos.tec.linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-timers.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/hv/vmbus_drv.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -298,9 +298,6 @@ static void common_hrtimer_rearm(struct
- {
- 	struct hrtimer *timer = &timr->it.real.timer;
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -300,6 +300,8 @@ static ssize_t out_intr_mask_show(struct
  
--	if (!timr->it_interval)
--		return;
--
- 	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
- 					    timr->it_interval);
- 	hrtimer_restart(timer);
-@@ -326,7 +323,7 @@ void posixtimer_rearm(struct siginfo *in
- 	if (!timr)
- 		return;
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
+ }
+@@ -313,6 +315,8 @@ static ssize_t out_read_index_show(struc
  
--	if (timr->it_requeue_pending == info->si_sys_private) {
-+	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
- 		timr->kclock->timer_rearm(timr);
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_read_index);
+ }
+@@ -327,6 +331,8 @@ static ssize_t out_write_index_show(stru
  
- 		timr->it_active = 1;
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_write_index);
+ }
+@@ -341,6 +347,8 @@ static ssize_t out_read_bytes_avail_show
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
+ }
+@@ -355,6 +363,8 @@ static ssize_t out_write_bytes_avail_sho
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
+ }
+@@ -368,6 +378,8 @@ static ssize_t in_intr_mask_show(struct
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
+ }
+@@ -381,6 +393,8 @@ static ssize_t in_read_index_show(struct
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_read_index);
+ }
+@@ -394,6 +408,8 @@ static ssize_t in_write_index_show(struc
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_write_index);
+ }
+@@ -408,6 +424,8 @@ static ssize_t in_read_bytes_avail_show(
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
+ }
+@@ -422,6 +440,8 @@ static ssize_t in_write_bytes_avail_show
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
+ }
 
 
