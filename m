@@ -2,91 +2,71 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DA3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ABEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0112087F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:49:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S7aUHADL";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S7aUHADL"
+	by mail.kernel.org (Postfix) with ESMTP id C82D5205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731773AbeL1HtE (ORCPT
+        id S1731818AbeL1Hzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 02:49:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57816 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729270AbeL1HtE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 02:49:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8565F607F1; Fri, 28 Dec 2018 07:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545983343;
-        bh=1F/Yn44DPECdXMHddk3/h6tLbhV1GEAPKLXSN3qQwNM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S7aUHADLd4FxPVpsq/ZBLAefCk1Rw1cSMQ/N2h8Glym7rJ4E/+PCc7KzqkkTM6khy
-         /X0XPmPVLfbp3Y3s0Ob7Oum3oa9JKiAOhsuW1XyUiMuwUHe5aVInAKUUWWMpTxmYOn
-         T5ubwBfhbbGDN3v0O2QXg3Ls56GxR44EVeiabuw8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id EA45660364;
-        Fri, 28 Dec 2018 07:49:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545983343;
-        bh=1F/Yn44DPECdXMHddk3/h6tLbhV1GEAPKLXSN3qQwNM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S7aUHADLd4FxPVpsq/ZBLAefCk1Rw1cSMQ/N2h8Glym7rJ4E/+PCc7KzqkkTM6khy
-         /X0XPmPVLfbp3Y3s0Ob7Oum3oa9JKiAOhsuW1XyUiMuwUHe5aVInAKUUWWMpTxmYOn
-         T5ubwBfhbbGDN3v0O2QXg3Ls56GxR44EVeiabuw8=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 28 Dec 2018 13:19:02 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v6 3/6] Bluetooth: hci_qca: Fix frame reassembly errors
- for wcn3990
-In-Reply-To: <20181227202514.GK261387@google.com>
-References: <20181227073136.8431-1-bgodavar@codeaurora.org>
- <20181227073136.8431-4-bgodavar@codeaurora.org>
- <20181227202514.GK261387@google.com>
-Message-ID: <3ff6a55912a5b4f9462484d90bab3084@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Fri, 28 Dec 2018 02:55:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729300AbeL1Hzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 02:55:45 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6687F7DD06;
+        Fri, 28 Dec 2018 07:55:45 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-196.pek2.redhat.com [10.72.12.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C91C5D9C9;
+        Fri, 28 Dec 2018 07:55:39 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH V2 0/3] vhost: accelerate metadata access through vmap()
+Date:   Fri, 28 Dec 2018 15:55:34 +0800
+Message-Id: <20181228075537.21402-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 28 Dec 2018 07:55:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Hi:
 
-On 2018-12-28 01:55, Matthias Kaehlcke wrote:
-> On Thu, Dec 27, 2018 at 01:01:33PM +0530, Balakrishna Godavarthi wrote:
->> During initalization of wcn3990, we observed UART is reading some
->> stray bytes on the Rx line. This is logging Frame reassembly errors
->> on the serial console. This could be because of tristate of Tx line
->> of wcn3990 during boot up.
-> 
-> My testing suggests that this change is not needed if the Rx line of
-> the SoC/AP is configured with a pull-up. We'd probably all prefer not
-> to have this change if there's a neater way to address the garbage
-> data. Could you test with adding the pull-up and dropping this patch
-> on your side?
-> 
-> Thanks
-> 
-> Matthias
+This series tries to access virtqueue metadata through kernel virtual
+address instead of copy_user() friends since they had too much
+overheads like checks, spec barriers or even hardware feature
+toggling.
 
-Thanks a lot it worked to me. will drop this patch.
+Test shows about 24% improvement on TX PPS. It should benefit other
+cases as well.
+
+Changes from V1:
+- instead of pinning pages, use MMU notifier to invalidate vmaps and
+  remap duing metadata prefetch
+- fix build warning on MIPS
+
+Please review
+
+Jason Wang (3):
+  vhost: generalize adding used elem
+  vhost: fine grain userspace memory accessors
+  vhost: access vq metadata through kernel virtual address
+
+ drivers/vhost/net.c   |   4 +-
+ drivers/vhost/vhost.c | 362 ++++++++++++++++++++++++++++++++++++++----
+ drivers/vhost/vhost.h |  15 +-
+ 3 files changed, 348 insertions(+), 33 deletions(-)
 
 -- 
-Regards
-Balakrishna.
+2.17.1
+
