@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037EDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF8CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCBA2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1A8E2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:17:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999423;
-	bh=w59KYaKImawlTFZUDhr4syIeactmrEhusjAGoX8/d9U=;
+	s=default; t=1545999427;
+	bh=z3BKq90ZM3APnE1LOXyQVLWKCbtx1BG/s44qUYNHkPU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ue9P3k8nBYX2WwRoPRvZrnG+/HCaz8S2uajbUxCk0OvrXC/OuM/m/dnw9UuqjEAZ8
-	 SUqG8C1nWtd6QpTkMEbX7BTRw+q767xRWTBIrmvTlmbkM/SQXQvcqN8e2vDzGUMa+B
-	 OKOTen1QqndStIvh3i6FDX6/5wkikDugp8+IndK0=
+	b=Ty25IG+btrfffv5cdSrk4GmSuqpFAUcks3KXIYBuxBnlxQeqmG/FISwWfAar7Yssy
+	 FYG87E3HA5m0zOvjGXhdr9cMFRTbuGBfMZ8NzWD9X3R6MdictRq27xrf5Ydlu2BZ07
+	 4Dislwhlm5JjEIWed6cbuCXfORzQ5NZI+1VU9sZY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732835AbeL1MRC (ORCPT
+        id S1732844AbeL1MRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36064 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:17:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732818AbeL1MQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:16:58 -0500
+        id S1732830AbeL1MRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57EC12146F;
-        Fri, 28 Dec 2018 12:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 649372146F;
+        Fri, 28 Dec 2018 12:17:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999417;
-        bh=w59KYaKImawlTFZUDhr4syIeactmrEhusjAGoX8/d9U=;
+        s=default; t=1545999420;
+        bh=z3BKq90ZM3APnE1LOXyQVLWKCbtx1BG/s44qUYNHkPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1PTuk/B43gPGagcvRia07UprqrQ752/zP79cvCkMkNNfdD9iXitM2XtlQEVKUeat9
-         9UMZZUcrlkhzbm8UWeLqQ8VAj8v8sKLTi2CdkkqDOfo06/mln60zen9wSXdXhA/Dwe
-         89utdtCO3ejYKN3orgCqHS55DjjLscUmQy4nkZy8=
+        b=j6MvbdvD8MnacrloPLfIwPrndIhcrcto9fD8tH8G5lJwdfic9hkyM+Mhfwuz3+14X
+         xGjcdh7YVIUqlIzqyxQYrapfQGBHF0ONH7tabmWtvQi4U7QsvqwRBrTiUZqcS8GstL
+         jOxCTxY3SbEFeH1EdCYi9qp3NX5TGAX2vUiN7Qlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
-        Andreas Dannenberg <dannenberg@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 19/36] mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
-Date:   Fri, 28 Dec 2018 12:52:35 +0100
-Message-Id: <20181228113127.881123491@linuxfoundation.org>
+Subject: [PATCH 4.14 20/36] mmc: omap_hsmmc: fix DMA API warning
+Date:   Fri, 28 Dec 2018 12:52:36 +0100
+Message-Id: <20181228113127.956657927@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -68,64 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit e3ae3401aa19432ee4943eb0bbc2ec704d07d793 upstream.
+commit 0b479790684192ab7024ce6a621f93f6d0a64d92 upstream.
 
-Some eMMCs from Micron have been reported to need ~800 ms timeout, while
-enabling the CACHE ctrl after running sudden power failure tests. The
-needed timeout is greater than what the card specifies as its generic CMD6
-timeout, through the EXT_CSD register, hence the problem.
+While booting with rootfs on MMC, the following warning is encountered
+on OMAP4430:
 
-Normally we would introduce a card quirk to extend the timeout for these
-specific Micron cards. However, due to the rather complicated debug process
-needed to find out the error, let's simply use a minimum timeout of 1600ms,
-the double of what has been reported, for all cards when enabling CACHE
-ctrl.
+omap-dma-engine 4a056000.dma-controller: DMA-API: mapping sg segment longer than device claims to support [len=69632] [max=65536]
 
-Reported-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reported-by: Andreas Dannenberg <dannenberg@ti.com>
-Reported-by: Faiz Abbas <faiz_abbas@ti.com>
+This is because the DMA engine has a default maximum segment size of 64K
+but HSMMC sets:
+
+        mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+        mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+        mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+        mmc->max_seg_size = mmc->max_req_size;
+
+which ends up telling the block layer that we support a maximum segment
+size of 65535*512, which exceeds the advertised DMA engine capabilities.
+
+Fix this by clamping the maximum segment size to the lower of the
+maximum request size and of the DMA engine device used for either DMA
+channel.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/mmc.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/mmc/host/omap_hsmmc.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -30,6 +30,7 @@
- #include "pwrseq.h"
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -2083,7 +2083,6 @@ static int omap_hsmmc_probe(struct platf
+ 	mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+ 	mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+-	mmc->max_seg_size = mmc->max_req_size;
  
- #define DEFAULT_CMD6_TIMEOUT_MS	500
-+#define MIN_CACHE_EN_TIMEOUT_MS 1600
- 
- static const unsigned int tran_exp[] = {
- 	10000,		100000,		1000000,	10000000,
-@@ -1762,13 +1763,18 @@ static int mmc_init_card(struct mmc_host
+ 	mmc->caps |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 		     MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_ERASE | MMC_CAP_CMD23;
+@@ -2113,6 +2112,17 @@ static int omap_hsmmc_probe(struct platf
+ 		goto err_irq;
  	}
  
- 	/*
--	 * If cache size is higher than 0, this indicates
--	 * the existence of cache and it can be turned on.
-+	 * If cache size is higher than 0, this indicates the existence of cache
-+	 * and it can be turned on. Note that some eMMCs from Micron has been
-+	 * reported to need ~800 ms timeout, while enabling the cache after
-+	 * sudden power failure tests. Let's extend the timeout to a minimum of
-+	 * DEFAULT_CACHE_EN_TIMEOUT_MS and do it for all cards.
- 	 */
- 	if (card->ext_csd.cache_size > 0) {
-+		unsigned int timeout_ms = MIN_CACHE_EN_TIMEOUT_MS;
++	/*
++	 * Limit the maximum segment size to the lower of the request size
++	 * and the DMA engine device segment size limits.  In reality, with
++	 * 32-bit transfers, the DMA engine can do longer segments than this
++	 * but there is no way to represent that in the DMA model - if we
++	 * increase this figure here, we get warnings from the DMA API debug.
++	 */
++	mmc->max_seg_size = min3(mmc->max_req_size,
++			dma_get_max_seg_size(host->rx_chan->device->dev),
++			dma_get_max_seg_size(host->tx_chan->device->dev));
 +
-+		timeout_ms = max(card->ext_csd.generic_cmd6_time, timeout_ms);
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
--				EXT_CSD_CACHE_CTRL, 1,
--				card->ext_csd.generic_cmd6_time);
-+				EXT_CSD_CACHE_CTRL, 1, timeout_ms);
- 		if (err && err != -EBADMSG)
- 			goto free_card;
- 
+ 	/* Request IRQ for MMC operations */
+ 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
+ 			mmc_hostname(mmc), host);
 
 
