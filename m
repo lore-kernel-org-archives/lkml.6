@@ -2,57 +2,59 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF7FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 10:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2EEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 10:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5773C20855
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 10:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A1C820855
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 10:51:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FTfLsvjp"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yZdVqtTY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbeL1KvN (ORCPT
+        id S1732088AbeL1KvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 05:51:13 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36304 "EHLO
+        Fri, 28 Dec 2018 05:51:19 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41917 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731657AbeL1KvM (ORCPT
+        with ESMTP id S1731657AbeL1KvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 05:51:12 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f23so17258685edb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 02:51:11 -0800 (PST)
+        Fri, 28 Dec 2018 05:51:18 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a20so10459504edc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 02:51:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=wA3sLETIlRKxDeeXR4+xPBu2iPGUxyZdr6J70dBcBMc=;
-        b=FTfLsvjp9wAwTpVKEXYFpHakm258olb010572UoKlhqZu+eFd2M96e1o8sklL+FVwY
-         z/8HWJXAg304i1r2AIAw2SOh8BR4bxqmtQdmaQ+V6o7pf9ImG1CFy2OzKhsgFrNYRcG2
-         fMnkp2aK6/MHsw3+OC9jutXDlcd/BDtP66GYfy8SX7S4WJQhdAhIuHnwo0QbvHG2vIEc
-         P8Nqwyibc+FuFWoQCkMbzhxidBN0t1jvv8KmJTQs79PZMTaCFFaGlvnbq+W3yHk396MC
-         +UIUxUSXaEv73vUgKfCM4PrAfp8TtE+irTB8IRkmRacKz1KUr/af3BtUEcop8cDVHnP4
-         wOvQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=R7MS0Uj6TV3IGRKuWXxgSYM6zp8WuEpgDa+p4giEhME=;
+        b=yZdVqtTY4hdZe8hkiWJ/OnLpqWTsMeOY81l02Veg7pb8pTkRRNxSllQmrLi27gS29v
+         KS1pa+U4IuZK3PlGmOrms/cxlyJuEXrEI0wQX5Zz5Rk9pkKP1HLIerb/2HphlYATFHeb
+         TxpehEIX06Ki39IRnOiHgWkeMnldKz69VDYjv0xKUdi9yJyRjf+dXAu9catVnVOZbWVW
+         zUmulG9Pc2/9WSqSNTKfMfBMoZoFZoWCCDbInX4g4ArbP/7ErQ8i6jLt3ZKtkdlUkXD9
+         BmgwGYWS/ZP8FKkSEKxM2bRI7OQmJdvC1jlYuWirVrjn5i5s1jMEknMshiICXb2gES02
+         b37w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wA3sLETIlRKxDeeXR4+xPBu2iPGUxyZdr6J70dBcBMc=;
-        b=K1FY9imvQOOVOQaQk0TQWcU5D2jkwMMKbByYsY/ODWPqd2Wi3W7GfI4wStUiHaTlDh
-         CFNLMx3AledGspHNojcTI+dQD1ugNmxuMXJYN5MutoX0fAtU4ZAtg1kFqsPgfzP01Iq9
-         /N16ShOQbMgywwo3NqFCnitJZapiVrXvZAbjpCqL7h6ATqoDsCEUeLC8L+o+aIcqncoF
-         W4FKhMNKEC9S2ubCNI7AD+iLQUma6F1Ug3K0b/rev1xeOwLjLDAKHloVPQlS4sCwGy1E
-         i/pgOlEAxjHtIW7WU4cOWEidSBSgZevM0NiuNpt2tVNj0eRJpAcQNCJP9+lHs+rdNMTC
-         rUJQ==
-X-Gm-Message-State: AA+aEWavU8qqQ/4HdJ/cBiu7qn5GqYr3PVgpLSsLecfA4SAc31tdK/K9
-        NA5+n0XXU301MWR/wC2r4fRE+w==
-X-Google-Smtp-Source: AFSGD/V0yeIx+cijKHQpfNYsgWe4yjvozMJgCgY0/4AQWOY/CSuayOl8aKpd4gZrrXxEbouMFg7VEg==
-X-Received: by 2002:a50:b006:: with SMTP id i6mr22275869edd.84.1545994270947;
-        Fri, 28 Dec 2018 02:51:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=R7MS0Uj6TV3IGRKuWXxgSYM6zp8WuEpgDa+p4giEhME=;
+        b=izaVmeugeVNNnSbKNVuj2GX00ljv8xhto/LorozqW7Fh263tQhkbzT3gZw+mDWp8h6
+         b7CvGSlxZUQT4zJKzzKo1ks5AuHWqurpDDeujM3JYMDWCKOJjw3luPXfN/qn1jgXC/LM
+         +4v3yhfVxkQk9PLEHh7JpegSmt/5Qq1jjr0U4SUajmejoIMcs4acP6HAXLzjupfYfgAZ
+         uPJPQmD+InRktGUPLpVk9lH5NEMh9RtZaP5mMtIIAVEM26I0/QzOUH6rM8JDqZ0ZbsSk
+         Nd6yyRnGDL8gXcDo48IcfvhEWBrklUtkr6cWSiJ71SEyuxWzVChKrPm/543UP3uEKkMS
+         eU5w==
+X-Gm-Message-State: AA+aEWabMGuqH96O4OiRYOLOAokzKkL8Wt8CIXEsutQDNezgnxV/OjNH
+        XZj9mUC9Og6KZ8YhmaY9eLAjsQ==
+X-Google-Smtp-Source: AFSGD/WkcjQjw5oTUruL7JeZA3mZvu0230sCi2ShPckzaEfx8suGNY1wnf1tdaDpB7CBxiFGzh4alA==
+X-Received: by 2002:a17:906:51d4:: with SMTP id v20-v6mr18411872ejk.184.1545994276866;
+        Fri, 28 Dec 2018 02:51:16 -0800 (PST)
 Received: from loys-ubuntu-BY1835A49200471.home (anice-157-1-157-17.w83-201.abo.wanadoo.fr. [83.201.132.17])
-        by smtp.googlemail.com with ESMTPSA id b45sm12919494eda.34.2018.12.28.02.51.09
+        by smtp.googlemail.com with ESMTPSA id b45sm12919494eda.34.2018.12.28.02.51.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 28 Dec 2018 02:51:10 -0800 (PST)
+        Fri, 28 Dec 2018 02:51:16 -0800 (PST)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
 Cc:     Loys Ollivier <lollivier@baylibre.com>,
@@ -60,79 +62,36 @@ Cc:     Loys Ollivier <lollivier@baylibre.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org
-Subject: [PATCH 0/4] Add driver for globaltop GNSS receivers
-Date:   Fri, 28 Dec 2018 11:50:31 +0100
-Message-Id: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
+Subject: [PATCH 1/4] dt-bindings: Add vendor prefix for "GlobalTop Technology, Inc."
+Date:   Fri, 28 Dec 2018 11:50:32 +0100
+Message-Id: <1545994235-8309-2-git-send-email-lollivier@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
+References: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello !
+Add globaltop vendor definition.
 
-This patch series adds a new GNSS driver for the globaltop GNSS receivers.
-These receivers transmits NMEA output sequence as soon as they have booted.
-Power management can be done via the main supply and optional backup supply
-as defined in the device tree.
-
-The driver has been tested using a GlobalTop pa6h chipset on a Libretech-cc
-board using the expansion header. Changes made in the board device tree can
-be found below for reference and testing.
-
-Loys
-
-Loys Ollivier (4):
-  dt-bindings: Add vendor prefix for "GlobalTop Technology, Inc."
-  dt-bindings: gnss: add gtop binding
-  gnss: add gtop receiver type support
-  gnss: add driver for globaltop receivers
-
- Documentation/devicetree/bindings/gnss/gtop.txt    |  33 +++++
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- drivers/gnss/Kconfig                               |  13 ++
- drivers/gnss/Makefile                              |   3 +
- drivers/gnss/core.c                                |   1 +
- drivers/gnss/gtop.c                                | 152 +++++++++++++++++++++
- include/linux/gnss.h                               |   1 +
- 7 files changed, 204 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gnss/gtop.txt
- create mode 100644 drivers/gnss/gtop.c
-
+Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 ---
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index 90a56af967a7..3b3d4dcc47aa 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-@@ -17,6 +17,7 @@
- 
-        aliases {
-                serial0 = &uart_AO;
-+               serial1 = &uart_A;
-                ethernet0 = &ethmac;
-        };
- 
-@@ -269,7 +270,20 @@
-        pinctrl-names = "default";
- };
- 
-+/* This is brought out on the UART_A_TX (8) and UART_A_RX (10) pins: */
-+&uart_A {
-+       status = "okay";
-+       pinctrl-0 = <&uart_a_pins>;
-+       pinctrl-names = "default";
-+
-+       gnss {
-+               compatible = "globaltop,pa6h";
-+               v-bckp-supply = <&vcc_3v3>;
-+               vcc-supply = <&vcc_3v3>;
-+               current-speed = <9600>;
-+       };
-+};
-+
- &usb0 {
-        status = "okay";
- };
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 4b1a2a8fcc16..a9214767afa8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -153,6 +153,7 @@ goodix	Shenzhen Huiding Technology Co., Ltd.
+ google	Google, Inc.
+ grinn	Grinn
+ grmn	Garmin Limited
++globaltop	GlobalTop Technology, Inc.
+ gumstix	Gumstix, Inc.
+ gw	Gateworks Corporation
+ hannstar	HannStar Display Corporation
 -- 
 2.7.4
 
