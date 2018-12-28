@@ -2,299 +2,205 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70269C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBF9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3458020869
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D20D21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 15:38:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CJJtLhYn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JF1iGwxW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732528AbeL1Pha (ORCPT
+        id S1732582AbeL1PiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 10:37:30 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:35292 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732018AbeL1Pha (ORCPT
+        Fri, 28 Dec 2018 10:38:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40684 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731178AbeL1PiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 10:37:30 -0500
-Received: by mail-vs1-f67.google.com with SMTP id e7so13171816vsc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 07:37:28 -0800 (PST)
+        Fri, 28 Dec 2018 10:38:16 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so21221352wrt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 07:38:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YeoCcLIO6TBLl7FrMpKnuYcluO173e+MPWd9CDhxy/Y=;
-        b=CJJtLhYnwGPturDSXtLn+1tZsCwTm8uY2tgJfviLACaoCGAsFFKazaWsqTziOZBi0Y
-         7AuPxLEEDfBdOZPHdcgaVFajfIM0Gqn8c9ACU8wdy3lCD7dzK9XzboBjfeJF15+WJcD0
-         /AgQcNMov2LQxMufo/0xdG5+lK++oARnlvV6U=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kQ5DundM5mKyJSywQDNbpiGYqXBfM218ZySSb/64ceQ=;
+        b=JF1iGwxWslVZKyYQT+YpI1icne4n5O3VmEmqvzX9eFGyFUHmAdpyv1EtPIlUoU0Ysz
+         U0AiOjhg6OHEPmy8f441wAJD3eti01HfUaTCTaJhO0d1SxOCpngh3gskjhpnYH+afZGg
+         AErYNZ9npZAzBkk/fppshty07I8jPHNYy9KdH3xG1xDdT0wOQlNa/qKhYAVUiStiqugs
+         9XMOc4iRMlEFtFRCzM0NmEIUeE7TDcu0TzD5XBYYS5pxF8BPthT+TvCVzkNnFqzQDDgG
+         ItXL8j+yORbZxO5/R15rDZujB0hGBS0IC1N54LC41w9C2xxP3qvkBlUeUvCBviCul5vk
+         Ejkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YeoCcLIO6TBLl7FrMpKnuYcluO173e+MPWd9CDhxy/Y=;
-        b=NjCjjGukAKinIShO1ZICtP0ApMa2qwVZKOH8nS9B6Zl3rMqMiZsFL491K88+OO76H/
-         pQ0XjttAvnxqq01xXPNZnn7a8nf0S6npb8A60HYg4u5Vsy9OLRdYvrxSpF1UVhJefLqt
-         mFVwnRle8PcolhHIrx+S43RVRJ/VbTiiEi8WA7NbgztCaB5ynoefriGRe54aBAdV2seA
-         XgRAD64FbwD6Zd8T+vEE+JpfSZNXBwHuCh5rxOHpLt/7MDk9HFMkbGveqrP55iBytetC
-         5TMPqjPGFU6jUBN+U2loftm6ARzgfYcWdOu24xs/XLppzp8/hIFXD9Bkv6hkYk+U0kh6
-         /Eag==
-X-Gm-Message-State: AA+aEWYY8aPo7C3xebFzhu2saQvdM+jaq2UL/1mxsBSCZyGDyA0Ut6MR
-        UYTS4eiAKgt4rpFBndUTcHErBkmZDuhQDqgtxdNqfw==
-X-Google-Smtp-Source: AFSGD/UjQAa2h1RvbXMs7pyY62Lh+9nGDi3adnyLAAg/kB3UCIAXowF7RuELRup3Nv5wZ/Yij/SjtWYerB16zOPDNjI=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr11255532vsc.35.1546011448292;
- Fri, 28 Dec 2018 07:37:28 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kQ5DundM5mKyJSywQDNbpiGYqXBfM218ZySSb/64ceQ=;
+        b=gJ0Vq7zKF/THiH5EtZ+lwwZZ5vH0apzHxaxEp6+jgnKgpu0t+YY+84dlWmGzSb3lNQ
+         gxXxYIlWkLzy816eO88gZx/tX6Qn/FsWSTY851XgfZo5/xJMRCqIh5ui6udet9OopzEv
+         KaSXe009bXxIxp27MxGA3bI2fA+D2IIMpyz6Q/tw/iiudJoYwWcM2YejxwuQnhG708rg
+         kckF/FkUuS0f1hHtuMlv+RvINK8p34hF2fqJifMO6LQXcalAJjjb4BySw+vHtmV4NCMt
+         erFv2VA/3Qm23Q6Dw3NVL3DuRSBLioKLw1Wr9m+mGdYr6C20KKq6hqe+idzTBLoaEUwE
+         rD1w==
+X-Gm-Message-State: AJcUukfxPn4j4Dt4wupSIUPUxQ1MBX8wHIsWMVEkVv16Hit95qf0mkld
+        D/jeOU2qgJWRmi/sV5w066T46HZP
+X-Google-Smtp-Source: ALg8bN6mWF7KzA9VytEFr9MNlyjS8NRI9Vv36Eh5i6sd2/BeFEDKKn6yN9x29VL8C/MqR6GV/KGOlA==
+X-Received: by 2002:a5d:4a0c:: with SMTP id m12mr25263961wrq.38.1546011493956;
+        Fri, 28 Dec 2018 07:38:13 -0800 (PST)
+Received: from localhost.localdomain.com (93-103-18-160.static.t-2.net. [93.103.18.160])
+        by smtp.gmail.com with ESMTPSA id v12sm18667215wmd.27.2018.12.28.07.38.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 07:38:13 -0800 (PST)
+From:   Uros Bizjak <ubizjak@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org
+Subject: [PATCH] x86/asm: Use CC_SET/CC_OUT in percpu_cmpxchg16b_double
+Date:   Fri, 28 Dec 2018 16:37:59 +0100
+Message-Id: <20181228153759.3132-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 28 Dec 2018 16:36:52 +0100
-Message-ID: <CAPDyKFrP8HOum_4S0-4Bx+sYbTNSyctv3rQDB78zozeNWOuv=A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for attach_dev
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "khilman@kernel.org" <khilman@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Dec 2018 at 18:14, Aisheng Dong <aisheng.dong@nxp.com> wrote:
->
-> Currently attach_dev() in power domain infrastructure still does
-> not support multi domains case as the struct device *dev passed
-> down from genpd_dev_pm_attach_by_id() is a virtual PD device, it
-> does not help for parsing the real device information from device
-> tree, e.g. Device/Power IDs, Clocks and it's unware of which real
-> power domain the device should attach.
+Use CC_SET(z)/CC_OUT(z) instead of explicit setz instruction.
+Using these two defines, the compiler that supports generation of
+condition code outputs from inline assembly flags generates one
+conditional jump instruction, e.g:
 
-Thanks for working on this!
+	[lea    (%rdi),%rsi
+	 callq  this_cpu_cmpxchg16b_emu]
+	-- or --
+	[cmpxchg16b %gs:(%rdi)]
+	jne    199764 <kmem_cache_alloc+0x44>
 
-I would appreciate if the changelog could clarify the problem a bit.
-Perhaps something along the lines of the below.
+instead of
 
-"A genpd provider's ->attach_dev() callback may be invoked with a so
-called virtual device, which is created by genpd, at the point when a
-device is being attached to one of its corresponding multiple PM
-domains.
+	[lea    (%rdi),%rsi
+	 callq  this_cpu_cmpxchg16b_emu]
+	-- or --
+	[cmpxchg16b %gs:(%rdi)]
+	sete   %cl
+	test   %cl,%cl
+	je     19ae04 <kmem_cache_alloc+0x44>
 
-In these cases, the genpd provider fails to look up any resource, by a
-clk_get() for example, for the virtual device in question. This is
-because, the virtual device that was created by genpd, does not have
-the virt_dev->of_node assigned."
+The complication with percpu_cmpxchg16b_double is, that the definition
+defaults to the call to this_cpu_cmpxchg16b_emu library function, which
+(depending on X86_FEATURE_CX16 flag) is later patched with real cmpxchg16b
+instruction. To solve this complication, the patch changes
+this_cpu_cmpxchg16b_emu library function to return the result in ZF flag of
+%rflags register, instead of %al register.  Please also note that instead
+of popf instruction (which restores flags register to a previously saved state),
+the patched function uses sti, but followed by a nop, which ends the
+inhibition of interrupts early.
 
->
-> Extend the framework a bit to store the multi PM domains information
-> in per-device struct generic_pm_domain_data, then power domain driver
-> could retrieve it for necessary operations during attach_dev().
->
-> Two new APIs genpd_is_mpd_device() and dev_gpd_mpd_data() are also
-> introduced to ease the driver operation.
->
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> This patch is a follow-up work of the earlier discussion with Ulf Hansson
-> about the multi PM domains support for the attach_dev() function [1].
-> After a bit more thinking, this is a less intrusive implementation with
-> the mininum impact on the exist function definitions and calling follows.
-> One known little drawback is that we have to use the device driver private
-> data (device.drvdata) to pass down the multi domains information in a
-> earlier time. However, as multi PD devices are created by domain framework,
-> this seems to be safe to use it in domain core code as device driver
-> is not likely going to use it.
-> Anyway, if any better ideas, please let me know.
->
-> With the two new APIs, the using can be simply as:
-> static int xxx_attach_dev(struct generic_pm_domain *domain,
->                           struct device *dev)
-> {
->         ...
->         if (genpd_is_mpd_device(dev)) {
->                 mpd_data = dev_gpd_mpd_data(dev);
->                 np = mpd_data->parent->of_node;
->                 idx = mpd_data->index;
->                 //dts parsing
->                 ...
->         }
->         ...
+The patch also introduces alternative_io_tail definition. This definition
+can take a tail instruction, common to all alternatives. By using this
+definition, it is possible to remove setz from cmpxchg16b alternatives, saved
+in .altinstr_replacement section, thus saving a few bytes from the binary.
 
-I think we can make this a lot less complicated. Just assign
-virt_dev->of_node = of_node_get(dev->of_node), somewhere in
-genpd_dev_pm_attach_by_id() and before calling
-__genpd_dev_pm_attach().
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org
+---
+ arch/x86/include/asm/alternative.h |  6 ++++++
+ arch/x86/include/asm/percpu.h      | 14 ++++++++------
+ arch/x86/lib/cmpxchg16b_emu.S      | 16 ++++++----------
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
-Doing that, would mean the genpd provider's ->attach_dev() callback,
-don't have to distinguish between virtual and non-virtual devices.
-Instead they should be able to look up resources in the same way as
-they did before.
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 0660e14690c8..49b29990950a 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -205,6 +205,12 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ 	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
+ 		: output : "i" (0), ## input)
+ 
++/* Like alternative_io, but with a common tail instruction. */
++#define alternative_io_tail(oldinstr, newinstr, feature, tail,		\
++			    output, input...)				\
++	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) tail	\
++		: output : "i" (0), ## input)
++
+ /* Like alternative_io, but for replacing a direct call with another one. */
+ #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
+ 	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index 1a19d11cfbbd..9cf2e78eb4b3 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -495,12 +495,14 @@ do {									\
+ 	bool __ret;							\
+ 	typeof(pcp1) __o1 = (o1), __n1 = (n1);				\
+ 	typeof(pcp2) __o2 = (o2), __n2 = (n2);				\
+-	alternative_io("leaq %P1,%%rsi\n\tcall this_cpu_cmpxchg16b_emu\n\t", \
+-		       "cmpxchg16b " __percpu_arg(1) "\n\tsetz %0\n\t",	\
+-		       X86_FEATURE_CX16,				\
+-		       ASM_OUTPUT2("=a" (__ret), "+m" (pcp1),		\
+-				   "+m" (pcp2), "+d" (__o2)),		\
+-		       "b" (__n1), "c" (__n2), "a" (__o1) : "rsi");	\
++	alternative_io_tail("leaq %P1,%%rsi\n\tcall this_cpu_cmpxchg16b_emu", \
++			    "cmpxchg16b "__percpu_arg(1),		\
++			    X86_FEATURE_CX16,				\
++			    CC_SET(z),					\
++			    ASM_OUTPUT2(CC_OUT(z) (__ret),		\
++					"+m" (pcp1), "+m" (pcp2),	\
++					"+a" (__o1), "+d" (__o2)),	\
++			    "b" (__n1), "c" (__n2) : "rsi");		\
+ 	__ret;								\
+ })
+ 
+diff --git a/arch/x86/lib/cmpxchg16b_emu.S b/arch/x86/lib/cmpxchg16b_emu.S
+index 9b330242e740..d8c1ae48e0d9 100644
+--- a/arch/x86/lib/cmpxchg16b_emu.S
++++ b/arch/x86/lib/cmpxchg16b_emu.S
+@@ -17,20 +17,20 @@
+  * %rdx : high 64 bits of old value
+  * %rbx : low 64 bits of new value
+  * %rcx : high 64 bits of new value
+- * %al  : Operation successful
++ *
++ * Outputs:
++ * %rflags.zf: set if the destination operand and %rdx:%rax are equal
+  */
+ ENTRY(this_cpu_cmpxchg16b_emu)
+ 
+ #
+-# Emulate 'cmpxchg16b %gs:(%rsi)' except we return the result in %al not
+-# via the ZF.  Caller will access %al to get result.
++# Emulate 'cmpxchg16b %gs:(%rsi)'
+ #
+ # Note that this is only useful for a cpuops operation.  Meaning that we
+ # do *not* have a fully atomic operation but just an operation that is
+ # *atomic* on a single cpu (as provided by the this_cpu_xx class of
+ # macros).
+ #
+-	pushfq
+ 	cli
+ 
+ 	cmpq PER_CPU_VAR((%rsi)), %rax
+@@ -41,13 +41,9 @@ ENTRY(this_cpu_cmpxchg16b_emu)
+ 	movq %rbx, PER_CPU_VAR((%rsi))
+ 	movq %rcx, PER_CPU_VAR(8(%rsi))
+ 
+-	popfq
+-	mov $1, %al
+-	ret
+-
+ .Lnot_same:
+-	popfq
+-	xor %al,%al
++	sti
++	nop
+ 	ret
+ 
+ ENDPROC(this_cpu_cmpxchg16b_emu)
+-- 
+2.20.1
 
-Kind regards
-Uffe
-
-> }
->
-> [1] https://patchwork.kernel.org/patch/10658669/
-> ---
->  drivers/base/power/domain.c | 31 +++++++++++++++++++++++++++++++
->  include/linux/pm_domain.h   | 23 +++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 7f38a92..1aa0918 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1343,6 +1343,9 @@ static struct generic_pm_domain_data *genpd_alloc_dev_data(struct device *dev,
->         gpd_data->td.effective_constraint_ns = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT_NS;
->         gpd_data->nb.notifier_call = genpd_dev_pm_qos_notifier;
->
-> +       if (genpd_is_mpd_device(dev))
-> +               gpd_data->mpd_data = dev_get_drvdata(dev);
-> +
->         spin_lock_irq(&dev->power.lock);
->
->         if (dev->power.subsys_data->domain_data) {
-> @@ -2179,6 +2182,7 @@ EXPORT_SYMBOL_GPL(of_genpd_remove_last);
->
->  static void genpd_release_dev(struct device *dev)
->  {
-> +       kfree(dev->driver_data);
->         kfree(dev);
->  }
->
-> @@ -2320,6 +2324,20 @@ int genpd_dev_pm_attach(struct device *dev)
->  EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
->
->  /**
-> + * genpd_is_mpd_device - Check if a device is associated with multi PM domains
-> + * @dev: Device to check.
-> + */
-> +
-> +bool genpd_is_mpd_device(struct device *dev)
-> +{
-> +       if (!dev || (dev && !dev->bus))
-> +               return false;
-> +
-> +       return dev->bus == &genpd_bus_type;
-> +};
-> +EXPORT_SYMBOL_GPL(genpd_is_mpd_device);
-> +
-> +/**
->   * genpd_dev_pm_attach_by_id - Associate a device with one of its PM domains.
->   * @dev: The device used to lookup the PM domain.
->   * @index: The index of the PM domain.
-> @@ -2338,6 +2356,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
->  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->                                          unsigned int index)
->  {
-> +       struct pm_domain_mpd_data *mpd_data;
->         struct device *genpd_dev;
->         int num_domains;
->         int ret;
-> @@ -2366,6 +2385,18 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->                 return ERR_PTR(ret);
->         }
->
-> +       /* Allocate multi power domains data */
-> +       mpd_data = kzalloc(sizeof(*mpd_data), GFP_KERNEL);
-> +       if (!mpd_data) {
-> +               device_unregister(genpd_dev);
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       mpd_data->parent = dev;
-> +       mpd_data->index = index;
-> +
-> +       dev_set_drvdata(genpd_dev, mpd_data);
-> +
->         /* Try to attach the device to the PM domain at the specified index. */
->         ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index, false);
->         if (ret < 1) {
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 3b5d728..106d4e7 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -144,6 +144,11 @@ struct gpd_timing_data {
->         bool cached_suspend_ok;
->  };
->
-> +struct pm_domain_mpd_data {
-> +       struct device *parent;
-> +       unsigned int index;
-> +};
-> +
->  struct pm_domain_data {
->         struct list_head list_node;
->         struct device *dev;
-> @@ -151,6 +156,7 @@ struct pm_domain_data {
->
->  struct generic_pm_domain_data {
->         struct pm_domain_data base;
-> +       struct pm_domain_mpd_data *mpd_data;
->         struct gpd_timing_data td;
->         struct notifier_block nb;
->         unsigned int performance_state;
-> @@ -262,10 +268,17 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
->                                 struct device_node *np);
->
->  int genpd_dev_pm_attach(struct device *dev);
-> +bool genpd_is_mpd_device(struct device *dev);
->  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->                                          unsigned int index);
->  struct device *genpd_dev_pm_attach_by_name(struct device *dev,
->                                            char *name);
-> +
-> +static inline struct pm_domain_mpd_data *dev_gpd_mpd_data(struct device *dev)
-> +{
-> +       return dev_gpd_data(dev)->mpd_data;
-> +}
-> +
->  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
->  static inline int of_genpd_add_provider_simple(struct device_node *np,
->                                         struct generic_pm_domain *genpd)
-> @@ -311,6 +324,11 @@ static inline int genpd_dev_pm_attach(struct device *dev)
->         return 0;
->  }
->
-> +static bool genpd_is_mpd_device(struct device *dev)
-> +{
-> +       return false;
-> +}
-> +
->  static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->                                                        unsigned int index)
->  {
-> @@ -323,6 +341,11 @@ static inline struct device *genpd_dev_pm_attach_by_name(struct device *dev,
->         return NULL;
->  }
->
-> +static inline struct pm_domain_mpd_data *dev_gpd_mpd_data(struct device *dev)
-> +{
-> +       return ERR_PTR(-ENOSYS);
-> +}
-> +
->  static inline
->  struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
->  {
-> --
-> 2.7.4
->
