@@ -2,86 +2,132 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0581C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8A2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C196F20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6760A20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:25:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgRdj4qj"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QH3jHzzv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387536AbeL1RWq (ORCPT
+        id S2387539AbeL1RZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 12:22:46 -0500
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:44797 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbeL1RWq (ORCPT
+        Fri, 28 Dec 2018 12:25:50 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39704 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbeL1RZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 12:22:46 -0500
-Received: by mail-wr1-f46.google.com with SMTP id z5so21468614wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 09:22:44 -0800 (PST)
+        Fri, 28 Dec 2018 12:25:49 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so27740563itl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 09:25:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+rvCtPeRPDqyQ6ai24Una5bw4CbIuQwxHLxifH7vXUM=;
-        b=YgRdj4qjy7dC5heZGNN+hy6yB6NZLablko+HP88d3MbLls0NLdYA90kcyNW/W/Rqcr
-         AQ4RJ4m/Y4w8jqUpk88JeXHJTwjvphU7HqjgrU6oh8Uy4jn5ZhCX6PhD/umjt55JSqLW
-         uK53GYTa3zO9JcBTFKaW6YQzYxAo+rHPD6LEuTWwbzLbO6FS7eA9lHzCBscv5tQosMZI
-         3B2IRHJLAK/bdh4DIPQjFdS/uaK/UqGXmnq58zcjXH71vQoUnHNvW/U6dnJrExOJzJmA
-         1kfWI1ooK23qmf4GdhMVU+OsPGe2A8s9qZMpxsAzZ1OWiMBLCpp/1pIMaf26Nr1Ju+83
-         fhMQ==
+        bh=F7PYXEbho+iDCU0XXTHdMZCs4YKxu18fFx+s5fS54DI=;
+        b=QH3jHzzvXCKp8rIxup+C6z5Mhy6iZowKiMDVdAveunTabeE6Kgjk/wGUnQCDI2WUwe
+         rGGG84Fwm7JeISMDbO+ROpCKorY5+AJ3ddt3UHupAsDgqXCkLcVSa4dewVcPrQ2PPHmf
+         K2lvQH2LN/r5JSgDpcKCEw4TeymVoFuAxW/sQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+rvCtPeRPDqyQ6ai24Una5bw4CbIuQwxHLxifH7vXUM=;
-        b=R9lTKaxhkMqueUW7S9BTtrvbwcokan14O+wfofKT9uqUQA9y348j8i5aBM4PbJmPok
-         fSEFFMDo6U+s8MhhnehWcLzdZY5M8FejPeLwZte+G4OPeb86f3mXPjS9eeUNBlWxjQeQ
-         +2t/POXP+QCUoYL+pONhZmMQ7iHXX6sooMPiBxSH5VWRaiYGv5OmcTzM087YHO1sq22C
-         hVtYi9nD9YVkvjqTJjj9PpBLBve0tU/DSD37NgamKIf/0e7g+jeSJl/TS7OZJJCUylgr
-         DdrpbpgaiafK6VI3XnNvMzcq1VSdngbmD/bFGazA7NcONYEtQ1SHHWg6R8PYzyHRjQe0
-         rnVA==
-X-Gm-Message-State: AJcUukdpACUD19OID+uiVuqT8dr3es7arYSOWoNRjTZt5b0JJ/yRmQuD
-        5XeeePaQw9/rxGYclNKjg9PNt6GZZ2+Mbc3XxLU=
-X-Google-Smtp-Source: ALg8bN41GnVQZGELwmBwZbNZmIxNkmLQLRa9/7+X4rA53wFZiwyfOueedLwsEXtvSNXzYJq2E1uwl3/ltBtxmVXAy0A=
-X-Received: by 2002:adf:e149:: with SMTP id f9mr28162316wri.42.1546017764072;
- Fri, 28 Dec 2018 09:22:44 -0800 (PST)
+        bh=F7PYXEbho+iDCU0XXTHdMZCs4YKxu18fFx+s5fS54DI=;
+        b=D/v+PK0czhhejX9xsUdrIgiwd90AgI/Ry5bQE6qEWa5SBplQfJK+wXEzx7UNUFVVsF
+         Qjcc9sHUDPN7a5ppTML676blJpjzix74lpxZ0qPwbMAK12RkXjcZt6pPPZROtZnwi0tE
+         kAai6rAAGLT/wEvtvJ1V3AigFG1sBnpveQhIJ3XWCpPLIqup5P7qUruByuK+RBf8xjQG
+         YG57L1bGtYtRaO+rKwfW58MziU4KyAfBA3LKLoSzciL37ut3aZwx8xKKhje20MZ20Fxn
+         rZ64fUQUoZfJRzguNKLNVUM6CSPLfstxbvHNUtLd0igjdNUVdSCUdwtitkFTQWXAehDF
+         OUKA==
+X-Gm-Message-State: AA+aEWZLuX6eFgiguOqGVYYuWI+va4TkgZfMiQNpDaWyXz2FQQ1hU+N1
+        lYGUZPFSohsckvWjxmr/mH3uZDgRKIHtXFtEP29wFA==
+X-Google-Smtp-Source: ALg8bN5D06utccMSW0OBq6k/QYR7Y3HULvocaCgPOepkbnXrVPWHEvgRegIwAR3u1j8XacrYtmQ9AuFE/Cgr5hSEyW8=
+X-Received: by 2002:a05:660c:a8f:: with SMTP id m15mr17901041itk.114.1546017948472;
+ Fri, 28 Dec 2018 09:25:48 -0800 (PST)
 MIME-Version: 1.0
-References: <238e9be2bb4751406260ebdc7686ef54@redchan.it> <CAD2jOU9SV3nuQbv+Nnp6XSqo-EA90AWvn5_kagr63eAsA=MaYw@mail.gmail.com>
- <673b3e733204be78710280893ccc350d@memeware.net>
-In-Reply-To: <673b3e733204be78710280893ccc350d@memeware.net>
-From:   Raul Miller <rauldmiller@gmail.com>
-Date:   Fri, 28 Dec 2018 12:22:18 -0500
-Message-ID: <CAD2jOU8DRBW_DgUjvO=tLkwzGcfHrRfH6qYEUTp84GBFmLwwFg@mail.gmail.com>
-Subject: Re: Yes: The linux devs can rescind their license grant. GPLv2 is a
- bare license and is revocable by the grantor.
-To:     vsnsdualce@memeware.net
-Cc:     visionsofalice@redchan.it, freebsd-women@freebsd.org,
-        freebsd-chat@freebsd.org,
-        OpenBSD general usage list <misc@openbsd.org>,
-        owner-misc@openbsd.org, linux-kernel@vger.kernel.org
+References: <20181227102107.GA21156@linaro.org> <CAKfTPtD7O_DU5no36jaQziZDCvy=BMJk+tZbnQk2yVt=pzRfPw@mail.gmail.com>
+ <CAMp4zn-bN=DdiKox-xZ++i2n_pgTA7Ms+1hBnAY2AbYv2iqXOA@mail.gmail.com>
+ <CAKfTPtAmkHZ5XVHpf6rE8nrSPGzW_uO7a0tvH5JqDSpTzK9D=Q@mail.gmail.com>
+ <CAHk-=wja7WN1sDz5_E7hf8c47CmX=yH8xc3h0zmmF8Y_fSR71A@mail.gmail.com>
+ <20181228011524.GF2509588@devbig004.ftw2.facebook.com> <CAHk-=wj33F7LKQS3wCYJtb_yCzYhbjPzFqhVS_ZPPNOWTTMHFQ@mail.gmail.com>
+ <20181228015352.GG2509588@devbig004.ftw2.facebook.com> <20181228020243.GH2509588@devbig004.ftw2.facebook.com>
+ <CAKfTPtA5WBKQ1FMyGqGjn1DdeDbSwT=bTQjD=oW7WMz6iKiS7A@mail.gmail.com> <20181228165451.GJ2509588@devbig004.ftw2.facebook.com>
+In-Reply-To: <20181228165451.GJ2509588@devbig004.ftw2.facebook.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 28 Dec 2018 18:25:37 +0100
+Message-ID: <CAKfTPtAMjfnNHu_JdDSi1BSMoXKgGkm2+G_QLsUBDAhq1wFvZQ@mail.gmail.com>
+Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Xie XiuQi <xiexiuqi@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, xiezhipeng1@huawei.com,
+        huawei.libin@huawei.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Adamushko <dmitry.adamushko@gmail.com>,
+        Rik van Riel <riel@surriel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 3:12 PM <vsnsdualce@memeware.net> wrote:
-> ... pompous programmer asshole*.
+On Fri, 28 Dec 2018 at 17:54, Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Fri, Dec 28, 2018 at 10:30:07AM +0100, Vincent Guittot wrote:
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index d1907506318a..88b9118b5191 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -7698,7 +7698,8 @@ static void update_blocked_averages(int cpu)
+> > >                  * There can be a lot of idle CPU cgroups.  Don't let fully
+> > >                  * decayed cfs_rqs linger on the list.
+> > >                  */
+> > > -               if (cfs_rq_is_decayed(cfs_rq))
+> > > +               if (cfs_rq_is_decayed(cfs_rq) &&
+> > > +                   rq->tmp_alone_branch == &rq->leaf_cfs_rq_list)
+> > >                         list_del_leaf_cfs_rq(cfs_rq);
+> >
+> > This patch reduces the cases but I don't thinks it's enough because it
+> > doesn't cover the case of unregister_fair_sched_group()
+> > And we can still break the ordering of the cfs_rq
+>
+> So, if unregister_fair_sched_group() can corrupt list, the bug is
+> there regardless of a9e7f6544b9ce, right?
 
-I think you are projecting your own personality in your perception of
-others (which is a natural thing to do - everyone does that to some
-degree).
+I don't think so because without a9e7f6544b9ce, the insertion in the
+list is done only once and we can't  call unregister_fair_sched_group
+while an enqueue is ongoing so tmp_alone_branch always point to
+rq->leaf_cfs_rq_list.
+a9e7f6544b9ce enables to have tmp_alone_branch not pointing to
+rq->leaf_cfs_rq_list
 
-That said, I am going to filter your messages to my spam bucket from now on.
+>
+> Is there a reason why we're building a dedicated list for avg
+> propagation?  AFAICS, it's just doing depth first walk, which can be
 
-Have fun,
+we have this list of sched group of the rq to update the load of each
+cfs_rq and as a result the load of the task group. This is then used
+to compute the share of a task group between CPUs.
+This list must be ordered to correctly propagate the updates from leafs to root.
 
--- 
-Raul
+> done without extra space as long as each node has the parent pointer,
+> which they do.  Is the dedicated list an optimization?
+
+It prevents to parse and walk all task group struct every time.
+Instead, you just have to follow a linked list
+
+Regards,
+Vincent
+>
+> Thanks.
+>
+> --
+> tejun
