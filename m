@@ -2,173 +2,160 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4DEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2388C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1FB20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9174E2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:07:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZAOtaTxE"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pr+Su2ka";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BwizeOk4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeL1MG7 (ORCPT
+        id S1727985AbeL1MHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:06:59 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37591 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbeL1MG7 (ORCPT
+        Fri, 28 Dec 2018 07:07:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58666 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeL1MHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:06:59 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h15so17389982edb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 04:06:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hQzZl3teCsnULOMDzfToWa1ZpsYJloOsq0xqC1iX5mI=;
-        b=ZAOtaTxEIUxC7Lhs/BOODrGJw5bcyVBDRe/AgD/HBcsHlPNI3D37GwXeLBXWooz4oH
-         JAdqhsM2hnHDQZmeFse/Hq8+Mn6yN2GdircRR5g2ZJsVoF/JRh90JYWCj33L9qFg0/cz
-         BJQMNy+BJvPakZwH7/MNncPlK5061WGsHQllM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=hQzZl3teCsnULOMDzfToWa1ZpsYJloOsq0xqC1iX5mI=;
-        b=YQlETpM15fYXrV0ahuj8LNljR+AL0bUVGFfPwQdSwXrN8ZLnYrCriwee0QxUKd6mX8
-         0MCDGMR9LNS+z6uwwSwYee5Vt1aUcpTXxEr99BCk9RihbMyMr36kqR6KqlmtJHtcqFgb
-         Pe6ywwMg6glOkoLCD0cdqGRwKclreTsSmdWVUFpBOItSimiZTc7MFoRk2Y+6S+ZwbJvq
-         JDXtk7fBLEdjFBsIQZ/C9BAJAxYAZneItm1IaFb0/SgjvTMIDevV4VNj+63HAQw3cfBC
-         /gUjiTVjm/Dklrgq/BVQMi8ZdT4wzEmGqukhtNKdBpv/CB2xJv14GsZmPYcDxtvMKxVK
-         KjrA==
-X-Gm-Message-State: AJcUukeGlJ7Q7mddf7skK4jEoIQC0SWlc8V70cgIG8l7YjYyBS9muP+s
-        E4FmGGZuDB81yTD3U4CQO4ooZQ==
-X-Google-Smtp-Source: ALg8bN7X+OPf7tzKIw/YjbnWmKzsHqfDZrbLDsmL2zcNM5UVVRg3dOID5RP57UioBPngKB4HeEXbdg==
-X-Received: by 2002:a17:906:d0c6:: with SMTP id bq6-v6mr13598531ejb.99.1545998816589;
-        Fri, 28 Dec 2018 04:06:56 -0800 (PST)
-Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
-        by smtp.gmail.com with ESMTPSA id j31sm12995044eda.46.2018.12.28.04.06.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 04:06:55 -0800 (PST)
-Date:   Fri, 28 Dec 2018 13:06:53 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Ivan Mironov <mironov.ivan@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: Re: [PATCH v1 2/2] drm/fb-helper: Ignore the value of
- fb_var_screeninfo.pixclock
-Message-ID: <20181228120652.GR9058@dvetter-linux.ger.corp.intel.com>
-Mail-Followup-To: Ivan Mironov <mironov.ivan@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        saahriktu <mail@saahriktu.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-References: <20181227231308.16904-1-mironov.ivan@gmail.com>
- <20181227231308.16904-3-mironov.ivan@gmail.com>
+        Fri, 28 Dec 2018 07:07:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 487A9607F4; Fri, 28 Dec 2018 12:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545998849;
+        bh=UTejcDY/XE3AHidaahIJmn23UpUx87hv2SPQ3EFob4c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Pr+Su2kaJ/lZAR18r7XnrYQXiUfPN97FPbWWhtqu+N7+gmqH7QTG6jyzGVr4YVh0W
+         e9qt49fOUtOk/b1Vt3KxcFFXP8KfvObxAFqQ5VJRVdxtdq4Q85tYf7rNoNVugO+8k1
+         KuJFNAc+SoTjPmLShTxhTyA4EOerKJ3xGSGSNIXQ=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5C16D60452;
+        Fri, 28 Dec 2018 12:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545998847;
+        bh=UTejcDY/XE3AHidaahIJmn23UpUx87hv2SPQ3EFob4c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BwizeOk44wu1PZjlnV0WlR4jEMmSlTMgm00BKMiXZLfu9d+V5a2RFBkEm+2iJXdDi
+         84/WGl9UhoVDnLIqGGQKmVI+u50mL8Dul/jhdCDvmpZqF6XX40JDC7hiE75n+IWmMz
+         J3bE6qd/f1MM+C/JqpWK60Y7RClVPRV1uloBClac=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C16D60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [RESEND, v2] Bluetooth: hci_qca: Add helper to set device address
+Date:   Fri, 28 Dec 2018 17:37:19 +0530
+Message-Id: <20181228120719.20571-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227231308.16904-3-mironov.ivan@gmail.com>
-X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
- 4.19.10-200.fc28.x86_64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 04:13:08AM +0500, Ivan Mironov wrote:
-> Strict requirement of pixclock to be zero breaks support of SDL 1.2
-> which contains hardcoded table of supported video modes with non-zero
-> pixclock values[1].
-> 
-> To better understand which pixclock values are considered valid and how
-> driver should handle these values, I briefly examined few existing fbdev
-> drivers and documentation in Documentation/fb/. And it looks like there
-> are no strict rules on that and actual behaviour varies:
-> 
-> 	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
-> 	* some treat (pixclock == 0) as invalid value which leads to
-> 	  -EINVAL (clps711x-fb.c);
-> 	* some pass converted pixclock value to hardware (uvesafb.c);
-> 	* some are trying to find nearest value from predefined table
->           (vga16fb.c, video_gx.c).
-> 
-> Given this, I believe that it should be safe to just ignore this value if
-> changing is not supported. It seems that any portable fbdev application
-> which was not written only for one specific device working under one
-> specific kernel version should not rely on any particular behaviour of
-> pixclock anyway.
-> 
-> However, while enabling SDL1 applications to work out of the box when
-> there is no /etc/fb.modes with valid settings, this change affects the
-> video mode choosing logic in SDL. Depending on current screen
-> resolution, contents of /etc/fb.modes and resolution requested by
-> application, this may lead to user-visible difference (not always):
-> image will be displayed in a right way, but it will be aligned to the
-> left instead of center. There is no "right behaviour" here as well, as
-> emulated fbdev, opposing to old fbdev drivers, simply ignores any
-> requsts of video mode changes with resolutions smaller than current.
-> 
-> Feel free to NAK this patch if you think that it causes breakage of
-> user-space =).
+This patch add qca_set_bdaddr() to set the device
+address for latest Qualcomm Bluetooth chipset wcn3990 and above.
 
-It's a regression, we don't nack regression fixes :-)
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/bluetooth/btqca.c   | 19 +++++++++++++++++++
+ drivers/bluetooth/btqca.h   |  8 +++++++-
+ drivers/bluetooth/hci_qca.c |  5 ++++-
+ 3 files changed, 30 insertions(+), 2 deletions(-)
 
-> The easiest way to reproduce this problem is to install sdl-sopwith[2],
-> remove /etc/fb.modes file if it exists, and then try to run sopwith
-> from console without X. At least in Fedora 29, sopwith may be simply
-> installed from standard repositories.
-> 
-> [1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
-> [2] http://sdl-sopwith.sourceforge.net/
-> 
-> Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-
-I thought this is also a regression fix, so also needs Fixes: and cc:
-stable?
--Daniel
-
-> ---
->  drivers/gpu/drm/drm_fb_helper.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index aff576c3c4fb..b95a0c23c7c8 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -1690,9 +1690,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
->  	struct drm_fb_helper *fb_helper = info->par;
->  	struct drm_framebuffer *fb = fb_helper->fb;
->  
-> -	if (var->pixclock != 0 || in_dbg_master())
-> +	if (in_dbg_master())
->  		return -EINVAL;
->  
-> +	if (var->pixclock != 0) {
-> +		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
-> +		var->pixclock = 0;
-> +	}
-> +
->  	if ((drm_format_info_block_width(fb->format, 0) > 1) ||
->  	    (drm_format_info_block_height(fb->format, 0) > 1))
->  		return -EINVAL;
-> -- 
-> 2.20.1
-> 
-
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index ec9e03a6b778..612268574fc7 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -391,6 +391,25 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ }
+ EXPORT_SYMBOL_GPL(qca_uart_setup);
+ 
++int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
++{
++	struct sk_buff *skb;
++	int err;
++
++	skb = __hci_cmd_sync_ev(hdev, EDL_WRITE_BD_ADDR_OPCODE, 6, bdaddr,
++				HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
++	if (IS_ERR(skb)) {
++		err = PTR_ERR(skb);
++		bt_dev_err(hdev, "QCA Change address cmd failed (%d)", err);
++		return err;
++	}
++
++	kfree_skb(skb);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(qca_set_bdaddr);
++
+ MODULE_AUTHOR("Ben Young Tae Kim <ytkim@qca.qualcomm.com>");
+ MODULE_DESCRIPTION("Bluetooth support for Qualcomm Atheros family ver " VERSION);
+ MODULE_VERSION(VERSION);
+diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+index 0c01f375fe83..c72c56ea7480 100644
+--- a/drivers/bluetooth/btqca.h
++++ b/drivers/bluetooth/btqca.h
+@@ -20,6 +20,7 @@
+ 
+ #define EDL_PATCH_CMD_OPCODE		(0xFC00)
+ #define EDL_NVM_ACCESS_OPCODE		(0xFC0B)
++#define EDL_WRITE_BD_ADDR_OPCODE	(0xFC14)
+ #define EDL_PATCH_CMD_LEN		(1)
+ #define EDL_PATCH_VER_REQ_CMD		(0x19)
+ #define EDL_PATCH_TLV_REQ_CMD		(0x1E)
+@@ -140,7 +141,7 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 		   enum qca_btsoc_type soc_type, u32 soc_ver);
+ int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
+-
++int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+ #else
+ 
+ static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+@@ -159,4 +160,9 @@ static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index f036c8f98ea3..53ac5ade532b 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1241,7 +1241,10 @@ static int qca_setup(struct hci_uart *hu)
+ 	}
+ 
+ 	/* Setup bdaddr */
+-	hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
++	if (qcadev->btsoc_type == QCA_WCN3990)
++		hu->hdev->set_bdaddr = qca_set_bdaddr;
++	else
++		hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
+ 
+ 	return ret;
+ }
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
