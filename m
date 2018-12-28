@@ -6,55 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742E3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F3CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFFC2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7504D2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999827;
-	bh=wgkus4lzbvHoWlO0V7uq8hlGxNFV1qTEdlLTl1VHEgI=;
+	s=default; t=1545999835;
+	bh=XFud7ChC63ZziDFEK/ufnaKhBY913O5M+FcEyzKTJ8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gxNoo/mAI+iKU/vbYet4YVrkTiMNY5LIzZZ6UBIpLEoCzBCRTgJ3db74d6iKXI8Vl
-	 XM2qP5/AHPHfgt05Bf8myC6cwgeFwgb8Oy+OPP7rhOJneZl0GY78f1nZJXZ9RhJAPT
-	 qKsCOXximuW1AEwA5/NAux7eiRdJdanf24Z4GyPs=
+	b=Q9tGS+nAH1pkYdeA+NwQgSt9M8oXR0NGwR1atUaW7jJnRkQKXrHCtIK5qF+w7xldo
+	 4eT2juAlKIUIpAmXdWOtntiHwgl14BU0FX9HpelW8Kg3al6QatmKUgsipiGE2fxlGD
+	 +mh6e/+qHGRjnKv4pAHv7EYL2eiCMA8raBkAX17g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbeL1MOb (ORCPT
+        id S1730460AbeL1MXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:14:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33248 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:23:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731016AbeL1MOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:14:24 -0500
+        id S1727544AbeL1MO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:14:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 199AB2184B;
-        Fri, 28 Dec 2018 12:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58771218FE;
+        Fri, 28 Dec 2018 12:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999263;
-        bh=wgkus4lzbvHoWlO0V7uq8hlGxNFV1qTEdlLTl1VHEgI=;
+        s=default; t=1545999268;
+        bh=XFud7ChC63ZziDFEK/ufnaKhBY913O5M+FcEyzKTJ8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBZP7RcBTg9PZw31RoOVr6ftH86kV/OYQd/1UnwE0BKCCjoZMQnB2nVF9HKYiu1RN
-         wb7xbvS7KCqB+FXq+wnQC3tGR1+wVuDkGcdnPd9QYFFCN0sjeCtNlsVbgHdmoJ+vGY
-         xM7FtuasDREwsR6mzffiYjeNmuW0K6CHRaMgZ7J4=
+        b=Tsuxr6KMbN5eBeK2TVGN81/kpObtkk96M607vj05pqppw8KJTaTZ+tXvSakGfmZzY
+         pwOTdJTU/e/9TEADKA2/ht8t4u1p9wEIHTEKyZVgIab065fKjpLuqC1sXOxclq/3Cd
+         XXp9416OUKqqlGzX/Dni6LYCcteIYdmyJaJGkEEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
-        Carlos ODonell <carlos@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Borislav Petkov <bp@suse.de>,
-        Laura Abbott <labbott@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        kernel-team@android.com, Thomas Gleixner <tglx@linutronix.de>,
-        X86 ML <x86@kernel.org>
-Subject: [PATCH 4.19 28/46] x86/vdso: Pass --eh-frame-hdr to the linker
-Date:   Fri, 28 Dec 2018 12:52:22 +0100
-Message-Id: <20181228113126.432293551@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 03/46] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+Date:   Fri, 28 Dec 2018 12:51:57 +0100
+Message-Id: <20181228113125.104476633@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -73,66 +66,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alistair Strachan <astrachan@google.com>
+From: Hui Peng <benquike@gmail.com>
 
-commit cd01544a268ad8ee5b1dfe42c4393f1095f86879 upstream.
+commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
 
-Commit
+The function hso_probe reads if_num from the USB device (as an u8) and uses
+it without a length check to index an array, resulting in an OOB memory read
+in hso_probe or hso_get_config_data.
 
-  379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Add a length check for both locations and updated hso_probe to bail on
+error.
 
-accidentally broke unwinding from userspace, because ld would strip the
-.eh_frame sections when linking.
+This issue has been assigned CVE-2018-19985.
 
-Originally, the compiler would implicitly add --eh-frame-hdr when
-invoking the linker, but when this Makefile was converted from invoking
-ld via the compiler, to invoking it directly (like vmlinux does),
-the flag was missed. (The EH_FRAME section is important for the VDSO
-shared libraries, but not for vmlinux.)
-
-Fix the problem by explicitly specifying --eh-frame-hdr, which restores
-parity with the old method.
-
-See relevant bug reports for additional info:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=201741
-  https://bugzilla.redhat.com/show_bug.cgi?id=1659295
-
-Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
-Reported-by: Florian Weimer <fweimer@redhat.com>
-Reported-by: Carlos O'Donell <carlos@redhat.com>
-Reported-by: "H. J. Lu" <hjl.tools@gmail.com>
-Signed-off-by: Alistair Strachan <astrachan@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Carlos O'Donell <carlos@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: kernel-team@android.com
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: X86 ML <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181214223637.35954-1-astrachan@google.com
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/vdso/Makefile |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/hso.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -171,7 +171,8 @@ quiet_cmd_vdso = VDSO    $@
- 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2807,6 +2807,12 @@ static int hso_get_config_data(struct us
+ 		return -EIO;
+ 	}
  
- VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
--	$(call ld-option, --build-id) -Bsymbolic
-+	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
-+	-Bsymbolic
- GCOV_PROFILE := n
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
++
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2877,10 +2883,18 @@ static int hso_probe(struct usb_interfac
  
- #
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
+ 
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
 
 
