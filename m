@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCE2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28EAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709A920675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A5F20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999577;
-	bh=l92MtuRw6RDClEn/jNtJ9sndxLZIe5itJYJBl2/cT4U=;
+	s=default; t=1545999582;
+	bh=PMhDp5BdtxMwZB1+rgMheRTi7ibkyyXHKHjKMR1KoLQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OJ78+kTMHH8nLtHn4VMMSbN/kn1MhENd3YB03NFmYUXU41ZcVOQHxkiTFyLSdltEf
-	 RrCPQeyMbTNBXGob9VaqNEioVH1Cc4cy/G+uSBsFQphae+J4lTVVAXoWoPmKQE282I
-	 +6mKjg9gdms5/sO4EgLcyyY2QUqgpDVzm+nOh0qE=
+	b=EX0IX8m6n3AxFVG7tDvTv+EnKUJLPtrDKiqK2br+E/2Rt8fd7NSMWNx6cPv4k/KYU
+	 NWvVF7oSnbmZmy5s8QLsvAaztEwOXdzz3KZ/1lIAdxRqajqeEjRezEdKxqjo7P7ZW5
+	 PmcTwv65ijwPjK6ATYFCv/SS56vGFHvMk0HyTWN4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731041AbeL1MRJ (ORCPT
+        id S1731167AbeL1MTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:17:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36146 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:19:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732818AbeL1MRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:04 -0500
+        id S1727269AbeL1MRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 077192087F;
-        Fri, 28 Dec 2018 12:17:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7605A2087F;
+        Fri, 28 Dec 2018 12:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999423;
-        bh=l92MtuRw6RDClEn/jNtJ9sndxLZIe5itJYJBl2/cT4U=;
+        s=default; t=1545999428;
+        bh=PMhDp5BdtxMwZB1+rgMheRTi7ibkyyXHKHjKMR1KoLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p+XgMbVG+rVp2oI6xhQ+zAYnuujjtRXeTYUJBZGWe54OSEj/R4wPeyK5BSmYeqh7X
-         Q00w9seYGQsC/4NuCme5Y5oqSDkvpDBurbqXfvy5On7maTognGPG+4TQ5RLYsIXZBn
-         ABlWV/LdGlRShqeW7ixKhwEAb2xTRT5MA3us+504=
+        b=xa5vSKY/0WItmwRt31HgTGvl14wgDRXULx1yWJWykxbf4dT4ZYFMoprLy80FiMjLK
+         PL6a/7uibxkFeg5yLCUoxIraL/Zuhkj/0qENv8fOWu3XRf5VYP95SPhQacjtHe/4Ea
+         pv20UgeSjjiQgl0J+d850/ZJuQxqQydqXbNMfbc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.14 21/36] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
-Date:   Fri, 28 Dec 2018 12:52:37 +0100
-Message-Id: <20181228113128.008079287@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 13/36] USB: serial: option: add Simcom SIM7500/SIM7600 (MBIM mode)
+Date:   Fri, 28 Dec 2018 12:52:29 +0100
+Message-Id: <20181228113127.460102126@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -65,54 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Jörgen Storvist <jorgen.storvist@gmail.com>
 
-commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
+commit cc6730df08a291e51e145bc65e24ffb5e2f17ab6 upstream.
 
-spi_read() and spi_write() require DMA-safe memory. When
-CONFIG_VMAP_STACK is selected, those functions cannot be used
-with buffers on stack.
+Added USB serial option driver support for Simcom SIM7500/SIM7600 series
+cellular modules exposing MBIM interface (VID 0x1e0e,PID 0x9003)
 
-This patch replaces calls to spi_read() and spi_write() by
-spi_write_then_read() which doesn't require DMA-safe buffers.
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 14 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1e0e ProdID=9003 Rev=03.18
+S:  Manufacturer=SimTech, Incorporated
+S:  Product=SimTech, Incorporated
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 5 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#= 6 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
 
-Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-max7301.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/usb/serial/option.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpio/gpio-max7301.c
-+++ b/drivers/gpio/gpio-max7301.c
-@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
- 	struct spi_device *spi = to_spi_device(dev);
- 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
- 
--	return spi_write(spi, (const u8 *)&word, sizeof(word));
-+	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
- }
- 
- /* A read from the MAX7301 means two transfers; here, one message each */
-@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
- 	struct spi_device *spi = to_spi_device(dev);
- 
- 	word = 0x8000 | (reg << 8);
--	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
--	if (ret)
--		return ret;
--	/*
--	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
--	 * zero bytes (=NOOP for MAX7301)
--	 */
--	ret = spi_read(spi, (u8 *)&word, sizeof(word));
-+	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
-+				  sizeof(word));
- 	if (ret)
- 		return ret;
- 	return word & 0xff;
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1763,6 +1763,7 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ALINK_VENDOR_ID, ALINK_PRODUCT_3GU, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE(ALINK_VENDOR_ID, SIMCOM_PRODUCT_SIM7100E),
+ 	  .driver_info = RSVD(5) | RSVD(6) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
+ 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
+ 	  .driver_info = NCTRL(0) | NCTRL(1) | RSVD(4) },
+ 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X220_X500D),
 
 
