@@ -2,126 +2,188 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA9CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2AAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FBFE20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B8320866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUG6U8gy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPW8izDP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387667AbeL1S2o (ORCPT
+        id S2387674AbeL1Sbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 13:28:44 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37077 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729445AbeL1S2n (ORCPT
+        Fri, 28 Dec 2018 13:31:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38382 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbeL1Sbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 13:28:43 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t33so24131006qtt.4;
-        Fri, 28 Dec 2018 10:28:43 -0800 (PST)
+        Fri, 28 Dec 2018 13:31:36 -0500
+Received: by mail-lj1-f194.google.com with SMTP id c19-v6so19337787lja.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 10:31:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OTNffT1eaQTcLAFvhNIeVKJ7Ks4jO89gQtFc2V6+jxc=;
-        b=jUG6U8gyE0Alt4dCEEdEDk07uJSsv2AxyaUFQYbBJkEFYAu5vHDV/GiLr6INd9lez6
-         0UhHUrZgwErbcyXor/OQNXMHw2EShgs/2woci1E53qGKB1Ww6jWW8TxwaexcrRy3DdDs
-         aADE9YRxF2BNelhszBtKIFNWemeRmXM/yRSYY2FyxAv0J764P4bFijA+wI7xjjyY4n2x
-         grcohJbASFlIP1mGO223kt6hpP4aLxKr+ddyDWBqXLz/TP2GPEqq1aG3v96dLn2QjIFe
-         4W/4tQtMkMUnj8aAtkNOJCZXGmfrrlO318fs6Wh6bDPzSh31mJOdY8fNGAtTPTSgIXSo
-         L2DQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=Ig2fCXrq5JfdxMDwdIofADJdXlMKPIPVy/UV2Rha8A8=;
+        b=mPW8izDPqD6Vvicg8sISIX1gLMctq4cUkGDNSxGp0ANOveKOp3sKDptOlBTDIWOmGH
+         P/gu9w9O+EigL6WjL6q0OMnzM3DYt9xwrIYYBeB+d5GmxG1Pnf543C9TeWdD3HkEen5m
+         VV8cimbUxvsPOYp1la9jUXrOR42gudfR4+dqmkqMi7ppmQUZXyXHK7MHWLsCvx7DzpHu
+         cpDuJ7FwpFDMOM344dQgIfHtlyqx2Uw9HCAcghsyjr76fV3+zZQaSLfcUyUQP58abQC8
+         fdSzw3tjndUaClxKj0h613vIM4qdNP/w8ZS4hmrPKIy5DICSCsYG6tlvnOL7QVHuyLbi
+         pxeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OTNffT1eaQTcLAFvhNIeVKJ7Ks4jO89gQtFc2V6+jxc=;
-        b=PT/LztCxUDkau14sGAVEIa2vRiLj2YpURRo0zgZMl0N3OLHIlcPBZgcFmlj+O3Y2Hq
-         /OJ6WxA//uedZj2lXs4cXK6Se+ok0QiySaJuL7oTxKOsUDB0YKacbpLepKfbgebDPx5J
-         od2+IEwasZDmMbABpPP4ESDJ8weKEs/c7O8uf/00LkgbqVpvNoEvWaTGCHOxityoXkfF
-         hmo/vVVJX6cRxqjThOeJwmTPSo3FKfaTNwDTzRwzjeSy15TrWyoFCaHGFL8H96G3YmFj
-         ndmCnelkxVwsJSDa7tRpkTSEqYYBOJ72WIwASHq3thKkzsw6we8dq7QbNKM1s0pamHyI
-         MEwA==
-X-Gm-Message-State: AJcUukc7OYLplDGrrjqSGudHOA0rBvJzb/oPCuO/Aky0sk9O6BLqCbQd
-        pcmAWIW3BPXmLMP9/UmwF42BwM+urnuqC6JxF6c=
-X-Google-Smtp-Source: ALg8bN6RJdjZWgaVAH30ZoxdUdjJEqpmXXm26j1aZhLKG+0DgYFGZcwn6g8o/jfNjBK84H50M7BIgQMeXCPIJZOkxnM=
-X-Received: by 2002:a0c:d29b:: with SMTP id q27mr27178531qvh.62.1546021722446;
- Fri, 28 Dec 2018 10:28:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20181226131446.330864849@intel.com> <20181227203158.GO16738@dhcp22.suse.cz>
- <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com> <20181228084105.GQ16738@dhcp22.suse.cz>
- <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com> <20181228121515.GS16738@dhcp22.suse.cz>
- <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
-In-Reply-To: <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 28 Dec 2018 10:28:31 -0800
-Message-ID: <CAHbLzkq91SY2s-N8sKReaQeC4z16DHsygFad4sqSzuXsZFzwQg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness accounting/migration
-To:     Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Fan Du <fan.du@intel.com>,
-        Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ig2fCXrq5JfdxMDwdIofADJdXlMKPIPVy/UV2Rha8A8=;
+        b=X+8qzjvhu3HJ0dG+IF6ZI5oyTHFbYo1UjVQ7pywaNfxQBBD+vSyBRNMFoMphBGeWKI
+         3Ujnm9af1z2adQisJWdoyN2/GNyLxMyIQj4mH8sZtW9jITM2QvFZyw/tq83fyifiutZx
+         la51UJNHe0WXgQQUre7nbx+1K9aHlANb0RlJJIxUxXsuv2h/ZNBVxU45W3gp8msm2J7u
+         ejkil5TQF+80z0r3h0z7n/DX9q68JDSpKyKJ5wglePx+AEDoQaZnal+yU/g5ctaAj4SF
+         MOtRS6qjXfDg9HRgVnQbhGw+xYTUWxiH2LPDTNhJK55ks2fQHx76JtIHCOmjsSTRkCVM
+         6XuQ==
+X-Gm-Message-State: AA+aEWZxoT72d0jGiDNlHGkzbyNEC0Azvu5xt3jokrhfIa6a8aoXepfz
+        bh666UfM77UsP+82Hwft/peqRQ/f
+X-Google-Smtp-Source: AFSGD/WK5ukUgPOnWq9N9G0by0ZpXdEzjIg99Il2ntrS1wieREV96XNwPr+FqrT6zQum/Rs52/l/Tg==
+X-Received: by 2002:a2e:4746:: with SMTP id u67-v6mr16305921lja.142.1546021893308;
+        Fri, 28 Dec 2018 10:31:33 -0800 (PST)
+Received: from octofox.hsd1.ca.comcast.net. (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id z6sm7997903lfa.87.2018.12.28.10.31.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Dec 2018 10:31:32 -0800 (PST)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 00/25] Xtensa updates for v4.21
+Date:   Fri, 28 Dec 2018 10:31:20 -0800
+Message-Id: <20181228183120.23058-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 5:31 AM Fengguang Wu <fengguang.wu@intel.com> wrote:
->
-> >> > I haven't looked at the implementation yet but if you are proposing a
-> >> > special cased zone lists then this is something CDM (Coherent Device
-> >> > Memory) was trying to do two years ago and there was quite some
-> >> > skepticism in the approach.
-> >>
-> >> It looks we are pretty different than CDM. :)
-> >> We creating new NUMA nodes rather than CDM's new ZONE.
-> >> The zonelists modification is just to make PMEM nodes more separated.
-> >
-> >Yes, this is exactly what CDM was after. Have a zone which is not
-> >reachable without explicit request AFAIR. So no, I do not think you are
-> >too different, you just use a different terminology ;)
->
-> Got it. OK.. The fall back zonelists patch does need more thoughts.
->
-> In long term POV, Linux should be prepared for multi-level memory.
-> Then there will arise the need to "allocate from this level memory".
-> So it looks good to have separated zonelists for each level of memory.
+Hi Linus,
 
-I tend to agree with Fengguang. We do have needs for finer grained
-control to the usage of DRAM and PMEM, for example, controlling the
-percentage of DRAM and PMEM for a specific VMA.
+please pull the following batch of updates for the Xtensa architecture.
 
-NUMA policy sounds not good enough for some usecases since it just can
-control what mempolicy is used by what memory range. Our usecase's
-memory access pattern is random in a VMA. So, we can't control the
-percentage by mempolicy. We have to put PMEM into a separate zonelist
-to make sure memory allocation happens on PMEM when certain criteria
-is met as what Fengguang does in this patch series.
+The following changes since commit 2595646791c319cadfdbf271563aac97d0843dc7:
 
-Thanks,
-Yang
+  Linux 4.20-rc5 (2018-12-02 15:07:55 -0800)
 
->
-> On the other hand, there will also be page allocations that don't care
-> about the exact memory level. So it looks reasonable to expect
-> different kind of fallback zonelists that can be selected by NUMA policy.
->
-> Thanks,
-> Fengguang
->
+are available in the git repository at:
+
+  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20181228
+
+for you to fetch changes up to 64711f9a47d4defa90417f5e8db8ed0060bc3275:
+
+  xtensa: implement jump_label support (2018-12-20 14:44:38 -0800)
+
+----------------------------------------------------------------
+Xtensa updates for v4.21:
+
+- switch to generated syscall table
+- switch ptrace to regsets, use regsets for core dumps
+- complete tracehook implementation
+- add syscall tracepoints support
+- add jumplabels support
+- add memtest support
+- drop unused/duplicated code from entry.S, ptrace.c, coprocessor.S,
+  elf.h and syscall.h
+- clean up warnings caused by WSR/RSR macros
+- clean up DTC warnings about SPI controller node names in xtfpga.dtsi
+- simplify coprocessor.S
+- get rid of explicit 'l32r' instruction usage in assembly
+
+----------------------------------------------------------------
+Dmitry V. Levin (2):
+      Move EM_XTENSA to uapi/linux/elf-em.h
+      xtensa: define syscall_get_arch()
+
+Firoz Khan (3):
+      xtensa: add __NR_syscalls along with __NR_syscall_count
+      xtensa: add system call table generation support
+      xtensa: generate uapi header and syscall table header files
+
+Max Filippov (20):
+      xtensa: drop fast_syscall_kernel
+      xtensa: drop unused field from the struct exc_table
+      xtensa: drop custom PTRACE_{PEEK,POKE}{TEXT,DATA}
+      xtensa: drop unused coprocessor helper functions
+      xtensa: clean up syscall.h
+      xtensa: drop unused declarations from elf.h
+      xtensa: clean up WSR*/RSR*/get_sr/set_sr
+      xtensa: simplify coprocessor.S
+      xtensa: don't clear cpenable unconditionally on release
+      xtensa: xtfpga.dtsi: fix dtc warnings about SPI
+      xtensa: don't use l32r opcode directly
+      xtensa: support memtest
+      xtensa: use NO_SYSCALL instead of -1
+      xtensa: call do_syscall_trace_{enter,leave} selectively
+      xtensa: implement task_user_regset_view
+      xtensa: implement TIE regset
+      xtensa: enable CORE_DUMP_USE_REGSET
+      xtensa: implement tracehook functions and enable HAVE_ARCH_TRACEHOOK
+      xtensa: implement syscall tracepoints
+      xtensa: implement jump_label support
+
+ .../features/core/jump-labels/arch-support.txt     |   2 +-
+ arch/xtensa/Kconfig                                |   3 +
+ arch/xtensa/Makefile                               |   3 +
+ arch/xtensa/boot/boot-elf/bootstrap.S              |  29 +-
+ arch/xtensa/boot/dts/xtfpga.dtsi                   |   2 +-
+ arch/xtensa/include/asm/Kbuild                     |   1 +
+ arch/xtensa/include/asm/coprocessor.h              |  23 -
+ arch/xtensa/include/asm/elf.h                      |  33 +-
+ arch/xtensa/include/asm/futex.h                    |   8 +-
+ arch/xtensa/include/asm/irqflags.h                 |   1 +
+ arch/xtensa/include/asm/jump_label.h               |  65 ++
+ arch/xtensa/include/asm/processor.h                |  18 +-
+ arch/xtensa/include/asm/ptrace.h                   |   7 +
+ arch/xtensa/include/asm/syscall.h                  | 109 ++-
+ arch/xtensa/include/asm/thread_info.h              |   9 +-
+ arch/xtensa/include/asm/timex.h                    |  18 +-
+ arch/xtensa/include/asm/traps.h                    |   2 -
+ arch/xtensa/include/asm/uaccess.h                  |  10 +-
+ arch/xtensa/include/asm/unistd.h                   |   2 +
+ arch/xtensa/include/uapi/asm/Kbuild                |   1 +
+ arch/xtensa/include/uapi/asm/ptrace.h              |  20 +-
+ arch/xtensa/include/uapi/asm/unistd.h              | 781 +--------------------
+ arch/xtensa/kernel/Makefile                        |   1 +
+ arch/xtensa/kernel/asm-offsets.c                   |   2 -
+ arch/xtensa/kernel/coprocessor.S                   | 102 +--
+ arch/xtensa/kernel/entry.S                         |  45 +-
+ arch/xtensa/kernel/head.S                          |   8 +-
+ arch/xtensa/kernel/hw_breakpoint.c                 |  21 +-
+ arch/xtensa/kernel/jump_label.c                    |  99 +++
+ arch/xtensa/kernel/process.c                       |  55 +-
+ arch/xtensa/kernel/ptrace.c                        | 353 ++++++----
+ arch/xtensa/kernel/setup.c                         |   8 +-
+ arch/xtensa/kernel/signal.c                        |   8 +-
+ arch/xtensa/kernel/syscall.c                       |  11 +-
+ arch/xtensa/kernel/syscalls/Makefile               |  38 +
+ arch/xtensa/kernel/syscalls/syscall.tbl            | 374 ++++++++++
+ arch/xtensa/kernel/syscalls/syscallhdr.sh          |  36 +
+ arch/xtensa/kernel/syscalls/syscalltbl.sh          |  32 +
+ arch/xtensa/kernel/traps.c                         |  10 +-
+ arch/xtensa/mm/init.c                              |   3 +
+ drivers/irqchip/irq-xtensa-mx.c                    |  10 +-
+ drivers/irqchip/irq-xtensa-pic.c                   |   8 +-
+ include/uapi/linux/audit.h                         |   1 +
+ include/uapi/linux/elf-em.h                        |   1 +
+ 44 files changed, 1117 insertions(+), 1256 deletions(-)
+ create mode 100644 arch/xtensa/include/asm/jump_label.h
+ create mode 100644 arch/xtensa/kernel/jump_label.c
+ create mode 100644 arch/xtensa/kernel/syscalls/Makefile
+ create mode 100644 arch/xtensa/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/xtensa/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/xtensa/kernel/syscalls/syscalltbl.sh
+
+Thanks.
+-- Max
