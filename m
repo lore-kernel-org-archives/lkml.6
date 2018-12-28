@@ -2,88 +2,182 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADCFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A635C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F58A2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182BA20873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 06:13:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="MvgVh3Vj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeL1Ftb (ORCPT
+        id S1728976AbeL1GLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 00:49:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36956 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeL1Ftb (ORCPT
+        Fri, 28 Dec 2018 01:11:25 -0500
+Received: from mail-qk1-f178.google.com ([209.85.222.178]:34710 "EHLO
+        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728319AbeL1GLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 00:49:31 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7034F72A;
-        Fri, 28 Dec 2018 05:49:30 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 21:49:29 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Huang Shijie <sjhuang@iluvatar.ai>
-Cc:     <sfr@canb.auug.org.au>, <alexey.skidanov@intel.com>,
-        <linux-kernel@vger.kernel.org>, <shijie8@gmail.com>
-Subject: Re: [PATCH 2/2] lib/genalloc.c: export symbol addr_in_gen_pool
-Message-Id: <20181227214929.713f8421d1991806e8f6fe7f@linux-foundation.org>
-In-Reply-To: <20181224070622.22197-2-sjhuang@iluvatar.ai>
-References: <20181224070622.22197-1-sjhuang@iluvatar.ai>
-        <20181224070622.22197-2-sjhuang@iluvatar.ai>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Dec 2018 01:11:24 -0500
+Received: by mail-qk1-f178.google.com with SMTP id q8so12119730qke.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Dec 2018 22:11:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=D36GjWMZ7ePAhmpAjQk40TSwf5XhT2qu7iQC9vePce8=;
+        b=MvgVh3VjwVAcICPIgGSj1CTh+UVdR+4VU3e9IexVZ4h86MbKikonWnJQQ8E0Uvuiom
+         vVxZasgal924i4O93asfQpTgUNlZIsM9yedg6SvTzA05YIDNDa0/y+hE1w9Efg5dm1jj
+         iL6EPU5N7WEeqUI9e/zGJa+F6Tm8i0pfoR47cfFuAiKtxYAc4ql4WSmoAlmTuKm5FRJB
+         ZULsp3u6zk+mwOlqHRvKWuQRrWZ5uV58hPWeCHY9E3y3rHPEj/hTUeDakkxrDBjb2ngT
+         ZFb+MGEE2s7NPXGObyFDTnyBVmuzy32Iz2ZiOHYzaLvwgxE6J/lW73oqivSREkYDAU4V
+         8b8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=D36GjWMZ7ePAhmpAjQk40TSwf5XhT2qu7iQC9vePce8=;
+        b=ks/MM+3oT/UZqQmAW5hyksgANFBal/yvjMMTG2mGPJgvGnYOL+/bN0oMyE+IuOmH1c
+         104RBiBXJLb37vSBOq7x+CuNjThiv2FOTtsMnPVISG7ORAmFkfhsD8f213TzR/CtjVFM
+         S/N1s3gWYii8S+iIYDPp2Xf3yehrh2JmLw4UoQyhlaD8RV5N1QIskRvzVNecQ9OQUtI2
+         SsSNGsETFXN5ouvz5sXzzfXTYMOyiV95bfWU3huMqEx6uOTe10BGyzDHaFZY5iz9wy9u
+         fIffC200E3rLV+LoCe7JG6YGafCK35WEs8TVDnOk+Z99OyAc7U/09JUjm2TeUtfNkL3G
+         seew==
+X-Gm-Message-State: AJcUukeQO0t/cLt2K3m6cDXjj5jPe2ySOBgEGpCHFh6sDn3GgR7H87Gt
+        Tt0xn0YvCfvWnf9hTp9+PcOHf+kc9MWtK0taAITrSg==
+X-Google-Smtp-Source: ALg8bN7HkHxHbYT8bhToWNBaF5MRICQ3s69OnpkZknw/5TdyrE7TBLL+ApSgoI2eNIoX9xZPjD22Bq36BtO7rQBp/Yo=
+X-Received: by 2002:a37:34f:: with SMTP id 76mr23924509qkd.347.1545977483095;
+ Thu, 27 Dec 2018 22:11:23 -0800 (PST)
+MIME-Version: 1.0
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Fri, 28 Dec 2018 14:11:12 +0800
+Message-ID: <CAD8Lp46R2oQxKv5gmC09Zb=WL=nV6o0CGZ3K=JZ80QYm0DJ9QQ@mail.gmail.com>
+Subject: APIC timer checked before it is set up, boot fails on Connex L1430
+To:     Thomas Gleixner <tglx@linutronix.de>, suresh.b.siddha@intel.com
+Cc:     Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Dec 2018 15:06:22 +0800 Huang Shijie <sjhuang@iluvatar.ai> wrote:
+Hi,
 
-> We may use the addr_in_gen_pool() in the driver module.
-> So export the addr_in_gen_pool for the compiling.
-> 
-> ...
->
-> --- a/lib/genalloc.c
-> +++ b/lib/genalloc.c
-> @@ -450,6 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
->  	rcu_read_unlock();
->  	return found;
->  }
-> +EXPORT_SYMBOL(addr_in_gen_pool);
->  
->  /**
->   * gen_pool_avail - get available free space of the pool
+On the Connex L1430 laptop based on Intel Apollo Lake N3350, Linux
+doesn't boot. It hangs early on a blank screen. Reproduced with Linus
+git, 4.18 and 4.19 (there is no previous known working kernel
+version). EFI earlyprintk shows:
 
-OK, but...  The name is poor.
+APIC: switch to symmetric I/O mode setup
+x2apic: IRQ remapping doesn't support X2APIC mode
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+..MP-BIOS bug: 8254 timer not connected to IO-APIC
+...tryign to set up timer (IRQ0) through the 8259A ...
+..... (found apic 0 pin 2) ...
+....... failed.
+...trying to set up timer as Virtual Wire IRQ...
+..... failed.
+...trying to set up timer as ExtINT IRQ...
+do_IRQ: 0.55 No irq handler for vector
+..... failed :(.
+Kernel panic - not syncing: IO-APIC + timer doesn't work! Boot with
+apic=debug and send a report.
 
-q:/usr/src/25> grep EXPORT_SYMBOL lib/genalloc.c
-EXPORT_SYMBOL(gen_pool_create);
-EXPORT_SYMBOL(gen_pool_add_virt);
-EXPORT_SYMBOL(gen_pool_virt_to_phys);
-EXPORT_SYMBOL(gen_pool_destroy);
-EXPORT_SYMBOL(gen_pool_alloc);
-EXPORT_SYMBOL(gen_pool_alloc_algo);
-EXPORT_SYMBOL(gen_pool_dma_alloc);
-EXPORT_SYMBOL(gen_pool_free);
-EXPORT_SYMBOL(gen_pool_for_each_chunk);
-EXPORT_SYMBOL_GPL(gen_pool_avail);
-EXPORT_SYMBOL_GPL(gen_pool_size);
-EXPORT_SYMBOL(gen_pool_set_algo);
-EXPORT_SYMBOL(gen_pool_first_fit);
-EXPORT_SYMBOL(gen_pool_first_fit_align);
-EXPORT_SYMBOL(gen_pool_fixed_alloc);
-EXPORT_SYMBOL(gen_pool_first_fit_order_align);
-EXPORT_SYMBOL(gen_pool_best_fit);
-EXPORT_SYMBOL_GPL(gen_pool_get);
-EXPORT_SYMBOL(devm_gen_pool_create);
-EXPORT_SYMBOL_GPL(of_gen_pool_get);
+Looking closer, check_timer() is observing that the IOAPIC timer
+doesn't tick, so it then tries some other approaches but doesn't
+manage to get them working either.
 
-See?  Almost everything is called gen_pool_foo.  Which is correct as
-per kernel conventions.  We should globally rename this to
-gen_pool_has_addr or similar.
+The strange thing is, I booted with the no_timer_check parameter and
+the system works fine! With this parameter it assumes the IOAPIC timer
+is ticking and just continues the boot sequence anyway. Here is the
+boot log with apic=debug no_timer_check:
+https://gist.github.com/dsd/6f40d8ecc7102dd5dcb90c5dedc69214#file-dmesg-txt
+
+/proc/interrupts shows that APIC Local timer interrupts are working
+fine on both CPUs:
+https://gist.github.com/dsd/6f40d8ecc7102dd5dcb90c5dedc69214#file-interrupts-txt
+
+So, check_timer() is incorrectly deducing that the IOAPIC timer isn't
+working. The way it checks this is to do a delay loop and then check
+if jiffies has advanced. I presume the expectation here is that during
+this delay, the hardware IRQ will invoke local_apic_timer_interrupt()
+which will then increment jiffies. Indeed, during check_timer()
+execution this interrupt does not fire, however by using
+no_timer_check and adding a log message I can see that it fires for
+the first time quite some time after check_timer() is done:
+
+ ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+ clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles:
+0xfc66f4fc7c, max_idle_ns: 440795224246 ns
+ Calibrating delay loop (skipped), value calculated using timer
+frequency.. 2188.80 BogoMIPS (lpj=1094400)
+ pid_max: default: 32768 minimum: 301
+ LSM: Security Framework initializing
+ SELinux:  Initializing.
+ Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes)
+ Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes)
+ Mount-cache hash table entries: 4096 (order: 3, 32768 bytes)
+ Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes)
+ mce: CPU supports 7 MCE banks
+ mce: CPU0: Thermal monitoring enabled (TM1)
+ Last level iTLB entries: 4KB 48, 2MB 0, 4MB 0
+ Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+ Spectre V2 : Spectre mitigation: kernel not compiled with retpoline;
+no mitigation available!
+ Freeing SMP alternatives memory: 44K
+ TSC deadline timer enabled
+ smpboot: CPU0: Intel(R) Celeron(R) CPU N3350 @ 1.10GHz (family: 0x6,
+model: 0x5c, stepping: 0x9)
+ Performance Events: PEBS fmt3+, Goldmont events, 32-deep LBR,
+full-width counters, Intel PMU driver.
+ ... version:                4
+ ... bit width:              48
+ ... generic registers:      4
+ ... value mask:             0000ffffffffffff
+ ... max period:             00007fffffffffff
+ ... fixed-purpose events:   3
+ ... event mask:             000000070000000f
+ rcu: Hierarchical SRCU implementation.
+ smp: Bringing up secondary CPUs ...
+ !!! local_apic_timer_interrupt for the first time cpu0 !!!
+
+Experimenting further, I used the same approach of adding delays and
+checking for the interrupt during the delay to figure out at which
+precise point during the boot sequence the timer interrupt starts
+working. It's here:
+
+static void setup_APIC_timer(void)
+{
+[...]
+    if (this_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER)) {
+[...]
+        clockevents_config_and_register(levt,
+                        tsc_khz * (1000 / TSC_DIVISOR),
+                        0xF, ~0UL);
+    }
+}
+
+We reach clockevents_register_device() which does:
+ 1. Take a spinlock and disable IRQs
+ 2. lapic_set_oneshot() which leads to "TSC deadline timer enabled" message
+ 3. lapic_next_deadline()
+ 4. Spin unlock & re-enable IRQs
+
+At the exact point where IRQs are re-enabled above, which is at the
+time of return from clockevents_config_and_register(), timer
+interrupts start working.
+
+
+The overall ordering here seems surprising. check_timer() is probing
+whether the APIC timer works well before setup_APIC_timer() has been
+called. Shouldn't the timer be checked only after it has been set up?
+
+Or is Linux assuming that the BIOS will boot with the APIC timer
+already running?
+
+Any other debugging suggestions much appreciated.
+
+Thanks
+Daniel
