@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BD3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8849CC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4132D20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CFC620879
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545998048;
-	bh=jL2JHwpEpYLiZKXLvgWWJInnjOUuvqNVC+PBvnlGyyM=;
+	s=default; t=1545998058;
+	bh=g8LL+pt59COJgYCYx1NnXjOM4zvNrXmjnVTjitagdpg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fc9bpyMikucRw4jDu0wEzBysfHxPumVqiL0fJtGYv5Zu/b4YwaEhjT92CKNvK7Leb
-	 q8QZ7WXAzEw33fHS2rTe8AxKMFRhH727T9Uqgua4qRuFKr6WzsVou/7zzbGJ21NmLi
-	 kXSe4GFQyUF3vzXtxZbulE22Z6BAcnbdDHMpfTBg=
+	b=n4RSQ6tJTiokcF0tdwdgVmpo8B3jo6DLHyDeQihs/pYkHT85YZwCPuzM7rDthEnn/
+	 EC2ZKWDIzVSxRCMF370wxTSTNR1+EklGkgD4DpxnDAi7L3njjg/dznecCVMJ64sTn2
+	 yE93iqVd2QYEbAyyYbyF9mBogmkBO5ePuIWCyow8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732338AbeL1Lxq (ORCPT
+        id S1732401AbeL1LyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 06:53:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53584 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 06:54:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727378AbeL1Lxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 06:53:42 -0500
+        id S1732287AbeL1Lxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 06:53:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 563732148E;
-        Fri, 28 Dec 2018 11:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F91420879;
+        Fri, 28 Dec 2018 11:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545998021;
-        bh=jL2JHwpEpYLiZKXLvgWWJInnjOUuvqNVC+PBvnlGyyM=;
+        s=default; t=1545998011;
+        bh=g8LL+pt59COJgYCYx1NnXjOM4zvNrXmjnVTjitagdpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GKPByK+V2wrE7/VwwiwOmtOwHWgr50ajM4rBDhOhlh36oJPMdEt1xJlqCEn1MbGZN
-         qf32XAlDQF19qL/l5UK/1ju0PHC5MzT7egKTgoxpcU5KV1g4Th7x2qfHWiLOjyapoA
-         zFxWqeNTezbRAtzfj0YBm/TcYC2D3BCxSm5bzoqQ=
+        b=UMHwQbmJxHPgD4BKT55nPFG3OB2sN8Zjf9dWEe8jFvQoJgxMKh2/AzgZLSRPemWpv
+         NjZqFPGmkEym9OJEgTK4rHnep8vyV4udL/gI9LPxAp1hwTkP/yOZvWVAurQJOBHYWP
+         2AvfZmYVM/QpspRbifAqHOx7EXyDDxnCq2U/BA2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 4.19 21/46] KVM: X86: Fix NULL deref in vcpu_scan_ioapic
-Date:   Fri, 28 Dec 2018 12:52:15 +0100
-Message-Id: <20181228113126.008457453@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 18/46] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+Date:   Fri, 28 Dec 2018 12:52:12 +0100
+Message-Id: <20181228113125.842208725@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -68,60 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wanpeng Li <wanpengli@tencent.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit dcbd3e49c2f0b2c2d8a321507ff8f3de4af76d7c upstream.
+commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
 
-Reported by syzkaller:
+spi_read() and spi_write() require DMA-safe memory. When
+CONFIG_VMAP_STACK is selected, those functions cannot be used
+with buffers on stack.
 
-    CPU: 1 PID: 5962 Comm: syz-executor118 Not tainted 4.20.0-rc6+ #374
-    Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-    RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
-    RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7449 [inline]
-    RIP: 0010:vcpu_enter_guest arch/x86/kvm/x86.c:7602 [inline]
-    RIP: 0010:vcpu_run arch/x86/kvm/x86.c:7874 [inline]
-    RIP: 0010:kvm_arch_vcpu_ioctl_run+0x5296/0x7320 arch/x86/kvm/x86.c:8074
-    Call Trace:
-	 kvm_vcpu_ioctl+0x5c8/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2596
-	 vfs_ioctl fs/ioctl.c:46 [inline]
-	 file_ioctl fs/ioctl.c:509 [inline]
-	 do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-	 ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-	 __do_sys_ioctl fs/ioctl.c:720 [inline]
-	 __se_sys_ioctl fs/ioctl.c:718 [inline]
-	 __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-	 do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+This patch replaces calls to spi_read() and spi_write() by
+spi_write_then_read() which doesn't require DMA-safe buffers.
 
-The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT14 msr
-and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
-However, irqchip is not initialized by this simple testcase, ioapic/apic
-objects should not be accessed.
-
-This patch fixes it by also considering whether or not apic is present.
-
-Reported-by: syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com
-Cc: stable@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-max7301.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7304,7 +7304,7 @@ void kvm_make_scan_ioapic_request(struct
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
  
- static void vcpu_scan_ioapic(struct kvm_vcpu *vcpu)
- {
--	if (!kvm_apic_hw_enabled(vcpu->arch.apic))
-+	if (!kvm_apic_present(vcpu))
- 		return;
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
+ }
  
- 	bitmap_zero(vcpu->arch.ioapic_handled_vectors, 256);
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
+ 	struct spi_device *spi = to_spi_device(dev);
+ 
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
 
 
