@@ -2,104 +2,154 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAEFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3E0C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0C020874
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D7020873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 18:12:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfDvSkd5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AEPiOveC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387642AbeL1SEg (ORCPT
+        id S2387657AbeL1SMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 13:04:36 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39696 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbeL1SEg (ORCPT
+        Fri, 28 Dec 2018 13:12:15 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39087 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387643AbeL1SMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 13:04:36 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so27848056itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 10:04:34 -0800 (PST)
+        Fri, 28 Dec 2018 13:12:14 -0500
+Received: by mail-io1-f65.google.com with SMTP id k7so17265626iob.6
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 10:12:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hO6btzCMrspbbGuA4t1Dn1GB/cNGFTn7DeTiFHCdvBU=;
-        b=dfDvSkd5V25EW3j/plGIf7nrV7UTYCBPpnkRpYNlaTUojd3kgEeaF17N5COXvb6tUs
-         1rvtoomCjVSECjICQa1cs4/bUBCXrKqYVR2EP2GkmQ16USswGLfAYu3AW/ScjZY6F6o/
-         ZTs4IeHx1ENzoqIEK96Jn6rRB/hBi4zXfMN8A=
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YvN5XzGEE5f57wuqld1AUnhuW43YgetQQF7INKbOvoQ=;
+        b=AEPiOveC1yivxHKPymqfJKJBjnZZ9x/ymZ2xRMIF4SJpTJB/JhN/xBZgJcJa/lxo7o
+         MK7JKbyV6p0vpc84pv0qJMh0aj6FZOuMD74UzpmmYaiuTyymYecGI8fBPKIXd8pgxhgA
+         7qtqDmBaFUWU4BFqEd8jzMwqaOytJg+M842hA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hO6btzCMrspbbGuA4t1Dn1GB/cNGFTn7DeTiFHCdvBU=;
-        b=pdxWz07xXXAhL3+IrGVaVgSrvyV3gKY/h70Vm1q1KWorLHEBKPcfjFPRjE2j8fWJqu
-         PxcJzuTUKtDjB5HvhLW7pyTXQjvsgdLf2RCJKj1p2OmjxGWBbrXQ/En67Nki8JN4iPDt
-         TCH4CSw2Je1zvFGLAr94UbS2cHESdffvk8+BxMkLQNRifst9kmiJcvOoQIvk0r8OWD+5
-         +gQ+uHDjMMeJWdvqGIT31FFb3pvhi0SbR/9/6mDVx0MRufqzyc3mRLMlHhbNftAlMJlO
-         5VOIDpYgJAkj0ASL50Ln6mzDvi1hqfXoemueWY60755mqTI1UiEcS03/IppGNbk1Ry5k
-         ytDw==
-X-Gm-Message-State: AJcUukcDnvmRLf9YFfyuhZ5Lg2QHOS9skSvswL3OzprI2ZacnWqkzmrQ
-        hRVfXCahJMD4FRl+1flNG11RlDFUk0LmYrF9N21dzQ==
-X-Google-Smtp-Source: ALg8bN4nmFD3yOWX2Gx6+0H2pOA1stiOCAKUoO8Sar7bL5Z2H3knmJiF2jUbXZWqat3MB/xIKPQIPB8/EF+PkDr3cy8=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr18878734itf.14.1546020274084;
- Fri, 28 Dec 2018 10:04:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=YvN5XzGEE5f57wuqld1AUnhuW43YgetQQF7INKbOvoQ=;
+        b=Z6LyRQxjsPMNx9/7Vuj1dg3jhlK+aQYvambhYElIMIVFoLou3YRfe/OefI1bWDYiGp
+         U2EjsdavrXClpJNwJl/lz8MZAmZ8DK/FbwN494aU5DrgD5CQO6XoUL+es63C+YFi2Wab
+         yXX5ZTNC0pwCr/hcP3bqODUYLhotAlCxJ50NXGKzaE9EznEyP9AENDvzk5iPTnxNZM7t
+         y4Ma3DMUBcEotptULc6k3Ta1oD5zU0DUUGQzhhM4TCD1ACUwowjOyCa1ec0Ff7BpbLt5
+         EKXR9RbTkYBP7O3RE4NWiKkW5uHhyiTiBTq4c8vy/3oL/deQqz1EPTL0YI/gdPrZFfPd
+         mEWA==
+X-Gm-Message-State: AJcUuke1isXxrS40kaMQpNpuqY7waiKPlGUyW0PNHSzVv3/FrOjlOJ6Y
+        f3ZmYcxjxpK91Gg4mLZmPe/xkQ==
+X-Google-Smtp-Source: ALg8bN7dAUt2zMXcYA20JBEczGMLWKntOEOcI3OSRf1HCpR75u92mW4eOJ0Iz223N1CiqXeSOetzAg==
+X-Received: by 2002:a6b:6604:: with SMTP id a4mr19274508ioc.10.1546020733576;
+        Fri, 28 Dec 2018 10:12:13 -0800 (PST)
+Received: from localhost (c-73-24-4-37.hsd1.mn.comcast.net. [73.24.4.37])
+        by smtp.gmail.com with ESMTPSA id q9sm18439496ioh.32.2018.12.28.10.12.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 10:12:12 -0800 (PST)
+Date:   Fri, 28 Dec 2018 12:12:11 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/22] 4.9.148-stable review
+Message-ID: <20181228181211.izpzyi24nwxpfyxm@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20181228113126.144310132@linuxfoundation.org>
 MIME-Version: 1.0
-References: <CAMp4zn-bN=DdiKox-xZ++i2n_pgTA7Ms+1hBnAY2AbYv2iqXOA@mail.gmail.com>
- <CAKfTPtAmkHZ5XVHpf6rE8nrSPGzW_uO7a0tvH5JqDSpTzK9D=Q@mail.gmail.com>
- <CAHk-=wja7WN1sDz5_E7hf8c47CmX=yH8xc3h0zmmF8Y_fSR71A@mail.gmail.com>
- <20181228011524.GF2509588@devbig004.ftw2.facebook.com> <CAHk-=wj33F7LKQS3wCYJtb_yCzYhbjPzFqhVS_ZPPNOWTTMHFQ@mail.gmail.com>
- <20181228015352.GG2509588@devbig004.ftw2.facebook.com> <20181228020243.GH2509588@devbig004.ftw2.facebook.com>
- <CAKfTPtA5WBKQ1FMyGqGjn1DdeDbSwT=bTQjD=oW7WMz6iKiS7A@mail.gmail.com>
- <20181228165451.GJ2509588@devbig004.ftw2.facebook.com> <CAKfTPtAMjfnNHu_JdDSi1BSMoXKgGkm2+G_QLsUBDAhq1wFvZQ@mail.gmail.com>
- <20181228174600.GK2509588@devbig004.ftw2.facebook.com>
-In-Reply-To: <20181228174600.GK2509588@devbig004.ftw2.facebook.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 28 Dec 2018 19:04:23 +0100
-Message-ID: <CAKfTPtBV6tkf237ZAtWrHAYAiK+o3m_cd7ctX3EeLzt+onzUZQ@mail.gmail.com>
-Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Xie XiuQi <xiexiuqi@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, xiezhipeng1@huawei.com,
-        huawei.libin@huawei.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dmitry Adamushko <dmitry.adamushko@gmail.com>,
-        Rik van Riel <riel@surriel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Dec 2018 at 18:46, Tejun Heo <tj@kernel.org> wrote:
->
-> On Fri, Dec 28, 2018 at 06:25:37PM +0100, Vincent Guittot wrote:
-> > > done without extra space as long as each node has the parent pointer,
-> > > which they do.  Is the dedicated list an optimization?
-> >
-> > It prevents to parse and walk all task group struct every time.
-> > Instead, you just have to follow a linked list
->
-> Hmmm... I'm having a bit of a hard time imagining doing an actual
-> traversal being a meaningful optimization.  It may require more
-> branches but that shouldn't be expensive at all, especially compared
-> to walking all idle groups in the system each time which the code used
-> to do. Anyways, this is tangential.
->
-> Thanks for the explanation and happy new year!
+On Fri, Dec 28, 2018 at 12:52:37PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.148 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Happy new year for you too
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Thanks
-Vincent
+Summary
+------------------------------------------------------------------------
 
->
-> --
-> tejun
+kernel: 4.9.148-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.9.y
+git commit: 90e2ba75f3b479bb8fb03958c1882389aeb50c45
+git describe: v4.9.147-23-g90e2ba75f3b4
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.147-23-g90e2ba75f3b4
+
+No regressions (compared to build v4.9.146-62-gbbfc30f29cb3)
+
+No fixes (compared to build v4.9.146-62-gbbfc30f29cb3)
+
+Ran 21367 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
