@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1FDC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B178CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 638A42146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DBF22146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999303;
-	bh=gVai3G6ImL00/4iTH799Kp5aUbGml+sQVwADkbdxaTk=;
+	s=default; t=1545999306;
+	bh=eWUvJZkPJBd7nyvvBAdYKqq1G4iKPrUO1RQj/kFKZ10=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aGpg94lkdCH1Ld26RVNibqnzL869aJFtKiSJqoMWKWrfP8lgh+3r9MMRnYwPpc6a6
-	 MSnCv7FHFqS6+jUj9vKRT1zagKJkRs69VPnECcjufVjhA10iVyR3k2AbekbhbeU/c6
-	 nIS1CE4UMi4u06OuHHm3HxifmpRuuIImCObKy8vU=
+	b=mO9707pDHWqz0ciFMltybdwdb33G2f6IePmGj6tNLCF99SCDr9vfl/LGP74uKcrkN
+	 ZLKHQnTHNIEMUJT2j2n6Bz9b3FOhwf4NApsDZVCiLZh7t8ml7D3cMya24hTKY7fcut
+	 uzQM7K4ywGfJpbPcjZNBFOhjBs7lnmCNHpS714g4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbeL1MPC (ORCPT
+        id S1731436AbeL1MPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731293AbeL1MPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:00 -0500
+        id S1731342AbeL1MO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:14:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A5492087F;
-        Fri, 28 Dec 2018 12:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7A84218FE;
+        Fri, 28 Dec 2018 12:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999300;
-        bh=gVai3G6ImL00/4iTH799Kp5aUbGml+sQVwADkbdxaTk=;
+        s=default; t=1545999297;
+        bh=eWUvJZkPJBd7nyvvBAdYKqq1G4iKPrUO1RQj/kFKZ10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wSKnaPinkFvgntK+LnEYhs0+6HtnvD1GikuTnG2K4tOQyKIvtrCPzzv1VRJHL/aDV
-         UGqx7kLx1m05YIGsKFW8T3YibkW9Cb+GCi1NN0MZ4DZGNTCxq6jPEW16IZW4ZmQpI1
-         7gYzf2FUycSUXXV25Wg81PiMx3+Bng4I2bPkIW2A=
+        b=1ktiaOwDRd7UIGvNIcKcfkonoce6ED8rum21ju5LI3Qhh/21F6XW/edL/h9UFwDEV
+         3ZqXrPLc+YQSSn/W2PMRRXB8pMCNoKUVhlRfk+blmEjAHqzBby+PT2i4Yp5TvbPP84
+         9cMrumOy8VRdAOBO3D2WAHafGH0Z+gtKpqEoMUW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        stable@vger.kernel.org,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.19 05/46] USB: xhci: fix broken_suspend placement in struct xchi_hcd
-Date:   Fri, 28 Dec 2018 12:51:59 +0100
-Message-Id: <20181228113125.188140278@linuxfoundation.org>
+Subject: [PATCH 4.19 04/46] xhci: Dont prevent USB2 bus suspend in state check intended for USB3 only
+Date:   Fri, 28 Dec 2018 12:51:58 +0100
+Message-Id: <20181228113125.146588313@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -66,46 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 2419f30a4a4fcaa5f35111563b4c61f1b2b26841 upstream.
+commit 45f750c16cae3625014c14c77bd9005eda975d35 upstream.
 
-As commented in the struct's definition there shouldn't be anything
-underneath its 'priv[0]' member as it would break some macros.
+The code to prevent a bus suspend if a USB3 port was still in link training
+also reacted to USB2 port polling state.
+This caused bus suspend to busyloop in some cases.
+USB2 polling state is different from USB3, and should not prevent bus
+suspend.
 
-The patch converts the broken_suspend into a bit-field and relocates it
-next to to the rest of bit-fields.
+Limit the USB3 link training state check to USB3 root hub ports only.
+The origial commit went to stable so this need to be applied there as well
 
-Fixes: a7d57abcc8a5 ("xhci: workaround CSS timeout on AMD SNPS 3.0 xHC")
-Reported-by: Oliver Neukum  <oneukum@suse.com>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 2f31a67f01a8 ("usb: xhci: Prevent bus suspend if a port connect change or polling state is detected")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/host/xhci-hub.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1860,6 +1860,8 @@ struct xhci_hcd {
- 	unsigned		sw_lpm_support:1;
- 	/* support xHCI 1.0 spec USB2 hardware LPM */
- 	unsigned		hw_lpm_support:1;
-+	/* Broken Suspend flag for SNPS Suspend resume issue */
-+	unsigned		broken_suspend:1;
- 	/* cached usb2 extened protocol capabilites */
- 	u32                     *ext_caps;
- 	unsigned int            num_ext_caps;
-@@ -1877,8 +1879,6 @@ struct xhci_hcd {
- 	void			*dbc;
- 	/* platform-specific data -- must come last */
- 	unsigned long		priv[0] __aligned(sizeof(s64));
--	/* Broken Suspend flag for SNPS Suspend resume issue */
--	u8			broken_suspend;
- };
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1507,7 +1507,8 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 		portsc_buf[port_index] = 0;
  
- /* Platform specific overrides to generic XHCI hc_driver ops */
+ 		/* Bail out if a USB3 port has a new device in link training */
+-		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++		if ((hcd->speed >= HCD_USB3) &&
++		    (t1 & PORT_PLS_MASK) == XDEV_POLLING) {
+ 			bus_state->bus_suspended = 0;
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+ 			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
 
 
