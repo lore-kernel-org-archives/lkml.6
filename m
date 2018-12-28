@@ -7,48 +7,52 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 354C1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF41CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018352070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC68F20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999743;
-	bh=FQifLs/y9Rfmm4XxEh8U8VirgW4E4OZFMhaKzw7NKeg=;
+	s=default; t=1545999751;
+	bh=3yyD6OfFoBXnAX9nRh17ccyPROfLQFNvdhYSfZZ2oyY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MC+qDPpjRp2+zI7xWlVrayCg5jGhW6VF6dcrRQ0xf5u8arDaT5NsQyCo3A0S/35Td
-	 NhA1tGT0KW5PzWe2peFKh42Xz2S6IiTgrBZtzN4EtDHMi/R0CpLsODV36heGqvrM3G
-	 x8tenbSBfwcZawIHRAcq3mCwLMDUNHIM0m7711qI=
+	b=VYaBbKovPmNq/RbME/9f1m8763m6WfxHzD2wUClwPmTxJsd3FtrwD3Rllx4RHhfjP
+	 CAwl04j+hWmFDLF9xVOpcwfr7xEvubH1MDrKGpHdhWJwypUeVwx/obDGVPVf6AVOcw
+	 5cdRUC3YcGBkqRuaZRx+OSP5t5v3assQCx9e4+uU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeL1MWW (ORCPT
+        id S1730350AbeL1MWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:22:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732411AbeL1MPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:24 -0500
+        id S1732296AbeL1MPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 218832148E;
-        Fri, 28 Dec 2018 12:15:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEB142148E;
+        Fri, 28 Dec 2018 12:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999323;
-        bh=FQifLs/y9Rfmm4XxEh8U8VirgW4E4OZFMhaKzw7NKeg=;
+        s=default; t=1545999318;
+        bh=3yyD6OfFoBXnAX9nRh17ccyPROfLQFNvdhYSfZZ2oyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bH+UuLyqh7NXR2S/fOII8yHxS/vv2yWzQ+LBRnAVEEOTg8HCHMa9Izqn91Bgy3/bn
-         Z/6AzEWrBle6lX1shxCTdwr+o6/3H4vDxga8UBVRo5ZiFh8fSgQ5lW/5aZqQiX1mad
-         jeUpPzFMQSunAQLDOP9kMvmhVJ3WvnvH+kSBDnGo=
+        b=xv50jDl1FoS3bjtRIDKWaJfKiBJEib95T1GVju+BbGy0FTeefVoheTfffRzhW91E/
+         7s5HxuI4dSSFqQX8DsVxk3jO+HS467B9RBSxXR4tOsGMZmXOY1gY/y17bie8Xlm0w8
+         4ReiZSIeTq/Vk812lRUf6vLJcQKQpfh834MwRosM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 44/46] Input: elantech - disable elan-i2c for P52 and P72
-Date:   Fri, 28 Dec 2018 12:52:38 +0100
-Message-Id: <20181228113127.550916114@linuxfoundation.org>
+        stable@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 42/46] mm, page_alloc: fix has_unmovable_pages for HugePages
+Date:   Fri, 28 Dec 2018 12:52:36 +0100
+Message-Id: <20181228113127.401931331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -67,69 +71,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Oscar Salvador <osalvador@suse.de>
 
-commit d21ff5d7f8c397261e095393a1a8e199934720bc upstream.
+commit 17e2e7d7e1b83fa324b3f099bfe426659aa3c2a4 upstream.
 
-The current implementation of elan_i2c is known to not support those
-2 laptops.
+While playing with gigantic hugepages and memory_hotplug, I triggered
+the following #PF when "cat memoryX/removable":
 
-A proper fix is to tweak both elantech and elan_i2c to transmit the
-correct information from PS/2, which would make a bad candidate for
-stable.
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+  #PF error: [normal kernel read fault]
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 1 PID: 1481 Comm: cat Tainted: G            E     4.20.0-rc6-mm1-1-default+ #18
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+  RIP: 0010:has_unmovable_pages+0x154/0x210
+  Call Trace:
+   is_mem_section_removable+0x7d/0x100
+   removable_show+0x90/0xb0
+   dev_attr_show+0x1c/0x50
+   sysfs_kf_seq_show+0xca/0x1b0
+   seq_read+0x133/0x380
+   __vfs_read+0x26/0x180
+   vfs_read+0x89/0x140
+   ksys_read+0x42/0x90
+   do_syscall_64+0x5b/0x180
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-So to give us some time for fixing the root of the problem, disable
-elan_i2c for the devices we know are not behaving properly.
+The reason is we do not pass the Head to page_hstate(), and so, the call
+to compound_order() in page_hstate() returns 0, so we end up checking
+all hstates's size to match PAGE_SIZE.
 
-Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1803600
-Link: https://bugs.archlinux.org/task/59714
-Fixes: df077237cf55 Input: elantech - detect new ICs and setup Host Notify for them
+Obviously, we do not find any hstate matching that size, and we return
+NULL.  Then, we dereference that NULL pointer in
+hugepage_migration_supported() and we got the #PF from above.
 
-Cc: stable@vger.kernel.org  # v4.18+
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fix that by getting the head page before calling page_hstate().
+
+Also, since gigantic pages span several pageblocks, re-adjust the logic
+for skipping pages.  While are it, we can also get rid of the
+round_up().
+
+[osalvador@suse.de: remove round_up(), adjust skip pages logic per Michal]
+  Link: http://lkml.kernel.org/r/20181221062809.31771-1-osalvador@suse.de
+Link: http://lkml.kernel.org/r/20181217225113.17864-1-osalvador@suse.de
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ mm/page_alloc.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1767,6 +1767,18 @@ static int elantech_smbus = IS_ENABLED(C
- module_param_named(elantech_smbus, elantech_smbus, int, 0644);
- MODULE_PARM_DESC(elantech_smbus, "Use a secondary bus for the Elantech device.");
- 
-+static const char * const i2c_blacklist_pnp_ids[] = {
-+	/*
-+	 * These are known to not be working properly as bits are missing
-+	 * in elan_i2c.
-+	 */
-+	"LEN2131", /* ThinkPad P52 w/ NFC */
-+	"LEN2132", /* ThinkPad P52 */
-+	"LEN2133", /* ThinkPad P72 w/ NFC */
-+	"LEN2134", /* ThinkPad P72 */
-+	NULL
-+};
-+
- static int elantech_create_smbus(struct psmouse *psmouse,
- 				 struct elantech_device_info *info,
- 				 bool leave_breadcrumbs)
-@@ -1802,10 +1814,12 @@ static int elantech_setup_smbus(struct p
- 
- 	if (elantech_smbus == ELANTECH_SMBUS_NOT_SET) {
- 		/*
--		 * New ICs are enabled by default.
-+		 * New ICs are enabled by default, unless mentioned in
-+		 * i2c_blacklist_pnp_ids.
- 		 * Old ICs are up to the user to decide.
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7716,11 +7716,14 @@ bool has_unmovable_pages(struct zone *zo
+ 		 * handle each tail page individually in migration.
  		 */
--		if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
-+		if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version) ||
-+		    psmouse_matches_pnp_id(psmouse, i2c_blacklist_pnp_ids))
- 			return -ENXIO;
- 	}
+ 		if (PageHuge(page)) {
++			struct page *head = compound_head(page);
++			unsigned int skip_pages;
+ 
+-			if (!hugepage_migration_supported(page_hstate(page)))
++			if (!hugepage_migration_supported(page_hstate(head)))
+ 				goto unmovable;
+ 
+-			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
++			skip_pages = (1 << compound_order(head)) - (page - head);
++			iter += skip_pages - 1;
+ 			continue;
+ 		}
  
 
 
