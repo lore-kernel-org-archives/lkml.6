@@ -2,75 +2,123 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE182C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0593C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46D82146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546025240;
-	bh=4n0hBtKwCEqwFcRVKhhCRAZncEoSgZGvHL/bMYj3+mg=;
-	h=To:References:Subject:Cc:From:In-Reply-To:Date:List-ID:From;
-	b=CzGo9k/QnB6hKTe35H98+2IrLV1PDBkTx4BsQzLwvG5f+z6gAfwyajqTqbiFHSydy
-	 SpbymrStylTxeM9OLgt2Uz1fe76Nt+3gMPtFHlxrFnk82YWt2c5Q6PT2UGVaQxkZns
-	 nKXPYkkT6UPwzFp0tbwOYam4Sy4OQJhUu8SgeEs0=
+	by mail.kernel.org (Postfix) with ESMTP id 6BCFA2081B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 19:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387776AbeL1T1T (ORCPT
+        id S2387787AbeL1T36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 14:27:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54504 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 14:29:58 -0500
+Received: from mga18.intel.com ([134.134.136.126]:35907 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732069AbeL1T1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 14:27:19 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 791BD2081B;
-        Fri, 28 Dec 2018 19:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546025238;
-        bh=4n0hBtKwCEqwFcRVKhhCRAZncEoSgZGvHL/bMYj3+mg=;
-        h=To:References:Subject:Cc:From:In-Reply-To:Date:From;
-        b=LQ6A7fz4obAntWgB/jHJrOnbejq6wwv0AiC2L1d2A70SdrrpBViAl5VLI834moDgp
-         sD/sdvIoNHPxOFtHRVutP766tlbFnmLzAw6G835NBNyOMUcjGTeyChsa+xGgpNLQnW
-         /OpJEelaoCgxrLy1Ad97+YN/SB946Al8Loa2Q6nQ=
-Content-Type: text/plain; charset="utf-8"
+        id S1729398AbeL1T36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 14:29:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Dec 2018 11:29:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,410,1539673200"; 
+   d="scan'208";a="305834893"
+Received: from ellie.jf.intel.com (HELO ellie) ([10.54.70.81])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Dec 2018 11:29:56 -0800
+From:   Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To:     PO LIU <po.liu@nxp.com>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "davem\@davemloft.net" <davem@davemloft.net>,
+        "haustad\@cisco.com" <haustad@cisco.com>,
+        "nicolas.ferre\@microchip.com" <nicolas.ferre@microchip.com>,
+        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        PO LIU <po.liu@nxp.com>, PO LIU <po.liu@nxp.com>
+Subject: Re: [PATCH] net: tsn: add an netlink interface between kernel and application layer
+In-Reply-To: <1545968945-7290-1-git-send-email-Po.Liu@nxp.com>
+References: <1545968772-7237-1-git-send-email-Po.Liu@nxp.com> <1545968945-7290-1-git-send-email-Po.Liu@nxp.com>
+Date:   Fri, 28 Dec 2018 11:29:56 -0800
+Message-ID: <87r2e14fgr.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Yangtao Li <tiny.windzz@gmail.com>, mturquette@baylibre.com,
-        t-kristo@ti.com
-Message-ID: <154602523753.179992.582803383819271608@swboyd.mtv.corp.google.com>
-References: <20181226132131.4619-1-tiny.windzz@gmail.com>
-Subject: Re: [PATCH] clk: ti: fix refcount leak in ti_dt_clocks_register()
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-In-Reply-To: <20181226132131.4619-1-tiny.windzz@gmail.com>
-Date:   Fri, 28 Dec 2018 11:27:17 -0800
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Yangtao Li (2018-12-26 05:21:31)
-> The of_find_compatible_node() returns a node pointer with refcount
-> incremented, but there is the lack of use of the of_node_put() when
-> done. Add the missing of_node_put() to release the refcount.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/clk/ti/clk.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
+Hi,
 
-Applied to clk-next and fixed a whine
+PO LIU <po.liu@nxp.com> writes:
 
-drivers/clk/ti/clk.c:197: trailing whitespace, space before tab in indent.
+> This patch provids netlink method to configure the TSN protocols hardwares.
+> TSN guaranteed packet transport with bounded low latency, low packet delay
+> variation, and low packet loss by hardware and software methods.
 
-please be more careful next time. Also, please add fixes tags to fixes.
+I don't think having another way to configure TSN features is a good
+idea. We already have the CBS/ETF/taprio family of qdiscs, that provide
+(or will in the near future, more on this later) a way to configure the
+hardware.
 
+A little background on the choice of qdiscs as an interface (and why we
+came to believe they are a good abstraction), they already provide a way
+to map packets into traffic classes (it isn't clear in our proposal how
+you do that, but I think you are using something like mqprio), they
+provide a neat way to "compose" (by installing one under another), they
+already have a user facing API with various counters, and very
+importantly for TSN they have mecanisms to offload some of their work to
+the hardware.
+
+I suggest is for you to take a look at how CBS offloading was
+implemented for the Intel i210:
+
+https://patchwork.ozlabs.org/cover/824626/
+
+Patches 4 and 5 should be the interesting ones. I think you can use them
+as inspiration for enabling CBS offload in your driver.
+
+If you did take a look at those patches (and the current work that has
+been upstreamed), my question then becomes, what are the reasons that it
+might not work for your use cases?
+
+>
+> The three basic components of TSN are:
+>
+> 1. Time synchronization: This was implement by 8021AS which base on the
+>    IEEE1588 precision Time Protocol. This is configured by the other way
+>    in kernel.
+>    8021AS not included in this patch.
+>
+> 2. Scheduling and traffic shaping and per-stream filter policing:
+>    This patch support Qbv/Qci.
+
+I am working on a proposal for the API for Qbv (and Qbu) offloading
+using taprio. I should send it soon-ish. Your feedback would be very
+welcome.
+
+Also, how to expose in the qdiscs the per-stream filtering and policing
+parts (Qci) is something that I don't know how to do right now, any
+suggestions would be nice.
+
+In short, take a look at what's there and see what's missing for the
+stuff that you care about, then we can work on that.
+
+>
+> 3. Selection of communication paths:
+>    This patch not support the pure software only TSN protocols(like Qcc)
+>    but hardware related configuration.
+>
+> TSN Protocols supports by this patch: Qbv/Qci/Qbu/Credit-base Shaper(Qav).
+> This patch verified on NXP ls1028ardb board.
+>
+> Will add more protocols in the future.
+>
+> Signed-off-by: Po Liu <Po.Liu@nxp.com>
+
+
+Cheers,
+--
+Vinicius
