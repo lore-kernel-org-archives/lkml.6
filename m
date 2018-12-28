@@ -2,240 +2,105 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9277C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AAFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65252146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBE452087F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="D+gJKUeO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbeL1Hhz (ORCPT
+        id S1731777AbeL1Hpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 02:37:55 -0500
-Received: from smtpbg202.qq.com ([184.105.206.29]:51259 "EHLO smtpbg202.qq.com"
+        Fri, 28 Dec 2018 02:45:49 -0500
+Received: from owa.iluvatar.ai ([103.91.158.24]:39034 "EHLO owa.iluvatar.ai"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730835AbeL1Hhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 02:37:55 -0500
-X-QQ-mid: bizesmtp12t1545982665t7nrb338
-Received: from hhtrace-pc.localdomain (unknown [210.22.22.130])
-        by esmtp6.qq.com (ESMTP) with 
-        id ; Fri, 28 Dec 2018 15:37:41 +0800 (CST)
-X-QQ-SSF: 01400000002000F0FF32000A0000000
-X-QQ-FEAT: x4sLw9LeY+a6c8l1PkBEh+C+0gbA+aUyeOjp2pc07qx5Jc2fR4K8t1KIDTYcX
-        OD16VIiR4INYT9M+E/7IQC/d9RxDhBs4u2GpPWDE7elbhPhEUvqb95UITN10myegaUl08AZ
-        9BISQktB/WdDNLmoz70nVbl59QN/Ed5HGbrs/1mVIOENsUlVdaQjIcc64YjtGssdbNfDS3Q
-        XJzv03K6ZHqJnedNv07JXo3lXW8R/gcE1MeRnBFxFsvTd0Ex8WZY3VMYuCI/WCxiddvZpxn
-        6zoS1lrjJC5vnRiArO/udcupqALhZbSU+fByHD5fUX24j+
-X-QQ-GoodBg: 2
-From:   huhai <huhai@kylinos.cn>
-To:     will.deacon@arm.com, catalin.marinas@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        liuyun01@kylinos.cn, huhai <huhai@kylinos.cn>
-Subject: [PATCH] arm64/lib: add accelerated do_csum for arm64
-Date:   Fri, 28 Dec 2018 15:37:39 +0800
-Message-Id: <20181228073739.13169-1-huhai@kylinos.cn>
-X-Mailer: git-send-email 2.20.1
+        id S1729379AbeL1Hpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 02:45:49 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
+        c=relaxed/relaxed; t=1545983134; h=from:subject:to:date:message-id;
+        bh=tfTMWdHonUAcpyICrMa3tyJtkMvHBFpQ82GdAPtnW5c=;
+        b=D+gJKUeOkUfCr9jw9W5A8wEv5G88ErfV+FJZ/77NWazg1d8yKJYmGbFOusIvors72NHT14aZwFH
+        ltcguKVeSon1uOgkpgWcE/Pi143Sg1waupxUjqMpR27/vXdn90kZy8dbvzHh5YUKcpmn6TkOB6zWz
+        gyHOViPWXI9UqoDGYA8=
+Received: from hsj-Precision-5520 (10.101.1.99) by
+ S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1415.2; Fri, 28 Dec 2018 15:45:33 +0800
+Date:   Fri, 28 Dec 2018 15:45:32 +0800
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     <sfr@canb.auug.org.au>, <alexey.skidanov@intel.com>,
+        <linux-kernel@vger.kernel.org>, <shijie8@gmail.com>
+Subject: Re: [PATCH 2/2] lib/genalloc.c: export symbol addr_in_gen_pool
+Message-ID: <20181228074531.GA2439@hsj-Precision-5520>
+References: <20181224070622.22197-1-sjhuang@iluvatar.ai>
+ <20181224070622.22197-2-sjhuang@iluvatar.ai>
+ <20181227214929.713f8421d1991806e8f6fe7f@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:kylinos.cn:qybgforeign:qybgforeign4
-X-QQ-Bgrelay: 1
+In-Reply-To: <20181227214929.713f8421d1991806e8f6fe7f@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.101.1.99]
+X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
+ S-10-101-1-102.iluvatar.local (10.101.1.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-do_csum() in lib/checksum.c is too slow in ARM64,
-and we can use assembly and algorithm to accelerate it.
+On Thu, Dec 27, 2018 at 09:49:29PM -0800, Andrew Morton wrote:
+> On Mon, 24 Dec 2018 15:06:22 +0800 Huang Shijie <sjhuang@iluvatar.ai> wrote:
+> 
+> > We may use the addr_in_gen_pool() in the driver module.
+> > So export the addr_in_gen_pool for the compiling.
+> > 
+> > ...
+> >
+> > --- a/lib/genalloc.c
+> > +++ b/lib/genalloc.c
+> > @@ -450,6 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
+> >  	rcu_read_unlock();
+> >  	return found;
+> >  }
+> > +EXPORT_SYMBOL(addr_in_gen_pool);
+> >  
+> >  /**
+> >   * gen_pool_avail - get available free space of the pool
+> 
+> OK, but...  The name is poor.
+> 
+> q:/usr/src/25> grep EXPORT_SYMBOL lib/genalloc.c
+> EXPORT_SYMBOL(gen_pool_create);
+> EXPORT_SYMBOL(gen_pool_add_virt);
+> EXPORT_SYMBOL(gen_pool_virt_to_phys);
+> EXPORT_SYMBOL(gen_pool_destroy);
+> EXPORT_SYMBOL(gen_pool_alloc);
+> EXPORT_SYMBOL(gen_pool_alloc_algo);
+> EXPORT_SYMBOL(gen_pool_dma_alloc);
+> EXPORT_SYMBOL(gen_pool_free);
+> EXPORT_SYMBOL(gen_pool_for_each_chunk);
+> EXPORT_SYMBOL_GPL(gen_pool_avail);
+> EXPORT_SYMBOL_GPL(gen_pool_size);
+> EXPORT_SYMBOL(gen_pool_set_algo);
+> EXPORT_SYMBOL(gen_pool_first_fit);
+> EXPORT_SYMBOL(gen_pool_first_fit_align);
+> EXPORT_SYMBOL(gen_pool_fixed_alloc);
+> EXPORT_SYMBOL(gen_pool_first_fit_order_align);
+> EXPORT_SYMBOL(gen_pool_best_fit);
+> EXPORT_SYMBOL_GPL(gen_pool_get);
+> EXPORT_SYMBOL(devm_gen_pool_create);
+> EXPORT_SYMBOL_GPL(of_gen_pool_get);
+> 
+> See?  Almost everything is called gen_pool_foo.  Which is correct as
+> per kernel conventions.  We should globally rename this to
+> gen_pool_has_addr or similar.
+okay, I will do it right now..
 
-Signed-off-by: huhai <huhai@kylinos.cn>
----
- arch/arm64/include/asm/checksum.h |   3 +
- arch/arm64/lib/Makefile           |   2 +-
- arch/arm64/lib/checksum.c         | 144 ++++++++++++++++++++++++++++++
- 3 files changed, 148 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/lib/checksum.c
-
-diff --git a/arch/arm64/include/asm/checksum.h b/arch/arm64/include/asm/checksum.h
-index 0b6f5a7d4027..0d7b80fb300e 100644
---- a/arch/arm64/include/asm/checksum.h
-+++ b/arch/arm64/include/asm/checksum.h
-@@ -26,6 +26,9 @@ static inline __sum16 csum_fold(__wsum csum)
- }
- #define csum_fold csum_fold
- 
-+#define do_csum do_csum
-+unsigned int do_csum(const unsigned char *buff, unsigned int len);
-+
- static inline __sum16 ip_fast_csum(const void *iph, unsigned int ihl)
- {
- 	__uint128_t tmp;
-diff --git a/arch/arm64/lib/Makefile b/arch/arm64/lib/Makefile
-index 69ff9887f724..4134730a121b 100644
---- a/arch/arm64/lib/Makefile
-+++ b/arch/arm64/lib/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--lib-y		:= clear_user.o delay.o copy_from_user.o		\
-+lib-y		:= checksum.o clear_user.o delay.o copy_from_user.o	\
- 		   copy_to_user.o copy_in_user.o copy_page.o		\
- 		   clear_page.o memchr.o memcpy.o memmove.o memset.o	\
- 		   memcmp.o strcmp.o strncmp.o strlen.o strnlen.o	\
-diff --git a/arch/arm64/lib/checksum.c b/arch/arm64/lib/checksum.c
-new file mode 100644
-index 000000000000..6931ef13ef87
---- /dev/null
-+++ b/arch/arm64/lib/checksum.c
-@@ -0,0 +1,144 @@
-+/*
-+ * arch/arm64/lib/checksum.c
-+ *
-+ * This file contains network checksum routines that are better done
-+ * in an architecture-specific manner due to speed.
-+ *
-+ * Acknowledgements:
-+ * This file is based on arch/x86/lib/csum-partial_64.c and
-+ * arch/alpha/lib/checksum.c, which was written by Thomas Gleixner
-+ * and Rick Gorton respectively.
-+ */
-+
-+#include <linux/compiler.h>
-+#include <linux/module.h>
-+#include <asm/checksum.h>
-+
-+static inline unsigned short from64to16(unsigned long x)
-+{
-+	/* Using extract instructions is a bit more efficient
-+	 * than the original shift/bitmask version.
-+	 */
-+
-+	union {
-+		unsigned long   ul;
-+		unsigned int    ui[2];
-+		unsigned short  us[4];
-+	} in_v, tmp_v, out_v;
-+
-+	in_v.ul = x;
-+	tmp_v.ul = (unsigned long) in_v.ui[0] + (unsigned long) in_v.ui[1];
-+
-+	/* Since the bits of tmp_v.sh[3] are going to always be zero,
-+	 * we don't have to bother to add that in.
-+	 */
-+	out_v.ul = (unsigned long) tmp_v.us[0] + (unsigned long) tmp_v.us[1]
-+			+ (unsigned long) tmp_v.us[2];
-+
-+	/* Similarly, out_v.us[2] is always zero for the final add.  */
-+	return out_v.us[0] + out_v.us[1];
-+}
-+
-+/*
-+ * Do a 64-bit checksum on an arbitrary memory area.
-+ * Returns a 16bit checksum.
-+ */
-+unsigned int do_csum(const unsigned char *buff, unsigned len)
-+{
-+	unsigned odd, count;
-+	unsigned long result = 0;
-+
-+	if (unlikely(len == 0))
-+		return result;
-+	odd = 1 & (unsigned long) buff;
-+	if (odd) {
-+		result = *buff << 8;
-+		len--;
-+		buff++;
-+	}
-+	count = len >> 1;		/* nr of 16-bit words.. */
-+	if (count) {
-+		if (2 & (unsigned long) buff) {
-+			result += *(unsigned short *)buff;
-+			count--;
-+			len -= 2;
-+			buff += 2;
-+		}
-+		count >>= 1;		/* nr of 32-bit words.. */
-+		if (count) {
-+			unsigned long zero;
-+			unsigned long tmp1;
-+			unsigned count64;
-+
-+			if (4 & (unsigned long) buff) {
-+				result += *(unsigned int *) buff;
-+				count--;
-+				len -= 4;
-+				buff += 4;
-+			}
-+			count >>= 1;	/* nr of 64-bit words.. */
-+
-+			/* main loop using 64byte blocks */
-+			zero = 0;
-+			count64 = count >> 3;
-+			while (count64) {
-+				__asm__ __volatile__(
-+					"ldr %x3, [%x1, #0]\n"
-+					"adds %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #8]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #16]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #24]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #32]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #40]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #48]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"ldr %x3, [%x1, #56]\n"
-+					"adcs %x0, %x0, %x3\n"
-+					"adcs %x0, %x0, %x2\n"
-+					: "=r" (result)
-+					: "r" (buff), "r" (zero), "r" (tmp1), "0" (result)
-+					: "cc", "memory");
-+
-+				buff += 64;
-+				count64--;
-+			}
-+
-+			/* last up to 7 8byte blocks */
-+			count %= 8;
-+
-+			while (count) {
-+				__asm__ __volatile__(
-+					"adds %x0, %x0, %x1\n"
-+					"adcs %x0, %x0, %x2\n"
-+					: "=r" (result)
-+					: "r" (*(unsigned long *)buff), "r" (zero), "0" (result)
-+					: "cc", "memory");
-+				--count;
-+				buff += 8;
-+			}
-+			result = (result & 0xffffffff) + (result >> 32);
-+
-+			if (len & 4) {
-+				result += *(unsigned int *) buff;
-+				buff += 4;
-+			}
-+		}
-+		if (len & 2) {
-+			result += *(unsigned short *) buff;
-+			buff += 2;
-+		}
-+	}
-+	if (len & 1)
-+		result += *buff;
-+
-+	result = from64to16(result);
-+	if (odd)
-+		result = ((result >> 8) & 0xff) | ((result & 0xff) << 8);
-+
-+	return result;
-+}
--- 
-2.20.1
-
-
-
+Thanks
+Huang Shijie
