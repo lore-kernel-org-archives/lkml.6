@@ -6,80 +6,79 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F014DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 03:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7022AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 03:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA8C92146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 03:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412D5218FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 03:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbeL1DGr (ORCPT
+        id S1731217AbeL1DMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 22:06:47 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46253 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725792AbeL1DGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 22:06:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2018 19:06:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,407,1539673200"; 
-   d="scan'208";a="307158766"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Dec 2018 19:06:43 -0800
-Message-ID: <5C259485.2030809@intel.com>
-Date:   Fri, 28 Dec 2018 11:12:05 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, dgilbert@redhat.com
-CC:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com, quintela@redhat.com,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH v37 1/3] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-References: <1535333539-32420-1-git-send-email-wei.w.wang@intel.com> <1535333539-32420-2-git-send-email-wei.w.wang@intel.com> <49d706f7-a0ee-e571-7d02-bcadac5ce742@de.ibm.com>
-In-Reply-To: <49d706f7-a0ee-e571-7d02-bcadac5ce742@de.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 27 Dec 2018 22:12:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57762 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbeL1DMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 22:12:00 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8ACCB6D;
+        Fri, 28 Dec 2018 03:11:59 +0000 (UTC)
+Date:   Thu, 27 Dec 2018 19:11:58 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     will.deacon@arm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -mmotm] arm64: fix build for MAX_USER_VA_BITS
+Message-Id: <20181227191158.db19ed656f902629d203b58f@linux-foundation.org>
+In-Reply-To: <20181224210312.56539-1-cai@lca.pw>
+References: <20181224210312.56539-1-cai@lca.pw>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/27/2018 08:03 PM, Christian Borntraeger wrote:
-> On 27.08.2018 03:32, Wei Wang wrote:
->>   static int init_vqs(struct virtio_balloon *vb)
->>   {
->> -	struct virtqueue *vqs[3];
->> -	vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
->> -	static const char * const names[] = { "inflate", "deflate", "stats" };
->> -	int err, nvqs;
->> +	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
->> +	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
->> +	const char *names[VIRTIO_BALLOON_VQ_MAX];
->> +	int err;
->>
->>   	/*
->> -	 * We expect two virtqueues: inflate and deflate, and
->> -	 * optionally stat.
->> +	 * Inflateq and deflateq are used unconditionally. The names[]
->> +	 * will be NULL if the related feature is not enabled, which will
->> +	 * cause no allocation for the corresponding virtqueue in find_vqs.
->>   	 */
-> This might be true for virtio-pci, but it is not for virtio-ccw.
+On Mon, 24 Dec 2018 16:03:12 -0500 Qian Cai <cai@lca.pw> wrote:
 
-Hi Christian,
+> Some code in 9b31cf493ff was lost during merging into the -mmotm tree
+> for some reasons,
+> 
+> In file included from ./arch/arm64/include/asm/processor.h:46,
+>                  from ./include/linux/rcupdate.h:43,
+>                  from ./include/linux/rculist.h:11,
+>                  from ./include/linux/pid.h:5,
+>                  from ./include/linux/sched.h:14,
+> 		 from arch/arm64/kernel/asm-offsets.c:22:
+> ./arch/arm64/include/asm/pgtable-hwdef.h:83:30: error:
+> 'MAX_USER_VA_BITS' undeclared here (not in a function); did you mean
+> 'MAX_USER_PRIO'?
+>  #define PTRS_PER_PGD  (1 << (MAX_USER_VA_BITS - PGDIR_SHIFT))
+>                               ^~~~~~~~~~~~~~~~
+> ./arch/arm64/include/asm/pgtable.h:442:26: note: in expansion of macro
+> 'PTRS_PER_PGD'
+>  extern pgd_t init_pg_dir[PTRS_PER_PGD];
+>
+> ...
+>
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -67,6 +67,12 @@
+>  #define KERNEL_START      _text
+>  #define KERNEL_END        _end
+>  
+> +#ifdef CONFIG_ARM64_USER_VA_BITS_52
+> +#define MAX_USER_VA_BITS	52
+> +#else
+> +#define MAX_USER_VA_BITS	VA_BITS
+> +#endif
+> +
+>  /*
+>   * Generic and tag-based KASAN require 1/8th and 1/16th of the kernel virtual
+>   * address space for the shadow region respectively. They can bloat the stack
 
+hm, that was presumably me getting lost in a maze of rejects.  It seems
+OK now.
 
-Please try the fix patches: https://lkml.org/lkml/2018/12/27/336
-
-Best,
-Wei
