@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3334AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC97C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0D7218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5062E2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 01:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730974AbeL1BHH (ORCPT
+        id S1727789AbeL1BM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 20:07:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44850 "EHLO mx1.redhat.com"
+        Thu, 27 Dec 2018 20:12:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49148 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbeL1BHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 20:07:04 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1727207AbeL1BMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 20:12:55 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 476F63C54;
-        Fri, 28 Dec 2018 01:07:04 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B7987AEAB;
+        Fri, 28 Dec 2018 01:12:55 +0000 (UTC)
 Received: from dhcp-128-65.nay.redhat.com (ovpn-12-71.pek2.redhat.com [10.72.12.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2C955C22B;
-        Fri, 28 Dec 2018 01:06:59 +0000 (UTC)
-Date:   Fri, 28 Dec 2018 09:06:56 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3740D19742;
+        Fri, 28 Dec 2018 01:12:50 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 09:12:47 +0800
 From:   Dave Young <dyoung@redhat.com>
 To:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org
 Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
@@ -37,84 +37,79 @@ Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] x86/kexec: fix a kexec_file_load failure
-Message-ID: <20181228010656.GA9904@dhcp-128-65.nay.redhat.com>
-References: <20181227050652.GA2960@dhcp-128-65.nay.redhat.com>
+Subject: [PATCH V2] x86/kexec: fix a kexec_file_load failure
+Message-ID: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181227050652.GA2960@dhcp-128-65.nay.redhat.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 28 Dec 2018 01:07:04 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 28 Dec 2018 01:12:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/27/18 at 01:06pm, Dave Young wrote:
-> The code cleanup mentioned in Fixes tag changed the behavior of
-> kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
-> allocate free memory only when kbuf.mem is initialized as zero.
-> 
-> But in x86 kexec_file_load implementation there are a few places
-> the kbuf.mem is reused like below:
->   /* kbuf initialized, kbuf.mem = 0 */
->   ...
->   kexec_add_buffer()
->   ...
->   kexec_add_buffer()
-> 
->   The second kexec_add_buffer will reuse previous kbuf but not
->   reinitialize the kbuf.mem.
-> 
-> Thus kexec_file_load failed because the sanity check failed.
-> 
-> So explictily reset mem = 0 to fix the issue.
-> 
-> Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> Cc: <stable@vger.kernel.org>
-> ---
->  arch/x86/kernel/crash.c           | 1 +
->  arch/x86/kernel/kexec-bzimage64.c | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index f631a3f15587..37147509d2c8 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
->  
->  	kbuf.memsz = kbuf.bufsz;
->  	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
-> +	kbuf.mem = 0;
+The code cleanup mentioned in Fixes tag changed the behavior of
+kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
+allocate free memory only when kbuf.mem is initialized as zero.
 
-Self NAK, will resend with KEXEC_BUF_MEM_UNKNOWN instead of "0"
+But in x86 kexec_file_load implementation there are a few places
+the kbuf.mem is reused like below:
+  /* kbuf initialized, kbuf.mem = 0 */
+  ...
+  kexec_add_buffer()
+  ...
+  kexec_add_buffer()
 
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret) {
->  		vfree((void *)image->arch.elf_headers);
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 278cd07228dd..558204bdf412 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	kbuf.memsz = PAGE_ALIGN(header->init_size);
->  	kbuf.buf_align = header->kernel_alignment;
->  	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
-> +	kbuf.mem = 0;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret)
->  		goto out_free_params;
-> @@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  		kbuf.bufsz = kbuf.memsz = initrd_len;
->  		kbuf.buf_align = PAGE_SIZE;
->  		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
-> +		kbuf.mem = 0;
->  		ret = kexec_add_buffer(&kbuf);
->  		if (ret)
->  			goto out_free_params;
-> -- 
-> 2.17.0
-> 
+  The second kexec_add_buffer will reuse previous kbuf but not
+  reinitialize the kbuf.mem.
+
+Thus kexec_file_load failed because the sanity check failed.
+
+So explictily reset kbuf.mem to fix the issue.
+
+Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Cc: <stable@vger.kernel.org>
+---
+V1 -> V2: use KEXEC_BUF_MEM_UNKNOWN in code.
+ arch/x86/kernel/crash.c           | 1 +
+ arch/x86/kernel/kexec-bzimage64.c | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index f631a3f15587..6b7890c7889b 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
+ 
+ 	kbuf.memsz = kbuf.bufsz;
+ 	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
++	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret) {
+ 		vfree((void *)image->arch.elf_headers);
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 278cd07228dd..0d5efa34f359 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 	kbuf.memsz = PAGE_ALIGN(header->init_size);
+ 	kbuf.buf_align = header->kernel_alignment;
+ 	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
++	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret)
+ 		goto out_free_params;
+@@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 		kbuf.bufsz = kbuf.memsz = initrd_len;
+ 		kbuf.buf_align = PAGE_SIZE;
+ 		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
++		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 		ret = kexec_add_buffer(&kbuf);
+ 		if (ret)
+ 			goto out_free_params;
+-- 
+2.17.0
+
