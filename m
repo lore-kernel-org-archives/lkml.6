@@ -7,52 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5702CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B398C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E61218FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28DD22148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999326;
-	bh=vPBPvjgH1t7ww02oDRj2K7FOl6nIFeFORM3N0IZ3BQo=;
+	s=default; t=1545999331;
+	bh=yI0MqnuWgBm4DRSxQ7CUx+PxBvmsb5JnRpnqpvXjh9Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kc4Oo+IaXn3+KYXPNnOJu6zIQzpcuAUaUJXg/fcT553/qERbogPOqcUA+IP2ET/Q7
-	 rvFxh8eVQKbrYnygUPGOGigyLAKrWhepVzShRsEcwcGjjROIDCq1Y8LuujngIQYnee
-	 UOgVGBSlnBSvfJjxORUX8QMznvwD8FTv3GmB2mio=
+	b=u5ZllIMHOCJy5fOzVcUxpT+sKRR3aOYHW+bj8zYnncn5lUy0jyQRIO+gHVZfke2Ez
+	 IhrUoQbHEUMxdrge41U/E+3f5cGOooym9lAfZIEFmg9guGZUHeDDU/JZfxSH//IAG8
+	 cTKB4HafadpzfiMSIWG90sIQrEo+oVGwnxb1To+s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbeL1MPZ (ORCPT
+        id S1728687AbeL1MPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732244AbeL1MPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:22 -0500
+        id S1732244AbeL1MP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 915EA2184B;
-        Fri, 28 Dec 2018 12:15:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB371218F0;
+        Fri, 28 Dec 2018 12:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999321;
-        bh=vPBPvjgH1t7ww02oDRj2K7FOl6nIFeFORM3N0IZ3BQo=;
+        s=default; t=1545999326;
+        bh=yI0MqnuWgBm4DRSxQ7CUx+PxBvmsb5JnRpnqpvXjh9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OtN+PaXEpryp8fZnCeHvhpy4MzTQIaPxoG5NvuLSlYAWfUYefO1vadMObJfrN/rSh
-         ujomqfcmx5oO+GMMQH6Oo5xwWIRzQGfcqzWNypNECjCxoJbKC6xfv/n5G2JHLWSiB9
-         hJONuBrE2A6gp5afayyL8oIvaEtHZk4CIzBlqMio=
+        b=Sf+UMwpbeDew9iAA2Ug/cV6TIbjTPMOob67iVhS49BobTehIheS188Guy08myBSNJ
+         qPa5xFlitXfUdJryvviaxm2ZfS4uY/IxDXYvP8NWFXPm6bkGdqXMFKPG87KS2Pwwgi
+         17qOHQs49TmMKkdDh9by6iZssYV4mPRPdydBuNsk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 43/46] mm: dont miss the last page because of round-off error
-Date:   Fri, 28 Dec 2018 12:52:37 +0100
-Message-Id: <20181228113127.485380863@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Delalande <colona@arista.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.19 45/46] proc/sysctl: dont return ENOMEM on lookup when a table is unregistering
+Date:   Fri, 28 Dec 2018 12:52:39 +0100
+Message-Id: <20181228113127.606449021@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -71,79 +65,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Gushchin <guro@fb.com>
+From: Ivan Delalande <colona@arista.com>
 
-commit 68600f623d69da428c6163275f97ca126e1a8ec5 upstream.
+commit ea5751ccd665a2fd1b24f9af81f6167f0718c5f6 upstream.
 
-I've noticed, that dying memory cgroups are often pinned in memory by a
-single pagecache page.  Even under moderate memory pressure they sometimes
-stayed in such state for a long time.  That looked strange.
+proc_sys_lookup can fail with ENOMEM instead of ENOENT when the
+corresponding sysctl table is being unregistered. In our case we see
+this upon opening /proc/sys/net/*/conf files while network interfaces
+are being deleted, which confuses our configuration daemon.
 
-My investigation showed that the problem is caused by applying the LRU
-pressure balancing math:
+The problem was successfully reproduced and this fix tested on v4.9.122
+and v4.20-rc6.
 
-  scan = div64_u64(scan * fraction[lru], denominator),
+v2: return ERR_PTRs in all cases when proc_sys_make_inode fails instead
+of mixing them with NULL. Thanks Al Viro for the feedback.
 
-where
-
-  denominator = fraction[anon] + fraction[file] + 1.
-
-Because fraction[lru] is always less than denominator, if the initial scan
-size is 1, the result is always 0.
-
-This means the last page is not scanned and has
-no chances to be reclaimed.
-
-Fix this by rounding up the result of the division.
-
-In practice this change significantly improves the speed of dying cgroups
-reclaim.
-
-[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
-  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
-Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: ace0c791e6c3 ("proc/sysctl: Don't grab i_lock under sysctl_lock.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ivan Delalande <colona@arista.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/math64.h |    3 +++
- mm/vmscan.c            |    6 ++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ fs/proc/proc_sysctl.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -281,4 +281,7 @@ static inline u64 mul_u64_u32_div(u64 a,
- }
- #endif /* mul_u64_u32_div */
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -464,7 +464,7 @@ static struct inode *proc_sys_make_inode
  
-+#define DIV64_U64_ROUND_UP(ll, d)	\
-+	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
-+
- #endif /* _LINUX_MATH64_H */
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2456,9 +2456,11 @@ out:
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
-+			 * Make sure we don't miss the last page
-+			 * because of a round-off error.
- 			 */
--			scan = div64_u64(scan * fraction[file],
--					 denominator);
-+			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+						  denominator);
- 			break;
- 		case SCAN_FILE:
- 		case SCAN_ANON:
+ 	inode = new_inode(sb);
+ 	if (!inode)
+-		goto out;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	inode->i_ino = get_next_ino();
+ 
+@@ -474,8 +474,7 @@ static struct inode *proc_sys_make_inode
+ 	if (unlikely(head->unregistering)) {
+ 		spin_unlock(&sysctl_lock);
+ 		iput(inode);
+-		inode = NULL;
+-		goto out;
++		return ERR_PTR(-ENOENT);
+ 	}
+ 	ei->sysctl = head;
+ 	ei->sysctl_entry = table;
+@@ -500,7 +499,6 @@ static struct inode *proc_sys_make_inode
+ 	if (root->set_ownership)
+ 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
+ 
+-out:
+ 	return inode;
+ }
+ 
+@@ -549,10 +547,11 @@ static struct dentry *proc_sys_lookup(st
+ 			goto out;
+ 	}
+ 
+-	err = ERR_PTR(-ENOMEM);
+ 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
+-	if (!inode)
++	if (IS_ERR(inode)) {
++		err = ERR_CAST(inode);
+ 		goto out;
++	}
+ 
+ 	d_set_d_op(dentry, &proc_sys_dentry_operations);
+ 	err = d_splice_alias(inode, dentry);
+@@ -685,7 +684,7 @@ static bool proc_sys_fill_cache(struct f
+ 		if (d_in_lookup(child)) {
+ 			struct dentry *res;
+ 			inode = proc_sys_make_inode(dir->d_sb, head, table);
+-			if (!inode) {
++			if (IS_ERR(inode)) {
+ 				d_lookup_done(child);
+ 				dput(child);
+ 				return false;
 
 
