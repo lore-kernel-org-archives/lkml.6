@@ -2,227 +2,58 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1754C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FD5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3A6217F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546034649;
-	bh=ggPQ1zTRQ9s2gojG9VXwRRi1HgyP8NA/k0HFwVgT6eg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mXVUF28KFCZyBhb6bF5vTjuP5wgO5u1kvkKMvPGtRAq5CS9Ga6+XOEp/mpM3nkWMc
-	 R3WNAdsE8KxwSbb6WgsBTooUK+qSJ39K9c9o/lQCCd+tiSIsmfb6itroMU3XweSFDc
-	 8icB9/AxUBz5zoZotDV8AnNRIFsGHde9mxv4J6D8=
+	by mail.kernel.org (Postfix) with ESMTP id 936C5217F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 22:06:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="vjWlAEwp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeL1WEI (ORCPT
+        id S1726875AbeL1WGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 17:04:08 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50190 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeL1WEI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 17:04:08 -0500
-Received: by mail-it1-f196.google.com with SMTP id z7so30053414iti.0;
-        Fri, 28 Dec 2018 14:04:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=notmpdDYWSi2JCcn64Q/8o1c94650SqabPpHm6d37c8=;
-        b=OVNb/EXOqvZHCcMkzJsJYaimYbQGg/QFzRZPtyUtgn8EhN9ZYxk9tngzFxh9WxzXyO
-         Sy1sMKYYHE0C8JjQTABgw9y94rs5/4opjMFO6IHRiNHj9WcYqoaAQ9R1qUSefuw3sdn/
-         oazyGJGpKhMC5anEwdk2vHPuzw16NZjYPL7bSnN1l7WeRRHgZliRrvdAWrKh1z/dfaEu
-         CySGWtsZ8gsZ0LKu2/XC6ijrc6dF1wljydOSjrnHwsJ5xioH+ygiTrJe0z766TeQnCdn
-         VHCDNeRGJoqTU5M22MD7SMYWrx8p4oByfh/ODkjxFt4G1hnBTT7x4x9pUbOrfe4XXaKn
-         5r8w==
-X-Gm-Message-State: AA+aEWZ8p5qZ8x9Ip7rOB8FJLUyY6MTsRX1ON/HVfUXIsfpRwCkKG3vQ
-        b7H+QnEdCQo9kwdjyLfiMA==
-X-Google-Smtp-Source: AFSGD/V3XBAlTTF7/zPGtpLedkoM2pu2PX66XShQPXNsmTTIz+801eskBVfox6c+vZfvl0+8sdQlFQ==
-X-Received: by 2002:a24:ed4f:: with SMTP id r76mr17599014ith.17.1546034646772;
-        Fri, 28 Dec 2018 14:04:06 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id b188sm16853950itc.9.2018.12.28.14.04.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 14:04:06 -0800 (PST)
-Date:   Fri, 28 Dec 2018 16:04:05 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Erin Lo <erin.lo@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding document
-Message-ID: <20181228220405.GA8739@bogus>
-References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
- <1545984581-25843-6-git-send-email-erin.lo@mediatek.com>
+        Fri, 28 Dec 2018 17:06:06 -0500
+Received: from cock.li ([185.100.85.212]:58450 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726066AbeL1WGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 17:06:04 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545984581-25843-6-git-send-email-erin.lo@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546034762; bh=xDSDoUJ7hWSTVEex+UDCgjOJuLYf1ytrudVZdwxh3h0=;
+        h=Date:From:To:Subject:From;
+        b=vjWlAEwp2G0EEG3/NA+M2jXtEPUXpOVNjiYtpu1jB5hjjNW6Shf/BBj0YeSjOYlEx
+         kXUdDu83O+PMFsW/RoRMmLMBNjWR05Up+l+UADZ9L1gNpeXeKBdvBRjSD0wVMxWWo4
+         kHpHdt+5qmYdRLhsndiyK0mLjY2eY2Mv2CjN4qkVi4lW9vW+seouFYUtQKt/xBbcxn
+         DySGY2zHbcwJgExfPXmB5F9uerO+hxQWJQh72r6HWhJLGOp05JYjKoLY1EUDug7o8E
+         5gOTbV8V8sR42R4KmdM3vHWaKEu67ZXkynMSa87F1YfBIFDwxlP/S+lafQkxP9LiGl
+         OLYhB4ljOh7TA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Dec 2018 22:06:01 +0000
+From:   vnsndalce@memeware.net
+To:     linux-kernel@vger.kernel.org
+Subject: A license is revocable absent an attached interest. He who pays
+ nothing, receives nothing.
+Message-ID: <55fed282973fb58f09b1578543f690f7@memeware.net>
+X-Sender: vnsndalce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
-> From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> 
-> The commit adds mt8183 compatible node in binding document.
-> 
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> new file mode 100644
-> index 0000000..7b5285e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> @@ -0,0 +1,110 @@
-> +* Mediatek MT8183 Pin Controller
-> +
-> +The Mediatek's Pin controller is used to control SoC pins.
-> +
-> +Required properties:
-> +- compatible: value should be one of the following.
-> +	"mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> +  binding is used, the amount of cells must be specified as 2. See the below
-> +  mentioned gpio binding representation for description of particular cells.
-> +- gpio-ranges : gpio valid number range.
-> +
-> +	Eg: <&pio 6 0>
-> +	<[phandle of the gpio controller node]
-> +	[line number within the gpio controller]
-> +	[flags]>
-> +
-> +	Values for gpio specifier:
-> +	- Line number: is a value between 0 to 202.
-> +	- Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> +            Only the following flags are supported:
-> +            0 - GPIO_ACTIVE_HIGH
-> +            1 - GPIO_ACTIVE_LOW
-> +
-> +Optional properties:
-> +- reg: physicall address base for gpio base registers.
+A license is revocable absent an attached interest.
 
-s/physicall/physical/
+He who pays nothing, receives nothing.
 
-reg should never be optional. 
+You paid nothing to Owner X.
 
-Need to say how many reg entries.
+Owner X may rescind the license he has granted to you.
 
-> +- reg-names: gpio base registers name.
+A license is a temporary grant, not a transfer.
 
-Need to say what are the names. However, I don't find the names in the 
-example all that useful, so I'd just drop it.
-
-> +- interrupt-controller: Marks the device node as an interrupt controller
-> +- #interrupt-cells: Should be two.
-> +- interrupts : The interrupt outputs from the controller.
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices.
-> +
-> +Subnode format
-> +A pinctrl node should contain at least one subnodes representing the
-> +pinctrl groups available on the machine. Each subnode will list the
-> +pins it needs, and how they should be configured, with regard to muxer
-> +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> +
-> +    node {
-> +	pinmux = <PIN_NUMBER_PINMUX>;
-> +	GENERIC_PINCONFIG;
-> +    };
-> +
-> +Required properties:
-> +- pinmux: integer array, represents gpio pin number and mux setting.
-> +    Supported pin number and mux varies for different SoCs, and are defined
-> +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> +
-> +Optional properties:
-> +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> +
-> +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> +    it support arguments for those special pins.
-> +
-> +    When config drive-strength, it can support some arguments, such as
-> +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> +
-> +Examples:
-> +
-> +#include "mt8183-pinfunc.h"
-> +
-> +...
-> +{
-> +	pio: pinctrl@10005000 {
-> +		compatible = "mediatek,mt8183-pinctrl";
-> +		reg = <0 0x10005000 0 0x1000>,
-> +		      <0 0x11F20000 0 0x1000>,
-> +		      <0 0x11E80000 0 0x1000>,
-> +		      <0 0x11E70000 0 0x1000>,
-> +		      <0 0x11E90000 0 0x1000>,
-> +		      <0 0x11D30000 0 0x1000>,
-> +		      <0 0x11D20000 0 0x1000>,
-> +		      <0 0x11C50000 0 0x1000>,
-> +		      <0 0x11F30000 0 0x1000>;
-> +		reg-names = "iocfg0", "iocfg1", "iocfg2",
-> +			    "iocfg3", "iocfg4", "iocfg5",
-> +			    "iocfg6", "iocfg7", "iocfg8";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-ranges = <&pio 0 0 192>;
-> +		interrupt-controller;
-> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-parent = <&gic>;
-> +		#interrupt-cells = <2>;
-> +
-> +		i2c0_pins_a: i2c0@0 {
-
-unit-address without reg property is not valid.
-
-> +			pins1 {
-> +				pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> +					 <PINMUX_GPIO49__FUNC_SDA5>;
-> +				mediatek,pull-up-adv = <11>;
-> +			};
-> +		};
-> +
-> +		i2c1_pins_a: i2c1@0 {
-> +			pins {
-> +				pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> +					 <PINMUX_GPIO51__FUNC_SDA3>;
-> +				mediatek,pull-down-adv = <10>;
-> +			};
-> +		};
-> +		...
-> +	};
-> +};
-> -- 
-> 1.9.1
-> 
