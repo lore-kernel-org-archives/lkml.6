@@ -2,56 +2,55 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8204CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAEBC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4968720675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50D12070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999728;
-	bh=+uoofZKX5yY4/5+wmwT8yBy2ajUlZQw6kcy+bSFjU4w=;
+	s=default; t=1545999733;
+	bh=8Q58KOTrwejcK4f0wPl1jkmNQzh8FhrioIY6JMd6LDc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RcjKVqZdBQwPXgg5qTjci5TqWPZR4twGunFqEZSYRICyV5ObEt9C+KB5ETa4rvhMv
-	 2Bkofeyy+Gbzni84hTEk8zl2mZzbHEQFUBq7W21dT4q2VL//7cqhlfn75KQewdo+rW
-	 siFdoPk1X2iS1J+CB89AmhAuidy30Fb4Gl5rjV4M=
+	b=IHIxI6J+NqgZqxv79JM30yfEkC2XzSkBeR5W47yYpwFQHTRTMRABbi6qAg8fXoThr
+	 jMQaXel7dqjDzxUzUPA7NF4ijvY2RcHAVeSOg2XtiSDk/4Cvmf67cMFeX1RoHgG0eP
+	 20Hs67pCZdyH5o2qAqCL3YEJAzk9dVpb9Zs8nb0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732489AbeL1MPj (ORCPT
+        id S1732460AbeL1MPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34626 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732455AbeL1MPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:34 -0500
+        id S1732442AbeL1MP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 531C92184B;
-        Fri, 28 Dec 2018 12:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D74218FE;
+        Fri, 28 Dec 2018 12:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999333;
-        bh=+uoofZKX5yY4/5+wmwT8yBy2ajUlZQw6kcy+bSFjU4w=;
+        s=default; t=1545999328;
+        bh=8Q58KOTrwejcK4f0wPl1jkmNQzh8FhrioIY6JMd6LDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WylIJFo3Dn4YCKVa7IxnOidmkmOQsnVteV7TAE0TMgIiQZ0fPWSXIR6WT67zxO9+9
-         rfqcytMMoFg8E54o0RaGLOpIdg+GaB7RqxS6fajyWIhUj31M6SevifAWplzGKkJZlM
-         KcvRshS9ca0dcXXaKCR0JvRvyn/X5qnAKHAfKuTY=
+        b=IVP4Ayezitm9OrUC3f83n7EcxYzkYpLRjCqyI3yG8EOBISiLLVSEEuBCy3kf3ekXS
+         5qPglIoe3YXY5TSMsM6AXkjdounwmoVoR8YvJaGJpmuEq1W5HGY+/QihfP9XTeRx/5
+         leFKuxGb6G4ayA8651+s6seOsJ8w/qw2U5rwHkQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 01/36] block: break discard submissions into the user defined size
-Date:   Fri, 28 Dec 2018 12:52:17 +0100
-Message-Id: <20181228113126.631472098@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.19 46/46] drm/ioctl: Fix Spectre v1 vulnerabilities
+Date:   Fri, 28 Dec 2018 12:52:40 +0100
+Message-Id: <20181228113127.679335146@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
-References: <20181228113126.526729877@linuxfoundation.org>
+In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
+References: <20181228113124.971620049@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,49 +62,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit af097f5d199e2aa3ab3ef777f0716e487b8f7b08 ]
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Don't build discards bigger than what the user asked for, if the
-user decided to limit the size by writing to 'discard_max_bytes'.
+commit 505b5240329b922f21f91d5b5d1e535c805eca6d upstream.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+nr is indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
+
+This issue was detected with the help of Smatch:
+
+drivers/gpu/drm/drm_ioctl.c:805 drm_ioctl() warn: potential spectre issue 'dev->driver->ioctls' [r]
+drivers/gpu/drm/drm_ioctl.c:810 drm_ioctl() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
+drivers/gpu/drm/drm_ioctl.c:892 drm_ioctl_flags() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
+
+Fix this by sanitizing nr before using it to index dev->driver->ioctls
+and drm_ioctls.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181220000015.GA18973@embeddedor
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/blk-lib.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_ioctl.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 2bc544ce3d2e..53a45663e688 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -59,10 +59,16 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 		unsigned int req_sects;
- 		sector_t end_sect, tmp;
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -37,6 +37,7 @@
  
--		/* Make sure bi_size doesn't overflow */
--		req_sects = min_t(sector_t, nr_sects, UINT_MAX >> 9);
-+		/*
-+		 * Issue in chunks of the user defined max discard setting,
-+		 * ensuring that bi_size doesn't overflow
-+		 */
-+		req_sects = min_t(sector_t, nr_sects,
-+					q->limits.max_discard_sectors);
-+		if (req_sects > UINT_MAX >> 9)
-+			req_sects = UINT_MAX >> 9;
+ #include <linux/pci.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
  
--		/**
-+		/*
- 		 * If splitting a request, and the next starting sector would be
- 		 * misaligned, stop the discard at the previous aligned sector.
- 		 */
--- 
-2.19.1
-
+ /**
+  * DOC: getunique and setversion story
+@@ -794,13 +795,17 @@ long drm_ioctl(struct file *filp,
+ 
+ 	if (is_driver_ioctl) {
+ 		/* driver ioctl */
+-		if (nr - DRM_COMMAND_BASE >= dev->driver->num_ioctls)
++		unsigned int index = nr - DRM_COMMAND_BASE;
++
++		if (index >= dev->driver->num_ioctls)
+ 			goto err_i1;
+-		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
++		index = array_index_nospec(index, dev->driver->num_ioctls);
++		ioctl = &dev->driver->ioctls[index];
+ 	} else {
+ 		/* core ioctl */
+ 		if (nr >= DRM_CORE_IOCTL_COUNT)
+ 			goto err_i1;
++		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 		ioctl = &drm_ioctls[nr];
+ 	}
+ 
+@@ -882,6 +887,7 @@ bool drm_ioctl_flags(unsigned int nr, un
+ 
+ 	if (nr >= DRM_CORE_IOCTL_COUNT)
+ 		return false;
++	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 
+ 	*flags = drm_ioctls[nr].flags;
+ 	return true;
 
 
