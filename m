@@ -6,169 +6,70 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ED3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8617C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B3D20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 04:58:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F0C821919
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 05:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbeL1E6A (ORCPT
+        id S1726550AbeL1FBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 23:58:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728174AbeL1E57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 23:57:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 65D6FAC9C;
-        Fri, 28 Dec 2018 04:57:56 +0000 (UTC)
-Subject: Re: [PATCH v5 6/6] net: lorawan: List LORAWAN in menuconfig
-To:     Alexander Aring <aring@mojatatu.com>,
-        Xue Liu <liuxuenetmail@gmail.com>
-Cc:     Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Jiri Pirko <jiri@resnulli.us>
-References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
- <20181216101858.9585-7-starnight@g.ncu.edu.tw>
- <CAJuUDwtS3c7NhcNqijyFNtZeupO2HLQ8ZuMA1a-azEQL5yHjng@mail.gmail.com>
- <8bfdccbf-fb47-daa5-fbd0-ed16a3d6d334@suse.de>
- <CAJuUDwsypFMEbTXZO+NwQ_FnD1wsO3ZRc3dthZphFGJ-u0n_=Q@mail.gmail.com>
- <20181224153205.ycr2zdrjbyklulfh@x220t>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <57bead63-bc4e-4dfe-57a9-9875600f5e37@suse.de>
-Date:   Fri, 28 Dec 2018 05:57:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 28 Dec 2018 00:01:30 -0500
+Received: from mx4.mailmox.it ([78.47.95.75]:42550 "EHLO mx4.mailmox.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbeL1FBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 00:01:30 -0500
+Received: from mx7.mailmox.it (mx7.mailmox.it [217.146.207.17])
+        by mx4.mailmox.it (Postfix) with ESMTP id 25C635413D
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 06:01:28 +0100 (CET)
+Received: from mx8.mailmox.it (mx8.mailmox.it [217.146.207.18])
+        by mx7.mailmox.it (Postfix) with ESMTPS id 3404D61E09
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 06:01:27 +0100 (CET)
+Received: from mx6.mailmox.it (mx6.mailmox.it [217.146.207.33])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx8.mailmox.it (Postfix) with ESMTPS id 30EF365237
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 06:01:26 +0100 (CET)
+Received: from lx.redracingparts.com (red.defende.it [217.146.207.57])
+        by mx6.mailmox.it (Postfix) with ESMTPSA id 262B021467
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 06:01:26 +0100 (CET)
+Date:   Fri, 28 Dec 2018 06:01:26 +0100
+To:     linux-kernel@vger.kernel.org
+From:   "RED Racing Parts (Info)" <newsletter@redracingparts.com>
+Reply-To: "RED Racing Parts (Info)" <red@redracingparts.com>
+Subject: New RED Racing Parts: 18% / 20% off and free shipping
+Message-ID: <eDyWjHyNVNs7PC9ZXTD32Rsg0sxQ5xlGJhInVpCuw@lx.redracingparts.com>
+X-Mailer: PHPMailer 6.0.6 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-In-Reply-To: <20181224153205.ycr2zdrjbyklulfh@x220t>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexander and Xue Liu,
 
-Am 24.12.18 um 16:32 schrieb Alexander Aring:
-> On Tue, Dec 18, 2018 at 02:50:58PM +0100, Xue Liu wrote:
->> On Mon, 17 Dec 2018 at 15:19, Andreas Färber <afaerber@suse.de> wrote:
->>> Am 17.12.18 um 09:50 schrieb Xue Liu:
->>>> I have a question about the architecture of your module. AFAIK LoRaWAN
->>>> is already the MAC Layer above the LoRa technology. Why do you want to
->>>> make a new layer called "maclorawan" ?
->>>
->>> I had asked Jian-Hong to separate between his soft-MAC implementation
->>> and the common bits needed to drive hard-MAC implementations found on
->>> several of the hardware modules made available to me.
->>>
->> As a reference Linux 802.11 uses cfg80211 to talk with hard-MAC devices.
->> We may also use the name “cfglora” for hard-MAC implementation.
-> 
-> There exists also a cfg802154. :-)
-> 
-> Note that cfg80211 is also for providing a backwardscompatibility to the
-> wireless ioctl() interface.
-> 
-> In theory it's simple:
-> 
-> netlink API -> SoftMAC (macFOOBAR layer) -> cfgFOOBAR implementation -> driver layer
->             \-> HardMAC (driver layer) -> cfgFOOBAR implementation
+Dear Rider,
 
-So how does cfgFOOBAR relate to nlFOOBAR now? Given that we were told to
-use netlink and pointed to some nl802whatever, I am confused about two
-people now calling for cfg. We have an nllora stubbed in linux-lora.git,
-and I was expecting to see an nllorawan¹ either in this series or on
-top. If you're suggesting to rename them technology-neutral, then please
-say so clearly - otherwise it sounds to me like you didn't actually look
-at the staged code yet or didn't read our previous discussions and lead
-our contributors to reinvent things we already have...
+From the new RED Racing Parts you find spare parts and accessories for road / offroad motorbike and
+scooter.
+Stickers, ergal / titanium bolts, brake / clutch levers, brake pads, carbon fiber parts, racing
+coolers, clutches and more...
+Excellent quality!
 
-We really need to complete the layers from the ground up before we get
-lost in more nice-to-have upper layers: For LoRaWAN that means we need
-to have TX and RX working for LoRa _and_ FSK. sx1276 still has lots of
-hardcoded stuff from my own testing that needs to hook into nllora, and
-FSK exists only as ETH_P_FSK constant so far, with no concept for
-switching modes yet (which as mentioned in my presentation¹ needs to go
-via sleep mode, losing most register settings) nor any netlink support.
-Not all drivers need to be at the same implementation level, of course,
-but we need at least one that's far enough to validate such patches.
+Visit our website on 
+https://www.redracingparts.com .
 
-And seeing that I just found a major bug in sx1276 driver's TX path,
-apparently no one apart from me is testing that driver - sx128x and
-sx1301 were not yet complete enough to transmit, and due to the open
-socket address/protocol discussions none can receive yet, so as Jiri
-hinted, this LoRaWAN soft-MAC patch series can't have been
-runtime-tested against any staged driver at all!  => [RFC lora-next v5 6/6]
+Free shipping and 18% OFF (20% OFF paying with Bitcoin) for today only.
 
-Therefore I thought in our case some hard-MAC may be easier to validate
-LoRaWAN sockets (patch 1/6), to avoid a dependency on completing the MAC
-implementation first. For example, iM880, RF1276TS and 32001353 are pure
-LoRaWAN modules without raw LoRa support. (Whereas many others support
-both and I'm still looking for input on how to best deal with that -
-currently exposing them as LoRa devices for maximal flexibility.)
 
-Regards,
-Andreas
+RED Racing Parts Staff
 
-¹
-https://events.linuxfoundation.org/wp-content/uploads/2017/12/ELCE2018_LoRa_final_Andreas-Farber.pdf
-https://www.youtube.com/watch?v=Jjel65sZO9M
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+
+
+If you found this email useful, please forward it on to your friends.
+
+To unsubscribe our newsletters click here
+https://www.redracingparts.com/news/u.php?l=e&p=CVAidQZXnFCIHWM8B9U2linux-kernel@vger.kernel.org
+
+
