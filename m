@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2D0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12B620856
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4FA20856
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 16:18:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Os75tXHL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDEhwt9w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbeL1QSh (ORCPT
+        id S1733308AbeL1QSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 11:18:37 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45930 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730976AbeL1QSg (ORCPT
+        Fri, 28 Dec 2018 11:18:41 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40197 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbeL1QSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 11:18:36 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b20so14830918lfa.12;
-        Fri, 28 Dec 2018 08:18:34 -0800 (PST)
+        Fri, 28 Dec 2018 11:18:37 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v5so14830603lfe.7;
+        Fri, 28 Dec 2018 08:18:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wWKmTFS5ZShhZDX8uM7xr7EH6AMOt2sQtD7cbsV9khY=;
-        b=Os75tXHLQ5Woz/aXfzxThmOiOs4nVjsc6VY+x1tXvnexcMuzCINJ/1pUslGGI4kDj0
-         gy0+CS6BzZfwzQ4zW1FJPdu+W97jxanL5OINhESM5ys243LvLfv6OrXl9bkDYZ6pofPq
-         P1ZmHwHLn4Nv742qOKlz/kjCL1BlGgTnI7ixV6siXwD74dmnaL1yTSCQBv5bPZTntTJK
-         JD04Yl5+jGLC40naq1DQLFXlEEar1s+q6XiAbnDkmexg6WamP+wzvK0NIb0xCTLAEKaL
-         8B3Yyd1CWkZ8MJREGyYq8i94tvpJCPqRx7YrFQSdlMQR7WYbE7nb328iUwpcQ/D5XcMS
-         nhmA==
+        bh=c77j7aD/DmGjVf2ggTd+wLasZg/BuGwrkqKrYB9JbP8=;
+        b=cDEhwt9wG1QFCcJXIHxTwIV0NqOcdnAGoooCVKCfbtbqGquU3+OPDWK9iGyPVfa4nQ
+         eE/egRt++mHX7vR8tHB/vRBiCe7+vmmAKjEyr540SKQTuneujk7iOLrBdgVeC59koDeK
+         WWOdF790rAYmktb3S/7p3krU6yXyl569l/BuzSMqcEWjcWxihas14tbH1778ywnRaJT/
+         8QusYQYnYwebW26hKhUJnCLdaRiejRgMu3iN0sFoyhRUdCSfppc9Nf3KZihfEOOvvDlX
+         iEAgL6hu24mNLIhZOIr+KN+63IJwx4WKZta7bu8tU+PnK1HO73oGSMHTjF9KgrNFAeZZ
+         aJrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wWKmTFS5ZShhZDX8uM7xr7EH6AMOt2sQtD7cbsV9khY=;
-        b=qPFmSwO04/TmCM5G03adOUecM5EXzVE16K1qOYi7m+g5DkS3CLSjfXb+wH7gaZHYL6
-         YYNoFru5Q/a8niGfOAW2aMEDpkFYH9Rp9wp8ycknksJ3SkDN1jIuuIqViX/MKjmrEk4B
-         mVPiYgUDUts/+yMTCwUMzdgSbSxe8jj9vUa6M5i8gZAI+z1qBgE8EqWGqFUzTEvMN1k1
-         nFQDEkKft0XplzODcMtfsKzhAC5u2a7M9H7jLCzRFFljeRgJ/yxypxysoS4PXwMr9Ci0
-         1p0pEnR1V9Tjjjry60qAqqee2z6vMtFel8fJIt5hY0h+fq+J6HfnsrXVWbXI+Z/GQqp7
-         NXwA==
-X-Gm-Message-State: AA+aEWbGSOaD2u+TRHdn2B790wKmVO2pvvffGvp1JUgDHZzMj6u+wKDQ
-        EcDh9Dbf3LAzmws5AvngGoU=
-X-Google-Smtp-Source: AFSGD/XkKiOKri+TsOKI0Wu9s9m0XTlRujFeB/+xuDFxCjNCtdAGEH/qpP4bfLVKWukuh3FLijjRxA==
-X-Received: by 2002:a19:e01e:: with SMTP id x30mr13629904lfg.89.1546013913934;
-        Fri, 28 Dec 2018 08:18:33 -0800 (PST)
+        bh=c77j7aD/DmGjVf2ggTd+wLasZg/BuGwrkqKrYB9JbP8=;
+        b=RAVF74Ab3GD//IEw1J0FABWYd2IpZJQiavF5sRNHlgil41m1VxgHF3VypvOE6sbNnk
+         BR6DgWLSrGYVaiTD5GxENuLold/KRUE2bP4LWQQ+r9SrEMjk9jxx2RF/53CVCduNCfTb
+         QN9vaG0vsVWzQRoxUx3iIIv+EgjNyGcSjh3mBVCyQJgDLlyiI11fvn4pjEH6CANvK0CU
+         x2WqTvAgcNlAzfGiAgO6PNlnwyXl4xLSw1aqDk0XwhwuHhvC45wWLGwqZfW6IFnnlOfc
+         nAZ5yKKKfsE5B3O02+L11wmGi8wud2r8NMuVSKbsB6HHMHVR85y8Rx6Uy+vMo8ja2daJ
+         eNWQ==
+X-Gm-Message-State: AA+aEWbh0lw8i5obW0KYZly4ftmXAyrNwOnlIEthP48YobasO1dXfbZ+
+        fn9qsoRR1E/iQSvhle21NrU=
+X-Google-Smtp-Source: AFSGD/UyE61l113Mwb8+mzsJNmZ65GwhtxiJUdpSg7Ea4PYhR1wdq6X8HVcfFPJdk/Z/hQ4tb3hoWQ==
+X-Received: by 2002:a19:a7c1:: with SMTP id q184mr13572469lfe.4.1546013915790;
+        Fri, 28 Dec 2018 08:18:35 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:7146:fd07:48ff:9665])
-        by smtp.googlemail.com with ESMTPSA id r4sm8136502lfe.60.2018.12.28.08.18.32
+        by smtp.googlemail.com with ESMTPSA id r4sm8136502lfe.60.2018.12.28.08.18.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 08:18:33 -0800 (PST)
+        Fri, 28 Dec 2018 08:18:35 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     krzk@kernel.org
 Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -63,9 +63,9 @@ Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         xc-racer2@live.ca, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] ARM: dts: s5pv210: galaxys: Remove hardcoded bootargs
-Date:   Fri, 28 Dec 2018 17:18:15 +0100
-Message-Id: <20181228161819.18931-3-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 3/6] ARM: dts: s5pv210: fascinate4g: Remove hardcoded bootargs
+Date:   Fri, 28 Dec 2018 17:18:16 +0100
+Message-Id: <20181228161819.18931-4-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
@@ -82,13 +82,13 @@ it's not needed anymore to hardcode bootargs.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- arch/arm/boot/dts/s5pv210-galaxys.dts | 7 -------
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts | 7 -------
  1 file changed, 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
-index 842276749717..cf161bbfbacf 100644
---- a/arch/arm/boot/dts/s5pv210-galaxys.dts
-+++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
+diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+index ccf761b1babf..07a8d9bbe5b8 100644
+--- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
++++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
 @@ -11,13 +11,6 @@
  
  	chosen {
@@ -99,10 +99,10 @@ index 842276749717..cf161bbfbacf 100644
 -		 * Let's hardocde bootargs for now, till u-boot port is finished,
 -		 * with which it should be easier.
 -		 */
--		bootargs = "root=/dev/mmcblk2p1 rw rootwait ignore_loglevel earlyprintk";
+-		bootargs = "root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
  	};
  
- 	nand_pwrseq: nand-pwrseq {
+ 	gpio-keys {
 -- 
 2.17.1
 
