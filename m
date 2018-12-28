@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C20C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91083C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441EE2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A2C2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999771;
-	bh=ctj6Eh9IIsiuyk8qk+7IEznBK7ZT7RW7z9w67xP/25w=;
+	s=default; t=1545999780;
+	bh=4oqUtLU7B364TsOXgzyS3yYLlunzP8F/9UCPblMRSCM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ODMdRnsnzwv0Lz8S1TRJrcMSkLC+1cQ1Sw7oBUODIGunxVnA+h3jrEsnE/HLgGbVi
-	 cQZuuBIWhVJnVg8FE56dj3/LFuGa222chPpW860blmZ2HZL3+Q0NtTaZukTERQfg2D
-	 bh7qq64kEiqlHmA05rePsPpLuyMBjs/1zVbikFLo=
+	b=TpCSPoo0qro2JzryJbqDPu7NcLzkEEDi0agl/AuLo3J9JHXuc1sShT1ZGfqQWmh9e
+	 WC2KGc2j7UANy54WPjKYkE8lDv7rbXTLT/riSqfkl/K0rCdNcbsMnADCAH+ImVxJP3
+	 WaYRUc7XnfbSr7Nnkpx55ouFweUBIHUmvWK4Dqmk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731659AbeL1MWt (ORCPT
+        id S1731688AbeL1MW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34178 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:22:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731421AbeL1MPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:11 -0500
+        id S1728064AbeL1MPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5E6C2087F;
-        Fri, 28 Dec 2018 12:15:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA30D2087F;
+        Fri, 28 Dec 2018 12:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999310;
-        bh=ctj6Eh9IIsiuyk8qk+7IEznBK7ZT7RW7z9w67xP/25w=;
+        s=default; t=1545999305;
+        bh=4oqUtLU7B364TsOXgzyS3yYLlunzP8F/9UCPblMRSCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hzwLW5RYC5VMQ/U8s6XGKYojIsOmSm2PHFwvfw5IuxbyTU2qE8pVKH4x0dPDJBGQz
-         vN/tLMf99EtpyOvSvIhpirpVMlOYgcjm6vGAaYge6g9LqqSYEYS+Sp5PZjJfD6hSie
-         /jo0KmAhyj0bJ1t2ATktOCDAqa7mcaJDr32O2mgU=
+        b=stV3svwkqxHEnUCD0JKnISpY5iAFl+4OJY8fuXTbeikJQUfBPLvzuJJPeSM1YrWqe
+         +pi7qY2juXU/rGPUHEMe1GkBr/0Q/CppS+P9G6e+qI+hNHABmn7OMJpLkZJ8MfWyCU
+         N6h1GrqgblgB/UW77x718+B5oQd6DuNtf44JmJ80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
+        stable@vger.kernel.org, Tore Anderson <tore@fud.no>,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 09/46] USB: serial: option: add Fibocom NL668 series
-Date:   Fri, 28 Dec 2018 12:52:03 +0100
-Message-Id: <20181228113125.356932332@linuxfoundation.org>
+Subject: [PATCH 4.19 07/46] USB: serial: option: add HP lt4132
+Date:   Fri, 28 Dec 2018 12:52:01 +0100
+Message-Id: <20181228113125.261851691@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113124.971620049@linuxfoundation.org>
 References: <20181228113124.971620049@linuxfoundation.org>
@@ -65,61 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Tore Anderson <tore@fud.no>
 
-commit 30360224441ce89a98ed627861e735beb4010775 upstream.
+commit d57ec3c83b5153217a70b561d4fb6ed96f2f7a25 upstream.
 
-Added USB serial option driver support for Fibocom NL668 series cellular
-modules. Reserved USB endpoints 4, 5 and 6 for network + ADB interfaces.
+The HP lt4132 is a rebranded Huawei ME906s-158 LTE modem.
 
-usb-devices output (QMI mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+The interface with protocol 0x16 is "CDC ECM & NCM" according to the *.inf
+files included with the Windows driver. Attaching the option driver to it
+doesn't result in a /dev/ttyUSB* device being created, so I've excluded it.
+Note that it is also excluded for corresponding Huawei-branded devices, cf.
+commit d544db293a44 ("USB: support new huawei devices in option.c").
 
-usb-devices output (ECM mode)
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 17 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1508 ProdID=1001 Rev=03.18
-S:  Manufacturer=Nodecom NL668 Modem
-S:  Product=Nodecom NL668-CN Modem
-S:  SerialNumber=
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=06 Prot=16 Driver=(none)
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
+
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 3 Cfg#= 3 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+
+Signed-off-by: Tore Anderson <tore@fud.no>
+Cc: stable@vger.kernel.org
+[ johan: drop id defines ]
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/serial/option.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 --- a/drivers/usb/serial/option.c
 +++ b/drivers/usb/serial/option.c
-@@ -1949,6 +1949,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
-+	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
-+	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+@@ -1942,7 +1942,12 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD200, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+-	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },	/* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },	/* HP lt4132 (Huawei ME906s-158) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
  	{ } /* Terminating entry */
  };
  MODULE_DEVICE_TABLE(usb, option_ids);
