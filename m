@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E3CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098E5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06F520874
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C53C620874
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 17:18:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="laPcJl+e"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="BvPE8jGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387516AbeL1RPo (ORCPT
+        id S2387503AbeL1RSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 12:15:44 -0500
-Received: from cock.li ([185.100.85.212]:37538 "EHLO cock.li"
+        Fri, 28 Dec 2018 12:18:05 -0500
+Received: from cock.li ([185.100.85.212]:40480 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729154AbeL1RPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 12:15:44 -0500
+        id S1726830AbeL1RSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 12:18:05 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546017340; bh=IdPQt51gv8ChUW9pxoKSHF0orDdvuiNByTVC000A3yE=;
+        t=1546017483; bh=IdPQt51gv8ChUW9pxoKSHF0orDdvuiNByTVC000A3yE=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=laPcJl+eoXyqlcPBAcZQ+tARYD0a3Gkjom6WOn681cHP0kBydNV8RE+Ck7Wj3nznk
-         f6mWBUSoUOEUubyy68oG3cRrAieYrvzcmXO+T3fmNbp3XtRuhourpqanGdQ3I1DVsK
-         dXUV1L3EX9YREyJsTz21WX72PvyiCaX47F8xwT7PdbgspwNaJYY9EIF3PAMxGPfHxP
-         x/YcoERPbX9HDO88PS08VoaT1zESpRU9fxHK9VGEuk8ml6wEx7egVxe5iqaKJ8VhPF
-         wPI5dq/4cvIvI7uiIBJz55BCBxIvLqkFmoBEJNMphMqEPyFa2Nch16FYIm2b5INCgz
-         MdC81jbCqcG4w==
+        b=BvPE8jGcxqctkz4ftDIXTs+WUapi7NmKXt8VBA0+6k1N1ksX3t6hwFKcodSz/ZNFd
+         femqJzQPgbSjtc7W7qs30ZkMlWsOJ+jflSV2sM4vZyfEUK+R2seKIiw6iqmgSqXOP2
+         dGH/+4n0K1/GcpG3U8xLfhgSBrhDa9XcUQS0plY4LAOq+B3EyKIq5lmkOrhrbvuov1
+         unM5wp8lCBTwPfp1vIRqifbaamOVb5jIzbemUxuIB0etuQ4Z70sz51+zNDC6d1Jza7
+         tIHi0X1nsfKrQdpU3dVPJDFcB0KF9Wp0xjNspc4EsHjwfyOB0sN1qYOKQlP9n6Ir6x
+         y+wCylnxRxLyg==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 28 Dec 2018 17:15:38 +0000
+Date:   Fri, 28 Dec 2018 17:18:02 +0000
 From:   vsnsdualce@memeware.net
-To:     fuck@fuckyou.net
-Cc:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+To:     linux-kernel@vger.kernel.org
+Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org
 Subject: Re: A lawyer?!
 In-Reply-To: <20181225125003.AE26C171A0745@cock.li>
 References: <20181225125003.AE26C171A0745@cock.li>
-Message-ID: <c246da4cdb5e52d0626a54ae122fb8e2@memeware.net>
+Message-ID: <7deb937b392f2a2d2f71af9f13960d67@memeware.net>
 X-Sender: vsnsdualce@memeware.net
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
