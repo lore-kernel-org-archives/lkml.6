@@ -2,51 +2,53 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E039AC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E86CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2E520866
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B90A2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999346;
-	bh=DgLK6wjD5ta8lYbXJSEI/gHvfAnvNOXdDRVwZWOIqqQ=;
+	s=default; t=1545999351;
+	bh=kvJoL1kGpnpo9zQ9ePM2KACY6rH47R+1Vq1p2c3KW8E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Um2aUNmG6R4MXngGqEh7TlMYe3YSc+paW6eoJol2edKsS8jAUbMXTbKZ3ihUGcVpq
-	 rsjZ90YRqj7iIo3Ug6l/JSMGj7sgabce3+61YCMhXaLMmEgmQmGPx2sDyeQD88zjC/
-	 1MQJAVHP+YFJYIY+l1WrXmM/cREINcewjqGALeBA=
+	b=u1KUNCO4ikfdUOiF2TacIDcYPIuibANtZCd6HyGBdhNFhu2tkCPKklBrhQenRTjwP
+	 tos4Fxn69y2CczPd8RQy486vwKAJ31WquQ+cHqzPcKGMGwgFz6s1sE0FJgyei0QhvY
+	 KmcHC1hjHgwsJrtYWeXw38OFkWksVgBrWBatLdPg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732516AbeL1MPq (ORCPT
+        id S1732542AbeL1MPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:15:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34754 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:15:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732478AbeL1MPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:15:43 -0500
+        id S1732518AbeL1MPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:15:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 889AD20866;
-        Fri, 28 Dec 2018 12:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1851C20866;
+        Fri, 28 Dec 2018 12:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999342;
-        bh=DgLK6wjD5ta8lYbXJSEI/gHvfAnvNOXdDRVwZWOIqqQ=;
+        s=default; t=1545999347;
+        bh=kvJoL1kGpnpo9zQ9ePM2KACY6rH47R+1Vq1p2c3KW8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AI11ARPf3F52d0Fo+qUkWLnLZzz+ja+Od9fQJbOLQmonZV3H00EuklEXlfiZGV8fF
-         h9i6p8e92bvDrbt93MbK67NbBYHZn0mPkbFzAlsyKz+LIoLJOmUxDV57KxeBDcMsSs
-         LLMWjgYbFORmC3BzEbQZwTm7ThXFYPDR9s36Wg9c=
+        b=SQoFXWYgxswitd/IsQbBel5uD6qeuHzA37DvQIds69bzLDCxcCZg7kmZO3My0D7ll
+         T91z7Tmt5lXn7YqTDOxjVpSMbD/TC7R+NiKSfa64Wl3Kf4na+atw5OXuCH41pm2nIA
+         N9cDc5JLH6a98GCK2qcrDesTEgnEVxPPORx5k55k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tore Anderson <tore@fud.no>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 12/36] USB: serial: option: add HP lt4132
-Date:   Fri, 28 Dec 2018 12:52:28 +0100
-Message-Id: <20181228113127.378586873@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 03/36] ASoC: sta32x: set ->component pointer in private struct
+Date:   Fri, 28 Dec 2018 12:52:19 +0100
+Message-Id: <20181228113126.748366261@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.526729877@linuxfoundation.org>
 References: <20181228113126.526729877@linuxfoundation.org>
@@ -65,83 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tore Anderson <tore@fud.no>
+commit 747df19747bc9752cd40b9cce761e17a033aa5c2 upstream
 
-commit d57ec3c83b5153217a70b561d4fb6ed96f2f7a25 upstream.
+The ESD watchdog code in sta32x_watchdog() dereferences the pointer
+which is never assigned.
 
-The HP lt4132 is a rebranded Huawei ME906s-158 LTE modem.
+This is a regression from a1be4cead9b950 ("ASoC: sta32x: Convert to direct
+regmap API usage.") which went unnoticed since nobody seems to use that ESD
+workaround.
 
-The interface with protocol 0x16 is "CDC ECM & NCM" according to the *.inf
-files included with the Windows driver. Attaching the option driver to it
-doesn't result in a /dev/ttyUSB* device being created, so I've excluded it.
-Note that it is also excluded for corresponding Huawei-branded devices, cf.
-commit d544db293a44 ("USB: support new huawei devices in option.c").
-
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
-P:  Vendor=03f0 ProdID=a31d Rev=01.02
-S:  Manufacturer=HP Inc.
-S:  Product=HP lt4132 LTE/HSPA+ 4G Module
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=2mA
-I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
-I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
-I:  If#=0x3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=06 Prot=16 Driver=(none)
-I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
-I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
-
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
-P:  Vendor=03f0 ProdID=a31d Rev=01.02
-S:  Manufacturer=HP Inc.
-S:  Product=HP lt4132 LTE/HSPA+ 4G Module
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=2mA
-I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
-I:  If#=0x3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
-I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
-I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
-I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
-
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
-P:  Vendor=03f0 ProdID=a31d Rev=01.02
-S:  Manufacturer=HP Inc.
-S:  Product=HP lt4132 LTE/HSPA+ 4G Module
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 3 Cfg#= 3 Atr=a0 MxPwr=2mA
-I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
-
-Signed-off-by: Tore Anderson <tore@fud.no>
+Fixes: a1be4cead9b950 ("ASoC: sta32x: Convert to direct regmap API usage.")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-[ johan: drop id defines ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/option.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ sound/soc/codecs/sta32x.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1944,7 +1944,12 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD200, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
--	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },	/* HP lt2523 (Novatel E371) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },	/* HP lt4132 (Huawei ME906s-158) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
- 	{ } /* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, option_ids);
+diff --git a/sound/soc/codecs/sta32x.c b/sound/soc/codecs/sta32x.c
+index 5b888476d9ff..b728140c79a9 100644
+--- a/sound/soc/codecs/sta32x.c
++++ b/sound/soc/codecs/sta32x.c
+@@ -879,6 +879,9 @@ static int sta32x_probe(struct snd_soc_codec *codec)
+ 	struct sta32x_priv *sta32x = snd_soc_codec_get_drvdata(codec);
+ 	struct sta32x_platform_data *pdata = sta32x->pdata;
+ 	int i, ret = 0, thermal = 0;
++
++	sta32x->codec = codec;
++
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(sta32x->supplies),
+ 				    sta32x->supplies);
+ 	if (ret != 0) {
+-- 
+2.19.1
+
 
 
