@@ -2,111 +2,153 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBC4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A332C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFE620866
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350CE20873
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 08:40:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=iluvatar.ai header.i=@iluvatar.ai header.b="Zfq4RP+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731531AbeL1Ihx (ORCPT
+        id S1731746AbeL1IkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 03:37:53 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45565 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730925AbeL1Ihw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 03:37:52 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EF16480706; Fri, 28 Dec 2018 09:37:44 +0100 (CET)
-Date:   Fri, 28 Dec 2018 09:37:49 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'John Hubbard' <jhubbard@nvidia.com>,
-        "'john.hubbard@gmail.com'" <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        Tom Talpey <tom@talpey.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] put_user_page*(): start converting the call sites
-Message-ID: <20181228083749.GC6341@amd>
-References: <20181204001720.26138-1-jhubbard@nvidia.com>
- <b31c7b3359344e778fc525013eeece64@AcuMS.aculab.com>
- <cfba998a-8217-bf03-f0d0-c95708aea03d@nvidia.com>
- <e7cac96b06664c46bde3abe72ecab2ee@AcuMS.aculab.com>
+        Fri, 28 Dec 2018 03:40:21 -0500
+Received: from owa.iluvatar.ai ([103.91.158.24]:45982 "EHLO owa.iluvatar.ai"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726700AbeL1IkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 03:40:20 -0500
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; d=iluvatar.ai; s=key_2018;
+        c=relaxed/relaxed; t=1545986414; h=from:subject:to:date:message-id;
+        bh=hPGTggK5mBzVng4X/eY1ndyLBHEXD2yxkrrkNdSjxi0=;
+        b=Zfq4RP+jdHrA0A51NQKdLp5tsQsTocr4Or1dwH/oIl6/cFk/15xI33rESQpgeKkf542rE/7olws
+        o3jnXO+UK7b2HiDiXH2CvnBZJUWEkARdP0Wym+B9sLFz1seKactB8dyfqDrOEXjqk6TNDVb9CyACa
+        BYV3hS8K0Jnd3zi7h70=
+Received: from localhost.localdomain (10.101.1.99) by
+ S-10-101-1-102.iluvatar.local (10.101.1.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1415.2; Fri, 28 Dec 2018 16:40:13 +0800
+From:   Huang Shijie <sjhuang@iluvatar.ai>
+To:     <akpm@linux-foundation.org>
+CC:     <linux@armlinux.org.uk>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <hch@lst.de>,
+        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <sfr@canb.auug.org.au>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <shijie8@gmail.com>, Huang Shijie <sjhuang@iluvatar.ai>
+Subject: [PATCH] lib/genalloc.c: rename addr_in_gen_pool to gen_pool_has_addr
+Date:   Fri, 28 Dec 2018 16:39:50 +0800
+Message-ID: <20181228083950.20398-1-sjhuang@iluvatar.ai>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="E/DnYTRukya0zdZ1"
-Content-Disposition: inline
-In-Reply-To: <e7cac96b06664c46bde3abe72ecab2ee@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Originating-IP: [10.101.1.99]
+X-ClientProxiedBy: S-10-101-1-102.iluvatar.local (10.101.1.102) To
+ S-10-101-1-102.iluvatar.local (10.101.1.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Follow the kernel conventions, rename addr_in_gen_pool to
+gen_pool_has_addr.
 
---E/DnYTRukya0zdZ1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Huang Shijie <sjhuang@iluvatar.ai>
+---
+ arch/arm/mm/dma-mapping.c | 2 +-
+ drivers/misc/sram-exec.c  | 2 +-
+ include/linux/genalloc.h  | 2 +-
+ kernel/dma/remap.c        | 2 +-
+ lib/genalloc.c            | 6 +++---
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-Hi!
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index f1e2922e447c..a876101a0f82 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -563,7 +563,7 @@ static void *__alloc_from_pool(size_t size, struct page **ret_page)
+ 
+ static bool __in_atomic_pool(void *start, size_t size)
+ {
+-	return addr_in_gen_pool(atomic_pool, (unsigned long)start, size);
++	return gen_pool_has_addr(atomic_pool, (unsigned long)start, size);
+ }
+ 
+ static int __free_from_pool(void *start, size_t size)
+diff --git a/drivers/misc/sram-exec.c b/drivers/misc/sram-exec.c
+index 426ad912b441..d054e2842a5f 100644
+--- a/drivers/misc/sram-exec.c
++++ b/drivers/misc/sram-exec.c
+@@ -96,7 +96,7 @@ void *sram_exec_copy(struct gen_pool *pool, void *dst, void *src,
+ 	if (!part)
+ 		return NULL;
+ 
+-	if (!addr_in_gen_pool(pool, (unsigned long)dst, size))
++	if (!gen_pool_has_addr(pool, (unsigned long)dst, size))
+ 		return NULL;
+ 
+ 	base = (unsigned long)part->base;
+diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
+index dd0a452373e7..c5e5bed82fbc 100644
+--- a/include/linux/genalloc.h
++++ b/include/linux/genalloc.h
+@@ -156,7 +156,7 @@ extern struct gen_pool *devm_gen_pool_create(struct device *dev,
+ 		int min_alloc_order, int nid, const char *name);
+ extern struct gen_pool *gen_pool_get(struct device *dev, const char *name);
+ 
+-bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
++extern bool gen_pool_has_addr(struct gen_pool *pool, unsigned long start,
+ 			size_t size);
+ 
+ #ifdef CONFIG_OF
+diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
+index 18cc09fc27b9..5022b904d7bc 100644
+--- a/kernel/dma/remap.c
++++ b/kernel/dma/remap.c
+@@ -158,7 +158,7 @@ int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
+ 
+ bool dma_in_atomic_pool(void *start, size_t size)
+ {
+-	return addr_in_gen_pool(atomic_pool, (unsigned long)start, size);
++	return gen_pool_has_addr(atomic_pool, (unsigned long)start, size);
+ }
+ 
+ void *dma_alloc_from_pool(size_t size, struct page **ret_page, gfp_t flags)
+diff --git a/lib/genalloc.c b/lib/genalloc.c
+index 96b6f478d275..946bbeefec81 100644
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -423,7 +423,7 @@ void gen_pool_for_each_chunk(struct gen_pool *pool,
+ EXPORT_SYMBOL(gen_pool_for_each_chunk);
+ 
+ /**
+- * addr_in_gen_pool - checks if an address falls within the range of a pool
++ * gen_pool_has_addr - checks if an address falls within the range of a pool
+  * @pool:	the generic memory pool
+  * @start:	start address
+  * @size:	size of the region
+@@ -431,7 +431,7 @@ EXPORT_SYMBOL(gen_pool_for_each_chunk);
+  * Check if the range of addresses falls within the specified pool. Returns
+  * true if the entire range is contained in the pool and false otherwise.
+  */
+-bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
++bool gen_pool_has_addr(struct gen_pool *pool, unsigned long start,
+ 			size_t size)
+ {
+ 	bool found = false;
+@@ -450,7 +450,7 @@ bool addr_in_gen_pool(struct gen_pool *pool, unsigned long start,
+ 	rcu_read_unlock();
+ 	return found;
+ }
+-EXPORT_SYMBOL(addr_in_gen_pool);
++EXPORT_SYMBOL(gen_pool_has_addr);
+ 
+ /**
+  * gen_pool_avail - get available free space of the pool
+-- 
+2.17.1
 
-> > This "patch 0000" is not a commit message, as it never shows up in git =
-log.
-> > Each of the follow-up patches does have details about the changes it ma=
-kes.
->=20
-> I think you should still describe the change - at least in summary.
->=20
-> The patch I looked at didn't really...
-> IIRC it still referred to external links.
->=20
-> > But maybe you are really asking for more background information, which I
-> > should have added in this cover letter. Here's a start:
-> >=20
-> > https://lore.kernel.org/r/20181110085041.10071-1-jhubbard@nvidia.com
->=20
-> Yes, but links go stale....
-
-It should really explain what the end goal is... and not even the
-20181110085041.10071-1-jhubbard@nvidia.com explains that.
-
-It seems you are introducing small slowdown to simplify something...?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---E/DnYTRukya0zdZ1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwl4N0ACgkQMOfwapXb+vKh7ACeJVdQzFocpewJi2c4F2t+if6H
-56UAoL1qhPFQFE851+GkLtCwOWVQx1mC
-=9WNe
------END PGP SIGNATURE-----
-
---E/DnYTRukya0zdZ1--
