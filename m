@@ -2,553 +2,218 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9B5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA07C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7ED205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F198208E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 07:57:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731870AbeL1H4F (ORCPT
+        id S1729584AbeL1H52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 02:56:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40206 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731533AbeL1Hz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 02:55:57 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6551512F8EA;
-        Fri, 28 Dec 2018 07:55:56 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-196.pek2.redhat.com [10.72.12.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D54D75D9C9;
-        Fri, 28 Dec 2018 07:55:53 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH V2 3/3] vhost: access vq metadata through kernel virtual address
-Date:   Fri, 28 Dec 2018 15:55:37 +0800
-Message-Id: <20181228075537.21402-4-jasowang@redhat.com>
-In-Reply-To: <20181228075537.21402-1-jasowang@redhat.com>
-References: <20181228075537.21402-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 28 Dec 2018 07:55:56 +0000 (UTC)
+        Fri, 28 Dec 2018 02:57:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42144 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727832AbeL1H50 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 02:57:26 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBS7nJAM005530
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 02:57:24 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pnfjw0s7k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 02:57:24 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Fri, 28 Dec 2018 07:57:22 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Dec 2018 07:57:17 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBS7vHV856098876
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Dec 2018 07:57:17 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E366152050;
+        Fri, 28 Dec 2018 07:57:16 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.141])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 5B6605204E;
+        Fri, 28 Dec 2018 07:57:16 +0000 (GMT)
+Subject: Re: [PATCH v1 0/2] Virtio: fix some vq allocation issues
+To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        mst@redhat.com, cohuck@redhat.com
+Cc:     pbonzini@redhat.com, dgilbert@redhat.com,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Fri, 28 Dec 2018 08:57:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18122807-4275-0000-0000-000002F647CF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122807-4276-0000-0000-000038046A6C
+Message-Id: <c6746307-fae5-7652-af8d-19f560fc31d9@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-28_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=614 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812280072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was noticed that the copy_user() friends that was used to access
-virtqueue metdata tends to be very expensive for dataplane
-implementation like vhost since it involves lots of software checks,
-speculation barrier, hardware feature toggling (e.g SMAP). The
-extra cost will be more obvious when transferring small packets since
-the time spent on metadata accessing become significant..
 
-This patch tries to eliminate those overhead by accessing them through
-kernel virtual address by vmap(). To make the pages can be migrated,
-instead of pinning them through GUP, we use mmu notifiers to
-invalidate vmaps and re-establish vmaps during each round of metadata
-prefetching in necessary. For devices that doesn't use metadata
-prefetch, the memory acessors fallback to normal copy_user()
-implementation gracefully.
 
-Note that this was only done when device IOTLB is not enabled. We
-could use similar method to optimize it in the future.
+On 28.12.2018 03:26, Wei Wang wrote:
+> Some vqs don't need to be allocated when the related feature bits are
+> disabled. Callers notice the vq allocation layer by setting the related
+> names[i] to be NULL.
+> 
+> This patch series fixes the find_vqs implementations to handle this case.
 
-Tests shows about ~24% improvement on TX PPS when using virtio-user +
-vhost_net + xdp1 on TAP:
+So the random crashes during boot are gone.
+What still does not work is actually using the balloon.
 
-Before: ~5.0Mpps
-After:  ~6.1Mpps
+So in the qemu monitor using lets say "balloon 1000"  will hang the guest.
+Seems to be a deadlock in the virtio-ccw code.  We seem to call the
+config code in the interrupt handler.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c   |   4 +-
- drivers/vhost/vhost.c | 259 +++++++++++++++++++++++++++++++++++++++++-
- drivers/vhost/vhost.h |  15 ++-
- 3 files changed, 271 insertions(+), 7 deletions(-)
+crash> bt
+PID: 0      TASK: d9a400            CPU: 0   COMMAND: "swapper/0"
+ LOWCORE INFO:
+  -psw      : 0x0404c00180000000 0x0000000000116472
+  -function : smp_yield_cpu at 116472
+  -prefix   : 0x7fffc000
+  -cpu timer: 0x7fffffcc8c0af5be
+  -clock cmp: 0x720a4e4002831000
+  -general registers:
+     000000000000000000 000000000000000000
+     0x000000000000009c 0x0000000000fac2b0
+     0x0000000000000015 0xffffffffffffffe2
+     0x000003e000100000 0x0000000000000001
+     000000000000000000 0x0000000000000001
+     0x00000000000003e8 0x000000000f85c020
+     000000000000000000 0x0000000000000001
+     0x0000000000116464 0x000003e00035fad0
+  -access registers:
+     0000000000 0000000000 0000000000 0000000000
+     0000000000 0000000000 0000000000 0000000000
+     0000000000 0000000000 0000000000 0000000000
+     0000000000 0000000000 0000000000 0000000000
+  -control registers:
+     0x0080000014866a10 0x0000000000fbc007
+     0x0000000000100140 000000000000000000
+     0x000000000000ffff 0x0000000000100140
+     0x0000000031000000 0x000000000f9281c3
+     000000000000000000 000000000000000000
+     000000000000000000 000000000000000000
+     000000000000000000 0x0000000000fbc007
+     0x00000000db000000 0x0000000000100280
+  -floating point registers:
+     000000000000000000 0x000002aa374b0298
+     0x0000000000000001 0x0000000000000010
+     0x00000000000001ae 0x000000000000000f
+     0x000002aa46056010 0x000002aa460681c0
+     0x000003ffd867d590 0x000003ffdca7c818
+     0x000003ffd867d58f 0x000003fff6ffdc60
+     0x000003ffd867dad8 0x000003ffdca7c5e8
+     0x000003ffd867dadc 0x000003ffdca7c818
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 36f3d0f49e60..0b4b3deab5aa 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -971,7 +971,7 @@ static void handle_tx(struct vhost_net *net)
- 	if (!sock)
- 		goto out;
- 
--	if (!vq_iotlb_prefetch(vq))
-+	if (!vq_meta_prefetch(vq))
- 		goto out;
- 
- 	vhost_disable_notify(&net->dev, vq);
-@@ -1140,7 +1140,7 @@ static void handle_rx(struct vhost_net *net)
- 	if (!sock)
- 		goto out;
- 
--	if (!vq_iotlb_prefetch(vq))
-+	if (!vq_meta_prefetch(vq))
- 		goto out;
- 
- 	vhost_disable_notify(&net->dev, vq);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 337ce6f5a098..46a889b61a4d 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -440,6 +440,9 @@ void vhost_dev_init(struct vhost_dev *dev,
- 		vq->indirect = NULL;
- 		vq->heads = NULL;
- 		vq->dev = dev;
-+		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
-+		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
-+		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
- 		mutex_init(&vq->mutex);
- 		vhost_vq_reset(dev, vq);
- 		if (vq->handle_kick)
-@@ -489,6 +492,61 @@ bool vhost_dev_has_owner(struct vhost_dev *dev)
- }
- EXPORT_SYMBOL_GPL(vhost_dev_has_owner);
- 
-+static int vhost_invalidate_vmap(struct vhost_virtqueue *vq,
-+				 struct vhost_vmap *map,
-+				 unsigned long uaddr,
-+				 unsigned long start,
-+				 unsigned long end,
-+				 bool blockable)
-+{
-+	if (start < uaddr && end >= uaddr) {
-+		if (!blockable)
-+			return -EAGAIN;
-+		mutex_lock(&vq->mutex);
-+		if (map->addr)
-+			vunmap(map->unmap_addr);
-+		map->addr = NULL;
-+		map->unmap_addr = NULL;
-+		mutex_unlock(&vq->mutex);
-+	}
-+
-+	return 0;
-+}
-+
-+static int vhost_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+						     struct mm_struct *mm,
-+						     unsigned long start,
-+						     unsigned long end,
-+						     bool blockable)
-+{
-+	struct vhost_dev *dev = container_of(mn, struct vhost_dev,
-+					     mmu_notifier);
-+	int i;
-+
-+	for (i = 0; i < dev->nvqs; i++) {
-+		struct vhost_virtqueue *vq = dev->vqs[i];
-+
-+		if (vhost_invalidate_vmap(vq, &vq->avail_ring,
-+					  (unsigned long)vq->avail,
-+					  start, end, blockable))
-+			return -EAGAIN;
-+		if (vhost_invalidate_vmap(vq, &vq->desc_ring,
-+					  (unsigned long)vq->desc,
-+					  start, end, blockable))
-+			return -EAGAIN;
-+		if (vhost_invalidate_vmap(vq, &vq->used_ring,
-+					  (unsigned long)vq->used,
-+					  start, end, blockable))
-+			return -EAGAIN;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct mmu_notifier_ops vhost_mmu_notifier_ops = {
-+	.invalidate_range_start = vhost_mmu_notifier_invalidate_range_start,
-+};
-+
- /* Caller should have device mutex */
- long vhost_dev_set_owner(struct vhost_dev *dev)
- {
-@@ -520,7 +578,14 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
- 	if (err)
- 		goto err_cgroup;
- 
-+	dev->mmu_notifier.ops = &vhost_mmu_notifier_ops;
-+	err = mmu_notifier_register(&dev->mmu_notifier, dev->mm);
-+	if (err)
-+		goto err_mmu_notifier;
-+
- 	return 0;
-+err_mmu_notifier:
-+	vhost_dev_free_iovecs(dev);
- err_cgroup:
- 	kthread_stop(worker);
- 	dev->worker = NULL;
-@@ -611,6 +676,87 @@ static void vhost_clear_msg(struct vhost_dev *dev)
- 	spin_unlock(&dev->iotlb_lock);
- }
- 
-+static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
-+			   size_t size, int write)
-+{
-+	struct page **pages;
-+	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
-+	int npinned;
-+	void *vaddr;
-+	int err = 0;
-+
-+	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
-+	if (!pages)
-+		return -ENOMEM;
-+
-+	npinned = get_user_pages_fast(uaddr, npages, write, pages);
-+	if (npinned != npages) {
-+		err = -EFAULT;
-+		goto err;
-+	}
-+
-+	vaddr = vmap(pages, npages, VM_MAP, PAGE_KERNEL);
-+	if (!vaddr) {
-+		err = EFAULT;
-+		goto err;
-+	}
-+
-+	map->addr = vaddr + (uaddr & (PAGE_SIZE - 1));
-+	map->unmap_addr = vaddr;
-+
-+err:
-+	/* Don't pin pages, mmu notifier will notify us about page
-+	 * migration.
-+	 */
-+	if (npinned > 0)
-+		release_pages(pages, npinned);
-+	kfree(pages);
-+	return err;
-+}
-+
-+static void vhost_uninit_vmap(struct vhost_vmap *map)
-+{
-+	if (map->addr) {
-+		vunmap(map->unmap_addr);
-+		map->addr = NULL;
-+	}
-+}
-+
-+static void vhost_clean_vmaps(struct vhost_virtqueue *vq)
-+{
-+	vhost_uninit_vmap(&vq->avail_ring);
-+	vhost_uninit_vmap(&vq->desc_ring);
-+	vhost_uninit_vmap(&vq->used_ring);
-+}
-+
-+static int vhost_setup_avail_vmap(struct vhost_virtqueue *vq,
-+				  unsigned long avail)
-+{
-+	size_t event = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
-+	size_t avail_size = sizeof(*vq->avail) +
-+			    sizeof(*vq->avail->ring) * vq->num + event;
-+
-+	return vhost_init_vmap(&vq->avail_ring, avail, avail_size, false);
-+}
-+
-+static int vhost_setup_desc_vmap(struct vhost_virtqueue *vq,
-+				 unsigned long desc)
-+{
-+	size_t desc_size = sizeof(*vq->desc) * vq->num;
-+
-+	return vhost_init_vmap(&vq->desc_ring, desc, desc_size, false);
-+}
-+
-+static int vhost_setup_used_vmap(struct vhost_virtqueue *vq,
-+				 unsigned long used)
-+{
-+	size_t event = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
-+	size_t used_size = sizeof(*vq->used) +
-+			   sizeof(*vq->used->ring) * vq->num + event;
-+
-+	return vhost_init_vmap(&vq->used_ring, used, used_size, true);
-+}
-+
- void vhost_dev_cleanup(struct vhost_dev *dev)
- {
- 	int i;
-@@ -623,6 +769,7 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- 		if (dev->vqs[i]->call_ctx)
- 			eventfd_ctx_put(dev->vqs[i]->call_ctx);
- 		vhost_vq_reset(dev, dev->vqs[i]);
-+		vhost_clean_vmaps(dev->vqs[i]);
- 	}
- 	vhost_dev_free_iovecs(dev);
- 	if (dev->log_ctx)
-@@ -640,8 +787,10 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- 		kthread_stop(dev->worker);
- 		dev->worker = NULL;
- 	}
--	if (dev->mm)
-+	if (dev->mm) {
-+		mmu_notifier_unregister(&dev->mmu_notifier, dev->mm);
- 		mmput(dev->mm);
-+	}
- 	dev->mm = NULL;
- }
- EXPORT_SYMBOL_GPL(vhost_dev_cleanup);
-@@ -870,6 +1019,16 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
- 
- static inline int vhost_put_avail_event(struct vhost_virtqueue *vq)
- {
-+	if (!vq->iotlb) {
-+		struct vring_used *used = vq->used_ring.addr;
-+
-+		if (likely(used)) {
-+			*((__virtio16 *)&used->ring[vq->num]) =
-+				cpu_to_vhost16(vq, vq->avail_idx);
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->avail_idx),
- 			      vhost_avail_event(vq));
- }
-@@ -878,6 +1037,16 @@ static inline int vhost_put_used(struct vhost_virtqueue *vq,
- 				 struct vring_used_elem *head, int idx,
- 				 int count)
- {
-+	if (!vq->iotlb) {
-+		struct vring_used *used = vq->used_ring.addr;
-+
-+		if (likely(used)) {
-+			memcpy(used->ring + idx, head,
-+			       count * sizeof(*head));
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_copy_to_user(vq, vq->used->ring + idx, head,
- 				  count * sizeof(*head));
- }
-@@ -885,6 +1054,15 @@ static inline int vhost_put_used(struct vhost_virtqueue *vq,
- static inline int vhost_put_used_flags(struct vhost_virtqueue *vq)
- 
- {
-+	if (!vq->iotlb) {
-+		struct vring_used *used = vq->used_ring.addr;
-+
-+		if (likely(used)) {
-+			used->flags = cpu_to_vhost16(vq, vq->used_flags);
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->used_flags),
- 			      &vq->used->flags);
- }
-@@ -892,6 +1070,15 @@ static inline int vhost_put_used_flags(struct vhost_virtqueue *vq)
- static inline int vhost_put_used_idx(struct vhost_virtqueue *vq)
- 
- {
-+	if (!vq->iotlb) {
-+		struct vring_used *used = vq->used_ring.addr;
-+
-+		if (likely(used)) {
-+			used->idx = cpu_to_vhost16(vq, vq->last_used_idx);
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->last_used_idx),
- 			      &vq->used->idx);
- }
-@@ -937,12 +1124,30 @@ static void vhost_dev_unlock_vqs(struct vhost_dev *d)
- static inline int vhost_get_avail_idx(struct vhost_virtqueue *vq,
- 				      __virtio16 *idx)
- {
-+	if (!vq->iotlb) {
-+		struct vring_avail *avail = vq->avail_ring.addr;
-+
-+		if (likely(avail)) {
-+			*idx = avail->idx;
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_get_avail(vq, *idx, &vq->avail->idx);
- }
- 
- static inline int vhost_get_avail_head(struct vhost_virtqueue *vq,
- 				       __virtio16 *head, int idx)
- {
-+	if (!vq->iotlb) {
-+		struct vring_avail *avail = vq->avail_ring.addr;
-+
-+		if (likely(avail)) {
-+			*head = avail->ring[idx & (vq->num - 1)];
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_get_avail(vq, *head,
- 			       &vq->avail->ring[idx & (vq->num - 1)]);
- }
-@@ -950,24 +1155,60 @@ static inline int vhost_get_avail_head(struct vhost_virtqueue *vq,
- static inline int vhost_get_avail_flags(struct vhost_virtqueue *vq,
- 					__virtio16 *flags)
- {
-+	if (!vq->iotlb) {
-+		struct vring_avail *avail = vq->avail_ring.addr;
-+
-+		if (likely(avail)) {
-+			*flags = avail->flags;
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_get_avail(vq, *flags, &vq->avail->flags);
- }
- 
- static inline int vhost_get_used_event(struct vhost_virtqueue *vq,
- 				       __virtio16 *event)
- {
-+	if (!vq->iotlb) {
-+		struct vring_avail *avail = vq->avail_ring.addr;
-+
-+		if (likely(avail)) {
-+			*event = (__virtio16)avail->ring[vq->num];
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_get_avail(vq, *event, vhost_used_event(vq));
- }
- 
- static inline int vhost_get_used_idx(struct vhost_virtqueue *vq,
- 				     __virtio16 *idx)
- {
-+	if (!vq->iotlb) {
-+		struct vring_used *used = vq->used_ring.addr;
-+
-+		if (likely(used)) {
-+			*idx = used->idx;
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_get_used(vq, *idx, &vq->used->idx);
- }
- 
- static inline int vhost_get_desc(struct vhost_virtqueue *vq,
- 				 struct vring_desc *desc, int idx)
- {
-+	if (!vq->iotlb) {
-+		struct vring_desc *d = vq->desc_ring.addr;
-+
-+		if (likely(d)) {
-+			*desc = *(d + idx);
-+			return 0;
-+		}
-+	}
-+
- 	return vhost_copy_from_user(vq, desc, vq->desc + idx, sizeof(*desc));
- }
- 
-@@ -1304,13 +1545,21 @@ static bool iotlb_access_ok(struct vhost_virtqueue *vq,
- 	return true;
- }
- 
--int vq_iotlb_prefetch(struct vhost_virtqueue *vq)
-+int vq_meta_prefetch(struct vhost_virtqueue *vq)
- {
- 	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
- 	unsigned int num = vq->num;
- 
--	if (!vq->iotlb)
-+	if (!vq->iotlb) {
-+		if (unlikely(!vq->avail_ring.addr))
-+			vhost_setup_avail_vmap(vq, (unsigned long)vq->avail);
-+		if (unlikely(!vq->desc_ring.addr))
-+			vhost_setup_desc_vmap(vq, (unsigned long)vq->desc);
-+		if (unlikely(!vq->used_ring.addr))
-+			vhost_setup_used_vmap(vq, (unsigned long)vq->used);
-+
- 		return 1;
-+	}
- 
- 	return iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->desc,
- 			       num * sizeof(*vq->desc), VHOST_ADDR_DESC) &&
-@@ -1323,7 +1572,7 @@ int vq_iotlb_prefetch(struct vhost_virtqueue *vq)
- 			       num * sizeof(*vq->used->ring) + s,
- 			       VHOST_ADDR_USED);
- }
--EXPORT_SYMBOL_GPL(vq_iotlb_prefetch);
-+EXPORT_SYMBOL_GPL(vq_meta_prefetch);
- 
- /* Can we log writes? */
- /* Caller should have device mutex but not vq mutex */
-@@ -1561,6 +1810,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
- 			}
- 		}
- 
-+		vhost_clean_vmaps(vq);
-+
- 		vq->log_used = !!(a.flags & (0x1 << VHOST_VRING_F_LOG));
- 		vq->desc = (void __user *)(unsigned long)a.desc_user_addr;
- 		vq->avail = (void __user *)(unsigned long)a.avail_user_addr;
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..00f016a4f198 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -12,6 +12,8 @@
- #include <linux/virtio_config.h>
- #include <linux/virtio_ring.h>
- #include <linux/atomic.h>
-+#include <linux/pagemap.h>
-+#include <linux/mmu_notifier.h>
- 
- struct vhost_work;
- typedef void (*vhost_work_fn_t)(struct vhost_work *work);
-@@ -80,6 +82,11 @@ enum vhost_uaddr_type {
- 	VHOST_NUM_ADDRS = 3,
- };
- 
-+struct vhost_vmap {
-+	void *addr;
-+	void *unmap_addr;
-+};
-+
- /* The virtqueue structure describes a queue attached to a device. */
- struct vhost_virtqueue {
- 	struct vhost_dev *dev;
-@@ -90,6 +97,11 @@ struct vhost_virtqueue {
- 	struct vring_desc __user *desc;
- 	struct vring_avail __user *avail;
- 	struct vring_used __user *used;
-+
-+	struct vhost_vmap avail_ring;
-+	struct vhost_vmap desc_ring;
-+	struct vhost_vmap used_ring;
-+
- 	const struct vhost_umem_node *meta_iotlb[VHOST_NUM_ADDRS];
- 	struct file *kick;
- 	struct eventfd_ctx *call_ctx;
-@@ -158,6 +170,7 @@ struct vhost_msg_node {
- 
- struct vhost_dev {
- 	struct mm_struct *mm;
-+	struct mmu_notifier mmu_notifier;
- 	struct mutex mutex;
- 	struct vhost_virtqueue **vqs;
- 	int nvqs;
-@@ -206,7 +219,7 @@ bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
- 
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
- 		    unsigned int log_num, u64 len);
--int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
-+int vq_meta_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
- void vhost_enqueue_msg(struct vhost_dev *dev,
--- 
-2.17.1
+ #0 [3e00035faf8] arch_spin_lock_wait at a7bd52
+ #1 [3e00035fb50] ccw_io_helper at 9130ea
+ #2 [3e00035fbd0] virtio_ccw_get_config at 914a28
+ #3 [3e00035fc30] virtballoon_changed at 76e776
+ #4 [3e00035fc70] virtio_config_changed at 76aabc
+ #5 [3e00035fca8] virtio_ccw_int_handler at 914ede
+ #6 [3e00035fd18] ccw_device_irq at 8941d4
+ #7 [3e00035fd48] do_cio_interrupt at 885906
+ #8 [3e00035fd80] __handle_irq_event_percpu at 1b3c22
+ #9 [3e00035fdf0] handle_irq_event_percpu at 1b3e1e
+#10 [3e00035fe28] handle_percpu_irq at 1b87d8
+#11 [3e00035fe58] generic_handle_irq at 1b2ce6
+#12 [3e00035fe70] do_IRQ at 10c3b2
+#13 [3e00035fea8] io_int_handler at a86b3c
+ PSW:  0404c00180000000 00000000001034f6 (enabled_wait+70)
+ GPRS: ffffffffffffffff 0000000000000000 000000007ff70200 0706c00180000000 
+       000000000000000c 000001bf6f331c58 ffffffffffffffff 0000000000000000 
+       0000000000000000 0000000000000000 0000000000000000 0000000000000001 
+       000000007ff70200 0000000000a8b2f0 00000000001034f6 000003e000317e00 
+ #0 [3e000317e28] arch_cpu_idle at 103842
+ #1 [3e000317e48] do_idle at 17ad18
+ #2 [3e000317e80] cpu_startup_entry at 17af16
+ #3 [3e000317ea8] arch_call_rest_init at eac934
+
+
+> 
+> Wei Wang (2):
+>   virtio_pci: use queue idx instead of array idx to set up the vq
+>   virtio: don't allocate vqs when names[i] = NULL
+> 
+>  drivers/misc/mic/vop/vop_main.c        |  9 +++++++--
+>  drivers/remoteproc/remoteproc_virtio.c |  9 +++++++--
+>  drivers/s390/virtio/virtio_ccw.c       | 12 +++++++++---
+>  drivers/virtio/virtio_mmio.c           |  9 +++++++--
+>  drivers/virtio/virtio_pci_common.c     |  8 ++++----
+>  5 files changed, 34 insertions(+), 13 deletions(-)
+> 
 
