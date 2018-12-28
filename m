@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCC9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713C5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D05A2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3E22148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999503;
-	bh=S8C3/bbVC9uxMBcDHNEkZ8tBRkpikRs0Gtsnh5zKFVU=;
+	s=default; t=1545999506;
+	bh=ElaTNq9eOW0hgfEwvhGMeviB/6dOE8mfD3JjD0cThmc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1HYqw6D8ytjNv/n1+vTh+lsgGiifP8twWjuozcBZ1w+smUI2Y6v35ZUc3RpnpWL/O
-	 QEBiRG99agyjPi5JHPpDOfqIfsEIdBKMvzIKE1sDRfyMrhCwEEe27tKXyJ/RACWlLw
-	 WXpPU0enZ378q2H5UQhY+MtC9644vvOVO7WAm158=
+	b=2u/OD7A6MXbK41PkjoEX2vb3BzdH03e9qBPVBICZkXhU0uWCRTyIYfpCSD3m68aEk
+	 vZwKV6DbtEUuClsGKkGaPMucPf52BD057VLz21ndEvPJj36oHj6dGlmjOwA0rww4O9
+	 rFrEtyGMugzCGbCskmqvo0h7Y7RCITgpceJeFk3g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733096AbeL1MSE (ORCPT
+        id S1733155AbeL1MSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:18:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37106 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:18:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733069AbeL1MSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:18:01 -0500
+        id S1733108AbeL1MSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:18:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 974412146F;
-        Fri, 28 Dec 2018 12:17:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 534482146F;
+        Fri, 28 Dec 2018 12:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999480;
-        bh=S8C3/bbVC9uxMBcDHNEkZ8tBRkpikRs0Gtsnh5zKFVU=;
+        s=default; t=1545999487;
+        bh=ElaTNq9eOW0hgfEwvhGMeviB/6dOE8mfD3JjD0cThmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j2KEPfqmQ6Aklyqf4XmDORqF/ZZip8f/8X8oSf6V00QbhrR7LyngzoVzCiB2r/kK0
-         aYoAxiNSBNETh/ViJPiSuoJEhiZGwPjMCVGUI+NbfOYO4FDJ33+NO3/kup7+q+Bdz3
-         IdA6IHXXJnPnvEyarRS67xsOu47NEADgqbljbJdo=
+        b=QdZc3V6mdPR1bfDpTC2MzkyN9YSzVwJwDaYuMb/hE5qlFL6cxjJAC21y4wOHaI7Xp
+         5TaiJLT+VF5FbCcIcF80n9HHNSX0lTsXqYxQFTceSGz21ecgeW2J1JIW+9MVmdQ1Ep
+         CcTIVkVr18JwD7ohM44ji9bEq8pUM1dUtiQRd6yE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 06/22] USB: serial: option: add GosunCn ZTE WeLink ME3630
-Date:   Fri, 28 Dec 2018 12:52:43 +0100
-Message-Id: <20181228113126.590275701@linuxfoundation.org>
+Subject: [PATCH 4.9 09/22] USB: serial: option: add Fibocom NL668 series
+Date:   Fri, 28 Dec 2018 12:52:46 +0100
+Message-Id: <20181228113126.781560771@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -68,38 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jörgen Storvist <jorgen.storvist@gmail.com>
 
-commit 70a7444c550a75584ffcfae95267058817eff6a7 upstream.
+commit 30360224441ce89a98ed627861e735beb4010775 upstream.
 
-Added USB serial option driver support for GosunCn ZTE WeLink ME3630
-series cellular modules for USB modes ECM/NCM and MBIM.
+Added USB serial option driver support for Fibocom NL668 series cellular
+modules. Reserved USB endpoints 4, 5 and 6 for network + ADB interfaces.
 
-usb-devices output MBIM mode:
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 10 Spd=480 MxCh= 0
+usb-devices output (QMI mode)
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 16 Spd=480 MxCh= 0
 D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=19d2 ProdID=0602 Rev=03.18
-S:  Manufacturer=Android
-S:  Product=Android
+P:  Vendor=1508 ProdID=1001 Rev=03.18
+S:  Manufacturer=Nodecom NL668 Modem
+S:  Product=Nodecom NL668-CN Modem
 S:  SerialNumber=
-C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
 I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
 I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
 I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-I:  If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
 
-usb-devices output ECM/NCM mode:
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 11 Spd=480 MxCh= 0
+usb-devices output (ECM mode)
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 17 Spd=480 MxCh= 0
 D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=19d2 ProdID=1476 Rev=03.18
-S:  Manufacturer=Android
-S:  Product=Android
+P:  Vendor=1508 ProdID=1001 Rev=03.18
+S:  Manufacturer=Nodecom NL668 Modem
+S:  Product=Nodecom NL668-CN Modem
 S:  SerialNumber=
-C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
+C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
 I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
 I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
 I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
-I:  If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 4 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#= 5 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
 
 Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
 Cc: stable <stable@vger.kernel.org>
@@ -112,21 +115,14 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/usb/serial/option.c
 +++ b/drivers/usb/serial/option.c
-@@ -1327,6 +1327,7 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0414, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0417, 0xff, 0xff, 0xff) },
-+	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x0602, 0xff) },	/* GosunCn ZTE WeLink ME3630 (MBIM mode) */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1008, 0xff, 0xff, 0xff),
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1010, 0xff, 0xff, 0xff),
-@@ -1530,6 +1531,7 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(2) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1428, 0xff, 0xff, 0xff),  /* Telewell TW-LTE 4G v2 */
- 	  .driver_info = RSVD(2) },
-+	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x1476, 0xff) },	/* GosunCn ZTE WeLink ME3630 (ECM/NCM mode) */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1533, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1534, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1535, 0xff, 0xff, 0xff) },
+@@ -1950,6 +1950,8 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
++	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
++	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
 
 
