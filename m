@@ -2,94 +2,72 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41386C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3F2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AAD20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:55:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 699402148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 11:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeL1Lz5 (ORCPT
+        id S1730993AbeL1L4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 06:55:57 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34432 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727735AbeL1Lz4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 06:55:56 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBSBrrw9004359;
-        Fri, 28 Dec 2018 05:55:49 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2phjjt6tqm-1;
-        Fri, 28 Dec 2018 05:55:49 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 63DA0611C8B0;
-        Fri, 28 Dec 2018 05:55:49 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 28 Dec 2018
- 11:55:48 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBSBtm8g031358; Fri,
- 28 Dec 2018 11:55:48 GMT
-Date:   Fri, 28 Dec 2018 11:55:48 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <broonie@kernel.org>, <matti.vaittinen@fi.rohmeurope.com>
-CC:     <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] regmap: irq: Make IRQ type support optional
-Message-ID: <20181228115548.GM16508@imbe.wolfsonmicro.main>
-References: <20181228112358.5914-1-ckeepax@opensource.cirrus.com>
+        Fri, 28 Dec 2018 06:56:38 -0500
+Received: from albireo.enyo.de ([5.158.152.32]:55106 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727027AbeL1L4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 06:56:38 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1gcqkk-0004t9-28; Fri, 28 Dec 2018 11:56:34 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.89)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1gcqkj-0005XI-TM; Fri, 28 Dec 2018 12:56:33 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, libc-alpha@sourceware.org,
+        qemu-devel@nongnu.org, ericvh@gmail.com, rminnich@sandia.gov,
+        lucho@ionkov.net, hpa@zytor.com, arnd@arndb.de
+Subject: Re: d_off field in struct dirent and 32-on-64 emulation
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+        <957967d7-5717-8ada-fb30-dfdf19898b6b@linaro.org>
+        <87pntmu9iw.fsf@mid.deneb.enyo.de>
+        <ae0530c9-5c46-5560-9734-1eacaf173b8d@linaro.org>
+Date:   Fri, 28 Dec 2018 12:56:33 +0100
+In-Reply-To: <ae0530c9-5c46-5560-9734-1eacaf173b8d@linaro.org> (Adhemerval
+        Zanella's message of "Fri, 28 Dec 2018 09:53:21 -0200")
+Message-ID: <87k1jtvp8u.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181228112358.5914-1-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812280108
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 11:23:58AM +0000, Charles Keepax wrote:
-> Currently only gpio-max77620 is using the type support in regmap IRQ,
-> but the implementation causes the irq_set_type operation to fail on all
-> other regmap IRQ chips. Avoid these regressions by skipping the type
-> handling on any chips that don't define a set of supported types.
-> 
-> Fixes: 1c2928e3e321 ("regmap: regmap-irq/gpio-max77620: add level-irq support")
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  drivers/base/regmap/regmap-irq.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-> index 1bd1145ad8b5e..8c674f1ad0fc8 100644
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -257,6 +257,9 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
->  	int reg;
->  	const struct regmap_irq_type *t = &irq_data->type;
->  
-> +	if (!t->types_supported)
-> +		return 0;
-> +
->  	if ((t->types_supported & type) != type)
->  		return -ENOTSUPP;
->  
-> -- 
-> 2.11.0
+* Adhemerval Zanella:
 
-+ Matti Vaittinen, apologies for forgetting to include you on the
-original sending.
+> On 27/12/2018 16:09, Florian Weimer wrote:
+>> * Adhemerval Zanella:
+>> 
+>>> Also for glibc standpoint, although reverting it back to use getdents 
+>>> syscall for non-LFS mode might fix this issue for architectures that
+>>> provides non-LFS getdents syscall it won't be a fix for architectures 
+>>> that still provides off_t different than off64_t *and* only provides 
+>>> getdents64 syscall.
+>>>
+>>> Currently we only have nios2 and csky (unfortunately).  But since generic 
+>>> definition for off_t and off64_t still assumes non-LFS support, all new
+>>> 32-bits ports potentially might carry the issue.
+>> 
+>> For csky, we could still change the type of the non-standard d_off
+>> field to long long int.  This way, only telldir would have to fail
+>> when truncation is necessary, as mentioned below:
+>
+> I think it makes no sense to continue making non-LFS as default for
+> newer 32 bits ports, the support will be emulated with LFS syscalls.
 
-Thanks,
-Charles
+Sorry, I don't see how this matters.  seekdir and telldir are NOT
+affected by LFS.
