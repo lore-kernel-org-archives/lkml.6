@@ -4,59 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F97C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D38C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E37FA20675
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 835A820675
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 12:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545999531;
-	bh=ShAB/C/RKQjqa7v47RkxZPS2eTI397LlYvnDQoJiBSo=;
+	s=default; t=1545999534;
+	bh=6A1eIaMLcC+fjnsk7HOlhpSObdQhNzw+DuN/68z5SJg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wKKp2okur8JCvIlOctWSVj0Arux0pACKTUq/P86GeljCUWyZfuVzia9g8DWD3w6q+
-	 ytc8rkpZHyf+0rKKBQBsDWA+35P+Iy43QBgcph+jFMimIXxXAUuNyyVvdoX+Pb2oZ9
-	 Z7E2D5G1Tizj0uB1KbkZUk5cWBvy1S0nrLb9RohM=
+	b=aqiK7bQX+18TqFtbIuXDGyVnqxdlwxRGELQ+Ab7NFD8+hM12HXZwj2tlw+epp39Yc
+	 +cDTbUY9NNiVBRcbHBxCeWIVgtVx/9KAnU+yGAAlciuK04kzCIi4C2ErHJG7sXUXis
+	 Y6NyoD5n8V97d9ZXtVlsmZGhWPOjKf80Zb0xc6Ys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733190AbeL1MSt (ORCPT
+        id S1733172AbeL1MSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 07:18:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36836 "EHLO mail.kernel.org"
+        Fri, 28 Dec 2018 07:18:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733017AbeL1MRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 07:17:45 -0500
+        id S1733023AbeL1MRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 07:17:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 277B820675;
-        Fri, 28 Dec 2018 12:17:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D103218F0;
+        Fri, 28 Dec 2018 12:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545999464;
-        bh=ShAB/C/RKQjqa7v47RkxZPS2eTI397LlYvnDQoJiBSo=;
+        s=default; t=1545999467;
+        bh=6A1eIaMLcC+fjnsk7HOlhpSObdQhNzw+DuN/68z5SJg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pJJrjvErXLhg2V8m6nwAf95S7znzlx5ekn7V5PRgEgMDqYFXUQtQZ0le6pP2XgBZp
-         0CUFj2qP4xKfTkEQ2d8He5+elaw4Hgay7MOAh8/X6eBzWoF7a/yv5Tc3ohPgILvvNa
-         Xwx6nJ68H9r0B6pxWAj8THgTy161LnBxG2OnbjRE=
+        b=uGRw/v/Mhxx0dY2PjJXdw4sxLaRgAjHfhMWrYJJGDuSqOs8Bvz3cMeuFrXI781Puv
+         beDohgDShAygWqjGP9GnskE56SaU1GaafeDiyCWif9sVaDOGUtzDoTLnHOPtAp4yjf
+         69CxJy9pgl+YdNP/n++fVzxWbUK6XSHQ9I7bR/f8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.9 20/22] panic: avoid deadlocks in re-entrant console drivers
-Date:   Fri, 28 Dec 2018 12:52:57 +0100
-Message-Id: <20181228113127.547233295@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Delalande <colona@arista.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 21/22] proc/sysctl: dont return ENOMEM on lookup when a table is unregistering
+Date:   Fri, 28 Dec 2018 12:52:58 +0100
+Message-Id: <20181228113127.624192129@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181228113126.144310132@linuxfoundation.org>
 References: <20181228113126.144310132@linuxfoundation.org>
@@ -75,113 +64,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+From: Ivan Delalande <colona@arista.com>
 
-commit c7c3f05e341a9a2bd1a92993d4f996cfd6e7348e upstream.
+commit ea5751ccd665a2fd1b24f9af81f6167f0718c5f6 upstream.
 
->From printk()/serial console point of view panic() is special, because
-it may force CPU to re-enter printk() or/and serial console driver.
-Therefore, some of serial consoles drivers are re-entrant. E.g. 8250:
+proc_sys_lookup can fail with ENOMEM instead of ENOENT when the
+corresponding sysctl table is being unregistered. In our case we see
+this upon opening /proc/sys/net/*/conf files while network interfaces
+are being deleted, which confuses our configuration daemon.
 
-serial8250_console_write()
-{
-	if (port->sysrq)
-		locked = 0;
-	else if (oops_in_progress)
-		locked = spin_trylock_irqsave(&port->lock, flags);
-	else
-		spin_lock_irqsave(&port->lock, flags);
-	...
-}
+The problem was successfully reproduced and this fix tested on v4.9.122
+and v4.20-rc6.
 
-panic() does set oops_in_progress via bust_spinlocks(1), so in theory
-we should be able to re-enter serial console driver from panic():
+v2: return ERR_PTRs in all cases when proc_sys_make_inode fails instead
+of mixing them with NULL. Thanks Al Viro for the feedback.
 
-	CPU0
-	<NMI>
-	uart_console_write()
-	serial8250_console_write()		// if (oops_in_progress)
-						//    spin_trylock_irqsave()
-	call_console_drivers()
-	console_unlock()
-	console_flush_on_panic()
-	bust_spinlocks(1)			// oops_in_progress++
-	panic()
-	<NMI/>
-	spin_lock_irqsave(&port->lock, flags)   // spin_lock_irqsave()
-	serial8250_console_write()
-	call_console_drivers()
-	console_unlock()
-	printk()
-	...
-
-However, this does not happen and we deadlock in serial console on
-port->lock spinlock. And the problem is that console_flush_on_panic()
-called after bust_spinlocks(0):
-
-void panic(const char *fmt, ...)
-{
-	bust_spinlocks(1);
-	...
-	bust_spinlocks(0);
-	console_flush_on_panic();
-	...
-}
-
-bust_spinlocks(0) decrements oops_in_progress, so oops_in_progress
-can go back to zero. Thus even re-entrant console drivers will simply
-spin on port->lock spinlock. Given that port->lock may already be
-locked either by a stopped CPU, or by the very same CPU we execute
-panic() on (for instance, NMI panic() on printing CPU) the system
-deadlocks and does not reboot.
-
-Fix this by removing bust_spinlocks(0), so oops_in_progress is always
-set in panic() now and, thus, re-entrant console drivers will trylock
-the port->lock instead of spinning on it forever, when we call them
-from console_flush_on_panic().
-
-Link: http://lkml.kernel.org/r/20181025101036.6823-1-sergey.senozhatsky@gmail.com
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Daniel Wang <wonderfly@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: linux-serial@vger.kernel.org
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Fixes: ace0c791e6c3 ("proc/sysctl: Don't grab i_lock under sysctl_lock.")
 Cc: stable@vger.kernel.org
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Ivan Delalande <colona@arista.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/panic.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/proc/proc_sysctl.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -13,6 +13,7 @@
- #include <linux/kmsg_dump.h>
- #include <linux/kallsyms.h>
- #include <linux/notifier.h>
-+#include <linux/vt_kern.h>
- #include <linux/module.h>
- #include <linux/random.h>
- #include <linux/ftrace.h>
-@@ -228,7 +229,10 @@ void panic(const char *fmt, ...)
- 	if (_crash_kexec_post_notifiers)
- 		__crash_kexec(NULL);
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -466,7 +466,7 @@ static struct inode *proc_sys_make_inode
  
--	bust_spinlocks(0);
-+#ifdef CONFIG_VT
-+	unblank_screen();
-+#endif
-+	console_unblank();
+ 	inode = new_inode(sb);
+ 	if (!inode)
+-		goto out;
++		return ERR_PTR(-ENOMEM);
  
- 	/*
- 	 * We may have ended up stopping the CPU holding the lock (in
+ 	inode->i_ino = get_next_ino();
+ 
+@@ -476,8 +476,7 @@ static struct inode *proc_sys_make_inode
+ 	if (unlikely(head->unregistering)) {
+ 		spin_unlock(&sysctl_lock);
+ 		iput(inode);
+-		inode = NULL;
+-		goto out;
++		return ERR_PTR(-ENOENT);
+ 	}
+ 	ei->sysctl = head;
+ 	ei->sysctl_entry = table;
+@@ -502,7 +501,6 @@ static struct inode *proc_sys_make_inode
+ 	if (root->set_ownership)
+ 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
+ 
+-out:
+ 	return inode;
+ }
+ 
+@@ -551,10 +549,11 @@ static struct dentry *proc_sys_lookup(st
+ 			goto out;
+ 	}
+ 
+-	err = ERR_PTR(-ENOMEM);
+ 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
+-	if (!inode)
++	if (IS_ERR(inode)) {
++		err = ERR_CAST(inode);
+ 		goto out;
++	}
+ 
+ 	err = NULL;
+ 	d_set_d_op(dentry, &proc_sys_dentry_operations);
+@@ -687,7 +686,7 @@ static bool proc_sys_fill_cache(struct f
+ 			return false;
+ 		if (d_in_lookup(child)) {
+ 			inode = proc_sys_make_inode(dir->d_sb, head, table);
+-			if (!inode) {
++			if (IS_ERR(inode)) {
+ 				d_lookup_done(child);
+ 				dput(child);
+ 				return false;
 
 
