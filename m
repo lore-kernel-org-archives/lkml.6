@@ -2,290 +2,183 @@ Return-Path: <SRS0=Tl5R=PF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BEFC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2A7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C70218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:55:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtCQ91Ih"
+	by mail.kernel.org (Postfix) with ESMTP id D22F5214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Dec 2018 02:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbeL1CzS (ORCPT
+        id S1728612AbeL1Czx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Dec 2018 21:55:18 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40490 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbeL1CzR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Dec 2018 21:55:17 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so9491426pgp.7;
-        Thu, 27 Dec 2018 18:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7C49Dk38UTlEkVQcN/N0SGjB+P62imQcKZsC2ilj/A4=;
-        b=RtCQ91IhUIwdJMB0yHiKF728Z6OceIxLxVzDTRZpi8lnH7cV0aHSCHOXG710dnuu7m
-         VmgKAJN5zQSsQ4rg6BaHX87BPWehdm2DlPZCr1DRIV6NvsbouMmQ7ctjvYVPr9o2iK3u
-         r2m0INlP6w1sBF994GfU22GeTIeR/L8ZfVtb6NTotcvLp76A2zYHiBLyyyZcKYr908JA
-         a9PMSB/zcl1tNPvS4CiwNv0RrupJGLke2ix5u5Cjy4yrni17K/MyKcVe9wOnQs2vr6Ei
-         JDFkQIQ5IEijrmNhnWIBxqimLyZydeoDAQL05dvQ8fSb8kJmZ2CDu/bJn+r017s0foSz
-         j+WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7C49Dk38UTlEkVQcN/N0SGjB+P62imQcKZsC2ilj/A4=;
-        b=QY3PGmrDotQs6jLKD+Iv85HXHGSoVG71kUhaq1WAj41HmpwaZ0vbgusF+ETiJOGIXS
-         2JCdqsB+HJyDPtkq87dRRsF2UJoWDS/Elnds1SqRRqZqRYjkIHIDEEw3dXsGduNCmxzn
-         Mcrlj08R+d0Oy+h1K2GvNejOzuD6ukkcYu6w2o+uGlb8WLdEeW4w/E05PWR1PfQZOKAU
-         0EahDhNgXsen0h0o3qcV6Tj5W9hj66RjD2PKv6SVN6/YFIQlxlN+wVLdNH2/CPgeWVMW
-         oZG0prkvyPdia1VqUEOp8niq2ri/oT6ezFLT71qlCl1i13I6v20zCnh6r05sWNN2amnR
-         rOEQ==
-X-Gm-Message-State: AJcUukeAmmaFKnFV11HdL1k01taooA0Zwn3GQuJARKMmnGbp+cAkV/LL
-        egWJyEPOjmTe5g3z5b1Tx/bX/upf
-X-Google-Smtp-Source: AFSGD/UEj7T4wzKqnni8+YqVPC796Y+S35F5IbEAcMHewGa0pvtJkDNs+B6o1RCemoofBWbYKuGCHA==
-X-Received: by 2002:a62:1484:: with SMTP id 126mr26090954pfu.257.1545965715599;
-        Thu, 27 Dec 2018 18:55:15 -0800 (PST)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id c13sm85461530pfe.93.2018.12.27.18.55.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 18:55:14 -0800 (PST)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-nfs@vger.kernel.org, viro@zeniv.linux.org.uk, arnd@arndb.de,
-        eric.dumazet@gmail.com, y2038@lists.linaro.org
-Subject: [PATCH v3] sock: Make sock->sk_stamp thread-safe
-Date:   Thu, 27 Dec 2018 18:55:09 -0800
-Message-Id: <20181228025509.14194-1-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 27 Dec 2018 21:55:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726873AbeL1Czx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Dec 2018 21:55:53 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E8AC3D15;
+        Fri, 28 Dec 2018 02:55:51 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-3.rdu2.redhat.com [10.10.120.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A6C761527;
+        Fri, 28 Dec 2018 02:55:48 +0000 (UTC)
+Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
+ regression
+To:     "Wang, Kemi" <kemi.wang@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc:     "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        Colin King <colin.king@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "lkp@01.org" <lkp@01.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+References: <20181105050813.GP24195@shao2-debian>
+ <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+ <f901e346-6203-371d-a39a-ed9231187570@suse.cz>
+ <CAHk-=wjZ1C2iL79jOuC9ysvX2oRpUjoqXirvY0NRuLC0eQ8nbg@mail.gmail.com>
+ <60ef3584-6f3a-1a9a-94d1-3d4a5b9f1e56@redhat.com>
+ <25017BF213203E48912DB000DE5F5E1E76365678@SHSMSX101.ccr.corp.intel.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <9a6fdc15-4ce1-9c55-d660-a9825b9ae104@redhat.com>
+Date:   Thu, 27 Dec 2018 21:55:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <25017BF213203E48912DB000DE5F5E1E76365678@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 28 Dec 2018 02:55:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro mentioned (Message-ID
-<20170626041334.GZ10672@ZenIV.linux.org.uk>)
-that there is probably a race condition
-lurking in accesses of sk_stamp on 32-bit machines.
+On 12/27/2018 08:31 PM, Wang, Kemi wrote:
+> Hi, Waiman
+>    Did you post that patch? Let's see if it helps.
 
-sock->sk_stamp is of type ktime_t which is always an s64.
-On a 32 bit architecture, we might run into situations of
-unsafe access as the access to the field becomes non atomic.
+I did post the patch a while ago. I will need to rebase it to a new
+baseline. Will do that in a week or 2.
 
-Use seqlocks for synchronization.
-This allows us to avoid using spinlocks for readers as
-readers do not need mutual exclusion.
+-Longman
 
-Another approach to solve this is to require sk_lock for all
-modifications of the timestamps. The current approach allows
-for timestamps to have their own lock: sk_stamp_lock.
-This allows for the patch to not compete with already
-existing critical sections, and side effects are limited
-to the paths in the patch.
+>
+> -----Original Message-----
+> From: LKP [mailto:lkp-bounces@lists.01.org] On Behalf Of Waiman Long
+> Sent: Tuesday, November 6, 2018 6:40 AM
+> To: Linus Torvalds <torvalds@linux-foundation.org>; vbabka@suse.cz; Davidlohr Bueso <dave@stgolabs.net>
+> Cc: yang.shi@linux.alibaba.com; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Matthew Wilcox <willy@infradead.org>; mhocko@kernel.org; Colin King <colin.king@canonical.com>; Andrew Morton <akpm@linux-foundation.org>; ldufour@linux.vnet.ibm.com; lkp@01.org; kirill.shutemov@linux.intel.com
+> Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1% regression
+>
+> On 11/05/2018 05:14 PM, Linus Torvalds wrote:
+>> On Mon, Nov 5, 2018 at 12:12 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>> I didn't spot an obvious mistake in the patch itself, so it looks
+>>> like some bad interaction between scheduler and the mmap downgrade?
+>> I'm thinking it's RWSEM_SPIN_ON_OWNER that ends up being confused by
+>> the downgrade.
+>>
+>> It looks like the benchmark used to be basically CPU-bound, at about
+>> 800% CPU, and now it's somewhere in the 200% CPU region:
+>>
+>>                   will-it-scale.time.percent_of_cpu_this_job_got
+>>
+>>   800 +-+-------------------------------------------------------------------+
+>>       |.+.+.+.+.+.+.+.  .+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+..+.+.+.+. .+.+.+.|
+>>   700 +-+             +.                                            +       |
+>>       |                                                                     |
+>>   600 +-+                                                                   |
+>>       |                                                                     |
+>>   500 +-+                                                                   |
+>>       |                                                                     |
+>>   400 +-+                                                                   |
+>>       |                                                                     |
+>>   300 +-+                                                                   |
+>>       |                                                                     |
+>>   200 O-O O O O O                O                                          |
+>>       |           O O O  O O O O   O O O O O O O O O O O                    |
+>>   100 +-+-------------------------------------------------------------------+
+>>
+>> which sounds like the downgrade really messes with the "spin waiting
+>> for lock" logic.
+>>
+>> I'm thinking it's the "wake up waiter" logic that has some bad
+>> interaction with spinning, and breaks that whole optimization.
+>>
+>> Adding Waiman and Davidlohr to the participants, because they seem to
+>> be the obvious experts in this area.
+>>
+>>                             Linus
+> Optimistic spinning on rwsem is done only on writers spinning on a
+> writer-owned rwsem. If a write-lock is downgraded to a read-lock, all
+> the spinning waiters will quit. That may explain the drop in cpu
+> utilization. I do have a old patch that enable a certain amount of
+> reader spinning which may help the situation. I can rebase that and send
+> it out for review if people have interest.
+>
+> Cheers,
+> Longman
+>
+>
+> _______________________________________________
+> LKP mailing list
+> LKP@lists.01.org
+> https://lists.01.org/mailman/listinfo/lkp
 
-The addition of the new field maintains the data locality
-optimizations from
-commit 9115e8cd2a0c ("net: reorganize struct sock for better data
-locality")
-
-Note that all the instances of the sk_stamp accesses
-are either through the ioctl or the syscall recvmsg.
-
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
-Changes since v2:
-* added ifdef as per eric's request
-Changes since v1:
-* fixed sunrpc sk_stamp update
-
- include/net/sock.h   | 38 +++++++++++++++++++++++++++++++++++---
- net/compat.c         | 15 +++++++++------
- net/core/sock.c      | 15 ++++++++++-----
- net/sunrpc/svcsock.c |  2 +-
- 4 files changed, 55 insertions(+), 15 deletions(-)
-
-diff --git a/include/net/sock.h b/include/net/sock.h
-index f665d74ae509..e144c071c93f 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -298,6 +298,7 @@ struct sock_common {
-   *	@sk_filter: socket filtering instructions
-   *	@sk_timer: sock cleanup timer
-   *	@sk_stamp: time stamp of last packet received
-+  *	@sk_stamp_seq: lock for accessing sk_stamp on 32 bit architectures only
-   *	@sk_tsflags: SO_TIMESTAMPING socket options
-   *	@sk_tskey: counter to disambiguate concurrent tstamp requests
-   *	@sk_zckey: counter to order MSG_ZEROCOPY notifications
-@@ -474,6 +475,9 @@ struct sock {
- 	const struct cred	*sk_peer_cred;
- 	long			sk_rcvtimeo;
- 	ktime_t			sk_stamp;
-+#if BITS_PER_LONG==32
-+	seqlock_t		sk_stamp_seq;
-+#endif
- 	u16			sk_tsflags;
- 	u8			sk_shutdown;
- 	u32			sk_tskey;
-@@ -2287,6 +2291,34 @@ static inline void sk_drops_add(struct sock *sk, const struct sk_buff *skb)
- 	atomic_add(segs, &sk->sk_drops);
- }
- 
-+static inline ktime_t sock_read_timestamp(struct sock *sk)
-+{
-+#if BITS_PER_LONG==32
-+	unsigned int seq;
-+	ktime_t kt;
-+
-+	do {
-+		seq = read_seqbegin(&sk->sk_stamp_seq);
-+		kt = sk->sk_stamp;
-+	} while (read_seqretry(&sk->sk_stamp_seq, seq));
-+
-+	return kt;
-+#else
-+	return sk->sk_stamp;
-+#endif
-+}
-+
-+static inline void sock_write_timestamp(struct sock *sk, ktime_t kt)
-+{
-+#if BITS_PER_LONG==32
-+	write_seqlock(&sk->sk_stamp_seq);
-+	sk->sk_stamp = kt;
-+	write_sequnlock(&sk->sk_stamp_seq);
-+#else
-+	sk->sk_stamp = kt;
-+#endif
-+}
-+
- void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
- 			   struct sk_buff *skb);
- void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
-@@ -2311,7 +2343,7 @@ sock_recv_timestamp(struct msghdr *msg, struct sock *sk, struct sk_buff *skb)
- 	     (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE)))
- 		__sock_recv_timestamp(msg, sk, skb);
- 	else
--		sk->sk_stamp = kt;
-+		sock_write_timestamp(sk, kt);
- 
- 	if (sock_flag(sk, SOCK_WIFI_STATUS) && skb->wifi_acked_valid)
- 		__sock_recv_wifi_status(msg, sk, skb);
-@@ -2332,9 +2364,9 @@ static inline void sock_recv_ts_and_drops(struct msghdr *msg, struct sock *sk,
- 	if (sk->sk_flags & FLAGS_TS_OR_DROPS || sk->sk_tsflags & TSFLAGS_ANY)
- 		__sock_recv_ts_and_drops(msg, sk, skb);
- 	else if (unlikely(sock_flag(sk, SOCK_TIMESTAMP)))
--		sk->sk_stamp = skb->tstamp;
-+		sock_write_timestamp(sk, skb->tstamp);
- 	else if (unlikely(sk->sk_stamp == SK_DEFAULT_STAMP))
--		sk->sk_stamp = 0;
-+		sock_write_timestamp(sk, 0);
- }
- 
- void __sock_tx_timestamp(__u16 tsflags, __u8 *tx_flags);
-diff --git a/net/compat.c b/net/compat.c
-index 47a614b370cd..d1f3a8a0b3ef 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -467,12 +467,14 @@ int compat_sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
- 	ctv = (struct compat_timeval __user *) userstamp;
- 	err = -ENOENT;
- 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
--	tv = ktime_to_timeval(sk->sk_stamp);
-+	tv = ktime_to_timeval(sock_read_timestamp(sk));
-+
- 	if (tv.tv_sec == -1)
- 		return err;
- 	if (tv.tv_sec == 0) {
--		sk->sk_stamp = ktime_get_real();
--		tv = ktime_to_timeval(sk->sk_stamp);
-+		ktime_t kt = ktime_get_real();
-+		sock_write_timestamp(sk, kt);
-+		tv = ktime_to_timeval(kt);
- 	}
- 	err = 0;
- 	if (put_user(tv.tv_sec, &ctv->tv_sec) ||
-@@ -494,12 +496,13 @@ int compat_sock_get_timestampns(struct sock *sk, struct timespec __user *usersta
- 	ctv = (struct compat_timespec __user *) userstamp;
- 	err = -ENOENT;
- 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
--	ts = ktime_to_timespec(sk->sk_stamp);
-+	ts = ktime_to_timespec(sock_read_timestamp(sk));
- 	if (ts.tv_sec == -1)
- 		return err;
- 	if (ts.tv_sec == 0) {
--		sk->sk_stamp = ktime_get_real();
--		ts = ktime_to_timespec(sk->sk_stamp);
-+		ktime_t kt = ktime_get_real();
-+		sock_write_timestamp(sk, kt);
-+		ts = ktime_to_timespec(kt);
- 	}
- 	err = 0;
- 	if (put_user(ts.tv_sec, &ctv->tv_sec) ||
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 6d7e189e3cd9..8236b28611c5 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2747,6 +2747,9 @@ void sock_init_data(struct socket *sock, struct sock *sk)
- 	sk->sk_sndtimeo		=	MAX_SCHEDULE_TIMEOUT;
- 
- 	sk->sk_stamp = SK_DEFAULT_STAMP;
-+#if BITS_PER_LONG==32
-+	seqlock_init(&sk->sk_stamp_seq);
-+#endif
- 	atomic_set(&sk->sk_zckey, 0);
- 
- #ifdef CONFIG_NET_RX_BUSY_POLL
-@@ -2846,12 +2849,13 @@ int sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
- 	struct timeval tv;
- 
- 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
--	tv = ktime_to_timeval(sk->sk_stamp);
-+	tv = ktime_to_timeval(sock_read_timestamp(sk));
- 	if (tv.tv_sec == -1)
- 		return -ENOENT;
- 	if (tv.tv_sec == 0) {
--		sk->sk_stamp = ktime_get_real();
--		tv = ktime_to_timeval(sk->sk_stamp);
-+		ktime_t kt = ktime_get_real();
-+		sock_write_timestamp(sk, kt);
-+		tv = ktime_to_timeval(kt);
- 	}
- 	return copy_to_user(userstamp, &tv, sizeof(tv)) ? -EFAULT : 0;
- }
-@@ -2862,11 +2866,12 @@ int sock_get_timestampns(struct sock *sk, struct timespec __user *userstamp)
- 	struct timespec ts;
- 
- 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
--	ts = ktime_to_timespec(sk->sk_stamp);
-+	ts = ktime_to_timespec(sock_read_timestamp(sk));
- 	if (ts.tv_sec == -1)
- 		return -ENOENT;
- 	if (ts.tv_sec == 0) {
--		sk->sk_stamp = ktime_get_real();
-+		ktime_t kt = ktime_get_real();
-+		sock_write_timestamp(sk, kt);
- 		ts = ktime_to_timespec(sk->sk_stamp);
- 	}
- 	return copy_to_user(userstamp, &ts, sizeof(ts)) ? -EFAULT : 0;
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 986f3ed7d1a2..b7e67310ec37 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -549,7 +549,7 @@ static int svc_udp_recvfrom(struct svc_rqst *rqstp)
- 		/* Don't enable netstamp, sunrpc doesn't
- 		   need that much accuracy */
- 	}
--	svsk->sk_sk->sk_stamp = skb->tstamp;
-+	sock_write_timestamp(svsk->sk_sk, skb->tstamp);
- 	set_bit(XPT_DATA, &svsk->sk_xprt.xpt_flags); /* there may be more data... */
- 
- 	len  = skb->len;
--- 
-2.17.1
 
