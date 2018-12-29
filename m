@@ -2,987 +2,506 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F43C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A30EC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAD2D218A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A6A3218A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbeL2H1T (ORCPT
+        id S1729116AbeL2H1Z convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 29 Dec 2018 02:27:25 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:57262 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729060AbeL2H1T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 29 Dec 2018 02:27:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53440 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725898AbeL2H1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 02:27:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12194AD5C;
-        Sat, 29 Dec 2018 07:27:14 +0000 (UTC)
-Subject: Re: [PATCH v5 1/6] net: lorawan: Add LoRaWAN socket module
-To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
-        Ben Whitten <ben.whitten@lairdtech.com>
-References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
- <20181216101858.9585-2-starnight@g.ncu.edu.tw>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <b1eb9451-cb15-3fc7-f95e-3100cf715ef6@suse.de>
-Date:   Sat, 29 Dec 2018 08:27:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181216101858.9585-2-starnight@g.ncu.edu.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: from [172.20.12.43] (unknown [213.61.67.157])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 6F6EECF358;
+        Sat, 29 Dec 2018 08:34:58 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC,v2] Bluetooth: hci_qca: Collect controller memory dump
+ during SSR
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181228130411.23007-1-bgodavar@codeaurora.org>
+Date:   Sat, 29 Dec 2018 08:27:16 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <8B1A4B0A-BFC3-44EC-A75F-D87DBA64625B@holtmann.org>
+References: <20181228130411.23007-1-bgodavar@codeaurora.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jian-Hong,
+Hi Balakrishna,
 
-Am 16.12.18 um 11:18 schrieb Jian-Hong Pan:
-> This patch adds a new address/protocol family for LoRaWAN network.
-> It also implements the the functions and maps to Datagram socket for
-> LoRaWAN unconfirmed data messages.
+> We will collect the ramdump of BT controller when hardware error event
+> received before rebooting the HCI layer. Before restarting a subsystem
+> or a process running on a subsystem, it is often required to request
+> either a subsystem or a process to perform proper cache dump and
+> software failure reason into a memory buffer which application
+> processor can retrieve afterwards. SW developers can often provide
+> initial investigation by looking into that debugging information.
 > 
-> Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-[...]
->  include/linux/lora/lorawan_netdev.h |  52 +++
->  net/lorawan/Kconfig                 |  10 +
->  net/lorawan/Makefile                |   2 +
->  net/lorawan/socket.c                | 686 ++++++++++++++++++++++++++++
->  4 files changed, 750 insertions(+)
->  create mode 100644 include/linux/lora/lorawan_netdev.h
->  create mode 100644 net/lorawan/Kconfig
->  create mode 100644 net/lorawan/Makefile
->  create mode 100644 net/lorawan/socket.c
-
-I'm not 100% happy with this yet, but to decouple it from the soft-MAC
-discussion (patches 2-6/6) and to allow reuse by Ben, I've staged it in
-linux-lora.git.
-
-We can clean it up with incremental patches there (and squash later).
-
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> changes v2:
+> * entirely an newer approach handling with an work queue.
 > 
-> diff --git a/include/linux/lora/lorawan_netdev.h b/include/linux/lora/lorawan_netdev.h
-> new file mode 100644
-> index 000000000000..5bffb5164f95
-> --- /dev/null
-> +++ b/include/linux/lora/lorawan_netdev.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
+> ---
+> drivers/bluetooth/hci_qca.c | 289 ++++++++++++++++++++++++++++++++++--
+> 1 file changed, 278 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index f036c8f98ea3..62b768bc32ec 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -32,6 +32,7 @@
+> #include <linux/clk.h>
+> #include <linux/debugfs.h>
+> #include <linux/delay.h>
+> +#include <linux/devcoredump.h>
+> #include <linux/device.h>
+> #include <linux/gpio/consumer.h>
+> #include <linux/mod_devicetable.h>
 
-Is there any practical reason you dual-license your code? My LoRa code
-is only GPL - should I reconsider that?
+don't we have some crashdump core facility that could be utilized here?
 
-> +/*-
-
-I assume the dash is a typo?
-
-> + * LoRaWAN stack related definitions
-> + *
-> + * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
-> + *
-
-Leftover white line from old license header?
-
-> + */
+> @@ -57,9 +58,10 @@
+> /* Controller states */
+> #define STATE_IN_BAND_SLEEP_ENABLED	1
+> 
+> -#define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+> +#define	IBS_WAKE_RETRANS_TIMEOUT_MS	100
+> #define IBS_TX_IDLE_TIMEOUT_MS		2000
+> -#define BAUDRATE_SETTLE_TIMEOUT_MS	300
+> +#define	BAUDRATE_SETTLE_TIMEOUT_MS	300
+> +#define MEMDUMP_COLLECTION_TIMEOUT_MS	8000
+> 
+> /* susclk rate */
+> #define SUSCLK_RATE_32KHZ	32768
+> @@ -67,6 +69,13 @@
+> /* Controller debug log header */
+> #define QCA_DEBUG_HANDLE	0x2EDC
+> 
+> +/* Controller dump header */
+> +#define QCA_SSR_DUMP_HANDLE		0x0108
+> +#define QCA_DUMP_PACKET_SIZE		255
+> +#define QCA_LAST_SEQUENCE_NUM		0xFFFF
+> +#define QCA_CRASHBYTE_PACKET_LEN	1100
+> +#define QCA_MEMDUMP_BYTE		0xFB
 > +
-> +#ifndef __LORAWAN_NET_DEVICE_H__
-> +#define __LORAWAN_NET_DEVICE_H__
-> +
-> +enum {
-> +	LRW_ADDR_APPEUI,
-> +	LRW_ADDR_DEVEUI,
-> +	LRW_ADDR_DEVADDR,
+> /* HCI_IBS transmit side sleep protocol states */
+> enum tx_ibs_states {
+> 	HCI_IBS_TX_ASLEEP,
+> @@ -89,12 +98,41 @@ enum hci_ibs_clock_state_vote {
+> 	HCI_IBS_RX_VOTE_CLOCK_OFF,
+> };
+> 
+> +/* Controller memory dump states */
+> +enum qca_memdump_states {
+> +	QCA_MEMDUMP_IDLE,
+> +	QCA_MEMDUMP_COLLECTING,
+> +	QCA_MEMDUMP_COLLECTED,
+> +	QCA_MEMDUMP_TIMEOUT,
 > +};
 > +
-> +struct lrw_addr_in {
-> +	int addr_type;
-> +	union {
-> +		u64 app_eui;
-> +		u64 dev_eui;
-
-In my RFC and in linux-lora.git I have a lora_eui typedef - any reason
-you're not using it here?
-
-> +		u32 devaddr;
-> +	};
+> +struct qca_memdump_data {
+> +	char *memdump_buf_head;
+> +	char *memdump_buf_tail;
+> +	u32 current_seq_no;
+> +	u32 received_dump;
 > +};
 > +
-> +struct sockaddr_lorawan {
-> +	sa_family_t family; /* AF_LORAWAN */
-> +	struct lrw_addr_in addr_in;
-> +};
+> +struct qca_memdump_event_hdr {
+> +	__u8    evt;
+> +	__u8    plen;
+> +	__u16   opcode;
+> +	__u16   seq_no;
+> +	__u8    reserved;
+> +} __packed;
 > +
-> +/**
-> + * lrw_mac_cb - This structure holds the control buffer (cb) of sk_buff
-> + *
-> + * @devaddr:	the LoRaWAN device address of this LoRaWAN hardware
-> + */
-> +struct lrw_mac_cb {
-> +	u32 devaddr;
-> +};
 > +
-> +/**
-> + * lrw_get_mac_cb - Get the LoRaWAN MAC control buffer of the sk_buff
-> + * @skb:	the exchanging sk_buff
-> + *
-> + * Return:	the pointer of LoRaWAN MAC control buffer
-> + */
-> +static inline struct lrw_mac_cb *lrw_get_mac_cb(struct sk_buff *skb)
+> +struct qca_dump_size {
+> +	u32 dump_size;
+> +} __packed;
+> +
+> struct qca_data {
+> 	struct hci_uart *hu;
+> 	struct sk_buff *rx_skb;
+> 	struct sk_buff_head txq;
+> -	struct sk_buff_head tx_wait_q;	/* HCI_IBS wait queue	*/
+> -	spinlock_t hci_ibs_lock;	/* HCI_IBS state lock	*/
+> +	struct sk_buff_head tx_wait_q;		/* HCI_IBS wait queue	*/
+> +	struct sk_buff_head rx_memdump_q;	/* Memdump wait queue	*/
+> +	spinlock_t hci_ibs_lock;		/* HCI_IBS state lock	*/
+> 	u8 tx_ibs_state;	/* HCI_IBS transmit side power state*/
+> 	u8 rx_ibs_state;	/* HCI_IBS receive side power state */
+> 	bool tx_vote;		/* Clock must be on for TX */
+> @@ -103,12 +141,17 @@ struct qca_data {
+> 	u32 tx_idle_delay;
+> 	struct timer_list wake_retrans_timer;
+> 	u32 wake_retrans;
+> +	struct timer_list memdump_timer;
+> +	u32 memdump_delay;
+> 	struct workqueue_struct *workqueue;
+> 	struct work_struct ws_awake_rx;
+> 	struct work_struct ws_awake_device;
+> 	struct work_struct ws_rx_vote_off;
+> 	struct work_struct ws_tx_vote_off;
+> +	struct work_struct ctrl_memdump_evt;
+> +	struct qca_memdump_data *qca_memdump;
+> 	unsigned long flags;
+> +	enum qca_memdump_states memdump_state;
+> 
+> 	/* For debugging purpose */
+> 	u64 ibs_sent_wacks;
+> @@ -173,6 +216,7 @@ struct qca_serdev {
+> static int qca_power_setup(struct hci_uart *hu, bool on);
+> static void qca_power_shutdown(struct hci_uart *hu);
+> static int qca_power_off(struct hci_dev *hdev);
+> +static void qca_controller_memdump(struct work_struct *work);
+> 
+> static void __serial_clock_on(struct tty_struct *tty)
+> {
+> @@ -446,6 +490,21 @@ static void hci_ibs_wake_retrans_timeout(struct timer_list *t)
+> 		hci_uart_tx_wakeup(hu);
+> }
+> 
+> +static void hci_memdump_timeout(struct timer_list *t)
 > +{
-> +	return (struct lrw_mac_cb *)skb->cb;
-> +}
-
-For LoRa I have a separate lora/skb.h - suggest to split this off into
-its own header consistently.
-
+> +	struct qca_data *qca = from_timer(qca, t, tx_idle_timer);
+> +	struct hci_uart *hu = qca->hu;
+> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+> +	char *memdump_buf = qca_memdump->memdump_buf_tail;
 > +
-> +#endif
-> diff --git a/net/lorawan/Kconfig b/net/lorawan/Kconfig
-> new file mode 100644
-> index 000000000000..bf6c9b77573b
-> --- /dev/null
-> +++ b/net/lorawan/Kconfig
-> @@ -0,0 +1,10 @@
-> +config LORAWAN
-> +	tristate "LoRaWAN Network support"
-
-The N in LoRaWAN is already for Network. :)
-
-> +	help
-> +	  LoRaWAN defines low data rate, low power and long range wireless
-> +	  wide area networks. It was designed to organize networks of automation
-> +	  devices, such as sensors, switches and actuators. It can operate
-> +	  multiple kilometers wide.
-
-The missing information here to distinguish it from LoRa would be that
-it's a client/server technology centered around gateways. In particular
-gateways that anyone can run, distinguishing it from (Sigfox or) NB-IoT.
-
-> +
-> +	  Say Y here to compile LoRaWAN support into the kernel or say M to
-> +	  compile it as a module.
-> diff --git a/net/lorawan/Makefile b/net/lorawan/Makefile
-> new file mode 100644
-> index 000000000000..8c923ca6541a
-> --- /dev/null
-> +++ b/net/lorawan/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-$(CONFIG_LORAWAN)	+= lorawan.o
-> +lorawan-objs		:= socket.o
-
-Both Kconfig and Makefile are not integrated into net/ here. That
-happens only in 6/6.
-
-> diff --git a/net/lorawan/socket.c b/net/lorawan/socket.c
-> new file mode 100644
-> index 000000000000..7ef106b877ca
-> --- /dev/null
-> +++ b/net/lorawan/socket.c
-> @@ -0,0 +1,686 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause
-> +/*-
-
-?
-
-> + * LoRaWAN stack related definitions
-> + *
-> + * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
-> + *
-
-?
-
-> + */
-> +
-> +#define	LORAWAN_MODULE_NAME	"lorawan"
-> +
-> +#define	pr_fmt(fmt)		LORAWAN_MODULE_NAME ": " fmt
-> +
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/list.h>
-> +#include <linux/net.h>
-> +#include <linux/if_arp.h>
-> +#include <linux/termios.h>		/* For TIOCOUTQ/INQ */
-> +#include <net/sock.h>
-> +#include <linux/lora/lorawan_netdev.h>
-
-Please sort headers alphabetically.
-
-> +
-> +/**
-> + * dgram_sock - This structure holds the states of Datagram socket
-> + *
-> + * @sk:			network layer representation of the socket
-> + *			sk must be the first member of dgram_sock
-
-Might that sentence be more useful as inline comment below?
-
-> + * @src_devaddr:	the LoRaWAN device address for this connection
-> + * @bound:		this socket is bound or not
-> + * @connected:		this socket is connected to the destination or not
-> + * @want_ack:		this socket needs to ack for the connection or not
-
-Doesn't exist below?
-
-> + */
-> +struct dgram_sock {
-> +	struct sock sk;
-> +	u32 src_devaddr;
-> +
-> +	u8 bound:1;
-> +	u8 connected:1;
-> +};
-> +
-> +static HLIST_HEAD(dgram_head);
-> +static DEFINE_RWLOCK(dgram_lock);
-> +
-> +static struct dgram_sock *
-> +dgram_sk(const struct sock *sk)
-> +{
-> +	return container_of(sk, struct dgram_sock, sk);
+> +	bt_dev_err(hu->hdev, "clearing allocated memory due to memdump timeout");
+> +	kfree(memdump_buf);
+> +	kfree(qca_memdump);
+> +	qca->memdump_state = QCA_MEMDUMP_TIMEOUT;
+> +	del_timer(&qca->memdump_timer);
+> +	cancel_work_sync(&qca->ctrl_memdump_evt);
 > +}
 > +
-> +static struct net_device *
-> +lrw_get_dev_by_addr(struct net *net, u32 devaddr)
+> /* Initialize protocol */
+> static int qca_open(struct hci_uart *hu)
+> {
+> @@ -461,6 +520,7 @@ static int qca_open(struct hci_uart *hu)
+> 
+> 	skb_queue_head_init(&qca->txq);
+> 	skb_queue_head_init(&qca->tx_wait_q);
+> +	skb_queue_head_init(&qca->rx_memdump_q);
+> 	spin_lock_init(&qca->hci_ibs_lock);
+> 	qca->workqueue = alloc_ordered_workqueue("qca_wq", 0);
+> 	if (!qca->workqueue) {
+> @@ -473,6 +533,7 @@ static int qca_open(struct hci_uart *hu)
+> 	INIT_WORK(&qca->ws_awake_device, qca_wq_awake_device);
+> 	INIT_WORK(&qca->ws_rx_vote_off, qca_wq_serial_rx_clock_vote_off);
+> 	INIT_WORK(&qca->ws_tx_vote_off, qca_wq_serial_tx_clock_vote_off);
+> +	INIT_WORK(&qca->ctrl_memdump_evt, qca_controller_memdump);
+> 
+> 	qca->hu = hu;
+> 
+> @@ -500,7 +561,7 @@ static int qca_open(struct hci_uart *hu)
+> 	qca->tx_votes_off = 0;
+> 	qca->rx_votes_on = 0;
+> 	qca->rx_votes_off = 0;
+> -
+> +	qca->memdump_state = QCA_MEMDUMP_IDLE;
+> 	hu->priv = qca;
+> 
+> 	if (hu->serdev) {
+> @@ -528,6 +589,9 @@ static int qca_open(struct hci_uart *hu)
+> 	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
+> 	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
+> 
+> +	timer_setup(&qca->memdump_timer, hci_memdump_timeout, 0);
+> +	qca->memdump_delay = MEMDUMP_COLLECTION_TIMEOUT_MS;
+> +
+> 	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
+> 	       qca->tx_idle_delay, qca->wake_retrans);
+> 
+> @@ -605,8 +669,10 @@ static int qca_close(struct hci_uart *hu)
+> 
+> 	skb_queue_purge(&qca->tx_wait_q);
+> 	skb_queue_purge(&qca->txq);
+> +	skb_queue_purge(&qca->rx_memdump_q);
+> 	del_timer(&qca->tx_idle_timer);
+> 	del_timer(&qca->wake_retrans_timer);
+> +	del_timer(&qca->memdump_timer);
+> 	destroy_workqueue(qca->workqueue);
+> 	qca->hu = NULL;
+> 
+> @@ -866,6 +932,141 @@ static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
+> 	return hci_recv_frame(hdev, skb);
+> }
+> 
+> +static void qca_controller_memdump(struct work_struct *work)
 > +{
-> +	__be32 be_addr = cpu_to_be32(devaddr);
-> +	struct net_device *ndev = NULL;
-> +
-> +	rcu_read_lock();
-> +	ndev = dev_getbyhwaddr_rcu(net, ARPHRD_LORAWAN, (char *)&be_addr);
-> +	if (ndev)
-> +		dev_hold(ndev);
-> +	rcu_read_unlock();
-> +
-> +	return ndev;
-> +}
-> +
-> +static int
-> +dgram_init(struct sock *sk)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void
-> +dgram_close(struct sock *sk, long timeout)
-> +{
-> +	sk_common_release(sk);
-> +}
-> +
-> +static int
-> +dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
-> +{
-> +	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
-> +	struct dgram_sock *ro = dgram_sk(sk);
-> +	struct net_device *ndev;
-> +	int ret;
-> +
-> +	lock_sock(sk);
-> +	ro->bound = 0;
-> +
-> +	ret = -EINVAL;
-> +	if (len < sizeof(*addr))
-> +		goto dgram_bind_end;
-> +
-> +	if (addr->family != AF_LORAWAN)
-> +		goto dgram_bind_end;
-> +
-> +	if (addr->addr_in.addr_type != LRW_ADDR_DEVADDR)
-> +		goto dgram_bind_end;
-> +
-> +	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
-> +	ndev = lrw_get_dev_by_addr(sock_net(sk), addr->addr_in.devaddr);
-> +	if (!ndev) {
-> +		ret = -ENODEV;
-> +		goto dgram_bind_end;
-> +	}
-> +	netdev_dbg(ndev, "%s: get ndev\n", __func__);
-> +
-> +	if (ndev->type != ARPHRD_LORAWAN) {
-> +		ret = -ENODEV;
-> +		goto dgram_bind_end;
-
-This is leaking ndev.
-
-> +	}
-> +
-> +	ro->src_devaddr = addr->addr_in.devaddr;
-> +	ro->bound = 1;
-> +	ret = 0;
-> +	dev_put(ndev);
-> +	pr_debug("%s: bound address %X\n", __func__, ro->src_devaddr);
-> +
-> +dgram_bind_end:
-> +	release_sock(sk);
-> +	return ret;
-> +}
-> +
-> +static int
-> +lrw_dev_hard_header(struct sk_buff *skb, struct net_device *ndev,
-> +		    const u32 src_devaddr, size_t len)
-> +{
-> +	/* TODO: Prepare the LoRaWAN sending header here */
-
-I wonder, is your idea that you would always write headers here but have
-me ignore them in hard-MAC drivers by accessing data and not head?
-
-I.e., does this dgram (and a later seqpacket) implementation give us not
-just the buffer to pass to hard-MAC or soft-MAC but actually LoRa, too,
-so that maclorawan needs to further post-processing of header/checksum?
-
-> +	return 0;
-> +}
-> +
-> +static int
-> +dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
-> +{
-> +	struct dgram_sock *ro = dgram_sk(sk);
-> +	struct net_device *ndev;
+> +	struct qca_data *qca = container_of(work, struct qca_data,
+> +					    ctrl_memdump_evt);
+> +	struct hci_uart *hu = qca->hu;
 > +	struct sk_buff *skb;
-> +	size_t hlen;
-> +	size_t tlen;
-> +	int ret;
+> +	struct qca_memdump_event_hdr *cmd_hdr;
+> +	struct qca_memdump_data *qca_memdump = qca->qca_memdump;
+> +	struct qca_dump_size *dump;
+> +	char *memdump_buf;
+> +	char nullBuff[QCA_DUMP_PACKET_SIZE] = { 0 };
+> +	u16 opcode, seq_no;
+> +	u32 dump_size;
 > +
-> +	pr_debug("%s: going to send %zu bytes", __func__, size);
-
-\n
-
-> +	if (msg->msg_flags & MSG_OOB) {
-> +		pr_debug("msg->msg_flags = 0x%x\n", msg->msg_flags);
-> +		return -EOPNOTSUPP;
-> +	}
+> +	while ((skb = skb_dequeue(&qca->rx_memdump_q))) {
 > +
-> +	pr_debug("%s: check msg_name\n", __func__);
-> +	if (!ro->connected && !msg->msg_name)
-> +		return -EDESTADDRREQ;
-> +	else if (ro->connected && msg->msg_name)
-> +		return -EISCONN;
+> +		if (!qca_memdump) {
+> +			qca_memdump = kzalloc(sizeof(struct qca_memdump_data),
+> +					      GFP_ATOMIC);
+> +			if (!qca_memdump)
+> +				return;
 > +
-> +	pr_debug("%s: check bound\n", __func__);
-> +	if (!ro->bound)
-> +		ndev = dev_getfirstbyhwtype(sock_net(sk), ARPHRD_LORAWAN);
-> +	else
-> +		ndev = lrw_get_dev_by_addr(sock_net(sk), ro->src_devaddr);
+> +			qca->qca_memdump = qca_memdump;
+> +		}
 > +
-> +	if (!ndev) {
-> +		pr_debug("no dev\n");
-> +		ret = -ENXIO;
-> +		goto dgram_sendmsg_end;
-> +	}
+> +		qca->memdump_state = QCA_MEMDUMP_COLLECTING;
+> +		cmd_hdr = (void *) skb->data;
+> +		opcode = __le16_to_cpu(cmd_hdr->opcode);
+> +		seq_no = __le16_to_cpu(cmd_hdr->seq_no);
+> +		skb_pull(skb, sizeof(struct qca_memdump_event_hdr));
 > +
-> +	if (size > ndev->mtu) {
-> +		netdev_dbg(ndev, "size = %zu, mtu = %u\n", size, ndev->mtu);
-> +		ret = -EMSGSIZE;
-> +		goto dgram_sendmsg_end;
-
-Leaks at least ndev from lrw_get_dev_by_addr.
-
-> +	}
+> +		if (!seq_no) {
 > +
-> +	netdev_dbg(ndev, "%s: create skb\n", __func__);
-> +	hlen = LL_RESERVED_SPACE(ndev);
-> +	tlen = ndev->needed_tailroom;
-> +	skb = sock_alloc_send_skb(sk, hlen + tlen + size,
-> +				  msg->msg_flags & MSG_DONTWAIT,
-> +				  &ret);
-> +
-> +	if (!skb)
-> +		goto dgram_sendmsg_no_skb;
-> +
-> +	skb_reserve(skb, hlen);
-> +	skb_reset_network_header(skb);
-> +
-> +	ret = lrw_dev_hard_header(skb, ndev, 0, size);
-> +	if (ret < 0)
-> +		goto dgram_sendmsg_no_skb;
-> +
-> +	ret = memcpy_from_msg(skb_put(skb, size), msg, size);
-> +	if (ret > 0)
-> +		goto dgram_sendmsg_err_skb;
-> +
-> +	skb->dev = ndev;
-> +	skb->protocol = htons(ETH_P_LORAWAN);
-> +
-> +	netdev_dbg(ndev, "%s: push skb to xmit queue\n", __func__);
-> +	ret = dev_queue_xmit(skb);
-> +	if (ret > 0)
-> +		ret = net_xmit_errno(ret);
-> +	netdev_dbg(ndev, "%s: pushed skb to xmit queue with ret=%d\n",
-> +		   __func__, ret);
-> +	dev_put(ndev);
-> +
-> +	return ret ?: size;
-> +
-> +dgram_sendmsg_err_skb:
-> +	kfree_skb(skb);
-> +dgram_sendmsg_no_skb:
-> +	dev_put(ndev);
-> +
-> +dgram_sendmsg_end:
-> +	return ret;
-> +}
-> +
-> +static int
-> +dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
-> +	      int noblock, int flags, int *addr_len)
-> +{
-> +	DECLARE_SOCKADDR(struct sockaddr_lorawan *, saddr, msg->msg_name);
-> +	struct sk_buff *skb;
-> +	size_t copied = 0;
-> +	int err;
-> +
-> +	skb = skb_recv_datagram(sk, flags, noblock, &err);
-> +	if (!skb)
-> +		goto dgram_recvmsg_end;
-> +
-> +	copied = skb->len;
-> +	if (len < copied) {
-> +		msg->msg_flags |= MSG_TRUNC;
-> +		copied = len;
-> +	}
-> +
-> +	err = skb_copy_datagram_msg(skb, 0, msg, copied);
-> +	if (err)
-> +		goto dgram_recvmsg_done;
-> +
-> +	sock_recv_ts_and_drops(msg, sk, skb);
-> +	if (saddr) {
-> +		memset(saddr, 0, sizeof(*saddr));
-> +		saddr->family = AF_LORAWAN;
-> +		saddr->addr_in.devaddr = lrw_get_mac_cb(skb)->devaddr;
-> +		*addr_len = sizeof(*saddr);
-> +	}
-> +
-> +	if (flags & MSG_TRUNC)
-> +		copied = skb->len;
-> +
-> +dgram_recvmsg_done:
-> +	skb_free_datagram(sk, skb);
-> +
-> +dgram_recvmsg_end:
-> +	if (err)
-> +		return err;
-> +	return copied;
-> +}
-> +
-> +static int
-> +dgram_hash(struct sock *sk)
-> +{
-> +	pr_debug("%s\n", __func__);
-> +	write_lock_bh(&dgram_lock);
-> +	sk_add_node(sk, &dgram_head);
-> +	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
-> +	write_unlock_bh(&dgram_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void
-> +dgram_unhash(struct sock *sk)
-> +{
-> +	pr_debug("%s\n", __func__);
-> +	write_lock_bh(&dgram_lock);
-> +	if (sk_del_node_init(sk))
-> +		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
-> +	write_unlock_bh(&dgram_lock);
-> +}
-> +
-> +static int
-> +dgram_connect(struct sock *sk, struct sockaddr *uaddr, int len)
-> +{
-> +	struct dgram_sock *ro = dgram_sk(sk);
-> +
-> +	/* Nodes of LoRaWAN send data to a gateway only, then data is received
-> +	 * and transferred to servers with the gateway's policy.
-> +	 * So, the destination address is not used by nodes.
-> +	 */
-> +	lock_sock(sk);
-> +	ro->connected = 1;
-> +	release_sock(sk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +dgram_disconnect(struct sock *sk, int flags)
-> +{
-> +	struct dgram_sock *ro = dgram_sk(sk);
-> +
-> +	lock_sock(sk);
-> +	ro->connected = 0;
-> +	release_sock(sk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +dgram_ioctl(struct sock *sk, int cmd, unsigned long arg)
-> +{
-> +	struct net_device *ndev = sk->sk_dst_cache->dev;
-> +	struct sk_buff *skb;
-> +	int amount;
-> +	int err;
-> +
-> +	netdev_dbg(ndev, "%s: ioctl file (cmd=0x%X)\n", __func__, cmd);
-> +	switch (cmd) {
-> +	case SIOCOUTQ:
-> +		amount = sk_wmem_alloc_get(sk);
-> +		err = put_user(amount, (int __user *)arg);
-> +		break;
-> +	case SIOCINQ:
-> +		amount = 0;
-> +		spin_lock_bh(&sk->sk_receive_queue.lock);
-> +		skb = skb_peek(&sk->sk_receive_queue);
-> +		if (skb) {
-> +			/* We will only return the amount of this packet
-> +			 * since that is all that will be read.
+> +			/* This is the first frame of memdump packet from
+> +			 * the controller, Disable IBS to recevie dump
+> +			 * with out any interruption, ideally time required for
+> +			 * the controller to send the dump is 8 seconds. let us
+> +			 * start timer to handle this asynchronous activity.
 > +			 */
-> +			amount = skb->len;
+> +			clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+> +
+> +			dump = (void *) skb->data;
+> +			dump_size = __le32_to_cpu(dump->dump_size);
+> +			if (!(dump_size)) {
+> +				bt_dev_err(hu->hdev, "QCA invalid memdump size");
+> +				kfree_skb(skb);
+> +				return;
+> +			}
+> +
+> +			bt_dev_info(hu->hdev, "QCA: collecting memdump started"
+> +				     "of size:%u", dump_size);
+> +			mod_timer(&qca->memdump_timer, (jiffies +
+> +				  msecs_to_jiffies(qca->memdump_delay)));
+> +
+> +			skb_pull(skb, sizeof(dump_size));
+> +			memdump_buf = vmalloc(dump_size);
+> +			qca_memdump->memdump_buf_head = memdump_buf;
+> +			qca_memdump->memdump_buf_tail = memdump_buf;
 > +		}
-> +		spin_unlock_bh(&sk->sk_receive_queue.lock);
-> +		err = put_user(amount, (int __user *)arg);
-> +		break;
-> +	default:
-> +		err = -ENOIOCTLCMD;
+> +
+> +		memdump_buf = qca_memdump->memdump_buf_tail;
+> +
+> +		/* If sequence no 0 is missed then there is no point in
+> +		 * accepting the other sequences.
+> +		 */
+> +		if (!memdump_buf) {
+> +			bt_dev_err(hu->hdev, "QCA: Discarding other packets");
+> +			kfree(qca_memdump);
+> +			kfree_skb(skb);
+> +			qca->qca_memdump = NULL;
+> +			return;
+> +		}
+> +
+> +		/* There could be chance of missing some packets from
+> +		 * the controller. In such cases let us store the dummy
+> +		 * packets in the buffer.
+> +		 */
+> +		while ((seq_no > qca_memdump->current_seq_no + 1) &&
+> +			seq_no != QCA_LAST_SEQUENCE_NUM) {
+> +			bt_dev_err(hu->hdev, "QCA controller missed packet:%d",
+> +				   qca_memdump->current_seq_no);
+> +			memcpy(memdump_buf, nullBuff, QCA_DUMP_PACKET_SIZE);
+> +			memdump_buf = memdump_buf + QCA_DUMP_PACKET_SIZE;
+> +			qca_memdump->received_dump += QCA_DUMP_PACKET_SIZE;
+> +			qca_memdump->current_seq_no++;
+> +		}
+> +
+> +		memcpy(memdump_buf, (unsigned char *) skb->data, skb->len);
+> +		memdump_buf = memdump_buf + skb->len;
+> +		qca_memdump->memdump_buf_tail = memdump_buf;
+> +		qca_memdump->current_seq_no = seq_no + 1;
+> +		qca_memdump->received_dump += skb->len;
+> +		qca->qca_memdump = qca_memdump;
+> +		kfree_skb(skb);
+> +		if (seq_no == QCA_LAST_SEQUENCE_NUM) {
+> +			bt_dev_info(hu->hdev, "QCA writing crash dump of size %d bytes",
+> +				   qca_memdump->received_dump);
+> +			memdump_buf = qca_memdump->memdump_buf_head;
+> +			dev_coredumpv(&hu->serdev->dev, memdump_buf,
+> +				      qca_memdump->received_dump, GFP_KERNEL);
+> +			// Revisit for free(memdump) if needed.
+> +			del_timer(&qca->memdump_timer);
+> +			kfree(qca->qca_memdump);
+> +			qca->qca_memdump = NULL;
+> +			qca->memdump_state = QCA_MEMDUMP_COLLECTED;
+> +		}
 > +	}
 > +
-> +	return err;
 > +}
 > +
-> +static int
-> +dgram_getsockopt(struct sock *sk, int level, int optname,
-> +		 char __user *optval, int __user *optlen)
+> +int qca_controller_memdump_event(struct hci_dev *hdev, struct sk_buff *skb)
 > +{
-> +	int val, len;
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	struct qca_data *qca = hu->priv;
 > +
-> +	if (level != SOL_LORAWAN)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (get_user(len, optlen))
-> +		return -EFAULT;
-> +
-> +	len = min_t(unsigned int, len, sizeof(int));
-> +
-> +	switch (optname) {
-> +	default:
-> +		return -ENOPROTOOPT;
-> +	}
-> +
-> +	if (put_user(len, optlen))
-> +		return -EFAULT;
-> +
-> +	if (copy_to_user(optval, &val, len))
-> +		return -EFAULT;
+> +	skb_queue_tail(&qca->rx_memdump_q, skb);
+> +	queue_work(qca->workqueue, &qca->ctrl_memdump_evt);
 > +
 > +	return 0;
 > +}
 > +
-> +static int
-> +dgram_setsockopt(struct sock *sk, int level, int optname,
-> +		 char __user *optval, unsigned int optlen)
+> +static int qca_recv_event_data(struct hci_dev *hdev, struct sk_buff *skb)
 > +{
-> +	int val;
-> +	int err;
-> +
-> +	err = 0;
-> +
-> +	if (optlen < sizeof(int))
-> +		return -EINVAL;
-> +
-> +	if (get_user(val, (int __user *)optval))
-> +		return -EFAULT;
-> +
-> +	lock_sock(sk);
-> +
-> +	switch (optname) {
-> +	default:
-> +		err = -ENOPROTOOPT;
-> +		break;
-> +	}
-> +
-> +	release_sock(sk);
-> +
-> +	return err;
-> +}
-> +
-> +static struct proto lrw_dgram_prot = {
-> +	.name		= "LoRaWAN",
-> +	.owner		= THIS_MODULE,
-> +	.obj_size	= sizeof(struct dgram_sock),
-> +	.init		= dgram_init,
-> +	.close		= dgram_close,
-> +	.bind		= dgram_bind,
-> +	.sendmsg	= dgram_sendmsg,
-> +	.recvmsg	= dgram_recvmsg,
-> +	.hash		= dgram_hash,
-> +	.unhash		= dgram_unhash,
-> +	.connect	= dgram_connect,
-> +	.disconnect	= dgram_disconnect,
-> +	.ioctl		= dgram_ioctl,
-> +	.getsockopt	= dgram_getsockopt,
-> +	.setsockopt	= dgram_setsockopt,
-> +};
-> +
-> +static int
-> +lrw_sock_release(struct socket *sock)
-> +{
-> +	struct sock *sk = sock->sk;
-> +
-> +	if (sk) {
-> +		sock->sk = NULL;
-> +		sk->sk_prot->close(sk, 0);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +lrw_sock_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
-> +{
-> +	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
-> +	struct sock *sk = sock->sk;
-> +
-> +	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
-> +	if (sk->sk_prot->bind)
-> +		return sk->sk_prot->bind(sk, uaddr, addr_len);
-> +
-> +	return sock_no_bind(sock, uaddr, addr_len);
-> +}
-> +
-> +static int
-> +lrw_sock_connect(struct socket *sock, struct sockaddr *uaddr,
-> +		 int addr_len, int flags)
-> +{
-> +	struct sock *sk = sock->sk;
-> +
-> +	if (addr_len < sizeof(uaddr->sa_family))
-> +		return -EINVAL;
-> +
-> +	return sk->sk_prot->connect(sk, uaddr, addr_len);
-> +}
-> +
-> +static int
-> +lrw_ndev_ioctl(struct sock *sk, struct ifreq __user *arg, unsigned int cmd)
-> +{
-> +	struct net_device *ndev;
-> +	struct ifreq ifr;
-> +	int ret;
-> +
-> +	pr_debug("%s: cmd %ud\n", __func__, cmd);
-> +	ret = -ENOIOCTLCMD;
-> +
-> +	if (copy_from_user(&ifr, arg, sizeof(struct ifreq)))
-> +		return -EFAULT;
-> +
-> +	ifr.ifr_name[IFNAMSIZ - 1] = 0;
-> +
-> +	dev_load(sock_net(sk), ifr.ifr_name);
-> +	ndev = dev_get_by_name(sock_net(sk), ifr.ifr_name);
-> +
-> +	netdev_dbg(ndev, "%s: cmd %ud\n", __func__, cmd);
-> +	if (!ndev)
-> +		return -ENODEV;
-> +
-> +	if (ndev->type == ARPHRD_LORAWAN && ndev->netdev_ops->ndo_do_ioctl)
-> +		ret = ndev->netdev_ops->ndo_do_ioctl(ndev, &ifr, cmd);
-> +
-> +	if (!ret && copy_to_user(arg, &ifr, sizeof(struct ifreq)))
-> +		ret = -EFAULT;
-> +	dev_put(ndev);
-> +
-> +	return ret;
-> +}
-> +
-> +static int
-> +lrw_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct sock *sk = sock->sk;
-> +
-> +	pr_debug("%s: cmd %ud\n", __func__, cmd);
-> +	switch (cmd) {
-> +	case SIOCGSTAMP:
-> +		return sock_get_timestamp(sk, (struct timeval __user *)arg);
-> +	case SIOCGSTAMPNS:
-> +		return sock_get_timestampns(sk, (struct timespec __user *)arg);
-> +	case SIOCOUTQ:
-> +	case SIOCINQ:
-> +		if (!sk->sk_prot->ioctl)
-> +			return -ENOIOCTLCMD;
-> +		return sk->sk_prot->ioctl(sk, cmd, arg);
-> +	default:
-> +		return lrw_ndev_ioctl(sk, (struct ifreq __user *)arg, cmd);
-> +	}
-> +}
-> +
-> +static int
-> +lrw_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
-> +{
-> +	struct sock *sk = sock->sk;
-> +
-> +	pr_debug("%s: going to send %zu bytes\n", __func__, len);
-> +	return sk->sk_prot->sendmsg(sk, msg, len);
-> +}
-> +
-> +static const struct proto_ops lrw_dgram_ops = {
-> +	.family		= PF_LORAWAN,
-> +	.owner		= THIS_MODULE,
-> +	.release	= lrw_sock_release,
-> +	.bind		= lrw_sock_bind,
-> +	.connect	= lrw_sock_connect,
-> +	.socketpair	= sock_no_socketpair,
-> +	.accept		= sock_no_accept,
-> +	.getname	= sock_no_getname,
-> +	.poll		= datagram_poll,
-> +	.ioctl		= lrw_sock_ioctl,
-> +	.listen		= sock_no_listen,
-> +	.shutdown	= sock_no_shutdown,
-> +	.setsockopt	= sock_common_setsockopt,
-> +	.getsockopt	= sock_common_getsockopt,
-> +	.sendmsg	= lrw_sock_sendmsg,
-> +	.recvmsg	= sock_common_recvmsg,
-> +	.mmap		= sock_no_mmap,
-> +	.sendpage	= sock_no_sendpage,
-> +};
-> +
-> +static int
-> +lorawan_creat(struct net *net, struct socket *sock, int protocol, int kern)
+> +	/* We receive chip memory dump as an event packet, With a dedicated
+> +	 * handler followed by a hardware error event. When this event is
+> +	 * received we store dump into a file before closing hci. This
+> +	 * dump will help in triaging the issues.
+> +	 */
+> +	if ((skb->data[0] == HCI_VENDOR_PKT) &&
+> +	    (get_unaligned_be16((skb->data) + 2) == QCA_SSR_DUMP_HANDLE))
 
-create
-Also, why lorawan_ here and lrw_ elsewhere?
+The (skb->data) is pointless, just do skb->data.
 
+> +		return qca_controller_memdump_event(hdev, skb);
+> +
+> +	return hci_recv_frame(hdev, skb);
+> +}
+> +
+> #define QCA_IBS_SLEEP_IND_EVENT \
+> 	.type = HCI_IBS_SLEEP_IND, \
+> 	.hlen = 0, \
+> @@ -888,12 +1089,12 @@ static int qca_recv_acl_data(struct hci_dev *hdev, struct sk_buff *skb)
+> 	.maxlen = HCI_MAX_IBS_SIZE
+> 
+> static const struct h4_recv_pkt qca_recv_pkts[] = {
+> -	{ H4_RECV_ACL,             .recv = qca_recv_acl_data },
+> -	{ H4_RECV_SCO,             .recv = hci_recv_frame    },
+> -	{ H4_RECV_EVENT,           .recv = hci_recv_frame    },
+> -	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind  },
+> -	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack  },
+> -	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind },
+> +	{ H4_RECV_ACL,             .recv = qca_recv_acl_data	},
+> +	{ H4_RECV_SCO,             .recv = hci_recv_frame	},
+> +	{ H4_RECV_EVENT,           .recv = qca_recv_event_data	},
+
+call it qca_recv_event and don't realign the whole table.
+
+> +	{ QCA_IBS_WAKE_IND_EVENT,  .recv = qca_ibs_wake_ind	},
+> +	{ QCA_IBS_WAKE_ACK_EVENT,  .recv = qca_ibs_wake_ack	},
+> +	{ QCA_IBS_SLEEP_IND_EVENT, .recv = qca_ibs_sleep_ind	},
+> };
+> 
+> static int qca_recv(struct hci_uart *hu, const void *data, int count)
+> @@ -1114,6 +1315,68 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+> 	return 0;
+> }
+> 
+> +static int qca_send_crashbuffer(struct hci_uart *hu)
 > +{
-> +	struct sock *sk;
-> +	int ret;
+> +	struct qca_data *qca = hu->priv;
+> +	struct sk_buff *skb;
+> +	unsigned char buf[QCA_CRASHBYTE_PACKET_LEN];
 > +
-> +	if (!net_eq(net, &init_net))
-> +		return -EAFNOSUPPORT;
+> +	bt_dev_dbg(hu->hdev, "sending soc crash buffer to controller");
 > +
-> +	if (sock->type != SOCK_DGRAM)
-> +		return -EAFNOSUPPORT;
+> +	/* We forcefully crash the controller, by sending 0xfb byte for
+> +	 * 1024 times. We also might have chance of losing data, To be
+> +	 * on safer side we send 1100 bytes to the SoC.
+> +	 */
+> +	memset(buf, QCA_MEMDUMP_BYTE, QCA_CRASHBYTE_PACKET_LEN);
 > +
-> +	/* Allocates enough memory for dgram_sock whose first member is sk */
-> +	sk = sk_alloc(net, PF_LORAWAN, GFP_KERNEL, &lrw_dgram_prot, kern);
-> +	if (!sk)
+> +	skb = bt_skb_alloc(QCA_CRASHBYTE_PACKET_LEN, GFP_KERNEL);
+> +	if (!skb) {
+> +		bt_dev_err(hu->hdev, "Failed to allocate memory for skb packet");
 > +		return -ENOMEM;
-> +
-> +	sock->ops = &lrw_dgram_ops;
-> +	sock_init_data(sock, sk);
-> +	sk->sk_family = PF_LORAWAN;
-> +	sock_set_flag(sk, SOCK_ZAPPED);
-> +
-> +	if (sk->sk_prot->hash) {
-> +		ret = sk->sk_prot->hash(sk);
-> +		if (ret) {
-> +			sk_common_release(sk);
-> +			goto lorawan_creat_end;
-> +		}
 > +	}
 > +
-> +	if (sk->sk_prot->init) {
-> +		ret = sk->sk_prot->init(sk);
-> +		if (ret)
-> +			sk_common_release(sk);
-> +	}
+> +	skb_put_data(skb, buf, QCA_CRASHBYTE_PACKET_LEN);
+> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
 > +
-> +lorawan_creat_end:
-
-create
-
-> +	return ret;
-> +}
+> +	skb_queue_tail(&qca->txq, skb);
+> +	hci_uart_tx_wakeup(hu);
 > +
-> +static const struct net_proto_family lorawan_family_ops = {
-> +	.owner		= THIS_MODULE,
-> +	.family		= PF_LORAWAN,
-> +	.create		= lorawan_creat,
-> +};
-> +
-> +static int
-> +lrw_dgram_deliver(struct net_device *ndev, struct sk_buff *skb)
-> +{
-> +	struct dgram_sock *ro;
-> +	struct sock *sk;
-> +	bool found;
-> +	int ret;
-> +
-> +	ret = NET_RX_SUCCESS;
-> +	found = false;
-
-In times of C99 you could probably fold that into the declarations.
-
-> +
-> +	read_lock(&dgram_lock);
-> +	sk_for_each(sk, &dgram_head) {
-> +		ro = dgram_sk(sk);
-> +		if (cpu_to_be32(ro->src_devaddr) == *(__be32 *)ndev->dev_addr) {
-> +			found = true;
-> +			break;
-> +		}
-> +	}
-> +	read_unlock(&dgram_lock);
-> +
-> +	if (!found)
-> +		goto lrw_dgram_deliver_err;
-> +
-> +	skb = skb_share_check(skb, GFP_ATOMIC);
-> +	if (!skb)
-> +		return NET_RX_DROP;
-> +
-> +	if (sock_queue_rcv_skb(sk, skb) < 0)
-> +		goto lrw_dgram_deliver_err;
-> +
-> +	return ret;
-> +
-> +lrw_dgram_deliver_err:
-> +	kfree_skb(skb);
-> +	ret = NET_RX_DROP;
-> +	return ret;
-> +}
-> +
-> +static int
-> +lorawan_rcv(struct sk_buff *skb, struct net_device *ndev,
-> +	    struct packet_type *pt, struct net_device *orig_ndev)
-> +{
-> +	if (!netif_running(ndev))
-> +		goto lorawan_rcv_drop;
-> +
-> +	if (!net_eq(dev_net(ndev), &init_net))
-> +		goto lorawan_rcv_drop;
-> +
-> +	if (ndev->type != ARPHRD_LORAWAN)
-> +		goto lorawan_rcv_drop;
-> +
-> +	if (skb->pkt_type != PACKET_OTHERHOST)
-> +		return lrw_dgram_deliver(ndev, skb);
-> +
-> +lorawan_rcv_drop:
-> +	kfree_skb(skb);
-> +	return NET_RX_DROP;
-> +}
-> +
-> +static struct packet_type lorawan_packet_type = {
-> +	.type		= htons(ETH_P_LORAWAN),
-> +	.func		= lorawan_rcv,
-> +};
-> +
-> +static int __init
-> +lrw_sock_init(void)
-> +{
-> +	int ret;
-> +
-> +	pr_info("module inserted\n");
-> +	ret = proto_register(&lrw_dgram_prot, 1);
-> +	if (ret)
-> +		goto lrw_sock_init_end;
-> +
-> +	/* Tell SOCKET that we are alive */
-
-Drop?
-
-> +	ret = sock_register(&lorawan_family_ops);
-> +	if (ret)
-> +		goto lrw_sock_init_err;
-> +
-> +	dev_add_pack(&lorawan_packet_type);
-> +	ret = 0;
-> +	goto lrw_sock_init_end;
-> +
-> +lrw_sock_init_err:
-> +	proto_unregister(&lrw_dgram_prot);
-> +
-> +lrw_sock_init_end:
 > +	return 0;
-
-return ret;?
-
 > +}
 > +
-> +static void __exit
-> +lrw_sock_exit(void)
+> +static void qca_hw_error(struct hci_dev *hdev, u8 code)
 > +{
-> +	dev_remove_pack(&lorawan_packet_type);
-> +	sock_unregister(PF_LORAWAN);
-> +	proto_unregister(&lrw_dgram_prot);
-> +	pr_info("module removed\n");
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	struct qca_data *qca = hu->priv;
+> +
+> +	bt_dev_info(hdev, "mem_dump_status: %d", qca->memdump_state);
+> +
+> +	if (qca->memdump_state == QCA_MEMDUMP_IDLE) {
+> +		/* If hardware error event received for other than QCA
+> +		 * soc memory dump event, then we need to crash the SOC
+> +		 * and wait here for 8 seconds to get the dump packets.
+> +		 * This will block main thread to be on hold until we
+> +		 * collect dump.
+> +		 */
+> +		mod_timer(&qca->memdump_timer,
+> +			  (jiffies + msecs_to_jiffies(qca->memdump_delay)));
+
+Why a timer that then ends up in interrupt context?
+
+> +		qca_send_crashbuffer(hu);
+> +
+> +		while (qca->memdump_state != QCA_MEMDUMP_COLLECTED &&
+> +			qca->memdump_state != QCA_MEMDUMP_TIMEOUT)
+> +			;
+
+What is this? Busy loop? I rather not do that.
+
+> +	} else if (qca->memdump_state == QCA_MEMDUMP_COLLECTING) {
+> +		/* Let us wait here until memory dump collected or
+> +		 * memory dump timer expired.
+> +		 */
+> +		bt_dev_info(hdev, "waiting for dump to complete");
+> +		while (qca->memdump_state == QCA_MEMDUMP_COLLECTING)
+> +			;
+> +	}
+> +
+> +	qca->memdump_state = QCA_MEMDUMP_IDLE;
 > +}
 > +
-> +module_init(lrw_sock_init);
-> +module_exit(lrw_sock_exit);
-> +
-> +MODULE_AUTHOR("Jian-Hong Pan, <starnight@g.ncu.edu.tw>");
+> static int qca_wcn3990_init(struct hci_uart *hu)
+> {
+> 	struct hci_dev *hdev = hu->hdev;
+> @@ -1229,6 +1492,10 @@ static int qca_setup(struct hci_uart *hu)
+> 	if (!ret) {
+> 		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+> 		qca_debugfs_init(hdev);
+> +		/* We only get controller dump when fw download is
+> +		 * successful.
+> +		 */
+> +		hu->hdev->hw_error = qca_hw_error;
 
-Drop the comma?
+I would set this all the time and handle it with a flag if firmware downloaded has succeeded or not.
 
-> +MODULE_DESCRIPTION("LoRaWAN socket kernel module");
+> 	} else if (ret == -ENOENT) {
+> 		/* No patch/nvm-config found, run with original fw/config */
+> 		ret = 0;
 
-Aren't they all kernel modules? :)
+Regards
 
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_ALIAS_NETPROTO(PF_LORAWAN);
+Marcel
 
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
