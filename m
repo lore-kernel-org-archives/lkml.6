@@ -6,122 +6,111 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBF6C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 20:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A58C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 21:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F2A217F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 20:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B91220873
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 21:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="RqY7fyMu"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d7P28SSx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeL2UWN (ORCPT
+        id S1726734AbeL2VBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 15:22:13 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34593 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeL2UWN (ORCPT
+        Sat, 29 Dec 2018 16:01:09 -0500
+Received: from mail-lf1-f48.google.com ([209.85.167.48]:40792 "EHLO
+        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbeL2VBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 15:22:13 -0500
-Received: by mail-qt1-f193.google.com with SMTP id r14so26462588qtp.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 12:22:12 -0800 (PST)
+        Sat, 29 Dec 2018 16:01:09 -0500
+Received: by mail-lf1-f48.google.com with SMTP id v5so16461946lfe.7
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 13:01:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FwRsmL1DfOhHxmJWMc/vCvURXQbKWXH1LRxKROrAQWk=;
-        b=RqY7fyMunItIUY8GckjRmSbB3HXewFTeXhlBdZRI77BA5YMclKHs0mKozal9oPLTMY
-         iEjaTjKyIth00izitS7/RpK/6eGXt8qC2CVEvIDqz3Cs3fMbZm7KCHZToBn3m77b4+Ql
-         Jr4tmXArdCU7v94V0wY55wvLY7A7nTlVbWh3UoTijXpdoHwKE6WUOfkh9UU15dta/EJg
-         6QlgPpYJoJAs4uDLHhaMcWG2aBfVJynGpuq/3WUKVYjmdgahbaSPWEByquo8vw0fLYPF
-         +xI7+PHsWS4ldKBYG7ZNMyDCSyVVbee2Y4SUOsQi0TCHRz01yOYrFQ6pNvLda3n6sMx4
-         1N5A==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HXIqqeXbam/lzjLJFdDUubWem918tYsWEHOiU1rXsj4=;
+        b=d7P28SSxy5v86rScb0XhbdyeJugYPOEs7Lcz8/7VSrXg0ALBoxj1aRj/3muOoJtYMZ
+         ByxMHeXIsby096p3ZmNMHN+cGtK6N0FA0ufPkzD9EIviEYa13gF4HO2usdW6l+3DOHMg
+         Prh1SSg0eaB+P2eC1mBf07t8MxRECVY8ve9wA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FwRsmL1DfOhHxmJWMc/vCvURXQbKWXH1LRxKROrAQWk=;
-        b=c/6/4DJPUhOsPT64fA6sF/uW59HT8fwsI799+ZUDtpeRCjYAHTKeeDVinxbS4ur7Cy
-         WMLn16OjM1wTJaN+UoKQe+M4slK+qsmg8tULTg2JAOeaAb/u/5QXhI2MkYlTeAryvWqZ
-         rBurb1WUUBJdAYs2BR3/aBv3a3O41GRaULLW2mPpmIIQYOUY1bmDmaMzKVM4GUhkj5Dq
-         LPj3SqEowVJeWR9QJzbFaafz8mUP21ndNweffIFj2Gz2S++3xP+vYwi2c0DbGJJNqJYR
-         Tm0F+xifqB/3Hv0vgUfI9p9jseLGReaWfqf65Az30stlyVBoVzXu1CwodMoW8Wu0j1j8
-         yYOg==
-X-Gm-Message-State: AA+aEWb1cBRbiLO+LkH5QiUYnmlwl6SUk+TlQxZ4B4O1JC4MGtBHSdfR
-        teCfJIweZZHGjBGMaDosTgLPVssQ3XKBuA==
-X-Google-Smtp-Source: ALg8bN4tX+ktxGWKDXhchW1HezRbpBrqZ6A9d7AgdekIWMhds7HER4f5+P8lwlF+l1BiwWGkPCHUaA==
-X-Received: by 2002:aed:29c7:: with SMTP id o65mr30553302qtd.353.1546114931566;
-        Sat, 29 Dec 2018 12:22:11 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id y2sm21041999qtb.88.2018.12.29.12.22.10
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HXIqqeXbam/lzjLJFdDUubWem918tYsWEHOiU1rXsj4=;
+        b=Xc04A+EoDggC24D+AqDDBE2xFyi7drkn03OGgnps1++ecL6dyFI0bkXrR+SQEXGeJd
+         Go/oOTWpmG4ei9c5Sbftzw+0ehv/EhsEMTFA9C0musrQZ47fvMY5gimuiSrCWWBRwe4n
+         iSlSqLaphvdNXIkLo9bJtaGRufkDFcFbW8/fxGYjQbUdD8oLDOpRmucgNzQT7ACNOMGY
+         R94/tGz83iP3u1rd2LusmJWTXmvRHuO+HCGufH5sUYtlESQhznBDpRXhSKVlq4OtVJnp
+         v89qrwiTNwAQLGnBILoKllr6GVvOGA96g+clXk8C3rQKzwnB/TEToypTacE/QK27kOdS
+         EIPA==
+X-Gm-Message-State: AA+aEWbPc9gVVNe/1tpR+t057Ixo0DUAnauvV+2aQ5Tn8iCTJ9Q811ml
+        GyYztXjqNByp4ax6suckIb3PFSIg5tQ=
+X-Google-Smtp-Source: AFSGD/WJAun5lXUkE1ff+vRblT8nG23YYbK8l4N0AHbUHzW7WHs/wL5ah0zCjsoFvIItJK1pD9M82g==
+X-Received: by 2002:a19:f20:: with SMTP id e32mr16917030lfi.51.1546117266408;
+        Sat, 29 Dec 2018 13:01:06 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id d23sm8579575lfc.11.2018.12.29.13.01.05
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 29 Dec 2018 12:22:11 -0800 (PST)
-Subject: Re: [PATCH -mmotm] efi: drop kmemleak_ignore() for page allocator
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181226023534.64048-1-cai@lca.pw>
- <CAKv+Gu_fiEDffKq_fONBYTOdSk-L7__+LgNEyVaNF3FGzBfAow@mail.gmail.com>
- <403405f1-b702-2feb-4616-35fc3dc3133e@lca.pw>
- <CAKv+Gu_e=NkKZ5C+KzBmgg2VMXNKPqXcPON8heRd0F_iW+aaEQ@mail.gmail.com>
- <20181227190456.0f21d511ef71f1b455403f2a@linux-foundation.org>
- <CAKv+Gu98AOB2LfQGMUHNc_B0MBvd3gATvtPypQaV1vgTcf87ww@mail.gmail.com>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <70d2a620-d9d8-f351-78fb-1135d264d824@lca.pw>
-Date:   Sat, 29 Dec 2018 15:22:09 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Sat, 29 Dec 2018 13:01:05 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id l10so16463999lfh.9
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 13:01:05 -0800 (PST)
+X-Received: by 2002:a19:4287:: with SMTP id p129mr17223923lfa.135.1546117264611;
+ Sat, 29 Dec 2018 13:01:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu98AOB2LfQGMUHNc_B0MBvd3gATvtPypQaV1vgTcf87ww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAK7LNARQggM3aKEPRKJqa4tunFAfmfErMZuS-rrnRv6UB1VpPQ@mail.gmail.com>
+In-Reply-To: <CAK7LNARQggM3aKEPRKJqa4tunFAfmfErMZuS-rrnRv6UB1VpPQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 29 Dec 2018 13:00:48 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiLt3rgeyM3BWAd5VJrKcnxxuHybwoQiDGMgyspo6oXDg@mail.gmail.com>
+Message-ID: <CAHk-=wiLt3rgeyM3BWAd5VJrKcnxxuHybwoQiDGMgyspo6oXDg@mail.gmail.com>
+Subject: Re: [GIT PULL 2/4] Kbuild updates for v4.21 part2
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/29/18 4:17 AM, Ard Biesheuvel wrote:
-> On Fri, 28 Dec 2018 at 04:04, Andrew Morton <akpm@linux-foundation.org> wrote:
->>
->> On Wed, 26 Dec 2018 16:31:59 +0100 Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->>
->>> Please stop sending EFI patches if you can't be bothered to
->>> test/reproduce against the EFI tree.
->>
->> um, sorry, but that's a bit strong.  Finding (let alone fixing) a bug
->> in EFI is a great contribution (thanks!) and the EFI maintainers are
->> perfectly capable of reviewing and testing the proposed fix.  Or of
->> fixing the bug by other means.
->>
-> 
-> Qian did spot some issues recently, which was really helpful. But I
-> really think that reporting all issues you find against the -mmotm
-> tree because that happens to be your preferred tree for development is
-> not the correct approach.
-> 
->> Let's not beat people up for helping us in a less-than-perfect way, no?
-> 
-> Fair enough. But asking people to ensure that an issue they found
-> actually exists on the subsystem tree in question is not that much to
-> ask, is it?
+On Fri, Dec 28, 2018 at 8:00 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Introduce a new option CONFIG_NO_AUTO_INLINE as well. With this option,
+> only functions explicitly marked with "inline" will be inlined. This
+> will allow the function tracer to trace more functions.
 
-It is not too much to ask to test on EFI subsystem tree only for this patch, but
-if every maintainer asked for the same thing to test each subsystem tree after
-found a bug even a trivial one in -mmotm or linux-next, it then become an issue.
+Ugh. This causes new and bogus warnings, because gcc doesn't see some
+of the checks.
 
-There are people genuinely interested in the kernel in general rather than focus
-on a few subsystems (yet). There are many subsystem git trees out there. It at
-least needs to figure out which branch to test and adjust the config file
-accordingly. Those subsystem trees usually are not well-documented like
-linux-next or -mmotm trees. Then, they may need to deal with the subsystem
-tree-specific issues.
+For example, the x86 emulate_vsyscall() function now warns that
 
-Those people may just better switch to use mainline instead where they don't
-need to bother testing the subsystem tree for every single patch. However, that
-will cause delay in fixing those issues because mainline is usually a bit lag
-behind the development.
+    warning: =E2=80=98syscall_nr=E2=80=99 may be used uninitialized in this=
+ function
+
+because addr_to_vsyscall_nr() isn't inlined any more, so gcc doesn't
+see that the return value is always smaller than three (and then it
+doesn't see that we handle all the cases in the switch statement
+later).
+
+So honestly, these "debugging improvements" have a rather nasty side
+effect. I'm not at all convinced that we should do this.  It is *not*
+worth causing extra development pain with a totally pointless option
+that changes code generation radically like this. It's going to cause
+lots of extra churn.
+
+This branch already added a couple of extra inline markers just to
+make code work reasonably. How many tens (or hundreds) got missed just
+because the build still works, but the lack of inlining means that we
+generate completely garbage code?
+
+I'm going to skip this pull request.
+
+We have basically always required a certain level of competence from
+the compiler, and this basically says that the compiler can do stupid
+things and we'd have to fix those stupidities by hand.
+
+             Linus
