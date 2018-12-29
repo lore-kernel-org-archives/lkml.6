@@ -2,60 +2,76 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF80C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839A1C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC4321019
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540E22146F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbeL2F73 (ORCPT
+        id S1728749AbeL2GNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 00:59:29 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:60371 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726672AbeL2F73 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 00:59:29 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1257284|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03276;MF=fuyao@allwinnertech.com;NM=1;PH=DS;RN=1;RT=1;SR=0;TI=SMTPD_---.DectfAK_1546063165;
-Received: from localhost(mailfrom:fuyao@allwinnertech.com fp:SMTPD_---.DectfAK_1546063165)
-          by smtp.aliyun-inc.com(10.194.98.226);
-          Sat, 29 Dec 2018 13:59:26 +0800
-Date:   Sat, 29 Dec 2018 13:59:25 +0800
-From:   fuyao <fuyao@allwinnertech.com>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] power_suuupy: change brace's place
-Message-ID: <20181229055925.GA12884@AExdroid03>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Sat, 29 Dec 2018 01:13:44 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:39880 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbeL2GNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 01:13:43 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 37C3011E33A64DADEC98;
+        Sat, 29 Dec 2018 14:13:41 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wBT6DZes026559;
+        Sat, 29 Dec 2018 14:13:35 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018122914142024-19463034 ;
+          Sat, 29 Dec 2018 14:14:20 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     dave.hansen@linux.intel.com, peterz@infradead.org,
+        tglx@linutronix.de, luto@kernel.org
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH]  x86/mm/mem_encrypt_identity : fix error useage to sizeof
+Date:   Sat, 29 Dec 2018 14:34:12 +0800
+Message-Id: <1546065252-97996-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-29 14:14:20,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-29 14:13:15,
+        Serialize complete at 2018-12-29 14:13:15
+X-MAIL: mse01.zte.com.cn wBT6DZes026559
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- drivers/power/supply/power_supply_sysfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Fix error usage to sizeof. It should not use sizeof to pointer.
 
-diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
-index 5204f115970f..be1577e96c59 100644
---- a/drivers/power/supply/power_supply_sysfs.c
-+++ b/drivers/power/supply/power_supply_sysfs.c
-@@ -75,7 +75,8 @@ static const char * const power_supply_scope_text[] = {
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/x86/mm/mem_encrypt_identity.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index a19ef1a..4aa9b14 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -158,8 +158,8 @@ static void __init sme_populate_pgd(struct sme_populate_pgd_data *ppd)
+ 	pmd = pmd_offset(pud, ppd->vaddr);
+ 	if (pmd_none(*pmd)) {
+ 		pte = ppd->pgtable_area;
+-		memset(pte, 0, sizeof(pte) * PTRS_PER_PTE);
+-		ppd->pgtable_area += sizeof(pte) * PTRS_PER_PTE;
++		memset(pte, 0, sizeof(*pte) * PTRS_PER_PTE);
++		ppd->pgtable_area += sizeof(*pte) * PTRS_PER_PTE;
+ 		set_pmd(pmd, __pmd(PMD_FLAGS | __pa(pte)));
+ 	}
  
- static ssize_t power_supply_show_property(struct device *dev,
- 					  struct device_attribute *attr,
--					  char *buf) {
-+					  char *buf)
-+{
- 	ssize_t ret = 0;
- 	struct power_supply *psy = dev_get_drvdata(dev);
- 	const ptrdiff_t off = attr - power_supply_attrs;
 -- 
-2.19.1
+1.8.3.1
 
