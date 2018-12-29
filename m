@@ -2,68 +2,63 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6738C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1143FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9192F21919
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546061827;
-	bh=7iixA7j4UJcF3FUD80YoIrz7XSZGDRfoA8v2VEgMIJc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=wsFf9H9LjjAV8DJ1dGHTddvIbwmB5EkIP276U4hxqt4MuFMY2XRDlWcV8YCP9Wc7J
-	 TzwT8SXCKI5jJO8ZDVqwU8G415tue5cZPXgq3SjVMdq9K1jsFbyGGSGWYMrTiFxrUC
-	 3pcyI1gkfLvAl9J2s6AvsiU0SzqpavDCnHoDSu1Q=
+	by mail.kernel.org (Postfix) with ESMTP id CF52C20665
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbeL2FhE (ORCPT
+        id S1728681AbeL2FtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 00:37:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbeL2FfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 00:35:05 -0500
-Subject: Re: [GIT PULL] hwmon updates for v4.21
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546061704;
-        bh=7iixA7j4UJcF3FUD80YoIrz7XSZGDRfoA8v2VEgMIJc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=wqzQBxpzi5twAB/GeVw6N2U2GxjAa4GylfrhW0UinIrQn5gjLEt1SlV9sh1xDxR47
-         +j+Mpow8HqvbM725BUfDi5KURH4kKkwJ454Yd+2VzGB/Fck8/rlJRGxN0Q2gweCL7l
-         DF6BT01qy8kshlxNLcPFFsoB6ERaU6OwsZYEWON0=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1545603149-15559-1-git-send-email-linux@roeck-us.net>
-References: <1545603149-15559-1-git-send-email-linux@roeck-us.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1545603149-15559-1-git-send-email-linux@roeck-us.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
- hwmon-for-v4.21
-X-PR-Tracked-Commit-Id: 9aa3aa15f4c2f74f47afd6c5db4b420fadf3f315
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8754040378e4ff70b3bb96b1dabac62da5dfb870
-Message-Id: <20181229053504.9301.28033.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 29 Dec 2018 05:35:04 +0000
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+        Sat, 29 Dec 2018 00:49:07 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40500 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbeL2FtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 00:49:07 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5F86D14515150;
+        Fri, 28 Dec 2018 21:49:06 -0800 (PST)
+Date:   Fri, 28 Dec 2018 21:49:05 -0800 (PST)
+Message-Id: <20181228.214905.2208487974538707696.davem@davemloft.net>
+To:     xuechaojing@huawei.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
+        tony.qu@huawei.com, luoshaokai@huawei.com
+Subject: Re: [PATCH 1/1] net-next/hinic:add shutdown callback
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181228002040.1256-1-xuechaojing@huawei.com>
+References: <20181228002040.1256-1-xuechaojing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 28 Dec 2018 21:49:06 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 23 Dec 2018 14:12:29 -0800:
+From: Xue Chaojing <xuechaojing@huawei.com>
+Date: Fri, 28 Dec 2018 00:20:40 +0000
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v4.21
+> @@ -1106,6 +1106,13 @@ static void hinic_remove(struct pci_dev *pdev)
+>  	dev_info(&pdev->dev, "HiNIC driver - removed\n");
+>  }
+>  
+> +static void hinic_shutdown(struct pci_dev *pdev)
+> +{
+> +	pci_disable_device(pdev);
+> +
+> +	dev_info(&pdev->dev, "HiNIC driver - shutdown\n");
+> +}
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8754040378e4ff70b3bb96b1dabac62da5dfb870
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+I do not think these messages are appropriate.  I didn't catch
+them before, but I'm not going to let new ones get added.
