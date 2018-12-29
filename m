@@ -2,90 +2,115 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5438C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F347FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C872145D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C119A2145D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:35:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YKfbQ153"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyZhZPNW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbeL2SeZ (ORCPT
+        id S1728267AbeL2SfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 13:34:25 -0500
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:38989
-        "EHLO sonic301-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727738AbeL2SeZ (ORCPT
+        Sat, 29 Dec 2018 13:35:21 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40373 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728185AbeL2SfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 13:34:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1546108463; bh=ZgjrlLp7GmcYyFnk7yxZClNQSO1PLCovYVtYIkaSkpg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YKfbQ153r+H9fGaF6UGTsxTplsB/ioUM9XEW31CziWQfSijEBaCcSkewhwWuBkPaSqbwfp2uYYkTLdul9+w0NmN7FeLf/4+TPte8GQkvZe77jywbK1tY9YpC82tLx4V2alzgMIjJBwCt9NY7Z9nbKEVlCBybhdAInrXIYHTTXK0b3aHidHcOCs8O9O+wv/womqP+Ok5ZSZRDYX6CjfgIns6fpPZF7lajDAb6ulDLV+mTTBg4LKdus7xW9kH4aCIMVoXCOTWEtRTmdkz2oI953VP8Boqw96GzRaRobu2woHzFLGTfgrJPRPaLyYOdSIlbqtICtcLfB//WEUtnOt5W5w==
-X-YMail-OSG: 0PeUPgQVM1ndho2oWI.tcuN2r1KqXqNI6OtU2a5VLlJmS6zu.rpr2V4NEUqvj4K
- Xv_1fxrEHoL5EzEiVT2lIG9L5PsmZDEwOhxs3213UJa1wF4O9_w4kB2U_zJjxTXCAWuJvhgbl.QS
- aTnfw2z6u6WGv554ihvBa7Lz3G31CZl9YnTZQFA9HQU1izda9U9AMUHbBm1ufDAbLig0b2nUI5gT
- Jj6DEH3x83qTuyeEL3lv6sLQzQomdTDVV8acgprEjwefieenggajThyCtYw5whW_W6hxR9VZc_8Z
- PFq0HLrY2hgSe_94gz9aeD_2f3nwYyP8e.DIC1Ozj3oB4MidUfiVHzL5J0snGVABfNVFR73x.Kxw
- oh6CnzQyZLrzCyt0M_lQHbMqUVgNYQ3DdHXKv9f6.CTV5wmIkhzHSDgumTPzZfoYAZQScL5bNc4j
- 4DjOitTf_hERpNNFrsefthYl32Tw5umsn4Fvh.VEGMnV2AVexc0cXj3gDxVqQCPxi6fGCr2BmMND
- zlk_2yEs3qISMBqEZ1VZhHWlfKcbdoXt33Tm2hLZ0YxZwirCkXY5a6XIFotGTeClgRQIQDp9DtBL
- uRTssqTsG6nmjsPS86eiwI4iRajDnPcxvh8zp71ObzvMtBOX5c3iprVzQwHh8wSzn6pLwz1VnMn3
- _dDAc9o9sTXRJLsbH53AdROyRblP83NPB6r0sbcJw_7orcUkNWCGUxhebr7mJTL2mEvNzM8y0Xqe
- NPuqPvhXPdInzlfj7Qz8XlxK3iJ.eXaCoCf2Rw0Kf9X3aNhGFmmiZZ_p37YfiKlWIyaAKrr_VSLQ
- VRcYyvzjA_pYKDuTU0q8F.TU6S8HH.cW.XqmqcTPqR8LoDn84zJm6MKV496uPzKFCTfTRgDisS_p
- GYNCikcu44omMD_q6aW3RX19cTUhXqJUdBl1fJdfePRocXf55Ofb74SYw3xGYavwbX2MFehen5zI
- j.rsIR8hXmwZA1wD2GrJ24o69TllJt.4z0ZFXjC.AHUeT63FGMBmpa9q88tqJyI2lwH3nd363Ju2
- lwZgKNlyl_IMshIAd3jczUNbNddyEp6JsaXGYuBcUr_AXqIKFkINOZaXsvupIrVfVpjvws5AOhAY
- PZnBWbIB9feHe1eVHOrOcpmKcH6g-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Sat, 29 Dec 2018 18:34:23 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp423.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9d48a13f66d8cb949f3d9195969ad350;
-          Sat, 29 Dec 2018 18:34:21 +0000 (UTC)
-Subject: Re: [GIT PULL] security: general updates for v4.21
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-References: <alpine.LRH.2.21.1812250652420.2714@namei.org>
- <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>
- <alpine.LRH.2.21.1812291406530.29722@namei.org>
- <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
- <alpine.LRH.2.21.1812291505480.31477@namei.org>
- <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <45d180c5-a174-7eef-9e23-83b819f8abd6@schaufler-ca.com>
-Date:   Sat, 29 Dec 2018 10:34:18 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Sat, 29 Dec 2018 13:35:20 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so11289247pgp.7;
+        Sat, 29 Dec 2018 10:35:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lFf9VNRLqoV0QJvVLgw9rhluSBUqDboBgzZBJJTvGfo=;
+        b=eyZhZPNW2vfoQma9xNA7HGOklOKmVrlg4dGhbuukNYvxlJyc4WLOFn5D0tx3BxrFWl
+         fJZzxleNEz2qQgJSzJiN5psq7IMmlRy/D6cfmAJpSEGkZ9KUlu/2hjPpF/YU6//nHxaK
+         qZqh+fdzyBih9pNqcSC/R30D+CsbBvz7EQFziErDo/4LeG8h4ha2I+6rF/ygzCUSRipg
+         fM1iYuL3SWv7uNp2i7+BlFLhXUC0x5DBLNsLmb9NgWIwX5bhWJ26MfOTBAblAFUYRzxJ
+         Vk4YwW9ivjxdbttVXGkoJutISRM4bHFioMFDmhKooE7u74lEubChok3rpOK+/I8X08F5
+         AuXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lFf9VNRLqoV0QJvVLgw9rhluSBUqDboBgzZBJJTvGfo=;
+        b=MRrkiLXxzLbg/HAnh/Qp88qYR8j8/z3WF2DiSoS4PsVi6pmy6CIUuv0+tvF71ld24E
+         aMKpWUZdFOdviudzFsR8y0+fxHi3pA2JYNfhBFPH1pjGbji9habMVIjwMlqzjgwUK0sh
+         ph3LQsswBI1eu10oTeKY6xt7QsiXdMyS1oCR++a0zm+D2FDgN7KCEWh2LIT3PJjSBEuq
+         GFjHVwabrF8K1qI2Psj3HVLBpbU9soWQLJtp+TszAJ+l/ANhu+DCmTCPoF4wNruPfV6o
+         7BNIBK5ZlHpxTZgQAUa8pRZDpxa9W7aXPCL2Bc8VpaUHwVkiU4YTKkn0fhLi0UFE1XSh
+         kTIg==
+X-Gm-Message-State: AJcUukfLFEoAK5ryqOeALOazYyxlK4r2T445w68hagVn10my5o4QMdGb
+        mmi96s6LqysoLqSRB/Pf0A0=
+X-Google-Smtp-Source: ALg8bN4kjOAaxWfHNhxzVR2H8acgnoMpZiUUiAWgI+8hU/W0/FO3GohObGNhXtXj38bkQGzJa2uAoA==
+X-Received: by 2002:a63:413:: with SMTP id 19mr2422685pge.7.1546108519250;
+        Sat, 29 Dec 2018 10:35:19 -0800 (PST)
+Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id b7sm107702617pga.39.2018.12.29.10.35.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Dec 2018 10:35:18 -0800 (PST)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
+Subject: [PATCH] input_event: Provide override for sparc64
+Date:   Sat, 29 Dec 2018 10:35:14 -0800
+Message-Id: <20181229183514.24644-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/28/2018 8:15 PM, Linus Torvalds wrote:
-> On Fri, Dec 28, 2018 at 8:09 PM James Morris <jmorris@namei.org> wrote:
->> Yep, I understand what you mean. I can't find the discussion from several
->> years ago, but developers asked to be able to work with more current
->> kernels, and I recall you saying that if you want to do this, merge to a
->> specific -rc tag at least.
-> If people really want it, maybe the merge can state that explicit
-> thing, as it is I'm trying to push back on empty merges that don't
-> explain why they even exist.
->
->                   Linus
+The usec part of the timeval is defined as
+__kernel_suseconds_t	tv_usec; /* microseconds */
 
-The security tree tends to get changed from multiple directions,
-most of which aren't based out of the security sub-system. The mount
-rework from David is an excellent example. It gets hit just about
-any time there's a significant VFS or networking change. Keeping
-it current has helped find issues much earlier in the process.
+Arnd noticed that sparc64 is the only architecture
+that defines __kernel_suseconds_t as int rather than long.
+
+This breaks the current y2038 fix for kernel as we only
+access and define the timeval struct for non-kernel use cases.
+But, this was hidden by an another typo in the use of __KERNEL__
+qualifier.
+
+Fix the typo, and provide an override for sparc64.
+
+Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+---
+ include/uapi/linux/input.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+index fb78f6f500f3..ffab958bc512 100644
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -26,13 +26,17 @@
+  */
+ 
+ struct input_event {
+-#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL)
++#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL__)
+ 	struct timeval time;
+ #define input_event_sec time.tv_sec
+ #define input_event_usec time.tv_usec
+ #else
+ 	__kernel_ulong_t __sec;
++#ifdef CONFIG_SPARC64
++	unsigned int __usec;
++#else
+ 	__kernel_ulong_t __usec;
++#endif
+ #define input_event_sec  __sec
+ #define input_event_usec __usec
+ #endif
+-- 
+2.17.1
 
