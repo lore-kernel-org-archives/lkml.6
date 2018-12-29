@@ -2,137 +2,187 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E80C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 17:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 330D3C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 17:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 646192145D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 17:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F32F12145D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 17:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeL2Ro0 (ORCPT
+        id S1727755AbeL2RyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 12:44:26 -0500
-Received: from yaina.de ([78.46.107.162]:47250 "EHLO mail.yaina.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727596AbeL2Ro0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 12:44:26 -0500
-X-Greylist: delayed 443 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Dec 2018 12:44:24 EST
-Received: by mail.yaina.de (Postfix, from userid 500)
-        id 7219F12B89D; Sat, 29 Dec 2018 18:36:59 +0100 (CET)
-Date:   Sat, 29 Dec 2018 18:36:59 +0100
-From:   Joerg Reuter <jreuter@yaina.de>
-To:     netdev@vger.kernel.org
-Cc:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in ax25_fillin_cb
-Message-ID: <20181229173658.GA13856@yaina.de>
-References: <000000000000da8f65057e1ce530@google.com>
+        Sat, 29 Dec 2018 12:54:05 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:35241 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbeL2RyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 12:54:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id x12so6648101ioj.2
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 09:54:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=O//1qSPnTkC23AzhlFyYJvC7j5Ac8XZAuFpz6vYFS8s=;
+        b=MctbIZfAjtPXBKGWPaODbQepyeB8e9l8xnQLH2bD4F5ccKDvLsUR2NYWjNCa2e78Tl
+         jItF87TL3D7wV4JxTduTcNfF9NcxC/wmr869RqJSkS9PemRVDhOCMo2OfQGB9DGX09MR
+         Ytyfkh6uaJp8GDER4xvh6pxxgCCxw/WmTw+P88J3SZmi9omuNpFyO3VGTlLoBDpmOucZ
+         CYDPNWcUnC20Ch46UYw63qqzfSyw4+jKYqFj62kgca5is6em65LFy31Qk466z6KLF+yp
+         fD+3b0CP8vHBsisSQymrRFRT+b4i83HMO5GejQoNIzfDj7HOiAwQBgkL6cVM1DhZYC6+
+         syGw==
+X-Gm-Message-State: AA+aEWZpDzj8V4IWEEIdDIRtKo1ovfUvR4bHqU90fESU/v4SXjP5Vv8/
+        a/xjqWDjwZ0CN7Tdxl87Y97FLeaADsbz/eWIPgqR8fppCNmb
+X-Google-Smtp-Source: AFSGD/U9MNpT8aQSyT0Y86xIcpvC2ageiADxLd3UuUCRWVagHt+z4hmNWJOZirNpgU3AojK7fx77hCzqVjTAxTaYK0+RoFwpCZet
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000da8f65057e1ce530@google.com>
-X-Face: -|Tm)MD9B08?aHe]*_v09ON~6*LV"A:<1AMnvz)sW#R9rWf?vf_5n=%"yPK]&ybq.K}xR5_
- +8Pb4r3C#wP%iWD$,_k;oH\}]cG54jLEtf)%Wcu6naYc#poD0=r(b^df%6G-vC6L0I/..iYP=HYJTN
- <VS3K"q`KX>6vC#EF;\uBwX[6[6d
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a02:1149:: with SMTP id 70mr24748306jaf.24.1546106043703;
+ Sat, 29 Dec 2018 09:54:03 -0800 (PST)
+Date:   Sat, 29 Dec 2018 09:54:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000852fcf057e2cdd51@google.com>
+Subject: KASAN: use-after-free Read in delete_and_unsubscribe_port
+From:   syzbot <syzbot+9917f000776fb73fa40f@syzkaller.appspotmail.com>
+To:     alsa-devel@alsa-project.org, colin.king@canonical.com,
+        linux-kernel@vger.kernel.org, perex@perex.cz,
+        syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 02:51:04PM -0800, syzbot wrote:
+Hello,
 
-> BUG: KASAN: use-after-free in ax25_fillin_cb_from_dev net/ax25/af_ax25.c:450
-> [inline]
-> BUG: KASAN: use-after-free in ax25_fillin_cb+0x6d5/0x810
-> net/ax25/af_ax25.c:477
-> Read of size 4 at addr ffff8881ccecc438 by task syz-executor5/11370
+syzbot found the following crash on:
 
-Not good... Why do things like this always pop up when I'm traveling?
+HEAD commit:    8fe28cb58bcb Linux 4.20
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=166859b3400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d581260bae0899a
+dashboard link: https://syzkaller.appspot.com/bug?extid=9917f000776fb73fa40f
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
->  ax25_fillin_cb_from_dev net/ax25/af_ax25.c:450 [inline]
->  ax25_fillin_cb+0x6d5/0x810 net/ax25/af_ax25.c:477
->  ax25_setsockopt+0x92a/0xa20 net/ax25/af_ax25.c:663
+Unfortunately, I don't have any reproducer for this crash yet.
 
-That's here:
-	// ...
-	case SO_BINDTODEVICE:
-		// ...
-		dev = dev_get_by_name(&init_net, devname);
-		if (!dev) {
-			res = -ENODEV;
-			break;
-		}
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9917f000776fb73fa40f@syzkaller.appspotmail.com
 
-		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-		ax25_fillin_cb(ax25, ax25->ax25_dev);
-		dev_put(dev);
-		break;
+==================================================================
+BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:191  
+[inline]
+BUG: KASAN: use-after-free in list_empty include/linux/list.h:226 [inline]
+BUG: KASAN: use-after-free in delete_and_unsubscribe_port+0x5d7/0x6d0  
+sound/core/seq/seq_ports.c:548
+Read of size 8 at addr ffff8881d1c05590 by task syz-executor1/6930
 
-Thus, dev is not NULL, and neither is dev->ax25_ptr.
+CPU: 0 PID: 6930 Comm: syz-executor1 Not tainted 4.20.0 #167
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __read_once_size include/linux/compiler.h:191 [inline]
+  list_empty include/linux/list.h:226 [inline]
+  delete_and_unsubscribe_port+0x5d7/0x6d0 sound/core/seq/seq_ports.c:548
+  snd_seq_port_disconnect+0x17b/0x280 sound/core/seq/seq_ports.c:628
+  snd_seq_ioctl_unsubscribe_port+0x1d8/0x310  
+sound/core/seq/seq_clientmgr.c:1499
+  snd_seq_ioctl+0x253/0x440 sound/core/seq/seq_clientmgr.c:2138
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457759
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f36626cac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457759
+RDX: 00000000200001c0 RSI: 0000000040505331 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f36626cb6d4
+R13: 00000000004ca358 R14: 00000000004d35d0 R15: 00000000ffffffff
 
-> Freed by task 11339:
->  [..]
->  ax25_dev_device_down+0x164/0x2f0 net/ax25/ax25_dev.c:129
->  ax25_device_event+0x1f6/0x2e0 net/ax25/af_ax25.c:131
->  notifier_call_chain+0x17e/0x380 kernel/notifier.c:93
+Allocated by task 6924:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  snd_seq_port_connect+0xe0/0x760 sound/core/seq/seq_ports.c:571
+  snd_seq_ioctl_subscribe_port+0x1d8/0x310  
+sound/core/seq/seq_clientmgr.c:1458
+  snd_seq_ioctl+0x253/0x440 sound/core/seq/seq_clientmgr.c:2138
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-ax25_dev_device_down() has this:
+Freed by task 6931:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  snd_seq_port_disconnect+0x205/0x280 sound/core/seq/seq_ports.c:632
+  snd_seq_ioctl_unsubscribe_port+0x1d8/0x310  
+sound/core/seq/seq_clientmgr.c:1499
+  snd_seq_ioctl+0x253/0x440 sound/core/seq/seq_clientmgr.c:2138
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-       if ((s = ax25_dev_list) == ax25_dev) {
-		ax25_dev_list = s->next;
-		spin_unlock_bh(&ax25_dev_lock);
-		dev_put(dev);
-		kfree(ax25_dev);
-		return;
-	}
+The buggy address belongs to the object at ffff8881d1c05540
+  which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 80 bytes inside of
+  128-byte region [ffff8881d1c05540, ffff8881d1c055c0)
+The buggy address belongs to the page:
+page:ffffea0007470140 count:1 mapcount:0 mapping:ffff8881da800640  
+index:0xffff8881d1c05b40
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0006fb09c8 ffffea0006f38908 ffff8881da800640
+raw: ffff8881d1c05b40 ffff8881d1c05000 000000010000000e 0000000000000000
+page dumped because: kasan: bad access detected
 
-	while (s != NULL && s->next != NULL) {
-		if (s->next == ax25_dev) {
-			s->next = ax25_dev->next;
-			spin_unlock_bh(&ax25_dev_lock);
-			dev_put(dev);
-			kfree(ax25_dev); // <==== here
-			return;
-		}
+Memory state around the buggy address:
+  ffff8881d1c05480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d1c05500: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8881d1c05580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                          ^
+  ffff8881d1c05600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d1c05680: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+==================================================================
 
-		s = s->next;
-	}
-	spin_unlock_bh(&ax25_dev_lock);
-	dev->ax25_ptr = NULL;
 
-I hope I didn't write this... *shudders*
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Anyway, we are indeed missing to set dev->ax25_ptr to NULL if we're at
-the head or somewhere on the ax25_dev_list, probably because it will be
-cleaned up on removal of dev anyway. Unfortunately, in the meantime
-either someone could call setsockopt() on an existing socket, or the
-setsockopt() call got interrupted. From my POV the SO_BINDTODEVICE needs
-to get protected by this:
-
-		spin_lock_bh(&ax25_dev_lock);
-		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-		if (ax25->ax25_dev != NULL) {
-			ax25_fillin_cb(ax25, ax25->ax25_dev);
-			dev_put(dev);
-		}
-		spin_unlock_bh(&ax25_dev_lock);
-
-and ax25_dev_device_down() needs to be rewritten and ensure
-that dev->ax25_ptr gets set to NULL after each kfree(ax25_dev)
-
-Unfortunately, I'm on a low bandwidth connection right now. I'd be
-grateful if someone could create a patch. This is likely not a high
-impact issue (unpriviliged users can't set up or tear down interfaces),
-still it may cause hard to find memory corruptions.
-
-	- Joerg (yes, I'm still alive)
-
--- 
-Joerg Reuter                                    http://yaina.de/jreuter
-And I make my way to where the warm scent of soil fills the evening air. 
-Everything is waiting quietly out there....                 (Anne Clark)
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
