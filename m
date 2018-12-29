@@ -2,67 +2,87 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605FDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73550C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 20:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317722087F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546113320;
-	bh=aewzvD4LAtMtHRWPugCxZE8hgqFXXG7fYoGbgzsfSFY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Ww+5j1zRjEbpqn/YEsPMwc2F4qjqhHgltmH+srZ6S+0eAbwZyflaZ81xrCUJgm3r6
-	 a6rreQ+oSJfAsuS73rSGEwFC3R/TXSOOPVtAIfrBBO9vjLZpT09euhZR54xVKBN4bY
-	 HwN3dhA4mz/C9thsUkJJGBdUNtPseigaZhChznI8=
+	by mail.kernel.org (Postfix) with ESMTP id 478C020866
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 20:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeL2TzT (ORCPT
+        id S1725966AbeL2UAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 14:55:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34246 "EHLO mail.kernel.org"
+        Sat, 29 Dec 2018 15:00:14 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:33048 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbeL2TzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 14:55:03 -0500
-Subject: Re: [GIT PULL] Documentation for 5.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546113302;
-        bh=aewzvD4LAtMtHRWPugCxZE8hgqFXXG7fYoGbgzsfSFY=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=mQmFaQGkleU+EC5aIpeKCpqdtAM4JZUG2YaIhGKOFJtRtkPtWHnQO/LDYwMrYwJOS
-         LKNciwOsXBo+RG985jXSGeq5mmG2uenk0/EXqL1QIPLjXNU20+SiGX2nVKip61MQAW
-         D8mnCrWeK91WRNel4g1iNCJ9bFgjwoZU5MV4HXFY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181228090622.4c210228@lwn.net>
-References: <20181228090622.4c210228@lwn.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181228090622.4c210228@lwn.net>
-X-PR-Tracked-Remote: git://git.lwn.net/linux.git tags/docs-5.0
-X-PR-Tracked-Commit-Id: 942104a21ce4951420ddf6c6b3179a0627301f7e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3868772b99e3146d02cf47e739d79022eba1d77c
-Message-Id: <20181229195502.31407.90012.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 29 Dec 2018 19:55:02 +0000
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+        id S1725784AbeL2UAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 15:00:14 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id wBTK04Oi016721;
+        Sat, 29 Dec 2018 21:00:04 +0100
+Date:   Sat, 29 Dec 2018 21:00:04 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools headers: move the nolibc header from rcutorture to
+ tools/include/nolibc/
+Message-ID: <20181229200004.GA16717@1wt.eu>
+References: <20181229180453.15889-1-w@1wt.eu>
+ <20181229182508.GJ4170@linux.ibm.com>
+ <20181229183047.GB12726@1wt.eu>
+ <20181229195518.GK4170@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229195518.GK4170@linux.ibm.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 28 Dec 2018 09:06:22 -0700:
+On Sat, Dec 29, 2018 at 11:55:18AM -0800, Paul E. McKenney wrote:
+> On Sat, Dec 29, 2018 at 07:30:47PM +0100, Willy Tarreau wrote:
+> > On Sat, Dec 29, 2018 at 10:25:08AM -0800, Paul E. McKenney wrote:
+> > > On Sat, Dec 29, 2018 at 07:04:53PM +0100, Willy Tarreau wrote:
+> > > > As suggested by Ingo, this header file might benefit other tools than
+> > > > just rcutorture. For now it's quite limited, but is easy to extend, so
+> > > > exposing it into tools/include/nolibc/ will make it much easier to
+> > > > adopt by other tools.
+> > > > 
+> > > > The mkinitrd.sh script in rcutorture was updated to use this new location.
+> > > > 
+> > > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > Signed-off-by: Willy Tarreau <w@1wt.eu>
+> > > 
+> > > Thank you, Willy!
+> > 
+> > You're welcome!
+> > 
+> > > I have queued all four of these.
+> > 
+> > Thanks!
+> > 
+> > > Should there
+> > > be a MAINTAINERS file entry for the new include/nolibc home for this
+> > > library code?
+> > 
+> > Good idea, I didn't think about it. Yes, I can add one and will
+> > send another patch. In case that helps I've created a repo at
+> > /pub/scm/linux/kernel/git/wtarreau/nolibc.git
+> 
+> And I have queued that one as well, thank you!
+> 
+> I am happy to curate nolibc patches indefinitely, but should some other
+> pathway to mainline become better for you, just let me know.
 
-> git://git.lwn.net/linux.git tags/docs-5.0
+Oh perfect, thank you. I'm always having difficulties with processes,
+so having a known working path to mainline is indeed a much appreciated
+help!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3868772b99e3146d02cf47e739d79022eba1d77c
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+Willy
