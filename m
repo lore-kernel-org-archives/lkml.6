@@ -2,162 +2,120 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC7AC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25609C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2449820818
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6CC920818
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbeL2WM6 (ORCPT
+        id S1727226AbeL2WUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 17:12:58 -0500
-Received: from mail.nwra.com ([72.52.192.72]:56070 "EHLO mail.nwra.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725648AbeL2WM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 17:12:57 -0500
-X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Dec 2018 17:12:57 EST
-Received: from pacas.cora.nwra.com (c-67-166-25-97.hsd1.co.comcast.net [67.166.25.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by mail.nwra.com (Postfix) with ESMTPSA id 64EA43404E6;
-        Sat, 29 Dec 2018 14:05:07 -0800 (PST)
-From:   Orion Poplawski <orion@nwra.com>
-Subject: Re: Re: [PATCH] fanotify: allow freeze on suspend when waiting for
- response from userspace
-To:     linux-kernel@vger.kernel.org, Vivek Trivedi <t.vivek@samsung.com>,
-        Jan Kara <jack@suse.com>
-Organization: NorthWest Research Associates
-Message-ID: <c1bb16b7-9eee-9cea-2c96-a512d8b3b9c7@nwra.com>
-Date:   Sat, 29 Dec 2018 15:04:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 29 Dec 2018 17:20:15 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35809 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeL2WUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 17:20:15 -0500
+Received: by mail-qt1-f196.google.com with SMTP id v11so26569547qtc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 14:20:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gEKNttcn2DuV6IUidckb9z98s4YMQSt0m/gFTL7QWxY=;
+        b=shwh4ihixViS4Lg9Tm9sbCvuoLdDLfLCsT50s76NHskzs/NW+C1psJ9rwNVoa+pCL+
+         neuE/Gb6zu6rVtYyabpf6kRVJfxrPBmqwixDqjNNXYh/mxcmy+Qd7ecsyimTn7Sfr5sT
+         3gDY/rxkRQyrDI4maO0Vec2+jB+/C4n3DePJ0K9piMdE0/i/md1YpqDZtm4D262kPo+l
+         +p8Ff1bjeW4i9AC62f+B2/BAJZkmUkBT8CdAfTbIq8LNd64KTaaYn09cb9aDT1/spQE7
+         iHu5fI7Vrkd+3vrTU6K4cvpRGFDi4XjMzi+kcdNeofK7bDf1KgsBjPAw6Ug8MWi7tSPX
+         CHuA==
+X-Gm-Message-State: AA+aEWZDSyIsVL79mqP7K5cHQ2HwdBzjHfpeoCbYdeBdEN+ayLKr9B5i
+        TwaQnFsMT4qGGyKXOaNG7bNO4gx6Tu6L/nMZ8eY=
+X-Google-Smtp-Source: AFSGD/VP4OgqTevr0l0kgt+jsLmHm4koubyN5NQH8QXOPDhgnoDNjTdGQzAzSL0INVYSyEyZd+6OwMNuoJ/8J8lFSpM=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr30221440qtr.319.1546122013947;
+ Sat, 29 Dec 2018 14:20:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1545784679.git.fthain@telegraphics.com.au> <3ba1dd965c1097e00463eafe7c7d5fd93bbed836.1545784679.git.fthain@telegraphics.com.au>
+In-Reply-To: <3ba1dd965c1097e00463eafe7c7d5fd93bbed836.1545784679.git.fthain@telegraphics.com.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 29 Dec 2018 23:19:57 +0100
+Message-ID: <CAK8P3a0-4vGuCR4aCq0=D1Du1K=f5MtnB9fyCBnOsF+4Na5dMg@mail.gmail.com>
+Subject: Re: [PATCH v8 18/25] powerpc: Implement nvram sync ioctl
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thu 22-02-18 15:14:54, Kunal Shubham wrote:
->> >> On Fri 16-02-18 15:14:40, t.vivek@samsung.com wrote:
->> >> From: Vivek Trivedi <t.vivek@samsung.com>
->> >> 
->> >> If fanotify userspace response server thread is frozen first,
->> >> it may fail to send response from userspace to kernel space listener.
->> >> In this scenario, fanotify response listener will never get response
->> >> from userepace and fail to suspend.
->> >> 
->> >> Use freeze-friendly wait API to handle this issue.
->> >> 
->> >> Same problem was reported here:
->> >> https://bbs.archlinux.org/viewtopic.php?id=232270
->> >> 
->> >> Freezing of tasks failed after 20.005 seconds
->> >> (1 tasks refusing to freeze, wq_busy=0)
->> >> 
->> >> Backtrace:
->> >> [<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
->> >> [<c0583584>] (schedule) from [<c01cb648>] (fanotify_handle_event+0x1c8/0x218)
->> >> [<c01cb480>] (fanotify_handle_event) from [<c01c8238>] (fsnotify+0x17c/0x38c)
->> >> [<c01c80bc>] (fsnotify) from [<c02676dc>] (security_file_open+0x88/0x8c)
->> >> [<c0267654>] (security_file_open) from [<c01854b0>] (do_dentry_open+0xc0/0x338)
->> >> [<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
->> >> [<c01859e4>] (vfs_open) from [<c0195480>] (do_last.isra.10+0x45c/0xcf8)
->> >> [<c0195024>] (do_last.isra.10) from [<c0196140>] (path_openat+0x424/0x600)
->> >> [<c0195d1c>] (path_openat) from [<c0197498>] (do_filp_open+0x3c/0x98)
->> >> [<c019745c>] (do_filp_open) from [<c0186b44>] (do_sys_open+0x120/0x1e4)
->> >> [<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
->> >> [<c0186c08>] (SyS_open) from [<c0010200>] (__sys_trace_return+0x0/0x20)
->> >
->> > Yeah, good catch.
->> >
->> >> @@ -63,7 +64,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
->> >> 
->> >>  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
->> >> 
->> >> -	wait_event(group->fanotify_data.access_waitq, event->response);
->> >> +	while (!event->response)
->> >> +		wait_event_freezable(group->fanotify_data.access_waitq,
->> >> +				     event->response);
->> >
->> > But if the process gets a signal while waiting, we will just livelock the
->> > kernel in this loop as wait_event_freezable() will keep returning
->> > ERESTARTSYS. So you need to be a bit more clever here...
->> 
->> Hi Jack,
->> Thanks for the quick review.
->> To avoid livelock issue, is it fine to use below change? 
->> If agree, I will send v2 patch.
->> 
->> @@ -63,7 +64,11 @@ static int fanotify_get_response(struct fsnotify_group *group,
->> 
->>         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
->> 
->> -       wait_event(group->fanotify_data.access_waitq, event->response);
->> +       while (!event->response) {
->> +               if (wait_event_freezable(group->fanotify_data.access_waitq,
->> +                                       event->response))
->> +                       flush_signals(current);
->> +       }
-> 
-> Hum, I don't think this is correct either as this way if any signal was
-> delivered while waiting for fanotify response, we'd just lose it while
-> previously it has been properly handled. So what I think needs to be done
-> is that we just use wait_event_freezable() and propagate non-zero return
-> value (-ERESTARTSYS) up to the caller to handle the signal and restart the
-> syscall as necessary.
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> --- a/drivers/char/nvram.c
+> +++ b/drivers/char/nvram.c
+> @@ -48,6 +48,10 @@
+>  #include <linux/mutex.h>
+>  #include <linux/pagemap.h>
+>
+> +#ifdef CONFIG_PPC
+> +#include <asm/nvram.h>
+> +#include <asm/machdep.h>
+> +#endif
+>
+>  static DEFINE_MUTEX(nvram_mutex);
+>  static DEFINE_SPINLOCK(nvram_state_lock);
+> @@ -331,6 +335,37 @@ static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
+>         long ret = -ENOTTY;
+>
+>         switch (cmd) {
+> +#ifdef CONFIG_PPC
+> +       case OBSOLETE_PMAC_NVRAM_GET_OFFSET:
+> +               pr_warn("nvram: Using obsolete PMAC_NVRAM_GET_OFFSET ioctl\n");
+> +               /* fall through */
+> +       case IOC_NVRAM_GET_OFFSET:
+> +               ret = -EINVAL;
+> +#ifdef CONFIG_PPC_PMAC
 
-Is there any progress here?  This has become a real pain for us while 
-running BitDefender on EL7 laptops.  I tried applying the following to 
-the EL7 kernel:
+I think it would make be nicer here to keep the ppc bits in arch/ppc,
+and instead add a .ioctl() callback to nvram_ops.
 
-diff -up 
-linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig 
-kernel-3.10.0-957.1.3.el7/linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c
---- linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig 
-2018-11-15 10:07:13.000000000 -0700
-+++ linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c 
-2018-12-28 15:44:26.452895337 -0700
-@@ -9,6 +9,7 @@
-  #include <linux/types.h>
-  #include <linux/wait.h>
-  #include <linux/audit.h>
-+#include <linux/freezer.h>
+> @@ -369,12 +405,14 @@ static int nvram_misc_open(struct inode *inode, struct file *file)
+>                 return -EBUSY;
+>         }
+>
+> +#ifndef CONFIG_PPC
+>         /* Prevent multiple writers if the set_checksum ioctl is implemented. */
+>         if ((arch_nvram_ops.set_checksum != NULL) &&
+>             (file->f_mode & FMODE_WRITE) && (nvram_open_mode & NVRAM_WRITE)) {
+>                 spin_unlock(&nvram_state_lock);
+>                 return -EBUSY;
+>         }
+> +#endif
+>
+> diff --git a/include/linux/nvram.h b/include/linux/nvram.h
+> index b7bfaec60a43..24a57675dba1 100644
+> --- a/include/linux/nvram.h
+> +++ b/include/linux/nvram.h
+> @@ -18,8 +18,12 @@ struct nvram_ops {
+>         unsigned char   (*read_byte)(int);
+>         void            (*write_byte)(unsigned char, int);
+>         ssize_t         (*get_size)(void);
+> +#ifdef CONFIG_PPC
+> +       long            (*sync)(void);
+> +#else
+>         long            (*set_checksum)(void);
+>         long            (*initialize)(void);
+> +#endif
+>  };
 
-  #include "fanotify.h"
+Maybe just leave all entries visible here, and avoid the above #ifdef checks.
 
-@@ -64,7 +65,12 @@ static int fanotify_get_response(struct
-
-         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
-
--       wait_event(group->fanotify_data.access_waitq, event->response);
-+       while (!event->response) {
-+               ret = 
-wait_event_freezable(group->fanotify_data.access_waitq,
-+                                          event->response);
-+               if (ret < 0)
-+                       return ret;
-+       }
-
-         /* userspace responded, convert to something usable */
-         switch (event->response & ~FAN_AUDIT) {
-
-but I get a kernel panic shortly after logging in to the system.
-
--- 
-Orion Poplawski
-Manager of NWRA Technical Systems          720-772-5637
-NWRA, Boulder/CoRA Office             FAX: 303-415-9702
-3380 Mitchell Lane                       orion@nwra.com
-Boulder, CO 80301                 https://www.nwra.com/
+       Arnd
