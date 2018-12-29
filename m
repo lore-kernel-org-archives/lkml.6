@@ -2,70 +2,125 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D58C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247852087F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546113310;
-	bh=2ZqHaJQnCTq5FGj49INdYKc6wJA1mUeTI4PEzUD6Q/g=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=iv/32bQSY5gZhNtXhWxIZIxxeS0BACvSEh7bO+WT2lAvPLpXG72fNrqccwLe7//8r
-	 gpgWxRRDvwNQf4PQshTNd9ltw0/HhNWWaADWSgTbKt9G+BZfRAAMb2HcHYb8EdnYEm
-	 veGFCDux7UrC24gOqo08oEOtl7q8uOcw5x+7q+js=
+	by mail.kernel.org (Postfix) with ESMTP id 1A21E2087F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 19:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbeL2TzI (ORCPT
+        id S1727095AbeL2TzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 14:55:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbeL2TzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 14:55:03 -0500
-Subject: Re: [GIT UPDATED PULL] cgroup changes for v4.21-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546113303;
-        bh=2ZqHaJQnCTq5FGj49INdYKc6wJA1mUeTI4PEzUD6Q/g=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=DuHqdGaj6iHmll5PcoFcdQ5GCVTtoAlNwytN0mWYxYV+DScfN9f1eh5MHmqX/yVCa
-         GedOCGwlPY4CWKUCcLttwQ19vaG0CMd2caCbY5lVHpO0rxuRCdNgSyi1cgGpAQCdYz
-         vHX4KWWs7OkXRXDxE2Tou7Q2c9fBaUUnafVuxl+c=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181228184117.GN2509588@devbig004.ftw2.facebook.com>
-References: <20181228021605.GI2509588@devbig004.ftw2.facebook.com>
- <20181228184117.GN2509588@devbig004.ftw2.facebook.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181228184117.GN2509588@devbig004.ftw2.facebook.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.21
-X-PR-Tracked-Commit-Id: 3fc9c12d27b4ded4f1f761a800558dab2e6bbac5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6f9d71c9c759b1e7d31189a4de228983192c7dc7
-Message-Id: <20181229195503.31407.2100.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 29 Dec 2018 19:55:03 +0000
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        Waiman Long <longman@redhat.com>
+        Sat, 29 Dec 2018 14:55:14 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48806 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726595AbeL2TzJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 14:55:09 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBTJmkql034199
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 14:55:08 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pp6annenk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 14:55:08 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 29 Dec 2018 19:55:07 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 29 Dec 2018 19:55:04 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBTJt3J719005492
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 29 Dec 2018 19:55:03 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD3A9B206A;
+        Sat, 29 Dec 2018 19:55:03 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 99B2AB2065;
+        Sat, 29 Dec 2018 19:55:03 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 29 Dec 2018 19:55:03 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 37FFA16C3039; Sat, 29 Dec 2018 11:55:18 -0800 (PST)
+Date:   Sat, 29 Dec 2018 11:55:18 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools headers: move the nolibc header from rcutorture to
+ tools/include/nolibc/
+Reply-To: paulmck@linux.ibm.com
+References: <20181229180453.15889-1-w@1wt.eu>
+ <20181229182508.GJ4170@linux.ibm.com>
+ <20181229183047.GB12726@1wt.eu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229183047.GB12726@1wt.eu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18122919-0052-0000-0000-0000036F4683
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010311; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01138908; UDB=6.00592524; IPR=6.00919098;
+ MB=3.00024895; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-29 19:55:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122919-0053-0000-0000-00005F460E93
+Message-Id: <20181229195518.GK4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-29_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812290182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 28 Dec 2018 10:41:17 -0800:
+On Sat, Dec 29, 2018 at 07:30:47PM +0100, Willy Tarreau wrote:
+> On Sat, Dec 29, 2018 at 10:25:08AM -0800, Paul E. McKenney wrote:
+> > On Sat, Dec 29, 2018 at 07:04:53PM +0100, Willy Tarreau wrote:
+> > > As suggested by Ingo, this header file might benefit other tools than
+> > > just rcutorture. For now it's quite limited, but is easy to extend, so
+> > > exposing it into tools/include/nolibc/ will make it much easier to
+> > > adopt by other tools.
+> > > 
+> > > The mkinitrd.sh script in rcutorture was updated to use this new location.
+> > > 
+> > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > Signed-off-by: Willy Tarreau <w@1wt.eu>
+> > 
+> > Thank you, Willy!
+> 
+> You're welcome!
+> 
+> > I have queued all four of these.
+> 
+> Thanks!
+> 
+> > Should there
+> > be a MAINTAINERS file entry for the new include/nolibc home for this
+> > library code?
+> 
+> Good idea, I didn't think about it. Yes, I can add one and will
+> send another patch. In case that helps I've created a repo at
+> /pub/scm/linux/kernel/git/wtarreau/nolibc.git
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.21
+And I have queued that one as well, thank you!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6f9d71c9c759b1e7d31189a4de228983192c7dc7
+I am happy to curate nolibc patches indefinitely, but should some other
+pathway to mainline become better for you, just let me know.
 
-Thank you!
+							Thanx, Paul
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
