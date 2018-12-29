@@ -2,111 +2,92 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22907C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 11:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE95C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 11:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7651218A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 11:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D6B320857
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 11:41:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="XxO7yeL/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbeL2LNq (ORCPT
+        id S1727509AbeL2Lk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 06:13:46 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44097 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbeL2LNq (ORCPT
+        Sat, 29 Dec 2018 06:40:59 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38365 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbeL2Lk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 06:13:46 -0500
-Received: by mail-vs1-f65.google.com with SMTP id z23so11055435vsj.11
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 03:13:45 -0800 (PST)
+        Sat, 29 Dec 2018 06:40:59 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so11043685plb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 03:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=nGdkRYHQIL7iMhVUjwMmQZYCUJey53JIJTC7veVRPLQ=;
+        b=XxO7yeL/nkJiH9jpPiTmBlngngGakwn3No20XrqogEhN6c5pzFuHH7bb1Omd62EvS+
+         mG2N/y5/hjTEzPDAQrKW4kc4elR5hw3kS0oQmSquhY0vkmwJYmwfr/XfrFg5IeQyqanQ
+         qu2CDNAZ2Ko817mIVrpMWxlxbnke41SvYHWcTRkKik1CLfzBcdkhuvbxVU5Iq1bHe4di
+         P71LkVnwKXrYJ6r7ELIlRQoRADzitjGWbHRO7DAv/9kVJHWatx+jM4MMgHVTj3kP2iN3
+         7awGd3gwahYZr795RnlqaMeAFJxblronODHITBu+ocyQJO/BujTU6XmEdyNqFZ/ZoJxL
+         526A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SsdMP4tMaKgMronza7Qf/UgE2j2tDASazSY4oBtkHi4=;
-        b=lakcea09az1fkyfgLqXwHgsMtY0H/K4Yr0tqFyK4Q0K1sGDBlndbdVLId5OHQhjMFi
-         88HnL8itiLN6++RqOgdDgfb4jLJW5ta8obsAC6JnGJ+axLNvY491RfCOO05b6ilaI5Ra
-         Rs2jOFyQ3rE0rj1cSZxgL7mzr1PSxxXeXsDfthvGq7H6yDxEebmYlmEzFbh83zG3mmIy
-         Pismy9Zy5gDcnfR2MUQIu1+8cK35mRas5c5i48MWeOffEm4NwX1ldh/7A1Ko93xTQ+1s
-         UKam0rZ49/LMBIEFXvxQQ8WR9gcDpaSGwujX3JmskHRP1UCvbjnWY2Btv1+He3AZ5D1z
-         UVHg==
-X-Gm-Message-State: AA+aEWai5vxPyP39zOG6Tj+923eKDIDjSArGJvlBdm32a31hVDpfO1lo
-        zaIfWs8T0kTTYuVA2Q8C6dioQ/9wyr8eLAHGl00=
-X-Google-Smtp-Source: ALg8bN6HvEA/Qn+/Ds9z7BVvNn+shuJtJer74xxW7C8VjIesOmDBIHSiarTAdc34Y2X8uVaHEftocPYxWlUsE4Xt5Rw=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr11764990vsi.63.1546082024833;
- Sat, 29 Dec 2018 03:13:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20181227084443.GA23991@localhost.localdomain>
-In-Reply-To: <20181227084443.GA23991@localhost.localdomain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 29 Dec 2018 12:13:32 +0100
-Message-ID: <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
-Subject: Re: [PATCH] regmap: regmap-irq: silently ignore unsupported type settings
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nGdkRYHQIL7iMhVUjwMmQZYCUJey53JIJTC7veVRPLQ=;
+        b=siRTQJ1aBCAGaPHyveaxC7CpIDsxZt30R12qhBeAbDeDr2sNwxn27obKSLkxX7g/5W
+         X+1KJRgfzpihSuMerMqkvjYbhLYTpksul1n4L0XIZpdq16GRqEGGM86I3TDgNN1xTb7S
+         4+lzw7843V5ASCf+dVdleoDCNPzBS3IDdPxiaPi/+Rx1Mc6NxDgBtOrxFCgayV1Dpv4H
+         l8ery+P0ICrCOLJyDSBXuGD4CfZVi832K7D/7UBdxfBHQkgMrB5HZsoVIiKtOf7oXDdf
+         N/DD+0tZA59cVpW2WxfNEClczeRPLGEJZTTefOdUk22NfPXK/2nLLm85w2qzLj5dk8Fh
+         TFHQ==
+X-Gm-Message-State: AJcUukcHzkMqaxIivl99z6+lHdchcZJEqNrZW5igZ+7cVA0H31dOKE9r
+        cm+JBVoTESFMaSHqF72thFKjxm9lCPo=
+X-Google-Smtp-Source: ALg8bN71j668PcZlnMQeghvQKg+BDIpEI9e9sKeOnqOLyCnRzxOYdpqhdeTftu24NbX3J33H31lJgg==
+X-Received: by 2002:a17:902:a5c3:: with SMTP id t3mr30483055plq.117.1546083658229;
+        Sat, 29 Dec 2018 03:40:58 -0800 (PST)
+Received: from localhost.localdomain (2001-b400-e259-0267-3521-1d47-ee3d-d8f8.emome-ip6.hinet.net. [2001:b400:e259:267:3521:1d47:ee3d:d8f8])
+        by smtp.gmail.com with ESMTPSA id 196sm176413341pfc.77.2018.12.29.03.40.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Dec 2018 03:40:57 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: lochnagar: Set up correct .data field for "cirrus,lochnagar2-mic2vdd"
+Date:   Sat, 29 Dec 2018 19:40:47 +0800
+Message-Id: <20181229114047.4265-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matti,
+Fix trival copy-n-paste mistake.
 
-On Thu, Dec 27, 2018 at 9:44 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
-> Do not return error if irq-type setting is requested for
-> controlloer which does not support this. This is how
-> regmap-irq has previously handled the undupported type
-> settings and existing drivers seem to be upset if failure
-> is now reported.
->
-> Fixes: 1c2928e3e321 ("regmap: regmap-irq/gpio-max77620: add level-irq support")
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/lochnagar-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index 5a89e6d4b9a6..818d20410518 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -226,7 +226,7 @@ static const struct of_device_id lochnagar_of_match[] = {
+ 	},
+ 	{
+ 		.compatible = "cirrus,lochnagar2-mic2vdd",
+-		.data = &lochnagar_regulators[LOCHNAGAR_MIC1VDD],
++		.data = &lochnagar_regulators[LOCHNAGAR_MIC2VDD],
+ 	},
+ 	{
+ 		.compatible = "cirrus,lochnagar2-vddcore",
+-- 
+2.17.1
 
-> ---
->
-> Geert reported that 1c2928e3e321 breaks da9063-rtc on the Renesas
-> Koelsch board:
->
-> https://lore.kernel.org/lkml/20181227075648.GB2461@localhost.localdomain/T/#m194616cc88d7b4c2a78f7ce07907608fdb64a092
->
-> Geert, do you know if anyone vould to test this?
-
-Thanks, that seems to fix the issue with da9063-rtc.
-
-I don't know how to trigger an actual interrupt, though.
-
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -258,7 +258,7 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
->         const struct regmap_irq_type *t = &irq_data->type;
->
->         if ((t->types_supported & type) != type)
-> -               return -ENOTSUPP;
-> +               return 0;
->
->         reg = t->type_reg_offset / map->reg_stride;
->
-> --
-> 2.14.3
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
