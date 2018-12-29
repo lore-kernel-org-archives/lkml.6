@@ -2,123 +2,106 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA54AC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 10:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A7EC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 10:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705792145D
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 10:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E31802145D
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 10:02:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="yGvMjzi7"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KaWkSNJM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeL2KBX (ORCPT
+        id S1729222AbeL2KC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 05:01:23 -0500
-Received: from mail-eopbgr130082.outbound.protection.outlook.com ([40.107.13.82]:26996
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726739AbeL2KBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 05:01:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VoYuskcfItn/z4BRBd6u/iZItta1e2RPqWg73psIzBY=;
- b=yGvMjzi7T14Jzk5tMOWO6I6Hx36Z1v+jTFtNvYJOHlct9aCsgjJSlyIGy8pTY+HEIQLggTW/GrcQA+4LU9UgnTZQR1fuO6V/+lyASFR/U4Nc7sST3w58+KMHbSGiWSW8Ij2l3C17r76kjj3xJBvZq0IexFUfV/gR+lDOTwI5FAw=
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
- AM6PR0402MB3560.eurprd04.prod.outlook.com (52.133.19.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Sat, 29 Dec 2018 10:01:19 +0000
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::e0f7:5b3f:bb6b:759f]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::e0f7:5b3f:bb6b:759f%3]) with mapi id 15.20.1471.019; Sat, 29 Dec 2018
- 10:01:18 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH] ARM: dts: imx6sx: correct backward compatible of gpt
-Thread-Topic: [PATCH] ARM: dts: imx6sx: correct backward compatible of gpt
-Thread-Index: AQHUn11xze44rhB2CEeG3+TNL+BIWQ==
-Date:   Sat, 29 Dec 2018 10:01:18 +0000
-Message-ID: <1546077384-5343-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0038.apcprd03.prod.outlook.com
- (2603:1096:203:2f::26) To AM6PR0402MB3911.eurprd04.prod.outlook.com
- (2603:10a6:209:1c::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3560;6:HGglVRivzdKTWpC8Bgy+Ucx2gp8pNyGOU36o9S52IzyBE4eG6HbkOt2DUvcihDhOy2Z12YtSExBDjGZDfpzi+hQzDu8PkFP+/75ITc1/9uyvNf29zWPiqv5n1iM2ZzMYTlZCBXyuTUztUgYarPY/0PzdCFxCbqz7cYuZ0crgL6Jssu4cuI0OhZxOGcgBrybHHlxEWOdI9zQ97JuAcPqmdoOid+DdUmoNGD78NPMF6mjO9pA92VfQI01PDUJzvesfcsl149PhoCp1KWKOV5uAuhbfUdCS/U8oPa8jLQKvhcrWsa8yUe0KPCU2sEYnB4xtfL6gJxIef+BOdm7Lggl0gHmKeFYVqOgwz8NQ97CpntzLXfK5Zun5BaiI4UpUz5kQkqYlbVV74m1RiVc0UAJcNlhesi3zFb4TUc7b8TAd3qdIKy34l1sReGc9bcMKS9CZd+Xtcq8MC3MGiP63SZIKQw==;5:/kGXkBHi+9yPbxXuWs+c+4iq1uS3ed93vgRAKNFroU2OIJlor6owM6tgkg0SHpth59SfQsR1LvOCEsykXTyWsIgOBCeo/80Qd8fs4LPA+fQDjkFootapxwFXXxpHcnPs6u54YX2uxP9raDZ61ZiyQ6MM+0f9QPHSqQJXr24s08M=;7:Ee+F3fsZdW4jj7C8HsXN3kquAH14o67I84BMZxAU6MKWufIKvFJfKRBaEDNe82TbTmX+a6vKc15cbARbbCZCTxSBI4ahYqFHJkn2+UBTbNvvud6Ls3yZtpsnt7jhrQ5Z7BlQyoCk1JtG+Qq7B0hViA==
-x-ms-office365-filtering-correlation-id: c7de50f7-4aac-40ef-6563-08d66d7493e8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3560;
-x-ms-traffictypediagnostic: AM6PR0402MB3560:
-x-microsoft-antispam-prvs: <AM6PR0402MB35602E3714B669D0AA3AB296F5B00@AM6PR0402MB3560.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220055)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3560;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3560;
-x-forefront-prvs: 09011458FC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(39860400002)(376002)(396003)(189003)(199004)(105586002)(2906002)(106356001)(6116002)(6486002)(478600001)(14454004)(25786009)(3846002)(4326008)(6436002)(68736007)(2616005)(186003)(53936002)(102836004)(26005)(6506007)(7736002)(52116002)(476003)(97736004)(8676002)(81156014)(486006)(8936002)(81166006)(386003)(50226002)(99286004)(36756003)(14444005)(66066001)(256004)(71200400001)(86362001)(71190400001)(2501003)(110136005)(316002)(5660300001)(305945005)(2201001)(6512007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3560;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Vj9HNPVFuglk7tNE3CD8H+XK0cW64SOeqB2v/Cu5pL3jRu/RkPiYA9se2oJeb+PV2TqBGRto9fqm9gDQjN8o3K8TaZLEHV+7vmQjfadGqCZ7ZSYqiOHwut+lweeqt8ObU3XX2pvOQR0TL+HwqKVFzNrQdDTOGhc7V7KJKmfW6EnmtI8yziGVjPUlb1+iY3XNd1wD9P9ylHmDYQbH7ab9phpGQsS4bgJZmyMsGxhloZnJF/na/W8aB8kvqJ0mVtL3ZrPXboBVWqRuBo8tIKWK0UzF7KxR8XOUaAbGlEgxXet73+p/JP+pRyoqRjLQeVNi
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 29 Dec 2018 05:02:28 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48319 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726737AbeL2KC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 05:02:27 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6F1CA21CCA;
+        Sat, 29 Dec 2018 05:02:24 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Sat, 29 Dec 2018 05:02:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=G6Xp2/+N8BFhpfIvek7LJpWLo8ioC8eE7s6mAK/Uk
+        To=; b=KaWkSNJMRSs3YiXBdZxUNH69HZC+jvcQ60vrZz9MDjM1Wc1x5HhPrvhxO
+        V3pUbcpw8mLvf3iruUr08kwnPLsTg8OKOLVHxxdt3xoNk2YndhegZmMffc/pULIK
+        njvkWv41M0FL2XS03pBX2SCMyKnYk2PAHMz6S3iBcz2sjF2MvBjizk6UvHN7bk/O
+        FXHrHUaUBU8zK7SCKAs22c0ZCJmYAOFEVornxLrICeEKZL8QMYLrCiNkp8l1QA2l
+        DIVIrpAa9O7DZSn+jzbg6ng+0DaYgoYl017yoRXCngrIDx8DDfN7ebeOIS523WTE
+        n6LUduQftvAC7V0nhs6CTDGIXP+dw==
+X-ME-Sender: <xms:LkYnXEkqpYk_Dx59m-kCbqcRNxaGtXauigQqZTdEpiUB_GHrM5VJew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrtdekgdduudculddtuddrgedtkedrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtje
+    ertddtfeejnecuhfhrohhmpefrvghkkhgrucfgnhgsvghrghcuoehpvghnsggvrhhgsehi
+    khhirdhfiheqnecukfhppeekledrvdejrdeffedrudejfeenucfrrghrrghmpehmrghilh
+    hfrhhomhepphgvnhgsvghrghesihhkihdrfhhinecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:LkYnXDYXcCHnGHH7d_l6r-ua9SP-9XffrxplVt8SAqSVFrAQDiO-jQ>
+    <xmx:LkYnXNcMUZHD5pMO4HdWLZbk9CY9Y82n5iBvP6mc1_4CyLeRP3aIAg>
+    <xmx:LkYnXOAwxNIJ6T7T13-ddvPrbOAbp2ij9127p8Bm5RnTlMs1ux-0OA>
+    <xmx:MEYnXGGbJvXKSK_gI1B29EIbEaon6yReOQvMvnO9Y043szEO5AnZGg>
+Received: from Pekka-MacBook.local (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 21578E459A;
+        Sat, 29 Dec 2018 05:02:19 -0500 (EST)
+Subject: Re: [PATCH] mm/slub.c: freelist is ensured to be NULL when new_slab()
+ fails
+To:     Peng Wang <rocking@whu.edu.cn>, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20181229062512.30469-1-rocking@whu.edu.cn>
+From:   Pekka Enberg <penberg@iki.fi>
+Message-ID: <56ee5ac0-0785-cf2a-c1b4-95d4df2d11f1@iki.fi>
+Date:   Sat, 29 Dec 2018 12:02:14 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7de50f7-4aac-40ef-6563-08d66d7493e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Dec 2018 10:01:18.9306
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3560
+In-Reply-To: <20181229062512.30469-1-rocking@whu.edu.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX6SX has same GPT type as i.MX6DL, in GPT driver, it uses
-below TIMER_OF_DECLARE, so the backward compatible should be
-"fsl,imx6dl-gpt", correct it.
+On 29/12/2018 8.25, Peng Wang wrote:
+> new_slab_objects() will return immediately if freelist is not NULL.
+> 
+>           if (freelist)
+>                   return freelist;
+> 
+> One more assignment operation could be avoided.
+> 
+> Signed-off-by: Peng Wang <rocking@whu.edu.cn>
 
-TIMER_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
+Reviewed-by: Pekka Enberg <penberg@kernel.org>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6sx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 272ff61..d1375d3 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -467,7 +467,7 @@
- 			};
-=20
- 			gpt: gpt@2098000 {
--				compatible =3D "fsl,imx6sx-gpt", "fsl,imx31-gpt";
-+				compatible =3D "fsl,imx6sx-gpt", "fsl,imx6dl-gpt";
- 				reg =3D <0x02098000 0x4000>;
- 				interrupts =3D <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks =3D <&clks IMX6SX_CLK_GPT_BUS>,
---=20
-2.7.4
-
+> ---
+>   mm/slub.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 36c0befeebd8..cf2ef4ababff 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2463,8 +2463,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
+>   		stat(s, ALLOC_SLAB);
+>   		c->page = page;
+>   		*pc = c;
+> -	} else
+> -		freelist = NULL;
+> +	}
+>   
+>   	return freelist;
+>   }
+> 
