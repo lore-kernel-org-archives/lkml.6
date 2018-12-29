@@ -2,51 +2,50 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F0BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 00:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228CAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 00:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59761218FD
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 00:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E782A20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 00:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727917AbeL2AVF (ORCPT
+        id S1727923AbeL2AlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 19:21:05 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:44941 "EHLO
+        Fri, 28 Dec 2018 19:41:05 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:42848 "EHLO
         mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeL2AVE (ORCPT
+        with ESMTP id S1726029AbeL2AlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 19:21:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id x82so26731600ita.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 16:21:03 -0800 (PST)
+        Fri, 28 Dec 2018 19:41:05 -0500
+Received: by mail-it1-f198.google.com with SMTP id g7so26775171itg.7
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 16:41:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+IN9sYV3UE0TlWQrfdPCflzp22PJO/7vIe8OpSpAeos=;
-        b=UINhPHXFK2PSK1P3Ec0Vcv0pHFvFljgS9IwLdK9wmtUpLhnN3x/Ukp8DA/g0hjJd3+
-         BGkWRCOpBW1lb1ndVtl7/Oo28j+JzUDEh+kkDYwtp/Z8J8hHUO+dayXhN31zpYTyuGyC
-         I25Bhi4JWyJsgL9GMurwDAY5C0CwzvObSDQjbwUiCjxqlf7KdWxpFaRSAsFLD4wecgoD
-         2DAUCuJLPn15QxsCaKp7DYwNpsxwqF3pm/FxLv678SLPe/UeJU0x8imtaPxjYWtTwm1e
-         AWAsLplzj5PFBnDawsKPr4XxB7FzV3HVidotQS0pMa/G4pwo+yXaQB8GzgDT07RMhvTS
-         iLcg==
-X-Gm-Message-State: AA+aEWZkM1DvrXYWHzNzLJgvwBEqDaId3KoiOrtZ3rwWijJ1EAfWl4PU
-        s9HS6CXpuHo1yBV9lR16IKRYLB1wVJ6y6uh9QxR7qaAy/9Ki
-X-Google-Smtp-Source: AFSGD/XuGWqOKXLMF1MaVk/aE5zhMCDx9k82yLWi7QY01+7VWMdz1m5mBt9/8CwAz1u5GxMRvdNfhHLssn644ycsoVpqEzuBkDVy
+        bh=ccmquVeqcBKtWF0Rq4M0ehdIJy/Og6ezpqhC3FSj9XU=;
+        b=cRiSD0wu+gOeDpz8vQPoBjOzxIh2yFCydGez4EvWkRwnZL1FQTi/fxCQEbqkIDULh3
+         patKOOFrd7jPrJvpwFgHkR+KOfkDpY+DTdiuSe3vJuaMYQmTTrmgDo49MIoaGBwnjBeT
+         Tr6TezxwF7ORnSkNkqQNW3QrK6mXbtb1niXhV4nSs5Ln5VLbg6GIxJ8B3M6TPnH7w9pV
+         76LmD55ZDAhyC1cXmVp8sJjoHhETAaFTabmXW5plsD6U/jtH/OLRVLxt+eBUQ8zvOboV
+         4Ew3mNIGtj2cyhrzIKodiqamW8SM0Ydc3MnbR8Aojau3MS0jx2l1i4Q/UTkTL6TYKsu0
+         Oc3g==
+X-Gm-Message-State: AJcUukcpIN6f765kWviV0+NwlEkfJu0DiZGfzqJzDeqnsbWsSIYx+FxL
+        7mC47sYM3KmlRrhra7B0NQnn/66quJnSYruwnXRyWMWClIdj
+X-Google-Smtp-Source: ALg8bN4r1ZH4ARK9yoo6ocE4filD46u5Sh62lR5tGbx9Qi5jBB94obS0nClBTqizaE80adrW4xWZaY3uMZfEs2DdXpgiTGK6PJyR
 MIME-Version: 1.0
-X-Received: by 2002:a24:594f:: with SMTP id p76mr22058907itb.10.1546042863550;
- Fri, 28 Dec 2018 16:21:03 -0800 (PST)
-Date:   Fri, 28 Dec 2018 16:21:03 -0800
+X-Received: by 2002:a6b:8e83:: with SMTP id q125mr27648689iod.9.1546044064435;
+ Fri, 28 Dec 2018 16:41:04 -0800 (PST)
+Date:   Fri, 28 Dec 2018 16:41:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b08bc4057e1e273a@google.com>
-Subject: KASAN: invalid-free in x25_asy_free
-From:   syzbot <syzbot+5e5e969e525129229052@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
+Message-ID: <000000000000449587057e1e6f8b@google.com>
+Subject: WARNING in __might_sleep (2)
+From:   syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,176 +58,73 @@ syzbot found the following crash on:
 
 HEAD commit:    8fe28cb58bcb Linux 4.20
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c11a3b400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16211a3b400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=7d581260bae0899a
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e5e969e525129229052
+dashboard link: https://syzkaller.appspot.com/bug?extid=c244af085a0159d22879
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1574eeaf400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1417cd8b400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1617cd8b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f5089b400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5e5e969e525129229052@syzkaller.appspotmail.com
+Reported-by: syzbot+c244af085a0159d22879@syzkaller.appspotmail.com
 
-  __alloc_pages include/linux/gfp.h:473 [inline]
-  __alloc_pages_node include/linux/gfp.h:486 [inline]
-  kmem_getpages mm/slab.c:1409 [inline]
-  cache_grow_begin+0x91/0x8c0 mm/slab.c:2677
-==================================================================
-  cache_alloc_refill mm/slab.c:3044 [inline]
-  ____cache_alloc mm/slab.c:3127 [inline]
-  slab_alloc_node mm/slab.c:3322 [inline]
-  kmem_cache_alloc_node_trace+0x670/0x740 mm/slab.c:3661
-BUG: KASAN: double-free or invalid-free in x25_asy_free+0x37/0x140  
-drivers/net/wan/x25_asy.c:111
-
-  __do_kmalloc_node mm/slab.c:3683 [inline]
-  __kmalloc_node+0x3c/0x70 mm/slab.c:3691
-  kmalloc_node include/linux/slab.h:589 [inline]
-  kvmalloc_node+0x65/0xf0 mm/util.c:416
-  kvmalloc include/linux/mm.h:577 [inline]
-  kvzalloc include/linux/mm.h:585 [inline]
-  alloc_netdev_mqs+0x17b/0xfe0 net/core/dev.c:8949
-  x25_asy_alloc drivers/net/wan/x25_asy.c:83 [inline]
-  x25_asy_open_tty+0x551/0x7e7 drivers/net/wan/x25_asy.c:556
-  tty_ldisc_open.isra.1+0x8b/0xe0 drivers/tty/tty_ldisc.c:453
-  tty_set_ldisc+0x2dc/0x6a0 drivers/tty/tty_ldisc.c:578
-  tiocsetd drivers/tty/tty_io.c:2321 [inline]
-  tty_ioctl+0x39d/0x17d0 drivers/tty/tty_io.c:2581
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4410e9
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 0b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc32511548 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004410e9
-RDX: 0000000020000000 RSI: 0000000000005423 RDI: 0000000000000003
-RBP: 00007ffc32511560 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-CPU: 0 PID: 7925 Comm: syz-executor081 Not tainted 4.20.0 #387
+audit: type=1800 audit(1545700018.193:29): pid=7508 uid=0 auid=4294967295  
+ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
+comm="startpar" name="rc.local" dev="sda1" ino=2432 res=0
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=1 set at  
+[<000000004df58f46>] n_hdlc_tty_read+0x301/0x7f0 drivers/tty/n_hdlc.c:589
+WARNING: CPU: 0 PID: 7659 at kernel/sched/core.c:6099  
+__might_sleep+0x13d/0x190 kernel/sched/core.c:6094
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 7659 Comm: syz-executor111 Not tainted 4.20.0 #387
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_invalid_free+0x64/0xa0 mm/kasan/report.c:336
-  __kasan_slab_free+0x13a/0x150 mm/kasan/kasan.c:501
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  x25_asy_free+0x37/0x140 drivers/net/wan/x25_asy.c:111
-  x25_asy_open_tty+0x6ad/0x7e7 drivers/net/wan/x25_asy.c:572
-  tty_ldisc_open.isra.1+0x8b/0xe0 drivers/tty/tty_ldisc.c:453
-  tty_set_ldisc+0x2dc/0x6a0 drivers/tty/tty_ldisc.c:578
-  tiocsetd drivers/tty/tty_io.c:2321 [inline]
-  tty_ioctl+0x39d/0x17d0 drivers/tty/tty_io.c:2581
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:__might_sleep+0x13d/0x190 kernel/sched/core.c:6094
+Code: 65 48 8b 1c 25 40 ee 01 00 48 8d 7b 10 48 89 fe 48 c1 ee 03 80 3c 06  
+00 75 2b 48 8b 73 10 48 c7 c7 40 e0 2a 88 e8 43 27 f3 ff <0f> 0b e9 43 ff  
+ff ff e8 f7 7c 6c 00 e9 26 ff ff ff e8 ed 7c 6c 00
+RSP: 0018:ffff8881b8db7948 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8881b8cae6c0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8164e045 RDI: 0000000000000005
+RBP: ffff8881b8db7978 R08: ffff8881b8cae6c0 R09: 0000000000000007
+R10: 0000000000000000 R11: ffff8881b8cae6c0 R12: ffffffff8860b220
+R13: 0000000000000019 R14: 0000000000000000 R15: ffff8881b8cae6c0
+  __might_fault+0xc6/0x1e0 mm/memory.c:4357
+  _copy_to_user+0x30/0x110 lib/usercopy.c:25
+  copy_to_user include/linux/uaccess.h:155 [inline]
+  n_hdlc_tty_read+0x5c1/0x7f0 drivers/tty/n_hdlc.c:600
+  tty_read+0x194/0x2a0 drivers/tty/tty_io.c:866
+  __vfs_read+0x117/0x9b0 fs/read_write.c:416
+  vfs_read+0x17f/0x3c0 fs/read_write.c:452
+  ksys_read+0x101/0x260 fs/read_write.c:578
+  __do_sys_read fs/read_write.c:588 [inline]
+  __se_sys_read fs/read_write.c:586 [inline]
+  __x64_sys_read+0x73/0xb0 fs/read_write.c:586
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4410e9
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+RIP: 0033:0x440099
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 0b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-kobject: 'queues' (000000001e78d271): kobject_uevent_env: filter function  
-caused the event to drop!
-RSP: 002b:00007ffc32511548 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004410e9
-RDX: 0000000020000000 RSI: 0000000000005423 RDI: 0000000000000003
-RBP: 00007ffc32511560 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-
-kobject: 'rx-0' (00000000b3577da5): kobject_add_internal: parent: 'queues',  
-set: 'queues'
-Allocated by task 7925:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3722 [inline]
-  __kmalloc+0x15b/0x770 mm/slab.c:3731
-  kmalloc include/linux/slab.h:551 [inline]
-  x25_asy_open drivers/net/wan/x25_asy.c:465 [inline]
-  x25_asy_open_tty+0x32a/0x7e7 drivers/net/wan/x25_asy.c:570
-  tty_ldisc_open.isra.1+0x8b/0xe0 drivers/tty/tty_ldisc.c:453
-  tty_set_ldisc+0x2dc/0x6a0 drivers/tty/tty_ldisc.c:578
-  tiocsetd drivers/tty/tty_io.c:2321 [inline]
-  tty_ioctl+0x39d/0x17d0 drivers/tty/tty_io.c:2581
-kobject: 'rx-0' (00000000b3577da5): kobject_uevent_env
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 7925:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-kobject: 'rx-0' (00000000b3577da5): fill_kobj_path: path  
-= '/devices/virtual/net/x25asy1/queues/rx-0'
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  x25_asy_open drivers/net/wan/x25_asy.c:489 [inline]
-  x25_asy_open_tty+0x6a0/0x7e7 drivers/net/wan/x25_asy.c:570
-  tty_ldisc_open.isra.1+0x8b/0xe0 drivers/tty/tty_ldisc.c:453
-  tty_set_ldisc+0x2dc/0x6a0 drivers/tty/tty_ldisc.c:578
-  tiocsetd drivers/tty/tty_io.c:2321 [inline]
-  tty_ioctl+0x39d/0x17d0 drivers/tty/tty_io.c:2581
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-kobject: 'tx-0' (00000000ae272600): kobject_add_internal: parent: 'queues',  
-set: 'queues'
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881afc12000
-  which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 0 bytes inside of
-  1024-byte region [ffff8881afc12000, ffff8881afc12400)
-The buggy address belongs to the page:
-page:ffffea0006bf0480 count:1 mapcount:0 mapping:ffff8881da800ac0 index:0x0  
-compound_mapcount: 0
-kobject: 'tx-0' (00000000ae272600): kobject_uevent_env
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea0007511e08 ffffea0007551288 ffff8881da800ac0
-raw: 0000000000000000 ffff8881afc12000 0000000100000007 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881afc11f00: fb fb fb fb fb fb fc fc fc fc fb fb fb fb fb fb
-  ffff8881afc11f80: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8881afc12000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-kobject: 'tx-0' (00000000ae272600): fill_kobj_path: path  
-= '/devices/virtual/net/x25asy1/queues/tx-0'
-                    ^
-  ffff8881afc12080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881afc12100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffeeb4e9ec8 EFLAGS: 00000207 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440099
+RDX: 0000000000000057 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000207 R12: 0000000000401920
+R13: 00000000004019b0 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
