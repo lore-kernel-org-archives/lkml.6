@@ -2,74 +2,83 @@ Return-Path: <SRS0=JLMu=PM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DATE_IN_PAST_96_XX,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52855C43387
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A2CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EE6621871
-	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2F3218F0
+	for <linux-kernel@archiver.kernel.org>; Fri,  4 Jan 2019 16:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbfADQBq (ORCPT
+        id S1728542AbfADQB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 4 Jan 2019 11:01:46 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:35487 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727022AbfADQBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 Jan 2019 11:01:33 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5A26F861F7BB6;
-        Sat,  5 Jan 2019 00:01:28 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 5 Jan 2019 00:00:25 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <yanaijie@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 0/3] libsas: SATA PHY connection rate matching during disovery
-Date:   Sat, 5 Jan 2019 00:01:25 +0800
-Message-ID: <1546617688-240623-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        Fri, 4 Jan 2019 11:01:57 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:31525 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727625AbfADQB4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 Jan 2019 11:01:56 -0500
+Received: from localhost.localdomain ([90.126.241.217])
+        by mwinf5d07 with ME
+        id LG1s1z00A4i89ZE03G1sx6; Fri, 04 Jan 2019 17:01:54 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 04 Jan 2019 17:01:54 +0100
+X-ME-IP: 90.126.241.217
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] octeontx2-af: Fix a resource leak in an error handling path in 'cgx_probe()'
+Date:   Sat, 29 Dec 2018 17:42:22 +0100
+Message-Id: <20181229164222.15791-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset looks to resolve an issue we see whereby a SATA end device
-negotiated linkrate may exceed the min linkrate to the initiator, and
-not be able to establish a connection.
+If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
+call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
 
-According to the SAS spec, we should lower the SATA PHY linkrate when this
-condition occurs.
+The same sequence is already in place in the corresponding 'cgx_remove()'
+function.
 
-It appears that some SAS HBAs (whose driver do not use libsas) already do
-this automatically (via firmware, I assume).
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This patchset solves this issue during device discovery phase when
-detecting a new device, but not during revalidation after the user has
-reprogrammed some PHY linkrates in the topology. Solving for the latter is
-much more complicated, and will be done as follow-up to this series.
-
-A minor tidy-up to libsas.h is also included.
-
-John Garry (3):
-  scsi: libsas: Fix some indentation in libsas.h
-  scsi: libsas: Check SMP PHY control function result
-  scsi: libsas: Support SATA PHY connection rate unmatch fixing during
-    discovery
-
- drivers/scsi/libsas/sas_expander.c | 29 +++++++++++++++++++-
- include/scsi/libsas.h              | 56 ++++++++++++++++++--------------------
- 2 files changed, 55 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+index 742f0c1f60df..6d55e3d0b7ea 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -825,7 +825,7 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!cgx->cgx_cmd_workq) {
+ 		dev_err(dev, "alloc workqueue failed for cgx cmd");
+ 		err = -ENOMEM;
+-		goto err_release_regions;
++		goto err_free_irq_vectors;
+ 	}
+ 
+ 	list_add(&cgx->cgx_list, &cgx_list);
+@@ -841,6 +841,8 @@ static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ err_release_lmac:
+ 	cgx_lmac_exit(cgx);
+ 	list_del(&cgx->cgx_list);
++err_free_irq_vectors:
++	pci_free_irq_vectors(pdev);
+ err_release_regions:
+ 	pci_release_regions(pdev);
+ err_disable_device:
 -- 
-1.9.1
+2.19.1
 
