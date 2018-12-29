@@ -2,70 +2,162 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30DBC43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC7AC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF8E20873
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546121114;
-	bh=epzUwYsXx/yC83ZQ6jJUpReZE5pJxDTOAfVM7W2LZoo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=r3+Ylr8spI69akXFHltm8o92JkGJqpiz1e+Nghh+t9HryWrk1ua7+5+A4kcfQHI+T
-	 4puwGkyye/5kLDEVcgrH9T/xGFVYR5ICtoUe/bgxO6F9twFiwHXCv6lV5ulStBOd/F
-	 VuhZF3eAd5aM9CnvnreOLNNKV5/1JXlo/ARC2k4s=
+	by mail.kernel.org (Postfix) with ESMTP id 2449820818
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:12:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbeL2WFM (ORCPT
+        id S1726908AbeL2WM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 17:05:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49466 "EHLO mail.kernel.org"
+        Sat, 29 Dec 2018 17:12:58 -0500
+Received: from mail.nwra.com ([72.52.192.72]:56070 "EHLO mail.nwra.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbeL2WFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 17:05:02 -0500
-Subject: Re: [GIT PULL 3/4] Kconfig updates for v4.21
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546121102;
-        bh=epzUwYsXx/yC83ZQ6jJUpReZE5pJxDTOAfVM7W2LZoo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=scc03de23naodGJ2HKIawRpZsp812xtpDqtbSoQsr9ta7fw424rQ0+9Xwn9fUHwqc
-         R19K4EDwXqwiI9hSjv/pX13DkGqbqig8P2djnpkzQMeBCS7NDy+PEOQTw2HzcWdZPU
-         RjNXdGLUbT7rtbJzUkImgBrbtXrTY7KfxSyKyRdE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNASuG-TiivGrJ17jY_mTPT1SaZQw4DaCRY+49deF49ZaEQ@mail.gmail.com>
-References: <CAK7LNASuG-TiivGrJ17jY_mTPT1SaZQw4DaCRY+49deF49ZaEQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNASuG-TiivGrJ17jY_mTPT1SaZQw4DaCRY+49deF49ZaEQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
- tags/kconfig-v4.21
-X-PR-Tracked-Commit-Id: f222b7f43661c3dddd44ee493c16e04e8f231542
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 769e47094dcc0ddc8fe8e04c13565a71134ec1a2
-Message-Id: <20181229220502.27755.4312.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 29 Dec 2018 22:05:02 +0000
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        masahiroy@kernel.org
+        id S1725648AbeL2WM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 17:12:57 -0500
+X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Sat, 29 Dec 2018 17:12:57 EST
+Received: from pacas.cora.nwra.com (c-67-166-25-97.hsd1.co.comcast.net [67.166.25.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by mail.nwra.com (Postfix) with ESMTPSA id 64EA43404E6;
+        Sat, 29 Dec 2018 14:05:07 -0800 (PST)
+From:   Orion Poplawski <orion@nwra.com>
+Subject: Re: Re: [PATCH] fanotify: allow freeze on suspend when waiting for
+ response from userspace
+To:     linux-kernel@vger.kernel.org, Vivek Trivedi <t.vivek@samsung.com>,
+        Jan Kara <jack@suse.com>
+Organization: NorthWest Research Associates
+Message-ID: <c1bb16b7-9eee-9cea-2c96-a512d8b3b9c7@nwra.com>
+Date:   Sat, 29 Dec 2018 15:04:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 29 Dec 2018 01:04:29 +0900:
+> On Thu 22-02-18 15:14:54, Kunal Shubham wrote:
+>> >> On Fri 16-02-18 15:14:40, t.vivek@samsung.com wrote:
+>> >> From: Vivek Trivedi <t.vivek@samsung.com>
+>> >> 
+>> >> If fanotify userspace response server thread is frozen first,
+>> >> it may fail to send response from userspace to kernel space listener.
+>> >> In this scenario, fanotify response listener will never get response
+>> >> from userepace and fail to suspend.
+>> >> 
+>> >> Use freeze-friendly wait API to handle this issue.
+>> >> 
+>> >> Same problem was reported here:
+>> >> https://bbs.archlinux.org/viewtopic.php?id=232270
+>> >> 
+>> >> Freezing of tasks failed after 20.005 seconds
+>> >> (1 tasks refusing to freeze, wq_busy=0)
+>> >> 
+>> >> Backtrace:
+>> >> [<c0582f80>] (__schedule) from [<c05835d0>] (schedule+0x4c/0xa4)
+>> >> [<c0583584>] (schedule) from [<c01cb648>] (fanotify_handle_event+0x1c8/0x218)
+>> >> [<c01cb480>] (fanotify_handle_event) from [<c01c8238>] (fsnotify+0x17c/0x38c)
+>> >> [<c01c80bc>] (fsnotify) from [<c02676dc>] (security_file_open+0x88/0x8c)
+>> >> [<c0267654>] (security_file_open) from [<c01854b0>] (do_dentry_open+0xc0/0x338)
+>> >> [<c01853f0>] (do_dentry_open) from [<c0185a38>] (vfs_open+0x54/0x58)
+>> >> [<c01859e4>] (vfs_open) from [<c0195480>] (do_last.isra.10+0x45c/0xcf8)
+>> >> [<c0195024>] (do_last.isra.10) from [<c0196140>] (path_openat+0x424/0x600)
+>> >> [<c0195d1c>] (path_openat) from [<c0197498>] (do_filp_open+0x3c/0x98)
+>> >> [<c019745c>] (do_filp_open) from [<c0186b44>] (do_sys_open+0x120/0x1e4)
+>> >> [<c0186a24>] (do_sys_open) from [<c0186c30>] (SyS_open+0x28/0x2c)
+>> >> [<c0186c08>] (SyS_open) from [<c0010200>] (__sys_trace_return+0x0/0x20)
+>> >
+>> > Yeah, good catch.
+>> >
+>> >> @@ -63,7 +64,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
+>> >> 
+>> >>  	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+>> >> 
+>> >> -	wait_event(group->fanotify_data.access_waitq, event->response);
+>> >> +	while (!event->response)
+>> >> +		wait_event_freezable(group->fanotify_data.access_waitq,
+>> >> +				     event->response);
+>> >
+>> > But if the process gets a signal while waiting, we will just livelock the
+>> > kernel in this loop as wait_event_freezable() will keep returning
+>> > ERESTARTSYS. So you need to be a bit more clever here...
+>> 
+>> Hi Jack,
+>> Thanks for the quick review.
+>> To avoid livelock issue, is it fine to use below change? 
+>> If agree, I will send v2 patch.
+>> 
+>> @@ -63,7 +64,11 @@ static int fanotify_get_response(struct fsnotify_group *group,
+>> 
+>>         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+>> 
+>> -       wait_event(group->fanotify_data.access_waitq, event->response);
+>> +       while (!event->response) {
+>> +               if (wait_event_freezable(group->fanotify_data.access_waitq,
+>> +                                       event->response))
+>> +                       flush_signals(current);
+>> +       }
+> 
+> Hum, I don't think this is correct either as this way if any signal was
+> delivered while waiting for fanotify response, we'd just lose it while
+> previously it has been properly handled. So what I think needs to be done
+> is that we just use wait_event_freezable() and propagate non-zero return
+> value (-ERESTARTSYS) up to the caller to handle the signal and restart the
+> syscall as necessary.
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kconfig-v4.21
+Is there any progress here?  This has become a real pain for us while 
+running BitDefender on EL7 laptops.  I tried applying the following to 
+the EL7 kernel:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/769e47094dcc0ddc8fe8e04c13565a71134ec1a2
+diff -up 
+linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig 
+kernel-3.10.0-957.1.3.el7/linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c
+--- linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c.orig 
+2018-11-15 10:07:13.000000000 -0700
++++ linux-3.10.0-957.1.3.el7.x86_64/fs/notify/fanotify/fanotify.c 
+2018-12-28 15:44:26.452895337 -0700
+@@ -9,6 +9,7 @@
+  #include <linux/types.h>
+  #include <linux/wait.h>
+  #include <linux/audit.h>
++#include <linux/freezer.h>
 
-Thank you!
+  #include "fanotify.h"
+
+@@ -64,7 +65,12 @@ static int fanotify_get_response(struct
+
+         pr_debug("%s: group=%p event=%p\n", __func__, group, event);
+
+-       wait_event(group->fanotify_data.access_waitq, event->response);
++       while (!event->response) {
++               ret = 
+wait_event_freezable(group->fanotify_data.access_waitq,
++                                          event->response);
++               if (ret < 0)
++                       return ret;
++       }
+
+         /* userspace responded, convert to something usable */
+         switch (event->response & ~FAN_AUDIT) {
+
+but I get a kernel panic shortly after logging in to the system.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Orion Poplawski
+Manager of NWRA Technical Systems          720-772-5637
+NWRA, Boulder/CoRA Office             FAX: 303-415-9702
+3380 Mitchell Lane                       orion@nwra.com
+Boulder, CO 80301                 https://www.nwra.com/
