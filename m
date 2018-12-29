@@ -2,127 +2,147 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EC8C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF90AC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F0E621901
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:32:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oWZw0X59"
+	by mail.kernel.org (Postfix) with ESMTP id A83532146F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeL2Bb7 (ORCPT
+        id S1728891AbeL2Bco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 20:31:59 -0500
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:55586 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeL2Bb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 20:31:58 -0500
-Received: by mail-pg1-f202.google.com with SMTP id g188so20927769pgc.22
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 17:31:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=jCn6C/cpRHtM9VQxY+22Xn56ZeUCdkzguW82dVDfWug=;
-        b=oWZw0X59mBgdk8cEHTvD73zbKXKCYhLL4ihzdBP1B+abwCrZZrRxPH9mQ77369eLc5
-         i/L6QPcKcCEJuOqRkMvL94x9fmmXFhR8ADtmXqh0Fr1LYndK6ZgQZXW9fzzAkLGjqch0
-         A0a8iunsmq2eiIPriGrm0mAbYCJID1ctyfiz5hgu/fvv9GHGTHaFcnUMlaF8USWx+sdb
-         vYEWgoICKdl6xN4iSB+rEXyZr7VVESWAxSdck3rEdb6/frweUGnaqbMErjJ9w84amCNm
-         ct99MgKNuXyHeRipm/rVz7RfdspV+sOod4b5U4J3lhEAnq4iXygvARafU8dFuDP7Fp77
-         vabw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=jCn6C/cpRHtM9VQxY+22Xn56ZeUCdkzguW82dVDfWug=;
-        b=LVzSW8btqhsp/vWQXGonUpRa/2Oo2ijHv8FR+LYwZbNVTCTqy19lujfTlsa5rzA4Yu
-         BpnMn47kageFoaOpAjr7ZD1aMZ/uluFq5zao1neeTo1M4GmL+j0/D3YBXWrWbYDedk08
-         kfhhDXEhtlZX0Y9IQMz4u0J4KIZQrNziEQB4cXQnmJbwCeDMc1UXVdaJMMH9ZoVZLObp
-         WQXhm2Gj1cNEF9/BuJcgXpIrJ7ZFNToOqvgjl4lSMQnbNwbDJFLGR5TPdS6K7W9SU1bS
-         OONFVJIZbqRxGg1nyZ2sbtyn/TqOmFxJwGzclrFDA2o856PxrxwMrSC/Bbpg5Yhu9K0e
-         MOhA==
-X-Gm-Message-State: AJcUukeQ3IaB9mVTKeKKKkpn6E13psoG5UAf1WSpQ6WXEj8AHZ9D9uw9
-        PTYP8g/feQ2YFD2ColFcRShDotRqylTGQA==
-X-Google-Smtp-Source: ALg8bN5AHRIe6jH1ZAHDzOHvD4iJTPGLBhxndrma8kZubs7W9wNjBNoBepBopB0KsdmeyudMuKPsujqEwtslqg==
-X-Received: by 2002:a63:3f41:: with SMTP id m62mr13692380pga.8.1546047116752;
- Fri, 28 Dec 2018 17:31:56 -0800 (PST)
-Date:   Fri, 28 Dec 2018 17:31:47 -0800
-Message-Id: <20181229013147.211079-1-shakeelb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-Subject: [PATCH] percpu: plumb gfp flag to pcpu_get_pages
-From:   Shakeel Butt <shakeelb@google.com>
-To:     Tejun Heo <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Fri, 28 Dec 2018 20:32:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39632 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728848AbeL2Bcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 20:32:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 335FBAF5A;
+        Sat, 29 Dec 2018 01:32:40 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Date:   Sat, 29 Dec 2018 12:32:30 +1100
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 treewide] headers: separate linux/mod_devicetable.h from linux/platform_device.h
+In-Reply-To: <20180707155306.GA23729@kroah.com>
+References: <7baed3cc-cb9c-66d2-b179-517877324407@infradead.org> <20180707155306.GA23729@kroah.com>
+Message-ID: <871s61azip.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__alloc_percpu_gfp() can be called from atomic context, so, make
-pcpu_get_pages use the gfp provided to the higher layer.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/percpu-vm.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+On Sat, Jul 07 2018, Greg Kroah-Hartman wrote:
 
-diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
-index d8078de912de..4f42c4c5c902 100644
---- a/mm/percpu-vm.c
-+++ b/mm/percpu-vm.c
-@@ -21,6 +21,7 @@ static struct page *pcpu_chunk_page(struct pcpu_chunk *chunk,
- 
- /**
-  * pcpu_get_pages - get temp pages array
-+ * @gfp: allocation flags passed to the underlying allocator
-  *
-  * Returns pointer to array of pointers to struct page which can be indexed
-  * with pcpu_page_idx().  Note that there is only one array and accesses
-@@ -29,7 +30,7 @@ static struct page *pcpu_chunk_page(struct pcpu_chunk *chunk,
-  * RETURNS:
-  * Pointer to temp pages array on success.
-  */
--static struct page **pcpu_get_pages(void)
-+static struct page **pcpu_get_pages(gfp_t gfp)
- {
- 	static struct page **pages;
- 	size_t pages_size = pcpu_nr_units * pcpu_unit_pages * sizeof(pages[0]);
-@@ -37,7 +38,7 @@ static struct page **pcpu_get_pages(void)
- 	lockdep_assert_held(&pcpu_alloc_mutex);
- 
- 	if (!pages)
--		pages = pcpu_mem_zalloc(pages_size, GFP_KERNEL);
-+		pages = pcpu_mem_zalloc(pages_size, gfp);
- 	return pages;
- }
- 
-@@ -278,7 +279,7 @@ static int pcpu_populate_chunk(struct pcpu_chunk *chunk,
- {
- 	struct page **pages;
- 
--	pages = pcpu_get_pages();
-+	pages = pcpu_get_pages(gfp);
- 	if (!pages)
- 		return -ENOMEM;
- 
-@@ -316,7 +317,7 @@ static void pcpu_depopulate_chunk(struct pcpu_chunk *chunk,
- 	 * successful population attempt so the temp pages array must
- 	 * be available now.
- 	 */
--	pages = pcpu_get_pages();
-+	pages = pcpu_get_pages(GFP_KERNEL);
- 	BUG_ON(!pages);
- 
- 	/* unmap and free */
--- 
-2.20.1.415.g653613c723-goog
+> On Tue, Jun 19, 2018 at 10:47:28PM -0700, Randy Dunlap wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>=20
+>> At over 4000 #includes, <linux/platform_device.h> is the 9th most
+>> #included header file in the Linux kernel.  It does not need
+>> <linux/mod_devicetable.h>, so drop that header and explicitly add
+>> <linux/mod_devicetable.h> to source files that need it.
+>>=20
+>>    4146 #include <linux/platform_device.h>
+>>=20
+>> After this patch, there are 225 files that use <linux/mod_devicetable.h>,
+>> for a reduction of around 3900 times that <linux/mod_devicetable.h>
+>> does not have to be read & parsed.
+>>=20
+>>     225 #include <linux/mod_devicetable.h>
+>>=20
+>> This patch was build-tested on 20 different arch-es.
+>>=20
+>> It also makes these drivers SubmitChecklist#1 compliant.
+>>=20
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Reported-by: kbuild test robot <lkp@intel.com> # drivers/media/platform/=
+vimc/
+>> Reported-by: kbuild test robot <lkp@intel.com> # drivers/pinctrl/pinctrl=
+-u300.c
+>> ---
+>> v3: add fix for drivers/pinctrl/pinctrl-u300.c
+>> v2: add fixes for drivers/media/platform/vimc/
+>
+> I've queued this up now, let's see what else breaks!  :)
 
+Some MIPS watchdog drivers break, at least.
+
+NeilBrown
+
+From: NeilBrown <neil@brown.name>
+Subject: [PATCH] Fix compilation problem for mt7621_wdt.c and rt2880_wdt.c
+
+These files need
+   #include <linux/mod_devicetable.h>
+to compile correctly.
+
+Fixes: ac3167257b9f ("headers: separate linux/mod_devicetable.h from linux/=
+platform_device.h")
+Signed-off-by: NeilBrown <neil@brown.name>
+=2D--
+ drivers/watchdog/mt7621_wdt.c | 1 +
+ drivers/watchdog/rt2880_wdt.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/watchdog/mt7621_wdt.c b/drivers/watchdog/mt7621_wdt.c
+index 5c4a764717c4..81208cd3f4ec 100644
+=2D-- a/drivers/watchdog/mt7621_wdt.c
++++ b/drivers/watchdog/mt7621_wdt.c
+@@ -17,6 +17,7 @@
+ #include <linux/watchdog.h>
+ #include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+=20
+ #include <asm/mach-ralink/ralink_regs.h>
+=20
+diff --git a/drivers/watchdog/rt2880_wdt.c b/drivers/watchdog/rt2880_wdt.c
+index 98967f0a7d10..db7c57d82cfd 100644
+=2D-- a/drivers/watchdog/rt2880_wdt.c
++++ b/drivers/watchdog/rt2880_wdt.c
+@@ -18,6 +18,7 @@
+ #include <linux/watchdog.h>
+ #include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
++#include <linux/mod_devicetable.h>
+=20
+ #include <asm/mach-ralink/ralink_regs.h>
+=20
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwmzq4ACgkQOeye3VZi
+gbkm8hAAhnOvpU6mkx90QVyixnKphhe92bxoDDxdBQ8oKMctLn+yXu0s7T9+nm6V
+MbjHGWFDFYC8nqdFBE6MaD3MyS5HnClCxHKeZGSvHW0z0diTXHAUSDSJmdZiQwxX
+PWsDT3lJ1v+aUO/RYX6KKcfntWAHkjav+UWZHbV3y/1qYwV6Cq0agqrSYDLfb7fn
+AlHWmrT43eOrUyrRVonk+/KVIKTKdQRjLNa1vz4ZlZoa2g46RJZeHHzUMOu2OHbb
+zPkNOQcFbGTmG82i8FTGtu0V1MZyWHeVM4uRnRJXiUEDfuHOnoy/RElyCjvxFqmd
+XBANZPxPXzbGUylH9yRtIzuDENPAlnMMDWhnL9auERSNLKx2Sg3ylwgbIIkA34KX
+wT6IxEzRmLU8Vlv8vlJuo/N+xE8mCpDzLEs9igQ996SufWrsrhhPbhBmZS1BIWeY
+W9S8msCBemB5QwABmYEeKZgAfCSjXU5hOmFsdE/77R8em5b8D3ZDVoyaLhhmoxfN
+nUR/z2rRvcnNOr1ByeTYUrKhJ5ADuXnjHA6735gHA27QSaFpEmPF5HSYyRymCXC2
+h4OmnkhSc1B4G6bNsUEzDVD2LjeDqWST7EhUoOx5BbdS48Lxvxwd5VN8J3dfxkma
+Re2YNxWGHF5/JB3G8BO3hMR3HpOvcU1moZmctLdxSM2JUYT4hI8=
+=/6XV
+-----END PGP SIGNATURE-----
+--=-=-=--
