@@ -2,185 +2,646 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9857C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5757DC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B1920873
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7F020873
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546088921;
-	bh=yc95Il/209C7sfV7g1N3uhf9Q+8OpjH9UY0pOhE+984=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=2o1b9VJBUgp8wKRZlkVccKyuSw3Vumfjij8/vziZ/GdxEECC6N0E9GO4ETeL2M0JB
-	 FIeQrzQ8gyS36bY2NQy2wXagSXlsBBgFILfyqOVBP3mf886GPNyILxbajtadvLks+G
-	 9QujtATA7VhfIN/N4UyeYtVPtGTB4nE9zJR0Eng8=
+	s=default; t=1546088929;
+	bh=v+YyXTPfk+JRLsyGRHyn0hLn/G9aNXDkF3BJxK/e+Lw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wce2jX8IYT7QIrCTBqxUmL6KOK6eI1TT9pNwVbhir0oq1RF4UIj17DGgZe5pxg29C
+	 48RWAWRmBu+znKHdF7b9BsdHQdpQ6IhNMleslFtvQVI/yqmOQ10bmZlGw7fYGVawaa
+	 o3aL5265pmimEDVgaxxGy2L5tPKcnfz08NnwKkVI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeL2NIk (ORCPT
+        id S1726079AbeL2NIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 08:08:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43074 "EHLO mail.kernel.org"
+        Sat, 29 Dec 2018 08:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbeL2NIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 08:08:38 -0500
+        id S1725886AbeL2NIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 08:08:47 -0500
 Received: from localhost (83-68-17-109.ip.xs4all.nl [83.68.17.109])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A505320873;
-        Sat, 29 Dec 2018 13:08:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3C8320873;
+        Sat, 29 Dec 2018 13:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546088917;
-        bh=yc95Il/209C7sfV7g1N3uhf9Q+8OpjH9UY0pOhE+984=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lfgk2DC4ao9CGnpwHhikzClFnz0UuApX4gjFu0QyMhT885rR7rmH890H+6lg6oX6A
-         rHdWXj56ylvwgZ9/DpcbLcKMEEX2a24QrFWLJhsn3xydh8opVqOmq/l2IS2M1pzSKA
-         JoeWSgBHTgV8C+3DHuoadIGRzb7pzgtCxWhI2I4s=
-Date:   Sat, 29 Dec 2018 14:08:34 +0100
+        s=default; t=1546088926;
+        bh=v+YyXTPfk+JRLsyGRHyn0hLn/G9aNXDkF3BJxK/e+Lw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UdATI9d8qVQVZcu06pKHPNO3ZRl8OmEuf9FN1hOqqqETKLPKzrgeUbbEh4LHiGIVe
+         wEzmQmG4kKVJuhdoNlq0q9plmEal9LFtUjMeMmRHZXCgUjxZ8r0DNka8hQ+m89t3aG
+         86lrzeIc18Ky1cpDzAY2/H6Gppctgrv1uoeiAmEU=
+Date:   Sat, 29 Dec 2018 14:08:41 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.9.148
-Message-ID: <20181229130834.GA15298@kroah.com>
+Subject: Re: Linux 4.9.148
+Message-ID: <20181229130841.GB15298@kroah.com>
+References: <20181229130834.GA15298@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181229130834.GA15298@kroah.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.9.148 kernel.
-
-All users of the 4.9 kernel series must upgrade.
-
-The updated 4.9.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.9.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                              |    2 -
- arch/x86/kernel/cpu/mtrr/if.c         |    2 +
- arch/x86/kernel/fpu/signal.c          |    4 +--
- block/blk-lib.c                       |   22 +++++++++++++++++---
- drivers/gpio/gpio-max7301.c           |   12 ++---------
- drivers/gpu/drm/drm_ioctl.c           |   10 +++++++--
- drivers/hv/vmbus_drv.c                |   20 ++++++++++++++++++
- drivers/infiniband/ulp/srpt/ib_srpt.c |    4 +--
- drivers/mmc/core/mmc.c                |   24 +++++++++++++---------
- drivers/mmc/host/omap_hsmmc.c         |   12 ++++++++++-
- drivers/net/usb/hso.c                 |   18 ++++++++++++++--
- drivers/usb/host/xhci-hub.c           |    3 +-
- drivers/usb/serial/option.c           |   16 +++++++++++++-
- fs/proc/proc_sysctl.c                 |   13 +++++------
- fs/ubifs/replay.c                     |   37 +++++++++++++++++++++++++++++=
-+++++
- kernel/panic.c                        |    6 ++++-
- 16 files changed, 164 insertions(+), 41 deletions(-)
-
-Bart Van Assche (1):
-      ib_srpt: Fix a use-after-free in __srpt_close_all_ch()
-
-Christophe Leroy (1):
-      gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
-
-Colin Ian King (1):
-      x86/mtrr: Don't copy uninitialized gentry fields back to userspace
-
-Dexuan Cui (1):
-      Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened cha=
-nnels
-
-Greg Kroah-Hartman (1):
-      Linux 4.9.148
-
-Gustavo A. R. Silva (1):
-      drm/ioctl: Fix Spectre v1 vulnerabilities
-
-Hui Peng (1):
-      USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
-
-Ivan Delalande (1):
-      proc/sysctl: don't return ENOMEM on lookup when a table is unregister=
-ing
-
-Jens Axboe (1):
-      block: break discard submissions into the user defined size
-
-J=F6rgen Storvist (4):
-      USB: serial: option: add GosunCn ZTE WeLink ME3630
-      USB: serial: option: add Simcom SIM7500/SIM7600 (MBIM mode)
-      USB: serial: option: add Fibocom NL668 series
-      USB: serial: option: add Telit LN940 series
-
-Mathias Nyman (1):
-      xhci: Don't prevent USB2 bus suspend in state check intended for USB3=
- only
-
-Mikulas Patocka (1):
-      block: fix infinite loop if the device loses discard capability
-
-Richard Weinberger (1):
-      ubifs: Handle re-linking of inodes correctly while recovery
-
-Russell King (1):
-      mmc: omap_hsmmc: fix DMA API warning
-
-Sebastian Andrzej Siewior (1):
-      x86/fpu: Disable bottom halves while loading FPU registers
-
-Sergey Senozhatsky (1):
-      panic: avoid deadlocks in re-entrant console drivers
-
-Tore Anderson (1):
-      USB: serial: option: add HP lt4132
-
-Ulf Hansson (3):
-      mmc: core: Reset HPI enabled state during re-init and in case of erro=
-rs
-      mmc: core: Allow BKOPS and CACHE ctrl even if no HPI support
-      mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
-
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlwncdIACgkQONu9yGCS
-aT5ZVRAAolBWLhPkkrEFtR/AHCK78/IGE2A03g8aOGMwYotzhkQHMfCEN3m0MjlW
-az4/B6s2cEhrlVSzUnpVG84WpmFdenLnQApVabK21ZjG8/86H950GsElxFt2SzjA
-64cJ6Lwc3WDbcEA/XFYqhlJ1PYtt+8bfmvLNNle1qJFpGZMAmqKHxnapYdjWdqoK
-BTES6GZB5TtvwDPndvq6BPGdh7BgRAyKqHr3jYXJZDL4yHLLmHs24iJh4CtWtRMS
-rfkXT64BZjZtmKqLnaQEHD+vecaD8y+OyWP+hdirvGAqjfEzG4KGc+HyuvD+ZbiL
-iL/UcTTAr7a8kFuk3WdMWlB9hBmiEkl0zczokZPL/U0ypJgc843m4+iqh/3zMljh
-0ueoSvvhgMiHrVTEgbC+2RT5jTqQ2DFS6Jhn7ky38iBE9aWPqRTBHYvhj5C4/Ica
-PynZT1nksf5SZbyD9kwFxrqzI1fZe7TEsms2Ck94zzSsFxCzX5k26/iSjsyfTfsv
-Z1v9q6DdkwdwDoQCFTsDwgfPjPKKhTBpN88UWWztE4rhuTjXlPOKpuzbKUCAAQ2y
-ApnPAn+YxuaTUmbT7TZmZkLXQ0tb5woZ+Kw7VOe5YeiNzqQ353NFPXNbSwiXvaEI
-pl7QUFyNJuoTgM/uhgreQB6LxeMT70UD3UFpyxb/h+XFupehCMs=
-=gaGR
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+diff --git a/Makefile b/Makefile
+index 3cccc51a57ce..1b71b11ea63e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 4
+ PATCHLEVEL = 9
+-SUBLEVEL = 147
++SUBLEVEL = 148
+ EXTRAVERSION =
+ NAME = Roaring Lionus
+ 
+diff --git a/arch/x86/kernel/cpu/mtrr/if.c b/arch/x86/kernel/cpu/mtrr/if.c
+index 6d9b45549109..d5b2a08e2b66 100644
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -172,6 +172,8 @@ mtrr_ioctl(struct file *file, unsigned int cmd, unsigned long __arg)
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
+ 
++	memset(&gentry, 0, sizeof(gentry));
++
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index ae52ef05d098..769831d9fd11 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -342,10 +342,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
+ 
++		local_bh_disable();
+ 		fpu->fpstate_active = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
+ 
+ 		return err;
+ 	} else {
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 46fe9248410d..af1d26f79878 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -63,10 +63,18 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		unsigned int req_sects;
+ 		sector_t end_sect, tmp;
+ 
+-		/* Make sure bi_size doesn't overflow */
+-		req_sects = min_t(sector_t, nr_sects, UINT_MAX >> 9);
++		/*
++		 * Issue in chunks of the user defined max discard setting,
++		 * ensuring that bi_size doesn't overflow
++		 */
++		req_sects = min_t(sector_t, nr_sects,
++					q->limits.max_discard_sectors);
++		if (!req_sects)
++			goto fail;
++		if (req_sects > UINT_MAX >> 9)
++			req_sects = UINT_MAX >> 9;
+ 
+-		/**
++		/*
+ 		 * If splitting a request, and the next starting sector would be
+ 		 * misaligned, stop the discard at the previous aligned sector.
+ 		 */
+@@ -100,6 +108,14 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 
+ 	*biop = bio;
+ 	return 0;
++
++fail:
++	if (bio) {
++		submit_bio_wait(bio);
++		bio_put(bio);
++	}
++	*biop = NULL;
++	return -EOPNOTSUPP;
+ }
+ EXPORT_SYMBOL(__blkdev_issue_discard);
+ 
+diff --git a/drivers/gpio/gpio-max7301.c b/drivers/gpio/gpio-max7301.c
+index 05813fbf3daf..647dfbbc4e1c 100644
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct device *dev, unsigned int reg,
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
+ 
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
+ }
+ 
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct device *dev, unsigned int reg)
+ 	struct spi_device *spi = to_spi_device(dev);
+ 
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index 71c3473476c7..04b26ca06180 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -36,6 +36,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
+ 
+ /**
+  * DOC: getunique and setversion story
+@@ -668,13 +669,17 @@ long drm_ioctl(struct file *filp,
+ 
+ 	if (is_driver_ioctl) {
+ 		/* driver ioctl */
+-		if (nr - DRM_COMMAND_BASE >= dev->driver->num_ioctls)
++		unsigned int index = nr - DRM_COMMAND_BASE;
++
++		if (index >= dev->driver->num_ioctls)
+ 			goto err_i1;
+-		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
++		index = array_index_nospec(index, dev->driver->num_ioctls);
++		ioctl = &dev->driver->ioctls[index];
+ 	} else {
+ 		/* core ioctl */
+ 		if (nr >= DRM_CORE_IOCTL_COUNT)
+ 			goto err_i1;
++		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 		ioctl = &drm_ioctls[nr];
+ 	}
+ 
+@@ -770,6 +775,7 @@ bool drm_ioctl_flags(unsigned int nr, unsigned int *flags)
+ 
+ 	if (nr >= DRM_CORE_IOCTL_COUNT)
+ 		return false;
++	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 
+ 	*flags = drm_ioctls[nr].flags;
+ 	return true;
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 0276d2ef06ee..9a0d0d0ad6d0 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -317,6 +317,8 @@ static ssize_t out_intr_mask_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
+ }
+@@ -330,6 +332,8 @@ static ssize_t out_read_index_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_read_index);
+ }
+@@ -344,6 +348,8 @@ static ssize_t out_write_index_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.current_write_index);
+ }
+@@ -358,6 +364,8 @@ static ssize_t out_read_bytes_avail_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
+ }
+@@ -372,6 +380,8 @@ static ssize_t out_write_bytes_avail_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
+ 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
+ }
+@@ -385,6 +395,8 @@ static ssize_t in_intr_mask_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
+ }
+@@ -398,6 +410,8 @@ static ssize_t in_read_index_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_read_index);
+ }
+@@ -411,6 +425,8 @@ static ssize_t in_write_index_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.current_write_index);
+ }
+@@ -425,6 +441,8 @@ static ssize_t in_read_bytes_avail_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
+ }
+@@ -439,6 +457,8 @@ static ssize_t in_write_bytes_avail_show(struct device *dev,
+ 
+ 	if (!hv_dev->channel)
+ 		return -ENODEV;
++	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
++		return -EINVAL;
+ 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
+ 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
+ }
+diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+index fe7c6ec67d98..2a44a2c3e859 100644
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -1763,8 +1763,8 @@ static void __srpt_close_all_ch(struct srpt_device *sdev)
+ 
+ 	list_for_each_entry(ch, &sdev->rch_list, list) {
+ 		if (srpt_disconnect_ch(ch) >= 0)
+-			pr_info("Closing channel %s-%d because target %s has been disabled\n",
+-				ch->sess_name, ch->qp->qp_num,
++			pr_info("Closing channel %s because target %s has been disabled\n",
++				ch->sess_name,
+ 				sdev->device->name);
+ 		srpt_close_ch(ch);
+ 	}
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 0c6de9f12ee8..97e51309d7af 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -27,6 +27,7 @@
+ #include "sd_ops.h"
+ 
+ #define DEFAULT_CMD6_TIMEOUT_MS	500
++#define MIN_CACHE_EN_TIMEOUT_MS 1600
+ 
+ static const unsigned int tran_exp[] = {
+ 	10000,		100000,		1000000,	10000000,
+@@ -522,8 +523,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 			card->cid.year += 16;
+ 
+ 		/* check whether the eMMC card supports BKOPS */
+-		if (!mmc_card_broken_hpi(card) &&
+-		    ext_csd[EXT_CSD_BKOPS_SUPPORT] & 0x1) {
++		if (ext_csd[EXT_CSD_BKOPS_SUPPORT] & 0x1) {
+ 			card->ext_csd.bkops = 1;
+ 			card->ext_csd.man_bkops_en =
+ 					(ext_csd[EXT_CSD_BKOPS_EN] &
+@@ -1719,20 +1719,26 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 		if (err) {
+ 			pr_warn("%s: Enabling HPI failed\n",
+ 				mmc_hostname(card->host));
++			card->ext_csd.hpi_en = 0;
+ 			err = 0;
+-		} else
++		} else {
+ 			card->ext_csd.hpi_en = 1;
++		}
+ 	}
+ 
+ 	/*
+-	 * If cache size is higher than 0, this indicates
+-	 * the existence of cache and it can be turned on.
++	 * If cache size is higher than 0, this indicates the existence of cache
++	 * and it can be turned on. Note that some eMMCs from Micron has been
++	 * reported to need ~800 ms timeout, while enabling the cache after
++	 * sudden power failure tests. Let's extend the timeout to a minimum of
++	 * DEFAULT_CACHE_EN_TIMEOUT_MS and do it for all cards.
+ 	 */
+-	if (!mmc_card_broken_hpi(card) &&
+-	    card->ext_csd.cache_size > 0) {
++	if (card->ext_csd.cache_size > 0) {
++		unsigned int timeout_ms = MIN_CACHE_EN_TIMEOUT_MS;
++
++		timeout_ms = max(card->ext_csd.generic_cmd6_time, timeout_ms);
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-				EXT_CSD_CACHE_CTRL, 1,
+-				card->ext_csd.generic_cmd6_time);
++				EXT_CSD_CACHE_CTRL, 1, timeout_ms);
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
+ 
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index f7d1c8c4e5ad..009242bcc7be 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -2105,7 +2105,6 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
+ 	mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+ 	mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+-	mmc->max_seg_size = mmc->max_req_size;
+ 
+ 	mmc->caps |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 		     MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_ERASE;
+@@ -2135,6 +2134,17 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
+ 
++	/*
++	 * Limit the maximum segment size to the lower of the request size
++	 * and the DMA engine device segment size limits.  In reality, with
++	 * 32-bit transfers, the DMA engine can do longer segments than this
++	 * but there is no way to represent that in the DMA model - if we
++	 * increase this figure here, we get warnings from the DMA API debug.
++	 */
++	mmc->max_seg_size = min3(mmc->max_req_size,
++			dma_get_max_seg_size(host->rx_chan->device->dev),
++			dma_get_max_seg_size(host->tx_chan->device->dev));
++
+ 	/* Request IRQ for MMC operations */
+ 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
+ 			mmc_hostname(mmc), host);
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index e7b516342678..66ae647b712e 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -2808,6 +2808,12 @@ static int hso_get_config_data(struct usb_interface *interface)
+ 		return -EIO;
+ 	}
+ 
++	/* check if we have a valid interface */
++	if (if_num > 16) {
++		kfree(config_data);
++		return -EINVAL;
++	}
++
+ 	switch (config_data[if_num]) {
+ 	case 0x0:
+ 		result = 0;
+@@ -2878,10 +2884,18 @@ static int hso_probe(struct usb_interface *interface,
+ 
+ 	/* Get the interface/port specification from either driver_info or from
+ 	 * the device itself */
+-	if (id->driver_info)
++	if (id->driver_info) {
++		/* if_num is controlled by the device, driver_info is a 0 terminated
++		 * array. Make sure, the access is in bounds! */
++		for (i = 0; i <= if_num; ++i)
++			if (((u32 *)(id->driver_info))[i] == 0)
++				goto exit;
+ 		port_spec = ((u32 *)(id->driver_info))[if_num];
+-	else
++	} else {
+ 		port_spec = hso_get_config_data(interface);
++		if (port_spec < 0)
++			goto exit;
++	}
+ 
+ 	/* Check if we need to switch to alt interfaces prior to port
+ 	 * configuration */
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 00d10660ff14..39e2d3271035 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1353,7 +1353,8 @@ int xhci_bus_suspend(struct usb_hcd *hcd)
+ 		portsc_buf[port_index] = 0;
+ 
+ 		/* Bail out if a USB3 port has a new device in link training */
+-		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++		if ((hcd->speed >= HCD_USB3) &&
++		    (t1 & PORT_PLS_MASK) == XDEV_POLLING) {
+ 			bus_state->bus_suspended = 0;
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+ 			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 2b81939fecd7..1e3445dd84b2 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1163,6 +1163,10 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1213, 0xff) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1214),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
++	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1900),				/* Telit LN940 (QMI) */
++	  .driver_info = NCTRL(0) | RSVD(1) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1901, 0xff),	/* Telit LN940 (MBIM) */
++	  .driver_info = NCTRL(0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, ZTE_PRODUCT_MF622, 0xff, 0xff, 0xff) }, /* ZTE WCDMA products */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0002, 0xff, 0xff, 0xff),
+ 	  .driver_info = RSVD(1) },
+@@ -1327,6 +1331,7 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0414, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0417, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x0602, 0xff) },	/* GosunCn ZTE WeLink ME3630 (MBIM mode) */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1008, 0xff, 0xff, 0xff),
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1010, 0xff, 0xff, 0xff),
+@@ -1530,6 +1535,7 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(2) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1428, 0xff, 0xff, 0xff),  /* Telewell TW-LTE 4G v2 */
+ 	  .driver_info = RSVD(2) },
++	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x1476, 0xff) },	/* GosunCn ZTE WeLink ME3630 (ECM/NCM mode) */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1533, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1534, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1535, 0xff, 0xff, 0xff) },
+@@ -1757,6 +1763,7 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ALINK_VENDOR_ID, ALINK_PRODUCT_3GU, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE(ALINK_VENDOR_ID, SIMCOM_PRODUCT_SIM7100E),
+ 	  .driver_info = RSVD(5) | RSVD(6) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
+ 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
+ 	  .driver_info = NCTRL(0) | NCTRL(1) | RSVD(4) },
+ 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X220_X500D),
+@@ -1941,7 +1948,14 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD200, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+-	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },	/* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },	/* HP lt4132 (Huawei ME906s-158) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
++	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 */
++	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 46cd2e1b055b..1999e85840d5 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -466,7 +466,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 
+ 	inode = new_inode(sb);
+ 	if (!inode)
+-		goto out;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	inode->i_ino = get_next_ino();
+ 
+@@ -476,8 +476,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 	if (unlikely(head->unregistering)) {
+ 		spin_unlock(&sysctl_lock);
+ 		iput(inode);
+-		inode = NULL;
+-		goto out;
++		return ERR_PTR(-ENOENT);
+ 	}
+ 	ei->sysctl = head;
+ 	ei->sysctl_entry = table;
+@@ -502,7 +501,6 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 	if (root->set_ownership)
+ 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
+ 
+-out:
+ 	return inode;
+ }
+ 
+@@ -551,10 +549,11 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
+ 			goto out;
+ 	}
+ 
+-	err = ERR_PTR(-ENOMEM);
+ 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
+-	if (!inode)
++	if (IS_ERR(inode)) {
++		err = ERR_CAST(inode);
+ 		goto out;
++	}
+ 
+ 	err = NULL;
+ 	d_set_d_op(dentry, &proc_sys_dentry_operations);
+@@ -687,7 +686,7 @@ static bool proc_sys_fill_cache(struct file *file,
+ 			return false;
+ 		if (d_in_lookup(child)) {
+ 			inode = proc_sys_make_inode(dir->d_sb, head, table);
+-			if (!inode) {
++			if (IS_ERR(inode)) {
+ 				d_lookup_done(child);
+ 				dput(child);
+ 				return false;
+diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
+index fb0f44cd1e28..de7799a0a9d1 100644
+--- a/fs/ubifs/replay.c
++++ b/fs/ubifs/replay.c
+@@ -209,6 +209,38 @@ static int trun_remove_range(struct ubifs_info *c, struct replay_entry *r)
+ 	return ubifs_tnc_remove_range(c, &min_key, &max_key);
+ }
+ 
++/**
++ * inode_still_linked - check whether inode in question will be re-linked.
++ * @c: UBIFS file-system description object
++ * @rino: replay entry to test
++ *
++ * O_TMPFILE files can be re-linked, this means link count goes from 0 to 1.
++ * This case needs special care, otherwise all references to the inode will
++ * be removed upon the first replay entry of an inode with link count 0
++ * is found.
++ */
++static bool inode_still_linked(struct ubifs_info *c, struct replay_entry *rino)
++{
++	struct replay_entry *r;
++
++	ubifs_assert(rino->deletion);
++	ubifs_assert(key_type(c, &rino->key) == UBIFS_INO_KEY);
++
++	/*
++	 * Find the most recent entry for the inode behind @rino and check
++	 * whether it is a deletion.
++	 */
++	list_for_each_entry_reverse(r, &c->replay_list, list) {
++		ubifs_assert(r->sqnum >= rino->sqnum);
++		if (key_inum(c, &r->key) == key_inum(c, &rino->key))
++			return r->deletion == 0;
++
++	}
++
++	ubifs_assert(0);
++	return false;
++}
++
+ /**
+  * apply_replay_entry - apply a replay entry to the TNC.
+  * @c: UBIFS file-system description object
+@@ -239,6 +271,11 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
+ 			{
+ 				ino_t inum = key_inum(c, &r->key);
+ 
++				if (inode_still_linked(c, r)) {
++					err = 0;
++					break;
++				}
++
+ 				err = ubifs_tnc_remove_ino(c, inum);
+ 				break;
+ 			}
+diff --git a/kernel/panic.c b/kernel/panic.c
+index dbec387099b1..eb7bc6d60927 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -13,6 +13,7 @@
+ #include <linux/kmsg_dump.h>
+ #include <linux/kallsyms.h>
+ #include <linux/notifier.h>
++#include <linux/vt_kern.h>
+ #include <linux/module.h>
+ #include <linux/random.h>
+ #include <linux/ftrace.h>
+@@ -228,7 +229,10 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
+ 
+-	bust_spinlocks(0);
++#ifdef CONFIG_VT
++	unblank_screen();
++#endif
++	console_unblank();
+ 
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
