@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E641BC43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2FFC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACDFC20828
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B9E520828
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 13:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyPASDp6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lROcxNZt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeL2Ndz (ORCPT
+        id S1726930AbeL2NeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 08:33:55 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37823 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeL2Ndn (ORCPT
+        Sat, 29 Dec 2018 08:34:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33636 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeL2Ndm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 08:33:43 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so19467997edb.4;
+        Sat, 29 Dec 2018 08:33:42 -0500
+Received: by mail-ed1-f68.google.com with SMTP id p6so19513872eds.0;
         Sat, 29 Dec 2018 05:33:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1wglHSkxyGTBpW71D3d8wcxzMqGZqy9iDQdsYiDzonE=;
-        b=CyPASDp6H+wFEkaEphC6t5MubhljNf1tI9HGfb+FEe+ajudGKBUipMWDr2FVNdnM2k
-         kZegCxlOc1PlDILEIGd5YzcrBZm5+Cc2ix+J3xMTEqBkptzzcrv1u0qEWKmnPZE7/l1Q
-         Dqj+8lS80rbzD4KPTfPDSxYDIkvG+3/SSMi0hmVtn/BIx9Ll5TyMBLXNO+wu0nlpQQtt
-         vM4IPfiqTGeWxZ7wHwomYW/+LVTAzOeyjATN9lZAuWlkGSLOLUan6Fn0439Y7mkkW3gt
-         lkPyj8Qn+x2lGBt5GkH8P0nMeIJCOlQ1wxw77h01KzNfaWE5ULQiJ/0E9I9Xgf+8PCYX
-         vmGA==
+        bh=ohQaTv2J9kKKkZzf1BMm6V+1alRU++HuBiNVjD/Tdc8=;
+        b=lROcxNZtyZz0YqrsCbaYhuDDYoGcZtzQ5YVmgJ28QLNus2d5lKpfUlKr8dLNUKa2RY
+         rUoHV9cJfN3s5z5SmmwIrk+shjN6sLo+zzSh324y7Wrpk4oVvOsJchKWn0AkKHI0dDsr
+         zOOXGRf+dkBmbRyW+Ba86F/muGL6bBGkEScm+f4tZnr4evTcqXZbxBOzXUdFkwGkaHgW
+         yN9o2+WexfsDhYSXcLhOPDkoXaAOe2tBseE48zy4BF22S80/900W/CRLHrF7PxiQ8OBt
+         FYRgplwlBv7VqI0v2Gj/mgFB2a1837qBzwQUUoEFebEevMJ41IoQu1zOup8JeiG7gAMw
+         4kMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1wglHSkxyGTBpW71D3d8wcxzMqGZqy9iDQdsYiDzonE=;
-        b=jR00jcLBqtLmy3p5QEkXa7ycDqU/P3gPt75UCG+SVSpBj8BZIpYWQre/iXNxDHB9wA
-         5io2gLnyoXvwut9EDW1xAiy8AWlvDjLyNZfUG6+3OUugmGKIROEH/IuAY1YnUu/BTABH
-         cHqVNfZVmaRXLyJDwzyxEvt8rajUMqW64ma8/JOEiPzewnWHOn9slRpWQ/D1XNstHm6M
-         gQxU5VoToh5Ct6Xew9cdSdtM9IEHv0yA8F3RyTT0qjdyybF2U49j0g9Q9WQQ3zyF2Ici
-         KSs71fgaCn/8E3lMGG3S65orfADBOGcTtxN1Agi/EvyFwl6zyNrjp/lPYvkkyf08Pjj4
-         4i4g==
-X-Gm-Message-State: AA+aEWbP9p2zTAbhycxcDdPWuBOc0B5yPxWK4wCyFoJ6bOcBqRf89nmn
-        prrN3O8jpA185I1kXPofhMQ=
-X-Google-Smtp-Source: AFSGD/VnaoatO3KAsK2Iay7QYMtSvZSGSJskN89P8E+VTGmuBmweU4vlYmtyd9hhXuFucTLu/GVJJQ==
-X-Received: by 2002:a17:906:6c97:: with SMTP id s23-v6mr21486841ejr.79.1546090421193;
-        Sat, 29 Dec 2018 05:33:41 -0800 (PST)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm8023063ejx.68.2018.12.29.05.33.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=ohQaTv2J9kKKkZzf1BMm6V+1alRU++HuBiNVjD/Tdc8=;
+        b=gZmsfRG9wGwLuSjIZfG2paiGtCe9ihD1IG5ClMVii1QP0Ry3FoVGRp0QeZkh533PK0
+         CRgz1ecjEU3WfleTQJnhd/aVborYkFlO0Bzs86RXTQoHiuCE+2TwRFW5pgpI70+7OljX
+         JdLAaO8NRwIXoG1xamg3+05a3JvURGqQP8B7sWSR3KstPYa6AYrBqtYE9y/GteTVEYs5
+         GHYJdZcCRrau/spyxDf9447jnnwTzDFdEAY8/y9drmosj9/Msv5q7r/VncSoVwVMe/JW
+         c+MZFp7fb/XQbZaWc83j7+p7ora6Zt+SBV7Slp3CZqJjMaL69+t+trkPEW0h8ZRnb0vV
+         NZdw==
+X-Gm-Message-State: AA+aEWZ4Q08vavGgPUD7odEltihePwUAkq7qIOJICV+q6i7qTAneG/5L
+        PaN0roEceTErUvz4h7HzcZkO/6Iv
+X-Google-Smtp-Source: AFSGD/VC0k1w65VqW7kPDVorcVnCE7blvPxWxkewJShB70llCBkmlHlsRSZBCrWVFmLqO86ITgpgzA==
+X-Received: by 2002:a50:b5c6:: with SMTP id a64mr26354856ede.112.1546090420207;
         Sat, 29 Dec 2018 05:33:40 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id d7-v6sm8023063ejx.68.2018.12.29.05.33.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Dec 2018 05:33:39 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
@@ -63,9 +64,9 @@ Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 7/7] ARM: dts: rockchip: rk3066a-mk808: enable vop0 and hdmi nodes
-Date:   Sat, 29 Dec 2018 14:33:18 +0100
-Message-Id: <20181229133318.18128-8-jbx6244@gmail.com>
+Subject: [PATCH v2 6/7] ARM: dts: rockchip: add rk3066 hdmi nodes
+Date:   Sat, 29 Dec 2018 14:33:17 +0100
+Message-Id: <20181229133318.18128-7-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181229133318.18128-1-jbx6244@gmail.com>
 References: <20181229133318.18128-1-jbx6244@gmail.com>
@@ -74,44 +75,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the vop0 and hdmi nodes
-for a MK808 with rk3066 processor.
+From: Zheng Yang <zhengyang@rock-chips.com>
 
+This patch adds the hdmi nodes to rk3066.
+
+Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk3066a-mk808.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/rk3066a.dtsi | 44 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3066a-mk808.dts b/arch/arm/boot/dts/rk3066a-mk808.dts
-index b6a8a82d2..14a560598 100644
---- a/arch/arm/boot/dts/rk3066a-mk808.dts
-+++ b/arch/arm/boot/dts/rk3066a-mk808.dts
-@@ -91,6 +91,14 @@
+diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
+index 653127a37..f95ce9881 100644
+--- a/arch/arm/boot/dts/rk3066a.dtsi
++++ b/arch/arm/boot/dts/rk3066a.dtsi
+@@ -80,6 +80,10 @@
+ 		vop0_out: port {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			vop0_out_hdmi: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hdmi_in_vop0>;
++			};
+ 		};
  	};
- };
  
-+&hdmi {
-+	status = "okay";
-+};
+@@ -101,6 +105,36 @@
+ 		vop1_out: port {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			vop1_out_hdmi: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hdmi_in_vop1>;
++			};
++		};
++	};
 +
-+&hdmi_in_vop1 {
-+	status = "disabled";
-+};
++	hdmi: hdmi@10116000 {
++		compatible = "rockchip,rk3066-hdmi";
++		reg = <0x10116000 0x2000>;
++		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HDMI>;
++		clock-names = "hclk";
++		power-domains = <&power RK3066_PD_VIO>;
++		rockchip,grf = <&grf>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmii2c_xfer>, <&hdmi_hpd>;
++		status = "disabled";
 +
- &mmc0 {
- 	bus-width = <4>;
- 	cap-mmc-highspeed;
-@@ -151,6 +159,10 @@
- 	status = "okay";
- };
++		hdmi_in: port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			hdmi_in_vop0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&vop0_out_hdmi>;
++			};
++			hdmi_in_vop1: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&vop1_out_hdmi>;
++			};
+ 		};
+ 	};
  
-+&vop0 {
-+	status = "okay";
-+};
+@@ -415,6 +449,16 @@
+ 			};
+ 		};
+ 
++		hdmi {
++			hdmi_hpd: hdmi-hpd {
++				rockchip,pins = <0 RK_PA0 1 &pcfg_pull_default>;
++			};
++			hdmii2c_xfer: hdmii2c-xfer {
++				rockchip,pins = <0 RK_PA1 1 &pcfg_pull_none>,
++						<0 RK_PA2 1 &pcfg_pull_none>;
++			};
++		};
 +
- &wdt {
- 	status = "okay";
- };
+ 		pwm0 {
+ 			pwm0_out: pwm0-out {
+ 				rockchip,pins = <RK_GPIO0 3 RK_FUNC_1 &pcfg_pull_none>;
 -- 
 2.11.0
 
