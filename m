@@ -6,129 +6,983 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA29C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F43C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD8A2146F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAD2D218A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 07:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbeL2HS4 convert rfc822-to-8bit (ORCPT
+        id S1729093AbeL2H1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 02:18:56 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:59696 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeL2HS4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 02:18:56 -0500
-Received: from [172.20.12.43] (unknown [213.61.67.157])
-        by mail.holtmann.org (Postfix) with ESMTPSA id C2247CF358;
-        Sat, 29 Dec 2018 08:26:35 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v7 4/4] Bluetooth: btqca: inject command complete event
- during fw download
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20181228114819.17479-5-bgodavar@codeaurora.org>
-Date:   Sat, 29 Dec 2018 08:18:53 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <2C799DB5-8033-45B5-A790-A16F73641645@holtmann.org>
-References: <20181228114819.17479-1-bgodavar@codeaurora.org>
- <20181228114819.17479-5-bgodavar@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sat, 29 Dec 2018 02:27:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53440 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725898AbeL2H1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 02:27:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12194AD5C;
+        Sat, 29 Dec 2018 07:27:14 +0000 (UTC)
+Subject: Re: [PATCH v5 1/6] net: lorawan: Add LoRaWAN socket module
+To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
+        Ben Whitten <ben.whitten@lairdtech.com>
+References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
+ <20181216101858.9585-2-starnight@g.ncu.edu.tw>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <b1eb9451-cb15-3fc7-f95e-3100cf715ef6@suse.de>
+Date:   Sat, 29 Dec 2018 08:27:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181216101858.9585-2-starnight@g.ncu.edu.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+Hi Jian-Hong,
 
-> Latest qualcomm chips are not sending an command complete event for
-> every firmware packet sent to chip. They only respond with a vendor
-> specific event for the last firmware packet. This optimization will
-> decrease the BT ON time. Due to this we are seeing a timeout error
-> message logs on the console during firmware download. Now we are
-> injecting a command complete event once we receive an vendor specific
-> event for the last RAM firmware packet.
+Am 16.12.18 um 11:18 schrieb Jian-Hong Pan:
+> This patch adds a new address/protocol family for LoRaWAN network.
+> It also implements the the functions and maps to Datagram socket for
+> LoRaWAN unconfirmed data messages.
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> drivers/bluetooth/btqca.c | 39 ++++++++++++++++++++++++++++++++++++++-
-> drivers/bluetooth/btqca.h |  3 +++
-> 2 files changed, 41 insertions(+), 1 deletion(-)
+> Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+[...]
+>  include/linux/lora/lorawan_netdev.h |  52 +++
+>  net/lorawan/Kconfig                 |  10 +
+>  net/lorawan/Makefile                |   2 +
+>  net/lorawan/socket.c                | 686 ++++++++++++++++++++++++++++
+>  4 files changed, 750 insertions(+)
+>  create mode 100644 include/linux/lora/lorawan_netdev.h
+>  create mode 100644 net/lorawan/Kconfig
+>  create mode 100644 net/lorawan/Makefile
+>  create mode 100644 net/lorawan/socket.c
+
+I'm not 100% happy with this yet, but to decouple it from the soft-MAC
+discussion (patches 2-6/6) and to allow reuse by Ben, I've staged it in
+linux-lora.git.
+
+We can clean it up with incremental patches there (and squash later).
+
 > 
-> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-> index ec9e03a6b778..0b533f65f652 100644
-> --- a/drivers/bluetooth/btqca.c
-> +++ b/drivers/bluetooth/btqca.c
-> @@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct rome_config *config,
-> 		 * In case VSE is skipped, only the last segment is acked.
-> 		 */
-> 		config->dnld_mode = tlv_patch->download_mode;
-> +		config->dnld_type = config->dnld_mode;
-> 
-> 		BT_DBG("Total Length           : %d bytes",
-> 		       le32_to_cpu(tlv_patch->total_size));
-> @@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
-> 	return err;
-> }
-> 
-> +static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
+> diff --git a/include/linux/lora/lorawan_netdev.h b/include/linux/lora/lorawan_netdev.h
+> new file mode 100644
+> index 000000000000..5bffb5164f95
+> --- /dev/null
+> +++ b/include/linux/lora/lorawan_netdev.h
+> @@ -0,0 +1,52 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
+
+Is there any practical reason you dual-license your code? My LoRa code
+is only GPL - should I reconsider that?
+
+> +/*-
+
+I assume the dash is a typo?
+
+> + * LoRaWAN stack related definitions
+> + *
+> + * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
+> + *
+
+Leftover white line from old license header?
+
+> + */
+> +
+> +#ifndef __LORAWAN_NET_DEVICE_H__
+> +#define __LORAWAN_NET_DEVICE_H__
+> +
+> +enum {
+> +	LRW_ADDR_APPEUI,
+> +	LRW_ADDR_DEVEUI,
+> +	LRW_ADDR_DEVADDR,
+> +};
+> +
+> +struct lrw_addr_in {
+> +	int addr_type;
+> +	union {
+> +		u64 app_eui;
+> +		u64 dev_eui;
+
+In my RFC and in linux-lora.git I have a lora_eui typedef - any reason
+you're not using it here?
+
+> +		u32 devaddr;
+> +	};
+> +};
+> +
+> +struct sockaddr_lorawan {
+> +	sa_family_t family; /* AF_LORAWAN */
+> +	struct lrw_addr_in addr_in;
+> +};
+> +
+> +/**
+> + * lrw_mac_cb - This structure holds the control buffer (cb) of sk_buff
+> + *
+> + * @devaddr:	the LoRaWAN device address of this LoRaWAN hardware
+> + */
+> +struct lrw_mac_cb {
+> +	u32 devaddr;
+> +};
+> +
+> +/**
+> + * lrw_get_mac_cb - Get the LoRaWAN MAC control buffer of the sk_buff
+> + * @skb:	the exchanging sk_buff
+> + *
+> + * Return:	the pointer of LoRaWAN MAC control buffer
+> + */
+> +static inline struct lrw_mac_cb *lrw_get_mac_cb(struct sk_buff *skb)
 > +{
-> +	struct hci_event_hdr *hdr;
-> +	struct hci_ev_cmd_complete *evt;
-> +	struct sk_buff *skb;
+> +	return (struct lrw_mac_cb *)skb->cb;
+> +}
+
+For LoRa I have a separate lora/skb.h - suggest to split this off into
+its own header consistently.
+
 > +
-> +	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
-> +	if (!skb)
-> +		return -ENOMEM;
+> +#endif
+> diff --git a/net/lorawan/Kconfig b/net/lorawan/Kconfig
+> new file mode 100644
+> index 000000000000..bf6c9b77573b
+> --- /dev/null
+> +++ b/net/lorawan/Kconfig
+> @@ -0,0 +1,10 @@
+> +config LORAWAN
+> +	tristate "LoRaWAN Network support"
+
+The N in LoRaWAN is already for Network. :)
+
+> +	help
+> +	  LoRaWAN defines low data rate, low power and long range wireless
+> +	  wide area networks. It was designed to organize networks of automation
+> +	  devices, such as sensors, switches and actuators. It can operate
+> +	  multiple kilometers wide.
+
+The missing information here to distinguish it from LoRa would be that
+it's a client/server technology centered around gateways. In particular
+gateways that anyone can run, distinguishing it from (Sigfox or) NB-IoT.
+
 > +
-> +	hdr = skb_put(skb, sizeof(*hdr));
-> +	hdr->evt = HCI_EV_CMD_COMPLETE;
-> +	hdr->plen = sizeof(*evt) + 1;
+> +	  Say Y here to compile LoRaWAN support into the kernel or say M to
+> +	  compile it as a module.
+> diff --git a/net/lorawan/Makefile b/net/lorawan/Makefile
+> new file mode 100644
+> index 000000000000..8c923ca6541a
+> --- /dev/null
+> +++ b/net/lorawan/Makefile
+> @@ -0,0 +1,2 @@
+> +obj-$(CONFIG_LORAWAN)	+= lorawan.o
+> +lorawan-objs		:= socket.o
+
+Both Kconfig and Makefile are not integrated into net/ here. That
+happens only in 6/6.
+
+> diff --git a/net/lorawan/socket.c b/net/lorawan/socket.c
+> new file mode 100644
+> index 000000000000..7ef106b877ca
+> --- /dev/null
+> +++ b/net/lorawan/socket.c
+> @@ -0,0 +1,686 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause
+> +/*-
+
+?
+
+> + * LoRaWAN stack related definitions
+> + *
+> + * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
+> + *
+
+?
+
+> + */
 > +
-> +	evt = skb_put(skb, sizeof(*evt));
-> +	evt->ncmd = 1;
-> +	evt->opcode = HCI_OP_NOP;
+> +#define	LORAWAN_MODULE_NAME	"lorawan"
 > +
-> +	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
+> +#define	pr_fmt(fmt)		LORAWAN_MODULE_NAME ": " fmt
 > +
-> +	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/list.h>
+> +#include <linux/net.h>
+> +#include <linux/if_arp.h>
+> +#include <linux/termios.h>		/* For TIOCOUTQ/INQ */
+> +#include <net/sock.h>
+> +#include <linux/lora/lorawan_netdev.h>
+
+Please sort headers alphabetically.
+
 > +
-> +	return hci_recv_frame(hdev, skb);
+> +/**
+> + * dgram_sock - This structure holds the states of Datagram socket
+> + *
+> + * @sk:			network layer representation of the socket
+> + *			sk must be the first member of dgram_sock
+
+Might that sentence be more useful as inline comment below?
+
+> + * @src_devaddr:	the LoRaWAN device address for this connection
+> + * @bound:		this socket is bound or not
+> + * @connected:		this socket is connected to the destination or not
+> + * @want_ack:		this socket needs to ack for the connection or not
+
+Doesn't exist below?
+
+> + */
+> +struct dgram_sock {
+> +	struct sock sk;
+> +	u32 src_devaddr;
+> +
+> +	u8 bound:1;
+> +	u8 connected:1;
+> +};
+> +
+> +static HLIST_HEAD(dgram_head);
+> +static DEFINE_RWLOCK(dgram_lock);
+> +
+> +static struct dgram_sock *
+> +dgram_sk(const struct sock *sk)
+> +{
+> +	return container_of(sk, struct dgram_sock, sk);
 > +}
 > +
-> static int qca_download_firmware(struct hci_dev *hdev,
-> 				  struct rome_config *config)
-> {
-> @@ -297,11 +323,22 @@ static int qca_download_firmware(struct hci_dev *hdev,
-> 		ret = qca_tlv_send_segment(hdev, segsize, segment,
-> 					    config->dnld_mode);
-> 		if (ret)
-> -			break;
-> +			goto out;
-> 
-> 		segment += segsize;
-> 	}
-> 
-> +	/* Latest qualcomm chipsets are not sending a command complete event
-> +	 * for every fw packet sent. They only respond with a vendor specific
-> +	 * event for the last packet. This optimization in the chip will
-> +	 * decrease the BT in initialization time. Here we will inject a command
-> +	 * complete event to avoid a command timeout error message.
-> +	 */
-> +	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
-> +	    config->dnld_type == ROME_SKIP_EVT_VSE))
-> +		return qca_inject_cmd_complete_event(hdev);
+> +static struct net_device *
+> +lrw_get_dev_by_addr(struct net *net, u32 devaddr)
+> +{
+> +	__be32 be_addr = cpu_to_be32(devaddr);
+> +	struct net_device *ndev = NULL;
 > +
+> +	rcu_read_lock();
+> +	ndev = dev_getbyhwaddr_rcu(net, ARPHRD_LORAWAN, (char *)&be_addr);
+> +	if (ndev)
+> +		dev_hold(ndev);
+> +	rcu_read_unlock();
+> +
+> +	return ndev;
+> +}
+> +
+> +static int
+> +dgram_init(struct sock *sk)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void
+> +dgram_close(struct sock *sk, long timeout)
+> +{
+> +	sk_common_release(sk);
+> +}
+> +
+> +static int
+> +dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
+> +{
+> +	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
+> +	struct dgram_sock *ro = dgram_sk(sk);
+> +	struct net_device *ndev;
+> +	int ret;
+> +
+> +	lock_sock(sk);
+> +	ro->bound = 0;
+> +
+> +	ret = -EINVAL;
+> +	if (len < sizeof(*addr))
+> +		goto dgram_bind_end;
+> +
+> +	if (addr->family != AF_LORAWAN)
+> +		goto dgram_bind_end;
+> +
+> +	if (addr->addr_in.addr_type != LRW_ADDR_DEVADDR)
+> +		goto dgram_bind_end;
+> +
+> +	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
+> +	ndev = lrw_get_dev_by_addr(sock_net(sk), addr->addr_in.devaddr);
+> +	if (!ndev) {
+> +		ret = -ENODEV;
+> +		goto dgram_bind_end;
+> +	}
+> +	netdev_dbg(ndev, "%s: get ndev\n", __func__);
+> +
+> +	if (ndev->type != ARPHRD_LORAWAN) {
+> +		ret = -ENODEV;
+> +		goto dgram_bind_end;
 
-have you actually considered using __hci_cmd_send in that case. It is allowed for vendor OGF to use that command. I see you actually do use it and now I am failing to understand what this is for.
+This is leaking ndev.
 
-Regards
+> +	}
+> +
+> +	ro->src_devaddr = addr->addr_in.devaddr;
+> +	ro->bound = 1;
+> +	ret = 0;
+> +	dev_put(ndev);
+> +	pr_debug("%s: bound address %X\n", __func__, ro->src_devaddr);
+> +
+> +dgram_bind_end:
+> +	release_sock(sk);
+> +	return ret;
+> +}
+> +
+> +static int
+> +lrw_dev_hard_header(struct sk_buff *skb, struct net_device *ndev,
+> +		    const u32 src_devaddr, size_t len)
+> +{
+> +	/* TODO: Prepare the LoRaWAN sending header here */
 
-Marcel
+I wonder, is your idea that you would always write headers here but have
+me ignore them in hard-MAC drivers by accessing data and not head?
 
+I.e., does this dgram (and a later seqpacket) implementation give us not
+just the buffer to pass to hard-MAC or soft-MAC but actually LoRa, too,
+so that maclorawan needs to further post-processing of header/checksum?
+
+> +	return 0;
+> +}
+> +
+> +static int
+> +dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+> +{
+> +	struct dgram_sock *ro = dgram_sk(sk);
+> +	struct net_device *ndev;
+> +	struct sk_buff *skb;
+> +	size_t hlen;
+> +	size_t tlen;
+> +	int ret;
+> +
+> +	pr_debug("%s: going to send %zu bytes", __func__, size);
+
+\n
+
+> +	if (msg->msg_flags & MSG_OOB) {
+> +		pr_debug("msg->msg_flags = 0x%x\n", msg->msg_flags);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	pr_debug("%s: check msg_name\n", __func__);
+> +	if (!ro->connected && !msg->msg_name)
+> +		return -EDESTADDRREQ;
+> +	else if (ro->connected && msg->msg_name)
+> +		return -EISCONN;
+> +
+> +	pr_debug("%s: check bound\n", __func__);
+> +	if (!ro->bound)
+> +		ndev = dev_getfirstbyhwtype(sock_net(sk), ARPHRD_LORAWAN);
+> +	else
+> +		ndev = lrw_get_dev_by_addr(sock_net(sk), ro->src_devaddr);
+> +
+> +	if (!ndev) {
+> +		pr_debug("no dev\n");
+> +		ret = -ENXIO;
+> +		goto dgram_sendmsg_end;
+> +	}
+> +
+> +	if (size > ndev->mtu) {
+> +		netdev_dbg(ndev, "size = %zu, mtu = %u\n", size, ndev->mtu);
+> +		ret = -EMSGSIZE;
+> +		goto dgram_sendmsg_end;
+
+Leaks at least ndev from lrw_get_dev_by_addr.
+
+> +	}
+> +
+> +	netdev_dbg(ndev, "%s: create skb\n", __func__);
+> +	hlen = LL_RESERVED_SPACE(ndev);
+> +	tlen = ndev->needed_tailroom;
+> +	skb = sock_alloc_send_skb(sk, hlen + tlen + size,
+> +				  msg->msg_flags & MSG_DONTWAIT,
+> +				  &ret);
+> +
+> +	if (!skb)
+> +		goto dgram_sendmsg_no_skb;
+> +
+> +	skb_reserve(skb, hlen);
+> +	skb_reset_network_header(skb);
+> +
+> +	ret = lrw_dev_hard_header(skb, ndev, 0, size);
+> +	if (ret < 0)
+> +		goto dgram_sendmsg_no_skb;
+> +
+> +	ret = memcpy_from_msg(skb_put(skb, size), msg, size);
+> +	if (ret > 0)
+> +		goto dgram_sendmsg_err_skb;
+> +
+> +	skb->dev = ndev;
+> +	skb->protocol = htons(ETH_P_LORAWAN);
+> +
+> +	netdev_dbg(ndev, "%s: push skb to xmit queue\n", __func__);
+> +	ret = dev_queue_xmit(skb);
+> +	if (ret > 0)
+> +		ret = net_xmit_errno(ret);
+> +	netdev_dbg(ndev, "%s: pushed skb to xmit queue with ret=%d\n",
+> +		   __func__, ret);
+> +	dev_put(ndev);
+> +
+> +	return ret ?: size;
+> +
+> +dgram_sendmsg_err_skb:
+> +	kfree_skb(skb);
+> +dgram_sendmsg_no_skb:
+> +	dev_put(ndev);
+> +
+> +dgram_sendmsg_end:
+> +	return ret;
+> +}
+> +
+> +static int
+> +dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
+> +	      int noblock, int flags, int *addr_len)
+> +{
+> +	DECLARE_SOCKADDR(struct sockaddr_lorawan *, saddr, msg->msg_name);
+> +	struct sk_buff *skb;
+> +	size_t copied = 0;
+> +	int err;
+> +
+> +	skb = skb_recv_datagram(sk, flags, noblock, &err);
+> +	if (!skb)
+> +		goto dgram_recvmsg_end;
+> +
+> +	copied = skb->len;
+> +	if (len < copied) {
+> +		msg->msg_flags |= MSG_TRUNC;
+> +		copied = len;
+> +	}
+> +
+> +	err = skb_copy_datagram_msg(skb, 0, msg, copied);
+> +	if (err)
+> +		goto dgram_recvmsg_done;
+> +
+> +	sock_recv_ts_and_drops(msg, sk, skb);
+> +	if (saddr) {
+> +		memset(saddr, 0, sizeof(*saddr));
+> +		saddr->family = AF_LORAWAN;
+> +		saddr->addr_in.devaddr = lrw_get_mac_cb(skb)->devaddr;
+> +		*addr_len = sizeof(*saddr);
+> +	}
+> +
+> +	if (flags & MSG_TRUNC)
+> +		copied = skb->len;
+> +
+> +dgram_recvmsg_done:
+> +	skb_free_datagram(sk, skb);
+> +
+> +dgram_recvmsg_end:
+> +	if (err)
+> +		return err;
+> +	return copied;
+> +}
+> +
+> +static int
+> +dgram_hash(struct sock *sk)
+> +{
+> +	pr_debug("%s\n", __func__);
+> +	write_lock_bh(&dgram_lock);
+> +	sk_add_node(sk, &dgram_head);
+> +	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
+> +	write_unlock_bh(&dgram_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static void
+> +dgram_unhash(struct sock *sk)
+> +{
+> +	pr_debug("%s\n", __func__);
+> +	write_lock_bh(&dgram_lock);
+> +	if (sk_del_node_init(sk))
+> +		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
+> +	write_unlock_bh(&dgram_lock);
+> +}
+> +
+> +static int
+> +dgram_connect(struct sock *sk, struct sockaddr *uaddr, int len)
+> +{
+> +	struct dgram_sock *ro = dgram_sk(sk);
+> +
+> +	/* Nodes of LoRaWAN send data to a gateway only, then data is received
+> +	 * and transferred to servers with the gateway's policy.
+> +	 * So, the destination address is not used by nodes.
+> +	 */
+> +	lock_sock(sk);
+> +	ro->connected = 1;
+> +	release_sock(sk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +dgram_disconnect(struct sock *sk, int flags)
+> +{
+> +	struct dgram_sock *ro = dgram_sk(sk);
+> +
+> +	lock_sock(sk);
+> +	ro->connected = 0;
+> +	release_sock(sk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +dgram_ioctl(struct sock *sk, int cmd, unsigned long arg)
+> +{
+> +	struct net_device *ndev = sk->sk_dst_cache->dev;
+> +	struct sk_buff *skb;
+> +	int amount;
+> +	int err;
+> +
+> +	netdev_dbg(ndev, "%s: ioctl file (cmd=0x%X)\n", __func__, cmd);
+> +	switch (cmd) {
+> +	case SIOCOUTQ:
+> +		amount = sk_wmem_alloc_get(sk);
+> +		err = put_user(amount, (int __user *)arg);
+> +		break;
+> +	case SIOCINQ:
+> +		amount = 0;
+> +		spin_lock_bh(&sk->sk_receive_queue.lock);
+> +		skb = skb_peek(&sk->sk_receive_queue);
+> +		if (skb) {
+> +			/* We will only return the amount of this packet
+> +			 * since that is all that will be read.
+> +			 */
+> +			amount = skb->len;
+> +		}
+> +		spin_unlock_bh(&sk->sk_receive_queue.lock);
+> +		err = put_user(amount, (int __user *)arg);
+> +		break;
+> +	default:
+> +		err = -ENOIOCTLCMD;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static int
+> +dgram_getsockopt(struct sock *sk, int level, int optname,
+> +		 char __user *optval, int __user *optlen)
+> +{
+> +	int val, len;
+> +
+> +	if (level != SOL_LORAWAN)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (get_user(len, optlen))
+> +		return -EFAULT;
+> +
+> +	len = min_t(unsigned int, len, sizeof(int));
+> +
+> +	switch (optname) {
+> +	default:
+> +		return -ENOPROTOOPT;
+> +	}
+> +
+> +	if (put_user(len, optlen))
+> +		return -EFAULT;
+> +
+> +	if (copy_to_user(optval, &val, len))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +dgram_setsockopt(struct sock *sk, int level, int optname,
+> +		 char __user *optval, unsigned int optlen)
+> +{
+> +	int val;
+> +	int err;
+> +
+> +	err = 0;
+> +
+> +	if (optlen < sizeof(int))
+> +		return -EINVAL;
+> +
+> +	if (get_user(val, (int __user *)optval))
+> +		return -EFAULT;
+> +
+> +	lock_sock(sk);
+> +
+> +	switch (optname) {
+> +	default:
+> +		err = -ENOPROTOOPT;
+> +		break;
+> +	}
+> +
+> +	release_sock(sk);
+> +
+> +	return err;
+> +}
+> +
+> +static struct proto lrw_dgram_prot = {
+> +	.name		= "LoRaWAN",
+> +	.owner		= THIS_MODULE,
+> +	.obj_size	= sizeof(struct dgram_sock),
+> +	.init		= dgram_init,
+> +	.close		= dgram_close,
+> +	.bind		= dgram_bind,
+> +	.sendmsg	= dgram_sendmsg,
+> +	.recvmsg	= dgram_recvmsg,
+> +	.hash		= dgram_hash,
+> +	.unhash		= dgram_unhash,
+> +	.connect	= dgram_connect,
+> +	.disconnect	= dgram_disconnect,
+> +	.ioctl		= dgram_ioctl,
+> +	.getsockopt	= dgram_getsockopt,
+> +	.setsockopt	= dgram_setsockopt,
+> +};
+> +
+> +static int
+> +lrw_sock_release(struct socket *sock)
+> +{
+> +	struct sock *sk = sock->sk;
+> +
+> +	if (sk) {
+> +		sock->sk = NULL;
+> +		sk->sk_prot->close(sk, 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +lrw_sock_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+> +{
+> +	struct sockaddr_lorawan *addr = (struct sockaddr_lorawan *)uaddr;
+> +	struct sock *sk = sock->sk;
+> +
+> +	pr_debug("%s: bind address %X\n", __func__, addr->addr_in.devaddr);
+> +	if (sk->sk_prot->bind)
+> +		return sk->sk_prot->bind(sk, uaddr, addr_len);
+> +
+> +	return sock_no_bind(sock, uaddr, addr_len);
+> +}
+> +
+> +static int
+> +lrw_sock_connect(struct socket *sock, struct sockaddr *uaddr,
+> +		 int addr_len, int flags)
+> +{
+> +	struct sock *sk = sock->sk;
+> +
+> +	if (addr_len < sizeof(uaddr->sa_family))
+> +		return -EINVAL;
+> +
+> +	return sk->sk_prot->connect(sk, uaddr, addr_len);
+> +}
+> +
+> +static int
+> +lrw_ndev_ioctl(struct sock *sk, struct ifreq __user *arg, unsigned int cmd)
+> +{
+> +	struct net_device *ndev;
+> +	struct ifreq ifr;
+> +	int ret;
+> +
+> +	pr_debug("%s: cmd %ud\n", __func__, cmd);
+> +	ret = -ENOIOCTLCMD;
+> +
+> +	if (copy_from_user(&ifr, arg, sizeof(struct ifreq)))
+> +		return -EFAULT;
+> +
+> +	ifr.ifr_name[IFNAMSIZ - 1] = 0;
+> +
+> +	dev_load(sock_net(sk), ifr.ifr_name);
+> +	ndev = dev_get_by_name(sock_net(sk), ifr.ifr_name);
+> +
+> +	netdev_dbg(ndev, "%s: cmd %ud\n", __func__, cmd);
+> +	if (!ndev)
+> +		return -ENODEV;
+> +
+> +	if (ndev->type == ARPHRD_LORAWAN && ndev->netdev_ops->ndo_do_ioctl)
+> +		ret = ndev->netdev_ops->ndo_do_ioctl(ndev, &ifr, cmd);
+> +
+> +	if (!ret && copy_to_user(arg, &ifr, sizeof(struct ifreq)))
+> +		ret = -EFAULT;
+> +	dev_put(ndev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +lrw_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+> +{
+> +	struct sock *sk = sock->sk;
+> +
+> +	pr_debug("%s: cmd %ud\n", __func__, cmd);
+> +	switch (cmd) {
+> +	case SIOCGSTAMP:
+> +		return sock_get_timestamp(sk, (struct timeval __user *)arg);
+> +	case SIOCGSTAMPNS:
+> +		return sock_get_timestampns(sk, (struct timespec __user *)arg);
+> +	case SIOCOUTQ:
+> +	case SIOCINQ:
+> +		if (!sk->sk_prot->ioctl)
+> +			return -ENOIOCTLCMD;
+> +		return sk->sk_prot->ioctl(sk, cmd, arg);
+> +	default:
+> +		return lrw_ndev_ioctl(sk, (struct ifreq __user *)arg, cmd);
+> +	}
+> +}
+> +
+> +static int
+> +lrw_sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+> +{
+> +	struct sock *sk = sock->sk;
+> +
+> +	pr_debug("%s: going to send %zu bytes\n", __func__, len);
+> +	return sk->sk_prot->sendmsg(sk, msg, len);
+> +}
+> +
+> +static const struct proto_ops lrw_dgram_ops = {
+> +	.family		= PF_LORAWAN,
+> +	.owner		= THIS_MODULE,
+> +	.release	= lrw_sock_release,
+> +	.bind		= lrw_sock_bind,
+> +	.connect	= lrw_sock_connect,
+> +	.socketpair	= sock_no_socketpair,
+> +	.accept		= sock_no_accept,
+> +	.getname	= sock_no_getname,
+> +	.poll		= datagram_poll,
+> +	.ioctl		= lrw_sock_ioctl,
+> +	.listen		= sock_no_listen,
+> +	.shutdown	= sock_no_shutdown,
+> +	.setsockopt	= sock_common_setsockopt,
+> +	.getsockopt	= sock_common_getsockopt,
+> +	.sendmsg	= lrw_sock_sendmsg,
+> +	.recvmsg	= sock_common_recvmsg,
+> +	.mmap		= sock_no_mmap,
+> +	.sendpage	= sock_no_sendpage,
+> +};
+> +
+> +static int
+> +lorawan_creat(struct net *net, struct socket *sock, int protocol, int kern)
+
+create
+Also, why lorawan_ here and lrw_ elsewhere?
+
+> +{
+> +	struct sock *sk;
+> +	int ret;
+> +
+> +	if (!net_eq(net, &init_net))
+> +		return -EAFNOSUPPORT;
+> +
+> +	if (sock->type != SOCK_DGRAM)
+> +		return -EAFNOSUPPORT;
+> +
+> +	/* Allocates enough memory for dgram_sock whose first member is sk */
+> +	sk = sk_alloc(net, PF_LORAWAN, GFP_KERNEL, &lrw_dgram_prot, kern);
+> +	if (!sk)
+> +		return -ENOMEM;
+> +
+> +	sock->ops = &lrw_dgram_ops;
+> +	sock_init_data(sock, sk);
+> +	sk->sk_family = PF_LORAWAN;
+> +	sock_set_flag(sk, SOCK_ZAPPED);
+> +
+> +	if (sk->sk_prot->hash) {
+> +		ret = sk->sk_prot->hash(sk);
+> +		if (ret) {
+> +			sk_common_release(sk);
+> +			goto lorawan_creat_end;
+> +		}
+> +	}
+> +
+> +	if (sk->sk_prot->init) {
+> +		ret = sk->sk_prot->init(sk);
+> +		if (ret)
+> +			sk_common_release(sk);
+> +	}
+> +
+> +lorawan_creat_end:
+
+create
+
+> +	return ret;
+> +}
+> +
+> +static const struct net_proto_family lorawan_family_ops = {
+> +	.owner		= THIS_MODULE,
+> +	.family		= PF_LORAWAN,
+> +	.create		= lorawan_creat,
+> +};
+> +
+> +static int
+> +lrw_dgram_deliver(struct net_device *ndev, struct sk_buff *skb)
+> +{
+> +	struct dgram_sock *ro;
+> +	struct sock *sk;
+> +	bool found;
+> +	int ret;
+> +
+> +	ret = NET_RX_SUCCESS;
+> +	found = false;
+
+In times of C99 you could probably fold that into the declarations.
+
+> +
+> +	read_lock(&dgram_lock);
+> +	sk_for_each(sk, &dgram_head) {
+> +		ro = dgram_sk(sk);
+> +		if (cpu_to_be32(ro->src_devaddr) == *(__be32 *)ndev->dev_addr) {
+> +			found = true;
+> +			break;
+> +		}
+> +	}
+> +	read_unlock(&dgram_lock);
+> +
+> +	if (!found)
+> +		goto lrw_dgram_deliver_err;
+> +
+> +	skb = skb_share_check(skb, GFP_ATOMIC);
+> +	if (!skb)
+> +		return NET_RX_DROP;
+> +
+> +	if (sock_queue_rcv_skb(sk, skb) < 0)
+> +		goto lrw_dgram_deliver_err;
+> +
+> +	return ret;
+> +
+> +lrw_dgram_deliver_err:
+> +	kfree_skb(skb);
+> +	ret = NET_RX_DROP;
+> +	return ret;
+> +}
+> +
+> +static int
+> +lorawan_rcv(struct sk_buff *skb, struct net_device *ndev,
+> +	    struct packet_type *pt, struct net_device *orig_ndev)
+> +{
+> +	if (!netif_running(ndev))
+> +		goto lorawan_rcv_drop;
+> +
+> +	if (!net_eq(dev_net(ndev), &init_net))
+> +		goto lorawan_rcv_drop;
+> +
+> +	if (ndev->type != ARPHRD_LORAWAN)
+> +		goto lorawan_rcv_drop;
+> +
+> +	if (skb->pkt_type != PACKET_OTHERHOST)
+> +		return lrw_dgram_deliver(ndev, skb);
+> +
+> +lorawan_rcv_drop:
+> +	kfree_skb(skb);
+> +	return NET_RX_DROP;
+> +}
+> +
+> +static struct packet_type lorawan_packet_type = {
+> +	.type		= htons(ETH_P_LORAWAN),
+> +	.func		= lorawan_rcv,
+> +};
+> +
+> +static int __init
+> +lrw_sock_init(void)
+> +{
+> +	int ret;
+> +
+> +	pr_info("module inserted\n");
+> +	ret = proto_register(&lrw_dgram_prot, 1);
+> +	if (ret)
+> +		goto lrw_sock_init_end;
+> +
+> +	/* Tell SOCKET that we are alive */
+
+Drop?
+
+> +	ret = sock_register(&lorawan_family_ops);
+> +	if (ret)
+> +		goto lrw_sock_init_err;
+> +
+> +	dev_add_pack(&lorawan_packet_type);
+> +	ret = 0;
+> +	goto lrw_sock_init_end;
+> +
+> +lrw_sock_init_err:
+> +	proto_unregister(&lrw_dgram_prot);
+> +
+> +lrw_sock_init_end:
+> +	return 0;
+
+return ret;?
+
+> +}
+> +
+> +static void __exit
+> +lrw_sock_exit(void)
+> +{
+> +	dev_remove_pack(&lorawan_packet_type);
+> +	sock_unregister(PF_LORAWAN);
+> +	proto_unregister(&lrw_dgram_prot);
+> +	pr_info("module removed\n");
+> +}
+> +
+> +module_init(lrw_sock_init);
+> +module_exit(lrw_sock_exit);
+> +
+> +MODULE_AUTHOR("Jian-Hong Pan, <starnight@g.ncu.edu.tw>");
+
+Drop the comma?
+
+> +MODULE_DESCRIPTION("LoRaWAN socket kernel module");
+
+Aren't they all kernel modules? :)
+
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_ALIAS_NETPROTO(PF_LORAWAN);
+
+Regards,
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
