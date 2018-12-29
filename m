@@ -2,99 +2,73 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12BCC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBA8C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F0A21908
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4143A21019
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:51:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbeL2GrO (ORCPT
+        id S1728958AbeL2GvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 01:47:14 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52350 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727254AbeL2GrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 01:47:14 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6FEC44106F70F;
-        Sat, 29 Dec 2018 14:47:10 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Sat, 29 Dec 2018
- 14:47:06 +0800
-Subject: Re: [PATCH] ipv4: fib_rules: Fix possible infinite loop in
- fib_empty_table
-To:     David Miller <davem@davemloft.net>
-References: <20181226083420.20436-1-yuehaibing@huawei.com>
- <20181228.211503.1983080144355610600.davem@davemloft.net>
-CC:     <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <3cb9f28c-534f-701a-19bf-63ebadac303f@huawei.com>
-Date:   Sat, 29 Dec 2018 14:46:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <20181228.211503.1983080144355610600.davem@davemloft.net>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Sat, 29 Dec 2018 01:51:07 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:20417
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728933AbeL2GvG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 01:51:06 -0500
+X-IronPort-AV: E=Sophos;i="5.56,412,1539640800"; 
+   d="scan'208";a="290374218"
+Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 29 Dec 2018 07:51:03 +0100
+From:   Julia Lawall <Julia.Lawall@lip6.fr>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH] scripts: coccinelle: boolinit: drop warnings on named constants
+Date:   Sat, 29 Dec 2018 07:14:16 +0100
+Message-Id: <1546064056-15569-1-git-send-email-Julia.Lawall@lip6.fr>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Coccinelle doesn't always have access to the values of named
+(#define) constants, and they may likely often be bound to true
+and false values anyway, resulting in false positives.  So stop
+warning about them.
 
-On 2018/12/29 13:15, David Miller wrote:
-> From: YueHaibing <yuehaibing@huawei.com>
-> Date: Wed, 26 Dec 2018 16:34:20 +0800
-> 
->> diff --git a/net/ipv4/fib_rules.c b/net/ipv4/fib_rules.c
->> index f8eb78d..1567e12 100644
->> --- a/net/ipv4/fib_rules.c
->> +++ b/net/ipv4/fib_rules.c
->> @@ -200,9 +200,13 @@ static struct fib_table *fib_empty_table(struct net *net)
->>  {
->>  	u32 id;
->>  
->> -	for (id = 1; id <= RT_TABLE_MAX; id++)
->> +	for (id = 1; id <= RT_TABLE_MAX; id++) {
->>  		if (!fib_get_table(net, id))
->>  			return fib_new_table(net, id);
->> +
->> +		if (id == RT_TABLE_MAX)
->> +			break;
->> +	}
->>  	return NULL;
->>  }
-> 
-> The loop now has two exit conditions, one of which (by your analysis
-> is completely impossible).
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks, will do it in v2.
+---
+ scripts/coccinelle/misc/boolinit.cocci |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-> Please clean this up into a loop with better structure and no
-> impossible tests.  One approach could be simply:
-> 
-> 	id = 1;
-> 	while (1) {
-> 	...
-> 		if (id++ == RT_TABLE_MAX)
-> 			break;
-> 	}
-> 
-> Or even:
-> 
-> 	id = 0;
-> 	while (++id) {
-> 	...
-> 	}
-> 
-> .
-> 
+diff --git a/scripts/coccinelle/misc/boolinit.cocci b/scripts/coccinelle/misc/boolinit.cocci
+index b0584a3..aabb581 100644
+--- a/scripts/coccinelle/misc/boolinit.cocci
++++ b/scripts/coccinelle/misc/boolinit.cocci
+@@ -136,9 +136,14 @@ position p1;
+ @r4 depends on !patch@
+ bool b;
+ position p2;
++identifier i;
+ constant c != {0,1};
+ @@
++(
++ b = i
++|
+ *b@p2 = c
++)
+ 
+ @script:python depends on org@
+ p << r1.p;
 
