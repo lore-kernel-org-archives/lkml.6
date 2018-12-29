@@ -2,87 +2,110 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3736FC43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E55EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0551221902
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2CB2218FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbeL2Cqh (ORCPT
+        id S1729981AbeL2Csw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 21:46:37 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58745 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727815AbeL2Cqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 21:46:36 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DC9C1968DD1DA;
-        Sat, 29 Dec 2018 10:46:32 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Sat, 29 Dec 2018
- 10:46:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-media@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] media: staging/intel-ipu3: Fix err handle of ipu3_css_find_binary
-Date:   Sat, 29 Dec 2018 10:45:28 +0800
-Message-ID: <20181229024528.6016-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 28 Dec 2018 21:48:52 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:15131 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727815AbeL2Csv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 21:48:51 -0500
+X-UUID: 82db1c0ec9f14e29a3abd3678ac361f7-20181229
+X-UUID: 82db1c0ec9f14e29a3abd3678ac361f7-20181229
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1276222270; Sat, 29 Dec 2018 10:48:42 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 29 Dec
+ 2018 10:48:40 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 29 Dec 2018 10:48:40 +0800
+Message-ID: <1546051720.32173.139.camel@mhfsdcap03>
+Subject: Re: [PATCH] usb: devio: update max count of DPs per interval for
+ ISOC
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Sat, 29 Dec 2018 10:48:40 +0800
+In-Reply-To: <20181228105148.GA22073@kroah.com>
+References: <1545992864-9530-1-git-send-email-chunfeng.yun@mediatek.com>
+         <20181228105148.GA22073@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'bindex' is unsigned, it never less than zero.
-This patch bring int 'binary' back to handle the err condition.
+Hi,
+On Fri, 2018-12-28 at 11:51 +0100, Greg Kroah-Hartman wrote:
+> On Fri, Dec 28, 2018 at 06:27:44PM +0800, Chunfeng Yun wrote:
+> > The host shall be able to accept and send up to 96 DPs for
+> > devices operating at Gen 2 speed.
+> 
+> Why?  What is this keeping from working properly today?
 
-Fixes: 51abe041c5ed ("media: staging/intel-ipu3: Add dual pipe support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/media/ipu3/ipu3-css.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+The failure happened when I tried to send up to 96DPs per an interval
+for SSP ISOC transations by libusb, this is used to verify SSP ISOC
+function of USB3 GEN2 controller. Maybe for normal scenarios they
+needn't transfer greater than 48 DPs in an ISOC interval.
+(refer usb3.1r1.0 section 8.12.6 Isochronous Transactions)
+> 
+> I need a much better changelog text here in order to be able to accept
+> this patch.
+I'll make the change in next version
+> 
+> > 
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > ---
+> >  drivers/usb/core/devio.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+> > index a75bc0b8a50f..82c16210e34c 100644
+> > --- a/drivers/usb/core/devio.c
+> > +++ b/drivers/usb/core/devio.c
+> > @@ -1564,12 +1564,10 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
+> >  		}
+> >  		for (totlen = u = 0; u < number_of_packets; u++) {
+> >  			/*
+> > -			 * arbitrary limit need for USB 3.0
+> > -			 * bMaxBurst (0~15 allowed, 1~16 packets)
+> > -			 * bmAttributes (bit 1:0, mult 0~2, 1~3 packets)
+> > -			 * sizemax: 1024 * 16 * 3 = 49152
+> > +			 * arbitrary limit need for USB 3.1 Gen2
+> > +			 * sizemax: 96 DPs at SSP, 96 * 1024 = 98304
+> >  			 */
+> > -			if (isopkt[u].length > 49152) {
+> > +			if (isopkt[u].length > 98304) {
+> 
+> Are we going to have to keep bumping this up as speeds get faster and
+> faster?
+Or remove the check of data length? I'm not sure which way is better
 
-diff --git a/drivers/staging/media/ipu3/ipu3-css.c b/drivers/staging/media/ipu3/ipu3-css.c
-index 44c5563..28f0c02 100644
---- a/drivers/staging/media/ipu3/ipu3-css.c
-+++ b/drivers/staging/media/ipu3/ipu3-css.c
-@@ -1751,7 +1751,7 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 					&q[IPU3_CSS_QUEUE_OUT].fmt.mpix;
- 	struct v4l2_pix_format_mplane *const vf =
- 					&q[IPU3_CSS_QUEUE_VF].fmt.mpix;
--	int i, s;
-+	int i, s, binary;
- 
- 	/* Adjust all formats, get statistics buffer sizes and formats */
- 	for (i = 0; i < IPU3_CSS_QUEUES; i++) {
-@@ -1826,13 +1826,13 @@ int ipu3_css_fmt_try(struct ipu3_css *css,
- 	s = (bds->height - gdc->height) / 2 - FILTER_SIZE;
- 	env->height = s < MIN_ENVELOPE ? MIN_ENVELOPE : s;
- 
--	css->pipes[pipe].bindex =
--		ipu3_css_find_binary(css, pipe, q, r);
--	if (css->pipes[pipe].bindex < 0) {
-+	binary = ipu3_css_find_binary(css, pipe, q, r);
-+	if (binary < 0) {
- 		dev_err(css->dev, "failed to find suitable binary\n");
- 		return -EINVAL;
- 	}
- 
-+	css->pipes[pipe].bindex = binary;
- 	dev_dbg(css->dev, "Binary index %d for pipe %d found.",
- 		css->pipes[pipe].bindex, pipe);
- 
--- 
-2.7.0
+> 
+> thanks,
+> 
+> greg k-h
 
 
