@@ -2,59 +2,118 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F76C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 16:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EC3C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 16:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D8C20869
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 16:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C66217F9
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 16:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546102176;
+	bh=mMN6xBzLLeHIs79oTtJhx2Vtm0hgPai1doa5+uzb9ic=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rKPTb8ogU16+tlwSvvfTGOjy6VVZy3QxWg1C0RwaXYufY3hlTRaqURkdkW+VEhwMa
+	 QJsonMPwZbuR9fK7KrMED2fqpkqsHCDgZlyFRMUnqPPXMPoHvfAhnlP2/PIt2AYsCO
+	 wLKk9OnR1vv4gzWg/UdjiQjGeRiYMZO0hKdNLZQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbeL2QlY (ORCPT
+        id S1727425AbeL2Qtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 11:41:24 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:45982 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbeL2QlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 11:41:23 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1663C14816515;
-        Sat, 29 Dec 2018 08:41:23 -0800 (PST)
-Date:   Sat, 29 Dec 2018 08:41:20 -0800 (PST)
-Message-Id: <20181229.084120.1873066963650416921.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
-        tony.qu@huawei.com, luoshaokai@huawei.com
-Subject: Re: =?utf-8?B?562U5aSNOg==?= [PATCH 1/1] net-next/hinic:add
- shutdown callback
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <DACA750462785649825D7529120E85A808A8320D@dggemm521-mbs.china.huawei.com>
-References: <20181228002040.1256-1-xuechaojing@huawei.com>
-        <20181228.214905.2208487974538707696.davem@davemloft.net>
-        <DACA750462785649825D7529120E85A808A8320D@dggemm521-mbs.china.huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 29 Dec 2018 08:41:23 -0800 (PST)
+        Sat, 29 Dec 2018 11:49:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726644AbeL2Qtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 11:49:35 -0500
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D519121908
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 16:49:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546102174;
+        bh=mMN6xBzLLeHIs79oTtJhx2Vtm0hgPai1doa5+uzb9ic=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iwTeC8epy4/VrlO/x5hBZlgjcjHqThxDfP9I2Pk9vzdLZJustDPwMj4DlACfl16VH
+         +vxuANxgZl0MKnyP+LYKWpjGqDmIisI8H7WsUazj4s04/tbZgJhNj5Sky7SQnlO3xI
+         rmDNNLTXunK3X8ZLthccrdHlM8vRL9CX4Ij52Ysw=
+Received: by mail-wm1-f44.google.com with SMTP id y139so20843591wmc.5
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 08:49:33 -0800 (PST)
+X-Gm-Message-State: AA+aEWZaV/fTDeu+swgjBPc35wRaX/RAG2mpVeLHpMjIqEOqY2CtCL8+
+        lH+mJCagkoaB+gY64HoYbMFK42br+tGw+GH/zNrgGQ==
+X-Google-Smtp-Source: ALg8bN6XH+38YCEIvVsRz77dVrjLYtyUD/h0T3/AkD4z2l8GBMstHDU62IF4NJM0lr4wRZoTcImPR+36aQ2b1geOUao=
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr25816261wmh.83.1546102172181;
+ Sat, 29 Dec 2018 08:49:32 -0800 (PST)
+MIME-Version: 1.0
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de> <CAFEAcA92m4vhzjJ+B=mP_o6Wfhx1XSKo3uWxah3osh=u5UXFuw@mail.gmail.com>
+ <9C6A7D45-CF53-4C61-B5DD-12CA0D419972@dilger.ca> <CAFEAcA9W+JK7_TrtTnL1P2ES1knNPJX9wcUvhfLwxLq9augq1w@mail.gmail.com>
+ <1EF1B31A-83D8-4642-BEBF-F56E45485223@dilger.ca> <CAFEAcA8Yq=CEyAUer1TcaSzuzcdNi3OUi4c67B6e+OkhmcKvbg@mail.gmail.com>
+ <20181229015453.GA6310@bombadil.infradead.org>
+In-Reply-To: <20181229015453.GA6310@bombadil.infradead.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 29 Dec 2018 08:49:19 -0800
+X-Gmail-Original-Message-ID: <CALCETrUJn4cV+o3scP1EzYS=JA--5KUXvjuxZDbsnhXra1vrwA@mail.gmail.com>
+Message-ID: <CALCETrUJn4cV+o3scP1EzYS=JA--5KUXvjuxZDbsnhXra1vrwA@mail.gmail.com>
+Subject: Re: [Qemu-devel] d_off field in struct dirent and 32-on-64 emulation
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Peter Maydell <peter.maydell@linaro.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Ron Minnich <rminnich@sandia.gov>,
+        V9FS Developers <v9fs-developer@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: xuechaojing <xuechaojing@huawei.com>
-Date: Sat, 29 Dec 2018 09:20:54 +0000
+> On Dec 28, 2018, at 6:54 PM, Matthew Wilcox <willy@infradead.org> wrote:
+>
+>> On Sat, Dec 29, 2018 at 12:12:27AM +0000, Peter Maydell wrote:
+>> On Fri, 28 Dec 2018 at 23:16, Andreas Dilger <adilger@dilger.ca> wrot
+>>> On Dec 28, 2018, at 4:18 AM, Peter Maydell <peter.maydell@linaro.org> w=
+rote:
+>>>> The problem is that there is no 32-bit API in some cases
+>>>> (unless I have misunderstood the kernel code) -- not all
+>>>> host architectures implement compat syscalls or allow them
+>>>> to be called from 64-bit processes or implement all the older
+>>>> syscall variants that had smaller offets. If there was a guaranteed
+>>>> "this syscall always exists and always gives me 32-bit offsets"
+>>>> we could use it.
+>>>
+>>> The "32bitapi" mount option would use 32-bit hash for seekdir
+>>> and telldir, regardless of what kernel API was used.  That would
+>>> just set the FMODE_32BITHASH flag in the file->f_mode for all files.
+>>
+>> A mount option wouldn't be much use to QEMU -- we can't tell
+>> our users how to mount their filesystems, which they're
+>> often doing lots of other things with besides running QEMU.
+>> (Otherwise we could just tell them "don't use ext4", which
+>> would also solve the problem :-)) We need something we can
+>> use at the individual-syscall level.
+>
+> Could you use a prctl to set whether you were running in 32 or 64 bit
+> mode?  Or do you change which kind of task you're emulating too often
+> to make this a good idea?
 
-> Sorry, I didn't explain this patch clearly.
-> if there is no shutdown callback, our board will report pcie UNF errors after restarting.
-> Attached is our log.
 
-I want you to remove the "dev_info()" call from your patch because it is
-inappropriate.
+How would this work?  We already have the separate
+COMPAT_DEFINE_SYSCALL entries *and* in_compat_syscall(). Now we=E2=80=99d h=
+ave
+a third degree of freedom.
+
+Either the arches people care about should add reasonable ways to
+issue 32-bit syscalls from 64-bit mode or there should be an explicit
+way to ask for the 32-bit directory offsets.
