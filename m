@@ -2,74 +2,99 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808E2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F87C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522D02146F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7533B2146F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 02:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729718AbeL2Cdr (ORCPT
+        id S1729879AbeL2Chj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 21:33:47 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:33594 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbeL2Cdq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 21:33:46 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 711D328CFC;
-        Fri, 28 Dec 2018 21:33:44 -0500 (EST)
-Date:   Sat, 29 Dec 2018 13:34:02 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Michael Schmitz <schmitzmic@gmail.com>
-cc:     LEROY Christophe <christophe.leroy@c-s.fr>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
-In-Reply-To: <a170720a-fe17-744d-790b-e258465bd75e@gmail.com>
-Message-ID: <alpine.LNX.2.21.1812291327380.152@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au> <20181228173846.Horde.z_zDEJN0rVd8tkt3HjYzmg2@messagerie.si.c-s.fr> <alpine.LNX.2.21.1812291050330.152@nippy.intranet>
- <a170720a-fe17-744d-790b-e258465bd75e@gmail.com>
+        Fri, 28 Dec 2018 21:37:39 -0500
+Received: from nautica.notk.org ([91.121.71.147]:33823 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727815AbeL2Chj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 21:37:39 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id D4A26C009; Sat, 29 Dec 2018 03:37:36 +0100 (CET)
+Date:   Sat, 29 Dec 2018 03:37:21 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        lucho@ionkov.net, libc-alpha@sourceware.org,
+        Arnd Bergmann <arnd@arndb.de>, ericvh@gmail.com, hpa@zytor.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>, rminnich@sandia.gov,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [Qemu-devel] d_off field in struct dirent and 32-on-64 emulation
+Message-ID: <20181229023721.GA9291@nautica>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>, lucho@ionkov.net,
+        libc-alpha@sourceware.org, Arnd Bergmann <arnd@arndb.de>,
+        ericvh@gmail.com, hpa@zytor.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>, rminnich@sandia.gov,
+        v9fs-developer@lists.sourceforge.net
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+ <CAFEAcA92m4vhzjJ+B=mP_o6Wfhx1XSKo3uWxah3osh=u5UXFuw@mail.gmail.com>
+ <9C6A7D45-CF53-4C61-B5DD-12CA0D419972@dilger.ca>
+ <CAFEAcA9W+JK7_TrtTnL1P2ES1knNPJX9wcUvhfLwxLq9augq1w@mail.gmail.com>
+ <20181229021157.GG5864@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181229021157.GG5864@mit.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 29 Dec 2018, Michael Schmitz wrote:
-
+Theodore Y. Ts'o wrote on Fri, Dec 28, 2018:
+> > The problem is that there is no 32-bit API in some cases
+> > (unless I have misunderstood the kernel code) -- not all
+> > host architectures implement compat syscalls or allow them
+> > to be called from 64-bit processes or implement all the older
+> > syscall variants that had smaller offets. If there was a guaranteed
+> > "this syscall always exists and always gives me 32-bit offsets"
+> > we could use it.
 > 
-> IS_BUILTIN(CONFIG_NVRAM) is probably what Christophe really meant to suggest.
-> 
-> Or (really going out on a limb here):
-> 
-> IS_BUILTIN(CONFIG_NVRAM) ||
-> ( IS_MODULE(CONFIG_ATARI_SCSI) && IS_ENABLED(CONFIG_NVRAM) )
-> 
-> Not that I'd advocate that, for this series.
-> 
+> Are there going to be cases where a process or a thread will sometimes
+> want the 64-bit interface, and sometimes want the 32-bit interface?
+> Or is it always going to be one or the other?  I wonder if we could
+> simply add a new flag to the process personality(2) flags.
 
-Well, you are a maintainer for atari_scsi.c.
+That would likely work for qemu user, but the qemu system+9p case is
+going to be more painful..
+More precisely, the 9p protocol does not plan for anything other than
+64bit offset so if the vfs needs to hand out a 32bit offset we'll need
+to make a correspondance table between the 32bit offsets we hand off and
+the 64bit ones to use; unless some flag can be passed at lopen to tell
+the server to always hand out 32bit offsets for this directory... And if
+we do that then 9p servers will need a way to use both APIs in parallel
+for both types of directories.
 
-Are you saying that you want IS_BUILTIN(CONFIG_NVRAM) used here instead of 
-ifdef?
+(Although I'd rather not have to do either in the first place, keeping
+track of all used offsets just in case seems like a waste even if we
+only do it for processes in 32bit mode, and a new flag would be a
+protocol change with 9p not being designed to catter for subtle protocol
+changes so would be rather painful to roll out)
 
-OTOH, if you approve of the existing patch, please send your acked-by.
 
+No bright idea here, sorry.
 -- 
-
-> Cheers,
-> 
-> 	Michael
-> 
-> 
-> 
-> 
+Dominique Martinet | Asmadeus
