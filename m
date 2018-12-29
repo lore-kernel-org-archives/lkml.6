@@ -2,76 +2,88 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839A1C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B0C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540E22146F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:13:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFDC217F9
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 06:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbeL2GNo (ORCPT
+        id S1728791AbeL2GTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 01:13:44 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:39880 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeL2GNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 01:13:43 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 37C3011E33A64DADEC98;
-        Sat, 29 Dec 2018 14:13:41 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wBT6DZes026559;
-        Sat, 29 Dec 2018 14:13:35 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018122914142024-19463034 ;
-          Sat, 29 Dec 2018 14:14:20 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     dave.hansen@linux.intel.com, peterz@infradead.org,
-        tglx@linutronix.de, luto@kernel.org
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  x86/mm/mem_encrypt_identity : fix error useage to sizeof
-Date:   Sat, 29 Dec 2018 14:34:12 +0800
-Message-Id: <1546065252-97996-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-29 14:14:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-29 14:13:15,
-        Serialize complete at 2018-12-29 14:13:15
-X-MAIL: mse01.zte.com.cn wBT6DZes026559
+        Sat, 29 Dec 2018 01:19:40 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:57844 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728681AbeL2GTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 01:19:39 -0500
+X-IronPort-AV: E=Sophos;i="5.56,412,1539640800"; 
+   d="scan'208";a="362048899"
+Received: from abo-91-111-68.mrs.modulonet.fr (HELO hadrien) ([85.68.111.91])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Dec 2018 07:19:35 +0100
+Date:   Sat, 29 Dec 2018 07:19:35 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Tom Psyborg <pozega.tomislav@gmail.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-scsi@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH 00/20] drop useless LIST_HEAD
+In-Reply-To: <20181229052504.GA16315@magnolia>
+Message-ID: <alpine.DEB.2.21.1812290717010.2673@hadrien>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr> <CAKR_QVJefW1vxYb7-qiU8=0YdbFghYo15SK2eGjOC-dntRfyYA@mail.gmail.com> <alpine.DEB.2.21.1812232304130.2940@hadrien> <CAKR_QVLeZBL43W4x1mzcfcakSZyyh9L81vgUMxfnSccKawEfdg@mail.gmail.com>
+ <20181227134055.GA2272@kadam> <20181229052504.GA16315@magnolia>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix error usage to sizeof. It should not use sizeof to pointer.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- arch/x86/mm/mem_encrypt_identity.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index a19ef1a..4aa9b14 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -158,8 +158,8 @@ static void __init sme_populate_pgd(struct sme_populate_pgd_data *ppd)
- 	pmd = pmd_offset(pud, ppd->vaddr);
- 	if (pmd_none(*pmd)) {
- 		pte = ppd->pgtable_area;
--		memset(pte, 0, sizeof(pte) * PTRS_PER_PTE);
--		ppd->pgtable_area += sizeof(pte) * PTRS_PER_PTE;
-+		memset(pte, 0, sizeof(*pte) * PTRS_PER_PTE);
-+		ppd->pgtable_area += sizeof(*pte) * PTRS_PER_PTE;
- 		set_pmd(pmd, __pmd(PMD_FLAGS | __pa(pte)));
- 	}
- 
--- 
-1.8.3.1
+On Fri, 28 Dec 2018, Darrick J. Wong wrote:
 
+> On Thu, Dec 27, 2018 at 04:40:55PM +0300, Dan Carpenter wrote:
+> > On Tue, Dec 25, 2018 at 11:12:20PM +0100, Tom Psyborg wrote:
+> > > there was discussion about this just some days ago. CC 4-5 lists is
+> > > more than enough
+> > >
+> >
+> > I don't know who you were discussing this with...
+> >
+> > You should CC the 0th patch to all the mailinglists.  That much is a
+> > clear rule.
+> >
+> > For the rest, Julia's position is the more conservative one.  I was in
+> > a conversation in RL and they were like, "CC everyone for all the
+> > patches".  It depends on the context, of course.  If the patches are
+> > dependent on each other then you *have* to CC everyone for everything.
+>
+> Agreed.  Ms. Lawall, sending "Cover letter + all relevant XFS patches"
+> (as you did) was exactly the right thing for us xfs types. :)
+>
+> For that matter, we prefer to receive through linux-xfs more patches
+> than necessary (one can send the entire series if one is unsure) than to
+> go wanting for more context.
+
+Thanks for the confirmation.  I was planning to ignore the 4-5 advice,
+because there is no way in this case to make a meaningful 4-5 list
+suggestion - it's either all or nothing.  But 20 patches at once is
+perhaps a lot as well.  In this case, I just wanted to get rid of the
+whole issue at once.
+
+julia
