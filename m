@@ -1,162 +1,86 @@
-Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6B8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 23:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91750C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 00:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D67B20857
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 23:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D0C20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 00:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbeL2XnS (ORCPT
+        id S1728015AbeL2X6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 18:43:18 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47396 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbeL2XnR (ORCPT
+        Sat, 29 Dec 2018 18:58:52 -0500
+Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:33990 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726140AbeL2X6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 18:43:17 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 5842628EE3;
-        Sat, 29 Dec 2018 18:43:10 -0500 (EST)
-Date:   Sun, 30 Dec 2018 10:43:33 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     LEROY Christophe <christophe.leroy@c-s.fr>
-cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-m68k@lists.linux-m68k.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sat, 29 Dec 2018 18:58:51 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 186211802749D;
+        Sat, 29 Dec 2018 23:58:50 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: earth72_873383838f442
+X-Filterd-Recvd-Size: 1887
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 29 Dec 2018 23:58:48 +0000 (UTC)
+Message-ID: <117f5de40dabc48457f8725ece6c5b659caff043.camel@perches.com>
+Subject: Re: [PATCH] Staging: vt6655: Fix camel case of variable
+From:   Joe Perches <joe@perches.com>
+To:     Petr =?ISO-8859-1?Q?Sedl=E1k?= <hugosedlak@gmail.com>,
+        Forest Bond <forest@alittletooquiet.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v8 20/25] powerpc, fbdev: Use arch_nvram_ops methods
- instead of nvram_read_byte() and nvram_write_byte()
-In-Reply-To: <20181229180236.Horde.idY3gOIzkSWywjIrqlXJMA1@messagerie.si.c-s.fr>
-Message-ID: <alpine.LNX.2.21.1812301024400.215@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <7e8eb87ea829c03941c895c968df2ebd0f80512f.1545784679.git.fthain@telegraphics.com.au> <20181229180236.Horde.idY3gOIzkSWywjIrqlXJMA1@messagerie.si.c-s.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sat, 29 Dec 2018 15:58:47 -0800
+In-Reply-To: <20181229225952.GA8447@PhilosophyOfMe>
+References: <20181229225952.GA8447@PhilosophyOfMe>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 29 Dec 2018, LEROY Christophe wrote:
+On Sat, 2018-12-29 at 23:59 +0100, Petr Sedlák wrote:
+> Replace variable uDelayUnit with u_delay_unit. Issue found by
+> checkpatch.
 
-> Finn Thain <fthain@telegraphics.com.au> a ?crit?:
-> 
-> > Make use of arch_nvram_ops in device drivers so that the nvram_* function
-> > exports can be removed.
-> > 
-> > Since they are no longer global symbols, rename the PPC32 nvram_* functions
-> > appropriately.
-> > 
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > ---
-> > arch/powerpc/kernel/setup_32.c             | 8 ++++----
-> > drivers/char/generic_nvram.c               | 4 ++--
-> > drivers/video/fbdev/controlfb.c            | 4 ++--
-> > drivers/video/fbdev/imsttfb.c              | 4 ++--
-> > drivers/video/fbdev/matrox/matroxfb_base.c | 2 +-
-> > drivers/video/fbdev/platinumfb.c           | 4 ++--
-> > drivers/video/fbdev/valkyriefb.c           | 4 ++--
-> > 7 files changed, 15 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
-> > index e0d045677472..bdbe6acbef11 100644
-> > --- a/arch/powerpc/kernel/setup_32.c
-> > +++ b/arch/powerpc/kernel/setup_32.c
-> > @@ -152,20 +152,18 @@ __setup("l3cr=", ppc_setup_l3cr);
-> > 
-> > #ifdef CONFIG_GENERIC_NVRAM
-> > 
-> > -unsigned char nvram_read_byte(int addr)
-> > +static unsigned char ppc_nvram_read_byte(int addr)
-> > {
-> > 	if (ppc_md.nvram_read_val)
-> > 		return ppc_md.nvram_read_val(addr);
-> > 	return 0xff;
-> > }
-> > -EXPORT_SYMBOL(nvram_read_byte);
-> > 
-> > -void nvram_write_byte(unsigned char val, int addr)
-> > +static void ppc_nvram_write_byte(unsigned char val, int addr)
-> > {
-> > 	if (ppc_md.nvram_write_val)
-> > 		ppc_md.nvram_write_val(addr, val);
-> > }
-> > -EXPORT_SYMBOL(nvram_write_byte);
-> > 
-> > static ssize_t ppc_nvram_get_size(void)
-> > {
-> > @@ -182,6 +180,8 @@ static long ppc_nvram_sync(void)
-> > }
-> > 
-> > const struct nvram_ops arch_nvram_ops = {
-> > +	.read_byte      = ppc_nvram_read_byte,
-> > +	.write_byte     = ppc_nvram_write_byte,
-> > 	.get_size       = ppc_nvram_get_size,
-> > 	.sync           = ppc_nvram_sync,
-> > };
-> > diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
-> > index f32d5663de95..41b76bf9614e 100644
-> > --- a/drivers/char/generic_nvram.c
-> > +++ b/drivers/char/generic_nvram.c
-> > @@ -48,7 +48,7 @@ static ssize_t read_nvram(struct file *file, char __user
-> > *buf,
-> > 	if (*ppos >= nvram_len)
-> > 		return 0;
-> > 	for (i = *ppos; count > 0 && i < nvram_len; ++i, ++p, --count)
-> > -		if (__put_user(nvram_read_byte(i), p))
-> > +		if (__put_user(arch_nvram_ops.read_byte(i), p))
-> 
-> Instead of modifying all drivers (in this patch and previous ones related to
-> other arches), wouldn't it be better to add helpers like the following in
-> nvram.h:
-> 
-> Static inline unsigned char nvram_read_byte(int addr)
-> {
->        return arch_nvram_ops.read_byte(addr);
-> }
-> 
+probably better as a static inline too.
 
-Is there some benefit, or is that just personal taste?
+> diff --git a/drivers/staging/vt6655/upc.h b/drivers/staging/vt6655/upc.h
+[]
+> @@ -42,15 +42,15 @@
+>  #define VNSvOutPortD(dwIOAddress, dwData) \
+>  	iowrite32((u32)(dwData), dwIOAddress)
+>  
+> -#define PCAvDelayByIO(uDelayUnit)				\
+> +#define PCAvDelayByIO(u_delay_unit)				\
+>  do {								\
+>  	unsigned char byData;					\
+>  	unsigned long ii;					\
+>  								\
+> -	if (uDelayUnit <= 50) {					\
+> -		udelay(uDelayUnit);				\
+> +	if (u_delay_unit <= 50) {					\
+> +		udelay(u_delay_unit);				\
+>  	} else {						\
+> -		for (ii = 0; ii < (uDelayUnit); ii++)		\
+> +		for (ii = 0; ii < (u_delay_unit); ii++)		\
+>  			byData = inb(0x61);			\
+>  	}							\
+>  } while (0)
 
-Avoiding changes to call sites avoids code review, but I think 1) the 
-thinkpad_acpi changes have already been reviewed and 2) the fbdev changes 
-need review anyway.
+And as the thing is used only once with a #define
+with a value less than 50, maybe just
+	udelay(CB_DELAY_LOOP_WAIT);
+in that one place.
 
-Your suggesion would add several new entities and one extra layer of 
-indirection.
 
-I think indirection harms readability because now the reader now has to go 
-and look up the meaning of the new entities.
-
-It's not the case that we need to choose between definitions of 
-nvram_read_byte() at compile time, or stub them out:
-
-#ifdef CONFIG_FOO
-static inline unsigned char nvram_read_byte(int addr)
-{
-	return arch_nvram_ops.read_byte(addr);
-}
-#else
-static inline unsigned char nvram_read_byte(int addr) { }
-#endif
-
-And I don't anticipate a need for a macro here either:
-
-#define nvram_read_byte(a) random_nvram_read_byte_impl(a)
-
-I think I've used the simplest solution.
-
--- 
-
-> Christophe
-> 
