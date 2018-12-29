@@ -6,139 +6,528 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFB5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 12:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 12:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 226CE217F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 12:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D8D21905
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 12:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbeL2Mrd (ORCPT
+        id S1729387AbeL2Mrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 07:47:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52580 "EHLO mx1.redhat.com"
+        Sat, 29 Dec 2018 07:47:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57578 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727934AbeL2Mrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 07:47:31 -0500
+        id S1727934AbeL2Mrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 07:47:36 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50A1681DE9;
-        Sat, 29 Dec 2018 12:47:31 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 830FD81F0C;
+        Sat, 29 Dec 2018 12:47:36 +0000 (UTC)
 Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-130.pek2.redhat.com [10.72.12.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA3A71001F5E;
-        Sat, 29 Dec 2018 12:47:23 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C6881001F5E;
+        Sat, 29 Dec 2018 12:47:31 +0000 (UTC)
 From:   Jason Wang <jasowang@redhat.com>
 To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     davem@davemloft.net
-Subject: [RFC PATCH V3 4/5] vhost: introduce helpers to get the size of metadata area
-Date:   Sat, 29 Dec 2018 20:46:55 +0800
-Message-Id: <20181229124656.3900-5-jasowang@redhat.com>
+Subject: [RFC PATCH V3 5/5] vhost: access vq metadata through kernel virtual address
+Date:   Sat, 29 Dec 2018 20:46:56 +0800
+Message-Id: <20181229124656.3900-6-jasowang@redhat.com>
 In-Reply-To: <20181229124656.3900-1-jasowang@redhat.com>
 References: <20181229124656.3900-1-jasowang@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sat, 29 Dec 2018 12:47:31 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sat, 29 Dec 2018 12:47:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It was noticed that the copy_user() friends that was used to access
+virtqueue metdata tends to be very expensive for dataplane
+implementation like vhost since it involves lots of software checks,
+speculation barrier, hardware feature toggling (e.g SMAP). The
+extra cost will be more obvious when transferring small packets since
+the time spent on metadata accessing become significant..
+
+This patch tries to eliminate those overhead by accessing them through
+kernel virtual address by vmap(). To make the pages can be migrated,
+instead of pinning them through GUP, we use mmu notifiers to
+invalidate vmaps and re-establish vmaps during each round of metadata
+prefetching in necessary. For devices that doesn't use metadata
+prefetching, the memory acessors fallback to normal copy_user()
+implementation gracefully. The invalidation was synchronized with
+datapath through vq mutex, and in order to avoid hold vq mutex during
+range checking, MMU notifier was teared down when trying to modify vq
+metadata.
+
+Note that this was only done when device IOTLB is not enabled. We
+could use similar method to optimize it in the future.
+
+Tests shows about ~24% improvement on TX PPS when using virtio-user +
+vhost_net + xdp1 on TAP:
+
+Before: ~5.0Mpps
+After:  ~6.1Mpps
+
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/vhost.c | 46 ++++++++++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 18 deletions(-)
+ drivers/vhost/vhost.c | 263 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/vhost/vhost.h |  13 +++
+ 2 files changed, 274 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 27b5c03feaac..54b43feef8d9 100644
+index 54b43feef8d9..e1ecb8acf8a3 100644
 --- a/drivers/vhost/vhost.c
 +++ b/drivers/vhost/vhost.c
-@@ -489,6 +489,27 @@ bool vhost_dev_has_owner(struct vhost_dev *dev)
+@@ -440,6 +440,9 @@ void vhost_dev_init(struct vhost_dev *dev,
+ 		vq->indirect = NULL;
+ 		vq->heads = NULL;
+ 		vq->dev = dev;
++		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
++		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
++		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
+ 		mutex_init(&vq->mutex);
+ 		vhost_vq_reset(dev, vq);
+ 		if (vq->handle_kick)
+@@ -510,6 +513,73 @@ static size_t vhost_get_desc_size(struct vhost_virtqueue *vq, int num)
+ 	return sizeof(*vq->desc) * num;
  }
- EXPORT_SYMBOL_GPL(vhost_dev_has_owner);
  
-+static size_t vhost_get_avail_size(struct vhost_virtqueue *vq, int num)
++static void vhost_uninit_vmap(struct vhost_vmap *map)
 +{
-+	size_t event = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
++	if (map->addr)
++		vunmap(map->unmap_addr);
 +
-+	return sizeof(*vq->avail) +
-+	       sizeof(*vq->avail->ring) * num + event;
++	map->addr = NULL;
++	map->unmap_addr = NULL;
 +}
 +
-+static size_t vhost_get_used_size(struct vhost_virtqueue *vq, int num)
++static int vhost_invalidate_vmap(struct vhost_virtqueue *vq,
++				 struct vhost_vmap *map,
++				 unsigned long ustart,
++				 size_t size,
++				 unsigned long start,
++				 unsigned long end,
++				 bool blockable)
 +{
-+	size_t event = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
++	if (end < ustart || start > ustart - 1 + size)
++		return 0;
 +
-+	return sizeof(*vq->used) +
-+	       sizeof(*vq->used->ring) * num + event;
++	if (!blockable)
++		return -EAGAIN;
++
++	mutex_lock(&vq->mutex);
++	vhost_uninit_vmap(map);
++	mutex_unlock(&vq->mutex);
++
++	return 0;
 +}
 +
-+static size_t vhost_get_desc_size(struct vhost_virtqueue *vq, int num)
++static int vhost_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
++						     struct mm_struct *mm,
++						     unsigned long start,
++						     unsigned long end,
++						     bool blockable)
 +{
-+	return sizeof(*vq->desc) * num;
++	struct vhost_dev *dev = container_of(mn, struct vhost_dev,
++					     mmu_notifier);
++	int i;
++
++	for (i = 0; i < dev->nvqs; i++) {
++		struct vhost_virtqueue *vq = dev->vqs[i];
++
++		if (vhost_invalidate_vmap(vq, &vq->avail_ring,
++					  (unsigned long)vq->avail,
++					  vhost_get_avail_size(vq, vq->num),
++					  start, end, blockable))
++			return -EAGAIN;
++		if (vhost_invalidate_vmap(vq, &vq->desc_ring,
++					  (unsigned long)vq->desc,
++					  vhost_get_desc_size(vq, vq->num),
++					  start, end, blockable))
++			return -EAGAIN;
++		if (vhost_invalidate_vmap(vq, &vq->used_ring,
++					  (unsigned long)vq->used,
++					  vhost_get_used_size(vq, vq->num),
++					  start, end, blockable))
++			return -EAGAIN;
++	}
++
++	return 0;
 +}
++
++static const struct mmu_notifier_ops vhost_mmu_notifier_ops = {
++	.invalidate_range_start = vhost_mmu_notifier_invalidate_range_start,
++};
 +
  /* Caller should have device mutex */
  long vhost_dev_set_owner(struct vhost_dev *dev)
  {
-@@ -1248,13 +1269,9 @@ static bool vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
- 			 struct vring_used __user *used)
+@@ -541,7 +611,14 @@ long vhost_dev_set_owner(struct vhost_dev *dev)
+ 	if (err)
+ 		goto err_cgroup;
  
- {
--	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
--
--	return access_ok(VERIFY_READ, desc, num * sizeof *desc) &&
--	       access_ok(VERIFY_READ, avail,
--			 sizeof *avail + num * sizeof *avail->ring + s) &&
--	       access_ok(VERIFY_WRITE, used,
--			sizeof *used + num * sizeof *used->ring + s);
-+	return access_ok(VERIFY_READ, desc, vhost_get_desc_size(vq, num)) &&
-+	       access_ok(VERIFY_READ, avail, vhost_get_avail_size(vq, num)) &&
-+	       access_ok(VERIFY_WRITE, used, vhost_get_used_size(vq, num));
++	dev->mmu_notifier.ops = &vhost_mmu_notifier_ops;
++	err = mmu_notifier_register(&dev->mmu_notifier, dev->mm);
++	if (err)
++		goto err_mmu_notifier;
++
+ 	return 0;
++err_mmu_notifier:
++	vhost_dev_free_iovecs(dev);
+ err_cgroup:
+ 	kthread_stop(worker);
+ 	dev->worker = NULL;
+@@ -632,6 +709,72 @@ static void vhost_clear_msg(struct vhost_dev *dev)
+ 	spin_unlock(&dev->iotlb_lock);
  }
  
- static void vhost_vq_meta_update(struct vhost_virtqueue *vq,
-@@ -1306,22 +1323,18 @@ static bool iotlb_access_ok(struct vhost_virtqueue *vq,
- 
- int vq_meta_prefetch(struct vhost_virtqueue *vq)
++static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
++			   size_t size, int write)
++{
++	struct page **pages;
++	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
++	int npinned;
++	void *vaddr;
++	int err = 0;
++
++	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
++	if (!pages)
++		return -ENOMEM;
++
++	npinned = get_user_pages_fast(uaddr, npages, write, pages);
++	if (npinned != npages) {
++		err = -EFAULT;
++		goto err;
++	}
++
++	vaddr = vmap(pages, npages, VM_MAP, PAGE_KERNEL);
++	if (!vaddr) {
++		err = EFAULT;
++		goto err;
++	}
++
++	map->addr = vaddr + (uaddr & (PAGE_SIZE - 1));
++	map->unmap_addr = vaddr;
++
++err:
++	/* Don't pin pages, mmu notifier will notify us about page
++	 * migration.
++	 */
++	if (npinned > 0)
++		release_pages(pages, npinned);
++	kfree(pages);
++	return err;
++}
++
++static void vhost_clean_vmaps(struct vhost_virtqueue *vq)
++{
++	vhost_uninit_vmap(&vq->avail_ring);
++	vhost_uninit_vmap(&vq->desc_ring);
++	vhost_uninit_vmap(&vq->used_ring);
++}
++
++static int vhost_setup_avail_vmap(struct vhost_virtqueue *vq,
++				  unsigned long avail)
++{
++	return vhost_init_vmap(&vq->avail_ring, avail,
++			       vhost_get_avail_size(vq, vq->num), false);
++}
++
++static int vhost_setup_desc_vmap(struct vhost_virtqueue *vq,
++				 unsigned long desc)
++{
++	return vhost_init_vmap(&vq->desc_ring, desc,
++			       vhost_get_desc_size(vq, vq->num), false);
++}
++
++static int vhost_setup_used_vmap(struct vhost_virtqueue *vq,
++				 unsigned long used)
++{
++	return vhost_init_vmap(&vq->used_ring, used,
++			       vhost_get_used_size(vq, vq->num), true);
++}
++
+ void vhost_dev_cleanup(struct vhost_dev *dev)
  {
--	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
+ 	int i;
+@@ -661,8 +804,12 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
+ 		kthread_stop(dev->worker);
+ 		dev->worker = NULL;
+ 	}
+-	if (dev->mm)
++	if (dev->mm) {
++		mmu_notifier_unregister(&dev->mmu_notifier, dev->mm);
+ 		mmput(dev->mm);
++	}
++	for (i = 0; i < dev->nvqs; i++)
++		vhost_clean_vmaps(dev->vqs[i]);
+ 	dev->mm = NULL;
+ }
+ EXPORT_SYMBOL_GPL(vhost_dev_cleanup);
+@@ -891,6 +1038,16 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
+ 
+ static inline int vhost_put_avail_event(struct vhost_virtqueue *vq)
+ {
++	if (!vq->iotlb) {
++		struct vring_used *used = vq->used_ring.addr;
++
++		if (likely(used)) {
++			*((__virtio16 *)&used->ring[vq->num]) =
++				cpu_to_vhost16(vq, vq->avail_idx);
++			return 0;
++		}
++	}
++
+ 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->avail_idx),
+ 			      vhost_avail_event(vq));
+ }
+@@ -899,6 +1056,16 @@ static inline int vhost_put_used(struct vhost_virtqueue *vq,
+ 				 struct vring_used_elem *head, int idx,
+ 				 int count)
+ {
++	if (!vq->iotlb) {
++		struct vring_used *used = vq->used_ring.addr;
++
++		if (likely(used)) {
++			memcpy(used->ring + idx, head,
++			       count * sizeof(*head));
++			return 0;
++		}
++	}
++
+ 	return vhost_copy_to_user(vq, vq->used->ring + idx, head,
+ 				  count * sizeof(*head));
+ }
+@@ -906,6 +1073,15 @@ static inline int vhost_put_used(struct vhost_virtqueue *vq,
+ static inline int vhost_put_used_flags(struct vhost_virtqueue *vq)
+ 
+ {
++	if (!vq->iotlb) {
++		struct vring_used *used = vq->used_ring.addr;
++
++		if (likely(used)) {
++			used->flags = cpu_to_vhost16(vq, vq->used_flags);
++			return 0;
++		}
++	}
++
+ 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->used_flags),
+ 			      &vq->used->flags);
+ }
+@@ -913,6 +1089,15 @@ static inline int vhost_put_used_flags(struct vhost_virtqueue *vq)
+ static inline int vhost_put_used_idx(struct vhost_virtqueue *vq)
+ 
+ {
++	if (!vq->iotlb) {
++		struct vring_used *used = vq->used_ring.addr;
++
++		if (likely(used)) {
++			used->idx = cpu_to_vhost16(vq, vq->last_used_idx);
++			return 0;
++		}
++	}
++
+ 	return vhost_put_user(vq, cpu_to_vhost16(vq, vq->last_used_idx),
+ 			      &vq->used->idx);
+ }
+@@ -958,12 +1143,30 @@ static void vhost_dev_unlock_vqs(struct vhost_dev *d)
+ static inline int vhost_get_avail_idx(struct vhost_virtqueue *vq,
+ 				      __virtio16 *idx)
+ {
++	if (!vq->iotlb) {
++		struct vring_avail *avail = vq->avail_ring.addr;
++
++		if (likely(avail)) {
++			*idx = avail->idx;
++			return 0;
++		}
++	}
++
+ 	return vhost_get_avail(vq, *idx, &vq->avail->idx);
+ }
+ 
+ static inline int vhost_get_avail_head(struct vhost_virtqueue *vq,
+ 				       __virtio16 *head, int idx)
+ {
++	if (!vq->iotlb) {
++		struct vring_avail *avail = vq->avail_ring.addr;
++
++		if (likely(avail)) {
++			*head = avail->ring[idx & (vq->num - 1)];
++			return 0;
++		}
++	}
++
+ 	return vhost_get_avail(vq, *head,
+ 			       &vq->avail->ring[idx & (vq->num - 1)]);
+ }
+@@ -971,24 +1174,60 @@ static inline int vhost_get_avail_head(struct vhost_virtqueue *vq,
+ static inline int vhost_get_avail_flags(struct vhost_virtqueue *vq,
+ 					__virtio16 *flags)
+ {
++	if (!vq->iotlb) {
++		struct vring_avail *avail = vq->avail_ring.addr;
++
++		if (likely(avail)) {
++			*flags = avail->flags;
++			return 0;
++		}
++	}
++
+ 	return vhost_get_avail(vq, *flags, &vq->avail->flags);
+ }
+ 
+ static inline int vhost_get_used_event(struct vhost_virtqueue *vq,
+ 				       __virtio16 *event)
+ {
++	if (!vq->iotlb) {
++		struct vring_avail *avail = vq->avail_ring.addr;
++
++		if (likely(avail)) {
++			*event = (__virtio16)avail->ring[vq->num];
++			return 0;
++		}
++	}
++
+ 	return vhost_get_avail(vq, *event, vhost_used_event(vq));
+ }
+ 
+ static inline int vhost_get_used_idx(struct vhost_virtqueue *vq,
+ 				     __virtio16 *idx)
+ {
++	if (!vq->iotlb) {
++		struct vring_used *used = vq->used_ring.addr;
++
++		if (likely(used)) {
++			*idx = used->idx;
++			return 0;
++		}
++	}
++
+ 	return vhost_get_used(vq, *idx, &vq->used->idx);
+ }
+ 
+ static inline int vhost_get_desc(struct vhost_virtqueue *vq,
+ 				 struct vring_desc *desc, int idx)
+ {
++	if (!vq->iotlb) {
++		struct vring_desc *d = vq->desc_ring.addr;
++
++		if (likely(d)) {
++			*desc = *(d + idx);
++			return 0;
++		}
++	}
++
+ 	return vhost_copy_from_user(vq, desc, vq->desc + idx, sizeof(*desc));
+ }
+ 
+@@ -1325,8 +1564,16 @@ int vq_meta_prefetch(struct vhost_virtqueue *vq)
+ {
  	unsigned int num = vq->num;
  
- 	if (!vq->iotlb)
+-	if (!vq->iotlb)
++	if (!vq->iotlb) {
++		if (unlikely(!vq->avail_ring.addr))
++			vhost_setup_avail_vmap(vq, (unsigned long)vq->avail);
++		if (unlikely(!vq->desc_ring.addr))
++			vhost_setup_desc_vmap(vq, (unsigned long)vq->desc);
++		if (unlikely(!vq->used_ring.addr))
++			vhost_setup_used_vmap(vq, (unsigned long)vq->used);
++
  		return 1;
++	}
  
  	return iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->desc,
--			       num * sizeof(*vq->desc), VHOST_ADDR_DESC) &&
-+			       vhost_get_desc_size(vq, num), VHOST_ADDR_DESC) &&
- 	       iotlb_access_ok(vq, VHOST_ACCESS_RO, (u64)(uintptr_t)vq->avail,
--			       sizeof *vq->avail +
--			       num * sizeof(*vq->avail->ring) + s,
-+			       vhost_get_avail_size(vq, num),
- 			       VHOST_ADDR_AVAIL) &&
- 	       iotlb_access_ok(vq, VHOST_ACCESS_WO, (u64)(uintptr_t)vq->used,
--			       sizeof *vq->used +
--			       num * sizeof(*vq->used->ring) + s,
--			       VHOST_ADDR_USED);
-+			       vhost_get_used_size(vq, num), VHOST_ADDR_USED);
- }
- EXPORT_SYMBOL_GPL(vq_meta_prefetch);
+ 			       vhost_get_desc_size(vq, num), VHOST_ADDR_DESC) &&
+@@ -1478,6 +1725,13 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
  
-@@ -1338,13 +1351,10 @@ EXPORT_SYMBOL_GPL(vhost_log_access_ok);
- static bool vq_log_access_ok(struct vhost_virtqueue *vq,
- 			     void __user *log_base)
- {
--	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
--
- 	return vq_memory_access_ok(log_base, vq->umem,
- 				   vhost_has_feature(vq, VHOST_F_LOG_ALL)) &&
- 		(!vq->log_used || log_access_ok(log_base, vq->log_addr,
--					sizeof *vq->used +
--					vq->num * sizeof *vq->used->ring + s));
-+				  vhost_get_used_size(vq, vq->num)));
- }
+ 	mutex_lock(&vq->mutex);
  
- /* Can we start vq? */
++	/* Unregister MMU notifer to allow invalidation callback
++	 * can access vq->avail, vq->desc , vq->used and vq->num
++	 * without holding vq->mutex.
++	 */
++	if (d->mm)
++		mmu_notifier_unregister(&d->mmu_notifier, d->mm);
++
+ 	switch (ioctl) {
+ 	case VHOST_SET_VRING_NUM:
+ 		/* Resizing ring with an active backend?
+@@ -1494,6 +1748,7 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 			r = -EINVAL;
+ 			break;
+ 		}
++		vhost_clean_vmaps(vq);
+ 		vq->num = s.num;
+ 		break;
+ 	case VHOST_SET_VRING_BASE:
+@@ -1571,6 +1826,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 			}
+ 		}
+ 
++		vhost_clean_vmaps(vq);
++
+ 		vq->log_used = !!(a.flags & (0x1 << VHOST_VRING_F_LOG));
+ 		vq->desc = (void __user *)(unsigned long)a.desc_user_addr;
+ 		vq->avail = (void __user *)(unsigned long)a.avail_user_addr;
+@@ -1651,6 +1908,8 @@ long vhost_vring_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *arg
+ 	if (pollstart && vq->handle_kick)
+ 		r = vhost_poll_start(&vq->poll, vq->kick);
+ 
++	if (d->mm)
++		mmu_notifier_register(&d->mmu_notifier, d->mm);
+ 	mutex_unlock(&vq->mutex);
+ 
+ 	if (pollstop && vq->handle_kick)
+diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+index 0d1ff977a43e..00f016a4f198 100644
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -12,6 +12,8 @@
+ #include <linux/virtio_config.h>
+ #include <linux/virtio_ring.h>
+ #include <linux/atomic.h>
++#include <linux/pagemap.h>
++#include <linux/mmu_notifier.h>
+ 
+ struct vhost_work;
+ typedef void (*vhost_work_fn_t)(struct vhost_work *work);
+@@ -80,6 +82,11 @@ enum vhost_uaddr_type {
+ 	VHOST_NUM_ADDRS = 3,
+ };
+ 
++struct vhost_vmap {
++	void *addr;
++	void *unmap_addr;
++};
++
+ /* The virtqueue structure describes a queue attached to a device. */
+ struct vhost_virtqueue {
+ 	struct vhost_dev *dev;
+@@ -90,6 +97,11 @@ struct vhost_virtqueue {
+ 	struct vring_desc __user *desc;
+ 	struct vring_avail __user *avail;
+ 	struct vring_used __user *used;
++
++	struct vhost_vmap avail_ring;
++	struct vhost_vmap desc_ring;
++	struct vhost_vmap used_ring;
++
+ 	const struct vhost_umem_node *meta_iotlb[VHOST_NUM_ADDRS];
+ 	struct file *kick;
+ 	struct eventfd_ctx *call_ctx;
+@@ -158,6 +170,7 @@ struct vhost_msg_node {
+ 
+ struct vhost_dev {
+ 	struct mm_struct *mm;
++	struct mmu_notifier mmu_notifier;
+ 	struct mutex mutex;
+ 	struct vhost_virtqueue **vqs;
+ 	int nvqs;
 -- 
 2.17.1
 
