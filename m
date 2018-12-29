@@ -2,99 +2,276 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230DAC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BBAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E832E20869
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DBCE2087F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 22:28:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="I1P4s4IZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeL2W1o (ORCPT
+        id S1727575AbeL2W25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 17:27:44 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33856 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbeL2W1o (ORCPT
+        Sat, 29 Dec 2018 17:28:57 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41604 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbeL2W25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 17:27:44 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q8so14270670qke.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 14:27:44 -0800 (PST)
+        Sat, 29 Dec 2018 17:28:57 -0500
+Received: by mail-ed1-f68.google.com with SMTP id a20so13371101edc.8
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 14:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ed35wjoDSEptb5WxV+67NIlIHh2DDBucYK0RteGlU4g=;
+        b=I1P4s4IZ9hlZV8M8DqmirGflrzSAdHimEvmIosQ9FVKyveJBbIwQFFJkQOW+ii9god
+         RVc5vS7e8mUuDTZ79zBP5eKHHXc4PxKVU8x2tdM7YEKm5SFw13dZYLgmcBxCVLCh9KeP
+         AsAQTQLU/LgGB+Vt/QdwBfxqPUAa/j0b1g8l8/IBQk8KUH+iiPIibpjfp/ENtc1QalUi
+         JBiHsYGaytnOKnQzmmvmGf72fgwHQr6Ps6Uf5mZlPJ6mMalFHqD9fT05CK02DppQTO8x
+         lLh/M6QcnrWlhZ3guzFiWsovSyBcn/dhNO1Y711uQtvDIa/3hyqbpBzwM5M0rQlNpG18
+         u6/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o0oBUkqD5p4j+xffeWUiyhsv44vkKiTcEHnXCi5uSdo=;
-        b=GJjtEWFWZOIKp4HzgPQzB4+ugDQi0Nk3/9MXvgbcb5h1IBzY78Aea360NMRd4dYSMO
-         LE+fKD+45/xSytdaxuhYTu/8F3Th1DX2oIq3NdZj1lMU8ppCFaYcxyrUjAAGamiYaDFn
-         W11J4Bcb/foZvMtLpCkbEavml2s9tSb9D/voGhlSKMfKtxRCl7pdaBc2FGLiMBYDEFYs
-         +xhBF65G9GuS+munDRvNhEmonY1KlQuyHh/Hcv4Iom2nwmM+KmWBayYaeAFs1xYdPLbK
-         dl5XeYQjrqS8boNvfoowQHEGX1nPhujDi39XZNrfEkk8A4eLw02Dn80xp6ozlyvIgiJ1
-         BJfQ==
-X-Gm-Message-State: AJcUukdZbg81Qf7h+eM27BpWcnbIpiwjGZ37YX+gwwKttG86rKh7sb2+
-        jvSf7NKMYIcDeBuAyxBdlng8UFJlL/v3ZdqjxJM=
-X-Google-Smtp-Source: ALg8bN6dhuNcs0QnWtoULV5zjryQxDeGrpo3N8kjItS1pnbJjUmy+wHGeE18YJWU6kA2rS73ItoSySk42fhqWqWBPIw=
-X-Received: by 2002:a37:bdc6:: with SMTP id n189mr29013373qkf.330.1546122463680;
- Sat, 29 Dec 2018 14:27:43 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ed35wjoDSEptb5WxV+67NIlIHh2DDBucYK0RteGlU4g=;
+        b=VSOb991RhMWfz7DPwFStqzNGhbr+rrh0lTY0cXIIWGkO2HFvh3am7j833iALxcrDxw
+         EpyqgK5l1PympmPmfIUZN3GbckiuB2B9RNrvRISr1R/N81MV1yzcxrN5T/buHgGUiA4/
+         nshHcRcfblPJSCXHB/FJdolM9eVeuKGZzhtLdPNIjljyUwqfMN7K47UyFQRbxmFHZRIl
+         Bd1Md/glU8dGl90CWMHcMXb0KrtGbCdr6gPHID0CcMm5YY5YRBNb4kUIivhSyhpFKEYW
+         mWQUQH95PE6o2BHG1M9axPjE2qjWEq+xJYNNZ27jLStG+YpjoKek07hR/DvLZi4OhD8u
+         T8YA==
+X-Gm-Message-State: AA+aEWZBbFNrXkSfm9X5XM2a8pT3+uDC4By2zFcj4Vu4uwQzXTJqS2eC
+        i+664/eIrENAJ8LSi5DzxZC1lifOUCC1Ag==
+X-Google-Smtp-Source: AFSGD/UpF+HRfQocb4zYXFJ8TvC6qW2dXybnP8Nqik6mMpixSCsQEdMmGRx6ssorJSbrm97EcmYdmg==
+X-Received: by 2002:a50:9106:: with SMTP id e6mr25773315eda.148.1546122534893;
+        Sat, 29 Dec 2018 14:28:54 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:c95d:2ebe:c81e:96a0])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm8212729eji.25.2018.12.29.14.28.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 29 Dec 2018 14:28:54 -0800 (PST)
+From:   Christian Brauner <christian@brauner.io>
+To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com,
+        keescook@chromium.org, akpm@linux-foundation.org
+Cc:     jannh@google.com, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, fweimer@redhat.com,
+        tglx@linutronix.de, x86@kernel.org, ebiederm@xmission.com,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH v6 2/2] selftests: add tests for pidfd_send_signal()
+Date:   Sat, 29 Dec 2018 23:27:56 +0100
+Message-Id: <20181229222756.30027-2-christian@brauner.io>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181229222756.30027-1-christian@brauner.io>
+References: <20181229222756.30027-1-christian@brauner.io>
 MIME-Version: 1.0
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <505240b144f1666acf26a3c1e93c8e6868fe1408.1545784679.git.fthain@telegraphics.com.au>
-In-Reply-To: <505240b144f1666acf26a3c1e93c8e6868fe1408.1545784679.git.fthain@telegraphics.com.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 29 Dec 2018 23:27:27 +0100
-Message-ID: <CAK8P3a0P7r+PCykB1cHq3HBrpHagfJ5WhDV7JR-wu0tGTMSFMA@mail.gmail.com>
-Subject: Re: [PATCH v8 13/25] m68k: Dispatch nvram_ops calls to Atari or Mac functions
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 26, 2018 at 1:43 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+As suggested by Andrew Morton in [1] add selftests for the new
+sys_pidfd_send_signal() syscall.
+This tests whether we can send a signal to an existing process and whether
+sending a signal to a process that has already exited fails with ESRCH.
 
-> +
-> +static ssize_t m68k_nvram_get_size(void)
-> +{
-> +       if (MACH_IS_ATARI)
-> +               return atari_nvram_get_size();
-> +       else if (MACH_IS_MAC)
-> +               return mac_pram_get_size();
-> +       return -ENODEV;
-> +}
-> +
-> +/* Atari device drivers call .read (to get checksum validation) whereas
-> + * Mac and PowerMac device drivers just use .read_byte.
-> + */
-> +const struct nvram_ops arch_nvram_ops = {
-> +#ifdef CONFIG_MAC
-> +       .read_byte      = m68k_nvram_read_byte,
-> +       .write_byte     = m68k_nvram_write_byte,
-> +#endif
-> +#ifdef CONFIG_ATARI
-> +       .read           = m68k_nvram_read,
-> +       .write          = m68k_nvram_write,
-> +       .set_checksum   = m68k_nvram_set_checksum,
-> +       .initialize     = m68k_nvram_initialize,
-> +#endif
-> +       .get_size       = m68k_nvram_get_size,
-> +};
-> +EXPORT_SYMBOL(arch_nvram_ops);
+[1]: https://lore.kernel.org/lkml/20181228152012.dbf0508c2508138efc5f2bbe@linux-foundation.org/
 
-Since the operations are almost entirely distinct, why not have two
-separate 'nvram_ops' instances here that each refer to just
-the set they actually need?
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirsky <luto@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Florian Weimer <fweimer@redhat.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+/* Changelog */
+v6:
+- patch introduced
+v5..v0:
+- patch not present
+---
+ tools/testing/selftests/Makefile           |   1 +
+ tools/testing/selftests/pidfd/Makefile     |   6 +
+ tools/testing/selftests/pidfd/pidfd_test.c | 130 +++++++++++++++++++++
+ 3 files changed, 137 insertions(+)
+ create mode 100644 tools/testing/selftests/pidfd/Makefile
+ create mode 100644 tools/testing/selftests/pidfd/pidfd_test.c
 
-I was actually expecting one more patch here that would make the
-arch_nvram_ops a pointer to one of multiple structures, which would
-be easier to do with multiple copies, but I suppose there is no need
-for that here (there might be on ppc, I have to look again).
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 24b9934fb269..63b0d8a0ebf7 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -27,6 +27,7 @@ TARGETS += net
+ TARGETS += netfilter
+ TARGETS += networking/timestamping
+ TARGETS += nsfs
++TARGETS += pidfd
+ TARGETS += powerpc
+ TARGETS += proc
+ TARGETS += pstore
+diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
+new file mode 100644
+index 000000000000..deaf8073bc06
+--- /dev/null
++++ b/tools/testing/selftests/pidfd/Makefile
+@@ -0,0 +1,6 @@
++CFLAGS += -g -I../../../../usr/include/
++
++TEST_GEN_PROGS := pidfd_test
++
++include ../lib.mk
++
+diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
+new file mode 100644
+index 000000000000..edcd59979b10
+--- /dev/null
++++ b/tools/testing/selftests/pidfd/pidfd_test.c
+@@ -0,0 +1,130 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/types.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <syscall.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++#include "../kselftest.h"
++
++static inline int sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
++					unsigned int flags)
++{
++	return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
++}
++
++static int signal_received;
++
++static void do_exit_success(int sig)
++{
++	signal_received = 1;
++}
++
++/*
++ * Straightforward test to see whether pidfd_send_signal() works is to send
++ * a signal to ourselves.
++ */
++static int test_pidfd_send_signal_simple_success(void)
++{
++	int pidfd, ret;
++	const char *test_name = "pidfd_send_signal send SIGUSR1";
++
++	pidfd = open("/proc/self", O_DIRECTORY | O_CLOEXEC);
++	if (pidfd < 0)
++		ksft_exit_fail_msg(
++			"%s test: Failed to open process file descriptor\n",
++			test_name);
++
++	signal(SIGUSR1, do_exit_success);
++
++	ret = sys_pidfd_send_signal(pidfd, SIGUSR1, NULL, 0);
++	close(pidfd);
++	if (ret < 0)
++		ksft_exit_fail_msg("%s test: Failed to send signal\n",
++				   test_name);
++
++	if (signal_received != 1)
++		ksft_exit_fail_msg("%s test: Failed to receive signal\n",
++				   test_name);
++
++	signal_received = 0;
++	ksft_test_result_pass("%s test: Sent signal\n", test_name);
++	return 0;
++}
++
++static void wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return;
++	}
++
++	if (ret != pid)
++		goto again;
++}
++
++static int test_pidfd_send_signal_exited_fail(void)
++{
++	int pidfd, ret, saved_errno;
++	char buf[256];
++	pid_t pid;
++	const char *test_name = "pidfd_send_signal signal exited process";
++
++	pid = fork();
++	if (pid < 0)
++		ksft_exit_fail_msg("%s test: Failed to create new process\n",
++				   test_name);
++
++	if (pid == 0)
++		_exit(EXIT_SUCCESS);
++
++	snprintf(buf, sizeof(buf), "/proc/%d", pid);
++
++	pidfd = open(buf, O_DIRECTORY | O_CLOEXEC);
++
++	wait_for_pid(pid);
++
++	if (pidfd < 0)
++		ksft_exit_fail_msg(
++			"%s test: Failed to open process file descriptor\n",
++			test_name);
++
++	ret = sys_pidfd_send_signal(pidfd, 0, NULL, 0);
++	saved_errno = errno;
++	close(pidfd);
++	if (ret == 0)
++		ksft_exit_fail_msg(
++			"%s test: Managed to send signal to process even though it should have failed\n",
++			test_name);
++
++	if (saved_errno != ESRCH)
++		ksft_exit_fail_msg(
++			"%s test: Expected to receive ESRCH as errno value but received %d instead\n",
++			test_name, saved_errno);
++
++	ksft_test_result_pass("%s test: Failed to send signal as expected\n",
++			      test_name);
++	return 0;
++}
++
++int main(int argc, char **argv)
++{
++	ksft_print_header();
++
++	test_pidfd_send_signal_simple_success();
++	test_pidfd_send_signal_exited_fail();
++
++	return ksft_exit_pass();
++}
+-- 
+2.19.1
 
-       Arnd
