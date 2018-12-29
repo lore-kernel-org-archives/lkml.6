@@ -2,92 +2,78 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A80EC43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3E7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBDB021902
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:15:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N0fC7CQ/"
+	by mail.kernel.org (Postfix) with ESMTP id 24BF8218FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbeL2EPc (ORCPT
+        id S1726765AbeL2EP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 23:15:32 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45520 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbeL2EPc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 23:15:32 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so20043613ljd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 20:15:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KmAnZj6zHaXNojG6OZsflTWqGMAp/1Un2CyCaQUoecY=;
-        b=N0fC7CQ/LjciIsz2v0VuyNZipMGAC6cVpOrOOO+71F9fT7jBvaTRe2qsVO6fAe1vJm
-         O8TSMU6f37fLBsij+1w3AwBap+/G1mN5sskMwRNn614b5TfKy5PHQksvWXlcRSlBdHIa
-         LQCjNc21xW6c5oBTYdYgGhbkSAW2EWvlVbjwU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KmAnZj6zHaXNojG6OZsflTWqGMAp/1Un2CyCaQUoecY=;
-        b=jIKWjY80dz+A52pDnqeO+jI10Q0pwignJYjg14zvh2k8mMzwCXxFjlEH6u2opeHjld
-         7ETVlU0D08fb7N7+0LH++3tjoZCbKUTX+oXMmHcRlMDwhoWShOcExqI8xSXX2DpmD+R5
-         QINLeVliWBJWXCqfO0Wa9EJgCptTwKlihttf+1vG30ou6zIk48ys02LN5IyBxcHHp3H4
-         VcQxXMBYuORVYFjXxvoCcMj7bqzqrJhLs3bg5gfT7Gnn9nu7Snyg5OFsZijQnRuRNhEp
-         +pJ4eIW51s0NxPHI9T+lP5yGUrqvtOZloZKxNy/AZ4t/7e+n+OZIXibz+oCxatnsri8u
-         DjEA==
-X-Gm-Message-State: AJcUukc+Qt/X4/y+v3YYgLNP3P5DtvnS/yR1L/ZM4Fjy0mSE2k2U8by3
-        isLFe6nGdxDCjBr7vicxXLeKznJQUPo=
-X-Google-Smtp-Source: ALg8bN4AD0pV4hjZLyzXe2Ki3OgyL8a+bnj666rj9j1bnVO8E9/xRI3idbditSXRYk7VmSHHjjmrig==
-X-Received: by 2002:a2e:20c3:: with SMTP id g64-v6mr19131664lji.101.1546056929941;
-        Fri, 28 Dec 2018 20:15:29 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id x21sm8322262lfe.6.2018.12.28.20.15.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 20:15:28 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id l10so15591886lfh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Dec 2018 20:15:28 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr13983313lff.16.1546056928294;
- Fri, 28 Dec 2018 20:15:28 -0800 (PST)
+        Fri, 28 Dec 2018 23:15:58 -0500
+Received: from app1.whu.edu.cn ([202.114.64.88]:59308 "EHLO whu.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726011AbeL2EP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 23:15:58 -0500
+Received: by ajax-webmail-email1 (Coremail) ; Sat, 29 Dec 2018 11:11:46
+ +0800 (GMT+08:00)
+X-Originating-IP: [114.255.3.133]
+Date:   Sat, 29 Dec 2018 11:11:46 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   =?UTF-8?B?546L6bmP?= <rocking@whu.edu.cn>
+To:     "andrew morton" <akpm@linux-foundation.org>
+Cc:     andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        ynorov@caviumnetworks.com, arnd@arndb.de, courbet@google.com,
+        osandov@fb.com, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH] bitmap: Add bitmap_valloc(), bitmap_vzalloc() and
+ bitmap_vfree()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.7 dev build
+ 20170822(baf61abd) Copyright (c) 2002-2018 www.mailtech.cn whu
+In-Reply-To: <20181228154137.c161e699e2293a07458580d3@linux-foundation.org>
+References: <20181227161829.32177-1-rocking@whu.edu.cn>
+ <20181228154137.c161e699e2293a07458580d3@linux-foundation.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-References: <alpine.LRH.2.21.1812250652420.2714@namei.org> <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>
- <alpine.LRH.2.21.1812291406530.29722@namei.org> <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
- <alpine.LRH.2.21.1812291505480.31477@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1812291505480.31477@namei.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 28 Dec 2018 20:15:12 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-Message-ID: <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-Subject: Re: [GIT PULL] security: general updates for v4.21
-To:     James Morris <jmorris@namei.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <4d8c67f0.108f13.167f7f23a8a.Coremail.rocking@whu.edu.cn>
+X-Coremail-Locale: en_US
+X-CM-TRANSID: AQBjCgC3vGDz5SZcvaCaCQ--.62072W
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/1tbiAQMOCFmj35VwigAAsO
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 8:09 PM James Morris <jmorris@namei.org> wrote:
->
-> Yep, I understand what you mean. I can't find the discussion from several
-> years ago, but developers asked to be able to work with more current
-> kernels, and I recall you saying that if you want to do this, merge to a
-> specific -rc tag at least.
-
-If people really want it, maybe the merge can state that explicit
-thing, as it is I'm trying to push back on empty merges that don't
-explain why they even exist.
-
-                  Linus
+T24gRGF0ZTogRnJpLCAyOCBEZWMgMjAxOCAxNTo0MTozNyAtMDgwMCBBbmRyZXcgTW9ydG9uIDxh
+a3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPiB3cm90ZToKCj4gRnJvbTogIkFuZHJldyBNb3J0b24i
+IDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPgo+IFNlbnQgVGltZTogMjAxOC0xMi0yOSAwNzo0
+MTozNyAoU2F0dXJkYXkpCj4gVG86ICJQZW5nIFdhbmciIDxyb2NraW5nQHdodS5lZHUuY24+Cj4g
+Q2M6IGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbSwgbGludXhAcmFzbXVzdmlsbGVt
+b2VzLmRrLCB5bm9yb3ZAY2F2aXVtbmV0d29ya3MuY29tLCBhcm5kQGFybmRiLmRlLCBjb3VyYmV0
+QGdvb2dsZS5jb20sIG9zYW5kb3ZAZmIuY29tLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+Cj4gU3ViamVjdDogUmU6IFtQQVRDSF0gYml0bWFwOiBBZGQgYml0bWFwX3ZhbGxvYygpLCBiaXRt
+YXBfdnphbGxvYygpIGFuZCBiaXRtYXBfdmZyZWUoKQo+IAo+IE9uIEZyaSwgMjggRGVjIDIwMTgg
+MDA6MTg6MjkgKzA4MDAgUGVuZyBXYW5nIDxyb2NraW5nQHdodS5lZHUuY24+IHdyb3RlOgo+IAo+
+ID4gSW50cm9kdWNlIGJpdG1hcCBhbGxvYy9mcmVlIGhlbHBlcnMgd2hlbiBjb250aWd1b3VzCj4g
+PiBtZW1vcnkgaXMgbm90IG5lY2Vzc2FyeS4KPiAKPiBUaGF0J3MgYSBsYXJnZSBiaXRtYXAgeW91
+IGhhdmUgdGhlcmUuICBXaGF0IGNvZGUgbmVlZHMgdGhpcz8KCkhpIEFuZHJldywKTm90IG9ubHkg
+Zm9yIGxhcmdlIGJpdG1hcC4gVGhpcyBjYW4gYWxzbyBiZW5lZml0IGZyb20gaGlnaCBtZW1vcnkg
+cHJlc3N1cmUgd2l0aCBubyByZXF1aXJlbWVudCBmb3IgcGh5c2ljYWwgY29udGludW91c25lc3Mu
+CgpXaGlsZSB0aGVzZSB0d28gY2FzZWVzIGFyZSByYXRoZXIgcmFyZS4gQW5kIEkgb25seSBmaW5k
+IG9uZSBwbGFjZSBpbiBtbS9zd2FwZmlsZS5jLgoKMzIyNCAgICAgICAgIC8qIGZyb250c3dhcCBl
+bmFibGVkPyBzZXQgdXAgYml0LXBlci1wYWdlIG1hcCBmb3IgZnJvbnRzd2FwICovCjMyMjUgICAg
+ICAgICBpZiAoSVNfRU5BQkxFRChDT05GSUdfRlJPTlRTV0FQKSkKMzIyNiAgICAgICAgICAgICAg
+ICAgZnJvbnRzd2FwX21hcCA9IGt2Y2FsbG9jKEJJVFNfVE9fTE9OR1MobWF4cGFnZXMpLAozMjI3
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6ZW9mKGxvbmcpLAoz
+MjI4ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0ZQX0tFUk5FTCk7
+CgpJIGFtIG5vdCBzdXJlIHdoZXRoZXIgdGhlc2UgaGVscGVyIGZ1bmN0aW9ucyBjYW4gZ2FpbiBh
+cyBtdWNoIGJlbmVmaXRzIGFzIHRoZSBlZmZvcnRzIHRvIGludHJvZHVjZSB0aGVtLgoKQ2hlZXJz
+LApQZW5n
