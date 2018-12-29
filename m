@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846C7C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4187DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 551A02146F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 049372087F
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 18:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546107304;
-	bh=Cf9RIDXkmHb761q4rxuG/1dwsBwv4Jqb8AEO9etJSq4=;
+	s=default; t=1546107319;
+	bh=lzkBc8gJnNTWOrYgl+CWEehBP51jL0FA7n8VCSs3TEU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=HFP/HFZFoH/E0NskviWGmBppGFr+KA7N7nCIiOSWUByyrLjYoBH7I3AL+P/ugtccg
-	 6pqaGqK/Q/XRL02hFv/fFEj0DYNcBzJXDVdgHYu0scUJqewWWoV27jNLnkdzEK70KQ
-	 uFRBqQXkWP6GqpFV/oNd7Nq18jNWC6ei6T+AcReM=
+	b=tRfOdafYQnI0h6elJsF3xW2Fur8UaTAGeok7Yj/z7hZiyWoeqv8xhhi1KmZKZJK3C
+	 asohhh/5h+reR2au5FFZ68sh3mdHmj68odg7kN63OACacInqELV7LazCAdZBjB9EuK
+	 D/w9/IeTCmHrdte+sdhGAQ7RmnKKo7bt03ysg5z0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeL2SPD (ORCPT
+        id S1728058AbeL2SPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 13:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50300 "EHLO mail.kernel.org"
+        Sat, 29 Dec 2018 13:15:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbeL2SPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728004AbeL2SPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 29 Dec 2018 13:15:03 -0500
-Subject: Re: [GIT PULL] nds32 new features and bug fix for 4.21
+Subject: Re: [PULL 00/25] Xtensa updates for v4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546107302;
-        bh=Cf9RIDXkmHb761q4rxuG/1dwsBwv4Jqb8AEO9etJSq4=;
+        s=default; t=1546107303;
+        bh=lzkBc8gJnNTWOrYgl+CWEehBP51jL0FA7n8VCSs3TEU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=EM+vpds9To8jdhsdLZPVxVabOGAdMZwWwsqxAeg3DA61042hQk0XoEEsV983yIqko
-         hXcWz84d/POPCc1Zo1ykgsTpy69Q/0ajq2mRmthC9kZWdRKvJ3oeGGMeX7rgggYtzh
-         /L0EnQUyIh47cPLLzH3gqRHnO8F+1M4BGDaRzt8s=
+        b=Dy/CjL1tF26wahaJY/98WBG/mrnDY1Cnn7RnV8BKeW8doPsxLRP5VvQ+aPUZyyvjX
+         DiIEhJyygi1UK64aQFBmndXJBkMx/LEb7obr0+lW87hSmD7EWErJjoWOw0oiZLJcAA
+         pOlhNfHzuFgpRRGkOzj+EXlf2LpgLTnA8OVrLiRI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAEbi=3c7dr2pjQf_1FMZXMfYx5qvnf6_+WsfEVByKHwrh-bBPA@mail.gmail.com>
-References: <CAEbi=3c7dr2pjQf_1FMZXMfYx5qvnf6_+WsfEVByKHwrh-bBPA@mail.gmail.com>
+In-Reply-To: <20181228183120.23058-1-jcmvbkbc@gmail.com>
+References: <20181228183120.23058-1-jcmvbkbc@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAEbi=3c7dr2pjQf_1FMZXMfYx5qvnf6_+WsfEVByKHwrh-bBPA@mail.gmail.com>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
- tags/nds32-for-linus-4.21
-X-PR-Tracked-Commit-Id: e2f3f8b4a497d26bdcd55a53246ec2e613ae0fd4
+X-PR-Tracked-Message-Id: <20181228183120.23058-1-jcmvbkbc@gmail.com>
+X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
+ tags/xtensa-20181228
+X-PR-Tracked-Commit-Id: 64711f9a47d4defa90417f5e8db8ed0060bc3275
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 889bb74302e5aba85d987b4093344150984d7cda
-Message-Id: <20181229181502.27859.83391.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: 9ef10340749e1da0c7fde609cedd5360f8484a0b
+Message-Id: <20181229181502.27859.16610.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Sat, 29 Dec 2018 18:15:02 +0000
-To:     Greentime Hu <green.hu@gmail.com>
+To:     Max Filippov <jcmvbkbc@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greentime <greentime@andestech.com>,
-        Arnd Bergmann <arnd@arndb.de>
+        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 28 Dec 2018 16:24:01 +0800:
+The pull request you sent on Fri, 28 Dec 2018 10:31:20 -0800:
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git tags/nds32-for-linus-4.21
+> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20181228
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/889bb74302e5aba85d987b4093344150984d7cda
+https://git.kernel.org/torvalds/c/9ef10340749e1da0c7fde609cedd5360f8484a0b
 
 Thank you!
 
