@@ -2,82 +2,68 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93CAC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADBCC43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A61F7218A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 04:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82379218FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 05:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728125AbeL2Etf (ORCPT
+        id S1726130AbeL2FFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 23:49:35 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:38420 "EHLO mxct.zte.com.cn"
+        Sat, 29 Dec 2018 00:05:45 -0500
+Received: from namei.org ([65.99.196.166]:53574 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbeL2Etf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 23:49:35 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 48F89428036E7A616BD1;
-        Sat, 29 Dec 2018 12:49:30 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wBT4nNa7078110;
-        Sat, 29 Dec 2018 12:49:23 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018122912500712-19455304 ;
-          Sat, 29 Dec 2018 12:50:07 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     linux@armlinux.org.uk, robert.jarzmik@free.fr
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH 2/2]  arm/plat-pxa/ssp : unneeded to free devm_ allocated data
-Date:   Sat, 29 Dec 2018 13:10:06 +0800
-Message-Id: <1546060206-97556-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-29 12:50:07,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-29 12:49:03,
-        Serialize complete at 2018-12-29 12:49:03
-X-MAIL: mse01.zte.com.cn wBT4nNa7078110
+        id S1725966AbeL2FFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Dec 2018 00:05:45 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBT49gYT031789;
+        Sat, 29 Dec 2018 04:09:43 GMT
+Date:   Sat, 29 Dec 2018 15:09:42 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: [GIT PULL] security: general updates for v4.21
+In-Reply-To: <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1812291505480.31477@namei.org>
+References: <alpine.LRH.2.21.1812250652420.2714@namei.org> <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com> <alpine.LRH.2.21.1812291406530.29722@namei.org> <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_ allocated data will be automatically freed. The free
-of devm_ allocated data is invalid.
+On Fri, 28 Dec 2018, Linus Torvalds wrote:
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- arch/arm/plat-pxa/ssp.c | 3 ---
- 1 file changed, 3 deletions(-)
+> On Fri, Dec 28, 2018 at 7:11 PM James Morris <jmorris@namei.org> wrote:
+> >
+> > I do this every development cycle, after requests from security subsystem
+> > maintainers to sync to -rc kernels.
+> 
+> Why?
+> 
+> A merge should have a *reason*.
 
-diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-index ed36dca..f519199 100644
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -190,8 +190,6 @@ static int pxa_ssp_remove(struct platform_device *pdev)
- 	if (ssp == NULL)
- 		return -ENODEV;
- 
--	iounmap(ssp->mmio_base);
--
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	release_mem_region(res->start, resource_size(res));
- 
-@@ -201,7 +199,6 @@ static int pxa_ssp_remove(struct platform_device *pdev)
- 	list_del(&ssp->node);
- 	mutex_unlock(&ssp_lock);
- 
--	kfree(ssp);
- 	return 0;
- }
- 
+Yep, I understand what you mean. I can't find the discussion from several 
+years ago, but developers asked to be able to work with more current 
+kernels, and I recall you saying that if you want to do this, merge to a 
+specific -rc tag at least.
+
+I'm not personally fussed either way, and if anyone cc'd has an opinion, 
+please comment. Otherwise, I'll go back to merging to Linus only as 
+necessary.
+
+
 -- 
-1.8.3.1
+James Morris
+<jmorris@namei.org>
 
