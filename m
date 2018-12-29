@@ -2,69 +2,94 @@ Return-Path: <SRS0=F2HD=PG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D737BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB22DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E7D2146F
-	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A158621901
+	for <linux-kernel@archiver.kernel.org>; Sat, 29 Dec 2018 01:55:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eeP0JHlN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbeL2Buk (ORCPT
+        id S1726908AbeL2By7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Dec 2018 20:50:40 -0500
-Received: from mail.us.es ([193.147.175.20]:36756 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbeL2Buk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Dec 2018 20:50:40 -0500
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 5453AFB446
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 02:50:38 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 46585DA7A2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 02:50:38 +0100 (CET)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 37246DA799; Sat, 29 Dec 2018 02:50:38 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 59A65DA78D;
-        Sat, 29 Dec 2018 02:50:36 +0100 (CET)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Sat, 29 Dec 2018 02:50:36 +0100 (CET)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 2EF684265A4E;
-        Sat, 29 Dec 2018 02:50:36 +0100 (CET)
-Date:   Sat, 29 Dec 2018 02:50:35 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: fix a missing check of nla put failure
-Message-ID: <20181229015035.schsfpi6iikphmxr@salvia>
-References: <20181221064623.59988-1-kjlu@umn.edu>
+        Fri, 28 Dec 2018 20:54:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37346 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeL2By7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Dec 2018 20:54:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nTTS0Oxnwwq7zyBs96gq67nFjAvmBAPzbWc9nnfvnC4=; b=eeP0JHlNVWPxJCgyT0Z7ODkiU
+        gyJyv6qzAjCPY0oAzkQJd9ySgdGDSVNsNVY0eA+Qjg6Bt6S0s/6pynnOz7j95/4qZbYKNwptrRDHp
+        YMTqdbtDpogacU/Craod/g4wf2Ue6e+JqIXmI+OwaLHwaDBHrDzajoyE7H7K6qsTF9S/Il9CZI+Gc
+        JWPeaoHtITwpDZZWqs8CMs3tSlkXFM4GQmTcABLHct3WS9Tvd5PRjL+TrGjkB+w/XrqdLmufkoK8K
+        8RzucHQuFNK32RR0aebK4fgtzED5VXLeVOGoUEa7u28psKlYFq+dM7fL0sC/4dyZtAbcudaoxLWpT
+        kMeNpJxDA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gd3q2-0004CV-9V; Sat, 29 Dec 2018 01:54:54 +0000
+Date:   Fri, 28 Dec 2018 17:54:54 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Maydell <peter.maydell@linaro.org>
+Cc:     Andreas Dilger <adilger@dilger.ca>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>, libc-alpha@sourceware.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Van Hensbergen <ericvh@gmail.com>, hpa@zytor.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>, rminnich@sandia.gov,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [Qemu-devel] d_off field in struct dirent and 32-on-64 emulation
+Message-ID: <20181229015453.GA6310@bombadil.infradead.org>
+References: <87bm56vqg4.fsf@mid.deneb.enyo.de>
+ <CAFEAcA92m4vhzjJ+B=mP_o6Wfhx1XSKo3uWxah3osh=u5UXFuw@mail.gmail.com>
+ <9C6A7D45-CF53-4C61-B5DD-12CA0D419972@dilger.ca>
+ <CAFEAcA9W+JK7_TrtTnL1P2ES1knNPJX9wcUvhfLwxLq9augq1w@mail.gmail.com>
+ <1EF1B31A-83D8-4642-BEBF-F56E45485223@dilger.ca>
+ <CAFEAcA8Yq=CEyAUer1TcaSzuzcdNi3OUi4c67B6e+OkhmcKvbg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181221064623.59988-1-kjlu@umn.edu>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <CAFEAcA8Yq=CEyAUer1TcaSzuzcdNi3OUi4c67B6e+OkhmcKvbg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 12:46:23AM -0600, Kangjie Lu wrote:
-> If nla_nest_start() may fail. The fix checks its return value and goes
-> to nla_put_failure if it fails.
+On Sat, Dec 29, 2018 at 12:12:27AM +0000, Peter Maydell wrote:
+> On Fri, 28 Dec 2018 at 23:16, Andreas Dilger <adilger@dilger.ca> wrot
+> > On Dec 28, 2018, at 4:18 AM, Peter Maydell <peter.maydell@linaro.org> wrote:
+> > > The problem is that there is no 32-bit API in some cases
+> > > (unless I have misunderstood the kernel code) -- not all
+> > > host architectures implement compat syscalls or allow them
+> > > to be called from 64-bit processes or implement all the older
+> > > syscall variants that had smaller offets. If there was a guaranteed
+> > > "this syscall always exists and always gives me 32-bit offsets"
+> > > we could use it.
+> >
+> > The "32bitapi" mount option would use 32-bit hash for seekdir
+> > and telldir, regardless of what kernel API was used.  That would
+> > just set the FMODE_32BITHASH flag in the file->f_mode for all files.
+> 
+> A mount option wouldn't be much use to QEMU -- we can't tell
+> our users how to mount their filesystems, which they're
+> often doing lots of other things with besides running QEMU.
+> (Otherwise we could just tell them "don't use ext4", which
+> would also solve the problem :-)) We need something we can
+> use at the individual-syscall level.
 
-Applied, thanks.
+Could you use a prctl to set whether you were running in 32 or 64 bit
+mode?  Or do you change which kind of task you're emulating too often
+to make this a good idea?
