@@ -7,247 +7,260 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7D6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE769C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D30220828
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F52E20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCETLPeo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J62IKDp2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbeL3QcI (ORCPT
+        id S1726685AbeL3Qcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 11:32:08 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34315 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbeL3QcI (ORCPT
+        Sun, 30 Dec 2018 11:32:35 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45950 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeL3Qcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 11:32:08 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so11943337pga.1;
-        Sun, 30 Dec 2018 08:32:07 -0800 (PST)
+        Sun, 30 Dec 2018 11:32:35 -0500
+Received: by mail-pl1-f195.google.com with SMTP id a14so11881257plm.12;
+        Sun, 30 Dec 2018 08:32:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=QMJufnjC2av/TaQG0Gtve4swcI6YQyf9FiBVtu4QS/Y=;
-        b=jCETLPeoX5yfRomyH09BgDg+YrWQGsTPqkP6UIsPkDDVPK2uJya4irCaVq3jZD+bfC
-         9xs/VyHtH1X+zlmf1SHk0zzIA3tKAZXpaglh4bcl69cNbTjfiNkJLwHUEBNMN+mlOZQe
-         J/cP05xcOEzLD2xlA/YZZTuLs1sT2SpUrPnJdwLJkOC2B/woxlZWqWoUP1B9wv/NkWLg
-         2wKrpf5a4R8VZ5JhjCMnAmtZSDWBEeaRUacd2Z5hr1Vps0Mj6la6uvsV4osqYKoQts+U
-         +UhTJs3dr8m4NwE6qQZPbgaPgDfAm+UHdJDBqEiKtbkYIUmi6dn6OBnXTkAPBpWadchs
-         Yygw==
+        bh=MpvPXvIifufe+uDDCsa2UqAYZWkhMO+OlIK179a13b0=;
+        b=J62IKDp2PlUu97oR24Uqs6C/15bWlC+DqEyBau7XWEyLwfNoiBA9hKSO/usnFCyCh5
+         RIANusE2rc/bO+VNMKKr0BldiJJ0QF8YpI9d95GOGqwSB4qAnz8aMnc4hvxxsd1cn29q
+         9znTTjhg5M7ETz/adOVceNjFhLcM04oWFNDmPIpVjH9dUo1wpDBz2HtDvVaCOXXTzwxC
+         YNuyzPbkli6w/0Bjj+QrGMXD/hN7gmYssmAbwcBpHzIIzs0H/aHW6PkMCpliWMeiytgg
+         86jKBnLIrrt+WRtSrM220rKPVJxYAZOmLtulllXYxJdcu4AYS6qEAtiErrpepqzMg8w0
+         ZC8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QMJufnjC2av/TaQG0Gtve4swcI6YQyf9FiBVtu4QS/Y=;
-        b=a8NpxXZ3yJRd/s/Y5sF/+bzjWSAA5XQvmgkdqKkwJvqcJziB9Ty4F8/dtp8iuqrP/F
-         wDe3EDw/ishKfqeuqjd9jcLR/rbu6oIKGfb0VNPbL76GGESckp6u1RLj+rU9zd26Dr2V
-         n7Ps0Fld0LZSqXoVQsh6YnO2JvX/d5AYbiu5R6gzHKSezy0EltymAQlA3ixQ5MrbkPWE
-         sbB8NoIAefJQbU/1ghdQDtqfoEIM0VkHPvZXn+l8DYYGZCa2kvA3sZoCm3xYeBU5+tXC
-         I7ccC/g8VqAvG4z/GkAJXIXVIhrGWGoy8vFF8YHInzv4pQHk5sFEXG7T7TeXOyq9uyPL
-         E7+w==
-X-Gm-Message-State: AA+aEWbkXAZlUc6HmiP0bfq4GAuaCpEg9wWhcAnmupAXuSBYl6Fgjaac
-        nW3xRYUXE0FeHauHVN8vPss=
-X-Google-Smtp-Source: AFSGD/VqLrWsqtP5+x8/nQGAfPR+ePLAxGyTFWbHsHTXcUADw35owqlIeXy1rrqozYOP+tktN5yxqg==
-X-Received: by 2002:a62:8985:: with SMTP id n5mr35788760pfk.255.1546187526781;
-        Sun, 30 Dec 2018 08:32:06 -0800 (PST)
+        bh=MpvPXvIifufe+uDDCsa2UqAYZWkhMO+OlIK179a13b0=;
+        b=DAtrwjnq+E+4kFlF9SHEou05HoUHcF4mm0xfYaOCIlpAaMp+O88dQF07s1ApYbrpMO
+         J3OxHeqabV8dxlIlB+xRXnyX55mo5dNGKv1sU/UmZH4I5WnxYnt+kQGC2lND2OFpKsHM
+         WVsgNLlFtB1eIBRwfvtHmX3prCRy8qwsJy67rv2iafdb6SWci/1pmLNJFSOjovY1fND8
+         O0WoR8+v/tL3FCAXC4ogCWZx1rQ9EWExee7Izzk2VmWmU99VcFFNNAGzBX7RFyJmq+Xd
+         k700Sn7Q4mHwM26Nue/7W5ypmHt+97raRtQCJfrhgzGwMa3voJ8XKIXUqQwcSqRW/4+r
+         c6WQ==
+X-Gm-Message-State: AJcUukfdrc7+PsvnsqFXtDY+5znXGeruZgg02pX2+/dT77j3gS9rs8QB
+        Fe+oNwV2S6x7jcHw/VED8WHS1q2i
+X-Google-Smtp-Source: ALg8bN76hXVqM9fYBCBSc7FpPKf4+ByIzScgJrZ7JwgTEc61VmvEd2zIQR0zgf/h3ZQa5hjM4tJeWg==
+X-Received: by 2002:a17:902:b118:: with SMTP id q24mr35031009plr.209.1546187554298;
+        Sun, 30 Dec 2018 08:32:34 -0800 (PST)
 Received: from ap-To-be-filled-by-O-E-M.8.8.8.8 ([14.33.120.60])
-        by smtp.gmail.com with ESMTPSA id r130sm85548208pfr.48.2018.12.30.08.32.04
+        by smtp.gmail.com with ESMTPSA id x186sm67582018pfb.59.2018.12.30.08.32.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Dec 2018 08:32:06 -0800 (PST)
+        Sun, 30 Dec 2018 08:32:33 -0800 (PST)
 From:   Taehee Yoo <ap420073@gmail.com>
 To:     davem@davemloft.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, daniel@iogearbox.net, ast@kernel.org,
         mcgrof@kernel.org
 Cc:     ap420073@gmail.com
-Subject: [PATCH net 2/4] net: bpfilter: use cleanup callback to release umh_info
-Date:   Mon, 31 Dec 2018 01:31:59 +0900
-Message-Id: <20181230163159.21168-1-ap420073@gmail.com>
+Subject: [PATCH net 3/4] net: bpfilter: restart bpfilter_umh when error occurred
+Date:   Mon, 31 Dec 2018 01:32:27 +0900
+Message-Id: <20181230163227.21248-1-ap420073@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, UMH process is killed, do_exit() calls the umh_info->cleanup callback
-to release members of the umh_info.
-This patch makes bpfilter_umh's cleanup routine to use the
-umh_info->cleanup callback.
+The bpfilter_umh will be stopped via __stop_umh() when the bpfilter
+error occurred.
+The bpfilter_umh() couldn't start again because there is no restart
+routine.
 
+The section of the bpfilter_umh_{start/end} is no longer .init.rodata
+because these area should be reused in the restart routine. hence
+the section name is changed to .bpfilter_umh.
+
+The bpfilter_ops->start() is restart callback. it will be called when
+bpfilter_umh is stopped.
+The stop bit means bpfilter_umh is stopped. this bit is set by both
+start and stop routine.
+
+Before this patch,
+Test commands:
+   $ iptables -vnL
+   $ kill -9 <pid of bpfilter_umh>
+   $ iptables -vnL
+   [  480.045136] bpfilter: write fail -32
+   $ iptables -vnL
+
+All iptables commands will fail.
+
+After this patch,
+Test commands:
+   $ iptables -vnL
+   $ kill -9 <pid of bpfilter_umh>
+   $ iptables -vnL
+   $ iptables -vnL
+
+Now, all iptables commands will work.
+
+Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- include/linux/bpfilter.h     | 11 ++++++++---
- net/bpfilter/bpfilter_kern.c | 23 ++++++++++-------------
- net/ipv4/bpfilter/sockopt.c  | 33 ++++++++++++++++++++++++++-------
- 3 files changed, 44 insertions(+), 23 deletions(-)
+ include/linux/bpfilter.h         |  2 ++
+ net/bpfilter/bpfilter_kern.c     | 35 +++++++++++++++++++++++---------
+ net/bpfilter/bpfilter_umh_blob.S |  2 +-
+ net/ipv4/bpfilter/sockopt.c      | 11 +++++++++-
+ 4 files changed, 38 insertions(+), 12 deletions(-)
 
 diff --git a/include/linux/bpfilter.h b/include/linux/bpfilter.h
-index f02cee0225d4..70ffeed280e9 100644
+index 70ffeed280e9..8ebcbdd70bdc 100644
 --- a/include/linux/bpfilter.h
 +++ b/include/linux/bpfilter.h
-@@ -3,13 +3,18 @@
- #define _LINUX_BPFILTER_H
- 
- #include <uapi/linux/bpfilter.h>
-+#include <linux/umh.h>
- 
- struct sock;
- int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
- 			    unsigned int optlen);
- int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
- 			    int __user *optlen);
--extern int (*bpfilter_process_sockopt)(struct sock *sk, int optname,
--				       char __user *optval,
--				       unsigned int optlen, bool is_set);
-+struct bpfilter_umh_ops {
-+	struct umh_info info;
-+	int (*sockopt)(struct sock *sk, int optname,
-+		       char __user *optval,
-+		       unsigned int optlen, bool is_set);
-+};
-+extern struct bpfilter_umh_ops bpfilter_ops;
+@@ -15,6 +15,8 @@ struct bpfilter_umh_ops {
+ 	int (*sockopt)(struct sock *sk, int optname,
+ 		       char __user *optval,
+ 		       unsigned int optlen, bool is_set);
++	int (*start)(void);
++	bool stop;
+ };
+ extern struct bpfilter_umh_ops bpfilter_ops;
  #endif
 diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
-index 7acfc83087d5..a68940b74c01 100644
+index a68940b74c01..33d6b159ba88 100644
 --- a/net/bpfilter/bpfilter_kern.c
 +++ b/net/bpfilter/bpfilter_kern.c
-@@ -13,7 +13,6 @@
- extern char bpfilter_umh_start;
- extern char bpfilter_umh_end;
- 
--static struct umh_info info;
+@@ -16,13 +16,14 @@ extern char bpfilter_umh_end;
  /* since ip_getsockopt() can run in parallel, serialize access to umh */
  static DEFINE_MUTEX(bpfilter_lock);
  
-@@ -28,16 +27,13 @@ static void shutdown_umh(struct umh_info *info)
+-static void shutdown_umh(struct umh_info *info)
++static void shutdown_umh(void)
+ {
+ 	struct task_struct *tsk;
+ 
+-	if (!info->pid)
++	if (bpfilter_ops.stop)
+ 		return;
+-	tsk = get_pid_task(find_vpid(info->pid), PIDTYPE_PID);
++
++	tsk = get_pid_task(find_vpid(bpfilter_ops.info.pid), PIDTYPE_PID);
+ 	if (tsk) {
  		force_sig(SIGKILL, tsk);
  		put_task_struct(tsk);
- 	}
--	fput(info->pipe_to_umh);
--	fput(info->pipe_from_umh);
--	info->pid = 0;
- }
+@@ -31,10 +32,8 @@ static void shutdown_umh(struct umh_info *info)
  
  static void __stop_umh(void)
  {
- 	if (IS_ENABLED(CONFIG_INET)) {
--		bpfilter_process_sockopt = NULL;
--		shutdown_umh(&info);
-+		bpfilter_ops.sockopt = NULL;
-+		shutdown_umh(&bpfilter_ops.info);
- 	}
+-	if (IS_ENABLED(CONFIG_INET)) {
+-		bpfilter_ops.sockopt = NULL;
+-		shutdown_umh(&bpfilter_ops.info);
+-	}
++	if (IS_ENABLED(CONFIG_INET))
++		shutdown_umh();
  }
  
-@@ -64,9 +60,10 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
- 	req.addr = (long __force __user)optval;
- 	req.len = optlen;
- 	mutex_lock(&bpfilter_lock);
--	if (!info.pid)
-+	if (!bpfilter_ops.info.pid)
- 		goto out;
--	n = __kernel_write(info.pipe_to_umh, &req, sizeof(req), &pos);
-+	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
-+			   &pos);
- 	if (n != sizeof(req)) {
- 		pr_err("write fail %zd\n", n);
- 		__stop_umh();
-@@ -74,7 +71,8 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
- 		goto out;
- 	}
- 	pos = 0;
--	n = kernel_read(info.pipe_from_umh, &reply, sizeof(reply), &pos);
-+	n = kernel_read(bpfilter_ops.info.pipe_from_umh, &reply, sizeof(reply),
-+			&pos);
- 	if (n != sizeof(reply)) {
- 		pr_err("read fail %zd\n", n);
- 		__stop_umh();
-@@ -92,13 +90,12 @@ static int __init load_umh(void)
+ static void stop_umh(void)
+@@ -85,7 +84,7 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	return ret;
+ }
+ 
+-static int __init load_umh(void)
++static int start_umh(void)
+ {
  	int err;
  
- 	/* fork usermode process */
--	info.cmdline = "bpfilter_umh";
- 	err = fork_usermode_blob(&bpfilter_umh_start,
- 				 &bpfilter_umh_end - &bpfilter_umh_start,
--				 &info);
-+				 &bpfilter_ops.info);
+@@ -95,6 +94,7 @@ static int __init load_umh(void)
+ 				 &bpfilter_ops.info);
  	if (err)
  		return err;
--	pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
-+	pr_info("Loaded bpfilter_umh pid %d\n", bpfilter_ops.info.pid);
++	bpfilter_ops.stop = false;
+ 	pr_info("Loaded bpfilter_umh pid %d\n", bpfilter_ops.info.pid);
  
  	/* health check that usermode process started correctly */
- 	if (__bpfilter_process_sockopt(NULL, 0, NULL, 0, 0) != 0) {
-@@ -106,7 +103,7 @@ static int __init load_umh(void)
+@@ -102,14 +102,29 @@ static int __init load_umh(void)
+ 		stop_umh();
  		return -EFAULT;
  	}
- 	if (IS_ENABLED(CONFIG_INET))
--		bpfilter_process_sockopt = &__bpfilter_process_sockopt;
-+		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
+-	if (IS_ENABLED(CONFIG_INET))
+-		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
  
  	return 0;
  }
+ 
++static int __init load_umh(void)
++{
++	int err;
++
++	err = start_umh();
++	if (!err && IS_ENABLED(CONFIG_INET)) {
++		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
++		bpfilter_ops.start = &start_umh;
++	}
++
++	return err;
++}
++
+ static void __exit fini_umh(void)
+ {
++	if (IS_ENABLED(CONFIG_INET)) {
++		bpfilter_ops.start = NULL;
++		bpfilter_ops.sockopt = NULL;
++	}
+ 	stop_umh();
+ }
+ module_init(load_umh);
+diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+index 40311d10d2f2..7f1c521dcc2f 100644
+--- a/net/bpfilter/bpfilter_umh_blob.S
++++ b/net/bpfilter/bpfilter_umh_blob.S
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-	.section .init.rodata, "a"
++	.section .bpfilter_umh, "a"
+ 	.global bpfilter_umh_start
+ bpfilter_umh_start:
+ 	.incbin "net/bpfilter/bpfilter_umh"
 diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
-index 5e04ed25bc0e..c326cfbc0f62 100644
+index c326cfbc0f62..de84ede4e765 100644
 --- a/net/ipv4/bpfilter/sockopt.c
 +++ b/net/ipv4/bpfilter/sockopt.c
-@@ -1,28 +1,37 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/init.h>
-+#include <linux/module.h>
- #include <linux/uaccess.h>
- #include <linux/bpfilter.h>
- #include <uapi/linux/bpf.h>
- #include <linux/wait.h>
- #include <linux/kmod.h>
-+#include <linux/fs.h>
-+#include <linux/file.h>
+@@ -14,6 +14,7 @@ EXPORT_SYMBOL_GPL(bpfilter_ops);
  
--int (*bpfilter_process_sockopt)(struct sock *sk, int optname,
--				char __user *optval,
--				unsigned int optlen, bool is_set);
--EXPORT_SYMBOL_GPL(bpfilter_process_sockopt);
-+struct bpfilter_umh_ops bpfilter_ops;
-+EXPORT_SYMBOL_GPL(bpfilter_ops);
-+
-+static void bpfilter_umh_cleanup(struct umh_info *info)
-+{
-+	fput(info->pipe_to_umh);
-+	fput(info->pipe_from_umh);
-+	info->pid = 0;
-+}
- 
- static int bpfilter_mbox_request(struct sock *sk, int optname,
+ static void bpfilter_umh_cleanup(struct umh_info *info)
+ {
++	bpfilter_ops.stop = true;
+ 	fput(info->pipe_to_umh);
+ 	fput(info->pipe_from_umh);
+ 	info->pid = 0;
+@@ -23,14 +24,21 @@ static int bpfilter_mbox_request(struct sock *sk, int optname,
  				 char __user *optval,
  				 unsigned int optlen, bool is_set)
  {
--	if (!bpfilter_process_sockopt) {
-+	if (!bpfilter_ops.sockopt) {
- 		int err = request_module("bpfilter");
++	int err;
++
+ 	if (!bpfilter_ops.sockopt) {
+-		int err = request_module("bpfilter");
++		err = request_module("bpfilter");
  
  		if (err)
  			return err;
--		if (!bpfilter_process_sockopt)
-+		if (!bpfilter_ops.sockopt)
+ 		if (!bpfilter_ops.sockopt)
  			return -ECHILD;
  	}
--	return bpfilter_process_sockopt(sk, optname, optval, optlen, is_set);
-+	return bpfilter_ops.sockopt(sk, optname, optval, optlen, is_set);
++	if (bpfilter_ops.stop) {
++		err = bpfilter_ops.start();
++		if (err)
++			return err;
++	}
+ 	return bpfilter_ops.sockopt(sk, optname, optval, optlen, is_set);
  }
  
- int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
-@@ -41,3 +50,13 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+@@ -53,6 +61,7 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
  
- 	return bpfilter_mbox_request(sk, optname, optval, len, false);
- }
-+
-+static int __init bpfilter_sockopt_init(void)
-+{
-+	bpfilter_ops.info.cmdline = "bpfilter_umh";
-+	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
-+
-+	return 0;
-+}
-+
-+module_init(bpfilter_sockopt_init);
+ static int __init bpfilter_sockopt_init(void)
+ {
++	bpfilter_ops.stop = true;
+ 	bpfilter_ops.info.cmdline = "bpfilter_umh";
+ 	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
+ 
 -- 
 2.17.1
 
