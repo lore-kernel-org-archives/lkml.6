@@ -2,95 +2,87 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD57C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 06:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A8FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 07:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC9D20866
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 06:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52D4620866
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 07:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbeL3GVE (ORCPT
+        id S1726049AbeL3HJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 01:21:04 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:37969 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbeL3GVD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 01:21:03 -0500
-Received: by mail-it1-f200.google.com with SMTP id m128so29300092itd.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 22:21:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zeZyL/JGGLkv/bI0KfHN5V8YkFk160XL1w/7u3jCJ+g=;
-        b=CJXVCjyJqoKBBS1XSEjnKCtzZsCIsLdbO4TwJBiRjoieIdCwjPIJ+geBZfSuKCPfJT
-         Zeo4JDz2tTb7NmKujNvQhj0ZH4suyb9x4KkNiRx1z/x3o58lD30L+aRtiT6J7hGz9GWN
-         su/U9obw/kj40R2HSdsulyhVhI2aS1S+aT2dhYxGIiQqJ5//GSu/8/PY4t8zewNvVub0
-         ogLaZUYyHydt2C4CN/cyvV7dBmxcnYvfXALnUOCm9ZtE29xOvweqbwwnp5k9FMPQHjod
-         5ES8e+C8Tbic7dGBvnjO0a7flw9pbiPNoJUcpU4KALyR9aoZ7au9fhAaHoWr4wPzCtBU
-         TucQ==
-X-Gm-Message-State: AJcUukckJXPVs0wR+JZsSRCttMxDaLtvxs0Yk1Wwv/78zEUGznqf2eW3
-        VvcqOfjQQPI4CdEYm31d9U7l5pkHGEedC4DknUWtYKpFr1nL
-X-Google-Smtp-Source: ALg8bN6GL2vFESfD4MJtPY3uWJbeIhsCi6EtKtaHtAm5gg8p5kb5tHDsjFTvEYtqovjxKprFu87ZpuNC7KE3CQsWs/wjzmDC192v
+        Sun, 30 Dec 2018 02:09:08 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:33076 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725991AbeL3HJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 02:09:07 -0500
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id wBU78kQI017145;
+        Sun, 30 Dec 2018 08:08:46 +0100
+Date:   Sun, 30 Dec 2018 08:08:46 +0100
+From:   Willy Tarreau <w@1wt.eu>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] rcutorture/nolibc: add a bit of documentation to
+ explain how to use nolibc
+Message-ID: <20181230070846.GA17139@1wt.eu>
+References: <20181229180218.15798-1-w@1wt.eu>
+ <20181229180218.15798-4-w@1wt.eu>
+ <20181229223324.slqx3qjrmzg5g2w2@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9919:: with SMTP id x25mr15427735iol.1.1546150863003;
- Sat, 29 Dec 2018 22:21:03 -0800 (PST)
-Date:   Sat, 29 Dec 2018 22:21:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f56975057e374c46@google.com>
-Subject: WARNING: lock held when returning to user space in set_property_atomic
-From:   syzbot <syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com>
-To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        maxime.ripard@bootlin.com, sean@poorly.run,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229223324.slqx3qjrmzg5g2w2@gmail.com>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Dec 29, 2018 at 12:33:24PM -1000, Joey Pabalinas wrote:
+> On Sat, Dec 29, 2018 at 07:02:18PM +0100, Willy Tarreau wrote:
+> > + *   - the lower level is the arch-specific syscall() definition, consisting in
+> > + *     assembly code in compound expressions. These are called my_syscall0() to
+> > + *     my_syscall6() depending on the number of arguments. The MIPS
+> > + *     implementation is limited to 5 arguments. All input arguments are cast
+> > + *     to a long stored in a register. These expressions always return the
+> > + *     syscall's return value as a signed long value which is often either a
+> > + *     pointer or the negated errno value.
+> > + *
+> > + *   - the second level is mostly architecture-independent. It is made of
+> > + *     static functions called sys_<name>() which rely on my_syscallN()
+> > + *     depending on the syscall definition. These functions are responsible
+> > + *     for exposing the appropriate types for the syscall arguments (int,
+> > + *     pointers, etc) and for setting the appropriate return type (often int).
+> > + *     A few of them are architecture-specific because the syscalls are not all
+> > + *     mapped exactly the same among architectures. For example, some archs do
+> > + *     not implement select() and need pselect6() instead, so the sys_select()
+> > + *     function will have to abstract this.
+> > + *
+> > + *   - the third level is the libc call definition. It exposes the lower raw
+> > + *     sys_<name>() calls in a way that looks like what a libc usually does,
+> > + *     takes care of specific input values, and of setting errno upon error.
+> > + *     There can be minor variations compared to standard libc calls. For
+> > + *     example the open() call always takes 3 args here.
+> 
+> Shouldn't these sentences begin with a capitalized "The" for
+> consistency?
 
-syzbot found the following crash on:
+Not sure since they're just list items. But probably as such they should
+end with a semi-colon and not a dot. Anyway, this is minor and likely for
+a later update to the file.
 
-HEAD commit:    903b77c63167 Merge tag 'linux-kselftest-4.21-rc1' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d0f553400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53a2f2aa0b1f7606
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ea337c427f5083ebdf2
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120d906f400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1024673b400000
+> >  /* some archs (at least aarch64) don't expose the regular syscalls anymore by
+> >   * default, either because they have an "_at" replacement, or because there are
+> >   * more modern alternatives. For now we'd rather still use them.
+> 
+> Also here. Shouldn't this begin with a capitalized "Some"?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6ea337c427f5083ebdf2@syzkaller.appspotmail.com
+Definitely! Same, I won't emit a patch just for this, Paul already queued it.
 
-RBP: 00007ffe369ca7a0 R08: 0000000000000001 R09: 00000000004009ce
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-
-================================================
-WARNING: lock held when returning to user space!
-4.20.0+ #174 Not tainted
-------------------------------------------------
-syz-executor556/8153 is leaving the kernel with locks still held!
-1 lock held by syz-executor556/8153:
-  #0: 000000005100c85c (crtc_ww_class_acquire){+.+.}, at:  
-set_property_atomic+0xb3/0x330 drivers/gpu/drm/drm_mode_object.c:462
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks!
+Willy
