@@ -2,111 +2,131 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5588C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1FFC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73D920855
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:09:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H2fMLgaw"
+	by mail.kernel.org (Postfix) with ESMTP id EF1BB20836
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:18:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbeL3LJF (ORCPT
+        id S1726212AbeL3LSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 06:09:05 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55399 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeL3LJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 06:09:05 -0500
-Received: by mail-it1-f194.google.com with SMTP id m62so33351545ith.5
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 03:09:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IopB3OJEHMkbL4+zfUW9FfwFFcYlgYfqDYEkENCo6mU=;
-        b=H2fMLgaw5QAf10jNRHr+TXGERAXyjZ902iLiCUVjA12BKkNC1QNSYG5ONuxk7x2G6n
-         Zdj8Tf4WCo4GvswGuK2HdMgRaCjmfTSkKuJyTFS16Zt2eC2oZdl7rrL91Gn4RANOzk2y
-         AAy5/4V9W7bJQ+f0vTQavEzSmSFeR1zXuJYjmN5nnlJdyPlqj1s+84c64BMKhRlZBBAj
-         rKybKt3lrs5KXVlbhKbljslVRXQPzDgKdCcxY15Tm8kq4vqTqDP+fDV0zvHS1fDxQGnl
-         HrfcimXtY/JYQZ/LuSLHEiOWlM6fTZHTxBd/nWtVxUr4NiX3XGlndVpNm2yh3bGm+IRN
-         bhwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IopB3OJEHMkbL4+zfUW9FfwFFcYlgYfqDYEkENCo6mU=;
-        b=RgorAhdNMelyt2tgGoY1ezcyJCP9s2NdZiBcr2oz2dZwJWdr3SO57eApRaSHE1xue3
-         SmsO08852zIYA2+Hd3dGqBxmcpCJQm6WvXn662X9uOrbXQsWZy2ob2zyNVQ5FNUFXmoS
-         QyQALzvv6JjoLMl2Jqsp8WFT5mj/uBokBrOLhcAzzdR5gTebLR36hDHf0rhcZZ383OuK
-         7mgkMFrDQ+jYHno9aCch0z1H6YHnNppfWMcAeScXjquvPgvm7AIpQJyHM2oJz0ubHPpb
-         X4NHNBY1hCbwGNjMOs9YsKE7s3t9wHMGXGNMbw+EZG7Y9OmfGtXRKUcaN+TJ6pLPd9Qr
-         rHVg==
-X-Gm-Message-State: AJcUukc3XpdkHztV/Jx7DMbERulQL9zuBGqPP6nzKjYoXn4AQxlDwUmh
-        +cb46LCNxd8m3Q5K0OKqJXZauICvkzhzB7yjpBBnuA==
-X-Google-Smtp-Source: AFSGD/XBJcBtYCB059Cu2uKzCaISRJsiEfVNVVCqaBdjJw55WPBgLJDKcoga8wiBKyOB4jDszqhQMrzGANPp8RFVb0E=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr19107462itl.144.1546168144058;
- Sun, 30 Dec 2018 03:09:04 -0800 (PST)
+        Sun, 30 Dec 2018 06:18:00 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:47206 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725971AbeL3LR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 06:17:59 -0500
+Received: from [192.168.1.9] (ppp85-140-180-153.pppoe.mtu-net.ru [85.140.180.153])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 72A9554006A;
+        Sun, 30 Dec 2018 14:17:55 +0300 (MSK)
+Subject: Re: [PATCH] media: tw9910: add missed clk_disable_unprepare() on
+ failure path
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+References: <1546119320-11841-1-git-send-email-khoroshilov@ispras.ru>
+ <20181230094918.6ysahn7tr6us6uoh@uno.localdomain>
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=khoroshilov@ispras.ru; prefer-encrypt=mutual; keydata=
+ mQINBFtq9eIBEACxmOIPDht+aZvO9DGi4TwnZ1WTDnyDVz3Nnh0rlQCK8IssaT6wE5a95VWo
+ iwOWalcL9bJMHQvw60JwZKFjt9oH2bov3xzx/JRCISQB4a4U1J/scWvPtabbB3t+VAodF5KZ
+ vZ2gu/Q/Wa5JZ9aBH0IvNpBAAThFg1rBXKh7wNqrhsQlMLg+zTSK6ZctddNl6RyaJvAmbaTS
+ sSeyUKXiabxHn3BR9jclXfmPLfWuayinBvW4J3vS+bOhbLxeu3MO0dUqeX/Nl8EAhvzo0I2d
+ A0vRu/Ze1wU3EQYT6M8z3i1b3pdLjr/i+MI8Rgijs+TFRAhxRw/+0vHGTg6Pn02t0XkycxQR
+ mhH3v0kVTvMyM7YSI7yXvd0QPxb1RX9AGmvbJu7eylzcq9Jla+/T3pOuWsJkbvbvuFKKmmYY
+ WnAOR7vu/VNVfiy4rM0bfO14cIuEG+yvogcPuMmQGYu6ZwS9IdgZIOAkO57M/6wR0jIyfxrG
+ FV3ietPtVcqeDVrcShKyziRLJ+Xcsg9BLdnImAqVQomYr27pyNMRL5ILuT7uOuAQPDKBksK+
+ l2Fws0d5iUifqnXSPuYxqgS4f8SQLS7ECxvCGVVbkEEng9vkkmyrF6wM86BZ9apPGDFbopiK
+ 7GRxQtSGszVv83abaVb8aDsAudJIp7lLaIuXLZAe1r+ycYpEtQARAQABtCpBbGV4ZXkgS2hv
+ cm9zaGlsb3YgPGtob3Jvc2hpbG92QGlzcHJhcy5ydT6JAj0EEwEIACcFAltq9eICGwMFCRLM
+ AwAFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ2B/JSzCwrEWLaA/+NFZfyhU0vJzFtYsk
+ yaqx8nWZLrAoUK7VcobH0lJH6lfGbarO5JpENaIiTP12YZ4xO+j3GGJtLy2gvnpypGnxmiAl
+ RqPt7WeAIj6oqPrUs2QF7i4SOiPtku/NrysI1zHzlA8yqUduBtam5rdQeLRNCJiEED1fU8sp
+ +DgJBN/OHEDyAag2hu1KFKWuPfQ+QGpXYZb+1NW/hKwvvwCNVyypELAfFnkketFXjIMwHnL8
+ ZPqJZlkvkpxuRXOaXPL9NFhZnC/WS+NJ81L3pr+w6eo3xTPYZvRW8glvqlEDgHqr3uMGIaes
+ nwfRXLHp+TC1ht6efCXzdPyMZ1E7HXQN9foKisI1V5iQFhN+CT3dbsguQI4e10F5ql0TZUJY
+ SMzvY0eObs6TWRdD/Ha7Y5rLmZ54R9sxumpZNcJzktfgm9f0XfeqVEJUn/40MRDD+l2W12Db
+ Jkko+sbtAEw+f+/j3uz8xOE+Uv4kwFC5a6JKgdX88oigHnpAs3FvffP594Loi3ibFrQUW5wH
+ bXh5Ni+l1GKEQ0PHMk+KQQT9L2r9s7C0Nh8XzwdpOshZWsrNSZqcG+01wrmUhyX2uSaoZ07I
+ /+KZURlMSqI71X6lkMWlB3SyThvYhHgnR0EGGTerwM1MaVjHN+Z6lPmsKNxG8lzCeWeZ6peA
+ c5oUHV4WQ8Ux9BM8saK5Ag0EW2r14gEQAMz+5u+X7j1/dT4WLVRQaE1Shnd2dKBn2E7fgo/N
+ 4JIY6wHD/DJoWYQpCJjjvBYSonvQsHicvDW8lPh2EXgZ9Fi8AHKT2mVPitVy+uhfWa/0FtsC
+ e3hPfrjTcN7BUcXlIjmptxIoDbvQrNfIWUGdWiyDj4EDfABW/kagXqaBwF2HdcDaNDGggD1c
+ DglA0APjezIyTGnGMKsi5QSSlOLm8OZEJMj5t+JL6QXrruijNb5Asmz5mpRQrak7DpGOskjK
+ fClm/0oy2zDvWuoXJa+dm3YFr43V+c5EIMA4LpGk63Eg+5NltQ/gj0ycgD5o6reCbjLz4R9D
+ JzBezK/KOQuNG5qKUTMbOHWaApZnZ6BDdOVflkV1V+LMo5GvIzkATNLm/7Jj6DmYmXbKoSAY
+ BKZiJWqzNsL1AJtmJA1y5zbWX/W4CpNs8qYMYG8eTNOqunzopEhX7T0cOswcTGArZYygiwDW
+ BuIS83QRc7udMlQg79qyMA5WqS9g9g/iodlssR9weIVoZSjfjhm5NJ3FmaKnb56h6DSvFgsH
+ xCa4s1DGnZGSAtedj8E3ACOsEfu4J/WqXEmvMYNBdGos2YAc+g0hjuOB10BSD98d38xP1vPc
+ qNrztIF+TODAl1dNwU4rCSdGQymsrMVFuXnHMH4G+dHvMAwWauzDbnILHAGFyJtfxVefABEB
+ AAGJAiUEGAEIAA8FAltq9eICGwwFCRLMAwAACgkQ2B/JSzCwrEU3Rg//eFWHXqTQ5CKw4KrX
+ kTFxdXnYKJ5zZB0EzqU6m/FAV7snmygFLbOXYlcMW2Fh306ivj9NKJrlOaPbUzzyDf8dtDAg
+ nSbH156oNJ9NHkz0mrxFMpJA2E5AUemOFx57PUYt93pR2B7bF2zGua4gMC+vorDQZjX9kvrL
+ Kbenh3boFOe1tUaiRRvEltVFLOg+b+CMkKVbLIQe/HkyKJH5MFiHAF7QxnPHaxyO7QbWaUmF
+ 6BHVujxAGvNgkrYJb6dpiNNZSFNRodaSToU5oM+z1dCrNNtN3u4R7AYr6DDIDxoSzR4k0ZaG
+ uSeqh4xxQCD7vLT3JdZDyhYUJgy9mvSXdkXGdBIhVmeLch2gaWNf5UOutVJwdPbIaUDRjVoV
+ Iw6qjKq+mnK3ttuxW5Aeg9Y1OuKEvCVu+U/iEEJxx1JRmVAYq848YqtVPY9DkZdBT4E9dHqO
+ n8lr+XPVyMN6SBXkaR5tB6zSkSDrIw+9uv1LN7QIri43fLqhM950ltlveROEdLL1bI30lYO5
+ J07KmxgOjrvY8X9WOC3O0k/nFpBbbsM4zUrmF6F5wIYO99xafQOlfpUnVtbo3GnBR2LIcPYj
+ SyY3dW28JXo2cftxIOr1edJ+fhcRqYRrPzJrQBZcE2GZjRO8tz6IOMAsc+WMtVfj5grgVHCu
+ kK2E04Fb+Zk1eJvHYRc=
+Message-ID: <80f84853-9991-8a64-da22-9349543d5deb@ispras.ru>
+Date:   Sun, 30 Dec 2018 14:17:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <000000000000d89413057e3aeec2@google.com> <3100603.HWLWhOUWpG@sven-edge>
-In-Reply-To: <3100603.HWLWhOUWpG@sven-edge>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 30 Dec 2018 12:08:53 +0100
-Message-ID: <CACT4Y+Yb+OvJ8c4Vot9pcTEF1OhTHeu=XK5Jb=EXEBv6xmNwnQ@mail.gmail.com>
-Subject: Re: WARNING in batadv_is_on_batman_iface
-To:     Sven Eckelmann <sven@narfation.org>
-Cc:     syzbot <syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com>,
-        a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, mareklindner@neomailbox.ch,
-        netdev <netdev@vger.kernel.org>, sw@simonwunderlich.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181230094918.6ysahn7tr6us6uoh@uno.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: ru-RU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 30, 2018 at 12:00 PM Sven Eckelmann <sven@narfation.org> wrote:
->
-> On Sunday, 30 December 2018 11.41.03 CET syzbot wrote:
-> [...]
-> > HEAD commit:    d8924c0d76aa Merge tag 'devprop-4.21-rc1' of git://git.ker..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=122a373f400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=91a256823ef17263
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=c764de0fcfadca9a8595
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fd1d67400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com
->
-> What is the bug here? The kernel module showed a warning because the parent
-> device cannot be found in the same netns using __dev_get_by_index.
->
-> The test system was just configured to panic on warnings. So are we now
-> expected to show warnings or what is the expected behavior?
->
-> This behavior was added with commit b7eddd0b3950 ("batman-adv: prevent using
-> any virtual device created on batman-adv as hard-interface") - 3d48811b27f5 in
-> the out-of-tree module.
+Hi Jacopo,
 
-Hi Sven,
+On 30.12.2018 12:49, Jacopo Mondi wrote:
+> On Sun, Dec 30, 2018 at 12:35:20AM +0300, Alexey Khoroshilov wrote:
+>> If gpiod_get_optional() fails in tw9910_power_on(), clk is left undisabled.
+> 
+> Correct, thanks for spotting this.
+> 
+> I think pdn_gpio should also be handled if rstb_gpio fails.
+> What's your opinion?
 
-The problem is that kernel code uses WARNING when it should not.
-For WARN guidelines please see this:
-https://elixir.bootlin.com/linux/v4.20/source/include/asm-generic/bug.h#L81
-and this (search for WARN_ON_ONCE):
-https://lwn.net/Articles/769365/
+I would agree. I'll send v2.
 
+Thank you,
+Alexey
 
-> Kind regards,
->         Sven
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b7eddd0b3950ea9dc863f1cbfa30d172dbf772f4
+> 
+>> Found by Linux Driver Verification project (linuxtesting.org).
+>>
+>> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+>> ---
+>>  drivers/media/i2c/tw9910.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
+>> index a54548cc4285..109770d678d2 100644
+>> --- a/drivers/media/i2c/tw9910.c
+>> +++ b/drivers/media/i2c/tw9910.c
+>> @@ -610,6 +610,7 @@ static int tw9910_power_on(struct tw9910_priv *priv)
+>>  					     GPIOD_OUT_LOW);
+>>  	if (IS_ERR(priv->rstb_gpio)) {
+>>  		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
+>> +		clk_disable_unprepare(priv->clk);
+>>  		return PTR_ERR(priv->rstb_gpio);
+>>  	}
+>>
+>> --
+>> 2.7.4
+>>
+
