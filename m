@@ -6,33 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1FCC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3625C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132382087F
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDCB20828
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbeL3QaN (ORCPT
+        id S1726736AbeL3QaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 11:30:13 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:52542
+        Sun, 30 Dec 2018 11:30:18 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:52556
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726640AbeL3QaE (ORCPT
+        by vger.kernel.org with ESMTP id S1726643AbeL3QaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 30 Dec 2018 11:30:04 -0500
 X-IronPort-AV: E=Sophos;i="5.56,417,1539640800"; 
-   d="scan'208";a="290435984"
+   d="scan'208";a="290435985"
 Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 30 Dec 2018 17:29:58 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] drm/msm/dsi: reduce indentation
-Date:   Sun, 30 Dec 2018 16:53:14 +0100
-Message-Id: <1546185195-25676-8-git-send-email-Julia.Lawall@lip6.fr>
+Subject: [PATCH 8/8] iommu/msm: reduce indentation
+Date:   Sun, 30 Dec 2018 16:53:15 +0100
+Message-Id: <1546185195-25676-9-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1546185195-25676-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -49,20 +47,26 @@ Found with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/msm_iommu.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-index 1760483b247e..4d8785282c6c 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-@@ -355,7 +355,7 @@ int msm_dsi_dphy_timing_calc_v3(struct msm_dsi_dphy_timing *timing,
- 	} else {
- 		timing->shared_timings.clk_pre =
- 			linear_inter(tmax, tmin, pcnt2, 0, false);
--			timing->shared_timings.clk_pre_inc_by_2 = 0;
-+		timing->shared_timings.clk_pre_inc_by_2 = 0;
- 	}
- 
- 	timing->ta_go = 3;
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index fc4270733f11..6dde3a9db92e 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -461,10 +461,10 @@ static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
+ 				master->num =
+ 					msm_iommu_alloc_ctx(iommu->context_map,
+ 							    0, iommu->ncb);
+-					if (IS_ERR_VALUE(master->num)) {
+-						ret = -ENODEV;
+-						goto fail;
+-					}
++				if (IS_ERR_VALUE(master->num)) {
++					ret = -ENODEV;
++					goto fail;
++				}
+ 				config_mids(iommu, master);
+ 				__program_context(iommu->base, master->num,
+ 						  priv);
 
