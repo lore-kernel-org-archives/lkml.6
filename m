@@ -2,171 +2,153 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DECC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 03:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C143C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 03:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2237B21019
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 03:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB69E21019
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 03:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbeL3DeU (ORCPT
+        id S1725966AbeL3DlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Dec 2018 22:34:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40868 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725889AbeL3DeU (ORCPT
+        Sat, 29 Dec 2018 22:41:04 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:50280 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbeL3DlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Dec 2018 22:34:20 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBU3XKuM113645
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 22:34:19 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ppkxr3gew-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 22:34:19 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 30 Dec 2018 03:34:16 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 30 Dec 2018 03:34:13 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBU3YBkY6947146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 30 Dec 2018 03:34:11 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8825011C04C;
-        Sun, 30 Dec 2018 03:34:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1777011C05B;
-        Sun, 30 Dec 2018 03:34:09 +0000 (GMT)
-Received: from unknown4C3488A63DDA (unknown [9.80.105.198])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 30 Dec 2018 03:34:08 +0000 (GMT)
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-Date:   Sat, 29 Dec 2018 22:33:57 -0500
-In-Reply-To: <b75fd04643daf5aab5a1fc115e8fbfca9a381f8d.camel@mniewoehner.de>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
-         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
-         <1545519232.3940.115.camel@linux.ibm.com>
-         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
-         <b75fd04643daf5aab5a1fc115e8fbfca9a381f8d.camel@mniewoehner.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18123003-0020-0000-0000-000002FDDDEE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18123003-0021-0000-0000-0000214E1569
-Message-Id: <1546140837.4069.81.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-29_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812300032
+        Sat, 29 Dec 2018 22:41:04 -0500
+Received: by mail-io1-f72.google.com with SMTP id p4so28584169iod.17
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Dec 2018 19:41:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=cDxP990uHMGkalxhsJspzFhheNpjaTLD2b03JnGVTAg=;
+        b=HxnpSI0OvfY2831d8Vb9hydy3V+JOk+jvC8+siEaXR8qHJf55OWDaMRXDxwsW1WpT0
+         pokViFA6ENgitn7LNhWElHuwh7l9uMlC17/kf0h0jowpF2Wc+0WIDHw2mCKHbe+XOExD
+         yn1UYm5Mz1EN9QhaGXhHWTSXgWtHJhctLmPIfRtcCwRnp6/T9Vm/1ckL0oyIG40KZnOA
+         Iay4Iiav9aEiGjhij24foqmA/c2cWpRUd836ompbo0dV3N6zbjOJJum/1TQTVVTTDNfa
+         SqIRtDMOqrRuKWdjts2GL3hGj7SSiBsrOrCBHtTTaApwxLUQaWfup1kncwTu/ao6tr7M
+         YQhA==
+X-Gm-Message-State: AJcUukduR2vpjZKPxiMdTVtFHFMOB3vc2pbLKx5Z4tZqqT/+poLdbBLb
+        uwyxGzQzfnGWOkqGqOjMD5TuUC5c8QcpBbb+eTH+mASL1VZI
+X-Google-Smtp-Source: ALg8bN6fBXQHiZ/PxN77M1FzRkyo10NeZAh2O8eqi85L89NUGSrGHIm/1f9I6B+Ki//J89f0XwrkMxpPPnOWP+g5PiY6a8FV0ywY
+MIME-Version: 1.0
+X-Received: by 2002:a6b:5a02:: with SMTP id o2mr31637855iob.17.1546141262990;
+ Sat, 29 Dec 2018 19:41:02 -0800 (PST)
+Date:   Sat, 29 Dec 2018 19:41:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c0d438057e35101e@google.com>
+Subject: WARNING in wiphy_register (3)
+From:   syzbot <syzbot+73fd8b0aa60c67fa4b60@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-25 at 14:55 +0100, Michael Niewöhner wrote:
-> On Sun, 2018-12-23 at 12:55 +0100, Michael Niewöhner wrote:
-> > Hi Mimi,
-> > 
-> > On Sat, 2018-12-22 at 17:53 -0500, Mimi Zohar wrote:
-> > > On Sat, 2018-12-22 at 14:47 +0100, Michael Niewöhner wrote:
-> > > 
-> > > > When I remove the timeout and boot directly to the linux kernel, I get
-> > > > that
-> > > > "2314 TPM-self test error" since it has not finished, yet. The TPM is
-> > > > detected
-> > > > by IMA and works fine then.
-> > > > 
-> > > > Some more tests showed that any delay before booting the kernel causes the
-> > > > TPM
-> > > > to not get detected. I tested, 10, 15, 20, 30, 60... seconds. Only in some
-> > > > very
-> > > > rare cases the TPM got detected.
-> > > > 
-> > > > I wanted to know if the TPM is in an well initialized state at the time of
-> > > > that
-> > > > error. Since I was not able to get some test/debug kernel patches working
-> > > > I
-> > > > decided to try kexec. It turned out that the TPM is indeed correctly
-> > > > working
-> > > > and
-> > > > will be detected just fine by linux after kexec!
-> > > 
-> > > No surprise here.  kexec would be the equivalent of a soft reboot.
-> > 
-> > Well, I am not that deep in kexec internals but isn't a soft reboot much more
-> > than a kexec? I thought kexec would "just" load the new kernel to memory and
-> > executes it while a soft reboot goes at least through some UEFI
-> > initialization.
-> > For example, my pwm fans - in fact the EC - get resetted on a soft reboot,
-> > while
-> > a kexec does not touch them.
-> > 
+Hello,
 
-Similarly, the PCRs are not reset on kexec.
+syzbot found the following crash on:
 
-> > That is why I wanted to test if there is a different behaviour on kexec
-> > compared
-> > to a "real" soft reboot. If there was such difference I would have assumed a
-> > UEFI bug that does not initialize the TPM correctly.
-> > Kexec AFAIK does not invoke any UEFI initialization, so the TPM should be in
-> > the
-> > same state as before kexec and since there is no difference between sr and
-> > kexec
-> > I have the feeling there is something wrong in the kernel.
-> > 
-> > Correct me if I am wrong here, please.
+HEAD commit:    90cadbbf341d Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17053c9b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d41c8529d7e7362
+dashboard link: https://syzkaller.appspot.com/bug?extid=73fd8b0aa60c67fa4b60
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17211a57400000
 
-But the problem you've described is on a cold boot, not a soft reboot.
- Both the soft reboot and kexec are working properly.  It seems the
-difference is that on a cold boot, the TPM takes longer to initialize.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+73fd8b0aa60c67fa4b60@syzkaller.appspotmail.com
 
-> > My current workaround is to do a machine_emergency_reboot() when TPM isn't
-> > detected correctly. That is a pretty hard workaround but it seems to work for
-> > now...
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+netlink: 'syz-executor4': attribute type 23 has an invalid length.
+WARNING: CPU: 0 PID: 9553 at net/wireless/core.c:581  
+wiphy_verify_combinations net/wireless/core.c:581 [inline]
+WARNING: CPU: 0 PID: 9553 at net/wireless/core.c:581  
+wiphy_register+0x147e/0x28d0 net/wireless/core.c:784
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 9553 Comm: syz-executor4 Not tainted 4.20.0-rc7+ #360
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:wiphy_verify_combinations net/wireless/core.c:581 [inline]
+RIP: 0010:wiphy_register+0x147e/0x28d0 net/wireless/core.c:784
+Code: f0 ff ff e8 74 30 2b fa 0f 0b bb ea ff ff ff e9 10 f0 ff ff e8 63 30  
+2b fa 0f 0b bb ea ff ff ff e9 ff ef ff ff e8 52 30 2b fa <0f> 0b bb ea ff  
+ff ff e9 ee ef ff ff e8 41 30 2b fa 0f 0b bb ea ff
+kobject: 'loop1' (00000000a0078c7e): kobject_uevent_env
+RSP: 0018:ffff8881d798edb0 EFLAGS: 00010293
+RAX: ffff8881cd55e040 RBX: 0000000000000001 RCX: ffffffff8753236b
+RDX: 0000000000000000 RSI: ffffffff8753292e RDI: 0000000000000001
+RBP: ffff8881d798ef38 R08: ffff8881cd55e040 R09: ffffed103a4a0680
+R10: ffffed103a4a0680 R11: ffff8881d2503405 R12: 000000000000002f
+R13: ffffffff88f0ba60 R14: ffff8881d2505e74 R15: 0000000000000000
+kobject: 'loop1' (00000000a0078c7e): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+  ieee80211_register_hw+0x15cd/0x40e0 net/mac80211/main.c:1109
+  mac80211_hwsim_new_radio+0x2025/0x3630  
+drivers/net/wireless/mac80211_hwsim.c:2921
+kobject: 'loop5' (000000003dbebf8f): kobject_uevent_env
+kobject: 'loop5' (000000003dbebf8f): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+  hwsim_new_radio_nl+0xd3a/0x14b0 drivers/net/wireless/mac80211_hwsim.c:3469
+  genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
+  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x16c/0x430 net/netlink/af_netlink.c:2477
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x59f/0x750 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457759
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f3a2a64fc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457759
+RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3a2a6506d4
+R13: 00000000004c49c9 R14: 00000000004d80a0 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-This is a again soft reboot.
 
->  
-> > > 
-> > > > 
-> > > > Is there anyone having an idea what could be wrong here? I am willing to
-> > > > debug
-> > > > this but I have really no idea where to start :-(
-> > > 
-> > > A while ago, I was "playing" with a pi.  Commenting out
-> > > tpm2_do_selftest() seemed to resolve a similar problem, but that was
-> > > before James' patches.  I don't know if that would make a difference
-> > > now.
-> > 
-> > Hm, I will try that..
-> > 
-> 
-> Unfortunately this did not change anything
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Not much I can do now.  After vacation, I'll set up the pi to see if
-it is working properly with a recent kernel.
-
-Mimi
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
