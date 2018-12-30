@@ -5,177 +5,249 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0120C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7D6C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAEF9218A1
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D30220828
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:32:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qlz2qUbe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCETLPeo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeL3Qbx (ORCPT
+        id S1726809AbeL3QcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 11:31:53 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36285 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbeL3Qbx (ORCPT
+        Sun, 30 Dec 2018 11:32:08 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34315 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbeL3QcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 11:31:53 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so12418101pfc.3;
-        Sun, 30 Dec 2018 08:31:52 -0800 (PST)
+        Sun, 30 Dec 2018 11:32:08 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j10so11943337pga.1;
+        Sun, 30 Dec 2018 08:32:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=nb0RmDBa19Ouia07fHp4izMVq1fsE5b35wttiwrK/1g=;
-        b=Qlz2qUbeyWPAyVTXHOD9EZfarB3O9An/5nrEOo6332coJaZulYvieuIV4c9b8cRTLH
-         iuVZEY1hD7JrOzQTc4gHqHFjhGTfyDLghSQfBpTXZx+YJwDAGw4vO7ixrNB6uK2RiRrh
-         2RqLrABs0dLB/Leq1yvtdCzC22jg21pZZefrYHVSMXwB98qUvcvW3XqOitrvly2+Xb3h
-         i1O8LklC2JFwjRQ1xvZZWhtgwv0DL1/FZJzuer91HebNfxOCrz1m4K+36c0lklqUuCV3
-         R4iLiM50M2iepROvXaJLdqyzlrjJfHwF4CbyZPw58AypmSCmO5Brhk/t+qEFhs/EFp4f
-         q2Hw==
+        bh=QMJufnjC2av/TaQG0Gtve4swcI6YQyf9FiBVtu4QS/Y=;
+        b=jCETLPeoX5yfRomyH09BgDg+YrWQGsTPqkP6UIsPkDDVPK2uJya4irCaVq3jZD+bfC
+         9xs/VyHtH1X+zlmf1SHk0zzIA3tKAZXpaglh4bcl69cNbTjfiNkJLwHUEBNMN+mlOZQe
+         J/cP05xcOEzLD2xlA/YZZTuLs1sT2SpUrPnJdwLJkOC2B/woxlZWqWoUP1B9wv/NkWLg
+         2wKrpf5a4R8VZ5JhjCMnAmtZSDWBEeaRUacd2Z5hr1Vps0Mj6la6uvsV4osqYKoQts+U
+         +UhTJs3dr8m4NwE6qQZPbgaPgDfAm+UHdJDBqEiKtbkYIUmi6dn6OBnXTkAPBpWadchs
+         Yygw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nb0RmDBa19Ouia07fHp4izMVq1fsE5b35wttiwrK/1g=;
-        b=KKcp65gb0vfSoM2BO4X7I2h84CcnZ3h9Yntv6WdcPKp6PrbOnUaJytJllHjnFvG1Pq
-         SjS3jRso5idEHPkaYBxwxTMqxwaXhTS9VsBcX2WYL6XOOi2ONGdDHzx9oJBXOB+nbBNn
-         uTDx7mCvDjFkx5FV3U6bJSQn6xiTC5++AWu+f1903y2Kn6dhX4klMgR+nlDPLJWIrYVp
-         1VBtFwvuVHDzkmIseV9Z0mi0ltV4wNAFLAcyHqBsIW+3kRPx05HcBjzf/i8dLywwoTk9
-         blugUKjOz6UUL9YMv3RR9BAlnx2ecyqHLf8STaFe4Cok13q+xnDeltRXZqXpZq92sBiX
-         OK0w==
-X-Gm-Message-State: AA+aEWaEkYCvlSDednoo3eMNcdDe/MFzfADfhVPDw2rUos4CWyzKPjXn
-        m1BlSZ+Zco39dZk2XeiMtxc=
-X-Google-Smtp-Source: AFSGD/WO/Xe5WUSqASFAmSDLn2jJU8enp8x3yfKtDQo7aczMe9NH6MqBJ6YO5L9djV83/j+zGjCyIQ==
-X-Received: by 2002:a62:8c11:: with SMTP id m17mr35199301pfd.224.1546187511991;
-        Sun, 30 Dec 2018 08:31:51 -0800 (PST)
+        bh=QMJufnjC2av/TaQG0Gtve4swcI6YQyf9FiBVtu4QS/Y=;
+        b=a8NpxXZ3yJRd/s/Y5sF/+bzjWSAA5XQvmgkdqKkwJvqcJziB9Ty4F8/dtp8iuqrP/F
+         wDe3EDw/ishKfqeuqjd9jcLR/rbu6oIKGfb0VNPbL76GGESckp6u1RLj+rU9zd26Dr2V
+         n7Ps0Fld0LZSqXoVQsh6YnO2JvX/d5AYbiu5R6gzHKSezy0EltymAQlA3ixQ5MrbkPWE
+         sbB8NoIAefJQbU/1ghdQDtqfoEIM0VkHPvZXn+l8DYYGZCa2kvA3sZoCm3xYeBU5+tXC
+         I7ccC/g8VqAvG4z/GkAJXIXVIhrGWGoy8vFF8YHInzv4pQHk5sFEXG7T7TeXOyq9uyPL
+         E7+w==
+X-Gm-Message-State: AA+aEWbkXAZlUc6HmiP0bfq4GAuaCpEg9wWhcAnmupAXuSBYl6Fgjaac
+        nW3xRYUXE0FeHauHVN8vPss=
+X-Google-Smtp-Source: AFSGD/VqLrWsqtP5+x8/nQGAfPR+ePLAxGyTFWbHsHTXcUADw35owqlIeXy1rrqozYOP+tktN5yxqg==
+X-Received: by 2002:a62:8985:: with SMTP id n5mr35788760pfk.255.1546187526781;
+        Sun, 30 Dec 2018 08:32:06 -0800 (PST)
 Received: from ap-To-be-filled-by-O-E-M.8.8.8.8 ([14.33.120.60])
-        by smtp.gmail.com with ESMTPSA id d80sm128632785pfm.146.2018.12.30.08.31.49
+        by smtp.gmail.com with ESMTPSA id r130sm85548208pfr.48.2018.12.30.08.32.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Dec 2018 08:31:51 -0800 (PST)
+        Sun, 30 Dec 2018 08:32:06 -0800 (PST)
 From:   Taehee Yoo <ap420073@gmail.com>
 To:     davem@davemloft.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, daniel@iogearbox.net, ast@kernel.org,
         mcgrof@kernel.org
 Cc:     ap420073@gmail.com
-Subject: [PATCH net 1/4] umh: add exit routine for UMH process
-Date:   Mon, 31 Dec 2018 01:31:43 +0900
-Message-Id: <20181230163143.21030-1-ap420073@gmail.com>
+Subject: [PATCH net 2/4] net: bpfilter: use cleanup callback to release umh_info
+Date:   Mon, 31 Dec 2018 01:31:59 +0900
+Message-Id: <20181230163159.21168-1-ap420073@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A UMH process which is created by the fork_usermode_blob() such as
-bpfilter needs to release members of the umh_info when process is
-terminated.
-But the do_exit() does not release members of the umh_info. hence module
-which uses UMH needs own code to detect whether UMH process is
-terminated or not.
-But this implementation needs extra code for checking the status of
-UMH process. it eventually makes the code more complex.
+Now, UMH process is killed, do_exit() calls the umh_info->cleanup callback
+to release members of the umh_info.
+This patch makes bpfilter_umh's cleanup routine to use the
+umh_info->cleanup callback.
 
-The exit_umh() does not release members of the umh_info.
-Hence umh_info->cleanup callback should release both members of the
-umh_info and the private data.
-
-Suggested-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- include/linux/umh.h |  4 ++++
- kernel/exit.c       |  1 +
- kernel/umh.c        | 27 +++++++++++++++++++++++++++
- 3 files changed, 32 insertions(+)
+ include/linux/bpfilter.h     | 11 ++++++++---
+ net/bpfilter/bpfilter_kern.c | 23 ++++++++++-------------
+ net/ipv4/bpfilter/sockopt.c  | 33 ++++++++++++++++++++++++++-------
+ 3 files changed, 44 insertions(+), 23 deletions(-)
 
-diff --git a/include/linux/umh.h b/include/linux/umh.h
-index 235f51b62c71..c645f0a19103 100644
---- a/include/linux/umh.h
-+++ b/include/linux/umh.h
-@@ -47,6 +47,8 @@ struct umh_info {
- 	const char *cmdline;
- 	struct file *pipe_to_umh;
- 	struct file *pipe_from_umh;
-+	struct list_head list;
-+	void (*cleanup)(struct umh_info *info);
- 	pid_t pid;
- };
- int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
-@@ -75,6 +77,8 @@ static inline void usermodehelper_enable(void)
- 	__usermodehelper_set_disable_depth(UMH_ENABLED);
+diff --git a/include/linux/bpfilter.h b/include/linux/bpfilter.h
+index f02cee0225d4..70ffeed280e9 100644
+--- a/include/linux/bpfilter.h
++++ b/include/linux/bpfilter.h
+@@ -3,13 +3,18 @@
+ #define _LINUX_BPFILTER_H
+ 
+ #include <uapi/linux/bpfilter.h>
++#include <linux/umh.h>
+ 
+ struct sock;
+ int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
+ 			    unsigned int optlen);
+ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ 			    int __user *optlen);
+-extern int (*bpfilter_process_sockopt)(struct sock *sk, int optname,
+-				       char __user *optval,
+-				       unsigned int optlen, bool is_set);
++struct bpfilter_umh_ops {
++	struct umh_info info;
++	int (*sockopt)(struct sock *sk, int optname,
++		       char __user *optval,
++		       unsigned int optlen, bool is_set);
++};
++extern struct bpfilter_umh_ops bpfilter_ops;
+ #endif
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index 7acfc83087d5..a68940b74c01 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -13,7 +13,6 @@
+ extern char bpfilter_umh_start;
+ extern char bpfilter_umh_end;
+ 
+-static struct umh_info info;
+ /* since ip_getsockopt() can run in parallel, serialize access to umh */
+ static DEFINE_MUTEX(bpfilter_lock);
+ 
+@@ -28,16 +27,13 @@ static void shutdown_umh(struct umh_info *info)
+ 		force_sig(SIGKILL, tsk);
+ 		put_task_struct(tsk);
+ 	}
+-	fput(info->pipe_to_umh);
+-	fput(info->pipe_from_umh);
+-	info->pid = 0;
  }
  
-+void exit_umh(struct task_struct *tsk);
-+
- extern int usermodehelper_read_trylock(void);
- extern long usermodehelper_read_lock_wait(long timeout);
- extern void usermodehelper_read_unlock(void);
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 0e21e6d21f35..63ce4c958390 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -866,6 +866,7 @@ void __noreturn do_exit(long code)
- 	exit_task_namespaces(tsk);
- 	exit_task_work(tsk);
- 	exit_thread(tsk);
-+	exit_umh(tsk);
- 
- 	/*
- 	 * Flush inherited counters to the parent - before the parent
-diff --git a/kernel/umh.c b/kernel/umh.c
-index 0baa672e023c..9b2238e440eb 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -37,6 +37,8 @@ static kernel_cap_t usermodehelper_bset = CAP_FULL_SET;
- static kernel_cap_t usermodehelper_inheritable = CAP_FULL_SET;
- static DEFINE_SPINLOCK(umh_sysctl_lock);
- static DECLARE_RWSEM(umhelper_sem);
-+static LIST_HEAD(umh_list);
-+static DEFINE_MUTEX(umh_list_lock);
- 
- static void call_usermodehelper_freeinfo(struct subprocess_info *info)
+ static void __stop_umh(void)
  {
-@@ -517,6 +519,11 @@ int fork_usermode_blob(void *data, size_t len, struct umh_info *info)
- 		goto out;
+ 	if (IS_ENABLED(CONFIG_INET)) {
+-		bpfilter_process_sockopt = NULL;
+-		shutdown_umh(&info);
++		bpfilter_ops.sockopt = NULL;
++		shutdown_umh(&bpfilter_ops.info);
+ 	}
+ }
  
- 	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
-+	if (!err) {
-+		mutex_lock(&umh_list_lock);
-+		list_add(&info->list, &umh_list);
-+		mutex_unlock(&umh_list_lock);
-+	}
- out:
- 	fput(file);
- 	return err;
-@@ -679,6 +686,26 @@ static int proc_cap_handler(struct ctl_table *table, int write,
+@@ -64,9 +60,10 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	req.addr = (long __force __user)optval;
+ 	req.len = optlen;
+ 	mutex_lock(&bpfilter_lock);
+-	if (!info.pid)
++	if (!bpfilter_ops.info.pid)
+ 		goto out;
+-	n = __kernel_write(info.pipe_to_umh, &req, sizeof(req), &pos);
++	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
++			   &pos);
+ 	if (n != sizeof(req)) {
+ 		pr_err("write fail %zd\n", n);
+ 		__stop_umh();
+@@ -74,7 +71,8 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 		goto out;
+ 	}
+ 	pos = 0;
+-	n = kernel_read(info.pipe_from_umh, &reply, sizeof(reply), &pos);
++	n = kernel_read(bpfilter_ops.info.pipe_from_umh, &reply, sizeof(reply),
++			&pos);
+ 	if (n != sizeof(reply)) {
+ 		pr_err("read fail %zd\n", n);
+ 		__stop_umh();
+@@ -92,13 +90,12 @@ static int __init load_umh(void)
+ 	int err;
+ 
+ 	/* fork usermode process */
+-	info.cmdline = "bpfilter_umh";
+ 	err = fork_usermode_blob(&bpfilter_umh_start,
+ 				 &bpfilter_umh_end - &bpfilter_umh_start,
+-				 &info);
++				 &bpfilter_ops.info);
+ 	if (err)
+ 		return err;
+-	pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
++	pr_info("Loaded bpfilter_umh pid %d\n", bpfilter_ops.info.pid);
+ 
+ 	/* health check that usermode process started correctly */
+ 	if (__bpfilter_process_sockopt(NULL, 0, NULL, 0, 0) != 0) {
+@@ -106,7 +103,7 @@ static int __init load_umh(void)
+ 		return -EFAULT;
+ 	}
+ 	if (IS_ENABLED(CONFIG_INET))
+-		bpfilter_process_sockopt = &__bpfilter_process_sockopt;
++		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
+ 
  	return 0;
  }
+diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
+index 5e04ed25bc0e..c326cfbc0f62 100644
+--- a/net/ipv4/bpfilter/sockopt.c
++++ b/net/ipv4/bpfilter/sockopt.c
+@@ -1,28 +1,37 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/uaccess.h>
+ #include <linux/bpfilter.h>
+ #include <uapi/linux/bpf.h>
+ #include <linux/wait.h>
+ #include <linux/kmod.h>
++#include <linux/fs.h>
++#include <linux/file.h>
  
-+void exit_umh(struct task_struct *tsk)
-+{
-+	struct umh_info *info;
-+	pid_t pid = tsk->pid;
+-int (*bpfilter_process_sockopt)(struct sock *sk, int optname,
+-				char __user *optval,
+-				unsigned int optlen, bool is_set);
+-EXPORT_SYMBOL_GPL(bpfilter_process_sockopt);
++struct bpfilter_umh_ops bpfilter_ops;
++EXPORT_SYMBOL_GPL(bpfilter_ops);
 +
-+	mutex_lock(&umh_list_lock);
-+	list_for_each_entry(info, &umh_list, list) {
-+		if (info->pid == pid) {
-+			list_del(&info->list);
-+			mutex_unlock(&umh_list_lock);
-+			goto out;
-+		}
-+	}
-+	mutex_unlock(&umh_list_lock);
-+	return;
-+out:
-+	if (info->cleanup)
-+		info->cleanup(info);
++static void bpfilter_umh_cleanup(struct umh_info *info)
++{
++	fput(info->pipe_to_umh);
++	fput(info->pipe_from_umh);
++	info->pid = 0;
++}
+ 
+ static int bpfilter_mbox_request(struct sock *sk, int optname,
+ 				 char __user *optval,
+ 				 unsigned int optlen, bool is_set)
+ {
+-	if (!bpfilter_process_sockopt) {
++	if (!bpfilter_ops.sockopt) {
+ 		int err = request_module("bpfilter");
+ 
+ 		if (err)
+ 			return err;
+-		if (!bpfilter_process_sockopt)
++		if (!bpfilter_ops.sockopt)
+ 			return -ECHILD;
+ 	}
+-	return bpfilter_process_sockopt(sk, optname, optval, optlen, is_set);
++	return bpfilter_ops.sockopt(sk, optname, optval, optlen, is_set);
+ }
+ 
+ int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
+@@ -41,3 +50,13 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ 
+ 	return bpfilter_mbox_request(sk, optname, optval, len, false);
+ }
++
++static int __init bpfilter_sockopt_init(void)
++{
++	bpfilter_ops.info.cmdline = "bpfilter_umh";
++	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
++
++	return 0;
 +}
 +
- struct ctl_table usermodehelper_table[] = {
- 	{
- 		.procname	= "bset",
++module_init(bpfilter_sockopt_init);
 -- 
 2.17.1
 
