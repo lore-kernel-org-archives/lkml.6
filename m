@@ -2,199 +2,117 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB68AC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104BFC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A391420836
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD35320836
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546196227;
+	bh=r/mtGw93pLNcIk80TUscHn5ixLW16gZUwAROr2fH6A0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=u/ih3XeKVt1FCiqeJh46M9t7aUV9v483oh2FroCXglsGm9CmFCyOq0Kye9YhUmAxT
+	 LPcledtMRRqDQJHL4ltlg1mYT4UNEVDAdPCon+hU66hnqfHLQRMzwAqE6xx/5s+LPN
+	 1rdYZvAQSQNCNhfWflWRMsvVZkqp7wKGgdJ7lCLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbeL3SsV (ORCPT
+        id S1726676AbeL3S5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 13:48:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40354 "EHLO mx1.redhat.com"
+        Sun, 30 Dec 2018 13:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbeL3SsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 13:48:21 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726300AbeL3S5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 13:57:06 -0500
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6F9FF80E7B;
-        Sun, 30 Dec 2018 18:48:20 +0000 (UTC)
-Received: from redhat.com (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A167910018F9;
-        Sun, 30 Dec 2018 18:48:12 +0000 (UTC)
-Date:   Sun, 30 Dec 2018 13:48:12 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-Message-ID: <20181230134539-mutt-send-email-mst@kernel.org>
-References: <20181205225323.12555-1-mst@redhat.com>
- <20181205225323.12555-2-mst@redhat.com>
- <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
- <20181226102100-mutt-send-email-mst@kernel.org>
- <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 23F95213F2;
+        Sun, 30 Dec 2018 18:57:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546196225;
+        bh=r/mtGw93pLNcIk80TUscHn5ixLW16gZUwAROr2fH6A0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gEhob2MtKKuq1Buh9V/zP3msUkGHST+V44Lvmvfmnemq+EvxyZjpW3Zof/8z95+8C
+         +Y3G4/QUYIQHggnHBs5drO6+F1lCd7h5b/fKPGSRsVqAkq7ukuMpdQ3RME0TbzZp4b
+         9CteEe428tc8W9YJuY/Z7G79LokCaDCO9tCVFb8M=
+Received: by mail-oi1-f172.google.com with SMTP id i6so20749323oia.6;
+        Sun, 30 Dec 2018 10:57:05 -0800 (PST)
+X-Gm-Message-State: AA+aEWa8ElUGmpNmqLojjMOAvhXLv88OtXqFXhGtCdyKISBawn4J3KkC
+        SMswmnJqduvAhn4Cm7swD4Yw30IMpyvVpPxvGC4=
+X-Google-Smtp-Source: AFSGD/UA1g5qA2e0Oh2EI1pp8jEzcOfbJ/WWgeZHnIlFVN06GewiqfyQKxJM3T6LxTsPbHQMjHoavsyNZL1kd95+WNA=
+X-Received: by 2002:aca:c312:: with SMTP id t18mr24023676oif.92.1546196224437;
+ Sun, 30 Dec 2018 10:57:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 30 Dec 2018 18:48:20 +0000 (UTC)
+References: <20181223232521.11320-1-okaya@kernel.org> <20181223232521.11320-10-okaya@kernel.org>
+ <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Sun, 30 Dec 2018 21:56:53 +0300
+X-Gmail-Original-Message-ID: <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
+Message-ID: <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Hunter, Adrian" <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com,
+        chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com,
+        ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>,
+        alex.smith@imgtec.com, chris.brandt@renesas.com,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 06:04:53PM +0800, Jason Wang wrote:
-> 
-> On 2018/12/26 下午11:22, Michael S. Tsirkin wrote:
-> > On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
-> > > On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
-> > > > When use_napi is set, let's enable BQLs.  Note: some of the issues are
-> > > > similar to wifi.  It's worth considering whether something similar to
-> > > > commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
-> > > > benefitial.
-> > > 
-> > > I've played a similar patch several days before. The tricky part is the mode
-> > > switching between napi and no napi. We should make sure when the packet is
-> > > sent and trakced by BQL,  it should be consumed by BQL as well.
-> > 
-> > I just went over the patch again and I don't understand this comment.
-> > This patch only enabled BQL with tx napi.
-> > 
-> > Thus there's no mode switching.
-> > 
-> > What did I miss?
-> 
-> 
-> Consider the case:
-> 
-> 
-> TX NAPI is disabled:
-> 
-> send N packets
-> 
-> turn TX NAPI on:
-> 
-> get tx interrupt
-> 
-> BQL try to consume those packets when lead WARN for dql.
-> 
-> 
-> Thanks
+On Wed, Dec 26, 2018 at 12:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
+> >
+> > Select IOSF_MBI only when PCI is set.
+> >
+> > Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> > ---
+> >  drivers/mmc/host/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> > index e26b8145efb3..4c5f037b246d 100644
+> > --- a/drivers/mmc/host/Kconfig
+> > +++ b/drivers/mmc/host/Kconfig
+> > @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
+> >  config MMC_SDHCI_ACPI
+> >         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+> >         depends on MMC_SDHCI && ACPI
+>
+> It should depend on PCI as well, shouldn't it?
+>
 
-Can one really switch tx napi on and off? How?
-While root can change the napi_tx module parameter, I don't think
-that has any effect outside device probe time. What did I miss?
+I don't think so. The PCI dependency is at IOSF_MBI code so code
+should select IOSF_MBI only when x86 and pci is defined as below.
 
+This driver does not depend on PCI.
 
+> As it stands with the patch applied, randconfig can still select it if
+> PCI is unset AFAICS, can't it?
 
-> 
-> 
-> > 
-> > 
-> > > I did it by
-> > > tracking it through skb->cb.  And deal with the freeze by reset the BQL
-> > > status. Patch attached.
-> > > 
-> > > But when testing with vhost-net, I don't very a stable performance, it was
-> > > probably because we batch the used ring updating so tx interrupt may come
-> > > randomly. We probably need to implement time bounded coalescing mechanism
-> > > which could be configured from userspace.
-> > > 
-> > > Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
-> > > regression on machine without APICv, (haven't found time to test APICv
-> > > machine). But consider it was for correctness, I think it's acceptable? Then
-> > > we can do optimization on top?
-> > > 
-> > > 
-> > > Thanks
-> > > 
-> > > 
-> > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > ---
-> > > >    drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
-> > > >    1 file changed, 19 insertions(+), 8 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > index cecfd77c9f3c..b657bde6b94b 100644
-> > > > --- a/drivers/net/virtio_net.c
-> > > > +++ b/drivers/net/virtio_net.c
-> > > > @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
-> > > >    	return stats.packets;
-> > > >    }
-> > > > -static void free_old_xmit_skbs(struct send_queue *sq)
-> > > > +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
-> > > > +			       bool use_napi)
-> > > >    {
-> > > >    	struct sk_buff *skb;
-> > > >    	unsigned int len;
-> > > > @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
-> > > >    	if (!packets)
-> > > >    		return;
-> > > > +	if (use_napi)
-> > > > +		netdev_tx_completed_queue(txq, packets, bytes);
-> > > > +
-> > > >    	u64_stats_update_begin(&sq->stats.syncp);
-> > > >    	sq->stats.bytes += bytes;
-> > > >    	sq->stats.packets += packets;
-> > > > @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
-> > > >    		return;
-> > > >    	if (__netif_tx_trylock(txq)) {
-> > > > -		free_old_xmit_skbs(sq);
-> > > > +		free_old_xmit_skbs(sq, txq, true);
-> > > >    		__netif_tx_unlock(txq);
-> > > >    	}
-> > > > @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
-> > > >    	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
-> > > >    	__netif_tx_lock(txq, raw_smp_processor_id());
-> > > > -	free_old_xmit_skbs(sq);
-> > > > +	free_old_xmit_skbs(sq, txq, true);
-> > > >    	__netif_tx_unlock(txq);
-> > > >    	virtqueue_napi_complete(napi, sq->vq, 0);
-> > > > @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> > > >    	struct send_queue *sq = &vi->sq[qnum];
-> > > >    	int err;
-> > > >    	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
-> > > > -	bool kick = !skb->xmit_more;
-> > > > +	bool more = skb->xmit_more;
-> > > >    	bool use_napi = sq->napi.weight;
-> > > > +	unsigned int bytes = skb->len;
-> > > > +	bool kick;
-> > > >    	/* Free up any pending old buffers before queueing new ones. */
-> > > > -	free_old_xmit_skbs(sq);
-> > > > +	free_old_xmit_skbs(sq, txq, use_napi);
-> > > > -	if (use_napi && kick)
-> > > > +	if (use_napi && !more)
-> > > >    		virtqueue_enable_cb_delayed(sq->vq);
-> > > >    	/* timestamp packet in software */
-> > > > @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> > > >    		if (!use_napi &&
-> > > >    		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
-> > > >    			/* More just got used, free them then recheck. */
-> > > > -			free_old_xmit_skbs(sq);
-> > > > +			free_old_xmit_skbs(sq, txq, false);
-> > > >    			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
-> > > >    				netif_start_subqueue(dev, qnum);
-> > > >    				virtqueue_disable_cb(sq->vq);
-> > > > @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
-> > > >    		}
-> > > >    	}
-> > > > -	if (kick || netif_xmit_stopped(txq)) {
-> > > > +	if (use_napi)
-> > > > +		kick = __netdev_tx_sent_queue(txq, bytes, more);
-> > > > +	else
-> > > > +		kick = !more || netif_xmit_stopped(txq);
-> > > > +
-> > > > +	if (kick) {
-> > > >    		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
-> > > >    			u64_stats_update_begin(&sq->stats.syncp);
-> > > >    			sq->stats.kicks++;
+True, we also should be careful about separating ACPI from PCI.
+Someone should be able to define a sdhci acpi object without PCI.
+
+What do you think about this?
+
+>
+> > -       select IOSF_MBI if X86
+> > +       select IOSF_MBI if (X86 && PCI)
+> >         help
+> >           This selects support for ACPI enumerated SDHCI controllers,
+> >           identified by ACPI Compatibility ID PNP0D40 or specific
+> > --
