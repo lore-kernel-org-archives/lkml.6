@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1718EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB68AC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C919120836
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A391420836
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeL3Spb (ORCPT
+        id S1726684AbeL3SsV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 13:45:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48306 "EHLO mx1.redhat.com"
+        Sun, 30 Dec 2018 13:48:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40354 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbeL3Spa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 13:45:30 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726223AbeL3SsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 13:48:21 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 757FB369A9;
-        Sun, 30 Dec 2018 18:45:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F9FF80E7B;
+        Sun, 30 Dec 2018 18:48:20 +0000 (UTC)
 Received: from redhat.com (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D4A9166A1;
-        Sun, 30 Dec 2018 18:45:23 +0000 (UTC)
-Date:   Sun, 30 Dec 2018 13:45:23 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A167910018F9;
+        Sun, 30 Dec 2018 18:48:12 +0000 (UTC)
+Date:   Sun, 30 Dec 2018 13:48:12 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     Jason Wang <jasowang@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
@@ -35,27 +35,27 @@ Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
         "David S. Miller" <davem@davemloft.net>,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
 Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-Message-ID: <20181230134106-mutt-send-email-mst@kernel.org>
+Message-ID: <20181230134539-mutt-send-email-mst@kernel.org>
 References: <20181205225323.12555-1-mst@redhat.com>
  <20181205225323.12555-2-mst@redhat.com>
  <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
- <20181226101528-mutt-send-email-mst@kernel.org>
- <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181226102100-mutt-send-email-mst@kernel.org>
+ <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sun, 30 Dec 2018 18:45:30 +0000 (UTC)
+In-Reply-To: <620cfd46-aa3e-7eb6-0757-f4afbafda44b@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 30 Dec 2018 18:48:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+On Thu, Dec 27, 2018 at 06:04:53PM +0800, Jason Wang wrote:
 > 
-> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+> On 2018/12/26 下午11:22, Michael S. Tsirkin wrote:
 > > On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
 > > > On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
 > > > > When use_napi is set, let's enable BQLs.  Note: some of the issues are
@@ -65,47 +65,51 @@ On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
 > > > 
 > > > I've played a similar patch several days before. The tricky part is the mode
 > > > switching between napi and no napi. We should make sure when the packet is
-> > > sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
-> > > tracking it through skb->cb.  And deal with the freeze by reset the BQL
-> > > status. Patch attached.
-> > > 
-> > > But when testing with vhost-net, I don't very a stable performance,
-> > So how about increasing TSQ pacing shift then?
-> 
-> 
-> I can test this. But changing default TCP value is much more than a
-> virtio-net specific thing.
-
-Well same logic as wifi applies. Unpredictable latencies related
-to radio in one case, to host scheduler in the other.
-
-> 
+> > > sent and trakced by BQL,  it should be consumed by BQL as well.
 > > 
-> > > it was
-> > > probably because we batch the used ring updating so tx interrupt may come
-> > > randomly. We probably need to implement time bounded coalescing mechanism
-> > > which could be configured from userspace.
-> > I don't think it's reasonable to expect userspace to be that smart ...
-> > Why do we need time bounded? used ring is always updated when ring
-> > becomes empty.
+> > I just went over the patch again and I don't understand this comment.
+> > This patch only enabled BQL with tx napi.
+> > 
+> > Thus there's no mode switching.
+> > 
+> > What did I miss?
 > 
 > 
-> We don't add used when means BQL may not see the consumed packet in time.
-> And the delay varies based on the workload since we count packets not bytes
-> or time before doing the batched updating.
+> Consider the case:
+> 
+> 
+> TX NAPI is disabled:
+> 
+> send N packets
+> 
+> turn TX NAPI on:
+> 
+> get tx interrupt
+> 
+> BQL try to consume those packets when lead WARN for dql.
+> 
 > 
 > Thanks
 
-Sorry I still don't get it.
-When nothing is outstanding then we do update the used.
-So if BQL stops userspace from sending packets then
-we get an interrupt and packets start flowing again.
+Can one really switch tx napi on and off? How?
+While root can change the napi_tx module parameter, I don't think
+that has any effect outside device probe time. What did I miss?
 
-It might be suboptimal, we might need to tune it but I doubt running
-timers is a solution, timer interrupts cause VM exits.
+
 
 > 
+> 
 > > 
+> > 
+> > > I did it by
+> > > tracking it through skb->cb.  And deal with the freeze by reset the BQL
+> > > status. Patch attached.
+> > > 
+> > > But when testing with vhost-net, I don't very a stable performance, it was
+> > > probably because we batch the used ring updating so tx interrupt may come
+> > > randomly. We probably need to implement time bounded coalescing mechanism
+> > > which could be configured from userspace.
+> > > 
 > > > Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR
 > > > regression on machine without APICv, (haven't found time to test APICv
 > > > machine). But consider it was for correctness, I think it's acceptable? Then
