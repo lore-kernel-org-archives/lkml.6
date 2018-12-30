@@ -2,94 +2,77 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2583EC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D39C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC4E20866
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C8902084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeL3RWL (ORCPT
+        id S1726561AbeL3R1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 12:22:11 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:43498 "EHLO gloria.sntech.de"
+        Sun, 30 Dec 2018 12:27:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38544 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbeL3RWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 12:22:10 -0500
-Received: from [46.183.103.17] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gdemo-0003gf-4o; Sun, 30 Dec 2018 18:22:02 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] drm: rockchip: vop: add rk3066 vop definitions
-Date:   Sun, 30 Dec 2018 18:22:00 +0100
-Message-ID: <154632658.xpTMZOjgxT@phil>
-In-Reply-To: <20181229133318.18128-4-jbx6244@gmail.com>
-References: <20181229133318.18128-1-jbx6244@gmail.com> <20181229133318.18128-4-jbx6244@gmail.com>
+        id S1726216AbeL3R1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 12:27:18 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0731CC0495AE;
+        Sun, 30 Dec 2018 17:27:18 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-31.ams2.redhat.com [10.36.116.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5477D60851;
+        Sun, 30 Dec 2018 17:27:16 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpu/intel: Lower "ENERGY_PERF_BIAS: Set to normal" message log priority
+Date:   Sun, 30 Dec 2018 18:27:15 +0100
+Message-Id: <20181230172715.17469-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sun, 30 Dec 2018 17:27:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+The "ENERGY_PERF_BIAS: Set to 'normal', was 'performance'" message triggers
+on pretty much every Intel machine. The purpose of log messages with
+a warning level is to notify the user of something which potentially is
+a problem, or at least somewhat unexpected.
 
-Am Samstag, 29. Dezember 2018, 14:33:14 CET schrieb Johan Jonker:
-> From: Mark Yao <mark.yao@rock-chips.com>
-> 
-> This patch adds the rk3066 VOP definitions.
-> 
-> The VOP or LCD Controller serves as interface between
-> framebuffer memory and a display device (LCD panel or TV set).
-> 
-> This SOC has two symmetrical LCDC's for a dual panel application.
-> 
-> A LCDC has 5 display layers.
-> Only 3 are used here.
-> 
-> - Video layer 0 (Win0)
-> - Video layer 1 (Win1)
-> - OSD layer     (Win2)
+This message clearly does not match those criteria, so lower its log
+priority from warning to info.
 
-Patch itself looks good, we'll need to wait a bit to give Rob a chance
-to look at the (simple) dt-binding change and I'll drop the paragraph
-about the display layers when applying.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ arch/x86/kernel/cpu/intel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Looking at the rk3066-manual, the lcdcs really only have 3 fully usable
-layers + the special cursor layer which is right now not really usable in
-a drm context, so the above paragraph is misleading, so I'll just drop it.
-
-Heiko
-
-
-> Win0 and Win1 are exchangeable.
-> Maximum resolution is 1920x1080.
-> 
-> The LCDC0 output is connected to:
-> - LCDC0 IO (without IOMUX)
-> - HDMI TX video input
-> 
-> The LCDC1 output is connected to:
-> - LCDC1 IO (with IOMUX)
-> - HDMI TX video input
-> 
-> The HDMI TX input can switch between LCDC0 and LCDC1.
-> 
-> Signed-off-by: Mark Yao <mark.yao@rock-chips.com>
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-
-
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index fc3c07fe7df5..3142fd7a9b32 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -611,8 +611,8 @@ static void init_intel_energy_perf(struct cpuinfo_x86 *c)
+ 	if ((epb & 0xF) != ENERGY_PERF_BIAS_PERFORMANCE)
+ 		return;
+ 
+-	pr_warn_once("ENERGY_PERF_BIAS: Set to 'normal', was 'performance'\n");
+-	pr_warn_once("ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)\n");
++	pr_info_once("ENERGY_PERF_BIAS: Set to 'normal', was 'performance'\n");
++	pr_info_once("ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)\n");
+ 	epb = (epb & ~0xF) | ENERGY_PERF_BIAS_NORMAL;
+ 	wrmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
+ }
+-- 
+2.20.1
 
