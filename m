@@ -2,93 +2,86 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B1AC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A27C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C3E20861
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:08:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="kmbScMng"
+	by mail.kernel.org (Postfix) with ESMTP id 12F2620828
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 16:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbeL3QIT (ORCPT
+        id S1726363AbeL3Q3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 11:08:19 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:38404 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeL3QIS (ORCPT
+        Sun, 30 Dec 2018 11:29:09 -0500
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:39382 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeL3Q3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 11:08:18 -0500
-Received: from zyt.lan (unknown [IPv6:2a02:169:3465::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 530AE5C102A;
-        Sun, 30 Dec 2018 17:08:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1546186096;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4b4Aplok1v5A3OAOr1AuVES09IdBt8fC2qqk06hsBWY=;
-        b=kmbScMngcFvaaUOOMOC/F6ghNgSCcDKZ4tYgSzB/BHpQiUTu58j5H0vs3fFiIGzs5Widl0
-        zWp8LnAhCKWkhgMESy4znfI7PU8VjrjLls+ZZPY9sEURTyH2W5FBuv1Bo5jO1jbS3+aEMv
-        Ds59A0iywCRmPI4KkHgJ6KiT6Rp10Mc=
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk
-Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, nicolas.pitre@linaro.org,
-        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 1/3] ARM: fix argument count to match macro definition
-Date:   Sun, 30 Dec 2018 17:08:17 +0100
-Message-Id: <e5aa8bda88280b9cc76e52e386b216a4b1eeb557.1546185298.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1546185298.git.stefan@agner.ch>
-References: <cover.1546185298.git.stefan@agner.ch>
+        Sun, 30 Dec 2018 11:29:08 -0500
+Received: from darkstar.musicnaut.iki.fi (85-76-80-127-nat.elisa-mobile.fi [85.76.80.127])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 57BD7300BD;
+        Sun, 30 Dec 2018 18:29:06 +0200 (EET)
+Date:   Sun, 30 Dec 2018 18:29:06 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Subject: Bug report: unaligned access with ext4 encryption
+Message-ID: <20181230162906.GI27785@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The macro str8w takes 10 arguments, abort being the 10th. In this
-particular instantiation the abort argument is passed as 11th
-argument leading to an error when using LLVM's integrated
-assembler:
-  <instantiation>:46:47: error: too many positional arguments
-    str8w r0, r3, r4, r5, r6, r7, r8, r9, ip, , abort=19f
-                                                ^
-  arch/arm/lib/copy_template.S:277:5: note: while in macro instantiation
-  18: forward_copy_shift pull=24 push=8
-      ^
+Hi,
 
-The argument is not used in the macro hence this does not change
-code generation.
+When using ext4 encryption on SPARC, there's plenty of dmesg noise about
+unaligned access:
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/lib/copy_template.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[  167.269526] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
+[  167.270152] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
+[  181.087451] log_unaligned: 5 callbacks suppressed
+[  181.087511] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
+[  181.092435] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
+[  181.095816] Kernel unaligned access at TPC[5497a0] find_and_lock_process_key+0x80/0x120
 
-diff --git a/arch/arm/lib/copy_template.S b/arch/arm/lib/copy_template.S
-index 652e4d98cd47..2d54491b0e22 100644
---- a/arch/arm/lib/copy_template.S
-+++ b/arch/arm/lib/copy_template.S
-@@ -241,7 +241,7 @@
- 		orr	r9, r9, ip, lspush #\push
- 		mov	ip, ip, lspull #\pull
- 		orr	ip, ip, lr, lspush #\push
--		str8w	r0, r3, r4, r5, r6, r7, r8, r9, ip, , abort=19f
-+		str8w	r0, r3, r4, r5, r6, r7, r8, r9, ip, abort=19f
- 		bge	12b
- 	PLD(	cmn	r2, #96			)
- 	PLD(	bge	13b			)
--- 
-2.20.1
+And also seen on an ARM machine:
+
+$ cat /proc/cpu/alignment
+User:           0
+System:         1028193 (find_and_lock_process_key+0x84/0x10c)
+Skipped:        0
+Half:           0
+Word:           1028193
+DWord:          0
+Multi:          0
+User faults:    0 (ignored)
+
+Looks like user_key_payload layout is not optimal when data address
+is used for fscrypt_key... I tried the below change and got rid of the
+messages. Not sure what the proper fix should be?
+
+A.
+
+diff --git a/include/keys/user-type.h b/include/keys/user-type.h
+index e098cbe27db5..6495ffcfe510 100644
+--- a/include/keys/user-type.h
++++ b/include/keys/user-type.h
+@@ -31,7 +31,7 @@
+ struct user_key_payload {
+ 	struct rcu_head	rcu;		/* RCU destructor */
+ 	unsigned short	datalen;	/* length of this data */
+-	char		data[0];	/* actual data */
++	char data[0] __aligned(4);	/* actual data */
+ };
+ 
+ extern struct key_type key_type_user;
 
