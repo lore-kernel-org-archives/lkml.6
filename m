@@ -2,73 +2,98 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F879C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F07C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E8D2081B
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 322D920663
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:56:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbeL3Xu7 (ORCPT
+        id S1726879AbeL3X4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 18:50:59 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:45326 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725792AbeL3Xu6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 18:50:58 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBUNiNDa024462;
-        Sun, 30 Dec 2018 17:50:55 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2pp7771quh-1;
-        Sun, 30 Dec 2018 17:50:55 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id BD95D611C8AF;
-        Sun, 30 Dec 2018 17:50:54 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Sun, 30 Dec 2018
- 23:50:54 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBUNorCQ008747; Sun,
- 30 Dec 2018 23:50:53 GMT
-Date:   Sun, 30 Dec 2018 23:50:53 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Axel Lin <axel.lin@ingics.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: lochnagar: Set up correct .data field for
- "cirrus,lochnagar2-mic2vdd"
-Message-ID: <20181230235053.GN16508@imbe.wolfsonmicro.main>
-References: <20181229114047.4265-1-axel.lin@ingics.com>
+        Sun, 30 Dec 2018 18:56:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:41458 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725792AbeL3X4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 18:56:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 157C1207AE; Mon, 31 Dec 2018 00:56:08 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DBE0C206A6;
+        Mon, 31 Dec 2018 00:55:57 +0100 (CET)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] rtc: nvmem: fix possible use after free
+Date:   Mon, 31 Dec 2018 00:55:53 +0100
+Message-Id: <20181230235553.31266-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181229114047.4265-1-axel.lin@ingics.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=729 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812300219
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 29, 2018 at 07:40:47PM +0800, Axel Lin wrote:
-> Fix trival copy-n-paste mistake.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
+In cas of probe failure, devres may free the memory allocated for
+rtc->nvram before devm_rtc_release_device() is called. This leads to
+rtc_nvram_unregister using it after being freed which may lead to a crash.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+This has been shown to happen after commit 461e557b9727 ("rtc: nvmem: use
+devm_nvmem_register()")
 
-Thanks,
-Charles
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/nvmem.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
+index ebdfe8e3a1a0..dce518d5e50e 100644
+--- a/drivers/rtc/nvmem.c
++++ b/drivers/rtc/nvmem.c
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/rtc.h>
++#include <linux/slab.h>
+ #include <linux/sysfs.h>
+ 
+ /*
+@@ -45,9 +46,7 @@ static int rtc_nvram_register(struct rtc_device *rtc,
+ {
+ 	int err;
+ 
+-	rtc->nvram = devm_kzalloc(rtc->dev.parent,
+-				sizeof(struct bin_attribute),
+-				GFP_KERNEL);
++	rtc->nvram = kzalloc(sizeof(struct bin_attribute), GFP_KERNEL);
+ 	if (!rtc->nvram)
+ 		return -ENOMEM;
+ 
+@@ -64,7 +63,7 @@ static int rtc_nvram_register(struct rtc_device *rtc,
+ 	err = sysfs_create_bin_file(&rtc->dev.parent->kobj,
+ 				    rtc->nvram);
+ 	if (err) {
+-		devm_kfree(rtc->dev.parent, rtc->nvram);
++		kfree(rtc->nvram);
+ 		rtc->nvram = NULL;
+ 	}
+ 
+@@ -74,6 +73,8 @@ static int rtc_nvram_register(struct rtc_device *rtc,
+ static void rtc_nvram_unregister(struct rtc_device *rtc)
+ {
+ 	sysfs_remove_bin_file(&rtc->dev.parent->kobj, rtc->nvram);
++	kfree(rtc->nvram);
++	rtc->nvram = NULL;
+ }
+ 
+ /*
+-- 
+2.20.1
+
