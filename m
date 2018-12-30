@@ -7,53 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E62FC43613
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDE1C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5353920861
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 763F420866
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6PU+6vc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sMxAXL0Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbeL3RtN (ORCPT
+        id S1726855AbeL3RtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 12:49:13 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44653 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeL3RtJ (ORCPT
+        Sun, 30 Dec 2018 12:49:23 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33931 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbeL3RtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 12:49:09 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so17301842lfe.11
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 09:49:08 -0800 (PST)
+        Sun, 30 Dec 2018 12:49:13 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p6so17360497lfc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 09:49:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=4E+CRC/Vb1YBvB774DuOXRpJUYqdKQe5t91V4N0keqM=;
-        b=i6PU+6vcvbSFAa43G+ZvLzrqnzh5Vf7BwcjDi/wK36dlJaLgwHGZGMLIiCJS9677qS
-         PPkGpLvMICDf/G6Dc1ilkSJy/N7t30G5YWL/yYAbObgJlfH1Gph/r+j8LlV8d66Ywnxs
-         VvOQNJLf/xqZYj3sEfwhcwQbOrWyzBHe7sw+GrQHH9K1p29wbseuVzguwdhKm2XAMB0V
-         MYD3devQeEQM3XNNrMkLqGNIRIogyWLrydbekRrx1Ze9dnNbsYd/oQgPhg9iEJPDllXJ
-         KOorLIaVNcnsYxNu/CzBPZBxoNnTcBgnd0LkIBmBbTuY5PXMHSP7kjNN8q/6i/2tspdo
-         Zkdw==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/ZTcPKETlii/w2Tbc/AE/b6eZh03/XEmwz48FJPu78E=;
+        b=sMxAXL0Z54GmZmLG2RquWOuUHWsT0xF8y0R+KwPqB7/CzFLWr+HTNDtMf2AC/5S/hL
+         CTySpeoX7a9RYexGCJTNp4wKdp518EAZgjWUnchF9UufvRWNj3La1JgPnY0LE+Bgyk9P
+         C9hgZUUW3jwhp68N/g5JFZHO5YRJT9W/Pw4WNx0BXj8NhtpZdKSCnsXxek9XQaK5z7Ay
+         4Npm+Mqj1Px33+xt6fQ7d3OFt/NesqhefUbACTF17y9E9bEByLgmmwphNvocX/bOXBqH
+         4ShOah9oxGhGqqM2rPrqfyxYSatkfwPUddHwimWx4shdGBYLA8hNqZBEgBIEcpcohssR
+         1cPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=4E+CRC/Vb1YBvB774DuOXRpJUYqdKQe5t91V4N0keqM=;
-        b=NHXSViQmI2TYzERhYVYgkO4tYNMuQ9nXfd6esFw6Jy+J0DtbMLfkTotvm3LfIf2buc
-         5G/Ga1k6Dk2BEg96CKM2tg0TDUHZ999C1rS1Cmi77VxmWLjQFbcigPBkOVqg4q4oIFk8
-         bp/2/7ovPWgcJY/V4+ExRHtXzI0xzLLAkHYseaD0wjjOiw48+BGoy2sd+nYBAF3Iy4Cg
-         XXNahYZ1T4BZipTRrbbBZtPtRbRQH9t0DYLWkulZPxDKHAOPdvXypju8SqB6Rxi/ZeK2
-         SU4g/17NjTlmgoDRJ/G2PnjcrW4hg+TTBotXeIo2bovDFhk00pXEkxwNoRpkd2C0cL83
-         BEAQ==
-X-Gm-Message-State: AA+aEWZgtmyEZXZfL4Zxx7SuP51Mg6r/FaHlHz/lRNuYTI+0ec+ftehL
-        dBOaT9fy/wv0lIqpJdkPq/M=
-X-Google-Smtp-Source: AFSGD/VxNz6Dh1amyqnZXFLMwAP3/t125Up6TTWgAnferqJMBdC8tk80NeyWHhO2CEqTB9WnW3M/cA==
-X-Received: by 2002:a19:f204:: with SMTP id q4mr18621487lfh.133.1546192147339;
-        Sun, 30 Dec 2018 09:49:07 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=/ZTcPKETlii/w2Tbc/AE/b6eZh03/XEmwz48FJPu78E=;
+        b=cNsggKwNfe0U/IpwihP0URKIvYKsKsZ5e5OuFibA/5hINUNhalXozv565sZ8Y4DCZO
+         o2uqwDTgUpuA3G9pbVVLyomZPzXgrm1NiZm7K9+LfD06mmd5IaQUVglZ+uxU1NR+PeX8
+         DBEoDoySo5bhagipQX9EyJBN3aOH2ySF3oSwNqUuXrLWO/STli3Znb0frOa+CSs7F+/6
+         ULtKQ0GHkQhThlYU6UDKEqJuMHbUL3NhthZUinqMa9yGRxVFveFnKp7rmuR0ytcqiYLI
+         u9IHoIYdCEF6dqclUh4L3NYCNTKWaPFEAJbJZXM1z/F4SqigW1A2oXLcpSzMeLwC11/g
+         PoaA==
+X-Gm-Message-State: AA+aEWbOHl6S+zk8XX8qhcJstBoNvtSPWDo5rnH+qPI/KQfgij3GY1cP
+        +z2dfifXHigRLv5nK2x0uQE=
+X-Google-Smtp-Source: AFSGD/VpOpZPsY76fQZNonAfHICY/E6eJkajGgdzyO+DVD/SvtAM5A3zfASctwXyx1xBpKWlrAzllQ==
+X-Received: by 2002:a19:db82:: with SMTP id t2mr18240749lfi.130.1546192150467;
+        Sun, 30 Dec 2018 09:49:10 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id q11sm8853170lfc.92.2018.12.30.09.49.06
+        by smtp.gmail.com with ESMTPSA id q11sm8853170lfc.92.2018.12.30.09.49.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Dec 2018 09:49:06 -0800 (PST)
+        Sun, 30 Dec 2018 09:49:10 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -63,123 +65,195 @@ To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 10/14] drm: remove include of drmP.h from drm_modeset_helper.h
-Date:   Sun, 30 Dec 2018 18:48:34 +0100
-Message-Id: <20181230174838.32330-11-sam@ravnborg.org>
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v2 13/14] drm/tinydrm: do not reply on drmP.h from drm_gem_cma_helper.h
+Date:   Sun, 30 Dec 2018 18:48:37 +0100
+Message-Id: <20181230174838.32330-14-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drmP.h is an relic from the days when there was a single header file.
-To enable the removal of drmP.h from all users drop include
-of drmP.h from drm_modeset_helper.h.
+drmP.h was the only header file in the past and a lot
+of files rely on that drmP.h defines everything.
+The goal is to one day to delete drmP.h and
+as a step towards this it will no longer be included in the
+headers files in include/drm/
 
-A few files relied on the file included in drmP.h - add explicit
-include statements to these files.
-Build tested with arm and x86.
+To prepare tinydrm/ for this add dependencies that
+othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
 
-v2:
-- Add forward declarations to drm_modeset_helper.h (Laurent Pinchart)
+To avoid that tinydrm.h became "include everything",
+push include files to the individual drivers.
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: "Noralf Trønnes" <noralf@tronnes.org>
 Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: David Lechner <david@lechnology.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/arc/arcpgu_sim.c     | 1 +
- drivers/gpu/drm/bridge/cdns-dsi.c    | 2 ++
- drivers/gpu/drm/drm_modeset_helper.c | 2 ++
- drivers/gpu/drm/rcar-du/rcar_lvds.c  | 1 +
- include/drm/drm_modeset_helper.h     | 6 +++++-
- 5 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tinydrm/core/tinydrm-core.c | 3 +++
+ drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c | 3 +++
+ drivers/gpu/drm/tinydrm/hx8357d.c           | 1 +
+ drivers/gpu/drm/tinydrm/ili9225.c           | 2 ++
+ drivers/gpu/drm/tinydrm/ili9341.c           | 1 +
+ drivers/gpu/drm/tinydrm/mi0283qt.c          | 1 +
+ drivers/gpu/drm/tinydrm/mipi-dbi.c          | 3 +++
+ drivers/gpu/drm/tinydrm/repaper.c           | 1 +
+ drivers/gpu/drm/tinydrm/st7586.c            | 1 +
+ drivers/gpu/drm/tinydrm/st7735r.c           | 1 +
+ 10 files changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_sim.c b/drivers/gpu/drm/arc/arcpgu_sim.c
-index 68629e614990..3b7556f62230 100644
---- a/drivers/gpu/drm/arc/arcpgu_sim.c
-+++ b/drivers/gpu/drm/arc/arcpgu_sim.c
-@@ -14,6 +14,7 @@
-  *
-  */
- 
-+#include <drm/drm_device.h>
- #include <drm/drm_crtc_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+index 01a6f2d42440..aeb93eadb047 100644
+--- a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
++++ b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+@@ -10,11 +10,14 @@
+ #include <drm/drm_atomic.h>
  #include <drm/drm_atomic_helper.h>
- 
-diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
-index ce9496d13986..4b73d0969468 100644
---- a/drivers/gpu/drm/bridge/cdns-dsi.c
-+++ b/drivers/gpu/drm/bridge/cdns-dsi.c
-@@ -8,11 +8,13 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_bridge.h>
  #include <drm/drm_crtc_helper.h>
 +#include <drm/drm_drv.h>
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_panel.h>
- #include <video/mipi_display.h>
- 
- #include <linux/clk.h>
-+#include <linux/interrupt.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
-index 9150fa385bba..9bc1ef788c77 100644
---- a/drivers/gpu/drm/drm_modeset_helper.c
-+++ b/drivers/gpu/drm/drm_modeset_helper.c
-@@ -23,8 +23,10 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
  #include <drm/drm_fb_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_plane_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
 +#include <drm/drm_print.h>
+ #include <drm/tinydrm/tinydrm.h>
+ #include <linux/device.h>
+ #include <linux/dma-buf.h>
++#include <linux/module.h>
  
  /**
-  * DOC: aux kms helpers
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 534a128a869d..8010ed702509 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_graph.h>
-diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
-index efa337f03129..995fd981cab0 100644
---- a/include/drm/drm_modeset_helper.h
-+++ b/include/drm/drm_modeset_helper.h
-@@ -23,7 +23,11 @@
- #ifndef __DRM_KMS_HELPER_H__
- #define __DRM_KMS_HELPER_H__
+  * DOC: overview
+diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+index eacfc0ec8ff1..d4576d6e8ce4 100644
+--- a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
++++ b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+@@ -9,8 +9,11 @@
  
--#include <drm/drmP.h>
-+struct drm_crtc;
-+struct drm_crtc_funcs;
-+struct drm_device;
-+struct drm_framebuffer;
-+struct drm_mode_fb_cmd2;
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_modes.h>
++#include <drm/drm_print.h>
++#include <drm/drm_vblank.h>
+ #include <drm/tinydrm/tinydrm.h>
  
- void drm_helper_move_panel_connectors_to_head(struct drm_device *);
+ struct tinydrm_connector {
+diff --git a/drivers/gpu/drm/tinydrm/hx8357d.c b/drivers/gpu/drm/tinydrm/hx8357d.c
+index 81a2bbeb25d4..3ae11aa4b73b 100644
+--- a/drivers/gpu/drm/tinydrm/hx8357d.c
++++ b/drivers/gpu/drm/tinydrm/hx8357d.c
+@@ -16,6 +16,7 @@
+ #include <linux/property.h>
+ #include <linux/spi/spi.h>
  
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_modeset_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/ili9225.c b/drivers/gpu/drm/tinydrm/ili9225.c
+index 78f7c2d1b449..b0ad58b97227 100644
+--- a/drivers/gpu/drm/tinydrm/ili9225.c
++++ b/drivers/gpu/drm/tinydrm/ili9225.c
+@@ -20,7 +20,9 @@
+ #include <linux/spi/spi.h>
+ #include <video/mipi_display.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/tinydrm/mipi-dbi.h>
+diff --git a/drivers/gpu/drm/tinydrm/ili9341.c b/drivers/gpu/drm/tinydrm/ili9341.c
+index 51395bdc6ca2..bcdf10906ade 100644
+--- a/drivers/gpu/drm/tinydrm/ili9341.c
++++ b/drivers/gpu/drm/tinydrm/ili9341.c
+@@ -15,6 +15,7 @@
+ #include <linux/property.h>
+ #include <linux/spi/spi.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_modeset_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/mi0283qt.c b/drivers/gpu/drm/tinydrm/mi0283qt.c
+index 3fa62e77c30b..97805ca37a04 100644
+--- a/drivers/gpu/drm/tinydrm/mi0283qt.c
++++ b/drivers/gpu/drm/tinydrm/mi0283qt.c
+@@ -17,6 +17,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/spi/spi.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_modeset_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/mipi-dbi.c b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+index 3a05e56f9b0d..10294e1283dd 100644
+--- a/drivers/gpu/drm/tinydrm/mipi-dbi.c
++++ b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+@@ -10,14 +10,17 @@
+  */
+ 
+ #include <linux/debugfs.h>
++#include <linux/delay.h>
+ #include <linux/dma-buf.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/spi/spi.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
++#include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/tinydrm/mipi-dbi.h>
+ #include <drm/tinydrm/tinydrm-helpers.h>
+diff --git a/drivers/gpu/drm/tinydrm/repaper.c b/drivers/gpu/drm/tinydrm/repaper.c
+index 54d6fe0f37ce..b2a8f894946a 100644
+--- a/drivers/gpu/drm/tinydrm/repaper.c
++++ b/drivers/gpu/drm/tinydrm/repaper.c
+@@ -26,6 +26,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/thermal.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/st7586.c b/drivers/gpu/drm/tinydrm/st7586.c
+index a6a8a1081b73..bf518167760a 100644
+--- a/drivers/gpu/drm/tinydrm/st7586.c
++++ b/drivers/gpu/drm/tinydrm/st7586.c
+@@ -17,6 +17,7 @@
+ #include <linux/spi/spi.h>
+ #include <video/mipi_display.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+diff --git a/drivers/gpu/drm/tinydrm/st7735r.c b/drivers/gpu/drm/tinydrm/st7735r.c
+index b39779e0dcd8..9bc93d5a0401 100644
+--- a/drivers/gpu/drm/tinydrm/st7735r.c
++++ b/drivers/gpu/drm/tinydrm/st7735r.c
+@@ -14,6 +14,7 @@
+ #include <linux/spi/spi.h>
+ #include <video/mipi_display.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/tinydrm/mipi-dbi.h>
 -- 
 2.12.0
 
