@@ -2,115 +2,94 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF419C43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 09:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B561C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7908121850
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 09:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 232F221019
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:17:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJvDFSES"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbeL3Jwa (ORCPT
+        id S1726144AbeL3KR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 04:52:30 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:56082 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbeL3Jwa (ORCPT
+        Sun, 30 Dec 2018 05:17:58 -0500
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:32789 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeL3KR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 04:52:30 -0500
-Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id CC4AB3A441C;
-        Sun, 30 Dec 2018 10:49:33 +0100 (CET)
-X-Originating-IP: 37.176.180.32
-Received: from uno.localdomain (unknown [37.176.180.32])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 55C5720003;
-        Sun, 30 Dec 2018 09:49:29 +0000 (UTC)
-Date:   Sun, 30 Dec 2018 10:49:27 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH] media: tw9910: add missed clk_disable_unprepare() on
- failure path
-Message-ID: <20181230094918.6ysahn7tr6us6uoh@uno.localdomain>
-References: <1546119320-11841-1-git-send-email-khoroshilov@ispras.ru>
+        Sun, 30 Dec 2018 05:17:57 -0500
+Received: by mail-lj1-f171.google.com with SMTP id v1-v6so21912524ljd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 02:17:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=5VTSRqosN2p9pLhoq9yGM90OXpRmfrewiM/uv6FDgk8=;
+        b=tJvDFSESkCt7pP8PNJHMDXwmhMrfNdedPJEAUeS0Z3lzgC0iX27PTNDHTu/mO2KuL0
+         fGzufTk913O2CU2CTonq19RXxxh75PwMY+OzSyGhUoZhTYG+z5b7DIYedcu+bkbxGr9T
+         iA19QBgMDX2qAQIUAcPzhz23WVQ0pzbZBrVyxW88bZMv8fbT6XX7VHmPoHQxBmh9lzLg
+         sZyudqXaH/mMbboBKU68CJZxGeGW0voM8qIEsc3GDRFPYz9dWHhs8RAPOfU4yOfv0Sg9
+         DAqFC2rrOg+BTV+pEMwWZbupp+kwY0GCCp+A5S+J7D0cVF4Y5mlkaoFC1Yl4+5gxaDyY
+         CcIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=5VTSRqosN2p9pLhoq9yGM90OXpRmfrewiM/uv6FDgk8=;
+        b=RpJM0sXRiITp3FccU9t7kVD1K3wwbU/e5t2JF7hyYsSDuykDITLM6mU5bCmxUMPz6t
+         Ah1EDUIvxTssF0YJxTbusq4PUgM/wy7IzLQN00VndfDCqniMEmTAJqM+u3bWzaeQ4omx
+         QdvHsnx2JkgIMCLoYR2vwn8oiOUxDL/QqNMpIBk51b8ptRwxNZvFsP86Iepcgh4tnI6z
+         SPnJI0nCEpbX7ts0Z7vOmMWjeCUNCVOuEARHuZD6QVjeu5M1rOYHqmx/G1dX4eeRxpls
+         lMcbzo4IOYTMUxZVdLiZeKY4BNpQttjVkIK196J5vo1d1HitMFnzI+UhJsq4hZ3uuxZ/
+         LLSA==
+X-Gm-Message-State: AJcUukehJb+4IVgeGUtSLE44sjmvhpjt3k5S/W0p+yDy/9/S8LjAQlFv
+        1s8ogIGJIKuaeLsMG/4xkJ10d+IE98nxQXjhv5jBfVLsCA==
+X-Google-Smtp-Source: ALg8bN5g99Cst64Uad9FGmgexHAD8YFUsBXs5dXmwq1dX1H2J0ARx3MY9PDB/grmatQR2EL2zhbGyE38/awr3XO12nk=
+X-Received: by 2002:a2e:e02:: with SMTP id 2-v6mr16489970ljo.10.1546165075266;
+ Sun, 30 Dec 2018 02:17:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="csa27tseyhrjxlu6"
-Content-Disposition: inline
-In-Reply-To: <1546119320-11841-1-git-send-email-khoroshilov@ispras.ru>
-User-Agent: NeoMutt/20180716
+From:   Yi Qingliang <niqingliang2003@gmail.com>
+Date:   Sun, 30 Dec 2018 18:17:44 +0800
+Message-ID: <CADwFkYe1Z7C_993xdKKeOg3F1O40L1o+K9GyF2JKG0HUUPv7SA@mail.gmail.com>
+Subject: epoll and vb2_poll: can't wake_up
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello, I encountered a "can't wake_up" problem when use camera on imx6.
 
---csa27tseyhrjxlu6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+if delay some time after 'streamon' the /dev/video0, then add fd
+through epoll_ctl, then the process can't be waken_up after some time.
 
-Hi Alexey,
-   thanks for the patch
+I checked both the epoll / vb2_poll(videobuf2_core.c) code.
 
-On Sun, Dec 30, 2018 at 12:35:20AM +0300, Alexey Khoroshilov wrote:
-> If gpiod_get_optional() fails in tw9910_power_on(), clk is left undisabled.
->
+epoll will pass 'poll_table' structure to vb2_poll, but it only
+contain valid function pointer when inserting fd.
 
-Correct, thanks for spotting this.
+in vb2_poll, if found new data in done list, it will not call 'poll_wait'.
+after that, every call to vb2_poll will not contain valid poll_table,
+which will result in all calling to poll_wait will not work.
 
-I think pdn_gpio should also be handled if rstb_gpio fails.
-What's your opinion?
+so if app can process frames quickly, and found frame data when
+inserting fd (i.e. poll_wait will not be called or not contain valid
+function pointer), it will not found valid frame in 'vb2_poll' finally
+at some time, then call 'poll_wait' to expect be waken up at following
+vb2_buffer_done, but no good luck.
 
-Thanks
-  j
+I also checked the 'videobuf-core.c', there is no this problem.
 
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> ---
->  drivers/media/i2c/tw9910.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
-> index a54548cc4285..109770d678d2 100644
-> --- a/drivers/media/i2c/tw9910.c
-> +++ b/drivers/media/i2c/tw9910.c
-> @@ -610,6 +610,7 @@ static int tw9910_power_on(struct tw9910_priv *priv)
->  					     GPIOD_OUT_LOW);
->  	if (IS_ERR(priv->rstb_gpio)) {
->  		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
-> +		clk_disable_unprepare(priv->clk);
->  		return PTR_ERR(priv->rstb_gpio);
->  	}
->
-> --
-> 2.7.4
->
+of course, both epoll and vb2_poll are right by itself side, but the
+result is we can't get new frames.
 
---csa27tseyhrjxlu6
-Content-Type: application/pgp-signature; name="signature.asc"
+I think by epoll's implementation, the user should always call poll_wait.
 
------BEGIN PGP SIGNATURE-----
+and it's better to split the two actions: 'wait' and 'poll' both for
+epoll framework and all epoll users, for example, v4l2.
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlwolKcACgkQcjQGjxah
-VjyYNhAArW3S6a0VKHt1tOqepKIhIZkqkl9SIlfKx0RuP2ir7rN9CQllhhwnqeyH
-p+7qzScVydDnk+tmTqXEqf3w0yFpgtCc3qqMjyYNkfBWtbb2O0YQCpcq4hDzHyHK
-jeEinxZzUzn5T9eBwMpjEI9wFi+3fjUit4yRSN7O9kdfQRCpYjCHdQEVuqUwuf5w
-8OrlMV6VhV3MARQdvbh4JAQ4ldQoUkx7cVRZ7rkL73qRb8pGTuIZAJbHO0A9mZKd
-mkc6yjOga9VIBmx54MHHzRBNtMZjtqth05GOvp6oTZ1zMMZ9iGCR93x5f5+rM6+I
-C1ep5Ju0KP4MGqzzfsmal2Cfp9Wq6HD0O+D1y3okwkV7YfZ63Fxz4PS3vDecS37J
-qBD9eC4TsYBo/WPCCX/Xe0WfTeonpbDD8dMkTSoZ9kbwbbl8F5hzBj4mKOEFcrPc
-c20Rea4WMWayE7WHmEKkHiEOwsrAdkGSBMxEmzb7rD48rCv5rXPISbTQXESKRFsM
-c6egrbU2Blgl0pnh9RJjygjnpgARzPyLiPuy+CtAs8vH3Qd8+LHGadxkvqZ+1y6U
-EZYkdF56iYTKq6SJDf5/OFJnKZi9++5dYrbgH7iZR19IPF1ZJblOgdmNKHeZQgRY
-0UM3MbsiTNH421Uipf8Qf5AjS5G9MB5EQsCICYMBJ/HAP8XzZNE=
-=xxg+
------END PGP SIGNATURE-----
-
---csa27tseyhrjxlu6--
+am I right?
