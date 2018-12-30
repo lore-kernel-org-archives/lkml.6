@@ -2,109 +2,102 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C94DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 12:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAAEC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 12:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5552B20855
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 12:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B609720855
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 12:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iqE9zpvr"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O2nXbAMt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbeL3MgY (ORCPT
+        id S1726139AbeL3Mgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 07:36:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38214 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbeL3MgY (ORCPT
+        Sun, 30 Dec 2018 07:36:38 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36799 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725894AbeL3Mgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 07:36:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so24619915wrw.5;
-        Sun, 30 Dec 2018 04:36:22 -0800 (PST)
+        Sun, 30 Dec 2018 07:36:38 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so31723599itj.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 04:36:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=i02gaLkDojUSUqCyfJ9g7Ameroxnp+aU5hKWOv8LesU=;
-        b=iqE9zpvryHXMKRsa4UKqZi+kCEuOp+Zxuc+oDI/g4RfK6QHEiFUHTlPartEADQZeJ9
-         Ukdo3HSldiZraOFYa58GorfZczo6jCryTx7Mg+CviszADBhPTMnsRp8/Wpq1hYJspmPd
-         obc+n3LTTdK9PiiIA69R5LHMrkQCMuh3U3FyRYFwdc+8epLohJcGYlm5PJZ3Ubh9d605
-         /0OVIvy/iugFVQmgLtTuGlZU143aeSc1uchnNHqBSJ7eZ9NYwcRWroiN8pZ48Mv1/7Yx
-         NnOcah4WeJ1r5r2p4X6olxTk70nvy/3fy1PGKOCW8RhYf9Ngs8KQe9umNpAVgJ16Cmr9
-         dVng==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i1mq4t38uYbLqxlD5aox2nT0EoBqfFO/XvxILpGueIg=;
+        b=O2nXbAMtEChqjNQlq6mXIhMRYh+OvxNVj7TnS62gVZJ6RTaU/fYMaKB/lZMYwB/6wq
+         56Sh4kQRoC5/R3AP8wlStBcHeaoFIZcyY2WtqAu0OLA2bGnL6JCOQPBMppe2TgXuyTn6
+         xb/V5zIOja//0/e6YvzbrXP/jDWD1PmyYPb8s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=i02gaLkDojUSUqCyfJ9g7Ameroxnp+aU5hKWOv8LesU=;
-        b=K4EKWsgc2sHLqitH2B0AX/6Nr7+YZ35xi5h/S9LwBJAZQLGoXOY/dyhSskJRst6AM5
-         SkXD8Uf1LZH3iys+bZ4HqBxG8Jj9i9reeULjNLDU2ZqyR4zoL1DGtJ9hW7w11YqHPz9y
-         xRctenXSmKBFGrisUFEMOcVfwoECZFvvB+QFy/rXiEziKg4lu5brdCrBVqG0tiQVhAyG
-         IxiDXvaecVy8aDpLp+7YOw7pzGDI/EJCGQdpXptIjhLbf7QuGL6Cp62Au+dIdRIx+izN
-         aWY0Trn3S1oI5fwIlWZqUwBEH2pSlAX4qlqqeRt+DFAv1Ru45R1WPNb1QkT098SNifnb
-         OAcw==
-X-Gm-Message-State: AJcUukeZ8tDCrrbaAL0/o4jv5sMQtwI+YE5XfMJvquZKA3H0s//qtFDU
-        7XKWN/lMqJZ96a2nMBrt1kMJjiE4
-X-Google-Smtp-Source: ALg8bN6BYjID4rCHzAiWFgobfF6iA42hRF8lVEXvedr7xg8YoTiBOcZTvSshIEBNhrU/4lAR1/m8Aw==
-X-Received: by 2002:adf:8484:: with SMTP id 4mr29951651wrg.249.1546173382090;
-        Sun, 30 Dec 2018 04:36:22 -0800 (PST)
-Received: from jig.fritz.box (p3EE0413B.dip0.t-ipconnect.de. [62.224.65.59])
-        by smtp.gmail.com with ESMTPSA id e27sm39258165wra.67.2018.12.30.04.36.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Dec 2018 04:36:21 -0800 (PST)
-From:   Mathias Krause <minipli@googlemail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathias Krause <minipli@googlemail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH] kallsyms: lower alignment on ARM
-Date:   Sun, 30 Dec 2018 13:36:00 +0100
-Message-Id: <1546173360-25573-1-git-send-email-minipli@googlemail.com>
-X-Mailer: git-send-email 1.7.10.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i1mq4t38uYbLqxlD5aox2nT0EoBqfFO/XvxILpGueIg=;
+        b=UOte/TseGj2iSi0cWZ488j0+XpgAlrSLgeq5N8F2J8xHEMKQu/ThccSKKBsMF0PSyY
+         VXmBoBzpA2Xa/47lQg8tll1WMnZ1wrkBPLOoMelOFoq7siiHQuDPw1d3/TquFddO0w0x
+         wqwrlDQ0XBsq4x6VuNB3sm4Me1Th2fnRVDzVzkkdutYtKVhkkkm6AU0NZLaGSmt2EGMa
+         4v1LTKJZ3SZkh8poCZkknXk7hc0wI8T19tMQNsIe9WLvPSaOeH/6MDginv3KT4D7E2IG
+         xZ6IxoUnz4lt/mKeMv7sE9ATqoP1mDoIzwUa50U7ckVPu+Yb9uR+YiwqYeIjMCesnDRk
+         rcYQ==
+X-Gm-Message-State: AA+aEWZCDJ5NrO8Ck2ZsoI8+5HQ/XvVZpWkQCDKNNp0zMDkNrshFzAa/
+        bZqvgCptavWCtcb4dy2eUSvUr7AyBapahxz6x2xApg==
+X-Google-Smtp-Source: AFSGD/UXmFbY+k3WtI3XRU0lK1BQPBSdGJp4g6uAWoSAtdzqstugpVc1BZE2JRYGLKQ08CsTjxQXk0xAPi1oJLXHkF0=
+X-Received: by 2002:a02:7f08:: with SMTP id r8mr23127713jac.20.1546173397523;
+ Sun, 30 Dec 2018 04:36:37 -0800 (PST)
+MIME-Version: 1.0
+References: <1545879866-27809-1-git-send-email-xiexiuqi@huawei.com>
+ <CAKfTPtDRGULW3mdFzeyT=OBPdtPsz-6BG-=UGWbK6RQ7Lg8YpA@mail.gmail.com> <20181230120435.GA17231@gmail.com>
+In-Reply-To: <20181230120435.GA17231@gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Sun, 30 Dec 2018 13:36:25 +0100
+Message-ID: <CAKfTPtA2ibYVJdqdWbEVjjCYueSCzc15Jwt9RNo=D=3kUFpEFw@mail.gmail.com>
+Subject: Re: [PATCH] sched: fix infinity loop in update_blocked_averages
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Xie XiuQi <xiexiuqi@huawei.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, xiezhipeng1@huawei.com,
+        huawei.libin@huawei.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As mentioned in the info pages of gas, the '.align' pseudo op's
-interpretation of the alignment value is architecture specific.
-It might either be a byte value or taken to the power of two.
+On Sun, 30 Dec 2018 at 13:04, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> > > Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+> > > Cc: Bin Li <huawei.libin@huawei.com>
+> > > Cc: <stable@vger.kernel.org>        [4.10+]
+> > > Fixes: 9c2791f936ef (sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list)
+> >
+> > If it only happens in update_blocked_averages(), the del leaf has been added by:
+> > a9e7f6544b9c (sched/fair: Fix O(nr_cgroups) in load balance path)
+>
+> So I think until we are confident in the proposed fixes, how about
+> applying Linus's patch that reverts a9e7f6544b9c and simplifies the list
+> manipulation?
 
-On ARM it's actually the latter which leads to unnecessary large
-alignments of 16 bytes for 32 bit builds or 256 bytes for 64 bit
-builds.
+looks good to me
 
-Fix this by switching to '.balign' instead which is consistent
-across all architectures.
-
-Signed-off-by: Mathias Krause <minipli@googlemail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- scripts/kallsyms.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 109a1af7e444..77cebad0474e 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -334,10 +334,10 @@ static void write_src(void)
- 	printf("#include <asm/types.h>\n");
- 	printf("#if BITS_PER_LONG == 64\n");
- 	printf("#define PTR .quad\n");
--	printf("#define ALGN .align 8\n");
-+	printf("#define ALGN .balign 8\n");
- 	printf("#else\n");
- 	printf("#define PTR .long\n");
--	printf("#define ALGN .align 4\n");
-+	printf("#define ALGN .balign 4\n");
- 	printf("#endif\n");
- 
- 	printf("\t.section .rodata, \"a\"\n");
--- 
-2.19.2
-
+Thanks
+Vincent
+>
+> That way we can re-introduce the O(nr_cgroups) optimization without
+> pressure.
+>
+> I'll prepare a commit for sched/urgent that does this, please holler if
+> any of you disagrees!
+>
+> Thanks,
+>
+>         Ingo
