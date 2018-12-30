@@ -2,131 +2,111 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1FFC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EBAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1BB20836
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 145792084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546169109;
+	bh=RpjY7SSj2kmlORp8R7hyIgBne2j4azVNO6Escq39RUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gx01ENAd7WRB8jey26RDlcYgxUs99DaafH0RE/KAIdJ5h1XX/WpPFQilf7gPTqJfz
+	 mdE7a+o63D+/e1V7b6PlkpgUQPl7R/eZXWwvDyDz+dlABtXdLvvCOlQM9qErHgvCwM
+	 fBQgQh2TAYShCdpyjsg1hEunaRGDgV6T1odF5VaM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbeL3LSA (ORCPT
+        id S1726217AbeL3LZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 06:18:00 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:47206 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbeL3LR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 06:17:59 -0500
-Received: from [192.168.1.9] (ppp85-140-180-153.pppoe.mtu-net.ru [85.140.180.153])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 72A9554006A;
-        Sun, 30 Dec 2018 14:17:55 +0300 (MSK)
-Subject: Re: [PATCH] media: tw9910: add missed clk_disable_unprepare() on
- failure path
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-References: <1546119320-11841-1-git-send-email-khoroshilov@ispras.ru>
- <20181230094918.6ysahn7tr6us6uoh@uno.localdomain>
-From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=khoroshilov@ispras.ru; prefer-encrypt=mutual; keydata=
- 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
- kK2E04Fb+Zk1eJvHYRc=
-Message-ID: <80f84853-9991-8a64-da22-9349543d5deb@ispras.ru>
-Date:   Sun, 30 Dec 2018 14:17:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 30 Dec 2018 06:25:08 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50875 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeL3LZH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 06:25:07 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so21903196wmd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 03:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zihMkPJKGrw/WyBTRFkecBRoxbnNFH+ExvSelPKG0Pk=;
+        b=JBsl+P9Uf4YWM+SIA9tbcWzM4gKSuy09o4wUcrlWxnxSLD39RZE9jnKh86U3cUqvPS
+         V7a2wmIM/q9H4BjeTr74fv4lIkuvPA3OEDUukvO9K9/WECPkXSpeTwRTR3i4xxXToNm0
+         bTwyRLQ4XHZtyJQSTI0HzT910rui5T2T+QEP5UtVINn0X8aKdcHsM69dwHgcaXUi5O3w
+         YaDZhrCS9t0lQeb7sd5zZGAgKcinVczsEQGlJN93iMJQGbcCCrta07XwWx3sLC2q44Sc
+         8nDTQKOnyJ3EPPXSaaRoEaZgjaDOwV0fn7MPaCmhhecnH5vWeWKtfUpxgKCZ0s5tu4ET
+         VQBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zihMkPJKGrw/WyBTRFkecBRoxbnNFH+ExvSelPKG0Pk=;
+        b=kx6yHiZaQwlUw7YDQPFwNBUYrHMoPIZSQjOHppe4E7veX1bu9FUL798rmQQLTUFE3Q
+         5hcCVlQwD1A9XQUEQheXpcik9spc6iR9aKQdTibSvkJMDvrBQAy3vn42MRzE3wI7xkpB
+         4UtvxtfmnNdDU+MWdviuv3vwJ85VIcK7pO+y2GettMCQitxeL3qnEauEz6Oa+SE2tXSK
+         2k635JEeSWvZvgYjwlNiP5OJ/G10iSYRYNAjgBgIRi0bmIorwt0LeMD9FD3AKkhEZi5e
+         nlyfwh+BlRbWW6jSTE1OTMT0ilveGnmipjo38mw9hRcIamRf+N+HW+TdIolPfqjrqE2Y
+         bxMw==
+X-Gm-Message-State: AA+aEWboYXwH6Rez8yrN0i+HXaHIya7554W1fF6Hz9EFGmE1lo2HLsfe
+        lm/UAfzBM3lThpHVE+4usQI=
+X-Google-Smtp-Source: AFSGD/Ue9Iyd/YC4V1XE2ldRjt+9qkCdbDTm8ddrtW7q3AXUH/bCyIyAKvR0lB9v8ZuMtBCvGyVE2A==
+X-Received: by 2002:a1c:c58d:: with SMTP id v135mr29790763wmf.88.1546169105039;
+        Sun, 30 Dec 2018 03:25:05 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id j129sm27683812wmb.39.2018.12.30.03.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 30 Dec 2018 03:25:04 -0800 (PST)
+Date:   Sun, 30 Dec 2018 12:25:02 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Willy Tarreau <w@1wt.eu>, acme@redhat.com,
+        linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH] tools headers: move the nolibc header from rcutorture to
+ tools/include/nolibc/
+Message-ID: <20181230112502.GA16126@gmail.com>
+References: <20181229180453.15889-1-w@1wt.eu>
+ <20181229182508.GJ4170@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181230094918.6ysahn7tr6us6uoh@uno.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: ru-RU
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229182508.GJ4170@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
 
-On 30.12.2018 12:49, Jacopo Mondi wrote:
-> On Sun, Dec 30, 2018 at 12:35:20AM +0300, Alexey Khoroshilov wrote:
->> If gpiod_get_optional() fails in tw9910_power_on(), clk is left undisabled.
+* Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+
+> On Sat, Dec 29, 2018 at 07:04:53PM +0100, Willy Tarreau wrote:
+> > As suggested by Ingo, this header file might benefit other tools than
+> > just rcutorture. For now it's quite limited, but is easy to extend, so
+> > exposing it into tools/include/nolibc/ will make it much easier to
+> > adopt by other tools.
+> > 
+> > The mkinitrd.sh script in rcutorture was updated to use this new location.
+> > 
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Signed-off-by: Willy Tarreau <w@1wt.eu>
 > 
-> Correct, thanks for spotting this.
-> 
-> I think pdn_gpio should also be handled if rstb_gpio fails.
-> What's your opinion?
+> Thank you, Willy!  I have queued all four of these.  Should there
+> be a MAINTAINERS file entry for the new include/nolibc home for this
+> library code?
 
-I would agree. I'll send v2.
+Very good idea - ack. Could we please also use the opportunity and move 
+nolibc.h to a more prominent place, like in tools/include/nolibc/nolibc.h 
+or so?
 
-Thank you,
-Alexey
+Thanks,
 
-> 
->> Found by Linux Driver Verification project (linuxtesting.org).
->>
->> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
->> ---
->>  drivers/media/i2c/tw9910.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
->> index a54548cc4285..109770d678d2 100644
->> --- a/drivers/media/i2c/tw9910.c
->> +++ b/drivers/media/i2c/tw9910.c
->> @@ -610,6 +610,7 @@ static int tw9910_power_on(struct tw9910_priv *priv)
->>  					     GPIOD_OUT_LOW);
->>  	if (IS_ERR(priv->rstb_gpio)) {
->>  		dev_info(&client->dev, "Unable to get GPIO \"rstb\"");
->> +		clk_disable_unprepare(priv->clk);
->>  		return PTR_ERR(priv->rstb_gpio);
->>  	}
->>
->> --
->> 2.7.4
->>
-
+	Ingo
