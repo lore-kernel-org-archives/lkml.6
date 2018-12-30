@@ -2,132 +2,286 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB5AC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D95C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6452B20836
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 782FE20861
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 18:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeL3SGz (ORCPT
+        id S1726663AbeL3SaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 13:06:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41630 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726321AbeL3SGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 13:06:55 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBUHwiSS067703
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 13:06:53 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ppq87surk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 13:06:53 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
-        Sun, 30 Dec 2018 18:06:52 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 30 Dec 2018 18:06:47 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBUI6krn13172922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 30 Dec 2018 18:06:47 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D7B97806A;
-        Sun, 30 Dec 2018 18:06:46 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A3E278064;
-        Sun, 30 Dec 2018 18:06:44 +0000 (GMT)
-Received: from [153.66.254.194] (unknown [9.80.193.237])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sun, 30 Dec 2018 18:06:44 +0000 (GMT)
-Subject: Re: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
-From:   James Bottomley <jejb@linux.vnet.ibm.com>
-To:     LEROY Christophe <christophe.leroy@c-s.fr>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Date:   Sun, 30 Dec 2018 10:06:43 -0800
-In-Reply-To: <20181230185002.Horde.AdSknvcs4hP1Kh_T_Cos6w8@messagerie.si.c-s.fr>
-References: <cover.1545784679.git.fthain@telegraphics.com.au>
-         <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>
-         <20181228173846.Horde.z_zDEJN0rVd8tkt3HjYzmg2@messagerie.si.c-s.fr>
-         <alpine.LNX.2.21.1812291050330.152@nippy.intranet>
-         <a170720a-fe17-744d-790b-e258465bd75e@gmail.com>
-         <alpine.LNX.2.21.1812291327380.152@nippy.intranet>
-         <5e901432-65e2-c87b-31e3-36a394687a9a@gmail.com>
-         <CAK8P3a1J3sy55nd5QbxR5AjxkLyE-RE=bDNKB9sG27xx=mZ60A@mail.gmail.com>
-         <20181230185002.Horde.AdSknvcs4hP1Kh_T_Cos6w8@messagerie.si.c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Sun, 30 Dec 2018 13:30:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbeL3SaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 13:30:17 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD92383F3D;
+        Sun, 30 Dec 2018 18:30:16 +0000 (UTC)
+Received: from redhat.com (ovpn-120-135.rdu2.redhat.com [10.10.120.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0DD545D9C7;
+        Sun, 30 Dec 2018 18:30:15 +0000 (UTC)
+Date:   Sun, 30 Dec 2018 13:30:15 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
+ virtual address
+Message-ID: <20181230132614-mutt-send-email-mst@kernel.org>
+References: <20181213102713-mutt-send-email-mst@kernel.org>
+ <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+ <20181214073332-mutt-send-email-mst@kernel.org>
+ <2ea274df-a79a-250f-648f-12927529d78a@redhat.com>
+ <20181224125237-mutt-send-email-mst@kernel.org>
+ <b31dbf4c-d499-1d34-f39f-f10cc0febc84@redhat.com>
+ <20181225071501-mutt-send-email-mst@kernel.org>
+ <70978ed8-bf76-693a-0e11-d31b6234af5c@redhat.com>
+ <20181226092431-mutt-send-email-mst@kernel.org>
+ <8ef53a5c-ad4e-fadd-b460-18b3e589ead9@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18123018-0012-0000-0000-000016F14095
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010317; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000272; SDB=6.01139345; UDB=6.00592790; IPR=6.00919542;
- MB=3.00024903; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-30 18:06:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18123018-0013-0000-0000-000055A18D29
-Message-Id: <1546193203.2844.9.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812300166
+In-Reply-To: <8ef53a5c-ad4e-fadd-b460-18b3e589ead9@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sun, 30 Dec 2018 18:30:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-12-30 at 18:50 +0100, LEROY Christophe wrote:
-> Arnd Bergmann <arnd@arndb.de> a écrit :
-> > On Sat, Dec 29, 2018 at 3:51 AM Michael Schmitz
-> > <schmitzmic@gmail.com> wrote:
-[...]
-> > > (On second thought - I don't want to speculate whether there's
-> > > weird compiler options that could result in the
-> > > nvram_check_checksum and nvram_read_bytes symbols to still be
-> > > referenced in the final link, even though
-> > > IS_BUILTIN(CONFIG_NVRAM) always evaluates to false. Best
-> > > leave this as-is.)
-> > 
-> > As far as I know, it's totally reliable with the supported
-> > compilers  (gcc-4.6+). In the older compilers (e.g. 4.1), there was
-> > a corner case, where it could have failed to eliminate a function
-> > that was only referenced through a pointer from a discarded
-> > variable, but a plain IS_ENABLED() check like the one here
-> > was still ok, and lots of code relies on that.
-> > 
-> > Other than that, I agree either way is totally fine here, so no
-> > objections to using the #ifdef.
+On Thu, Dec 27, 2018 at 05:39:21PM +0800, Jason Wang wrote:
 > 
-> As far as I know, kernel codying style promotes the use of  
-> IS_ENABLED() etc. instead of #ifdefs when possible.
+> On 2018/12/26 下午11:02, Michael S. Tsirkin wrote:
+> > On Wed, Dec 26, 2018 at 11:57:32AM +0800, Jason Wang wrote:
+> > > On 2018/12/25 下午8:50, Michael S. Tsirkin wrote:
+> > > > On Tue, Dec 25, 2018 at 06:05:25PM +0800, Jason Wang wrote:
+> > > > > On 2018/12/25 上午2:10, Michael S. Tsirkin wrote:
+> > > > > > On Mon, Dec 24, 2018 at 03:53:16PM +0800, Jason Wang wrote:
+> > > > > > > On 2018/12/14 下午8:36, Michael S. Tsirkin wrote:
+> > > > > > > > On Fri, Dec 14, 2018 at 11:57:35AM +0800, Jason Wang wrote:
+> > > > > > > > > On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
+> > > > > > > > > > On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
+> > > > > > > > > > > It was noticed that the copy_user() friends that was used to access
+> > > > > > > > > > > virtqueue metdata tends to be very expensive for dataplane
+> > > > > > > > > > > implementation like vhost since it involves lots of software check,
+> > > > > > > > > > > speculation barrier, hardware feature toggling (e.g SMAP). The
+> > > > > > > > > > > extra cost will be more obvious when transferring small packets.
+> > > > > > > > > > > 
+> > > > > > > > > > > This patch tries to eliminate those overhead by pin vq metadata pages
+> > > > > > > > > > > and access them through vmap(). During SET_VRING_ADDR, we will setup
+> > > > > > > > > > > those mappings and memory accessors are modified to use pointers to
+> > > > > > > > > > > access the metadata directly.
+> > > > > > > > > > > 
+> > > > > > > > > > > Note, this was only done when device IOTLB is not enabled. We could
+> > > > > > > > > > > use similar method to optimize it in the future.
+> > > > > > > > > > > 
+> > > > > > > > > > > Tests shows about ~24% improvement on TX PPS when using virtio-user +
+> > > > > > > > > > > vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
+> > > > > > > > > > > 
+> > > > > > > > > > > Before: ~5.0Mpps
+> > > > > > > > > > > After:  ~6.1Mpps
+> > > > > > > > > > > 
+> > > > > > > > > > > Signed-off-by: Jason Wang<jasowang@redhat.com>
+> > > > > > > > > > > ---
+> > > > > > > > > > >       drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
+> > > > > > > > > > >       drivers/vhost/vhost.h |  11 +++
+> > > > > > > > > > >       2 files changed, 189 insertions(+)
+> > > > > > > > > > > 
+> > > > > > > > > > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > > > > > > > > > > index bafe39d2e637..1bd24203afb6 100644
+> > > > > > > > > > > --- a/drivers/vhost/vhost.c
+> > > > > > > > > > > +++ b/drivers/vhost/vhost.c
+> > > > > > > > > > > @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
+> > > > > > > > > > >       		vq->indirect = NULL;
+> > > > > > > > > > >       		vq->heads = NULL;
+> > > > > > > > > > >       		vq->dev = dev;
+> > > > > > > > > > > +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
+> > > > > > > > > > > +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
+> > > > > > > > > > > +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
+> > > > > > > > > > >       		mutex_init(&vq->mutex);
+> > > > > > > > > > >       		vhost_vq_reset(dev, vq);
+> > > > > > > > > > >       		if (vq->handle_kick)
+> > > > > > > > > > > @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
+> > > > > > > > > > >       	spin_unlock(&dev->iotlb_lock);
+> > > > > > > > > > >       }
+> > > > > > > > > > > +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
+> > > > > > > > > > > +			   size_t size, int write)
+> > > > > > > > > > > +{
+> > > > > > > > > > > +	struct page **pages;
+> > > > > > > > > > > +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
+> > > > > > > > > > > +	int npinned;
+> > > > > > > > > > > +	void *vaddr;
+> > > > > > > > > > > +
+> > > > > > > > > > > +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+> > > > > > > > > > > +	if (!pages)
+> > > > > > > > > > > +		return -ENOMEM;
+> > > > > > > > > > > +
+> > > > > > > > > > > +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
+> > > > > > > > > > > +	if (npinned != npages)
+> > > > > > > > > > > +		goto err;
+> > > > > > > > > > > +
+> > > > > > > > > > As I said I have doubts about the whole approach, but this
+> > > > > > > > > > implementation in particular isn't a good idea
+> > > > > > > > > > as it keeps the page around forever.
+> > > > > > > The pages wil be released during set features.
+> > > > > > > 
+> > > > > > > 
+> > > > > > > > > > So no THP, no NUMA rebalancing,
+> > > > > > > For THP, we will probably miss 2 or 4 pages, but does this really matter
+> > > > > > > consider the gain we have?
+> > > > > > We as in vhost? networking isn't the only thing guest does.
+> > > > > > We don't even know if this guest does a lot of networking.
+> > > > > > You don't
+> > > > > > know what else is in this huge page. Can be something very important
+> > > > > > that guest touches all the time.
+> > > > > Well, the probability should be very small consider we usually give several
+> > > > > gigabytes to guest. The rest of the pages that doesn't sit in the same
+> > > > > hugepage with metadata can still be merged by THP.  Anyway, I can test the
+> > > > > differences.
+> > > > Thanks!
+> > > > 
+> > > > > > > For NUMA rebalancing, I'm even not quite sure if
+> > > > > > > it can helps for the case of IPC (vhost). It looks to me the worst case it
+> > > > > > > may cause page to be thrash between nodes if vhost and userspace are running
+> > > > > > > in two nodes.
+> > > > > > So again it's a gain for vhost but has a completely unpredictable effect on
+> > > > > > other functionality of the guest.
+> > > > > > 
+> > > > > > That's what bothers me with this approach.
+> > > > > So:
+> > > > > 
+> > > > > - The rest of the pages could still be balanced to other nodes, no?
+> > > > > 
+> > > > > - try to balance metadata pages (belongs to co-operate processes) itself is
+> > > > > still questionable
+> > > > I am not sure why. It should be easy enough to force the VCPU and vhost
+> > > > to move (e.g. start them pinned to 1 cpu, then pin them to another one).
+> > > > Clearly sometimes this would be necessary for load balancing reasons.
+> > > 
+> > > Yes, but it looks to me the part of motivation of auto NUMA is to avoid
+> > > manual pinning.
+> > ... of memory. Yes.
+> > 
+> > 
+> > > > With autonuma after a while (could take seconds but it will happen) the
+> > > > memory will migrate.
+> > > > 
+> > > Yes. As you mentioned during the discuss, I wonder we could do it similarly
+> > > through mmu notifier like APIC access page in commit c24ae0dcd3e ("kvm: x86:
+> > > Unpin and remove kvm_arch->apic_access_page")
+> > That would be a possible approach.
+> 
+> 
+> Yes, this looks possible, and the conversion seems not hard. Let me have a
+> try with this.
+> 
+> 
+> [...]
+> 
+> 
+> > > > > > > > I don't see how a kthread makes any difference. We do have a validation
+> > > > > > > > step which makes some difference.
+> > > > > > > The problem is not kthread but the address of userspace address. The
+> > > > > > > addresses of vq metadata tends to be consistent for a while, and vhost knows
+> > > > > > > they will be frequently. SMAP doesn't help too much in this case.
+> > > > > > > 
+> > > > > > > Thanks.
+> > > > > > It's true for a real life applications but a malicious one
+> > > > > > can call the setup ioctls any number of times. And SMAP is
+> > > > > > all about malcious applications.
+> > > > > We don't do this in the path of ioctl, there's no context switch between
+> > > > > userspace and kernel in the worker thread. SMAP is used to prevent kernel
+> > > > > from accessing userspace pages unexpectedly which is not the case for
+> > > > > metadata access.
+> > > > > 
+> > > > > Thanks
+> > > > OK let's forget smap for now.
+> > > 
+> > > Some numbers I measured:
+> > > 
+> > > On an old Sandy bridge machine without SMAP support. Remove speculation
+> > > barrier boost the performance from 4.6Mpps to 5.1Mpps
+> > > 
+> > > On a newer Broadwell machine with SMAP support. Remove speculation barrier
+> > > only gives 2%-5% improvement, disable SMAP completely through Kconfig boost
+> > > 57% performance from 4.8Mpps to 7.5Mpps. (Vmap gives 6Mpps - 6.1Mpps, it
+> > > only bypass SMAP for metadata).
+> > > 
+> > > So it looks like for recent machine, SMAP becomes pain point when the copy
+> > > is short (e.g 64B) for high PPS.
+> > > 
+> > > Thanks
+> > Thanks a lot for looking into this!
+> > 
+> > So first of all users can just boot with nosmap, right?
+> > What's wrong with that?
+> 
+> 
+> Nothing wrong, just realize we had this kernel parameter.
+> 
+> 
+> >   Yes it's not fine-grained but OTOH
+> > it's easy to understand.
+> > 
+> > And I guess this confirms that if we are going to worry
+> > about smap enabled, we need to look into packet copies
+> > too, not just meta-data.
+> 
+> 
+> For packet copies, we can do batch copy which is pretty simple for the case
+> of XDP. I've already had patches for this.
+> 
+> 
+> > 
+> > Vaguely could see a module option (off by default)
+> > where vhost basically does user_access_begin
+> > when it starts running, then uses unsafe accesses
+> > in vhost and tun and then user_access_end.
+> 
+> 
+> Using user_access_begin() is more tricky than imaged. E.g it requires:
+> 
+> - userspace address to be validated before through access_ok() [1]
 
-It's a preference, as with a lot of coding style stuff, which we leave
-up to the maintainer.
+This part is fine I think - addresses come from the memory
+map and when userspace supplies the memory map
+we validate everything with access_ok.
+Well do we validate with the iotlb too? Don't see it right now
+so maybe not but it's easy to add.
 
-That said, as has been pointed out, the current #ifdef has a failing
-corner case when both are modular (because the code should then be
-included).  The runtime macro that correctly expresses this is
-IS_REACHABLE(CONFIG_NVRAM).
+> - It doesn't support calling a function that does explicit schedule since
+> SMAP/PAN state is not maintained through schedule() [2]
+> 
+> [1] https://lwn.net/Articles/736348/
+> 
+> [2] https://lkml.org/lkml/2018/11/23/430
+> 
+> So calling user_access_begin() all the time when vhost is running seems
+> pretty dangerous.
 
-James
+Yes it requires some rework e.g. to try getting memory with
+GFP_ATOMIC. We could then do a slow path with GFP_KERNEL
+if that fails.
 
+> For a better batched datacopy, I tend to build not only XDP but also skb in
+> vhost in the future.
+> 
+> Thanks
+
+Sure, why not.
+
+> 
+> > 
+> > 
+> > > > > > > > > Packet or AF_XDP benefit from
+> > > > > > > > > accessing metadata directly, we should do it as well.
+> > > > > > > > > 
+> > > > > > > > > Thanks
