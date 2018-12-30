@@ -2,44 +2,42 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA617C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 22:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BAEC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7211120828
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 22:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 295A620818
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 23:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbeL3WpW (ORCPT
+        id S1726765AbeL3XNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 17:45:22 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:34502 "EHLO
+        Sun, 30 Dec 2018 18:13:24 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:34860 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeL3WpW (ORCPT
+        with ESMTP id S1725862AbeL3XNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 17:45:22 -0500
+        Sun, 30 Dec 2018 18:13:24 -0500
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 42EE12280E;
-        Sun, 30 Dec 2018 17:45:18 -0500 (EST)
-Date:   Mon, 31 Dec 2018 09:45:16 +1100 (AEDT)
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id ABAD52994E;
+        Sun, 30 Dec 2018 18:13:19 -0500 (EST)
+Date:   Mon, 31 Dec 2018 10:13:17 +1100 (AEDT)
 From:   Finn Thain <fthain@telegraphics.com.au>
-To:     James Bottomley <jejb@linux.vnet.ibm.com>
-cc:     LEROY Christophe <christophe.leroy@c-s.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Subject: Re: [PATCH v8 01/25] scsi/atari_scsi: Don't select CONFIG_NVRAM
-In-Reply-To: <alpine.LNX.2.21.1812310839050.444@nippy.intranet>
-Message-ID: <alpine.LNX.2.21.1812310933450.444@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au>         <e68fcc3ec0a6cd4e14f763366d4d9445890b9b82.1545784679.git.fthain@telegraphics.com.au>         <20181228173846.Horde.z_zDEJN0rVd8tkt3HjYzmg2@messagerie.si.c-s.fr>        
- <alpine.LNX.2.21.1812291050330.152@nippy.intranet>         <a170720a-fe17-744d-790b-e258465bd75e@gmail.com>         <alpine.LNX.2.21.1812291327380.152@nippy.intranet>         <5e901432-65e2-c87b-31e3-36a394687a9a@gmail.com>        
- <CAK8P3a1J3sy55nd5QbxR5AjxkLyE-RE=bDNKB9sG27xx=mZ60A@mail.gmail.com>         <20181230185002.Horde.AdSknvcs4hP1Kh_T_Cos6w8@messagerie.si.c-s.fr> <1546193203.2844.9.camel@linux.vnet.ibm.com> <alpine.LNX.2.21.1812310839050.444@nippy.intranet>
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v8 18/25] powerpc: Implement nvram sync ioctl
+In-Reply-To: <alpine.LNX.2.21.1812301744540.424@nippy.intranet>
+Message-ID: <alpine.LNX.2.21.1812311006040.444@nippy.intranet>
+References: <cover.1545784679.git.fthain@telegraphics.com.au> <3ba1dd965c1097e00463eafe7c7d5fd93bbed836.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a0-4vGuCR4aCq0=D1Du1K=f5MtnB9fyCBnOsF+4Na5dMg@mail.gmail.com>
+ <alpine.LNX.2.21.1812301744540.424@nippy.intranet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,46 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 31 Dec 2018, Finn Thain wrote:
+On Sun, 30 Dec 2018, Finn Thain wrote:
 
-> On Sun, 30 Dec 2018, James Bottomley wrote:
-> 
+> > > diff --git a/include/linux/nvram.h b/include/linux/nvram.h
+> > > index b7bfaec60a43..24a57675dba1 100644
+> > > --- a/include/linux/nvram.h
+> > > +++ b/include/linux/nvram.h
+> > > @@ -18,8 +18,12 @@ struct nvram_ops {
+> > >         unsigned char   (*read_byte)(int);
+> > >         void            (*write_byte)(unsigned char, int);
+> > >         ssize_t         (*get_size)(void);
+> > > +#ifdef CONFIG_PPC
+> > > +       long            (*sync)(void);
+> > > +#else
+> > >         long            (*set_checksum)(void);
+> > >         long            (*initialize)(void);
+> > > +#endif
+> > >  };
 > > 
-> > That said, as has been pointed out, the current #ifdef has a failing 
-> > corner case when both are modular (because the code should then be 
-> > included).  The runtime macro that correctly expresses this is 
-> > IS_REACHABLE(CONFIG_NVRAM).
+> > Maybe just leave all entries visible here, and avoid the above #ifdef 
+> > checks.
 > > 
 > 
-> No, in the case of CONFIG_NVRAM=m, the conditional code is deliberately 
-> excluded. This is discussed in the patch description. The convention on 
-> PPC32 is that device drivers drop support for NVRAM in this situation. 
-> 
-> I've adopted the PPC32 convention here because M68K drivers and PPC32 
-> drivers have to co-exist (I'm thinking of valkyriefb, but there are other 
-> examples).
+> The #ifdef isn't there just to save a few bytes, though it does do that. 
+> It's really meant to cause a build failure when I mess up somewhere. But 
+> I'm happy to change it if you can see a reason to do so (?)
 > 
 
-I agree with your comment in principle, that these drivers should be using 
-IS_REACHABLE(CONFIG_NVRAM), not defined(CONFIG_NVRAM).
+I think the problem with these #ifdef conditionals is that they don't 
+express the correct constraints. So, at the end of this series I'd prefer 
+to see,
 
-$ grep -lrw CONFIG_NVRAM drivers/
-drivers/video/fbdev/matrox/matroxfb_base.c
-drivers/video/fbdev/platinumfb.c
-drivers/video/fbdev/controlfb.c
-drivers/video/fbdev/valkyriefb.c
-drivers/video/fbdev/imsttfb.c
-drivers/scsi/atari_scsi.c
-$ 
+struct nvram_ops {
+       ssize_t         (*read)(char *, size_t, loff_t *);
+       ssize_t         (*write)(char *, size_t, loff_t *);
+       unsigned char   (*read_byte)(int);
+       void            (*write_byte)(unsigned char, int);
+       ssize_t         (*get_size)(void);
+#if defined(CONFIG_PPC)
+       long            (*sync)(void);
+       int             (*get_partition)(int);
+#elif defined(CONFIG_X86) || defined(CONFIG_M68K)
+       long            (*set_checksum)(void);
+       long            (*initialize)(void);
+#endif
+};
 
-But I think this is not the fault of this patch; it's just a historical 
-accident.
-
-Having said that, I will rework this series to convert all of the above 
-drivers to IS_REACHABLE(CONFIG_NVRAM). I think it would be an improvement.
-
-Besides, it seems likely that some rework involving ppc_md will be needed 
-too because as Arnd pointed out, it would be good to avoid two sets of 
-nvram accessor methods.
+Is that okay with you?
 
 -- 
