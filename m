@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E240BC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B738FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21B120861
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8764D20861
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 17:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vTE2j4fp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTVt+fM4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeL3Rtf (ORCPT
+        id S1726870AbeL3Rte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 12:49:35 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36784 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbeL3RtK (ORCPT
+        Sun, 30 Dec 2018 12:49:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40364 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbeL3RtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 12:49:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a16so17332919lfg.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 09:49:09 -0800 (PST)
+        Sun, 30 Dec 2018 12:49:11 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so22347049lji.7
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 09:49:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id;
-        bh=SgrrjuoGTy1EqHP7pAvYoAmmepSCbBgSenwuzQIOABg=;
-        b=vTE2j4fpxcfvBbt3E6v2q6kIlZSwKNUrrTdSnyd3AH9gYyoZwIk/zGTXwCbUgqfbFH
-         q8glQjzmApcSF8QqlFDApEszbmX8vVvoCUf4+ZMLKw9+F+SSAB2fk7bLaAWIyvaoZTna
-         HQnJCiMRjMgtWjx65QNK78mnBn3+/OOFGoRSjp4LZjifub32McvSuHihmy0YxRaCP8sG
-         A+QWtsJ0zugUUgvvxLD+YRV178H03+TbI+k+CPFBEoYStrEMKcSkkUBRCS7/c47n5u6r
-         hYLXrDHLI25q7dvsIuRHeyPAmXJqBUWlEuTYJvh0xeCnSC6+Ylz4WPKTfiFSEwU4G0a8
-         qSeg==
+        bh=eCma5HCQv5NpqZQvrQIQPXNldhs2hE4OB3E1rHYiUvM=;
+        b=QTVt+fM4CWnCDNj7kTTGiFDJm/iLZPxnGAlrvxmQJ1+X62Dx1wSZx4GgS4PpMqxMFs
+         9Yc1aN93blIBKaNSejHHnaRJau24AD5LivAsShl5XZGzjROhGTP3r//O+oB8H2SdW0mc
+         ah2MyE/rHiTypQbfF27mV86wb7MtelYNFsj6Ah3Gnd9MI9mIRzF88axjBO6aStNto0hQ
+         fvGR/if9GWf9BvEENTEbd5CGGy35LeoBzifpmUcWYBOYSO3zNCVrX2KyCURomp4wF2NI
+         2/R6ytmCfAlivmVzXGkHc4wg8g3t4egR7oT9fvBGc3pQvav9/4CvdYJXx+hQbJn6lYPq
+         Kb8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=SgrrjuoGTy1EqHP7pAvYoAmmepSCbBgSenwuzQIOABg=;
-        b=o3wqXtLu64ETLmx1TQo+NwLCAHPDWuSlUxhjWnLarAAEGK/ma8QucXxkmRTKItEYlK
-         N06/UEkYkOvqERDb8ErDnqHlrG2n8r/Nzb0XKNz2EmbUMpMk4KIlJ2I5Zs4P9G6qeq/D
-         l7QizOnxtPDoqthQvTcFuFKVn6rrbGoMrKvNvI9n065S9ztGQHS2kusVY6BRIjv64sxZ
-         uABPcyoDxr1Vl+Nh4XZ9mbdScmWMtI/JfTXi9w+AbdEJVDk37f4NfrkbzjYDx40Ocvds
-         W/mb1baVGw7sjGD7/ySY47bj/WZyidtnhDSQ2aZO75ur4yxpkAi/xrnH+iKwrTzyAMo+
-         lo/Q==
-X-Gm-Message-State: AA+aEWYrTFgQ9UNCUGzyJmGdPeZYA20+lg0sCFzYO6SW8pMTtM3Rp5rb
-        fU6SUbtdSqn6VJHuj/eVydI=
-X-Google-Smtp-Source: AFSGD/WF2sx/OHmKrzkNk1i3lpHq4tFFuvyD/f4NcUXj18+stjtkeoJsrJOGpR7nLTJaKIt+DVwSjA==
-X-Received: by 2002:a19:c4cc:: with SMTP id u195mr16795546lff.141.1546192148328;
-        Sun, 30 Dec 2018 09:49:08 -0800 (PST)
+        bh=eCma5HCQv5NpqZQvrQIQPXNldhs2hE4OB3E1rHYiUvM=;
+        b=d0k9VI+snNINnPNNVOPxkgV+xjBhmR5k2/EW1bYcoLEJDPCZqw8TB2s6OaMu003QZ0
+         xIYvWIMZGbravUZllrRDiy/yqsjUA3wOfaaGJInQ6nX0hIuUZxaIvAT3wuJ4hSOit91e
+         KEFHHQNtdXsxrT3ayO3crGuitB6lmLT345/u1BDzaX3XHt3OuaobPwENL23o13V97ZO0
+         info6eHVeZG9KiN/TvoEu3WfYibiVeHUbeJ4Y4gs/uZURaA1loFZnElutwfK2a4Jy4dh
+         vcs9EHegZ4DbjCpxRXxyjsAlnu3f8Jh64z8J/F3ZLetesLajBC0OhCz+7A+O7HjNBOu/
+         kRUQ==
+X-Gm-Message-State: AJcUukc/rn2lolBUvSzVL7XyEE7LhkoS17SVxP9Co/3n3SQXyC3SwEbz
+        7233PsB4ARkT7EFx/P3+7t8=
+X-Google-Smtp-Source: AFSGD/WSWgG3e1kW/otWHZFXrzBTFaHOMwMjZxJPwH8icm+lh/hsTvzqOflvj8xLyMw4V0dlWh/STQ==
+X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr19992129ljs.118.1546192149434;
+        Sun, 30 Dec 2018 09:49:09 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id q11sm8853170lfc.92.2018.12.30.09.49.07
+        by smtp.gmail.com with ESMTPSA id q11sm8853170lfc.92.2018.12.30.09.49.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Dec 2018 09:49:07 -0800 (PST)
+        Sun, 30 Dec 2018 09:49:09 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -63,10 +63,13 @@ To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>
-Subject: [PATCH v2 11/14] drm/arc: do not reply on drmP.h from drm_gem_cma_helper.h
-Date:   Sun, 30 Dec 2018 18:48:35 +0100
-Message-Id: <20181230174838.32330-12-sam@ravnborg.org>
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>
+Subject: [PATCH v2 12/14] drm/stm: do not reply on drmP.h from drm_gem_cma_helper.h
+Date:   Sun, 30 Dec 2018 18:48:36 +0100
+Message-Id: <20181230174838.32330-13-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,56 +82,78 @@ The goal is to one day to delete drmP.h and
 as a step towards this it will no longer be included in the
 headers files in include/drm/
 
-To prepare arc/ for this add dependencies that
+To prepare stm/ for this add dependencies that
 othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
 
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
----
- drivers/gpu/drm/arc/arcpgu_crtc.c | 2 ++
- drivers/gpu/drm/arc/arcpgu_drv.c  | 6 ++++++
- 2 files changed, 8 insertions(+)
+Sort the include list when we anyway modify it.
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_crtc.c b/drivers/gpu/drm/arc/arcpgu_crtc.c
-index 62f51f70606d..155ab177ce0b 100644
---- a/drivers/gpu/drm/arc/arcpgu_crtc.c
-+++ b/drivers/gpu/drm/arc/arcpgu_crtc.c
-@@ -16,8 +16,10 @@
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Cc: Yannick Fertre <yannick.fertre@st.com>
+Cc: Philippe Cornu <philippe.cornu@st.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Vincent Abriou <vincent.abriou@st.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+---
+ drivers/gpu/drm/stm/drv.c  | 6 +++++-
+ drivers/gpu/drm/stm/ltdc.c | 9 ++++++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+index 8dec001b9d37..9cd6228a18ad 100644
+--- a/drivers/gpu/drm/stm/drv.c
++++ b/drivers/gpu/drm/stm/drv.c
+@@ -9,15 +9,19 @@
+  */
  
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_device.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
-+#include <drm/drm_vblank.h>
- #include <drm/drm_plane_helper.h>
- #include <linux/clk.h>
- #include <linux/platform_data/simplefb.h>
-diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
-index 206a76abf771..39a79f5718c4 100644
---- a/drivers/gpu/drm/arc/arcpgu_drv.c
-+++ b/drivers/gpu/drm/arc/arcpgu_drv.c
-@@ -16,12 +16,18 @@
- 
- #include <linux/clk.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_debugfs.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_atomic_helper.h>
+ #include <linux/component.h>
 +#include <linux/dma-mapping.h>
 +#include <linux/module.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
+ #include <linux/of_platform.h>
  
- #include "arcpgu.h"
- #include "arcpgu_regs.h"
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_helper.h>
+-#include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_vblank.h>
+ 
+ #include "ltdc.h"
+ 
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index 61dd661aa0ac..5cce6c7f35d4 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -10,17 +10,24 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/component.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/of_graph.h>
++#include <linux/platform_device.h>
+ #include <linux/reset.h>
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_device.h>
+ #include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_of.h>
+-#include <drm/drm_bridge.h>
++#include <drm/drm_vblank.h>
+ #include <drm/drm_plane_helper.h>
+ 
+ #include <video/videomode.h>
 -- 
 2.12.0
 
