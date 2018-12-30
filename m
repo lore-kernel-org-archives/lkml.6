@@ -3,93 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B561C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E8EC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232F221019
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61DBB21019
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 10:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJvDFSES"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2Gz+1F1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbeL3KR6 (ORCPT
+        id S1726168AbeL3KZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 05:17:58 -0500
-Received: from mail-lj1-f171.google.com ([209.85.208.171]:32789 "EHLO
-        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeL3KR5 (ORCPT
+        Sun, 30 Dec 2018 05:25:31 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33764 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbeL3KZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 05:17:57 -0500
-Received: by mail-lj1-f171.google.com with SMTP id v1-v6so21912524ljd.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 02:17:56 -0800 (PST)
+        Sun, 30 Dec 2018 05:25:31 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r24so28439624wmh.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 02:25:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=5VTSRqosN2p9pLhoq9yGM90OXpRmfrewiM/uv6FDgk8=;
-        b=tJvDFSESkCt7pP8PNJHMDXwmhMrfNdedPJEAUeS0Z3lzgC0iX27PTNDHTu/mO2KuL0
-         fGzufTk913O2CU2CTonq19RXxxh75PwMY+OzSyGhUoZhTYG+z5b7DIYedcu+bkbxGr9T
-         iA19QBgMDX2qAQIUAcPzhz23WVQ0pzbZBrVyxW88bZMv8fbT6XX7VHmPoHQxBmh9lzLg
-         sZyudqXaH/mMbboBKU68CJZxGeGW0voM8qIEsc3GDRFPYz9dWHhs8RAPOfU4yOfv0Sg9
-         DAqFC2rrOg+BTV+pEMwWZbupp+kwY0GCCp+A5S+J7D0cVF4Y5mlkaoFC1Yl4+5gxaDyY
-         CcIA==
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=RcIxiy51crz2BQyDtywt/mbWbWq0tfJAe0NkaqiG1IM=;
+        b=J2Gz+1F1qZXyqxAPjwSRThTSJUptrgZUg6fKCtvgXhgC8HcoRmlPrhLmIwcxyF6xn+
+         wbCktOKo6nps6P+AolCt1l1RLjoq9WdSMOwUXb/dz10JTbqZ9y+TOrrS6g4FyWrMhgfI
+         gy1xRQH3ziJRyLLoBvajgBfamYoD0nXeNpCIU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=5VTSRqosN2p9pLhoq9yGM90OXpRmfrewiM/uv6FDgk8=;
-        b=RpJM0sXRiITp3FccU9t7kVD1K3wwbU/e5t2JF7hyYsSDuykDITLM6mU5bCmxUMPz6t
-         Ah1EDUIvxTssF0YJxTbusq4PUgM/wy7IzLQN00VndfDCqniMEmTAJqM+u3bWzaeQ4omx
-         QdvHsnx2JkgIMCLoYR2vwn8oiOUxDL/QqNMpIBk51b8ptRwxNZvFsP86Iepcgh4tnI6z
-         SPnJI0nCEpbX7ts0Z7vOmMWjeCUNCVOuEARHuZD6QVjeu5M1rOYHqmx/G1dX4eeRxpls
-         lMcbzo4IOYTMUxZVdLiZeKY4BNpQttjVkIK196J5vo1d1HitMFnzI+UhJsq4hZ3uuxZ/
-         LLSA==
-X-Gm-Message-State: AJcUukehJb+4IVgeGUtSLE44sjmvhpjt3k5S/W0p+yDy/9/S8LjAQlFv
-        1s8ogIGJIKuaeLsMG/4xkJ10d+IE98nxQXjhv5jBfVLsCA==
-X-Google-Smtp-Source: ALg8bN5g99Cst64Uad9FGmgexHAD8YFUsBXs5dXmwq1dX1H2J0ARx3MY9PDB/grmatQR2EL2zhbGyE38/awr3XO12nk=
-X-Received: by 2002:a2e:e02:: with SMTP id 2-v6mr16489970ljo.10.1546165075266;
- Sun, 30 Dec 2018 02:17:55 -0800 (PST)
-MIME-Version: 1.0
-From:   Yi Qingliang <niqingliang2003@gmail.com>
-Date:   Sun, 30 Dec 2018 18:17:44 +0800
-Message-ID: <CADwFkYe1Z7C_993xdKKeOg3F1O40L1o+K9GyF2JKG0HUUPv7SA@mail.gmail.com>
-Subject: epoll and vb2_poll: can't wake_up
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=RcIxiy51crz2BQyDtywt/mbWbWq0tfJAe0NkaqiG1IM=;
+        b=ZLefOQGk5ojwDtcqPTmH1k1AnmNXr/6/LKnTv+36sZuonn5w27RWVMepWrxxUCBU+Y
+         siPseS6Lek4DOq43eNFi71YmzzVqMsrhlUK89wG7ctjf0+u571nZSVsWl6LlUkZg46wZ
+         l0DsZscDsq8j46Dl6VsgqlBiHYVRKO2h2c+SMqbqGSb+YEMIt5jc/0G5YTagEOE2w+lg
+         WzCaIKGsWQKFkQtCB4aNHev+MHS4urdy8r/e7k8HWEfGxlyfklzXa2iRVX+noYkpMKWS
+         +EN2qZbbDYFEBdWfYkyZzv+16qn8j0fCULF5XnRd23x5bz9be2NbU8YxYQ5tAJfGqgQh
+         FEHw==
+X-Gm-Message-State: AJcUukel6t54TMi98NcLAAbO4aVZnSG53wbZ9NpiQiL56Y1lZlraVBhk
+        h1E3UM6t9LugLVV+2IGFXNQGSA==
+X-Google-Smtp-Source: ALg8bN526XimT9K+w4VLwcsCWezIkvqZvSgRHDdQJ9tWiXJjZ+pgAgEhFYvyy530UENjshRziH1ByQ==
+X-Received: by 2002:a1c:c64e:: with SMTP id w75mr30115242wmf.46.1546165529055;
+        Sun, 30 Dec 2018 02:25:29 -0800 (PST)
+Received: from [192.168.0.101] ([88.147.52.125])
+        by smtp.gmail.com with ESMTPSA id z12sm33115243wrh.35.2018.12.30.02.25.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Dec 2018 02:25:28 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
+ policy in blkio/io
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20181227234144.GE2509588@devbig004.ftw2.facebook.com>
+Date:   Sun, 30 Dec 2018 11:25:25 +0100
+Cc:     'Paolo Valente' via bfq-iosched <bfq-iosched@googlegroups.com>,
+        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F2A4E669-8C79-46D7-8A97-2C561FF5346B@linaro.org>
+References: <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
+ <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
+ <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
+ <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
+ <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
+ <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
+ <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
+ <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
+ <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
+ <A360EBDC-B297-4754-AF5C-0A6C30D725B4@linaro.org>
+ <20181227234144.GE2509588@devbig004.ftw2.facebook.com>
+To:     Tejun Heo <tj@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, I encountered a "can't wake_up" problem when use camera on imx6.
 
-if delay some time after 'streamon' the /dev/video0, then add fd
-through epoll_ctl, then the process can't be waken_up after some time.
 
-I checked both the epoll / vb2_poll(videobuf2_core.c) code.
+> Il giorno 28 dic 2018, alle ore 00:41, Tejun Heo <tj@kernel.org> ha =
+scritto:
+>=20
+> Hello, Paolo.
+>=20
+> On Sun, Dec 23, 2018 at 12:00:14PM +0100, Paolo Valente wrote:
+>> 4.21 is coming ...  and the legacy proportional share interface will
+>> be gone with cfq.  This will break legacy code using the
+>> proportional-share interface on top of bfq.  This code may just fail
+>> when trying to use interface files that don't exist any longer.
+>=20
+> Sounds like inheriting .cfq namespace would be the easiest.  Would
+> that work?
+>=20
 
-epoll will pass 'poll_table' structure to vb2_poll, but it only
-contain valid function pointer when inserting fd.
+For bfq, yes, but what will, e.g., Josef do when he adds his new
+proportional-share implementation?  Will he add a new set of names not
+used by any legacy piece of code?
 
-in vb2_poll, if found new data in done list, it will not call 'poll_wait'.
-after that, every call to vb2_poll will not contain valid poll_table,
-which will result in all calling to poll_wait will not work.
+What's the benefit of throwing away months of work, on which we agreed
+before starting it, and that solves a problem already acknowledged by
+interested parties?
 
-so if app can process frames quickly, and found frame data when
-inserting fd (i.e. poll_wait will not be called or not contain valid
-function pointer), it will not found valid frame in 'vb2_poll' finally
-at some time, then call 'poll_wait' to expect be waken up at following
-vb2_buffer_done, but no good luck.
+Thanks,
+Paolo
 
-I also checked the 'videobuf-core.c', there is no this problem.
+> Thanks.
+>=20
+> --=20
+> tejun
 
-of course, both epoll and vb2_poll are right by itself side, but the
-result is we can't get new frames.
-
-I think by epoll's implementation, the user should always call poll_wait.
-
-and it's better to split the two actions: 'wait' and 'poll' both for
-epoll framework and all epoll users, for example, v4l2.
-
-am I right?
