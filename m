@@ -2,101 +2,174 @@ Return-Path: <SRS0=XIf+=PH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39358C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B23DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09B920855
-	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546170679;
-	bh=8ZMG0PYjeVJyMNdUddGKm6XTMXr1ZcYbR3GklIyv460=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vpRES13exgWPnA6493inGYz0JNTOTqGiZeeS0+8XrQIohhCBxS0OTzeV80PWQQqNt
-	 n22+fDutXmOWIKJgLBreIQmfdoCdhGiT5niAeWGw8T6PZIxWvm3sS/q2oke4DT0NPS
-	 wc8uBKQh1uFfLeg4IxI0fW1PsUEYC/IHGEMCsU8g=
+	by mail.kernel.org (Postfix) with ESMTP id E245A20861
+	for <linux-kernel@archiver.kernel.org>; Sun, 30 Dec 2018 11:57:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="WYQgD8Qr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeL3Lux (ORCPT
+        id S1726246AbeL3L5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 06:50:53 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38797 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeL3Luw (ORCPT
+        Sun, 30 Dec 2018 06:57:48 -0500
+Received: from www.linux-watchdog.org ([185.87.125.42]:58698 "EHLO
+        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeL3L5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 06:50:52 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m22so22882647wml.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 03:50:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZTp0DP4zvwveB93OyxnisTzZ6Y4w4Hg2DrzFPKn1LsU=;
-        b=Ie42Mi33bLhlEKpPl6CXPfrFsSZPXjQQIvwP7AN1YMdobMj6FSNfHob/o86zBMT621
-         NXFPufhY9El2ifofBdqbtG7yaLr7d5aRlVXIvuRaPWm4Ad5jx+fPaXIfH6fhTWll2ycU
-         5kE8wg9OpAXb1ATKhM60IWsoY0ZwTkDn79GlZumGBPiuYxyuv6kf9VJiJ6T86Io1SHHO
-         94HDNvvxHCp4LtNlpEKA6SKCI08f2UcTtSfVZaTvd56VSEnGZ6ZrYxb9GGmG/0rRSio7
-         Hi39wucHsTsko8ve5NOWRzJ8lC5kw4FT+8I4aj3uB+7N823EeifUHYUKZB9+XEIREswk
-         XuQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZTp0DP4zvwveB93OyxnisTzZ6Y4w4Hg2DrzFPKn1LsU=;
-        b=SZmASngyUWHmYzPwu0wvV4BmP3WjqQbudFwM4Lm5/mUR5cuJV7n5J9/cHCH75Sagoi
-         HLeedJdt3N8YKiqimXKfZuP4t1BHauT6gimNbdRwf0v9hYaW0lOXuvbnkyuqhG92ivE/
-         +Y7LkmMXciILJFhpOPtaTw2g2L7Ro3FIlj8QuKcdE6vI+Sg3jpB4+gGzjPTz5FXpsy7S
-         h49mkRHljgXSIFDvD4b+LmzIduxguHv7auaIaSjYBLbdCkORkYJSctOFXBhComcjLcHy
-         emyQ5wvbq26tjWNv5KoGmy6lQVMXw2gbqGpK1eh2f4hG9vFJWi3PyDBHWVsH/eXHD+ir
-         QFgw==
-X-Gm-Message-State: AA+aEWYSL5N8EU7q2nugeVDVbuwUZ6De8XR7VEmpT5xgoMnjkJ4IXc0D
-        +ZAtlNKdb0nScmAoqAgrXmc=
-X-Google-Smtp-Source: AFSGD/U6NcJ2jcKiF5wLF4hvGY/e3PI8FqGPdoa0v/uDiMSuQaWXnu6An97ClRJ4pmesHAuNxBAIPQ==
-X-Received: by 2002:a1c:ac42:: with SMTP id v63mr27648074wme.119.1546170651092;
-        Sun, 30 Dec 2018 03:50:51 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y12sm26957191wmi.7.2018.12.30.03.50.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Dec 2018 03:50:50 -0800 (PST)
-Date:   Sun, 30 Dec 2018 12:50:48 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>, acme@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Subject: Re: [PATCH] tools headers: move the nolibc header from rcutorture to
- tools/include/nolibc/
-Message-ID: <20181230115048.GA16460@gmail.com>
-References: <20181229180453.15889-1-w@1wt.eu>
- <20181229182508.GJ4170@linux.ibm.com>
- <20181230112502.GA16126@gmail.com>
- <20181230113841.GA17373@1wt.eu>
+        Sun, 30 Dec 2018 06:57:47 -0500
+X-Greylist: delayed 359 seconds by postgrey-1.27 at vger.kernel.org; Sun, 30 Dec 2018 06:57:46 EST
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+        id AADDE405AC; Sun, 30 Dec 2018 12:24:45 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org AADDE405AC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+        s=odk20180602; t=1546169085;
+        bh=jEYhZ7NuBnTccO+pSB6NQmLCKgEaz+55LqWKLGz3Leg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WYQgD8Qr5WCpW4Y+Y5XKnQvPQ674IZUbonKpASgwOYvEVcwTxLfFixU/feQwzmryF
+         MsEIi17eyuRCR/QzAPzkp9mQRVwT0/hBmmf531f4W08dOh0E6s3AYh5K8i+uDcSNFp
+         OCrOhR+4XwXOe1g+GEVnT9ztEBz9FQTTNxPLTaIA=
+Date:   Sun, 30 Dec 2018 12:24:45 +0100
+From:   Wim Van Sebroeck <wim@linux-watchdog.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Colin Ian King <colin.king@canonical.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [GIT PULL REQUEST] watchdog - v4.21 Merge window
+Message-ID: <20181230112445.GA12489@www.linux-watchdog.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181230113841.GA17373@1wt.eu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
-* Willy Tarreau <w@1wt.eu> wrote:
+Please pull the watchdog changes for the v4.21 release cycle.
 
-> On Sun, Dec 30, 2018 at 12:25:02PM +0100, Ingo Molnar wrote:
-> Could we please also use the opportunity and move 
-> > nolibc.h to a more prominent place, like in tools/include/nolibc/nolibc.h 
-> > or so?
-> 
-> It's exactly what the last patch does, I followed your suggestion :-)
+This series contains:
+* add TQ-Systems TQMX86 watchdog driver
+* add Qualcomm PM8916 watchdog driver
+* w83627hf_wdt: add quirk for Inves system
+* renesas_wdt: several improvements and document r8a774c0 support
+* mena21_wdt, mtx-1: Convert to use GPIO descriptor
+* bcm281xx, ie6xx_wdt: convert to DEFINE_SHOW_ATTRIBUTE
+* documentation: add PM usage and kernel-api: don't reference removed functions
+* update bindings for MT7629 SoC
+* several small fixes
 
-Silly me - I only looked at the series of patches and didn't see a file 
-movement patch there :-)
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
-Thanks,
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
-	Ingo
+are available in the git repository at:
+
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-4.21-rc1
+
+for you to fetch changes up to e3c21e088f8936a004a3d9f2f4e14b3f2bdd6ea9:
+
+  watchdog: tqmx86: Add watchdog driver for the IO controller (2018-12-24 13:15:07 +0100)
+
+----------------------------------------------------------------
+linux-watchdog 4.21-rc1 tag
+
+----------------------------------------------------------------
+Andrew Lunn (1):
+      watchdog: tqmx86: Add watchdog driver for the IO controller
+
+Colin Ian King (1):
+      watchdog: asm9260_wdt: make array mode_name static, shrinks object size
+
+Fabrizio Castro (2):
+      watchdog: renesas_wdt: Fix typos
+      dt-bindings: watchdog: renesas-wdt: Document r8a774c0 support
+
+Hardik Singh Rathore (1):
+      Watchdog: remove outdated comment
+
+Jean Delvare (1):
+      watchdog: w83627hf_wdt: Add quirk for Inves system
+
+Jerry Hoemann (3):
+      watchdog/hpwdt: Exclude via blacklist
+      watchdog/hpwdt: Do not claim unsupported hardware
+      watchdog/hpwdt: Update driver version.
+
+Linus Walleij (2):
+      watchdog: mena21_wdt: Convert to GPIO descriptors
+      watchdog: mtx-1: Convert to use GPIO descriptor
+
+Loic Poulain (2):
+      watchdog: Add pm8916 watchdog driver
+      dt-bindings: watchdog: Add Qualcomm PM8916 watchdog
+
+Ryder Lee (1):
+      dt-bindings: watchdog: update bindings for MT7629 SoC
+
+Tomer Maimon (1):
+      watchdog: npcm: Modify npcm watchdog kconfig arch parameter
+
+Wolfram Sang (4):
+      watchdog: renesas_wdt: don't set divider while watchdog is running
+      watchdog: renesas_wdt: don't keep timer value during suspend/resume
+      watchdog: add documentation for PM usage
+      watchdog: docs: kernel-api: don't reference removed functions
+
+Yangtao Li (3):
+      watchdog: cpwd: add of_node_put()
+      watchdog: bcm281xx: convert to DEFINE_SHOW_ATTRIBUTE
+      watchdog: ie6xx_wdt: convert to DEFINE_SHOW_ATTRIBUTE
+
+ .../devicetree/bindings/watchdog/mtk-wdt.txt       |   1 +
+ .../bindings/watchdog/qcom,pm8916-wdt.txt          |  28 +++
+ .../devicetree/bindings/watchdog/renesas-wdt.txt   |   1 +
+ Documentation/watchdog/watchdog-kernel-api.txt     |   4 -
+ Documentation/watchdog/watchdog-pm.txt             |  19 ++
+ arch/mips/alchemy/board-mtx1.c                     |  18 +-
+ drivers/watchdog/Kconfig                           |  22 ++-
+ drivers/watchdog/Makefile                          |   2 +
+ drivers/watchdog/asm9260_wdt.c                     |   2 +-
+ drivers/watchdog/bcm_kona_wdt.c                    |  16 +-
+ drivers/watchdog/cpwd.c                            |   2 +
+ drivers/watchdog/hpwdt.c                           |  15 +-
+ drivers/watchdog/ie6xx_wdt.c                       |  16 +-
+ drivers/watchdog/mena21_wdt.c                      |  73 ++++---
+ drivers/watchdog/mtx-1_wdt.c                       |  19 +-
+ drivers/watchdog/pm8916_wdt.c                      | 211 +++++++++++++++++++++
+ drivers/watchdog/renesas_wdt.c                     |  24 +--
+ drivers/watchdog/tqmx86_wdt.c                      | 126 ++++++++++++
+ drivers/watchdog/w83627hf_wdt.c                    |  38 +++-
+ include/linux/watchdog.h                           |   3 -
+ 20 files changed, 529 insertions(+), 111 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/qcom,pm8916-wdt.txt
+ create mode 100644 Documentation/watchdog/watchdog-pm.txt
+ create mode 100644 drivers/watchdog/pm8916_wdt.c
+ create mode 100644 drivers/watchdog/tqmx86_wdt.c
+----------------------------------------------------------------
+
+Kind regards and best wishes,
+Wim.
+
