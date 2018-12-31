@@ -2,118 +2,169 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5424C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE911C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7480721019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546285367;
-	bh=kqzqwoV99iJvHWKyk7Yl2s8AGP2WbHVYqE6DI1BWguE=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=TmSGuzf1eHfK2h7XSDk30zWdeCBdqBqd+QUq6hhbBRYNlNfLVbrpIGtOKgu/JBPvZ
-	 J36IAmZmDVsYjx0QkNyVwIrWujOvBUXBttCWRrF+EFMVe5GL0XohEr/8uwSnRqCm2k
-	 FFWIhyEykcm47aYPBlFqOSfLrcQWhCZoeLoLtYGQ=
+	by mail.kernel.org (Postfix) with ESMTP id 9E04F21871
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbeLaTmq (ORCPT
+        id S1727890AbeLaTnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 14:42:46 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47838 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbeLaTmo (ORCPT
+        Mon, 31 Dec 2018 14:43:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34932 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727405AbeLaTnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 14:42:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZL2kTmtvJE0WTVN2vNIh+PyhYJ626nlPpU66YvCE9ro=; b=FBisLJKrnOgf
-        XMOLxIbcZjooCjvvnIpWyR5rYxAwLsFSzYyL9Fuk1mb7NEug7TnAvNs9VdE4veYmV0xIXo6hFGSVI
-        EWgCNvO+QpMwBqJyT0/N2MvZBP+8NdEPuM/v9/E6BZIogGWXiq1RW0q7hj5VqDjhm1WxMUHsRNvLb
-        xaBds=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ge3SR-0002n1-0A; Mon, 31 Dec 2018 19:42:39 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 69BDA440080; Mon, 31 Dec 2018 19:42:38 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: lochnagar: Set up correct .data field for "cirrus,lochnagar2-mic2vdd"" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20181231194238.69BDA440080@finisterre.ee.mobilebroadband>
-Date:   Mon, 31 Dec 2018 19:42:38 +0000 (GMT)
+        Mon, 31 Dec 2018 14:43:23 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBVJXXoc110491
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 14:43:21 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pqkpfmgc9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 14:43:21 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 31 Dec 2018 19:43:20 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 31 Dec 2018 19:43:17 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBVJhGNL22216802
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Dec 2018 19:43:16 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B100B2064;
+        Mon, 31 Dec 2018 19:43:16 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAB40B205F;
+        Mon, 31 Dec 2018 19:43:15 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 31 Dec 2018 19:43:15 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 621A216C32AD; Mon, 31 Dec 2018 11:43:32 -0800 (PST)
+Date:   Mon, 31 Dec 2018 11:43:32 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>, Willy Tarreau <w@1wt.eu>,
+        mingo@kernel.org, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] rcutorture/nolibc: fix some poor indentation and
+ alignment
+Reply-To: paulmck@linux.ibm.com
+References: <20181229180218.15798-1-w@1wt.eu>
+ <20181229180218.15798-3-w@1wt.eu>
+ <20181229223033.q4gx4cn7ci6scysr@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229223033.q4gx4cn7ci6scysr@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18123119-0052-0000-0000-0000036FED48
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010323; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01139844; UDB=6.00593097; IPR=6.00920054;
+ MB=3.00024915; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-31 19:43:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18123119-0053-0000-0000-00005F4AE67E
+Message-Id: <20181231194332.GR4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812310171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sat, Dec 29, 2018 at 12:30:33PM -1000, Joey Pabalinas wrote:
+> On Sat, Dec 29, 2018 at 07:02:17PM +0100, Willy Tarreau wrote:
+> > A few macros had their rightmost backslash misaligned, and the pollfd
+> > struct definition resisted the previous code reindent. Nothing else
+> > changed.
+> > 
+> > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Signed-off-by: Willy Tarreau <w@1wt.eu>
+> 
+> Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-   regulator: lochnagar: Set up correct .data field for "cirrus,lochnagar2-mic2vdd"
+Applied, thank you both!
 
-has been applied to the regulator tree at
+							Thanx, Paul
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+> > ---
+> >  tools/testing/selftests/rcutorture/bin/nolibc.h | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/rcutorture/bin/nolibc.h b/tools/testing/selftests/rcutorture/bin/nolibc.h
+> > index 30bd27b..985364c 100644
+> > --- a/tools/testing/selftests/rcutorture/bin/nolibc.h
+> > +++ b/tools/testing/selftests/rcutorture/bin/nolibc.h
+> > @@ -81,9 +81,9 @@ typedef   signed long        time_t;
+> >  
+> >  /* for poll() */
+> >  struct pollfd {
+> > -    int fd;
+> > -    short int events;
+> > -    short int revents;
+> > +	int fd;
+> > +	short int events;
+> > +	short int revents;
+> >  };
+> >  
+> >  /* for select() */
+> > @@ -239,7 +239,7 @@ struct stat {
+> >  		"syscall\n"                                                   \
+> >  		: "=a" (_ret)                                                 \
+> >  		: "0"(_num)                                                   \
+> > -		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"                                \
+> > +		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"             \
+> >  	);                                                                    \
+> >  	_ret;                                                                 \
+> >  })
+> > @@ -255,7 +255,7 @@ struct stat {
+> >  		: "=a" (_ret)                                                 \
+> >  		: "r"(_arg1),                                                 \
+> >  		  "0"(_num)                                                   \
+> > -		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"                                \
+> > +		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"             \
+> >  	);                                                                    \
+> >  	_ret;                                                                 \
+> >  })
+> > @@ -272,7 +272,7 @@ struct stat {
+> >  		: "=a" (_ret)                                                 \
+> >  		: "r"(_arg1), "r"(_arg2),                                     \
+> >  		  "0"(_num)                                                   \
+> > -		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"                                \
+> > +		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"             \
+> >  	);                                                                    \
+> >  	_ret;                                                                 \
+> >  })
+> > @@ -290,7 +290,7 @@ struct stat {
+> >  		: "=a" (_ret)                                                 \
+> >  		: "r"(_arg1), "r"(_arg2), "r"(_arg3),                         \
+> >  		  "0"(_num)                                                   \
+> > -		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"                                \
+> > +		: "rcx", "r8", "r9", "r10", "r11", "memory", "cc"             \
+> >  	);                                                                    \
+> >  	_ret;                                                                 \
+> >  })
+> > -- 
+> > 2.9.0
+> > 
+> 
+> -- 
+> Cheers,
+> Joey Pabalinas
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 4cac31e2be6e569bd55f936e662d2d146325b74c Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Sat, 29 Dec 2018 19:40:47 +0800
-Subject: [PATCH] regulator: lochnagar: Set up correct .data field for
- "cirrus,lochnagar2-mic2vdd"
-
-Fix trival copy-n-paste mistake.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/lochnagar-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
-index 5a89e6d4b9a6..818d20410518 100644
---- a/drivers/regulator/lochnagar-regulator.c
-+++ b/drivers/regulator/lochnagar-regulator.c
-@@ -226,7 +226,7 @@ static const struct of_device_id lochnagar_of_match[] = {
- 	},
- 	{
- 		.compatible = "cirrus,lochnagar2-mic2vdd",
--		.data = &lochnagar_regulators[LOCHNAGAR_MIC1VDD],
-+		.data = &lochnagar_regulators[LOCHNAGAR_MIC2VDD],
- 	},
- 	{
- 		.compatible = "cirrus,lochnagar2-vddcore",
--- 
-2.20.1
 
