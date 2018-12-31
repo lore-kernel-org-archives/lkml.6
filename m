@@ -7,43 +7,50 @@ X-Spam-Status: No, score=-11.0 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBD5C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 04:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D1CC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 04:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3862821019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 04:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C553121019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 04:16:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbeLaEPK (ORCPT
+        id S1727027AbeLaEQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 23:15:10 -0500
-Received: from namei.org ([65.99.196.166]:53788 "EHLO namei.org"
+        Sun, 30 Dec 2018 23:16:26 -0500
+Received: from namei.org ([65.99.196.166]:53796 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbeLaEPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 23:15:10 -0500
+        id S1726131AbeLaEQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 23:16:26 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBV4F84Y001668;
-        Mon, 31 Dec 2018 04:15:08 GMT
-Date:   Mon, 31 Dec 2018 15:15:08 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBV4GPUw001788;
+        Mon, 31 Dec 2018 04:16:25 GMT
+Date:   Mon, 31 Dec 2018 15:16:25 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] security: seccomp changes for v4.21
-Message-ID: <alpine.LRH.2.21.1812311511360.1435@namei.org>
+Subject: [GIT PULL] security: Smack changes for v4.21
+Message-ID: <alpine.LRH.2.21.1812311515150.1435@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; BOUNDARY="1665246916-996557093-1546229750=:1435"
+Content-ID: <alpine.LRH.2.21.1812311516100.1435@namei.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Kees:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-"- Add SECCOMP_RET_USER_NOTIF
+--1665246916-996557093-1546229750=:1435
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.LRH.2.21.1812311516101.1435@namei.org>
 
-- seccomp fixes for sparse warnings and s390 build (Tycho)"
+From Casey:
 
-
+"I have two Smack patches for 4.21. One Jose's patch adds
+missing documentation and Zoran's fleshes out the access checks
+on keyrings."
 
 The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
 
@@ -51,35 +58,23 @@ The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
 
-for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
+for you to fetch changes up to 20bb4cb4fb9fb994d757932abc4404cf0f0f56cc:
 
-  Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
+  Merge branch 'smack-for-4.21-a' of https://github.com/cschaufler/next-smack into next-smack (2018-12-13 19:30:33 -0800)
 
 ----------------------------------------------------------------
-James Morris (2):
-      Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
-      Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
+James Morris (1):
+      Merge branch 'smack-for-4.21-a' of https://github.com/cschaufler/next-smack into next-smack
 
-Tycho Andersen (6):
-      seccomp: hoist struct seccomp_data recalculation higher
-      seccomp: switch system call argument type to void *
-      seccomp: add a return code to trap to userspace
-      samples: add an example of seccomp user trap
-      seccomp: fix poor type promotion
-      seccomp, s390: fix build for syscall type change
+José Bollo (1):
+      Smack: Improve Documentation
 
- Documentation/ioctl/ioctl-number.txt           |   1 +
- Documentation/userspace-api/seccomp_filter.rst |  84 +++++
- arch/s390/kernel/compat_wrapper.c              |   2 +-
- include/linux/seccomp.h                        |   9 +-
- include/linux/syscalls.h                       |   2 +-
- include/uapi/linux/seccomp.h                   |  40 ++-
- kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
- samples/seccomp/.gitignore                     |   1 +
- samples/seccomp/Makefile                       |   7 +-
- samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
- tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
- 11 files changed, 1411 insertions(+), 24 deletions(-)
- create mode 100644 samples/seccomp/user-trap.c
+Zoran Markovic (1):
+      smack: fix access permissions for keyring
+
+ Documentation/admin-guide/LSM/Smack.rst |  4 ++++
+ security/smack/smack_lsm.c              | 12 +++++++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+--1665246916-996557093-1546229750=:1435--
