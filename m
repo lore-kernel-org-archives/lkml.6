@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1369C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BBBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C122133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BECFB2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546270490;
-	bh=88xtgBizjQItNUU89dc/RPXkCDoAQwbRJRlCE68Y7TY=;
+	s=default; t=1546270500;
+	bh=R0zp25Y0AmKZGHzLWsinFTN9YVDl2Zr1aon4HhLLbms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VQVv3K3ShKkfBBILN+FG87+E3ZEdWkgA3YBGslJM1BSrpM3mFxUvCvZLPnmqRKbXE
-	 PKWTqcAuqrdCrwCXJ0GA2YGNWRa5hwD0xDkU0zLdXGjsbW5793f23ZKxHe+oi7en9j
-	 M/IjY+j3x41JAHC1nNQhNuj9ExWVvalnWPF8zrXI=
+	b=c4yhP0oAL5RRtrWpaRV8eX9WFWIGK3grXo0R40Acj5j/6gvQX4ZyG1OcEGPW9DNaP
+	 x1F37XmyFKLJkfa20u4AtK8kCtHtHivw3cxiIsrcBQDd94PR3Q029uod2F8SXokt9R
+	 Wg00NZwxTD5uOQQbXntwwE5DtamdtSSpMVC0LqXM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeLaPet (ORCPT
+        id S1727492AbeLaPe7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 10:34:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60122 "EHLO mail.kernel.org"
+        Mon, 31 Dec 2018 10:34:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeLaPet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 10:34:49 -0500
+        id S1726722AbeLaPe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 10:34:59 -0500
 Received: from localhost.localdomain (unknown [183.128.55.205])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3496D2133F;
-        Mon, 31 Dec 2018 15:34:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3202133F;
+        Mon, 31 Dec 2018 15:34:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546270488;
-        bh=88xtgBizjQItNUU89dc/RPXkCDoAQwbRJRlCE68Y7TY=;
+        s=default; t=1546270498;
+        bh=R0zp25Y0AmKZGHzLWsinFTN9YVDl2Zr1aon4HhLLbms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9yIX439EYGjerxONTWjX/4QRSjP19tvlXlqWhlPCOKs+Kp+FP6KonDBdDl+Gxl6N
-         5gpkuDcDF3oB2GM5Egfn8sATnejUEVaAn8sSlIJwA8ZS+1bUGTck6dXoWqHPHgf67X
-         O7HXOs2wp46j1VSEa2hHF6UI1SsKoH0p9n7MhFgE=
+        b=i+42E+ZBYXjbHULVTixEDt4/Z3HlmRk+zpoCBQIO24YT/lsS6BLxoox9jRtX34oAA
+         1Ien09TJ5/3Zp/QtaRqmEL1lE0MdNXxRJxQVFFsHLnHU4KbXI3Wu7TCjGgqyWeuGQk
+         eMieQJKKE8us2jyRaDQAq/T2XPyhz1XJVrntisU8=
 From:   guoren@kernel.org
 To:     arnd@arndb.de
 Cc:     guoren@kernel.org, linux-kernel@vger.kernel.org,
         rostedt@goodmis.org, mingo@redhat.com, oleg@redhat.com,
         linux-arch@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH 08/14] csky: stacktrace supported.
-Date:   Mon, 31 Dec 2018 23:32:59 +0800
-Message-Id: <1546270384-4590-7-git-send-email-guoren@kernel.org>
+Subject: [PATCH 09/14] csky: optimize kernel panic print.
+Date:   Mon, 31 Dec 2018 23:33:00 +0800
+Message-Id: <1546270384-4590-8-git-send-email-guoren@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1546270384-4590-1-git-send-email-guoren@kernel.org>
 References: <1546270384-4590-1-git-send-email-guoren@kernel.org>
@@ -56,193 +57,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <ren_guo@c-sky.com>
 
-The gcc option "-mbacktrace" will push fp(r8),lr into stack and we could
-unwind the stack with:
-	fp = *fp
-	lr = (unsigned int *)fp[1]
+Use STACKTRACE to optimize panic print more pretty and align registers
+printing.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- arch/csky/Kconfig                   |  3 ++
- arch/csky/Makefile                  |  4 +++
- arch/csky/include/asm/thread_info.h |  4 +++
- arch/csky/kernel/Makefile           |  1 +
- arch/csky/kernel/process.c          | 29 +++++++++++--------
- arch/csky/kernel/stacktrace.c       | 57 +++++++++++++++++++++++++++++++++++++
- 6 files changed, 86 insertions(+), 12 deletions(-)
- create mode 100644 arch/csky/kernel/stacktrace.c
+ arch/csky/kernel/dumpstack.c | 59 ++++++++++++++------------------------------
+ arch/csky/kernel/ptrace.c    | 34 ++++++++++++++-----------
+ arch/csky/mm/fault.c         |  4 +--
+ 3 files changed, 41 insertions(+), 56 deletions(-)
 
-diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-index 8bdbe92..65804d1 100644
---- a/arch/csky/Kconfig
-+++ b/arch/csky/Kconfig
-@@ -94,6 +94,9 @@ config MMU
- config RWSEM_GENERIC_SPINLOCK
- 	def_bool y
+diff --git a/arch/csky/kernel/dumpstack.c b/arch/csky/kernel/dumpstack.c
+index a9a03ac..659253e 100644
+--- a/arch/csky/kernel/dumpstack.c
++++ b/arch/csky/kernel/dumpstack.c
+@@ -7,60 +7,39 @@ int kstack_depth_to_print = 48;
  
-+config STACKTRACE_SUPPORT
-+	def_bool y
-+
- config TIME_LOW_RES
- 	def_bool y
- 
-diff --git a/arch/csky/Makefile b/arch/csky/Makefile
-index c639fc1..3607a6e 100644
---- a/arch/csky/Makefile
-+++ b/arch/csky/Makefile
-@@ -47,6 +47,10 @@ ifeq ($(CSKYABI),abiv2)
- KBUILD_CFLAGS += -mno-stack-size
- endif
- 
-+ifdef CONFIG_STACKTRACE
-+KBUILD_CFLAGS += -mbacktrace
-+endif
-+
- abidirs := $(patsubst %,arch/csky/%/,$(CSKYABI))
- KBUILD_CFLAGS += $(patsubst %,-I$(srctree)/%inc,$(abidirs))
- 
-diff --git a/arch/csky/include/asm/thread_info.h b/arch/csky/include/asm/thread_info.h
-index a2c69a7..0e9d035 100644
---- a/arch/csky/include/asm/thread_info.h
-+++ b/arch/csky/include/asm/thread_info.h
-@@ -10,6 +10,7 @@
- #include <asm/types.h>
- #include <asm/page.h>
- #include <asm/processor.h>
-+#include <abi/switch_context.h>
- 
- struct thread_info {
- 	struct task_struct	*task;
-@@ -36,6 +37,9 @@ struct thread_info {
- 
- #define THREAD_SIZE_ORDER (THREAD_SHIFT - PAGE_SHIFT)
- 
-+#define thread_saved_fp(tsk) \
-+	((unsigned long)(((struct switch_stack *)(tsk->thread.ksp))->r8))
-+
- static inline struct thread_info *current_thread_info(void)
+ void show_trace(unsigned long *stack)
  {
- 	unsigned long sp;
-diff --git a/arch/csky/kernel/Makefile b/arch/csky/kernel/Makefile
-index 4422de7..ba5ca48 100644
---- a/arch/csky/kernel/Makefile
-+++ b/arch/csky/kernel/Makefile
-@@ -6,3 +6,4 @@ obj-y += process.o cpu-probe.o ptrace.o dumpstack.o
+-	unsigned long *endstack;
++	unsigned long *stack_end;
++	unsigned long *stack_start;
++	unsigned long *fp;
+ 	unsigned long addr;
+-	int i;
  
- obj-$(CONFIG_MODULES)			+= module.o
- obj-$(CONFIG_SMP)			+= smp.o
-+obj-$(CONFIG_STACKTRACE)		+= stacktrace.o
-diff --git a/arch/csky/kernel/process.c b/arch/csky/kernel/process.c
-index 8ed2002..e555740 100644
---- a/arch/csky/kernel/process.c
-+++ b/arch/csky/kernel/process.c
-@@ -93,26 +93,31 @@ int dump_task_regs(struct task_struct *tsk, elf_gregset_t *pr_regs)
- 
- unsigned long get_wchan(struct task_struct *p)
- {
--	unsigned long esp, pc;
--	unsigned long stack_page;
-+	unsigned long lr;
-+	unsigned long *fp, *stack_start, *stack_end;
- 	int count = 0;
- 
- 	if (!p || p == current || p->state == TASK_RUNNING)
- 		return 0;
- 
--	stack_page = (unsigned long)p;
--	esp = p->thread.esp0;
-+	stack_start = (unsigned long *)end_of_stack(p);
-+	stack_end = (unsigned long *)(task_stack_page(p) + THREAD_SIZE);
-+
-+	fp = (unsigned long *) thread_saved_fp(p);
- 	do {
--		if (esp < stack_page+sizeof(struct task_struct) ||
--		    esp >= 8184+stack_page)
-+		if (fp < stack_start || fp > stack_end)
- 			return 0;
--		/*FIXME: There's may be error here!*/
--		pc = ((unsigned long *)esp)[1];
--		/* FIXME: This depends on the order of these functions. */
--		if (!in_sched_functions(pc))
--			return pc;
--		esp = *(unsigned long *) esp;
-+#ifdef CONFIG_STACKTRACE
-+		lr = fp[1];
-+		fp = (unsigned long *)fp[0];
-+#else
-+		lr = *fp++;
-+#endif
-+		if (!in_sched_functions(lr) &&
-+		    __kernel_text_address(lr))
-+			return lr;
- 	} while (count++ < 16);
-+
- 	return 0;
- }
- EXPORT_SYMBOL(get_wchan);
-diff --git a/arch/csky/kernel/stacktrace.c b/arch/csky/kernel/stacktrace.c
-new file mode 100644
-index 0000000..fec777a
---- /dev/null
-+++ b/arch/csky/kernel/stacktrace.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd. */
-+
-+#include <linux/sched/debug.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/stacktrace.h>
-+#include <linux/ftrace.h>
-+
-+void save_stack_trace(struct stack_trace *trace)
-+{
-+	save_stack_trace_tsk(current, trace);
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace);
-+
-+void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
-+{
-+	unsigned long *fp, *stack_start, *stack_end;
-+	unsigned long addr;
-+	int skip = trace->skip;
-+	int savesched;
-+	int graph_idx = 0;
-+
-+	if (tsk == current) {
-+		asm volatile("mov %0, r8\n":"=r"(fp));
-+		savesched = 1;
-+	} else {
-+		fp = (unsigned long *)thread_saved_fp(tsk);
-+		savesched = 0;
-+	}
-+
-+	addr = (unsigned long) fp & THREAD_MASK;
+-	pr_info("Call Trace:\n");
+-	addr = (unsigned long)stack + THREAD_SIZE - 1;
+-	endstack = (unsigned long *)(addr & -THREAD_SIZE);
+-	i = 0;
+-	while (stack + 1 <= endstack) {
+-		addr = *stack++;
+-		/*
+-		 * If the address is either in the text segment of the
+-		 * kernel, or in the region which contains vmalloc'ed
+-		 * memory, it *may* be the address of a calling
+-		 * routine; if so, print it so that someone tracing
+-		 * down the cause of the crash will be able to figure
+-		 * out the call path that was taken.
+-		 */
+-		if (__kernel_text_address(addr)) {
+-#ifndef CONFIG_KALLSYMS
+-			if (i % 5 == 0)
+-				pr_cont("\n       ");
++	addr = (unsigned long) stack & THREAD_MASK;
 +	stack_start = (unsigned long *) addr;
 +	stack_end = (unsigned long *) (addr + THREAD_SIZE);
 +
++	fp = stack;
++	pr_info("\nCall Trace:");
++
 +	while (fp > stack_start && fp < stack_end) {
-+		unsigned long lpp, fpp;
++#ifdef CONFIG_STACKTRACE
++		addr	= fp[1];
++		fp	= (unsigned long *) fp[0];
++#else
++		addr	= *fp++;
+ #endif
+-			pr_cont(" [<%08lx>] %pS\n", addr, (void *)addr);
+-			i++;
+-		}
++		if (__kernel_text_address(addr))
++			pr_cont("\n[<%08lx>] %pS", addr, (void *)addr);
+ 	}
+ 	pr_cont("\n");
+ }
+ 
+ void show_stack(struct task_struct *task, unsigned long *stack)
+ {
+-	unsigned long *p;
+-	unsigned long *endstack;
+-	int i;
+-
+ 	if (!stack) {
+ 		if (task)
+-			stack = (unsigned long *)task->thread.esp0;
++			stack = (unsigned long *)thread_saved_fp(task);
+ 		else
+ 			stack = (unsigned long *)&stack;
+ 	}
+-	endstack = (unsigned long *)
+-		(((unsigned long)stack + THREAD_SIZE - 1) & -THREAD_SIZE);
+ 
+-	pr_info("Stack from %08lx:", (unsigned long)stack);
+-	p = stack;
+-	for (i = 0; i < kstack_depth_to_print; i++) {
+-		if (p + 1 > endstack)
+-			break;
+-		if (i % 8 == 0)
+-			pr_cont("\n       ");
+-		pr_cont(" %08lx", *p++);
+-	}
+-	pr_cont("\n");
+ 	show_trace(stack);
+ }
+diff --git a/arch/csky/kernel/ptrace.c b/arch/csky/kernel/ptrace.c
+index a76d466..eb62e07 100644
+--- a/arch/csky/kernel/ptrace.c
++++ b/arch/csky/kernel/ptrace.c
+@@ -241,6 +241,7 @@ asmlinkage void syscall_trace(int why, struct pt_regs *regs)
+ 	regs->regs[SYSTRACE_SAVENUM] = saved_why;
+ }
+ 
++extern void show_stack(struct task_struct *task, unsigned long *stack);
+ void show_regs(struct pt_regs *fp)
+ {
+ 	unsigned long   *sp;
+@@ -263,35 +264,37 @@ void show_regs(struct pt_regs *fp)
+ 		       (int) (((unsigned long) current) + 2 * PAGE_SIZE));
+ 	}
+ 
+-	pr_info("PC: 0x%08lx\n", (long)fp->pc);
++	pr_info("PC: 0x%08lx (%pS)\n", (long)fp->pc, (void *)fp->pc);
++	pr_info("LR: 0x%08lx (%pS)\n", (long)fp->lr, (void *)fp->lr);
++	pr_info("SP: 0x%08lx\n", (long)fp);
+ 	pr_info("orig_a0: 0x%08lx\n", fp->orig_a0);
+ 	pr_info("PSR: 0x%08lx\n", (long)fp->sr);
+ 
+-	pr_info("a0: 0x%08lx  a1: 0x%08lx  a2: 0x%08lx  a3: 0x%08lx\n",
+-	       fp->a0, fp->a1, fp->a2, fp->a3);
++	pr_info(" a0: 0x%08lx   a1: 0x%08lx   a2: 0x%08lx   a3: 0x%08lx\n",
++		fp->a0, fp->a1, fp->a2, fp->a3);
+ #if defined(__CSKYABIV2__)
+-	pr_info("r4: 0x%08lx  r5: 0x%08lx    r6: 0x%08lx    r7: 0x%08lx\n",
++	pr_info(" r4: 0x%08lx   r5: 0x%08lx   r6: 0x%08lx   r7: 0x%08lx\n",
+ 		fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
+-	pr_info("r8: 0x%08lx  r9: 0x%08lx   r10: 0x%08lx   r11: 0x%08lx\n",
++	pr_info(" r8: 0x%08lx   r9: 0x%08lx  r10: 0x%08lx  r11: 0x%08lx\n",
+ 		fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
+-	pr_info("r12 0x%08lx  r13: 0x%08lx   r15: 0x%08lx\n",
++	pr_info("r12: 0x%08lx  r13: 0x%08lx  r15: 0x%08lx\n",
+ 		fp->regs[8], fp->regs[9], fp->lr);
+-	pr_info("r16:0x%08lx   r17: 0x%08lx   r18: 0x%08lx    r19: 0x%08lx\n",
++	pr_info("r16: 0x%08lx  r17: 0x%08lx  r18: 0x%08lx  r19: 0x%08lx\n",
+ 		fp->exregs[0], fp->exregs[1], fp->exregs[2], fp->exregs[3]);
+-	pr_info("r20 0x%08lx   r21: 0x%08lx   r22: 0x%08lx    r23: 0x%08lx\n",
++	pr_info("r20: 0x%08lx  r21: 0x%08lx  r22: 0x%08lx  r23: 0x%08lx\n",
+ 		fp->exregs[4], fp->exregs[5], fp->exregs[6], fp->exregs[7]);
+-	pr_info("r24 0x%08lx   r25: 0x%08lx   r26: 0x%08lx    r27: 0x%08lx\n",
++	pr_info("r24: 0x%08lx  r25: 0x%08lx  r26: 0x%08lx  r27: 0x%08lx\n",
+ 		fp->exregs[8], fp->exregs[9], fp->exregs[10], fp->exregs[11]);
+-	pr_info("r28 0x%08lx   r29: 0x%08lx   r30: 0x%08lx    tls: 0x%08lx\n",
++	pr_info("r28: 0x%08lx  r29: 0x%08lx  r30: 0x%08lx  tls: 0x%08lx\n",
+ 		fp->exregs[12], fp->exregs[13], fp->exregs[14], fp->tls);
+-	pr_info("hi 0x%08lx    lo: 0x%08lx\n",
++	pr_info(" hi: 0x%08lx   lo: 0x%08lx\n",
+ 		fp->rhi, fp->rlo);
+ #else
+-	pr_info("r6: 0x%08lx   r7: 0x%08lx   r8: 0x%08lx   r9: 0x%08lx\n",
++	pr_info(" r6: 0x%08lx   r7: 0x%08lx   r8: 0x%08lx   r9: 0x%08lx\n",
+ 		fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
+-	pr_info("r10: 0x%08lx   r11: 0x%08lx   r12: 0x%08lx   r13: 0x%08lx\n",
++	pr_info("r10: 0x%08lx  r11: 0x%08lx  r12: 0x%08lx  r13: 0x%08lx\n",
+ 		fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
+-	pr_info("r14 0x%08lx   r1: 0x%08lx   r15: 0x%08lx\n",
++	pr_info("r14: 0x%08lx   r1: 0x%08lx  r15: 0x%08lx\n",
+ 		fp->regs[8], fp->regs[9], fp->lr);
+ #endif
+ 
+@@ -313,4 +316,7 @@ void show_regs(struct pt_regs *fp)
+ 		pr_cont("%08x ", (int) *sp++);
+ 	}
+ 	pr_cont("\n");
 +
-+		fpp = fp[0];
-+		lpp = fp[1];
-+		if (!__kernel_text_address(lpp))
-+			break;
-+		else
-+			lpp = ftrace_graph_ret_addr(tsk, &graph_idx, lpp, NULL);
-+
-+		if (savesched || !in_sched_functions(lpp)) {
-+			if (skip) {
-+				skip--;
-+			} else {
-+				trace->entries[trace->nr_entries++] = lpp;
-+				if (trace->nr_entries >= trace->max_entries)
-+					break;
-+			}
-+		}
-+		fp = (unsigned long *)fpp;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
++	show_stack(NULL, (unsigned long *)fp->regs[4]);
++	return;
+ }
+diff --git a/arch/csky/mm/fault.c b/arch/csky/mm/fault.c
+index 7df57f9..6a94661 100644
+--- a/arch/csky/mm/fault.c
++++ b/arch/csky/mm/fault.c
+@@ -188,8 +188,8 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long write,
+ 	 * terminate things with extreme prejudice.
+ 	 */
+ 	bust_spinlocks(1);
+-	pr_alert("Unable to %s at vaddr: %08lx, epc: %08lx\n",
+-		 __func__, address, regs->pc);
++	pr_alert("Unable to handle kernel paging request at virtual "
++		 "address 0x%08lx, pc: 0x%08lx\n", address, regs->pc);
+ 	die_if_kernel("Oops", regs, write);
+ 
+ out_of_memory:
 -- 
 2.7.4
 
