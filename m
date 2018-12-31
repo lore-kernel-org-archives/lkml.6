@@ -2,53 +2,51 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E352C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74441C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1843213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF3F21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeLaHvG (ORCPT
+        id S1727044AbeLaICF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 02:51:06 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:37147 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbeLaHvF (ORCPT
+        Mon, 31 Dec 2018 03:02:05 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:51654 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbeLaICE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 02:51:05 -0500
-Received: by mail-io1-f71.google.com with SMTP id d63so31410519iog.4
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 23:51:04 -0800 (PST)
+        Mon, 31 Dec 2018 03:02:04 -0500
+Received: by mail-it1-f199.google.com with SMTP id b14so7240019itd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 00:02:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=5bYkrf2iXF/WXT7SuF3mLu9Q/j9McFxOsv29t9E5usw=;
-        b=YwU9tKQbH8nhZ03oGeicrgtBJyDDRKksmZ+eChCRVqwgxIFqCXsjo3rEk3qCte7go9
-         EhQcNM3daqqncIGBQqWEDmkrei4P0itFWpne8J2q5PhbMJA3cOH1YsAHoVX3GRYRRlMk
-         mukZKXvbbinQI8wSIh02b6+aWjrufph9v1scJoPt6oyVEibCu0ZLDcfkTxlsux/1q9ML
-         J71hGEN3antEDvZCAXSzL4EgYZ80rWdQtBe29zmXOksLkTARu/7z2Mk+Ntp50LEsaub3
-         PGntYQDF+SWjGNUvEJ9DA8ngLnYSz7I+x6zw/xvaxR0Lb7xXcS2V98jt8Sa6OHb7NXls
-         f2Wg==
-X-Gm-Message-State: AJcUukcV2FWvkpnGUXlj5WaR1xAKMnmbnRjzqzTG4bmt38dGDGWaiuf0
-        LfSvHrqLalC7IPSZurh7uIlYKwiQ3f9EyK/vn7iLC8BSIJfR
-X-Google-Smtp-Source: ALg8bN7UvxTW/tVd0ZZBjdqQL1056zg74TXcTo/Inyc5KBwM/qzF+bO909d/IEUkSdgV7NKNgByMpHoI+QyjyzO+pdXjTBrrCDpp
+        bh=70O4whXVZ7B1GEqqhYOaoV0QX3bXH4GoMbMpUK9Fvq8=;
+        b=ivz9All5Vq1GK7y83sDGYDUuNHdD6seMl/uE6FiDl3wj5dJhYcC2jhEyPnUxRjhS3+
+         cMyKBMlKSlkXZRqJ42rsnXCv0J1h6rLlNiMSgVZFdBbuTug6HjeUvgdZS4tB3PG6PIeK
+         5CoT4c4NR5KjpAIiYXvnIIM3IFspWW3K9+1JHo/z2mCHThAARacTZtGzSQ0KL2nQRTS8
+         e+KigR5SvpfVxgOzXM9ZGa4njZSITCgj0JAXQMAObC5U/xwc4FkK1ty3NthaIP4gOTdM
+         MjQxVEO8xR3JWrIO0J3xs4gZohEPZ8gLmYgjmGkg4pgUfqNWL8Z4csjl4RzWs9k7p8hH
+         W3BA==
+X-Gm-Message-State: AJcUukeHR6wZeKbXqZ2PgvsRjkXx0S+2CF66CGHKENdRk0P8woeOwYOz
+        5rpiA4y6dMr9dfKLWGt7C3zNHojihfNhA4dBDaMsevtXt0Vo
+X-Google-Smtp-Source: ALg8bN7uPzSQI99d4p+0JnxmCptLnWqhdKdj/CDYcKgbW637WIv8GQJP2BIrH8JwFxagt/iRfuNnO2u6t1bB5JUKeYK1ub+L1bHr
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8d81:: with SMTP id b1mr34927650ioj.27.1546242664454;
- Sun, 30 Dec 2018 23:51:04 -0800 (PST)
-Date:   Sun, 30 Dec 2018 23:51:04 -0800
+X-Received: by 2002:a6b:d11a:: with SMTP id l26mr24719547iob.34.1546243323550;
+ Mon, 31 Dec 2018 00:02:03 -0800 (PST)
+Date:   Mon, 31 Dec 2018 00:02:03 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c06550057e4cac7c@google.com>
-Subject: KMSAN: uninit-value in mpol_rebind_mm
-From:   syzbot <syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com>
-To:     aarcange@redhat.com, akpm@linux-foundation.org, glider@google.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux@dominikbrodowski.net, mhocko@suse.com,
-        rientjes@google.com, syzkaller-bugs@googlegroups.com,
-        vbabka@suse.cz, xieyisheng1@huawei.com, zhongjiang@huawei.com
+Message-ID: <0000000000000966a8057e4cd467@google.com>
+Subject: general protection fault in xfrm_policy_lookup_bytype
+From:   syzbot <syzbot+80f2c1182f5bf39e5208@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,119 +57,122 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    79fc24ff6184 kmsan: highmem: use kmsan_clear_page() in cop..
-git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c48b67400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=901dd030b2cc57e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=b19c2dc2c990ea657a71
-compiler:       clang version 8.0.0 (trunk 349734)
+HEAD commit:    90cadbbf341d Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1018bf67400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a32c9a4aef9af7
+dashboard link: https://syzkaller.appspot.com/bug?extid=80f2c1182f5bf39e5208
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com
+Reported-by: syzbot+80f2c1182f5bf39e5208@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KMSAN: uninit-value in mpol_rebind_policy mm/mempolicy.c:353 [inline]
-BUG: KMSAN: uninit-value in mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
-CPU: 1 PID: 17420 Comm: syz-executor4 Not tainted 4.20.0-rc7+ #15
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 25894 Comm: syz-executor0 Not tainted 4.20.0-rc7+ #361
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:__xfrm_policy_eval_candidates net/xfrm/xfrm_policy.c:2019 [inline]
+RIP: 0010:xfrm_policy_eval_candidates net/xfrm/xfrm_policy.c:2053 [inline]
+RIP: 0010:xfrm_policy_lookup_bytype+0xc1b/0xe70 net/xfrm/xfrm_policy.c:2113
+Code: 7f fe ff ff e8 f6 59 c1 fa 4d 89 e6 49 83 ee 08 0f 84 6d fe ff ff e8  
+e4 59 c1 fa 49 8d bc 24 ac 00 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 14 28  
+48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85
+kobject: 'loop1' (0000000000151e1f): kobject_uevent_env
+RSP: 0018:ffff8880ae606ba8 EFLAGS: 00010203
+RAX: 0000000020000015 RBX: 0000000000000000 RCX: ffffffff86bd011c
+RDX: 0000000000000100 RSI: ffffffff86bd013c RDI: 00000001000000ac
+RBP: ffff8880ae606e60 R08: ffff88809e8c4400 R09: 0000000000000000
+kobject: 'loop1' (0000000000151e1f): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+R10: 0000000000000000 R11: ffff88809e8c4400 R12: 0000000100000000
+R13: dffffc0000000000 R14: 00000000fffffff8 R15: 00000000ffffffff
+FS:  00007f6c92e5d700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004cd730 CR3: 00000000a5cf0000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
-  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
-  mpol_rebind_policy mm/mempolicy.c:353 [inline]
-  mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
-  update_tasks_nodemask+0x608/0xca0 kernel/cgroup/cpuset.c:1120
-  update_nodemasks_hier kernel/cgroup/cpuset.c:1185 [inline]
-  update_nodemask kernel/cgroup/cpuset.c:1253 [inline]
-  cpuset_write_resmask+0x2a98/0x34b0 kernel/cgroup/cpuset.c:1728
-  cgroup_file_write+0x44a/0x8e0 kernel/cgroup/cgroup.c:3473
-  kernfs_fop_write+0x558/0x840 fs/kernfs/file.c:316
-  __vfs_write+0x1f4/0xb70 fs/read_write.c:485
-  __kernel_write+0x1fb/0x590 fs/read_write.c:506
-  write_pipe_buf+0x1c0/0x270 fs/splice.c:797
-  splice_from_pipe_feed fs/splice.c:503 [inline]
-  __splice_from_pipe+0x48c/0xf10 fs/splice.c:627
-  splice_from_pipe fs/splice.c:662 [inline]
-  default_file_splice_write+0x1ee/0x3c0 fs/splice.c:809
-  do_splice_from fs/splice.c:851 [inline]
-  direct_splice_actor+0x19e/0x200 fs/splice.c:1023
-  splice_direct_to_actor+0x852/0x1140 fs/splice.c:978
-  do_splice_direct+0x342/0x580 fs/splice.c:1066
-  do_sendfile+0x108f/0x1de0 fs/read_write.c:1439
-  __do_sys_sendfile64 fs/read_write.c:1494 [inline]
-  __se_sys_sendfile64+0x189/0x360 fs/read_write.c:1486
-  __x64_sys_sendfile64+0x56/0x70 fs/read_write.c:1486
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+  <IRQ>
+  xfrm_policy_lookup+0x7e/0x80 net/xfrm/xfrm_policy.c:2145
+  __xfrm_policy_check+0x14f0/0x2c40 net/xfrm/xfrm_policy.c:3354
+  __xfrm_policy_check2 include/net/xfrm.h:1170 [inline]
+  xfrm_policy_check include/net/xfrm.h:1175 [inline]
+  xfrm6_policy_check include/net/xfrm.h:1185 [inline]
+  ip6_protocol_deliver_rcu+0x8e9/0x1940 net/ipv6/ip6_input.c:391
+  ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
+  ip6_mc_input+0x514/0x11c0 net/ipv6/ip6_input.c:537
+  dst_input include/net/dst.h:450 [inline]
+  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
+  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
+  process_backlog+0x217/0x760 net/core/dev.c:5923
+  napi_poll net/core/dev.c:6346 [inline]
+  net_rx_action+0x7c5/0x1950 net/core/dev.c:6412
+  __do_softirq+0x30c/0xb2e kernel/softirq.c:292
+  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1027
+  </IRQ>
+  do_softirq.part.13+0x126/0x160 kernel/softirq.c:337
+  do_softirq+0x19/0x20 kernel/softirq.c:340
+  netif_rx_ni+0x521/0x870 net/core/dev.c:4569
+  dev_loopback_xmit+0x287/0x8c0 net/core/dev.c:3576
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip6_finish_output2+0x193a/0x2930 net/ipv6/ip6_output.c:84
+  ip6_finish_output+0x583/0xc50 net/ipv6/ip6_output.c:154
+  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+  ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
+  dst_output include/net/dst.h:444 [inline]
+  ip6_local_out+0xc5/0x1b0 net/ipv6/output_core.c:176
+  ip6_send_skb+0xbc/0x340 net/ipv6/ip6_output.c:1727
+  ip6_push_pending_frames+0xc5/0xf0 net/ipv6/ip6_output.c:1747
+  l2tp_ip6_push_pending_frames net/l2tp/l2tp_ip6.c:482 [inline]
+  l2tp_ip6_sendmsg+0x1d04/0x2190 net/l2tp/l2tp_ip6.c:643
+  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x4579b9
 Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f132b74cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000004579b9
-RDX: 0000000020000080 RSI: 0000000000000005 RDI: 0000000000000004
+RSP: 002b:00007f6c92e5cc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004579b9
+RDX: 0000000000000000 RSI: 00000000200014c0 RDI: 0000000000000004
 RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007f132b74d6d4
-R13: 00000000004c471e R14: 00000000004d7d10 R15: 00000000ffffffff
-
-Uninit was stored to memory at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
-  kmsan_save_stack mm/kmsan/kmsan.c:219 [inline]
-  kmsan_internal_chain_origin+0x134/0x230 mm/kmsan/kmsan.c:439
-  kmsan_memcpy_memmove_metadata+0x58f/0xfa0 mm/kmsan/kmsan.c:316
-  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:337
-  __msan_memcpy+0x5b/0x70 mm/kmsan/kmsan_instr.c:133
-  __mpol_dup+0x146/0x470 mm/mempolicy.c:2149
-  mpol_dup include/linux/mempolicy.h:91 [inline]
-  vma_dup_policy+0x93/0x190 mm/mempolicy.c:2116
-  dup_mmap kernel/fork.c:529 [inline]
-  dup_mm kernel/fork.c:1320 [inline]
-  copy_mm kernel/fork.c:1375 [inline]
-  copy_process+0x65e6/0xb020 kernel/fork.c:1919
-  _do_fork+0x384/0x1050 kernel/fork.c:2218
-  __do_sys_clone kernel/fork.c:2325 [inline]
-  __se_sys_clone+0xf6/0x110 kernel/fork.c:2319
-  __x64_sys_clone+0x62/0x80 kernel/fork.c:2319
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Uninit was stored to memory at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
-  kmsan_save_stack mm/kmsan/kmsan.c:219 [inline]
-  kmsan_internal_chain_origin+0x134/0x230 mm/kmsan/kmsan.c:439
-  kmsan_memcpy_memmove_metadata+0x58f/0xfa0 mm/kmsan/kmsan.c:316
-  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:337
-  __msan_memcpy+0x5b/0x70 mm/kmsan/kmsan_instr.c:133
-  __mpol_dup+0x146/0x470 mm/mempolicy.c:2149
-  mpol_dup include/linux/mempolicy.h:91 [inline]
-  vma_replace_policy mm/mempolicy.c:656 [inline]
-  mbind_range mm/mempolicy.c:728 [inline]
-  do_mbind mm/mempolicy.c:1223 [inline]
-  kernel_mbind+0x254d/0x31a0 mm/mempolicy.c:1347
-  __do_sys_mbind mm/mempolicy.c:1354 [inline]
-  __se_sys_mbind+0x11c/0x130 mm/mempolicy.c:1350
-  __x64_sys_mbind+0x6e/0x90 mm/mempolicy.c:1350
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
-  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
-  kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
-  kmem_cache_alloc+0x572/0xb90 mm/slub.c:2777
-  mpol_new mm/mempolicy.c:276 [inline]
-  do_mbind mm/mempolicy.c:1180 [inline]
-  kernel_mbind+0x8a7/0x31a0 mm/mempolicy.c:1347
-  __do_sys_mbind mm/mempolicy.c:1354 [inline]
-  __se_sys_mbind+0x11c/0x130 mm/mempolicy.c:1350
-  __x64_sys_mbind+0x6e/0x90 mm/mempolicy.c:1350
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-==================================================================
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6c92e5d6d4
+R13: 00000000004c4d3b R14: 00000000004d84a8 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 5178ef7fa63f0d3d ]---
+RIP: 0010:__xfrm_policy_eval_candidates net/xfrm/xfrm_policy.c:2019 [inline]
+RIP: 0010:xfrm_policy_eval_candidates net/xfrm/xfrm_policy.c:2053 [inline]
+RIP: 0010:xfrm_policy_lookup_bytype+0xc1b/0xe70 net/xfrm/xfrm_policy.c:2113
+Code: 7f fe ff ff e8 f6 59 c1 fa 4d 89 e6 49 83 ee 08 0f 84 6d fe ff ff e8  
+e4 59 c1 fa 49 8d bc 24 ac 00 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 14 28  
+48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85
+RSP: 0018:ffff8880ae606ba8 EFLAGS: 00010203
+RAX: 0000000020000015 RBX: 0000000000000000 RCX: ffffffff86bd011c
+RDX: 0000000000000100 RSI: ffffffff86bd013c RDI: 00000001000000ac
+RBP: ffff8880ae606e60 R08: ffff88809e8c4400 R09: 0000000000000000
+R10: 0000000000000000 R11: ffff88809e8c4400 R12: 0000000100000000
+R13: dffffc0000000000 R14: 00000000fffffff8 R15: 00000000ffffffff
+FS:  00007f6c92e5d700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004cd730 CR3: 00000000a5cf0000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
