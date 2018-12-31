@@ -2,100 +2,220 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE94EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8454DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853AC2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546283675;
-	bh=+A5qCuC/MLNrINoxxhwiUkMw3H4SiaV3NODrqD+IPbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=p9b0OuR9f5CDpjlkvUWv0TMXo/dQz8BTy6CCVkxFESycR8LEMOcHipQQ0Z38KjGBH
-	 Pi+SW0VV8m9VmUxHp58A5NuMaTdQ9B0aTRteoHF/lMjhSchXsXBV/M9vG5UbmpMWIj
-	 SJ3VZzJhPJKc/pfzh0tgeyOPbXW3K6JrRsqJMlh4=
+	by mail.kernel.org (Postfix) with ESMTP id 4A168213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:15:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WuBzGu7i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeLaTOe (ORCPT
+        id S1727711AbeLaTPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 14:14:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56948 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726903AbeLaTOe (ORCPT
+        Mon, 31 Dec 2018 14:15:12 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53302 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbeLaTPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 14:14:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+A5qCuC/MLNrINoxxhwiUkMw3H4SiaV3NODrqD+IPbs=; b=ofuy0itMy7sAn5lAWxfA3QKdf
-        MBBuhCkL69D5DPsO47sysskrF4IuNsFjhnG05DR/4jVWOSef+ZZ/bGQVTEYXQQHu6yJhaPC6vwmw4
-        phBWuANycMSA6sWHmDpMrdtsd5vgb5bCFovttFXmHDFCuk9lxzrVg2sxVQ9oClrrEMq7o=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ge31B-0002e6-4R; Mon, 31 Dec 2018 19:14:29 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 72386440080; Mon, 31 Dec 2018 19:14:28 +0000 (GMT)
-Date:   Mon, 31 Dec 2018 19:14:28 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH] regmap: regmap-irq: silently ignore unsupported type
- settings
-Message-ID: <20181231191428.GM1846@sirena.org.uk>
-References: <20181227084443.GA23991@localhost.localdomain>
- <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
+        Mon, 31 Dec 2018 14:15:11 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBVJF3Zk127908;
+        Mon, 31 Dec 2018 13:15:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1546283703;
+        bh=/UrNVsLsfI0CWJQineup1cJt77YQrPjAZwkSdbKU8Wk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=WuBzGu7ibybSY1wOhvfR7eMW8DCdzbHP1yYddxXGF1GmEfeD8KmNh+lg3EyR2rLwY
+         KCuw1TzR0H8qbexT0a5mAP1sHDdlC0gMGzHE4B3JGa8MK4coDE8E+vUYxhmC5+MWJf
+         M9fbXWxsp7CBxOQB8TQ2o30+wAL2J7BtR6Wyel/M=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBVJF2O9099890
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Dec 2018 13:15:03 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 31
+ Dec 2018 13:15:02 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 31 Dec 2018 13:15:02 -0600
+Received: from [172.22.106.176] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBVJF2a5001283;
+        Mon, 31 Dec 2018 13:15:02 -0600
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <71d3ac12-5beb-0a26-71e1-5eae798e7b9f@gmail.com>
+ <2bca210b-76ad-d5a9-906c-4151695050c3@gmail.com>
+ <45ce01f0-af6e-1cc6-5126-fb557c7d2a82@ti.com>
+ <b7c69135-1641-48cb-1770-c4c77a989efe@gmail.com> <20181229190726.GA29851@amd>
+ <4b5a89ed-0c0b-3103-ca57-a0f97aa5ace9@gmail.com> <20181230173505.GA19593@amd>
+ <7763a3ae-343c-0fbe-da88-afce8459e4c2@gmail.com>
+ <9eafcf90-9083-ff42-e256-82d61991d610@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c687413a-863d-26eb-ca0b-b00a89a4ed44@ti.com>
+Date:   Mon, 31 Dec 2018 13:15:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Nj4mAaUCx+wbOcQD"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
-X-Cookie: knowledge, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9eafcf90-9083-ff42-e256-82d61991d610@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/31/18 9:47 AM, Jacek Anaszewski wrote:
+> On 12/31/18 4:43 PM, Jacek Anaszewski wrote:
+>> On 12/30/18 6:35 PM, Pavel Machek wrote:
+>>> On Sun 2018-12-30 18:09:35, Jacek Anaszewski wrote:
+>>>> On 12/29/18 8:07 PM, Pavel Machek wrote:
+>>>>> Hi!
+>>>>>
+>>>>>>>> With the "color" sysfs file it will make more sense to allow for user
+>>>>>>>> defined color palettes.
+>>>>>>>>
+>>>>>>>
+>>>>>>> I think defining these values in the device tree or acpi severely limits the devices
+>>>>>>> capabilities.  Especially in development phases.  If the knobs were exposed then the user space
+>>>>>>> can create new experiences.  The color definition should be an absolute color defined in the dt and
+>>>>>>> either the framework or user space needs to mix these appropriately.  IMO user space should set the policy
+>>>>>>> of the user experience and the dt/acpi needs to set the capabilities.
+>>>>>>>
+>>>>>>> I do like Pavels idea on defining the more standard binding pattern to "group" leds into a single group.
+>>>>>>>
+>>>>>>> Maybe the framework could take these groups and combine/group them into a single node with the groups colors.
+>>>>>>
+>>>>>> There is still HSV approach [0] in store. One problem with proposed
+>>>>>> implementation is fixed algorithm of RGB <-> HSV color space conversion.
+>>>>>> Maybe allowing for some board specific adjustments in DT would add
+>>>>>> more flexibility.
+>>>>>>
+>>>>>> [0] https://lkml.org/lkml/2017/8/31/255
+>>>>>
+>>>>> Yes we could do HSV. Problem is that that we do not really have RGB
+>>>>> available. We do have integers for red, green and blue, but they do
+>>>>> not correspond to RGB colorspace.
+>>>>
+>>>> OK, so conversion from HSV to RGB would only increase the aberration.
+>>>> So, let's stick to RGB - we've got to have some stable ground and this
+>>>> is something that the hardware at least pretends to be compliant
+>>>> with.
+>>>
+>>> I'm not saying that we should stick to RGB. I'm just saying that
+>>> problem is complex.
+>>>
+>>> And no, hardware does not even pretend to be compliant with RGB color
+>>> model ( https://en.wikipedia.org/wiki/RGB_color_model ). In
+>>> particular, in RGB there is non-linear brightness curve.
+>>
+>> Quotation from the wiki page you referred to:
+>>
+>> "RGB is a device-dependent color model: different devices detect or
+>> reproduce a given RGB value differently, since the color elements (such
+>> as phosphors or dyes) and their response to the individual R, G, and B
+>> levels vary from manufacturer to manufacturer, or even in the same
+>> device over time. Thus an RGB value does not define the same color
+>> across devices without some kind of color management"
+>>
+>> This claim alone leaves much room for the manufacturers to pretend that
+>> their devices are compliant with RGB model.
+>>
+>> And the documentation of the hardware the discussed driver is for
+>> also refers to RGB model in many places - e.g. see Table 1, page 15
+>> in the document [0], where mapping of output triplets to an RGB module
+>> is shown.
+>>
+>> One thing that I missed is that the discussed hardware provides
+>> LEDn_BRIGHTNESS registers for each RGB LED module, that can be
+>> configured to set color intensity in linear or logarithmic fashion.
+>>
+>> Actually this stands in contradiction with RGB model, since
+>> change of "color intensity" means change of all RGB components.
+>>
+>> We could use brightness file as for monochrome LEDs for that,
+> 
+> Here I mean brightness file in addition to the previously proposed
+> red, green and blue files.
+> 
+>> but we'd need to come up with consistent interface semantics
+>> for all devices, also those which don't have corresponding
+>> functionality. Probably this is the place where we could apply
+>> some RGB<->HSV conversion, as color intensity feels something
+>> more of HSV's saturation and value.
+>>
+>> It would be good to hear from Dan how that looks in reality
+>> in case of lp5024 device.
 
---Nj4mAaUCx+wbOcQD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sorry for the non-response I have had a passing in my family and have not been at my
+computer for some time.
 
-On Sat, Dec 29, 2018 at 12:13:32PM +0100, Geert Uytterhoeven wrote:
+I am not seeing how HSV will fit into this device.  Not sure what the V is in HSV.
+I am still not a fan of defining colors in the kernel.  I think the user space needs to do this based
+on information it is given.  When I look at Android the user space sets all the policies of the hardware
+the kernel just provides the vehicle to hardware.  I think defining any set colors in the kernel for devices
+that have a full color spectrum palette is very restricting.  The kernel should indicate the absolute colors
+available and not the colors that are allowed.  So in this case we indicate that a Red, green and blue LED are
+available or that the palette is variable.  Or in the case of a white LED driver we just say white.
 
-> > Geert, do you know if anyone vould to test this?
+In the case of this device there are RGB outputs that are grouped in clusters and controlled by the LEDn_BRIGHTNESS
+register.  This is what the brightness file is mapped to.  Within that cluster the individual intensity of the RGB can 
+be modified via the OUTn_color register.  Not knowing what color LED is on what output means the sysfs node has to be left generic.
 
-> Thanks, that seems to fix the issue with da9063-rtc.
+So as Pavel pointed out white would need to be achieved through the RGB individual LEDs being set to certain values and
+the difuser disfusing the light to achieve the color.  This was done on the original DROID device with a RGB and we
+were able to get a "white" color but had to set the RGB LEDs to different values.  For this device, once the color is
+achieved there may be no reason to adjust the color so adjusting the overall brightness of the LEDs without adjusting the
+individual color can be done with a single write and look seamless to the user.
+Or other colors can be tuned by setting the unneeded colors in the OUTn_color to 0.
 
-> I don't know how to trigger an actual interrupt, though.
+These RGB LED clusters can also be grouped into LED banks as well so that all LEDs of the same color within the group will have 
+the same color gradient and brightness.  This is achieved with the BANK_X_COLOR and BRIGHTNESS registers.
 
-If it's a RTC does it have an alarm you can set?
+Again I am not sure how the HSV would work for this device since there is no reason to create a node for each LED output.
+As the overall brightness of the cluster or bank is controlled by a single brightness file.
 
---Nj4mAaUCx+wbOcQD
-Content-Type: application/pgp-signature; name="signature.asc"
+Dan
 
------BEGIN PGP SIGNATURE-----
+>>
+>>>> Our problem is how to set the color atomically. With HSV approach we
+>>>> were to obviate the problem by mapping brightness file to the "V"
+>>>> component of that color space, and write all H,S and V values to the
+>>>> hardware only on write to brightness file.
+>>>
+>>> I'm not sure how realistic the "atomic color" problem is. Computers
+>>> are way faster than human vision.
+>>
+>> With LEDn_BRIGHTNESS registers of lp5024 it seems that we need the
+>> ability for grouping LEDs in triplets and be able to set their intensity
+>> with a single write operation.
+>>
+>>> I believe problem to start with is the "white" problem. Setting
+>>> R=G=B=255 will _not_ result in anything close to white light on
+>>> hardware I have.
+>>
+>> RGBW LED controllers solve this problem. For the devices without
+>> white/amber we cannot do more than the hardware allows for.
+>>
+>> [0] http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>>
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwqapMACgkQJNaLcl1U
-h9CgeQf/fjG7HJ8kklzN98fafIkQ5sRbyONFCSbBosdOVgstcxyaTKi5nutk3dmy
-C/oWtQnxpFrcWj0i2KMX3SnMjlRmETHNZPjF5kRC+e0W7i3PcnEQ7SPYGm2QCyDg
-j9GAdS5HKvdR8GKGxYYYQ9vFb2CVa0QQwdCkAF7Z7q60qyObOTrLZ132q+4KHqlp
-oIEcuc5y7a8RWYMSYRbzoSdMnlypS8f9/uYr7xxehRxywtwkzRi5trLjEqiXeEUg
-cloxj/o34UXVR6/YsfGZ7frECPRxdxAFjGCLSxE0loZMg0SZHRkVdm60q3sG1+jc
-w7mR9Wp8srXgJluFKKTtjAcH7H0CGQ==
-=O84J
------END PGP SIGNATURE-----
 
---Nj4mAaUCx+wbOcQD--
+-- 
+------------------
+Dan Murphy
