@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA55C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 03:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723CEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 03:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECCD21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 03:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E1020B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 03:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbeLaDeG (ORCPT
+        id S1726957AbeLaDlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 22:34:06 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:47613 "EHLO
+        Sun, 30 Dec 2018 22:41:06 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:51439 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbeLaDeF (ORCPT
+        with ESMTP id S1725935AbeLaDlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 22:34:05 -0500
-Received: by mail-io1-f70.google.com with SMTP id s25so31056448ioc.14
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 19:34:04 -0800 (PST)
+        Sun, 30 Dec 2018 22:41:05 -0500
+Received: by mail-io1-f70.google.com with SMTP id q207so28463075iod.18
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 19:41:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=dVxYa+Qv/hrvwgK6htPfaWkuBhegOYQYg8rIoPV6FbM=;
-        b=EDATJVcm3RmWgea4CEUiP3uJ2yVSsgwuRzDONVVDwz1qNb2JCSUb4LiatcbnIgU6RP
-         vPMPXn9JrIXkNEykJbzyRfn5nkPrHn4DbvFq3GVrGk0+kyieQk+Lzm49ozsmy1FbtUkg
-         EWMVxLPjYOqHEkHnase7pgYB4mI1BJJrMi3T2q9ggjBP+Tvz0NU05r9hOOU3lsItZH+J
-         LKUvy+A3gUUb7XCF4mVnUEhUUddlzmlatbEtUEcrLyBlGpKvkzsBV9X7zOTMsoHqxN+i
-         GOlibgTv+00fG5qwBcXR6K28iShGctV8RyVVh9tSn1Mdo01F5JLpNssHlqbkdp1dzo/5
-         AU3A==
-X-Gm-Message-State: AA+aEWambudkedxAjpwK+kUDWfb7y86vp8FVqahwwDX0Ra/39AQ/Chwg
-        cZ13U795aiO3RUl+SWJ6S1gechv9yHdlYhve/cT3/9UD4Jmb
-X-Google-Smtp-Source: AFSGD/VTxiP4t+KpkMcqmFqk2U67lajfunjwDoW+5tAKMv7FtFL+fLX/qibS4PQTzoUjJ0HFQorfpeszcs4mdlnilOGyqeGzgYKf
+        bh=86AMUuzbwPhOMbCH6aZm3cGDKGCVuTQXSdj4gflnNT4=;
+        b=iiliPF6ivGoTPD+ca3au8zxcjV4XJrvj0ki5gVdE6l3H31ysz94mxoK1vCqggbzm59
+         +Qx9Nnq8SY21ONoLNbGeTwDAjwXBNd2EKi0TztSzA4SrZ9jl2DtRnpytidVMTyloYTWk
+         ZyFKQegIN5OjHuNS4cOUEtrWSc2B4AJo/ok8DkoiXODlt1ttaDCMv17hK4FbU/x8EwCC
+         FLkaI4OtA3dK+tn4a0EoG5oAf7mR/XcCTmknFRt96WaYy5f14S3B6Xg2MTnk2HhMMKdV
+         vUunlCQ4wx8XwulAtRJ5EdR0LXda7NjWOK2a2x24D2O3Cq8YgVz+e4pexdekRbLB+HbI
+         5Hpg==
+X-Gm-Message-State: AA+aEWZwfBZfOq82jZiP4glyqQDWQqZo4KnU8PAj4Do72LoRAvaAj6VY
+        yQMBEKVB9hPHVDESAQQYpkUaXNbH8Zyz5ewqf8xkL943SDlu
+X-Google-Smtp-Source: AFSGD/UbTPDnfO7+7L6o/YPxEyPmWVhqw44svwzwe+4dZvoIXbGjaLf04sI83shk23K+MRPxba5b8ITkrOcZKkydFM5lego3et7d
 MIME-Version: 1.0
-X-Received: by 2002:a24:4ac4:: with SMTP id k187mr26251793itb.8.1546227244042;
- Sun, 30 Dec 2018 19:34:04 -0800 (PST)
-Date:   Sun, 30 Dec 2018 19:34:04 -0800
+X-Received: by 2002:a02:8ca9:: with SMTP id f38mr28307294jak.14.1546227664572;
+ Sun, 30 Dec 2018 19:41:04 -0800 (PST)
+Date:   Sun, 30 Dec 2018 19:41:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f9349057e4915b4@google.com>
-Subject: INFO: rcu detected stall in inet_dgram_connect
-From:   syzbot <syzbot+94683b47a87718b5dff7@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000b05d0c057e492e33@google.com>
+Subject: kernel panic: corrupted stack end in wb_workfn
+From:   syzbot <syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, guro@fb.com,
+        hannes@cmpxchg.org, jbacik@fb.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mgorman@techsingularity.net, mhocko@suse.com, shakeelb@google.com,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,140 +59,116 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    f7d18ef6a95f Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=152cb86f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4b137b8ba637eb77
-dashboard link: https://syzkaller.appspot.com/bug?extid=94683b47a87718b5dff7
+HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=176c0ebf400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec1b7575afef85a0e5ca
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a9a84b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17199bb3400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+94683b47a87718b5dff7@syzkaller.appspotmail.com
+Reported-by: syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com
 
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor4'.
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor4'.
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P23939
-rcu: 	(detected by 1, t=10503 jiffies, g=56797, q=1404)
-syz-executor5   R  running task    24952 23939   8064 0x00000006
+Kernel panic - not syncing: corrupted stack end detected inside scheduler
+CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.20.0+ #396
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: writeback wb_workfn (flush-8:0)
 Call Trace:
-  <IRQ>
-  sched_show_task.cold.86+0x2b6/0x30a kernel/sched/core.c:5293
-  rcu_print_detail_task_stall_rnp+0xc7/0x103 kernel/rcu/tree_plugin.h:690
-  rcu_print_detail_task_stall kernel/rcu/tree_plugin.h:703 [inline]
-  print_other_cpu_stall.cold.69+0x5b5/0x8db kernel/rcu/tree.c:1289
-  check_cpu_stall kernel/rcu/tree.c:1429 [inline]
-  rcu_pending kernel/rcu/tree.c:3018 [inline]
-  rcu_check_callbacks+0xfe8/0x1410 kernel/rcu/tree.c:2521
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1635
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:161
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1271
-  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1451
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1509
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1060
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50 kernel/kcov.c:94
-Code: 14 dd 28 00 00 00 4d 39 d0 72 1b 49 83 c1 01 4a 89 7c 10 e0 4a 89 74  
-10 e8 4a 89 54 10 f0 4a 89 4c d8 20 4c 89 08 5d c3 66 90 <55> 48 89 e5 48  
-8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 c8 47
-RSP: 0018:ffff888065fa7458 EFLAGS: 00000217 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff86c5ddd8
-RDX: 00000000ffffffff RSI: 000000000000227d RDI: 0000000000000004
-RBP: ffff888065fa7718 R08: ffff8880a9eac700 R09: 0000000000000000
-R10: 0000000000000000 R11: ffff8880a9eac700 R12: 000000000000227d
-R13: dffffc0000000000 R14: ffff8880a86c8dc0 R15: 00000000ffffffff
-  xfrm_policy_lookup+0x7e/0x80 net/xfrm/xfrm_policy.c:2145
-  xfrm_bundle_lookup net/xfrm/xfrm_policy.c:2939 [inline]
-  xfrm_lookup_with_ifid+0x972/0x2b80 net/xfrm/xfrm_policy.c:3080
-  xfrm_lookup net/xfrm/xfrm_policy.c:3172 [inline]
-  xfrm_lookup_route+0x3c/0x1f0 net/xfrm/xfrm_policy.c:3183
-  ip_route_output_flow+0xb1/0xc0 net/ipv4/route.c:2582
-  ip_route_connect include/net/route.h:309 [inline]
-  __ip4_datagram_connect+0x70e/0x1330 net/ipv4/datagram.c:51
-  ip4_datagram_connect+0x2f/0x50 net/ipv4/datagram.c:92
-  inet_dgram_connect+0x154/0x2e0 net/ipv4/af_inet.c:571
-  __sys_connect+0x37d/0x4c0 net/socket.c:1664
-  __do_sys_connect net/socket.c:1675 [inline]
-  __se_sys_connect net/socket.c:1672 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1672
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fee7c44bc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000010 RSI: 0000000020593000 RDI: 0000000000000004
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fee7c44c6d4
-R13: 00000000004be2ff R14: 00000000004ce440 R15: 00000000ffffffff
-syz-executor5   R  running task    24952 23939   8064 0x8000000e
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  panic+0x2ad/0x55f kernel/panic.c:189
+  schedule_debug kernel/sched/core.c:3285 [inline]
+  __schedule+0x1ec6/0x1ed0 kernel/sched/core.c:3394
+  preempt_schedule_common+0x1f/0xe0 kernel/sched/core.c:3596
+  preempt_schedule+0x4d/0x60 kernel/sched/core.c:3622
+  ___preempt_schedule+0x16/0x18
+  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:161 [inline]
+  _raw_spin_unlock_irqrestore+0xbb/0xd0 kernel/locking/spinlock.c:184
+  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
+  __remove_mapping+0x932/0x1af0 mm/vmscan.c:967
+  shrink_page_list+0x6610/0xc2e0 mm/vmscan.c:1461
+  shrink_inactive_list+0x77b/0x1c60 mm/vmscan.c:1961
+  shrink_list mm/vmscan.c:2273 [inline]
+  shrink_node_memcg+0x7a8/0x19a0 mm/vmscan.c:2538
+  shrink_node+0x3e1/0x17f0 mm/vmscan.c:2753
+  shrink_zones mm/vmscan.c:2987 [inline]
+  do_try_to_free_pages+0x3df/0x12a0 mm/vmscan.c:3049
+  try_to_free_pages+0x4d0/0xb90 mm/vmscan.c:3265
+  __perform_reclaim mm/page_alloc.c:3920 [inline]
+  __alloc_pages_direct_reclaim mm/page_alloc.c:3942 [inline]
+  __alloc_pages_slowpath+0xa5a/0x2db0 mm/page_alloc.c:4335
+  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
+  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
+  alloc_pages include/linux/gfp.h:509 [inline]
+  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
+  pagecache_get_page+0x396/0xf00 mm/filemap.c:1615
+  find_or_create_page include/linux/pagemap.h:322 [inline]
+  ext4_mb_load_buddy_gfp+0xddf/0x1e70 fs/ext4/mballoc.c:1158
+  ext4_mb_load_buddy fs/ext4/mballoc.c:1241 [inline]
+  ext4_mb_regular_allocator+0x634/0x1590 fs/ext4/mballoc.c:2190
+  ext4_mb_new_blocks+0x1de3/0x4840 fs/ext4/mballoc.c:4538
+  ext4_ext_map_blocks+0x2eef/0x6180 fs/ext4/extents.c:4404
+  ext4_map_blocks+0x8f7/0x1b60 fs/ext4/inode.c:636
+  mpage_map_one_extent fs/ext4/inode.c:2480 [inline]
+  mpage_map_and_submit_extent fs/ext4/inode.c:2533 [inline]
+  ext4_writepages+0x2564/0x4170 fs/ext4/inode.c:2884
+  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2335
+  __writeback_single_inode+0x20a/0x1660 fs/fs-writeback.c:1316
+  writeback_sb_inodes+0x71f/0x1210 fs/fs-writeback.c:1580
+  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1649
+  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1758
+oom_reaper: reaped process 7963 (syz-executor189), now anon-rss:0kB,  
+file-rss:0kB, shmem-rss:0kB
+rsyslogd invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE),  
+order=0, oom_score_adj=0
+  wb_check_start_all fs/fs-writeback.c:1882 [inline]
+  wb_do_writeback fs/fs-writeback.c:1908 [inline]
+  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1942
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+CPU: 1 PID: 7840 Comm: rsyslogd Not tainted 4.20.0+ #396
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
 Call Trace:
-  <IRQ>
-  sched_show_task.cold.86+0x2b6/0x30a kernel/sched/core.c:5293
-  rcu_print_detail_task_stall_rnp+0xc7/0x103 kernel/rcu/tree_plugin.h:690
-  rcu_print_detail_task_stall kernel/rcu/tree_plugin.h:705 [inline]
-  print_other_cpu_stall.cold.69+0x615/0x8db kernel/rcu/tree.c:1289
-  check_cpu_stall kernel/rcu/tree.c:1429 [inline]
-  rcu_pending kernel/rcu/tree.c:3018 [inline]
-  rcu_check_callbacks+0xfe8/0x1410 kernel/rcu/tree.c:2521
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1635
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:161
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1271
-  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1451
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1509
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1060
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50 kernel/kcov.c:94
-Code: 14 dd 28 00 00 00 4d 39 d0 72 1b 49 83 c1 01 4a 89 7c 10 e0 4a 89 74  
-10 e8 4a 89 54 10 f0 4a 89 4c d8 20 4c 89 08 5d c3 66 90 <55> 48 89 e5 48  
-8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 c8 47
-RSP: 0018:ffff888065fa7458 EFLAGS: 00000217 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffff86c5ddd8
-RDX: 00000000ffffffff RSI: 000000000000227d RDI: 0000000000000004
-RBP: ffff888065fa7718 R08: ffff8880a9eac700 R09: 0000000000000000
-R10: 0000000000000000 R11: ffff8880a9eac700 R12: 000000000000227d
-R13: dffffc0000000000 R14: ffff8880a86c8dc0 R15: 00000000ffffffff
-  xfrm_policy_lookup+0x7e/0x80 net/xfrm/xfrm_policy.c:2145
-  xfrm_bundle_lookup net/xfrm/xfrm_policy.c:2939 [inline]
-  xfrm_lookup_with_ifid+0x972/0x2b80 net/xfrm/xfrm_policy.c:3080
-  xfrm_lookup net/xfrm/xfrm_policy.c:3172 [inline]
-  xfrm_lookup_route+0x3c/0x1f0 net/xfrm/xfrm_policy.c:3183
-  ip_route_output_flow+0xb1/0xc0 net/ipv4/route.c:2582
-  ip_route_connect include/net/route.h:309 [inline]
-  __ip4_datagram_connect+0x70e/0x1330 net/ipv4/datagram.c:51
-  ip4_datagram_connect+0x2f/0x50 net/ipv4/datagram.c:92
-  inet_dgram_connect+0x154/0x2e0 net/ipv4/af_inet.c:571
-  __sys_connect+0x37d/0x4c0 net/socket.c:1664
-  __do_sys_connect net/socket.c:1675 [inline]
-  __se_sys_connect net/socket.c:1672 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1672
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fee7c44bc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000010 RSI: 0000000020593000 RDI: 0000000000000004
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fee7c44c6d4
-R13: 00000000004be2ff R14: 00000000004ce440 R15: 00000000ffffffff
-rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P23939 }  
-10898 jiffies s: 5085 root: 0x0/T
-rcu: blocking rcu_node structures:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+  dump_header+0x253/0x1239 mm/oom_kill.c:451
+  oom_kill_process.cold.27+0x10/0x903 mm/oom_kill.c:966
+  out_of_memory+0x8ba/0x1480 mm/oom_kill.c:1133
+  __alloc_pages_may_oom mm/page_alloc.c:3666 [inline]
+  __alloc_pages_slowpath+0x230c/0x2db0 mm/page_alloc.c:4379
+  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
+  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
+  alloc_pages include/linux/gfp.h:509 [inline]
+  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
+  page_cache_read mm/filemap.c:2373 [inline]
+  filemap_fault+0x1595/0x25f0 mm/filemap.c:2557
+  ext4_filemap_fault+0x82/0xad fs/ext4/inode.c:6317
+  __do_fault+0x100/0x6b0 mm/memory.c:2997
+  do_read_fault mm/memory.c:3409 [inline]
+  do_fault mm/memory.c:3535 [inline]
+  handle_pte_fault mm/memory.c:3766 [inline]
+  __handle_mm_fault+0x392f/0x5630 mm/memory.c:3890
+  handle_mm_fault+0x54f/0xc70 mm/memory.c:3927
+  do_user_addr_fault arch/x86/mm/fault.c:1475 [inline]
+  __do_page_fault+0x5f6/0xd70 arch/x86/mm/fault.c:1541
+  do_page_fault+0xf2/0x7e0 arch/x86/mm/fault.c:1572
+  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
+RIP: 0033:0x7f00f990e1fd
+Code: Bad RIP value.
+RSP: 002b:00007f00f6eade30 EFLAGS: 00010293
+RAX: 0000000000000fd2 RBX: 000000000111f170 RCX: 00007f00f990e1fd
+RDX: 0000000000000fff RSI: 00007f00f86e25a0 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 000000000110a260 R09: 0000000000000000
+R10: 74616c7567657227 R11: 0000000000000293 R12: 000000000065e420
+R13: 00007f00f6eae9c0 R14: 00007f00f9f53040 R15: 0000000000000003
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -201,3 +179,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
 syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
