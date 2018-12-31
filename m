@@ -2,165 +2,238 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E92C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F109C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CDE21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E476B214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbeLaHVC (ORCPT
+        id S1727074AbeLaHXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 02:21:02 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:41029 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726435AbeLaHU5 (ORCPT
+        Mon, 31 Dec 2018 02:23:04 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:43640 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeLaHXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 02:20:57 -0500
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Sun, 30 Dec 2018 23:20:33 -0800
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 8CF9E40B12;
-        Sun, 30 Dec 2018 23:20:35 -0800 (PST)
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>
-CC:     "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Nadav Amit <namit@vmware.com>
-Subject: [RFC v2 1/6] x86: introduce kernel restartable sequence
-Date:   Sun, 30 Dec 2018 23:21:07 -0800
-Message-ID: <20181231072112.21051-2-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181231072112.21051-1-namit@vmware.com>
-References: <20181231072112.21051-1-namit@vmware.com>
+        Mon, 31 Dec 2018 02:23:04 -0500
+Received: by mail-it1-f198.google.com with SMTP id 128so31289970itw.8
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 23:23:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=L6mp+WKNRhAQX8dYCw36L9QxSIEkYA82nJ8yheZJJ7w=;
+        b=pH6fUFS8huNFcbqcmsNpxVKqtUg4sBOuAtJpAeEwZ1GaIrgIIhjwBohNK+YUszU6Rk
+         fnW9BFQuMYLs0pImmoTsOAuzf1rHNkwRY238Zk1Eky77fWpYTuK9/T99mUyjZCT4IZ5j
+         WXjTSRMgBhZpxt3u4AOE5XB9od/lycrmmsy3XBmMjby/wsnQABJCf/F90tKVV7cZHN7E
+         8Hc6RFJc72RZXViZ0QqhIBvCrQFxhGoVgyPEs3gUtOGNDq3RB3Fxgw8jxH6Vpw5pVqwZ
+         jmZuMr8MS++8IqfgbLTARnauGBYC+KZfPSMLH3VIlOjihQEFB0sctW1dD50B2MmCmnuM
+         EQ2Q==
+X-Gm-Message-State: AJcUukdxn9lW3+eSyz40u2QGTW0+/NiF1zGdq1W5I4iZz22T4IDgB9/1
+        En+71shP584usOxoaJywX8i+aVzykV5JtGsD1odaB+XXGlIc
+X-Google-Smtp-Source: ALg8bN6pmQIyJBpa5H5cg/snSRE4oDO2IHo0R3/TSUsFH/kRsClqtD6Fs2CySE92p/7VphCiC0rsaEOmuXt/jnYEh2mQTzTN5YjA
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+X-Received: by 2002:a6b:794b:: with SMTP id j11mr13843727iop.0.1546240983283;
+ Sun, 30 Dec 2018 23:23:03 -0800 (PST)
+Date:   Sun, 30 Dec 2018 23:23:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008bc346057e4c4873@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in
+ kmem_cache_free (2)
+From:   syzbot <syzbot+463e2f5d13fc785dd322@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, borntraeger@de.ibm.com,
+        colin.king@canonical.com, jglisse@redhat.com,
+        khalid.aziz@oracle.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        mike.kravetz@oracle.com, n-horiguchi@ah.jp.nec.com,
+        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is sometimes beneficial to have a restartable sequence - very few
-instructions which if they are preempted jump to a predefined point.
+Hello,
 
-To provide such functionality on x86-64, we use an empty REX-prefix
-(opcode 0x40) as an indication for instruction in such a sequence. Before
-calling the schedule IRQ routine, if the "magic" prefix is found, we
-call a routine to adjust the instruction pointer.  It is expected that
-this opcode is not in common use.
+syzbot found the following crash on:
 
-The following patch will make use of this function. Since there are no
-other users (yet?), the patch does not bother to create a general
-infrastructure and API that others can use for such sequences. Yet, it
-should not be hard to make such extension later.
+HEAD commit:    345671ea0f92 Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10442713400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c0a49d2b5210087
+dashboard link: https://syzkaller.appspot.com/bug?extid=463e2f5d13fc785dd322
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+463e2f5d13fc785dd322@syzkaller.appspotmail.com
+
+FAT-fs (loop1): Directory bread(block 72) failed
+EXT4-fs (loop3): Can't read superblock on 2nd try
+FAT-fs (loop1): Directory bread(block 73) failed
+audit: type=1400 audit(1540684862.923:177): avc:  denied  { mmap_zero }  
+for  pid=17455 comm="udevd" scontext=system_u:system_r:kernel_t:s0  
+tcontext=system_u:system_r:kernel_t:s0 tclass=memprotect permissive=1
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 17455 Comm: udevd Not tainted 4.19.0+ #85
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:slab_equal_or_root mm/slab.h:228 [inline]
+RIP: 0010:cache_from_obj mm/slab.h:374 [inline]
+RIP: 0010:kmem_cache_free+0x120/0x290 mm/slab.c:3752
+Code: ea ff ff 48 c1 e8 0c 48 c1 e0 06 48 01 d0 48 8b 50 08 48 8d 4a ff 83  
+e2 01 48 0f 45 c1 48 8b 40 18 48 39 c3 0f 84 00 ff ff ff <48> 3b 98 80 00  
+00 00 0f 84 11 01 00 00 48 8b 48 58 48 c7 c6 20 0c
+RSP: 0018:ffff88018eb271d8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8801da979480 RCX: ffffea0007658e87
+RDX: 0000000000000000 RSI: ffffffff8139ec96 RDI: 0000000000000007
+RBP: ffff88018eb271f8 R08: ffff88018e3f03c0 R09: ffffed003914bb50
+R10: ffffed003914bb50 R11: ffff8801c8a5da83 R12: ffff8801d963ab10
+R13: ffff8801b37755a0 R14: ffff8801b37755a0 R15: ffff8801b3775590
+FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000080 CR3: 00000001c0bd1000 CR4: 00000000001426e0
+Call Trace:
+  anon_vma_chain_free mm/rmap.c:134 [inline]
+  unlink_anon_vmas+0x5f0/0xa60 mm/rmap.c:419
+  free_pgtables+0x271/0x380 mm/memory.c:393
+  exit_mmap+0x2cd/0x590 mm/mmap.c:3146
+  __mmput kernel/fork.c:1044 [inline]
+  mmput+0x247/0x610 kernel/fork.c:1065
+  exec_mmap fs/exec.c:1043 [inline]
+  flush_old_exec+0xb91/0x21b0 fs/exec.c:1276
+  load_elf_binary+0xa39/0x5620 fs/binfmt_elf.c:869
+  search_binary_handler+0x17d/0x570 fs/exec.c:1653
+  exec_binprm fs/exec.c:1695 [inline]
+  __do_execve_file.isra.33+0x1661/0x25d0 fs/exec.c:1819
+  do_execveat_common fs/exec.c:1866 [inline]
+  do_execve fs/exec.c:1883 [inline]
+  __do_sys_execve fs/exec.c:1964 [inline]
+  __se_sys_execve fs/exec.c:1959 [inline]
+  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1959
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7ffa0b953207
+Code: Bad RIP value.
+RSP: 002b:00007ffefdbbcde8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
+RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007ffa0b953207
+RDX: 0000000000e42b70 RSI: 00007ffefdbbcee0 RDI: 00007ffefdbbdef0
+RBP: 0000000000625500 R08: 000000000000405a R09: 000000000000405a
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000e42b70
+R13: 0000000000000007 R14: 0000000000d40030 R15: 0000000000000005
+Modules linked in:
+CR2: 0000000000000080
+kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+---[ end trace fc838222524811c3 ]---
+RIP: 0010:slab_equal_or_root mm/slab.h:228 [inline]
+RIP: 0010:cache_from_obj mm/slab.h:374 [inline]
+RIP: 0010:kmem_cache_free+0x120/0x290 mm/slab.c:3752
+kobject: 'loop5' (00000000598b220f): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+Code: ea ff ff 48 c1 e8 0c 48 c1 e0 06 48 01 d0 48 8b 50 08 48 8d 4a ff 83  
+e2 01 48 0f 45 c1 48 8b 40 18 48 39 c3 0f 84 00 ff ff ff <48> 3b 98 80 00  
+00 00 0f 84 11 01 00 00 48 8b 48 58 48 c7 c6 20 0c
+RSP: 0018:ffff88018eb271d8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8801da979480 RCX: ffffea0007658e87
+kobject: 'loop1' (00000000606593e3): kobject_uevent_env
+kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+kobject: 'loop1' (00000000606593e3): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop2' (00000000a62421b8): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+RDX: 0000000000000000 RSI: ffffffff8139ec96 RDI: 0000000000000007
+RBP: ffff88018eb271f8 R08: ffff88018e3f03c0 R09: ffffed003914bb50
+R10: ffffed003914bb50 R11: ffff8801c8a5da83 R12: ffff8801d963ab10
+R13: ffff8801b37755a0 R14: ffff8801b37755a0 R15: ffff8801b3775590
+kasan: CONFIG_KASAN_INLINE enabled
+kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+FS:  00007ffa0c26f7a0(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+kobject: 'loop5' (00000000598b220f): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+general protection fault: 0000 [#2] PREEMPT SMP KASAN
+CPU: 1 PID: 16046 Comm: udevd Tainted: G      D           4.19.0+ #85
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__anon_vma_interval_tree_insert mm/interval_tree.c:72 [inline]
+RIP: 0010:anon_vma_interval_tree_insert+0x179/0x370 mm/interval_tree.c:83
+Code: 03 42 80 3c 3a 00 0f 85 7d 01 00 00 4d 8b 65 00 4d 85 e4 0f 84 a5 00  
+00 00 e8 b3 fc cf ff 49 8d 7c 24 18 48 89 f8 48 c1 e8 03 <42> 80 3c 38 00  
+0f 85 75 01 00 00 4d 8b 6c 24 18 4c 89 f7 4c 89 ee
+RSP: 0018:ffff8801c3396c90 EFLAGS: 00010206
+RAX: 000000000836b159 RBX: ffff8801d8a8eee0 RCX: ffffffff81af3d90
+RDX: 0000000000000000 RSI: ffffffff81af3d0d RDI: 0000000041b58acb
+RBP: ffff8801c3396cd8 R08: ffff880183b76340 R09: 0000000000000000
+R10: 00000000224b4293 R11: ffff880183b76340 R12: 0000000041b58ab3
+R13: ffff8801d963dfc0 R14: 000000000000001f R15: dffffc0000000000
+FS:  00007ffa0c26f7a0(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000930004 CR3: 000000018800a000 CR4: 00000000001426e0
+Call Trace:
+  anon_vma_chain_link mm/rmap.c:144 [inline]
+  anon_vma_clone+0x2f5/0x710 mm/rmap.c:279
+  anon_vma_fork+0xf4/0x820 mm/rmap.c:332
+  dup_mmap kernel/fork.c:539 [inline]
+  dup_mm kernel/fork.c:1317 [inline]
+  copy_mm kernel/fork.c:1372 [inline]
+  copy_process+0x47cc/0x8770 kernel/fork.c:1916
+  _do_fork+0x1cb/0x11d0 kernel/fork.c:2213
+  __do_sys_clone kernel/fork.c:2320 [inline]
+  __se_sys_clone kernel/fork.c:2314 [inline]
+  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2314
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7ffa0b952f46
+Code: f7 d8 64 89 04 25 d4 02 00 00 64 4c 8b 14 25 10 00 00 00 31 d2 49 81  
+c2 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff  
+ff 0f 87 31 01 00 00 85 c0 41 89 c4 0f 85 3b 01 00
+RSP: 002b:00007ffefdbbcd80 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffefdbbcd80 RCX: 00007ffa0b952f46
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffefdbbcde0 R08: 0000000000003eae R09: 0000000000003eae
+R10: 00007ffa0c26fa70 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffefdbbcda0 R14: 0000000000000005 R15: 0000000000000005
+Modules linked in:
+kobject: 'loop1' (00000000606593e3): kobject_uevent_env
+kobject: 'loop2' (00000000a62421b8): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop1' (00000000606593e3): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+EXT4-fs (loop5): Can't read superblock on 2nd try
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kobject: 'loop4' (000000001ebc1bae): kobject_uevent_env
+kobject: 'loop4' (000000001ebc1bae): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+CR2: 00000000004ede98 CR3: 00000001c0bd1000 CR4: 00000000001426e0
+FAT-fs (loop1): Directory bread(block 64) failed
+kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+EXT4-fs (loop2): Invalid log block size: 2949122
+kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+FAT-fs (loop1): Directory bread(block 65) failed
+kobject: 'loop5' (00000000598b220f): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop5' (00000000598b220f): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+FAT-fs (loop1): Directory bread(block 66) failed
+kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+
+
 ---
- arch/x86/entry/entry_64.S            | 16 ++++++++++++++--
- arch/x86/include/asm/nospec-branch.h | 12 ++++++++++++
- arch/x86/kernel/traps.c              |  7 +++++++
- 3 files changed, 33 insertions(+), 2 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 1f0efdb7b629..e144ff8b914f 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -644,12 +644,24 @@ retint_kernel:
- 	/* Interrupts are off */
- 	/* Check if we need preemption */
- 	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
--	jnc	1f
-+	jnc	2f
- 0:	cmpl	$0, PER_CPU_VAR(__preempt_count)
-+	jnz	2f
-+
-+	/*
-+	 * Allow to use restartable code sections in the kernel. Consider an
-+	 * instruction with the first byte having REX prefix without any bits
-+	 * set as an indication for an instruction in such a section.
-+	 */
-+	movq    RIP(%rsp), %rax
-+	cmpb    $KERNEL_RESTARTABLE_PREFIX, (%rax)
- 	jnz	1f
-+	mov	%rsp, %rdi
-+	call	restart_kernel_rseq
-+1:
- 	call	preempt_schedule_irq
- 	jmp	0b
--1:
-+2:
- #endif
- 	/*
- 	 * The iretq could re-enable interrupts:
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index dad12b767ba0..be4713ef0940 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -54,6 +54,12 @@
- 	jnz	771b;				\
- 	add	$(BITS_PER_LONG/8) * nr, sp;
- 
-+/*
-+ * An empty REX-prefix is an indication that this instruction is part of kernel
-+ * restartable sequence.
-+ */
-+#define KERNEL_RESTARTABLE_PREFIX		(0x40)
-+
- #ifdef __ASSEMBLY__
- 
- /*
-@@ -150,6 +156,12 @@
- #endif
- .endm
- 
-+.macro restartable_seq_prefix
-+#ifdef CONFIG_PREEMPT
-+	.byte	KERNEL_RESTARTABLE_PREFIX
-+#endif
-+.endm
-+
- #else /* __ASSEMBLY__ */
- 
- #define ANNOTATE_NOSPEC_ALTERNATIVE				\
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 85cccadb9a65..b1e855bad5ac 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -59,6 +59,7 @@
- #include <asm/fpu/xstate.h>
- #include <asm/vm86.h>
- #include <asm/umip.h>
-+#include <asm/nospec-branch.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -186,6 +187,12 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
- 	return 0;
- }
- 
-+asmlinkage __visible void restart_kernel_rseq(struct pt_regs *regs)
-+{
-+	if (user_mode(regs) || *(u8 *)regs->ip != KERNEL_RESTARTABLE_PREFIX)
-+		return;
-+}
-+
- static nokprobe_inline int
- do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		  struct pt_regs *regs,	long error_code)
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
