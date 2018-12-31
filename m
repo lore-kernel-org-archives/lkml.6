@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B5AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CDCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CC821783
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9F42133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV8MTMZP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTlGUiv9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeLaN1F (ORCPT
+        id S1726829AbeLaN1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 08:27:05 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41135 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeLaN1D (ORCPT
+        Mon, 31 Dec 2018 08:27:04 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45821 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbeLaN1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 08:27:03 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so23601969ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 05:27:01 -0800 (PST)
+        Mon, 31 Dec 2018 08:27:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so23588613ljd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 05:26:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0M4OawCboNcD91Tap7IyIZTkmVexgAxLIIXYJWmUsZY=;
-        b=cV8MTMZPz3gBTw7vLq1oN3ZG6Pgs4lDCZTNvUdHLVn9fyoF1KXd0gnaCQ03DhUuNOt
-         mOLBhdTPI9z/o5XUlgkFrzgDgFWUSOH0Z6TIJ0dmUOo1W6W2J/2aVTHXHaS+rTBDFW7F
-         PGVR0TKz7sgneoYv5Dhp4KDTh7mrI/j8NZlfj++w6XgCw6t1+bfgRWzG60dUHreZ1F6N
-         fnK96Xkeax9XEuvojl0hWlk26rKOJMwJsW+u3uAK49Zml7ai3QZuoNUV7u8icLMBIalV
-         9EvX+6eptbu++bX5VjY0uPBWbLE/+qucZ5xYmDpbRCGAdMrHslAsCZXn2CwieQl1X7A0
-         xbxA==
+        bh=yNmvh2PqKY3uity0XxTH3j/VdOohshcilcMhWf7+9FA=;
+        b=WTlGUiv97FsIzN5La/73+9SwEO11ZbPbzgKfZhjr1m0mSc3F6abLz58RJlpwCzlDJT
+         Uzp3ZFd6Cluz3nzIrO8DopdT222HsLKq6b6Imidv8Pf10D/lU/0ObgHG0mB8ZHnDa4Z5
+         rqxidGhPXouMBGW+fZEiJELUgRA+iQNtoiF5XyM1FYQCl9oql4aFlyIF0tyjFNJQa6+E
+         WjvPFWIfpP/7O1gtmxbQTCjSdDy795seZlqRx8DHKMJkq1ee8RPmK3yXhpgnlV+T9hkn
+         2cJrflhrsdwl/7Fh+JypSFUZ0w9ZZwY65UZTSn+rpWP7yG6mkD59kz/gSHd0cyGHKNgU
+         WgQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0M4OawCboNcD91Tap7IyIZTkmVexgAxLIIXYJWmUsZY=;
-        b=HcfBbAK+f0xlmrWWqctjbB79oD6D4T2bbml87DYacV+430cxK7fi8cPbnPS7T2AuOu
-         cRgxtTucyEWwo27mu/ue51aPpU+gTdmJehmQumuK1bvMMcVqGbYvtXkF8h49lXFasJD0
-         TJ0ZtwhUr8M1cJFUcRw5MlyVseWWuwy51Eli1jrFhIFEZvPLNs4mX5nJjfOT+sxjfPnz
-         bA56tmNgAa+o6IDO8tFnzZByHocbPnc8AV7A4NL2mh4RT4osh99AwcMKPFdQ/c8swPT7
-         uE2N8mzQv7RvXtPUrH4y4UdcsMwmXU2y6acgsopirIYQnY6OrmVbEGDDdiOXoHITylKK
-         /a7Q==
-X-Gm-Message-State: AJcUukeLuqPUQ5nFZlfk5UROFELfFBYVlso83ZQyNU+9Sm7kNjSV4vah
-        RWkEAXZLacCZtjKtOlF3NAs=
-X-Google-Smtp-Source: ALg8bN75tW18bA7H2RNfwbdlH1L4oCQsyWKv//tuq+BNLw+1AxvAHMdCUSBghNd7qu7I/2h/VKYFfQ==
-X-Received: by 2002:a2e:750a:: with SMTP id q10-v6mr16664172ljc.39.1546262820227;
-        Mon, 31 Dec 2018 05:27:00 -0800 (PST)
+        bh=yNmvh2PqKY3uity0XxTH3j/VdOohshcilcMhWf7+9FA=;
+        b=PuxnDfHCW8mOx7JaPYzV5v8uq9NCdBjlcRiCokg/paI+hYQW43MERCLC4u2bvt5h63
+         QS6BNZ6PYpPGBt+WvlN1DuahsVDrbJn4nB1Lm9IFMXBdlqmGHg04bdbBwpWY3AoH56Wg
+         p8IdVsppCvuBY0R6ivpdC0Lo6+ESpJrJbYYYvBTU6mkf5yVg11kwwusAtShyopDEVJ5L
+         h7uzgG3wuW0FE0Md9sYnexr0OQDvQvHi8qga2EZ0VG8xyDWT15b6GtxrS6wtEnNCwhe4
+         /Wr28ky/fHPFmoSLVjrYjF5nNEqKMSn5DBAn7STnDDb+GuSI4EFOmxFFAk6Oovmw8fBz
+         7XvA==
+X-Gm-Message-State: AA+aEWb1uHG0mzLGEGkoO7G0ukO/Uelr2ooaH0/pCVN6NuJ0plFX04H6
+        z0G0BPjPeqdQR0OvB6FJmvw=
+X-Google-Smtp-Source: ALg8bN7uloJzuf3EFIjHLXIMtDdGN8mIcuT++44fiqvL0HMVbfETRp0wODDBzLiYaseQ5DFrjHZ3zA==
+X-Received: by 2002:a2e:197:: with SMTP id f23-v6mr21516276lji.144.1546262818022;
+        Mon, 31 Dec 2018 05:26:58 -0800 (PST)
 Received: from localhost.localdomain (mm-142-13-214-37.mogilev.dynamic.pppoe.byfly.by. [37.214.13.142])
-        by smtp.gmail.com with ESMTPSA id y23-v6sm10162231ljk.95.2018.12.31.05.26.58
+        by smtp.gmail.com with ESMTPSA id y23-v6sm10162231ljk.95.2018.12.31.05.26.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 05:26:59 -0800 (PST)
+        Mon, 31 Dec 2018 05:26:57 -0800 (PST)
 From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
         Shuah Khan <shuah@kernel.org>,
@@ -65,9 +64,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [RFC v2 3/3] selftests/vm: add script helper for CONFIG_TEST_VMALLOC_MODULE
-Date:   Mon, 31 Dec 2018 14:26:40 +0100
-Message-Id: <20181231132640.21898-4-urezki@gmail.com>
+Subject: [RFC v2 2/3] vmalloc: add test driver to analyse vmalloc allocator
+Date:   Mon, 31 Dec 2018 14:26:39 +0100
+Message-Id: <20181231132640.21898-3-urezki@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181231132640.21898-1-urezki@gmail.com>
 References: <20181231132640.21898-1-urezki@gmail.com>
@@ -76,220 +75,678 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the test script for the kernel test driver to analyse vmalloc
-allocator for benchmarking and stressing purposes. It is just a kernel
-module loader. You can specify and pass different parameters in order
-to investigate allocations behaviour. See "usage" output for more
-details.
+This adds a new kernel module for analysis of vmalloc allocator. It is
+only enabled as a module. There are two main reasons this module should
+be used for: performance evaluation and stressing of vmalloc subsystem.
 
-Also add basic vmalloc smoke test to the "run_vmtests" suite.
+It consists of several test cases. As of now there are 8. The module
+has five parameters we can specify to change its the behaviour.
+
+1) run_test_mask - set of tests to be run
+
+id: 1,   name: fix_size_alloc_test
+id: 2,   name: full_fit_alloc_test
+id: 4,   name: long_busy_list_alloc_test
+id: 8,   name: random_size_alloc_test
+id: 16,  name: fix_align_alloc_test
+id: 32,  name: random_size_align_alloc_test
+id: 64,  name: align_shift_alloc_test
+id: 128, name: pcpu_alloc_test
+
+By default all tests are in run test mask. If you want to select some
+specific tests it is possible to pass the mask. For example for first,
+second and fourth tests we go 11 value.
+
+2) test_repeat_count - how many times each test should be repeated
+By default it is one time per test. It is possible to pass any number.
+As high the value is the test duration gets increased.
+
+3) test_loop_count - internal test loop counter. By default it is set
+to 1000000.
+
+4) single_cpu_test - use one CPU to run the tests
+By default this parameter is set to false. It means that all online
+CPUs execute tests. By setting it to 1, the tests are executed by
+first online CPU only.
+
+5) sequential_test_order - run tests in sequential order
+By default this parameter is set to false. It means that before running
+tests the order is shuffled. It is possible to make it sequential, just
+set it to 1.
+
+Performance analysis:
+In order to evaluate performance of vmalloc allocations, usually it
+makes sense to use only one CPU that runs tests, use sequential order,
+number of repeat tests can be different as well as set of test mask.
+
+For example if we want to run all tests, to use one CPU and repeat each
+test 3 times. Insert the module passing following parameters:
+
+single_cpu_test=1 sequential_test_order=1 test_repeat_count=3
+
+with following output:
+
+<snip>
+Summary: fix_size_alloc_test passed: 3 failed: 0 repeat: 3 loops: 1000000 avg: 901177 usec
+Summary: full_fit_alloc_test passed: 3 failed: 0 repeat: 3 loops: 1000000 avg: 1039341 usec
+Summary: long_busy_list_alloc_test passed: 3 failed: 0 repeat: 3 loops: 1000000 avg: 11775763 usec
+Summary: random_size_alloc_test passed 3: failed: 0 repeat: 3 loops: 1000000 avg: 6081992 usec
+Summary: fix_align_alloc_test passed: 3 failed: 0 repeat: 3, loops: 1000000 avg: 2003712 usec
+Summary: random_size_align_alloc_test passed: 3 failed: 0 repeat: 3 loops: 1000000 avg: 2895689 usec
+Summary: align_shift_alloc_test passed: 0 failed: 3 repeat: 3 loops: 1000000 avg: 573 usec
+Summary: pcpu_alloc_test passed: 3 failed: 0 repeat: 3 loops: 1000000 avg: 95802 usec
+All test took CPU0=192945605995 cycles
+<snip>
+
+The align_shift_alloc_test is expected to be failed.
+
+Stressing:
+In order to stress the vmalloc subsystem we run all available test cases
+on all available CPUs simultaneously. In order to prevent constant behaviour
+pattern, the test cases array is shuffled by default to randomize the order
+of test execution.
+
+For example if we want to run all tests(default), use all online CPUs(default)
+with shuffled order(default) and to repeat each test 30 times. The command
+would be like:
+
+modprobe vmalloc_test test_repeat_count=30
+
+Expected results are the system is alive, there are no any BUG_ONs or Kernel
+Panics the tests are completed, no memory leaks.
 
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- tools/testing/selftests/vm/run_vmtests     |  11 ++
- tools/testing/selftests/vm/test_vmalloc.sh | 173 +++++++++++++++++++++++++++++
- 2 files changed, 184 insertions(+)
- create mode 100755 tools/testing/selftests/vm/test_vmalloc.sh
+ lib/Kconfig.debug  |  12 ++
+ lib/Makefile       |   1 +
+ lib/test_vmalloc.c | 543 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 556 insertions(+)
+ create mode 100644 lib/test_vmalloc.c
 
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index 88cbe5575f0c..56053ac2bf47 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -200,4 +200,15 @@ else
-     echo "[PASS]"
- fi
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8838d1158d19..ca8a1a55d777 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1851,6 +1851,18 @@ config TEST_LKM
  
-+echo "------------------------------------"
-+echo "running vmalloc stability smoke test"
-+echo "------------------------------------"
-+./test_vmalloc.sh smoke
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=1
-+else
-+	echo "[PASS]"
-+fi
+ 	  If unsure, say N.
+ 
++config TEST_VMALLOC
++	tristate "Test module for stress/performance analysis of vmalloc allocator"
++	default n
++	depends on m
++	help
++	  This builds the "vmalloc_test" module that should be used for
++	  stress and performance analysis. So, any new change for vmalloc
++	  subsystem can be evaluated from performance and stability point
++	  of view.
 +
- exit $exitcode
-diff --git a/tools/testing/selftests/vm/test_vmalloc.sh b/tools/testing/selftests/vm/test_vmalloc.sh
-new file mode 100755
-index 000000000000..f4f0d3990f2c
++	  If unsure, say N.
++
+ config TEST_USER_COPY
+ 	tristate "Test user/kernel boundary protections"
+ 	default n
+diff --git a/lib/Makefile b/lib/Makefile
+index 90dc5520b784..2caa6161b417 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -57,6 +57,7 @@ UBSAN_SANITIZE_test_ubsan.o := y
+ obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
+ obj-$(CONFIG_TEST_LIST_SORT) += test_list_sort.o
+ obj-$(CONFIG_TEST_LKM) += test_module.o
++obj-$(CONFIG_TEST_VMALLOC) += test_vmalloc.o
+ obj-$(CONFIG_TEST_OVERFLOW) += test_overflow.o
+ obj-$(CONFIG_TEST_RHASHTABLE) += test_rhashtable.o
+ obj-$(CONFIG_TEST_SORT) += test_sort.o
+diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
+new file mode 100644
+index 000000000000..f852b404f436
 --- /dev/null
-+++ b/tools/testing/selftests/vm/test_vmalloc.sh
-@@ -0,0 +1,173 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) 2018 Uladzislau Rezki (Sony) <urezki@gmail.com>
-+#
-+# This is a test script for the kernel test driver to analyse vmalloc
-+# allocator. Therefore it is just a kernel module loader. You can specify
-+# and pass different parameters in order to:
-+#     a) analyse performance of vmalloc allocations;
-+#     b) stressing and stability check of vmalloc subsystem.
++++ b/lib/test_vmalloc.c
+@@ -0,0 +1,543 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+TEST_NAME="vmalloc"
-+DRIVER="test_${TEST_NAME}"
++/*
++ * Test module for stress and analyze performance of vmalloc allocator.
++ * (C) 2018 Uladzislau Rezki (Sony) <urezki@gmail.com>
++ */
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/vmalloc.h>
++#include <linux/random.h>
++#include <linux/kthread.h>
++#include <linux/moduleparam.h>
++#include <linux/completion.h>
++#include <linux/delay.h>
++#include <linux/rwsem.h>
++#include <linux/mm.h>
 +
-+# 1 if fails
-+exitcode=1
++#define __param(type, name, init, msg)		\
++	static type name = init;				\
++	module_param(name, type, 0444);			\
++	MODULE_PARM_DESC(name, msg)				\
 +
-+#
-+# Static templates for performance, stressing and smoke tests.
-+# Also it is possible to pass any supported parameters manualy.
-+#
-+PERF_PARAM="single_cpu_test=1 sequential_test_order=1 test_repeat_count=3"
-+SMOKE_PARAM="single_cpu_test=1 test_loop_count=10000 test_repeat_count=10"
-+STRESS_PARAM="test_repeat_count=20"
++__param(bool, single_cpu_test, false,
++	"Use single first online CPU to run tests");
 +
-+check_test_requirements()
++__param(bool, sequential_test_order, false,
++	"Use sequential stress tests order");
++
++__param(int, test_repeat_count, 1,
++	"Set test repeat counter");
++
++__param(int, test_loop_count, 1000000,
++	"Set test loop counter");
++
++__param(int, run_test_mask, INT_MAX,
++	"Set tests specified in the mask.\n\n"
++		"\t\tid: 1,   name: fix_size_alloc_test\n"
++		"\t\tid: 2,   name: full_fit_alloc_test\n"
++		"\t\tid: 4,   name: long_busy_list_alloc_test\n"
++		"\t\tid: 8,   name: random_size_alloc_test\n"
++		"\t\tid: 16,  name: fix_align_alloc_test\n"
++		"\t\tid: 32,  name: random_size_align_alloc_test\n"
++		"\t\tid: 64,  name: align_shift_alloc_test\n"
++		"\t\tid: 128, name: pcpu_alloc_test\n"
++		/* Add a new test case description here. */
++);
++
++/*
++ * Depends on single_cpu_test parameter. If it is true, then
++ * use first online CPU to trigger a test on, otherwise go with
++ * all online CPUs.
++ */
++static cpumask_t cpus_run_test_mask = CPU_MASK_NONE;
++
++/*
++ * Read write semaphore for synchronization of setup
++ * phase that is done in main thread and workers.
++ */
++static DECLARE_RWSEM(prepare_for_test_rwsem);
++
++/*
++ * Completion tracking for worker threads.
++ */
++static DECLARE_COMPLETION(test_all_done_comp);
++static atomic_t test_n_undone = ATOMIC_INIT(0);
++
++static inline void
++test_report_one_done(void)
 +{
-+	uid=$(id -u)
-+	if [ $uid -ne 0 ]; then
-+		echo "$0: Must be run as root"
-+		exit $exitcode
-+	fi
-+
-+	if ! which modprobe > /dev/null 2>&1; then
-+		echo "$0: You need modprobe installed"
-+		exit $exitcode
-+	fi
-+
-+	if ! modinfo $DRIVER > /dev/null 2>&1; then
-+		echo "$0: You must have the following enabled in your kernel:"
-+		echo "CONFIG_TEST_VMALLOC=m"
-+		exit $exitcode
-+	fi
++	if (atomic_dec_and_test(&test_n_undone))
++		complete(&test_all_done_comp);
 +}
 +
-+run_perfformance_check()
++static int random_size_align_alloc_test(void)
 +{
-+	echo "Run performance tests to evaluate how fast vmalloc allocation is."
-+	echo "It runs all test cases on one single CPU with sequential order."
++	unsigned long size, align, rnd;
++	void *ptr;
++	int i;
 +
-+	modprobe $DRIVER $PERF_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Ccheck the kernel message buffer to see the summary."
++	for (i = 0; i < test_loop_count; i++) {
++		get_random_bytes(&rnd, sizeof(rnd));
++
++		/*
++		 * Maximum 1024 pages, if PAGE_SIZE is 4096.
++		 */
++		align = 1 << (rnd % 23);
++
++		/*
++		 * Maximum 10 pages.
++		 */
++		size = ((rnd % 10) + 1) * PAGE_SIZE;
++
++		ptr = __vmalloc_node_range(size, align,
++		   VMALLOC_START, VMALLOC_END,
++		   GFP_KERNEL | __GFP_ZERO,
++		   PAGE_KERNEL,
++		   0, 0, __builtin_return_address(0));
++
++		if (!ptr)
++			return -1;
++
++		vfree(ptr);
++	}
++
++	return 0;
 +}
 +
-+run_stability_check()
++/*
++ * This test case is supposed to be failed.
++ */
++static int align_shift_alloc_test(void)
 +{
-+	echo "Run stability tests. In order to stress vmalloc subsystem we run"
-+	echo "all available test cases on all available CPUs simultaneously."
-+	echo "It will take time, so be patient."
++	unsigned long align;
++	void *ptr;
++	int i;
 +
-+	modprobe $DRIVER $STRESS_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
++	for (i = 0; i < BITS_PER_LONG; i++) {
++		align = ((unsigned long) 1) << i;
++
++		ptr = __vmalloc_node_range(PAGE_SIZE, align,
++			VMALLOC_START, VMALLOC_END,
++			GFP_KERNEL | __GFP_ZERO,
++			PAGE_KERNEL,
++			0, 0, __builtin_return_address(0));
++
++		if (!ptr)
++			return -1;
++
++		vfree(ptr);
++	}
++
++	return 0;
 +}
 +
-+run_smoke_check()
++static int fix_align_alloc_test(void)
 +{
-+	echo "Run smoke test. Note, this test provides basic coverage."
-+	echo "Please check $0 output how it can be used"
-+	echo "for deep performance analysis as well as stress testing."
++	void *ptr;
++	int i;
 +
-+	modprobe $DRIVER $SMOKE_PARAM > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
++	for (i = 0; i < test_loop_count; i++) {
++		ptr = __vmalloc_node_range(5 * PAGE_SIZE,
++			THREAD_ALIGN << 1,
++			VMALLOC_START, VMALLOC_END,
++			GFP_KERNEL | __GFP_ZERO,
++			PAGE_KERNEL,
++			0, 0, __builtin_return_address(0));
++
++		if (!ptr)
++			return -1;
++
++		vfree(ptr);
++	}
++
++	return 0;
 +}
 +
-+usage()
++static int random_size_alloc_test(void)
 +{
-+	echo -n "Usage: $0 [ performance ] | [ stress ] | | [ smoke ] | "
-+	echo "manual parameters"
-+	echo
-+	echo "Valid tests and parameters:"
-+	echo
-+	modinfo $DRIVER
-+	echo
-+	echo "Example usage:"
-+	echo
-+	echo "# Shows help message"
-+	echo "./${DRIVER}.sh"
-+	echo
-+	echo "# Runs 1 test(id_1), repeats it 5 times on all online CPUs"
-+	echo "./${DRIVER}.sh run_test_mask=1 test_repeat_count=5"
-+	echo
-+	echo -n "# Runs 4 tests(id_1|id_2|id_4|id_16) on one CPU with "
-+	echo "sequential order"
-+	echo -n "./${DRIVER}.sh single_cpu_test=1 sequential_test_order=1 "
-+	echo "run_test_mask=23"
-+	echo
-+	echo -n "# Runs all tests on all online CPUs, shuffled order, repeats "
-+	echo "20 times"
-+	echo "./${DRIVER}.sh test_repeat_count=20"
-+	echo
-+	echo "# Performance analysis"
-+	echo "./${DRIVER}.sh performance"
-+	echo
-+	echo "# Stress testing"
-+	echo "./${DRIVER}.sh stress"
-+	echo
-+	exit $exitcode
++	unsigned int n;
++	void *p;
++	int i;
++
++	for (i = 0; i < test_loop_count; i++) {
++		get_random_bytes(&n, sizeof(i));
++		n = (n % 100) + 1;
++
++		p = vmalloc(n * PAGE_SIZE);
++
++		if (!p)
++			return -1;
++
++		*((__u8 *)p) = 1;
++		vfree(p);
++	}
++
++	return 0;
 +}
 +
-+function validate_passed_args()
++static int long_busy_list_alloc_test(void)
 +{
-+	VALID_ARGS=`modinfo $DRIVER | awk '/parm:/ {print $2}' | sed 's/:.*//'`
++	void *ptr_1, *ptr_2;
++	void **ptr;
++	int rv = -1;
++	int i;
 +
-+	#
-+	# Something has been passed, check it.
-+	#
-+	for passed_arg in $@; do
-+		key=${passed_arg//=*/}
-+		val="${passed_arg:$((${#key}+1))}"
-+		valid=0
++	ptr = vmalloc(sizeof(void *) * 15000);
++	if (!ptr)
++		return rv;
 +
-+		for valid_arg in $VALID_ARGS; do
-+			if [[ $key = $valid_arg ]] && [[ $val -gt 0 ]]; then
-+				valid=1
-+				break
-+			fi
-+		done
++	for (i = 0; i < 15000; i++)
++		ptr[i] = vmalloc(1 * PAGE_SIZE);
 +
-+		if [[ $valid -ne 1 ]]; then
-+			echo "Error: key or value is not correct: ${key} $val"
-+			exit $exitcode
-+		fi
-+	done
++	for (i = 0; i < test_loop_count; i++) {
++		ptr_1 = vmalloc(100 * PAGE_SIZE);
++		if (!ptr_1)
++			goto leave;
++
++		ptr_2 = vmalloc(1 * PAGE_SIZE);
++		if (!ptr_2) {
++			vfree(ptr_1);
++			goto leave;
++		}
++
++		*((__u8 *)ptr_1) = 0;
++		*((__u8 *)ptr_2) = 1;
++
++		vfree(ptr_1);
++		vfree(ptr_2);
++	}
++
++	/*  Success */
++	rv = 0;
++
++leave:
++	for (i = 0; i < 15000; i++)
++		vfree(ptr[i]);
++
++	vfree(ptr);
++	return rv;
 +}
 +
-+function run_manual_check()
++static int full_fit_alloc_test(void)
 +{
-+	#
-+	# Validate passed parameters. If there is wrong one,
-+	# the script exists and does not execute further.
-+	#
-+	validate_passed_args $@
++	void **ptr, **junk_ptr, *tmp;
++	int junk_length;
++	int rv = -1;
++	int i;
 +
-+	echo "Run the test with following parameters: $@"
-+	modprobe $DRIVER $@ > /dev/null 2>&1
-+	echo "Done."
-+	echo "Check the kernel ring buffer to see the summary."
++	junk_length = fls(num_online_cpus());
++	junk_length *= (32 * 1024 * 1024 / PAGE_SIZE);
++
++	ptr = vmalloc(sizeof(void *) * junk_length);
++	if (!ptr)
++		return rv;
++
++	junk_ptr = vmalloc(sizeof(void *) * junk_length);
++	if (!junk_ptr) {
++		vfree(ptr);
++		return rv;
++	}
++
++	for (i = 0; i < junk_length; i++) {
++		ptr[i] = vmalloc(1 * PAGE_SIZE);
++		junk_ptr[i] = vmalloc(1 * PAGE_SIZE);
++	}
++
++	for (i = 0; i < junk_length; i++)
++		vfree(junk_ptr[i]);
++
++	for (i = 0; i < test_loop_count; i++) {
++		tmp = vmalloc(1 * PAGE_SIZE);
++
++		if (!tmp)
++			goto error;
++
++		*((__u8 *)tmp) = 1;
++		vfree(tmp);
++	}
++
++	/* Success */
++	rv = 0;
++
++error:
++	for (i = 0; i < junk_length; i++)
++		vfree(ptr[i]);
++
++	vfree(ptr);
++	vfree(junk_ptr);
++
++	return rv;
 +}
 +
-+function run_test()
++static int fix_size_alloc_test(void)
 +{
-+	if [ $# -eq 0 ]; then
-+		usage
++	void *ptr;
++	int i;
++
++	for (i = 0; i < test_loop_count; i++) {
++		ptr = vmalloc(3 * PAGE_SIZE);
++
++		if (!ptr)
++			return -1;
++
++		*((__u8 *)ptr) = 0;
++
++		vfree(ptr);
++	}
++
++	return 0;
++}
++
++static int
++pcpu_alloc_test(void)
++{
++	int rv = 0;
++#ifndef CONFIG_NEED_PER_CPU_KM
++	void __percpu **pcpu;
++	size_t size, align;
++	int i;
++
++	pcpu = vmalloc(sizeof(void __percpu *) * 35000);
++	if (!pcpu)
++		return -1;
++
++	for (i = 0; i < 35000; i++) {
++		unsigned int r;
++
++		get_random_bytes(&r, sizeof(i));
++		size = (r % (PAGE_SIZE / 4)) + 1;
++
++		/*
++		 * Maximum PAGE_SIZE
++		 */
++		get_random_bytes(&r, sizeof(i));
++		align = 1 << ((i % 11) + 1);
++
++		pcpu[i] = __alloc_percpu(size, align);
++		if (!pcpu[i])
++			rv = -1;
++	}
++
++	for (i = 0; i < 35000; i++)
++		free_percpu(pcpu[i]);
++
++	vfree(pcpu);
++#endif
++	return rv;
++}
++
++struct test_case_desc {
++	const char *test_name;
++	int (*test_func)(void);
++};
++
++static struct test_case_desc test_case_array[] = {
++	{ "fix_size_alloc_test", fix_size_alloc_test },
++	{ "full_fit_alloc_test", full_fit_alloc_test },
++	{ "long_busy_list_alloc_test", long_busy_list_alloc_test },
++	{ "random_size_alloc_test", random_size_alloc_test },
++	{ "fix_align_alloc_test", fix_align_alloc_test },
++	{ "random_size_align_alloc_test", random_size_align_alloc_test },
++	{ "align_shift_alloc_test", align_shift_alloc_test },
++	{ "pcpu_alloc_test", pcpu_alloc_test },
++	/* Add a new test case here. */
++};
++
++struct test_case_data {
++	int test_failed;
++	int test_passed;
++	s64 time;
++};
++
++/* Split it to get rid of: WARNING: line over 80 characters */
++static struct test_case_data
++	per_cpu_test_data[NR_CPUS][ARRAY_SIZE(test_case_array)];
++
++static struct test_driver {
++	struct task_struct *task;
++	unsigned long start;
++	unsigned long stop;
++	int cpu;
++} per_cpu_test_driver[NR_CPUS];
++
++static void shuffle_array(int *arr, int n)
++{
++	unsigned int rnd;
++	int i, j, x;
++
++	for (i = n - 1; i > 0; i--)  {
++		get_random_bytes(&rnd, sizeof(rnd));
++
++		/* Cut the range. */
++		j = rnd % i;
++
++		/* Swap indexes. */
++		x = arr[i];
++		arr[i] = arr[j];
++		arr[j] = x;
++	}
++}
++
++static int test_func(void *private)
++{
++	struct test_driver *t = private;
++	cpumask_t newmask = CPU_MASK_NONE;
++	int random_array[ARRAY_SIZE(test_case_array)];
++	int index, i, j, ret;
++	ktime_t kt;
++
++	cpumask_set_cpu(t->cpu, &newmask);
++	set_cpus_allowed_ptr(current, &newmask);
++
++	for (i = 0; i < ARRAY_SIZE(test_case_array); i++)
++		random_array[i] = i;
++
++	if (!sequential_test_order)
++		shuffle_array(random_array, ARRAY_SIZE(test_case_array));
++
++	/*
++	 * Block until initialization is done.
++	 */
++	down_read(&prepare_for_test_rwsem);
++
++	t->start = get_cycles();
++	for (i = 0; i < ARRAY_SIZE(test_case_array); i++) {
++		index = random_array[i];
++
++		/*
++		 * Skip tests if run_test_mask has been specified.
++		 */
++		if (!((run_test_mask & (1 << index)) >> index))
++			continue;
++
++		kt = ktime_get();
++		for (j = 0; j < test_repeat_count; j++) {
++			ret = test_case_array[index].test_func();
++			if (!ret)
++				per_cpu_test_data[t->cpu][index].test_passed++;
++			else
++				per_cpu_test_data[t->cpu][index].test_failed++;
++		}
++
++		/*
++		 * Take an average time that test took.
++		 */
++		per_cpu_test_data[t->cpu][index].time =
++			ktime_us_delta(ktime_get(), kt) / test_repeat_count;
++	}
++	t->stop = get_cycles();
++
++	up_read(&prepare_for_test_rwsem);
++	test_report_one_done();
++
++	/*
++	 * Wait for the kthread_stop() call.
++	 */
++	while (!kthread_should_stop())
++		msleep(10);
++
++	return 0;
++}
++
++static void
++init_test_configurtion(void)
++{
++	/*
++	 * Reset all data of all CPUs.
++	 */
++	memset(per_cpu_test_data, 0, sizeof(per_cpu_test_data));
++
++	if (single_cpu_test)
++		cpumask_set_cpu(cpumask_first(cpu_online_mask),
++			&cpus_run_test_mask);
 +	else
-+		if [[ "$1" = "performance" ]]; then
-+			run_perfformance_check
-+		elif [[ "$1" = "stress" ]]; then
-+			run_stability_check
-+		elif [[ "$1" = "smoke" ]]; then
-+			run_smoke_check
-+		else
-+			run_manual_check $@
-+		fi
-+	fi
++		cpumask_and(&cpus_run_test_mask, cpu_online_mask,
++			cpu_online_mask);
++
++	if (test_repeat_count <= 0)
++		test_repeat_count = 1;
++
++	if (test_loop_count <= 0)
++		test_loop_count = 1;
 +}
 +
-+check_test_requirements
-+run_test $@
++static void do_concurrent_test(void)
++{
++	int cpu;
 +
-+exit 0
++	/*
++	 * Set some basic configurations plus sanity check.
++	 */
++	init_test_configurtion();
++
++	/*
++	 * Put on hold all workers.
++	 */
++	down_write(&prepare_for_test_rwsem);
++
++	for_each_cpu(cpu, &cpus_run_test_mask) {
++		struct test_driver *t = &per_cpu_test_driver[cpu];
++
++		t->cpu = cpu;
++		t->task = kthread_run(test_func, t, "vmalloc_test/%d", cpu);
++
++		if (!IS_ERR(t->task))
++			/* Success. */
++			atomic_inc(&test_n_undone);
++		else
++			pr_err("Failed to start kthread for %d CPU\n", cpu);
++	}
++
++	/*
++	 * Now let the workers do their job.
++	 */
++	up_write(&prepare_for_test_rwsem);
++
++	/*
++	 * Sleep quiet until all workers are done.
++	 */
++	wait_for_completion(&test_all_done_comp);
++
++	for_each_cpu(cpu, &cpus_run_test_mask) {
++		struct test_driver *t = &per_cpu_test_driver[cpu];
++		int i;
++
++		if (!IS_ERR(t->task))
++			kthread_stop(t->task);
++
++		for (i = 0; i < ARRAY_SIZE(test_case_array); i++) {
++			if (!((run_test_mask & (1 << i)) >> i))
++				continue;
++
++			pr_info(
++				"Summary: %s passed: %d failed: %d repeat: %d loops: %d avg: %llu usec\n",
++				test_case_array[i].test_name,
++				per_cpu_test_data[cpu][i].test_passed,
++				per_cpu_test_data[cpu][i].test_failed,
++				test_repeat_count, test_loop_count,
++				per_cpu_test_data[cpu][i].time);
++		}
++
++		pr_info("All test took CPU%d=%lu cycles\n",
++			cpu, t->stop - t->start);
++	}
++}
++
++static int vmalloc_test_init(void)
++{
++	do_concurrent_test();
++	return -EAGAIN; /* Fail will directly unload the module */
++}
++
++static void vmalloc_test_exit(void)
++{
++}
++
++module_init(vmalloc_test_init)
++module_exit(vmalloc_test_exit)
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Uladzislau Rezki");
++MODULE_DESCRIPTION("vmalloc test module");
 -- 
 2.11.0
 
