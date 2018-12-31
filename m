@@ -2,145 +2,150 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0ECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 10:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B3CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 10:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071CB218AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 10:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546252861;
-	bh=xc5/gIvNxDnpj64JC6uK7YnQwnhqe1oLUCct72yCcCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NSS6QFcpZ5Q0SH2SAPr20hrUfwj6FPidMNzvW8otudIEgStKSRIq0DXrPGtZu0ikI
-	 PRU7dgUjYGhDJhXyMn0BzceQqeHFygAb78yQxZFd2eMfEfEncskJ/QzrfVlBSkOjnP
-	 iIOS2W+9Jgc0Al/HKyOGLxl1QeXXmcI4oYgPbpvo=
+	by mail.kernel.org (Postfix) with ESMTP id AC20A21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 10:44:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gEikk3hl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeLaKlA (ORCPT
+        id S1727226AbeLaKo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 05:41:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727040AbeLaKk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 05:40:59 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A727F21019;
-        Mon, 31 Dec 2018 10:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546252858;
-        bh=xc5/gIvNxDnpj64JC6uK7YnQwnhqe1oLUCct72yCcCE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0oPQlDWAp3ETW9bL5hWEzELj1Ma2axb1y0WGq53Eqii6K5bcMTEsycMAt4PFgridz
-         kIQr/8paMRdnJ9GoS+g2RGyP0tf1t1Afc5/hTAiEmoRp6SVyYyr9TcVtUIJ2MWmYzO
-         RuvL7ZQOE1VZv7owM6wps+g6oAqesXKzhfb7IsGo=
-Date:   Mon, 31 Dec 2018 11:40:55 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     joeyli <jlee@suse.com>
-Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joe Perches <joe@perches.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Chen Yu <yu.c.chen@intel.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 2/2] PM / Sleep: Check the file capability when writing
- wake lock interface
-Message-ID: <20181231104055.GB27420@kroah.com>
-References: <20181230132856.24095-1-jlee@suse.com>
- <20181230132856.24095-3-jlee@suse.com>
- <20181230144835.GB18985@kroah.com>
- <20181231093851.GN3506@linux-l9pv.suse>
+        Mon, 31 Dec 2018 05:44:56 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33326 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbeLaKo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 05:44:56 -0500
+Received: by mail-io1-f66.google.com with SMTP id t24so21126750ioi.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 02:44:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X4ptc1+o2qKwFMRy0Ztxm6pBTMKhv1UyUWGrhFH/wrY=;
+        b=gEikk3hlCV8SNNjPyHbbsz7QUYG0vTdEj0fXr53xlNlSG0dKVpZbTwufHzoiEGwbpb
+         oPxJj1Y/Cv0gjYFZ3UlLJj5QKvDhnkwPaMmIWBZHTkbjBj3bpUUGSA1TvenqM+gJQZ1Z
+         cSYMHUTFeswEmC93lukhzzi7zYTzOX2M3OhHXo9a4zidpSYT4lJh/f1kG2DSrKOcAA9B
+         HTNwt/b/nPg/RGj/ExZQ115UWvSh2jg0hFOMMVhDK46fKG+YtldHlIYQwMQjgs391bOP
+         WHJYLZycxLaHhxX2e2QeTRuuPYqCaw28Wcgez/jQf2XnAaMO0KY1B8SKea/rGYpFQyYK
+         5Vow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X4ptc1+o2qKwFMRy0Ztxm6pBTMKhv1UyUWGrhFH/wrY=;
+        b=oRUTbXoXOFxfy0BGpZXb7VRvSbsjkwl8uhrCXuuPHwIIVvPolm9BGS4cVTr3rGy81m
+         8TIvQ3Wvz9oQTIvH4MxNkcBm1/kFyHjjFWlLWpYbDSGSQW3Lz8xB8VUaoMnEHtBu7v4L
+         8WMzKErj6K7h6+u8kIIzxLjBW67CsBSSD0tsyIlS4RWINqY4ThYg2h2dUPqzPiqk4B+l
+         MfSGKp2vKIi0ZjLUhoWBi6fPGMtcBFWcTuzOtBwiJXyy1hHo00BJgtQRfTVYjdAwPPwO
+         xEtOIBW8ZO7BZZPN7eK03BpdYTBEGCFzUf6xavQRWr51Xz/HDWgYLQoSgaZLo41qxLM6
+         tQ6A==
+X-Gm-Message-State: AJcUukf+4xBlQCC3g/n50JrW28IQ7FvMMEQzfoEIsjJ3uoEt/Qb+aCjG
+        rnb8DvA+UL1Wyg7i5DM+4WUuko/cgJIXyRWgPvpzFw==
+X-Google-Smtp-Source: ALg8bN5tlWIxF3FBofAuKHrDiAv7Prdd03m93G2d/iMQWoeRqqZryPPSZGaSyFMLDNXdFVFYfElrzcB84S9+gUEngiU=
+X-Received: by 2002:a6b:fa0e:: with SMTP id p14mr23555548ioh.271.1546253094702;
+ Mon, 31 Dec 2018 02:44:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181231093851.GN3506@linux-l9pv.suse>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <0000000000002cdabf057685027b@google.com> <CACT4Y+avdGM3bTCCHFxgH-4BpgA4KtGz6c=7R=Kwm5aGiq8zOg@mail.gmail.com>
+In-Reply-To: <CACT4Y+avdGM3bTCCHFxgH-4BpgA4KtGz6c=7R=Kwm5aGiq8zOg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 31 Dec 2018 11:44:43 +0100
+Message-ID: <CACT4Y+ZVeybp_cPNwgAscPGjNDYktd9MiXk+MrBJ+y6MSsnxQw@mail.gmail.com>
+Subject: Re: net build error
+To:     syzbot <syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 05:38:51PM +0800, joeyli wrote:
-> Hi Greg,
-> 
-> On Sun, Dec 30, 2018 at 03:48:35PM +0100, Greg Kroah-Hartman wrote:
-> > On Sun, Dec 30, 2018 at 09:28:56PM +0800, Lee, Chun-Yi wrote:
-> > > The wake lock/unlock sysfs interfaces check that the writer must has
-> > > CAP_BLOCK_SUSPEND capability. But the checking logic can be bypassed
-> > > by opening sysfs file within an unprivileged process and then writing
-> > > the file within a privileged process. The tricking way has been exposed
-> > > by Andy Lutomirski in CVE-2013-1959.
-> > 
-> > Don't you mean "open by privileged and then written by unprivileged?"
-> > Or if not, exactly how is this a problem?  You check the capabilities
-> > when you do the write and if that is not allowed then, well
+On Sun, Sep 23, 2018 at 10:14 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Sun, Sep 23, 2018 at 9:42 AM, syzbot
+> <syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com> wrote:
+> > Hello,
 > >
-> 
-> Sorry for I didn't provide clear explanation.
-> 
-> The privileged means CAP_BLOCK_SUSPEND but not file permission. The file permission
-> has already relaxed for non-root user. Then the expected behavior is that non-root
-> process must has CAP_BLOCK_SUSPEND capability for writing wake_lock sysfs.
-> 
-> But, the CAP_BLOCK_SUSPEND restrict can be bypassed:
-> 
-> int main(int argc, char* argv[])
-> {
->         int fd, ret = 0;
-> 
->         fd = open("/sys/power/wake_lock", O_RDWR);
->         if (fd < 0)
->                 err(1, "open wake_lock");
-> 
->         if (dup2(fd, 1) != 1)	// overwrite the stdout with wake_lock
->                 err(1, "dup2");
->         sleep(1);
->         execl("./string", "string");	//string has capability
-> 
->         return ret;
-> }
-> 
-> This program is an unpriviledged process (has no CAP_BLOCK_SUSPEND), it opened
-> wake_lock sysfs and overwrited stdout. Then it executes the "string" program
-> that has CAP_BLOCK_SUSPEND.
-
-That's the problem right there, do not give CAP_BLOCK_SUSPEND rights to
-"string".  If any user can run that program, there's nothing the kernel
-can do about this, right?  Just don't allow that program on the system :)
-
-> The string program writes to stdout, which means that it writes to
-> wake_lock. So an unpriviledged opener can trick an priviledged writer
-> for writing sysfs.  
-
-That sounds like a userspace program that was somehow given incorrect
-rights by the admin, and a user is taking advantage of it.  That's not
-the kernel's fault.
-
-> > And you are checking the namespace of the person trying to do the write
-> > when the write happens, which is correct here, right?
-> > 
-> > If you really want to mess with wake locks in a namespaced environment,
-> > then put it in a real namespaced environment, which is {HUGE HINT} not
-> > sysfs.
+> > syzbot found the following crash on:
 > >
-> 
-> I don't want to mess with wake locks in namespace.
+> > HEAD commit:    474ff2600889 net-ethtool: ETHTOOL_GUFO did not and should ..
+> > git tree:       net
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=164c4059400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a72ba31e3224309179d4
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com
+>
+> +netdev
+>
+> The root cause:
 
-Neither do I :)
+Turns out +David fixed this in September with:
 
-so all should be fine, don't allow crazy executables with odd
-permissions to be run by any user and you should be fine.  That's always
-been the case, right?
+#syz fix: rds: Fix build regression.
 
-thanks,
-
-greg k-h
+> net/rds/ib.o:(.data..percpu..shared_aligned+0x0): multiple definition
+> of `rds_ib_stats'
+> net/rds/rdma_transport.o:(.data..percpu..shared_aligned+0x0): first defined here
+> net/rds/ib_cm.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_recv.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_ring.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_send.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_stats.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_sysctl.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_rdma.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_fmr.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> net/rds/ib_frmr.o:(.data..percpu..shared_aligned+0x0): multiple
+> definition of `rds_ib_stats'
+> net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
+> first defined here
+> Makefile:1030: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
+>
+>
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
