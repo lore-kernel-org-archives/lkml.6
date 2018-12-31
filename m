@@ -2,243 +2,182 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2268EC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C93C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E505821019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F27F621019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 13:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546263374;
+	bh=tXCnYMeQWRObpJ37q4tKhu5guivGxoqG+sedlVwZjOM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=f8XWpWv9GrmlnNjr59JuEHh0FuK9zrpZvi/Wxq1Cx0BC1+eniboqIt39oSitES1k2
+	 V0E+jJ+ohogcwIokBAgAxcCjc1kD8j/jMkhl7DRIkLdD1Gh3Q6y+TFDyax3vS6CzFn
+	 MOYEhvVT+4qqjK8Ci2M7sYsEI7NTNvlnhhuOWz0g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbeLaN1Q (ORCPT
+        id S1726591AbeLaNgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 08:27:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726689AbeLaN1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 08:27:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1E14AE62;
-        Mon, 31 Dec 2018 13:27:07 +0000 (UTC)
-Subject: Re: [PATCH v3 lora-next 5/5] net: lora: sx125x sx1301: allow radio to
- register as a clk provider
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-To:     Ben Whitten <ben.whitten@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        netdev@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-lpwan@lists.infradead.org" <linux-lpwan@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>
-References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
- <1539361567-3602-6-git-send-email-ben.whitten@lairdtech.com>
- <a89c7974-672f-e5d0-8022-d2c2f9ffeac0@suse.de>
- <d22f1f18-0c93-a537-a439-07363174a03b@suse.de>
- <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <a5fd0ea3-c2d1-add2-87bc-b0fd9bbc926b@suse.de>
-Date:   Mon, 31 Dec 2018 14:27:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 31 Dec 2018 08:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725899AbeLaNgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 08:36:10 -0500
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 701992133F;
+        Mon, 31 Dec 2018 13:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546263368;
+        bh=tXCnYMeQWRObpJ37q4tKhu5guivGxoqG+sedlVwZjOM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ho7v6gsqKUc9H4fxSv3dgdqtZu0I1RxFT35xwoY4S8Ju2ExOxHIoXsD2nU510KBhy
+         8IoQLbt5R+O3JQzuHLlVMRpl21XEqfwYLnDWQBqGTjw5HKBFtFnqT6pEW0Eci2rlvs
+         YNAAkNr0WhOr5iMzdU1+tYKDAe6/yZsVw4SJzvwM=
+Received: by mail-lj1-f173.google.com with SMTP id v1-v6so23655208ljd.0;
+        Mon, 31 Dec 2018 05:36:08 -0800 (PST)
+X-Gm-Message-State: AJcUukcw0gBcNVxw9CwElfcI5ouLAqPhjWop7SVHbVrR45WmpyKGg7lH
+        8V/je4jxhyEMlzAnLhTyYv9gbsuvz0bdkc9YnVU=
+X-Google-Smtp-Source: ALg8bN6ZnZ8v3AdOQSsMsFhmNvc24doDUzk83f3TiKRz7QlVWXONzFPDHZCJzlZduPHoqPYKBEXAq3aFCehzHK6p02A=
+X-Received: by 2002:a2e:c41:: with SMTP id o1-v6mr21530785ljd.152.1546263366548;
+ Mon, 31 Dec 2018 05:36:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com> <20181228161819.18931-6-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20181228161819.18931-6-pawel.mikolaj.chmiel@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 31 Dec 2018 14:35:55 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPf3Z9=mjq_UWyD1oVEapvnNR71cDfyJP1Y_VLkXkFcyew@mail.gmail.com>
+Message-ID: <CAJKOXPf3Z9=mjq_UWyD1oVEapvnNR71cDfyJP1Y_VLkXkFcyew@mail.gmail.com>
+Subject: Re: [PATCH 5/6] ARM: dts: s5pv210: aries: Support for more devices
+ present on Aries
+To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, xc-racer2@live.ca,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 30.12.18 um 11:55 schrieb Andreas Färber:
-> Am 29.12.18 um 21:16 schrieb Andreas Färber:
->> `sudo ip link set lora2 up` froze my system, with both
->> lora1 and lora2 being sx1301. [...]
->>
->> Investigating...
-> 
-> I've bisected and confirmed that it was indeed this patch that regresses
-> for one of my SX1301 concentrators.
-[...]
-> We never return from the sx125x_clkout_enable() performing the
-> regmap_field_write() on our regmap_bus, which in turn uses a SPI regmap
-> in sx1301_regmap_bus_read().
-> 
-> A notable difference between my two concentrators is that the working
-> one is using spi-gpio driver, the regressing one spi-sun6i.
-> 
-> Two things stood out in spi-sun6i: It uses a completion (I do not run
-> into its timeout warning!), and it uses clk_{get,set}_rate().
-> 
-> Given that observed symptoms were CPU stalls, workqueue [freezes] and RCU
-> problems, requiring a power-cycle to recover, I wonder whether we are
-> running into some atomic/locking issue with clk_enable()? Is it valid at
-> all to use SPI/regmap for clk_enable()? If it is, is there a known issue
-> specific to spi-sun6i (A64) in 4.20.0?
+On Fri, 28 Dec 2018 at 17:18, Pawe=C5=82 Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+>
+> From: Jonathan Bakker <xc-racer2@live.ca>
+>
+> This commit enables following devices present on Aries based phones:
+> - pwm-vibrator attached to PWM 1
+> - poweroff support
+> - Atmel maXTouch touchscreen. It's connected to i2c2
+> - Broadcom BCM4329 bluetooth over uart0
+>
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  arch/arm/boot/dts/s5pv210-aries.dtsi | 68 ++++++++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5p=
+v210-aries.dtsi
+> index 35ba009a1a33..b7246f879648 100644
+> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
+> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> @@ -41,6 +41,13 @@
+>                 };
+>         };
+>
+> +       vibrator_pwr: regulator-fixed-0 {
+> +               compatible =3D "regulator-fixed";
+> +               regulator-name =3D "vibrator-en";
+> +               enable-active-high;
+> +               gpio =3D <&gpj1 1 GPIO_ACTIVE_HIGH>;
+> +       };
+> +
+>         wifi_pwrseq: wifi-pwrseq {
+>                 compatible =3D "mmc-pwrseq-simple";
+>                 reset-gpios =3D <&gpg1 2 GPIO_ACTIVE_LOW>;
+> @@ -314,6 +321,22 @@
+>                         reg =3D <0x36>;
+>                 };
+>         };
+> +
+> +       vibrator: pwm-vibrator {
+> +               compatible =3D "pwm-vibrator";
+> +               pwms =3D <&pwm 1 44642 0>;
+> +               pwm-names =3D "enable";
+> +               vcc-supply =3D <&vibrator_pwr>;
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&pwm1_out>;
+> +       };
+> +
+> +       poweroff: syscon-poweroff {
+> +               compatible =3D "syscon-poweroff";
+> +               regmap =3D <&pmu_syscon>;
+> +               offset =3D <0x681c>; /* PS_HOLD_CONTROL */
+> +               value =3D <0x5200>;
+> +       };
+>  };
+>
+>  &fimd {
+> @@ -347,6 +370,23 @@
+>         status =3D "okay";
+>  };
+>
+> +&i2c2 {
+> +       samsung,i2c-sda-delay =3D <100>;
+> +       samsung,i2c-max-bus-freq =3D <400000>;
+> +       samsung,i2c-slave-addr =3D <0x10>;
+> +       status =3D "okay";
+> +
+> +       touchscreen@4a {
+> +               compatible =3D "atmel,maxtouch";
+> +               reg =3D <0x4a>;
+> +               interrupt-parent =3D <&gpj0>;
+> +               interrupts =3D <5 IRQ_TYPE_LEVEL_LOW>;
+> +               pinctrl-names =3D "default";
+> +               pinctrl-0 =3D <&ts_irq>;
+> +               reset-gpios =3D <&gpj1 3 GPIO_ACTIVE_HIGH>;
+> +       };
+> +};
+> +
+>  &mfc {
+>         memory-region =3D <&mfc_left>, <&mfc_right>;
+>  };
+> @@ -372,6 +412,13 @@
+>                 samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
+>         };
+>
+> +       bt_host_wake: bt-host-wake {
+> +               samsung,pins =3D "gph2-5";
+> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> +               samsung,pin-pud =3D <S3C64XX_PIN_PULL_DOWN>;
+> +               samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
+> +       };
+> +
+>         tf_detect: tf-detect {
+>                 samsung,pins =3D "gph3-4";
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> @@ -384,6 +431,17 @@
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+>                 samsung,pin-pud =3D <S3C64XX_PIN_PULL_NONE>;
+>         };
+> +
+> +       ts_irq: ts-irq {
+> +               samsung,pins =3D "gpj0-5";
+> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> +               samsung,pin-pud =3D <S3C64XX_PIN_PULL_UP>;
 
-I've now hacked together a test case: delaying the regmap operation to a
-work queue (violating the .enable contract of a stable clk on return!)
-and having our caller poll afterwards for the operation to finish. Guess
-what, below gross hack makes it work again on both cards... :/
+It seems there is a difference here between Aries and Fascinate. At
+least in vendor kernel. One disables pull and second pulls down.
+Anyway neither of them pulls it up.
 
-Is this hinting at an issue with spi-sun6i clk_get_rate()'s prepare_lock
-vs. our clk_enable()'s enable_lock? I grep'ed around and spi-sun6i is
-not the only SPI driver using clk_get_rate() in transfer_one...
-
-Thanks for any hints,
-
-Andreas
-
-
-diff --git a/drivers/net/lora/sx125x.c b/drivers/net/lora/sx125x.c
-index 597b882379ac..095ca40e5de7 100644
---- a/drivers/net/lora/sx125x.c
-+++ b/drivers/net/lora/sx125x.c
-@@ -11,6 +11,7 @@
-
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -49,6 +50,9 @@ struct sx125x_priv {
-        struct device           *dev;
-        struct regmap           *regmap;
-        struct regmap_field
-*regmap_fields[ARRAY_SIZE(sx125x_regmap_fields)];
-+
-+       struct workqueue_struct *clk_wq;
-+       struct work_struct      clk_out_enable_work;
- };
-
- #define to_clkout(_hw) container_of(_hw, struct sx125x_priv, clkout_hw)
-@@ -81,8 +85,17 @@ static int sx125x_clkout_enable(struct clk_hw *hw)
- {
-        struct sx125x_priv *priv = to_clkout(hw);
-
-+       dev_info(priv->dev, "enabling clkout...\n");
-+       queue_work(priv->clk_wq, &priv->clk_out_enable_work);
-+       return 0;
-+}
-+
-+static void sx125x_clk_out_enable_work_handler(struct work_struct *ws)
-+{
-+       struct sx125x_priv *priv = container_of(ws, struct sx125x_priv,
-clk_out_enable_work);
-+
-        dev_info(priv->dev, "enabling clkout\n");
--       return sx125x_field_write(priv, F_CLK_OUT, 1);
-+       sx125x_field_write(priv, F_CLK_OUT, 1);
- }
-
- static void sx125x_clkout_disable(struct clk_hw *hw)
-@@ -230,6 +243,9 @@ static int __maybe_unused sx125x_regmap_probe(struct
-device *dev, struct regmap
-                }
-        }
-
-+       priv->clk_wq = alloc_workqueue("sx127x_wq", WQ_FREEZABLE |
-WQ_MEM_RECLAIM, 0);
-+       INIT_WORK(&priv->clk_out_enable_work,
-sx125x_clk_out_enable_work_handler);
-+
-        dev_info(dev, "SX125x module probed\n");
-
-        return 0;
-@@ -237,6 +253,10 @@ static int __maybe_unused
-sx125x_regmap_probe(struct device *dev, struct regmap
-
- static int __maybe_unused sx125x_regmap_remove(struct device *dev)
- {
-+       struct sx125x_priv *priv = dev_get_drvdata(dev);
-+
-+       destroy_workqueue(priv->clk_wq);
-+
-        dev_info(dev, "SX125x module removed\n");
-
-        return 0;
-diff --git a/drivers/net/lora/sx130x.c b/drivers/net/lora/sx130x.c
-index 7ac7de9eda46..4ae6699d38ad 100644
---- a/drivers/net/lora/sx130x.c
-+++ b/drivers/net/lora/sx130x.c
-@@ -11,6 +11,7 @@
-
- #include <linux/bitops.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/lora.h>
-@@ -391,6 +392,10 @@ static int sx130x_loradev_open(struct net_device
-*netdev)
-                goto err_clk_enable;
-        }
-
-+       do {
-+               usleep_range(100, 1000);
-+       } while (!__clk_is_enabled(priv->clk32m));
-+
-        ret = sx130x_field_write(priv, F_GLOBAL_EN, 1);
-        if (ret) {
-                dev_err(priv->dev, "enable global clocks failed (%d)\n",
-ret);
-
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Best regards,
+Krzysztof
