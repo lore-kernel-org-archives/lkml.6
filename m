@@ -2,52 +2,50 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E82BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F26C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE31E2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27FA2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeLaHFE (ORCPT
+        id S1727057AbeLaHKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 02:05:04 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:35950 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbeLaHFD (ORCPT
+        Mon, 31 Dec 2018 02:10:05 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:40414 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbeLaHKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 02:05:03 -0500
-Received: by mail-io1-f69.google.com with SMTP id t13so25964649ioi.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 23:05:03 -0800 (PST)
+        Mon, 31 Dec 2018 02:10:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id 135so31299421itk.5
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 23:10:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=k2Ww8s/iPBwFApa69aq1avFcBXQpI3yJdW7nEeOlABs=;
-        b=KiIquOUmPakxXAhwUl+w6p8Yk2Xbi13Jd0o537E/Wt7aFtmm2BHBmf+fsg27FXnxoJ
-         cQ8jMBDN3kkouBg2PuPwKGEngetGXNrBx4nmR8iiQiHHZqU4A7/sVvv5SqvY46xJzs+V
-         Qtt046H6vTBd7Z8Jll2TanQyY24NB2vPPF4h/MlAlMpP4b7x9T0imYnVHGMIigqL/o70
-         klMqGAN9QMADpqlODBUASMv8MZGavKqSWtbp3BoGF7ResGTiNhbm+38bkBk7M8n8TZr/
-         TPGv2LteZa8Eg8FvzYwLxywkOHgxpCGKy+TqLllNSQsgUxj+B0vTU+PCAqQDM1fWDd0o
-         yT9w==
-X-Gm-Message-State: AA+aEWaWqIoLe+gZ3Q97dk9DSTwrJcT0A5yZtv4iJzSLK1KCGtk5bDQL
-        uAoYe0+afYGJN+lJcIDjK11g+wWYKvcskj7LChihPecXGChp
-X-Google-Smtp-Source: AFSGD/VmxvjbsimznQpxn+M9og2XpOgUoOfNHGnj+bhPZKuCrgxY8Rgk090jIQno91teIth1Cbfh3fDs0rh/v4M9UFN2Fth860tQ
+        bh=8t0KDMdy9Zeg4plPT0vxgN/PwCFX6d2UmIiIfq3Hoj0=;
+        b=DxG4614Q+py/f142nAf3HfreS8v7PASa7eg6V/8C/thUdoHUAsk77J8sd/Pc36AENz
+         O33dBBgcEggazT2mdTM5Z0nZQA+rOrn4OxXe4dpBjzXGa1b8NmNo4aAcQOUvTrl386xI
+         iofHwaLvuVtFpKP1nQxELRkoa0sxfJiU/DGxViiVGsIaq7ec5bUuqhAsP1Yxs6TIdnlt
+         r/K3M1yN4Y0dtx4Y+c+IQWK9BxuYNzAH8tqc+DziLpWkW0gJFFvuAZxtKYiHOnDhLwFT
+         qXAc2oLPkOYRF5d427nayfgWWwcKCcfTOzrm1FToY3WyhYAiK4oEG7zfm3R+MiTnw6Xw
+         alCA==
+X-Gm-Message-State: AA+aEWYY2ESp2fR83zS3kELR4WVsu0ZohevnKd6B1qkEu5aTwzzJOBUs
+        ouooSI6zwPX6pE7qiwxGdD30HlpSZsZB6Pewsk8YvO3hYU0I
+X-Google-Smtp-Source: AFSGD/WtmXOVk3uQhDprmpKyqJTVEDfNe/ZKjADGdipUGch7epQXjNITQEKkDSV4A/6oaGJoYZUrByw7s5WFq6j6JDEFvIdOip9k
 MIME-Version: 1.0
-X-Received: by 2002:a02:95ae:: with SMTP id b43mr28653427jai.4.1546239902740;
- Sun, 30 Dec 2018 23:05:02 -0800 (PST)
-Date:   Sun, 30 Dec 2018 23:05:02 -0800
+X-Received: by 2002:a24:50c:: with SMTP id 12mr26750292itl.18.1546240204136;
+ Sun, 30 Dec 2018 23:10:04 -0800 (PST)
+Date:   Sun, 30 Dec 2018 23:10:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023f74b057e4c0890@google.com>
-Subject: BUG: unable to handle kernel paging request in init_srcu_struct_fields
-From:   syzbot <syzbot+010232b93d20ef8abde5@syzkaller.appspotmail.com>
-To:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Message-ID: <0000000000001aea21057e4c1ab5@google.com>
+Subject: BUG: corrupted list in account_entity_enqueue
+From:   syzbot <syzbot+14005fa30c9a07192934@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,109 +56,79 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    65e08c5e8631 Merge tag 'linux-kselftest-4.20-rc7' of git:/..
+HEAD commit:    00c569b567c7 Merge tag 'locks-v4.21-1' of git://git.kernel..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ca3d2b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-dashboard link: https://syzkaller.appspot.com/bug?extid=010232b93d20ef8abde5
+console output: https://syzkaller.appspot.com/x/log.txt?x=136d858f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fbee5876573727cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=14005fa30c9a07192934
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+010232b93d20ef8abde5@syzkaller.appspotmail.com
+Reported-by: syzbot+14005fa30c9a07192934@syzkaller.appspotmail.com
 
-BUG: unable to handle kernel paging request at ffffc90013465878
-PGD 1da95a067 P4D 1da95a067 PUD 1da95b067 PMD 1bfe03067 PTE 0
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 31204 Comm: syz-executor4 Not tainted 4.20.0-rc6+ #372
+attempt to access beyond end of device
+list_add corruption. next->prev should be prev (ffff8880ae62d8d8), but was  
+0000000000000000. (next=ffff8880a9e1e330).
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:25!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0+ #393
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-RIP: 0010:init_srcu_struct_nodes kernel/rcu/srcutree.c:161 [inline]
-RIP: 0010:init_srcu_struct_fields+0xd03/0x1470 kernel/rcu/srcutree.c:191
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-Code: 88 00 00 00 48 89 f8 48 c1 e8 03 0f b6 04 18 84 c0 74 08 3c 03 0f 8e  
-0a 04 00 00 49 8d be 98 01 00 00 44 89 e1 b8 01 00 00 00 <41> 2b 8d 88 00  
-00 00 48 89 fa 48 c1 ea 03 d3 e0 80 3c 1a 00 48 98
-RSP: 0018:ffff888182a37420 EFLAGS: 00010246
-RAX: 0000000000000001 RBX: dffffc0000000000 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8881daf00198
-RBP: ffff888182a37600 R08: ffff8881b89ec140 R09: 0000000000000000
-R10: ffffed103b5c5b5f R11: ffff8881dae2dafb R12: 0000000000000001
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-R13: ffffc900134657f0 R14: ffff8881daf00000 R15: ffff8881daf000f0
-FS:  00007f333e7d7700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+Code: e8 23 0b 32 fe e9 68 ff ff ff e8 19 0b 32 fe eb c9 4c 89 e7 e8 0f 0b  
+32 fe eb 97 48 89 d9 48 c7 c7 40 c3 80 88 e8 32 ef d4 fd <0f> 0b 48 89 f1  
+48 c7 c7 00 c4 80 88 48 89 de e8 1e ef d4 fd 0f 0b
+RSP: 0018:ffff8880ae607218 EFLAGS: 00010082
+RAX: 0000000000000075 RBX: ffff8880a9e1e330 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81683015 RDI: 0000000000000005
+RBP: ffff8880ae607230 R08: ffff8880a9e1c240 R09: ffffed1015cc5020
+R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffff888059bac2f0
+R13: 1ffff11015cc0e4b R14: ffff8880ae6072b8 R15: ffff888059bac2f0
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90013465878 CR3: 00000001c01eb000 CR4: 00000000001426f0
+CR2: 00007fe5cdd85018 CR3: 000000008679a000 CR4: 00000000001426f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  __init_srcu_struct+0x54/0x60 kernel/rcu/srcutree.c:207
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-  kvm_page_track_init+0x27/0x60 arch/x86/kvm/page_track.c:177
-  kvm_arch_init_vm+0x5f0/0x790 arch/x86/kvm/x86.c:9024
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-  kvm_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:641 [inline]
-  kvm_dev_ioctl_create_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:3197  
-[inline]
-  kvm_dev_ioctl+0x4c4/0x1ae0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3249
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-kobject: 'kvm' (000000003b7ad1f2): kobject_uevent_env
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-kobject: 'kvm' (000000003b7ad1f2): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457679
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f333e7d6c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457679
-RDX: 0000000000000000 RSI: 000000000000ae01 RDI: 0000000000000007
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f333e7d76d4
-R13: 00000000004c00fe R14: 00000000004d1138 R15: 00000000ffffffff
+  <IRQ>
+  __list_add include/linux/list.h:60 [inline]
+  list_add include/linux/list.h:79 [inline]
+  account_entity_enqueue+0x3a3/0x660 kernel/sched/fair.c:2679
+  enqueue_entity+0x2af/0x1ff0 kernel/sched/fair.c:3903
+  enqueue_task_fair+0x288/0x11f0 kernel/sched/fair.c:5134
+  enqueue_task kernel/sched/core.c:730 [inline]
+  activate_task+0x136/0x430 kernel/sched/core.c:751
+  ttwu_activate kernel/sched/core.c:1643 [inline]
+  ttwu_do_activate+0xd5/0x1f0 kernel/sched/core.c:1702
+  ttwu_queue kernel/sched/core.c:1847 [inline]
+  try_to_wake_up+0x9a3/0x1460 kernel/sched/core.c:2057
+  wake_up_process+0x10/0x20 kernel/sched/core.c:2129
+  hrtimer_wakeup+0x48/0x60 kernel/time/hrtimer.c:1637
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
 Modules linked in:
-CR2: ffffc90013465878
----[ end trace 6d1d73f0a8f2db3c ]---
-RIP: 0010:init_srcu_struct_nodes kernel/rcu/srcutree.c:161 [inline]
-RIP: 0010:init_srcu_struct_fields+0xd03/0x1470 kernel/rcu/srcutree.c:191
-Code: 88 00 00 00 48 89 f8 48 c1 e8 03 0f b6 04 18 84 c0 74 08 3c 03 0f 8e  
-0a 04 00 00 49 8d be 98 01 00 00 44 89 e1 b8 01 00 00 00 <41> 2b 8d 88 00  
-00 00 48 89 fa 48 c1 ea 03 d3 e0 80 3c 1a 00 48 98
-RSP: 0018:ffff888182a37420 EFLAGS: 00010246
-RAX: 0000000000000001 RBX: dffffc0000000000 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8881daf00198
-RBP: ffff888182a37600 R08: ffff8881b89ec140 R09: 0000000000000000
-R10: ffffed103b5c5b5f R11: ffff8881dae2dafb R12: 0000000000000001
-R13: ffffc900134657f0 R14: ffff8881daf00000 R15: ffff8881daf000f0
-FS:  00007f333e7d7700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+---[ end trace 8b80f5ec9872c871 ]---
+RIP: 0010:__list_add_valid.cold.0+0xf/0x25 lib/list_debug.c:23
+Code: e8 23 0b 32 fe e9 68 ff ff ff e8 19 0b 32 fe eb c9 4c 89 e7 e8 0f 0b  
+32 fe eb 97 48 89 d9 48 c7 c7 40 c3 80 88 e8 32 ef d4 fd <0f> 0b 48 89 f1  
+48 c7 c7 00 c4 80 88 48 89 de e8 1e ef d4 fd 0f 0b
+RSP: 0018:ffff8880ae607218 EFLAGS: 00010082
+RAX: 0000000000000075 RBX: ffff8880a9e1e330 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81683015 RDI: 0000000000000005
+RBP: ffff8880ae607230 R08: ffff8880a9e1c240 R09: ffffed1015cc5020
+R10: ffffed1015cc5020 R11: ffff8880ae628107 R12: ffff888059bac2f0
+R13: 1ffff11015cc0e4b R14: ffff8880ae6072b8 R15: ffff888059bac2f0
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90013465878 CR3: 00000001c01eb000 CR4: 00000000001426f0
+CR2: 00007fe5cdd85018 CR3: 000000008679a000 CR4: 00000000001426f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
