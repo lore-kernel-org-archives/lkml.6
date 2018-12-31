@@ -2,128 +2,85 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E56C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE1DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD61C20B1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546283496;
-	bh=UyIvoZwFh8LDFrOuAXsIMtswKR7g6viqheWSHfyx2ME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ae3I+CZ/qvieP4dfVr6gaavI1mkTuqIgSbkvada9dlLjeBEbp6QxEAiV7fLrirJuq
-	 gRfWSzTSM4sfBypbXCaVCwVriapJtT30btaN10JD5RH8A0I5C9VMo8t7xzmyAKdfKp
-	 wa/Pz2fhx00FPnrupXUkxjz4MByIImse2/1Y2v/E=
+	by mail.kernel.org (Postfix) with ESMTP id 0087B2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 19:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeLaTLg (ORCPT
+        id S1727646AbeLaTMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 14:11:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51978 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbeLaTLf (ORCPT
+        Mon, 31 Dec 2018 14:12:24 -0500
+Received: from smtprelay0093.hostedemail.com ([216.40.44.93]:50740 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727367AbeLaTMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 14:11:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Nj8Y+aQRIRkHU+7mC4UcT1kfh7PTHrf/SYAXsGJpvkQ=; b=PKfmjnlx9OQUgqBnz48XCh94H
-        SzTQ8rEeQT/IDwh3skFLDK2nkjB8DRKnb0qXhR//gsjrBIvchKiATCH+lpEjlPZoZfOiWeypvmHWA
-        ZNiEMzQU9xk8uSRsj1IRqgxrMHXZg0NJq/t2fpVV4C5gV05qFay7t4mUtZJ6khnKd/ZPQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ge2yG-0002dF-I0; Mon, 31 Dec 2018 19:11:28 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id C9FAC440080; Mon, 31 Dec 2018 19:11:27 +0000 (GMT)
-Date:   Mon, 31 Dec 2018 19:11:27 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Message-ID: <20181231191127.GL1846@sirena.org.uk>
-References: <20181218115931.GA21253@localhost.localdomain>
- <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
- <20181227073531.GA2461@localhost.localdomain>
- <20181227075648.GB2461@localhost.localdomain>
- <20181228080533.GC2461@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eWbcAUUbgrfSEG1c"
-Content-Disposition: inline
-In-Reply-To: <20181228080533.GC2461@localhost.localdomain>
-X-Cookie: knowledge, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 31 Dec 2018 14:12:23 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9790B100E86C1;
+        Mon, 31 Dec 2018 19:12:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: spade09_4e8ff7f567408
+X-Filterd-Recvd-Size: 1943
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 31 Dec 2018 19:12:19 +0000 (UTC)
+Message-ID: <2a7f53c58896e2a9c3115a8630040b98497e5877.camel@perches.com>
+Subject: Re: [PATCH 6/6] MAINTAINERS: Add linux-actions mailing list for
+ Actions Semi
+From:   Joe Perches <joe@perches.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
+        robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date:   Mon, 31 Dec 2018 11:12:18 -0800
+In-Reply-To: <20181231185517.18517-7-manivannan.sadhasivam@linaro.org>
+References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
+         <20181231185517.18517-7-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2019-01-01 at 00:25 +0530, Manivannan Sadhasivam wrote:
+> Add the linux-actions mailing list for Actions Semi SoC architecture.
 
---eWbcAUUbgrfSEG1c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Unrelated to adding this L: entry
 
-On Fri, Dec 28, 2018 at 10:05:33AM +0200, Matti Vaittinen wrote:
+> diff --git a/MAINTAINERS b/MAINTAINERS
+[]
+> @@ -1240,6 +1240,7 @@ ARM/ACTIONS SEMI ARCHITECTURE
+>  M:	Andreas Färber <afaerber@suse.de>
+>  R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  N:	owl
 
-> Last night - just when I was about to get some sleep - it stroke me. I
-> think the correct thing to do would be leaving the irq_set_type to NULL
-> for those IRQ chips which do not support type setting. If we do that,
-> then the irq core will take care of situations where user requests type
-> setting but the chip does not support it. Which means the regmap-irq
-> would be no different from any other irq chip where type setting is not
-> supported.
+The N: entry matches too many non-owl entries like:
 
-Yes, this is the best fix - let the framework handle things properly.
-We'll need a second set of operations and to select which to use based
-on having type information but that's fine.
+Documentation/parport-lowlevel.txt
+drivers/misc/ibmasm/lowlevel.c
+drivers/misc/ibmasm/lowlevel.h
+fs/udf/lowle
+vel.c
+net/ipv6/ip6_flowlabel.c
+sound/soc/samsung/lowland.c
 
-> So at the cost of removing "const" from regmap_irq_chip we could do:
+Maybe there should be two entries
 
-...
+N:	/owl
+N:	-owl
 
-> Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
-> but I did omit this as I have never looked at the wake functionality
-> before).
 
-We need a separate struct as otherwise if there's multiple devices with
-regmap irq_chip implementations then they'll collide with each other but
-otherwise I like this approach (or we could copy the irq_chip struct
-when registering and then modify which is going to scale a bit better -
-you're probably right that we need to do the same thing for the wake
-configuration.  I'll still look at applying your patch as a temporary
-fix though.
-
---eWbcAUUbgrfSEG1c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwqad4ACgkQJNaLcl1U
-h9Bc0Af8DMJruSFgiVs/MWljDlBa743YhF8i6QW5jYRmLkU6Rm6iD5FJAJ8sGXag
-R/h/8Z8o9HoZn62qHkinaOvZa/hg4at63kwp6riLnIsJFS1uCSacwBpCNTf1LvyW
-Zv5Cd4WVW+ldiaVEWJPcV23UWqjHWdSMEtYG2/FUycSoTMZNzHLiZc27euQ3Izi1
-bGQEAGJU/5koBsDa2eoLkbmFg58Kc5HBcmw0wPgLnRX5/8LcXMrrh7dF8bypLJDG
-K7+WrkyFLgDBGZ8QHdzVUUHUj7+W5o2xkB5/yTedou/e0dr2jtgcrfHSvMitCePa
-eGKlmA0VqMLTsEhp+wvK55Iy0lmAjg==
-=U4/g
------END PGP SIGNATURE-----
-
---eWbcAUUbgrfSEG1c--
