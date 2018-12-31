@@ -2,165 +2,138 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3085C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E77BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58B521738
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0712021019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:58:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightbitslabs-com.20150623.gappssmtp.com header.i=@lightbitslabs-com.20150623.gappssmtp.com header.b="PESCsPXi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeLaLyx (ORCPT
+        id S1727270AbeLaL6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 06:54:53 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:46570 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727078AbeLaLyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 06:54:52 -0500
-Received: from sf.home (trofi-1-pt.tunnel.tserv1.lon2.ipv6.he.net [IPv6:2001:470:1f1c:a0f::2])
-        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: slyfox)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id DD92E335C07;
-        Mon, 31 Dec 2018 11:54:50 +0000 (UTC)
-Received: by sf.home (Postfix, from userid 1000)
-        id F2BF022F2B8EC; Mon, 31 Dec 2018 11:54:45 +0000 (GMT)
-From:   Sergei Trofimovich <slyfox@gentoo.org>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sergei Trofimovich <slyfox@gentoo.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] alpha: fix page fault handling for r16-r18 targets
-Date:   Mon, 31 Dec 2018 11:53:55 +0000
-Message-Id: <20181231115355.32051-1-slyfox@gentoo.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181231014515.GA13296@altlinux.org>
-References: <20181231014515.GA13296@altlinux.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 31 Dec 2018 06:58:44 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39277 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbeLaL6n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 06:58:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so26337923wra.6
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 03:58:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightbitslabs-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=KQNrUefm3GzUX/F5605K1SA559kW8YelkDAIwoatBLE=;
+        b=PESCsPXiHo33SnO9j8/oHTANH57OTkp/NwLGuXPFs5HqvBx4zvVsQm7L+IoxFPLvy7
+         xxrwSKAoD43g/M5DcnVTBkFZeFz1rzT4/wIK5L2PyE3fcpF0lv0mGLB8o5gKntctXYzR
+         ltlpk7zy848vG0ZKHIODPKL3z7qEW6yCqAVQjUz0KSK9jT4d7uPTSp9YmgKiLpRmBzIb
+         UnsCvvLSvgd9C4jE9nQ/I9vTUVWywcqCKY8OHR7k1bIX08cynirhgqAm5shZxcAIU0FD
+         bnaosbS/BIWaOZGX6FOdh5CUzITVQk9aOPLQuuBXMsQTLJIzn2lYH3SsmUxHzxKFosL3
+         BC5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KQNrUefm3GzUX/F5605K1SA559kW8YelkDAIwoatBLE=;
+        b=MDH17eKBfosL8V8kEV11P6ope8G9ks1iPXqnSrLxb6sRsbXQzKOsqYV8RCvMCK4QDQ
+         031fuMtSnJrQZjvW8VTTEPY55w4EnXcg16gYr8qupRzYeKTFtLJ88TPILjLmIcnR9D/W
+         aJpzyZ5/igrateHdIqRgtiKECAzicmAGWQm+KvaUkJXIOxfdMRSSTEYnUdyjrqnmI9wJ
+         bdwohmZryUwjuMtcL/DVUT6y5aHCecRA2mKKdCiiS8EiDnGU+rKi4DS++OEYeeJ3crr0
+         lnH5jQabl74xP8tQsCltMHxH1agYNkJvAAj5tQU+wNnUHEEBDI+BbmLhkAJQz8n2uYsm
+         YYJg==
+X-Gm-Message-State: AJcUukfuhzM+sgREJz85yckB536qEt9czSnZxNxxiYuaVPvEsG+ZXvA0
+        wyv+9ykowev9DnMqDNxPXqNGpRFE8kb+YCsS
+X-Google-Smtp-Source: ALg8bN7GjMJzKqHN0GaYZbvhc59fefCD9V+krvClgPSSxBabbpwh0WldD2+F2tAlv1bsOZyFrnQSFQ==
+X-Received: by 2002:a05:6000:51:: with SMTP id k17mr31244350wrx.259.1546257521425;
+        Mon, 31 Dec 2018 03:58:41 -0800 (PST)
+Received: from build02.lbits (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
+        by smtp.gmail.com with ESMTPSA id k15sm64936751wru.8.2018.12.31.03.58.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 31 Dec 2018 03:58:40 -0800 (PST)
+From:   Elazar Leibovich <elazar@lightbitslabs.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Elazar Leibovich <elazar@lightbitslabs.com>,
+        Orit Wasserman <orit.was@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] tracefs: fix partial reading of tracefs id file
+Date:   Mon, 31 Dec 2018 13:58:37 +0200
+Message-Id: <20181231115837.4932-1-elazar@lightbitslabs.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix page fault handling code to fixup r16-r18 registers.
-Before the patch code had off-by-two registers bug.
-This bug caused overwriting of ps,pc,gp registers instead
-of fixing intended r16,r17,r18 (see `struct pt_regs`).
+When reading only part of the id file, the ppos isn't tracked correctly.
+This is taken care by simple_read_from_buffer.
 
-More details:
+Reading a sinlge byte, and then the next byte would result EOF.
 
-Initially Dmitry noticed a kernel bug as a failure
-on strace test suite. Test passes unmapped userspace
-pointer to io_submit:
+While this seems like not a big deal, this breaks abstractions that
+reads information from files unbuffered. See for example
+https://github.com/golang/go/issues/29399
 
-```c
-    #include <err.h>
-    #include <unistd.h>
-    #include <sys/mman.h>
-    #include <asm/unistd.h>
-    int main(void)
-    {
-        unsigned long ctx = 0;
-        if (syscall(__NR_io_setup, 1, &ctx))
-            err(1, "io_setup");
-        const size_t page_size = sysconf(_SC_PAGESIZE);
-        const size_t size = page_size * 2;
-        void *ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (MAP_FAILED == ptr)
-            err(1, "mmap(%zu)", size);
-        if (munmap(ptr, size))
-            err(1, "munmap");
-        syscall(__NR_io_submit, ctx, 1, ptr + page_size);
-        syscall(__NR_io_destroy, ctx);
-        return 0;
-    }
-```
+This code was mentioned as problematic in
+commit cd458ba9d5a5
+("tracing: Do not (ab)use trace_seq in event_id_read()")
 
-Running this test causes kernel to crash when handling page fault:
+An example C code that show this bug is:
 
-```
-    Unable to handle kernel paging request at virtual address ffffffffffff9468
-    CPU 3
-    aio(26027): Oops 0
-    pc = [<fffffc00004eddf8>]  ra = [<fffffc00004edd5c>]  ps = 0000    Not tainted
-    pc is at sys_io_submit+0x108/0x200
-    ra is at sys_io_submit+0x6c/0x200
-    v0 = fffffc00c58e6300  t0 = fffffffffffffff2  t1 = 000002000025e000
-    t2 = fffffc01f159fef8  t3 = fffffc0001009640  t4 = fffffc0000e0f6e0
-    t5 = 0000020001002e9e  t6 = 4c41564e49452031  t7 = fffffc01f159c000
-    s0 = 0000000000000002  s1 = 000002000025e000  s2 = 0000000000000000
-    s3 = 0000000000000000  s4 = 0000000000000000  s5 = fffffffffffffff2
-    s6 = fffffc00c58e6300
-    a0 = fffffc00c58e6300  a1 = 0000000000000000  a2 = 000002000025e000
-    a3 = 00000200001ac260  a4 = 00000200001ac1e8  a5 = 0000000000000001
-    t8 = 0000000000000008  t9 = 000000011f8bce30  t10= 00000200001ac440
-    t11= 0000000000000000  pv = fffffc00006fd320  at = 0000000000000000
-    gp = 0000000000000000  sp = 00000000265fd174
-    Disabling lock debugging due to kernel taint
-    Trace:
-    [<fffffc0000311404>] entSys+0xa4/0xc0
-```
+  #include <stdio.h>
+  #include <stdint.h>
 
-Here `gp` has invalid value. `gp is s overwritten by a fixup for the
-following page fault handler in `io_submit` syscall handler:
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <unistd.h>
 
-```
-    __se_sys_io_submit
-    ...
-        ldq     a1,0(t1)
-        bne     t0,4280 <__se_sys_io_submit+0x180>
-```
+  int main(int argc, char **argv) {
+    if (argc < 2)
+      return 1;
+    int fd = open(argv[1], O_RDONLY);
+    char c;
+    read(fd, &c, 1);
+    printf("First  %c\n", c);
+    read(fd, &c, 1);
+    printf("Second %c\n", c);
+  }
 
-After a page fault `t0` should contain -EFALUT and `a1` is 0.
-Instead `gp` was overwritten in place of `a1`.
+Then run with, e.g.
 
-This happens due to a off-by-two bug in `dpf_reg()` for `r16-r18`
-(aka `a0-a2`).
+  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
 
-I think the bug went unnoticed for a long time as `gp` is one
-of scratch registers. Any kernel function call would re-calculate `gp`.
+You'll notice you're getting the first character twice, instead of the
+first two characters in the id file.
 
-Dmitry tracked down the bug origin back to 2.1.32 kernel version
-where trap_a{0,1,2} fields were inserted into struct pt_regs.
-And even before that `dpf_reg()` contained off-by-one error.
-
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reported-and-reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: stable@vger.kernel.org # v2.1.32+
-Bug: https://bugs.gentoo.org/672040
-Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+Cc: Orit Wasserman <orit.was@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
 ---
-Changes since V1:
-- expanded bug origin tracked down by Dmitry
-- added proper Dmitry's email and reviwed by tags
+ kernel/trace/trace_events.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
- arch/alpha/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
-index d73dc473fbb9..188fc9256baf 100644
---- a/arch/alpha/mm/fault.c
-+++ b/arch/alpha/mm/fault.c
-@@ -78,7 +78,7 @@ __load_new_mm_context(struct mm_struct *next_mm)
- /* Macro for exception fixup code to access integer registers.  */
- #define dpf_reg(r)							\
- 	(((unsigned long *)regs)[(r) <= 8 ? (r) : (r) <= 15 ? (r)-16 :	\
--				 (r) <= 18 ? (r)+8 : (r)-10])
-+				 (r) <= 18 ? (r)+10 : (r)-10])
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index f94be0c2827b..7345f5f8f3fe 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1318,9 +1318,6 @@ event_id_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
+ 	char buf[32];
+ 	int len;
  
- asmlinkage void
- do_page_fault(unsigned long address, unsigned long mmcsr,
+-	if (*ppos)
+-		return 0;
+-
+ 	if (unlikely(!id))
+ 		return -ENODEV;
+ 
 -- 
-2.20.1
+2.14.1
 
