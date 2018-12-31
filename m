@@ -2,138 +2,150 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E77BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97362C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 12:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0712021019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 11:58:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A51121871
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 12:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightbitslabs-com.20150623.gappssmtp.com header.i=@lightbitslabs-com.20150623.gappssmtp.com header.b="PESCsPXi"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="miLLMeLc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeLaL6o (ORCPT
+        id S1727276AbeLaMDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 06:58:44 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39277 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbeLaL6n (ORCPT
+        Mon, 31 Dec 2018 07:03:03 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36610 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbeLaMDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 06:58:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t27so26337923wra.6
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 03:58:42 -0800 (PST)
+        Mon, 31 Dec 2018 07:03:02 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k98so23327693otk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 04:03:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightbitslabs-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=KQNrUefm3GzUX/F5605K1SA559kW8YelkDAIwoatBLE=;
-        b=PESCsPXiHo33SnO9j8/oHTANH57OTkp/NwLGuXPFs5HqvBx4zvVsQm7L+IoxFPLvy7
-         xxrwSKAoD43g/M5DcnVTBkFZeFz1rzT4/wIK5L2PyE3fcpF0lv0mGLB8o5gKntctXYzR
-         ltlpk7zy848vG0ZKHIODPKL3z7qEW6yCqAVQjUz0KSK9jT4d7uPTSp9YmgKiLpRmBzIb
-         UnsCvvLSvgd9C4jE9nQ/I9vTUVWywcqCKY8OHR7k1bIX08cynirhgqAm5shZxcAIU0FD
-         bnaosbS/BIWaOZGX6FOdh5CUzITVQk9aOPLQuuBXMsQTLJIzn2lYH3SsmUxHzxKFosL3
-         BC5A==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z8dBJmLcQdaLLq1HdXuuJNw83XKuooJ1ZctjUGhMN7o=;
+        b=miLLMeLcRBAz/geft3qlQi7pchr4kE9mJdo4IvWeP/4crlSQkz8IM8eGS4uMqcbEJg
+         ynCSpSyVm8oJ8Q1999w/Wh9fz3eUmsntnJ7Dbv4ovUa0gOYA//D3mU+Kcj/TD2ymTGew
+         j6Ta51e7ut1q3UzzreXFxKnOLAOHTi4Gn/v8gvrcrOh8kOzAzf9R+/6WN5VDJ2/JiixV
+         MrDjRR/PnCMW7JELNm1Mw2B6ZCZqzpwai8j0Mg9AIZYw1bLrNdf8s6rF7Jm/cBiaYeOH
+         2FqouJcMXr+TsmJYh2GfLk3xkCa6yvDHsIPp2Zg4ltTs7a8jjhE9K9dO8NCPa3TV16ms
+         Xh0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KQNrUefm3GzUX/F5605K1SA559kW8YelkDAIwoatBLE=;
-        b=MDH17eKBfosL8V8kEV11P6ope8G9ks1iPXqnSrLxb6sRsbXQzKOsqYV8RCvMCK4QDQ
-         031fuMtSnJrQZjvW8VTTEPY55w4EnXcg16gYr8qupRzYeKTFtLJ88TPILjLmIcnR9D/W
-         aJpzyZ5/igrateHdIqRgtiKECAzicmAGWQm+KvaUkJXIOxfdMRSSTEYnUdyjrqnmI9wJ
-         bdwohmZryUwjuMtcL/DVUT6y5aHCecRA2mKKdCiiS8EiDnGU+rKi4DS++OEYeeJ3crr0
-         lnH5jQabl74xP8tQsCltMHxH1agYNkJvAAj5tQU+wNnUHEEBDI+BbmLhkAJQz8n2uYsm
-         YYJg==
-X-Gm-Message-State: AJcUukfuhzM+sgREJz85yckB536qEt9czSnZxNxxiYuaVPvEsG+ZXvA0
-        wyv+9ykowev9DnMqDNxPXqNGpRFE8kb+YCsS
-X-Google-Smtp-Source: ALg8bN7GjMJzKqHN0GaYZbvhc59fefCD9V+krvClgPSSxBabbpwh0WldD2+F2tAlv1bsOZyFrnQSFQ==
-X-Received: by 2002:a05:6000:51:: with SMTP id k17mr31244350wrx.259.1546257521425;
-        Mon, 31 Dec 2018 03:58:41 -0800 (PST)
-Received: from build02.lbits (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id k15sm64936751wru.8.2018.12.31.03.58.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 03:58:40 -0800 (PST)
-From:   Elazar Leibovich <elazar@lightbitslabs.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Elazar Leibovich <elazar@lightbitslabs.com>,
-        Orit Wasserman <orit.was@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] tracefs: fix partial reading of tracefs id file
-Date:   Mon, 31 Dec 2018 13:58:37 +0200
-Message-Id: <20181231115837.4932-1-elazar@lightbitslabs.com>
-X-Mailer: git-send-email 2.14.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z8dBJmLcQdaLLq1HdXuuJNw83XKuooJ1ZctjUGhMN7o=;
+        b=uIxuZvkgui7f0XAi0bOUvVKQyBhgqE+0rvrZBjbb4f5WCavSWvrXS/XwW2VjZYBWBC
+         c2Hx3FKNDO5MMSNvM7MD8BcTpeWJQDnrrqYfTcnB6B4YNcsmuzfF2WH9Bf1zh7w3Dx8P
+         KKhzpe0eQZwr+NarefDef7fUlv3ZeiNfGbYRQlS17L4sX8HORfOiXG+kZP1pAADa5gJo
+         fOJOcmXHNYILxIAYsXbPVy4iVdhsGe6dg374Ucwv5k/Zy91h9dn7fUmiMlJCtPlOk+CL
+         OEVgbPweCGVKtMmLQXGZtHhGkmxKuuUxeivZqDJSvbFytERehTS85eF3xCxRd2o3YkD1
+         ksbA==
+X-Gm-Message-State: AJcUukcp7UUQNpsvhei5VuDzSRI1VRDYM09C3WT0e2FF3hu7gEsHJnK2
+        3KCu+MG0O19h6XBo8W4l1BsztIGf+wNukxmO1+xMBA==
+X-Google-Smtp-Source: ALg8bN7G5yxWG0yuzNVzNBDCaR1i4N5+zTh0cMM7rCGErPa11EKjlk4VfP6Sc8FvIcvwlQEH1ndLMbPvQhcYBWjXA9A=
+X-Received: by 2002:a9d:460e:: with SMTP id y14mr26713852ote.198.1546257781654;
+ Mon, 31 Dec 2018 04:03:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20181230132856.24095-1-jlee@suse.com> <20181230132856.24095-3-jlee@suse.com>
+ <20181230144835.GB18985@kroah.com> <20181231093851.GN3506@linux-l9pv.suse> <20181231104055.GB27420@kroah.com>
+In-Reply-To: <20181231104055.GB27420@kroah.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 31 Dec 2018 13:02:35 +0100
+Message-ID: <CAG48ez3-YEVsyuk1H6hjGy9Ogm-z46bmdnqy0JbW9YL297FsTw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PM / Sleep: Check the file capability when writing
+ wake lock interface
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        joeyli <jlee@suse.com>, Andy Lutomirski <luto@kernel.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When reading only part of the id file, the ppos isn't tracked correctly.
-This is taken care by simple_read_from_buffer.
+On Mon, Dec 31, 2018 at 11:41 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Dec 31, 2018 at 05:38:51PM +0800, joeyli wrote:
+> > Hi Greg,
+> >
+> > On Sun, Dec 30, 2018 at 03:48:35PM +0100, Greg Kroah-Hartman wrote:
+> > > On Sun, Dec 30, 2018 at 09:28:56PM +0800, Lee, Chun-Yi wrote:
+> > > > The wake lock/unlock sysfs interfaces check that the writer must has
+> > > > CAP_BLOCK_SUSPEND capability. But the checking logic can be bypassed
+> > > > by opening sysfs file within an unprivileged process and then writing
+> > > > the file within a privileged process. The tricking way has been exposed
+> > > > by Andy Lutomirski in CVE-2013-1959.
+> > >
+> > > Don't you mean "open by privileged and then written by unprivileged?"
+> > > Or if not, exactly how is this a problem?  You check the capabilities
+> > > when you do the write and if that is not allowed then, well
+> > >
+> >
+> > Sorry for I didn't provide clear explanation.
+> >
+> > The privileged means CAP_BLOCK_SUSPEND but not file permission. The file permission
+> > has already relaxed for non-root user. Then the expected behavior is that non-root
+> > process must has CAP_BLOCK_SUSPEND capability for writing wake_lock sysfs.
+> >
+> > But, the CAP_BLOCK_SUSPEND restrict can be bypassed:
+> >
+> > int main(int argc, char* argv[])
+> > {
+> >         int fd, ret = 0;
+> >
+> >         fd = open("/sys/power/wake_lock", O_RDWR);
+> >         if (fd < 0)
+> >                 err(1, "open wake_lock");
+> >
+> >         if (dup2(fd, 1) != 1) // overwrite the stdout with wake_lock
+> >                 err(1, "dup2");
+> >         sleep(1);
+> >         execl("./string", "string");  //string has capability
+> >
+> >         return ret;
+> > }
+> >
+> > This program is an unpriviledged process (has no CAP_BLOCK_SUSPEND), it opened
+> > wake_lock sysfs and overwrited stdout. Then it executes the "string" program
+> > that has CAP_BLOCK_SUSPEND.
+>
+> That's the problem right there, do not give CAP_BLOCK_SUSPEND rights to
+> "string".  If any user can run that program, there's nothing the kernel
+> can do about this, right?  Just don't allow that program on the system :)
+>
+> > The string program writes to stdout, which means that it writes to
+> > wake_lock. So an unpriviledged opener can trick an priviledged writer
+> > for writing sysfs.
+>
+> That sounds like a userspace program that was somehow given incorrect
+> rights by the admin, and a user is taking advantage of it.  That's not
+> the kernel's fault.
 
-Reading a sinlge byte, and then the next byte would result EOF.
-
-While this seems like not a big deal, this breaks abstractions that
-reads information from files unbuffered. See for example
-https://github.com/golang/go/issues/29399
-
-This code was mentioned as problematic in
-commit cd458ba9d5a5
-("tracing: Do not (ab)use trace_seq in event_id_read()")
-
-An example C code that show this bug is:
-
-  #include <stdio.h>
-  #include <stdint.h>
-
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-  #include <unistd.h>
-
-  int main(int argc, char **argv) {
-    if (argc < 2)
-      return 1;
-    int fd = open(argv[1], O_RDONLY);
-    char c;
-    read(fd, &c, 1);
-    printf("First  %c\n", c);
-    read(fd, &c, 1);
-    printf("Second %c\n", c);
-  }
-
-Then run with, e.g.
-
-  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
-
-You'll notice you're getting the first character twice, instead of the
-first two characters in the id file.
-
-Cc: Orit Wasserman <orit.was@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
----
- kernel/trace/trace_events.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index f94be0c2827b..7345f5f8f3fe 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1318,9 +1318,6 @@ event_id_read(struct file *filp, char __user *ubuf, size_t cnt, loff_t *ppos)
- 	char buf[32];
- 	int len;
- 
--	if (*ppos)
--		return 0;
--
- 	if (unlikely(!id))
- 		return -ENODEV;
- 
--- 
-2.14.1
-
+Isn't it? Pretty much any setuid program will write to stdout or
+stderr; even the glibc linker code does so if you set LD_DEBUG.
+(Normally the output isn't entirely attacker-controlled, but it is in
+the case of stuff like "procmail", which I think Debian still ships as
+setuid root.) setuid programs should always be able to safely call
+read() and write() on caller-provided file descriptors. Also, you're
+supposed to be able to receive file descriptors over unix domain
+sockets and then write to them without trusting the sender. Basically,
+the ->read and ->write VFS handlers should never look at the caller's
+credentials, only the opener's (with the exception of LSMs, which tend
+to do weird things to the system's security model).
