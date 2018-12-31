@@ -2,86 +2,101 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59748C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D56EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FDE2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546278786;
-	bh=1uChU92cpLvGVMd1CnZF/dbmeBiPo1aLrxS+rt412jI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DiILmyz/mdRUG83BkV0kw8DarN1+xoujPuop0CZ4L6xpoVdQJl6OVt76ou7ER/0aF
-	 LQ1Pgl3CiNXKzMDPp7d1esa1dCM9mBxl7ncfLrgp9mBT3CuD9YU5b9cHKQRD/DOZb0
-	 LDDLsK0mmVd2E+JKxfT4AY1OOyTtTcPHxmKkzkdY=
+	by mail.kernel.org (Postfix) with ESMTP id 263462080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeLaRxF (ORCPT
+        id S1727623AbeLaR4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 12:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbeLaRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 12:53:04 -0500
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B83C221720;
-        Mon, 31 Dec 2018 17:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546278783;
-        bh=1uChU92cpLvGVMd1CnZF/dbmeBiPo1aLrxS+rt412jI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KjicB0+zI/nrW0yCDEPn0n9QffkGaWHMK4GCFZFMocPEqoQMtO7I6Hy9naa/NdzAS
-         PdCIaVJ6gtTZW30hI8MtARBS3crHwhaH+knFM8w3z33scvDn7wpLAy4PPwtXEXd45q
-         DoROnpQEC/Y9eJRscm+70oy5cAUrTppPMfBa+t20=
-Received: by mail-oi1-f172.google.com with SMTP id a77so22295378oii.5;
-        Mon, 31 Dec 2018 09:53:03 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ9bv0JusOUJ7CIz0AE3rALtp0yA3KTZn5rV9sKk5WvUMymMVIO
-        46S4mAq3AIRsZdv5genUiYulwTSvS3vT2MD5d7s=
-X-Google-Smtp-Source: AFSGD/W70kUbVXipY1zIvuaDv7hOmJYIj+5yzjVeiv39jXWxqqxSCU0n/w+a2257xx/rVC9TSh1UCzAGL94Z85MZqz0=
-X-Received: by 2002:aca:c186:: with SMTP id r128mr26499667oif.52.1546278783048;
- Mon, 31 Dec 2018 09:53:03 -0800 (PST)
+        Mon, 31 Dec 2018 12:56:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52570 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726722AbeLaR4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 12:56:09 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBVHmtIf037642
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 12:56:07 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pqkpfhjw5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 12:56:07 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kgold@linux.ibm.com>;
+        Mon, 31 Dec 2018 17:56:07 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 31 Dec 2018 17:56:04 -0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBVHu3cb24576074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Dec 2018 17:56:03 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD25B28059;
+        Mon, 31 Dec 2018 17:56:03 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9E7A32805E;
+        Mon, 31 Dec 2018 17:56:03 +0000 (GMT)
+Received: from [9.77.128.220] (unknown [9.77.128.220])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 31 Dec 2018 17:56:03 +0000 (GMT)
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+ <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+ <1545519232.3940.115.camel@linux.ibm.com>
+ <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+ <b75fd04643daf5aab5a1fc115e8fbfca9a381f8d.camel@mniewoehner.de>
+ <1546140837.4069.81.camel@linux.ibm.com>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Date:   Mon, 31 Dec 2018 12:56:03 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181230195612.6657-1-okaya@kernel.org> <20181230195612.6657-9-okaya@kernel.org>
- <20181231174654.GH1846@sirena.org.uk>
-In-Reply-To: <20181231174654.GH1846@sirena.org.uk>
-From:   Sinan Kaya <Okaya@kernel.org>
-Date:   Mon, 31 Dec 2018 20:52:52 +0300
-X-Gmail-Original-Message-ID: <CAK9iUCPHu0FV9LqMOKixKi7Cg_DC_F04OeXh50YSHOpgkGKejQ@mail.gmail.com>
-Message-ID: <CAK9iUCPHu0FV9LqMOKixKi7Cg_DC_F04OeXh50YSHOpgkGKejQ@mail.gmail.com>
-Subject: Re: [PATCH v4 08/11] ASoC: Intel: atom: Make PCI dependency explicit
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1546140837.4069.81.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18123117-0060-0000-0000-000002F0F9A7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010323; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000272; SDB=6.01139808; UDB=6.00593076; IPR=6.00920018;
+ MB=3.00024914; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-31 17:56:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18123117-0061-0000-0000-000047C04996
+Message-Id: <94e4968b-0b19-f0ca-24d8-e8105c1af704@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812310158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 8:47 PM Mark Brown <broonie@kernel.org> wrote:
->
-> On Sun, Dec 30, 2018 at 07:56:09PM +0000, Sinan Kaya wrote:
-> > Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
-> > CONFIG_PCI set but this is not specified anywhere.
->
-> I don't have the cover letter or anything for this series, what's going
-> on with dependencies?
+On 12/29/2018 10:33 PM, Mimi Zohar wrote:
+> But the problem you've described is on a cold boot, not a soft reboot.
+>   Both the soft reboot and kexec are working properly.  It seems the
+> difference is that on a cold boot, the TPM takes longer to initialize.
 
-Here is the executive summary:
+I would expect this.
 
-I have a changeset that separates ACPI from PCI on 4.21. CONFIG_ACPI
-used to select PCI. This is no longer true.
+The TPM doesn't even see a 'soft reboot' right?
 
-You can build an ACPI system without any PCI devices.
+OTOH, a 'cold boot' hits the TPM Init pin, which causes the take several
+actions.  Probably the one with the most impact is resetting the state
+of self test.  Thus, the TPM will require a function to be self tested
+before it can be used, adding delays.
+
