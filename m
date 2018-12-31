@@ -2,135 +2,275 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B66C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B189BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 971A521019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DE0420B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:32:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="USg6Jlz+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZAToqtd6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbeLaHYF (ORCPT
+        id S1727061AbeLaHcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 02:24:05 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42196 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbeLaHYF (ORCPT
+        Mon, 31 Dec 2018 02:32:42 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50510 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbeLaHcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 02:24:05 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBV7NfCi086845;
-        Mon, 31 Dec 2018 01:23:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546241021;
-        bh=dcJlzenKwlZxVF52kac9hRUeb8Zn724yAguLWcOgVXw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=USg6Jlz+wZP3VODbRYvdCRa3p9dTEgOEYYe21B87kupdYEkHzIDGMSQsn+9yhcHhn
-         +VktUbFzAF4l6TPhNJNHwDL3S2qDnGx7xTQw2f21eEBqBNWg8iSNNQ+6/+/jiC8hGI
-         KF/pfJSAGQj/89TyjqcAMIMMuwt0JhYVmjTP/nI8=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBV7Nfrx071415
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 31 Dec 2018 01:23:41 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 31
- Dec 2018 01:23:40 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 31 Dec 2018 01:23:40 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBV7NbvQ030072;
-        Mon, 31 Dec 2018 01:23:38 -0600
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-To:     Tony Lindgren <tony@atomide.com>,
-        Andreas Kemnade <andreas@kemnade.info>
-CC:     Stephen Boyd <sboyd@kernel.org>, <bcousson@baylibre.com>,
-        <letux-kernel@openphoenux.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <mturquette@baylibre.com>, <paul@pwsan.com>
-References: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
- <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
- <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
- <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
- <20181130153729.GG53235@atomide.com>
- <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
- <20181203153910.GA6707@atomide.com> <20181203172246.0e767a16@kemnade.info>
- <20181204164556.GB6707@atomide.com> <20181227211222.5996c356@aktux>
- <20181228200229.GY6707@atomide.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <76d9fc57-898b-53ba-1dca-78e5b5c9b2be@ti.com>
-Date:   Mon, 31 Dec 2018 09:23:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 31 Dec 2018 02:32:41 -0500
+Received: by mail-it1-f194.google.com with SMTP id z7so35112958iti.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 23:32:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/JUxisj3yMqqd8GEVQeekC6PLpLGQSqqgoY8Pa1AqgE=;
+        b=ZAToqtd6MY1DNueDmGoOSs2GTGW3Ef9x4y/9SHR7Z94UcFR0+WK/zMPIeHQ6FloGOf
+         0AWZIQTZZ7193UNLqq/kbRrFiyaz2S7N6fPIIze8WY4hP95NCc8NaAsygxmOcmdYWlET
+         V9TFUTDZdIVfi3DIA3i9xE2Z2SZy/1DQTcJ5NkG/wGYKVZ5/FxnpBflz5scLYZaViRPQ
+         hR2ov/lYeywL0zvhgOCz9iRSvg9wfrcno3xY5ETEd7utvo2sZ1MQFgIl9rRTL74bXJUP
+         u5N60dBHumGXUpGWVS0K9c+xQHP4Ofp06J2qUGmavAXT+o4RXG/9F8v4dBPxK/PWMviC
+         d6Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/JUxisj3yMqqd8GEVQeekC6PLpLGQSqqgoY8Pa1AqgE=;
+        b=RV2jzPtVzc/d4wTnFk2dwpoJvCxL3Py2VteZn3zkjIKmfagV3HrjBXigYr183QT5+I
+         x+RBtBtMM0KfBUjMbFJh4J+2OIrQD2jSPuqitcBDGyZT/bb85fkZym+e6UmYLBaK+mOj
+         8QBoN8mhBAdwWPQk0idd2K94udp/Xwtm1DIKvEDeHe/WughI+oJJqS68h4M6/JfeVeve
+         mXFBW+K5ttS1tsyQ7UyeXEu+3Xt9BFZY7Xupq+HFN6MJyShyfZwur3tcKlnVXZ9/4rCf
+         9r5z8gUcPC7biJsreKza4roda38QfgNIGT+ZjHm8eZu6Q/1MjtqWVQ/RO5IMI1eNeR28
+         7EJg==
+X-Gm-Message-State: AJcUukcTkr0XmwlTB8cPCJ84NcZTLzJoo7RwKet0iUFEH5JisrCYz0Ka
+        wVyi30I284AoFEr8dGwZ0L+OcWfEh9MUUsuUbq5eiQ==
+X-Google-Smtp-Source: ALg8bN5T9zmTrlRI1qEhXf2XalGjWNbji0kcTfVHuCa5Tf8M2duy/ktZMnmOLJCNR5GIQ26sBmTewXXZXoMQMC57dVI=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr925806itb.12.1546241559220;
+ Sun, 30 Dec 2018 23:32:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181228200229.GY6707@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <0000000000008bc346057e4c4873@google.com>
+In-Reply-To: <0000000000008bc346057e4c4873@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 31 Dec 2018 08:32:28 +0100
+Message-ID: <CACT4Y+aJadRs+O+Y2GUg4z+2Z0gTAdoc5EY2A_CwLmyXwk+ZsA@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ kmem_cache_free (2)
+To:     syzbot <syzbot+463e2f5d13fc785dd322@syzkaller.appspotmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Colin King <colin.king@canonical.com>,
+        Jerome Glisse <jglisse@redhat.com>, khalid.aziz@oracle.com,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/12/2018 22:02, Tony Lindgren wrote:
-> * Andreas Kemnade <andreas@kemnade.info> [181227 20:13]:
->> Hi,
->>
->> On Tue, 4 Dec 2018 08:45:57 -0800
->> Tony Lindgren <tony@atomide.com> wrote:
->>
->>> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
->>>> On Mon, 3 Dec 2018 07:39:10 -0800
->>>> Tony Lindgren <tony@atomide.com> wrote:
->>>>> The consumer device stays active just fine with PM runtime
->>>>> calls. So yes, the problem is keeping a clock controller forced
->>>>> active for the period of consumer device reset. Other than
->>>>> that typically autoidle can be just kept enabled.
->>>>>    
->>>> Are we still talking about the same problem? Maybe I am losing track
->>>> here. Just to make sure.
->>>> The patch series was about disabling autoidle for devices which cannot
->>>> work with it during normal operation. Not during reset or something
->>>> like that.
->>>> Or is the keep-clock-active-during-reset just a requirement for bigger
->>>> restructuring ideas?
->>>
->>> Yeah there are two issues: The fix needed for the issue you brought up,
->>> and also how to let a reset driver to block autoidle for reset.
->>>
->> Hmm, is this set now waiting for the famous "somebody" fixing all
->> the stuff?
-> 
-> Well I think we're still waiting on Tero to comment on this.
+On Mon, Dec 31, 2018 at 8:23 AM syzbot
+<syzbot+463e2f5d13fc785dd322@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    345671ea0f92 Merge branch 'akpm' (patches from Andrew)
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10442713400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5c0a49d2b5210087
+> dashboard link: https://syzkaller.appspot.com/bug?extid=463e2f5d13fc785dd322
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+463e2f5d13fc785dd322@syzkaller.appspotmail.com
 
-The only item requiring immediate fixing is the point Stephen made out, 
-removing the usage of CLK_IS_BASIC from this patch.
+Since this involves OOMs and looks like a one-off induced memory corruption:
 
-Afaics, the reset related concerns Tony has can be handled later.
+#syz dup: kernel panic: corrupted stack end in wb_workfn
 
--Tero
 
-> 
->> What are currently visible symptoms for the driver not blocking
->> autoidle for reset? Maybe I can at least test something there. I have
->> also omap5 here.
-> 
-> Oh that's just for making drivers/reset drivers to work in
-> the long run. Let's keep that separate from these fixes..
-> 
-> Regards,
-> 
-> Tony
-> 
-> 
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> FAT-fs (loop1): Directory bread(block 72) failed
+> EXT4-fs (loop3): Can't read superblock on 2nd try
+> FAT-fs (loop1): Directory bread(block 73) failed
+> audit: type=1400 audit(1540684862.923:177): avc:  denied  { mmap_zero }
+> for  pid=17455 comm="udevd" scontext=system_u:system_r:kernel_t:s0
+> tcontext=system_u:system_r:kernel_t:s0 tclass=memprotect permissive=1
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+> PGD 0 P4D 0
+> Oops: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 17455 Comm: udevd Not tainted 4.19.0+ #85
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:slab_equal_or_root mm/slab.h:228 [inline]
+> RIP: 0010:cache_from_obj mm/slab.h:374 [inline]
+> RIP: 0010:kmem_cache_free+0x120/0x290 mm/slab.c:3752
+> Code: ea ff ff 48 c1 e8 0c 48 c1 e0 06 48 01 d0 48 8b 50 08 48 8d 4a ff 83
+> e2 01 48 0f 45 c1 48 8b 40 18 48 39 c3 0f 84 00 ff ff ff <48> 3b 98 80 00
+> 00 00 0f 84 11 01 00 00 48 8b 48 58 48 c7 c6 20 0c
+> RSP: 0018:ffff88018eb271d8 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: ffff8801da979480 RCX: ffffea0007658e87
+> RDX: 0000000000000000 RSI: ffffffff8139ec96 RDI: 0000000000000007
+> RBP: ffff88018eb271f8 R08: ffff88018e3f03c0 R09: ffffed003914bb50
+> R10: ffffed003914bb50 R11: ffff8801c8a5da83 R12: ffff8801d963ab10
+> R13: ffff8801b37755a0 R14: ffff8801b37755a0 R15: ffff8801b3775590
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000080 CR3: 00000001c0bd1000 CR4: 00000000001426e0
+> Call Trace:
+>   anon_vma_chain_free mm/rmap.c:134 [inline]
+>   unlink_anon_vmas+0x5f0/0xa60 mm/rmap.c:419
+>   free_pgtables+0x271/0x380 mm/memory.c:393
+>   exit_mmap+0x2cd/0x590 mm/mmap.c:3146
+>   __mmput kernel/fork.c:1044 [inline]
+>   mmput+0x247/0x610 kernel/fork.c:1065
+>   exec_mmap fs/exec.c:1043 [inline]
+>   flush_old_exec+0xb91/0x21b0 fs/exec.c:1276
+>   load_elf_binary+0xa39/0x5620 fs/binfmt_elf.c:869
+>   search_binary_handler+0x17d/0x570 fs/exec.c:1653
+>   exec_binprm fs/exec.c:1695 [inline]
+>   __do_execve_file.isra.33+0x1661/0x25d0 fs/exec.c:1819
+>   do_execveat_common fs/exec.c:1866 [inline]
+>   do_execve fs/exec.c:1883 [inline]
+>   __do_sys_execve fs/exec.c:1964 [inline]
+>   __se_sys_execve fs/exec.c:1959 [inline]
+>   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1959
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x7ffa0b953207
+> Code: Bad RIP value.
+> RSP: 002b:00007ffefdbbcde8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
+> RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007ffa0b953207
+> RDX: 0000000000e42b70 RSI: 00007ffefdbbcee0 RDI: 00007ffefdbbdef0
+> RBP: 0000000000625500 R08: 000000000000405a R09: 000000000000405a
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000e42b70
+> R13: 0000000000000007 R14: 0000000000d40030 R15: 0000000000000005
+> Modules linked in:
+> CR2: 0000000000000080
+> kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+> ---[ end trace fc838222524811c3 ]---
+> RIP: 0010:slab_equal_or_root mm/slab.h:228 [inline]
+> RIP: 0010:cache_from_obj mm/slab.h:374 [inline]
+> RIP: 0010:kmem_cache_free+0x120/0x290 mm/slab.c:3752
+> kobject: 'loop5' (00000000598b220f): fill_kobj_path: path
+> = '/devices/virtual/block/loop5'
+> Code: ea ff ff 48 c1 e8 0c 48 c1 e0 06 48 01 d0 48 8b 50 08 48 8d 4a ff 83
+> e2 01 48 0f 45 c1 48 8b 40 18 48 39 c3 0f 84 00 ff ff ff <48> 3b 98 80 00
+> 00 00 0f 84 11 01 00 00 48 8b 48 58 48 c7 c6 20 0c
+> RSP: 0018:ffff88018eb271d8 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: ffff8801da979480 RCX: ffffea0007658e87
+> kobject: 'loop1' (00000000606593e3): kobject_uevent_env
+> kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+> kobject: 'loop1' (00000000606593e3): fill_kobj_path: path
+> = '/devices/virtual/block/loop1'
+> kobject: 'loop2' (00000000a62421b8): fill_kobj_path: path
+> = '/devices/virtual/block/loop2'
+> RDX: 0000000000000000 RSI: ffffffff8139ec96 RDI: 0000000000000007
+> RBP: ffff88018eb271f8 R08: ffff88018e3f03c0 R09: ffffed003914bb50
+> R10: ffffed003914bb50 R11: ffff8801c8a5da83 R12: ffff8801d963ab10
+> R13: ffff8801b37755a0 R14: ffff8801b37755a0 R15: ffff8801b3775590
+> kasan: CONFIG_KASAN_INLINE enabled
+> kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+> FS:  00007ffa0c26f7a0(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> kobject: 'loop5' (00000000598b220f): fill_kobj_path: path
+> = '/devices/virtual/block/loop5'
+> kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+> general protection fault: 0000 [#2] PREEMPT SMP KASAN
+> CPU: 1 PID: 16046 Comm: udevd Tainted: G      D           4.19.0+ #85
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__anon_vma_interval_tree_insert mm/interval_tree.c:72 [inline]
+> RIP: 0010:anon_vma_interval_tree_insert+0x179/0x370 mm/interval_tree.c:83
+> Code: 03 42 80 3c 3a 00 0f 85 7d 01 00 00 4d 8b 65 00 4d 85 e4 0f 84 a5 00
+> 00 00 e8 b3 fc cf ff 49 8d 7c 24 18 48 89 f8 48 c1 e8 03 <42> 80 3c 38 00
+> 0f 85 75 01 00 00 4d 8b 6c 24 18 4c 89 f7 4c 89 ee
+> RSP: 0018:ffff8801c3396c90 EFLAGS: 00010206
+> RAX: 000000000836b159 RBX: ffff8801d8a8eee0 RCX: ffffffff81af3d90
+> RDX: 0000000000000000 RSI: ffffffff81af3d0d RDI: 0000000041b58acb
+> RBP: ffff8801c3396cd8 R08: ffff880183b76340 R09: 0000000000000000
+> R10: 00000000224b4293 R11: ffff880183b76340 R12: 0000000041b58ab3
+> R13: ffff8801d963dfc0 R14: 000000000000001f R15: dffffc0000000000
+> FS:  00007ffa0c26f7a0(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000930004 CR3: 000000018800a000 CR4: 00000000001426e0
+> Call Trace:
+>   anon_vma_chain_link mm/rmap.c:144 [inline]
+>   anon_vma_clone+0x2f5/0x710 mm/rmap.c:279
+>   anon_vma_fork+0xf4/0x820 mm/rmap.c:332
+>   dup_mmap kernel/fork.c:539 [inline]
+>   dup_mm kernel/fork.c:1317 [inline]
+>   copy_mm kernel/fork.c:1372 [inline]
+>   copy_process+0x47cc/0x8770 kernel/fork.c:1916
+>   _do_fork+0x1cb/0x11d0 kernel/fork.c:2213
+>   __do_sys_clone kernel/fork.c:2320 [inline]
+>   __se_sys_clone kernel/fork.c:2314 [inline]
+>   __x64_sys_clone+0xbf/0x150 kernel/fork.c:2314
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x7ffa0b952f46
+> Code: f7 d8 64 89 04 25 d4 02 00 00 64 4c 8b 14 25 10 00 00 00 31 d2 49 81
+> c2 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff
+> ff 0f 87 31 01 00 00 85 c0 41 89 c4 0f 85 3b 01 00
+> RSP: 002b:00007ffefdbbcd80 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+> RAX: ffffffffffffffda RBX: 00007ffefdbbcd80 RCX: 00007ffa0b952f46
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+> RBP: 00007ffefdbbcde0 R08: 0000000000003eae R09: 0000000000003eae
+> R10: 00007ffa0c26fa70 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffefdbbcda0 R14: 0000000000000005 R15: 0000000000000005
+> Modules linked in:
+> kobject: 'loop1' (00000000606593e3): kobject_uevent_env
+> kobject: 'loop2' (00000000a62421b8): fill_kobj_path: path
+> = '/devices/virtual/block/loop2'
+> kobject: 'loop1' (00000000606593e3): fill_kobj_path: path
+> = '/devices/virtual/block/loop1'
+> EXT4-fs (loop5): Can't read superblock on 2nd try
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> kobject: 'loop4' (000000001ebc1bae): kobject_uevent_env
+> kobject: 'loop4' (000000001ebc1bae): fill_kobj_path: path
+> = '/devices/virtual/block/loop4'
+> CR2: 00000000004ede98 CR3: 00000001c0bd1000 CR4: 00000000001426e0
+> FAT-fs (loop1): Directory bread(block 64) failed
+> kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+> DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+> EXT4-fs (loop2): Invalid log block size: 2949122
+> kobject: 'loop5' (00000000598b220f): kobject_uevent_env
+> FAT-fs (loop1): Directory bread(block 65) failed
+> kobject: 'loop5' (00000000598b220f): fill_kobj_path: path
+> = '/devices/virtual/block/loop5'
+> kobject: 'loop5' (00000000598b220f): fill_kobj_path: path
+> = '/devices/virtual/block/loop5'
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> FAT-fs (loop1): Directory bread(block 66) failed
+> kobject: 'loop2' (00000000a62421b8): kobject_uevent_env
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000008bc346057e4c4873%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
