@@ -2,243 +2,234 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECABFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E23BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98CB20B1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28C1321019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LYXMn4nz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O5Z3zuon"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeLaGb3 (ORCPT
+        id S1726931AbeLaGfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 01:31:29 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36973 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726228AbeLaGb3 (ORCPT
+        Mon, 31 Dec 2018 01:35:44 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43335 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeLaGfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 01:31:29 -0500
-Received: by mail-io1-f67.google.com with SMTP id g8so9466550iok.4
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 22:31:27 -0800 (PST)
+        Mon, 31 Dec 2018 01:35:44 -0500
+Received: by mail-io1-f65.google.com with SMTP id a2so9020160ios.10
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 22:35:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yT+tsqBctM7vCiYLh3mcOtrpbxMPManNTH74WEzE148=;
-        b=LYXMn4nz+lvDh/icutGeVJV5+eniIw9pXAb7Dv3ufhOW/yO54BGB8o2LSSTAwKxRMZ
-         Q7ZiQgX9CQ5lPlZEgYDZKX8oR+xJa01GNMrl2EeVt/nATK9+Ge5a2jv56SoiAzCyZNMU
-         hmi+TvCJ6zwiFdii0w6DzYjo7Oqz20/MhM1/hXuVGGAyvMT7uVRG6FpUof+/n0RF7S4d
-         292D2+K6+7EePFefkI8cciyrbQA+ydAcgL6dqbGANbilZZw3pbNR94KIorS445nfPYdR
-         h3gxCJ0vjoKx+TyI+zx1bBDzIiBF8vWjzPhF+y42VqA5B7BH3dAWnxCw9oRrKAxCWY+e
-         tslg==
+        bh=KfzdauCZhoEjjtzETPQhyq82uT1QhfYuLBcput13h6c=;
+        b=O5Z3zuon243G7G0aSr1a/BQnAPpsllMIU7OIqn332ZDaJsX90KGT81KyP2m3fF2TiP
+         BmsTfI+Zn2Lz+PocfD5anRn6gww2L1VJNm16+CRmE441lKBxMkCVyTcd0i2VG9KiYp55
+         5FxzFmyScY8+esxASAwd9ApQYWXkanTh6OKwzRxWtwR7fCJMobpTbgLF8/GH74dcDT7z
+         e9uga2c8WxkOkxv7q6+620xWFO+q0i/oabuTW5t9dg5zIKfSG+LNnhfg5B9wziLGgcX0
+         V+oqit678MUtQH9FKkLX5xfisydy7xS/GMGonole8sr374gob3W11sESsD2ZSJLXnPMd
+         1TTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yT+tsqBctM7vCiYLh3mcOtrpbxMPManNTH74WEzE148=;
-        b=iZUMwy9kmDuk8SzKBlo6AmJohSN2nKuiD29AQ2E72hy5nEZExOdXkWMB96NXwMTWjp
-         8HsK0Csojeb9r61z+QeczydX9LCvHeTQ4lp6byWQ6CNCpt7+2elppZVvBEeO6wMT4Atz
-         f4GAZSW1Rct4B978PkdiGFaAON5TI/Aaxloi34V2ARbxX6AZwkpqmcdi59TjYMeofZ5Z
-         HA2cI7Y94D+rEmNKlj1BAGW2MNSNgGUvjjZY2td4RGR27UH5/rMDXBwnu6zBf5RjGQ1G
-         WXjimwDiQA0VX0R5eiutlHVkdb8x/ewgfAJRRiFEsVyx4jxLjS3zFYjLCN8O60pF7oX+
-         hChw==
-X-Gm-Message-State: AJcUukfsCNiHfG3BPkHHoZZ+dOaCBUmD4amntBpjB+FOvP3MEl927GiB
-        Mc17zGZnF/978JYjgzn04SZE3BNlcxAudEhbAPcLjA==
-X-Google-Smtp-Source: ALg8bN5wYys6/A0JTLwtF0KkhpoeNi9Jbukq4jt5Gki90McxNxDWIUdPmilN3vK+EM99t9jvFSRkuXQ19UkgDJKByDQ=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr25091347iom.11.1546237886942;
- Sun, 30 Dec 2018 22:31:26 -0800 (PST)
+        bh=KfzdauCZhoEjjtzETPQhyq82uT1QhfYuLBcput13h6c=;
+        b=LYPolSl7XKbkfUxiIT88pOlcv/RIAQqJI9d9CinyIGnV37o4QX1s5xu4lWZLPtg9Ae
+         6rgKG+iusjvVWaZ8PwmDn2NddExbloFQ1wDSSBfnlBH2WqNV9/Ex4lhM/TquGZrRwITC
+         /GOe6isfs6lBiQSRF70apeDhvVqqk/mEkkm+UGtUuGX5sPwxuijrfKV7TcnwmHsFuC5W
+         3UtukOZiReGIv44kcgnO+Ej4/ZU88OMVEVK4aSMN0wCFseoy3D+zPVrwwav8ge302Gth
+         DKQOOeZPfbaZNNaD/+Sa+548xfeaGaPUfE2KAXNjTZBA4ufzmouzbKPXd+7eSEwF3WJK
+         TUtA==
+X-Gm-Message-State: AJcUukf0RWm8qoMtDWW2X5cs2xuH83A+OyntdS5gBA3rYW42QVTPzbw1
+        vyA5u6odfwFqGrGFX43CG9Uu2bSNmyjQH1hgbiVbsA==
+X-Google-Smtp-Source: ALg8bN4v9OFS59N7u53aIAQJNn7Mw0GY/5AfWgwBQPep+eoP4Pu8bwKORF/wPqehx6sJg753D+L0NL/A9dhTJgWDYJ8=
+X-Received: by 2002:a5d:9456:: with SMTP id x22mr230259ior.282.1546238142897;
+ Sun, 30 Dec 2018 22:35:42 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000b05d0c057e492e33@google.com> <9fe14b68-5a3c-5964-62b1-53a4ef4c0b76@lca.pw>
-In-Reply-To: <9fe14b68-5a3c-5964-62b1-53a4ef4c0b76@lca.pw>
+References: <00000000000051ee78057cc4d98f@google.com> <CACT4Y+YX3=OLqfmWwhHVCQz+HwE=53VH9c1E2M+rgbF=UVTV5A@mail.gmail.com>
+ <ab2fb696-8d3b-9720-a8a0-99c66a080605@colorfullife.com> <CACT4Y+Y-c7FgSTKyHqpRZu3eKLo5QfXy10axTSwWkU4MUgjFgw@mail.gmail.com>
+ <87614226-e895-c3a3-3626-b0fbe7e191be@colorfullife.com> <CACT4Y+bU4mLF1tEhw6mKf1m1W63OGvaFhAsTrpTW0M5MFXekRQ@mail.gmail.com>
+ <CACT4Y+Zynq-URqgJNyCZyTPM80GU8DndtKv=BFDU9_U=f0KceA@mail.gmail.com>
+ <CACT4Y+ZitcDg=OA8NbJJTWQyHHzmiZ7rFekFkgxmdOOnSKTfXg@mail.gmail.com>
+ <CACT4Y+bUYDEEdB-WrWc2gdzuQ-xOSoCZxzT7faNd3_ENnxFNnQ@mail.gmail.com>
+ <f4eaca71-09f6-3c21-258c-336d1b56d38c@colorfullife.com> <CACT4Y+Z3GYkvL28BmyGWJHZmK=NgrJcMfhqyXPPMME_Rk8X_qw@mail.gmail.com>
+ <CACT4Y+Zg85KDMhq3BNtHH0gbO2hWQ6O05n8K9=MRO5htLovMgQ@mail.gmail.com> <CACT4Y+axE-hxbn1pYwY+14PAa4Wq4cb0ohRueumGZONrQ9iuRQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+axE-hxbn1pYwY+14PAa4Wq4cb0ohRueumGZONrQ9iuRQ@mail.gmail.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 31 Dec 2018 07:31:15 +0100
-Message-ID: <CACT4Y+Y-WW-giKkihkMXkKxQ2mK7Lhc60fCta3TqssiWGM8-2A@mail.gmail.com>
-Subject: Re: kernel panic: corrupted stack end in wb_workfn
-To:     Qian Cai <cai@lca.pw>
-Cc:     syzbot <syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com>,
+Date:   Mon, 31 Dec 2018 07:35:31 +0100
+Message-ID: <CACT4Y+b+Exydw6Ya86J3XTXnT5RLscai0W+X=dVudW1Ae5fXiw@mail.gmail.com>
+Subject: Re: general protection fault in put_pid
+To:     Manfred Spraul <manfred@colorfullife.com>,
+        Shakeel Butt <shakeelb@google.com>
+Cc:     syzbot+1145ec2e23165570c3ac@syzkaller.appspotmail.com,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, guro@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <jbacik@fb.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        ktsanaktsidis@zendesk.com, LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>,
-        Shakeel Butt <shakeelb@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Matthew Wilcox <willy@infradead.org>
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 4:47 AM Qian Cai <cai@lca.pw> wrote:
+On Sun, Dec 30, 2018 at 10:31 AM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
-> Ah, it has KASAN_EXTRA. Need this patch then.
+> On Wed, Dec 26, 2018 at 10:03 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > > > Hello Dmitry,
+> > > >
+> > > > On 12/23/18 11:42 AM, Dmitry Vyukov wrote:
+> > > > > Actually was able to reproduce this with a syzkaller program:
+> > > > > ./syz-execprog -repeat=0 -procs=10 prog
+> > > > > ...
+> > > > > kasan: CONFIG_KASAN_INLINE enabled
+> > > > > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > > > > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > > > > CPU: 1 PID: 8788 Comm: syz-executor8 Not tainted 4.20.0-rc7+ #6
+> > > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > > > > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > > > > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > > > > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > > > > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > > > > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > > > > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > > > > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > > > > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > > > > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > > > > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > > > > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > Call Trace:
+> > > > >   __list_del_entry include/linux/list.h:117 [inline]
+> > > > >   list_del include/linux/list.h:125 [inline]
+> > > > >   unlink_queue ipc/sem.c:786 [inline]
+> > > > >   freeary+0xddb/0x1c90 ipc/sem.c:1164
+> > > > >   free_ipcs+0xf0/0x160 ipc/namespace.c:112
+> > > > >   sem_exit_ns+0x20/0x40 ipc/sem.c:237
+> > > > >   free_ipc_ns ipc/namespace.c:120 [inline]
+> > > > >   put_ipc_ns+0x55/0x160 ipc/namespace.c:152
+> > > > >   free_nsproxy+0xc0/0x1f0 kernel/nsproxy.c:180
+> > > > >   switch_task_namespaces+0xa5/0xc0 kernel/nsproxy.c:229
+> > > > >   exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
+> > > > >   do_exit+0x19e5/0x27d0 kernel/exit.c:866
+> > > > >   do_group_exit+0x151/0x410 kernel/exit.c:970
+> > > > >   __do_sys_exit_group kernel/exit.c:981 [inline]
+> > > > >   __se_sys_exit_group kernel/exit.c:979 [inline]
+> > > > >   __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+> > > > >   do_syscall_64+0x192/0x770 arch/x86/entry/common.c:290
+> > > > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > > > RIP: 0033:0x4570e9
+> > > > > Code: 5d af fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
+> > > > > 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> > > > > 01 f0 ff ff 0f 83 2b af fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > > > RSP: 002b:00007ffe35f12018 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > > > RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00000000004570e9
+> > > > > RDX: 0000000000410540 RSI: 0000000000a34c00 RDI: 0000000000000045
+> > > > > RBP: 00000000004a43a4 R08: 000000000000000c R09: 0000000000000000
+> > > > > R10: 0000000000d24940 R11: 0000000000000246 R12: 0000000000000000
+> > > > > R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000008
+> > > > > Modules linked in:
+> > > > > Dumping ftrace buffer:
+> > > > >     (ftrace buffer empty)
+> > > > > ---[ end trace 17829b0f00569a59 ]---
+> > > > > RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+> > > > > Code: ad de 4c 8b 26 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48
+> > > > > 89 da 48 39 c3 74 65 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c
+> > > > > 02 00 75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8 00
+> > > > > RSP: 0018:ffff88804faef210 EFLAGS: 00010a02
+> > > > > RAX: dffffc0000000000 RBX: f817edba555e1f00 RCX: ffffffff831bad5f
+> > > > > RDX: 1f02fdb74aabc3e0 RSI: ffff88801b8a0720 RDI: ffff88801b8a0728
+> > > > > RBP: ffff88804faef228 R08: fffff52001055401 R09: fffff52001055401
+> > > > > R10: 0000000000000001 R11: fffff52001055400 R12: ffff88802d52cc98
+> > > > > R13: ffff88801b8a0728 R14: ffff88801b8a0720 R15: dffffc0000000000
+> > > > > FS:  0000000000d24940(0000) GS:ffff88802d500000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00000000004bb580 CR3: 0000000011177005 CR4: 00000000003606e0
+> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > >
+> > > > >
+> > > > > The prog is:
+> > > > > unshare(0x8020000)
+> > > > > semget$private(0x0, 0x4007, 0x0)
+> > > > >
+> > > > > kernel is on 9105b8aa50c182371533fc97db64fc8f26f051b3
+> > > > >
+> > > > > and again it involved lots of oom kills, the repro eats all memory, a
+> > > > > process getting killed, frees some memory and the process repeats.
+> > > >
+> > > > I was too fast: I can't reproduce the memory leak.
+> > > >
+> > > > Can you send me the source for prog?
+> > >
+> > >
+> > > Here is the program:
+> > > https://gist.githubusercontent.com/dvyukov/03ec54b3429ade16fa07bf8b2379aff3/raw/ae4f654e279810de2505e8fa41b73dc1d77778e6/gistfile1.txt
+> > >
+> > > But we concluded this is not a leak, right?
+> > > It just creates large semaphores tied to a persistent ipcns. Once the
+> > > process is killed, all memory is released. When this program runs, it
+> > > eats all memory, then one of the subprocesses is oom-killed, part of
+> > > memory is released, then all memory is consumed again by a new
+> > > subprocess and this repeats. If all processes are killed, all memory
+> > > is released back. It seems to be working as intended.
+> > >
+> > > However, what you said about kernel.sem sysctl is useful and I think
+> > > we need to use it for additional sandboxing of syzkaller test
+> > > processes. I am thinking of applying:
+> > >
+> > > kernel.shmmax = 16777216
+> > > kernel.shmall = 536870912
+> > > kernel.shmmni = 1024
+> > > kernel.msgmax = 8192
+> > > kernel.msgmni = 1024
+> > > kernel.msgmnb = 1024
+> > > kernel.sem = 1024 1048576 500 1024
+> > >
+> > > It should be enough to trigger bugs of any complexity (oom's aside),
+> > > but should prevent uncontrolled memory consumption.
+> > > Looking at the code I figured that these sysctls are
+> > > per-ipc-namespace, right? I.e. if I do sysctl from an ipcns, the
+> > > limits will be set only only for that ns. I won't use this initially,
+> > > but something to keep in mind if the global limits will fail in some
+> > > way.
+> >
+> > +Shakeel who was interested in memory isolation problems
+> >
+> > Setting these sysctl's globally does not help, as they are reset for
+> > new ipc namespaces (?). Setting them for test process namespaces does
+> > not help either, as it's trivial to do unshare(NEWIPC) (which the
+> > repro in fact does). It seems to make things somewhat better for
+> > syzkaller because any namespaces that a test creates are short-lived.
+> > But this seems to be a general resource isolation issue for
+> > containers.
 >
-> https://lore.kernel.org/lkml/20181228020639.80425-1-cai@lca.pw/
 >
-> or to use GCC from the HEAD which suppose to reduce the stack-size in half.
->
-> shrink_page_list
-> shrink_inactive_list
->
-> Those things are 7k each, so 32k would be soon gone.
+> The stack overflow was reported 5 months ago with a bunch of repros:
+> https://groups.google.com/forum/#!msg/syzkaller-bugs/C7d0Hm6YcDM/nQeciKgtCgAJ
+> now we are spending time re-debugging other incarnations of the same bug.
 
-I am not sure it's just KASAN. I reproduced stack overflow at this
-stack without KASAN:
-https://groups.google.com/forum/#!msg/syzkaller-bugs/ZaBzAJbn6i8/Py9FVlAqDQAJ
+FTR, the main place to track the stack overflow is now this thread:
+https://groups.google.com/forum/#!msg/syzkaller-bugs/nFeC8-UG1gg/_KMuN0ViFQAJ
 
-Note: this was originally reported 5 months ago:
-https://groups.google.com/forum/#!msg/syzkaller-bugs/C7d0Hm6YcDM/nQeciKgtCgAJ
-so now at least in 2 releases and causes stream of induced crashes
-that people spent time debugging:
-https://groups.google.com/forum/#!msg/syzkaller-bugs/ZaBzAJbn6i8/Py9FVlAqDQAJ
-https://groups.google.com/forum/#!msg/syzkaller-bugs/GIpnqHiIEQg/5jzwQqqfCwAJ
-https://syzkaller.appspot.com/bug?id=26c906d472ea470c2cb58c77f08f964f347cbc68
-https://groups.google.com/forum/#!msg/syzkaller-bugs/Ovkbsq5qd84/FHsTYlsfDAAJ
-most likely more of these:
-https://syzkaller.appspot.com#upstream
-
-
-
-> On 12/30/18 10:41 PM, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=176c0ebf400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=ec1b7575afef85a0e5ca
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a9a84b400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17199bb3400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com
-> >
-> > Kernel panic - not syncing: corrupted stack end detected inside scheduler
-> > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.20.0+ #396
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> > 01/01/2011
-> > Workqueue: writeback wb_workfn (flush-8:0)
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-> >  panic+0x2ad/0x55f kernel/panic.c:189
-> >  schedule_debug kernel/sched/core.c:3285 [inline]
-> >  __schedule+0x1ec6/0x1ed0 kernel/sched/core.c:3394
-> >  preempt_schedule_common+0x1f/0xe0 kernel/sched/core.c:3596
-> >  preempt_schedule+0x4d/0x60 kernel/sched/core.c:3622
-> >  ___preempt_schedule+0x16/0x18
-> >  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:161 [inline]
-> >  _raw_spin_unlock_irqrestore+0xbb/0xd0 kernel/locking/spinlock.c:184
-> >  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
-> >  __remove_mapping+0x932/0x1af0 mm/vmscan.c:967
-> >  shrink_page_list+0x6610/0xc2e0 mm/vmscan.c:1461
-> >  shrink_inactive_list+0x77b/0x1c60 mm/vmscan.c:1961
-> >  shrink_list mm/vmscan.c:2273 [inline]
-> >  shrink_node_memcg+0x7a8/0x19a0 mm/vmscan.c:2538
-> >  shrink_node+0x3e1/0x17f0 mm/vmscan.c:2753
-> >  shrink_zones mm/vmscan.c:2987 [inline]
-> >  do_try_to_free_pages+0x3df/0x12a0 mm/vmscan.c:3049
-> >  try_to_free_pages+0x4d0/0xb90 mm/vmscan.c:3265
-> >  __perform_reclaim mm/page_alloc.c:3920 [inline]
-> >  __alloc_pages_direct_reclaim mm/page_alloc.c:3942 [inline]
-> >  __alloc_pages_slowpath+0xa5a/0x2db0 mm/page_alloc.c:4335
-> >  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
-> >  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
-> >  alloc_pages include/linux/gfp.h:509 [inline]
-> >  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
-> >  pagecache_get_page+0x396/0xf00 mm/filemap.c:1615
-> >  find_or_create_page include/linux/pagemap.h:322 [inline]
-> >  ext4_mb_load_buddy_gfp+0xddf/0x1e70 fs/ext4/mballoc.c:1158
-> >  ext4_mb_load_buddy fs/ext4/mballoc.c:1241 [inline]
-> >  ext4_mb_regular_allocator+0x634/0x1590 fs/ext4/mballoc.c:2190
-> >  ext4_mb_new_blocks+0x1de3/0x4840 fs/ext4/mballoc.c:4538
-> >  ext4_ext_map_blocks+0x2eef/0x6180 fs/ext4/extents.c:4404
-> >  ext4_map_blocks+0x8f7/0x1b60 fs/ext4/inode.c:636
-> >  mpage_map_one_extent fs/ext4/inode.c:2480 [inline]
-> >  mpage_map_and_submit_extent fs/ext4/inode.c:2533 [inline]
-> >  ext4_writepages+0x2564/0x4170 fs/ext4/inode.c:2884
-> >  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2335
-> >  __writeback_single_inode+0x20a/0x1660 fs/fs-writeback.c:1316
-> >  writeback_sb_inodes+0x71f/0x1210 fs/fs-writeback.c:1580
-> >  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1649
-> >  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1758
-> > oom_reaper: reaped process 7963 (syz-executor189), now anon-rss:0kB,
-> > file-rss:0kB, shmem-rss:0kB
-> > rsyslogd invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), order=0,
-> > oom_score_adj=0
-> >  wb_check_start_all fs/fs-writeback.c:1882 [inline]
-> >  wb_do_writeback fs/fs-writeback.c:1908 [inline]
-> >  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1942
-> >  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-> >  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-> >  kthread+0x35a/0x440 kernel/kthread.c:246
-> >  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> > CPU: 1 PID: 7840 Comm: rsyslogd Not tainted 4.20.0+ #396
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> > 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-> >  dump_header+0x253/0x1239 mm/oom_kill.c:451
-> >  oom_kill_process.cold.27+0x10/0x903 mm/oom_kill.c:966
-> >  out_of_memory+0x8ba/0x1480 mm/oom_kill.c:1133
-> >  __alloc_pages_may_oom mm/page_alloc.c:3666 [inline]
-> >  __alloc_pages_slowpath+0x230c/0x2db0 mm/page_alloc.c:4379
-> >  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
-> >  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
-> >  alloc_pages include/linux/gfp.h:509 [inline]
-> >  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
-> >  page_cache_read mm/filemap.c:2373 [inline]
-> >  filemap_fault+0x1595/0x25f0 mm/filemap.c:2557
-> >  ext4_filemap_fault+0x82/0xad fs/ext4/inode.c:6317
-> >  __do_fault+0x100/0x6b0 mm/memory.c:2997
-> >  do_read_fault mm/memory.c:3409 [inline]
-> >  do_fault mm/memory.c:3535 [inline]
-> >  handle_pte_fault mm/memory.c:3766 [inline]
-> >  __handle_mm_fault+0x392f/0x5630 mm/memory.c:3890
-> >  handle_mm_fault+0x54f/0xc70 mm/memory.c:3927
-> >  do_user_addr_fault arch/x86/mm/fault.c:1475 [inline]
-> >  __do_page_fault+0x5f6/0xd70 arch/x86/mm/fault.c:1541
-> >  do_page_fault+0xf2/0x7e0 arch/x86/mm/fault.c:1572
-> >  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
-> > RIP: 0033:0x7f00f990e1fd
-> > Code: Bad RIP value.
-> > RSP: 002b:00007f00f6eade30 EFLAGS: 00010293
-> > RAX: 0000000000000fd2 RBX: 000000000111f170 RCX: 00007f00f990e1fd
-> > RDX: 0000000000000fff RSI: 00007f00f86e25a0 RDI: 0000000000000004
-> > RBP: 0000000000000000 R08: 000000000110a260 R09: 0000000000000000
-> > R10: 74616c7567657227 R11: 0000000000000293 R12: 000000000065e420
-> > R13: 00007f00f6eae9c0 R14: 00007f00f9f53040 R15: 0000000000000003
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> >
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> >
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/9fe14b68-5a3c-5964-62b1-53a4ef4c0b76%40lca.pw.
-> For more options, visit https://groups.google.com/d/optout.
+Manfred, you are proceeding with submission of the race fix, right?
+Since it includes 3 Reported-by tags I will not mark these bugs as dup
+of "kernel panic: corrupted stack end in wb_workfn", otherwise it will
+cause confusion (the patch will appear as fixing the stack overflow
+which it is not). Of, if you remove the tags, we can mark these 3 bugs
+as a dup.
