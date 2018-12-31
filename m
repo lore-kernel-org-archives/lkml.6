@@ -2,103 +2,111 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EC0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907C3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE97420828
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:10:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DlYC5H05"
+	by mail.kernel.org (Postfix) with ESMTP id 6B3A920B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeLaGKJ (ORCPT
+        id S1727037AbeLaG2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 01:10:09 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33749 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbeLaGKJ (ORCPT
+        Mon, 31 Dec 2018 01:28:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726228AbeLaG2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 01:10:09 -0500
-Received: by mail-io1-f65.google.com with SMTP id t24so20821559ioi.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 22:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RWXk32NGwEbWOnn28Kw933pTT+gOGAMs6PWbGYkREzY=;
-        b=DlYC5H05NSMpUq0MJdGKzaQe6QDBGQ29lZOKnYOeC64f1CzkIRbN0RwDn731QNbrCE
-         /p0qegD3efRRj+j0QZAHBb06OU3nAG8qLm1u2ASkvDZsFLQc0yfmclegRwdozqrb3tti
-         bir2JSFAXg6DAtHVEP1ID0okr6o2BcznFDNAo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RWXk32NGwEbWOnn28Kw933pTT+gOGAMs6PWbGYkREzY=;
-        b=I6MKu32zRLa9rNgcR2+hJY5L7KRWL3Z80sYDUPIYFROHXyh3PEinugqftyhBAEK2lx
-         JS7W2wWDejq9cV0QdowUMwXbCVJSDxPe/NYAZt39xsjMVijCltQXS2FLrOdlkwIslMhQ
-         MFIwZb0dASki0fnIZvQqvCCQEXobJ1Pf4HW43+0xSPiVtoPazbOx9gibaRpfS01Awk9J
-         Aqibo+jVHQsflcSeASoloJ1Og3iiYDN0KKm+WKJnMT6mnpGLp/yScHbR/sPGLDKL5784
-         3c5rP/Is3ZAjgKLtxaWj8LBrfxqvqIwSuiDltaQfYXsf0pp/Xlq+dDPyyhu92eu0rPQr
-         VDaQ==
-X-Gm-Message-State: AJcUukfflhVUpQC9t73PFstcoaqcbqSmNMfx4U8iaWxwcMQI/woDv8Nr
-        ifz/Us8URgPlJ7IUx389i4MV6K5eJNhfmpRhOYLDsg==
-X-Google-Smtp-Source: ALg8bN4JiqbVwLgMNOrozkh8IuYsHnM8t0zngXZaH4fKm1lndHUFBxk0AJHo30WsDfA/wLp6Okay9vjJk06z+ijMIFg=
-X-Received: by 2002:a6b:d005:: with SMTP id x5mr5855601ioa.46.1546236608186;
- Sun, 30 Dec 2018 22:10:08 -0800 (PST)
+        Mon, 31 Dec 2018 01:28:39 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBV6K1jZ174339
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 01:28:37 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pqdpngd47-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 01:28:37 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 31 Dec 2018 06:28:36 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 31 Dec 2018 06:28:32 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBV6SVwv2621828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Dec 2018 06:28:31 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9B154A4053;
+        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E33AA404D;
+        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.23])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
+Date:   Mon, 31 Dec 2018 08:28:29 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Kyle Spiers <ksspiers@google.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] include/linux/gfp.h: fix typo
+References: <20181227232354.64562-1-ksspiers@google.com>
 MIME-Version: 1.0
-References: <20181226185623.9324-1-pakki001@umn.edu>
-In-Reply-To: <20181226185623.9324-1-pakki001@umn.edu>
-From:   Devesh Sharma <devesh.sharma@broadcom.com>
-Date:   Mon, 31 Dec 2018 11:39:32 +0530
-Message-ID: <CANjDDBgEFGe3DMUvP_K7zzuqA8i0RosLwX_iRHBMxAEBx3crXg@mail.gmail.com>
-Subject: Re: [PATCH] infiniband: bnxt_re: qplib: Check the return value of send_message
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Selvin Xavier <selvin.xavier@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181227232354.64562-1-ksspiers@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18123106-0028-0000-0000-000003311917
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18123106-0029-0000-0000-000023EE5D12
+Message-Id: <20181231062828.GA20219@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812310059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 12:26 AM Aditya Pakki <pakki001@umn.edu> wrote:
->
-> In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return
-> an error value. The fix returns the error from the latter function
-> upstream.
->
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-> index 5216b5f844cc..adb8eae5193c 100644
-> --- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-> +++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-> @@ -778,9 +778,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
->         req.cos0 = cpu_to_le16(cids[0]);
->         req.cos1 = cpu_to_le16(cids[1]);
->
-> -       bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
-> -                                    0);
-> -       return 0;
-> +       return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
-> +                                               NULL, 0);
->  }
->
->  int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
-> --
-> 2.17.1
->
+On Thu, Dec 27, 2018 at 03:23:54PM -0800, Kyle Spiers wrote:
+> Fix misspelled "satisfied"
+> 
+> Signed-off-by: Kyle Spiers <ksspiers@google.com>
 
-Acked-By: Devesh Sharma <devesh.sharma@broadcom.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+
+> ---
+>  include/linux/gfp.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 0705164f928c..5f5e25fd6149 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -81,7 +81,7 @@ struct vm_area_struct;
+>   *
+>   * %__GFP_HARDWALL enforces the cpuset memory allocation policy.
+>   *
+> - * %__GFP_THISNODE forces the allocation to be satisified from the requested
+> + * %__GFP_THISNODE forces the allocation to be satisfied from the requested
+>   * node with no fallbacks or placement policy enforcements.
+>   *
+>   * %__GFP_ACCOUNT causes the allocation to be accounted to kmemcg.
+> -- 
+> 2.20.1.415.g653613c723-goog
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
