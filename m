@@ -2,105 +2,143 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EA6C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 16:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297B1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 16:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D484E21871
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 16:23:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="LxnOl42N"
+	by mail.kernel.org (Postfix) with ESMTP id ED35721019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 16:28:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeLaQXM (ORCPT
+        id S1727520AbeLaQ2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 11:23:12 -0500
-Received: from mail2.candelatech.com ([208.74.158.173]:41044 "EHLO
-        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbeLaQXL (ORCPT
+        Mon, 31 Dec 2018 11:28:33 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59233 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbeLaQ2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 11:23:11 -0500
-Received: from [192.168.1.47] (104-235-168-9.evrt.wa.frontiernet.net [104.235.168.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail2.candelatech.com (Postfix) with ESMTPSA id 1D93740A626;
-        Mon, 31 Dec 2018 08:22:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail2.candelatech.com 1D93740A626
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-        s=default; t=1546273388;
-        bh=NNnK+sMWElOcWI7DzR+H+uq1YtnavaNDDxCsIuiq/KE=;
-        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
-        b=LxnOl42NZ8RqSRBOgpnVAZR5ANuQ1XKsZBglRHWzDImhmIMjXQO1eIut1wT+QMHFJ
-         Ul4Qhfcwp4+hZeJ9fqROGWlhUDR0sL4MbZ2OuOSKTZYEeFX1VyY+gha/xwr9ep5xxN
-         hb25Cx2i07PQmnr/5An7EDZ3iz33sOl3MLWkkV5E=
-Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and its
- mitigations
-To:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
- <1c7923ec-70aa-25d4-3de1-f1b1768bb80b@candelatech.com>
- <fdf4e1cd-9b28-75c7-6846-6d0f5b816936@linux.intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, stable@vger.kernel.org
-From:   Ben Greear <greearb@candelatech.com>
-Message-ID: <5d45f3ef-a91f-815a-f532-62e75899e697@candelatech.com>
-Date:   Mon, 31 Dec 2018 08:22:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 31 Dec 2018 11:28:32 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 5CDDD80805; Mon, 31 Dec 2018 17:28:24 +0100 (CET)
+Date:   Mon, 31 Dec 2018 17:28:28 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+Message-ID: <20181231162828.GA8846@amd>
+References: <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+ <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+ <71d3ac12-5beb-0a26-71e1-5eae798e7b9f@gmail.com>
+ <2bca210b-76ad-d5a9-906c-4151695050c3@gmail.com>
+ <45ce01f0-af6e-1cc6-5126-fb557c7d2a82@ti.com>
+ <b7c69135-1641-48cb-1770-c4c77a989efe@gmail.com>
+ <20181229190726.GA29851@amd>
+ <4b5a89ed-0c0b-3103-ca57-a0f97aa5ace9@gmail.com>
+ <20181230173505.GA19593@amd>
+ <7763a3ae-343c-0fbe-da88-afce8459e4c2@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <fdf4e1cd-9b28-75c7-6846-6d0f5b816936@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <7763a3ae-343c-0fbe-da88-afce8459e4c2@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/21/2018 05:17 PM, Tim Chen wrote:
-> On 12/21/18 1:59 PM, Ben Greear wrote:
->> On 12/21/18 9:44 AM, Tim Chen wrote:
->>> Thomas,
->>>
->>> Andi and I have made an update to our draft of the Spectre admin guide.
->>> We may be out on Christmas vacation for a while.  But we want to
->>> send it out for everyone to take a look.
->>
->> Can you add a section on how to compile out all mitigations that have anything
->> beyond negligible performance impact for those running systems where performance
->> is more important than security?
->>
->
-> If you don't worry about security and performance is paramount, then
-> boot with "nospectre_v2".  That's explained in the document.
+Hi!
 
-There seem to be lots of different variants of this type of problem.  It was not clear
-to me that just doing nospectre_v2 would be sufficient to get back full performance.
+> >>>>There is still HSV approach [0] in store. One problem with proposed
+> >>>>implementation is fixed algorithm of RGB <-> HSV color space conversi=
+on.
+> >>>>Maybe allowing for some board specific adjustments in DT would add
+> >>>>more flexibility.
+> >>>>
+> >>>>[0] https://lkml.org/lkml/2017/8/31/255
+> >>>
+> >>>Yes we could do HSV. Problem is that that we do not really have RGB
+> >>>available. We do have integers for red, green and blue, but they do
+> >>>not correspond to RGB colorspace.
+> >>
+> >>OK, so conversion from HSV to RGB would only increase the aberration.
+> >>So, let's stick to RGB - we've got to have some stable ground and this
+> >>is something that the hardware at least pretends to be compliant
+> >>with.
+> >
+> >I'm not saying that we should stick to RGB. I'm just saying that
+> >problem is complex.
+> >
+> >And no, hardware does not even pretend to be compliant with RGB color
+> >model ( https://en.wikipedia.org/wiki/RGB_color_model ). In
+> >particular, in RGB there is non-linear brightness curve.
+>=20
+> Quotation from the wiki page you referred to:
+>=20
+> "RGB is a device-dependent color model: different devices detect or
+> reproduce a given RGB value differently, since the color elements (such
+> as phosphors or dyes) and their response to the individual R, G, and B
+> levels vary from manufacturer to manufacturer, or even in the same
+> device over time. Thus an RGB value does not define the same color
+> across devices without some kind of color management"
+>=20
+> This claim alone leaves much room for the manufacturers to pretend that
+> their devices are compliant with RGB model.
 
-And anyway, I would like to compile the kernel to not need that command-line option,
-so I am still interesting in what compile options need to be set to what values...
+Much room, but everyone agrees that R=3DG=3DB=3D255 should be some kind of
+white, and what other colors "approximately" mean.=20
 
-Thanks,
-Ben
+I have two monitors, and no, colors don't match.
 
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+Do you have access to RGB led? Try to compare two monitors, and then
+RGB led with monitor. RGB led will be _way_ off.
+
+This chart makes sense:
+
+https://www.rapidtables.com/web/color/RGB_Color.html
+
+Try it on your LED device...
+
+> >I believe problem to start with is the "white" problem. Setting
+> >R=3DG=3DB=3D255 will _not_ result in anything close to white light on
+> >hardware I have.
+>=20
+> RGBW LED controllers solve this problem. For the devices without
+> white/amber we cannot do more than the hardware allows for.
+
+But the hardware can do some kind of white. It is just that R=3DG=3DB=3D255
+will result in green-ish-blue and something like R=3D255, G=3D50, B=3D10 is
+neccessary to get approximation of white.
+
+IMO good start would be to specify what kind of intensities are
+neccessary to approximate white. And then try converting from RGB to
+led intensities, and see if it somehow works.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwqQ6wACgkQMOfwapXb+vJNZwCghwg2SD5PmRNKA//menJsT9pL
+5WkAn21UrJAaED3VNBEzYGp+E3OIfzEq
+=+Bi5
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
