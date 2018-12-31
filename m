@@ -2,101 +2,86 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86028C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59748C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DAA12080D
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:51:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="njkX33pq"
+	by mail.kernel.org (Postfix) with ESMTP id 05FDE2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 17:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546278786;
+	bh=1uChU92cpLvGVMd1CnZF/dbmeBiPo1aLrxS+rt412jI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=DiILmyz/mdRUG83BkV0kw8DarN1+xoujPuop0CZ4L6xpoVdQJl6OVt76ou7ER/0aF
+	 LQ1Pgl3CiNXKzMDPp7d1esa1dCM9mBxl7ncfLrgp9mBT3CuD9YU5b9cHKQRD/DOZb0
+	 LDDLsK0mmVd2E+JKxfT4AY1OOyTtTcPHxmKkzkdY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbeLaRvT (ORCPT
+        id S1727675AbeLaRxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 12:51:19 -0500
-Received: from vern.gendns.com ([98.142.107.122]:39020 "EHLO vern.gendns.com"
+        Mon, 31 Dec 2018 12:53:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbeLaRvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 12:51:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hU3v/BaE1auEC5jRsR00M4oFJ6dfjKk478hhTXI50EM=; b=njkX33pqKaARJ98EfdtGo22JdO
-        jbWBgBWZ8Ias+eGdZTo+jvn7BGj7XSHbFplIEbdXWB3rrolpO+nYEMBdyvcaG/fErjXvsAl1G+aQ7
-        RTSqgl+2aAL1ja6QQSLzwgZYxNbpWCsetPRTE3F6A8PLVgFPfjXc59nIyCSY4l91KfJ27J8AdoaBh
-        CyJQnEmr7W41OEL+1jW/FcAjtM2BrbiGwC/xEc/c+CYmFcasgzhgU19aDz/Y7ylk3zTgyNsSE02a/
-        p8muLBqY4/0vlpqL6fhqcjO7N9tqRVWGdiWVGSmHuT9C4VQWqdOAIB0Z2Km1/+/pOTuG3XhV2RT1x
-        /S0Bxmog==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:43698 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1ge1gU-00007c-3w; Mon, 31 Dec 2018 12:49:02 -0500
-Subject: Re: [PATCH v2 13/14] drm/tinydrm: do not reply on drmP.h from
- drm_gem_cma_helper.h
-To:     Sam Ravnborg <sam@ravnborg.org>, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-References: <20181230174838.32330-14-sam@ravnborg.org>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <edcf6127-376b-7e42-ec95-a5216b168c85@lechnology.com>
-Date:   Mon, 31 Dec 2018 11:51:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726903AbeLaRxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 12:53:04 -0500
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B83C221720;
+        Mon, 31 Dec 2018 17:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546278783;
+        bh=1uChU92cpLvGVMd1CnZF/dbmeBiPo1aLrxS+rt412jI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KjicB0+zI/nrW0yCDEPn0n9QffkGaWHMK4GCFZFMocPEqoQMtO7I6Hy9naa/NdzAS
+         PdCIaVJ6gtTZW30hI8MtARBS3crHwhaH+knFM8w3z33scvDn7wpLAy4PPwtXEXd45q
+         DoROnpQEC/Y9eJRscm+70oy5cAUrTppPMfBa+t20=
+Received: by mail-oi1-f172.google.com with SMTP id a77so22295378oii.5;
+        Mon, 31 Dec 2018 09:53:03 -0800 (PST)
+X-Gm-Message-State: AA+aEWZ9bv0JusOUJ7CIz0AE3rALtp0yA3KTZn5rV9sKk5WvUMymMVIO
+        46S4mAq3AIRsZdv5genUiYulwTSvS3vT2MD5d7s=
+X-Google-Smtp-Source: AFSGD/W70kUbVXipY1zIvuaDv7hOmJYIj+5yzjVeiv39jXWxqqxSCU0n/w+a2257xx/rVC9TSh1UCzAGL94Z85MZqz0=
+X-Received: by 2002:aca:c186:: with SMTP id r128mr26499667oif.52.1546278783048;
+ Mon, 31 Dec 2018 09:53:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181230174838.32330-14-sam@ravnborg.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20181230195612.6657-1-okaya@kernel.org> <20181230195612.6657-9-okaya@kernel.org>
+ <20181231174654.GH1846@sirena.org.uk>
+In-Reply-To: <20181231174654.GH1846@sirena.org.uk>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Mon, 31 Dec 2018 20:52:52 +0300
+X-Gmail-Original-Message-ID: <CAK9iUCPHu0FV9LqMOKixKi7Cg_DC_F04OeXh50YSHOpgkGKejQ@mail.gmail.com>
+Message-ID: <CAK9iUCPHu0FV9LqMOKixKi7Cg_DC_F04OeXh50YSHOpgkGKejQ@mail.gmail.com>
+Subject: Re: [PATCH v4 08/11] ASoC: Intel: atom: Make PCI dependency explicit
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "moderated list:INTEL ASoC DRIVERS" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/30/18 11:48 AM, Sam Ravnborg wrote:
-> drmP.h was the only header file in the past and a lot
-> of files rely on that drmP.h defines everything.
-> The goal is to one day to delete drmP.h and
-> as a step towards this it will no longer be included in the
-> headers files in include/drm/
-> 
-> To prepare tinydrm/ for this add dependencies that
-> othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
-> 
-> To avoid that tinydrm.h became "include everything",
-> push include files to the individual drivers.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: "Noralf Trønnes" <noralf@tronnes.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: David Lechner <david@lechnology.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
+On Mon, Dec 31, 2018 at 8:47 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Sun, Dec 30, 2018 at 07:56:09PM +0000, Sinan Kaya wrote:
+> > Code does unconditional select for IOSF_MBI. IOSF_MBI driver depends on
+> > CONFIG_PCI set but this is not specified anywhere.
+>
+> I don't have the cover letter or anything for this series, what's going
+> on with dependencies?
 
-Acked-by: David Lechner <david@lechnology.com>
+Here is the executive summary:
 
+I have a changeset that separates ACPI from PCI on 4.21. CONFIG_ACPI
+used to select PCI. This is no longer true.
 
+You can build an ACPI system without any PCI devices.
