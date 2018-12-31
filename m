@@ -2,191 +2,300 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41357C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 05:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B938C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB212080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 05:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4296021783
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="gnYENC3O"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="elJmfTmR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfAAFoi (ORCPT
+        id S1728096AbfAAGTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 00:44:38 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44826 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfAAFoi (ORCPT
+        Tue, 1 Jan 2019 01:19:37 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33038 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbfAAGTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 00:44:38 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so30639736qte.11
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 21:44:37 -0800 (PST)
+        Tue, 1 Jan 2019 01:19:37 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so13276127plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 22:19:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=jpVzcdxGIszSzxvb5QxULHsU0tDtjhNEHECdTWGahmE=;
-        b=gnYENC3OAE0gsPUWanr96RgkFE0vrwwo3GHwzOjJyne6ZehImdEEQAw1TLXkY2gbnX
-         auWK1lIx+2n1birGq2jepqnpKv0fD3NGUaytHtj1/T5B/N9zVrBpVdPcD7fDTBAruzDZ
-         0OQ0uTwEA/TULJeh/5bRmnBRU6VdKlSfZbRr+8coc/5AbDRpLG9K0ebGHPZ/7isOBzic
-         1qsrU73DRnqZu93FH2E1Z+uSv81aN/bUYsLlxXp0fKP27KcDd0HyAmIpSCTszXQqdFBt
-         s9/NnGy4XNTw6FvjVMs2HiPwIgkd+opw2SJlvWQSG0ThhSmf9xwT1jU0uCjUkdOt94nH
-         fmKw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=YDMyhkckBPF9ap1EOCmaBF5RyGy54vfKRQ5wQkKQk7Q=;
+        b=elJmfTmRWlDewwK3i2jpkvIIedEzaMOSzlR/dOP5MQiF/pRz4lm/1QJPIB4CgoDZGY
+         3ZQzDpxEvx3KcrPXEWWU4rlpfFdvKUwZKz/cJ9CjMKLBDU0oHDEbDRKKc86mt8JQT1s7
+         IuamQI9dnvYLxsTxfxnjTSnxlTL7gbhx5qFNJPhIlbWsPza2aZv8mhuKsRCXt/DSqh29
+         QSvC0uE0PVE/doKI55twekBraUzBtRr0jFydVMAG36G54a89boW9t1urZ6s9J1UVWZG3
+         f+HLV4JoOgAhmjaTny5YVLT/d9TUoCSmG/jdt6aVe4Dyy28GRSSZ3/h5jeKjV7KuuBVX
+         5fyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=jpVzcdxGIszSzxvb5QxULHsU0tDtjhNEHECdTWGahmE=;
-        b=kFwTjnQhJgHTusdQWCcTQglCUD80KafoMymKUV2JUdjDxrtyXYzVg5PG/q9tD+J1/t
-         ca9wbxRFpquQA4a3i7via1aKriEp6ktWhIFAE8yc3J45Md3oLldT4ua0l9T7iigt1zvj
-         Dg3DSzPro5sd9Di+v7t0SAz4QfcUJQQ1J3M76e504RfkdGD5nZ1P1L807qOWwVIoeR4c
-         czyw8AYw3eeKdENUhknUsRTaoHf1oZLX/426z82RvosWID5H0K3BNCH5NahmTdt7Qtsn
-         iOky79q6rgvv8A0udYIMdTbH84RabZwForCHv0dAyoC3KZiCR4hvSevVVlp7wA3e/2Yu
-         9P6g==
-X-Gm-Message-State: AJcUukf3uxeGpmhy4c5M/txNzE5Dw8m4N9AP/2tEujjsLKXHN24sV008
-        pcHOv1v4G1QoCpNVqJTLO0LVCLBOAZA0iQ==
-X-Google-Smtp-Source: ALg8bN6jqq5eQQsd89m5fBc0baGxc46PcTBCdYEtFqDeV/4MrBX5a16b+bawDXuKn3WKgaOgX1DC0g==
-X-Received: by 2002:a0c:8542:: with SMTP id n60mr38422016qva.205.1546321476856;
-        Mon, 31 Dec 2018 21:44:36 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 189sm19721982qkh.9.2018.12.31.21.44.35
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=YDMyhkckBPF9ap1EOCmaBF5RyGy54vfKRQ5wQkKQk7Q=;
+        b=O1mcWiOvdCspTgORx0EjHAzkbHUP1oTbEURGDpW+ecBB92gIQDp07nBM5mFETvEQ3h
+         5IbTJFM4dy+o9kunGlcCl+D6ba/9iQq7z4hlre7g/NUjfQg1J1xi+tr1Yowab4uYKNmS
+         84fAFP6k0o+Sp5fiszXJjdqevvdNGqK6vZDNBImZ+3NC4t7YfSJyz302MCIbNyfTDx2O
+         H6Y6AzgOeQtq1bGSMz8vNOXEtDPkVlD/THHh7VcA2oMDWVgM5G8CNRJuXChGyrniutBq
+         V/LZvdWW+8zRL7KMgfvgNhnPTvq9WEorSvGZWBjdMwCmR8aTo+03Cv0aXS3YRO8vQ9dd
+         s/Ow==
+X-Gm-Message-State: AJcUukcjYbR9DozozJufA+Hjr7ISArG/+vR88GvEYYV6zZeVAaOXKsZV
+        S8/U6KvHeP0EnI+Rq/WI/dhmEA==
+X-Google-Smtp-Source: ALg8bN7PSCoaM2T52sN5Ln3dXatoiIPOWtcFu3R8L7Kl1vjZk5jowdUO8J4YcbDwY1FNorGJoBV6GQ==
+X-Received: by 2002:a17:902:9a41:: with SMTP id x1mr39157234plv.126.1546323576222;
+        Mon, 31 Dec 2018 22:19:36 -0800 (PST)
+Received: from localhost (cpe-104-32-89-52.socal.res.rr.com. [104.32.89.52])
+        by smtp.gmail.com with ESMTPSA id r187sm147197127pfc.63.2018.12.31.22.19.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 21:44:36 -0800 (PST)
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux kernel <linux-kernel@vger.kernel.org>
-From:   Qian Cai <cai@lca.pw>
-Subject: kernel BUG at kernel/sched/core.c:3490!
-Message-ID: <ba9c5ad8-d78c-904d-0430-a67d8e3ea729@lca.pw>
-Date:   Tue, 1 Jan 2019 00:44:35 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Mon, 31 Dec 2018 22:19:34 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+From:   Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <19e55a84-08d9-8cfa-02cb-be963f08ca61@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, Doug Anderson <dianders@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+References: <20181208170216.32555-1-georgi.djakov@linaro.org>
+ <CAOesGMgZYheG77L_nuNtTA8xY-PtDpseHOKf8kCjusiYsv5Mmw@mail.gmail.com>
+ <19e55a84-08d9-8cfa-02cb-be963f08ca61@linaro.org>
+Message-ID: <20181231195820.65829.58455@resonance>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v12 0/7] Introduce on-chip interconnect API
+Date:   Mon, 31 Dec 2018 11:58:20 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running some mmap() workloads to put the system on low memory situation with
-swapping and OOM, and then it trigger this BUG(),
+Hi Olof, Georgi,
 
-void __noreturn do_task_dead(void)
-{
-        /* Causes final put_task_struct in finish_task_switch(): */
-        set_special_state(TASK_DEAD);
+Happy new year! :-)
 
-        /* Tell freezer to ignore us: */
-        current->flags |= PF_NOFREEZE;
+Quoting Georgi Djakov (2018-12-08 21:15:35)
+> Hi Olof,
+> =
 
-        __schedule(false);
-        BUG();
+> On 9.12.18 2:33, Olof Johansson wrote:
+> > Hi Georgi,
+> > =
 
-        /* Avoid "noreturn function does return" - but don't continue if BUG()
-is a NOP: */
-        for (;;)
-                cpu_relax();
-}
+> > On Sat, Dec 8, 2018 at 9:02 AM Georgi Djakov <georgi.djakov@linaro.org>=
+ wrote:
+> >>
+> >> Modern SoCs have multiple processors and various dedicated cores (vide=
+o, gpu,
+> >> graphics, modem). These cores are talking to each other and can genera=
+te a
+> >> lot of data flowing through the on-chip interconnects. These interconn=
+ect
+> >> buses could form different topologies such as crossbar, point to point=
+ buses,
+> >> hierarchical buses or use the network-on-chip concept.
+> >>
+> >> These buses have been sized usually to handle use cases with high data
+> >> throughput but it is not necessary all the time and consume a lot of p=
+ower.
+> >> Furthermore, the priority between masters can vary depending on the ru=
+nning
+> >> use case like video playback or CPU intensive tasks.
+> >>
+> >> Having an API to control the requirement of the system in terms of ban=
+dwidth
+> >> and QoS, so we can adapt the interconnect configuration to match those=
+ by
+> >> scaling the frequencies, setting link priority and tuning QoS paramete=
+rs.
+> >> This configuration can be a static, one-time operation done at boot fo=
+r some
+> >> platforms or a dynamic set of operations that happen at run-time.
+> >>
+> >> This patchset introduce a new API to get the requirement and configure=
+ the
+> >> interconnect buses across the entire chipset to fit with the current d=
+emand.
+> >> The API is NOT for changing the performance of the endpoint devices, b=
+ut only
+> >> the interconnect path in between them.
+> >>
+> >> The API is using a consumer/provider-based model, where the providers =
+are
+> >> the interconnect buses and the consumers could be various drivers.
+> >> The consumers request interconnect resources (path) to an endpoint and=
+ set
+> >> the desired constraints on this data flow path. The provider(s) receive
+> >> requests from consumers and aggregate these requests for all master-sl=
+ave
+> >> pairs on that path. Then the providers configure each participating in=
+ the
+> >> topology node according to the requested data flow path, physical link=
+s and
+> >> constraints. The topology could be complicated and multi-tiered and is=
+ SoC
+> >> specific.
+> > =
 
-[  422.863911] kernel BUG at kernel/sched/core.c:3490!
-[  422.868634] oom01 (3177) used greatest stack depth: 28712 bytes left
-[  422.869109] invalid opcode: 0000 [#1] SMP KASAN NOPTI
-[  422.880325] CPU: 86 PID: 3235 Comm: oom01 Kdump: loaded Tainted: G        W
-      4.20.0+ #5
-[  422.888995] Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10,
-BIOS A40 09/07/2018
-[  422.897590] RIP: 0010:do_task_dead+0x73/0x90
-[  422.901893] Code: 48 c7 43 10 80 00 00 00 4c 89 ee 4c 89 e7 e8 34 26 8a 00 48
-8d 7b 24 e8 3b b6 2e 00 81 4b 24 00 80 00 00 31 ff e8 8d 4c 89 00 <0f> 0b 48 c7
-c7 40 2c 53 b1 e8 da e7 51 00 0f 1f 44 00 00 66 2e 0f
-[  422.920783] RSP: 0018:ffff888392daf5a8 EFLAGS: 00010282
-[  422.926048] RAX: 0000000000000000 RBX: ffff88810e23aec0 RCX: 0000000000000000
-[  422.933234] RDX: dffffc0000000000 RSI: dffffc0000000000 RDI: ffffed10725b5ea8
-[  422.940419] RBP: ffff888392daf5c0 R08: fffffbfff6338a76 R09: fffffbfff6338a75
-[  422.947604] R10: fffffbfff6338a75 R11: ffffffffb19c53ab R12: ffff88810e23b510
-[  422.954789] R13: 0000000000000246 R14: 0000000000000000 R15: ffff888638f636d8
-[  422.961974] FS:  00007f105ff5d700(0000) GS:ffff88905e300000(0000)
-knlGS:0000000000000000
-[  422.970118] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  422.975905] CR2: 00007f105ff5d9d0 CR3: 0000000a23e1e000 CR4: 00000000001406a0
-[  422.983087] Call Trace:
-[  422.985564]  do_exit+0x95e/0xe30
-[  422.988821]  ? dump_align+0x50/0x50
-[  422.992338]  ? mm_update_next_owner+0x570/0x570
-[  422.996906]  ? __kasan_slab_free+0x1af/0x210
-[  423.001207]  ? kmem_cache_free+0xc0/0x350
-[  423.005247]  ? __dequeue_signal+0x2bd/0x370
-[  423.009460]  ? dequeue_signal+0x90/0x2d0
-[  423.013410]  ? get_signal+0x296/0xf30
-[  423.017100]  ? do_signal+0x93/0x9d0
-[  423.020619]  ? exit_to_usermode_loop+0x130/0x170
-[  423.025271]  ? prepare_exit_to_usermode+0x1d7/0x1f0
-[  423.030187]  ? retint_user+0x8/0x18
-[  423.033704]  ? trace_hardirqs_off+0x9d/0x230
-[  423.038005]  ? trace_hardirqs_on_caller+0x230/0x230
-[  423.042919]  ? do_raw_spin_trylock+0x180/0x180
-[  423.047396]  ? do_raw_spin_lock+0xf0/0x1f0
-[  423.051524]  ? rwlock_bug.part.0+0x60/0x60
-[  423.055656]  ? __dequeue_signal+0x2bd/0x370
-[  423.059871]  ? _raw_spin_unlock_irqrestore+0x34/0x50
-[  423.064873]  ? __debug_check_no_obj_freed+0x204/0x330
-[  423.069963]  ? debug_object_free+0x10/0x10
-[  423.074092]  ? trace_hardirqs_on_caller+0x9f/0x230
-[  423.078920]  ? check_stack_object+0x22/0x60
-[  423.083138]  ? debug_lockdep_rcu_enabled+0x22/0x40
-[  423.087964]  ? kmem_cache_free+0x22e/0x350
-[  423.092091]  ? __dequeue_signal+0x2bd/0x370
-[  423.096309]  ? debug_lockdep_rcu_enabled+0x22/0x40
-[  423.101137]  ? get_signal+0x530/0xf30
-[  423.104828]  ? __flush_itimer_signals+0x310/0x310
-[  423.109567]  ? check_flags.part.18+0x220/0x220
-[  423.114045]  ? recalc_sigpending+0x6e/0x110
-[  423.118258]  ? __sigqueue_alloc+0x4e0/0x4e0
-[  423.122470]  ? lockdep_hardirqs_on+0x11/0x290
-[  423.126861]  do_group_exit+0xc1/0x1d0
-[  423.130552]  ? __x64_sys_exit+0x30/0x30
-[  423.134416]  get_signal+0x4a6/0xf30
-[  423.137933]  ? ptrace_notify+0xb0/0xb0
-[  423.141708]  ? force_sig_fault+0xb3/0xf0
-[  423.145659]  ? force_sigsegv+0x90/0x90
-[  423.149440]  ? set_signal_archinfo+0x6f/0xa0
-[  423.153738]  ? __do_page_fault+0x6b1/0x6d0
-[  423.157863]  ? mm_fault_error+0x140/0x140
-[  423.161903]  do_signal+0x93/0x9d0
-[  423.165244]  ? lockdep_hardirqs_on+0x11/0x290
-[  423.169632]  ? trace_hardirqs_on+0x9d/0x230
-[  423.173846]  ? ftrace_destroy_function_files+0x50/0x50
-[  423.179022]  ? do_raw_spin_trylock+0x180/0x180
-[  423.183498]  ? setup_sigcontext+0x260/0x260
-[  423.187712]  ? do_page_fault+0x119/0x53c
-[  423.191663]  ? lockdep_hardirqs_on+0x11/0x290
-[  423.196050]  ? trace_hardirqs_on+0x9d/0x230
-[  423.200264]  ? ftrace_destroy_function_files+0x50/0x50
-[  423.205441]  ? task_work_run+0x118/0x1a0
-[  423.209393]  ? mark_held_locks+0x23/0xb0
-[  423.213345]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  423.217999]  ? retint_user+0x18/0x18
-[  423.221602]  exit_to_usermode_loop+0x130/0x170
-[  423.226081]  ? lockdep_sys_exit_thunk+0x29/0x29
-[  423.230647]  prepare_exit_to_usermode+0x1d7/0x1f0
-[  423.235387]  ? syscall_slow_exit_work+0x380/0x380
-[  423.240127]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  423.244866]  ? page_fault+0x5/0x20
-[  423.248294]  retint_user+0x8/0x18
-[  423.251637] RIP: 0033:0x40f910
-[  423.254719] Code: Bad RIP value.
-[  423.257970] RSP: 002b:00007f105ff5cec0 EFLAGS: 00010206
-[  423.263230] RAX: 0000000000001000 RBX: 00000000c0000000 RCX: 00007f5dd40bd497
-[  423.270413] RDX: 0000000013ff8000 RSI: 00000000c0000000 RDI: 0000000000000000
-[  423.277594] RBP: 00007f0edef5c000 R08: 00000000ffffffff R09: 0000000000000000
-[  423.284777] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000000001
-[  423.291958] R13: 00007ffe090ed89f R14: 0000000000000000 R15: 00007f105ff5cfc0
-[  423.299141] Modules linked in: af_packet nls_iso8859_1 nls_cp437 vfat fat ses
-enclosure efivars ip_tables x_tables xfs libcrc32c crc32c_generic crypto_hash
-sd_mod smartpqi tg3 scsi_transport_sas mlx5_core libphy firmware_class dm_mirror
-dm_region_hash dm_log dm_mod efivarfs
+> > This patch series description fails to describe why you need a brand
+> > new subsystem for this instead of either using one of the current
+> > ones, or adapting it to fit the needs you have.
+> > =
+
+> > Primarily, I'm wondering what's missing from drivers/devfreq to fit you=
+r needs?
+> =
+
+> The devfreq subsystem seems to be more oriented towards a device (like
+> GPU or CPU) that controls the power/performance characteristics by
+> itself and not the performance of other devices. The main problem of
+> using it is that it's using a reactive approach - for example monitor
+> some performance counters and then reconfigure bandwidth after some
+> bottleneck has already occurred. This is suboptimal and might not work
+> well. The new solution does the opposite by allowing drivers to
+> express their needs in advance and be proactive. Devfreq also does not
+> seem suitable for configuring complex, multi-tiered bus topologies and
+> aggregating constraints provided by drivers.
+
+[reflowed Georgi's responses]
+
+Agreed that devfreq is not good for this. Like any good driver
+framework, the interconnect framework provides a client/consumer api to
+device drivers to express their needs (in this case, throughput over a
+bus or interconnect).
+
+On modern SoCs these topologies can be quite complicated, which requires
+a provider api.
+
+I think that a dedicated framework makes sense for this.
+
+> =
+
+> > The series also doesn't seem to provide any kind of indication how
+> > this will be used by end points. You have one driver for one SoC that
+> > just contains large tables that are parsed at probe time, but no
+> > driver hooks anywhere that will actually change any settings depending
+> > on use cases. Also, the bindings as posted don't seem to include any
+> > of this kind of information. So it's hard to get a picture of how this
+> > is going to be used in reality, which makes it hard to judge whether
+> > it is a good solution or not.
+> =
+
+> Here are links to some of the examples that are on the mailing list
+> already. I really should have  included them in the cover letter. =
+
+> https://lkml.org/lkml/2018/12/7/584
+> https://lkml.org/lkml/2018/10/11/499
+> https://lkml.org/lkml/2018/9/20/986
+> https://lkml.org/lkml/2018/11/22/772
+> =
+
+> Platforms drivers for different SoCs are available:
+> https://lkml.org/lkml/2018/11/17/368
+> https://lkml.org/lkml/2018/8/10/380
+> There is a discussion on linux-pm about supporting also Tegra
+> platforms in addition to NXP and Qualcomm.
+
+Just FYI, Alex will renew his efforts to port iMX over to this framework
+after the new year.
+
+I honestly don't know if this series is ready to be merged or not. I
+stopped reviewing it a long time ago. But there is interest in the need
+that it addresses for sure.
+
+> =
+
+> > Overall, exposing all of this to software is obviously a nightmare
+> > from a complexity point of view, and one in which it will surely be
+> > very very hard to make the system behave properly for generic
+> > workloads beyond benchmark tuning.
+
+Detailed SoC glue controlled by Linux is always a nightmare. This typically
+falls into the power management bucket: functional clocks and interface clo=
+cks,
+clock domains, voltage control, scalable power islands (for both idle & act=
+ive
+use cases), master initiators and slave targets across interconnects,
+configuring wake-up capable interrupts and handling them, handling dynamic
+dependencies such as register spaces that are not clocked/powered and must =
+be
+enabled before read/write access, reading eFuses and defining operating poi=
+nts
+at runtime, and the inevitable "system controllers" that are a grab bag of
+whatever the SoC designers couldn't fit elsewhere...
+
+This stuff is all a nightmare to handle in Linux, and upstream Linux still
+lacks the expressiveness to address much of it. Until the SoC designers rep=
+lace
+it all with firmware or a dedicated PM microcontroller or whatever, we'll n=
+eed
+to model it and implement it as driver frameworks. This is an attempt to do=
+ so
+upstream, which I support.
+
+> =
+
+> It allows the consumer drivers to dynamically express their
+> performance needs in the system in a more fine grained way (if they
+> want/need to) and this helps the system to keep the lowest power
+> profile. This has already been done for a long time in various
+> different kernels shipping with Android devices, for example, and
+> basically every vendor uses a different custom approach. So I believe
+> that this is doing the generalization that was needed.
+
+Correct, everyone does this out of tree. For example:
+
+https://source.codeaurora.org/external/imx/linux-imx/tree/arch/arm/mach-imx=
+/busfreq-imx.c?h=3Dimx_4.14.62_1.0.0_beta
+
+See you in 2019,
+Mike
+
+> =
+
+> > Having more information about the above would definitely help tell if
+> > this whole effort is a step in the right direction, or if it is
+> > needless complexity that is better solved in other ways.
+> =
+
+> Sure, hope that this answers your questions.
+> =
+
+> Thanks,
+> Georgi
+> =
+
+> > =
+
+> > -Olof
+> > =
+
+>=20
