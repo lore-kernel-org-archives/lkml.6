@@ -2,93 +2,104 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DE5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E83C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B683320B1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C4682133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:18:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SqN7DDP8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbeLaSPE (ORCPT
+        id S1727712AbeLaSSC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 13:15:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58052 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726722AbeLaSPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 13:15:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 67920ACC3;
-        Mon, 31 Dec 2018 18:15:02 +0000 (UTC)
-Date:   Mon, 31 Dec 2018 19:15:02 +0100
-Message-ID: <s5ho991k1g9.wl-tiwai@suse.de>
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 31 Dec 2018 13:18:02 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39389 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727379AbeLaSSB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 13:18:01 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so24076514ljh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 10:18:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9RLp7N2bv/VXzmKuxFVMgoVmav//VtI8k+vRHbVad/c=;
+        b=SqN7DDP8mq5HNZCWaanDDALpbhYvnCRg9JT0BRikuXtxBCT3HOYgFS2moAlt/IbVGC
+         oZI2r0EymfIDlP5wFQgKsqe5gyFrOZm85UE+3996LqeFgmpKXIHM/Q+A8nu6QmPheUuq
+         cNYld69KQIkd+VbsxKDcylk2RBmaRtSi1PCdQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9RLp7N2bv/VXzmKuxFVMgoVmav//VtI8k+vRHbVad/c=;
+        b=k5En55L1xSTRtRZeKDjF/Yy/v77/a2KAbNpjTaWWXCPvvmLAPNLCRuOFoOx33d9qp8
+         tplxdhsz0QKbWhFtPyp7Ofhi8vM5c/8B/y4UvrsblJeIo52FLCsH6knlvPVxhdlValXk
+         eEVgoJsk9rQ4CnR98uaximmD+UlGk+T0sIeOTmU+y4ltVU38V3HaT9Rz8vCqTxv2Adrn
+         F6tFyIyUeyAQ+bYTSi8BqJEhFDXNUzMcsh0lMqzDrnFGcRUqIdHX9ax9ReiOzUBm3XNe
+         s2JcIudbKHnEqefXEIDt3QAzJtq29dMFCrBFgwZNBsG1Q0xuBTRaY444KLlXIqzLlOxV
+         tlTg==
+X-Gm-Message-State: AA+aEWYFtsNF7gqMeYeCxzBjI6PtTsWGXB3zcgEGqk5GVIjYiUJ7MZNf
+        H0SzgvWflZ3/FDJA7cEtA1Ewjn/Gp2g=
+X-Google-Smtp-Source: ALg8bN7wZOlJcPu26Hy9OgbC8HrrnPmURsb7OIovJdKEvYNnczLGUVLENXbmCQZ6BFZHpXzChx8AjQ==
+X-Received: by 2002:a2e:5152:: with SMTP id b18-v6mr18305186lje.88.1546280279201;
+        Mon, 31 Dec 2018 10:17:59 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 11sm9447202lfq.89.2018.12.31.10.17.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 31 Dec 2018 10:17:58 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id l10so18652866lfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 10:17:58 -0800 (PST)
+X-Received: by 2002:a19:cbcc:: with SMTP id b195mr19897408lfg.117.1546280277768;
+ Mon, 31 Dec 2018 10:17:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20181228182813.01ae131a@gandalf.local.home>
+In-Reply-To: <20181228182813.01ae131a@gandalf.local.home>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 31 Dec 2018 10:17:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh9rpBhJ9r_AH=RuvaD8u1V1VKpY8diqZtpqdToYRdCwA@mail.gmail.com>
+Message-ID: <CAHk-=wh9rpBhJ9r_AH=RuvaD8u1V1VKpY8diqZtpqdToYRdCwA@mail.gmail.com>
+Subject: Re: [GIT PULL] tracing: Update for 4.21
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] sound updates for 4.21
-In-Reply-To: <acbc8f2d-c112-550d-1028-b4c234df4c1b@linux.intel.com>
-References: <s5hk1k48ayx.wl-tiwai@suse.de>
-        <CAHk-=wg+hjDa8UGRVnCFytjwYLPk2yDgJoKOESVSE7_6KfaeTg@mail.gmail.com>
-        <20181228124303.GA16558@gmail.com>
-        <s5hmuoplgw2.wl-tiwai@suse.de>
-        <CAHk-=wjXVPpDWHzvNL=9gGVGNnYg1jOH8hQx=dq4caEzip-n0g@mail.gmail.com>
-        <s5hef9zl69r.wl-tiwai@suse.de>
-        <82bb7f60-c3c2-4715-a0a0-f1f2a8b14c74@linux.intel.com>
-        <s5h1s5ykteg.wl-tiwai@suse.de>
-        <acbc8f2d-c112-550d-1028-b4c234df4c1b@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
- FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
- (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
-Content-Type: text/plain; charset=US-ASCII
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>,
+        Andreas Schwab <schwab@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 31 Dec 2018 11:24:41 +0100,
-Pierre-Louis Bossart wrote:
-> 
-> 
-> On 12/31/18 2:11 AM, Takashi Iwai wrote:
-> > On Mon, 31 Dec 2018 00:17:58 +0100,
-> > Pierre-Louis Bossart wrote:
-> >>> BTW, one thing I'd really like to avoid is to rearrange the probe
-> >>> procedure of the legacy HDA driver (so that we can get codec_mask
-> >>> during pci probe() call).  The async probe is the result of the many
-> >>> struggles with the various and complex configurations.   Moving the
-> >>> codec probe to the beginning isn't trivial and quite risky to break
-> >>> something else.
-> >> Agree, mucking with the probe isn't something we should look into,
-> >> especially with this Skylake driver being eventually deprecated once
-> >> SOF is at feature parity. This set of autodetection patches for 4.21
-> >> was really targeting CFL/WHL+ devices, where the DSP usage is
-> >> mandatory when directly-attached digital microphones are used. For
-> >> Skylake and kabylake using the legacy by default is just fine.
-> > OK, then how about applying the PCI class check only for such ones
-> > like the patch below?  The macro isn't sexy and can be replaced with
-> > another way, but you have an idea.
-> 
-> The two patches which added the PCI class checks were supposed to be a
-> simple bullet-proof way of detecting the DSP presence and solving a
-> problem of coexistence between two drivers. At this point if we start
-> adding quirks and still have unclear issues with HDMI support which
-> isn't different for CFL+, it may be wiser to revert them to let the
-> 4.21 merge window progress? It's frustrating but I'd rather solve this
-> problem the right way than with multiple iterations rushed because of
-> the merge window timing.
+On Fri, Dec 28, 2018 at 3:28 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+> trace-v4.21
 
-Fair enough, let's revert them for now.  I'm going to submit the
-revert patch.
+No such tag.
 
+> Tag SHA1: bcf1ea7cb12ce702d1d0660dfba0c3462c0b04e1
+> Head SHA1: 3d739c1f6156c70eb0548aa288dcfbac9e0bd162
 
-thanks,
+I can see branches with that commit SHA ("for-next" and "ftrace/core")
+but there is no tag with that name or that SHA1.
 
-Takashi
+Forgot to push out?
+
+Btw, please don't include the whole diff in the same email when it's
+~seven thousand lines and over 200k in size. Yeah, I'm on a fast
+connection, but that isn't *always* true. Did lkml even take this
+email?
+
+                     Linus
