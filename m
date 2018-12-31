@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60AEC43613
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F56C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B4A21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E44221019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 07:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeLaHUp (ORCPT
+        id S1727135AbeLaHUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 02:20:45 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:25217 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726442AbeLaHUl (ORCPT
+        Mon, 31 Dec 2018 02:20:55 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:41029 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726435AbeLaHUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 02:20:41 -0500
+        Mon, 31 Dec 2018 02:20:55 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Sun, 30 Dec 2018 23:20:33 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D0EE140687;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id A03EB40BD0;
         Sun, 30 Dec 2018 23:20:35 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
@@ -39,649 +39,671 @@ CC:     "H . Peter Anvin" <hpa@zytor.com>,
         Borislav Petkov <bp@alien8.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Nadav Amit <namit@vmware.com>
-Subject: [RFC v2 6/6] x86: outline optpoline
-Date:   Sun, 30 Dec 2018 23:21:12 -0800
-Message-ID: <20181231072112.21051-7-namit@vmware.com>
+Subject: [RFC v2 3/6] x86: patch indirect branch promotion
+Date:   Sun, 30 Dec 2018 23:21:09 -0800
+Message-ID: <20181231072112.21051-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181231072112.21051-1-namit@vmware.com>
 References: <20181231072112.21051-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is more than a single target, we can set an outline block to
-hold optimized for few more targets. This is done dynamically during
-runtime, limiting the potential memory consumption.
-
-If preemption is performed while we are running the outline block, we
-jump to the indirect thunk, and continue execution from there.
-
-The current version does not reclaim memory if an entire page of
-outline optpoline blocks is released (e.g., due to module removal).
-There are various additional optimizations that are possible to reduce
-the memory consumption of each optpoline.
+To perform indirect branch promotion, we need to find all the locations
+and patch them, while ignore various code sections (e.g., init,
+alternatives). Using a GCC plugin allows us to do so. It is also
+possible to add on top of this plugin and opt-in/out mechanism.
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/nospec-branch.c | 372 ++++++++++++++++++++++++++++----
- 1 file changed, 331 insertions(+), 41 deletions(-)
+ arch/x86/Kconfig                             |   4 +
+ arch/x86/include/asm/nospec-branch.h         |  71 ++++
+ arch/x86/kernel/Makefile                     |   1 +
+ arch/x86/kernel/asm-offsets.c                |   9 +
+ arch/x86/kernel/nospec-branch.c              |  11 +
+ arch/x86/kernel/vmlinux.lds.S                |   7 +
+ arch/x86/lib/retpoline.S                     |  83 +++++
+ scripts/Makefile.gcc-plugins                 |   3 +
+ scripts/gcc-plugins/x86_call_markup_plugin.c | 329 +++++++++++++++++++
+ 9 files changed, 518 insertions(+)
+ create mode 100644 arch/x86/kernel/nospec-branch.c
+ create mode 100644 scripts/gcc-plugins/x86_call_markup_plugin.c
 
-diff --git a/arch/x86/kernel/nospec-branch.c b/arch/x86/kernel/nospec-branch.c
-index 1503c312f715..df787a00a51a 100644
---- a/arch/x86/kernel/nospec-branch.c
-+++ b/arch/x86/kernel/nospec-branch.c
-@@ -18,6 +18,8 @@
- #include <linux/debugfs.h>
- #include <linux/jump_label.h>
- #include <linux/rhashtable.h>
-+#include <linux/moduleloader.h>
-+#include <linux/set_memory.h>
- #include <asm/nospec-branch.h>
- #include <asm/text-patching.h>
- #include <asm/asm-offsets.h>
-@@ -32,11 +34,16 @@
- #define NOP_OPCODE		(0x90)
- #define INT3_OPCODE		(0xcc)
- #define CALL_IND_INS		"\xff\xd0"
-+#define JMP_REL32_OPCODE        (0xe9)
-+#define JZ_REL32_OPCODE		"\x0f\x84"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index e65105c1f875..b0956fb7b40b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2904,6 +2904,10 @@ config X86_DMA_REMAP
+ config HAVE_GENERIC_GUP
+ 	def_bool y
  
- #define OP_READJUST_SECONDS	(1)
- #define OP_REENABLE_IN_EPOCH	(4)
- #define OP_ENABLE_IN_EPOCH	(512)
- #define OP_SAMPLE_MSECS		(30000)
-+#define OP_INLINED_TARGETS	(1)
-+#define OP_OUTLINED_TARGETS	(6)
-+#define OP_N_TARGETS		(OP_INLINED_TARGETS + OP_OUTLINED_TARGETS)
++config OPTPOLINE
++       def_bool y
++       depends on X86_64 && RETPOLINE && GCC_PLUGINS
++
+ source "drivers/firmware/Kconfig"
  
- enum code_state {
- 	OPTPOLINE_SLOWPATH,
-@@ -46,12 +53,25 @@ enum code_state {
+ source "arch/x86/kvm/Kconfig"
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index be4713ef0940..cb0a7613dd0a 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -9,6 +9,7 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeatures.h>
+ #include <asm/msr-index.h>
++#include <asm/percpu.h>
  
  /*
-  * Information for optpolines as it dynamically changes during execution.
-+ *
-+ * TODO: This structure is under-optimized. For example, we can reduce its size
-+ * and not save the targets, but instead realize them from the code itself.
-  */
- struct optpoline {
- 	struct list_head node;
- 	struct rhash_head rhash;
-+
-+	/*
-+	 * Using hashtable to look for the optpoline by the instruction-pointer.
-+	 */
-+	struct rhash_head outline_rhash;
-+
-+	/* Outline code block; NULL if none */
-+	union outline_optpoline *outline_op;
-+
- 	u32 rip;
--	u32 target;
-+	u32 outline_rip;
-+	u32 targets[OP_N_TARGETS];
+  * Fill the CPU return stack buffer.
+@@ -30,6 +31,9 @@
+ #define RSB_CLEAR_LOOPS		32	/* To forcibly overwrite all entries */
+ #define RSB_FILL_LOOPS		16	/* To avoid underflow */
  
- 	/* The register that is used by the indirect branch */
- 	u8 reg : 4;
-@@ -59,12 +79,6 @@ struct optpoline {
- 	/* The state of the optpoline, which indicates on which list it is */
- 	u8 state : 3;
- 
--	/* Whether we ever encountered more than one target */
--	u8 unstable : 1;
--
--	/* Whether there is a valid target */
--	u8 has_target : 1;
--
- 	/*
- 	 * Whether the optpoline needs to be set into training mode. This is a
- 	 * transitory indication, which is cleared once it is set in learning
-@@ -87,8 +101,16 @@ static const struct rhashtable_params optpoline_rht_params = {
- 	.head_offset = offsetof(struct optpoline, rhash),
- };
- 
-+static const struct rhashtable_params outline_optpoline_rht_params = {
-+	.automatic_shrinking = true,
-+	.key_len = sizeof(u32),
-+	.key_offset = offsetof(struct optpoline, outline_rip),
-+	.head_offset = offsetof(struct optpoline, outline_rhash),
-+};
++#define OPTPOLINE_SAMPLES_NUM		(1 << 8)
++#define OPTPOLINE_SAMPLES_MASK		(OPTPOLINE_SAMPLES_NUM - 1)
 +
+ /*
+  * Google experimented with loop-unrolling and this turned out to be
+  * the optimal version — two calls, each with their own speculation
+@@ -299,6 +303,73 @@ static inline void indirect_branch_prediction_barrier(void)
+ 	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB);
+ }
+ 
++/* Data structure that is used during the learning stage */
++struct optpoline_sample {
++	u32 src;
++	u32 tgt;
++	u32 cnt;
++} __packed;
 +
- DEFINE_PER_CPU_ALIGNED(struct optpoline_sample[OPTPOLINE_SAMPLES_NUM],
--		       optpoline_samples);
-+			optpoline_samples);
- DEFINE_PER_CPU(u8, has_optpoline_samples);
- 
- enum optpoline_state {
-@@ -114,6 +136,38 @@ static const char *const optpoline_state_name[OP_STATE_NUM] = {
- 	[OP_STATE_UPDATING] = "updating",
- };
- 
-+union outline_optpoline_entry {
-+	struct {
++DECLARE_PER_CPU_ALIGNED(struct optpoline_sample[OPTPOLINE_SAMPLES_NUM],
++		       optpoline_samples);
++
++DECLARE_PER_CPU(u8, has_optpoline_samples);
++
++/*
++ * Information for optpolines as it is saved in the source.
++ */
++struct optpoline_entry {
++	void *rip;
++	u8 reg;
++} __packed;
++
++/*
++ * Reflects the structure of the assembly code. We exclude the compare
++ * opcode which depends on the register.
++ */
++struct optpoline_code {
++	union {
 +		struct {
-+			u8 no_preempt_prefix;
-+			u8 rex_prefix;
++			u8 rex;
 +			u8 opcode;
 +			u8 modrm;
 +			u32 imm;
 +		} __packed cmp;
 +		struct {
-+			u8 no_preempt_prefix;
-+			u8 opcode[2];
-+			int32_t rel;
-+		} __packed jz;
++			u8 opcode;
++			s8 rel;
++		} __packed skip;
++		struct {
++			u8 opcode;
++			s32 rel;
++		} __packed patching_call;
 +	} __packed;
 +	struct {
-+		u8 no_preempt_prefix;
++		u8 rex;
 +		u8 opcode;
-+		int32_t rel;
++		s8 rel;
++	} __packed jnz;
++	struct {
++		u8 rex;
++		u8 opcode;
++		s32 rel;
++	} __packed call;
++	struct {
++		/* Instruction is not patched, so no prefix needed */
++		u8 opcode;
++		u8 rel;
++	} __packed jmp_done;
++	struct {
++		u8 rex;
++		u8 opcode;
++		s32 rel;
 +	} __packed fallback;
 +} __packed;
 +
-+#define OP_OUTLINE_SIZE							\
-+	(ALIGN(sizeof(union outline_optpoline_entry) *			\
-+		(OP_OUTLINED_TARGETS + 1), SMP_CACHE_BYTES))
++extern const void *indirect_thunks[16];
++extern const void *save_optpoline_funcs[16];
++extern const void *skip_optpoline_funcs[16];
 +
-+union outline_optpoline {
-+	union outline_optpoline_entry entries[OP_OUTLINED_TARGETS + 1];
-+	union outline_optpoline *next_free;
-+	u8 padding[OP_OUTLINE_SIZE];
-+} __packed;
+ /* The Intel SPEC CTRL MSR base value cache */
+ extern u64 x86_spec_ctrl_base;
+ 
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 8824d01c0c35..7c342cfd3771 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -149,4 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
+ 
+ 	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
+ 	obj-y				+= vsmp_64.o
++	obj-$(CONFIG_OPTPOLINE)		+= nospec-branch.o
+ endif
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index 168543d077d7..e5b6236fdcb2 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -18,6 +18,7 @@
+ #include <asm/bootparam.h>
+ #include <asm/suspend.h>
+ #include <asm/tlbflush.h>
++#include <asm/nospec-branch.h>
+ 
+ #ifdef CONFIG_XEN
+ #include <xen/interface/xen.h>
+@@ -105,4 +106,12 @@ static void __used common(void)
+ 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
+ 	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
+ 	OFFSET(TSS_sp2, tss_struct, x86_tss.sp2);
 +
- struct optpolines {
- 	struct mutex mutex;
- 	struct optpoline_sample *samples_copy;
-@@ -124,6 +178,12 @@ struct optpolines {
- 	 */
- 	struct rhashtable rhead;
- 
-+	/*
-+	 * Hashtable that holds all the outlined optpolines, key'd by the
-+	 * instruction pointer of the outline optpoline code block, aligned.
-+	 */
-+	struct rhashtable outline_rhead;
++	/* Relpolines */
++	OFFSET(OPTPOLINE_SAMPLE_src, optpoline_sample, src);
++	OFFSET(OPTPOLINE_SAMPLE_tgt, optpoline_sample, tgt);
++	OFFSET(OPTPOLINE_SAMPLE_cnt, optpoline_sample, cnt);
++	DEFINE(OPTPOLINE_CODE_SIZE, sizeof(struct optpoline_code));
++	DEFINE(OPTPOLINE_CODE_patching_call_end,
++	       offsetofend(struct optpoline_code, patching_call));
+ }
+diff --git a/arch/x86/kernel/nospec-branch.c b/arch/x86/kernel/nospec-branch.c
+new file mode 100644
+index 000000000000..5ae12681b23b
+--- /dev/null
++++ b/arch/x86/kernel/nospec-branch.c
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 Nadav Amit <namit@vmware.com>
++ */
 +
- 	/*
- 	 * List of optpolines according to their states.
- 	 */
-@@ -140,6 +200,7 @@ struct optpolines {
- 	 * wasn't initialized, so we need to keep track of it.
- 	 */
- 	u8 rhead_initialized : 1;
-+	u8 outline_rhead_initialized : 1;
- 
- 	 /* Number of unstable optpolines that are pending relearning. */
- 	unsigned int pending_relearn;
-@@ -147,11 +208,18 @@ struct optpolines {
- 	/* Kernel (excluding modules) optpolines */
- 	struct optpoline *kernel_optpolines;
- 
-+	union outline_optpoline *outline_free_list;
++#include <linux/percpu.h>
++#include <asm/nospec-branch.h>
 +
- 	struct dentry *dbg_entry;
++DEFINE_PER_CPU_ALIGNED(struct optpoline_sample[OPTPOLINE_SAMPLES_NUM],
++		       optpoline_samples);
++DEFINE_PER_CPU(u8, has_optpoline_samples);
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 0d618ee634ac..6faf89098e40 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -355,6 +355,13 @@ SECTIONS
+ 	.data_nosave : AT(ADDR(.data_nosave) - LOAD_OFFSET) {
+ 		NOSAVE_DATA
+ 	}
++
++	. = ALIGN(8);
++	.optpolines : AT(ADDR(.optpolines) - LOAD_OFFSET) {
++		__optpolines = .;
++		*(.optpolines)
++		__optpolines_end = .;
++	}
+ #endif
  
- 	ktime_t sample_time;
- };
+ 	/* BSS */
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index c909961e678a..e53a08a9a385 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -7,6 +7,7 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/asm-offsets.h>
  
-+struct optpoline_target {
-+	u32 target;
-+	u32 count;
+ .macro THUNK reg
+ 	.section .text.__x86.indirect_thunk
+@@ -45,4 +46,86 @@ GENERATE_THUNK(r12)
+ GENERATE_THUNK(r13)
+ GENERATE_THUNK(r14)
+ GENERATE_THUNK(r15)
++
++#ifdef CONFIG_OPTPOLINE
++
++.macro save_optpoline reg:req
++ENTRY(save_optpoline_\reg\())
++	pushq 	%rdi
++	pushq	%rsi
++	pushq	%rcx
++
++	/* First load the destination, for the case rsi is the destination */
++.if "\reg" != "rdi"
++	mov	%\reg, %rdi
++.endif
++	mov	24(%rsp), %rsi
++
++	/* Compute the xor as an index in the table */
++	mov	%rsi, %rcx
++	xor	%rdi, %rcx
++	and	$OPTPOLINE_SAMPLES_MASK, %ecx
++
++	/* Entry size is 12-bit */
++	shl	$2, %ecx				# ecx *= 4
++	lea	optpoline_samples(%rcx,%rcx,2), %rcx	# rcx *= 3
++
++	movl	%esi, PER_CPU_VAR(OPTPOLINE_SAMPLE_src)(%rcx)
++	movl	%edi, PER_CPU_VAR(OPTPOLINE_SAMPLE_tgt)(%rcx)
++	incl	PER_CPU_VAR(OPTPOLINE_SAMPLE_cnt)(%rcx)
++	movb	$1, PER_CPU_VAR(has_optpoline_samples)
++
++	popq	%rcx
++	popq	%rsi
++	popq	%rdi
++	ANNOTATE_NOSPEC_ALTERNATIVE
++	ALTERNATIVE __stringify(ANNOTATE_RETPOLINE_SAFE; jmp *%\reg\()),\
++		"jmp __x86_indirect_thunk_\reg",			\
++		X86_FEATURE_RETPOLINE
++
++ENDPROC(save_optpoline_\reg\())
++_ASM_NOKPROBE(save_optpoline_\reg\())
++EXPORT_SYMBOL(save_optpoline_\reg\())
++.endm
++
++.macro skip_optpoline reg:req
++ENTRY(skip_optpoline_\reg\())
++	addq	$(OPTPOLINE_CODE_SIZE - OPTPOLINE_CODE_patching_call_end), (%_ASM_SP)
++	jmp	__x86_indirect_thunk_\reg
++ENDPROC(skip_optpoline_\reg\())
++_ASM_NOKPROBE(skip_optpoline_\reg\())
++EXPORT_SYMBOL(skip_optpoline_\reg\())
++.endm
++
++#define ARCH_REG_NAMES rax,rcx,rdx,rbx,rsp,rbp,rsi,rdi,r8,r9,r10,r11,r12,r13,r14,r15
++
++.irp reg,ARCH_REG_NAMES
++.if \reg != "rsp"
++save_optpoline reg=\reg
++skip_optpoline reg=\reg
++.endif
++.endr
++
++/*
++ * List of indirect thunks
++ */
++.macro create_func_per_reg_list name:req func_prefix:req
++.global \name
++\name:
++.irp reg,ARCH_REG_NAMES
++.if \reg != "rsp"
++.quad \func_prefix\()_\reg
++.else
++.quad 0
++.endif
++.endr
++.endm
++
++.pushsection .rodata
++create_func_per_reg_list name=indirect_thunks func_prefix=__x86_indirect_thunk
++create_func_per_reg_list name=save_optpoline_funcs func_prefix=save_optpoline
++create_func_per_reg_list name=skip_optpoline_funcs func_prefix=skip_optpoline
++.popsection
++
++#endif
+ #endif
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index 46c5c6809806..796b6d59f27e 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -31,6 +31,9 @@ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK)		\
+ 		+= -DSTACKLEAK_PLUGIN
+ gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK)		\
+ 		+= -fplugin-arg-stackleak_plugin-track-min-size=$(CONFIG_STACKLEAK_TRACK_MIN_SIZE)
++
++gcc-plugin-$(CONFIG_OPTPOLINE) 			+= x86_call_markup_plugin.so
++
+ ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+     DISABLE_STACKLEAK_PLUGIN += -fplugin-arg-stackleak_plugin-disable
+ endif
+diff --git a/scripts/gcc-plugins/x86_call_markup_plugin.c b/scripts/gcc-plugins/x86_call_markup_plugin.c
+new file mode 100644
+index 000000000000..fb01cf36c26f
+--- /dev/null
++++ b/scripts/gcc-plugins/x86_call_markup_plugin.c
+@@ -0,0 +1,329 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 Nadav Amit <namit@vmware.com>
++ */
++
++#include "gcc-common.h"
++
++__visible int plugin_is_GPL_compatible;
++
++static struct plugin_info kernexec_plugin_info = {
++	.version	= "201607271510vanilla",
++	.help		= "method=call\tmaniuplation method\n"
 +};
 +
- static struct optpolines optpolines;
- 
- static inline void *kernel_ptr(u32 low_addr)
-@@ -169,6 +237,149 @@ static inline u8 optpoline_cmp_modrm(u8 reg)
- 	return 0xf8 | reg;
- }
- 
-+static void release_outline_branch_block(struct optpoline *op)
++static bool include_emitted;
++
++#define N_CLOBBERED_FUNC_REGS			(4)
++
++struct reg_pair {
++	machine_mode	mode;
++	unsigned int	regno;
++};
++
++static const struct reg_pair clobbered_func_regs[N_CLOBBERED_FUNC_REGS] = {
++	{DImode, R11_REG},
++	{DImode, R10_REG},
++	{CCmode, FLAGS_REG},
++	{CCFPmode, FPSR_REG}
++};
++
++struct output_pair {
++	const char *constraint;
++	unsigned int regno;
++};
++
++#define N_OUTPUT_FUNC_REGS			(7)
++
++/* VREG indicates the call register, which is N_OUTPUT_FUNC_REGS + 1 */
++#define VREG					"8"
++
++static const struct output_pair output_regs[N_OUTPUT_FUNC_REGS] = {
++	/* Order must not be changed, since inputs regard outputs */
++	{"=r", SP_REG},
++	{"=D", DI_REG},
++	{"=S", SI_REG},
++	{"=c", CX_REG},
++	{"=d", DX_REG},
++	{"+r", R8_REG},
++	{"+r", R9_REG}
++};
++
++#define KERNEL_RESTARTABLE_PREFIX		"0x40"
++
++/*
++ * %V8, since 8 = N_OUTPUT_FUNC_REGS + 1
++ *
++ * There are a few suboptimization in this code, that can be addressed in the
++ * future. They simplify the code, though.
++ *
++ * 1. We always encode a longer version of CMP, even 'cmp eax, imm' is possible.
++ * 2. We always encode the "restartable" prefix, even on non-preemptive or
++ *    voluntary-preemption kernels.
++ */
++const char *call_block =
++	"# INDIRECT BRANCH -------------------				\n"
++	"	i = 0							\n"
++	"	.irp reg_it, rax,rcx,rdx,rbx,rsp,rbp,rsi,rdi,r8,r9,r10,r11,r12,r13,r14,r15\n"
++	"	.ifc \"%V" VREG "\", \"\\reg_it\"			\n"
++	"		reg_num=i					\n"
++	"	.endif							\n"
++	"	i = i + 1						\n"
++	"	.endr							\n"
++	"1:								\n"
++	".section .optpolines,\"a\"					\n"
++	"	.quad		1b					\n"
++	"	.byte		reg_num					\n"
++	".previous							\n"
++	"								\n"
++	"	.byte 0x48 | ((reg_num & 8) >> 3)			\n"
++	"	.byte 0x81, 0xf8 | (reg_num & 7)			\n"
++	"	.long 0							\n"
++	"								\n"
++	"	# jmp 4f, patched to jnz in runtime			\n"
++	"	.byte " KERNEL_RESTARTABLE_PREFIX ", 0xeb, 4f - 2f	\n"
++	"								\n"
++	"	# call retpoline, tell objtool about it			\n"
++	"2:								\n"
++	"	.pushsection .discard.ignore				\n"
++	"	.long 2b - .						\n"
++	"	.popsection						\n"
++	"	.byte " KERNEL_RESTARTABLE_PREFIX ", 0xe8		\n"
++	"	.long __x86_indirect_thunk_%V " VREG " - 3f		\n"
++	"3:								\n"
++	"	# jmp 5f,  tell objtool about it			\n"
++	"	.pushsection .discard.ignore				\n"
++	"	.long 3b - .						\n"
++	"	.popsection						\n"
++	"	.byte 0xeb, 5f - 4f					\n"
++	"4:								\n"
++	"	# retpoline						\n"
++	"	.byte " KERNEL_RESTARTABLE_PREFIX ", 0xe8		\n"
++	"	.long __x86_indirect_thunk_%V" VREG " - 5f 		\n"
++	"5:								\n"
++	" # ----------------------------------				\n";
++
++static unsigned int x86_call_markup_execute(void)
 +{
-+	union outline_optpoline *p_outline = kernel_ptr(op->outline_rip);
++	rtx_insn *insn;
++	rtx annotate;
++	const char *buf;
++	const char * name;
 +
-+	if (!p_outline)
-+		return;
++	insn = get_first_nonnote_insn();
++	if (!insn)
++		return 0;
 +
-+	/*
-+	 * Update the linked-list, but since these are code pages, we need to do
-+	 * it by poking the text.
-+	 */
-+	text_poke(&p_outline->next_free, optpolines.outline_free_list,
-+		  sizeof(p_outline->next_free));
-+	optpolines.outline_free_list = p_outline;
++	/* Do not patch init (and other) section calls */
++	if (current_function_decl) {
++	       const char *sec_name = DECL_SECTION_NAME(current_function_decl);
 +
-+	rhashtable_remove_fast(&optpolines.outline_rhead, &op->outline_rhash,
-+			       outline_optpoline_rht_params);
++	       if (sec_name)
++		       return 0;
++	}
 +
-+	op->outline_rip = 0;
++	buf = call_block;
 +
-+	/* TODO: release the whole page if its reference count drops to zero */
-+}
++	for (insn = get_insns(); insn; insn = NEXT_INSN(insn)) {
++		unsigned int i, j, n_inputs;
++		bool has_output;
++		rtvec arg_vec, constraint_vec, label_vec;
++		rtx operands, call, call_op, annotate;
++		rtx asm_op, new_body, p, clob;
++		rtx output_reg;
++		rtx body;
 +
-+static void alloc_outline_branch_block(struct optpoline *op)
-+{
-+	const u32 entries_per_chunk = PAGE_SIZE / OP_OUTLINE_SIZE;
-+	union outline_optpoline *outline, *chunk;
-+	unsigned int i;
-+	int r;
++		if (!CALL_P(insn))
++			continue;
 +
-+retry:
-+	outline = optpolines.outline_free_list;
-+	if (outline) {
-+		op->outline_rip = (u32)(uintptr_t)outline;
-+		r = rhashtable_insert_fast(&optpolines.outline_rhead, &op->rhash,
-+					   outline_optpoline_rht_params);
-+
-+		if (unlikely(r < 0)) {
-+			WARN_ONCE(1, "outline block allocation failed");
-+			op->outline_rip = 0;
-+			return;
++		body = PATTERN(insn);
++		switch (GET_CODE(body)) {
++		case CALL:
++			/* A call with no return value */
++			has_output = false;
++			call = body;
++			break;
++		case SET:
++			/* A call with a return value */
++			has_output = true;
++			call = SET_SRC(body);
++			break;
++		default:
++			return -1;
 +		}
 +
-+		optpolines.outline_free_list = outline->next_free;
-+		return;
-+	}
++		if (GET_CODE(call) != CALL)
++			continue;
 +
-+	chunk = module_alloc(PAGE_SIZE);
-+	if (unlikely(!chunk)) {
-+		WARN_ONCE(1, "outline block allocation failed");
-+		return;
-+	}
++		call_op = XEXP(XEXP(call, 0), 0);
 +
-+	/* Add the entries from the newly allocated chunk to the linked list */
-+	for (i = 1; i < entries_per_chunk; i++)
-+		chunk[i - 1].next_free = &chunk[i];
-+
-+	chunk[entries_per_chunk - 1].next_free = optpolines.outline_free_list;
-+	optpolines.outline_free_list = &chunk[0];
-+
-+	set_memory_ro((uintptr_t)chunk, 1);
-+	goto retry;
-+}
-+
-+static int make_outline_optpoline(struct optpoline *op)
-+{
-+	union outline_optpoline outline_op, *p_outline;
-+	union outline_optpoline_entry *entry;
-+	uintptr_t rel_from, rel_to;
-+	size_t set_bytes;
-+	unsigned int i;
-+	u8 *last_byte;
-+	s64 offset;
-+
-+	if (!op->outline_rip) {
-+		alloc_outline_branch_block(op);
-+
-+		/*
-+		 * If we hit some allocation error, only use the first
-+		 * destination and override the previous decision.
-+		 */
-+		if (unlikely(!op->outline_rip))
-+			return -ENOMEM;
-+	}
-+
-+	p_outline = kernel_ptr(op->outline_rip);
-+
-+	/* Offset to adjust the pointer before poking */
-+	offset = (uintptr_t)p_outline - (uintptr_t)&outline_op;
-+
-+	for (i = 0, entry = &outline_op.entries[0]; i < OP_OUTLINED_TARGETS;
-+	     i++, entry++) {
-+		u32 target = op->targets[i + OP_INLINED_TARGETS];
-+
-+		if (target == 0)
++		switch (GET_CODE(call_op)) {
++		case SYMBOL_REF:
++			/* direct call */
++			continue;
++		case REG:
 +			break;
++		default:
++			return -1;	/* ERROR */
++		}
 +
-+		/* compare target to immediate */
-+		entry->cmp.no_preempt_prefix = KERNEL_RESTARTABLE_PREFIX;
-+		entry->cmp.opcode = CMP_IMM32_OPCODE;
-+		entry->cmp.imm = target;
-+		entry->cmp.rex_prefix = optpoline_cmp_rex_prefix(op->reg);
-+		entry->cmp.modrm = optpoline_cmp_modrm(op->reg);
++		/* Count the inputs */
++		for (n_inputs = 0, p = CALL_INSN_FUNCTION_USAGE (insn); p; p = XEXP (p, 1)) {
++			if (GET_CODE (XEXP (p, 0)) != USE)
++				return -1;
++			n_inputs++;
++		}
++
++		label_vec = rtvec_alloc(0);
++		arg_vec = rtvec_alloc(2 + n_inputs);
++		constraint_vec = rtvec_alloc(2 + n_inputs);
++
++		i = 0;
++
++		/* AX input */
++		RTVEC_ELT(arg_vec, i) = call_op;
++		RTVEC_ELT(constraint_vec, i) =
++			gen_rtx_ASM_INPUT_loc(GET_MODE(call_op), "r",
++					      RTL_LOCATION(call_op));
++		i++;
++
++		/* SP input */
++		RTVEC_ELT(arg_vec, i) = gen_rtx_REG(DImode, SP_REG);
++		RTVEC_ELT(constraint_vec, i) =
++			gen_rtx_ASM_INPUT_loc(DImode, "1",
++					      RTL_LOCATION(call_op));
++		i++;
++
++		for (p = CALL_INSN_FUNCTION_USAGE(insn); p; p = XEXP (p, 1)) {
++			const char *constraint;
++			rtx input;
++
++			if (GET_CODE (XEXP (p, 0)) != USE)
++				continue;
++
++			input = XEXP(XEXP(p, 0), 0);
++
++			if (MEM_P(input)) {
++				constraint = "m";
++			} else if (REG_P(input)) {
++				switch (REGNO(input)) {
++				case DI_REG:
++					constraint = "D";
++					break;
++				case SI_REG:
++					constraint = "S";
++					break;
++				case DX_REG:
++					constraint = "d";
++					break;
++				case CX_REG:
++					constraint = "c";
++					break;
++				case R8_REG:
++					constraint = "r";
++					break;
++				case R9_REG:
++					constraint = "r";
++					break;
++				default:
++					return -1;
++				}
++			} else {
++				return -1;
++			}
++			RTVEC_ELT(arg_vec, i) = input;
++			rtx input_rtx = gen_rtx_ASM_INPUT_loc(GET_MODE(input),
++							      ggc_strdup(constraint),
++							      RTL_LOCATION(input));
++
++			RTVEC_ELT(constraint_vec, i) = input_rtx;
++			i++;
++		}
++
++		new_body = gen_rtx_PARALLEL(VOIDmode,
++				rtvec_alloc(1 + 1 + N_OUTPUT_FUNC_REGS +
++					    N_CLOBBERED_FUNC_REGS));
 +
 +		/*
-+		 * During installation of the outline cachepoline, we set all
-+		 * the entries as JMPs, and patch them into JNZ only once we
-+		 * enable them.
++		 * The function output. If none still mark as if AX is
++		 * written to ensure it is clobbered.
 +		 */
-+		entry->jz.no_preempt_prefix = KERNEL_RESTARTABLE_PREFIX;
-+		memcpy(entry->jz.opcode, JZ_REL32_OPCODE, sizeof(JZ_REL32_OPCODE));
++		i = 0;
++		output_reg = has_output ? SET_DEST(body) :
++					  gen_rtx_REG(DImode, AX_REG);
++		asm_op = gen_rtx_ASM_OPERANDS(VOIDmode, ggc_strdup(buf), "=a", i,
++					      arg_vec, constraint_vec,
++					      label_vec, RTL_LOCATION(insn));
++		XVECEXP(new_body, 0, i++) = gen_rtx_SET(output_reg, asm_op);
 +
-+		rel_from = (uintptr_t)&entry->jz + sizeof(entry->jz) + offset;
-+		rel_to = (uintptr_t)kernel_ptr(target);
-+		entry->jz.rel = (s32)(rel_to - rel_from);
++		/*
++		 * SP is used as output. Since there is always an output, we do
++		 * not use MEM_VOLATILE_P
++		 */
++		for (j = 0; j < N_OUTPUT_FUNC_REGS; j++) {
++			const struct output_pair *output = &output_regs[j];
++			rtx reg_rtx;
++
++			asm_op = gen_rtx_ASM_OPERANDS(VOIDmode, ggc_strdup(buf),
++						      output->constraint, i,
++						      arg_vec, constraint_vec,
++						      label_vec, RTL_LOCATION(insn));
++
++			reg_rtx = gen_rtx_REG(DImode, output->regno);
++			XVECEXP(new_body, 0, i++) = gen_rtx_SET(reg_rtx, asm_op);
++		}
++
++		/* Add the clobbers */
++		for (j = 0; j < N_CLOBBERED_FUNC_REGS; j++) {
++			const struct reg_pair *regs = &clobbered_func_regs[j];
++
++			clob = gen_rtx_REG(regs->mode, regs->regno);
++			clob = gen_rtx_CLOBBER(VOIDmode, clob);
++			XVECEXP(new_body, 0, i++) = clob;
++		}
++
++		/* Memory clobber */
++		clob = gen_rtx_SCRATCH(VOIDmode);
++		clob = gen_rtx_MEM(BLKmode, clob);
++		clob = gen_rtx_CLOBBER(VOIDmode, clob);
++		XVECEXP(new_body, 0, i++) = clob;
++
++		if (n_inputs >= 5)
++			emit_insn_before(gen_rtx_USE(VOIDmode,
++					  gen_rtx_REG(DImode, R8_REG)), insn);
++		if (n_inputs >= 6)
++			emit_insn_before(gen_rtx_USE(VOIDmode,
++					  gen_rtx_REG(DImode, R9_REG)), insn);
++
++		emit_insn_before(new_body, insn);
++
++		delete_insn(insn);
 +	}
-+
-+	entry->fallback.no_preempt_prefix = KERNEL_RESTARTABLE_PREFIX;
-+	entry->fallback.opcode = JMP_REL32_OPCODE;
-+
-+	rel_from = (uintptr_t)&entry->fallback + sizeof(entry->fallback) + offset;
-+
-+	/*
-+	 * If we ran out of space, stop learning, since it would thrash the
-+	 * learning hash-table.
-+	 */
-+	if (entry == &outline_op.entries[OP_OUTLINED_TARGETS])
-+		rel_to = (uintptr_t)indirect_thunks[op->reg];
-+	else
-+		rel_to = (uintptr_t)save_optpoline_funcs[op->reg];
-+
-+	entry->fallback.rel = (s32)(rel_to - rel_from);
-+
-+	/* Fill the rest with int3 */
-+	last_byte = (u8 *)&entry->fallback + sizeof(entry->fallback);
-+	set_bytes = (uintptr_t)last_byte - (uintptr_t)&outline_op;
-+	memset(last_byte, INT3_OPCODE, OP_OUTLINE_SIZE - set_bytes);
-+
-+	text_poke(p_outline, &outline_op, sizeof(outline_op));
-+
 +	return 0;
 +}
 +
- static void clear_optpoline_samples(void)
- {
- 	int cpu, i;
-@@ -264,6 +475,7 @@ static void remove_module_optpolines(struct module *mod)
- 			continue;
- 
- 		remove_optpoline_from_list(op);
-+		release_outline_branch_block(op);
- 
- 		rhashtable_remove_fast(&optpolines.rhead, &op->rhash,
- 				       optpoline_rht_params);
-@@ -358,31 +570,44 @@ static void analyze_optpoline_samples(struct optpoline *op,
- 				      struct optpoline_sample *samples,
- 				      unsigned int n_entries)
- {
--	int i, n_targets = 0;
-+	unsigned int i, j, k, n_new_targets, n_prev_targets;
++#define PASS_NAME x86_call_markup
++#define NO_GATE
 +
-+	/* Count the number of previous targets */
-+	for (n_prev_targets = 0; n_prev_targets < OP_N_TARGETS; n_prev_targets++) {
-+		if (op->targets[n_prev_targets] == 0)
-+			break;
-+	}
- 
- 	/* Merge destinations with the same source and sum their samples. */
--	for (i = 0; i < n_entries; i++) {
--		if (n_targets == 0 ||
--		    samples[n_targets-1].tgt != samples[i].tgt) {
-+	for (i = 0, n_new_targets = 0; i < n_entries; i++) {
-+		if (n_new_targets == 0 ||
-+		    samples[n_new_targets-1].tgt != samples[i].tgt) {
- 			/* New target */
--			samples[n_targets++] = samples[i];
-+			samples[n_new_targets++] = samples[i];
- 			continue;
- 		}
- 
- 		/* Known target, add samples */
--		samples[n_targets - 1].cnt += samples[i].cnt;
-+		samples[n_new_targets - 1].cnt += samples[i].cnt;
- 	}
- 
- 	/* Sort targets by frequency */
--	sort(samples, n_targets, sizeof(*samples),
-+	sort(samples, n_new_targets, sizeof(*samples),
- 	     optpoline_sample_cnt_cmp_func, NULL);
- 
--	/* Mark as unstable if there is more than a single target */
--	if ((op->has_target && op->target != samples[0].tgt) || n_targets > 1)
--		op->unstable = true;
-+	for (i = n_prev_targets, j = 0;
-+	     i < OP_N_TARGETS && j < n_new_targets; j++) {
-+		bool duplicate = false;
- 
--	op->target = samples[0].tgt;
--	op->has_target = true;
-+		/* Check if the new target is already considered */
-+		for (k = 0; k < n_new_targets; k++)
-+			duplicate |= (samples[j].tgt == op->targets[k]);
++#include "gcc-generate-rtl-pass.h"
 +
-+		if (duplicate)
-+			continue;
-+
-+		op->targets[i++] = samples[j].tgt;
-+	}
- }
- 
- /*
-@@ -435,11 +660,11 @@ static inline bool is_learning_optpoline(struct optpoline *op)
- 		return true;
- 
- 	/* Don't get updates if we know there are multiple targets */
--	if (op->unstable)
-+	if (op->targets[OP_INLINED_TARGETS])
- 		return false;
- 
- 	/* If we still don't know what the target, learning is needed */
--	return !op->has_target;
-+	return op->targets[0] != 0;
- }
- 
- static inline bool is_conditional_optpoline(struct optpoline *op)
-@@ -449,7 +674,7 @@ static inline bool is_conditional_optpoline(struct optpoline *op)
- 		return false;
- 
- 	/* If we don't know where to go, the condition is useless */
--	return op->has_target;
-+	return op->targets[0];
- }
- 
- #define CALL_OFFSET(op, offset, target)					\
-@@ -470,13 +695,13 @@ static void make_common_optpoline(struct optpoline *op,
- }
- 
- static void make_conditional_optpoline(struct optpoline *op,
--				       struct optpoline_code *code,
--				       const void *fallback_target)
-+					struct optpoline_code *code,
-+					const void *fallback_target)
- {
- 	code->cmp.rex = optpoline_cmp_rex_prefix(op->reg);
- 	code->cmp.opcode = CMP_IMM32_OPCODE;
- 	code->cmp.modrm = optpoline_cmp_modrm(op->reg);
--	code->cmp.imm = op->target;
-+	code->cmp.imm = op->targets[0];
- 
- 	code->jnz.rex = KERNEL_RESTARTABLE_PREFIX;
- 	code->jnz.opcode = JNZ_REL8_OPCODE;
-@@ -485,7 +710,7 @@ static void make_conditional_optpoline(struct optpoline *op,
- 
- 	code->call.rex = KERNEL_RESTARTABLE_PREFIX;
- 	code->call.opcode = CALL_REL32_OPCODE;
--	code->call.rel = CALL_OFFSET(op, call, kernel_ptr(op->target));
-+	code->call.rel = CALL_OFFSET(op, call, kernel_ptr(op->targets[0]));
- 
- 	make_common_optpoline(op, code, fallback_target);
- }
-@@ -525,7 +750,7 @@ static void update_optpolines(void)
- {
- 	struct list_head *list = &optpolines.list[OP_STATE_UPDATING].list;
- 	const u8 patching_offset = offsetofend(struct optpoline_code,
--					       patching_call);
-+						patching_call);
- 	struct optpoline *op, *tmp;
- 
- 	mutex_lock(&text_mutex);
-@@ -537,10 +762,6 @@ static void update_optpolines(void)
- 
- 		p_code = kernel_ptr(op->rip);
- 
--		fallback_target = (is_learning_optpoline(op)) ?
--					save_optpoline_funcs[op->reg] :
--					indirect_thunks[op->reg];
--
- 		end_of_optpoline = (const void *)(p_code + 1);
- 
- 		/*
-@@ -564,6 +785,25 @@ static void update_optpolines(void)
- 		/* Wait for everyone to sees the updated version */
- 		synchronize_sched();
- 
-+		if (op->targets[OP_INLINED_TARGETS]) {
-+			int r = make_outline_optpoline(op);
-+
-+			/*
-+			 * If there is an error in creating the outline, fall
-+			 * back to a single target.
-+			 */
-+			if (r)
-+				op->targets[OP_INLINED_TARGETS] = 0;
-+		}
-+
-+		/* Choose the appropriate target */
-+		if (is_learning_optpoline(op))
-+			fallback_target = save_optpoline_funcs[op->reg];
-+		else if (op->outline_rip)
-+			fallback_target = kernel_ptr(op->outline_rip);
-+		else
-+			fallback_target = indirect_thunks[op->reg];
-+
- 		if (is_conditional_optpoline(op))
- 			make_conditional_optpoline(op, &code, fallback_target);
- 		else
-@@ -578,9 +818,10 @@ static void update_optpolines(void)
- 			     &p_code->fallback);
- 
- 		if (is_conditional_optpoline(op)) {
--			state = op->unstable ? OP_STATE_UNSTABLE :
--					       OP_STATE_STABLE;
--		} else if (op->has_target)
-+			state = op->targets[OP_INLINED_TARGETS] ?
-+						OP_STATE_UNSTABLE :
-+						OP_STATE_STABLE;
-+		} else if (op->targets[0])
- 			state = OP_STATE_RELEARN;
- 		else
- 			state = op->to_learn ? OP_STATE_LEARN : OP_STATE_NEW;
-@@ -694,6 +935,19 @@ static void optpoline_work(struct work_struct *work)
- 		schedule_delayed_work(&c_work, HZ * OP_READJUST_SECONDS);
- }
- 
-+static bool optpoline_has_targets_in_module(struct optpoline *op,
-+					    const struct module *mod)
++__visible int plugin_init(struct plugin_name_args *plugin_info,
++			  struct plugin_gcc_version *version)
 +{
-+	unsigned int i;
++	const char * const plugin_name = plugin_info->base_name;
++	const int argc = plugin_info->argc;
++	const struct plugin_argument *argv = plugin_info->argv;
 +
-+	for (i = 0; i < OP_N_TARGETS && op->targets[i]; i++) {
-+		if (within_module((uintptr_t)kernel_ptr(op->targets[i]), mod))
-+			return true;
++	if (!plugin_default_version_check(version, &gcc_version)) {
++		error(G_("incompatible gcc/plugin versions"));
++		return 1;
 +	}
 +
-+	return false;
++	register_callback(plugin_name, PLUGIN_INFO, NULL, &kernexec_plugin_info);
++
++	PASS_INFO(x86_call_markup, "expand", 1, PASS_POS_INSERT_AFTER);
++	register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL,
++			  &x86_call_markup_pass_info);
++
++	return 0;
 +}
-+
- static void reset_optpolines(enum optpoline_state state,
- 			     const struct module *mod)
- {
-@@ -701,13 +955,20 @@ static void reset_optpolines(enum optpoline_state state,
- 	struct optpoline *op, *tmp;
- 
- 	list_for_each_entry_safe(op, tmp, list, node) {
--		if (mod && !within_module((uintptr_t)kernel_ptr(op->target), mod))
-+		if (mod && !optpoline_has_targets_in_module(op, mod))
- 			continue;
- 
--		op->unstable = false;
--		op->has_target = false;
-+		op->targets[0] = 0;
- 		op->to_learn = false;
- 		change_optpoline_state(op, OP_STATE_UPDATING);
-+
-+		/*
-+		 * TODO: To be super safe, we should disable the optpolines
-+		 * immediately instead of deferring the update. Otherwise, there
-+		 * is a time-window in which the optpoline can speculatively
-+		 * jump to the wrong target. Someone may use BPF to set his own
-+		 * code on the call target, for example, and exploit it.
-+		 */
- 	}
- }
- 
-@@ -778,6 +1039,8 @@ static struct notifier_block optpoline_module_nb = {
-  */
- asmlinkage __visible void optpoline_restart_rseq(struct pt_regs *regs)
- {
-+	uintptr_t outline_start;
-+	struct optpoline *op;
- 	u8 i;
- 	u8 offsets[3] = {
- 		offsetof(struct optpoline_code, jnz),
-@@ -786,12 +1049,13 @@ asmlinkage __visible void optpoline_restart_rseq(struct pt_regs *regs)
- 	};
- 
- 	rcu_read_lock();
-+
-+	/* Check the inline optpoline */
- 	for (i = 0; i < ARRAY_SIZE(offsets); i++) {
- 		unsigned long rip = regs->ip + offsets[i];
--		struct optpoline *op;
- 
- 		op = rhashtable_lookup(&optpolines.rhead, &rip,
--				       optpoline_rht_params);
-+					optpoline_rht_params);
- 
- 		if (op) {
- 			/*
-@@ -799,9 +1063,25 @@ asmlinkage __visible void optpoline_restart_rseq(struct pt_regs *regs)
- 			 * the start of the optpoline.
- 			 */
- 			regs->ip -= offsets[i];
--			break;
-+			goto out;
- 		}
- 	};
-+
-+	/* Check the outline optpoline. Use the alignment to ease the search */
-+	outline_start = (regs->ip & PAGE_MASK) |
-+			ALIGN_DOWN(offset_in_page(regs->ip), OP_OUTLINE_SIZE);
-+
-+	op = rhashtable_lookup(&optpolines.outline_rhead, &outline_start,
-+			       outline_optpoline_rht_params);
-+
-+	/*
-+	 * We already have performed the call and we don't want to mess with the
-+	 * stack, so just move the rip to the indirect call thunk.
-+	 */
-+	if (op)
-+		regs->ip = (uintptr_t)indirect_thunks[op->reg];
-+
-+out:
- 	rcu_read_unlock();
- }
- #endif
-@@ -900,6 +1180,10 @@ static void optpolines_destroy(void)
- 		rhashtable_destroy(&optpolines.rhead);
- 	optpolines.rhead_initialized = false;
- 
-+	if (optpolines.outline_rhead_initialized)
-+		rhashtable_destroy(&optpolines.outline_rhead);
-+	optpolines.outline_rhead_initialized = false;
-+
- 	kvfree(optpolines.kernel_optpolines);
- 	optpolines.kernel_optpolines = NULL;
- 
-@@ -959,6 +1243,12 @@ static int __init optpolines_init(void)
- 
- 	optpolines.rhead_initialized = true;
- 
-+	r = rhashtable_init(&optpolines.outline_rhead, &outline_optpoline_rht_params);
-+	if (r)
-+		goto error;
-+
-+	optpolines.outline_rhead_initialized = true;
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		r = create_optpoline_debugfs();
- 		if (r)
 -- 
 2.17.1
 
