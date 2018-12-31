@@ -2,230 +2,217 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A495C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 01:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC1CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 01:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB792081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 01:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="tyrB8N6J"
+	by mail.kernel.org (Postfix) with ESMTP id 60A5E2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 01:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeLaBnk (ORCPT
+        id S1726953AbeLaBpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 30 Dec 2018 20:43:40 -0500
-Received: from cock.li ([185.100.85.212]:57868 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbeLaBnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 30 Dec 2018 20:43:39 -0500
+        Sun, 30 Dec 2018 20:45:20 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:42744 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbeLaBpT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 30 Dec 2018 20:45:19 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A1FF372CC6C;
+        Mon, 31 Dec 2018 04:45:15 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 93530965869; Mon, 31 Dec 2018 04:45:15 +0300 (MSK)
+Date:   Mon, 31 Dec 2018 04:45:15 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Sergei Trofimovich <slyfox@gentoo.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alpha: fix page fault handling for r16-r18 targets
+Message-ID: <20181231014515.GA13296@altlinux.org>
+References: <20181230202312.7239-1-slyfox@gentoo.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546220614; bh=8G0Qy2DBv2GfoNiXCbIOTGN/1sHL73qWJsQhV8zX/7Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tyrB8N6Jt8rDfxglp0Pvxq8Bw3PXun3u/ikZk903soW5u8zeVpGqfAJ0bbGUblfxb
-         5592UFEPmM2YZPWDp9uIUA5CkztJvlVYEUqbyM229kSuDalttEUYf7HunkzhuahZpV
-         R3Hqut9mxTKxsUbugKuP8Qyz5YnQG1ab1aYPM6nZAYVeGq0l1tlffmKEuo7f/soJwG
-         CCuDccGmjbysVuFFMpssYRGWndkTOlC9YF8cw85MC1zEYE2GJ6cK16L3T74jNRGQhU
-         3dggvrCBOkjLbqhnHpb3NOD1EnVVDGr2tjhmo2EROzzs7irCZmVhh/EcLnEX06CeDD
-         DBghaUxXkElRA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 31 Dec 2018 01:43:34 +0000
-From:   vnsndalce@memeware.net
-To:     R0b0t1 <r030t1@gmail.com>
-Cc:     gentoo-user@lists.gentoo.org, ubuntu-users@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org, debian-user@lists.debian.org
-Subject: Re: Thank you for your insight.
-In-Reply-To: <CAAD4mYi572rWPcXZqw-5DGFDWKZQzBXVm=kUC4KsMqBBB8fZ1g@mail.gmail.com>
-References: <25ffdaef51fc80ac49f3d54d5245cd87@memeware.net>
- <CAAD4mYi572rWPcXZqw-5DGFDWKZQzBXVm=kUC4KsMqBBB8fZ1g@mail.gmail.com>
-Message-ID: <25caa529daa3b38efeed32cc7762cefc@memeware.net>
-X-Sender: vnsndalce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+Content-Disposition: inline
+In-Reply-To: <20181230202312.7239-1-slyfox@gentoo.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's good that you got an opinion from an additional party.
-The programmers swear they know better than I on this subject.
 
-In a previous debate on the subject, the programmers decided that the
-fact that they followed the license was "consideration", even though
-without the permission from the grantor they have no right to
-modify or redistribute the grantor's program to begin with.
-I had to attempt to dispell that notion, informing them that the
-permission to redistribute is a gratuity from the grantor,
-the permission to modify the work is a gratuity from the grantor,
-the permission to make derivative works is a gratuity from the grantor,
-and the permission to redistribute derivative works is a gratuity from 
-the grantor;
-that they have no permission to do these things without the grantor,
-They still believe it however and ignore me:
+--/9DWx/yDrRhgMJTb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Their take is that if you lent (licensed) them a lawnmower and told them 
-not to wreck it,
-the fact that they did not wreck it entitles them to keep the lawnmower 
-forever
-(they followed your instruction regarding the use of your property: 
-"thus consideration,
-thus irrevocable license")
+Hi,
 
-Previous writing:
---------------------------------
+On Sun, Dec 30, 2018 at 08:23:12PM +0000, Sergei Trofimovich wrote:
+> Fix page fault handling code to fixup r16-r18 registers.
+> Before the patch code had off-by-two registers bug.
+> This bug caused overwriting of ps,pc,gp registers instead
+> of fixing intended r16,r17,r18 (see `struct pt_regs`).
+>=20
+> More details:
+>=20
+> Initially Dmitry noticed a kernel bug as a failure
+> on strace test suite. Test passes unmapped userspace
+> pointer to io_submit:
+>=20
+> ```c
+>     #include <err.h>
+>     #include <unistd.h>
+>     #include <sys/mman.h>
+>     #include <asm/unistd.h>
+>     int main(void)
+>     {
+>         unsigned long ctx =3D 0;
+>         if (syscall(__NR_io_setup, 1, &ctx))
+>             err(1, "io_setup");
+>         const size_t page_size =3D sysconf(_SC_PAGESIZE);
+>         const size_t size =3D page_size * 2;
+>         void *ptr =3D mmap(NULL, size, PROT_READ | PROT_WRITE,
+>                          MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>         if (MAP_FAILED =3D=3D ptr)
+>             err(1, "mmap(%zu)", size);
+>         if (munmap(ptr, size))
+>             err(1, "munmap");
+>         syscall(__NR_io_submit, ctx, 1, ptr + page_size);
+>         syscall(__NR_io_destroy, ctx);
+>         return 0;
+>     }
+> ```
+>=20
+> Running this test causes kernel to crash when handling page fault:
+>=20
+> ```
+>     Unable to handle kernel paging request at virtual address fffffffffff=
+f9468
+>     CPU 3
+>     aio(26027): Oops 0
+>     pc =3D [<fffffc00004eddf8>]  ra =3D [<fffffc00004edd5c>]  ps =3D 0000=
+    Not tainted
+>     pc is at sys_io_submit+0x108/0x200
+>     ra is at sys_io_submit+0x6c/0x200
+>     v0 =3D fffffc00c58e6300  t0 =3D fffffffffffffff2  t1 =3D 000002000025=
+e000
+>     t2 =3D fffffc01f159fef8  t3 =3D fffffc0001009640  t4 =3D fffffc0000e0=
+f6e0
+>     t5 =3D 0000020001002e9e  t6 =3D 4c41564e49452031  t7 =3D fffffc01f159=
+c000
+>     s0 =3D 0000000000000002  s1 =3D 000002000025e000  s2 =3D 000000000000=
+0000
+>     s3 =3D 0000000000000000  s4 =3D 0000000000000000  s5 =3D ffffffffffff=
+fff2
+>     s6 =3D fffffc00c58e6300
+>     a0 =3D fffffc00c58e6300  a1 =3D 0000000000000000  a2 =3D 000002000025=
+e000
+>     a3 =3D 00000200001ac260  a4 =3D 00000200001ac1e8  a5 =3D 000000000000=
+0001
+>     t8 =3D 0000000000000008  t9 =3D 000000011f8bce30  t10=3D 00000200001a=
+c440
+>     t11=3D 0000000000000000  pv =3D fffffc00006fd320  at =3D 000000000000=
+0000
+>     gp =3D 0000000000000000  sp =3D 00000000265fd174
+>     Disabling lock debugging due to kernel taint
+>     Trace:
+>     [<fffffc0000311404>] entSys+0xa4/0xc0
+> ```
+>=20
+> Here `gp` has invalid value. `gp is s overwritten by a fixup for the
+> following page fault handler in `io_submit` syscall handler:
+>=20
+> ```
+>     __se_sys_io_submit
+>     ...
+>         ldq     a1,0(t1)
+>         bne     t0,4280 <__se_sys_io_submit+0x180>
+> ```
+>=20
+> After a page fault `t0` should contain -EFALUT and `a1` is 0.
+> Instead `gp` was overwritten in place of `a1`.
+>=20
+> This happens due to a off-by-two bug in `dpf_reg()` for `r16-r18`
+> (aka `a0-a2`).
+>=20
+> I think the bug went unnoticed for a long time as `gp` is one
+> of scratch registers. Any kernel function call would re-calculate `gp`.
 
-The permission to redistribute was simply given, gratis, by the grantor.
+Thanks, that's impressive!
 
-He asked for nothing in return, and, infact received nothing, not even a 
-promise of compliance.
+According to the history git, the off-by-two bug was introduced in linux
+2.1.32 when trap_a{0,1,2} fields were inserted into struct pt_regs on
+alpha without an appropriate dpf_reg() update.
 
-At a later date any of countless licensees might decide they wish make 
-derivative works based upon the copyright-owner's property.
+Before 2.1.32 (back to 2.1.7 when dpf_reg() was introduced)
+there was another off-by-one bug in dpf_reg(): r16 was written
+into struct pt_regs.r17.
 
-By law this is barred.
+In other words, the bug is quite old indeed.
 
-However the copyright holder here has magnanimously granted that the 
-licensee is, contrary to the default rule, permitted to create and 
-publish derivative works provided that they use the same license as the 
-original work.
+You can add
+Reported-and-reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
+Cc: stable@vger.kernel.org # v2.1.32+
 
-Here the copyright holder suffers a detriment. He is payed nothing for 
-this forbearance (no consideration).
+> CC: Dmitry V. Levin <gentoo.dl@altlinux.org>
 
-The licensee does not suffer a detriment: he had no right to make nor 
-publish a derivative work to begin with.
+This is a technical address, please remove it.
 
-The extending to him, of permission, is a pure gratuity.
-He payed nothing for the change from "You may not create nor distribute 
-derivative works" to "You may create and distribute derivative works 
-under the same license as the original work".
+> CC: Richard Henderson <rth@twiddle.net>
+> CC: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> CC: Matt Turner <mattst88@gmail.com>
+> CC: linux-alpha@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> Reported-by: Dmitry V. Levin
+> Bug: https://bugs.gentoo.org/672040
+> Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+> ---
+>  arch/alpha/mm/fault.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
+> index d73dc473fbb9..188fc9256baf 100644
+> --- a/arch/alpha/mm/fault.c
+> +++ b/arch/alpha/mm/fault.c
+> @@ -78,7 +78,7 @@ __load_new_mm_context(struct mm_struct *next_mm)
+>  /* Macro for exception fixup code to access integer registers.  */
+>  #define dpf_reg(r)							\
+>  	(((unsigned long *)regs)[(r) <=3D 8 ? (r) : (r) <=3D 15 ? (r)-16 :	\
+> -				 (r) <=3D 18 ? (r)+8 : (r)-10])
+> +				 (r) <=3D 18 ? (r)+10 : (r)-10])
+> =20
+>  asmlinkage void
+>  do_page_fault(unsigned long address, unsigned long mmcsr,
+> --=20
+> 2.20.1
 
+--=20
+ldv
 
---------------------------------
-Context:
---------------------------------
+--/9DWx/yDrRhgMJTb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://news.slashdot.org/comments.pl?sid=12682608&cid=57401302
-     Re: Straw Man (Score:0)
-     by Anonymous Coward on Sunday September 30, 2018 @10:51PM 
-(#57401302)
+-----BEGIN PGP SIGNATURE-----
 
-     GPL is a bare license.
+iQIcBAEBCAAGBQJcKXSrAAoJEAVFT+BVnCUI0J8P/j/xCYbqq6l7cMnZ2IEIZ1hG
+fr5mV4+8JmL+gHoB3uGw3thvbk1sbXR22Dfn39VggnFgoAg9r0M9WAUXx7HJ0jwV
+s7zEHePg3UQDHvPb4DlMgVnHrPqZbBmLUvQEIIXTqCZ8z3mZB3ROD28kspRxLCX1
+xbvEpsvXdDfqAVhfAWSXA9NAEHRumDWPRsVaIcagrp9olwv6NI4A2vB5WRNcY2Bb
+858VReUuam2TGQ8OyR2VkgTaFZAG5LSGe3JfGBDNgNE0ceRHEK+YA788Yr5gm6tv
+Si+gyqFvjlmjK+CwGOES5jxIifG0a/pw4DfPec2u5mlGB7GjGVni+GGSbn+XD9pU
+FSpyyc7/MS77H1W2Lu/l2ysz33N2J3FAMA4E8rpQEKmFfI0iRStWdqkh+CGp5seB
+e2Iu/cJ3OuRMSG84S9Y2cJ7Fcs9vaKuJQ4gKO3y1y/F3U/g8ca8UbsuweWnLmY04
+DdF9TRf/HjXaD6eh6GfQo6QnxvBbLPc/jD/499BI9EyHa49v7hGQiKtpSP76Xo0T
+/ZycmcD+qeuXcKLuhpQyU64CpEbLZ10d4mbsajcne88Y7Ub0r/OChxBNB991XCT/
+GaM66D9jkNNmLiy2d3z8z2fX9KtdcuF+K46MUknJRvpc0J64m9ITiWkDiSPA3M24
+yEnKi9EuadAEuQRH5h/N
+=3Aks
+-----END PGP SIGNATURE-----
 
-     Don't agree?
-     What consideration was given?
-     Can't answer that? Don't know why it would matter?
-
-     Why do you think it is a contract then?
-
---------------------------------
-
-https://news.slashdot.org/comments.pl?sid=12682608&cid=57403506
-
-	Re: Straw Man (Score:2)
-	by drinkypoo ( 153816 ) <martin.espinoza@gmail.com> on Monday October 
-01, 2018 @09:21AM (#57403506) Homepage Journal
-
-	>What consideration was given?
-	The right to redistribute was given in exchange for use of the license 
-for one's own code. Something for something. What was your question 
-again?
-
-
---------------------------------
-https://news.slashdot.org/comments.pl?sid=12682608&cid=57408874
-
-
-Re: Straw Man (Score:0)
-by Anonymous Coward on Tuesday October 02, 2018 @12:58AM (#57408874)
-
-Incorrect.
-
-The permission to redistribute was simply given, gratis, by the grantor.
-
-He asked for nothing in return, and, infact received nothing, not even a 
-promise of compliance.
-
-At a later date any of countless licensees might decide they wish make 
-derivative works based upon the copyright-owner's property.
-
-By law this is barred.
-
-However the copyright holder here has magnanimously granted that the 
-licensee is, contrary to the default rule, permitted to create and 
-publish derivative works provided that they use the same license as the 
-original work.
-
-Here the copyright holder suffers a detriment. He is payed nothing for 
-this forbearance (no consideration).
-
-The licensee does not suffer a detriment: he had no right to make nor 
-publish a derivative work to begin with.
-
-The extending to him, of permission, is a pure gratuity.
-He payed nothing for the change from "You may not create nor distribute 
-derivative works" to "You may create and distribute derivative works 
-under the same license as the original work".
-
-
-On 2018-12-28 21:49, R0b0t1 wrote:
-> Thank you for the response, though I feel you don't address my
-> question. Happily though, I spoke with an acquaintance and it was
-> determined that the subservience to the license (i.e. agreeing to be
-> bound by the GPL2) could not be offered as consideration as its
-> restrictions were not the licensee's to offer at the time of
-> acceptance of the license. The licensee had no rights to offer as part
-> of the contract, as the contract had not yet given them any rights to
-> give up. The terms put forth by the GPL2 are only restrictions that
-> are part of the license.
-> 
-> Furthermore, as stated above, it should seem quite self referential -
-> I can't offer my acceptance of a license as consideration, because it
-> is what I am trying to accept.
-> 
-> As I am sure you are aware, under US law there is no contract if both
-> sides have not provided consideration. This leaves us in the strange
-> place of gratis licenses being suggestions.
-> 
-> Cheers,
->     R0b0t1
-> 
-> On Fri, Dec 28, 2018 at 12:47 PM <vnsndalce@memeware.net> wrote:
->> 
->> Thank you for your insight.
->> 
->> It is a shame that there were no responses. They ignored your post, 
->> then
->> kept baying at me: "no this is wrong" "you're not a lawyer" "I will 
->> not
->> lower myself to refute you with arguments!".
->> 
->> As for non-monetary consideration to support an additional 
->> no-revocation
->> term:
->> Many of the old linux-kernel (programmer)rights-holders have received
->> nothing, and have made no such promise.
->> Many of the contributors (who did not transfer their rights) have
->> received nothing.
->> 
->> There is nothing to uphold the contention that they have forfeited 
->> their
->> default right to rescind license to their property.
->> They never made such a promise, they were never paid for such a 
->> promise,
->> they never contracted for such, etc.
->> 
->> They wrote code, licensed it gratuitously,
->> and now an attempt is being made to both control their speech, their
->> action, and to basically convert their property.
->> 
->> Most of the entities who have been licensed the works have neither 
->> paid
->> anything to the various rights-holders,
->> nor have they ever contacted nor been contacted by the various
->> rights-holders, etc.
->> 
+--/9DWx/yDrRhgMJTb--
