@@ -2,144 +2,259 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA740C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A011CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2AD02075D
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:30:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="eoyiuLKf"
+	by mail.kernel.org (Postfix) with ESMTP id 62D6C2080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbeLaIaj (ORCPT
+        id S1727117AbeLaIkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 03:30:39 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:40494 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeLaIaj (ORCPT
+        Mon, 31 Dec 2018 03:40:33 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726033AbeLaIkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 03:30:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dwOVJ/oq8m7hcvuIJ7iuf+eqFbwnOlo+POQGaqgUhLU=; b=eoyiuLKfDQPlXD/Mj1CXlc1GX
-        E/oM28J0cU9BQScZsd0AeSjjYCygQ/Hwa2ipve1dFtppiiH3GzB4U2odN2fN+52vSlsvB5jR4Zlep
-        69Rh5MLUdekVdTzzcP5mWsUcqbsMFw5J/XXS4F/YiA+7/hkGapEIi9+FrYYVB/jiwXl/Y=;
-Received: from pd9e2f42d.dip0.t-ipconnect.de ([217.226.244.45] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gdsxu-0001vi-Ki; Mon, 31 Dec 2018 09:30:26 +0100
-Date:   Mon, 31 Dec 2018 09:30:21 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>, Stephen Boyd <sboyd@kernel.org>,
-        <bcousson@baylibre.com>, <letux-kernel@openphoenux.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <mturquette@baylibre.com>,
-        <paul@pwsan.com>
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181231092944.014fc1c0@aktux>
-In-Reply-To: <76d9fc57-898b-53ba-1dca-78e5b5c9b2be@ti.com>
-References: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
-        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
-        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
-        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-        <20181130153729.GG53235@atomide.com>
-        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
-        <20181203153910.GA6707@atomide.com>
-        <20181203172246.0e767a16@kemnade.info>
-        <20181204164556.GB6707@atomide.com>
-        <20181227211222.5996c356@aktux>
-        <20181228200229.GY6707@atomide.com>
-        <76d9fc57-898b-53ba-1dca-78e5b5c9b2be@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 31 Dec 2018 03:40:33 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBV8dkJ1109165
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 03:40:31 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pqdpnma3s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 03:40:31 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 31 Dec 2018 08:40:29 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 31 Dec 2018 08:40:24 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBV8eNmg60424196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Dec 2018 08:40:23 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28DA052057;
+        Mon, 31 Dec 2018 08:40:23 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.47])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 2E31652050;
+        Mon, 31 Dec 2018 08:40:21 +0000 (GMT)
+Date:   Mon, 31 Dec 2018 10:40:19 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
+        vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memblock: extend the limit inferior of
+ bottom-up after parsing hotplug attr
+References: <1545966002-3075-1-git-send-email-kernelfans@gmail.com>
+ <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uU6bRmK+3X7C1R5FajkKT9V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545966002-3075-2-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18123108-0020-0000-0000-000002FE32D1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18123108-0021-0000-0000-0000214E6C26
+Message-Id: <20181231084018.GA28478@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812310081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uU6bRmK+3X7C1R5FajkKT9V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 28, 2018 at 11:00:01AM +0800, Pingfan Liu wrote:
+> The bottom-up allocation style is introduced to cope with movable_node,
+> where the limit inferior of allocation starts from kernel's end, due to
+> lack of knowledge of memory hotplug info at this early time. But if later,
+> hotplug info has been got, the limit inferior can be extend to 0.
+> 'kexec -c' prefers to reuse this style to alloc mem at lower address,
+> since if the reserved region is beyond 4G, then it requires extra mem
+> (default is 16M) for swiotlb.
 
-On Mon, 31 Dec 2018 09:23:01 +0200
-Tero Kristo <t-kristo@ti.com> wrote:
+I fail to understand why the availability of memory hotplug information
+would allow to extend the lower limit of bottom-up memblock allocations
+below the kernel. The memory in the physical range [0, kernel_start) can be
+allocated as soon as the kernel memory is reserved.
 
-> On 28/12/2018 22:02, Tony Lindgren wrote:
-> > * Andreas Kemnade <andreas@kemnade.info> [181227 20:13]: =20
-> >> Hi,
-> >>
-> >> On Tue, 4 Dec 2018 08:45:57 -0800
-> >> Tony Lindgren <tony@atomide.com> wrote:
-> >> =20
-> >>> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]: =20
-> >>>> On Mon, 3 Dec 2018 07:39:10 -0800
-> >>>> Tony Lindgren <tony@atomide.com> wrote: =20
-> >>>>> The consumer device stays active just fine with PM runtime
-> >>>>> calls. So yes, the problem is keeping a clock controller forced
-> >>>>> active for the period of consumer device reset. Other than
-> >>>>> that typically autoidle can be just kept enabled.
-> >>>>>     =20
-> >>>> Are we still talking about the same problem? Maybe I am losing track
-> >>>> here. Just to make sure.
-> >>>> The patch series was about disabling autoidle for devices which cann=
-ot
-> >>>> work with it during normal operation. Not during reset or something
-> >>>> like that.
-> >>>> Or is the keep-clock-active-during-reset just a requirement for bigg=
-er
-> >>>> restructuring ideas? =20
-> >>>
-> >>> Yeah there are two issues: The fix needed for the issue you brought u=
-p,
-> >>> and also how to let a reset driver to block autoidle for reset.
-> >>> =20
-> >> Hmm, is this set now waiting for the famous "somebody" fixing all
-> >> the stuff? =20
-> >=20
-> > Well I think we're still waiting on Tero to comment on this. =20
->=20
-> The only item requiring immediate fixing is the point Stephen made out,=20
-> removing the usage of CLK_IS_BASIC from this patch.
->=20
-> Afaics, the reset related concerns Tony has can be handled later.
->=20
-hmm, and there we need Stephen's opinion about having the allow/deny
-autoidle functions in the main clk_ops struct.
+The extents of the memory node hosting the kernel image can be used to
+limit memblok allocations from that particular node, even in top-down mode.
+ 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: Tang Chen <tangchen@cn.fujitsu.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: Daniel Vacek <neelx@redhat.com>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: yinghai@kernel.org,
+> Cc: vgoyal@redhat.com
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/acpi/numa.c      |  4 ++++
+>  include/linux/memblock.h |  1 +
+>  mm/memblock.c            | 58 +++++++++++++++++++++++++++++-------------------
+>  3 files changed, 40 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 2746994..3eea4e4 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -462,6 +462,10 @@ int __init acpi_numa_init(void)
+> 
+>  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>  					    acpi_parse_memory_affinity, 0);
+> +
+> +#if defined(CONFIG_X86) || defined(CONFIG_ARM64)
+> +		mark_mem_hotplug_parsed();
+> +#endif
+>  	}
+> 
+>  	/* SLIT: System Locality Information Table */
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index aee299a..d89ed9e 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -125,6 +125,7 @@ int memblock_reserve(phys_addr_t base, phys_addr_t size);
+>  void memblock_trim_memory(phys_addr_t align);
+>  bool memblock_overlaps_region(struct memblock_type *type,
+>  			      phys_addr_t base, phys_addr_t size);
+> +void mark_mem_hotplug_parsed(void);
+>  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
+>  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+>  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 81ae63c..a3f5e46 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -231,6 +231,12 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+>  	return 0;
+>  }
+> 
+> +static bool mem_hotmovable_parsed __initdata_memblock;
+> +void __init_memblock mark_mem_hotplug_parsed(void)
+> +{
+> +	mem_hotmovable_parsed = true;
+> +}
+> +
+>  /**
+>   * memblock_find_in_range_node - find free area in given range and node
+>   * @size: size of free area to find
+> @@ -259,7 +265,7 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>  					phys_addr_t end, int nid,
+>  					enum memblock_flags flags)
+>  {
+> -	phys_addr_t kernel_end, ret;
+> +	phys_addr_t kernel_end, ret = 0;
+> 
+>  	/* pump up @end */
+>  	if (end == MEMBLOCK_ALLOC_ACCESSIBLE)
+> @@ -270,34 +276,40 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>  	end = max(start, end);
+>  	kernel_end = __pa_symbol(_end);
+> 
+> -	/*
+> -	 * try bottom-up allocation only when bottom-up mode
+> -	 * is set and @end is above the kernel image.
+> -	 */
+> -	if (memblock_bottom_up() && end > kernel_end) {
+> -		phys_addr_t bottom_up_start;
+> +	if (memblock_bottom_up()) {
+> +		phys_addr_t bottom_up_start = start;
+> 
+> -		/* make sure we will allocate above the kernel */
+> -		bottom_up_start = max(start, kernel_end);
+> -
+> -		/* ok, try bottom-up allocation first */
+> -		ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> -						      size, align, nid, flags);
+> -		if (ret)
+> +		if (mem_hotmovable_parsed) {
+> +			ret = __memblock_find_range_bottom_up(
+> +				bottom_up_start, end, size, align, nid,
+> +				flags);
+>  			return ret;
+> 
+>  		/*
+> -		 * we always limit bottom-up allocation above the kernel,
+> -		 * but top-down allocation doesn't have the limit, so
+> -		 * retrying top-down allocation may succeed when bottom-up
+> -		 * allocation failed.
+> -		 *
+> -		 * bottom-up allocation is expected to be fail very rarely,
+> -		 * so we use WARN_ONCE() here to see the stack trace if
+> -		 * fail happens.
+> +		 * if mem hotplug info is not parsed yet, try bottom-up
+> +		 * allocation with @end above the kernel image.
+>  		 */
+> -		WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+> +		} else if (!mem_hotmovable_parsed && end > kernel_end) {
+> +			/* make sure we will allocate above the kernel */
+> +			bottom_up_start = max(start, kernel_end);
+> +			ret = __memblock_find_range_bottom_up(
+> +				bottom_up_start, end, size, align, nid,
+> +				flags);
+> +			if (ret)
+> +				return ret;
+> +			/*
+> +			 * we always limit bottom-up allocation above the
+> +			 * kernel, but top-down allocation doesn't have
+> +			 * the limit, so retrying top-down allocation may
+> +			 * succeed when bottom-up allocation failed.
+> +			 *
+> +			 * bottom-up allocation is expected to be fail
+> +			 * very rarely, so we use WARN_ONCE() here to see
+> +			 * the stack trace if fail happens.
+> +			 */
+> +			WARN_ONCE(IS_ENABLED(CONFIG_MEMORY_HOTREMOVE),
+>  			  "memblock: bottom-up allocation failed, memory hotremove may be affected\n");
+> +		}
+>  	}
+> 
+>  	return __memblock_find_range_top_down(start, end, size, align, nid,
+> -- 
+> 2.7.4
+> 
 
-Regards,
-Andreas
+-- 
+Sincerely yours,
+Mike.
 
---Sig_/uU6bRmK+3X7C1R5FajkKT9V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwp050ACgkQfb1qx03i
-kyR0Yg/9Ez4PEKEZaVe/qnywZub7XESAii40MAwGrsvUC727+M/xPzpupttLutZl
-SCF4QgDq+TpLd3xsRlx6IJZzux7hoLa29R+cAMz7YFkGbKxlZtVEydLcq4jWQfVs
-yuNYi6WZriYAg5rBqhlqLWi0h162ELJzPOiuZN56aj6sizGFqaeCOyvGHIZJF5lo
-NCazBMBiszNuCuk8W6V6vcqmyDDQY6EA2olIZUV8oThTcjETYuN0O9+9Yhr3Clzr
-Hgztmk3zKA7B1Bi0G1irdgg4uF9MhMEkhtaNC5xTRtU7pFXoYoS1V40P6wtLxb6d
-UI2tmbIBH4k9t4PqF+wt2Ly9FQn3xnDS1sZ4/qJWwhUluTM55r76o65DRfwHaj+Y
-AZFccX3LS6ck6CA8T5SziUxuzUrBuGtMjhGEtrk23MvaZr942lMuYeJ16Kblh4tk
-7yOpuUNt3wbXJZ32kUkMjgzUjs6/kua4YNXJW7t//ZLR5xZw5qSPZYF9DYd0yBcR
-qzLQicqUq3DUs4RxA4i/9cf/h3Pp9sAnntw5k6pDYZcbgBeik4Ue3A4DPMl5FQK+
-I+Nf/I7sXlSDtd+po4dDmBpo+ZtCAgRaVwfHWMHOAnUfaqH497dz6VZqzCHEQeoq
-73zXbWMzrhk5fuordHOn98raOsDibCuJNFxuByNQxhLLkEDxsMc=
-=ypiE
------END PGP SIGNATURE-----
-
---Sig_/uU6bRmK+3X7C1R5FajkKT9V--
