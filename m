@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10952C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E05C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9AAF218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A0821871
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 15:33:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546270422;
-	bh=khvb7vmTj/HrRAid0nNTHSewSqPnTBjKhFPOLYiAMUY=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Bsb/Dz8OS3o0DTkSknILuFHMedE9JtKDnc4YfzOGvOKgmSVQkEqZ5lcs1XrCNoapt
-	 tulxWjo+2sdVc5A2bkd9BThx8GqQRB7x6r3htjRf98Ov72Jp6e221sdgese48bk1Rt
-	 XbXrwnXcH3h+RhDdjR4qUJmiJr2mwZubYTG5fUhk=
+	s=default; t=1546270433;
+	bh=UJ7xDGy3ytVXMeTYzu1HJ7BMLzQvoQcDhQRlxMaTdNY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uYDYRdGLhWxk9duth9IkRT6QOHmT+A9EeW/jS/prM9Tsh0CsxcHSKhJbBmXBaBxOj
+	 tdPW+lF8hCQ6xVl61VjQM7dQxfLfZ3da3juIP6A6dGico9O86qKmqEsqnaeDjeLXEK
+	 EVVuOH1Ggf6ijz5f9yeDEX8dY5ycK0jgMbXOtWmE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeLaPdm (ORCPT
+        id S1727391AbeLaPdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 10:33:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59458 "EHLO mail.kernel.org"
+        Mon, 31 Dec 2018 10:33:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeLaPdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 10:33:41 -0500
+        id S1726722AbeLaPdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 10:33:52 -0500
 Received: from localhost.localdomain (unknown [183.128.55.205])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35C382133F;
-        Mon, 31 Dec 2018 15:33:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 264872133F;
+        Mon, 31 Dec 2018 15:33:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546270421;
-        bh=khvb7vmTj/HrRAid0nNTHSewSqPnTBjKhFPOLYiAMUY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VeNb2OJJeSiAaZfseBHMcu6Q2wT4bBB3k6Tt/53zm5oVU9OuNZ+ggViWHELVwuw/H
-         Su7nVYLndK/CiWr18QvVX1ZM2/yHPLoke23gwBBPLrYAIj1pM4uGLy4h6xAwJGW3Ok
-         IHzSEDNsAsHBVrYkW6GT8DlvwljWRenUyDtXnkt8=
+        s=default; t=1546270432;
+        bh=UJ7xDGy3ytVXMeTYzu1HJ7BMLzQvoQcDhQRlxMaTdNY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WShQW72Ir5zDt4IrDL7T3fRqsaVGahrDR9wiJjzBcBT1duW0/Gj5gUZ4P1kESMF2g
+         20TGToX12M3AQTJAPaCAtqE3syuLcCxCupiADONjtnOo/ciXjoqdA6kdCjAlE1Qdi0
+         Ib9DpnwtEQGmW3p7bVvjelQNJO0YwwL5X2zidEoY=
 From:   guoren@kernel.org
 To:     arnd@arndb.de
 Cc:     guoren@kernel.org, linux-kernel@vger.kernel.org,
         rostedt@goodmis.org, mingo@redhat.com, oleg@redhat.com,
         linux-arch@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH 01/14] csky: fixup abiv2 mmap(... O_SYNC) failed.
-Date:   Mon, 31 Dec 2018 23:32:53 +0800
-Message-Id: <1546270384-4590-1-git-send-email-guoren@kernel.org>
+Subject: [PATCH 02/14] csky: bugfix gdb coredump error.
+Date:   Mon, 31 Dec 2018 23:32:54 +0800
+Message-Id: <1546270384-4590-2-git-send-email-guoren@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546270384-4590-1-git-send-email-guoren@kernel.org>
+References: <1546270384-4590-1-git-send-email-guoren@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,57 +57,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <ren_guo@c-sky.com>
 
-Glibc function mmap(... O_SYNC) will make page to _PAGE_UNCACHE +
-_PAGE_SO and strong-order page couldn't support unalignment access.
-So remove _PAGE_SO from _PAGE_UNCACHE, also sync abiv1 with the macro
-of _PAGE_SO.
+In gdb/bfd elf32-csky.c, csky_elf_grok_prstatus() use fixed size of
+elf_prstatus. It's 148 for abiv1 and 220 for abiv2, the size is enough
+for coredump and no need full sizeof(struct pt_regs).
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Reported-by: Liu Renwei <Renwei.Liu@verisilicon.com>
-Tested-by: Yuan Qiyun <qiyun_yuan@c-sky.com>
+Reported-by: Lu Baoquan <lu.baoquan@intellif.com>
+Reported-by: Liu Mao <liu.mao@intellif.com>
 ---
- arch/csky/abiv1/inc/abi/pgtable-bits.h | 1 +
- arch/csky/abiv2/inc/abi/pgtable-bits.h | 2 +-
- arch/csky/mm/ioremap.c                 | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
+ arch/csky/include/asm/elf.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/csky/abiv1/inc/abi/pgtable-bits.h b/arch/csky/abiv1/inc/abi/pgtable-bits.h
-index 455075b..d605445 100644
---- a/arch/csky/abiv1/inc/abi/pgtable-bits.h
-+++ b/arch/csky/abiv1/inc/abi/pgtable-bits.h
-@@ -26,6 +26,7 @@
+diff --git a/arch/csky/include/asm/elf.h b/arch/csky/include/asm/elf.h
+index 48b5366..d6dbc00 100644
+--- a/arch/csky/include/asm/elf.h
++++ b/arch/csky/include/asm/elf.h
+@@ -31,7 +31,12 @@ typedef unsigned long elf_greg_t;
  
- #define _PAGE_CACHE		(3<<9)
- #define _PAGE_UNCACHE		(2<<9)
-+#define _PAGE_SO		_PAGE_UNCACHE
+ typedef struct user_fp elf_fpregset_t;
  
- #define _CACHE_MASK		(7<<9)
+-#define ELF_NGREG (sizeof(struct pt_regs) / sizeof(elf_greg_t))
++/*
++ * In gdb/bfd elf32-csky.c, csky_elf_grok_prstatus() use fixed size of
++ * elf_prstatus. It's 148 for abiv1 and 220 for abiv2, the size is enough
++ * for coredump and no need full sizeof(struct pt_regs).
++ */
++#define ELF_NGREG ((sizeof(struct pt_regs) / sizeof(elf_greg_t)) - 2)
  
-diff --git a/arch/csky/abiv2/inc/abi/pgtable-bits.h b/arch/csky/abiv2/inc/abi/pgtable-bits.h
-index b20ae19..137f793 100644
---- a/arch/csky/abiv2/inc/abi/pgtable-bits.h
-+++ b/arch/csky/abiv2/inc/abi/pgtable-bits.h
-@@ -32,6 +32,6 @@
- #define _CACHE_MASK		_PAGE_CACHE
+ typedef elf_greg_t elf_gregset_t[ELF_NGREG];
  
- #define _CACHE_CACHED		(_PAGE_VALID | _PAGE_CACHE | _PAGE_BUF)
--#define _CACHE_UNCACHED		(_PAGE_VALID | _PAGE_SO)
-+#define _CACHE_UNCACHED		(_PAGE_VALID)
- 
- #endif /* __ASM_CSKY_PGTABLE_BITS_H */
-diff --git a/arch/csky/mm/ioremap.c b/arch/csky/mm/ioremap.c
-index 7ad3ff1..cb7c03e 100644
---- a/arch/csky/mm/ioremap.c
-+++ b/arch/csky/mm/ioremap.c
-@@ -30,7 +30,7 @@ void __iomem *ioremap(phys_addr_t addr, size_t size)
- 	vaddr = (unsigned long)area->addr;
- 
- 	prot = __pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE |
--			_PAGE_GLOBAL | _CACHE_UNCACHED);
-+			_PAGE_GLOBAL | _CACHE_UNCACHED | _PAGE_SO);
- 
- 	if (ioremap_page_range(vaddr, vaddr + size, addr, prot)) {
- 		free_vm_area(area);
 -- 
 2.7.4
 
