@@ -2,104 +2,99 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E83C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B3EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4682133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:18:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SqN7DDP8"
+	by mail.kernel.org (Postfix) with ESMTP id 35B1321019
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 18:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546280952;
+	bh=3zMcF2KEX4ee17ZLmsSdZXMFVWf6Mq3KQKMusvsRkKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KrGi8zjvwKBFoFMtxTXv5E7Kpb+6JdiXfA1eVYjTEWzTi4MMKit4VbduLBaeawUXN
+	 Wd5ZjSweiDg5D6whnqXkXEOP17xY2245MC24Hq3PvwYwJ7ZHmt/dgQD6Q0Sy9colIZ
+	 mGvBN8XaRnF5jMOJqERXAFkIXOYz57TIfbiK2Z6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727712AbeLaSSC (ORCPT
+        id S1727722AbeLaS3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 13:18:02 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39389 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbeLaSSB (ORCPT
+        Mon, 31 Dec 2018 13:29:11 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37186 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727379AbeLaS3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 13:18:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so24076514ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 10:18:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9RLp7N2bv/VXzmKuxFVMgoVmav//VtI8k+vRHbVad/c=;
-        b=SqN7DDP8mq5HNZCWaanDDALpbhYvnCRg9JT0BRikuXtxBCT3HOYgFS2moAlt/IbVGC
-         oZI2r0EymfIDlP5wFQgKsqe5gyFrOZm85UE+3996LqeFgmpKXIHM/Q+A8nu6QmPheUuq
-         cNYld69KQIkd+VbsxKDcylk2RBmaRtSi1PCdQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9RLp7N2bv/VXzmKuxFVMgoVmav//VtI8k+vRHbVad/c=;
-        b=k5En55L1xSTRtRZeKDjF/Yy/v77/a2KAbNpjTaWWXCPvvmLAPNLCRuOFoOx33d9qp8
-         tplxdhsz0QKbWhFtPyp7Ofhi8vM5c/8B/y4UvrsblJeIo52FLCsH6knlvPVxhdlValXk
-         eEVgoJsk9rQ4CnR98uaximmD+UlGk+T0sIeOTmU+y4ltVU38V3HaT9Rz8vCqTxv2Adrn
-         F6tFyIyUeyAQ+bYTSi8BqJEhFDXNUzMcsh0lMqzDrnFGcRUqIdHX9ax9ReiOzUBm3XNe
-         s2JcIudbKHnEqefXEIDt3QAzJtq29dMFCrBFgwZNBsG1Q0xuBTRaY444KLlXIqzLlOxV
-         tlTg==
-X-Gm-Message-State: AA+aEWYFtsNF7gqMeYeCxzBjI6PtTsWGXB3zcgEGqk5GVIjYiUJ7MZNf
-        H0SzgvWflZ3/FDJA7cEtA1Ewjn/Gp2g=
-X-Google-Smtp-Source: ALg8bN7wZOlJcPu26Hy9OgbC8HrrnPmURsb7OIovJdKEvYNnczLGUVLENXbmCQZ6BFZHpXzChx8AjQ==
-X-Received: by 2002:a2e:5152:: with SMTP id b18-v6mr18305186lje.88.1546280279201;
-        Mon, 31 Dec 2018 10:17:59 -0800 (PST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 11sm9447202lfq.89.2018.12.31.10.17.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 10:17:58 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id l10so18652866lfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 10:17:58 -0800 (PST)
-X-Received: by 2002:a19:cbcc:: with SMTP id b195mr19897408lfg.117.1546280277768;
- Mon, 31 Dec 2018 10:17:57 -0800 (PST)
+        Mon, 31 Dec 2018 13:29:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zJ6KP8AYB+QWekcs4ggyM6Q+bcyBYTm1dsxFOhU2ngw=; b=lN52IYZbivr/6e1Iq2bWQUzrM
+        fZlDa1/etKF2icV9F20tYcTTuAXWc8rkr3fK6QmNVRLKntXhQqpfzbXyFGXPd36b/8NgEGE6SUDDg
+        CKZof7RsVgNYM8amTF7mjTQDdLK77Hz8OXnP94wGyUg6CKbzrHXjQRhQusDbbj0OS4298=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ge2JF-0002VJ-95; Mon, 31 Dec 2018 18:29:05 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 5710A440080; Mon, 31 Dec 2018 18:29:04 +0000 (GMT)
+Date:   Mon, 31 Dec 2018 18:29:04 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Ben Whitten <benwhitten@gmail.com>
+Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        linux-lpwan@lists.infradead.org,
+        Ben Whitten <Ben.Whitten@lairdtech.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH lora-next] net: lora: sx1301: Fix radio SPI write
+Message-ID: <20181231182904.GJ1846@sirena.org.uk>
+References: <20181230084427.32623-1-afaerber@suse.de>
+ <CAF3==iuRn2juDJHkqyawxTj7ko0kGMaLdi8QsRpWswKUCS3woA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181228182813.01ae131a@gandalf.local.home>
-In-Reply-To: <20181228182813.01ae131a@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 31 Dec 2018 10:17:41 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh9rpBhJ9r_AH=RuvaD8u1V1VKpY8diqZtpqdToYRdCwA@mail.gmail.com>
-Message-ID: <CAHk-=wh9rpBhJ9r_AH=RuvaD8u1V1VKpY8diqZtpqdToYRdCwA@mail.gmail.com>
-Subject: Re: [GIT PULL] tracing: Update for 4.21
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ibvzjYYg+QDzMCy1"
+Content-Disposition: inline
+In-Reply-To: <CAF3==iuRn2juDJHkqyawxTj7ko0kGMaLdi8QsRpWswKUCS3woA@mail.gmail.com>
+X-Cookie: knowledge, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 3:28 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-> trace-v4.21
 
-No such tag.
+--ibvzjYYg+QDzMCy1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Tag SHA1: bcf1ea7cb12ce702d1d0660dfba0c3462c0b04e1
-> Head SHA1: 3d739c1f6156c70eb0548aa288dcfbac9e0bd162
+On Mon, Dec 31, 2018 at 12:14:34AM +0000, Ben Whitten wrote:
 
-I can see branches with that commit SHA ("for-next" and "ftrace/core")
-but there is no tag with that name or that SHA1.
+> If the regmap_bus provider does need to apply the mask, can we get the
+> end device regmap_config and apply it from there?
+> Mark what are your thoughts on the route to take?
 
-Forgot to push out?
+If you're getting a byte stream in then it'll have the mask applied.  If
+you're providing per-register read/write ops no formatting at all will
+be done, obviously in that case there's no need to bounce the
+information through the config.
 
-Btw, please don't include the whole diff in the same email when it's
-~seven thousand lines and over 200k in size. Yeah, I'm on a fast
-connection, but that isn't *always* true. Did lkml even take this
-email?
+--ibvzjYYg+QDzMCy1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                     Linus
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwqX+8ACgkQJNaLcl1U
+h9Djwgf/f9wfIU7fjZkputX8arBtl//RHJx9zQr8OnNkxm93gfo6DpTHnrW0tVFR
+d5lDRzFRJgplNEVUgDjh08lUrbkXO87TywFS5RVgPylRefAEYAqXjKg1zhKMwww1
+6lnvmlWF8l5jpikt18Uocb78wfbT05BJxa0Y3NhMIQhbGuqKu6hkwUwxiJmoTpnV
+J4cB+SXj6+sW5Jy2YrPttUcsMAoQnfSOZxFgacvEz+rFf1dBTIbQgKSvXrGDzn7F
+h+gxVrYV8UedZow9T/FgmVGtVq5QIy6s2VDMUzATWYNJiP1WbafaDq0J7oU+UHKU
+gl8jZei0UxcmWZziOX0u7CMXY2+i5A==
+=vr6s
+-----END PGP SIGNATURE-----
+
+--ibvzjYYg+QDzMCy1--
