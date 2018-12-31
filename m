@@ -2,219 +2,115 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09EDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE9CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466F02133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A5F21726
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeLaJaO (ORCPT
+        id S1727170AbeLaJjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 04:30:14 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32884 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727284AbeLaJaM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 04:30:12 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBV9Sixp017039
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 04:30:12 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pqftghdw2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 04:30:12 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 31 Dec 2018 09:30:09 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 31 Dec 2018 09:30:01 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBV9U0sC8585524
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 31 Dec 2018 09:30:00 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85A674C044;
-        Mon, 31 Dec 2018 09:30:00 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8A934C040;
-        Mon, 31 Dec 2018 09:29:56 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.181])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 31 Dec 2018 09:29:56 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 31 Dec 2018 11:29:56 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Greentime Hu <green.hu@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Mark Salter <msalter@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, openrisc@lists.librecores.org,
-        sparclinux@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH v4 6/6] arm, s390, unicore32: remove oneliner wrappers for memblock_alloc()
-Date:   Mon, 31 Dec 2018 11:29:26 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546248566-14910-1-git-send-email-rppt@linux.ibm.com>
-References: <1546248566-14910-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18123109-0020-0000-0000-000002FE365B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18123109-0021-0000-0000-0000214E6FCE
-Message-Id: <1546248566-14910-7-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812310088
+        Mon, 31 Dec 2018 04:39:33 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:59830 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeLaJjc (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 31 Dec 2018 04:39:32 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 31 Dec 2018 10:39:30 +0100
+Received: from linux-l9pv.suse (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Mon, 31 Dec 2018 09:39:04 +0000
+Date:   Mon, 31 Dec 2018 17:38:51 +0800
+From:   joeyli <jlee@suse.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Chen Yu <yu.c.chen@intel.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 2/2] PM / Sleep: Check the file capability when writing
+ wake lock interface
+Message-ID: <20181231093851.GN3506@linux-l9pv.suse>
+References: <20181230132856.24095-1-jlee@suse.com>
+ <20181230132856.24095-3-jlee@suse.com>
+ <20181230144835.GB18985@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181230144835.GB18985@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, s390 and unicore32 use oneliner wrappers for memblock_alloc().
-Replace their usage with direct call to memblock_alloc().
+Hi Greg,
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/arm/mm/mmu.c       | 11 +++--------
- arch/s390/numa/numa.c   | 10 +---------
- arch/unicore32/mm/mmu.c | 12 ++++--------
- 3 files changed, 8 insertions(+), 25 deletions(-)
+On Sun, Dec 30, 2018 at 03:48:35PM +0100, Greg Kroah-Hartman wrote:
+> On Sun, Dec 30, 2018 at 09:28:56PM +0800, Lee, Chun-Yi wrote:
+> > The wake lock/unlock sysfs interfaces check that the writer must has
+> > CAP_BLOCK_SUSPEND capability. But the checking logic can be bypassed
+> > by opening sysfs file within an unprivileged process and then writing
+> > the file within a privileged process. The tricking way has been exposed
+> > by Andy Lutomirski in CVE-2013-1959.
+> 
+> Don't you mean "open by privileged and then written by unprivileged?"
+> Or if not, exactly how is this a problem?  You check the capabilities
+> when you do the write and if that is not allowed then, well
+>
 
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index 0a04c9a5..57de0dd 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -719,14 +719,9 @@ EXPORT_SYMBOL(phys_mem_access_prot);
- 
- #define vectors_base()	(vectors_high() ? 0xffff0000 : 0)
- 
--static void __init *early_alloc_aligned(unsigned long sz, unsigned long align)
--{
--	return memblock_alloc(sz, align);
--}
--
- static void __init *early_alloc(unsigned long sz)
- {
--	return early_alloc_aligned(sz, sz);
-+	return memblock_alloc(sz, sz);
- }
- 
- static void *__init late_alloc(unsigned long sz)
-@@ -998,7 +993,7 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
- 	if (!nr)
- 		return;
- 
--	svm = early_alloc_aligned(sizeof(*svm) * nr, __alignof__(*svm));
-+	svm = memblock_alloc(sizeof(*svm) * nr, __alignof__(*svm));
- 
- 	for (md = io_desc; nr; md++, nr--) {
- 		create_mapping(md);
-@@ -1020,7 +1015,7 @@ void __init vm_reserve_area_early(unsigned long addr, unsigned long size,
- 	struct vm_struct *vm;
- 	struct static_vm *svm;
- 
--	svm = early_alloc_aligned(sizeof(*svm), __alignof__(*svm));
-+	svm = memblock_alloc(sizeof(*svm), __alignof__(*svm));
- 
- 	vm = &svm->vm;
- 	vm->addr = (void *)addr;
-diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
-index 2281a88..2d1271e 100644
---- a/arch/s390/numa/numa.c
-+++ b/arch/s390/numa/numa.c
-@@ -58,14 +58,6 @@ EXPORT_SYMBOL(__node_distance);
- int numa_debug_enabled;
- 
- /*
-- * alloc_node_data() - Allocate node data
-- */
--static __init pg_data_t *alloc_node_data(void)
--{
--	return memblock_alloc(sizeof(pg_data_t), 8);
--}
--
--/*
-  * numa_setup_memory() - Assign bootmem to nodes
-  *
-  * The memory is first added to memblock without any respect to nodes.
-@@ -101,7 +93,7 @@ static void __init numa_setup_memory(void)
- 
- 	/* Allocate and fill out node_data */
- 	for (nid = 0; nid < MAX_NUMNODES; nid++)
--		NODE_DATA(nid) = alloc_node_data();
-+		NODE_DATA(nid) = memblock_alloc(sizeof(pg_data_t), 8);
- 
- 	for_each_online_node(nid) {
- 		unsigned long start_pfn, end_pfn;
-diff --git a/arch/unicore32/mm/mmu.c b/arch/unicore32/mm/mmu.c
-index 50d8c1a..a402192 100644
---- a/arch/unicore32/mm/mmu.c
-+++ b/arch/unicore32/mm/mmu.c
-@@ -141,16 +141,12 @@ static void __init build_mem_type_table(void)
- 
- #define vectors_base()	(vectors_high() ? 0xffff0000 : 0)
- 
--static void __init *early_alloc(unsigned long sz)
--{
--	return memblock_alloc(sz, sz);
--}
--
- static pte_t * __init early_pte_alloc(pmd_t *pmd, unsigned long addr,
- 		unsigned long prot)
- {
- 	if (pmd_none(*pmd)) {
--		pte_t *pte = early_alloc(PTRS_PER_PTE * sizeof(pte_t));
-+		pte_t *pte = memblock_alloc(PTRS_PER_PTE * sizeof(pte_t),
-+					    PTRS_PER_PTE * sizeof(pte_t));
- 		__pmd_populate(pmd, __pa(pte) | prot);
- 	}
- 	BUG_ON(pmd_bad(*pmd));
-@@ -352,7 +348,7 @@ static void __init devicemaps_init(void)
- 	/*
- 	 * Allocate the vector page early.
- 	 */
--	vectors = early_alloc(PAGE_SIZE);
-+	vectors = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 
- 	for (addr = VMALLOC_END; addr; addr += PGDIR_SIZE)
- 		pmd_clear(pmd_off_k(addr));
-@@ -429,7 +425,7 @@ void __init paging_init(void)
- 	top_pmd = pmd_off_k(0xffff0000);
- 
- 	/* allocate the zero page. */
--	zero_page = early_alloc(PAGE_SIZE);
-+	zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
- 
- 	bootmem_init();
- 
--- 
-2.7.4
+Sorry for I didn't provide clear explanation.
 
+The privileged means CAP_BLOCK_SUSPEND but not file permission. The file permission
+has already relaxed for non-root user. Then the expected behavior is that non-root
+process must has CAP_BLOCK_SUSPEND capability for writing wake_lock sysfs.
+
+But, the CAP_BLOCK_SUSPEND restrict can be bypassed:
+
+int main(int argc, char* argv[])
+{
+        int fd, ret = 0;
+
+        fd = open("/sys/power/wake_lock", O_RDWR);
+        if (fd < 0)
+                err(1, "open wake_lock");
+
+        if (dup2(fd, 1) != 1)	// overwrite the stdout with wake_lock
+                err(1, "dup2");
+        sleep(1);
+        execl("./string", "string");	//string has capability
+
+        return ret;
+}
+
+This program is an unpriviledged process (has no CAP_BLOCK_SUSPEND), it opened
+wake_lock sysfs and overwrited stdout. Then it executes the "string" program
+that has CAP_BLOCK_SUSPEND. The string program writes to stdout, which means
+that it writes to wake_lock. So an unpriviledged opener can trick an priviledged
+writer for writing sysfs.  
+ 
+> And you are checking the namespace of the person trying to do the write
+> when the write happens, which is correct here, right?
+> 
+> If you really want to mess with wake locks in a namespaced environment,
+> then put it in a real namespaced environment, which is {HUGE HINT} not
+> sysfs.
+>
+
+I don't want to mess with wake locks in namespace.
+ 
+> So no, this patch isn't ok...
+>
+
+Thanks a lot!
+Joey Lee 
