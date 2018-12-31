@@ -2,112 +2,95 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA88C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09B9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4AD20B1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2564620B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 08:24:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lL9PqDvS"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GgqVkxlL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeLaIYa (ORCPT
+        id S1727153AbeLaIYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 03:24:30 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52003 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeLaIY3 (ORCPT
+        Mon, 31 Dec 2018 03:24:34 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:31572 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbeLaIYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 03:24:29 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so35213422ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 00:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x/dJbjiOAY3ymU6pajADp9+hSys+HJ1L9NBPmb3INQs=;
-        b=lL9PqDvSoOx02XKuKc4YXYvZEjuWMuahfKL9/Xlz+0U/k9gTkaDk+cOWtoH04IgSmI
-         6+tiQ+AC5KSIHUJhvxrLuW51jmhUH/fp2d6d2IdQqYmm7tzVKr+uUTGPjrm2BxV9mxgx
-         U5XykdJaTfL4SbVPowXm1de5Add8k69pE+f1VJEf3jVHdF9CWVnkAhzrkL5S07Hk7qZS
-         0VKs3/9VHcOojv1drHai35XhpBT3rppyZakSOnZ16wmPCBPCw4S3J6YiJXoFP4nYoj3f
-         izS9l3vG2opYLcvP8qVG/JCooLA5ZOCLL3mvAUeYr7rfOtsRodvRuqV8QHrc0vfnpbmI
-         aUpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x/dJbjiOAY3ymU6pajADp9+hSys+HJ1L9NBPmb3INQs=;
-        b=WFBQy87QaHvYhk2triAV3PJghegxjQw/9cSsGW+gasZERvxGH1vmg5DFtiaenPmQbo
-         R25jDK968Or4wyarmbC3X/ROTubKvakcgXtZrB1SPoMJk2N5fcfrIQugZxk+SmBZ5ZMY
-         wn0FveL2X0FJ08v1ydp3Ag8gHXS+vietzfeKR2omDu73YsdBeRWlPkiWdVkpDPnY3Rcs
-         K/3BdAQN8EEHfZ8mpbirXYaokTXdQ7vcs4kjJprCZvxOB1SraCUMF3d1ajFq3232UEQq
-         exOkpueMJsybtaOESZSOauLS+zCzi5vc+7JaHeIvrO2azgfnv5Y9Av7XHCgEUGK0QxUg
-         9xJQ==
-X-Gm-Message-State: AJcUukd63psQEvSNjL9K0CKtTfjdIZ+ZYQ5Ek/qjunSiY6JBSL599HBs
-        vKEdYu5TAxZkT/Xp2q9QdrTFGGA3+tNfI24KZ/pGNQ==
-X-Google-Smtp-Source: AFSGD/WAXRR32TGOAsq8ckXtNG4WI9cS6EgN+hAJoP8QpGjd2i1aJD1h4MIBx0fPKKhWRr2JmBQqnyNtZYsKApO51K0=
-X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr20595383itl.144.1546244667674;
- Mon, 31 Dec 2018 00:24:27 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000007beca9057e4c8c14@google.com> <CACT4Y+Yx4BJw=F_PMx9a8AjPKzEwhzLnzt9K-dgkBoNkKQj2+g@mail.gmail.com>
- <ef2508c9-d069-2143-09a6-a90b9ef12568@I-love.SAKURA.ne.jp>
-In-Reply-To: <ef2508c9-d069-2143-09a6-a90b9ef12568@I-love.SAKURA.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 31 Dec 2018 09:24:16 +0100
-Message-ID: <CACT4Y+YYwYDnqFmMwfSg6UNXnrbh46bo0jp7ijbej8nkDDmBXQ@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in ndisc_alloc_skb
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     syzbot <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 31 Dec 2018 03:24:32 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id wBV8OIjs008355;
+        Mon, 31 Dec 2018 17:24:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBV8OIjs008355
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546244662;
+        bh=MSX7E/Yr9wKRJPYXLcNN01TdcBq4zxC6Gw6XsUjaLF4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GgqVkxlL2rzuH5ZCWkx9kSR2xufulpUA3iFmrIf1SfG9Vp+UrLBTJdafFnHYqsPq1
+         w2qrmJE2Slxtlh/schtjztYO5ypfWP+Hj/2c76xAxajTTBqZKCfE2ob9yMqgNlWYzl
+         TnwWvcpX5H1kM2xfqQgapag1DMVOPtn1W338TaY5VtWJYlm07gZ4iSAwM5FDXFtgSU
+         u9b/ko61kejrLas6I8YyjmR0nw9TDT73Vst4m3WtdILtc5h1sB/3izf+VHsAxLU5u+
+         RlE5pNOGKYMJQ8xcjNDenGdbNO9Yz/t0iwqakkQtjHG7r7su5wfV/4aVO06ynO6GzS
+         BEDLyE7x/loBQ==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] kbuild: make LINUX_VERSION_CODE in <linux/version.h> more readable
+Date:   Mon, 31 Dec 2018 17:24:11 +0900
+Message-Id: <1546244651-10447-4-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546244651-10447-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1546244651-10447-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 9:17 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2018/12/31 16:49, Dmitry Vyukov wrote:
-> > On Mon, Dec 31, 2018 at 8:42 AM syzbot
-> > <syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com> wrote:
-> >>
-> >> Hello,
-> >>
-> >> syzbot found the following crash on:
-> >>
-> >> HEAD commit:    ef4ab8447aa2 selftests: bpf: install script with_addr.sh
-> >> git tree:       bpf-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=14a28b6e400000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=7e7e2279c0020d5f
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=ea7d9cb314b4ab49a18a
-> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> >>
-> >> Unfortunately, I don't have any reproducer for this crash yet.
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+ea7d9cb314b4ab49a18a@syzkaller.appspotmail.com
-> >
-> > Since this involves OOMs and looks like a one-off induced memory corruption:
-> >
-> > #syz dup: kernel panic: corrupted stack end in wb_workfn
-> >
->
-> Why?
->
-> RCU stall in this case is likely to be latency caused by flooding of printk().
+Makefile does not need to calculate LINUX_VERSION_CODE.
+Let's leave it to the preprocessor.
 
-Just a hypothesis. OOMs lead to arbitrary memory corruptions, so can
-cause stalls as well. But can be what you said too. I just thought
-that cleaner dashboard is more useful than a large assorted pile of
-crashes. If you think it's actionable in some way, feel free to undup.
+This commit changes include/generated/uapi/linux/version.h as follows:
+
+Before:
+
+  #define LINUX_VERSION_CODE 267264
+  #define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
+After:
+
+  #define LINUX_VERSION_CODE KERNEL_VERSION(4, 20, 0)
+  #define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
+The latter is more human-readable in my opinion.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 437d603..1ebf5ed 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1131,8 +1131,7 @@ define filechk_utsrelease.h
+ endef
+ 
+ define filechk_version.h
+-	echo \#define LINUX_VERSION_CODE $(shell                         \
+-	expr $(VERSION) \* 65536 + 0$(PATCHLEVEL) \* 256 + 0$(SUBLEVEL)); \
++	echo '#define LINUX_VERSION_CODE KERNEL_VERSION($(VERSION), $(PATCHLEVEL), $(SUBLEVEL))'; \
+ 	echo '#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))'
+ endef
+ 
+-- 
+2.7.4
+
