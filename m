@@ -2,399 +2,292 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30E2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85A6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A992173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:43:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="jZ5rxEru";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="fk9oHKBT"
+	by mail.kernel.org (Postfix) with ESMTP id 69CEB20B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 09:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeLaJnV (ORCPT
+        id S1727197AbeLaJv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 04:43:21 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:37438 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726457AbeLaJnU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 04:43:20 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBV9dNc5016806;
-        Mon, 31 Dec 2018 01:43:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=/BSMV/bfcgNm4pHlZ7/dU1kq3MwvnGXQKr3oObgKw+g=;
- b=jZ5rxEruX9KjTw+/UbPDZr9eIaX3EbXTRBsav/zgB+x8Cz1jMhrrgjktcKh0Lz68PgRB
- UG972oOYws9sBXMHNCYwlksuf7763mcAGLbxQymPsh6mQM8xRM/2PkPMUAywWGcgFdt8
- 53+UW99MV24mbgR6vD2mm/Kw9/v/qcxbZla+d3Nc3gwFCIPQt8WOiEu1sACmjbRP1DGs
- gHsYCUzQcTy0CsOGD7mByW/TK27GvpD4VmnIrAmE8cRqBKLeG36yY6vbzc+k/SXeCtAc
- /YG3RIOIIK7gm/snMcvVvky5FLmLsJLMAI+RGURF+y9mkYMHJ7NKSO6QVqGlkVHZXkbR Ng== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2055.outbound.protection.outlook.com [104.47.36.55])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2pp5d1fvcn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 31 Dec 2018 01:42:59 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/BSMV/bfcgNm4pHlZ7/dU1kq3MwvnGXQKr3oObgKw+g=;
- b=fk9oHKBTfYBa1Peim0Sjiz9ehbbkR8BjezOsY+lFbYwUkeWh9tnndpriiZ0hSKfWRRmAUQjwsfw3X0Y3L4WR5sWe4gUVrs9ipUiIUkmrUOrrnxh7CzTPv7g5okkhIrVljUz0IDJMafgxPLjObBYuWIsUllf2VQKRdCmpTphaAjQ=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB4965.namprd07.prod.outlook.com (52.135.238.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Mon, 31 Dec 2018 09:42:55 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e97e:1c66:94bc:24ef]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e97e:1c66:94bc:24ef%3]) with mapi id 15.20.1471.019; Mon, 31 Dec 2018
- 09:42:55 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     kbuild test robot <lkp@intel.com>
-CC:     "kbuild-all@01.org" <kbuild-all@01.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Topic: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Index: AQHUmtItEP31Hrx74EuIb6kD4d3L1KWMs42AgAvqBiA=
-Date:   Mon, 31 Dec 2018 09:42:55 +0000
-Message-ID: <BYAPR07MB4709D1D286EAD3A794987E51DDB20@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1545577992-4013-6-git-send-email-pawell@cadence.com>
- <201812240317.VglTVDie%fengguang.wu@intel.com>
-In-Reply-To: <201812240317.VglTVDie%fengguang.wu@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-tag-bcast: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNzA2NDcyZWUtMGNlMC0xMWU5LTg3MjktMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDcwNjQ3MmVmLTBjZTAtMTFlOS04NzI5LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iODA1MSIgdD0iMTMxOTA3MjI5NzMyMTQ5NDMxIiBoPSJtT2xWa3k4SXRvRVdzQi9WOFNNc0FJYk9SYmc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-paste: 
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB4965;20:RuXS+x6Vxgur+4s6/NWLfCywVx9NKZHN7+/RiTRFG8RclSFjgxWt7MXmSX59oPQ2yz/GBkRyiuvhTYiN3NFBS/ASiiohd1amLPflCjDQK4gmkznDSNLG8E1IE4YSmiEouOYV4NNqqVCnL0xc1HgMxwz8DTNycfXYb4MiAYfwBoM3OlxNGno8kbzKcgguwArFqFRvw7HEpnfg9V55mgBorok6Cy1RC5ROeWWMgWCyIF4xLRsEwF84cYDK3KCwTfKJ
-x-ms-office365-filtering-correlation-id: 83277671-7e1f-4726-bb5d-08d66f04577e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB4965;
-x-ms-traffictypediagnostic: BYAPR07MB4965:
-x-microsoft-antispam-prvs: <BYAPR07MB49653360AF951E36EAC70E26DDB20@BYAPR07MB4965.namprd07.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220055)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4965;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4965;
-x-forefront-prvs: 0903DD1D85
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(39850400004)(366004)(346002)(189003)(199004)(36092001)(186003)(7416002)(26005)(4001150100001)(7736002)(2906002)(6916009)(486006)(316002)(74316002)(54906003)(76176011)(7696005)(6506007)(476003)(97736004)(25786009)(105586002)(446003)(106356001)(102836004)(6436002)(8936002)(229853002)(81156014)(4326008)(81166006)(6346003)(8676002)(305945005)(11346002)(3846002)(6116002)(53936002)(33656002)(71190400001)(71200400001)(55016002)(6306002)(9686003)(575784001)(39060400002)(478600001)(5024004)(966005)(5660300001)(256004)(99286004)(14454004)(14444005)(68736007)(345774005)(66066001)(86362001)(6246003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4965;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: INADhZ3oKkEcxhbVP5LzgTfGEUpGfDUF1LWDpb0OMvdXJb/GDKOq6oYsLyhukrbA9ppttCnN4SemGqSb5GoYzLERSIj6fOm1W1nsw2LSOIVt7wZjtJjSS0Mx56oyYquPTMA91+9XTmXY3PtS3737YypfP8mO9hbZ3B/XItmycDUO9qywVT2z/zvNjoYIwTIqzAVxtynenMwSud62r0gTK83/DtMpZgQJPmq2f0tsrSd06vYboy8VYf03PB9PhCAhAr0MXG+m7X+7RY42lRPtWrFwl/kEKOcLhxHK2vGz/s72M8i9VKadXX7zF76igUuH
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 31 Dec 2018 04:51:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41484 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726867AbeLaJv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 04:51:56 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 346775F73A;
+        Mon, 31 Dec 2018 09:51:55 +0000 (UTC)
+Received: from localhost (ovpn-200-20.brq.redhat.com [10.40.200.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3761F5D717;
+        Mon, 31 Dec 2018 09:51:44 +0000 (UTC)
+Date:   Mon, 31 Dec 2018 10:51:43 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     syzbot <syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, edumazet@google.com, jasowang@redhat.com,
+        linux-kernel@vger.kernel.org, mst@redhat.com,
+        netdev@vger.kernel.org, peterpenkov96@gmail.com,
+        sd@queasysnail.net, syzkaller-bugs@googlegroups.com,
+        willemb@google.com, brouer@redhat.com
+Subject: Re: KASAN: slab-out-of-bounds Read in tun_net_xmit (2)
+Message-ID: <20181231105143.2b2d2b63@redhat.com>
+In-Reply-To: <0000000000005c921a057e4114a2@google.com>
+References: <0000000000008fe18f05711982f1@google.com>
+        <0000000000005c921a057e4114a2@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83277671-7e1f-4726-bb5d-08d66f04577e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Dec 2018 09:42:55.6778
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4965
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812310090
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 31 Dec 2018 09:51:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Hi MST and Jason,
 
-I can't recreate these issue on my environment. I use  gcc (Ubuntu 7.3.0-27=
-ubuntu1~18.04) 7.3.0.  Maybe there are some differenct between these two co=
-mpilers.=20
+Could you please take a look at this?  This bug is caused by a thread
+resizing the tun-queue (via tun_queue_resize -> ptr_ring_resize_multiple).
+And error happens in tun_net_xmit -> ptr_ring_produce.  My guess is bug
+happens when reading r->queue in ptr_ring_produce.
 
-Do you have any idea how I should change this fragment of code:
-		sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x",
-			bRequestType, bRequest,
-			cpu_to_le16(wValue) & 0xff,
-			cpu_to_le16(wValue) >> 8,
-			cpu_to_le16(wIndex) & 0xff,
-			cpu_to_le16(wIndex) >> 8,
-			cpu_to_le16(wLength) & 0xff,
-			cpu_to_le16(wLength) >> 8);
+I've look at the code (see diff comments below), but I cannot spot the
+issue as the (implicit) memory barrier of a spinlock should cover the
+cases I can imagine.
 
-to remove "restricted __le16 degrades to integer" warnings ?
+diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+index 6894976b54e3..75a262d274bb 100644
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -107,6 +107,12 @@ static inline bool ptr_ring_full_bh(struct ptr_ring *r)
+  */
+ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
+ {
++       barrier(); // Compiler barrier, should not be needed as
++                  // spinlock are suppose-to-be a full barrier
++
++       // r->queue array can be kvfree'ed by ptr_ring_resize_multiple
++       // and reassigned by __ptr_ring_swap_queue, it should be safe
++       // as everything is called inder r->producer_lock spinlock.
+        if (unlikely(!r->size) || r->queue[r->producer])
+                return -ENOSPC;
+ 
+@@ -578,6 +584,8 @@ static inline void **__ptr_ring_swap_queue(struct ptr_ring *r, void **queue,
+        r->consumer_head = 0;
+        r->consumer_tail = 0;
+        old = r->queue;
++       // Do we need some WRITE_ONCE for r->queue assignmment?
++       // or smp_wmb()
+        r->queue = queue;
+ 
+        return old;
+@@ -640,6 +648,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+        for (i = 0; i < nrings; ++i) {
+                spin_lock_irqsave(&(rings[i])->consumer_lock, flags);
+                spin_lock(&(rings[i])->producer_lock);
++               // happens under lock(s)
+                queues[i] = __ptr_ring_swap_queue(rings[i], queues[i],
+                                                  size, gfp, destroy);
+                spin_unlock(&(rings[i])->producer_lock);
+@@ -647,7 +656,7 @@ static inline int ptr_ring_resize_multiple(struct ptr_ring **rings,
+        }
+ 
+        for (i = 0; i < nrings; ++i)
+-               kvfree(queues[i]);
++               kvfree(queues[i]); // old r->queue is free'ed here
+ 
+        kfree(queues);
 
-Maybe I should cast all to u8. Then this code will look like:
-		sprintf(str, "%02x %02x %02x %02x %02x %02x %02x %02x",
-			bRequestType, bRequest,
-			(u8)(cpu_to_le16(wValue) & 0xff),
-			(u8)(cpu_to_le16(wValue) >> 8),
-			(u8)(cpu_to_le16(wIndex) & 0xff),
-			(u8)(cpu_to_le16(wIndex) >> 8),
-			(u8)(cpu_to_le16(wLength) & 0xff),
-			(u8)(cpu_to_le16(wLength) >> 8));
 
-Should it Fix these warnings ?
+On Sun, 30 Dec 2018 10:01:03 -0800
+syzbot <syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com> wrote:
 
-Cheers,
-Pawel
+> syzbot has found a reproducer for the following crash on:
+> 
+> HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14494353400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4b137b8ba637eb77
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8993c0fa96d57c399735
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a01577400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=174baeab400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+8993c0fa96d57c399735@syzkaller.appspotmail.com
+> 
+> IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+> 8021q: adding VLAN 0 to HW filter on device batadv0
+> nf_conntrack: default automatic helper assignment has been turned off for  
+> security reasons and CT-based  firewall rule not found. Use the iptables CT  
+> target to attach helpers instead.
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in __ptr_ring_produce  
+> include/linux/ptr_ring.h:110 [inline]
+> BUG: KASAN: slab-out-of-bounds in ptr_ring_produce  
+> include/linux/ptr_ring.h:133 [inline]
+> BUG: KASAN: slab-out-of-bounds in tun_net_xmit+0x197e/0x1be0  
+> drivers/net/tun.c:1119
+> Read of size 8 at addr ffff88809fa64f48 by task swapper/0/0
+> 
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0+ #363
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Call Trace:
+>   <IRQ>
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+>   print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>   kasan_report_error mm/kasan/report.c:354 [inline]
+>   kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>   __ptr_ring_produce include/linux/ptr_ring.h:110 [inline]
+>   ptr_ring_produce include/linux/ptr_ring.h:133 [inline]
+>   tun_net_xmit+0x197e/0x1be0 drivers/net/tun.c:1119
+>   __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
+>   netdev_start_xmit include/linux/netdevice.h:4391 [inline]
+>   xmit_one net/core/dev.c:3278 [inline]
+>   dev_hard_start_xmit+0x286/0xc80 net/core/dev.c:3294
+>   sch_direct_xmit+0x48b/0x1130 net/sched/sch_generic.c:327
+>   qdisc_restart net/sched/sch_generic.c:390 [inline]
+>   __qdisc_run+0x624/0x19f0 net/sched/sch_generic.c:398
+>   qdisc_run include/net/pkt_sched.h:121 [inline]
+>   __dev_xmit_skb net/core/dev.c:3473 [inline]
+>   __dev_queue_xmit+0x190c/0x3ac0 net/core/dev.c:3832
+>   dev_queue_xmit+0x17/0x20 net/core/dev.c:3897
+>   neigh_hh_output include/net/neighbour.h:498 [inline]
+>   neigh_output include/net/neighbour.h:506 [inline]
+>   ip6_finish_output2+0x144e/0x2930 net/ipv6/ip6_output.c:120
+>   ip6_finish_output+0x583/0xc50 net/ipv6/ip6_output.c:154
+>   NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+>   ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
+>   dst_output include/net/dst.h:444 [inline]
+>   NF_HOOK include/linux/netfilter.h:289 [inline]
+>   mld_sendpack+0xac9/0xfa0 net/ipv6/mcast.c:1683
+>   mld_send_initial_cr.part.32+0x114/0x160 net/ipv6/mcast.c:2100
+>   mld_send_initial_cr net/ipv6/mcast.c:2084 [inline]
+>   mld_dad_timer_expire+0x42/0x1b0 net/ipv6/mcast.c:2119
+>   call_timer_fn+0x272/0x920 kernel/time/timer.c:1325
+>   expire_timers kernel/time/timer.c:1362 [inline]
+>   __run_timers+0x7e5/0xc70 kernel/time/timer.c:1681
+>   run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+>   __do_softirq+0x30c/0xb2e kernel/softirq.c:292
+>   invoke_softirq kernel/softirq.c:373 [inline]
+>   irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+>   exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>   smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1062
+>   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+>   </IRQ>
+> RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:58
+> Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 a3 84 c9 f9 48 8b 45 d8 e9 ca  
+> fe ff ff 48 89 df e8 92 84 c9 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
+> 00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+> RSP: 0018:ffffffff89607c20 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> RAX: dffffc0000000000 RBX: 1ffffffff12c0f88 RCX: 0000000000000000
+> RDX: 1ffffffff12e4969 RSI: 0000000000000001 RDI: ffffffff89724b48
+> RBP: ffffffff89607c20 R08: ffffffff8967aec0 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff89607ce0
+> R13: ffffffff8a3a3260 R14: 0000000000000000 R15: 0000000000000000
+>   arch_safe_halt arch/x86/include/asm/paravirt.h:156 [inline]
+>   default_idle+0xbf/0x490 arch/x86/kernel/process.c:564
+>   arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+>   default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+>   cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+>   do_idle+0x3db/0x5b0 kernel/sched/idle.c:262
+>   cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
+>   rest_init+0x243/0x372 init/main.c:443
+>   arch_call_rest_init+0xe/0x1b
+>   start_kernel+0x873/0x8ae init/main.c:741
+>   x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+>   x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+>   secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+> 
+> Allocated by task 7497:
+>   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>   set_track mm/kasan/kasan.c:460 [inline]
+>   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>   __do_kmalloc_node mm/slab.c:3684 [inline]
+>   __kmalloc_node+0x50/0x70 mm/slab.c:3691
+>   kmalloc_node include/linux/slab.h:589 [inline]
+>   kvmalloc_node+0x65/0xf0 mm/util.c:416
+>   kvmalloc include/linux/mm.h:577 [inline]
+>   kvmalloc_array include/linux/mm.h:595 [inline]
+>   __ptr_ring_init_queue_alloc include/linux/ptr_ring.h:475 [inline]
+>   ptr_ring_resize_multiple include/linux/ptr_ring.h:635 [inline]
+>   tun_queue_resize drivers/net/tun.c:3606 [inline]
+>   tun_device_event+0x56a/0x106c drivers/net/tun.c:3625
+>   notifier_call_chain+0x17e/0x380 kernel/notifier.c:93
+>   __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+>   raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+>   call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1739
+>   call_netdevice_notifiers_extack net/core/dev.c:1751 [inline]
+>   call_netdevice_notifiers net/core/dev.c:1765 [inline]
+>   dev_change_tx_queue_len+0x188/0x270 net/core/dev.c:7742
+>   dev_ifsioc+0x79b/0xa80 net/core/dev_ioctl.c:287
+>   dev_ioctl+0x1b5/0xcc0 net/core/dev_ioctl.c:488
+>   sock_do_ioctl+0x1f6/0x420 net/socket.c:973
+>   sock_ioctl+0x313/0x690 net/socket.c:1074
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+>   ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Freed by task 4400:
+>   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>   set_track mm/kasan/kasan.c:460 [inline]
+>   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>   __cache_free mm/slab.c:3498 [inline]
+>   kfree+0xcf/0x230 mm/slab.c:3817
+>   single_release+0x8f/0xb0 fs/seq_file.c:597
+>   __fput+0x385/0xa30 fs/file_table.c:278
+>   ____fput+0x15/0x20 fs/file_table.c:309
+>   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>   exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+>   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> The buggy address belongs to the object at ffff88809fa64f40
+>   which belongs to the cache kmalloc-32 of size 32
+> The buggy address is located 8 bytes inside of
+>   32-byte region [ffff88809fa64f40, ffff88809fa64f60)
+> The buggy address belongs to the page:
+> page:ffffea00027e9900 count:1 mapcount:0 mapping:ffff88812c3f01c0  
+> index:0xffff88809fa64fc1
+> flags: 0x1fffc0000000200(slab)
+> raw: 01fffc0000000200 ffffea0002837048 ffffea00028f0888 ffff88812c3f01c0
+> raw: ffff88809fa64fc1 ffff88809fa64000 000000010000003f 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>   ffff88809fa64e00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+>   ffff88809fa64e80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> > ffff88809fa64f00: fb fb fb fb fc fc fc fc 00 fc fc fc fc fc fc fc  
+>                                                ^
+>   ffff88809fa64f80: 06 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>   ffff88809fa65000: fc fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00
+> ==================================================================
+> 
 
->Thank you for the patch! Perhaps something to improve:
->
->
->
->[auto build test WARNING on usb/usb-testing]
->
->[also build test WARNING on v4.20-rc7 next-20181221]
->
->[if your patch is applied to the wrong git tree, please drop us a note to =
-help improve the system]
->
->
->
->url:    https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_=
-0day-2Dci_linux_commits_Pawel-2DLaszczak_Introduced-
->2Dnew-2DCadence-2DUSBSS-2DDRD-2DDriver_20181223-2D231813&d=3DDwIBAg&c=3DaU=
-q983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-
->_haXqY&r=3De1OgxfvkL0qo9XO6fX1gscva-w03uSYC1nIyxl89-rI&m=3DJS8MUBEUPN46-me=
-57xUY-
->7hoBbSrlgd2SCB9ahNjK4s&s=3DbhpHqRyEtMdMbWdGoBqQ9Pz9wq7pRA7-OohrGik3BpM&e=
-=3D
->
->base:   https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
->3A__git.kernel.org_pub_scm_linux_kernel_git_gregkh_usb.git&d=3DDwIBAg&c=3D=
-aUq983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-
->_haXqY&r=3De1OgxfvkL0qo9XO6fX1gscva-w03uSYC1nIyxl89-rI&m=3DJS8MUBEUPN46-me=
-57xUY-
->7hoBbSrlgd2SCB9ahNjK4s&s=3DVf__lGpV27zdf1egowm9p8YBJjz9aMmgbi8nW_Z_DLk&e=
-=3D usb-testing
->
->config: x86_64-allmodconfig (attached as .config)
->
->compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
->
->reproduce:
->
->        # save the attached .config to linux build tree
->
->        make ARCH=3Dx86_64
->
->
->
->All warnings (new ones prefixed by >>):
->
->
->
->>> drivers/usb/common/debug.c:253:25: warning: restricted __le16 degrades =
-to integer
->
->   drivers/usb/common/debug.c:254:25: warning: restricted __le16 degrades =
-to integer
->
->   drivers/usb/common/debug.c:255:25: warning: restricted __le16 degrades =
-to integer
->
->   drivers/usb/common/debug.c:256:25: warning: restricted __le16 degrades =
-to integer
->
->   drivers/usb/common/debug.c:257:25: warning: restricted __le16 degrades =
-to integer
->
->   drivers/usb/common/debug.c:258:25: warning: restricted __le16 degrades =
-to integer
->
->
->
->vim +253 drivers/usb/common/debug.c
->
->
->
->cefb8b21 Pawel Laszczak 2018-12-23  205
->
->cefb8b21 Pawel Laszczak 2018-12-23  206  /**
->
->cefb8b21 Pawel Laszczak 2018-12-23  207   * usb_decode_ctrl - returns a st=
-ring representation of ctrl request
->
->cefb8b21 Pawel Laszczak 2018-12-23  208   */
->
->cefb8b21 Pawel Laszczak 2018-12-23  209  const char *usb_decode_ctrl(char =
-*str, __u8 bRequestType, __u8 bRequest,
->
->cefb8b21 Pawel Laszczak 2018-12-23  210  			    __u16 wValue,  __u16 wInde=
-x, __u16 wLength)
->
->cefb8b21 Pawel Laszczak 2018-12-23  211  {
->
->cefb8b21 Pawel Laszczak 2018-12-23  212  	switch (bRequest) {
->
->cefb8b21 Pawel Laszczak 2018-12-23  213  	case USB_REQ_GET_STATUS:
->
->cefb8b21 Pawel Laszczak 2018-12-23  214  		usb_decode_get_status(bRequestT=
-ype, wIndex, wLength, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  215  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  216  	case USB_REQ_CLEAR_FEATURE:
->
->cefb8b21 Pawel Laszczak 2018-12-23  217  	case USB_REQ_SET_FEATURE:
->
->cefb8b21 Pawel Laszczak 2018-12-23  218  		usb_decode_set_clear_feature(bR=
-equestType, bRequest, wValue,
->
->cefb8b21 Pawel Laszczak 2018-12-23  219  					     wIndex, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  220  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  221  	case USB_REQ_SET_ADDRESS:
->
->cefb8b21 Pawel Laszczak 2018-12-23  222  		usb_decode_set_address(wValue, =
-str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  223  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  224  	case USB_REQ_GET_DESCRIPTOR:
->
->cefb8b21 Pawel Laszczak 2018-12-23  225  	case USB_REQ_SET_DESCRIPTOR:
->
->cefb8b21 Pawel Laszczak 2018-12-23  226  		usb_decode_get_set_descriptor(b=
-RequestType, bRequest, wValue,
->
->cefb8b21 Pawel Laszczak 2018-12-23  227  					      wIndex, wLength, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  228  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  229  	case USB_REQ_GET_CONFIGURATION:
->
->cefb8b21 Pawel Laszczak 2018-12-23  230  		usb_decode_get_configuration(wL=
-ength, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  231  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  232  	case USB_REQ_SET_CONFIGURATION:
->
->cefb8b21 Pawel Laszczak 2018-12-23  233  		usb_decode_set_configuration(wV=
-alue, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  234  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  235  	case USB_REQ_GET_INTERFACE:
->
->cefb8b21 Pawel Laszczak 2018-12-23  236  		usb_decode_get_intf(wIndex, wLe=
-ngth, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  237  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  238  	case USB_REQ_SET_INTERFACE:
->
->cefb8b21 Pawel Laszczak 2018-12-23  239  		usb_decode_set_intf(wValue, wIn=
-dex, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  240  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  241  	case USB_REQ_SYNCH_FRAME:
->
->cefb8b21 Pawel Laszczak 2018-12-23  242  		usb_decode_synch_frame(wIndex, =
-wLength, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  243  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  244  	case USB_REQ_SET_SEL:
->
->cefb8b21 Pawel Laszczak 2018-12-23  245  		usb_decode_set_sel(wLength, str=
-);
->
->cefb8b21 Pawel Laszczak 2018-12-23  246  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  247  	case USB_REQ_SET_ISOCH_DELAY:
->
->cefb8b21 Pawel Laszczak 2018-12-23  248  		usb_decode_set_isoch_delay(wVal=
-ue, str);
->
->cefb8b21 Pawel Laszczak 2018-12-23  249  		break;
->
->cefb8b21 Pawel Laszczak 2018-12-23  250  	default:
->
->cefb8b21 Pawel Laszczak 2018-12-23  251  		sprintf(str, "%02x %02x %02x %0=
-2x %02x %02x %02x %02x",
->
->cefb8b21 Pawel Laszczak 2018-12-23  252  			bRequestType, bRequest,
->
->cefb8b21 Pawel Laszczak 2018-12-23 @253  			cpu_to_le16(wValue) & 0xff,
->
->cefb8b21 Pawel Laszczak 2018-12-23  254  			cpu_to_le16(wValue) >> 8,
->
->cefb8b21 Pawel Laszczak 2018-12-23  255  			cpu_to_le16(wIndex) & 0xff,
->
->cefb8b21 Pawel Laszczak 2018-12-23  256  			cpu_to_le16(wIndex) >> 8,
->
->cefb8b21 Pawel Laszczak 2018-12-23  257  			cpu_to_le16(wLength) & 0xff,
->
->cefb8b21 Pawel Laszczak 2018-12-23  258  			cpu_to_le16(wLength) >> 8);
->
->cefb8b21 Pawel Laszczak 2018-12-23  259  	}
->
->cefb8b21 Pawel Laszczak 2018-12-23  260
->
->cefb8b21 Pawel Laszczak 2018-12-23  261  	return str;
->
->cefb8b21 Pawel Laszczak 2018-12-23  262  }
->
->cefb8b21 Pawel Laszczak 2018-12-23  263  EXPORT_SYMBOL_GPL(usb_decode_ctrl=
-);
->
->cefb8b21 Pawel Laszczak 2018-12-23  264
->
->
->
->:::::: The code at line 253 was first introduced by commit
->
->:::::: cefb8b2176410ef0aacc22411a64f8a157612f14 usb:common Separated decod=
-ing functions from dwc3 driver.
->
->
->
->:::::: TO: Pawel Laszczak <pawell@cadence.com>
->
->:::::: CC: 0day robot <lkp@intel.com>
->
->
->
->---
->
->0-DAY kernel test infrastructure                Open Source Technology Cen=
-ter
->
->https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lists.01.org_piperm=
-ail_kbuild-
->2Dall&d=3DDwIBAg&c=3DaUq983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-_haXqY&r=3De1Ogx=
-fvkL0qo9XO6fX1gscva-w03uSYC1nIyxl89-
->rI&m=3DJS8MUBEUPN46-me57xUY-7hoBbSrlgd2SCB9ahNjK4s&s=3D7vN3rhLkFNcUQ6jriRP=
-_jESizA-Wm6VxtiGb8qhTKqU&e=3D                   Intel
->Corporation
 
+
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
