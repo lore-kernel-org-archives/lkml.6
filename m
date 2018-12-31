@@ -2,111 +2,243 @@ Return-Path: <SRS0=w+lf=PI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 907C3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECABFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3A920B1F
-	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A98CB20B1F
+	for <linux-kernel@archiver.kernel.org>; Mon, 31 Dec 2018 06:31:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LYXMn4nz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeLaG2j (ORCPT
+        id S1727053AbeLaGb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 01:28:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49162 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726228AbeLaG2j (ORCPT
+        Mon, 31 Dec 2018 01:31:29 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36973 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbeLaGb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 01:28:39 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBV6K1jZ174339
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 01:28:37 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pqdpngd47-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 01:28:37 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 31 Dec 2018 06:28:36 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 31 Dec 2018 06:28:32 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBV6SVwv2621828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 31 Dec 2018 06:28:31 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B154A4053;
-        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E33AA404D;
-        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.23])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 31 Dec 2018 06:28:31 +0000 (GMT)
-Date:   Mon, 31 Dec 2018 08:28:29 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Kyle Spiers <ksspiers@google.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] include/linux/gfp.h: fix typo
-References: <20181227232354.64562-1-ksspiers@google.com>
+        Mon, 31 Dec 2018 01:31:29 -0500
+Received: by mail-io1-f67.google.com with SMTP id g8so9466550iok.4
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Dec 2018 22:31:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yT+tsqBctM7vCiYLh3mcOtrpbxMPManNTH74WEzE148=;
+        b=LYXMn4nz+lvDh/icutGeVJV5+eniIw9pXAb7Dv3ufhOW/yO54BGB8o2LSSTAwKxRMZ
+         Q7ZiQgX9CQ5lPlZEgYDZKX8oR+xJa01GNMrl2EeVt/nATK9+Ge5a2jv56SoiAzCyZNMU
+         hmi+TvCJ6zwiFdii0w6DzYjo7Oqz20/MhM1/hXuVGGAyvMT7uVRG6FpUof+/n0RF7S4d
+         292D2+K6+7EePFefkI8cciyrbQA+ydAcgL6dqbGANbilZZw3pbNR94KIorS445nfPYdR
+         h3gxCJ0vjoKx+TyI+zx1bBDzIiBF8vWjzPhF+y42VqA5B7BH3dAWnxCw9oRrKAxCWY+e
+         tslg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yT+tsqBctM7vCiYLh3mcOtrpbxMPManNTH74WEzE148=;
+        b=iZUMwy9kmDuk8SzKBlo6AmJohSN2nKuiD29AQ2E72hy5nEZExOdXkWMB96NXwMTWjp
+         8HsK0Csojeb9r61z+QeczydX9LCvHeTQ4lp6byWQ6CNCpt7+2elppZVvBEeO6wMT4Atz
+         f4GAZSW1Rct4B978PkdiGFaAON5TI/Aaxloi34V2ARbxX6AZwkpqmcdi59TjYMeofZ5Z
+         HA2cI7Y94D+rEmNKlj1BAGW2MNSNgGUvjjZY2td4RGR27UH5/rMDXBwnu6zBf5RjGQ1G
+         WXjimwDiQA0VX0R5eiutlHVkdb8x/ewgfAJRRiFEsVyx4jxLjS3zFYjLCN8O60pF7oX+
+         hChw==
+X-Gm-Message-State: AJcUukfsCNiHfG3BPkHHoZZ+dOaCBUmD4amntBpjB+FOvP3MEl927GiB
+        Mc17zGZnF/978JYjgzn04SZE3BNlcxAudEhbAPcLjA==
+X-Google-Smtp-Source: ALg8bN5wYys6/A0JTLwtF0KkhpoeNi9Jbukq4jt5Gki90McxNxDWIUdPmilN3vK+EM99t9jvFSRkuXQ19UkgDJKByDQ=
+X-Received: by 2002:a5d:8491:: with SMTP id t17mr25091347iom.11.1546237886942;
+ Sun, 30 Dec 2018 22:31:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227232354.64562-1-ksspiers@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18123106-0028-0000-0000-000003311917
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18123106-0029-0000-0000-000023EE5D12
-Message-Id: <20181231062828.GA20219@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812310059
+References: <000000000000b05d0c057e492e33@google.com> <9fe14b68-5a3c-5964-62b1-53a4ef4c0b76@lca.pw>
+In-Reply-To: <9fe14b68-5a3c-5964-62b1-53a4ef4c0b76@lca.pw>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 31 Dec 2018 07:31:15 +0100
+Message-ID: <CACT4Y+Y-WW-giKkihkMXkKxQ2mK7Lhc60fCta3TqssiWGM8-2A@mail.gmail.com>
+Subject: Re: kernel panic: corrupted stack end in wb_workfn
+To:     Qian Cai <cai@lca.pw>
+Cc:     syzbot <syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, guro@fb.com,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <jbacik@fb.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 03:23:54PM -0800, Kyle Spiers wrote:
-> Fix misspelled "satisfied"
-> 
-> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+On Mon, Dec 31, 2018 at 4:47 AM Qian Cai <cai@lca.pw> wrote:
+>
+> Ah, it has KASAN_EXTRA. Need this patch then.
+>
+> https://lore.kernel.org/lkml/20181228020639.80425-1-cai@lca.pw/
+>
+> or to use GCC from the HEAD which suppose to reduce the stack-size in half.
+>
+> shrink_page_list
+> shrink_inactive_list
+>
+> Those things are 7k each, so 32k would be soon gone.
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+I am not sure it's just KASAN. I reproduced stack overflow at this
+stack without KASAN:
+https://groups.google.com/forum/#!msg/syzkaller-bugs/ZaBzAJbn6i8/Py9FVlAqDQAJ
 
-> ---
->  include/linux/gfp.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 0705164f928c..5f5e25fd6149 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -81,7 +81,7 @@ struct vm_area_struct;
->   *
->   * %__GFP_HARDWALL enforces the cpuset memory allocation policy.
->   *
-> - * %__GFP_THISNODE forces the allocation to be satisified from the requested
-> + * %__GFP_THISNODE forces the allocation to be satisfied from the requested
->   * node with no fallbacks or placement policy enforcements.
->   *
->   * %__GFP_ACCOUNT causes the allocation to be accounted to kmemcg.
-> -- 
-> 2.20.1.415.g653613c723-goog
-> 
-> 
+Note: this was originally reported 5 months ago:
+https://groups.google.com/forum/#!msg/syzkaller-bugs/C7d0Hm6YcDM/nQeciKgtCgAJ
+so now at least in 2 releases and causes stream of induced crashes
+that people spent time debugging:
+https://groups.google.com/forum/#!msg/syzkaller-bugs/ZaBzAJbn6i8/Py9FVlAqDQAJ
+https://groups.google.com/forum/#!msg/syzkaller-bugs/GIpnqHiIEQg/5jzwQqqfCwAJ
+https://syzkaller.appspot.com/bug?id=26c906d472ea470c2cb58c77f08f964f347cbc68
+https://groups.google.com/forum/#!msg/syzkaller-bugs/Ovkbsq5qd84/FHsTYlsfDAAJ
+most likely more of these:
+https://syzkaller.appspot.com#upstream
 
--- 
-Sincerely yours,
-Mike.
 
+
+> On 12/30/18 10:41 PM, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    195303136f19 Merge tag 'kconfig-v4.21-2' of git://git.kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=176c0ebf400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7dc790609552d7
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=ec1b7575afef85a0e5ca
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a9a84b400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17199bb3400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+ec1b7575afef85a0e5ca@syzkaller.appspotmail.com
+> >
+> > Kernel panic - not syncing: corrupted stack end detected inside scheduler
+> > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.20.0+ #396
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> > 01/01/2011
+> > Workqueue: writeback wb_workfn (flush-8:0)
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+> >  panic+0x2ad/0x55f kernel/panic.c:189
+> >  schedule_debug kernel/sched/core.c:3285 [inline]
+> >  __schedule+0x1ec6/0x1ed0 kernel/sched/core.c:3394
+> >  preempt_schedule_common+0x1f/0xe0 kernel/sched/core.c:3596
+> >  preempt_schedule+0x4d/0x60 kernel/sched/core.c:3622
+> >  ___preempt_schedule+0x16/0x18
+> >  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:161 [inline]
+> >  _raw_spin_unlock_irqrestore+0xbb/0xd0 kernel/locking/spinlock.c:184
+> >  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
+> >  __remove_mapping+0x932/0x1af0 mm/vmscan.c:967
+> >  shrink_page_list+0x6610/0xc2e0 mm/vmscan.c:1461
+> >  shrink_inactive_list+0x77b/0x1c60 mm/vmscan.c:1961
+> >  shrink_list mm/vmscan.c:2273 [inline]
+> >  shrink_node_memcg+0x7a8/0x19a0 mm/vmscan.c:2538
+> >  shrink_node+0x3e1/0x17f0 mm/vmscan.c:2753
+> >  shrink_zones mm/vmscan.c:2987 [inline]
+> >  do_try_to_free_pages+0x3df/0x12a0 mm/vmscan.c:3049
+> >  try_to_free_pages+0x4d0/0xb90 mm/vmscan.c:3265
+> >  __perform_reclaim mm/page_alloc.c:3920 [inline]
+> >  __alloc_pages_direct_reclaim mm/page_alloc.c:3942 [inline]
+> >  __alloc_pages_slowpath+0xa5a/0x2db0 mm/page_alloc.c:4335
+> >  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
+> >  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
+> >  alloc_pages include/linux/gfp.h:509 [inline]
+> >  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
+> >  pagecache_get_page+0x396/0xf00 mm/filemap.c:1615
+> >  find_or_create_page include/linux/pagemap.h:322 [inline]
+> >  ext4_mb_load_buddy_gfp+0xddf/0x1e70 fs/ext4/mballoc.c:1158
+> >  ext4_mb_load_buddy fs/ext4/mballoc.c:1241 [inline]
+> >  ext4_mb_regular_allocator+0x634/0x1590 fs/ext4/mballoc.c:2190
+> >  ext4_mb_new_blocks+0x1de3/0x4840 fs/ext4/mballoc.c:4538
+> >  ext4_ext_map_blocks+0x2eef/0x6180 fs/ext4/extents.c:4404
+> >  ext4_map_blocks+0x8f7/0x1b60 fs/ext4/inode.c:636
+> >  mpage_map_one_extent fs/ext4/inode.c:2480 [inline]
+> >  mpage_map_and_submit_extent fs/ext4/inode.c:2533 [inline]
+> >  ext4_writepages+0x2564/0x4170 fs/ext4/inode.c:2884
+> >  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2335
+> >  __writeback_single_inode+0x20a/0x1660 fs/fs-writeback.c:1316
+> >  writeback_sb_inodes+0x71f/0x1210 fs/fs-writeback.c:1580
+> >  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1649
+> >  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1758
+> > oom_reaper: reaped process 7963 (syz-executor189), now anon-rss:0kB,
+> > file-rss:0kB, shmem-rss:0kB
+> > rsyslogd invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), order=0,
+> > oom_score_adj=0
+> >  wb_check_start_all fs/fs-writeback.c:1882 [inline]
+> >  wb_do_writeback fs/fs-writeback.c:1908 [inline]
+> >  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1942
+> >  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+> >  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+> >  kthread+0x35a/0x440 kernel/kthread.c:246
+> >  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> > CPU: 1 PID: 7840 Comm: rsyslogd Not tainted 4.20.0+ #396
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
+> > 01/01/2011
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
+> >  dump_header+0x253/0x1239 mm/oom_kill.c:451
+> >  oom_kill_process.cold.27+0x10/0x903 mm/oom_kill.c:966
+> >  out_of_memory+0x8ba/0x1480 mm/oom_kill.c:1133
+> >  __alloc_pages_may_oom mm/page_alloc.c:3666 [inline]
+> >  __alloc_pages_slowpath+0x230c/0x2db0 mm/page_alloc.c:4379
+> >  __alloc_pages_nodemask+0xa89/0xde0 mm/page_alloc.c:4549
+> >  alloc_pages_current+0x10c/0x210 mm/mempolicy.c:2106
+> >  alloc_pages include/linux/gfp.h:509 [inline]
+> >  __page_cache_alloc+0x38c/0x5b0 mm/filemap.c:924
+> >  page_cache_read mm/filemap.c:2373 [inline]
+> >  filemap_fault+0x1595/0x25f0 mm/filemap.c:2557
+> >  ext4_filemap_fault+0x82/0xad fs/ext4/inode.c:6317
+> >  __do_fault+0x100/0x6b0 mm/memory.c:2997
+> >  do_read_fault mm/memory.c:3409 [inline]
+> >  do_fault mm/memory.c:3535 [inline]
+> >  handle_pte_fault mm/memory.c:3766 [inline]
+> >  __handle_mm_fault+0x392f/0x5630 mm/memory.c:3890
+> >  handle_mm_fault+0x54f/0xc70 mm/memory.c:3927
+> >  do_user_addr_fault arch/x86/mm/fault.c:1475 [inline]
+> >  __do_page_fault+0x5f6/0xd70 arch/x86/mm/fault.c:1541
+> >  do_page_fault+0xf2/0x7e0 arch/x86/mm/fault.c:1572
+> >  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
+> > RIP: 0033:0x7f00f990e1fd
+> > Code: Bad RIP value.
+> > RSP: 002b:00007f00f6eade30 EFLAGS: 00010293
+> > RAX: 0000000000000fd2 RBX: 000000000111f170 RCX: 00007f00f990e1fd
+> > RDX: 0000000000000fff RSI: 00007f00f86e25a0 RDI: 0000000000000004
+> > RBP: 0000000000000000 R08: 000000000110a260 R09: 0000000000000000
+> > R10: 74616c7567657227 R11: 0000000000000293 R12: 000000000065e420
+> > R13: 00007f00f6eae9c0 R14: 00007f00f9f53040 R15: 0000000000000003
+> > Kernel Offset: disabled
+> > Rebooting in 86400 seconds..
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+> >
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/9fe14b68-5a3c-5964-62b1-53a4ef4c0b76%40lca.pw.
+> For more options, visit https://groups.google.com/d/optout.
