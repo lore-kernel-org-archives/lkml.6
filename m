@@ -6,118 +6,78 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1D3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89092C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 18:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399B620656
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618B221019
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 18:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726577AbfAAR5M (ORCPT
+        id S1726652AbfAASAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 12:57:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726144AbfAAR5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 12:57:11 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x01HsDrC138608
-        for <linux-kernel@vger.kernel.org>; Tue, 1 Jan 2019 12:57:10 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pr95hfu0c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 12:57:10 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 1 Jan 2019 17:57:09 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 1 Jan 2019 17:57:07 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x01Hv6co22151246
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 1 Jan 2019 17:57:06 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 531AEB2068;
-        Tue,  1 Jan 2019 17:57:06 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 31B66B2064;
-        Tue,  1 Jan 2019 17:57:06 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Jan 2019 17:57:06 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9DE6D16C3373; Tue,  1 Jan 2019 09:57:23 -0800 (PST)
-Date:   Tue, 1 Jan 2019 09:57:23 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>, Willy Tarreau <w@1wt.eu>,
-        mingo@kernel.org, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] rcutorture/nolibc: add a bit of documentation to
- explain how to use nolibc
-Reply-To: paulmck@linux.ibm.com
-References: <20181229180218.15798-1-w@1wt.eu>
- <20181229180218.15798-4-w@1wt.eu>
- <20181229223324.slqx3qjrmzg5g2w2@gmail.com>
- <20181230070846.GA17139@1wt.eu>
- <20181230074020.nirv2jzf6lh7s5lf@gmail.com>
- <20181231200854.GS4170@linux.ibm.com>
- <20190101002136.fvn3hy7ybkhmgd3r@gmail.com>
+        Tue, 1 Jan 2019 13:00:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39014 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbfAASAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 13:00:54 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 706BAC07EFFF;
+        Tue,  1 Jan 2019 18:00:54 +0000 (UTC)
+Received: from krava (ovpn-204-83.brq.redhat.com [10.40.204.83])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 977815C71A;
+        Tue,  1 Jan 2019 18:00:52 +0000 (UTC)
+Date:   Tue, 1 Jan 2019 19:00:51 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: Re: perf: Use strcmp(str, "const") instead of strncmp(str, "const",
+ sizeof("const"))
+Message-ID: <20190101180051.GB9613@krava>
+References: <20181220122601.62bf8858@gandalf.local.home>
+ <20181220185553.GA22971@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190101002136.fvn3hy7ybkhmgd3r@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19010117-0060-0000-0000-000002F14A3E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010329; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000272; SDB=6.01140283; UDB=6.00593364; IPR=6.00920499;
- MB=3.00024931; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-01 17:57:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010117-0061-0000-0000-000047C28C5C
-Message-Id: <20190101175723.GX4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=656 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901010164
+In-Reply-To: <20181220185553.GA22971@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 01 Jan 2019 18:00:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 02:21:36PM -1000, Joey Pabalinas wrote:
-> On Mon, Dec 31, 2018 at 12:08:54PM -0800, Paul E. McKenney wrote:
-> > On Sat, Dec 29, 2018 at 09:40:20PM -1000, Joey Pabalinas wrote:
-> > > On Sun, Dec 30, 2018 at 08:08:46AM +0100, Willy Tarreau wrote:
-> > > > Definitely! Same, I won't emit a patch just for this, Paul already queued it.
-> > > 
-> > > Yeah, not that big a deal :)
-> > > 
-> > > Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+On Thu, Dec 20, 2018 at 03:55:53PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Dec 20, 2018 at 12:26:01PM -0500, Steven Rostedt escreveu:
+> > As strncmp(str, "const", sizeof("const") is exactly the same as
+> > strcmp(str, "const") use that instead, otherwise it is confusing.
 > > 
-> > But as long as I am rebasing to add the Reviewed-by, might as well
-> > update the others.
-> > 
-> > The English rules for capitalization and lists are baroque and completely
-> > unsuited to word processors ("If any list item is longer than one line,
-> > capitalize all the items."), but in this case each item has multiple
-> > sentences, so it makes sense to capitalize.
-> > 
-> > Please see below for the updated commit, and thank you all!
+> > sizeof("const") includes the nul terminator ('\0') of the string
+> > "const", and that means strncmp() will only return a match if str and
+> > "const" are exactly the same, which is what strcmp() does.
 > 
-> Interesting, I had no idea it was actually that odd, hah.
+> There are more of those, that are there from time immemorial, lemme see
+> if the original intention can be found... 
+> 
+> commit 26d330226b9cf6208daae9b0b3697980c8fb51d8
+> Author: Jiri Olsa <jolsa@redhat.com>
+> Date:   Tue Aug 7 15:20:47 2012 +0200
+> 
+>     perf tools: Support for DWARF mode callchain
+> 
+> ----------------
+> 
+> I thought this could be because at the time strchr was used and thus the
+> name would be in a buffer followed by ',' or other separator, but
+> strtok_r() was used, so your patch should simplify things.
 
-The horrible thing is the guy that informed me of this had English as
-his third or fourth of something like seven languages.  Yet he knew
-English better than I ever will.  Worst of all, when I would complain
-about some inconsistency, his response was simply "Mr. McKenney, it is
-your language, not mine!"  ;-)
+yea, strtok_r returns null-terminated string containing the next token,
+so there's always trailing null terminator.. so those strncmp calls
+work properly
 
-							Thanx, Paul
-
+jirka
