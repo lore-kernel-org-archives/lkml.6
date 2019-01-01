@@ -2,36 +2,38 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4857AC43612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B83CC43387
 	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA5521871
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01B92080D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbfAAIxy (ORCPT
+        id S1728504AbfAAIv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 03:53:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37196 "EHLO mx1.suse.de"
+        Tue, 1 Jan 2019 03:51:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36940 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727302AbfAAIxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 03:53:54 -0500
+        id S1727302AbfAAIv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 03:51:56 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11D78AD02;
-        Tue,  1 Jan 2019 08:53:53 +0000 (UTC)
-Date:   Tue, 01 Jan 2019 09:53:52 +0100
-Message-ID: <s5hr2dwiwrj.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 6F88FAE86;
+        Tue,  1 Jan 2019 08:51:54 +0000 (UTC)
+Date:   Tue, 01 Jan 2019 09:51:53 +0100
+Message-ID: <s5hsgyciwuu.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Kangjie Lu" <kjlu@umn.edu>
-Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
-        <pakki001@umn.edu>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gus: add a check of the status of snd_ctl_add
-In-Reply-To: <20181226014052.70937-1-kjlu@umn.edu>
-References: <20181226014052.70937-1-kjlu@umn.edu>
+To:     " huang.zijiang " <huang.zijiang@zte.com.cn>
+Cc:     <perex@perex.cz>, <w@1wt.eu>, <alsa-devel@alsa-project.org>,
+        <colin.king@canonical.com>, <keescook@chromium.org>,
+        <linux-kernel@vger.kernel.org>, <wang.yi59@zte.com.cn>,
+        <xue.zhihong@zte.com.cn>
+Subject: Re: [PATCH] sound:emu10k1:Use kmemdup instead of duplicating its function
+In-Reply-To: <1545640968-42357-1-git-send-email-huang.zijiang@zte.com.cn>
+References: <1545640968-42357-1-git-send-email-huang.zijiang@zte.com.cn>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -42,16 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Dec 2018 02:40:51 +0100,
-Kangjie Lu wrote:
+On Mon, 24 Dec 2018 09:42:48 +0100,
+ huang.zijiang  wrote:
 > 
-> snd_ctl_add() could fail, so let's check its status and issue an error
-> message if it indeed fails.
+> From: "huang.zijiang" <huang.zijiang@zte.com.cn>
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> kmemdup has implemented the function that kmalloc() and memcpy().
+> 
+> Signed-off-by: huang.zijiang <huang.zijiang@zte.com.cn>
+> ---
+>  sound/pci/emu10k1/emufx.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+> index 6ebe817..b4fe4c5 100644
+> --- a/sound/pci/emu10k1/emufx.c
+> +++ b/sound/pci/emu10k1/emufx.c
+> @@ -671,10 +671,9 @@ static unsigned int *copy_tlv(const unsigned int __user *_tlv, bool in_kernel)
+>  		return NULL;
+>  	if (data[1] >= MAX_TLV_SIZE)
+>  		return NULL;
+> -	tlv = kmalloc(data[1] + sizeof(data), GFP_KERNEL);
+> +	tlv =  kmemdup(data, data[1] + sizeof(data), GFP_KERNEL);
+>  	if (!tlv)
+>  		return NULL;
+> -	memcpy(tlv, data, sizeof(data));
 
-The function itself prints the error in most of useful cases, so the
-extra error here would be superfluous.
+These changes are not equivalent, and rather dangerous, unfortunately.
+The memcpy() performs only for sizeof(data), and in this case, it's
+not the same size as the allocation above.
 
 
 thanks,
