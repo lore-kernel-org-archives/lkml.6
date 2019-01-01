@@ -2,87 +2,114 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EF4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6824AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54B1121019
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:16:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="t+LGHX3l"
+	by mail.kernel.org (Postfix) with ESMTP id 378B4218D3
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfAAUQV (ORCPT
+        id S1726747AbfAAUVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 15:16:21 -0500
-Received: from cock.li ([185.100.85.212]:44220 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfAAUQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 15:16:20 -0500
+        Tue, 1 Jan 2019 15:21:23 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36680 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfAAUVW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 15:21:22 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7D8AF806B5; Tue,  1 Jan 2019 21:21:15 +0100 (CET)
+Date:   Tue, 1 Jan 2019 21:21:19 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     kjlu@umn.edu, pakki001@umn.edu,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] base: fix a missing check of clk_prepare
+Message-ID: <20190101202119.GA13097@amd>
+References: <20181226024700.72318-1-kjlu@umn.edu>
+ <CAJZ5v0iK+ASbadEjj+9vgCV+1ycjp8Hs2GbEmT3dGSqjLVGbPA@mail.gmail.com>
+ <20181231172556.GA14092@amd>
+ <CAJZ5v0hOKXkZbpchv9+23uTgZyeq_3oQHznPKR3-+X43JakGeg@mail.gmail.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546373777; bh=zaJQ2FgZ8mqejKJ/tuvAYL9DELeGKI2UKSMIpxVia0Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=t+LGHX3lgmCqpJ+/W8TUnqjq32aeNIhEPw36F8IV5ktf59dJyYnzInwXDd0isW7w9
-         XKakBkAaK6RmT/S7om1NdUn78dzJxBf9ESv8zDQHahC/WgwnhVArJVYlOJAgouI7wZ
-         y8RHNy9m7MdVcFjPiUfsmt/FDODYyqej8hgoIMiGclrXdFjEw4a7omXlZGm9y5pXNr
-         ER24cDY0N0P+VHJWddYpPkmMRZzQ+u9oVRwi3tgLuCte1NGxxWK2vB338mWNiM8T4M
-         5cHkjLUszuldEovUJf37tKGPc8llsk9tSyoIGPdvN83baau/WH/arG4CnvhAWVf3+K
-         RwkfGSIwZHwgA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 01 Jan 2019 20:16:16 +0000
-From:   vsnsdualce@memeware.net
-To:     william@techservsys.com,
-        "Ubuntu user technical support, not for general discussions" 
-        <ubuntu-users@lists.ubuntu.com>
-Cc:     misc@openbsd.org, gentoo-user@lists.gentoo.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: CoC loving Linux programmers swear the GPLv2 is irrevocable. They
- are wrong. (As are the women they wish to empower).
-In-Reply-To: <q0fn2v$q4j$1@blaine.gmane.org>
-References: <a6f3c4d6d8c85f1db2e84682b8305339@memeware.net>
- <q0fn2v$q4j$1@blaine.gmane.org>
-Message-ID: <604e57a471c4ce5ecca308125e9bb25b@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0hOKXkZbpchv9+23uTgZyeq_3oQHznPKR3-+X43JakGeg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-What promise did you rely upon?
 
-It is the right of the property owner to revoke.
-You payed the property owner (Linux Programmer 721) nothing for his 
-code.
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-He never promised you that he would forgo his right to revoke
-(Read the GPLv2, there is no mention of not revoking the license. 
-Something which the GPLv3 adds).
-(The SFConservancy's artistic interpretations were debunked 5 hours 
-after publication)
+On Tue 2019-01-01 21:13:01, Rafael J. Wysocki wrote:
+> On Mon, Dec 31, 2018 at 6:25 PM Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > On Wed 2018-12-26 10:37:54, Rafael J. Wysocki wrote:
+> > > On Wed, Dec 26, 2018 at 3:47 AM Kangjie Lu <kjlu@umn.edu> wrote:
+> > > >
+> > > > clk_prepare() could fail, so let's check its status, and if it fail=
+s,
+> > > > issue an error message.
+> > > >
+> > > > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> > > > ---
+> > > >  drivers/base/power/clock_ops.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/cl=
+ock_ops.c
+> > > > index 5a42ae4078c2..cb6144fb24e2 100644
+> > > > --- a/drivers/base/power/clock_ops.c
+> > > > +++ b/drivers/base/power/clock_ops.c
+> > > > @@ -65,7 +65,9 @@ static void pm_clk_acquire(struct device *dev, st=
+ruct pm_clock_entry *ce)
+> > > >         if (IS_ERR(ce->clk)) {
+> > > >                 ce->status =3D PCE_STATUS_ERROR;
+> > > >         } else {
+> > > > -               clk_prepare(ce->clk);
+> > > > +               if (clk_prepare(ce->clk))
+> > > > +                       dev_err(dev, "clk_prepare failed.\n");
+> > >
+> > > I'm not sure that this is useful.  The code continues regardless of
+> > > the error anyway and it should at least set ce->status to
+> > > PCE_STATUS_ERROR in the failing case.
+> >
+> > Maybe this is not complete fix, but dev_err() is preferable to silent
+> > failure.
+>=20
+> Preferable to you I suppose?
 
-Additionally you did not pay the LICENSOR for this forbearance.
-It is not reasonable for you to rely on a promise that was never made, 
-and a promise that you never payed the owner for.
+Preferable to the poor person trying to figure out why his machine
+does not work?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-In short: you are wrong,
-and you and others are attempting to convert the property of the 
-copyright owners to your own property, essentially.
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-(Your claim is that another's property can be taken from him because to 
-do otherwise would be inconvenient to the people that are committed to 
-committing the taking.)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
+iEYEARECAAYFAlwry78ACgkQMOfwapXb+vJBTACgsGB9b5Hdbbw9I5arJDguqf75
+C3wAnipok1OUsWd4AEX3Qr+aj9VC+rlP
+=1H8F
+-----END PGP SIGNATURE-----
 
-On 2019-01-01 12:42, william drescher wrote:
-> "Consideration" can be in form of "
-> detrimental reliance." That means that you relied on the license and
-> that reliance cost you something.
-> 
-> So if you spend money to pay programmers or if you spend time writing
-> programs based on the license you have paid for the license.
+--tKW2IUtsqtDRztdT--
