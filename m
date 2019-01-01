@@ -2,173 +2,93 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAE6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2EDC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B8F21019
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:07:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fktClN+D"
+	by mail.kernel.org (Postfix) with ESMTP id 1309A218AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:16:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbfAAQHi (ORCPT
+        id S1728863AbfAAQQI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 11:07:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41666 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728376AbfAAQHh (ORCPT
+        Tue, 1 Jan 2019 11:16:08 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21848 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfAAQQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 11:07:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u6so13580812plm.8;
-        Tue, 01 Jan 2019 08:07:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Kn6rNictp1Dew3UUAZaRUmeDmCNm+3V7xeDdhxN8a00=;
-        b=fktClN+DhDl+8XsGO0JLqloF85gYR9Wpi7JlBXj0w/FqH4Nb6jw+Tud4PJtmTmvwhj
-         4H/wXYct5rWEP4lm8o0aFwYq6FxQNadvR/icdUaiGyYkZKagKwVu/rhSLApy1kHOYkNn
-         rtjiaaIfItxS+6FmO5/+8ksFk/tk+5P3KSMlbsqLvJ/G5Tqdy0jF0aUj+bweI5PebiFp
-         qgbDRE/DbwMDF5eOCPeF/HpBJlpnn3FHAnVWyv2JCTrs4EPZu1q4hRnhTQd5HBAQ8CTm
-         8Ntsg56Bafw+/ilDhVEqDFL2mEVvHpDPC/H6/eDLavU5xg6kYz56iKa3DIBQxz4IqDXq
-         sPtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Kn6rNictp1Dew3UUAZaRUmeDmCNm+3V7xeDdhxN8a00=;
-        b=HipiwN2lDflflODtx+I3TIPxRYqKjtJSeZaYzA3UsteWtCthvi0G7OXCxcMQannpaz
-         2aNZoqyUD77NA6wVKrNP9vIVmnb37GfSbLVk81Ar5kC8iBeOZc7rtiSjVeGIhYyVhoKt
-         V3U8A8tCy7fuLLI4BrF0tz2hYcV66khsNiKFY3Nfq9BFD4qsAFODvEQvqBY295KG1fIn
-         WuoYVxIgf1h1txd5ejpuVQFGAYY0csASExyAU4atCrQHQwVKZlYerIaYnOse9rGl73cw
-         wIfKdgaBivQrteShYZhnw9nJozWulLkZaB2IFSngwdqVZUPLTmKrWH4XB78Fd1NrnyF/
-         0UEQ==
-X-Gm-Message-State: AJcUukfArqcm9MGKwCHU9qArdKL+0z4vTlf46rylbjhHCaUH3J5N9tlk
-        eh1GtcMdTlcaNrR5AcE3g6M=
-X-Google-Smtp-Source: ALg8bN56DbfMcg2EpG9IS/28PeapaxzeVFca5rUUBdXeRCsvMZcfSH264G9ZTQQXqtZmE8RzkGLjJg==
-X-Received: by 2002:a17:902:2:: with SMTP id 2mr14025061pla.228.1546358856974;
-        Tue, 01 Jan 2019 08:07:36 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id n68sm83224498pfb.62.2019.01.01.08.07.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Jan 2019 08:07:36 -0800 (PST)
-Date:   Tue, 1 Jan 2019 08:07:34 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Zhang Rui <rui.zhang@intel.com>
-Cc:     Florian Fainelli <florian.fainelli@broadcom.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH v5 0/3] Stingray thermal driver support
-Message-ID: <20190101160733.GB3306@localhost.localdomain>
-References: <1539702680-3746-1-git-send-email-srinath.mannam@broadcom.com>
- <b6e02875-784f-4908-a985-5ee7e3df3ac6@gmail.com>
- <CABe79T4mpnbkaTCerYegmc1+uY4idOVOxCVDqHramk3fYipiCA@mail.gmail.com>
- <3c05a1f1-5041-ebb7-27e5-0a2321314b0a@broadcom.com>
- <1546351479.2077.1.camel@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1546351479.2077.1.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 1 Jan 2019 11:16:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546359346; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=M2SvHFeyehJTBGsQVDYruuJp3KnKU5sQRiSNgteJQ/SnwxjIW3OEOui/ukrDO80DHNgTs4ansX2pnvKVC9fBLdWtYf5CkZ+VXHlhw/JRVKT977AXTxX+nafM3vxjlDEQALqIBevvxWzI9udeym6Ze+xmVCofoOmJFFov5/vpGPY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546359346; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=QwPyCcfpi76YeoNHUj5YVKVltz1QRDQpOn8356tJ4+w=; 
+        b=M/y2UwFNXXvyLcQxw18G66qV0g0IJStgMgn7MzEhMBhDrE9Q9iHZIX3DhoIDTQuX7wfDWCYXrdNAQvDEilUuDzzMGKJcq2vstb3oFzqS3Q84SVRjEIj1A4boyHiVBb+rY/o1dG/Ib5XnBlfE3e7JhvmKd4C6o5zYgg4kT82YoF8=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1546359345156561.599932662492; Tue, 1 Jan 2019 08:15:45 -0800 (PST)
+Message-ID: <0902784697eea3fc522e21a89cdecb745f12c83c.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <1546291059.4069.158.camel@linux.ibm.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <b75fd04643daf5aab5a1fc115e8fbfca9a381f8d.camel@mniewoehner.de>
+         <1546140837.4069.81.camel@linux.ibm.com>
+         <912668ea1d74f526f78f03f562fdaf17fc06f62c.camel@mniewoehner.de>
+         <1546291059.4069.158.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 01 Jan 2019 17:15:40 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 10:04:39PM +0800, Zhang Rui wrote:
-> On 一, 2018-12-31 at 14:15 -0800, Florian Fainelli wrote:
+On Mon, 2018-12-31 at 16:17 -0500, Mimi Zohar wrote:
+> On Sun, 2018-12-30 at 14:22 +0100, Michael Niewöhner wrote:
+> 
+> > > difference is that on a cold boot, the TPM takes longer to initialize.
 > > 
-> > On 04/12/2018 19:17, Srinath Mannam wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > Could you please provide your feedback to this patch series?
-> > Rui or Eduardo can we get either one of you to review the thermal
-> > driver
-> > parts of this patch series? Why do we constantly have to chase people
-> > to
-> > respond in this specific subsystem?
-> > 
-> Eduardo, can you please take a look at this patch series?
+> > Well, as I said. Waiting for 10, 20 or even 60 seconds in the boot manager
+> > does
+> > not solve the problem. So the problem is NOT that the TPM takes longer to
+> > initialize. Even adding a delay of 20 seconds before TPM init does not solve
+> > that while that should be more than enough time.
+> 
+> The purpose of commenting out the TPM2 selftest was to minimize the
+> TPM initialization delay, so that the TPM is ready before IMA.  After
+> James' patch that wasn't needed anymore.
+> 
+> Looking back at this thread, I see you're using systemd-boot, not
+> grub2.  When you commented out the systemd-boot timeout, IMA found the
+> TPM.  The question is why isn't the TPM ready with the timeout before
+> IMA (like above)?  Has systemd-boot done the selftest?
 
-Yup, I will take a look.
+I am not sure wether systemd-boot touches TPM at all but I get the same
+behaviour with syslinux-efi.
 
 > 
-> thanks,
-> rui
-> > > 
-> > > 
-> > > Regards,
-> > > Srinath.
-> > > On Thu, Nov 8, 2018 at 3:45 AM Florian Fainelli <f.fainelli@gmail.c
-> > > om> wrote:
-> > > > 
-> > > > 
-> > > > 
-> > > > 
-> > > > On 10/16/2018 8:11 AM, Srinath Mannam wrote:
-> > > > > 
-> > > > > These patches adds the stingray thermal driver and its
-> > > > > corresponding DT nodes with documentation.
-> > > > Can we get feedback from the thermal maintains whether this is
-> > > > acceptable or not?
-> > > > 
-> > > > > 
-> > > > > 
-> > > > > Changes from v4
-> > > > >   - Addressed Rob Herring comments on DT parameters and
-> > > > >     thermal driver architecture.
-> > > > >   - Removed brcm,max-crit-temp DT parameter
-> > > > >   - Changed driver to thermal sensor registration model.
-> > > > >   - Added trip DT properties.
-> > > > > 
-> > > > > Changes from v3
-> > > > >   - Addressed Daniel lezcano comments.
-> > > > >   - Elaborated commit description of thermal driver patch.
-> > > > >   - Added brcm,max-crit-temp DT parameter.
-> > > > > 
-> > > > > Changes from v2:
-> > > > >   - All stingray TMON DT nodes are combine together into
-> > > > > single.
-> > > > >     Temperature registers are combined into one mem resource.
-> > > > >     brcm,tmon-mask parameter has available TMONs mask value.
-> > > > >   - All available TMONs are initialized together in single
-> > > > >     instance of driver probe call.
-> > > > > 
-> > > > > Changes from v1:
-> > > > >   - Fixed auto build sparce warning.
-> > > > > 
-> > > > > Pramod Kumar (3):
-> > > > >   dt-bindings: thermal: Add binding document for SR thermal
-> > > > >   thermal: broadcom: Add Stingray thermal driver
-> > > > >   arm64: dts: stingray: Add Stingray Thermal DT support.
-> > > > > 
-> > > > >  .../bindings/thermal/brcm,sr-thermal.txt           | 105
-> > > > > ++++++++++++++++
-> > > > >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89
-> > > > > +++++++++++++
-> > > > >  drivers/thermal/Kconfig                            |   3 +-
-> > > > >  drivers/thermal/broadcom/Kconfig                   |   9 ++
-> > > > >  drivers/thermal/broadcom/Makefile                  |   1 +
-> > > > >  drivers/thermal/broadcom/sr-thermal.c              | 138
-> > > > > +++++++++++++++++++++
-> > > > >  6 files changed, 344 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644
-> > > > > Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> > > > >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
-> > > > > 
-> > > > --
-> > > > Florian
+> Mimi
+> 
+
+
