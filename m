@@ -2,38 +2,42 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9AEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 820F2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA082075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49B692075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 08:34:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfAAIbD (ORCPT
+        id S1728525AbfAAIeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 03:31:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35544 "EHLO mx1.suse.de"
+        Tue, 1 Jan 2019 03:34:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35838 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727509AbfAAIbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 03:31:03 -0500
+        id S1728391AbfAAIeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 03:34:16 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BB19EAE7A;
-        Tue,  1 Jan 2019 08:31:01 +0000 (UTC)
-Date:   Tue, 01 Jan 2019 09:31:00 +0100
-Message-ID: <s5h5zv8kce3.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 4519DAE10;
+        Tue,  1 Jan 2019 08:34:15 +0000 (UTC)
+Date:   Tue, 01 Jan 2019 09:34:14 +0100
+Message-ID: <s5h36qckc8p.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Jian-Hong Pan" <jian-hong@endlessm.com>
-Cc:     "Jaroslav Kysela" <perex@perex.cz>,
-        "Kailang Yang" <kailang@realtek.com>,
-        <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
-        "Daniel Drake" <drake@endlessm.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda/realtek: Enable the headset mic auto detection for ASUS laptops
-In-Reply-To: <20181227084631.2934-1-jian-hong@endlessm.com>
-References: <20181227084631.2934-1-jian-hong@endlessm.com>
+To:     "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>
+Cc:     "Kangjie Lu" <kjlu@umn.edu>, <alsa-devel@alsa-project.org>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Liam Girdwood" <liam.r.girdwood@linux.intel.com>,
+        "Jie Yang" <yang.jie@linux.intel.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+        <pakki001@umn.edu>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sound: atom: fix a missing check of snd_pcm_lib_malloc_pages
+In-Reply-To: <a684ebcb-7b7a-d5b5-8770-f87db0c5a480@linux.intel.com>
+References: <20181226022950.71824-1-kjlu@umn.edu>
+        <a684ebcb-7b7a-d5b5-8770-f87db0c5a480@linux.intel.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -44,19 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 27 Dec 2018 09:46:31 +0100,
-Jian-Hong Pan wrote:
+On Wed, 26 Dec 2018 18:57:47 +0100,
+Pierre-Louis Bossart wrote:
 > 
-> The headset mic of ASUS laptops like UX533FD, UX433FN and UX333FA, whose
-> CODEC is Realtek ALC294 has jack auto detection feature. This patch
-> enables the feature.
 > 
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
-> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> On 12/25/18 8:29 PM, Kangjie Lu wrote:
+> > snd_pcm_lib_malloc_pages() may fail, so let's check its status and
+> > return its error code upstream.
+> 
+> Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Applied with Cc to stable now.
+This fixes a potential kernel Oops.  Mark, please put Cc to stable
+when applying.
 
 
 thanks,
 
 Takashi
+
+> 
+> 
+> >
+> > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> > ---
+> >   sound/soc/intel/atom/sst-mfld-platform-pcm.c | 8 +++++++-
+> >   1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/sound/soc/intel/atom/sst-mfld-platform-pcm.c b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> > index afc559866095..91a2436ce952 100644
+> > --- a/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> > +++ b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+> > @@ -399,7 +399,13 @@ static int sst_media_hw_params(struct snd_pcm_substream *substream,
+> >   				struct snd_pcm_hw_params *params,
+> >   				struct snd_soc_dai *dai)
+> >   {
+> > -	snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
+> > +	int ret;
+> > +
+> > +	ret =
+> > +		snd_pcm_lib_malloc_pages(substream,
+> > +				params_buffer_bytes(params));
+> > +	if (ret)
+> > +		return ret;
+> >   	memset(substream->runtime->dma_area, 0, params_buffer_bytes(params));
+> >   	return 0;
+> >   }
+> 
