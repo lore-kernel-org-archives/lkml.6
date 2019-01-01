@@ -2,145 +2,126 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADD0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 19:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB681C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 19:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7719D208E3
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 19:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DD0621871
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 19:44:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="jAz6b/kJ"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="KTtQ33rq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfAATbs (ORCPT
+        id S1727117AbfAAToa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 14:31:48 -0500
-Received: from cock.li ([185.100.85.212]:55370 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbfAATbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 14:31:48 -0500
+        Tue, 1 Jan 2019 14:44:30 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37260 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbfAAToa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 14:44:30 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s12so28703740wrt.4;
+        Tue, 01 Jan 2019 11:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EgFPtA56/pi/munJDAyiQosAJuwozyE4DN+t4JD48nY=;
+        b=KTtQ33rq1nkZfx1bdDLywWiyhsq+wNwCOVnJefVmcdIFkS7Gep6aM57xgF3pD7kt+6
+         BnnOrz+ift5j5NUL5CQ/pkqFqYxGzYyAl01PrIydBXYGqtKHROvY9x8zZlL6LddWSxWg
+         d4QFrj1aOV1tzXxM1/ctCUIsNGghaU92nZJdTRKuno+LmYkaXOFLEbdKMVjZT53N8wei
+         u3qHz4l3SvwpBXzdgMmnDTePkUAj0PraW4AFtaJvXLK9NnAVJdCzkbH+PeNAiZ1Wu9gT
+         y2Nn1RJHrQ0Xolu9h2E7FuGTiYaZYwuPF/D0G2LQiri4D5Cdo+l820rKSPpMFoyY3HEo
+         DBsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EgFPtA56/pi/munJDAyiQosAJuwozyE4DN+t4JD48nY=;
+        b=dNp+v5rfCAscRjr/eTRV8nl/SkE5Sq4dKPxdNCUIt4XnNV5C8exG7Tsmv+UlBbu/aE
+         6zBmf/yvRVfi9TDANHLksTkSbzNgXLa/kfBoEiAzXHY+APVJXShfp/aNzarExjRvXLkq
+         Z8BlaE0OHMoSe8DD3OIhIrjOP+GJECbfEjQLy/4+CBNUN6cvox0uJmnoFlz7s35BEvPl
+         z6YcCg0kpth/ohKhZ6MKBmMZCxzXM1uXXDUP3nGWFSxnbHplNzCnIDRBgK7epn9hSojs
+         2jv2+MeS7IJzD/caORYMnQBR/I1A7hSPYhwKQyIlmeB+17IlTVtnaU8RQ4BpK4iig0bN
+         FH9g==
+X-Gm-Message-State: AJcUukfyy8MomiPs2A953Iiv6ckDHWbbV1N5yrvqTJ5EeGKsD0u8XVrZ
+        8L3eh4xVxuJXnvrgh+cEkoI=
+X-Google-Smtp-Source: ALg8bN7siEF/o+Fia3jVqdBHmMwwt9X55TVA12QJYTgHiS2e1GnuxWa8MvbLt4fCiXGYqlPoIZJIcQ==
+X-Received: by 2002:a05:6000:120a:: with SMTP id e10mr36672882wrx.85.1546371868049;
+        Tue, 01 Jan 2019 11:44:28 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD719940081266F57D36520DF.dip0.t-ipconnect.de. [2003:dc:d719:9400:8126:6f57:d365:20df])
+        by smtp.googlemail.com with ESMTPSA id l8sm41505654wrr.60.2019.01.01.11.44.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Jan 2019 11:44:27 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     linux@roeck-us.net, bgolaszewski@baylibre.com,
+        ulf.hansson@linaro.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/1] mmc: core: don't override the CD GPIO level when "cd-inverted" is set
+Date:   Tue,  1 Jan 2019 20:44:14 +0100
+Message-Id: <20190101194414.24766-2-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190101194414.24766-1-martin.blumenstingl@googlemail.com>
+References: <20190101194414.24766-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546371104; bh=6EKIL+zzercIxlsgQ2SRkBaQGS2cPSfr2992rwcIbhA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jAz6b/kJqHuGTKJuglInN9b28tQCib1LSpW6W6Yf+briBHDNbaMINiZvu8KU1nk00
-         QzWb50r7jiBztYP6z85tnbtTbP6kcfUqtzZr2Zz128chEUfRsk3/jwJfM0I/q76vx4
-         fidkbFs7qa9forb3Sx8fjOLqOv3VRLwICsd6zc3AvYKuInSPb9sp15Twl2Pa0/DegF
-         6jvLY4nJTTHtoVs+11S/M5pK9HHYkJyVIVYqRHu05r6UnuR9xfdAB9U+84YMFvHi0+
-         JXmWC9F88jimbPcQ1VGSTqUoY21trKiYWpAu4tEBDtOENSAN1HQmnVmZR4/1uoeRrp
-         XW4JulHQ9HWNQ==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Date:   Tue, 01 Jan 2019 19:31:44 +0000
-From:   vnsndalce@memeware.net
-To:     Ivan Ivanov <qmastery16@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gentoo-user@lists.gentoo.org, ubuntu-users@lists.ubuntu.com,
-        misc@openbsd.org
-Subject: Re: CoC loving Linux programmers swear the GPLv2 is irrevocable. They
- are wrong. (As are the women they wish to empower).
-In-Reply-To: <CAAaskFBcotAXfRCsz84G_9vJnO+30Ky3F4q7W3Ua7p+LGg7eVQ@mail.gmail.com>
-References: <CAAaskFBcotAXfRCsz84G_9vJnO+30Ky3F4q7W3Ua7p+LGg7eVQ@mail.gmail.com>
-Message-ID: <23b6edcea7a06b4237839aa86bae5a0d@memeware.net>
-X-Sender: vnsndalce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Band together as a Bloc and take action together. (Bloc revocation).
-One practice note: do not send a cease-and-desist before-hand.
-Do not let your lawyer send a cease-and-desist before-hand.
-If a potential defendant knows that their liberties regarding a 
-copyrighted work is in question
-from entity X (entity X being a rights-holder etc), then they can rush 
-to the courthouse
-and file for a hearing to determine their rights.
+Since commit 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device
+tree") gpiolib-of parses the "cd-gpios" property and flips the polarity
+if "cd-inverted" is also set. This results in the "cd-inverted" property
+being evaluated twice, which effectively makes it a no-op:
+- first in drivers/gpio/gpiolib-of.c (of_xlate_and_get_gpiod_flags) when
+  setting up the CD GPIO
+- then again in drivers/mmc/core/slot-gpio.c (mmc_gpio_get_cd) when
+  reading the CD GPIO value at runtime
 
-They do this to give you less time to prepare your case, and to have the 
-case start in
-a jurisdiction that they feel is favorable to them (the CoC supporters 
-will be trying
-to get the case adjudicated in the 9th circuit, as they feel they have 
-those
-judges in their pocket - the 9th circuit absolutely hates men with a 
-passion _even_
-greater than the rest of America - and they like to overturn and ignore
-black-letter law)
+On boards which are using device-tree with the "cd-inverted" property
+being set any inserted card are not detected anymore. This is due to the
+MMC core treating the CD GPIO with the wrong polarity.
 
-You will notice that the CoC supporters and No-Rescind group have fallen 
-silent
-in the last couple of months. They know they have very little to grasp 
-onto,
-and every one of their claims have been refuted.
+Disable "override_cd_active_level" for the card detection GPIO which is
+parsed using mmc_of_parse. This fixes SD card detection on the boards
+which are currently using the "cd-inverted" device-tree property (tested
+on Meson8b Odroid-C1 and Meson8b EC-100).
 
-Heather Meekers just gives the issue a gloss and says "lol no"
-and points to a ZDnet article, where I have cited academic papers on the 
-issue,
-as-well as the law I learned in law school, and further studies.
+This does not remove the CD GPIO inversion logic from the MMC core
+because there's at least one driver (sdhci-pci-core for Intel BayTrail
+based boards) which still passes "override_cd_active_level = true" to
+mmc_gpiod_request_cd(). Due to lack of hardware for testing this is left
+untouched.
+In the future the GPIO inversion logic for both, card and read-only
+detection can be removed once no driver is using it anymore.
 
-Bruce Perens literally called you all replaceable.
-As did Mathew Garret.
-Specifically because they feel that they own your property now and they 
-do not need you.
+Fixes: 89a5e15bcba87d ("gpio/mmc/of: Respect polarity in the device tree")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/mmc/core/host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Inform them that such is not the case, in the most direct manner.
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index f57f5de54206..cf58ccaf22d5 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -234,7 +234,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 		if (device_property_read_bool(dev, "broken-cd"))
+ 			host->caps |= MMC_CAP_NEEDS_POLL;
+ 
+-		ret = mmc_gpiod_request_cd(host, "cd", 0, true,
++		ret = mmc_gpiod_request_cd(host, "cd", 0, false,
+ 					   cd_debounce_delay_ms * 1000,
+ 					   &cd_gpio_invert);
+ 		if (!ret)
+-- 
+2.20.1
 
-Remember: These are the people, the class, that prevent you from having 
-sweet love.
-They are those who uphold your legal disabilities (cannot marry cute 
-young girls, as YHWH allows).
-They are your enemies, and the enemies of all Men on earth.
-
-On 2018-12-31 08:45, Ivan Ivanov wrote:
-> Thank you very much for this message, friend. We the people should
-> learn it and stop taking Cock of Conduct up our ass
-> 
-> пн, 31 дек. 2018 г. в 05:07, <vnsndalce@memeware.net>:
->> 
->> Their take is that if you lent (licensed) them a lawnmower and told 
->> them
->> not to wreck it, the fact that they did not wreck it entitles them to
->> keep the lawnmower forever(they followed your instruction regarding 
->> the
->> use of your property: "thus consideration, thus irrevocable license").
->> 
->> They are wrong. You can revoke the license.
->> 
->> You were paid nothing for this grant.
->> The takers have nothing.
->> 
->> Yet they are taking your positions, your seniority, controlling your
->> speech, and ejecting you from your communities.
->> 
->> You must fight back. They have already taken from you all the natural
->> pleasures in life (which include pretty young girls as brides, ruling
->> over your girls and family, being the master - not the servant of the
->> woman and her state).
->> 
->> Now they are taking this edifice, this refuge, which you have built 
->> for
->> yourself.
->> 
->> They see you as replaceable, expendable, removable employees.
->> (See: Bruce Perens statements on slashdot and this and other mailing
->> lists about how those who do not like the Code of Conduct can be 
->> easily
->> replaced)
->> 
->> But you are property owners and may elect to enforce your rights as
->> such. And you should do so.
->> 
->> And yes, You can trust my words. I am a licensed attorney, and I'm on
->> your side. Not the side of the women. Not the side of people like 
->> Bruce
->> Perens who see you as a replaceable cog: a worker... a chattel. Your
->> side. The side of the dispossessed men who are ruled over by the women
->> and the supporters of the women: who will not tolerate any corner of
->> advertence not fixated on them.
->> 
->> 
