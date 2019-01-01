@@ -2,110 +2,90 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687F7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4EEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3500E208E3
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9200B218A4
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:35:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P6Pp+31N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfAAVXw (ORCPT
+        id S1727706AbfAAVf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 16:23:52 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34897 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfAAVXv (ORCPT
+        Tue, 1 Jan 2019 16:35:56 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39598 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfAAVf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 16:23:51 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d2so9411874ual.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 13:23:51 -0800 (PST)
+        Tue, 1 Jan 2019 16:35:56 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so25682610ljh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 13:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RrKXKuQDDGTYLHzfvWYJcBUvW3wfkTd45q/FZUKCT8c=;
+        b=P6Pp+31NWyUPx+KB80THa8KbIh5SUdZqpjWJn0YK43qOLXu/JtnHe1LeQpK9ysUGSg
+         sKApQtQQhp+altgSwjoZQmvgsA93Ub4Lft42/DOTu967kCaDuRHt15y+FKe+M5NU4HwM
+         /F7tFlqhPK5k0ioafExJLKRQwBmIdAHMSSGV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Nf/BNLan3bgecUg9xxsTNzMFhLqEgR058RxfN91rOmU=;
-        b=V7zgQu87B0aehyg6jO/Y7WvHZlUz7VEzgOdvKiGesrHjUm98ODS+V8qzXj/sdDzDwj
-         mVhwPXhL7nwNsmO2e/l6tR9dHACujmY7efzdO3SBGmoOefnnlcIF38BI992X1/wWu8HX
-         orlvVIopw+fAGCBfnXK8NAilY+X+o5mdrN+8EbJ/fyLXJSXY06cJMDVL5F8ScyltKkIm
-         CZVRcxcaiKqx1yaAb7yhezVuBkoCDXwgpYidiotvGAPUt3j0vU+T/y/fvHuGmfrWVBR4
-         a92VWdheKc+4gX8u74XOCu9jpNtYQsc1QDl2SO2KJj4oJU806t0XtD0Garyte8yKd9D2
-         f2SA==
-X-Gm-Message-State: AJcUuke1pgA87rJM+tHA8cBlh2AaViVtToX5ugOGpH8y/D7v0b6ojOwE
-        +Clk8Wu2vp+8e22lJhBs+M1QTlMrogTdKCdtKCI=
-X-Google-Smtp-Source: ALg8bN5HYsslMWxs1c3zrLu+gh1KCJW06j2ZG3l3f/437jAmOqMKdZK0eJT3lsTOotFd/mVNmM/PBaC4+ThtLYON8Bo=
-X-Received: by 2002:a9f:314c:: with SMTP id n12mr15560034uab.33.1546377830754;
- Tue, 01 Jan 2019 13:23:50 -0800 (PST)
+        bh=RrKXKuQDDGTYLHzfvWYJcBUvW3wfkTd45q/FZUKCT8c=;
+        b=ubU6hh588IvH0D7nxAWTX3+TjoKtfXoUqZtwFOBYbkF1rX8yoBkuFRzHIH7lIMvJRX
+         EEieE0y5HuNsnOeUF1labB/4rMwIT8htDTyZ35I8TaqkjS98/yk63aSJdTg2awJOaUIM
+         T7CM7bBu8SaU0bSd8Q+SkapgBAU30+/OWFrX0juOyTnkHvsSvNx1U8Ah25zIYXCaV0Rs
+         diXt9f4B/W8Rz154n+vNkeNHoM4KBAwtJHov4H0TmYlzeqPER4920H7tFcuQ2GUEOypD
+         cCt2vKau4Xa23shKHwuomYoYlYQ0XMHREzG6NiyuuMl4mpIgVh7yTs86QQAK6QxcHUXf
+         RRLg==
+X-Gm-Message-State: AJcUukeLOy3sX8Gcf3J553NFXavhYQy+4XpzR38kk51fMx6YQ4E3v4Wb
+        SE1RMGVRSAWoaX3fvQm059yAysjTmls=
+X-Google-Smtp-Source: ALg8bN68PMG5T0gdv09p4c0qOj4idSCAL+YW9XhWgd/NxUM2crkbvf3hjkchuFB1AzSqnyZGbntTnw==
+X-Received: by 2002:a2e:9457:: with SMTP id o23-v6mr25479102ljh.7.1546378553653;
+        Tue, 01 Jan 2019 13:35:53 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id c22sm9808376lfd.88.2019.01.01.13.35.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Jan 2019 13:35:52 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id a16so19933058lfg.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 13:35:52 -0800 (PST)
+X-Received: by 2002:a19:cbcc:: with SMTP id b195mr21502264lfg.117.1546378552037;
+ Tue, 01 Jan 2019 13:35:52 -0800 (PST)
 MIME-Version: 1.0
-References: <cb43e1cb-dffa-26d8-c938-49ca4b48d38a@nisi.nl>
-In-Reply-To: <cb43e1cb-dffa-26d8-c938-49ca4b48d38a@nisi.nl>
-From:   Ilia Mirkin <imirkin@alum.mit.edu>
-Date:   Tue, 1 Jan 2019 16:23:39 -0500
-Message-ID: <CAKb7UvjMCGOdKybtUrV9DRY1vjiQvi+pkzf2FCHefdedqMGnig@mail.gmail.com>
-Subject: Re: Nouveau module results in total lockups without any dmesg trace
- on a NP900X5N Kaby Lake machine
-To:     Jan Vlietland <j.vlietland@nisi.nl>
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS" 
-        <nouveau@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
+References: <20190101160503.GA3306@localhost.localdomain>
+In-Reply-To: <20190101160503.GA3306@localhost.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 1 Jan 2019 13:35:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
+Message-ID: <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
+Subject: Re: [GIT PULL] Thermal-SoC management updates for v4.21-rc1
+To:     Eduardo Valentin <edubezval@gmail.com>
+Cc:     Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 1, 2019 at 4:06 PM Jan Vlietland <j.vlietland@nisi.nl> wrote:
+On Tue, Jan 1, 2019 at 8:05 AM Eduardo Valentin <edubezval@gmail.com> wrote:
 >
-> Hi Ben, David and Daniel ,
+> Please consider pulling from
 >
-> First of all happy new year. Based on advice of Greg K-H herewith a mail
-> about a number of Nouveau issues with my laptop.
->
-> I installed various Kali linux versions up to Linux 4.20.0-rc7
-> (downloaded, compiled and installed) on a Samsung NP900X5N laptop and
-> have an issue with the driver after loading.
->
-> My configuration:
->
-> - i7 7500
-> - 16 gb / 256 gb ssd
-> - nvidia 940MX (for 3D graphics)
->
-> When I enable loading of the nouveau module for my Nvidia 3D card I get
-> three MMIO faults:
->
-> [   35.984104] nouveau 0000:01:00.0: bus: MMIO read of 00000000 FAULT at 6013d4 [ IBUS ]
-> [   35.997510] nouveau 0000:01:00.0: bus: MMIO read of 00000000 FAULT at 10ac08 [ IBUS ]
-> [   37.551790] nouveau 0000:01:00.0: bus: MMIO read of 00000000 FAULT at 619444 [ IBUS ]
->
-> I see currenty varous discussions on bugzilla: (as summarized by Bruno
-> Pagani) https://bugs.freedesktop.org/show_bug.cgi?id=100423.
->
-> But I do not see any confirmed solutions on the MMIO faults.
->
-> The module is loaded but X server cannot run in framebuffer mode. I
-> assume that the module does not provide any video memory to X to run in
-> graphics mode.
->
-> First of all I would like to understand what the faults impose.
-> And I also would like to help you providing testing to fix the errors.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
 
-The faults are, generally, nothing to worry about, esp if they occur
-infrequently. It's one bit or another of code that's poking at a part
-of the GPU it shouldn't be touching.
+No.
 
-To the best of my knowledge, 940MX (GM108) should work reasonably
-well. Perhaps it would make most sense if you posted about some of
-your other issues (usually GM108's are have no outputs, so only usable
-as offload devices). Feel free to join #nouveau on irc.freenode.net to
-get more info as well.
+I pulled and immediately unpulled again.
 
-Cheers,
+It doesn't even build cleanly.
 
-  -ilia
+                Linus
