@@ -2,90 +2,59 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B987C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574EDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A98218A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A00E2080D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 21:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfAAVlV (ORCPT
+        id S1726726AbfAAVxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 16:41:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfAAVlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 16:41:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CF87087637;
-        Tue,  1 Jan 2019 21:41:20 +0000 (UTC)
-Received: from krava (ovpn-204-83.brq.redhat.com [10.40.204.83])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C16785C1B2;
-        Tue,  1 Jan 2019 21:41:18 +0000 (UTC)
-Date:   Tue, 1 Jan 2019 22:41:17 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] perf record: bind the AIO user space buffers to
- nodes
-Message-ID: <20190101214117.GI13760@krava>
-References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
- <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 01 Jan 2019 21:41:20 +0000 (UTC)
+        Tue, 1 Jan 2019 16:53:17 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:60264 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfAAVxR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 16:53:17 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BD28B14B799CB;
+        Tue,  1 Jan 2019 13:44:33 -0800 (PST)
+Date:   Tue, 01 Jan 2019 13:44:33 -0800 (PST)
+Message-Id: <20190101.134433.394702619292998613.davem@davemloft.net>
+To:     murali.policharla@broadcom.com
+Cc:     amritha.nambiar@intel.com, ecree@solarflare.com,
+        ktkhai@virtuozzo.com, alexander.h.duyck@intel.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: core: Fix to store new mtu setting in netdevice.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+References: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 01 Jan 2019 13:44:34 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 24, 2018 at 03:24:36PM +0300, Alexey Budankov wrote:
+From: Murali Krishna Policharla <murali.policharla@broadcom.com>
+Date: Tue,  1 Jan 2019 12:12:14 +0530
 
-SNIP
+> Store newly configured mtu settings in the netdevice after mtu
+> configuration is successful to the dsa switch.
+> 
+> Fixes: 2315dc91a5 ("net: make dev_set_mtu() honor notification return code")
+> Signed-off-by: Murali Krishna Policharla <murali.policharla@broadcom.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-> +static void perf_mmap__aio_free(void **data, size_t len __maybe_unused)
-> +{
-> +	zfree(data);
-> +}
-> +
-> +static void perf_mmap__aio_bind(void *data __maybe_unused, size_t len __maybe_unused,
-> +                                int cpu __maybe_unused, int affinity __maybe_unused)
-> +{
-> +}
-> +#endif
-> +
->  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
->  {
->  	int delta_max, i, prio;
-> @@ -177,11 +220,13 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
->  		}
->  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
->  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
-> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
-> +			size_t mmap_len = perf_mmap__mmap_len(map);
-> +			perf_mmap__aio_alloc(&(map->aio.data[i]), mmap_len);
->  			if (!map->aio.data[i]) {
->  				pr_debug2("failed to allocate data buffer area, error %m");
->  				return -1;
->  			}
-> +			perf_mmap__aio_bind(map->aio.data[i], mmap_len, map->cpu, mp->affinity);
-
-this all does not work if bind fails.. I think we need to
-propagate the error value here and fail
-
-jirka
+It is entirely premature to mention DSA in this commit message when
+the DSA code lacks the callback yet.
