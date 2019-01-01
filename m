@@ -2,114 +2,115 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6824AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CF6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378B4218D3
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:21:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4898C2171F
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:28:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=microgate-com.20150623.gappssmtp.com header.i=@microgate-com.20150623.gappssmtp.com header.b="dih6BhoA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfAAUVX (ORCPT
+        id S1726822AbfAAU24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 15:21:23 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36680 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfAAUVW (ORCPT
+        Tue, 1 Jan 2019 15:28:56 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44220 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfAAU2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 15:21:22 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7D8AF806B5; Tue,  1 Jan 2019 21:21:15 +0100 (CET)
-Date:   Tue, 1 Jan 2019 21:21:19 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     kjlu@umn.edu, pakki001@umn.edu,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] base: fix a missing check of clk_prepare
-Message-ID: <20190101202119.GA13097@amd>
-References: <20181226024700.72318-1-kjlu@umn.edu>
- <CAJZ5v0iK+ASbadEjj+9vgCV+1ycjp8Hs2GbEmT3dGSqjLVGbPA@mail.gmail.com>
- <20181231172556.GA14092@amd>
- <CAJZ5v0hOKXkZbpchv9+23uTgZyeq_3oQHznPKR3-+X43JakGeg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hOKXkZbpchv9+23uTgZyeq_3oQHznPKR3-+X43JakGeg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 1 Jan 2019 15:28:55 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e11so13705238plt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 12:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=microgate-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VMXygqeRMN1W83XBoaIlpxbglZRQRMOh3rD875r6cPc=;
+        b=dih6BhoAxbu2i4lGmB8B/RjzmpSjs1nIOpYVxgIZRJoT3fnpeEq/QZdthHkRXvWj0t
+         1GWqd0k5VblW1iLp8KoiuilsPPpGdZ79y6IbsBf6FnoVTovmHR+0i1JhX/P4ldV5/EaN
+         9RbRiyiI2OfiNBDBZ8SnJyWewl11bkQV7LgeTKAhY/PzcYeqN2TEU55HLkbglMbun4nq
+         9ZzI02CGlJz7iSLcRb+HJ86KSTu9Lv3E3O9ci68ShRinr+7onauAoVL3XBDskkTLZjcW
+         GHygWXV7IEb/l7hWOvr6rFpgG7Z7+F//s317NIfwUdxXGlO7G+ReGBwuQyggNPvewSK1
+         281g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VMXygqeRMN1W83XBoaIlpxbglZRQRMOh3rD875r6cPc=;
+        b=HSGn/EPGugJNtNpmF7AvbrRZ77AtyKhxGg5Nd4p03pelLYP+MPmukRbTtXjW1EaEXf
+         pzeueWGwfjhvHqpEaKvLagCWz1jAeuGMgY/vvLac+GMHlgIlo9noukI0O4ddEl4VZ7EA
+         poMABbC9ekuxopCYvGjxXZMeBTbKAOYI7Ad9ySRjadvxC1F9d1OmtDIR7A1WqXQscqhE
+         yeA+bivpKkYBJp4etSWdGoJS1ec/9VqVlZ895dHlyqN831GjkjBUqLFN1cOMatIwxYRG
+         BI1+gds9LwPyJMovTzOVEUGya2wznmTYk6S3cJ67kelXNJ0Td34JSYW0caqVNfwMRIfK
+         jo9Q==
+X-Gm-Message-State: AJcUukfbkDPhl8cxL2Sr5l0ecERZCX65p61vH07i/z9vnsd2i+OUPBgK
+        z4GNYXGyVyy7A9hnDelpEuCUSQKotG0=
+X-Google-Smtp-Source: ALg8bN7WUZClRGzOOlUZz9RiGL4pLDK3+xWx2iHuIX8mnc32H/vaqcVLAYxSxpiJ0JpxdbUtu/X8yA==
+X-Received: by 2002:a17:902:9305:: with SMTP id bc5mr40950710plb.86.1546374534850;
+        Tue, 01 Jan 2019 12:28:54 -0800 (PST)
+Received: from [192.168.1.77] (c.208.53.119.160.static.broadstripe.net. [208.53.119.160])
+        by smtp.gmail.com with ESMTPSA id t5sm76141876pfb.60.2019.01.01.12.28.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Jan 2019 12:28:54 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: [PATCH] tty/n_hdlc: fix __might_sleep warning
+From:   Paul Fulghum <paulkf@microgate.com>
+In-Reply-To: <62FAC6A3-AC41-44CD-8ABC-79F404BF8CB1@microgate.com>
+Date:   Tue, 1 Jan 2019 12:28:53 -0800
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
+        jslaby@suse.com, syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F23DE81F-C976-4AED-8990-84A6ADC1BF1F@microgate.com>
+References: <000000000000449587057e1e6f8b@google.com>
+ <49b3b189-a51f-6a97-0e1f-bc3f2c305299@I-love.SAKURA.ne.jp>
+ <62FAC6A3-AC41-44CD-8ABC-79F404BF8CB1@microgate.com>
+To:     "linux-kernel@vger.kernel.org Mailing List" 
+        <linux-kernel@vger.kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix __might_sleep warning in tty/n_hdlc.c read due to copy_to_user call =
+while current is TASK_INTERRUPTIBLE.
+This is a false positive since the code path does not depend on current =
+state remaining TASK_INTERRUPTIBLE.
+The loop breaks out and sets TASK_RUNNING after calling copy_to_user.=20
+This patch supresses the warning by setting TASK_RUNNING before calling =
+copy_to_user.
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[1] =
+https://syzkaller.appspot.com/bug?id=3D17d5de7f1fcab794cb8c40032f893f52de8=
+99324
 
-On Tue 2019-01-01 21:13:01, Rafael J. Wysocki wrote:
-> On Mon, Dec 31, 2018 at 6:25 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > On Wed 2018-12-26 10:37:54, Rafael J. Wysocki wrote:
-> > > On Wed, Dec 26, 2018 at 3:47 AM Kangjie Lu <kjlu@umn.edu> wrote:
-> > > >
-> > > > clk_prepare() could fail, so let's check its status, and if it fail=
-s,
-> > > > issue an error message.
-> > > >
-> > > > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> > > > ---
-> > > >  drivers/base/power/clock_ops.c | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/cl=
-ock_ops.c
-> > > > index 5a42ae4078c2..cb6144fb24e2 100644
-> > > > --- a/drivers/base/power/clock_ops.c
-> > > > +++ b/drivers/base/power/clock_ops.c
-> > > > @@ -65,7 +65,9 @@ static void pm_clk_acquire(struct device *dev, st=
-ruct pm_clock_entry *ce)
-> > > >         if (IS_ERR(ce->clk)) {
-> > > >                 ce->status =3D PCE_STATUS_ERROR;
-> > > >         } else {
-> > > > -               clk_prepare(ce->clk);
-> > > > +               if (clk_prepare(ce->clk))
-> > > > +                       dev_err(dev, "clk_prepare failed.\n");
-> > >
-> > > I'm not sure that this is useful.  The code continues regardless of
-> > > the error anyway and it should at least set ce->status to
-> > > PCE_STATUS_ERROR in the failing case.
-> >
-> > Maybe this is not complete fix, but dev_err() is preferable to silent
-> > failure.
->=20
-> Preferable to you I suppose?
+Signed-off-by: Paul Fulghum <paulkf@microgate.com>
+Reported-by: syzbot =
+<syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+=E2=80=94
+--- a/drivers/tty/n_hdlc.c	2018-12-23 15:55:59.000000000 -0800
++++ b/drivers/tty/n_hdlc.c	2019-01-01 11:44:47.148153954 -0800
+@@ -597,6 +597,7 @@ static ssize_t n_hdlc_tty_read(struct tt
+ 				/* too large for caller's buffer */
+ 				ret =3D -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, =
+rbuf->count))
+ 					ret =3D -EFAULT;
+ 				else
 
-Preferable to the poor person trying to figure out why his machine
-does not work?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwry78ACgkQMOfwapXb+vJBTACgsGB9b5Hdbbw9I5arJDguqf75
-C3wAnipok1OUsWd4AEX3Qr+aj9VC+rlP
-=1H8F
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+=20=
