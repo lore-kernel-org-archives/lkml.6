@@ -2,85 +2,104 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FF0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4969DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C765D206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B2E62070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbfAARg2 (ORCPT
+        id S1726075AbfAARje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 12:36:28 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:35689 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfAARg1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 12:36:27 -0500
-Received: by mail-vk1-f195.google.com with SMTP id b18so6184125vke.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 09:36:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HHbve5bzvHOo4uY6yXwLFm0GG7yFkTwTmFXguVT9CEk=;
-        b=hjORvq6aPjs7iof4qdSC5jR9Wlj9onDXTxR/2VSLAosKNIaAXbf1ft1dkKCPyv0Mnn
-         0hj+k+Hi7dlZ+kXob2i20Z5D1mlgr9tPDfZgO/VCfAVP+kcnfnKKIKFWIS5eoFYazPnR
-         5FgxNC7dJ0Ok0gt0Yv5XT7JT2FUMVZuXpPEwoXI3Ub8qVniXo9Own4cQsoU5Dminkmil
-         VKXgiP6VEvr/FyMjXLGlFqrGTIx8AIHI5mCDXsW1AEpFEsRYTAVIPQoHesgbHaLY9Hu3
-         XboRturFiHkCUDtM0plyp1XWvsQxMyI97kl1pAfxGDAO+mQNcYX508lBdQGt7LuFu925
-         ZaRA==
-X-Gm-Message-State: AJcUukfjv6qkrqmra/CN58Bley7JHuPb0CDR06WPb0hpIaU/RwoOKuid
-        kJb5lDquHZGqwXM9shvCNM1zHa2Zz2vGvHD0t+0=
-X-Google-Smtp-Source: ALg8bN5k20a4iQBOVnU2gey0aRAh8Hf7q+D1JACPBsFD3fsYhkEo9P+r5iXC1ougBPkC6vbW2SsWdMHg0VXWun8/5E0=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr15173592vkh.65.1546364185671;
- Tue, 01 Jan 2019 09:36:25 -0800 (PST)
+        Tue, 1 Jan 2019 12:39:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33192 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfAARjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 12:39:33 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98CFD806A8;
+        Tue,  1 Jan 2019 17:39:32 +0000 (UTC)
+Received: from krava (ovpn-204-83.brq.redhat.com [10.40.204.83])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 875405D9CA;
+        Tue,  1 Jan 2019 17:39:27 +0000 (UTC)
+Date:   Tue, 1 Jan 2019 18:39:26 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
+Subject: Re: [PATCH v3 0/2] perf tests: Check for ARM [vectors] page
+Message-ID: <20190101173926.GA15729@krava>
+References: <20181221034337.26663-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
-References: <20181227084443.GA23991@localhost.localdomain> <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
- <20181231191428.GM1846@sirena.org.uk>
-In-Reply-To: <20181231191428.GM1846@sirena.org.uk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 1 Jan 2019 18:36:13 +0100
-Message-ID: <CAMuHMdXi60ZnVMgAxTnBr2ydvhcFzVbooosc+O+gC4q0-0_sEA@mail.gmail.com>
-Subject: Re: [PATCH] regmap: regmap-irq: silently ignore unsupported type settings
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221034337.26663-1-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 01 Jan 2019 17:39:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Thu, Dec 20, 2018 at 07:43:35PM -0800, Florian Fainelli wrote:
+> Hi all,
+> 
+> I just painfully learned that perf would segfault when
+> CONFIG_KUSER_HELPERS is disabled because it unconditionally makes use of
+> it. This patch series adds an ARM test for that by leveraging the
+> existing find_vdso_map() function and making it more generic and capable
+> of location any map within /proc/self/maps.
+> 
+> Changes in v3:
+> 
+> - remove find_vdso_map() call find_map() with VDSO__MAP_NAME
+> 
+> Changes in v2:
+> 
+> - use strlen() instead of sizeof() -1 since we made the page name a
+>   parameter
+> - use TEST_OK/TEST_FAIL in lieu of 0/-1
+> - added an error message indicating CONFIG_KUSER_HELPERS might be
+>   disabled
+> 
+> Florian Fainelli (2):
+>   perf tools: Make find_vdso_map() more modular
+>   perf tests: Add a test for the ARM 32-bit [vectors] page
 
-On Mon, Dec 31, 2018 at 8:14 PM Mark Brown <broonie@kernel.org> wrote:
-> On Sat, Dec 29, 2018 at 12:13:32PM +0100, Geert Uytterhoeven wrote:
-> > > Geert, do you know if anyone vould to test this?
->
-> > Thanks, that seems to fix the issue with da9063-rtc.
->
-> > I don't know how to trigger an actual interrupt, though.
->
-> If it's a RTC does it have an alarm you can set?
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-That's what I had expected, too, but there is no alarm file under
-/sys/class/rtc/.
+thanks,
+jirka
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+>  tools/perf/Makefile.perf                      |  4 ++--
+>  tools/perf/arch/arm/tests/Build               |  1 +
+>  tools/perf/arch/arm/tests/arch-tests.c        |  4 ++++
+>  tools/perf/arch/arm/tests/vectors-page.c      | 24 +++++++++++++++++++
+>  tools/perf/perf-read-vdso.c                   |  6 ++---
+>  tools/perf/tests/tests.h                      |  5 ++++
+>  .../perf/util/{find-vdso-map.c => find-map.c} |  7 +++---
+>  tools/perf/util/vdso.c                        |  6 ++---
+>  8 files changed, 45 insertions(+), 12 deletions(-)
+>  create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+>  rename tools/perf/util/{find-vdso-map.c => find-map.c} (71%)
+> 
+> -- 
+> 2.17.1
+> 
