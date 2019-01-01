@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3C2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E6BC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054CF2075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BF912075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfAAExF (ORCPT
+        id S1728568AbfAAExL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 23:53:05 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38399 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727370AbfAAExE (ORCPT
+        Mon, 31 Dec 2018 23:53:11 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31113 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727370AbfAAExK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 23:53:04 -0500
-X-UUID: dbc6801cfd184678bb02a869185fa74b-20190101
-X-UUID: dbc6801cfd184678bb02a869185fa74b-20190101
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Mon, 31 Dec 2018 23:53:10 -0500
+X-UUID: 80db2e4edc424da3be63f1615359206f-20190101
+X-UUID: 80db2e4edc424da3be63f1615359206f-20190101
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 790189475; Tue, 01 Jan 2019 12:52:58 +0800
+        with ESMTP id 232489272; Tue, 01 Jan 2019 12:53:05 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 1 Jan 2019 12:52:57 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 1 Jan 2019 12:53:03 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 1 Jan 2019 12:52:56 +0800
+ Transport; Tue, 1 Jan 2019 12:53:02 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,87 +47,132 @@ CC:     Robin Murphy <robin.murphy@arm.com>,
         <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>
-Subject: [PATCH 10/13] memory: mtk-smi: Get rid of mtk_smi_larb_get/put
-Date:   Tue, 1 Jan 2019 12:51:13 +0800
-Message-ID: <1546318276-18993-11-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH 11/13] iommu/mediatek: Use builtin_platform_driver
+Date:   Tue, 1 Jan 2019 12:51:14 +0800
+Message-ID: <1546318276-18993-12-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
 References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 763C6A7E7CF2199B37B7CB189F52E0010B63FEC48DC0003EBCE5814974BE44872000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After adding device_link between the iommu consumer and smi-larb,
-the pm_runtime_get(_sync) of smi-larb and smi-common will be called
-automatically. we can get rid of mtk_smi_larb_get/put.
+MediaTek IOMMU should wait for smi larb which need wait for the
+power domain(mtk-scpsys.c) and the multimedia ccf who both are
+module init. Thus, subsys_initcall for MediaTek IOMMU is not helpful.
+Switch to builtin_platform_driver.
 
-CC: Matthias Brugger <matthias.bgg@gmail.com>
+Meanwhile, the ".remove" can be removed. Move its content to
+".shutdown".
+
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- drivers/memory/mtk-smi.c   | 14 --------------
- include/soc/mediatek/smi.h | 20 --------------------
- 2 files changed, 34 deletions(-)
+ drivers/iommu/mtk_iommu.c    | 23 ++---------------------
+ drivers/iommu/mtk_iommu_v1.c | 16 ++--------------
+ 2 files changed, 4 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 30930e4..a1dc34b 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -123,20 +123,6 @@ static void mtk_smi_clk_disable(const struct mtk_smi *smi)
- 	clk_disable_unprepare(smi->clk_apb);
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 735ae8d..2798b12 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -690,7 +690,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
+ 	return component_master_add_with_match(dev, &mtk_iommu_com_ops, match);
  }
  
--int mtk_smi_larb_get(struct device *larbdev)
--{
--	int ret = pm_runtime_get_sync(larbdev);
--
--	return (ret < 0) ? ret : 0;
--}
--EXPORT_SYMBOL_GPL(mtk_smi_larb_get);
--
--void mtk_smi_larb_put(struct device *larbdev)
--{
--	pm_runtime_put_sync(larbdev);
--}
--EXPORT_SYMBOL_GPL(mtk_smi_larb_put);
--
- static int
- mtk_smi_larb_bind(struct device *dev, struct device *master, void *data)
+-static int mtk_iommu_remove(struct platform_device *pdev)
++static void mtk_iommu_shutdown(struct platform_device *pdev)
  {
-diff --git a/include/soc/mediatek/smi.h b/include/soc/mediatek/smi.h
-index 2b410d2..b993aa2 100644
---- a/include/soc/mediatek/smi.h
-+++ b/include/soc/mediatek/smi.h
-@@ -25,26 +25,6 @@ struct mtk_smi_iommu {
- 	struct mtk_smi_larb_iommu larb_imu[MTK_LARB_NR_MAX];
- };
+ 	struct mtk_iommu_data *data = platform_get_drvdata(pdev);
  
--/*
-- * mtk_smi_larb_get: Enable the power domain and clocks for this local arbiter.
-- *                   It also initialize some basic setting(like iommu).
-- * mtk_smi_larb_put: Disable the power domain and clocks for this local arbiter.
-- * Both should be called in non-atomic context.
-- *
-- * Returns 0 if successful, negative on failure.
-- */
--int mtk_smi_larb_get(struct device *larbdev);
--void mtk_smi_larb_put(struct device *larbdev);
--
--#else
--
--static inline int mtk_smi_larb_get(struct device *larbdev)
--{
+@@ -703,12 +703,6 @@ static int mtk_iommu_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(data->bclk);
+ 	devm_free_irq(&pdev->dev, data->irq, data);
+ 	component_master_del(&pdev->dev, &mtk_iommu_com_ops);
 -	return 0;
 -}
 -
--static inline void mtk_smi_larb_put(struct device *larbdev) { }
--
- #endif
+-static void mtk_iommu_shutdown(struct platform_device *pdev)
+-{
+-	mtk_iommu_remove(pdev);
+ }
  
- #endif
+ static int __maybe_unused mtk_iommu_suspend(struct device *dev)
+@@ -791,7 +785,6 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+ 
+ static struct platform_driver mtk_iommu_driver = {
+ 	.probe	= mtk_iommu_probe,
+-	.remove	= mtk_iommu_remove,
+ 	.shutdown = mtk_iommu_shutdown,
+ 	.driver	= {
+ 		.name = "mtk-iommu",
+@@ -799,16 +792,4 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+ 		.pm = &mtk_iommu_pm_ops,
+ 	}
+ };
+-
+-static int __init mtk_iommu_init(void)
+-{
+-	int ret;
+-
+-	ret = platform_driver_register(&mtk_iommu_driver);
+-	if (ret != 0)
+-		pr_err("Failed to register MTK IOMMU driver\n");
+-
+-	return ret;
+-}
+-
+-subsys_initcall(mtk_iommu_init)
++builtin_platform_driver(mtk_iommu_driver);
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 022bad9..5464918 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -648,7 +648,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
+ 	return component_master_add_with_match(dev, &mtk_iommu_com_ops, match);
+ }
+ 
+-static int mtk_iommu_remove(struct platform_device *pdev)
++static void mtk_iommu_shutdown(struct platform_device *pdev)
+ {
+ 	struct mtk_iommu_data *data = platform_get_drvdata(pdev);
+ 
+@@ -661,12 +661,6 @@ static int mtk_iommu_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(data->bclk);
+ 	devm_free_irq(&pdev->dev, data->irq, data);
+ 	component_master_del(&pdev->dev, &mtk_iommu_com_ops);
+-	return 0;
+-}
+-
+-static void mtk_iommu_shutdown(struct platform_device *pdev)
+-{
+-	mtk_iommu_remove(pdev);
+ }
+ 
+ static int __maybe_unused mtk_iommu_suspend(struct device *dev)
+@@ -705,7 +699,6 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+ 
+ static struct platform_driver mtk_iommu_driver = {
+ 	.probe	= mtk_iommu_probe,
+-	.remove	= mtk_iommu_remove,
+ 	.shutdown = mtk_iommu_shutdown,
+ 	.driver	= {
+ 		.name = "mtk-iommu-v1",
+@@ -713,9 +706,4 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+ 		.pm = &mtk_iommu_pm_ops,
+ 	}
+ };
+-
+-static int __init m4u_init(void)
+-{
+-	return platform_driver_register(&mtk_iommu_driver);
+-}
+-subsys_initcall(m4u_init);
++builtin_platform_driver(mtk_iommu_driver);
 -- 
 1.9.1
 
