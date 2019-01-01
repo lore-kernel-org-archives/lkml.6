@@ -2,107 +2,136 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7EAC43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF751C43612
 	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 14:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18CFE218AE
+	by mail.kernel.org (Postfix) with ESMTP id A7FDD218AE
 	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 14:04:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="joLnbLDy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbfAAOEo (ORCPT
+        id S1728871AbfAAOEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 09:04:44 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44304 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfAAOEn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 09:04:43 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so13570375pgr.11;
-        Tue, 01 Jan 2019 06:04:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FVpq9NfH7pOa6Xw3+8DNcMQ4vCU7AxJNWMBivPbUUcY=;
-        b=joLnbLDyRpNu9l2c4LS/NWcyYxk9rApbVvZst/3Vbjxl2IQeviJQW0Z0HIpI+niDyV
-         Xx/t5xyzo2dg03dLwr7shQakc/FXbF+Xw0zNct4iOLvyGos9AP2HBBWrx7IVXX2xiz9S
-         lUaz/EOy2JFWCr0iMFIHTBxVsgxB3etBn3Fn99mOFMsD7+9Cp3NQ+lyQyxDmCVNRgHNK
-         L6OLVDHFseAAKlqeuyk3R1uUEp1xY50S85e9hyfIk4skl7ZbQZEZPFb7JbKQDtNlu8Gx
-         wa2L8+uPGtZe+rlkwlok+kh82jCsdC8zdSnlEHxPLp/GNF2wojlZ1tSCazu3Nxkoth+s
-         Ckxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FVpq9NfH7pOa6Xw3+8DNcMQ4vCU7AxJNWMBivPbUUcY=;
-        b=fOD86VyK+5aF8OS11ggMsbwCYvZV68w16j6R3c+0sIN5FhaMo1PwZ9/SVcxMBfQ3cz
-         muPeIhipr/4FF4RtpoLcoy4KkPuO/8s7c2p6/DtApkYsDy6wk89X4fr60p8n7SoIQeyL
-         jUBhl8JXEuN/QqdtkAMhIbm8AdogN5N4tXeEpurdcm5tssIBiY/BnFORu4sU/m5qeQ/V
-         IAJ3xn/AfhOyxo0sIowS/zQG6JICdwOzx+o1d6pH5ougF56uqwphNlFGqqszN2RlsT68
-         LzJCMPnalZMtSQG9hlaPqZPCLjj0wjIx9TdmGnj22nQUPqYeS+kut3utKFS9O4s25/9B
-         NX1Q==
-X-Gm-Message-State: AJcUukepgsnM4aWdJLvR49XtXPW/8dsmxWuMbq2URAAp79pkAerFYP9U
-        oYZoeuMxTAVJyXs8/vzfAA==
-X-Google-Smtp-Source: ALg8bN6uCpj194teH+fx4QRkRzCQt0eNAMF74NKF2BPwia7Sehsp6+1GMnd8QUGI4EzHqjouyE4XEg==
-X-Received: by 2002:a63:cd11:: with SMTP id i17mr10723232pgg.345.1546351482695;
-        Tue, 01 Jan 2019 06:04:42 -0800 (PST)
-Received: from localhost.localdomain (li1566-229.members.linode.com. [139.162.86.229])
-        by smtp.gmail.com with ESMTPSA id v14sm121117477pgf.3.2019.01.01.06.04.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 01 Jan 2019 06:04:42 -0800 (PST)
-From:   Junchang Wang <junchangwang@gmail.com>
-To:     dave@stgolabs.net, paulmck@linux.ibm.com, josh@joshtriplett.org,
-        corbet@lwn.net, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Junchang Wang <junchangwang@gmail.com>
-Subject: [PATCH 1/2] whatisRCU.txt: fix outdated links
-Date:   Tue,  1 Jan 2019 22:03:19 +0800
-Message-Id: <1546351400-16389-2-git-send-email-junchangwang@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546351400-16389-1-git-send-email-junchangwang@gmail.com>
-References: <1546351400-16389-1-git-send-email-junchangwang@gmail.com>
+        Tue, 1 Jan 2019 09:04:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:53323 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbfAAOEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 09:04:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2019 06:04:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,427,1539673200"; 
+   d="scan'208";a="104731564"
+Received: from dliu15-mobl5.ccr.corp.intel.com ([10.249.175.141])
+  by orsmga006.jf.intel.com with ESMTP; 01 Jan 2019 06:04:41 -0800
+Message-ID: <1546351479.2077.1.camel@intel.com>
+Subject: Re: [PATCH v5 0/3] Stingray thermal driver support
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Florian Fainelli <florian.fainelli@broadcom.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Date:   Tue, 01 Jan 2019 22:04:39 +0800
+In-Reply-To: <3c05a1f1-5041-ebb7-27e5-0a2321314b0a@broadcom.com>
+References: <1539702680-3746-1-git-send-email-srinath.mannam@broadcom.com>
+         <b6e02875-784f-4908-a985-5ee7e3df3ac6@gmail.com>
+         <CABe79T4mpnbkaTCerYegmc1+uY4idOVOxCVDqHramk3fYipiCA@mail.gmail.com>
+         <3c05a1f1-5041-ebb7-27e5-0a2321314b0a@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix outdated links in whatisRCU.txt.
+On 一, 2018-12-31 at 14:15 -0800, Florian Fainelli wrote:
+> 
+> On 04/12/2018 19:17, Srinath Mannam wrote:
+> > 
+> > Hi,
+> > 
+> > Could you please provide your feedback to this patch series?
+> Rui or Eduardo can we get either one of you to review the thermal
+> driver
+> parts of this patch series? Why do we constantly have to chase people
+> to
+> respond in this specific subsystem?
+> 
+Eduardo, can you please take a look at this patch series?
 
-Signed-off-by: Junchang Wang <junchangwang@gmail.com>
----
- Documentation/RCU/whatisRCU.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-index 4a68543..1ace208 100644
---- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -302,7 +302,7 @@ rcu_dereference()
- 	must prohibit.	The rcu_dereference_protected() variant takes
- 	a lockdep expression to indicate which locks must be acquired
- 	by the caller. If the indicated protection is not provided,
--	a lockdep splat is emitted.  See RCU/Design/Requirements.html
-+	a lockdep splat is emitted.  See RCU/Design/Requirements/Requirements.html
- 	and the API's code comments for more details and example usage.
- 
- The following diagram shows how each API communicates among the
-@@ -560,7 +560,7 @@ presents two such "toy" implementations of RCU, one that is implemented
- in terms of familiar locking primitives, and another that more closely
- resembles "classic" RCU.  Both are way too simple for real-world use,
- lacking both functionality and performance.  However, they are useful
--in getting a feel for how RCU works.  See kernel/rcupdate.c for a
-+in getting a feel for how RCU works.  See kernel/rcu/update.c for a
- production-quality implementation, and see:
- 
- 	http://www.rdrop.com/users/paulmck/RCU
--- 
-2.7.4
-
+thanks,
+rui
+> > 
+> > 
+> > Regards,
+> > Srinath.
+> > On Thu, Nov 8, 2018 at 3:45 AM Florian Fainelli <f.fainelli@gmail.c
+> > om> wrote:
+> > > 
+> > > 
+> > > 
+> > > 
+> > > On 10/16/2018 8:11 AM, Srinath Mannam wrote:
+> > > > 
+> > > > These patches adds the stingray thermal driver and its
+> > > > corresponding DT nodes with documentation.
+> > > Can we get feedback from the thermal maintains whether this is
+> > > acceptable or not?
+> > > 
+> > > > 
+> > > > 
+> > > > Changes from v4
+> > > >   - Addressed Rob Herring comments on DT parameters and
+> > > >     thermal driver architecture.
+> > > >   - Removed brcm,max-crit-temp DT parameter
+> > > >   - Changed driver to thermal sensor registration model.
+> > > >   - Added trip DT properties.
+> > > > 
+> > > > Changes from v3
+> > > >   - Addressed Daniel lezcano comments.
+> > > >   - Elaborated commit description of thermal driver patch.
+> > > >   - Added brcm,max-crit-temp DT parameter.
+> > > > 
+> > > > Changes from v2:
+> > > >   - All stingray TMON DT nodes are combine together into
+> > > > single.
+> > > >     Temperature registers are combined into one mem resource.
+> > > >     brcm,tmon-mask parameter has available TMONs mask value.
+> > > >   - All available TMONs are initialized together in single
+> > > >     instance of driver probe call.
+> > > > 
+> > > > Changes from v1:
+> > > >   - Fixed auto build sparce warning.
+> > > > 
+> > > > Pramod Kumar (3):
+> > > >   dt-bindings: thermal: Add binding document for SR thermal
+> > > >   thermal: broadcom: Add Stingray thermal driver
+> > > >   arm64: dts: stingray: Add Stingray Thermal DT support.
+> > > > 
+> > > >  .../bindings/thermal/brcm,sr-thermal.txt           | 105
+> > > > ++++++++++++++++
+> > > >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89
+> > > > +++++++++++++
+> > > >  drivers/thermal/Kconfig                            |   3 +-
+> > > >  drivers/thermal/broadcom/Kconfig                   |   9 ++
+> > > >  drivers/thermal/broadcom/Makefile                  |   1 +
+> > > >  drivers/thermal/broadcom/sr-thermal.c              | 138
+> > > > +++++++++++++++++++++
+> > > >  6 files changed, 344 insertions(+), 1 deletion(-)
+> > > >  create mode 100644
+> > > > Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+> > > >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
+> > > > 
+> > > --
+> > > Florian
