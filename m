@@ -2,143 +2,126 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A333BC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 07:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2881FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 07:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A9E21783
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 07:38:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i6bHE1zw"
+	by mail.kernel.org (Postfix) with ESMTP id E082F2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 07:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546329169;
+	bh=DE5oLLUhTfnPt+tYOAnkEr1lx2NgWAuJNdYXdMN/pyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WwajTcshATRTs+cNW3jJqpqTclUF4eDxXWAxPE9GHSf8EQpa3gijFONrLTMroolje
+	 sFU/FCJ9ofLWu22xYsJRPU8ITXuZuspvaYWGqxtY0PJxJkmo8Dl7fpmzp7gJA2gWC8
+	 jTsTEkdttITdmC+6EPc7ksCnwAXjJY9Z7Fs6xvYg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbfAAHh5 (ORCPT
+        id S1728456AbfAAHws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 02:37:57 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45690 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbfAAHh4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 02:37:56 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a14so13296666plm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 23:37:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=97y5ma4ufpzuFHgG4U4LHmitRQtAGbTe3kx87jknEPs=;
-        b=i6bHE1zwmWlww+T4Cd55Y9VG3Pfp8hBrO0nxdoQRK7DAblxPvIGixOOUTTbWDyX4p7
-         ftpB7iIE6MLRyreHVbtlD8I9ZugNvwrTqB/sy9CYSFlKpB/ijt1xTAKmE96I7iitZqkU
-         F7ua5HgbvqIs3XwnJxwnurvRIoxhovZAz81MM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=97y5ma4ufpzuFHgG4U4LHmitRQtAGbTe3kx87jknEPs=;
-        b=P6PPkHDcWdW4A/hxXGL4J4wGW+52LPXnTW8gaQiDQdh+tapvezlKKE1xQ1MZLD1CFo
-         0hbTVgSDJOV1331Q0Ja+mC2aAoS12Ew2PiQ80JS8RApJ4D5ho2GO+3eAku3W07NYJZ9J
-         4suHYYLYO3SAkKQWpbCluBIkDGX4vBrrqPeEphVruc88sFrpVtRn8KnSXMaVG0lHHdlW
-         OgMNwkMJwJnq4j3rBtUHEk0sYQbHSz1kIxIKAFjTlgLYgTznp7fTCdcNpBZAoI5FBy4D
-         ZsyMW7W7q6oMVQHDX4sYgok1qAllC/H9Gf9zE7sMEN3uJfoOqVpt8/pRsceu1QivQkGX
-         RvHw==
-X-Gm-Message-State: AJcUukfUMj6uKZOUIDfjgltv464p2F6XKheKUwBspo/Zf6lb/RDAbMyd
-        Togse9QpgIXuMbsVgB1/rRZb
-X-Google-Smtp-Source: ALg8bN5uYQ8cKV0BX7QuhVvDPQ7pWu1/iXjsOY5XIo8XP/92WrjJFeyTxMG/vTQz3ARaX3iK8ZJO8Q==
-X-Received: by 2002:a17:902:8e8b:: with SMTP id bg11mr40203473plb.332.1546328275746;
-        Mon, 31 Dec 2018 23:37:55 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:6394:f979:3812:84fe:81d3:6fa8])
-        by smtp.gmail.com with ESMTPSA id u87sm96116441pfi.2.2018.12.31.23.37.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 31 Dec 2018 23:37:54 -0800 (PST)
-Date:   Tue, 1 Jan 2019 13:07:45 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Joe Perches <joe@perches.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 6/6] MAINTAINERS: Add linux-actions mailing list for
- Actions Semi
-Message-ID: <20190101073745.GA6711@Mani-XPS-13-9360>
-References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
- <20181231185517.18517-7-manivannan.sadhasivam@linaro.org>
- <2a7f53c58896e2a9c3115a8630040b98497e5877.camel@perches.com>
- <20190101032622.GC2736@Mani-XPS-13-9360>
- <6c6cc111-ad1b-15eb-a1b0-3cbe8b5e5226@suse.de>
+        Tue, 1 Jan 2019 02:52:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728189AbfAAHwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 02:52:47 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6872075D;
+        Tue,  1 Jan 2019 07:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546329166;
+        bh=DE5oLLUhTfnPt+tYOAnkEr1lx2NgWAuJNdYXdMN/pyc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Dz95W1gC4SxwMJz1fS51zbLlZWyf1J3LycSHeJjN+5OzHCzDbfkRSZU9clFQ1EqxK
+         1Y1tMNx3g4I+ADdnBjpbSS11emGP9l2+0gE6IMDocfQ35rwjTLZhcVDPArHktCiiqx
+         WowsHvHhPYDSQ0YH56Ciq/T3CS8jUHVRB7NoDc0M=
+Date:   Tue, 1 Jan 2019 09:52:42 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] infiniband: bnxt_re: qplib: Check the return value of
+ send_message
+Message-ID: <20190101075242.GN10329@mtr-leonro.mtl.com>
+References: <20181226185623.9324-1-pakki001@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J+eNKFoVC4T1DV3f"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c6cc111-ad1b-15eb-a1b0-3cbe8b5e5226@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181226185623.9324-1-pakki001@umn.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 04:32:40AM +0100, Andreas Färber wrote:
-> Am 01.01.19 um 04:26 schrieb Manivannan Sadhasivam:
-> > On Mon, Dec 31, 2018 at 11:12:18AM -0800, Joe Perches wrote:
-> >> On Tue, 2019-01-01 at 00:25 +0530, Manivannan Sadhasivam wrote:
-> >>> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> []
-> >>> @@ -1240,6 +1240,7 @@ ARM/ACTIONS SEMI ARCHITECTURE
-> >>>  M:	Andreas Färber <afaerber@suse.de>
-> >>>  R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> >>>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> >>> +L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
-> >>>  S:	Maintained
-> >>>  N:	owl
-> >>
-> >> The N: entry matches too many non-owl entries like:
-> >>
-> >> Documentation/parport-lowlevel.txt
-> >> drivers/misc/ibmasm/lowlevel.c
-> >> drivers/misc/ibmasm/lowlevel.h
-> >> fs/udf/lowle
-> >> vel.c
-> >> net/ipv6/ip6_flowlabel.c
-> >> sound/soc/samsung/lowland.c
-> >>
-> >> Maybe there should be two entries
-> >>
-> >> N:	/owl
-> >> N:	-owl
-> >>
-> > 
-> > Thanks for letting us know. Yes, we need to change it. How about below?
-> > 
-> > N: owl-
-> > N: -owl
-> 
-> No underscores anywhere?
+
+--J+eNKFoVC4T1DV3f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Dec 26, 2018 at 12:56:22PM -0600, Aditya Pakki wrote:
+> In bnxt_qplib_map_tc2cos(), bnxt_qplib_rcfw_send_message() can return
+> an error value. The fix returns the error from the latter function
+> upstream.
+>
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>  drivers/infiniband/hw/bnxt_re/qplib_sp.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+> index 5216b5f844cc..adb8eae5193c 100644
+> --- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+> +++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+> @@ -778,9 +778,8 @@ int bnxt_qplib_map_tc2cos(struct bnxt_qplib_res *res, u16 *cids)
+>  	req.cos0 = cpu_to_le16(cids[0]);
+>  	req.cos1 = cpu_to_le16(cids[1]);
+>
+> -	bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp, NULL,
+> -				     0);
+> -	return 0;
+> +	return bnxt_qplib_rcfw_send_message(rcfw, (void *)&req, (void *)&resp,
+> +						NULL, 0);
+>  }
+
+AFAIK, there is no need to do casting to/from void*.
+
+Thanks
+
+>
+>  int bnxt_qplib_get_roce_stats(struct bnxt_qplib_rcfw *rcfw,
+> --
+> 2.17.1
 >
 
-There is nothing with underscore yet and I don't think we'll add it in
-future.
+--J+eNKFoVC4T1DV3f
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mani
+-----BEGIN PGP SIGNATURE-----
 
-> Cheers,
-> Andreas
-> 
-> > 
-> > Will do it as a follow-up patch if agreed!
-> > 
-> > Regards,
-> > Mani
-> > 
-> >>
-> 
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+iQIcBAEBAgAGBQJcKxxKAAoJEORje4g2clinjZsP/1vavFeuhDosVrH+JHls5Yu1
+s3CG5MZSXGXCj5G2nrIKTRe0X9hkR/aP3LWVjAz91q4b/RYiz3jw1uitPSn6k0HY
+jiz2kNea1lr6fG3EzNPakRPc6+UzFXX66nOCWq7Z3tkVZOmLf+IxJo957UH8fBGF
++2A/CeZmvOa0fwfi6BbD5Yw5EkFLz1A4jUdMSYbkH6DiMT6z/jzMFMnzT9773jn3
+035YHUuTFLDMTQLFGRXoGUQ0Ima15y82Av3w/RNWt4t7mMRJUvpnDiRNc4GRb8uC
+u8mJhorpKeIY7ZhEve+pFkUp/YG5LJKYODpRpw/i8PFj8r/LioOP71TyeOJtiL4e
+iIKXPAjbUzupVPT8Y80JqOkPNZwiZg51oVWTYK92LFrFHR9/Ef2og36bd20WkOE6
+6KD0ojs4q2h+qYcHcQcA4htdAkWZcHkOPu39Aj/k2XPZFresfYjmjkdFIv2T6SVy
+07j0R9iaAqD1Coukln7LESQl+qGiVxIEZMJbVxQuy+YX20g/iXpjcdtjepDX+Ydd
+kNQLJfB3YUIDe9F7yHf7VIZROuOzh3qWNRo4xtKY2uxPr534g4g8Q+TEcmzc0vEH
+5fswpGzCnIdPXyZa/wHDFmvVL7/hCQx0/ol0Hj8PR5Ls8LkoLhOTKb7S58SCoy2e
+Axx4p7mQT31Q5JmeegQ8
+=L+Ol
+-----END PGP SIGNATURE-----
+
+--J+eNKFoVC4T1DV3f--
