@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EADC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 03:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BAAC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 03:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 523B22075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 03:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F8FA218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 03:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfAAD5I (ORCPT
+        id S1728232AbfAAD5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 22:57:08 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:11842 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726686AbfAAD5I (ORCPT
+        Mon, 31 Dec 2018 22:57:22 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12003 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726686AbfAAD5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 22:57:08 -0500
-X-UUID: 6a27504733b4474e91f7a242df262bba-20190101
-X-UUID: 6a27504733b4474e91f7a242df262bba-20190101
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        Mon, 31 Dec 2018 22:57:22 -0500
+X-UUID: a1ced808a22d4bd09e6891d125e632b2-20190101
+X-UUID: a1ced808a22d4bd09e6891d125e632b2-20190101
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 195630814; Tue, 01 Jan 2019 11:57:02 +0800
+        with ESMTP id 458497283; Tue, 01 Jan 2019 11:57:14 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 1 Jan 2019 11:57:00 +0800
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 1 Jan 2019 11:57:13 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 1 Jan 2019 11:56:59 +0800
+ Transport; Tue, 1 Jan 2019 11:57:12 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -45,131 +45,148 @@ CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>
-Subject: [PATCH v5 04/20] memory: mtk-smi: Use a struct for the platform data for smi-common
-Date:   Tue, 1 Jan 2019 11:55:36 +0800
-Message-ID: <1546314952-15990-5-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v5 05/20] iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and iopte_to_paddr helpers
+Date:   Tue, 1 Jan 2019 11:55:37 +0800
+Message-ID: <1546314952-15990-6-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com>
 References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: ADC68E80D3D666D683107B9CF8ED9CCE5997905F45C77456993A207A0BAC48BD2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a struct as the platform special data instead of the enumeration.
-
-Also there is a minor change that moving the position of
-"enum mtk_smi_gen" definition, this is because we expect define
-"struct mtk_smi_common_plat" before it is referred.
-
-This is a preparing patch for mt8183.
+Add two helper functions: paddr_to_iopte and iopte_to_paddr.
 
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/memory/mtk-smi.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ drivers/iommu/io-pgtable-arm-v7s.c | 45 ++++++++++++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 9fd6b3d..8a2f968 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -49,6 +49,15 @@
- #define SMI_LARB_NONSEC_CON(id)	(0x380 + ((id) * 4))
- #define F_MMU_EN		BIT(0)
- 
-+enum mtk_smi_gen {
-+	MTK_SMI_GEN1,
-+	MTK_SMI_GEN2
-+};
-+
-+struct mtk_smi_common_plat {
-+	enum mtk_smi_gen gen;
-+};
-+
- struct mtk_smi_larb_gen {
- 	bool need_larbid;
- 	int port_in_larb[MTK_LARB_NR_MAX + 1];
-@@ -61,6 +70,8 @@ struct mtk_smi {
- 	struct clk			*clk_apb, *clk_smi;
- 	struct clk			*clk_async; /*only needed by mt2701*/
- 	void __iomem			*smi_ao_base;
-+
-+	const struct mtk_smi_common_plat *plat;
+diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+index cec29bf..11d8505 100644
+--- a/drivers/iommu/io-pgtable-arm-v7s.c
++++ b/drivers/iommu/io-pgtable-arm-v7s.c
+@@ -173,18 +173,38 @@ struct arm_v7s_io_pgtable {
+ 	spinlock_t		split_lock;
  };
  
- struct mtk_smi_larb { /* larb: local arbiter */
-@@ -72,11 +83,6 @@ struct mtk_smi_larb { /* larb: local arbiter */
- 	u32				*mmu;
- };
- 
--enum mtk_smi_gen {
--	MTK_SMI_GEN1,
--	MTK_SMI_GEN2
--};
--
- static int mtk_smi_enable(const struct mtk_smi *smi)
++static bool arm_v7s_pte_is_cont(arm_v7s_iopte pte, int lvl);
++
+ static dma_addr_t __arm_v7s_dma_addr(void *pages)
  {
- 	int ret;
-@@ -351,18 +357,26 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
+ 	return (dma_addr_t)virt_to_phys(pages);
+ }
+ 
+-static arm_v7s_iopte *iopte_deref(arm_v7s_iopte pte, int lvl)
++static arm_v7s_iopte paddr_to_iopte(phys_addr_t paddr, int lvl,
++				    struct io_pgtable_cfg *cfg)
+ {
++	return paddr & ARM_V7S_LVL_MASK(lvl);
++}
++
++static phys_addr_t iopte_to_paddr(arm_v7s_iopte pte, int lvl,
++				  struct io_pgtable_cfg *cfg)
++{
++	arm_v7s_iopte mask;
++
+ 	if (ARM_V7S_PTE_IS_TABLE(pte, lvl))
+-		pte &= ARM_V7S_TABLE_MASK;
++		mask = ARM_V7S_TABLE_MASK;
++	else if (arm_v7s_pte_is_cont(pte, lvl))
++		mask = ARM_V7S_LVL_MASK(lvl) * ARM_V7S_CONT_PAGES;
+ 	else
+-		pte &= ARM_V7S_LVL_MASK(lvl);
+-	return phys_to_virt(pte);
++		mask = ARM_V7S_LVL_MASK(lvl);
++
++	return pte & mask;
++}
++
++static arm_v7s_iopte *iopte_deref(arm_v7s_iopte pte, int lvl,
++				  struct arm_v7s_io_pgtable *data)
++{
++	return phys_to_virt(iopte_to_paddr(pte, lvl, &data->iop.cfg));
+ }
+ 
+ static void *__arm_v7s_alloc_table(int lvl, gfp_t gfp,
+@@ -396,7 +416,7 @@ static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
+ 	if (num_entries > 1)
+ 		pte = arm_v7s_pte_to_cont(pte, lvl);
+ 
+-	pte |= paddr & ARM_V7S_LVL_MASK(lvl);
++	pte |= paddr_to_iopte(paddr, lvl, cfg);
+ 
+ 	__arm_v7s_set_pte(ptep, pte, num_entries, cfg);
+ 	return 0;
+@@ -462,7 +482,7 @@ static int __arm_v7s_map(struct arm_v7s_io_pgtable *data, unsigned long iova,
  	}
- };
  
-+static const struct mtk_smi_common_plat mtk_smi_common_gen1 = {
-+	.gen = MTK_SMI_GEN1,
-+};
-+
-+static const struct mtk_smi_common_plat mtk_smi_common_gen2 = {
-+	.gen = MTK_SMI_GEN2,
-+};
-+
- static const struct of_device_id mtk_smi_common_of_ids[] = {
- 	{
- 		.compatible = "mediatek,mt8173-smi-common",
--		.data = (void *)MTK_SMI_GEN2
-+		.data = &mtk_smi_common_gen2,
- 	},
- 	{
- 		.compatible = "mediatek,mt2701-smi-common",
--		.data = (void *)MTK_SMI_GEN1
-+		.data = &mtk_smi_common_gen1,
- 	},
- 	{
- 		.compatible = "mediatek,mt2712-smi-common",
--		.data = (void *)MTK_SMI_GEN2
-+		.data = &mtk_smi_common_gen2,
- 	},
- 	{}
- };
-@@ -372,13 +386,13 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct mtk_smi *common;
- 	struct resource *res;
--	enum mtk_smi_gen smi_gen;
- 	int ret;
+ 	if (ARM_V7S_PTE_IS_TABLE(pte, lvl)) {
+-		cptep = iopte_deref(pte, lvl);
++		cptep = iopte_deref(pte, lvl, data);
+ 	} else if (pte) {
+ 		/* We require an unmap first */
+ 		WARN_ON(!selftest_running);
+@@ -512,7 +532,8 @@ static void arm_v7s_free_pgtable(struct io_pgtable *iop)
+ 		arm_v7s_iopte pte = data->pgd[i];
  
- 	common = devm_kzalloc(dev, sizeof(*common), GFP_KERNEL);
- 	if (!common)
- 		return -ENOMEM;
- 	common->dev = dev;
-+	common->plat = of_device_get_match_data(dev);
+ 		if (ARM_V7S_PTE_IS_TABLE(pte, 1))
+-			__arm_v7s_free_table(iopte_deref(pte, 1), 2, data);
++			__arm_v7s_free_table(iopte_deref(pte, 1, data),
++					     2, data);
+ 	}
+ 	__arm_v7s_free_table(data->pgd, 1, data);
+ 	kmem_cache_destroy(data->l2_tables);
+@@ -582,7 +603,7 @@ static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
+ 		if (!ARM_V7S_PTE_IS_TABLE(pte, 1))
+ 			return 0;
  
- 	common->clk_apb = devm_clk_get(dev, "apb");
- 	if (IS_ERR(common->clk_apb))
-@@ -394,8 +408,7 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
- 	 * clock into emi clock domain, but for mtk smi gen2, there's no smi ao
- 	 * base.
- 	 */
--	smi_gen = (enum mtk_smi_gen)of_device_get_match_data(dev);
--	if (smi_gen == MTK_SMI_GEN1) {
-+	if (common->plat->gen == MTK_SMI_GEN1) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 		common->smi_ao_base = devm_ioremap_resource(dev, res);
- 		if (IS_ERR(common->smi_ao_base))
+-		tablep = iopte_deref(pte, 1);
++		tablep = iopte_deref(pte, 1, data);
+ 		return __arm_v7s_unmap(data, iova, size, 2, tablep);
+ 	}
+ 
+@@ -641,7 +662,7 @@ static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
+ 				io_pgtable_tlb_add_flush(iop, iova, blk_size,
+ 					ARM_V7S_BLOCK_SIZE(lvl + 1), false);
+ 				io_pgtable_tlb_sync(iop);
+-				ptep = iopte_deref(pte[i], lvl);
++				ptep = iopte_deref(pte[i], lvl, data);
+ 				__arm_v7s_free_table(ptep, lvl + 1, data);
+ 			} else if (iop->cfg.quirks & IO_PGTABLE_QUIRK_NON_STRICT) {
+ 				/*
+@@ -666,7 +687,7 @@ static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
+ 	}
+ 
+ 	/* Keep on walkin' */
+-	ptep = iopte_deref(pte[0], lvl);
++	ptep = iopte_deref(pte[0], lvl, data);
+ 	return __arm_v7s_unmap(data, iova, size, lvl + 1, ptep);
+ }
+ 
+@@ -692,7 +713,7 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+ 	do {
+ 		ptep += ARM_V7S_LVL_IDX(iova, ++lvl);
+ 		pte = READ_ONCE(*ptep);
+-		ptep = iopte_deref(pte, lvl);
++		ptep = iopte_deref(pte, lvl, data);
+ 	} while (ARM_V7S_PTE_IS_TABLE(pte, lvl));
+ 
+ 	if (!ARM_V7S_PTE_IS_VALID(pte))
+@@ -701,7 +722,7 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+ 	mask = ARM_V7S_LVL_MASK(lvl);
+ 	if (arm_v7s_pte_is_cont(pte, lvl))
+ 		mask *= ARM_V7S_CONT_PAGES;
+-	return (pte & mask) | (iova & ~mask);
++	return iopte_to_paddr(pte, lvl, &data->iop.cfg) | (iova & ~mask);
+ }
+ 
+ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
 -- 
 1.9.1
 
