@@ -2,98 +2,121 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5478DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5BEC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189FA21871
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DM81vOjJ"
+	by mail.kernel.org (Postfix) with ESMTP id EA4BC218CD
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbfAAQ4R (ORCPT
+        id S1729018AbfAAQ4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 11:56:17 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46999 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbfAAQ4Q (ORCPT
+        Tue, 1 Jan 2019 11:56:54 -0500
+Received: from smtprelay0027.hostedemail.com ([216.40.44.27]:49644 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727360AbfAAQ4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 11:56:16 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so25350865ljh.13
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 08:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4ZV9vRNCNAmFUnR6fwDcAXfnV7vxR8zwb/FEVRXMrqI=;
-        b=DM81vOjJeBk2tdqciXTtuugI09M219TXY1Czava3aXH5Mh2y8lsd0R7h49nOBN6NVB
-         NO6V19m8ebZSucguorKfsS7sefMlV25tCrnMGQO7IQahWmCiXvSf7HPfS7HT2SXFp+95
-         V3f8/j7IrmBr3uCOCbItXbBm3uKC4TRFd6nqVVco54xi6lK3khM7Lt2CK0SUA2RAkHEF
-         rreBbKvoyHkU3OxgkDzkUHNH5XbQBrBPvEGMO+m2KBKnwSE5K4sL0q052KPXEO8lkJ3k
-         85mqUIyHV1kuix9Qg95edYIRwbngQSjkqHu58dS+fCgRjQxKzvT/bBZifGc0Rqz77TlM
-         wONA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4ZV9vRNCNAmFUnR6fwDcAXfnV7vxR8zwb/FEVRXMrqI=;
-        b=FWZe0wRs+WDBTK3d5EU7OE9CQ+O5310QgAV0YD33AWTxyAxFEzAEriF/n0O1vxjUcp
-         sL0IhHDBmw5JUh/u9td/8Xy1p7CTvcZ79wa4teKNNWE5KzaM0zWRYgS/zFJXn47wIL2F
-         X5gZR1K16eFFxBDox3FFia+F6ILQNREn2hD49XFqsC2JWlEIbC/XNm6n6hPwatYH4foZ
-         2SJKbLxTj0GfWIjZD2fc4EBBmjvsUSwUYLyqGoTtqoBHRc3MEFUJPou5qPIl3XSFEjsw
-         IsMsYWN4Tp3EPSAOpxo3fxRp+OCp2/t6HYNTXmnuz+2VXsjI6SD2rlsSYCkTeb171lhf
-         EDZw==
-X-Gm-Message-State: AJcUukdOyQTLy3EPiDSY9BrxQj9vEN5iTCyrVzT3GRfbTzyEJrYjWm6I
-        6UfIAPUHTtUzlxxQvQG2FXA=
-X-Google-Smtp-Source: ALg8bN45HAGxAh9Y9+6b52UpieI4ZUaLj06xda6f8x2x/7DqTG4D3gudXRNBNuw+kRO7y/qrHkMRRw==
-X-Received: by 2002:a2e:8256:: with SMTP id j22-v6mr23444448ljh.40.1546361774345;
-        Tue, 01 Jan 2019 08:56:14 -0800 (PST)
-Received: from pc636 ([37.212.194.0])
-        by smtp.gmail.com with ESMTPSA id x29-v6sm10748139ljb.97.2019.01.01.08.56.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Jan 2019 08:56:13 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Tue, 1 Jan 2019 17:55:57 +0100
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC v2 1/3] vmalloc: export __vmalloc_node_range for
- CONFIG_TEST_VMALLOC_MODULE
-Message-ID: <20190101165557.z2ocf6fmjzh73dyp@pc636>
-References: <20181231132640.21898-1-urezki@gmail.com>
- <20181231132640.21898-2-urezki@gmail.com>
- <20181231185022.GC6310@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181231185022.GC6310@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 1 Jan 2019 11:56:53 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 24FAA182CF666;
+        Tue,  1 Jan 2019 16:56:52 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: skin36_75f2ef0090321
+X-Filterd-Recvd-Size: 3254
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  1 Jan 2019 16:56:50 +0000 (UTC)
+Message-ID: <a935ceb348e5b4efb754484da745425afa1e7713.camel@perches.com>
+Subject: Re: [PATCH 6/6] MAINTAINERS: Add linux-actions mailing list for
+ Actions Semi
+From:   Joe Perches <joe@perches.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date:   Tue, 01 Jan 2019 08:56:49 -0800
+In-Reply-To: <20190101032622.GC2736@Mani-XPS-13-9360>
+References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
+         <20181231185517.18517-7-manivannan.sadhasivam@linaro.org>
+         <2a7f53c58896e2a9c3115a8630040b98497e5877.camel@perches.com>
+         <20190101032622.GC2736@Mani-XPS-13-9360>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 10:50:22AM -0800, Matthew Wilcox wrote:
-> On Mon, Dec 31, 2018 at 02:26:38PM +0100, Uladzislau Rezki (Sony) wrote:
-> > +#ifdef CONFIG_TEST_VMALLOC_MODULE
-> > +EXPORT_SYMBOL(__vmalloc_node_range);
-> > +#endif
+On Tue, 2019-01-01 at 08:56 +0530, Manivannan Sadhasivam wrote:
+> Hi Joe,
+
+Hi Manivannan.
+
+> On Mon, Dec 31, 2018 at 11:12:18AM -0800, Joe Perches wrote:
+> > On Tue, 2019-01-01 at 00:25 +0530, Manivannan Sadhasivam wrote:
+> > > Add the linux-actions mailing list for Actions Semi SoC architecture.
+> > 
+> > Unrelated to adding this L: entry
+> > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > []
+> > > @@ -1240,6 +1240,7 @@ ARM/ACTIONS SEMI ARCHITECTURE
+> > >  M:	Andreas Färber <afaerber@suse.de>
+> > >  R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > > +L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
+> > >  S:	Maintained
+> > >  N:	owl
+> > 
+> > The N: entry matches too many non-owl entries like:
+> > 
+> > Documentation/parport-lowlevel.txt
+> > drivers/misc/ibmasm/lowlevel.c
+> > drivers/misc/ibmasm/lowlevel.h
+> > fs/udf/lowlevel.c
+> > net/ipv6/ip6_flowlabel.c
+> > sound/soc/samsung/lowland.c
+> > 
+> > Maybe there should be two entries
+> > 
+> > N:	/owl
+> > N:	-owl
+> > 
 > 
-> Definitely needs to be _GPL.
-Will upload updated variant. 
+> Thanks for letting us know. Yes, we need to change it. How about below?
+> 
+> N: owl-
+> N: -owl
+> 
+> Will do it as a follow-up patch if agreed!
 
-Thanks for the comment!
+from MAINTAINERS:
 
---
-Vlad Rezki
+	   scripts/get_maintainer.pl has different behavior for files that
+	   match F: pattern and matches of N: patterns.  By default,
+	   get_maintainer will not look at git log history when an F: pattern
+	   match occurs.  When an N: match occurs, git log history is used
+	   to also notify the people that have git commit signatures.
+
+F: entries are preferred to N: entries because the
+get_maintainer.pl script does not assume that the
+N: entries are exclusively maintained.  Maybe use a
+more comprehensive F: list like:
+
+F:	Documentation/devicetree/bindings/*/*owl-*
+F:	arch/arm/boot/dts/owl-*
+F:	drivers/*/owl-*
+F:	drivers/*/*-owl*
+F:	drivers/*/*/owl-*
+F:	drivers/*/*/*-owl*
+F:	include/dt-bindings/power/owl-*
+F:	include/linux/soc/actions/owl-sps.h
+
+
