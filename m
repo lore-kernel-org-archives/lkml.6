@@ -2,728 +2,107 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B980AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C83C6C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C3021871
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F0DE2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbfAAJCr (ORCPT
+        id S1728431AbfAAJPA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 04:02:47 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:61825 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbfAAJCr (ORCPT
+        Tue, 1 Jan 2019 04:15:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53998 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726654AbfAAJPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 04:02:47 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-02.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1geFuE-0005VP-QK from Pragnesh_Patel@mentor.com ; Tue, 01 Jan 2019 01:00:11 -0800
-Received: from [10.0.2.15] (137.202.0.90) by svr-ies-mbx-02.mgc.mentorg.com
- (139.181.222.2) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 1 Jan
- 2019 09:00:02 +0000
-From:   ppatel <pragnesh_patel@mentor.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: add ROCK Pi 4 DTS support
-To:     <heiko@sntech.de>
-CC:     Akash Gajjar <Akash_Gajjar@mentor.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>, Levin Du <djw@t-chip.com.cn>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Liang Chen <cl@rock-chips.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Shohei Maruyama <cheat.sc.linux@outlook.com>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <Pragnesh_Patel@mentor.com>
- <20190101080848.5697-1-Pragnesh_Patel@mentor.com>
-Message-ID: <67e433c9-ad10-43a7-59de-b8d76526e8ee@mentor.com>
-Date:   Tue, 1 Jan 2019 14:29:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 1 Jan 2019 04:15:00 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x019E65l047368
+        for <linux-kernel@vger.kernel.org>; Tue, 1 Jan 2019 04:14:58 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pr43mjp98-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 04:14:58 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Tue, 1 Jan 2019 09:14:56 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 1 Jan 2019 09:14:51 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x019EoB356426542
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 1 Jan 2019 09:14:50 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F84EA4051;
+        Tue,  1 Jan 2019 09:14:50 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 583BAA4040;
+        Tue,  1 Jan 2019 09:14:46 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.85.88.250])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  1 Jan 2019 09:14:46 +0000 (GMT)
+X-Mailer: emacs 26.1 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Fan Du <fan.du@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC][PATCH v2 10/21] mm: build separate zonelist for PMEM and DRAM node
+In-Reply-To: <20181226133351.644607371@intel.com>
+References: <20181226131446.330864849@intel.com> <20181226133351.644607371@intel.com>
+Date:   Tue, 01 Jan 2019 14:44:41 +0530
 MIME-Version: 1.0
-In-Reply-To: <20190101080848.5697-1-Pragnesh_Patel@mentor.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19010109-0016-0000-0000-0000023E2131
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010109-0017-0000-0000-0000329721CA
+Message-Id: <87sgyc7n9a.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-01_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=574 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901010085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Board booting logs available at https://paste.ubuntu.com/p/62SYScSRzn/
+Fengguang Wu <fengguang.wu@intel.com> writes:
 
-On 01/01/19 1:38 PM, Pragnesh_Patel@mentor.com wrote:
-> From: Akash Gajjar <Akash_Gajjar@mentor.com>
+> From: Fan Du <fan.du@intel.com>
 >
-> ROCK Pi 4 is RK3399 based SBC from radxa.com. board has a 1G/2G/4G lpddr4, CSI,
-> DSI, HDMI, OTG, USB 2.0, USB 3.0, 10/100/1000 RGMII Ethernet Phy, es8316 codec,
-> POE, WIFI (for Model B only), PCIE M.2 support on board.
+> When allocate page, DRAM and PMEM node should better not fall back to
+> each other. This allows migration code to explicitly control which type
+> of node to allocate pages from.
 >
-> This patch enables
-> - HDMI Display
-> - Console
-> - MMC, EMMC
-> - USB 2.0, USB-3.0
-> - Ethernet
->
-> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
-> Signed-off-by: Pragnesh Patel <Pragnesh_Patel@mentor.com>
-> ---
->   .../devicetree/bindings/arm/rockchip.yaml     |   5 +
->   arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->   .../boot/dts/rockchip/rk3399-rock-pi-4.dts    | 606 ++++++++++++++++++
->   3 files changed, 612 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
->
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index b12958bda09c..b45296e1c20e 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -317,6 +317,11 @@ properties:
->             - const: radxa,rock
->             - const: rockchip,rk3188
->   
-> +      - description: Radxa ROCK Pi 4
-> +        items:
-> +          - const: radxa,rockpi4
-> +          - const: rockchip,rk3399
-> +
->         - description: Radxa Rock2 Square
->           items:
->             - const: radxa,rock2-square
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index de0c406c20cc..3fab0a3e4eeb 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-scarlet-inx.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-scarlet-kd.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock-pi-4.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-> new file mode 100644
-> index 000000000000..72c142b50350
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
-> @@ -0,0 +1,606 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2019 Akash Gajjar <Akash_Gajjar@mentor.com>
-> + * Copyright (c) 2019 Pragnesh Patel <Pragnesh_Patel@mentor.com>
-> + */
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/input/linux-event-codes.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +#include "rk3399.dtsi"
-> +#include "rk3399-opp.dtsi"
-> +
-> +/ {
-> +	model = "Radxa ROCK Pi 4";
-> +	compatible = "radxa,rockpi4", "rockchip,rk3399";
-> +
-> +	chosen {
-> +		stdout-path = "serial2:1500000n8";
-> +	};
-> +
-> +	clkin_gmac: external-gmac-clock {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <125000000>;
-> +		clock-output-names = "clkin_gmac";
-> +		#clock-cells = <0>;
-> +	};
-> +
-> +	vcc12v_dcin: dc-12v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc12v_dcin";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +	};
-> +
-> +	vcc5v0_sys: vcc-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vcc12v_dcin>;
-> +	};
-> +
-> +	vcc3v3_pcie: vcc3v3-pcie-regulator {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pcie_pwr_en>;
-> +		regulator-name = "vcc3v3_pcie";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc3v3_sys: vcc3v3-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc5v0_host: vcc5v0-host-regulator {
-> +		compatible = "regulator-fixed";
-> +		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc5v0_host_en>;
-> +		regulator-name = "vcc5v0_host";
-> +		regulator-always-on;
-> +		enable-active-high;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc5v0_typec: vcc5v0-typec-regulator {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc5v0_typec_en>;
-> +		regulator-name = "vcc5v0_typec";
-> +		regulator-always-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc_lan: vcc3v3-phy-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_lan";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +
-> +	vdd_log: vdd-log {
-> +		compatible = "pwm-regulator";
-> +		pwms = <&pwm2 0 25000 1>;
-> +		regulator-name = "vdd_log";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <800000>;
-> +		regulator-max-microvolt = <1400000>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +};
-> +
-> +&cpu_l0 {
-> +	cpu-supply = <&vdd_cpu_l>;
-> +};
-> +
-> +&cpu_l1 {
-> +	cpu-supply = <&vdd_cpu_l>;
-> +};
-> +
-> +&cpu_l2 {
-> +	cpu-supply = <&vdd_cpu_l>;
-> +};
-> +
-> +&cpu_l3 {
-> +	cpu-supply = <&vdd_cpu_l>;
-> +};
-> +
-> +&cpu_b0 {
-> +	cpu-supply = <&vdd_cpu_b>;
-> +};
-> +
-> +&cpu_b1 {
-> +	cpu-supply = <&vdd_cpu_b>;
-> +};
-> +
-> +&emmc_phy {
-> +	status = "okay";
-> +};
-> +
-> +&gmac {
-> +	assigned-clocks = <&cru SCLK_RMII_SRC>;
-> +	assigned-clock-parents = <&clkin_gmac>;
-> +	clock_in_out = "input";
-> +	phy-supply = <&vcc_lan>;
-> +	phy-mode = "rgmii";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&rgmii_pins>;
-> +	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-> +	snps,reset-active-low;
-> +	snps,reset-delays-us = <0 10000 50000>;
-> +	tx_delay = <0x28>;
-> +	rx_delay = <0x11>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	status = "okay";
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&hdmi_cec>;
-> +};
-> +
-> +&i2c0 {
-> +	clock-frequency = <400000>;
-> +	i2c-scl-rising-time-ns = <168>;
-> +	i2c-scl-falling-time-ns = <4>;
-> +	status = "okay";
-> +
-> +	rk808: pmic@1b {
-> +		compatible = "rockchip,rk808";
-> +		reg = <0x1b>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-> +		#clock-cells = <1>;
-> +		clock-output-names = "xin32k", "rk808-clkout2";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pmic_int_l>;
-> +		rockchip,system-power-controller;
-> +		wakeup-source;
-> +
-> +		vcc1-supply = <&vcc5v0_sys>;
-> +		vcc2-supply = <&vcc5v0_sys>;
-> +		vcc3-supply = <&vcc5v0_sys>;
-> +		vcc4-supply = <&vcc5v0_sys>;
-> +		vcc6-supply = <&vcc5v0_sys>;
-> +		vcc7-supply = <&vcc5v0_sys>;
-> +		vcc8-supply = <&vcc3v3_sys>;
-> +		vcc9-supply = <&vcc5v0_sys>;
-> +		vcc10-supply = <&vcc5v0_sys>;
-> +		vcc11-supply = <&vcc5v0_sys>;
-> +		vcc12-supply = <&vcc3v3_sys>;
-> +		vddio-supply = <&vcc_1v8>;
-> +
-> +		regulators {
-> +			vdd_center: DCDC_REG1 {
-> +				regulator-name = "vdd_center";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <750000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdd_cpu_l: DCDC_REG2 {
-> +				regulator-name = "vdd_cpu_l";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <750000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_ddr: DCDC_REG3 {
-> +				regulator-name = "vcc_ddr";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_1v8: DCDC_REG4 {
-> +				regulator-name = "vcc_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +
-> +			vcc1v8_codec: LDO_REG1 {
-> +				regulator-name = "vcc1v8_codec";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc1v8_hdmi: LDO_REG2 {
-> +				regulator-name = "vcc3v0_hdmi";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcca_1v8: LDO_REG3 {
-> +				regulator-name = "vcca_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +
-> +			vcc_sdio: LDO_REG4 {
-> +				regulator-name = "vcc_sdio";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3000000>;
-> +				};
-> +			};
-> +
-> +			vcca3v0_codec: LDO_REG5 {
-> +				regulator-name = "vcca3v0_codec";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_1v5: LDO_REG6 {
-> +				regulator-name = "vcc_1v5";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1500000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1500000>;
-> +				};
-> +			};
-> +
-> +			vcc0v9_hdmi: LDO_REG7 {
-> +				regulator-name = "vcc0v9_hdmi";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <900000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_3v0: LDO_REG8 {
-> +				regulator-name = "vcc_3v0";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3000000>;
-> +				};
-> +			};
-> +
-> +			vcc_cam: SWITCH_REG1 {
-> +				regulator-name = "vcc_cam";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_mipi: SWITCH_REG2 {
-> +				regulator-name = "vcc_mipi";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	vdd_cpu_b: regulator@40 {
-> +		compatible = "silergy,syr827";
-> +		reg = <0x40>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vsel1_gpio>;
-> +		regulator-name = "vdd_cpu_b";
-> +		regulator-min-microvolt = <712500>;
-> +		regulator-max-microvolt = <1500000>;
-> +		regulator-ramp-delay = <1000>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +
-> +	vdd_gpu: regulator@41 {
-> +		compatible = "silergy,syr828";
-> +		reg = <0x41>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vsel2_gpio>;
-> +		regulator-name = "vdd_gpu";
-> +		regulator-min-microvolt = <712500>;
-> +		regulator-max-microvolt = <1500000>;
-> +		regulator-ramp-delay = <1000>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	i2c-scl-rising-time-ns = <300>;
-> +	i2c-scl-falling-time-ns = <15>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c3 {
-> +	i2c-scl-rising-time-ns = <450>;
-> +	i2c-scl-falling-time-ns = <15>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c4 {
-> +	i2c-scl-rising-time-ns = <600>;
-> +	i2c-scl-falling-time-ns = <20>;
-> +	status = "okay";
-> +};
-> +
-> +&i2s0 {
-> +	rockchip,playback-channels = <8>;
-> +	rockchip,capture-channels = <8>;
-> +	status = "okay";
-> +};
-> +
-> +&i2s1 {
-> +	rockchip,playback-channels = <2>;
-> +	rockchip,capture-channels = <2>;
-> +	status = "okay";
-> +};
-> +
-> +&i2s2 {
-> +	status = "okay";
-> +};
-> +
-> +&io_domains {
-> +	status = "okay";
-> +
-> +	bt656-supply = <&vcc_3v0>;
-> +	audio-supply = <&vcc_3v0>;
-> +	sdmmc-supply = <&vcc_sdio>;
-> +	gpio1830-supply = <&vcc_3v0>;
-> +};
-> +
-> +&pmu_io_domains {
-> +	status = "okay";
-> +
-> +	pmu1830-supply = <&vcc_3v0>;
-> +};
-> +
-> +&pinctrl {
-> +	pcie {
-> +		pcie_pwr_en: pcie-pwr-en {
-> +			rockchip,pins = <2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	pmic {
-> +		pmic_int_l: pmic-int-l {
-> +			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +
-> +		vsel1_gpio: vsel1-gpio {
-> +			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_down>;
-> +		};
-> +
-> +		vsel2_gpio: vsel2-gpio {
-> +			rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
-> +		};
-> +	};
-> +
-> +	usb-typec {
-> +		vcc5v0_typec_en: vcc5v0-typec-en {
-> +			rockchip,pins = <1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +	};
-> +
-> +	usb2 {
-> +		vcc5v0_host_en: vcc5v0-host-en {
-> +			rockchip,pins = <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +};
-> +
-> +&pwm2 {
-> +	status = "okay";
-> +};
-> +
-> +&saradc {
-> +	status = "okay";
-> +
-> +	vref-supply = <&vcc_1v8>;
-> +};
-> +
-> +&sdmmc {
-> +	bus-width = <4>;
-> +	cap-mmc-highspeed;
-> +	cap-sd-highspeed;
-> +	cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
-> +	disable-wp;
-> +	max-frequency = <150000000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cd &sdmmc_cmd &sdmmc_bus4>;
-> +	status = "okay";
-> +};
-> +
-> +&sdhci {
-> +	bus-width = <8>;
-> +	mmc-hs400-1_8v;
-> +	mmc-hs400-enhanced-strobe;
-> +	non-removable;
-> +	status = "okay";
-> +};
-> +
-> +&tcphy0 {
-> +	status = "okay";
-> +};
-> +
-> +&tcphy1 {
-> +	status = "okay";
-> +};
-> +
-> +&tsadc {
-> +	status = "okay";
-> +
-> +	/* tshut mode 0:CRU 1:GPIO */
-> +	rockchip,hw-tshut-mode = <1>;
-> +	/* tshut polarity 0:LOW 1:HIGH */
-> +	rockchip,hw-tshut-polarity = <1>;
-> +};
-> +
-> +&u2phy0 {
-> +	status = "okay";
-> +
-> +	u2phy0_otg: otg-port {
-> +		status = "okay";
-> +	};
-> +
-> +	u2phy0_host: host-port {
-> +		phy-supply = <&vcc5v0_host>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&u2phy1 {
-> +	status = "okay";
-> +
-> +	u2phy1_otg: otg-port {
-> +		status = "okay";
-> +	};
-> +
-> +	u2phy1_host: host-port {
-> +		phy-supply = <&vcc5v0_host>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ohci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host1_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host1_ohci {
-> +	status = "okay";
-> +};
-> +
-> +&usbdrd3_0 {
-> +	status = "okay";
-> +};
-> +
-> +&usbdrd_dwc3_0 {
-> +	status = "okay";
-> +	dr_mode = "otg";
-> +};
-> +
-> +&usbdrd3_1 {
-> +	status = "okay";
-> +};
-> +
-> +&usbdrd_dwc3_1 {
-> +	status = "okay";
-> +	dr_mode = "host";
-> +};
-> +
-> +&vopb {
-> +	status = "okay";
-> +};
-> +
-> +&vopb_mmu {
-> +	status = "okay";
-> +};
-> +
-> +&vopl {
-> +	status = "okay";
-> +};
-> +
-> +&vopl_mmu {
-> +	status = "okay";
-> +};
+> With this patch, PMEM NUMA node can only be used in 2 ways:
+> - migrate in and out
+> - numactl
+
+Can we achieve this using nodemask? That way we don't tag nodes with
+different properties such as DRAM/PMEM. We can then give the
+flexibilility to the device init code to add the new memory nodes to
+the right nodemask
+
+-aneesh
+
