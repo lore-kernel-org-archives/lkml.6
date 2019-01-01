@@ -2,108 +2,77 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCA1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61EF32080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF182080D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:24:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ol1JVsTn"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Sx0yUnZt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfAAXQQ (ORCPT
+        id S1727425AbfAAXYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 18:16:16 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33322 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbfAAXQQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 18:16:16 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so13881486pgu.0;
-        Tue, 01 Jan 2019 15:16:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ibc6NEwZn0iuZhQYem70KiVYf+1asaj43Ebh9VS4Ksk=;
-        b=ol1JVsTni2X397r3+UTaCwZDYp4hs8QMD0YGH0BhsaU8AjTBBE9BMsaF1KizXABcwT
-         OZKlpMGD4nT87T9gOw9wGQZWuGPeejzRPLOhYUg0g5BcBamnVpg0pfhPY1wrJbfjda13
-         SR6xp6y5xX7+254nF73ADZIKpxy6Q/pxxE2GR1Y8dBXpyA+lXEDGgWNHWVItm9udBVq5
-         kYdym9mbPKeAa92XatyJwbdrRMZQG17N/NIR4Ujc8jtwliFzw5fVLC0H+BQfeTkCL/OG
-         YLf9Ws8LN8X5J1rtmP17wweHxC4+uBny8Pgc8qrf1hXpQIH58hvbFNBckvibP00OBR/D
-         BeKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ibc6NEwZn0iuZhQYem70KiVYf+1asaj43Ebh9VS4Ksk=;
-        b=dLmWIUL+7PF7mdL0AlrYftrCQtmQ45m9A09Y4bD0ZNVWKuoH5plUdHGT4KNDX2NAKA
-         YJSd8QWMynxrEfO3V+BiktIaPaGbU7tIKg0EhqkOQk46IK0cBsl/dLaFqxrq6khiYI24
-         hOsBw5faK+rh3qVtdTWoDxd736sKqLGDbEdRpYz+3a2g7EMoAUk8ZX603yUyYRTlvfuG
-         YsEs8rz7q0pMByPW5xfmnVe8T7fG58w11VvY8lXxbWPinVWj+ffBTd79o89fhtM2Cv9k
-         XVaXJX9zdXQl7XIERptVDN9rddUoJ+NCXdSqppF+09+JZ7ysu5jYHxFgFoLGKwdLV/6G
-         5InA==
-X-Gm-Message-State: AJcUukdLr++c/oEDOJKeVwrv0oYD0cIHYRGsfGZgS2eSL497OxTsj6Gn
-        P/WCN07gqCIejr2X17iaCBA=
-X-Google-Smtp-Source: ALg8bN5KPFtR7vbHiJl1IfRV08/pKKnS+Ihr3JoEaz9ZvB0LW2ilMBI+tEXpENhjNGDCiarNUxLvPQ==
-X-Received: by 2002:a65:434d:: with SMTP id k13mr11847509pgq.269.1546384575393;
-        Tue, 01 Jan 2019 15:16:15 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id t67sm95160686pfd.90.2019.01.01.15.16.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Jan 2019 15:16:14 -0800 (PST)
-Date:   Tue, 1 Jan 2019 15:15:31 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rui Zhang <rui.zhang@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Thermal-SoC management updates for v4.21-rc1
-Message-ID: <20190101231526.GA7944@localhost.localdomain>
-References: <20190101160503.GA3306@localhost.localdomain>
- <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
+        Tue, 1 Jan 2019 18:24:54 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:60096 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726294AbfAAXYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 18:24:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=4I9JtvYdW3ZMyfcKyKXoDYIy9gfsXRolbJq8yVYrck0=;
+        b=Sx0yUnZtRbZV0pTN1hwv0480MFVV7Ol5fVLMoArlNSzpAoX9FrV3vUZSf1hXvFLyWpFm9FKKWkcCiA96fBHxhiNyv+ETzuAbwhEHyYhAt3BChLlmxmjdOhdNx2TCIYEOfEAtXL+su3H48ZB1pTK6BaFv8iKQXE1h7JDjNqC2Bdc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1geTOt-00060n-Dv; Wed, 02 Jan 2019 00:24:43 +0100
+Date:   Wed, 2 Jan 2019 00:24:43 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Murali Krishna Policharla <murali.policharla@broadcom.com>
+Cc:     davem@davemloft.net, amritha.nambiar@intel.com,
+        ecree@solarflare.com, ktkhai@virtuozzo.com,
+        alexander.h.duyck@intel.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: core: Fix to store new mtu setting in netdevice.
+Message-ID: <20190101232443.GA22737@lunn.ch>
+References: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+ <20190101083450.GA17613@lunn.ch>
+ <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whXWWXSMMPpm3eGV=PL12=K5LFM3didLBuGy1Y7vUbXVg@mail.gmail.com>
+In-Reply-To: <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 01:35:36PM -0800, Linus Torvalds wrote:
-> On Tue, Jan 1, 2019 at 8:05 AM Eduardo Valentin <edubezval@gmail.com> wrote:
-> >
-> > Please consider pulling from
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+On Tue, Jan 01, 2019 at 03:18:51PM +0530, Murali Krishna Policharla wrote:
+> Hi Andrew,
+>                            Currently net/dsa/slave.c does not have
+> ndo_change_mtu function.  But shortly I will be submitting a separate
+> patch outside this fix that has ndo_change_mtu function support added to
+> DSA switch.  As part of testing the newly added ndo_change_mtu function
+> for DSA switch it uncovered that new mtu size is not being updated to
+> netdevice structure. This patch fixes this issue and updates  new mtu size
+> to  netdevice structure.
 > 
-> No.
-> 
-> I pulled and immediately unpulled again.
-> 
+> Hope this clarifies, let me know if you need any further information.
 
-hmm... ok I am double checking.
+Hi Murali
 
-> It doesn't even build cleanly.
-> 
+Thanks for the explanation.
 
-Do you still have have a copy of the build error? 
+However, i looked at the patch you listed as 'fixes'. I don't see what
+came before that setting the mtu when an ndo_change_mtu function is
+provided. It seems to me, if you provide an ndo_change_mtu, it has to
+do the assignment. I don't think you are fixing anything here.
 
-The local tests I did were not enough to see this error,
-neither were the kernel CI builds. Only failed build was
-on something completely unrelated (ARC) to these
-changes:
-Full Build Summary:
-https://kernelci.org/build/evalenti/branch/for-kernelci/kernel/v4.20-rc5-42-g055ddb633a35/
+If you do want to move the assignment into the core, please review all
+the MAC drivers which implement ndo_change_mtu and remove the
+assignment from them.
 
-
-
->                 Linus
+	   Thanks
+		Andrew
