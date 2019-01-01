@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AE7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF46C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB982075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:52:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 821922075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 04:52:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbfAAEws (ORCPT
+        id S1728545AbfAAEwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 23:52:48 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:35546 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728425AbfAAEwr (ORCPT
+        Mon, 31 Dec 2018 23:52:54 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16672 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728272AbfAAEwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 23:52:47 -0500
-X-UUID: 926d049c97d5449cac60646be8db4107-20190101
-X-UUID: 926d049c97d5449cac60646be8db4107-20190101
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        Mon, 31 Dec 2018 23:52:54 -0500
+X-UUID: 057c9f877e22482c9b2c837242ed57cc-20190101
+X-UUID: 057c9f877e22482c9b2c837242ed57cc-20190101
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 345160631; Tue, 01 Jan 2019 12:52:42 +0800
+        with ESMTP id 274667257; Tue, 01 Jan 2019 12:52:50 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 1 Jan 2019 12:52:40 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 1 Jan 2019 12:52:49 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 1 Jan 2019 12:52:40 +0800
+ Transport; Tue, 1 Jan 2019 12:52:48 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,10 +47,11 @@ CC:     Robin Murphy <robin.murphy@arm.com>,
         <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>
-Subject: [PATCH 08/13] media: mtk-vcodec: Get rid of mtk_smi_larb_get/put
-Date:   Tue, 1 Jan 2019 12:51:11 +0800
-Message-ID: <1546318276-18993-9-git-send-email-yong.wu@mediatek.com>
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 09/13] drm/mediatek: Get rid of mtk_smi_larb_get/put
+Date:   Tue, 1 Jan 2019 12:51:12 +0800
+Message-ID: <1546318276-18993-10-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
 References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
@@ -63,174 +64,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 MediaTek IOMMU has already added the device_link between the consumer
-and smi-larb device. If the vcodec device call the pm_runtime_get_sync,
+and smi-larb device. If the drm device call the pm_runtime_get_sync,
 the smi-larb's pm_runtime_get_sync also be called automatically.
 
-CC: Tiffany Lin <tiffany.lin@mediatek.com>
+CC: CK Hu <ck.hu@mediatek.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- .../media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c  | 19 -----------
- drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h |  3 --
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c |  1 -
- .../media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c  | 38 ----------------------
- 4 files changed, 61 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c     | 11 -----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 26 --------------------------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  1 -
+ 3 files changed, 38 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-index 79ca03a..90e1641 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-@@ -16,7 +16,6 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 92ecb9b..fbf859e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -18,7 +18,6 @@
+ #include <drm/drm_plane_helper.h>
+ #include <linux/clk.h>
  #include <linux/pm_runtime.h>
 -#include <soc/mediatek/smi.h>
  
- #include "mtk_vcodec_dec_pm.h"
- #include "mtk_vcodec_util.h"
-@@ -24,7 +23,6 @@
- 
- int mtk_vcodec_init_dec_pm(struct mtk_vcodec_dev *mtkdev)
+ #include "mtk_drm_drv.h"
+ #include "mtk_drm_crtc.h"
+@@ -371,20 +370,12 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
+ 				       struct drm_crtc_state *old_state)
  {
--	struct device_node *node;
- 	struct platform_device *pdev;
- 	struct mtk_vcodec_pm *pm;
- 	int ret = 0;
-@@ -32,18 +30,7 @@ int mtk_vcodec_init_dec_pm(struct mtk_vcodec_dev *mtkdev)
- 	pdev = mtkdev->plat_dev;
- 	pm = &mtkdev->pm;
- 	pm->mtkdev = mtkdev;
--	node = of_parse_phandle(pdev->dev.of_node, "mediatek,larb", 0);
--	if (!node) {
--		mtk_v4l2_err("of_parse_phandle mediatek,larb fail!");
--		return -1;
--	}
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+ 	int ret;
  
--	pdev = of_find_device_by_node(node);
--	if (WARN_ON(!pdev)) {
--		of_node_put(node);
--		return -1;
--	}
--	pm->larbvdec = &pdev->dev;
- 	pdev = mtkdev->plat_dev;
- 	pm->dev = &pdev->dev;
+ 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
  
-@@ -181,16 +168,10 @@ void mtk_vcodec_dec_clock_on(struct mtk_vcodec_pm *pm)
- 	ret = clk_set_parent(pm->vdec_sel, pm->vdecpll);
- 	if (ret)
- 		mtk_v4l2_err("clk_set_parent vdec_sel vdecpll fail %d", ret);
+-	ret = mtk_smi_larb_get(comp->larb_dev);
+-	if (ret) {
+-		DRM_ERROR("Failed to get larb: %d\n", ret);
+-		return;
+-	}
 -
--	ret = mtk_smi_larb_get(pm->larbvdec);
--	if (ret)
--		mtk_v4l2_err("mtk_smi_larb_get larbvdec fail %d", ret);
+ 	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
+ 	if (ret) {
+-		mtk_smi_larb_put(comp->larb_dev);
+ 		return;
+ 	}
+ 
+@@ -396,7 +387,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 					struct drm_crtc_state *old_state)
+ {
+ 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+-	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+ 	int i;
+ 
+ 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
+@@ -419,7 +409,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 	drm_crtc_vblank_off(crtc);
+ 	mtk_crtc_ddp_hw_fini(mtk_crtc);
+-	mtk_smi_larb_put(comp->larb_dev);
+ 
+ 	mtk_crtc->enabled = false;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 54ca794..ede15c9 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -265,8 +265,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 		      const struct mtk_ddp_comp_funcs *funcs)
+ {
+ 	enum mtk_ddp_comp_type type;
+-	struct device_node *larb_node;
+-	struct platform_device *larb_pdev;
+ 
+ 	if (comp_id < 0 || comp_id >= DDP_COMPONENT_ID_MAX)
+ 		return -EINVAL;
+@@ -296,30 +294,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 	if (IS_ERR(comp->clk))
+ 		return PTR_ERR(comp->clk);
+ 
+-	/* Only DMA capable components need the LARB property */
+-	comp->larb_dev = NULL;
+-	if (type != MTK_DISP_OVL &&
+-	    type != MTK_DISP_RDMA &&
+-	    type != MTK_DISP_WDMA)
+-		return 0;
 -
+-	larb_node = of_parse_phandle(node, "mediatek,larb", 0);
+-	if (!larb_node) {
+-		dev_err(dev,
+-			"Missing mediadek,larb phandle in %pOF node\n", node);
+-		return -EINVAL;
+-	}
+-
+-	larb_pdev = of_find_device_by_node(larb_node);
+-	if (!larb_pdev) {
+-		dev_warn(dev, "Waiting for larb device %pOF\n", larb_node);
+-		of_node_put(larb_node);
+-		return -EPROBE_DEFER;
+-	}
+-	of_node_put(larb_node);
+-
+-	comp->larb_dev = &larb_pdev->dev;
+-
+ 	return 0;
  }
  
- void mtk_vcodec_dec_clock_off(struct mtk_vcodec_pm *pm)
- {
--	mtk_smi_larb_put(pm->larbvdec);
- 	clk_disable_unprepare(pm->vdec_sel);
- 	clk_disable_unprepare(pm->vdecpll);
- 	clk_disable_unprepare(pm->univpll_d2);
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-index 3cffb38..2696e14 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-@@ -191,9 +191,6 @@ struct mtk_vcodec_pm {
- 	struct clk	*venc_sel;
- 	struct clk	*univpll1_d2;
- 	struct clk	*venc_lt_sel;
--	struct device	*larbvdec;
--	struct device	*larbvenc;
--	struct device	*larbvenclt;
- 	struct device	*dev;
- 	struct mtk_vcodec_dev	*mtkdev;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index 8399229..b8dc17e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -91,7 +91,6 @@ struct mtk_ddp_comp {
+ 	struct clk *clk;
+ 	void __iomem *regs;
+ 	int irq;
+-	struct device *larb_dev;
+ 	enum mtk_ddp_comp_id id;
+ 	const struct mtk_ddp_comp_funcs *funcs;
  };
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-index 54631ad..7401619 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-@@ -16,7 +16,6 @@
- #include <media/v4l2-event.h>
- #include <media/v4l2-mem2mem.h>
- #include <media/videobuf2-dma-contig.h>
--#include <soc/mediatek/smi.h>
- 
- #include "mtk_vcodec_drv.h"
- #include "mtk_vcodec_enc.h"
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-index 3e73e9d..a3abd3d 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-@@ -16,7 +16,6 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
--#include <soc/mediatek/smi.h>
- 
- #include "mtk_vcodec_enc_pm.h"
- #include "mtk_vcodec_util.h"
-@@ -25,7 +24,6 @@
- 
- int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- {
--	struct device_node *node;
- 	struct platform_device *pdev;
- 	struct device *dev;
- 	struct mtk_vcodec_pm *pm;
-@@ -38,31 +36,6 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 	pm->dev = &pdev->dev;
- 	dev = &pdev->dev;
- 
--	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
--	if (!node) {
--		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
--	}
--	pdev = of_find_device_by_node(node);
--	if (!pdev) {
--		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
--	}
--	pm->larbvenc = &pdev->dev;
--
--	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
--	if (!node) {
--		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
--	}
--
--	pdev = of_find_device_by_node(node);
--	if (!pdev) {
--		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
--	}
--
--	pm->larbvenclt = &pdev->dev;
- 	pdev = mtkdev->plat_dev;
- 	pm->dev = &pdev->dev;
- 
-@@ -117,21 +90,10 @@ void mtk_vcodec_enc_clock_on(struct mtk_vcodec_pm *pm)
- 	ret = clk_set_parent(pm->venc_lt_sel, pm->univpll1_d2);
- 	if (ret)
- 		mtk_v4l2_err("clk_set_parent fail %d", ret);
--
--	ret = mtk_smi_larb_get(pm->larbvenc);
--	if (ret)
--		mtk_v4l2_err("mtk_smi_larb_get larb3 fail %d", ret);
--
--	ret = mtk_smi_larb_get(pm->larbvenclt);
--	if (ret)
--		mtk_v4l2_err("mtk_smi_larb_get larb4 fail %d", ret);
--
- }
- 
- void mtk_vcodec_enc_clock_off(struct mtk_vcodec_pm *pm)
- {
--	mtk_smi_larb_put(pm->larbvenc);
--	mtk_smi_larb_put(pm->larbvenclt);
- 	clk_disable_unprepare(pm->venc_lt_sel);
- 	clk_disable_unprepare(pm->venc_sel);
- }
 -- 
 1.9.1
 
