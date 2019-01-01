@@ -1,146 +1,270 @@
 Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D12C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 00:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6953C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 00:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D07C2080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 00:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B3921019
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 00:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlmqFh1N"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tMXnz5Xz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfAAAVl (ORCPT
+        id S1728072AbfAAAog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 19:21:41 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43370 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbfAAAVl (ORCPT
+        Mon, 31 Dec 2018 19:44:36 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40464 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbfAAAog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 19:21:41 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so13650867pfk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 16:21:40 -0800 (PST)
+        Mon, 31 Dec 2018 19:44:36 -0500
+Received: by mail-oi1-f194.google.com with SMTP id t204so22750125oie.7
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 16:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xs0DOor6riAMBvGvncxA8hc+sXAg7Y+KCqawPJPM/L4=;
-        b=mlmqFh1N2rKInWKL+zaXRB6n+Tgab2ngy33K1W8EPhOixEQB4tUwAJCn+BAcR7kkPI
-         pybrkzhm5Wy2kEhczCTxEyz6teVevTOPVXAggHuT5zgIsHsegbrSus+S2wyrubczdHyZ
-         LpjKw81MDH5gqk2UJuNFZ4fIzFktkREtcnXHeozxATXIH5lDG/OU8ArKNzw52o0OnUEl
-         5PPI2Glah7BP9mMjPkzmYZv1J4H4fnpELYMXN9lMdtqn5aVpyNQ/heKPn6196o5RQl3O
-         ifhY9gcTydT4MCB7xOtqUcZan9VJSi7ZsLHFRftqi+hBUu0ZlTvhkHYxarYR5hwymCPn
-         85Iw==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=3clf4p2zR0Kr6AYYOg+cEyz2yTDTor5Y/lT1dJ6upqE=;
+        b=tMXnz5Xz8WKhlJ0ckNW7G8rB3sE3qBwu8XJHbo/6WD8MB9JSNZfkmzQwX4j4kbscAH
+         SWZZTgZQiV7sQcVT/S987wcIrjww6ttqifC+F8xBDfWSxyYlesy5pWJUoVIlm575Au2P
+         HmQCgEQT4DRn9Jm+hdhnB7rBjShflNGsyGauRkwXJYga/L7meRCRjBvYqdjD6ReJwsBd
+         uutvU2TAUt4QwEfoZ54QOrfrHgJUKVyAVZnIcYEysfGJEa6wBsJojOiXFaRCTKepGZEn
+         nzqUKtyBHXCHAE3/P/X1Ie6cY6yqjuV7pT9O6xE0j8xaeqTzXs9f4CPZ/dnOTWFY22JL
+         a++A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Xs0DOor6riAMBvGvncxA8hc+sXAg7Y+KCqawPJPM/L4=;
-        b=PilKTjab0fzlsHZ9GSMj9odBdQiNrIzj7C0P+xeqFpI+rhHbDGr1/hzLGgwoQWN70v
-         MMkXqI4/QaHJbTV+xw4/kV2ZOBVN/sWattNRCW6GxzJBVFFY1SfqKwSdTjGeRUAnhgP2
-         I/ddwaDj0eERhRLrooM6laezoK6jyAkde9PBdiRpQO4d0+LS5Yo7YiwlqZbOyJ8c+ng/
-         VgEzhlFY8PKgOY7Tt6e5FMW/5rk/k3rV/chr0kLtm5QZ0JQls1gnNrLNyhrhLN6Zmabz
-         OtRV4uFntz8OxdN84ecucHrr7WNOIdhNhOyxof6g4cD1maj1I4OYZNDFIIuhJCOthF76
-         ZB0g==
-X-Gm-Message-State: AA+aEWZ9Rt1B4qTjf1HaZJrLceYqDIRwJ8dtgw82oubGZ7zpOxljXwW0
-        fWJ7Fe0kkPJTkKX+dGTBAAdzU/tDHTE60w==
-X-Google-Smtp-Source: ALg8bN5OrwF+89s9Qnnva5gnz310uVHL52bdOQw+T/GLl2da1QxSv2l/eOZHTYAuARWsU3Cfh2OWaw==
-X-Received: by 2002:a62:3603:: with SMTP id d3mr40913334pfa.146.1546302099517;
-        Mon, 31 Dec 2018 16:21:39 -0800 (PST)
-Received: from gmail.com ([2605:e000:1117:c227:3b53:d0fe:bff:4913])
-        by smtp.gmail.com with ESMTPSA id n7sm83522312pff.36.2018.12.31.16.21.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 31 Dec 2018 16:21:38 -0800 (PST)
-Date:   Mon, 31 Dec 2018 14:21:36 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Joey Pabalinas <joeypabalinas@gmail.com>, Willy Tarreau <w@1wt.eu>,
-        mingo@kernel.org, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] rcutorture/nolibc: add a bit of documentation to
- explain how to use nolibc
-Message-ID: <20190101002136.fvn3hy7ybkhmgd3r@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Willy Tarreau <w@1wt.eu>, mingo@kernel.org, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181229180218.15798-1-w@1wt.eu>
- <20181229180218.15798-4-w@1wt.eu>
- <20181229223324.slqx3qjrmzg5g2w2@gmail.com>
- <20181230070846.GA17139@1wt.eu>
- <20181230074020.nirv2jzf6lh7s5lf@gmail.com>
- <20181231200854.GS4170@linux.ibm.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=3clf4p2zR0Kr6AYYOg+cEyz2yTDTor5Y/lT1dJ6upqE=;
+        b=P2eakzRVhnH6/8vewjsYfCamEXYF8T2VpoAxMFz89KfcomTr6/3yZtwjP/J7ZHDWLg
+         FMpdA/emnvqoQ5+sG7dxvodwjoZxxqwfABtflMBC/DvGwBcwkrHZyt1h1EWSu0Pz5aMk
+         H1lGmdJLfyZ3vyHqTe6qSDnagP4y4uhcld3gKSYxDqDa0IwTcQuXN6OdcjEG8yr8sJMi
+         09SN3fy+prVi/Q0aNrVGMwz0eyd11zWuHdV1dpUdfSfSzVjIJC3/5F+i0KFKghxoS80z
+         q4lp3uux3pwDau2xv54ugJDFwkcqtKepRf4vWgxPCkkt0pSISnWS1S/TO0kk+T8my7hD
+         mevA==
+X-Gm-Message-State: AA+aEWZzFkCZW+1Fer3frrdcJdAG4KNxY9NMlF8b2tr7Hli2uZpqSR7r
+        PYHn8qleAR17TCA59USaVIvnng==
+X-Google-Smtp-Source: AFSGD/XImH2v0l15xE4/u4gjuTl0mDfvHSUDjdDkheK2WGTP+d6zwEHYJ9CremhKN+qt9LL4AIZ2dA==
+X-Received: by 2002:a54:4486:: with SMTP id v6mr26570949oiv.233.1546303474701;
+        Mon, 31 Dec 2018 16:44:34 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id c78sm37919044oig.30.2018.12.31.16.44.32
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 31 Dec 2018 16:44:33 -0800 (PST)
+Date:   Mon, 31 Dec 2018 16:44:24 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Kelley Nielsen <kelleynnn@gmail.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v3 2/2] mm: rid swapoff of quadratic complexity
+In-Reply-To: <20181203170934.16512-2-vpillai@digitalocean.com>
+Message-ID: <alpine.LSU.2.11.1812311635590.4106@eggly.anvils>
+References: <20181203170934.16512-1-vpillai@digitalocean.com> <20181203170934.16512-2-vpillai@digitalocean.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2wxiw7bbzajuuvrw"
-Content-Disposition: inline
-In-Reply-To: <20181231200854.GS4170@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 3 Dec 2018, Vineeth Remanan Pillai wrote:
 
---2wxiw7bbzajuuvrw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This patch was initially posted by Kelley(kelleynnn@gmail.com).
+> Reposting the patch with all review comments addressed and with minor
+> modifications and optimizations. Tests were rerun and commit message
+> updated with new results.
+> 
+> The function try_to_unuse() is of quadratic complexity, with a lot of
+> wasted effort. It unuses swap entries one by one, potentially iterating
+> over all the page tables for all the processes in the system for each
+> one.
+> 
+> This new proposed implementation of try_to_unuse simplifies its
+> complexity to linear. It iterates over the system's mms once, unusing
+> all the affected entries as it walks each set of page tables. It also
+> makes similar changes to shmem_unuse.
 
-On Mon, Dec 31, 2018 at 12:08:54PM -0800, Paul E. McKenney wrote:
-> On Sat, Dec 29, 2018 at 09:40:20PM -1000, Joey Pabalinas wrote:
-> > On Sun, Dec 30, 2018 at 08:08:46AM +0100, Willy Tarreau wrote:
-> > > Definitely! Same, I won't emit a patch just for this, Paul already qu=
-eued it.
-> >=20
-> > Yeah, not that big a deal :)
-> >=20
-> > Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
->=20
-> But as long as I am rebasing to add the Reviewed-by, might as well
-> update the others.
->=20
-> The English rules for capitalization and lists are baroque and completely
-> unsuited to word processors ("If any list item is longer than one line,
-> capitalize all the items."), but in this case each item has multiple
-> sentences, so it makes sense to capitalize.
->=20
-> Please see below for the updated commit, and thank you all!
+Hi Vineeth, please fold in fixes below before reposting your
+"mm,swap: rid swapoff of quadratic complexity" patch -
+or ask for more detail if unclear.  I could split it up,
+of course, but since they should all (except perhaps one)
+just be merged into the base patch before going any further,
+it'll save me time to keep them together here and just explain:-
 
-Interesting, I had no idea it was actually that odd, hah.
+shmem_unuse_swap_entries():
+If a user fault races with swapoff, it's very normal for
+shmem_swapin_page() to return -EEXIST, and the old code was
+careful not to pass back any error but -ENOMEM; whereas on mmotm,
+/usr/sbin/swapoff often failed silently because it got that EEXIST.
 
-> And Happy New Year!!!  ;-)
+shmem_unuse():
+A couple of crashing bugs there: a list_del_init without holding the
+mutex, and too much faith in the "safe" in list_for_each_entry_safe():
+it does assume that the mutex has been held throughout, you (very
+nicely!) drop it, but that does require "next" to be re-evaluated.
 
-Glad to help, and happy new year to you as well  :)
+shmem_writepage():
+Not a bug fix, this is the "except perhaps one": minor optimization,
+could be left out, but if shmem_unuse() is going through the list
+in the forward direction, and may completely unswap a file and del
+it from the list, then pages from that file can be swapped out to
+*other* swap areas after that, and it be reinserted in the list:
+better to reinsert it behind shmem_unuse()'s cursor than in front
+of it, which would entail a second pointless pass over that file.
 
---=20
-Cheers,
-Joey Pabalinas
+try_to_unuse():
+Moved up the assignment of "oldi = i" (and changed the test to
+"oldi <= i"), so as not to get trapped in that find_next_to_unuse()
+loop when find_get_page() does not find it.
 
---2wxiw7bbzajuuvrw
-Content-Type: application/pgp-signature; name="signature.asc"
+try_to_unuse():
+But the main problem was passing entry.val to find_get_page() there:
+that used to be correct, but since f6ab1f7f6b2d we need to pass just
+the offset - as it stood, it could only find the pages when swapping
+off area 0 (a similar issue was fixed in shmem_replace_page() recently).
+That (together with the late oldi assignment) was why my swapoffs were
+hanging on SWAP_HAS_CACHE swap_map entries.
 
------BEGIN PGP SIGNATURE-----
+With those changes, it all seems to work rather well, and is a nice
+simplification of the source, in addition to removing the quadratic
+complexity. To my great surprise, the KSM pages are already handled
+fairly well - the ksm_might_need_to_copy() that has long been in
+unuse_pte() turns out to do (almost) a good enough job already,
+so most users of KSM and swapoff would never see any problem.
+And I'd been afraid of swapin readahead causing spurious -ENOMEMs,
+but have seen nothing of that in practice (though something else
+in mmotm does appear to use up more memory than before).
 
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlwqso8ACgkQ2rGdfm9D
-tVJBfBAAnELVDn1WR6KHONC4ToV0uRjg1HaaHcp1RwJoTAHEqSdJ9VYPIjH4p11d
-9XNjmQ/X6Bj08L5rluQd/mWcosdWrGQWz52A3xJ12PoXr41pRvbZZ6rR9+MXZK63
-lYzbHXgCBXbVkiNcGO+bPCSGD8B/CD//G2GbITu46c6BEIlKvlc0PpOpz4orPOen
-dFqKhUfi3jQFuqdvt126VhIOG57XuUL5AmIXiBpdIVA4QnvB3cBGOnMsbVx6ZnNk
-TnUl0eUKJ/hvOUunqNOzA4py1EuBPTl6y7iVHIUV7NWvb6sgNOe9i+3I/2NgM67+
-U2PUEJeREUnVwLUjiY0sacwAWMW9AvENTQHCCZDdFI2z6tMhmZI2yI7yASq7P366
-OCUmn+7mcd4vZhrwpGADzNdnLvXZpJ9D6YPAKP4/8SirxZadVOs+DMO93j6I9a/P
-8qmEIYfscLcVnGo+XCTUrrJjzZVgtBMoX1jFODS0l/kDMUXy7d/tcE8sfZmHS8f3
-TWHpzdmbGH4kr0UEny6N0LpnYLt/x2Eb6FdBxCYDrTWcqs6FznXj9Q5BmLYVEVtk
-7HKWF7KYqJniL6+bAr/OFrKVrKQgLblH0F1lY4x6fJ9gjaXtG/rRVmpSyhHQMeLc
-LHrLPkfYtH96DvSTnEi4p3WCcDvYXadkHF0zVifcfCqxXf1zjsk=
-=B3ur
------END PGP SIGNATURE-----
+My remaining criticisms would be:
 
---2wxiw7bbzajuuvrw--
+As Huang Ying pointed out in other mail, there is a danger of
+livelock (or rather, hitting the MAX_RETRIES limit) when a multiply
+mapped page (most especially a KSM page, whose mappings are not
+likely to be nearby in the mmlist) is swapped out then partially
+swapped off then some ptes swapped back out.  As indeed the
+"Under global memory pressure" comment admits.
+
+I have hit the MAX_RETRIES 3 limit several times in load testing,
+not investigated but I presume due to such a multiply mapped page,
+so at present we do have a regression there.  A very simple answer
+would be to remove the retries limiting - perhaps you just added
+that to get around the find_get_page() failure before it was
+understood?  That does then tend towards the livelock alternative,
+but you've kept the signal_pending() check, so there's still the
+same way out as the old technique had (but greater likelihood of
+needing it with the new technique).  The right fix will be to do
+an rmap walk to unuse all the swap entries of a single anon_vma
+while holding page lock (with KSM needing that page force-deleted
+from swap cache before moving on); but none of us have written
+that code yet, maybe just removing the retries limit good enough.
+
+Two dislikes on the code structure, probably one solution: the
+"goto retry", up two levels from inside the lower loop, is easy to
+misunderstand; and the oldi business is ugly - find_next_to_unuse()
+was written to wrap around continuously to suit the old loop, but
+now it's left with its "++i >= max" code to achieve that, then your
+"i <= oldi" code to detect when it did, to undo that again: please
+delete code from both ends to make that all simpler.
+
+I'd expect to see checks on inuse_pages in some places, to terminate
+the scans as soon as possible (swapoff of an unused swapfile should
+be very quick, shouldn't it? not requiring any scans at all); but it
+looks like the old code did not have those either - was inuse_pages
+unreliable once upon a time? is it unreliable now?
+
+Hugh
+
+---
+
+ mm/shmem.c    |   12 ++++++++----
+ mm/swapfile.c |    8 ++++----
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+--- mmotm/mm/shmem.c	2018-12-22 13:32:51.339584848 -0800
++++ linux/mm/shmem.c	2018-12-31 12:30:55.822407154 -0800
+@@ -1149,6 +1149,7 @@ static int shmem_unuse_swap_entries(stru
+ 		}
+ 		if (error == -ENOMEM)
+ 			break;
++		error = 0;
+ 	}
+ 	return error;
+ }
+@@ -1216,12 +1217,15 @@ int shmem_unuse(unsigned int type)
+ 		mutex_unlock(&shmem_swaplist_mutex);
+ 		if (prev_inode)
+ 			iput(prev_inode);
++		prev_inode = inode;
++
+ 		error = shmem_unuse_inode(inode, type);
+-		if (!info->swapped)
+-			list_del_init(&info->swaplist);
+ 		cond_resched();
+-		prev_inode = inode;
++
+ 		mutex_lock(&shmem_swaplist_mutex);
++		next = list_next_entry(info, swaplist);
++		if (!info->swapped)
++			list_del_init(&info->swaplist);
+ 		if (error)
+ 			break;
+ 	}
+@@ -1313,7 +1317,7 @@ static int shmem_writepage(struct page *
+ 	 */
+ 	mutex_lock(&shmem_swaplist_mutex);
+ 	if (list_empty(&info->swaplist))
+-		list_add_tail(&info->swaplist, &shmem_swaplist);
++		list_add(&info->swaplist, &shmem_swaplist);
+ 
+ 	if (add_to_swap_cache(page, swap, GFP_ATOMIC) == 0) {
+ 		spin_lock_irq(&info->lock);
+diff -purN mmotm/mm/swapfile.c linux/mm/swapfile.c
+--- mmotm/mm/swapfile.c	2018-12-22 13:32:51.347584880 -0800
++++ linux/mm/swapfile.c	2018-12-31 12:30:55.822407154 -0800
+@@ -2156,7 +2156,7 @@ retry:
+ 
+ 	while ((i = find_next_to_unuse(si, i, frontswap)) != 0) {
+ 		/*
+-		 * under global memory pressure, swap entries
++		 * Under global memory pressure, swap entries
+ 		 * can be reinserted back into process space
+ 		 * after the mmlist loop above passes over them.
+ 		 * This loop will then repeat fruitlessly,
+@@ -2164,7 +2164,7 @@ retry:
+ 		 * but doing nothing to actually free up the swap.
+ 		 * In this case, go over the mmlist loop again.
+ 		 */
+-		if (i < oldi) {
++		if (i <= oldi) {
+ 			retries++;
+ 			if (retries > MAX_RETRIES) {
+ 				retval = -EBUSY;
+@@ -2172,8 +2172,9 @@ retry:
+ 			}
+ 			goto retry;
+ 		}
++		oldi = i;
+ 		entry = swp_entry(type, i);
+-		page = find_get_page(swap_address_space(entry), entry.val);
++		page = find_get_page(swap_address_space(entry), i);
+ 		if (!page)
+ 			continue;
+ 
+@@ -2188,7 +2189,6 @@ retry:
+ 		try_to_free_swap(page);
+ 		unlock_page(page);
+ 		put_page(page);
+-		oldi = i;
+ 	}
+ out:
+ 	return retval;
