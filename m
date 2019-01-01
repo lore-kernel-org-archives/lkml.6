@@ -2,36 +2,36 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D68C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B6AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9874208E3
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93CFD208E3
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 09:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfAAJAJ (ORCPT
+        id S1728627AbfAAJCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 04:00:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37494 "EHLO mx1.suse.de"
+        Tue, 1 Jan 2019 04:02:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37598 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726423AbfAAJAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 04:00:09 -0500
+        id S1726480AbfAAJCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 04:02:10 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DB211AE10;
-        Tue,  1 Jan 2019 09:00:07 +0000 (UTC)
-Date:   Tue, 01 Jan 2019 10:00:07 +0100
-Message-ID: <s5ho990iwh4.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 65F16AE10;
+        Tue,  1 Jan 2019 09:02:09 +0000 (UTC)
+Date:   Tue, 01 Jan 2019 10:02:09 +0100
+Message-ID: <s5hmuokiwdq.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Kangjie Lu" <kjlu@umn.edu>
 Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
         <pakki001@umn.edu>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] line6: add a  check for snd_card_register
-In-Reply-To: <20181226033933.73306-1-kjlu@umn.edu>
-References: <20181226033933.73306-1-kjlu@umn.edu>
+Subject: Re: [PATCH] pci: fix a missing check of snd_i2c_sendbytes
+In-Reply-To: <20181226051206.74467-1-kjlu@umn.edu>
+References: <20181226051206.74467-1-kjlu@umn.edu>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -42,25 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Dec 2018 04:39:31 +0100,
+On Wed, 26 Dec 2018 06:12:04 +0100,
 Kangjie Lu wrote:
 > 
-> The fix checks if snd_card_register() fails, and if so, issues a
-> warning.
+> snd_i2c_sendbytes could fail. The fix checks its return value: if it
+> fails, issues an error message and returns with its error code.
 > 
 > Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  sound/pci/ice1712/ews.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/pci/ice1712/ews.c b/sound/pci/ice1712/ews.c
+> index b8af747ecb43..b978cdb0fc20 100644
+> --- a/sound/pci/ice1712/ews.c
+> +++ b/sound/pci/ice1712/ews.c
+> @@ -826,7 +826,10 @@ static int snd_ice1712_6fire_read_pca(struct snd_ice1712 *ice, unsigned char reg
+>  
+>  	snd_i2c_lock(ice->i2c);
+>  	byte = reg;
+> -	snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1);
+> +	if (snd_i2c_sendbytes(spec->i2cdevs[EWS_I2C_6FIRE], &byte, 1)) {
+> +		dev_err(ice->card->dev, "cannot send pca\n");
+> +		return -EIO;
 
-Hmm, you submitted multiple patches doing the similar things but the
-error messages are handled completely differently in both cases.
-Please make them consistent.
-
-... and above all:
-
-> -	snd_card_register(line6->card);
-> +	if (snd_card_register(line6->card))
-> +		pr_warn("Failed to register ALSA card.\n");
-
-This error message is almost useless.  Better to use dev_*() variant.
+You forgot to unlock before returning.
 
 
 thanks,
