@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3ABC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6295C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C6D21871
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5517C21871
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPioarUB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUWsas/q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfAAQsc (ORCPT
+        id S1728999AbfAAQua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 11:48:32 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44451 "EHLO
+        Tue, 1 Jan 2019 11:50:30 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46968 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728977AbfAAQsc (ORCPT
+        with ESMTP id S1728176AbfAAQua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 11:48:32 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z13so19650282lfe.11
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 08:48:29 -0800 (PST)
+        Tue, 1 Jan 2019 11:50:30 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y14so698460lfg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jan 2019 08:50:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:from:date:message-id:subject:to:cc;
-        bh=4ZIZa02DoYM8CX2jBoLu46TaHoHcc33m8BVGVHaaZTU=;
-        b=kPioarUB24yLBhgeXgf5CXVQQ+SjB9KzmBvn6T4oSoFiXABxqobwyKtgiGgMTA9oRm
-         /CoU7yttITP0z2qW7Bacv20djBQjrOFUfijezOwOQRGU3+Bw/ZICi+ZKDyfNkOagUOvN
-         Zt885rdUcuWYh4l7nf/x/d1GMgBm531FQUyaZSTcwC83eFnPKL9iBlCfton8ny3/Fzsq
-         5IAC3/7ZNhRy2qVZkU0ZpvIVVM97sbSdsU9LgPElIXcxtLvCGLpS18Wmzki2IdJNTtXw
-         muN21F4Toa4YLBBWhsIEOxol+khQ1Yf8I+jnaYWw9YM4ciC3p+0Feh8lBEgAPT3kgsxP
-         qEqw==
+        bh=v9/EDKi2c//O+5xJnrTjcp6tKbxQg/ZMTzCU4XtWXEk=;
+        b=MUWsas/qbxMNl7dSa1NUCKZyKjI8YzX4Y6XdkTnfNOeXhcoDdRYrtH/ibMTN/Gqbu5
+         FJlk+jKbcsJwhv2wydDQ/GC7N9bjRHeTVJj0GNrYCl0fTyOZw9bVXSj9C8HggxLm5yrj
+         U50nk3IX0yOeCi//DXiSO9XI2q0ExLXzbEVUa6CQvF7BtXI2QiNcoHej1uVjfGdcb8If
+         CAhgM8BIfzyqAeuzGvdq1I1qA385k/mROuKWTQwKNmiATkuGIzlUm0EofHpSmv/Rk/2A
+         cp8D6KE3mD71LZCvghKU4IguKTWvjsGFnzB56B2bPpXBTavovwiZwvWU4fo4Mwmv5bof
+         3FGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=4ZIZa02DoYM8CX2jBoLu46TaHoHcc33m8BVGVHaaZTU=;
-        b=jr7FW33H2gpNZ3OmE4LxUXGtnuo1hFeoR6N4+LCOZoiC7vXiyj9lCMfeVRnAxfjq8n
-         9OSxsmyCFJ1FItCxiPOV4Ptf66gqEHQVPc1m3mUm3iS9CIkq5tbOZVMWeb1aVwtIGE6e
-         hZqqaikEMy8yqzE+py2VwbH3qUOPpNtJnrqim8oPLPdPX//003d1U8ITWRdydelTFPQP
-         Ow8odlQQGCn/dMJfNJyeFXczo/HAkNw0pHZm6DqFCL0NUd3rbPH+/t2bKeVPgb72xFVC
-         BGS2rRtAfSYGKyEQ+TCD05QJGJUp4L9sC/WoZ3fAJXGjloKvsB1Fdnbx6oK6Iu18e2cx
-         w4NA==
-X-Gm-Message-State: AA+aEWZNMtBl0nsNVKtuq2onYFI178zcJ7JdqZfQ6Ew9L6S3w40LQz9R
-        zzmEwXN24YJ/cUW0kNORWrk/D/mrFkpooZkXi5xPYwWl
-X-Google-Smtp-Source: AFSGD/V3WDP55p9pVNF/dloW0ksb49brgC+2Qs133IZZbEgW5sAQw99pXsiru9ufDXifMHpT3IUdWdKs973sFtJm8L0=
-X-Received: by 2002:a19:c203:: with SMTP id l3mr19588681lfc.113.1546361308214;
- Tue, 01 Jan 2019 08:48:28 -0800 (PST)
+        bh=v9/EDKi2c//O+5xJnrTjcp6tKbxQg/ZMTzCU4XtWXEk=;
+        b=GyRpimJBND4PjYekKtx1NC2fx5lYxiAepqXKwcj0Ll/sA8ajK7SXWSRANXA/ZQ38yY
+         6lH6dKz5BhaSp8nOmeRnnmU5p6oaKPAK6t0nKnXaP9m3KPA4SX8QBcRK1OFOA/NBeu/2
+         vMI0qmPH6rYY4eMCuKGnGoBjm3nZnmPte7/f6c6Ew25JVXi83+W7Qd2TeH28561kpWgH
+         CbKm7jdreI91Yh3atlA3WR571HNbRYHVvIWcnfYAKTXVuDOFOvq7Jwmyc+f0ghwxawhN
+         mDfcYJD/sWNWZN8PYFz573gn3UIYZXvKDNiZh5/jf2HPZXNInf4SSYzKhq5g8enV6Ll1
+         kqOQ==
+X-Gm-Message-State: AJcUukd4YvClAfm6nQs3/RSy6ErVTeFdSsZ4t8/OViUjb5754aVtRN0q
+        CwDkfnVV01evITotzaW5Pzvl+ONQmQrrrMdSzwYLPgAi
+X-Google-Smtp-Source: ALg8bN6VnNOQ5uBhmUik8ZTUf4U9PMR1YoJx+bRgFOUJENHcjxmtMP0KCs3YX0QqStgjFyWFRzXv10KdVOZk85EPn40=
+X-Received: by 2002:a19:7dc2:: with SMTP id y185mr10417241lfc.27.1546361426072;
+ Tue, 01 Jan 2019 08:50:26 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:ab3:7ad7:0:0:0:0:0 with HTTP; Tue, 1 Jan 2019 08:48:27 -0800 (PST)
+Received: by 2002:ab3:7ad7:0:0:0:0:0 with HTTP; Tue, 1 Jan 2019 08:50:25 -0800 (PST)
 From:   Nathaniel Russell <naterussell83@gmail.com>
-Date:   Tue, 1 Jan 2019 10:48:27 -0600
-Message-ID: <CAONH+JnibQOphTKDC1uCEBiVcmiW5o9=LDbe6i7q6mHP1o1xnw@mail.gmail.com>
-Subject: Kernel Opppps Kernel 4.
+Date:   Tue, 1 Jan 2019 10:50:25 -0600
+Message-ID: <CAONH+J=rW_EKR5F33OHrYSznouX70=u-MGYpLJrOEAuJ5Ezv0Q@mail.gmail.com>
+Subject: Kernel Opppps Kernel 4.20.0
 To:     linux-kernel <linux-kernel@vger.kernel.org>
 Cc:     Nathaniel Russell <naterussell83@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -63,6 +63,13 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+I got this message this morning on Kernel 4.20.0 , mind you I have not
+done anything differently as the same with kernel 4.19.6. So when this
+came up this morning I figured I needed to send this in.
+
+
+
 
 [74011.275028] ------------[ cut here ]------------
 [74011.275031] CPA: called for zero pte. vaddr = 0 cpa->vaddr = 0
