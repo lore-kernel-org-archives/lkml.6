@@ -2,104 +2,155 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8F5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 12:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6594BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 12:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B352218AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 12:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042CC218B0
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 12:49:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nisi.nl header.i=j.vlietland@nisi.nl header.b="O5e8qQWm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbfAAMeI convert rfc822-to-8bit (ORCPT
+        id S1728774AbfAAMte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 07:34:08 -0500
-Received: from smtp2-g21.free.fr ([212.27.42.2]:36274 "EHLO smtp2-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728438AbfAAMeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 07:34:07 -0500
-Received: from mail.corsac.net (unknown [78.194.244.226])
-        by smtp2-g21.free.fr (Postfix) with ESMTPS id DC7802003BE
-        for <linux-kernel@vger.kernel.org>; Tue,  1 Jan 2019 13:34:02 +0100 (CET)
-Received: from scapa.corsac.net (unknown [IPv6:2a01:e34:ec2f:4e20:6af7:28ff:fe8d:2119])
-        by mail.corsac.net (Postfix) with ESMTPS id 69B2A91
-        for <linux-kernel@vger.kernel.org>; Tue,  1 Jan 2019 13:34:00 +0100 (CET)
-Received: from corsac (uid 1000)
-        (envelope-from corsac@corsac.net)
-        id a02d0
-        by scapa.corsac.net (DragonFly Mail Agent v0.11);
-        Tue, 01 Jan 2019 13:34:00 +0100
-Message-ID: <80e6c45b77a512047ec59314a00b3199f9ca86fd.camel@corsac.net>
-Subject: Stall during read() on CIFS with 4.19
-From:   Yves-Alexis Perez <corsac@corsac.net>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Paulo Alcantara <palcantara@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Date:   Tue, 01 Jan 2019 13:33:59 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.3-1 
-Mime-Version: 1.0
+        Tue, 1 Jan 2019 07:49:34 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21718 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728507AbfAAMte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 07:49:34 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1546346963; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=hRkWL35rWcC7jj3iPcskSMB2Mvty41XqOG0v0u3IoIboJ865X9S1yIpeR3Ql7apH5xQgNEwZKFoCK6vynr7rKOofjRFR42XGm50UhUxmGDe8+jo0RVI8nIJLx/Bs2rpCyDMkDFsuGfQRi7JboeZ0o+KnajRTmfr22lE2aZ8YmVA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1546346963; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=WxBrV152C7S//4G/HV+3fpOcWS4fjTEgVnM/9tAVQ1s=; 
+        b=b8r0b7vkrsgOWWR3m37dGfajMRh2rAj/qqhPycNkPxzwd89VzbkxyaiPx6rIjdwEBB9qye1GXTpZpqc8/amj6q9v1ZuJsuUd4eMszB8cXqHsqtCRgbDBSyd3wq2mmiEpHzA52w4URmhx3+HU/cAM92CZVVM5DIa8VSj/zuME7lo=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=nisi.nl;
+        spf=pass  smtp.mailfrom=j.vlietland@nisi.nl;
+        dmarc=pass header.from=<j.vlietland@nisi.nl> header.from=<j.vlietland@nisi.nl>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zoho; d=nisi.nl; 
+  h=from:subject:to:cc:message-id:date:user-agent:mime-version:content-type; 
+  b=MME/OA8SyuKxF3U8Z3yt5YfISZf9bN2XXVPIrD265RYUTn6r4QsCM6ecg5QfjoEXIvmyHXkpSPEW
+    CtDz7/6p1ld0AC/vtjFq1bmm09lMKebf/9Ew3rA5l9ryjhWBZF9tPQe47yDXuyruksQ96gi1wiQq
+    IYWd6J2NjSyPTjzdOIg=  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1546346963;
+        s=zoho; d=nisi.nl; i=j.vlietland@nisi.nl;
+        h=From:Subject:To:Cc:Message-ID:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        l=2478; bh=WxBrV152C7S//4G/HV+3fpOcWS4fjTEgVnM/9tAVQ1s=;
+        b=O5e8qQWm47ZaSHP0iEWfWJveFHlqUaZD7J4tViWWpPTlc1zvsotPWU+mINIErT4n
+        iUsvOH5A1u7nmQ1jO19juNq8vMWgziQDNXWW0HslngszFa3mHsHYWsQw0OhAYtlBw2V
+        Pl6oJnYwCXbnYCNPyvkmFanU/maw5NenLLJ5m34I=
+Received: from [192.168.93.103] (5357467A.cm-6-8b.dynamic.ziggo.nl [83.87.70.122]) by mx.zohomail.com
+        with SMTPS id 1546346960116893.1277897660914; Tue, 1 Jan 2019 04:49:20 -0800 (PST)
+From:   Jan Vlietland <j.vlietland@nisi.nl>
+Subject: Keyboard backlight not working on my NP900X5N laptop <previous not
+ accepted due to HTML encoding>
+To:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     "open list:SAMSUNG LAPTOP DRIVER" 
+        <platform-driver-x86@vger.kernel.org>
+Message-ID: <c3ea9b3f-5ffe-df8f-726c-0bf6f3a82701@nisi.nl>
+Date:   Tue, 1 Jan 2019 13:48:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: nl
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi all,
 
-with the upgrade to 4.19 in Debian sid, I experienced a regression with CIFS
-filesystems.
+Greg K-H suggested to mail you guys.
 
-The server is running Debian stretch with samba, the clients are running
-Debian sid or stretch. With 4.18 kernels everything is fine, but with 4.19
-while the mount succeeds, any read() syscall on a file open()ed from a share
-just stalls.
+I installed Linux 4.20.0-rc7 (downloaded, compiled and installed) on a Sams=
+ung NP900X5N laptop and have noticed 3 bugs. 2 of them I found in Bugzilla =
+and replied on them (i915 and Nouveau issues). I am currently discussing th=
+em with an intel engineer.
 
-I've tried to bisect between 4.18 and 4.19 and here are the results:
+On other bug I haven't found so therefore a mail directly to you guys as ma=
+intainers.
 
-# bad: [84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d] Linux 4.19
-# good: [94710cac0ef4ee177a63b5227664b38c95bbf703] Linux 4.18
-git bisect start 'v4.19' 'v4.18'
-# bad: [db06f826ec12bf0701ea7fc0a3c0aa00b84417c8] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-git bisect bad db06f826ec12bf0701ea7fc0a3c0aa00b84417c8
-# bad: [0a957467c5fd46142bc9c52758ffc552d4c5e2f7] x86: i8259: Add missing include file
-git bisect bad 0a957467c5fd46142bc9c52758ffc552d4c5e2f7
-# bad: [958f338e96f874a0d29442396d6adf9c1e17aa2d] Merge branch 'l1tf-final' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect bad 958f338e96f874a0d29442396d6adf9c1e17aa2d
-# good: [85a0b791bc17f7a49280b33e2905d109c062a47b] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux
-git bisect good 85a0b791bc17f7a49280b33e2905d109c062a47b
-# good: [a1a4f841ec4585185c0e75bfae43a18b282dd316] Merge tag 'for-4.19-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-git bisect good a1a4f841ec4585185c0e75bfae43a18b282dd316
-# good: [0e93d3f43ec7d3308bff25ce1be81d46330168c9] xfs: repair the AGFL
-git bisect good 0e93d3f43ec7d3308bff25ce1be81d46330168c9
-# bad: [10f3e23f07cb0c20f9bcb77a5b5a7eb2a1b2a2fe] Merge tag 'ext4_for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
-git bisect bad 10f3e23f07cb0c20f9bcb77a5b5a7eb2a1b2a2fe
-# bad: [c1777df1a5d541cda918ff0450c8adcc8b69c2fd] cifs: add missing support for ACLs in SMB 3.11
-git bisect bad c1777df1a5d541cda918ff0450c8adcc8b69c2fd
-# good: [bf1fdeb7899a86adfbe0b521bee5cf78bb870a14] smb3: add reconnect tracepoints
-git bisect good bf1fdeb7899a86adfbe0b521bee5cf78bb870a14
-# good: [d258650004617fbd5dfe97d77d26fb37187d06e9] smb3: fix minor debug output for CONFIG_CIFS_STATS
-git bisect good d258650004617fbd5dfe97d77d26fb37187d06e9
-# good: [296ecbae7fdf209b1e0fb08b8bd82e5e9b637439] cifs: add SMB2_query_info_[init|free]()
-git bisect good 296ecbae7fdf209b1e0fb08b8bd82e5e9b637439
-# bad: [b24df3e30cbf48255db866720fb71f14bf9d2f39] cifs: update receive_encrypted_standard to handle compounded responses
-git bisect bad b24df3e30cbf48255db866720fb71f14bf9d2f39
-# bad: [1eb9fb52040fc6e5656c277b562229f09467c9f8] cifs: create SMB2_open_init()/SMB2_open_free() helpers.
-git bisect bad 1eb9fb52040fc6e5656c277b562229f09467c9f8
-# first bad commit: [1eb9fb52040fc6e5656c277b562229f09467c9f8] cifs: create SMB2_open_init()/SMB2_open_free() helpers.
+On my other machine, a Samsung NP900X4D (just bought it in the USA, 2017 mo=
+del), the samsung-laptop.ko module is enabling the use of the keyboard back=
+light keys.
 
-I'm a bit surprised since I'd assume introducing helpers would not change
-anything feature-wise, but I didn't dig into the code (I don't know a lot
-about cifs). Unfortunately I can't easily revert 1eb9fb52040f on top of 4.19
-so I prefer reporting it first.
+It is not working on my new machine NP900X5N. My samsung-laptop.ko driver i=
+sn't loading. If I try to load it manually it complains about 'no such devi=
+ce".
 
-If you need more information or want me to experiment something, feel free to
-ask.
+My Linux kernel is working in CSM mode. The module is still not loaded.
 
-Regards,
--- 
-Yves-Alexis
+As it is weekend I did some more reading and debugging of the module. To my=
+ understanding the module checks the model and type of the laptop. The know=
+n models and types are stored in the struct:
+
+static struct dmi_system_id __initdata samsung_dmi_table[]
+
+I wondr if the NP900X5N notebook is included in this list.
+
+With dmidecode -t chassis it shows:
+Getting SMBIOS data from sysfs.
+SMBIOS 3.0.0 present.
+
+Handle 0x0003, DMI type 3, 22 bytes
+Chassis Information
+         Manufacturer: SAMSUNG ELECTRONICS CO., LTD.
+         Type: Notebook
+         Lock: Not Present
+         Version: N/A
+         Serial Number: 0F4C91CJ900346
+         Asset Tag: No Asset Tag
+         Boot-up State: Safe
+         Power Supply State: Safe
+         Thermal State: Other
+         Security Status: None
+         OEM Information: 0x00000000
+         Height: Unspecified
+         Number Of Power Cords: 1
+         Contained Elements: 0
+         SKU Number: Chassis
+
+If I use the -u flag. The notebook value is 0x0A, not 0x10!!!
+
+Could that be the reason for not loading?
+
+=09=09.matches =3D {
+=09=09=09DMI_MATCH(DMI_SYS_VENDOR,
+=09=09=09=09=09"SAMSUNG ELECTRONICS CO., LTD."),
+=09=09=09DMI_MATCH(DMI_CHASSIS_TYPE, "10"), /* Notebook */
+=09=09},
+
+Maybe another reason could that that either the i915 and Nouveau modules=20
+are not working well. I get black screens with the i915 and MMIO faults=20
+with the nouveau driver. That is another issue that I need to tackle.
+
+Oh happy new year :-)
+
+--=20
+
+Met vriendelijke groet,
+
+*dr. Jan Vlietland*, namens
+
+spin-off
+
+Nederlands Instituut voor de Software Industrie
+
+_j.vlietland@nisi.nl_| 06 =E2=80=93 20 411 834 | 030 =E2=80=93 268 53 98
+Princetonplein 5 | 3584 CC=C2=A0 Utrecht | www.nisi.nl
+
+
+
