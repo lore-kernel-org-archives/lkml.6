@@ -2,107 +2,103 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD31C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B04C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7312080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CACB6208E3
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 06:43:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GkUvtjES"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfAAGhM convert rfc822-to-8bit (ORCPT
+        id S1728265AbfAAGnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 01:37:12 -0500
-Received: from dfwrgout.huawei.com ([206.16.17.72]:2062 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727611AbfAAGhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 01:37:11 -0500
-X-Greylist: delayed 972 seconds by postgrey-1.27 at vger.kernel.org; Tue, 01 Jan 2019 01:37:11 EST
-Received: from DFWEML703-CAH.china.huawei.com (unknown [172.18.9.221])
-        by Forcepoint Email with ESMTP id ED5C087E15F02;
-        Tue,  1 Jan 2019 00:20:55 -0600 (CST)
-Received: from SJCEML701-CHM.china.huawei.com (10.208.112.40) by
- DFWEML703-CAH.china.huawei.com (10.193.5.177) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 31 Dec 2018 22:20:57 -0800
-Received: from SJCEML521-MBS.china.huawei.com ([169.254.2.185]) by
- SJCEML701-CHM.china.huawei.com ([169.254.3.129]) with mapi id 14.03.0415.000;
- Mon, 31 Dec 2018 22:20:49 -0800
-From:   Eric Wehage <Eric.Wehage@huawei.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>, yu <kkndyu@gmail.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Logan Gunthorpe" <logang@deltatee.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: RE: How to force RC to forward p2p TLPs
-Thread-Topic: How to force RC to forward p2p TLPs
-Thread-Index: AQHUnx5arrCTMaIaJ0ieNs1Uu8mqA6WZ9IxA
-Date:   Tue, 1 Jan 2019 06:20:48 +0000
-Message-ID: <DD8FB053C05D2D4DB8AA6C93326178785997FDDC@sjceml521-mbs.china.huawei.com>
-References: <CADayL-pxr_dpJykyiTeQDO13XmKPoKUs544zVrB2taHTVEx9Pw@mail.gmail.com>
- <20181229022923.GA159477@google.com>
-In-Reply-To: <20181229022923.GA159477@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.212.247.199]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Tue, 1 Jan 2019 01:43:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45827 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728195AbfAAGnY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 01:43:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so13863360pfd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Dec 2018 22:43:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=AMznWe95QdV1GP0WW3Yl0Y7+cEK5agGrzdLNNRyeYp4=;
+        b=GkUvtjESp2w9iiVtvyItRv1eAiW/eMLagweLYWINxEPKHooNhxVo/ViGJq7koLyrvk
+         Ms4f+dIA6NTcqjEo4SqnKXxHjJmcSljGxuWhkEePTsI1rB/WcVx8xpaNffTIJyNK0xZ6
+         MOTsTJkgP316q2Chq57+2Q8/UxgF0DkyygtVc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AMznWe95QdV1GP0WW3Yl0Y7+cEK5agGrzdLNNRyeYp4=;
+        b=QWKQ7sTfHGYLbkeYIWK0r3wsTuvJF9pBsVA/0JTNiajReOlz363MSn9rGlEMOzMIE7
+         H2tsDwUd1Zn5uRsURRiewiyV4WPRWfMEKwvRzdKoHaKA0Dxix91E2C6Vf1Iv0rLVUGL4
+         MjDhB93fhRusWFLqYmt3OY7VTogCDmfLMRaHjvSpaJrAR3Rq8AdnPD0zj5AFn6p7rWfg
+         mcHdad7h7cseYKjB11WN0EbeiLUEr11T7UBj6/GqBvYKna3QiyVOVoAdPVhnn1q7WTL3
+         uTut08N2Nae2jSLh6CrDp9W+ug7SFmuHY8WSaDpLOM7ZrwcKsF8lqj4QERXLbAMI3GNk
+         yD5Q==
+X-Gm-Message-State: AA+aEWaRBPSdabftS/7uO8IP5E1QZplCyQIfBT5nPrCB4ncOWm9/hcPp
+        k5iqNAtVtKbMZVmjmuUCzCaUHEZYUu0=
+X-Google-Smtp-Source: AFSGD/XZVVW5URYoXIlECez3E1P/TBPTPzk6LFf9fbThvI2qkNdnR9ylGr0Ki6o6rw3E3FlrXjMXaQ==
+X-Received: by 2002:a62:2082:: with SMTP id m2mr39667108pfj.163.1546325003568;
+        Mon, 31 Dec 2018 22:43:23 -0800 (PST)
+Received: from cpxswub.broadcom.com ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id s9sm67327266pgl.88.2018.12.31.22.43.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 31 Dec 2018 22:43:22 -0800 (PST)
+From:   Murali Krishna Policharla <murali.policharla@broadcom.com>
+To:     davem@davemloft.net, amritha.nambiar@intel.com,
+        ecree@solarflare.com, ktkhai@virtuozzo.com,
+        alexander.h.duyck@intel.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Murali Krishna Policharla <murali.policharla@broadcom.com>
+Subject: [PATCH] net: core: Fix to store new mtu setting in netdevice.
+Date:   Tue,  1 Jan 2019 12:12:14 +0530
+Message-Id: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no method to force an RC to forward requests p2p. RC's are also not required to support p2p and whether they do or not is implementation specific. There is also currently no PCIe based standard to determine whether an RC supports p2p or in what capacity. Also, even if p2p is supported, it might not be supported in a system that enables Virtualization (the Virtualization would have to setup p2p tables to allow it).
+Store newly configured mtu settings in the netdevice after mtu
+configuration is successful to the dsa switch.
 
-There is currently a PCIe ECR that has been submitted, but is undergoing review, that defines a PCIe capability for bridge devices (Root Ports and Switch Downstream Ports) that would allow them to advertise what level of p2p is supported by the device.
+Fixes: 2315dc91a5 ("net: make dev_set_mtu() honor notification return code")
+Signed-off-by: Murali Krishna Policharla <murali.policharla@broadcom.com>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ net/core/dev.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Eric Wehage
-Huawei Principal Engineer, PCIe
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 722d50d..58617aa 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7586,12 +7586,15 @@ int dev_change_flags(struct net_device *dev, unsigned int flags)
+ int __dev_set_mtu(struct net_device *dev, int new_mtu)
+ {
+ 	const struct net_device_ops *ops = dev->netdev_ops;
++	int ret = 0;
+ 
+ 	if (ops->ndo_change_mtu)
+-		return ops->ndo_change_mtu(dev, new_mtu);
++		ret = ops->ndo_change_mtu(dev, new_mtu);
+ 
+-	dev->mtu = new_mtu;
+-	return 0;
++	if (ret >= 0)
++		dev->mtu = new_mtu;
++
++	return ret;
+ }
+ EXPORT_SYMBOL(__dev_set_mtu);
+ 
+-- 
+1.9.1
 
------Original Message-----
-From: Bjorn Helgaas [mailto:helgaas@kernel.org] 
-Sent: Friday, December 28, 2018 6:29 PM
-To: yu <kkndyu@gmail.com>
-Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Logan Gunthorpe <logang@deltatee.com>; Stephen Bates <sbates@raithlin.com>; Jonathan Cameron <jonathan.cameron@huawei.com>; Eric Wehage <Eric.Wehage@huawei.com>; Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: How to force RC to forward p2p TLPs
-
-[+cc Logan, Stephen, Jonathan, Eric, Alex]
-
-On Sat, Dec 22, 2018 at 12:50:19PM +0800, yu wrote:
-> Hi all,
-> 
-> We have a PCIE card which has a PEX8732 switch on-board,  and there 
-> are two endpoint SOCs like graphic decoder behind the switch, and by 
-> default the ACS is enabled in 8732.
-> 
-> We use the p2p DMA to transfer data between these two endpoint SOCs, 
-> and if the host server is not enable ACS in BIOS, the p2p works well, 
-> but when ACS is enabled in BIOS, the p2p is always failed. With the 
-> help of a protocol analyzer, we can see that the TLP is redirected to 
-> RC, and RC just discard it.
-> 
-> I tried to find how to make RC forward redirected TLP to its original 
-> target, but nothing found, it seems this is highly related to the RC 
-> vendors.
-> 
-> In the PCIE 4.0 spec, the section of the RC behavior of the p2p 
-> request redirect  said that ''implementation-specific logic within the 
-> RC that determines whether the request is directed towards its 
-> original target, or blocked as an ACS Violation error. the algorithms 
-> and specific controls for making this determination are not 
-> architected by this spec''.
-> 
-> 
-> So is there some spec or document to describe how to set the RC? Any 
-> suggestion is appreciated.
-
-Not that I'm aware of, but the folks I cc'd would know a lot more about this area.
-
-Bjorn
