@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E114C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C45C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB20820836
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341DC2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 20:05:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="MYSMoGLr"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="N3X3U92X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfAAUDa (ORCPT
+        id S1727221AbfAAUFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 15:03:30 -0500
-Received: from cock.li ([185.100.85.212]:58832 "EHLO cock.li"
+        Tue, 1 Jan 2019 15:05:48 -0500
+Received: from cock.li ([185.100.85.212]:33030 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfAAUDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 15:03:30 -0500
+        id S1725919AbfAAUFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 15:05:47 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546373007; bh=6FwiCcleh+lWAycTjvk5rum67ZchQonJTw1P8Ydty+c=;
+        t=1546373145; bh=LokOEpJe2Fvt1IEn+V29ptbStlHjUO/CmaMdwb9mi2k=;
         h=Date:From:To:Cc:Subject:From;
-        b=MYSMoGLrtsZgvHxb/PYgJxXenQ54KOZ5L7u1t9SEA3+zIDQrxwboyYBz9i6Qn109V
-         VkyNfAm+hwBgfjVeaiipAgrlLWvzdmrHx6Ip3ibAWsyczAOnkVPVJJ+kqEIwM8748o
-         TuMsySB+xg0yXNBZrVgNPigsszXvy2tlW8Xm+TIInQVu211ZXD1Ux94gA2N/FTlvfU
-         HGVoR6YsHwA8sT98m9bdoKYacWSJSoxX74yaTCuOFuNy5QiIyaxC+041zQdz2FkQTI
-         y96Ny4DCecEkUI8H3VYgjC5D2dbsyDpu4DsmXwsUJldbneOaWrJsj181vQWu+R8dd6
-         SVjHinYnZsVWw==
+        b=N3X3U92XAZ73cy4+1v4itxF35QqPpCkIgUVDTLCze/0ogvnjv85hu7i4yvcBs2MQP
+         3gM+JuS2MDyhGgMQEK/AB6f2l9Tl4PCBVFNdn1GUtTHEVHXfec9vqXjdlVdoa7Py/R
+         foInzrGKyt1m3/ACVmE3xLFrmNdhuAOXYD2cr2W1NHQR08SiTxX7cYnG1AXD7B9cWn
+         IBzedLMjvvazgUwnVrkKCLtxfvlJbSsyfzrofqo+XWDJ3uE5T12FwV1WpNhkFGLCFL
+         eJZONNA4UfD3fYwgR3MRsJ9iNhvbfFUuFUMvUHBQ5MIcZ53gHzqGpLEAwYHLhVJkPo
+         /4z8qoqDMQA1w==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 01 Jan 2019 20:03:26 +0000
+Date:   Tue, 01 Jan 2019 20:05:44 +0000
 From:   vnsndalce@memeware.net
 To:     linux-kernel@vger.kernel.org, debian-user@lists.debian.org,
         legal@lists.fedoraproject.org, users@lists.fedoraproject.org,
         rms@gnu.org
 Cc:     gentoo-user@lists.gentoo.org, ubuntu-users@lists.ubuntu.com,
         misc@openbsd.org
-Subject: Without an attached interest you can very well revoke the license and
- prevent all further distribution of your code, and further use of it in future
- versions.
-Message-ID: <5ff2d769e29faad86bab566335820a29@memeware.net>
+Subject: They claim that your property can be taken from you because to do
+ otherwise would be inconvenient to the people that are committed to committing
+ the taking.
+Message-ID: <3370f7fb2c5ebfeeb6a54b3a48b867be@memeware.net>
 X-Sender: vnsndalce@memeware.net
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,41 +52,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The GPL is not revocable despite not being a contract. It is a license 
-> to distribute software and you cannot revoke the license on already 
-> existing publications. All you can do is revoke the license on future 
-> publications.
->> 1014527
+Notice the detractors always simply say "NO u can't do this!" or "No u 
+can't do this because this belongs to this group!".
 
-Without an attached interest you can very well revoke the license and 
-prevent all further distribution of your code, and further use of it in 
-future versions.
+While I explain where your rights come from, their history, and their 
+extent.
 
-You can revoke the license.
+Detractors say "This is like when Author, after being payed millions, 
+tries to revoke an exclusive license from Publisher and have existing 
+Published Works seized and destroyed!" "AND U CANT DO THAT!"
 
-What you are thinking about is the normal case of commercial 
-distribution licenses - which have an attached interest (they were paid 
-for, the licensor received consideration).
+They try to fit the new case of
+'Author was paid nothing, signed over nothing, didn't require anything 
+from licensees'
+to these cases where good consideration was payed for the license, and 
+destruction of physical copies is being sought.
 
-Almost all court cases involve such issues. Not bare licenses.
+I have explained why this case is different.
 
-Additionally you are thinking about consumer protection statutes that 
-would run against the property owner successfully suing for the 
-destruction of all current now-unlicensed copies in existence.
+For X to have an interest, it is vital that X secured it.
 
-Once the license is revoked the linux team may no-longer use the revoked 
-code in future versions. They no longer have permission - the license 
-they were given ceases to exist.
-
-Normally the copyright owner then has the option to pray to the court 
-that all unlicensed copys be destroyed. The court, as you put, is 
-unlikely to grant this form of relief regarding existing copys that 
-existed prior to the revocation.
-
-That does not mean that Linux Team still is licensed to modify or 
-distribute the code: they are not. The license does not survive the 
-revocation.
-
-
-
-
+The detractors claim otherwise. They claim that your property can be 
+taken from you because to do otherwise would be inconvenient to the 
+people that are committed to committing the taking.
