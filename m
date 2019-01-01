@@ -2,77 +2,81 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCA1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 804DEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF182080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E025208E3
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Sx0yUnZt"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="X9O8Ajyo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfAAXYy (ORCPT
+        id S1726772AbfAAXax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 18:24:54 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:60096 "EHLO vps0.lunn.ch"
+        Tue, 1 Jan 2019 18:30:53 -0500
+Received: from cock.li ([185.100.85.212]:40262 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfAAXYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 18:24:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=4I9JtvYdW3ZMyfcKyKXoDYIy9gfsXRolbJq8yVYrck0=;
-        b=Sx0yUnZtRbZV0pTN1hwv0480MFVV7Ol5fVLMoArlNSzpAoX9FrV3vUZSf1hXvFLyWpFm9FKKWkcCiA96fBHxhiNyv+ETzuAbwhEHyYhAt3BChLlmxmjdOhdNx2TCIYEOfEAtXL+su3H48ZB1pTK6BaFv8iKQXE1h7JDjNqC2Bdc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1geTOt-00060n-Dv; Wed, 02 Jan 2019 00:24:43 +0100
-Date:   Wed, 2 Jan 2019 00:24:43 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Murali Krishna Policharla <murali.policharla@broadcom.com>
-Cc:     davem@davemloft.net, amritha.nambiar@intel.com,
-        ecree@solarflare.com, ktkhai@virtuozzo.com,
-        alexander.h.duyck@intel.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: core: Fix to store new mtu setting in netdevice.
-Message-ID: <20190101232443.GA22737@lunn.ch>
-References: <1546324934-17555-1-git-send-email-murali.policharla@broadcom.com>
- <20190101083450.GA17613@lunn.ch>
- <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
+        id S1725958AbfAAXaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 18:30:52 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30ecb54251911d28c50b61299b0f8d3d@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546385449; bh=UZgANCC8MweJpFGYGS6rOD6ns8jGxBKcW/9izaK4Ueg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X9O8Ajyo6PY2GVi7nwdtZMaHDK3W9Oen5YNiFDhL1kCPZZiLSNdv0o9nTKj3GmTms
+         4ICXSldDdmHo5gvnmTcpzmVZgTB3xAldQcUZn9mFNfKz/snO0a3oh66i+AFG7Rsl4q
+         fRqcZEha1Hp2GA/fiaZBK2v9T5dL4MkJVTsvi2Baxf0fPB7+WVPSTwB4r5qgwWucet
+         6tR0TrzwOk4fGTqQLdmv8vWMvRdvDpFK0F8Kq7Xgho7fzZ0Y6ptEbHLRGLU7sY+kEl
+         h5N5K5sF5mmx0mGilWf3IGECnoTfuPfe1HUfrPnnDEPE7vH+CKc1OG34Nij/EtAGpL
+         CAN1cia5xwdgA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 01 Jan 2019 23:30:48 +0000
+From:   vsnsdualce@memeware.net
+To:     linux-kernel@vger.kernel.org, misc@openbsd.org,
+        gentoo-user@lists.gentoo.org
+Cc:     debian-user@lists.debian.org, ci-users@centos.org,
+        centos@centos.org
+Subject: Re: Thank you for your messages, and Happy New Year ;)
+In-Reply-To: <CAAaskFBmER_jHyiXyH=yM-0fObGy0LGgo9OfQOmwZ-psaimS+w@mail.gmail.com>
+References: <CAAaskFBmER_jHyiXyH=yM-0fObGy0LGgo9OfQOmwZ-psaimS+w@mail.gmail.com>
+Message-ID: <b8e7b7bdaada30dfd719c7938ed5dc15@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 03:18:51PM +0530, Murali Krishna Policharla wrote:
-> Hi Andrew,
->                            Currently net/dsa/slave.c does not have
-> ndo_change_mtu function.  But shortly I will be submitting a separate
-> patch outside this fix that has ndo_change_mtu function support added to
-> DSA switch.  As part of testing the newly added ndo_change_mtu function
-> for DSA switch it uncovered that new mtu size is not being updated to
-> netdevice structure. This patch fixes this issue and updates  new mtu size
-> to  netdevice structure.
-> 
-> Hope this clarifies, let me know if you need any further information.
+Thanks for your response :).
 
-Hi Murali
+Please Spread the word regarding the copyright-holders rights (remeber: 
+the
+Linux kernel programmers did not sign over their copyrights, one of the
+reasons Linux grew so quickly amongst developers where GNU very slowly
+(The FSF will only include code where the copyright has been transferred
+to it)), thus the various 1000s of linux programmers who didn't work
+for a company all retain their property rights.
 
-Thanks for the explanation.
+A license is just that: license (permission). It is not a transfer of
+rights. These licenses that were given are non-exclusive (not to just
+one entity) and are thus cannot be construed as transfers either.
 
-However, i looked at the patch you listed as 'fixes'. I don't see what
-came before that setting the mtu when an ndo_change_mtu function is
-provided. It seems to me, if you provide an ndo_change_mtu, it has to
-do the assignment. I don't think you are fixing anything here.
+It's simply permission to use property, same as if you allowed a 
+neighbor
+to use an ax you owned (gave them license to use the ax).
 
-If you do want to move the assignment into the core, please review all
-the MAC drivers which implement ndo_change_mtu and remove the
-assignment from them.
+If that neighbor went and then chopped an enemy to pieces with that ax,
+limb by limb, joint by joint, applying burning cauterizing oil after 
+each dismemberment,
+he cannot say "I will not give you back the ax, because I relied on
+your lease, and thus used the ax in such a way as it would be 
+inconvenient
+for me to return it to you".
 
-	   Thanks
-		Andrew
+The ax is still yours and you may tell your friend: give me my ax back 
+now
+(this is you rescinding the license).
