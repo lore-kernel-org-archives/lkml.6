@@ -2,261 +2,118 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D47DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832FCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 342D02075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F5E2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 23:51:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="pt8R6A3n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfAAXnp (ORCPT
+        id S1726983AbfAAXvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 18:43:45 -0500
-Received: from mga17.intel.com ([192.55.52.151]:9498 "EHLO mga17.intel.com"
+        Tue, 1 Jan 2019 18:51:31 -0500
+Received: from cock.li ([185.100.85.212]:34576 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfAAXno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 18:43:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jan 2019 15:43:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,428,1539673200"; 
-   d="gz'50?scan'50,208,50";a="134555369"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Jan 2019 15:43:42 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1geThG-000A96-Ey; Wed, 02 Jan 2019 07:43:42 +0800
-Date:   Wed, 2 Jan 2019 07:43:01 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: device_sysfs.c:undefined reference to `utf16s_to_utf8s'
-Message-ID: <201901020739.5sx8hjOo%fengguang.wu@intel.com>
+        id S1725941AbfAAXva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 18:51:30 -0500
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
+        t=1546386687; bh=vXmoKuOoLH+/bML4OsxDWPgDErt5LP4daPjNDXmGVs8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pt8R6A3nurJ9tkVOebJpekpj9AHZK3TTfjQD2Joce/RgCjNBQJOPziAEabaFn5rn7
+         s/Ex0wdSm7kLmvFNFDIZ1zrhSG50IriJ10W6DYQBP3GRZxZZLXH9/YtFLKZsQVysj1
+         AMWRAx/D46iwS9vhHFtzEnVOciRrdPShPY0lThfE2nshRvQfdEabamKgUSNSgFHOF4
+         HMD0n8nryBlL66XeZwd2Rjz+9Eo8MrGMJ9fBTGXP6LyXR57STqR9YaUQlRFMLXf2GU
+         DxuK9DL39F7/Q9jkoBjQn7B/9BpP2SM0CNF/K/sFYOxQz6nHCZgr2+QyaHMW31hIeq
+         R7uqiWfhWfGLw==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 01 Jan 2019 23:51:25 +0000
+From:   vsnsdualce@memeware.net
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Cc:     freebsd-women@freebsd.org, freebsd-chat@freebsd.org,
+        misc@openbsd.org
+Subject: Yes: your code IS property. It is YOUR property.
+Message-ID: <58f8ccfee05d03e32426b78bc5e7d0f1@memeware.net>
+X-Sender: vsnsdualce@memeware.net
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>> he compares lending a physical object to licensing intellectual 
+>> property
+> Why are you still LARPing as a laywer?
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>> 1015334
+The foundation of this law IS in property law.
 
-Hi Sinan,
+Copyright is alienable in all ways that property is (see: US Copyright 
+statute).
 
-FYI, the error/warning still remains.
+That is where you get the ability to LICENSE software, books, music, etc 
+to begin with.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   28e8c4bc8eb483c22d977e147a0b98fc63efadf7
-commit: 5d32a66541c4683456507481a0944ed2985e75c7 PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
-date:   13 days ago
-config: i386-alldefconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        git checkout 5d32a66541c4683456507481a0944ed2985e75c7
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+The Copyright act announces that these ethereal concepts, these things 
+that are not in reality something one can truly physically extend 
+dominion and control (ownership) over... are never the less... to be 
+treated as such.
 
-All errors (new ones prefixed by >>):
+Yes, a License, first and foremost, is a PROPERTY law concept. Property 
+which you can defend, which you can build walls around, which you can 
+enclose, from which you can eject trespassers.
 
-   drivers/acpi/device_sysfs.o: In function `description_show':
->> device_sysfs.c:(.text+0x44b): undefined reference to `utf16s_to_utf8s'
+An Idea? A song? Can one eject a tresspasser from that? Can one ever 
+rape a mind of an allready-recieved idea?
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Can one cut from the grasp of an interlocutor, this supposed Object ... 
+a song?
 
---8t9RHnE3ZwKMSgU+
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+No. Not in reality.
 
-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
+But the Copyright Act declares differently.
+It declares that these incorporeal concepts be imagined to be that piece 
+of land on which your stronghold sits, onwhich your implements of 
+defence are trained from the high towers you have erected.
 
---8t9RHnE3ZwKMSgU+--
+It declares that a Song, A piece of litererature, every copy there-of, 
+all-in-the-same, is not a wisp upon the wind...
+but a piece of land, or some personal implement such as an ax.
+
+And that you can, indeed, cut from the grasp of some theif this ax, you 
+can cut his fingers one by one until that Ax of yours falls from his 
+countenance back into your possession.
+
+And the way this is done is by the destruction of all offending 
+articles: which a court may order, and or the punishment of those who 
+would violate the property rights of the owner, which again the court 
+may order.
+
+So yes, intellectual property is... like a physical thing. Because the 
+law says it is.
+
+Even though you cannot even prevent yourself from knowing that which is 
+thrust upon you...
+
+Here the property owners, who came to be property owners at the fixation 
+of the article (that is: when the code was written down), chose not to 
+transfer their ownership in the article. Instead they, after reading the 
+Copyright Act, elected to a different from of Property alienation.
+
+A rather limited form known as a license. Permission. A temporary grant 
+which, at their time of choosing, they may end.
+
+Since this grant makes no mention of them selling off their right to 
+rescind the permission, and since, indeed, forbearance of said right was 
+not sold, there is no attached interest with which to bind their hand.
+
+They may rescind.
+If you don't like that: pay them for a forbearance.
