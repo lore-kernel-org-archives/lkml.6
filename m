@@ -2,121 +2,69 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CEEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 01:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A1BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 01:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 868DD21019
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 01:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA0BA218AF
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 01:45:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546307105;
+	bh=4ccfoIcz8hHSH7I7quI0FKMtMyXrm/XaZtyvm2MXxTA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=jB/33hl8+Wgi6vOzT711U8T0Nt1IkZzeTMke9n5W/Ou0M2fw7vdRqey+lqTQs1BVi
+	 /vI8VUGt56K0HSbTSW1YUEtwln9UGp+GbBGDQZtDcDeBrFliggzxvkS8jNEwOszWdG
+	 k2Ey3Pm8tWqnJ6oKrIUEl53x5rUNv/XmLIS8kklY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbfAABis (ORCPT
+        id S1728351AbfAABpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 31 Dec 2018 20:38:48 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59170 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728232AbfAABis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 31 Dec 2018 20:38:48 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 0F38329CD9;
-        Mon, 31 Dec 2018 20:38:41 -0500 (EST)
-Date:   Tue, 1 Jan 2019 12:38:38 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
-In-Reply-To: <CAK8P3a3OD9ou=y+PaZ03v-ivW4A3fwwzA+aL+CoJDd_L2vTMLA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1901011228290.574@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a2p91XJfJuSCZqRLRgC-aP3LR1tMK2DDxTiSuD8_FOg8Q@mail.gmail.com> <alpine.LNX.2.21.1812301401220.215@nippy.intranet>
- <CAK8P3a3OD9ou=y+PaZ03v-ivW4A3fwwzA+aL+CoJDd_L2vTMLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 31 Dec 2018 20:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728333AbfAABpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 31 Dec 2018 20:45:04 -0500
+Subject: Re: [GIT PULL 1/4] ARM: SoC platform updates
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546307104;
+        bh=4ccfoIcz8hHSH7I7quI0FKMtMyXrm/XaZtyvm2MXxTA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=aSaN3hCzU2fkaG5ivvoNVzElBwteoPoRKYC3gCjRtlTQ/yvgCym9PZqCK9YTd4nlO
+         iFfxzMTRVM2mAPpjxppb3k+nY/kp30benIjWUU8Baf1lUOssTufWwjVvdmIfC4U5Sf
+         b7T/sd4U5YjmR1B7xTz1De091uOja6qmeXZih4p0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20181231214640.17015-2-olof@lixom.net>
+References: <20181231214640.17015-1-olof@lixom.net>
+ <20181231214640.17015-2-olof@lixom.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20181231214640.17015-2-olof@lixom.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-soc
+X-PR-Tracked-Commit-Id: cac1fc8fb561ac766468394d49c3dd11a2b8cb44
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0922275ef157ba8ac93e7e7857087eb0442d5397
+Message-Id: <20190101014503.19922.77591.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Tue, 01 Jan 2019 01:45:04 +0000
+To:     Olof Johansson <olof@lixom.net>
+Cc:     torvalds@linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        arm@kernel.org, Olof Johansson <olof@lixom.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 31 Dec 2018, Arnd Bergmann wrote:
+The pull request you sent on Mon, 31 Dec 2018 13:46:37 -0800:
 
-> On Sun, Dec 30, 2018 at 4:29 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> >
-> > On Sat, 29 Dec 2018, Arnd Bergmann wrote:
-> >
-> > > On Wed, Dec 26, 2018 at 1:43 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> > >
-> > > > +static ssize_t ppc_nvram_get_size(void)
-> > > > +{
-> > > > +       if (ppc_md.nvram_size)
-> > > > +               return ppc_md.nvram_size();
-> > > > +       return -ENODEV;
-> > > > +}
-> > >
-> > > > +const struct nvram_ops arch_nvram_ops = {
-> > > > +       .read           = ppc_nvram_read,
-> > > > +       .write          = ppc_nvram_write,
-> > > > +       .get_size       = ppc_nvram_get_size,
-> > > > +       .sync           = ppc_nvram_sync,
-> > > > +};
-> > >
-> > > Coming back to this after my comment on the m68k side, I notice that 
-> > > there is now a double indirection through function pointers. Have 
-> > > you considered completely removing the operations from ppc_md 
-> > > instead by having multiple copies of nvram_ops?
-> > >
-> >
-> > I considered a few alternatives. I figured that it was refactoring 
-> > that could be deferred, as it would be confined to arch/powerpc. I was 
-> > more interested in the cross-platform API.
-> 
-> Fair enough.
-> 
-> > > With the current method, it does seem odd to have a single 
-> > > per-architecture instance of the exported structure containing 
-> > > function pointers. This doesn't give us the flexibility of having 
-> > > multiple copies in the kernel the way that ppc_md does, but it adds 
-> > > overhead compared to simply exporting the functions directly.
-> > >
-> >
-> > You're right, there is overhead here.
-> >
-> > With a bit of auditing, wrappers like the one you quoted (which merely 
-> > checks whether or not a ppc_md method is implemented) could surely be 
-> > avoided.
-> >
-> > The arch_nvram_ops methods are supposed to optional (that is, they are 
-> > allowed to be NULL).
-> >
-> > We could call exactly the same function pointers though either ppc_md 
-> > or arch_nvram_ops. That would avoid the double indirection.
-> 
-> I think you can have a 'const' structure in the __ro_after_init section, 
-> so without changing anything else, powerpc could just copy the function 
-> pointers from ppc_md into the arch_nvram_ops at early init time, which 
-> should ideally simplify your implementation as well.
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-soc
 
-This "early init time" could be hard to pin down... It has to be after 
-ppc_md methods are initialized but before the nvram_ops methods get used 
-(e.g. by the framebuffer console). Seems a bit fragile (?)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0922275ef157ba8ac93e7e7857087eb0442d5397
 
-Your suggestion to completely remove the ppc_md.nvram* methods might be a 
-better way. It just means functions get assigned to nvram_ops pointers 
-instead of ppc_md pointers.
-
-The patch is simple enough, but it assumes that arch_nvram_ops is not 
-const. The struct machdep_calls ppc_md is not const, so should we worry 
-about dropping the const for the struct nvram_ops arch_nvram_ops?
+Thank you!
 
 -- 
-
->         Arnd
-> 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
