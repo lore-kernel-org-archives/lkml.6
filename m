@@ -2,121 +2,96 @@ Return-Path: <SRS0=7Uv1=PJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5BEC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED53C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4BC218CD
-	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 16:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EB5C218AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  1 Jan 2019 17:02:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbfAAQ4y (ORCPT
+        id S1729026AbfAARCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 1 Jan 2019 11:56:54 -0500
-Received: from smtprelay0027.hostedemail.com ([216.40.44.27]:49644 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727360AbfAAQ4x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 Jan 2019 11:56:53 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 24FAA182CF666;
-        Tue,  1 Jan 2019 16:56:52 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: skin36_75f2ef0090321
-X-Filterd-Recvd-Size: 3254
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  1 Jan 2019 16:56:50 +0000 (UTC)
-Message-ID: <a935ceb348e5b4efb754484da745425afa1e7713.camel@perches.com>
-Subject: Re: [PATCH 6/6] MAINTAINERS: Add linux-actions mailing list for
- Actions Semi
-From:   Joe Perches <joe@perches.com>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date:   Tue, 01 Jan 2019 08:56:49 -0800
-In-Reply-To: <20190101032622.GC2736@Mani-XPS-13-9360>
-References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
-         <20181231185517.18517-7-manivannan.sadhasivam@linaro.org>
-         <2a7f53c58896e2a9c3115a8630040b98497e5877.camel@perches.com>
-         <20190101032622.GC2736@Mani-XPS-13-9360>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 1 Jan 2019 12:02:06 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:47180 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727224AbfAARCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 Jan 2019 12:02:05 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 68CC1AC2; Tue,  1 Jan 2019 11:02:03 -0600 (CST)
+Date:   Tue, 1 Jan 2019 11:02:03 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, luto@kernel.org, arnd@arndb.de,
+        keescook@chromium.org, akpm@linux-foundation.org, jannh@google.com,
+        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, dancol@google.com,
+        timmurray@google.com, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org, ebiederm@xmission.com
+Subject: Re: [PATCH v6 2/2] selftests: add tests for pidfd_send_signal()
+Message-ID: <20190101170203.GA15661@mail.hallyn.com>
+References: <20181229222756.30027-1-christian@brauner.io>
+ <20181229222756.30027-2-christian@brauner.io>
+ <20181230210245.GA30252@mail.hallyn.com>
+ <20181230232711.7aayb7vnhogbv4co@brauner.io>
+ <20190101150743.ikrrfcogqec2oqeh@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190101150743.ikrrfcogqec2oqeh@brauner.io>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-01 at 08:56 +0530, Manivannan Sadhasivam wrote:
-> Hi Joe,
-
-Hi Manivannan.
-
-> On Mon, Dec 31, 2018 at 11:12:18AM -0800, Joe Perches wrote:
-> > On Tue, 2019-01-01 at 00:25 +0530, Manivannan Sadhasivam wrote:
-> > > Add the linux-actions mailing list for Actions Semi SoC architecture.
+On Tue, Jan 01, 2019 at 04:07:44PM +0100, Christian Brauner wrote:
+> On Mon, Dec 31, 2018 at 12:27:13AM +0100, Christian Brauner wrote:
+> > On Sun, Dec 30, 2018 at 03:02:45PM -0600, Serge Hallyn wrote:
+> > > On Sat, Dec 29, 2018 at 11:27:56PM +0100, Christian Brauner wrote:
+> > > > As suggested by Andrew Morton in [1] add selftests for the new
+> > > > sys_pidfd_send_signal() syscall.
+> > > > This tests whether we can send a signal to an existing process and whether
+> > > > sending a signal to a process that has already exited fails with ESRCH.
+> > > > 
+> > > > [1]: https://lore.kernel.org/lkml/20181228152012.dbf0508c2508138efc5f2bbe@linux-foundation.org/
+> > > > 
+> > > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > > Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> > > > Cc: Kees Cook <keescook@chromium.org>
+> > > > Cc: Serge Hallyn <serge@hallyn.com>
+> > > 
+> > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > 
+> > > Not saying you need to do this, but it would be neat if you could test
+> > > sending to a pid which has been recycled :)
 > > 
-> > Unrelated to adding this L: entry
-> > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > []
-> > > @@ -1240,6 +1240,7 @@ ARM/ACTIONS SEMI ARCHITECTURE
-> > >  M:	Andreas Färber <afaerber@suse.de>
-> > >  R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > > +L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
-> > >  S:	Maintained
-> > >  N:	owl
-> > 
-> > The N: entry matches too many non-owl entries like:
-> > 
-> > Documentation/parport-lowlevel.txt
-> > drivers/misc/ibmasm/lowlevel.c
-> > drivers/misc/ibmasm/lowlevel.h
-> > fs/udf/lowlevel.c
-> > net/ipv6/ip6_flowlabel.c
-> > sound/soc/samsung/lowland.c
-> > 
-> > Maybe there should be two entries
-> > 
-> > N:	/owl
-> > N:	-owl
-> > 
+> > Yeah, I thought about it but it's a little weird code. First of all, we
+> > can't set /proc/sys/kernel/pid_max to a very low value since this is a
+> > system wide setting. So we need to recycle a lot via fork(). Something
+> > along the lines of:
+> > - unshare pid namespace
+> > - fork to create pid 1 in new pid namespace
+> > - cycle with fork() until pid > 300 since pids lower than 300 are
+> >   reserved by the kernel.
+> >   (That means if we simply use the first fork() after we created pid 1 we
+> >   would never be able to recycle the pid since we skip over it. :))
+> > - get pidfd to the pid > 300 we just created
+> > - wait on the pid > 300
+> > - cycle via fork() until we have reached the same pid > 300 again
+> > - send SIGSTOP to that recycled process
+> > - test that we cannot send SIGCONT to this SIGSTOPed task via the pidfd we
+> >   received before
+> > - send SIGCONT to the SIGSTOPed recycled pid and exit
 > 
-> Thanks for letting us know. Yes, we need to change it. How about below?
-> 
-> N: owl-
-> N: -owl
-> 
-> Will do it as a follow-up patch if agreed!
+> Ok, I have something like this in my tree now that tests for pid
+> recycling. I'm going to send it out tomorrow since I reckon Andrew and
+> others will be off today.
+> But fwiw it sits in https://github.com/brauner/linux/commits/2018-12-02/procfds
 
-from MAINTAINERS:
+Thanks, that shows off the advantages of the new syscall :)
 
-	   scripts/get_maintainer.pl has different behavior for files that
-	   match F: pattern and matches of N: patterns.  By default,
-	   get_maintainer will not look at git log history when an F: pattern
-	   match occurs.  When an N: match occurs, git log history is used
-	   to also notify the people that have git commit signatures.
-
-F: entries are preferred to N: entries because the
-get_maintainer.pl script does not assume that the
-N: entries are exclusively maintained.  Maybe use a
-more comprehensive F: list like:
-
-F:	Documentation/devicetree/bindings/*/*owl-*
-F:	arch/arm/boot/dts/owl-*
-F:	drivers/*/owl-*
-F:	drivers/*/*-owl*
-F:	drivers/*/*/owl-*
-F:	drivers/*/*/*-owl*
-F:	include/dt-bindings/power/owl-*
-F:	include/linux/soc/actions/owl-sps.h
-
-
+-serge
