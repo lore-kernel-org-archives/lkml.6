@@ -2,150 +2,123 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AE2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869BEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3161921871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48CBE21871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 09:10:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zu5I/ANu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfABJIw (ORCPT
+        id S1729097AbfABJKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:08:52 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53731 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729067AbfABJIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:08:51 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 816504E0D64F2;
-        Wed,  2 Jan 2019 17:08:47 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 2 Jan 2019
- 17:08:40 +0800
-From:   sunqiuyang <sunqiuyang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <sunqiuyang@huawei.com>
-Subject: [PATCH 2/2] fs: support direct IO in a multi-device FS
-Date:   Wed, 2 Jan 2019 17:07:18 +0800
-Message-ID: <20190102090718.8115-1-sunqiuyang@huawei.com>
-X-Mailer: git-send-email 2.14.4
+        Wed, 2 Jan 2019 04:10:46 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:37066 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbfABJKq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 04:10:46 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0294FZ4102756;
+        Wed, 2 Jan 2019 09:10:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=PnPFuY64n8N1zt8suuiHCOKKINqeFJpbwpiyf2jfVtA=;
+ b=zu5I/ANuM30Vd3Y8jt5yT4lJ5Exr3909OS7G6jkuJ9tisveZSkXhHmz0/y/c5tiYjaOU
+ hHkPIqkLqKeGktbFls/b1mzLffLs0n3wPPZQilIO+4tt3Tx+Xoq5LUqoyV7XdzVwunDj
+ M7kvlSeGOV7/AS55XehAvrDdbwRC8E5Da6f7PUC7iPxa16SKypcSqUgG0Ds9BTxw6AQZ
+ zM7vRshH5b4u83eOW4QVqywixLd8mRSPKqOz7TSDggyOMlNQEGt4rgq9b1esUIRgaG2z
+ wVqMVn514QaqJ5fw8abawzAEAbY2eLdiFZ07TUKGaUmggkIkRx2DgfFnuzr+XAYkXICL Yg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2pnxee188p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 09:10:39 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x029AcmP008463
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 09:10:38 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x029Ac7o009213;
+        Wed, 2 Jan 2019 09:10:38 GMT
+Received: from kadam (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 01:10:37 -0800
+Date:   Wed, 2 Jan 2019 12:10:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     Arushi Singhal <arushisinghal19971997@gmail.com>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kjlu@umn.edu,
+        linux-kernel@vger.kernel.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Quytelda Kahja <quytelda@tamalin.org>
+Subject: Re: [PATCH] rtl8723bs/ioctl_linux: Add a security check to
+ copy_from_user()
+Message-ID: <20190102091016.GA3781@kadam>
+References: <20181224001303.9032-1-pakki001@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181224001303.9032-1-pakki001@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=829
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+On Sun, Dec 23, 2018 at 06:13:02PM -0600, Aditya Pakki wrote:
+> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> index b8631baf128d..9992caa8c839 100644
+> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+> @@ -2577,14 +2577,19 @@ static int rtw_wps_start(struct net_device *dev,
+>  	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
+>  	struct iw_point *pdata = &wrqu->data;
+>  	u32   u32wps_start = 0;
+> -        unsigned int uintRet = 0;
+>  
+>  	if ((true == padapter->bDriverStopped) ||(true ==padapter->bSurpriseRemoved) || (NULL == pdata)) {
+>  		ret = -EINVAL;
+>  		goto exit;
+>  	}
+>  
+> -	uintRet = copy_from_user((void*)&u32wps_start, pdata->pointer, 4);
+> +	ret = copy_from_user((void *)&u32wps_start, pdata->pointer, 4);
+> +
+> +	if (ret) {
+> +		ret = -EINVAL;
+> +		goto exit;
 
-Don't use the bdev pointer in struct buffer_head for dio_bio_alloc(),
-since it may have been changed to another device in the FS in
-get_more_blocks().
+Good eye for spotting this bug.  :)
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
----
- fs/direct-io.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Really this function is not useful though so we should just delete it.
+All the CONFIG_INTEL_WIDI stuff is dead code.
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 722d17c..6cd6029 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -99,6 +99,7 @@ struct dio_submit {
- 	unsigned cur_page_offset;	/* Offset into it, in bytes */
- 	unsigned cur_page_len;		/* Nr of bytes at cur_page_offset */
- 	sector_t cur_page_block;	/* Where it starts */
-+	struct block_device *cur_page_dev;
- 	loff_t cur_page_fs_offset;	/* Offset in file */
- 
- 	struct iov_iter *iter;
-@@ -729,7 +730,7 @@ static int get_more_blocks(struct dio *dio, struct dio_submit *sdio,
-  * There is no bio.  Make one now.
-  */
- static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
--		sector_t start_sector, struct buffer_head *map_bh)
-+		sector_t start_sector)
- {
- 	sector_t sector;
- 	int ret, nr_pages;
-@@ -740,7 +741,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
- 	sector = start_sector << (sdio->blkbits - 9);
- 	nr_pages = min(sdio->pages_in_io, BIO_MAX_PAGES);
- 	BUG_ON(nr_pages <= 0);
--	dio_bio_alloc(dio, sdio, map_bh->b_bdev, sector, nr_pages);
-+	dio_bio_alloc(dio, sdio, sdio->cur_page_dev, sector, nr_pages);
- 	sdio->boundary = 0;
- out:
- 	return ret;
-@@ -785,8 +786,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
-  * The caller of this function is responsible for removing cur_page from the
-  * dio, and for dropping the refcount which came from that presence.
-  */
--static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
--		struct buffer_head *map_bh)
-+static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio)
- {
- 	int ret = 0;
- 
-@@ -815,14 +815,14 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
- 	}
- 
- 	if (sdio->bio == NULL) {
--		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
-+		ret = dio_new_bio(dio, sdio, sdio->cur_page_block);
- 		if (ret)
- 			goto out;
- 	}
- 
- 	if (dio_bio_add_page(sdio) != 0) {
- 		dio_bio_submit(dio, sdio);
--		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
-+		ret = dio_new_bio(dio, sdio, sdio->cur_page_block);
- 		if (ret == 0) {
- 			ret = dio_bio_add_page(sdio);
- 			BUG_ON(ret != 0);
-@@ -878,7 +878,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
- 	 * If there's a deferred page already there then send it.
- 	 */
- 	if (sdio->cur_page) {
--		ret = dio_send_cur_page(dio, sdio, map_bh);
-+		ret = dio_send_cur_page(dio, sdio);
- 		put_page(sdio->cur_page);
- 		sdio->cur_page = NULL;
- 		if (ret)
-@@ -890,6 +890,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
- 	sdio->cur_page_offset = offset;
- 	sdio->cur_page_len = len;
- 	sdio->cur_page_block = blocknr;
-+	sdio->cur_page_dev = map_bh->b_bdev;
- 	sdio->cur_page_fs_offset = sdio->block_in_file << sdio->blkbits;
- out:
- 	/*
-@@ -897,7 +898,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
- 	 * avoid metadata seeks.
- 	 */
- 	if (sdio->boundary) {
--		ret = dio_send_cur_page(dio, sdio, map_bh);
-+		ret = dio_send_cur_page(dio, sdio);
- 		if (sdio->bio)
- 			dio_bio_submit(dio, sdio);
- 		put_page(sdio->cur_page);
-@@ -1348,7 +1349,7 @@ static inline int drop_refcount(struct dio *dio)
- 	if (sdio.cur_page) {
- 		ssize_t ret2;
- 
--		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
-+		ret2 = dio_send_cur_page(dio, &sdio);
- 		if (retval == 0)
- 			retval = ret2;
- 		put_page(sdio.cur_page);
--- 
-1.8.3.1
+Also if copy_from_user() the correct error code is -EFAULT.  And we
+would normally write it like this:
+
+	if (copy_from_user((void *)&u32wps_start, pdata->pointer, 4)) {
+		ret = -EFAULT;
+		goto exit;
+	}
+
+But in this case, since this is dead code we should just delete
+rtw_wps_start() and put a NULL in the rtw_private_handler[] array where
+it used to be.
+
+regards,
+dan carpenter
 
