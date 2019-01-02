@@ -2,80 +2,108 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D18C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0754F20856
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F0CF20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 22:48:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YrkLVVSZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfABWpR (ORCPT
+        id S1729940AbfABWsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 17:45:17 -0500
-Received: from sauhun.de ([88.99.104.3]:49120 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbfABWpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 17:45:16 -0500
-Received: from localhost (p54B3353A.dip0.t-ipconnect.de [84.179.53.58])
-        by pokefinder.org (Postfix) with ESMTPSA id 9E6EE2DE754;
-        Wed,  2 Jan 2019 23:45:13 +0100 (CET)
-Date:   Wed, 2 Jan 2019 23:45:13 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH V2] i2c: tegra: Fix Maximum transfer size
-Message-ID: <20190102224512.GA2750@kunai>
-References: <1546468519-2128-1-git-send-email-skomatineni@nvidia.com>
+        Wed, 2 Jan 2019 17:48:40 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32902 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfABWsk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 17:48:40 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so15797198pfb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 14:48:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3WhVCQhZOtORYuh+/dnVCObSLZZhAbXOiiQqWuucFIU=;
+        b=YrkLVVSZkUSQWwPRQ9+2McOfiItzA4uSkOYIF8N2SW14nXeftAP6G3HizJDf/in5+P
+         nmu72Dr5tuh3rGvn7YpIByLAVRdrpiKLmfz/ec/tmxVwoJVh1I9CfCgaF/dLkMyyoZPd
+         mYu1tft6s7JJUwhuVaRL+g/vJQRIGzW8PyyqEkjTA1Gp9eJKLih5P21Igj/JksHmLAx5
+         rmb55EEs1jnO1peoZE9d5F/m1SQhoeZFGTAwpj46iPboxViEIMWbD21i3g2G7IKt6quP
+         vKJ5yg5NU17PuYX0G+RtFYb1WR1BKbmqqMxgGzUFcazTtVUYbagJ1OXGRSqlV8WE43P9
+         w63w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3WhVCQhZOtORYuh+/dnVCObSLZZhAbXOiiQqWuucFIU=;
+        b=e1ZryUfGU+Y9HzBTX+XdkkyJKUpVwL99hnbtS+h5BRdvuYcf6VSDtHnZQb0pOp1Xri
+         R5j6ggdwiE9aKe7xJyXkB1LifNVGRPOMXTdKwwT/g81ES48x8/3zaiSTNgNehSY2u7gT
+         XWGujm/H86WUut69Ja4ySE8dgFRXP5Z/DaldIUGxJK07tCMnT2ssEjq6ZkdK1+Zi1yqj
+         TebjVgxTskO/xhCzKD8sYI0mZKrO5SmC3v1q2EOT4HMZ2oVnEpLpyfljoghon+7Fi4st
+         mY3pk2pca0QGP+uXrtWYmiTwXO4RdoT7SyeVQGDm5a339oxomYgICjjggvYg53/G4SKn
+         S6Ow==
+X-Gm-Message-State: AA+aEWY+nWYa3qixGuMtsX7pB6MtKx+jbENircDpfn+DfWvCrFM4pG29
+        SiWvF7xbBwfdV5eatkrHPoeQIw==
+X-Google-Smtp-Source: AFSGD/WtUFVlfBXHzbhJ1h97EoWmM+O2AVFoir6FdSxxcJQ0LqkyJitgF48z1rhC7LEbD2SQb5fN3Q==
+X-Received: by 2002:a62:6408:: with SMTP id y8mr45745510pfb.202.1546469319515;
+        Wed, 02 Jan 2019 14:48:39 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id u137sm94810084pfc.140.2019.01.02.14.48.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Jan 2019 14:48:38 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gepJV-0007Ie-HN; Wed, 02 Jan 2019 15:48:37 -0700
+Date:   Wed, 2 Jan 2019 15:48:37 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/20] IB/ipoib: drop useless LIST_HEAD
+Message-ID: <20190102224837.GA28029@ziepe.ca>
+References: <1545555435-24576-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1545555435-24576-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546468519-2128-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1545555435-24576-7-git-send-email-Julia.Lawall@lip6.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 23, 2018 at 09:57:01AM +0100, Julia Lawall wrote:
+> Drop LIST_HEAD where the variable it declares is never used.
+> 
+> Commit 31c02e215700 ("IPoIB: Avoid using stale last_send counter
+> when reaping AHs") removed the uses, but not the declaration.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> @@
+> - LIST_HEAD(x);
+>   ... when != x
+> // </smpl>
+> 
+> Fixes: 31c02e215700 ("IPoIB: Avoid using stale last_send counter when reaping AHs")
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+> ---
+> Successfully 0-day tested on 151 configurations.
+> 
+>  drivers/infiniband/ulp/ipoib/ipoib_ib.c |    1 -
+>  1 file changed, 1 deletion(-)
 
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to rdma for-next thanks
 
-On Wed, Jan 02, 2019 at 02:35:19PM -0800, Sowjanya Komatineni wrote:
-> Tegra194 supports maximum 64K Bytes transfer per packet.
-
-Linux I2C doesn't support more than 64K of transfers as well...
-
-> +	.max_read_len = 65535,
-> +	.max_write_len = 65535,
-
-... so you can simply drop these lines.
-
-
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwtPvQACgkQFA3kzBSg
-KbYyhg//Tk0HSGMGXUeNh1I6iOG6YdKa6Nc2860yRcRCTv3zWSyjLh5M5XdHZYfn
-wcyC0g0sa8NqNicyYi0/U/mGc6hnPdclAdXQOtDWpSp5bLzSjFCy1h1W4GvP5nz8
-1opiKPIn2j6NWftnVGfM1+DJD0HWhk1zLPm7FwOizQ7Des4Y6s8fzPG7MnnhCKYx
-moMevM6TgryERm5qAtdePLVX0N12JPBdHrIgRbFPmlVIZB7Y8K5R6sBlTPIHx30e
-GOwmBwvh7x25qoejOZNVeuzafLiRiR4e1kOqdXSVA1L+91FAakdWb5YEINgCPEAt
-Q1e38EmSVNHp7KiIiTUsTU3pxEBdY4bc7qp9+UryHAaoWnapC9HvVJ7dJD+5G3F+
-3gXJcv7odrsEO92C1FyN0JDevFvxNdTQR4gPzbCdlKA6inYjY5VhyLXGdgACkaXr
-9kO4u4A7ikPmheO7Dr5Qe5bDLmng5Qfd5dkUfA0hZRcfVEZpvKdr5ujd30Mp9CKI
-3Rd0jgO5sdgSUzxmHey0VGQUpqZoB0h3d6lDdBPPK9+okaRXiZ1W2icFr/w/TZ5D
-RVbgwl4XP47uC+kkAGI3Jhi7ZtmtkrNWlpHKI5bAX4EA9cMlEZkvUkBf9eqSN1FQ
-zpY9Bgxz6cXTabWUyUWVrvggkIEfMB7wYBSBie9yV3QbGBhnWYQ=
-=axrp
------END PGP SIGNATURE-----
-
---fdj2RfSjLxBAspz7--
+Jason
