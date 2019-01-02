@@ -2,159 +2,221 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C1CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD468C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6266218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99A40218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 18:51:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XKnTc2qU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AIWaFTP6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfABSvJ (ORCPT
+        id S1728442AbfABSvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 13:51:09 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34357 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfABSvJ (ORCPT
+        Wed, 2 Jan 2019 13:51:49 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39203 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfABSvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 13:51:09 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so14860565plz.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:51:08 -0800 (PST)
+        Wed, 2 Jan 2019 13:51:49 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so39893706itl.4
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 10:51:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9HKfEMnbHSewczzLJZOpgSyzV+WfqxvtlV1fTobNlf4=;
-        b=XKnTc2qUAm+sCV7kK4NKXgSyuqPV1e5GiKvz+NemSyIzAra40nrc/k1rxC42ZPfY5n
-         ZXOLM/7sdPYDYGzn451hL0jzau1BHQjsctrODfAq28QVgetdr61j4q9ZOtOoR6PnlE2R
-         0sw2TrTjrtnSjSyadvTvgYT2EKxZ74A2JNoc4=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s6WbM5t4Fhv9PtkQpLmBxBeQalh5ya7NPA0HZpHaL6Q=;
+        b=AIWaFTP6oaQr/ZeMkjoB6e2yRdf9m8VpCT+J273e+DICrSPojZ5pAVhYl6dUDwelES
+         bY8jujJYDveq94nfRLZcWML/XNsxbJVEpk6aQPRRPCEkdI4WlgRCwS2sRsybMZeH5H3l
+         lBtKivBugj5W4qu7woMYMVhP/Z2yZd44eqWDPZvMf5/5c3Ai087ZSI88WjY7JUrhoIWs
+         N+RYbz0HNGG317HwMyBbdtJQ8wN3wbd4BL6qj0mVlQlEipf2a0ppXM9GShgYbc3pNnUR
+         SUnS+rItrdhnaUDChr97dfyHdcRtls2Kw3mzn4QJx5KyAKK2FnVvqNMNqmf59EODEDO4
+         QE5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9HKfEMnbHSewczzLJZOpgSyzV+WfqxvtlV1fTobNlf4=;
-        b=pGs4dD8UjJqYFh09W9dD2GSbrQVIur9TEEzHuhV7oP/MklnPCqEaLIGyKQvQDHj4yf
-         mrGUpYjwAYGSeO2GcdL6JW9Vmy1H+lGoPTCuIMzUy86CMxNh433fziwzqqEP5CxYvoB8
-         gLm4GimWonq4o/c/25fmo8q11kor2IbdQiJuqu7K9k5ZII9D2Zw9dcrokUlb037cGI+s
-         HD3jKy0OLOF5Uz7dCLrZRXaY3y3iW7aERgXsaQQ61jZ3s0Fx9jlQDemG/a/vNKhyAEaz
-         89yvG4QzoIoWfg5JneC/LJMy8cgviiGaLRy4Kae/moqagJM8n1gstsAp6j8Kbxpax/3Z
-         YM7Q==
-X-Gm-Message-State: AJcUukenNdY9yRcYZVN3rPt7jYdlyB46OOhE6vI5Sqi//c9FstTKnkgN
-        7FJbEEnIAsC2yOga+MJHdjby/A==
-X-Google-Smtp-Source: ALg8bN5no1yyoBihkGJA9F0mZVUp6PXHb/nR8kM7g7OL0ckcxVQi06jhMcP1bZX40gyQP26tOdWhUg==
-X-Received: by 2002:a17:902:9047:: with SMTP id w7mr44696541plz.270.1546455068444;
-        Wed, 02 Jan 2019 10:51:08 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id c7sm78250800pfa.24.2019.01.02.10.51.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 10:51:07 -0800 (PST)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     robh@kernel.org
-Cc:     a.hajda@samsung.com, andy.shevchenko@gmail.com,
-        b.zolnierkie@samsung.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, javierm@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, m.szyprowski@samsung.com, rafael@kernel.org
-Subject: [PATCH v3] driver core: platform: Add an error message to platform_get_irq*()
-Date:   Wed,  2 Jan 2019 10:51:06 -0800
-Message-Id: <20190102185106.56913-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-In-Reply-To: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
-References: <CABGGisxcHWwhUcQML7XmriK_DLFGjmud3cKt8yp+K4G2CAL=9Q@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s6WbM5t4Fhv9PtkQpLmBxBeQalh5ya7NPA0HZpHaL6Q=;
+        b=ikarnRdFkhV7PtrhMLVfp27jQ9ZMPLEvzMPm/78innRXGS/ztSaxpPBUz58djOmTxt
+         yFhCFgYjlTDKJhU2baHxo7hGkMOi0Uqp8e22SmP8gTiDRJutsxDrrJa7pAXTFJS1QHO9
+         uBMcfLfS0vrdmYMahOE/5tL4Jmzcv/0DeFbYWvzfIyX2Y37iC8XtLTOow0bORNLGf9ay
+         bDFZsysYpGpcNlBKEKgaI87tBcTHRTkUW3k/ptheu+/c6kXp4FOqf4CaOnQ9dUwcj1Jz
+         e7YXeXrayW6qbIGHQHz+EHWekpXMCmzZi8XzKWI1koK9w7oPPeN9LBqkBePz7twlCsWR
+         HSUw==
+X-Gm-Message-State: AA+aEWYDW6ofCt6w9Qb/SD3Q3ILJW35hcJI3TWAXQSzsvwdX5Y35pMIs
+        Z/X4tTX5+QySJMBBu63eB4fraz2CaJRHu+onsYOiig==
+X-Google-Smtp-Source: AFSGD/WrN9SMDMIo82aLHCamzdwkYlzl80z3PYeJq/27QH2BKHoDtoLbVSM1jEOySVxBStj5W9D12S8FB3NP0bISVvc=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr27431488jan.72.1546455107720;
+ Wed, 02 Jan 2019 10:51:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <000000000000a415f5057e772463@google.com> <9546892a26b5d933132d733468550a232df60e17.camel@kernel.org>
+In-Reply-To: <9546892a26b5d933132d733468550a232df60e17.camel@kernel.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 2 Jan 2019 19:51:35 +0100
+Message-ID: <CACT4Y+auMcSDNggu5GkJ==yg05Dj9zZxdsx5HO9FMSLHdvAecQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in posix_lock_inode
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     syzbot <syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A grep of the kernel shows that many drivers print an error message if
-they fail to get the irq they're looking for. Furthermore, those drivers
-all decide to print the device name, or not, and the irq they were
-requesting, or not, etc. Let's consolidate all these error messages into
-the API itself, allowing us to get rid of the error messages in each
-driver.
+On Wed, Jan 2, 2019 at 7:20 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Wed, 2019-01-02 at 02:31 -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    e1ef035d272e Merge tag 'armsoc-defconfig' of git://git.ker..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16bb4c4b400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9c6a26e22579190b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=239d99847eb49ecb3899
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128aa377400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+239d99847eb49ecb3899@syzkaller.appspotmail.com
+> >
+> > IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+> > IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
+> > 8021q: adding VLAN 0 to HW filter on device batadv0
+> > 8021q: adding VLAN 0 to HW filter on device batadv0
+> > ==================================================================
+> > BUG: KASAN: use-after-free in what_owner_is_waiting_for fs/locks.c:1000
+> > [inline]
+> > BUG: KASAN: use-after-free in posix_locks_deadlock fs/locks.c:1023 [inline]
+> > BUG: KASAN: use-after-free in posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
+> > Read of size 8 at addr ffff88808791b000 by task syz-executor2/10100
+> >
+> > CPU: 1 PID: 10100 Comm: syz-executor2 Not tainted 4.20.0+ #3
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+> >   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+> >   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+> >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+> >   what_owner_is_waiting_for fs/locks.c:1000 [inline]
+> >   posix_locks_deadlock fs/locks.c:1023 [inline]
+> >   posix_lock_inode+0x1f9e/0x2750 fs/locks.c:1163
+> >   posix_lock_file fs/locks.c:1346 [inline]
+> >   vfs_lock_file fs/locks.c:2314 [inline]
+> >   vfs_lock_file+0xc7/0xf0 fs/locks.c:2309
+> >   do_lock_file_wait.part.0+0xe5/0x260 fs/locks.c:2328
+> >   do_lock_file_wait fs/locks.c:2324 [inline]
+> >   fcntl_setlk+0x2f1/0xfe0 fs/locks.c:2413
+> >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x457ec9
+> > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007f58bbb50c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000048
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+> > RDX: 0000000020000140 RSI: 0000000000000007 RDI: 0000000000000003
+> > RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f58bbb516d4
+> > R13: 00000000004be5f0 R14: 00000000004ceab0 R15: 00000000ffffffff
+> >
+> > Allocated by task 10100:
+> >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> >   set_track mm/kasan/common.c:85 [inline]
+> >   kasan_kmalloc mm/kasan/common.c:482 [inline]
+> >   kasan_kmalloc+0xcf/0xe0 mm/kasan/common.c:455
+> >   kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:397
+> >   kmem_cache_alloc+0x12d/0x710 mm/slab.c:3541
+> >   kmem_cache_zalloc include/linux/slab.h:730 [inline]
+> >   locks_alloc_lock+0x8e/0x2f0 fs/locks.c:344
+> >   fcntl_setlk+0xa9/0xfe0 fs/locks.c:2362
+> >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > Freed by task 10100:
+> >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> >   set_track mm/kasan/common.c:85 [inline]
+> >   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:444
+> >   kasan_slab_free+0xe/0x10 mm/kasan/common.c:452
+> >   __cache_free mm/slab.c:3485 [inline]
+> >   kmem_cache_free+0x86/0x260 mm/slab.c:3747
+> >   locks_free_lock+0x27a/0x3f0 fs/locks.c:381
+> >   fcntl_setlk+0x7b5/0xfe0 fs/locks.c:2439
+> >   do_fcntl+0x843/0x12b0 fs/fcntl.c:370
+> >   __do_sys_fcntl fs/fcntl.c:463 [inline]
+> >   __se_sys_fcntl fs/fcntl.c:448 [inline]
+> >   __x64_sys_fcntl+0x16d/0x1e0 fs/fcntl.c:448
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > The buggy address belongs to the object at ffff88808791b000
+> >   which belongs to the cache file_lock_cache of size 264
+> > The buggy address is located 0 bytes inside of
+> >   264-byte region [ffff88808791b000, ffff88808791b108)
+> > The buggy address belongs to the page:
+> > page:ffffea00021e46c0 count:1 mapcount:0 mapping:ffff8880aa16a1c0 index:0x0
+> > flags: 0x1fffc0000000200(slab)
+> > raw: 01fffc0000000200 ffffea0002333508 ffffea00021d76c8 ffff8880aa16a1c0
+> > raw: 0000000000000000 ffff88808791b000 000000010000000c 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >   ffff88808791af00: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
+> >   ffff88808791af80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > ffff88808791b000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >                     ^
+> >   ffff88808791b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff88808791b100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
+> > ==================================================================
+> >
+> >
+>
+> I've given this a harder look and I really don't quite grok what
+> this output is telling me:
+>
+> All 3 stack traces say they come from PID 10100, but the use-after-free
+> seems to occur well before the free could have occurred in the context
+> of the current fcntl call.
 
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
+Interestingly it is the case in all crashes for this bug. It may be
+something inherent, or maybe just the particular program that
+triggered this is such that these accesses happen in the same thread.
 
-Changes from v2:
- * Don't refactor platform_get_irq(), just wrap it
+> So, I guess that leaves the possibility that we freed a lock request
+> from an earlier fcntl call without removing it properly from the tree,
+> but (a) I don't see how that could happen, _and_ (b) why didn't that
+> trip the BUG_ONs in locks_free_lock?
+>
+> I'll keep looking at this, but I'm a bit stumped at the moment.
 
-Changes from v1:
- * Update error text to indicate irq index instead of IRQn, use %u
+The simplest repro for this is:
 
- drivers/base/platform.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+# See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+#{"threaded":true,"collide":true,"repeat":true,"procs":6,"sandbox":"none","fault_call":-1,"tun":true,"tmpdir":true,"cgroups":true,"netdev":true,"resetnet":true,"segv":true}
+r0 = epoll_create1(0x0)
+fcntl$lock(r0, 0x7, &(0x7f0000000080))
+fcntl$lock(r0, 0x7, &(0x7f0000000140)={0x1000000000001, 0x0, 0x1000000})
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1c958eb33ef4..388461306dd4 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -79,12 +79,7 @@ struct resource *platform_get_resource(struct platform_device *dev,
- }
- EXPORT_SYMBOL_GPL(platform_get_resource);
- 
--/**
-- * platform_get_irq - get an IRQ for a device
-- * @dev: platform device
-- * @num: IRQ number index
-- */
--int platform_get_irq(struct platform_device *dev, unsigned int num)
-+static int __platform_get_irq(struct platform_device *dev, unsigned int num)
- {
- #ifdef CONFIG_SPARC
- 	/* sparc does not have irqs represented as IORESOURCE_IRQ resources */
-@@ -130,6 +125,22 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
- 	return r ? r->start : -ENXIO;
- #endif
- }
-+
-+/**
-+ * platform_get_irq - get an IRQ for a device
-+ * @dev: platform device
-+ * @num: IRQ number index
-+ */
-+int platform_get_irq(struct platform_device *dev, unsigned int num)
-+{
-+	int ret;
-+
-+	ret = __platform_get_irq(dev, num);
-+	if (ret < 0 && ret != -EPROBE_DEFER)
-+		dev_err(&dev->dev, "IRQ index %u not found\n", num);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(platform_get_irq);
- 
- /**
-@@ -142,7 +153,7 @@ int platform_irq_count(struct platform_device *dev)
- {
- 	int ret, nr = 0;
- 
--	while ((ret = platform_get_irq(dev, nr)) >= 0)
-+	while ((ret = __platform_get_irq(dev, nr)) >= 0)
- 		nr++;
- 
- 	if (ret == -EPROBE_DEFER)
-@@ -195,7 +206,11 @@ int platform_get_irq_byname(struct platform_device *dev, const char *name)
- 	}
- 
- 	r = platform_get_resource_byname(dev, IORESOURCE_IRQ, name);
--	return r ? r->start : -ENXIO;
-+	if (r)
-+		return r->start;
-+
-+	dev_err(&dev->dev, "IRQ %s not found\n", name);
-+	return -ENXIO;
- }
- EXPORT_SYMBOL_GPL(platform_get_irq_byname);
- 
--- 
-Sent by a computer through tubes
-
+"collide":true means that the 2 fcntl's were executed in parallel. But
+still the alloc/free/access always happened in the same thread, so the
+thread interaction seems to be somewhat unusual.
