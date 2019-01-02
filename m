@@ -2,99 +2,104 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAEFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D321DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE59218CD
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A435F20836
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 14:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbfABOBi (ORCPT
+        id S1729382AbfABOEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 09:01:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47302 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729988AbfABOBI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 09:01:08 -0500
-X-UUID: 58d8e67fb15e45b9be35046c6d58a513-20190102
-X-UUID: 58d8e67fb15e45b9be35046c6d58a513-20190102
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <henryc.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1226812703; Wed, 02 Jan 2019 22:00:58 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 2 Jan 2019 22:00:56 +0800
-Received: from mtkslt205.mediatek.inc (10.21.15.75) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 22:00:56 +0800
-From:   Henry Chen <henryc.chen@mediatek.com>
-To:     Viresh Kumar <vireshk@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Kees Cook <keescook@chromium.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Henry Chen <henryc.chen@mediatek.com>
-Subject: [RFC PATCH 5/7] soc: mediatek: add header for mediatek SIP interface
-Date:   Wed, 2 Jan 2019 21:44:02 +0800
-Message-ID: <1546436644-19234-6-git-send-email-henryc.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com>
-References: <1546436644-19234-1-git-send-email-henryc.chen@mediatek.com>
+        Wed, 2 Jan 2019 09:04:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:37936 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727827AbfABOEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 Jan 2019 09:04:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jan 2019 06:04:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,431,1539673200"; 
+   d="scan'208";a="113614933"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Jan 2019 06:04:47 -0800
+Subject: Re: [PATCH v3 09/11] mmc: add PCI dependency into IOSF_MBI
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sinan Kaya <Okaya@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, faiz_abbas@ti.com,
+        chunyan.zhang@unisoc.com, Jisheng.Zhang@synaptics.com,
+        ludovic.barre@st.com, Arnd Bergmann <arnd@arndb.de>,
+        alex.smith@imgtec.com, chris.brandt@renesas.com,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181223232521.11320-1-okaya@kernel.org>
+ <20181223232521.11320-10-okaya@kernel.org>
+ <CAJZ5v0jFXvGJH_V9gJ8c3T5x80yYHQmk=0WfJi=vvkSJ_aShwg@mail.gmail.com>
+ <CAK9iUCPqqyK7KMvchM4jY_FBgujnQm019J27TpDJjXUXvu5sjQ@mail.gmail.com>
+ <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <21e732e8-84e4-72f9-4142-8e6af54f1346@intel.com>
+Date:   Wed, 2 Jan 2019 16:03:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <CAJZ5v0hw_=Odpok=6qWVWAfJ0wG7Z8NjwzMCpaFgxYnEAreKcg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a header to collect SIPs and add one SIP call to initialize power
-management hardware for the SIP interface defined to access the SPM
-handling vcore voltage and ddr rate changes on mt8183 (and most likely
-later socs).
+On 31/12/18 11:40 AM, Rafael J. Wysocki wrote:
+> On Sun, Dec 30, 2018 at 7:57 PM Sinan Kaya <Okaya@kernel.org> wrote:
+>>
+>> On Wed, Dec 26, 2018 at 12:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>>>
+>>> On Mon, Dec 24, 2018 at 12:26 AM Sinan Kaya <okaya@kernel.org> wrote:
+>>>>
+>>>> Select IOSF_MBI only when PCI is set.
+>>>>
+>>>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+>>>> ---
+>>>>  drivers/mmc/host/Kconfig | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>>> index e26b8145efb3..4c5f037b246d 100644
+>>>> --- a/drivers/mmc/host/Kconfig
+>>>> +++ b/drivers/mmc/host/Kconfig
+>>>> @@ -117,7 +117,7 @@ config MMC_RICOH_MMC
+>>>>  config MMC_SDHCI_ACPI
+>>>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+>>>>         depends on MMC_SDHCI && ACPI
+>>>
+>>> It should depend on PCI as well, shouldn't it?
+>>>
+>>
+>> I don't think so. The PCI dependency is at IOSF_MBI code so code
+>> should select IOSF_MBI only when x86 and pci is defined as below.
+>>
+>> This driver does not depend on PCI.
+> 
+> Are you sure?
+> 
+> Do you know any systems in which to use it without PCI?
+> 
 
-Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
----
- include/soc/mediatek/mtk_sip.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 include/soc/mediatek/mtk_sip.h
-
-diff --git a/include/soc/mediatek/mtk_sip.h b/include/soc/mediatek/mtk_sip.h
-new file mode 100644
-index 0000000..5394ff4
---- /dev/null
-+++ b/include/soc/mediatek/mtk_sip.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 MediaTek Inc.
-+ */
-+#ifndef __SOC_MTK_SIP_H
-+#define __SOC_MTK_SIP_H
-+
-+#ifdef CONFIG_ARM64
-+#define MTK_SIP_SMC_AARCH_BIT		0x40000000
-+#else
-+#define MTK_SIP_SMC_AARCH_BIT		0x00000000
-+#endif
-+
-+#define MTK_SIP_SPM			(0x82000220 | MTK_SIP_SMC_AARCH_BIT)
-+#define MTK_SIP_SPM_DVFSRC_INIT		0x00
-+
-+#endif
--- 
-1.9.1
-
+Qualcomm use it and I don't know if those systems have PCI.
+AMD use it but probably also have PCI.  And yes Intel systems (just BYT and
+CHT IIRC) that use this driver will always have PCI.
