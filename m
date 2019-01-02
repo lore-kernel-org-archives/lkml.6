@@ -2,145 +2,132 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AF5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6704EC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55227218DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7CF218FC
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 17:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rs6buJY3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eInQQm6s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbfABRaF (ORCPT
+        id S1726618AbfABRgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 12:30:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33201 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfABR37 (ORCPT
+        Wed, 2 Jan 2019 12:36:15 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38795 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbfABRgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 12:29:59 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so33196777wmh.0;
-        Wed, 02 Jan 2019 09:29:58 -0800 (PST)
+        Wed, 2 Jan 2019 12:36:14 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so31232602wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 09:36:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pGcTWdnCmvN66ZwQPNKvPT7pk8Vrg++8TkTmZWpUWe0=;
-        b=Rs6buJY3efYWnbYivxuxoonPpEir/nYLlJb8PUuF3aMcM4xKioFejft54RaBMEUz/q
-         tUSzwXHxj03UDGheUldT15Iv/TN8a5JFpmAVtGDaYBN19wsNH+BUY+ZOAi2IlSMb+h2k
-         wyNifw1ooVOt82oie1VKtwKl1h51PpLxH1y5ue+NEHx/nEFBzgqbE7Lw4S0pXlzUp82t
-         /VGru9IsDNlYD6a6P+HB77fujTj9kZN/WXAdyLpY6IXNzcQUP2T3yPbPqCPst6hEzmXr
-         Oc4jt3m8iwOu3CNNDM2FJckcEg8BRZQK2HOt+u2DFRSCA+o8EmkqnMlJxIr4QxFMfdHy
-         VS8w==
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WqvxLRjs/8snQEsiyX94OkFXxMlQW9YzCnB6B4t2n8E=;
+        b=eInQQm6sEDrSW8Ri+2HTk9tz3KWL9anV9aQzBFXwpIjQ4AslOvmf6JrAnCjVPVskuq
+         ggP7jCm5cJAgtjJ/fZmLjKcm/Xveqors2DstMRikDY34EH2+KXOkbSK4m0kIaz6QLcbI
+         otUByN5572pZdK9BeiJ9bovq8A4K9xoY6l8mD3nYm3QjXsnb16R2Wg/qaxZGqvXtEoc6
+         UNb5Ta0RlReeCtasTgUG2dYzC6YmZAs1X6pvyDHur7RbcME8G/AXmy+Yrdw9M7dJ+YMs
+         kqL+2tdPZkveGaEuzfj676vUysAAq7naoRF0853qdrcjSVmYRPA26o6RQaPkZzaIT0/V
+         dC8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pGcTWdnCmvN66ZwQPNKvPT7pk8Vrg++8TkTmZWpUWe0=;
-        b=XWm69DSa6TNhBMM1q1AvDGLvYh6VE+zK6qOmt9Jxp9FRSPL6UGE+Jc0No3aCD/Ra8u
-         FcfX78WIntSTfMjpPkppFgMQwYOIDTrjKPeadJCyqmGaoZlXuUQvKYqYsb3s83gtTwVK
-         1CmxL7N39KNAT5bjXDfjsZxVDJZQJzNuUOBV1wwXTlAFDz5jVtS8aa9K+XgyF0cdLynX
-         mP4QTxdKTqe6+RYQb4tcDtOkj45fazpEV49lp19VPTpc3akgbP5/GY9QF9Cbu8atZglW
-         Q5qnValezbKrMISpq05oLaizfrzye2gUiOKp/oF2u69mCuVygOYeVwYd9XAN8kzZuNg8
-         IoDg==
-X-Gm-Message-State: AJcUukfc/Unny96wBgLMF3dpUR447H5hFuL8rO4yZ56TIStvFlVVmWkM
-        pLgeLvCr86OQwVY7JbqiD7MxInn/
-X-Google-Smtp-Source: AFSGD/UZvt9Wsz0xvEb05slw6UO4WjIdMclml/TBOzynnfC27D+cB6XxkTp5A8Dbus/seU0IOglyXw==
-X-Received: by 2002:a1c:6243:: with SMTP id w64mr34933871wmb.153.1546450197149;
-        Wed, 02 Jan 2019 09:29:57 -0800 (PST)
-Received: from localhost.localdomain ([185.175.214.210])
-        by smtp.gmail.com with ESMTPSA id m15sm38008200wrr.95.2019.01.02.09.29.55
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WqvxLRjs/8snQEsiyX94OkFXxMlQW9YzCnB6B4t2n8E=;
+        b=lqml7HA9x1W6meRKin+zSxveb0SBYDANFaLZpe2tXSIFa7Iv1Lsr+u2uqCYQvuuGWS
+         MiTxX7PqU9LDNn8ReM6KnTiR9uUGcUTnHCfVHTAulCC6yLY6bTfnmV48XAlPJEuynNar
+         RvGm34TUsM+eMaUpri4LsMe8xiPN8TNFB9zsUNwX9AFqudlsqKFd84r/AFAtsCP3XWqR
+         K/qghbTThMm9UQDVp5Fx4Je+QhbrL7K5qhNt8Rtt7dASPErR0DieAvCRJwJX5AYwfykv
+         fR8dkIYFN3C3kZYi+gHC17yPW47L5kHLP+ozmz7IoQKnQsDdklps4gKW4XAP//rVs5i+
+         2P6g==
+X-Gm-Message-State: AJcUukdOxIkn+PtEDATb2glD5r1hnBUHU1CRk18FILdb177kz46LgwvW
+        xvov8CaU11NiEQyE1jrgpi1A3w==
+X-Google-Smtp-Source: ALg8bN66RPF5pJV4sTABV8H6vo3c/v+grDb2wiefBxmR4QoVbGBAeb/TQmsmt/DjfRVG2/5x2PUzCA==
+X-Received: by 2002:a5d:5182:: with SMTP id k2mr38617647wrv.121.1546450573026;
+        Wed, 02 Jan 2019 09:36:13 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
+        by smtp.gmail.com with ESMTPSA id t4sm45987076wrm.6.2019.01.02.09.36.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jan 2019 09:29:56 -0800 (PST)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Subject: [PATCH] KVM: validate userspace input in kvm_clear_dirty_log_protect()
-Date:   Wed,  2 Jan 2019 18:29:37 +0100
-Message-Id: <20190102172937.28741-1-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 02 Jan 2019 09:36:11 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v2 0/3] kasan: tag-based mode fixes
+Date:   Wed,  2 Jan 2019 18:36:05 +0100
+Message-Id: <cover.1546450432.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function at issue does not fully validate the content of the structure pointed by the log parameter, though its content has just been copied from userspace and lacks validation. Fix that.
+Hi Andrew,
 
-Moreover, change the type of n to unsigned long as that is the type returned by kvm_dirty_bitmap_bytes().
+This patchset includes an updated "kasan, arm64: use ARCH_SLAB_MINALIGN
+instead of manual aligning" patch and fixes for two more issues that
+were uncovered while testing with a variety of different config options
+enabled.
 
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+028366e52c9ace67deb3@syzkaller.appspotmail.com
----
-Syzbot report:
+Thanks!
 
-BUG: KASAN: slab-out-of-bounds in kvm_clear_dirty_log_protect+0x8cf/0x970 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1262
-Read of size 8 at addr ffff88809e631290 by task syz-executor007/7635
+Andrey Konovalov (3):
+  kasan, arm64: use ARCH_SLAB_MINALIGN instead of manual aligning
+  kasan: make tag based mode work with CONFIG_HARDENED_USERCOPY
+  kasan: fix krealloc handling for tag-based mode
 
-CPU: 0 PID: 7635 Comm: syz-executor007 Not tainted 4.20.0+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
- print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
- kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
- kvm_clear_dirty_log_protect+0x8cf/0x970 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1262
- kvm_vm_ioctl_clear_dirty_log+0xff/0x260 arch/x86/kvm/x86.c:4468
- kvm_vm_ioctl+0xc19/0x1fe0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3127
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:509 [inline]
- do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
- ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl fs/ioctl.c:718 [inline]
- __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
- do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440b09
-Code: 23 02 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 0b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00000000007dff68 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004a28d8 RCX: 0000000000440b09
-RDX: 0000000020000080 RSI: 00000000c018aec0 RDI: 0000000000000004
-RBP: 00000000004a28d8 R08: 0000000120080522 R09: 0000000120080522
-R10: 0000000120080522 R11: 0000000000000217 R12: 00000000004022a0
-R13: 0000000000402330 R14: 0000000000000000 R15: 0000000000000000
+ arch/arm64/include/asm/kasan.h |  4 ++++
+ include/linux/kasan.h          | 14 +++++---------
+ include/linux/slab.h           |  5 +++--
+ mm/kasan/common.c              | 22 ++++++++++++----------
+ mm/slab.c                      |  8 ++++----
+ mm/slab_common.c               |  2 +-
+ mm/slub.c                      | 12 +++++++-----
+ 7 files changed, 36 insertions(+), 31 deletions(-)
 
-
-
- virt/kvm/kvm_main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 666d0155662d..360588aa54c5 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1228,9 +1228,9 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
--	int as_id, id, n;
-+	int as_id, id;
- 	gfn_t offset;
--	unsigned long i;
-+	unsigned long i, n;
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
- 
-@@ -1250,6 +1250,10 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
- 		return -ENOENT;
- 
- 	n = kvm_dirty_bitmap_bytes(memslot);
-+
-+	if (n << 3 < log->num_pages || log->first_page > log->num_pages)
-+		return -EINVAL;
-+
- 	*flush = false;
- 	dirty_bitmap_buffer = kvm_second_dirty_bitmap(memslot);
- 	if (copy_from_user(dirty_bitmap_buffer, log->dirty_bitmap, n))
 -- 
-2.11.0
+2.20.1.415.g653613c723-goog
 
