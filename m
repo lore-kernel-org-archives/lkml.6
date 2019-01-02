@@ -2,183 +2,127 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C77C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6516FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F63E21871
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D82521871
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 10:28:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n0Y/Wd4F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbfABK23 (ORCPT
+        id S1729465AbfABK2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:28:29 -0500
-Received: from lucky1.263xmail.com ([211.157.147.133]:55570 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729127AbfABK2F (ORCPT
+        Wed, 2 Jan 2019 05:28:47 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:48922 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfABK2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:28:05 -0500
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.73])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 9536F39E;
-        Wed,  2 Jan 2019 18:24:00 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P26122T140328057173760S1546424637719409_;
-        Wed, 02 Jan 2019 18:23:59 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <e4fc296ef6d910149d5f469ddb8210b5>
-X-RL-SENDER: tony.xie@rock-chips.com
-X-SENDER: xxx@rock-chips.com
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v7 6/6] clk: RK808: add RK809 and RK817 support.
-Date:   Wed,  2 Jan 2019 05:23:55 -0500
-Message-Id: <20190102102355.29377-1-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190102102002.29245-1-tony.xie@rock-chips.com>
-References: <20190102102002.29245-1-tony.xie@rock-chips.com>
+        Wed, 2 Jan 2019 05:28:46 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x02AJ3cd162598;
+        Wed, 2 Jan 2019 10:28:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=fxXZeFmf/hUwfiqSPA4f8xhJ3/kqz5vs9+XKAQOe/z4=;
+ b=n0Y/Wd4Fl33fMyic2LaD7ni5/1EpXhMfy5FiuXHKERQgfId/NRX6MFZxOeL+nlUiVGbT
+ k3OVeg/chXwMSI175kSxkTa2sQBrLMM17CTZh4m0GYaCfC71Gyh6kNy3sNOH0ykXTDbA
+ e95NBpWl0nglBUbPtpAIymWLcuB45sRgVYtuQ4gwoajtlC7aduAFSyf1weA1UW6tQ50o
+ BqoFBa4FglVHbGqm+d8+Qza9gO4WCIFrQ4Oo6dzuWeAAkxFBR5N0mXVhoRNvdf7uWfUh
+ ysbT23GE2Es/B9lRBXV9y8k5nHjHDdq3OqofQoQkM363qLu6yjl05AGg3Va/H0Biw17z qg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2pnxee1kbm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Jan 2019 10:28:35 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x02ASYeo028972
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jan 2019 10:28:34 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x02ASWMs011298;
+        Wed, 2 Jan 2019 10:28:33 GMT
+Received: from kadam (/197.157.0.49)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 02 Jan 2019 02:28:32 -0800
+Date:   Wed, 2 Jan 2019 13:28:14 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     devel@driverdev.osuosl.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, pakki001@umn.edu,
+        Colin Ian King <colin.king@canonical.com>,
+        Aymen Qader <qader.aymen@gmail.com>
+Subject: Re: [PATCH] rts5208: fix a missing check of the status of
+ sd_init_power
+Message-ID: <20190102102814.GF3781@kadam>
+References: <20181225083334.68473-1-kjlu@umn.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181225083334.68473-1-kjlu@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9123 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901020094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+On Tue, Dec 25, 2018 at 02:33:32AM -0600, Kangjie Lu wrote:
+> sd_init_power() could fail. The fix inserts a check of its status. If it
+> fails, returns STATUS_FAIL.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/staging/rts5208/sd.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
+> index ff1a9aa152ce..8c3fd885a4f3 100644
+> --- a/drivers/staging/rts5208/sd.c
+> +++ b/drivers/staging/rts5208/sd.c
+> @@ -2352,7 +2352,9 @@ static int reset_sd(struct rtsx_chip *chip)
+>  				break;
+>  			}
+>  
+> -			sd_init_power(chip);
+> +			retval = sd_init_power(chip);
+> +			if (retval != STATUS_SUCCESS)
+> +				goto status_fail;
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/Kconfig     |  9 +++---
- drivers/clk/clk-rk808.c | 64 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 67 insertions(+), 6 deletions(-)
+Are you able to test this?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e5b2fe80eab4..532ab112fa8a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -52,13 +52,12 @@ config COMMON_CLK_MAX9485
- 	  This driver supports Maxim 9485 Programmable Audio Clock Generator
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
--	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
--	  by control register.
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-+	  Clkout1 is always on, Clkout2 can off by control register.
- 
- config COMMON_CLK_HI655X
- 	tristate "Clock driver for Hi655x" if EXPERT
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 8d90bdf5b946..75f2cf0dfc9f 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,68 @@ of_clk_rk808_get(struct of_phandle_args *clkspec, void *data)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return 0;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	/*
-+	 * For the default case, it match the following PMIC type.
-+	 * RK805_ID
-+	 * RK808_ID
-+	 * RK818_ID
-+	 */
-+	default:
-+		return &rk808_clkout2_ops;
-+	}
-+}
-+
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +189,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
- 
- 	/* optional override of the clockname */
--- 
-2.17.1
+I don't think you appreciate the risk of applying this patch.  We are
+taking code which succeeds and making it fail.  That's a risky thing.
+The benefit is just that it makes a static analysis tool happy?
 
+It would be different if the benefit were that it improves security or
+prevents a crash.  Or if you could test it.
 
+This is the reset_sd() function.  It always feels a bit hacky to me to
+even have a reset function.  It basically means you know you have messed
+up but you don't know where or how so let's just try scrub everything
+and go back to the start.  Maybe the driver is trying to work around a
+firmware bug.  I often find bugs in reset functions which show they have
+not been tested...  It's so tricky for me to do a cost benefit analysis
+here, but I sort of think we should leave the code as-is.
+
+It's frustrating because the static analysis tool is probably right, but
+maybe the code only works because two bugs cancel each other out?  We
+can't know without testing.
+
+In a more ideal world we would do the static analysis on patches before
+they are applied and refuse to apply them until the maintainer explains
+why the function is not checked.
+
+regards,
+dan carpenter
 
