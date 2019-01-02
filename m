@@ -2,210 +2,201 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F83C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2810AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9835720656
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12F5218EA
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 15:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GIitmsin"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eHVGWa5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbfABPHm (ORCPT
+        id S1729961AbfABPIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:07:42 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45899 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729853AbfABPHi (ORCPT
+        Wed, 2 Jan 2019 10:08:48 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53767 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729761AbfABPIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:07:38 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so14687276pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 07:07:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BpdCkO4cmTj33UUTHGwsT4WjRV/iOfWi6Qr7bUc27sE=;
-        b=GIitmsins5R8uwRYvO3WlhKg4IdAIReu53iCAMsOG4VxX0NVX3TOc6UD/biqn82mGp
-         6EXh1luvYHJuToJk8c7rtEQJZM9TUko99GkxocDxSFM/Dbp1wUkbCdzJ/RnPmB8oxlgr
-         fRao6BOBqtoiBa1UEIztlLbH06nFTuCV7He5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BpdCkO4cmTj33UUTHGwsT4WjRV/iOfWi6Qr7bUc27sE=;
-        b=JWWFVo3tz2/jw0yKIK1nWiLmMxjtQnrdojynk0Jwss9w3KcgkLrzxyPnTS2Yw1NgTC
-         U0NNYl01rLqYL9Vb/gasOqhaOCGJaRT43+5uWY/urYXVLz4TjeJPufBb8dgzwFuQ3ej5
-         IjfpL3zje8EXzr9Iin5K2vuaZ1i7IOJIjZolBkHTXfD98oma27zfZSaeHQ7OFQJtZULG
-         Mf7GXeiJgXEHFxX1DdXDh1BFE+q+FzADDmGuRzfLF22JC+bBU6fHygCh06oCfMUnO2aS
-         0nyunKLwQCJ2/ev0tJrIj7+m+nyKCgHIQJbH4sj7QVoGYpB3nvby3p3ri1WKV5R5VsGa
-         Ov0Q==
-X-Gm-Message-State: AA+aEWZYqDYZyyVSBX89Q8QQ5rns87uith95uO6vXjq5sb2chf+lhbef
-        cLFDFExrzK5XvSfnDZzW4hnGzg==
-X-Google-Smtp-Source: AFSGD/UWJ9aHMegAO9E0nuerLwO4AbT9Dim3waqrpKP78AC7LV8BszwSyAQhvEGs3/H9NKjwEvy55w==
-X-Received: by 2002:a62:d148:: with SMTP id t8mr45871258pfl.52.1546441657161;
-        Wed, 02 Jan 2019 07:07:37 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id k24sm78458985pfj.13.2019.01.02.07.07.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 02 Jan 2019 07:07:36 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 2/2] alpha: generate uapi header and syscall table header files
-Date:   Wed,  2 Jan 2019 20:36:59 +0530
-Message-Id: <1546441619-19977-3-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546441619-19977-1-git-send-email-firoz.khan@linaro.org>
-References: <1546441619-19977-1-git-send-email-firoz.khan@linaro.org>
+        Wed, 2 Jan 2019 10:08:47 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190102150846euoutp014e0b8718b4a453ad539b57440e764670~2EI51wAks3275232752euoutp01k
+        for <linux-kernel@vger.kernel.org>; Wed,  2 Jan 2019 15:08:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190102150846euoutp014e0b8718b4a453ad539b57440e764670~2EI51wAks3275232752euoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1546441726;
+        bh=Dauv+FCCkr7n/ZSEz6jvJVwA7TRT6PBibnYObEabNWs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=eHVGWa5zCHpH9HFlV7VqFSOJbvXJfCdxn8CnOY5cYkrbsdJeiHRycQ0EmcBvVL27s
+         cRk0+lzGZat6nHS8fKgaQZqsk/IR5Qac+r5t0fc6vzTCuXRLTgjId/SeFH45/ihRIT
+         hIVoCtRRc0jG7RVJC9KWH4pvHZ4k3vL0lGMSwqb4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190102150844eucas1p1a38cad87181f71021188f438eb16e4bf~2EI3_eHLs2902929029eucas1p1m;
+        Wed,  2 Jan 2019 15:08:44 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id EC.EB.04294.BF3DC2C5; Wed,  2
+        Jan 2019 15:08:43 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190102150843eucas1p178b4aa4faf0243a2c28236d54b402c2c~2EI3AX_kg2902329023eucas1p1n;
+        Wed,  2 Jan 2019 15:08:43 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190102150842eusmtrp1ee3aa15b03dd0597f07f305d39becc8c~2EI2wssyf1315313153eusmtrp1o;
+        Wed,  2 Jan 2019 15:08:42 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-66-5c2cd3fb658b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 45.6A.04128.AF3DC2C5; Wed,  2
+        Jan 2019 15:08:42 +0000 (GMT)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190102150841eusmtip2e53560e132d75204eeba41493dd8ddb4~2EI13KSHp2438424384eusmtip2D;
+        Wed,  2 Jan 2019 15:08:41 +0000 (GMT)
+Subject: Re: [PATCH v3 4/5] drivers: power: suspend: call devfreq
+ suspend/resume
+To:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc:     myungjoo.ham@samsung.com,
+        "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <eda2b1f2-ed6f-b75f-f582-761c2a48c0cd@partner.samsung.com>
+Date:   Wed, 2 Jan 2019 16:08:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6@epcms1p7>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTVxz29D6BlRyLs7/Aoqbuj2EcjG1ZzuKyaEbmTSTL4qLZg8xVuQEz
+        iq4X2GTLRHl1lZesMOzqgyCPXLoU266QCjI7RmUVkJnJHNORQMQpXcxKAIWwcbmQ8d93vkd+
+        35ccntI52Hj+cE6uaM4xZhvYaNrX93jw+fmb29NfcE0mk6vfJ5JL9S6GdFyaYcjI9CRDzvcO
+        MqSo0cWS66dMpGr8IUWGhto5MnByiiN2W7eGuMdvMeSm38GSSEUvIvVDVzTku947HGkaGdaQ
+        0ROtLLnz809L+dAvDCnp7uVIadsjhkzduEvv1Au+yz5GcJ5zIuHbwmFaqK76BwmNXX9pBLf8
+        FSv0nHVyguficWGxjxO8v5bRQqVXRkJr2ywnRNyb3ta+H/1ahph9OF80J7/+UXTWqOcsdTSs
+        /WzmdJguRHKMFUXxgF8G70Q1a0XRvA63IuiamuMUQYenEcz6E1QhgqCq5BpaTbSX+RjV1ILg
+        dvtB1RRGcMZ1kVaEOLwXguUuRhE24EUN2GYuLD8oXMzCYOgyZUU8z+Ik6JQ/UQJa/CYE624t
+        h2n8LFiuhCgFP43fBcufbazqWQ/9ZyZoJRqF34K7A68qNIX18PvEeY2KN0NH2EEppwD/wUNF
+        f4RRW6dCpS+wsiAOHgS9nIqfgdDX5bSKJRiwyKyKv4Cy/s4Vzw74MTjMKHcpnAguf7JK74Lr
+        /h+W6wCOhd/C69UKsVDj+4ZSaS1YSnWq+znwlt/QqHgjtDjruGpksK/ZZV8zxr5mjP3/uxcQ
+        LSO9mCeZMkXpxRzx0yTJaJLycjKTDh0xudHSnw0tBqc7kX/hYABhHhme0lqubk/XMcZ86Zgp
+        gICnDBu0G6UlSpthPFYgmo8cMOdli1IAJfC0Qa/9fN3YBzqcacwVPxbFo6J5VdXwUfGFqHBk
+        T27avZ7ml2rmndV4/+OGeG+LITUi/73vkJwytqV5a5b/vnUiQ4gKcTsigd3veFizfp2j0dIU
+        fBLc/W9tvocS3st0PLk25qFcRfpZ+UH6GG9bKLYf//AVd0xtzMMvm2zD9XuLTpVZIwMNW8ZH
+        bXOPit7QxRU0ZHO30zpiewy0lGVM2UaZJeN/mJd/068DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA03Sa0hTYRgHcN6dq+niNC97G3ZhCJXU0Wnqu7Lhh4hDHyy6SvdRRzfanJ0z
+        o9WHVlLmssyS0JlT6IIsy5o2o1LRTDHTZZpGkVEZIToxNSMxaXMFfvu/z/P8XnjgoTGZi1DQ
+        +kwzL2RqDUpyAd4x2zawZrpn9b5Yr3MVanq0Cj0sriZQ3cMpAvVPfidQeUsXgXJuVpPo1UUj
+        Kvg6jCGP5wGFOs+OUMheVC9Brq99BOp5coNEE5daACr2NEjQvZaPFLrd3y1BH85Ukujjyxc+
+        3/GGQOfqWyh0/u4YgUZeD+Apcs791E1wVY4qwJVau3HuSsE44G4+G5JwLmceyTWWVVFcza3T
+        3GwrxdW+zcW5y7VOwFXe/UVxE66lW6V72GTBlG3ml+tMonmDcq8KxbEqNWLj1qpZVXzS/nVx
+        CcoYTfIR3qA/zgsxmkOs7kNNGZbllZ6YKvTiVuAMtoEgGjJr4YNcN2EDC2gZcxvAL6V2KtCI
+        gFcb6v7lUDjTZyMDQ8MAvpsaxPyNUGYbbMuvntNhjBWDP8crMP8DY2wkfFJZQAVIrwR6263A
+        BmiaZFj42HnMr6XMJth2vQ/3Z5yJghcaOuZ+DWfSYOfQfRCYWQTbSwZxPw1iUuFAp9pfxphE
+        6Kj5jAWyHL4fLJcE8jJY572BXQEy+zxtn0fs84h9HqkAuBOE8dmiMcMoxrGi1ihmZ2awh01G
+        F/Ddi7v1d+1jYBvd3gwYGihDpLGNq/fJCO1x0WJsBpDGlGHSCNFXkh7RWk7ygumgkG3gxWaQ
+        4NutEFOEHzb5ri/TfFCVoEpCalVSfFJ8IlLKpZ5Yyx4Zk6E180d5PosX/jsJHaSwgpDEXZbU
+        XsVuKiV3mG+a3lg6qXGQ8gN2W63QmIeCC9jo5+uGBpktsrS3UeklRTnBTxPkCw+MhurvWEYG
+        5Nd0eeoVHo08sjzIoI4YWy+986c33dG1I2RzyadIPZdWvVXR/D2qTCZ07zLkb/sWs7NtY8+p
+        3+nRmiU/VkZXjC+eyVHiok6risYEUfsX6Nm8GUUDAAA=
+X-CMS-MailID: 20190102150843eucas1p178b4aa4faf0243a2c28236d54b402c2c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f
+References: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
+        <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f@epcms1p7>
+        <20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6@epcms1p7>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unified system call table generation script must be run to
-generate unistd_32.h and syscall_table.h files. This patch
-will have changes which will invokes the script.
+Hi Rafael,
 
-This patch will generate unistd_32.h and syscall_table.h
-files by the syscall table generation script invoked by
-alpha/Makefile and the generated files against the removed
-files must be identical.
+Gentle ping...
+Please take this patch, it got ACK.
+The other patches have been taken through MyungJoo's
+tree, but this one is actually enabling the feature.
 
-The generated uapi header file will be included in uapi/-
-asm/unistd.h and generated system call table header file
-will be included by kernel/systbls.S file.
+Regards,
+Lukasz
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- arch/alpha/kernel/syscalls/Makefile      | 11 ++++++++--
- arch/alpha/kernel/syscalls/syscallhdr.sh | 36 --------------------------------
- arch/alpha/kernel/syscalls/syscalltbl.sh | 32 ----------------------------
- 3 files changed, 9 insertions(+), 70 deletions(-)
- delete mode 100644 arch/alpha/kernel/syscalls/syscallhdr.sh
- delete mode 100644 arch/alpha/kernel/syscalls/syscalltbl.sh
 
-diff --git a/arch/alpha/kernel/syscalls/Makefile b/arch/alpha/kernel/syscalls/Makefile
-index 659faef..75c7421 100644
---- a/arch/alpha/kernel/syscalls/Makefile
-+++ b/arch/alpha/kernel/syscalls/Makefile
-@@ -6,8 +6,9 @@ _dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')	\
- 	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
- 
- syscall := $(srctree)/$(src)/syscall.tbl
--syshdr := $(srctree)/$(src)/syscallhdr.sh
--systbl := $(srctree)/$(src)/syscalltbl.sh
-+syshdr := $(srctree)/scripts/syscallhdr.sh
-+sysnr := $(srctree)/scripts/syscallnr.sh
-+systbl := $(srctree)/scripts/syscalltbl.sh
- 
- quiet_cmd_syshdr = SYSHDR  $@
-       cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'	\
-@@ -15,6 +16,12 @@ quiet_cmd_syshdr = SYSHDR  $@
- 		   '$(syshdr_pfx_$(basetarget))'		\
- 		   '$(syshdr_offset_$(basetarget))'
- 
-+quiet_cmd_sysnr = SYSNR  $@
-+      cmd_sysnr = $(CONFIG_SHELL) '$(sysnr)' '$<' '$@'		\
-+		  '$(sysnr_abis_$(basetarget))'			\
-+		  '$(sysnr_pfx_$(basetarget))'			\
-+		  '$(sysnr_offset_$(basetarget))'
-+
- quiet_cmd_systbl = SYSTBL  $@
-       cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'	\
- 		   '$(systbl_abis_$(basetarget))'		\
-diff --git a/arch/alpha/kernel/syscalls/syscallhdr.sh b/arch/alpha/kernel/syscalls/syscallhdr.sh
-deleted file mode 100644
-index e5b99bd..0000000
---- a/arch/alpha/kernel/syscalls/syscallhdr.sh
-+++ /dev/null
-@@ -1,36 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--
--in="$1"
--out="$2"
--my_abis=`echo "($3)" | tr ',' '|'`
--prefix="$4"
--offset="$5"
--
--fileguard=_UAPI_ASM_ALPHA_`basename "$out" | sed \
--	-e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
--	-e 's/[^A-Z0-9_]/_/g' -e 's/__/_/g'`
--grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
--	printf "#ifndef %s\n" "${fileguard}"
--	printf "#define %s\n" "${fileguard}"
--	printf "\n"
--
--	nxt=0
--	while read nr abi name entry ; do
--		if [ -z "$offset" ]; then
--			printf "#define __NR_%s%s\t%s\n" \
--				"${prefix}" "${name}" "${nr}"
--		else
--			printf "#define __NR_%s%s\t(%s + %s)\n" \
--				"${prefix}" "${name}" "${offset}" "${nr}"
--		fi
--		nxt=$((nr+1))
--	done
--
--	printf "\n"
--	printf "#ifdef __KERNEL__\n"
--	printf "#define __NR_syscalls\t%s\n" "${nxt}"
--	printf "#endif\n"
--	printf "\n"
--	printf "#endif /* %s */" "${fileguard}"
--) > "$out"
-diff --git a/arch/alpha/kernel/syscalls/syscalltbl.sh b/arch/alpha/kernel/syscalls/syscalltbl.sh
-deleted file mode 100644
-index 904b8e6..0000000
---- a/arch/alpha/kernel/syscalls/syscalltbl.sh
-+++ /dev/null
-@@ -1,32 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--
--in="$1"
--out="$2"
--my_abis=`echo "($3)" | tr ',' '|'`
--my_abi="$4"
--offset="$5"
--
--emit() {
--	t_nxt="$1"
--	t_nr="$2"
--	t_entry="$3"
--
--	while [ $t_nxt -lt $t_nr ]; do
--		printf "__SYSCALL(%s,sys_ni_syscall)\n" "${t_nxt}"
--		t_nxt=$((t_nxt+1))
--	done
--	printf "__SYSCALL(%s,%s)\n" "${t_nxt}" "${t_entry}"
--}
--
--grep -E "^[0-9A-Fa-fXx]+[[:space:]]+${my_abis}" "$in" | sort -n | (
--	nxt=0
--	if [ -z "$offset" ]; then
--		offset=0
--	fi
--
--	while read nr abi name entry ; do
--		emit $((nxt+offset)) $((nr+offset)) $entry
--		nxt=$((nr+1))
--	done
--) > "$out"
--- 
-1.9.1
-
+On 12/21/18 1:33 AM, MyungJoo Ham wrote:
+>> On 2018-12-05 12:05, Lukasz Luba wrote:
+>>> Devfreq framework supports suspend of its devices.
+>>> Call the the devfreq interface and allow devfreq devices preserve/restore
+>>> their states during suspend/resume.
+>>>
+>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> 
+> This looks all good to me.
+> 
+> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> 
+>>> ---
+>>>   drivers/base/power/main.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>>> index a690fd4..0992e67 100644
+>>> --- a/drivers/base/power/main.c
+>>> +++ b/drivers/base/power/main.c
+>>> @@ -32,6 +32,7 @@
+>>>   #include <trace/events/power.h>
+>>>   #include <linux/cpufreq.h>
+>>>   #include <linux/cpuidle.h>
+>>> +#include <linux/devfreq.h>
+>>>   #include <linux/timer.h>
+>>>   
+>>>   #include "../base.h"
+>>> @@ -1078,6 +1079,7 @@ void dpm_resume(pm_message_t state)
+>>>   	dpm_show_time(starttime, state, 0, NULL);
+>>>   
+>>>   	cpufreq_resume();
+>>> +	devfreq_resume();
+>>>   	trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>>>   }
+>>>   
+>>> @@ -1852,6 +1854,7 @@ int dpm_suspend(pm_message_t state)
+>>>   	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+>>>   	might_sleep();
+>>>   
+>>> +	devfreq_suspend();
+>>>   	cpufreq_suspend();
+>>>   
+>>>   	mutex_lock(&dpm_list_mtx);
+> 
+> 
