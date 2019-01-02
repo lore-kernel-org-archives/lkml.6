@@ -2,141 +2,122 @@ Return-Path: <SRS0=kQMq=PK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C0BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 19:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60DAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 19:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C20218EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 19:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B79E20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  2 Jan 2019 19:43:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EKyq3FQV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bfOEJAnj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbfABTgy (ORCPT
+        id S1727985AbfABTnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 2 Jan 2019 14:36:54 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10045 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729680AbfABTgw (ORCPT
+        Wed, 2 Jan 2019 14:43:21 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37623 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbfABTnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 Jan 2019 14:36:52 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c2d12c90000>; Wed, 02 Jan 2019 11:36:41 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 02 Jan 2019 11:36:52 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 02 Jan 2019 11:36:52 -0800
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 2 Jan
- 2019 19:36:51 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 2 Jan 2019 19:36:51 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c2d12d30007>; Wed, 02 Jan 2019 11:36:51 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V7 1/2] arm64: dtsi: Fix SDMMC address range
-Date:   Wed, 2 Jan 2019 11:36:47 -0800
-Message-ID: <1546457808-18270-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
-References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 2 Jan 2019 14:43:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so14904472plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jan 2019 11:43:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=R11YRNGLg7CgD4a9KU3qTMje2Bj1pNep2Y2+/ttJnKQ=;
+        b=bfOEJAnjnaN57sGdjQL7WTLCb47OFeG9Jx9a7m41YFvupoOw/BDT8FCtSgCQJHNKoD
+         zrcTbdFz1BtMs2ipclejuZ5rxueDg05/fV/IZyh29nM9aRxzQaas9TxhqofVO7hOJlMX
+         ym6tCsHNKSzn4md6EeHHz+RMawQhHjaw751q2Q81oTwlF8mCS32vaodtA7ByBw3YUl6Y
+         xRcHoh0WtT0a35nF7I8vK6eGjnAnJlo6bNHSiOpn1jmnzL43YYgX/rP6jZwqO3/NKrd+
+         sZx7c+Qbx0Ns8zrG1fka+XyGxuTq9r20jHSB4uBSsjYQ9NHTdow+Ku0yrw4JZ3od8gdp
+         5elA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=R11YRNGLg7CgD4a9KU3qTMje2Bj1pNep2Y2+/ttJnKQ=;
+        b=RfDL0QgLjJR2yL77yLKpBIQiagwoBsSbKdH+23Gs59cZq0Wq9M/ZdcOklZoJeX5CJa
+         Zu6vGsq/XYIW5QQgUfhuIVTgX1GbpFq55bxETt1b1XCml5ybqd7WHa2RGxD7gr3xGKQ/
+         wz04KF6yx2X73LUZuQ+iUokAbktSvrC3zYNKBfhkvvqdY7y9TXYRLKEX0kMXfwoa/I8F
+         1AGPDh8dfhMMNtlY5ChVdNP54lHbLYfPdtjfZknt2dndFTVvuVZB+b6ASo4V4THCvcXN
+         gH8ZvS4amktNgpGYtTFnEwY0grjhNClfEr7EkRvDPhcdiQ39+F6oCKEHVbT7VlJwVV/Z
+         NzXA==
+X-Gm-Message-State: AJcUukc3i1B4ghJIOaXYTiTa9pRDMiO7yXBd6ZhIzREpEOns07bkueGW
+        QAYe6qtdTpSHz37TUYYphSX89w==
+X-Google-Smtp-Source: ALg8bN4T5keWdjzEDYXMLBrTaz792i+sHg8SlzQOmoMyLJz9y9szbkag54wCLTpqqc8D1CB/GiY8yQ==
+X-Received: by 2002:a17:902:9a9:: with SMTP id 38mr43746591pln.204.1546458200138;
+        Wed, 02 Jan 2019 11:43:20 -0800 (PST)
+Received: from [100.112.89.103] ([104.133.8.103])
+        by smtp.gmail.com with ESMTPSA id w11sm64310340pgk.16.2019.01.02.11.43.18
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 02 Jan 2019 11:43:18 -0800 (PST)
+Date:   Wed, 2 Jan 2019 11:43:12 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Vineeth Pillai <vpillai@digitalocean.com>
+cc:     Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Kelley Nielsen <kelleynnn@gmail.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v3 2/2] mm: rid swapoff of quadratic complexity
+In-Reply-To: <CANaguZC_d2EBmNuXtcJRcEcw8uXK234tYSXx6Uc2o9JH_vfP4A@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.1901021039490.13761@eggly.anvils>
+References: <20181203170934.16512-1-vpillai@digitalocean.com> <20181203170934.16512-2-vpillai@digitalocean.com> <alpine.LSU.2.11.1812311635590.4106@eggly.anvils> <CANaguZAStuiXpk2S0rYwdn3Zzsoakavaps4RzSRVqMs3wZ49qg@mail.gmail.com> <alpine.LSU.2.11.1901012010440.13241@eggly.anvils>
+ <CANaguZC_d2EBmNuXtcJRcEcw8uXK234tYSXx6Uc2o9JH_vfP4A@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1546457801; bh=CFBtF6ZaKNyqKgjWa+hPoclDVuRehYmyqcZmFtTTkGs=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=EKyq3FQV0+EihYXuQs0JNZbNNFen40c+IiaECfmFFv7OlJ01YZKCCKFR1Qn0ZxM2j
-         rAkaYg8PLUf0hR8EwdHLYMtpw4qqprfqWgekWJbLdlH4JxkMNOarbMTDZ+sf6asjwo
-         aKYlvd3t2VTMZun5yb0+DlWZofjrcuHUif66G0pwl9mqoP5lXrN7QE7RCjoQ8UxKJC
-         ztla0regIz5WFSidf7LJtx0UxRxE8kG+dfkpX3J2e2GSu5aCXrOJNDZFy5SWqWWLd2
-         pnzZoeQIG3tMcFNoOfjmm/i5B43Gn1eFmNOxjaf27D6OBLBeUvqVrtTpnQX8OVvIYy
-         YJ5o4Ai41Bg+g==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the SDMMC Controllers address space to be exact
-defined register address range as per the design.
+On Wed, 2 Jan 2019, Vineeth Pillai wrote:
+> 
+> After reading the code again, I feel like we can make the retry logic
+> simpler and avoid the use of oldi. If my understanding is correct,
+> except for frontswap case, we reach try_to_unuse() only after we
+> disable the swap device. So I think, we would not be seeing any more
+> swap usage on the disabled swap device, after we loop through all the
+> process and swapin the pages on that device. In that case, we would
+> not need the retry logic right?
 
-SDMMC Controller supporting Command Queue has CQHCI registers at
-offset 0xF000.
+Wrong.  Without heavier locking that would add unwelcome overhead to
+common paths, we shall "always" need the retry logic.  It does not
+come into play very often, but here are two examples of why it's
+needed (if I thought longer, I might find more).  And in practice,
+yes, I sometimes saw 1 retry needed.
 
-This fix helps to identify the Tegra SDMMC Controllers supporting
-Command Queue based on the size of address space.
+One, the issue already discussed, of a multiply-mapped page which is
+swapped out, one pte swapped off, but swapped back in by concurrent
+fault before the last pte has been swapped off and the page finally
+deleted from swap cache.  That swapin still references the disabled
+swapfile, and will need a retry to unuse (and that retry might need
+another).  We may fix this later with an rmap walk while still holding
+page locked for the first pte; but even if we do, I'd still want to
+retain the retry logic, to avoid dependence on corner-case-free
+reliable rmap walks.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 +++---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Two, get_swap_page() allocated a swap entry for shmem file or vma
+just before the swapoff started, but the swapper did not reach the
+point of inserting that swap entry before try_to_unuse() scanned
+the shmem file or vma in question.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..6fda3d6a7f3d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -231,7 +231,7 @@
- 
- 	sdmmc1: sdhci@3400000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03400000 0x0 0x10000>;
-+		reg = <0x0 0x03400000 0x0 0x220>;
- 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
- 		clock-names = "sdhci";
-@@ -256,7 +256,7 @@
- 
- 	sdmmc2: sdhci@3420000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03420000 0x0 0x10000>;
-+		reg = <0x0 0x03420000 0x0 0x220>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
- 		clock-names = "sdhci";
-@@ -276,7 +276,7 @@
- 
- 	sdmmc3: sdhci@3440000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03440000 0x0 0x10000>;
-+		reg = <0x0 0x03440000 0x0 0x220>;
- 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
- 		clock-names = "sdhci";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..6510ef6492b1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -295,7 +295,7 @@
- 
- 		sdmmc1: sdhci@3400000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03400000 0x10000>;
-+			reg = <0x03400000 0x220>;
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
- 			clock-names = "sdhci";
-@@ -306,7 +306,7 @@
- 
- 		sdmmc3: sdhci@3440000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03440000 0x10000>;
-+			reg = <0x03440000 0x220>;
- 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
- 			clock-names = "sdhci";
--- 
-2.7.4
+> For frontswap case, the patch was missing a check for pages_to_unuse.
+> We would still need the retry logic, but as you mentioned, I can
+> easily remove the oldi logic and make it simpler. Or probably,
+> refactor the frontswap code out as a special case if pages_to_unuse is
+> still not zero after the initial loop.
 
+I don't use frontswap myself, and haven't paid any attention to the
+frontswap partial swapoff case (though notice now that shmem_unuse()
+lacks the plumbing needed for it - that needs fixing); but doubt it
+would be a good idea to refactor it out as a separate case.
+
+Hugh
